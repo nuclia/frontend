@@ -1,0 +1,16 @@
+table {
+    width: 100%;
+}
+
+.llistat {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.actions {
+  mat-icon {
+    margin-left: 10px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+}

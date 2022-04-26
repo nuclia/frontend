@@ -1,0 +1,58 @@
+@import 'variables';
+
+.account-home {
+  padding: 4.5vw var(--app-layout-margin-right);
+
+  .container {
+    padding: 25px 30px;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-bottom: 30px;
+  }
+  .left-column {
+    width: 371px;
+  }
+  .switch-action {
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.16);
+    a {
+      color: var(--stf-black);
+      text-decoration: none;
+      display: flex;
+      font-size: 20px;
+      font-weight: var(--stf-font-weight-light);
+    }
+    span {
+      flex-grow: 1;
+      line-height: 24px;
+      ::ng-deep strong {
+        font-weight: var(--stf-font-weight-semibold);
+      }
+    }
+    svg-icon ::ng-deep svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  .processing-stats {
+    h2 {
+      margin: 0 0 25px 0;
+    }
+  }
+  .totals {
+    font-size: 20px;
+    font-weight: var(--stf-font-weight-light);
+  }
+  .chart-header {
+    display: flex;
+    align-items: baseline;
+    h2 {
+      font-weight: var(--stf-font-weight-light);
+    }
+    span {
+      font-weight: var(--stf-font-weight-light);
+      flex-grow: 1;
+      text-align: right;
+      font: italic;
+    }
+  }
+}

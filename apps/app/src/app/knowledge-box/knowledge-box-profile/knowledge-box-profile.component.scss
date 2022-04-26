@@ -1,0 +1,49 @@
+.knowledge-box-profile {
+  width: 770px;
+  max-width: 100%;
+  margin: 30px 0 80px 0;
+
+  .section {
+    padding: 50px 0 55px 0;
+    border-bottom: 1px solid var(--stf-gray-lighter-2);
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+
+  h2 {
+    margin: 0 0 36px 0;
+    font-weight: var(--stf-font-weight-bold);
+  }
+
+  .kb-field-name {
+    margin-top: 12px;
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 28px auto;
+    grid-gap: 10px;
+    .one-col {
+      grid-column: 2;
+    }
+    .warning {
+      color: var(--stf-orange);
+    }
+    svg-icon {
+      height: 20px;
+    }
+    .toggle-anonymisation {
+      margin-top: 20px;
+      font-weight: var(--stf-font-weight-bold);
+    }
+  }
+
+  hr {
+    height: 1px;
+    background-color: var(--stf-gray-lighter-3);
+    border: none;
+    margin: 76px 0;
+  }
+}

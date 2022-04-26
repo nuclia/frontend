@@ -1,0 +1,6 @@
+<section>
+  Mode: {{ anonymous ? 'Anonymous' : 'User Credentials' }}
+  <button (click)="toggleMode()">Toggle mode</button>
+</section>
+<sdk-demo-with-credentials *ngIf="!anonymous"></sdk-demo-with-credentials>
+<sdk-demo-anonymous *ngIf="anonymous"></sdk-demo-anonymous>

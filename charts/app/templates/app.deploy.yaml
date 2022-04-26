@@ -1,0 +1,46 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: stash-app
+  labels:
+    app: app
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: app
+      release: "{{ .Release.Name }}"
+      heritage: "{{ .Release.Service }}"
+  template:
+    metadata:
+      name: stash-app
+      labels:
+        app: app
+        version: "{{ .Values.hash }}"
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+    spec:
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      containers:
+      - name: stash-app
+        image: "{{ .Values.image }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: app-config
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.service.internalPort }}
+        ports:
+        - name: stash-app
+          containerPort: {{ .Values.service.internalPort }}

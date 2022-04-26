@@ -1,0 +1,30 @@
+@import 'variables';
+
+.setup-invite {
+  display: flex;
+  flex-direction: column;
+  min-height: var(--setup-container-min-height);
+  padding: 60px 100px;
+
+  .logo {
+    text-align: center;
+    img {
+      width: 176px;
+      height: auto;
+    }
+  }
+
+  &-title {
+    margin: 36px 0 40px 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+    text-align: center;
+  }
+
+  &-actions {
+    margin-top: auto;
+    padding-top: 25px;
+    text-align: center;
+  }
+}
+

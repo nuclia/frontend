@@ -1,0 +1,74 @@
+
+// Main layout
+@mixin main-layout() {
+  html,
+  body {
+    display: flex;
+    flex: 1 0 auto;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    min-height: 100%;
+    padding: 0;
+    overflow: hidden;
+  }
+}
+
+@mixin text-truncate() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Truncate multiline
+@mixin limit-lines($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Reset button defaults
+@mixin reset-button() {
+  -webkit-appearance: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+// Provisional fix to use while this issue isn't resolved: https://github.com/angular/components/issues/21932
+@mixin fix-cdk-virtual-scroll() {
+  -webkit-transform: translateZ(0);
+  transform: none;
+}
+
+@mixin arrow($orientation, $halfWidth, $height, $color) {
+  width: 0;
+  height: 0;
+  @if $orientation == top{
+    border-left: $halfWidth solid transparent;
+    border-right: $halfWidth solid transparent;
+    border-bottom: $height solid $color;
+    border-top: 0;
+  }@else if $orientation == right{
+    border-top: $halfWidth solid transparent;
+    border-bottom: $halfWidth solid transparent;
+    border-left: $height solid $color;
+    border-right: 0;
+  }@else if $orientation == down{
+    border-left: $halfWidth solid transparent;
+    border-right: $halfWidth solid transparent;
+    border-top: $height solid $color;
+    border-bottom: 0;
+  }@else{
+    border-top: $halfWidth solid transparent;
+    border-bottom: $halfWidth solid transparent;
+    border-right: $height solid $color;
+    border-left: 0;
+  }
+}

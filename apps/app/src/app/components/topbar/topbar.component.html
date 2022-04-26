@@ -1,0 +1,74 @@
+<div class="topbar">
+  <button class="topbar-logo"
+          (click)="goToHome()"
+          tourAnchor="step1">
+    <!-- <svg-icon src="assets/logos/logo_text.svg"
+              class="topbar-logo-expanded"></svg-icon> -->
+    <svg-icon src="assets/logos/logo-beta.svg"
+              class="topbar-logo-expanded"></svg-icon>
+    <svg-icon src="assets/logos/symbol.svg"
+              class="topbar-logo-collapsed"></svg-icon>
+  </button>
+
+  <div class="search-widget">
+    <span tourAnchor="step2">{{ 'searchbar.help' | translate}}</span>
+    <div tourAnchor="step3"
+         [innerHtml]="searchWidget | async">
+    </div>
+  </div>
+
+  <a class="topbar-report"
+     href="https://github.com/nuclia/support"
+     rel="noopener noreferrer"
+     target="_blank">
+    <svg-icon src="assets/icons/bug.svg"></svg-icon>
+    <span>{{ 'generic.report_bug' | translate }}</span>
+  </a>
+
+  <div class="topbar-separator"></div>
+
+  <button class="topbar-kb"
+          (click)="switchOpen = true"
+          cdkOverlayOrigin
+          #currentKb
+          #triggerSwitch="cdkOverlayOrigin">
+    <span>{{ (kb | async)?.title }}</span>
+    <svg-icon *ngIf="(kb | async)?.state === 'PUBLISHED'"
+              src="assets/icons/unlock.svg">
+    </svg-icon>
+  </button>
+
+  <button class="topbar-user"
+          (click)="menuOpen = true"
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin">
+    <stf-user-avatar-simple tourAnchor="step4"
+                            [userPrefs]="userPrefs | async"
+                            [blackMode]="true">
+    </stf-user-avatar-simple>
+  </button>
+
+  <ng-template cdkConnectedOverlay
+               [cdkConnectedOverlayOrigin]="trigger"
+               [cdkConnectedOverlayOpen]="menuOpen"
+               [cdkConnectedOverlayHasBackdrop]="true"
+               [cdkConnectedOverlayPositions]="menuPosition"
+               [cdkConnectedOverlayOffsetY]="7"
+               (backdropClick)="menuOpen = false"
+               cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+    <app-user-menu (close)="menuOpen = false"></app-user-menu>
+  </ng-template>
+
+  <ng-template cdkConnectedOverlay
+               [cdkConnectedOverlayOrigin]="triggerSwitch"
+               [cdkConnectedOverlayOpen]="switchOpen"
+               [cdkConnectedOverlayHasBackdrop]="true"
+               [cdkConnectedOverlayOffsetY]="5"
+               (backdropClick)="switchOpen = false"
+               [cdkConnectedOverlayWidth]="currentKb.clientWidth"
+               cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+    <app-kb-switch (close)="switchOpen = false"
+                   [style.width.px]="currentKb.clientWidth">
+    </app-kb-switch>
+  </ng-template>
+</div>

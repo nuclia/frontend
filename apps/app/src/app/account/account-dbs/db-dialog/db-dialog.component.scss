@@ -1,0 +1,41 @@
+@import 'variables';
+
+.db-dialog {
+  position: relative;
+  padding: 16px 35px;
+
+  h1 {
+    margin: 0 0 42px 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+  }
+
+  h2 {
+    margin: 0 0 6px 0;
+    font-weight: var(--stf-font-weight-bold);
+  }
+
+  .close-button {
+    @include reset-button();
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    cursor: pointer;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  &-field-name {
+    margin-top: 12px;
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  &-zone {
+    width: 90%;
+    &-select {
+      min-width: 305px;
+    }
+  }
+}

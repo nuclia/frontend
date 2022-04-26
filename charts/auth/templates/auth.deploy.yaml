@@ -1,0 +1,46 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: auth
+  labels:
+    app: auth
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: auth
+      release: "{{ .Release.Name }}"
+      heritage: "{{ .Release.Service }}"
+  template:
+    metadata:
+      name: auth
+      labels:
+        app: auth
+        version: "{{ .Values.hash }}"
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+    spec:
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      containers:
+      - name: auth
+        image: "{{ .Values.image }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: auth-app-config
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.service.internalPort }}
+        ports:
+        - name: auth-app
+          containerPort: {{ .Values.service.internalPort }}

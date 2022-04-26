@@ -1,0 +1,28 @@
+<div class="user-background">
+  <div class="outter_account_form">
+    <div class="inner_account_form">
+      <div class="logo">
+        <img src="assets/logos/logo.svg" />
+      </div>
+      <div class="account_content">
+        <div class="account_title">
+          <h1>{{ 'account.title' | translate }}</h1>
+          <div class="description">{{ 'generic.description' | translate }}</div>
+          <div class="description alert"
+               *ngIf="message">{{ message }}</div>
+        </div>
+        <mat-list>
+          <mat-list-item *ngFor="let account of accounts"
+                         class="account"
+                         (click)="goToAccount(account.slug)">
+            {{ account.title | titlecase }} - ({{ account.slug }})
+          </mat-list-item>
+        </mat-list>
+      </div>
+      <div fxLayout="row"
+           fxLayoutAlign="center center">
+        <stf-button (click)="logout()">{{ 'user.logout' | translate }}</stf-button>
+      </div>
+    </div>
+  </div>
+</div>

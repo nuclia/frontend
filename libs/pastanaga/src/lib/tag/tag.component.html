@@ -1,0 +1,10 @@
+<div class="tag-wrapper" [ngStyle]="{'background-color': background, 'padding-bottom': padding, 'color': color}">
+  <span *ngIf="class" class="class-label">{{class}}</span>
+  <span class="text-label"   [ngStyle]="{'margin-top': margin}" >
+    {{text}}
+  </span>
+  <span *ngIf="mode === 'edit'">
+    <button class="small-icon" (click)="addElement($event)" *ngIf="prob && action" mat-icon-button aria-label="Add"><mat-icon>add</mat-icon></button>
+    <button class="small-icon" (click)="delElement($event)" *ngIf="!prob && action" mat-icon-button aria-label="Remove"><mat-icon>delete</mat-icon></button>
+  </span>
+</div>

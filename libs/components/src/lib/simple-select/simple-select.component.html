@@ -1,0 +1,33 @@
+<div class="simple-select-wrapper" [ngClass]="'theme-'+theme">
+  <div *ngIf="isOpen" class="overlay" (click)="toggleOpen()"></div>
+  <div class="simple-select" (click)="toggleOpen()" fxLayout="column">
+
+    <div class="simple-select__trigger" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="5px">
+      <span fxFlex="1 1 auto" class="min-width-0" fxLayout="row" fxLayoutAlign="start center">
+        <svg-icon *ngIf="selectedValue?.icon" fxFlex="0 0 auto" class="simple-select-icon" [src]="selectedValue.icon"></svg-icon>
+        <span *ngIf="selectedValue?.value" [class.text-truncate]="!allowTwoLines" [class.allow-two-lines]="allowTwoLines" fxFlex="1 1 auto">{{ selectedValue.value | translate }}</span>
+      </span>
+      <div fxFlex="0 0 auto" [class.arrow-down]="!isOpen" [class.arrow-up]="isOpen"></div>
+    </div>
+    <div class="simple-select-options" [class.simple-select-options-open]="isOpen" >
+      <div 
+        *ngFor="let option of options"
+        class="simple-select-option"
+        [class.simple-select-option-selected]="selectedValue && option.key === selectedValue.key"
+        (click)="setSelectedValue(option)"
+      >
+        <svg-icon *ngIf="option.icon" class="simple-select-option-icon" fxFlex="0 0 auto" [src]="option.icon"></svg-icon>
+        <span class="simple-select-option-text text-truncate" fxFlex="1 1 auto">
+          {{ option.value | translate }}
+        </span>
+      </div>
+      <div
+        *ngIf="showReset && selectedValue?.value?.length > 0"
+        class="simple-select-option reset"
+        (click)="reset()"
+      >
+        <span class="simple-select-option-text">{{ 'generic.all' | translate }}</span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: manager
+  labels:
+    app: manager
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  type: ClusterIP
+  selector:
+    app: manager
+  ports:
+    - name: manager-app
+      port: {{ .Values.service.externalPort }}
+      targetPort: {{ .Values.service.internalPort }}
+      protocol: TCP

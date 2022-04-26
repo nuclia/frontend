@@ -1,0 +1,91 @@
+@import 'libs/pastanaga/src/lib/styles/stf';
+
+.upload-files {
+  position: relative;
+  width: 50vw;
+  min-width: 350px;
+  max-width: 722px;
+  max-height: 85vh;
+  padding: 16px 26px 14px 26px;
+}
+
+.close-button {
+  @include reset-button();
+  position: absolute;
+  top: 6px;
+  right: 2px;
+  cursor: pointer;
+}
+
+h1 {
+  margin: 0;
+  font-size: var(--stf-font-size-title);
+  font-weight: var(--stf-font-weight-bold);
+}
+
+.dropzone {
+  margin-bottom: 30px;
+  border: 2px dashed #ccc;
+  color: rgba(0, 0, 0, 0.5);
+  min-height: 94px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  span {
+    transition: opacity 0.15s;
+  }
+  &.file-over {
+    border: 2px dashed var(--stf-primary);
+    span {
+      opacity: 0.3;
+    }
+  }
+}
+
+app-label-field {
+  margin-bottom: 36px;
+}
+
+.file-list {
+  @include scrollbar-style(6px, var(--stf-gray-background), var(--stf-gray-background), #000, #000, 0, 0);
+  max-height: 13vh;
+  overflow-y: auto;
+  margin-bottom: 26px;
+
+  &-item {
+    display: flex;
+    align-items: center;
+    height: 37px;
+    margin-right: 10px;
+    border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+    &:first-child {
+      border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+    }
+  }
+}
+
+.select-language {
+  &-warning {
+    margin-bottom: 20px;
+    font-weight: var(--stf-font-weight-semibold);
+    svg {
+      display: block;
+    }
+  }
+
+  select {
+    min-width: 200px;
+    margin-bottom: 4px;
+  }
+
+  .audio-file {
+    &-checkbox {
+      width: 24px;
+    }
+
+    &-title {
+      @include text-truncate();
+      width: 290px;
+      padding-right: 20px;
+    }
+  }
+}

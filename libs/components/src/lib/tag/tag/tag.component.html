@@ -1,0 +1,25 @@
+<ng-container *ngIf="!asToggleButton">
+  <ng-template [ngTemplateOutlet]="tagContent"></ng-template>
+</ng-container>
+
+<ng-container *ngIf="asToggleButton">
+  <button role="checkbox" [attr.aria-checked]="_selected" (click)="onClick()">
+    <ng-template [ngTemplateOutlet]="tagContent"></ng-template>
+  </button>
+</ng-container>
+
+<ng-template #tagContent>
+  <div 
+    [class]="'tag-component tag-component-' + size"
+    [class.tag-component-secondary]="_secondary"
+    [class.tag-component-contrast]="_contrast"
+    [class.selected]="_selected"
+    fxLayout="row"
+    fxLayoutAlign="space-between center"
+  >
+    <span>
+      {{ tag }}
+    </span>
+    <svg-icon *ngIf="deleteIcon && !asToggleButton" [src]="'assets/icons/cross.svg' | assetUrl" class="tag-component-icon" fxLayout="row" fxLayoutAlign="start center" (click)="onClickIcon()"></svg-icon>
+  </div>
+</ng-template>

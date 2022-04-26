@@ -1,0 +1,23 @@
+<div class="row_log"  fxLayout="row"  *ngIf="!short">
+  <div class="when" fxFlex="10%">
+    {{ when | timeAgo }}
+  </div>
+  <div class="stash" fxFlex="20%">{{ db }}/{{ account }}/{{ stash }}</div>
+  <div class="user" fxFlex="10%">
+    {{ user }}
+  </div>
+  <div class="title" fxFlex="60%" (click)="goToUUID(id)" *ngIf="title">
+    <span class="title">{{ title }}</span>
+  </div>
+  <div class="title" fxFlex="60%" (click)="goToUUID(id)" *ngIf="!title">
+    <span class="id">{{ id }}</span>
+  </div>
+  <div class="title" fxFlex="60%"  *ngIf="!title">
+    {{ uuid }}
+  </div>
+</div>
+<ng-container *ngIf="short">
+  <div mat-line (click)="goToUUID(id)" *ngIf="!title"><span class="id">{{id}}</span></div>
+  <div mat-line (click)="goToUUID(id)" *ngIf="title"><span class="title">{{title}}</span></div>
+  <div mat-line>{{ when | timeAgo }} - {{ user }}</div>
+</ng-container>

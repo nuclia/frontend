@@ -1,0 +1,74 @@
+import { Component, OnInit, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { SAMLService, GoogleService, BackendConfigurationService, SDKService } from '@flaps/auth';
+import { ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'stf-user-callback',
+  template: '<div class="user-background"></div>',
+})
+export class CallbackComponent implements OnInit {
+  constructor(
+    private route: ActivatedRoute,
+    private samlService: SAMLService,
+    private googleService: GoogleService,
+    private config: BackendConfigurationService,
+    @Inject(DOCUMENT) private document: Document,
+    private sdk: SDKService,
+  ) {}
+
+  ngOnInit() {
+    if (this.route.snapshot.data.saml) {
+      // Returning from SAML authentification
+      this.getSAMLToken();
+    } else if (this.route.snapshot.data.samlOauth) {
+      // Returning from SAML authentification in a OAuth flow
+      this.redirect();
+    } else if (this.route.snapshot.data.google) {
+      this.googleLogin();
+    } else {
+      this.loadUrlToken();
+    }
+  }
+
+  loadUrlToken() {
+    this.route.queryParams.subscribe((params) =>
+      this.sdk.nuclia.auth.authenticate({
+        access_token: params['token'],
+        refresh_token: '',
+      }),
+    );
+  }
+
+  getSAMLToken(): void {
+    const token = this.route.snapshot.queryParamMap.get('token');
+    if (token) {
+      this.samlService.getToken(token).subscribe((token) => {
+        this.sdk.nuclia.auth.authenticate(token);
+      });
+    }
+  }
+
+  redirect(): void {
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirect_to');
+    if (redirectTo) {
+      const allowedHosts = this.config.getAllowdHostsRedirect();
+      try {
+        const url = new URL(redirectTo);
+        if (allowedHosts.indexOf(url.hostname) >= 0) {
+          this.document.location.href = redirectTo;
+        }
+      } catch {}
+    }
+  }
+
+  googleLogin(): void {
+    const code = this.route.snapshot.queryParamMap.get('code');
+    const state = this.route.snapshot.queryParamMap.get('state');
+    if (code !== null && state !== null) {
+      this.googleService.login(code, state).subscribe((token) => {
+        this.sdk.nuclia.auth.authenticate(token);
+      });
+    }
+  }
+}

@@ -1,0 +1,123 @@
+@import 'variables';
+
+// Height from which the menu get smaller (prevents scrollbar to appear)
+$height-breakpoint: 730px;
+
+:host,
+.stash-navbar {
+  height: 100%;
+}
+
+:host * {
+  // prettier-ignore
+  @include scrollbar-style(
+    10px,
+    rgba(0, 0, 0, 0.06),
+    rgba(0, 0, 0, 0.10),
+    rgba(0, 0, 0, 0.20),
+    rgba(0, 0, 0, 0.40)
+  );
+}
+
+.navbar-scroll-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  > .navbar-content {
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  > .navbar-footer {
+    flex: 0 0 auto;
+    width: 100%;
+  }
+
+  .nav-group {
+    padding: 12px 0;
+    border-bottom: 1px solid #dfdfdf;
+    @media (max-height: $height-breakpoint) {
+      padding: 4px 0 6px 0;
+    }
+    > .group-items {
+      > .nav-link {
+        height: 44px;
+        padding: 0 0 0 16px;
+        margin-right: 16px;
+        margin-left: 5px;
+        color: inherit;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        cursor: pointer;
+        user-select: none;
+        svg {
+          display: block;
+          width: 25px;
+        }
+        > .nav-link-title {
+          flex: 1 1 auto;
+          white-space: nowrap;
+          padding-left: 15px;
+          font-size: var(--stf-font-size-large);
+        }
+        @media (max-height: $height-breakpoint) {
+          height: 38px;
+          svg {
+            width: 21px;
+          }
+          > .nav-link-title {
+            font-size: var(--stf-font-size-medium);
+          }
+        }
+
+        &.quick-start {
+          margin-top: 8px;
+          margin-bottom: 8px;
+          padding: 0 0 0 12px;
+          svg {
+            width: 30px;
+          }
+          .quick-start-title {
+            font-weight: var(--stf-font-weight-bold);
+          }
+          .quick-start-tasks {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.stash-navbar:not(.is-unfolded) {
+  .navbar-scroll-container {
+    .navbar-content {
+      padding-top: 0;
+
+      .nav-link {
+        margin: 0 5px;
+      }
+      .nav-link-title {
+        display: none;
+      }
+    }
+  }
+}
+
+.quick-start-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 376px;
+  overflow-y: auto;
+  background-color: var(--stf-gray-lighter);
+}
+
+.group-items.touranchor--is-active {
+  border: 1px solid var(--stf-primary);
+}

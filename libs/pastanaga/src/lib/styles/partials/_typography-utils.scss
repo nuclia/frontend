@@ -1,0 +1,220 @@
+// -----------------------------------------------------------------------------------------------------
+// @ Typography utils
+// -----------------------------------------------------------------------------------------------------
+
+@import 'mixins';
+
+// Blockquote
+blockquote {
+  border-left: 3px solid rgba(0, 0, 0, 0.12);
+  font-style: italic;
+  margin: 1em 0;
+  padding-left: 16px;
+
+  footer {
+    font-style: normal;
+
+    &:before {
+      content: '\2014 \00A0';
+    }
+  }
+
+  &.reverse {
+    border-left: none;
+    border-right: 3px solid rgba(0, 0, 0, 0.12);
+    text-align: right;
+    padding-left: 0;
+    padding-right: 16px;
+
+    footer {
+
+      &:before {
+        content: '';
+      }
+
+      &:after {
+        content: '\2014 \00A0';
+      }
+    }
+  }
+}
+
+// Code
+code {
+  white-space: pre;
+  font-family: 'Monaco', 'Menlo', 'Consolas', 'Ubuntu Mono', monospace;
+
+  &:not(.highlight) {
+    color: #106CC8;
+    padding: 2px 3px;
+    border-radius: 2px;
+    line-height: 1.7;
+  }
+}
+
+// Definition lists
+dl {
+  dt {
+    font-weight: bold;
+  }
+
+  dd {
+    margin: 4px 0 16px 0;
+  }
+}
+
+// Mark
+mark {
+  padding: 5px;
+  border-radius: 2px;
+  background: #F7F49A;
+}
+
+// Pre
+pre {
+  line-height: 1.6;
+  margin: 8px 16px;
+  white-space: pre-wrap;
+  font-family: var(--stf-font-family);
+}
+
+// Small
+small {
+  font-size: 80%;
+}
+
+// Table
+table {
+  thead {
+    tr {
+      th {
+        text-align: left;
+      }
+    }
+  }
+}
+
+// Text format helpers
+.text-italic {
+  font-style: italic;
+}
+
+.text-semibold {
+  font-weight: var(--stf-font-weight-semibold);
+}
+
+.text-bold {
+  font-weight: var(--stf-font-weight-bold);
+}
+
+.text-strike {
+  text-decoration: line-through;
+}
+
+.text-super {
+  vertical-align: super;
+}
+
+.text-sub {
+  vertical-align: sub;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+// Text align helpers
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+// Font weight helpers
+@for $weight from 1 through 9 {
+
+  .font-weight-#{$weight * 100} {
+    font-weight: #{$weight * 100};
+  }
+}
+
+// Font size helpers
+@for $size from 1 through 60 {
+
+  .font-size-#{$size * 2} {
+    font-size: #{$size * 2}px;
+  }
+}
+
+// Line height helpers
+@for $lineHeight from 1 through 60 {
+
+  .line-height-#{$lineHeight * 2} {
+    line-height: #{$lineHeight * 2}px;
+  }
+}
+
+.line-height-1 {
+  line-height: 1;
+}
+
+.line-height-1\.25 {
+  line-height: 1.25;
+}
+
+.line-height-1\.5,
+.line-height-1\.50 {
+  line-height: 1.5;
+}
+
+.line-height-1\.75 {
+  line-height: 1.75;
+}
+
+// Letter spacing helpers
+.letter-spacing-condensed {
+  letter-spacing: -0.02em;
+}
+
+.letter-spacing-normal {
+  letter-spacing: normal;
+}
+
+.letter-spacing-relaxed {
+  letter-spacing: 0.02em;
+}
+
+// Boxed text
+.text-boxed {
+  border-radius: 2px;
+  padding: 4px 8px;
+  margin: 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+// Truncate
+.text-truncate {
+  display: block;
+  @include text-truncate();
+}
+
+// Nowrap
+.text-nowrap {
+  white-space: nowrap;
+}

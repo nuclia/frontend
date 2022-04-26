@@ -1,0 +1,34 @@
+.when {
+  border: 1px solid #ccc;
+  padding: 7px;
+}
+
+.stash {
+  font-weight: 700;
+  padding: 7px;
+  border-right: 1px solid #ccc;
+}
+
+.user {
+  padding: 7px;
+  border-right: 1px solid #ccc;
+}
+
+.title {
+  padding: 7px;
+}
+
+:host {
+  width: 100%;
+}
+.row_log {
+  width: 100%;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.id {
+  font-weight: 600;
+}

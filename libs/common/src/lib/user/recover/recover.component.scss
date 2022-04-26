@@ -1,0 +1,30 @@
+
+.recover_title {
+  margin: 50px 0 42px 0;
+  padding: 0 30px;
+  text-align: center;
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+  }
+  .description {
+    line-height: 1.5;
+  }
+}
+
+.recover_form {
+  margin-bottom: 44px;
+  padding: 0 20px;
+}
+
+.recover_button {
+  margin-top: 60px;
+}
+
+.recover_link {
+  color: var(--stf-primary);
+  font-weight: var(--stf-font-weight-bold);
+  text-decoration: none;
+  padding-left: 15px;
+}

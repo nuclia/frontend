@@ -1,0 +1,24 @@
+.empty-chart {
+  --app-chart-line-color: #e1e1e1;
+
+  &-row {
+    display: flex;
+    margin-bottom: 50px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &-line {
+    flex: 1 1 auto;
+    height: 1px;
+    background-color: var(--app-chart-line-color);
+  }
+
+  &-axis {
+    margin-left: 14px;
+    flex: 0 0 37px;
+    height: 1px;
+    background-color: var(--app-chart-line-color);
+  }
+}

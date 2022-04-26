@@ -1,0 +1,46 @@
+<div [class]="'stf-field stf-input-'+ type"
+     [class.stf-field-required]="required"
+     [class.stf-field-disabled]="disabled"
+     [class.stf-field-focused]="focused"
+     [class.stf-field-empty]="empty"
+     [class.stf-label-float]="label_float">
+  <div class="stf-input-infix">
+    <input class="stf-input-control"
+           [class.stf-input-control__with-icon]="_withIcon"
+           [class.stf-input-control__lessen]="_isLessen || (placeholder && placeholder.length > 0)"
+           [type]="type"
+           [attr.id]="id"
+           [attr.aria-label]="ariaLabel || null"
+           [attr.aria-describedby]="helpId || null"
+           [attr.placeholder]="placeholder"
+           [attr.aria-invalid]="errorState"
+           [attr.aria-required]="required"
+           [attr.readonly]="_readonly || null"
+           [attr.spellcheck]="_noSpellcheck ? 'false' : null"
+           [attr.autocomplete]="_noAutocomplete ? 'off' : null"
+           [attr.autocapitalize]="_noAutocapitalize ? 'off' : null"
+           [disabled]="disabled"
+           [required]="required"
+           [value]="value"
+           (onchange)="change($event.target.value)"
+           (change)="change($event.target.value)"
+           (keyup)="onKeyUp($event.target.value)"
+           (keydown)="onKeyDown($event.target?.value, $event)"
+           (keydown.enter)="onEnterPressed($event)"
+           (focus)="_focusChanged(true)"
+           (focusout)="focusOut.emit()"
+           (blur)="_focusChanged(false)"
+           [attr.name]="name"
+           #realInput>
+    <label class="stf-input-label"
+           [for]="id">
+      <ng-content></ng-content>
+    </label>
+    <small *ngIf="errorHelp"
+           class="stf-input-help stf-input-help-error"
+           [innerHTML]="errorHelp"></small>
+    <small *ngIf="help"
+           class="stf-input-help"
+           [id]="helpId">{{ help }}</small>
+  </div>
+</div>

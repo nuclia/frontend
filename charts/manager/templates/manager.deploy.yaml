@@ -1,0 +1,46 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: manager
+  labels:
+    app: manager
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: manager
+      release: "{{ .Release.Name }}"
+      heritage: "{{ .Release.Service }}"
+  template:
+    metadata:
+      name: manager
+      labels:
+        app: manager
+        version: "{{ .Values.hash }}"
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+    spec:
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      containers:
+      - name: manager
+        image: "{{ .Values.image }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        envFrom:
+        - configMapRef:
+            name: manager-app-config
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.service.internalPort }}
+        ports:
+        - name: manager-app
+          containerPort: {{ .Values.service.internalPort }}

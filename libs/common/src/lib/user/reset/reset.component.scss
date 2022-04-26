@@ -1,0 +1,33 @@
+
+.reset_title {
+  margin: 50px 0 60px 0;
+  text-align: center;
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+  }
+  .description {
+    line-height: 1.5;
+  }
+}
+
+.reset_form {
+  padding: 0 20px;
+}
+
+.reset_field {
+  margin-bottom: 16px;
+}
+
+.reset_button {
+  margin-top: 70px;
+}
+
+.reset_success {
+  margin-bottom: 30px;
+  font-size: var(--stf-font-size-title);
+  font-weight: var(--stf-font-weight-bold);
+  color: var(--stf-primary);
+  text-align: center;
+}

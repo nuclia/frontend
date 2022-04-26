@@ -1,0 +1,77 @@
+<div class="knowledge-box-profile"
+     *ngIf="kb && account">
+
+  <div class="section">
+    <h2>{{ 'stash.profile' | translate }}</h2>
+
+    <form [formGroup]="kbForm"
+          (ngSubmit)="saveKb()">
+      <div class="mb-24"
+           fxLayout="row">
+        <label class="kb-field-name mt-12"
+               fxFlex="30%">
+          {{ 'generic.name' | translate }}
+        </label>
+        <div fxFlex="70%">
+          <stf-input formControlName="title"
+                     [validator]="kbForm.controls['title']"
+                     [validation_messages]="validationMessages.title"
+                     theme="white"
+                     [isLessen]="true">
+          </stf-input>
+        </div>
+      </div>
+
+      <div fxLayout="row">
+        <label class="kb-field-name mt-12"
+               fxFlex="30%">
+          {{ 'generic.description' | translate }}
+        </label>
+        <div fxFlex="70%">
+          <stf-textarea formControlName="description"
+                        color="white"
+                        initialHeight="130px">
+          </stf-textarea>
+        </div>
+      </div>
+
+      <!-- <hr />
+
+      <h2>{{ 'stash.create.anonymization' | translate }}</h2>
+      <div class="grid">
+        <svg-icon src="assets/icons/toast-warning.svg"></svg-icon>
+        <div class="warning">{{ 'stash.create.anonymization-warning' | translate }}</div>
+        <div class="one-col">{{ 'stash.create.anonymization-help' | translate }}</div>
+        <stf-checkbox class="one-col toggle-anonymisation"
+                      [selected]="useAnonymization"
+                      (selectedChange)="changeAnonymization($event)">{{ (useAnonymization ? 'generic.enabled' :
+          'generic.disabled') |
+          translate }}</stf-checkbox>
+      </div>
+
+      <hr /> -->
+
+      <div class="mt-40"
+           fxLayout="row">
+        <div fxFlex="30%"></div>
+        <div fxFlex="70%"
+             fxLayout="row"
+             fxLayoutGap="10px">
+          <stf-button type="submit"
+                      minWidth="110px"
+                      [disabled]="kbForm.invalid || kbForm.pristine">
+            {{ 'generic.save' | translate }}
+          </stf-button>
+          <stf-button *ngIf="!kbForm.pristine"
+                      (click)="initKbForm()"
+                      type="button"
+                      color="white"
+                      minWidth="110px">
+            {{ 'generic.cancel' | translate }}
+          </stf-button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>

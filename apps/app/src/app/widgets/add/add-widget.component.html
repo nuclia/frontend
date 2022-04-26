@@ -1,0 +1,30 @@
+<div class="widget-dialog">
+  <h1>{{ (data?.rename ? 'stash.widgets.rename-title' : 'stash.widgets.add') | translate }}</h1>
+  <button class="close-button"
+          (click)="close()">
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
+  </button>
+
+  {{ 'stash.widgets.add-help' | translate }}
+
+  <form [formGroup]="mainForm"
+        (ngSubmit)="save()">
+    <stf-input formControlName="id"
+               [validator]="mainForm.controls['id']"
+               [validation_messages]="validationMessages.title">id</stf-input>
+
+    <div class="buttons">
+      <stf-button type="submit"
+                  minWidth="110px"
+                  [disabled]="!mainForm.valid || mainForm.pristine">
+        {{ 'generic.save' | translate }}
+      </stf-button>
+      <stf-button (click)="close()"
+                  color="gray"
+                  minWidth="110px">
+        {{ 'generic.cancel' | translate }}
+      </stf-button>
+    </div>
+  </form>
+
+</div>

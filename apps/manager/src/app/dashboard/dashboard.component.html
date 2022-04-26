@@ -1,0 +1,28 @@
+<div id="main">
+  <mat-toolbar color="primary">
+    <mat-toolbar-row>
+      <span class="home" [routerLink]="['/']">Stashify management</span>
+      <span class="toolbar-spacer"></span>
+      <button mat-button [matMenuTriggerFor]="userMenu"  class="user-button">
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <span class="username mr-12 ml-12 h5">{{this.fullname}} ({{this.type}})</span>
+          <mat-icon class="s-16" fxHide.xs>keyboard_arrow_down</mat-icon>
+        </div>
+      </button>
+      <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+      <!-- <mat-icon class="toolbar-icon" aria-hidden="false" aria-label="Example heart icon">favorite</mat-icon>
+      <mat-icon class="toolbar-icon" aria-hidden="false" aria-label="Example delete icon">delete</mat-icon> -->
+    </mat-toolbar-row>
+  </mat-toolbar>
+
+  <div class="container">
+      <div id="content" fxLayout="column" fxFlex>
+          <router-outlet #routerOutlet="outlet"></router-outlet>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+@import 'variables';
+
+.button-clear {
+  @include reset-button();
+  cursor: pointer;
+  font-size: var(--stf-font-size-ssmall);
+  text-decoration: underline;
+  svg {
+    margin-right: 4px;
+  }
+}

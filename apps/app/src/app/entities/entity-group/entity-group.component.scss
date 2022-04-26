@@ -1,0 +1,65 @@
+@import '../tokens';
+
+.entity-group {
+  display: flex;
+  height: 42px;
+  border-bottom: 2px solid #fff;
+  cursor: pointer;
+  &.disabled {
+    cursor: auto;
+  }
+  &:hover:not(.disabled) {
+    background-color: #f3f3f3;
+  }
+
+  &-cell {
+    display: flex;
+    align-items: center;
+
+    &.cell-color { flex: $entity-table-color-flex }
+    &.cell-name { flex: $entity-table-name-flex }
+    &.cell-synonyms { flex: $entity-table-synonyms-flex }
+    &.cell-description { flex: $entity-table-description-flex }
+    &.cell-presence { flex: $entity-table-presence-flex }
+    &.cell-actions { flex: $entity-table-actions-flex }
+  }
+
+  .cell-color {
+    position: relative;
+    .color-border {
+      position: absolute;
+      top: 0;
+      bottom: -2px;
+      width: 10px;
+      background-color: var(--stf-gray-lighter-3); // Fallback color
+    }
+  }
+  .cell-name {
+    svg {
+      display: block;
+      margin-top: 2px;
+      width: 11px;
+      height: auto;
+      transition: transform 0.2s;
+    }
+    span {
+      margin-left: 6px;
+      font-weight: var(--stf-font-weight-semibold);
+    }
+  }
+  &.expanded {
+    .cell-name {
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .cell-presence {
+    justify-content: center;
+  }
+  .cell-actions {
+    justify-content: flex-end;
+    padding-right: 8px;
+  }
+}

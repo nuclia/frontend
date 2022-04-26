@@ -1,0 +1,113 @@
+<stf-user-container widthSm="520px"
+                    *ngIf="!error; else errorMessage">
+  <stf-user-container-logo>
+    <div class="login_content">
+      <div class="login_alert"
+           [class.small]="message.length > 24"
+           *ngIf="message">{{ message | translate }}</div>
+      <div class="login_form">
+        <form #form
+              [formGroup]="loginForm"
+              (ngSubmit)="login()"
+              [method]="oauth ? 'POST' : null"
+              [action]="oauth ? oAuthLoginUrl() : null">
+          <div class="login_field">
+            <stf-input #email
+                       formControlName="email"
+                       (enterPressed)="onEnterPressed('email')"
+                       [required]="true"
+                       type='text'
+                       theme="border"
+                       [noAutocapitalize]="true"
+                       [validator]="loginForm.controls['email']"
+                       [validation_messages]="loginValidationMessages.email"
+                       [name]="oauth ? 'username' : undefined"
+                       (focusOut)="checkSAML(email.value)">
+              {{ 'login.email' | translate }}
+            </stf-input>
+          </div>
+          <div class="login_field">
+            <stf-password-input #password
+                                controlName="password"
+                                theme="border"
+                                (enterPressed)="onEnterPressed('password')"
+                                [validator]="loginForm.controls['password']"
+                                [validation_messages]="loginValidationMessages.password"
+                                [name]="oauth ? 'password' : undefined">
+              {{ 'login.password' | translate }}
+            </stf-password-input>
+          </div>
+          <input *ngIf="oauth"
+                 type="hidden"
+                 name="login_challenge"
+                 [value]="loginChallenge">
+          <div class="login_policy">
+            This site is protected by reCAPTCHA and the Google
+            <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+            <a href="https://policies.google.com/terms">Terms of Service</a> apply.
+          </div>
+          <div class="login_form_error"
+               *ngIf="formError"
+               fxLayout="row">
+            <span class="login_form_error_icon"
+                  fxFlex="0 0 auto">!</span>
+            <div>
+              <strong>{{ 'login.error.auth_error' | translate }} </strong>
+              <span>{{ 'login.try_again' | translate }}</span>
+            </div>
+          </div>
+          <div class="login_submit"
+               fxLayout="row"
+               fxLayoutAlign="center center">
+            <stf-button type="submit"
+                        weight="bold"
+                        minWidth="128px">{{'login.login' | translate}}</stf-button>
+          </div>
+        </form>
+      </div>
+      <div class="login_recover">
+        <span>{{ 'login.recover_help' | translate }} </span>
+        <a href="javascript:;"
+           (click)="recoverPassword($event)">{{ 'login.recover' | translate }}</a>
+      </div>
+      <div class="login_social"
+           *ngIf="config.getSocialLogin()">
+        <div class="login_separator">
+          <span>{{ 'generic.or' | translate }}</span>
+        </div>
+        <div class="mb-16">
+          <button class="login_social_button"
+                  (click)="googleLogin()">
+            <div class="login_google"
+                 fxLayout="row"
+                 fxLayoutAlign="center center"
+                 fxLayoutGap="10px">
+              <svg-icon src="assets/icons/google.svg"></svg-icon>
+              <span>{{ 'login.continue_with' | translate }} <strong>Google</strong></span>
+            </div>
+          </button>
+        </div>
+        <!--
+        <div>
+          <stf-button color="basic" weight="regular" [fullWidth]="true" size="large">
+            <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+              <svg-icon src="assets/icons/github.svg"></svg-icon>
+              <span>{{ 'login.continue_with' | translate }} <strong>GitHub</strong></span>
+            </div>
+          </stf-button>
+        </div>
+        -->
+      </div>
+      <div class="login_signup">
+        <span>{{ 'login.have_account' | translate }} </span>
+        <a [routerLink]="['../signup']"
+           queryParamsHandling="merge">{{ 'login.create_one' | translate }}</a>
+      </div>
+    </div>
+  </stf-user-container-logo>
+</stf-user-container>
+
+<ng-template #errorMessage>
+  <stf-user-error *ngIf="error"
+                  [message]="error"></stf-user-error>
+</ng-template>

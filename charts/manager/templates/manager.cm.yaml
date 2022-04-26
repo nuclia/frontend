@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: manager-app-config
+  labels:
+    app: manager
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  API_PATH: {{ .Values.api_path }}
+  SITE_KEY: "{{ .Values.site_key }}"
+  APP_NAME: {{ .Values.app_name }}
+  GANALYTICS: "{{ .Values.ganalytics }}"
+  SENTRY_ENV: {{ .Values.sentry_environment }}
+  SENTRY_URL: "{{ .Values.sentry_url }}"
+  STF_VERSION: "{{ .Chart.Version }}"
+  EMAIL_DOMAIN: "{{ .Values.email_domain }}"

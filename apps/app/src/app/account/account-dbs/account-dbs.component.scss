@@ -1,0 +1,59 @@
+@import 'variables';
+
+.account-dbs {
+  max-width: 770px;
+
+  .account-db {
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+    padding-right: 26px;
+    &:first-child {
+      border-top: 1px solid rgba(0,0,0,0.3);
+    }
+
+    &-header {
+      height: 50px;
+    }
+
+    &-title {
+      button {
+        @include reset-button();
+        cursor: pointer;
+        font-weight: var(--stf-font-weight-semibold);
+      }
+      &-arrow {
+        transition: transform 0.2s;
+        &.expanded {
+          transform: rotate(90deg);
+        }
+        svg {
+          display: block;
+          width: 14px;
+          height: auto;
+        }
+      }
+    }
+
+    &-date {
+      min-width: 120px;
+    }
+
+    &-count {
+      min-width: 120px;
+    }
+
+    &-action {
+      min-width: 120px;
+    }
+
+    &-body {
+      padding-bottom: 20px;
+    }
+
+    &-email {
+      margin-bottom: 14px;
+      span {
+        font-weight: var(--stf-font-weight-semibold);
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+<div *ngIf="knowledgeBoxes | async as kbs"
+     class="kb-switch"
+     @dropdown>
+  <button *ngFor="let kb of kbs"
+          class="kb-switch-item"
+          (click)="goToKb(kb)">
+    <span>{{ kb.title }}</span>
+    <svg-icon *ngIf="kb.state === 'PUBLISHED'"
+              src="assets/icons/unlock.svg">
+    </svg-icon>
+  </button>
+</div>

@@ -1,0 +1,18 @@
+@import 'variables';
+
+.color-picker {
+  button {
+    @include reset-button();
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    user-select: none;
+    &.selected {
+      border: 1px solid currentColor;
+    }
+    &.custom {
+      width: auto;
+      padding: 0 15px;
+    }
+  }
+}

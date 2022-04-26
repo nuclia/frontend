@@ -1,0 +1,8 @@
+.user-error {
+  padding: 20px;
+  text-align: center;
+  &-title {
+    font-size: var(--stf-font-size-xxxlarge);
+    margin-bottom: 15px;
+  }
+}

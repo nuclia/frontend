@@ -1,0 +1,51 @@
+<stf-user-container widthSm="520px">
+  <stf-user-container-logo>
+    <div class="reset_title">
+      <h1>{{ 'reset.title' | translate }}</h1>
+      <div class="description">{{ 'reset.description' | translate }}</div>
+    </div>
+    <div class="reset_form">
+      <form [formGroup]="resetForm" #form="ngForm" (ngSubmit)="submit()">
+        <div class="reset_field">
+          <stf-input
+            #password
+            formControlName="password"
+            (enterPressed)="onEnterPressed('password')"
+            required
+            type='password'
+            theme="border"
+            [noAutocapitalize]="true"
+            [validator]="resetForm.controls['password']"
+            [validation_messages]="resetValidationMessages.password">
+            {{ 'reset.password' | translate }}
+          </stf-input>
+        </div>
+        <div class="reset_field">
+          <stf-input
+            #passwordConfirm
+            formControlName="passwordConfirm"
+            [noAutocapitalize]="true"
+            (enterPressed)="onEnterPressed('passwordConfirm')"
+            required
+            type="password"
+            theme="border"
+            [validator]="resetForm.controls['passwordConfirm']"
+            [validation_messages]="resetValidationMessages.passwordConfirm">
+            {{ 'generic.confirm_password' | translate }}
+          </stf-input>
+        </div>
+        <div class="reset_success" *ngIf="passwordRecovered">
+          {{ 'reset.password_reset' | translate }}
+        </div>
+        <div class="reset_button" fxLayout="row" fxLayoutAlign="center center" >
+          <stf-button
+            type="submit"
+            minWidth="128px"
+            [disabled]="passwordRecovered">
+            {{'generic.save' | translate}}
+          </stf-button>
+        </div>
+      </form>
+    </div>
+  </stf-user-container-logo>
+</stf-user-container>

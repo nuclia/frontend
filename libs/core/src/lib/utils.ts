@@ -1,0 +1,250 @@
+import latinize from 'latinize';
+
+export const MIN_PASSWORD_LENGTH = 8;
+
+const DATE_FORMATS: { [locale: string]: string } = {
+  ca: 'dd - LL - yyyy',
+  es: 'dd - LL - yyyy',
+  'en-US': 'LL - dd - yyyy',
+};
+
+export class STFUtils {
+  // Generete a slug from arbitrary text.
+  // Slugs only have alphanumeric lowercase characters (a-z, 0-9) and separators (-_)
+  public static generateSlug(text: string): string {
+    if (!text) {
+      return '';
+    }
+
+    // latinize characters when possible
+    let slug = latinize(text);
+
+    // Strip non allowed characters
+    slug = slug.replace(/[^\w\s-_]+/g, '');
+
+    // Replace white spaces
+    slug = slug.trim();
+    slug = slug.replace(/[\s]+/g, '-');
+
+    // To lowercase
+    slug = slug.toLowerCase();
+
+    return slug;
+  }
+
+  public static generateUniqueSlug(text: string, slugs: string[]): string {
+    let slug = STFUtils.generateSlug(text);
+    let i = 0;
+    while (slugs.includes(slug)) {
+      slug = STFUtils.generateSlug(text) + '-' + i;
+      i++;
+    }
+    return slug;
+  }
+
+  public static get REGEX() {
+    return {
+      email:
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    };
+  }
+
+  // ISO 639-1 language codes
+  public static languageList(): string[] {
+    return [
+      'aa',
+      'ab',
+      'af',
+      'ak',
+      'am',
+      'an',
+      'ar',
+      'as',
+      'av',
+      'ay',
+      'az',
+      'ba',
+      'be',
+      'bg',
+      'bh',
+      'bi',
+      'bm',
+      'bn',
+      'bo',
+      'br',
+      'bs',
+      'ca',
+      'ce',
+      'ch',
+      'co',
+      'cr',
+      'cs',
+      'cu',
+      'cv',
+      'cy',
+      'da',
+      'de',
+      'dv',
+      'dz',
+      'ee',
+      'el',
+      'en',
+      'eo',
+      'es',
+      'et',
+      'eu',
+      'fa',
+      'ff',
+      'fi',
+      'fj',
+      'fo',
+      'fr',
+      'fy',
+      'ga',
+      'gd',
+      'gl',
+      'gn',
+      'gu',
+      'gv',
+      'ha',
+      'he',
+      'hi',
+      'ho',
+      'hr',
+      'ht',
+      'hu',
+      'hy',
+      'hz',
+      'ia',
+      'id',
+      'ie',
+      'ig',
+      'ii',
+      'ik',
+      'io',
+      'is',
+      'it',
+      'iu',
+      'ja',
+      'jv',
+      'ka',
+      'kg',
+      'ki',
+      'kj',
+      'kk',
+      'kl',
+      'km',
+      'kn',
+      'ko',
+      'kr',
+      'ks',
+      'ku',
+      'kv',
+      'kw',
+      'ky',
+      'la',
+      'lb',
+      'lg',
+      'li',
+      'ln',
+      'lo',
+      'lt',
+      'lv',
+      'mg',
+      'mh',
+      'mi',
+      'mk',
+      'ml',
+      'mn',
+      'mo',
+      'mr',
+      'ms',
+      'mt',
+      'my',
+      'na',
+      'nd',
+      'ne',
+      'ng',
+      'nl',
+      'nn',
+      'no',
+      'nr',
+      'nv',
+      'ny',
+      'oc',
+      'oj',
+      'om',
+      'or',
+      'os',
+      'pa',
+      'pi',
+      'pl',
+      'ps',
+      'pt',
+      'qu',
+      'rm',
+      'rn',
+      'ro',
+      'ru',
+      'rw',
+      'sa',
+      'sc',
+      'sd',
+      'sg',
+      'sh',
+      'si',
+      'sk',
+      'sl',
+      'sm',
+      'sn',
+      'so',
+      'sq',
+      'sr',
+      'ss',
+      'st',
+      'su',
+      'sv',
+      'sw',
+      'ta',
+      'te',
+      'tg',
+      'th',
+      'ti',
+      'tk',
+      'tl',
+      'tn',
+      'to',
+      'tr',
+      'ts',
+      'tt',
+      'tw',
+      'ty',
+      'ug',
+      'uk',
+      'ur',
+      've',
+      'vi',
+      'vo',
+      'wa',
+      'wo',
+      'xh',
+      'yi',
+      'yo',
+      'za',
+      'zh',
+      'zu',
+    ];
+  }
+
+  public static supportedLanguages() {
+    return ['ca', 'es', 'en'];
+  }
+
+  static getDateFormat(locale: string): string {
+    return DATE_FORMATS[locale] ? DATE_FORMATS[locale] : DATE_FORMATS['en-US'];
+  }
+
+  public static supportedAudioLanguages() {
+    return ['ca', 'es', 'en', 'fr', 'de', 'it'];
+  }
+}

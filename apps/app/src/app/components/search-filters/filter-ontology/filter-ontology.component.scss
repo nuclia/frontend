@@ -1,0 +1,37 @@
+@import 'variables';
+
+.filter-ontology {
+
+  &-button {
+    @include reset-button();
+    cursor: pointer;
+    margin-bottom: 8px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    svg-icon {
+      margin-right: 2px;
+    }
+    svg {
+      display: block;
+      width: 14px;
+      height: auto;
+      transition: 0.2s transform;
+    }
+    &.open {
+      svg {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  &-counter {
+    margin: 2px 0 0 5px;
+    font-size: var(--stf-font-size-ssmall);
+    font-weight: var(--stf-font-weight-light);
+  }
+
+  &-list {
+    padding: 0 0 12px 18px;
+  }
+}

@@ -1,0 +1,24 @@
+<div
+  [class]="'stf-field stf-textarea stf-color-' + color"
+  [class.stf-field-error]="hasError || !!errorMessage">
+    <textarea 
+      #textarea
+      class="stf-textarea-control"
+      [class.stf-textarea-control-filled]="!!value"
+      [ngClass]="{code: _isCode, 'has-label': !!label}" 
+      [id]="id"
+      [attr.aria-describedby]="helpId"
+      [style.height]="initialHeight || null"
+      [name]="name"
+      [readonly]="_isReadOnly"
+      [disabled]="_disabled"
+      [required]="_required"
+      (change)="changeEvent($event)"
+      (keyup)="onKeyUp($event)"
+      (blur)="onBlur()">{{ value }}</textarea>
+    <label class="stf-textarea-label" *ngIf="label" [for]="id" [class.stf-sr]="_isLabelHidden">{{ label | translate }}</label>
+    <div class="stf-textarea-control-resizer"></div>
+    <small *ngIf="hasError && errorHelp" class="stf-field-help stf-field-help-error">{{ errorHelp | translate}}</small>
+    <small *ngIf="!!errorMessage" class="stf-field-help stf-field-help-error">{{ errorMessage | translate }}</small>
+    <small *ngIf="help" class="stf-field-help" [id]="helpId">{{ help | translate }}</small>
+</div>

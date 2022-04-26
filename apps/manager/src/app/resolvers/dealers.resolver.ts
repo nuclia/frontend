@@ -1,0 +1,14 @@
+import { Injectable } from '@angular/core';
+import { Dealer } from '../models/dealer.model';
+import { Router, Resolve, ActivatedRouteSnapshot } from '@angular/router';
+import { Observable } from 'rxjs';
+import { DealerService } from '../services/dealer.service';
+
+@Injectable()
+export class DealersResolve implements Resolve<any> {
+  constructor(private dealerService: DealerService) {}
+
+  resolve(route: ActivatedRouteSnapshot): Observable<Dealer[]> {
+    return this.dealerService.getDealers();
+  }
+}

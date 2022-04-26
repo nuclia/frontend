@@ -1,0 +1,69 @@
+<div class="entity-dialog">
+  <button (click)="close()" class="entity-dialog-close" [attr.ariaLabel]="'generic.close' | translate">
+    <svg-icon src="assets/icons/close-modal.svg"></svg-icon>
+  </button>
+  
+  <div class="mb-44">
+    <app-group-select
+      [(selected)]="group"
+      [groups]="(groups$ | async) || {}"
+      [disabled]="mode !== 'add'">
+    </app-group-select>
+  </div>
+
+  <ng-container *ngIf="mode === 'view'">
+    <h2 class="mb-44">{{ data.entity?.value }}</h2>
+    <div class="entity-dialog-short-description mb-40">Capital d’Argentina</div>
+    <div class="entity-dialog-description">Buenos Aires es la gran capital cosmopolita de Argentina. Su centro es la Plaza de Mayo, rodeada de imponentes edificios del siglo XIX, incluida la Casa Rosada, el icónico palacio presidencial que tiene varios balcones. Entre otras atracciones importantes, se incluyen el Teatro Colón, un lujoso teatro de ópera de 1908 con cerca de 2,500 asientos, y el moderno museo MALBA, que exhibe arte latinoamericano.</div>
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px" class="mt-80">
+      <stf-button 
+        (click)="close()"
+        minWidth="110px">
+        {{ 'generic.close' | translate }}
+      </stf-button>
+      <stf-button
+      (click)="edit()"
+        color="gray"
+        minWidth="110px">
+        {{ 'generic.edit' | translate }}
+      </stf-button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="mode === 'edit' || mode === 'add'">
+    <h2 class="mb-16" *ngIf="data.entity">{{ data.entity.value }}</h2>
+    <form [formGroup]="entityForm" (submit)="save()">
+      <div class="mb-8" *ngIf="!data.entity">
+        <stf-input
+          formControlName="name"
+          [validator]="entityForm.controls['name']"
+          [validation_messages]="validationMessages.name">
+          {{ 'entity.entity_name' | translate }}
+        </stf-input>
+      </div>
+      <!--
+      <div class="mb-8">
+        <stf-input formControlName="shortDescription">
+          {{ 'entity.add_short_description' | translate }}
+        </stf-input>
+      </div>
+      <stf-textarea formControlName="description" label="entity.add_description" initialHeight="186px">
+      </stf-textarea>
+      -->
+    </form>
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px" class="mt-32">
+      <stf-button 
+        (click)="save()"
+        minWidth="110px">
+        {{ 'generic.save' | translate }}
+      </stf-button>
+      <stf-button
+        (click)="close()"
+        color="gray"
+        minWidth="110px">
+        {{ 'generic.cancel' | translate }}
+      </stf-button>
+    </div>
+  </ng-container>
+
+</div>

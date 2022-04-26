@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 38.9 38.9" xml:space="preserve">
+  <style type="text/css">
+    .st1 {
+      fill: #E81C66;
+    }
+
+    .st2 {
+      fill: url(#SVGID_1_);
+    }
+  </style>
+  <g id="guies">
+    <g>
+      <path class="st1" d="M30.2,13.4H21L29.5,0H18.8l-10,20.1h7.9L8.7,38.9L30.2,13.4z" />
+      <g>
+        <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="8.71" y1="13.7548" x2="30.16" y2="13.7548"
+          gradientTransform="matrix(1 0 0 -1 0 39.8898)">
+          <stop offset="0.3461" style="stop-color:#E81C66" />
+          <stop offset="0.5977" style="stop-color:#D3185B" />
+          <stop offset="0.9986" style="stop-color:#AB1046" />
+        </linearGradient>
+        <polygon class="st2" points="27.5,13.4 11.4,32.5 8.7,38.9 30.2,13.4" />
+      </g>
+    </g>
+  </g>
+</svg>

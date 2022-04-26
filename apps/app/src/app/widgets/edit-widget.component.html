@@ -1,0 +1,93 @@
+<div class="edit-widget">
+  <section>
+    <form [formGroup]="mainForm"
+          (change)="generateSnippet()">
+      <h2>{{ 'stash.widgets.title' | translate }} <span>{{ isDefaultWidget ? 'Dashboard widget' : widget?.id }}</span>
+      </h2>
+      <div class="one-col">
+        <div>
+          <span class="label">{{ 'stash.widgets.preview' | translate }}</span>
+        </div>
+        <div>
+          <div id="preview"
+               [innerHtml]="snippetPreview"></div>
+        </div>
+      </div>
+      <div class="two-cols">
+        <div>
+          <div class="options">
+            <div class="tabs">
+              <div class="label"
+                   [class.selected]="currentTab === 'pref'"
+                   (click)="currentTab ='pref'">{{ 'stash.widgets.preferences' | translate }}</div>
+              <div class="label"
+                   [class.selected]="currentTab === 'style'"
+                   (click)="currentTab ='style'">{{ 'stash.widgets.style' | translate }}</div>
+            </div>
+            <div *ngIf="currentTab === 'pref'"
+                 class="tab-content">
+              <label for="mode-select"
+                     class="label">{{ 'stash.widgets.mode' | translate }}</label>
+              <select stfSelect
+                      formControlName="mode"
+                      selectSize="small"
+                      id="mode-select">
+                <option value="button">{{ 'stash.widgets.mode.button' | translate }}</option>
+                <option value="input">{{ 'stash.widgets.mode.input' | translate }}</option>
+                <option value="form">{{ 'stash.widgets.mode.form' | translate }}</option>
+              </select>
+
+            </div>
+            <div *ngIf="currentTab === 'style'"
+                 class="tab-content"
+                 formGroupName="style">
+              <div *ngFor="let field of styleFormFields">
+                <label class="label"
+                       [for]="field">{{ field }}</label>
+                <stf-input [formControlName]="field"></stf-input>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="snippet">
+          <div class="label">
+            <span>
+              {{ 'stash.widgets.snippet' | translate }}
+            </span>
+            <button *ngIf="clipboardSupported"
+                    class="close-button"
+                    (click)="copy()">
+              <svg-icon [src]="copyIcon"></svg-icon>
+            </button>
+          </div>
+          <pre><code class="highlight">{{ snippet }}</code></pre>
+        </div>
+      </div>
+      <div class="buttons">
+        <stf-button minWidth="110px"
+                    [disabled]="!mainForm.valid || mainForm.pristine"
+                    (click)="save()">
+          {{ 'generic.save' | translate }}
+        </stf-button>
+        <stf-button color="white"
+                    minWidth="110px"
+                    [disabled]="mainForm.pristine"
+                    (click)="cancel()">
+          {{ 'generic.cancel' | translate }}
+        </stf-button>
+        <stf-button color="white"
+                    minWidth="110px"
+                    [disabled]="isDefaultWidget"
+                    (click)="rename()">
+          {{ 'stash.widgets.rename' | translate }}
+        </stf-button>
+        <stf-button color="white"
+                    minWidth="110px"
+                    [disabled]="isDefaultWidget"
+                    (click)="deleteWidget()">
+          {{ 'generic.delete' | translate }}
+        </stf-button>
+      </div>
+    </form>
+  </section>
+</div>

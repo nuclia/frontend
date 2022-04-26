@@ -1,0 +1,21 @@
+.entity {
+    margin: 20px;
+    max-width: 400px;
+    min-width: 300px;
+    padding: 20px;
+
+    textarea, input, mat-form-field {
+        min-width: 250px;
+    }
+}
+
+.sessions {
+  width: 100%;
+  margin: 20px;
+  padding: 20px;
+  max-height: 300px;
+  overflow-y: scroll;
+}
+.error {
+  color: red;
+}

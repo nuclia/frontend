@@ -1,0 +1,39 @@
+<stf-user-container widthSm="520px">
+  <stf-user-container-logo>
+    <div class="recover_title">
+      <h1>{{ 'recover.title' | translate }}</h1>
+      <div class="description">{{ 'recover.description' | translate }}</div>
+    </div>
+    <div class="recover_form">
+      <form [formGroup]="recoverForm" #form="ngForm" (ngSubmit)="submit()">
+        <div>
+          <stf-input
+            #email
+            formControlName="email"
+            required
+            type='text'
+            theme="border"
+            [noAutocapitalize]="true"
+            [validator]="recoverForm.controls['email']"
+            [validation_messages]="recoverValidationMessages.email"
+            (enterPressed)="onEnterPressed()">
+            {{ 'generic.email' | translate }}
+          </stf-input>
+        </div>
+        <div class="recover_button" fxLayout="row" fxLayoutAlign="center center">
+          <stf-button
+            type="submit"
+            minWidth="128px">
+            {{'recover.recover' | translate}}
+          </stf-button>
+        </div>
+      </form>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <span>{{ 'recover.gologin_help' | translate }} </span>
+      <a href="javascript:;" class="recover_link" (click)="goLogin()">
+        {{ 'recover.gologin' | translate }}
+      </a>
+    </div>
+  </stf-user-container-logo>
+</stf-user-container>

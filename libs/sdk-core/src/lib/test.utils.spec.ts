@@ -1,0 +1,38 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const mockFetch = (response: any) => {
+  global.fetch = jest.fn(() =>
+    Promise.resolve({
+      status: 200,
+      clone: () => ({
+        json: () => Promise.resolve(response),
+      }),
+      json: () => Promise.resolve(response),
+      text: () => Promise.resolve(response),
+    })
+  ) as jest.Mock;
+};
+
+class LocalStorageMock {
+  store: { [key: string]: string } = {};
+
+  clear() {
+    this.store = {};
+  }
+
+  getItem(key: string) {
+    return this.store[key] || null;
+  }
+
+  setItem(key: string, value: string) {
+    this.store[key] = String(value);
+  }
+
+  removeItem(key: string) {
+    delete this.store[key];
+  }
+}
+global.localStorage = new LocalStorageMock() as unknown as Storage;
+
+describe('Just test utils', () => {
+  it.skip('should do nothing', () => {});
+});

@@ -1,0 +1,55 @@
+<div class="quick-start">
+  <h2>{{ 'quickstart.title' | translate }}</h2>
+  <h3 class="quick-start-subtitle">{{ 'quickstart.become_master' | translate }}</h3>
+  <div class="mb-28">{{ 'quickstart.complete_steps' | translate }}</div>
+  <h3>{{ 'quickstart.pending_tasks' | translate }}</h3>
+  <div class="mb-48" fxLayout="column" fxLayoutGap="14px">
+    <div class="achievement">
+      <div class="achievement-title">{{ 'quickstart.task4.title' | translate }}</div>
+      <div class="achievement-desc" [innerHTML]="'quickstart.task4.description' | translate"></div>
+      <button class="achievement-close">
+        <svg-icon src="assets/icons/close.svg"></svg-icon>
+      </button>
+      <stf-button padding="pd-l" size="small" weight="bold">{{ 'quickstart.go' | translate }}</stf-button>
+    </div>
+    <div class="achievement">
+      <div class="achievement-title">{{ 'quickstart.task5.title' | translate }}</div>
+      <div class="achievement-desc" [innerHTML]="'quickstart.task5.description' | translate"></div>
+      <button class="achievement-close">
+        <svg-icon src="assets/icons/close.svg"></svg-icon>
+      </button>
+      <stf-button padding="pd-l" size="small" weight="bold">{{ 'quickstart.go' | translate }}</stf-button>
+    </div>
+    <div class="achievement">
+      <div class="achievement-title">{{ 'quickstart.task6.title' | translate }}</div>
+      <div class="achievement-desc" [innerHTML]="'quickstart.task6.description' | translate"></div>
+      <button class="achievement-close">
+        <svg-icon src="assets/icons/close.svg"></svg-icon>
+      </button>
+      <stf-button padding="pd-l" size="small" weight="bold">{{ 'quickstart.go' | translate }}</stf-button>
+    </div>
+    <div class="achievement">
+      <div class="achievement-title">{{ 'quickstart.task7.title' | translate }}</div>
+      <div class="achievement-desc" [innerHTML]="'quickstart.task7.description' | translate"></div>
+      <button class="achievement-close">
+        <svg-icon src="assets/icons/close.svg"></svg-icon>
+      </button>
+      <stf-button padding="pd-l" size="small" weight="bold">{{ 'quickstart.go' | translate }}</stf-button>
+    </div>
+  </div>
+  <h3>{{ 'quickstart.completed_tasks' | translate }}</h3>
+  <div fxLayout="column" fxLayoutGap="5px">
+    <div class="achievement-completed" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+      <span fxFlex="1 1 auto">{{ 'quickstart.task1.title' | translate }}</span>
+      <svg-icon fxFlex="0 0 auto" src="assets/icons/check.svg"></svg-icon>
+    </div>
+    <div class="achievement-completed" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+      <span fxFlex="1 1 auto">{{ 'quickstart.task2.title' | translate }}</span>
+      <svg-icon fxFlex="0 0 auto" src="assets/icons/check.svg"></svg-icon>
+    </div>
+    <div class="achievement-completed" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+      <span fxFlex="1 1 auto">{{ 'quickstart.task3.title' | translate }}</span>
+      <svg-icon fxFlex="0 0 auto" src="assets/icons/check.svg"></svg-icon>
+    </div>
+  </div>
+</div>

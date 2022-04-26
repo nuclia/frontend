@@ -1,0 +1,62 @@
+@import 'variables';
+
+.service-access-container {
+  padding: 20px 28px 34px 20px;
+  background-color: #fff;
+
+  h3 {
+    margin: 0 0 12px 0;
+    font-size: var(--stf-font-size-medium);
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  form {
+    max-width: 720px;
+  }
+
+  .service-access-list {
+    border-top: 1px solid #000;
+  }
+
+  .service-access {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+    &-header {
+      min-height: 44px;
+    }
+
+    &-title {
+      button {
+        @include reset-button();
+        cursor: pointer;
+        &[disabled] {
+          cursor: default;
+        }
+        text-align: left;
+      }
+      &-arrow {
+        transition: transform 0.2s;
+        &.expanded {
+          transform: rotate(90deg);
+        }
+        svg {
+          display: block;
+          width: 14px;
+          height: auto;
+        }
+      }
+    }
+
+    &-keys {
+      padding: 0 0 12px 18px;
+    }
+    &-key {
+      width: 100%;
+      height: 28px;
+      font-size: var(--stf-font-size-ssmall);
+      &-actions {
+        text-align: right;
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.mini_picture_user {
+    width: 25px;
+    border-radius: 10em;
+    vertical-align: middle;
+    margin-right: 10px;
+    background-color: var(--stf-black);
+    display: inline-block;
+
+    &.text {
+        padding: 5px;
+        height: 30px;
+        width: 30px;
+        text-align: center;
+        color: white;
+    }
+}

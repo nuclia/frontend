@@ -1,0 +1,80 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+
+import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
+import { ButtonActionModule } from '../components/button-action/button-action.module';
+import { PipesModule } from '../utils/pipes/pipes.module';
+import { STFConfirmModule, UserAvatarModule } from '@flaps/components';
+import { STFSectionNavbarModule, STFCheckboxModule } from '@flaps/common';
+import {
+  STFButtonsModule,
+  STFInputModule,
+  STFTextFieldModule,
+  STFFormDirectivesModule,
+  STFTooltipModule,
+  STFExpanderModule,
+  ToasterModule,
+} from '@flaps/pastanaga';
+
+import { AccountComponent } from './account.component';
+import { AccountHomeComponent } from './account-home/account-home.component';
+import { AccountManageComponent } from './account-manage/account-manage.component';
+import { AccountKbsComponent } from './account-kbs/account-kbs.component';
+import { KbAddComponent } from './account-kbs/kb-add/kb-add.component';
+import { AccountDBsComponent } from './account-dbs/account-dbs.component';
+import { DBDialogComponent } from './account-dbs/db-dialog/db-dialog.component';
+import { AccountUsersComponent } from './account-users/account-users.component';
+import { ChartsModule } from '../components/charts/charts.module';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+const Components = [
+  AccountComponent,
+  AccountHomeComponent,
+  AccountManageComponent,
+  AccountKbsComponent,
+  KbAddComponent,
+  AccountDBsComponent,
+  DBDialogComponent,
+  AccountUsersComponent,
+];
+
+@NgModule({
+  imports: [
+    CommonModule,
+    AngularSvgIconModule,
+    FlexLayoutModule,
+    TranslateModule.forChild(),
+    ReactiveFormsModule,
+    RouterModule,
+    OverlayModule,
+    MatDialogModule,
+    MatTableModule,
+    STFSectionNavbarModule,
+    STFCheckboxModule,
+    STFConfirmModule,
+    UserAvatarModule,
+    STFButtonsModule,
+    STFInputModule,
+    STFTextFieldModule,
+    STFFormDirectivesModule,
+    STFTooltipModule,
+    STFExpanderModule,
+    ButtonActionModule,
+    PipesModule,
+    TokenDialogModule,
+    ToasterModule,
+    ChartsModule,
+    MatProgressSpinnerModule,
+  ],
+  declarations: [...Components],
+  exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
+})
+export class AccountModule {}

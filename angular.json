@@ -1,0 +1,836 @@
+{
+  "version": 1,
+  "projects": {
+    "app": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/app",
+      "sourceRoot": "apps/app/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/app",
+            "index": "apps/app/src/index.html",
+            "main": "apps/app/src/main.ts",
+            "polyfills": "apps/app/src/polyfills.ts",
+            "tsConfig": "apps/app/tsconfig.app.json",
+            "allowedCommonJsDependencies": [],
+            "assets": [
+              "apps/app/src/favicon.ico",
+              "apps/app/src/assets",
+              "apps/app/src/manifest.webmanifest",
+              {
+                "glob": "**/*",
+                "input": "libs/pastanaga/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/common/src/assets/i18n",
+                "output": "assets/i18n"
+              },
+              {
+                "glob": "**/*",
+                "input": "apps/app/src/environments_config/local",
+                "output": "assets/deployment"
+              }
+            ],
+            "styles": ["apps/app/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["apps/app/src"]
+            },
+            "scripts": [],
+            "ngswConfigPath": "apps/app/src/ngsw-config.json",
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "30mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "50kb",
+                "maximumError": "100kb"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "all",
+              "serviceWorker": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/app/src/environments/environment.ts",
+                  "with": "apps/app/src/environments/environment.prod.ts"
+                }
+              ],
+              "assets": [
+                "apps/app/src/favicon.ico",
+                "apps/app/src/assets",
+                "apps/app/src/manifest.webmanifest",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/app/src/environments_config/production",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "local-stage": {
+              "aot": false,
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "assets": [
+                "apps/app/src/favicon.ico",
+                "apps/app/src/assets",
+                "apps/app/src/manifest.webmanifest",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/app/src/environments_config/local-stage",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "defaultConfiguration": "production"
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "app:build:production"
+            },
+            "local-stage": {
+              "browserTarget": "app:build:local-stage"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "app:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/app/src/test.ts",
+            "tsConfig": "apps/app/tsconfig.spec.json",
+            "karmaConfig": "apps/app/karma.conf.js",
+            "polyfills": "apps/app/src/polyfills.ts",
+            "styles": [],
+            "scripts": [],
+            "assets": [],
+            "stylePreprocessorOptions": {
+              "includePaths": ["apps/app/src"]
+            }
+          },
+          "outputs": ["coverage/apps/app"]
+        }
+      },
+      "tags": []
+    },
+    "auth": {
+      "projectType": "library",
+      "root": "libs/auth",
+      "sourceRoot": "libs/auth/src",
+      "prefix": "stf",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/auth/src/test.ts",
+            "tsConfig": "libs/auth/tsconfig.spec.json",
+            "karmaConfig": "libs/auth/karma.conf.js"
+          },
+          "outputs": ["coverage/libs/auth"]
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "tags": []
+    },
+    "common": {
+      "projectType": "library",
+      "root": "libs/common",
+      "sourceRoot": "libs/common/src",
+      "prefix": "stf",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/common/src/test.ts",
+            "tsConfig": "libs/common/tsconfig.spec.json",
+            "karmaConfig": "libs/common/karma.conf.js"
+          },
+          "outputs": ["coverage/libs/common"]
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "tags": []
+    },
+    "components": {
+      "projectType": "library",
+      "root": "libs/components",
+      "sourceRoot": "libs/components/src",
+      "prefix": "flaps",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/components/src/test.ts",
+            "tsConfig": "libs/components/tsconfig.spec.json",
+            "karmaConfig": "libs/components/karma.conf.js"
+          },
+          "outputs": ["coverage/libs/components"]
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "tags": []
+    },
+    "core": {
+      "projectType": "library",
+      "root": "libs/core",
+      "sourceRoot": "libs/core/src",
+      "prefix": "stf",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/core/src/test.ts",
+            "tsConfig": "libs/core/tsconfig.spec.json",
+            "karmaConfig": "libs/core/karma.conf.js"
+          },
+          "outputs": ["coverage/libs/core"]
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "tags": []
+    },
+    "login-login": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/login/login",
+      "sourceRoot": "apps/login/login/src",
+      "prefix": "flaps",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/login/login",
+            "index": "apps/login/login/src/index.html",
+            "main": "apps/login/login/src/main.ts",
+            "polyfills": "apps/login/login/src/polyfills.ts",
+            "tsConfig": "apps/login/login/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/login/login/src/favicon.ico",
+              "apps/login/login/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/pastanaga/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/common/src/assets/i18n",
+                "output": "assets/i18n"
+              },
+              {
+                "glob": "**/*",
+                "input": "apps/app/src/environments_config/local",
+                "output": "assets/deployment"
+              }
+            ],
+            "styles": ["apps/login/login/src/styles.scss"],
+            "scripts": [],
+            "allowedCommonJsDependencies": ["lodash", "@swimlane/dragula", "lru-cache", "url-parse", "js-base64"],
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "30mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "50kb",
+                "maximumError": "100kb"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "aot": true,
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "serviceWorker": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/login/login/src/environments/environment.ts",
+                  "with": "apps/login/login/src/environments/environment.prod.ts"
+                }
+              ],
+              "assets": [
+                "apps/login/login/src/favicon.ico",
+                "apps/login/login/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/login/login/src/environments_config/production",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "local-stage": {
+              "aot": false,
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "assets": [
+                "apps/login/login/src/favicon.ico",
+                "apps/login/login/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/login/login/src/environments_config/local-stage",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "defaultConfiguration": "production"
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "login-login:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "login-login:build:production"
+            },
+            "local-stage": {
+              "browserTarget": "login-login:build:local-stage"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "login-login:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/login/login/src/test.ts",
+            "tsConfig": "apps/login/login/tsconfig.spec.json",
+            "karmaConfig": "apps/login/login/karma.conf.js",
+            "polyfills": "apps/login/login/src/polyfills.ts",
+            "styles": [],
+            "scripts": [],
+            "assets": []
+          },
+          "outputs": ["coverage/apps/login/login"]
+        }
+      },
+      "tags": []
+    },
+    "manager": {
+      "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "apps/manager",
+      "sourceRoot": "apps/manager/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/manager",
+            "index": "apps/manager/src/index.html",
+            "main": "apps/manager/src/main.ts",
+            "polyfills": "apps/manager/src/polyfills.ts",
+            "tsConfig": "apps/manager/tsconfig.app.json",
+            "allowedCommonJsDependencies": ["lru-cache"],
+            "budgets": [
+              {
+                "type": "initial",
+                "maximumWarning": "2mb",
+                "maximumError": "5mb"
+              },
+              {
+                "type": "anyComponentStyle",
+                "maximumWarning": "60kb",
+                "maximumError": "100kb"
+              }
+            ],
+            "assets": [
+              "apps/manager/src/favicon.ico",
+              "apps/manager/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/pastanaga/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/common/src/assets/i18n",
+                "output": "assets/i18n"
+              },
+              {
+                "glob": "**/*",
+                "input": "apps/manager/src/environments_config/local",
+                "output": "assets/deployment"
+              }
+            ],
+            "styles": ["apps/manager/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "aot": true,
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/manager/src/environments/environment.ts",
+                  "with": "apps/manager/src/environments/environment.prod.ts"
+                }
+              ],
+              "assets": [
+                "apps/manager/src/favicon.ico",
+                "apps/manager/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/manager/src/environments_config/production",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "local-stage": {
+              "aot": false,
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "assets": [
+                "apps/manager/src/favicon.ico",
+                "apps/manager/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/manager/src/environments_config/local-stage",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "defaultConfiguration": "production"
+          },
+          "outputs": ["{options.outputPath}"]
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "manager:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "manager:build:production"
+            },
+            "local-stage": {
+              "browserTarget": "manager:build:local-stage"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "manager:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "apps/manager/src/test.ts",
+            "tsConfig": "apps/manager/tsconfig.spec.json",
+            "karmaConfig": "apps/manager/karma.conf.js",
+            "polyfills": "apps/manager/src/polyfills.ts",
+            "styles": [],
+            "scripts": [],
+            "assets": []
+          },
+          "outputs": ["coverage/apps/manager"]
+        }
+      },
+      "tags": []
+    },
+    "pastanaga": {
+      "projectType": "library",
+      "root": "libs/pastanaga",
+      "sourceRoot": "libs/pastanaga/src",
+      "prefix": "stf",
+      "architect": {
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "libs/pastanaga/src/test.ts",
+            "tsConfig": "libs/pastanaga/tsconfig.spec.json",
+            "karmaConfig": "libs/pastanaga/karma.conf.js"
+          },
+          "outputs": ["coverage/libs/pastanaga"]
+        }
+      },
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss"
+        }
+      },
+      "tags": []
+    },
+    "sdk-core": {
+      "root": "libs/sdk-core",
+      "sourceRoot": "libs/sdk-core/src",
+      "projectType": "library",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/js:tsc",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/sdk-core",
+            "main": "libs/sdk-core/src/index.ts",
+            "tsConfig": "libs/sdk-core/tsconfig.lib.json",
+            "assets": ["libs/sdk-core/*.md"]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/sdk-core/**/*.ts"]
+          },
+          "outputs": ["{options.outputFile}"]
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/sdk-core"],
+          "options": {
+            "jestConfig": "libs/sdk-core/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "sdk-demo": {
+      "projectType": "application",
+      "root": "apps/sdk-demo",
+      "sourceRoot": "apps/sdk-demo/src",
+      "prefix": "sdk-demo",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/apps/sdk-demo",
+            "index": "apps/sdk-demo/src/index.html",
+            "main": "apps/sdk-demo/src/main.ts",
+            "polyfills": "apps/sdk-demo/src/polyfills.ts",
+            "tsConfig": "apps/sdk-demo/tsconfig.app.json",
+            "aot": true,
+            "assets": ["apps/sdk-demo/src/favicon.ico", "apps/sdk-demo/src/assets"],
+            "styles": ["apps/sdk-demo/src/styles.scss"],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/sdk-demo/src/environments/environment.ts",
+                  "with": "apps/sdk-demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "sdk-demo:build"
+          },
+          "configurations": {
+            "development": {
+              "browserTarget": "sdk-demo:build:development"
+            },
+            "production": {
+              "browserTarget": "sdk-demo:build:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "sdk-demo:build"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/sdk-demo"],
+          "options": {
+            "jestConfig": "apps/sdk-demo/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
+    "search-widget": {
+      "root": "libs/search-widget",
+      "sourceRoot": "libs/search-widget/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/search-widget/**/*.{ts,svelte,spec.ts}"]
+          }
+        },
+        "check": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "svelte-check",
+            "cwd": "libs/search-widget"
+          }
+        },
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "yarn vite build -c=libs/search-widget/vite.config.js && cp -r libs/search-widget/public/i18n dist/libs/search-widget"
+            ]
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "build-original": {
+          "builder": "@nxext/svelte:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/search-widget",
+            "entryFile": "libs/search-widget/src/index.ts",
+            "tsConfig": "libs/search-widget/tsconfig.lib.json",
+            "svelteConfig": "libs/search-widget/svelte.config.cjs",
+            "assets": [
+              {
+                "glob": "/*",
+                "input": "./public/**",
+                "output": "./"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "dev": false
+            }
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/search-widget"],
+          "options": {
+            "jestConfig": "libs/search-widget/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "search-widget-demo": {
+      "root": "apps/search-widget-demo",
+      "sourceRoot": "apps/search-widget-demo/src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "@nxext/vite:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/search-widget-demo",
+            "assets": [
+              {
+                "glob": "/*",
+                "input": "./public/**",
+                "output": "./"
+              }
+            ],
+            "tsConfig": "apps/search-widget-demo/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "builder": "@nxext/vite:dev",
+          "options": {
+            "outputPath": "dist/apps/search-widget-demo"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/search-widget-demo/**/*.{ts,svelte,spec.ts}"]
+          }
+        },
+        "check": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "svelte-check",
+            "cwd": "apps/search-widget-demo"
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/search-widget-demo"],
+          "options": {
+            "jestConfig": "apps/search-widget-demo/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  }
+}

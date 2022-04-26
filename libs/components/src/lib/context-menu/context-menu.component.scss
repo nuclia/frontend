@@ -1,0 +1,9 @@
+::ng-deep .mat-menu-panel.context-menu {
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.16);
+  .mat-menu-content {
+    padding: 0;
+  }
+}

@@ -1,0 +1,14 @@
+<stf-section-navbar [title]="'stash.widgets'"
+                    [routes]="(routes | async) || []"
+                    [hasInnerRoutes]="true">
+  <stf-section-navbar-body class="widgets-sections">
+    <router-outlet></router-outlet>
+  </stf-section-navbar-body>
+  <stf-section-navbar-footer>
+    <stf-button (click)="addWidget()"
+                minWidth="150px"
+                color="secondary">
+      {{ 'stash.widgets.add' | translate }}
+    </stf-button>
+  </stf-section-navbar-footer>
+</stf-section-navbar>

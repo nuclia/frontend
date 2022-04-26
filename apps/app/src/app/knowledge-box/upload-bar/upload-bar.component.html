@@ -1,0 +1,22 @@
+<div class="upload-bar"
+     fxLayout="flex"
+     fxLayoutAlign="start center">
+  <div class="upload-bar-title"
+       fxFlex="0 0 auto"
+       [innerHTML]="'upload.uploading_files' | translate"></div>
+
+  <div class="upload-bar-progress"
+       fxFlex="1 1 auto">
+    <div class="upload-bar-progress-value"
+         [style.width.%]="progress | async"></div>
+  </div>
+
+  <div class="upload-bar-percentage"
+       fxFlex="0 0 auto">
+    <strong>{{progress | async}}%</strong> {{ 'upload.completed' | translate }}
+  </div>
+
+  <button (click)="checkFiles()">
+    {{ 'upload.check_files' | translate }}
+  </button>
+</div>

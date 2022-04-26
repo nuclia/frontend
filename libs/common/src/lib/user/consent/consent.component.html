@@ -1,0 +1,43 @@
+<stf-user-container widthSm="480px" *ngIf="!error; else errorMessage">
+  <stf-user-container-logo>
+    <ng-container *ngIf="consentData">
+      <div class="consent_content">
+        <div class="consent-subject" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+          <stf-user-avatar-simple [blackMode]="true" size="small" [userPrefs]="({ name: consentData?.user_name })"></stf-user-avatar-simple>
+          <span>{{ consentData?.user_email }}</span>
+        </div>
+        <div class="consent-client"><strong>{{ consentData?.client_name }}</strong> {{ 'login.access_request' | translate }}</div>
+        <ul class="consent-scopes">
+          <li class="consent-scopes-item" *ngFor="let scope of visibleScopes()" fxLayout="row" fxLayoutGap="10px">
+            <svg-icon src="assets/icons/check.svg" fxFlex="0 0 auto"></svg-icon>
+            <span fxFlex="1 1" [ngSwitch]="scope">
+              <span *ngSwitchCase="'flaps.kbs:read'">{{ 'login.scope.kbs_read' | translate }}</span>
+              <span *ngSwitchCase="'flaps.kbs:write'">{{ 'login.scope.kbs_write' | translate }}</span>
+              <span *ngSwitchDefault>{{ scope }}</span>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="consent-buttons" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+        <form #form method="POST" [action]="oAuthConsentUrl()">
+          <input type="hidden" name="consent_challenge" [value]="consentChallenge">
+          <input type="hidden" name="grant_scope" [value]="acceptedScopes()">
+          <stf-button type="submit" minWidth="136px">
+            {{ 'generic.allow' | translate }}
+          </stf-button>
+        </form>
+        <form method="POST" [action]="oAuthConsentUrl()">
+          <input type="hidden" name="consent_challenge" [value]="consentChallenge">
+          <input type="hidden" name="reject" [value]="true">
+          <stf-button type="submit" color="legacy" minWidth="136px">
+            {{ 'generic.cancel' | translate }}
+          </stf-button>
+        </form>
+      </div>
+    </ng-container>
+  </stf-user-container-logo>
+</stf-user-container>
+
+<ng-template #errorMessage>
+  <stf-user-error [message]="error"></stf-user-error>
+</ng-template>

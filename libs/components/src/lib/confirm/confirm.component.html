@@ -1,0 +1,37 @@
+<div class="confirm-modal">
+  <button
+    cdkFocusInitial
+    class="close-button"
+    [attr.ariaLabel]="'generic.close' | translate"
+    (click)="onNoClick()"
+  >
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
+  </button>
+  
+  <h1>
+    <ng-container *ngIf="data.title" >{{ data.title | translate }}</ng-container>
+    <ng-container *ngIf="data.title$">{{ data.title$ | async }}</ng-container>
+  </h1>
+  
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <div class="message">
+      <ng-container *ngIf="data.message" >{{ data.message | translate }}</ng-container>
+      <ng-container *ngIf="data.message$">{{ data.message$ | async }}</ng-container>
+      <div *ngIf="data.messageHtml$" [innerHTML]="data.messageHtml$ | async"></div>
+      <ng-container *ngIf="data.messages">
+        <div *ngFor="let message of data.messages">{{ message | translate }}</div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+    <stf-button [color]="data.onlyConfirm ? 'gray' : 'primary'" (click)="onYesClick()" [minWidth]="data.minWidthButtons" >
+      <ng-container *ngIf="!data.confirmText">{{ 'generic.accept' | translate }}</ng-container>
+      <ng-container *ngIf="data.confirmText">{{ data.confirmText | translate }}</ng-container>
+    </stf-button>
+    <stf-button color="gray" (click)="onNoClick()" [minWidth]="data.minWidthButtons" *ngIf="!data.onlyConfirm">
+      <ng-container *ngIf="!data.cancelText">{{ 'generic.cancel' | translate }}</ng-container>
+      <ng-container *ngIf="data.cancelText">{{ data.cancelText | translate }}</ng-container>
+    </stf-button>
+  </div>
+</div>

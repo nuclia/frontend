@@ -1,0 +1,21 @@
+@import 'libs/pastanaga/src/lib/styles/stf';
+
+.user_container_logo {
+  padding: 34px 30px 36px;
+  @include media-breakpoint("gt-xs") {
+    padding: 55px 50px 55px;
+  }
+
+  .logo {
+    margin-bottom: 25px;
+    text-align: center;
+    img {
+      width: 180px;
+      height: auto;
+      @include media-breakpoint("gt-xs") {
+        width: 218px;
+      }
+    }
+  }
+}
+

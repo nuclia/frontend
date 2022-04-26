@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "esnext",
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "useDefineForClassFields": true,
+    "importsNotUsedAsValues": "error",
+    "isolatedModules": true,
+    "sourceMap": true,
+    "types": ["svelte"],
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "checkJs": true
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

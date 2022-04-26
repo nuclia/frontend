@@ -1,0 +1,79 @@
+@import 'libs/pastanaga/src/lib/styles/stf';
+
+.tag-component {
+  $root: &;
+  max-width: 300px;
+  min-height: 30px;
+  padding: 0px 6px;
+  border-radius: 5px;
+  background: var(--stf-primary-light);
+  position: relative;
+  &.selected {
+    border: 1px solid var(--stf-primary);
+  }
+
+  &-icon {
+    cursor: pointer;
+    svg {
+      width: 12px;
+      height: auto;
+      fill: var(--stf-primary);
+      position: absolute;
+      border: 1px solid var(--stf-primary);
+      border-radius: 25px;
+      right: -4px;
+      top: -4px;
+      background-color: #fff;
+    }
+  }
+  
+  span {
+    font-size: 14px;
+    color: var(--stf-primary);
+  }
+
+  &-secondary {
+    background: var(--stf-blue-lighter);
+    &.selected {
+      border: 1px solid var(--stf-blue);
+    }
+    &#{$root}-contrast {
+      background: #E6E6F9;
+    }
+    svg {
+      fill: var(--stf-blue);
+      border: 1px solid var(--stf-blue);
+    }
+    span {
+      color: var(--stf-blue);
+    }
+  }
+
+  &-large {
+    min-height: 33px;
+    padding: 0px 12px;
+    #{$root}-icon svg {
+      width: 17px;
+      right: -4px;
+      top: -8px;
+    }
+    span {
+      font-size: var(--stf-font-size-xxlarge);
+    }
+  }
+
+  &-small {
+    min-height: 20px;
+    padding: 0px 16px;
+    border-radius: 2px;
+    span {
+      font-size: var(--stf-font-size-ssmall);
+    }
+  }
+
+}
+
+button {
+  @include reset-button();
+  cursor: pointer;
+}
