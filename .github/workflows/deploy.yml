@@ -1,19 +1,20 @@
 name: Deploy
+
 on:
   push:
     branches:
       - main
 
+env:
+  APP_IMAGE_NAME: app
+  LOGIN_IMAGE_NAME: auth
+  MANAGER_IMAGE_NAME: manager
+  CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
+  CONTAINER_REGISTRY: eu.gcr.io/${{ secrets.PROJECT_ID }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      HASH: $(git rev-parse --short "$GITHUB_SHA")
-      BRANCH: ${GITHUB_REF##*/}
-      PROJECT_ID: ${{ secrets.PROJECT_ID }}
-      CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
-      IMAGE_PREFIX: eu.gcr.io/${{ secrets.PROJECT_ID }}
 
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
@@ -25,10 +26,13 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - uses: nrwl/nx-set-shas@v2
+
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn cache dir)"
+
       - uses: actions/cache@v2
         id: yarn-cache
         with:
@@ -36,12 +40,24 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
+
+      - name: Calculate short sha
+        id: env-vars
+        run: |-
+          HASH=`git rev-parse --short HEAD`
+          BRANCH=${GITHUB_REF##*/}
+          echo "::set-output name=short_sha::$HASH"
+          echo "::set-output name=branch::$BRANCH"
+
       - name: Install project dependencies
         run: yarn --prefer-offline
+
       - name: Unit tests
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo
+
       - name: Build affected apps
         run: npx nx affected --target=build --parallel=3 -c production --exclude=sdk-demo,search-widget-demo,sdk-core
+
       - name: Check apps to deploy
         id: check-deploy
         run: |-
@@ -49,13 +65,17 @@ jobs:
           (test -d dist/apps/app && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
           (test -d dist/apps/login && echo "::set-output name=deploy-login::yes") || echo "Login unchanged"
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
+
       - uses: google-github-actions/auth@v0
         with:
           credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v0'
+
       - name: Configure Docker
         run: gcloud auth configure-docker --quiet
+
       - name: Publish widget
         if: steps.check-deploy.outputs.deploy-widget == 'yes'
         run: |-
@@ -63,27 +83,30 @@ jobs:
           gsutil copy dist/libs/search-widget/nuclia-widget.umd.js gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/i18n gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/icons gs://$CDN_STORAGE
+
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'
         run: |-
-          docker build -t $IMAGE_PREFIX/app:$GITHUB_SHA -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=app .
-          docker tag $IMAGE_PREFIX/app:$GITHUB_SHA $IMAGE_PREFIX/app:latest
-          docker push $IMAGE_PREFIX/app:$GITHUB_SHA
-          docker push $IMAGE_PREFIX/app:latest
+          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=app .
+          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
+          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
+          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
+
       # - name: Build login image
       #   if: steps.check-deploy.outputs.deploy-login == 'yes'
       #   run: |-
-      #     docker build -t $IMAGE_PREFIX/auth:$GITHUB_SHA -f docker/Dockerfile  --build-arg appId=auth --build-arg appFolder=login/login .
-      #     docker tag $IMAGE_PREFIX/auth:$GITHUB_SHA $IMAGE_PREFIX/auth:latest
-      #     docker push $IMAGE_PREFIX/auth:$GITHUB_SHA
-      #     docker push $IMAGE_PREFIX/auth:latest
+      #     docker build -t $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} -f docker/Dockerfile  --build-arg appId=auth --build-arg appFolder=login/login .
+      #     docker tag $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
+      #     docker push $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
+      #     docker push $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
+
       - name: Build manager image
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
         run: |-
-          docker build -t $IMAGE_PREFIX/manager:$GITHUB_SHA -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager .
-          docker tag $IMAGE_PREFIX/manager:$GITHUB_SHA $IMAGE_PREFIX/manager:latest
-          docker push $IMAGE_PREFIX/manager:$GITHUB_SHA
-          docker push $IMAGE_PREFIX/manager:latest
+          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager .
+          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
+          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
+          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
 
   deploy-app:
     name: Deploy dashboard
@@ -91,18 +114,22 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-app == 'yes'
 
-    env:
-      IMAGE_NAME: ${{ secrets.PROJECT_ID }}/app
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Calculate short sha
+        id: env-vars
+        run: |-
+          HASH=`git rev-parse --short HEAD`
+          echo "::set-output name=short_sha::$HASH"
+
       - name: Set helm package image
         id: version_step
         run: |-
-          sed -i.bak "s#IMAGE_TO_REPLACE#$IMAGE_NAME:$GITHUB_SHA#" ./charts/app/values.yaml
-          VERSION_SHA=1.0.0+$(echo $GITHUB_SHA | cut -c1-6)
+          sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}#" ./charts/app/values.yaml
+          VERSION=`cat apps/app/VERSION`
+          VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
           echo "::set-output name=version_number::$VERSION_SHA"
 
@@ -132,18 +159,22 @@ jobs:
     needs: build
     if: needs.build.outputs.deploy-manager == 'yes'
 
-    env:
-      IMAGE_NAME: ${{ secrets.PROJECT_ID }}/manager
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Calculate short sha
+        id: env-vars
+        run: |-
+          HASH=`git rev-parse --short HEAD`
+          echo "::set-output name=short_sha::$HASH"
+
       - name: Set helm package image
         id: version_step
         run: |-
-          sed -i.bak "s#IMAGE_TO_REPLACE#$IMAGE_NAME:$GITHUB_SHA#" ./charts/manager/values.yaml
-          VERSION_SHA=1.0.0+$(echo $GITHUB_SHA | cut -c1-6)
+          sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}#" ./charts/manager/values.yaml
+          VERSION=`cat apps/manager/VERSION`
+          VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
           echo "::set-output name=version_number::$VERSION_SHA"
 
