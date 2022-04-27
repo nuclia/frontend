@@ -1,11 +1,12 @@
 replicaCount: 1
 revisionHistoryLimit: 3
+containerRegistry: eu.gcr.io/stashify-218417
 image: IMAGE_TO_REPLACE
 hash: HASH_VERSION_TO_REPLACE
 resources:
   limits:
-    memory: "50Mi"
-    cpu: "50m"
+    memory: '50Mi'
+    cpu: '50m'
 service:
   internalPort: 80
   externalPort: 80

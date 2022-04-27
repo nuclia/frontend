@@ -1,0 +1,168 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      HASH: $(git rev-parse --short "$GITHUB_SHA")
+      BRANCH: ${GITHUB_REF##*/}
+      PROJECT_ID: ${{ secrets.PROJECT_ID }}
+      CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
+      IMAGE_PREFIX: eu.gcr.io/${{ secrets.PROJECT_ID }}
+
+    outputs:
+      deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
+      deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
+      deploy-login: ${{ steps.check-deploy.outputs.deploy-login }}
+      deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install project dependencies
+        run: yarn --prefer-offline
+      - name: Unit tests
+        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo
+      - name: Build affected apps
+        run: npx nx affected --target=build --parallel=3 -c production --exclude=sdk-demo,search-widget-demo,sdk-core
+      - name: Check apps to deploy
+        id: check-deploy
+        run: |-
+          (test -d dist/libs/search-widget && echo "::set-output name=deploy-widget::yes") || echo "Widget unchanged"
+          (test -d dist/apps/app && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
+          (test -d dist/apps/login && echo "::set-output name=deploy-login::yes") || echo "Login unchanged"
+          (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
+      - uses: google-github-actions/auth@v0
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0'
+      - name: Configure Docker
+        run: gcloud auth configure-docker --quiet
+      - name: Publish widget
+        if: steps.check-deploy.outputs.deploy-widget == 'yes'
+        run: |-
+          sed -i.bak "s#__NUCLIA_DEV_VERSION__#$GITHUB_SHA#g" dist/libs/search-widget/nuclia-widget.umd.js
+          gsutil copy dist/libs/search-widget/nuclia-widget.umd.js gs://$CDN_STORAGE
+          gsutil copy -r libs/search-widget/public/i18n gs://$CDN_STORAGE
+          gsutil copy -r libs/search-widget/public/icons gs://$CDN_STORAGE
+      - name: Build dashboard image
+        if: steps.check-deploy.outputs.deploy-app == 'yes'
+        run: |-
+          docker build -t $IMAGE_PREFIX/app:$GITHUB_SHA -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=app .
+          docker tag $IMAGE_PREFIX/app:$GITHUB_SHA $IMAGE_PREFIX/app:latest
+          docker push $IMAGE_PREFIX/app:$GITHUB_SHA
+          docker push $IMAGE_PREFIX/app:latest
+      # - name: Build login image
+      #   if: steps.check-deploy.outputs.deploy-login == 'yes'
+      #   run: |-
+      #     docker build -t $IMAGE_PREFIX/auth:$GITHUB_SHA -f docker/Dockerfile  --build-arg appId=auth --build-arg appFolder=login/login .
+      #     docker tag $IMAGE_PREFIX/auth:$GITHUB_SHA $IMAGE_PREFIX/auth:latest
+      #     docker push $IMAGE_PREFIX/auth:$GITHUB_SHA
+      #     docker push $IMAGE_PREFIX/auth:latest
+      - name: Build manager image
+        if: steps.check-deploy.outputs.deploy-manager == 'yes'
+        run: |-
+          docker build -t $IMAGE_PREFIX/manager:$GITHUB_SHA -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager .
+          docker tag $IMAGE_PREFIX/manager:$GITHUB_SHA $IMAGE_PREFIX/manager:latest
+          docker push $IMAGE_PREFIX/manager:$GITHUB_SHA
+          docker push $IMAGE_PREFIX/manager:latest
+
+  deploy-app:
+    name: Deploy dashboard
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.deploy-app == 'yes'
+
+    env:
+      IMAGE_NAME: ${{ secrets.PROJECT_ID }}/app
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set helm package image
+        id: version_step
+        run: |-
+          sed -i.bak "s#IMAGE_TO_REPLACE#$IMAGE_NAME:$GITHUB_SHA#" ./charts/app/values.yaml
+          VERSION_SHA=1.0.0+$(echo $GITHUB_SHA | cut -c1-6)
+          sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
+          echo "::set-output name=version_number::$VERSION_SHA"
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v2.0
+        with:
+          version: v3.4.0
+
+      - name: Push helm package
+        run: |-
+          helm lint charts/app
+          helm package charts/app
+          curl --data-binary "@app-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
+
+      - name: Trigger internal Jenkins
+        run: |-
+          curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=app" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
+
+  deploy-manager:
+    name: Deploy manager
+    runs-on: ubuntu-latest
+    needs: build
+    if: needs.build.outputs.deploy-manager == 'yes'
+
+    env:
+      IMAGE_NAME: ${{ secrets.PROJECT_ID }}/manager
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set helm package image
+        id: version_step
+        run: |-
+          sed -i.bak "s#IMAGE_TO_REPLACE#$IMAGE_NAME:$GITHUB_SHA#" ./charts/manager/values.yaml
+          VERSION_SHA=1.0.0+$(echo $GITHUB_SHA | cut -c1-6)
+          sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
+          echo "::set-output name=version_number::$VERSION_SHA"
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v2.0
+        with:
+          version: v3.4.0
+
+      - name: Push helm package
+        run: |-
+          helm lint charts/manager
+          helm package charts/manager
+          curl --data-binary "@manager-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
+
+      - name: Trigger internal Jenkins
+        run: |-
+          curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=manager" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters

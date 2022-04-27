@@ -30,7 +30,7 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       containers:
       - name: manager
-        image: "{{ .Values.image }}"
+        image: "{{ .Values.containerRegistry }}/{{ .Values.image }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         envFrom:

@@ -30,7 +30,7 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       containers:
       - name: auth
-        image: "{{ .Values.image }}"
+        image: "{{ .Values.containerRegistry }}/{{ .Values.image }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         imagePullPolicy: Always
