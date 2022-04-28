@@ -40,6 +40,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getLabels(): Observable<Labels>;
   getResource(uuid: string): Observable<IResource>;
   search(query: string): Observable<Search.Results>;
+  suggest(query: string): Observable<Search.Suggestions>;
   getWidgets(): Observable<Widgets>;
   getWidget(widgetId: string): Observable<Widget>;
   counters(): Observable<Counters>;

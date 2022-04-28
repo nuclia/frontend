@@ -12,17 +12,12 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
   STATE = state;
 };
 
-export const search = (query: string, suggestions = false) => {
+export const search = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox
-    .search(
-      query,
-      suggestions
-        ? [Search.Features.PARAGRAPH, Search.Features.RELATIONS]
-        : [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT],
-    )
+    .search(query, [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT])
     .pipe(
       filter((res) => {
         if (res.error) {
@@ -31,6 +26,20 @@ export const search = (query: string, suggestions = false) => {
         return !res.error;
       }),
     );
+};
+
+export const suggest = (query: string) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.suggest(query).pipe(
+    filter((res) => {
+      if (res.error) {
+        nucliaStore().hasSearchError.next(true);
+      }
+      return !res.error;
+    }),
+  );
 };
 
 export const getResource = (uid: string) => {
