@@ -128,7 +128,7 @@ export class TopbarComponent implements AfterViewInit {
             take(1),
             map(
               (kb) =>
-                `<pre><code class="endpoint">${this.sdk.nuclia.regionalBackend}${kb.path}/resource/${uid}</code></pre>`,
+                `<pre><code class="endpoint">${this.sdk.nuclia.rest.getFullUrl(kb.path)}/resource/${uid}</code></pre>`,
             ),
           ),
           onlyConfirm: true,
