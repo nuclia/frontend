@@ -11,59 +11,64 @@
          *ngFor="let kb of knowledgeBoxes"
          fxLayoutAlign="space-between center">
       <a class="account-kb-title"
-         [routerLink]="getKbUrl(account.slug, kb.slug)">
+         [class.disabled]="!kb.role_on_kb"
+         [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
         {{ kb.title }}
       </a>
       <div fxLayout="row"
            fxLayoutAlign="start center">
 
-        <app-button-action *ngIf="isUsersEnabled | async"
-                           (click)="manageKbUsers(kb.slug)"
-                           action="users"
-                           iconWidth="20px"
-                           iconHeight="20px"
-                           ariaLabel="account.stash.users"
-                           stfTooltip
-                           stfTooltipText="account.stash.users">
-        </app-button-action>
+        <ng-container *ngIf="kb.role_on_kb === 'SOWNER' || kb.role_on_kb === 'SCONTRIBUTOR'">
+          <app-button-action *ngIf="isUsersEnabled | async"
+                             (click)="manageKbUsers(kb.slug!)"
+                             action="users"
+                             iconWidth="20px"
+                             iconHeight="20px"
+                             ariaLabel="account.stash.users"
+                             stfTooltip
+                             stfTooltipText="account.stash.users">
+          </app-button-action>
+          <app-button-action (click)="manageKb(kb.slug!)"
+                             action="edit"
+                             ariaLabel="account.stash.edit"
+                             stfTooltip
+                             stfTooltipText="account.stash.edit">
+          </app-button-action>
+        </ng-container>
 
-        <app-button-action (click)="manageKb(kb.slug)"
-                           action="edit"
-                           ariaLabel="account.stash.edit"
-                           stfTooltip
-                           stfTooltipText="account.stash.edit">
-        </app-button-action>
+        <ng-container *ngIf="kb.role_on_kb === 'SOWNER'">
+          <stf-button class="account-kbs-retire"
+                      *ngIf="kb.state === 'PUBLISHED'"
+                      icon="lock"
+                      color="white"
+                      size="small"
+                      (click)="retireKb(kb)">
+            {{ 'account.stash.retire' | translate }}
+          </stf-button>
 
-        <stf-button class="account-kbs-retire"
-                    *ngIf="kb.state === 'PUBLISHED'"
-                    icon="lock"
-                    color="white"
-                    size="small"
-                    (click)="retireKb(kb)">
-          {{ 'account.stash.retire' | translate }}
-        </stf-button>
+          <stf-button class="account-kbs-publish"
+                      *ngIf="kb.state === 'PRIVATE'"
+                      icon="unlock"
+                      color="secondary"
+                      size="small"
+                      (click)="publishKb(kb)">
+            {{ 'account.stash.publish' | translate }}
+          </stf-button>
 
-        <stf-button class="account-kbs-publish"
-                    *ngIf="kb.state === 'PRIVATE'"
-                    icon="unlock"
-                    color="secondary"
-                    size="small"
-                    (click)="publishKb(kb)">
-          {{ 'account.stash.publish' | translate }}
-        </stf-button>
-
-        <stf-button class="account-kbs-delete"
-                    icon="delete"
-                    color="destructive"
-                    size="small"
-                    (click)="deleteKb(kb)">
-          {{ 'generic.delete' | translate }}
-        </stf-button>
+          <stf-button class="account-kbs-delete"
+                      icon="delete"
+                      color="destructive"
+                      size="small"
+                      (click)="deleteKb(kb)">
+            {{ 'generic.delete' | translate }}
+          </stf-button>
+        </ng-container>
       </div>
     </div>
   </div>
 
-  <div class="mt-24"
+  <div *ngIf="canAddKb | async"
+       class="mt-24"
        fxLayout="row"
        fxLayoutAlign="start center"
        fxLayoutGap="24px">
@@ -84,5 +89,10 @@
         <stf-button (click)="goUpgrade()">{{ 'account.stash.upgrade' | translate }}</stf-button>
     </div
     -->
+  </div>
+
+  <div class="account-kbs-empty"
+       *ngIf="knowledgeBoxes.length === 0 && !(canAddKb | async)">
+    {{ 'stash.contact_admin' | translate }}
   </div>
 </div>

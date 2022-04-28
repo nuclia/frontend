@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap, shareReplay } from 'rxjs/operators';
-import { Account, IKnowledgeBox, KBStates, KnowledgeBoxCreation, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, IKnowledgeBox, KBStates, KnowledgeBoxCreation, WritableKnowledgeBox, IKnowledgeBoxItem } from '@nuclia/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { Zone, ZoneService } from '@flaps/core';
 import { STFTrackingService, StateService, SDKService } from '@flaps/auth';
@@ -22,9 +22,13 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   @Input() zones: Zone[] | undefined;
   isLoading = false;
   account?: Account;
-  knowledgeBoxes: IKnowledgeBox[] | undefined;
+  knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
   maxKnowledgeBoxes: number = 1;
   isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
+  canAddKb = this.stateService.account.pipe(
+    filter((account) => !!account),
+    map((account) => account!.can_manage_account),
+  );
   unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -62,7 +66,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     // TODO: if no kbs, we should display to the default Empty page
   }
 
-  updateKbs(): Observable<IKnowledgeBox[]> {
+  updateKbs(): Observable<IKnowledgeBoxItem[]> {
     return this.sdk.nuclia.db.getKnowledgeBoxes(this.account!.slug).pipe(
       map((kbs) => kbs.sort((a, b) => (a.title || '').localeCompare(b.title || ''))),
       tap((kbs) => {
@@ -105,15 +109,15 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
       });
   }
 
-  publishKb(kb: IKnowledgeBox) {
+  publishKb(kb: IKnowledgeBoxItem) {
     this.changeState(kb, 'publish', 'PUBLISHED');
   }
 
-  retireKb(kb: IKnowledgeBox) {
+  retireKb(kb: IKnowledgeBoxItem) {
     this.changeState(kb, 'retire', 'PRIVATE');
   }
 
-  private changeState(kb: IKnowledgeBox, actionLabel: string, state: KBStates): void {
+  private changeState(kb: IKnowledgeBoxItem, actionLabel: string, state: KBStates): void {
     const dialogRef = this.dialog.open(STFConfirmComponent, {
       width: '420px',
       data: {
@@ -142,7 +146,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
       });
   }
 
-  deleteKb(kb: IKnowledgeBox) {
+  deleteKb(kb: IKnowledgeBoxItem) {
     const dialogRef = this.dialog.open(STFConfirmComponent, {
       width: '420px',
       data: {

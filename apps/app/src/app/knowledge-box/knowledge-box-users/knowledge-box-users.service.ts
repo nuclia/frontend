@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, map, forkJoin } from 'rxjs';
-import { switchMap, filter, take } from 'rxjs/operators';
+import { switchMap, filter, take, tap } from 'rxjs/operators';
 import { UsersService, InviteKbData } from '@flaps/core';
 import { SDKService, StateService } from '@flaps/auth';
 import { KBRoles } from '@nuclia/core';
@@ -40,16 +40,17 @@ export class KnowledgeBoxUsersService {
     return this._slugs.pipe(
       switchMap(([accountSlug, kbSlug]) =>
         this.users.setKbUsers(accountSlug, kbSlug, {
-          add: [{ id, role }],
-          delete: [],
+          updated: [{ id, role }]
         }),
       ),
+      tap(() => { this.updateUsers() })
     );
   }
 
   deleteUser(id: string) {
     return this._slugs.pipe(
       switchMap(([accountSlug, kbSlug]) => this.users.setKbUsers(accountSlug, kbSlug, { delete: [id] })),
+      tap(() => { this.updateUsers() })
     );
   }
 }

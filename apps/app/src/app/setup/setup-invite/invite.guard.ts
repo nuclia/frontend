@@ -16,11 +16,11 @@ export class InviteGuard implements CanActivate {
     ]).pipe(
       take(1),
       map(([slugs, prefs]) => {
-        const isNewUser = prefs!.last_login;
+        const isNewUser = !prefs!.last_login;
         if (isNewUser) {
           return true;
         } else {
-          const path = `/at/${slugs.accountSlug}` + (slugs.kbSlug ? `/${slugs.kbSlug}` : '');
+          const path = slugs.kbSlug ? `/at/${slugs.accountSlug}/${slugs.kbSlug}` : '/select/${slugs.accountSlug}';
           return this.router.createUrlTree([path]);
         }
       }),

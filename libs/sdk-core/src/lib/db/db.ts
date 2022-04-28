@@ -1,7 +1,7 @@
 import { map, Observable, of, switchMap, tap } from 'rxjs';
 import type { INuclia, IDb } from '../models';
 import { Account, AccountCreation, AccountStatus, ProcessingStat, StatsPeriod, StatsType, Welcome } from './db.models';
-import type { IKnowledgeBox, KnowledgeBoxCreation } from './kb.models';
+import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
 
 export class Db implements IDb {
@@ -40,8 +40,8 @@ export class Db implements IDb {
     return this.nuclia.rest.get<Account>(`/account/${account}`);
   }
 
-  getKnowledgeBoxes(account: string): Observable<IKnowledgeBox[]> {
-    return this.nuclia.rest.get<IKnowledgeBox[]>(`/account/${account}/kbs`);
+  getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]> {
+    return this.nuclia.rest.get<IKnowledgeBoxItem[]>(`/account/${account}/kbs`);
   }
 
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;

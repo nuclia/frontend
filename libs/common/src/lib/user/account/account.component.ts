@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { UserService, SDKService } from '@flaps/auth';
-import { Account, IKnowledgeBox } from '@nuclia/core';
+import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 
 @Component({
   selector: 'stf-account',
@@ -11,7 +11,7 @@ import { Account, IKnowledgeBox } from '@nuclia/core';
 })
 export class AccountComponent implements OnInit {
   accounts: Account[] = [];
-  stashes: { [slug: string]: IKnowledgeBox[] } = {};
+  stashes: { [slug: string]: IKnowledgeBoxItem[] } = {};
   selectedAccount: string | null = null;
 
   constructor(public user: UserService, private router: Router, private sdk: SDKService) {}
@@ -24,7 +24,7 @@ export class AccountComponent implements OnInit {
         return;
       }
 
-      const stashes$: { [account: string]: Observable<IKnowledgeBox[]> } = {};
+      const stashes$: { [account: string]: Observable<IKnowledgeBoxItem[]> } = {};
       accounts.forEach((account) => {
         stashes$[account.slug] = this.sdk.nuclia.db.getKnowledgeBoxes(account.slug);
       });

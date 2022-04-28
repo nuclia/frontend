@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/auth';
-import { Account, IKnowledgeBox } from '@nuclia/core';
+import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 
-export type AccountsKbs = { [account: string]: IKnowledgeBox[] };
+export type AccountsKbs = { [account: string]: IKnowledgeBoxItem[] };
 
 // This service is provided in the root, but is only intended to be used inside Select component.
 @Injectable({
@@ -35,9 +35,11 @@ export class SelectService {
       ),
       switchMap((allKbs) => {
         const accountKbs: AccountsKbs = {};
-        allKbs.forEach((kbs: IKnowledgeBox[], index: number) => {
-          return (accountKbs[accounts[index].slug] = kbs);
-        });
+        allKbs
+          .map((kbs) => kbs.filter((kb) => !!kb.role_on_kb))
+          .forEach((kbs, index) => {
+            return (accountKbs[accounts[index].slug] = kbs);
+          });
 
         this.accountsSubject.next(accounts);
         this.kbsSubject.next(accountKbs);

@@ -8,7 +8,7 @@ import { NavigationService } from '../../services/navigation.service';
 import { SelectService } from '../select.service';
 import { Sluggable } from '@flaps/common';
 import { STFUtils } from '@flaps/core';
-import { IKnowledgeBox } from '@nuclia/core';
+import { IKnowledgeBoxItem } from '@nuclia/core';
 
 @Component({
   selector: 'app-select-kb',
@@ -18,7 +18,7 @@ import { IKnowledgeBox } from '@nuclia/core';
 })
 export class SelectKbComponent implements OnInit, OnDestroy {
   account: SimpleAccount | undefined;
-  kbs: IKnowledgeBox[] | undefined;
+  kbs: IKnowledgeBoxItem[] | undefined;
   addKb: boolean = false;
   accountData = this.route.paramMap.pipe(
     filter((params) => params.get('account') !== null),

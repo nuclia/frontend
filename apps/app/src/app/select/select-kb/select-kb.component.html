@@ -27,6 +27,7 @@
          *ngIf="kbs.length > 0">
       <ng-container *ngFor="let kb of kbs">
         <a class="kb"
+           *ngIf="kb.slug"
            [routerLink]="getKbUrl(kb.slug)">
           {{ kb.title }}
           <svg-icon class="kb-arrow"

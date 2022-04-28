@@ -5,7 +5,7 @@ import type {
   Account,
   AccountCreation,
   AccountStatus,
-  IKnowledgeBox,
+  IKnowledgeBoxItem,
   KnowledgeBox,
   KnowledgeBoxCreation,
   ProcessingStat,
@@ -58,7 +58,7 @@ export interface IDb {
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
-  getKnowledgeBoxes(account: string): Observable<IKnowledgeBox[]>;
+  getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox>;

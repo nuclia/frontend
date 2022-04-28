@@ -27,7 +27,7 @@ import { SetupInviteComponent } from './setup/setup-invite/setup-invite.componen
 import { RootGuard } from './guards/root.guard';
 import { SelectGuard } from './select/select.guard';
 import { AccountKbsComponent } from './account/account-kbs/account-kbs.component';
-import { AccountOwnerGuard, KnowledgeBoxRoleGuard } from './guards/permission.guard';
+import { AccountOwnerGuard, KnowledgeBoxOwnerGuard } from './guards/permission.guard';
 import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
 
@@ -114,7 +114,6 @@ const routes: Routes = [
               {
                 path: 'manage',
                 component: KnowledgeBoxManageComponent,
-                canActivate: [KnowledgeBoxRoleGuard],
                 children: [
                   {
                     path: '',
@@ -134,6 +133,7 @@ const routes: Routes = [
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
+                canActivate: [KnowledgeBoxOwnerGuard],
               },
               {
                 path: 'widgets',

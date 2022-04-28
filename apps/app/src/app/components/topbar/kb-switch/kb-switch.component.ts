@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angul
 import { Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
 import { StateService, SDKService } from '@flaps/auth';
-import { IKnowledgeBox, Account } from '@nuclia/core';
+import { IKnowledgeBoxItem, Account } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { NavigationService } from '../../../services/navigation.service';
 
@@ -32,7 +32,7 @@ export class KbSwitchComponent {
     private stateService: StateService,
   ) {}
 
-  goToKb(kb: IKnowledgeBox) {
+  goToKb(kb: IKnowledgeBoxItem) {
     this.router.navigate([this.navigation.getKbUrl(this.account!.slug, kb.slug!)]);
     this.close.emit();
   }

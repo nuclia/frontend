@@ -29,13 +29,6 @@
         {{ 'account.add_user' | translate }}
       </stf-button>
     </div>
-    <stf-expander [expanded]="!!addedMessage">
-      <stf-expander-content>
-        <div class="user-added"
-             [innerHTML]="addedMessage">
-        </div>
-      </stf-expander-content>
-    </stf-expander>
   </div>
 
 
@@ -76,12 +69,18 @@
       <td class="user-role"
           mat-cell
           *matCellDef="let user" >
-        <button [disabled]="isItMe(user)"
-                (click)="!isItMe(user) ? toggleRole(user) : null">
-          <svg-icon src="/assets/icons/user-role.svg"
-                    [class.active]="user.role === 'AOWNER'">
-          </svg-icon>
-        </button>
+        <select stfSelect
+                selectSize="small"
+                (ngModelChange)="changeRole(user, $event)"
+                [ngModel]="user.role"
+                [disabled]="isItMe(user.id)">
+          <ng-container *ngFor="let role of roles">
+            <option
+              [value]="role[0]">
+              {{ role[1] | translate }}
+            </option>
+          </ng-container>
+        </select>
       </td>
     </ng-container>
   
@@ -92,7 +91,7 @@
       <td class="user-actions"
           mat-cell
           *matCellDef="let user">
-        <app-button-action *ngIf="!isItMe(user)" 
+        <app-button-action *ngIf="!isItMe(user.id)" 
                            (click)="deleteUserConfirm(user)"
                            action="delete"
                            ariaLabel="generic.delete"

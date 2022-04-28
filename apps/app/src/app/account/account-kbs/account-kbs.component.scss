@@ -33,11 +33,19 @@
       color: inherit;
       text-decoration: underline;
       font-weight: var(--stf-font-weight-semibold);
+      &.disabled {
+        text-decoration: none;
+        font-weight: var(--stf-font-weight-regular);
+      }
     }
   }
 
   &-counter {
     font-weight: var(--stf-font-weight-semibold);
+  }
+
+  &-empty {
+    font-style: italic;
   }
 }
 

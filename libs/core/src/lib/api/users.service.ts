@@ -22,11 +22,11 @@ export class UsersService {
 
   setAccountUsers(slug: string, users: SetUsersAccount): Observable<void> {
     const url = `/${VERSION}/${ACCOUNT}/${slug}/users`;
-    return this.api.post(url, JSON.stringify(users), true, undefined, undefined, true);
+    return this.api.patch(url, JSON.stringify(users), true, undefined, true);
   }
 
-  searchAccountUsers(slug: string, query: string): Observable<void> {
-    const url = `/${VERSION}/${ACCOUNT}/${slug}/users/search`;
+  searchAccountUsers(slug: string, query: string): Observable<AccountUser[]> {
+    const url = `/${VERSION}/${ACCOUNT}/${slug}/users/search?query=${query}`;
     return this.api.get(url, true, undefined, true);
   }
 
