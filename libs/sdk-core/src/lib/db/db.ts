@@ -1,4 +1,4 @@
-import { map, Observable, of, switchMap, tap } from 'rxjs';
+import { filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { INuclia, IDb } from '../models';
 import { Account, AccountCreation, AccountStatus, ProcessingStat, StatsPeriod, StatsType, Welcome } from './db.models';
 import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
@@ -97,8 +97,9 @@ export class Db implements IDb {
     if (knowledgeBox) {
       params.push(`knowledgebox=${knowledgeBox}`);
     }
-    return this.nuclia.rest
-      .get<{ data: ProcessingStat[] }>(`/account/${account}/stats?${params.join('&')}`)
-      .pipe(map((response) => response.data));
+    return this.nuclia.rest.get<{ data: ProcessingStat[] }>(`/account/${account}/stats?${params.join('&')}`).pipe(
+      map((response) => response.data),
+      filter((data) => !!data),
+    );
   }
 }
