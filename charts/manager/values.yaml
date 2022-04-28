@@ -18,3 +18,8 @@ app_name: app
 ganalytics: XXX
 sentry_environment: stage
 sentry_url: XXX
+
+virtualService:
+  enabled: false
+  gateway: XXX
+  host: XXX

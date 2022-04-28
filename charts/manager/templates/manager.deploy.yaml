@@ -1,9 +1,9 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: manager
+  name: {{ .Release.Name }}
   labels:
-    app: manager
+    app: {{ .Release.Name }}
     version: "{{ .Values.hash }}"
     chart: "{{ .Chart.Name }}"
     release: "{{ .Release.Name }}"
@@ -13,14 +13,14 @@ spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   selector:
     matchLabels:
-      app: manager
+      app: {{ .Release.Name }}
       release: "{{ .Release.Name }}"
       heritage: "{{ .Release.Service }}"
   template:
     metadata:
-      name: manager
+      name: {{ .Release.Name }}
       labels:
-        app: manager
+        app: {{ .Release.Name }}
         version: "{{ .Values.hash }}"
         chart: "{{ .Chart.Name }}"
         release: "{{ .Release.Name }}"
@@ -29,18 +29,18 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       containers:
-      - name: manager
+      - name: {{ .Release.Name }}
         image: "{{ .Values.containerRegistry }}/{{ .Values.image }}"
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         envFrom:
         - configMapRef:
-            name: manager-app-config
+            name: "{{ .Release.Name }}-config"
         imagePullPolicy: Always
         readinessProbe:
           httpGet:
             path: /
             port: {{ .Values.service.internalPort }}
         ports:
-        - name: manager-app
+        - name: "http-{{ .Release.Name }}"
           containerPort: {{ .Values.service.internalPort }}

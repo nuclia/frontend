@@ -23,3 +23,8 @@ posthog_host: XXX
 posthog_key: XXX
 allowed_host_redirect: XXX
 saml_enabled: false
+
+virtualService:
+  enabled: false
+  gateway: XXX
+  host: XXX

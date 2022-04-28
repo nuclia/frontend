@@ -23,3 +23,8 @@ email_domain: XXX
 posthog_host: XXX
 posthog_key: XXX
 saml_enabled: XXX
+
+virtualService:
+  enabled: false
+  gateway: XXX
+  host: XXX

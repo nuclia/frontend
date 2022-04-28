@@ -1,9 +1,9 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: front-app
+  name: {{ .Release.Name }}
   labels:
-    app: app
+    app: {{ .Release.Name }}
     version: "{{ .Values.hash }}"
     chart: "{{ .Chart.Name }}"
     release: "{{ .Release.Name }}"
@@ -11,9 +11,9 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    app: app
+    app: {{ .Release.Name }}
   ports:
-    - name: stash-app
+    - name: "http-{{ .Release.Name }}"
       port: {{ .Values.service.externalPort }}
       targetPort: {{ .Values.service.internalPort }}
       protocol: TCP

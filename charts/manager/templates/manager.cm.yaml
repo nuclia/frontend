@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: manager-app-config
+  name: "{{ .Release.Name }}-config"
   labels:
-    app: manager
+    app: {{ .Release.Name }}
     version: "{{ .Values.hash }}"
     chart: "{{ .Chart.Name }}"
     release: "{{ .Release.Name }}"
