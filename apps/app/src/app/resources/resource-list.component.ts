@@ -93,12 +93,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     ),
   );
 
-  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib ));
-  displayedColumns = this.isAdminOrContrib.pipe(map((canEdit) => {
-    const columns = ['icon', 'title', 'modification', 'status', 'language'];
-    return canEdit ? ['select', ...columns, 'actions'] : columns;
-  }));
-  
+  currentKb = this.sdk.currentKb;
+  isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  displayedColumns = this.isAdminOrContrib.pipe(
+    map((canEdit) => {
+      const columns = ['icon', 'title', 'modification', 'status', 'language'];
+      return canEdit ? ['select', ...columns, 'actions'] : columns;
+    }),
+  );
+
   constructor(
     public dialog: MatDialog,
     private sdk: SDKService,

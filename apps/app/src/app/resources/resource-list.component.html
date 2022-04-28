@@ -103,7 +103,8 @@
 
 
     <div class="table-container">
-      <table [dataSource]="data"
+      <table *ngIf="currentKb | async"
+             [dataSource]="data"
              cdk-table>
 
         <ng-container cdkColumnDef="select">
