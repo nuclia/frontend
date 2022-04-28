@@ -29,6 +29,6 @@ jobs:
       - name: Install project dependencies
         run: yarn --prefer-offline
       - name: Unit tests
-        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo
+        run: npx nx affected:apps --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo
       - name: Check if build succeeds
         run: npx nx affected --target=build --parallel=3 -c production --exclude=sdk-demo,search-widget-demo,sdk-core
