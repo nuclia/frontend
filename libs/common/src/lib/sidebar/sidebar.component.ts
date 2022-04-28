@@ -347,7 +347,9 @@ export class STFSidebarComponent implements OnInit, OnDestroy {
 
     // Add an event listener to the overlay
     this._backdrop?.addEventListener('click', () => {
-      this.close();
+      if (!this.foldedAutoTriggerOnHover) {
+        this.close();
+      }
     });
 
     // Mark for check

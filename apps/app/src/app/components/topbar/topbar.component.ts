@@ -83,6 +83,15 @@ export class TopbarComponent implements AfterViewInit {
         }, 500);
       }
     });
+    this.sdk.nuclia.auth
+      .isAuthenticated()
+      .pipe(
+        filter((isAuth) => !isAuth),
+        take(1),
+      )
+      .subscribe(() => {
+        this.closeViewer();
+      });
   }
 
   delete(uid: string) {
