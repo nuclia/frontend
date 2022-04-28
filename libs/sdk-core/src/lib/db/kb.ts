@@ -84,6 +84,16 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
+  suggest(query: string): Observable<Search.Suggestions> {
+    const params = `query=${encodeURIComponent(query)}`;
+    return this.nuclia.rest.get<Search.Suggestions | { detail: string }>(`${this.path}/suggest?${params}`).pipe(
+      catchError(() => of({ error: true } as Search.Suggestions)),
+      map((res) =>
+        Object.keys(res).includes('detail') ? ({ error: true } as Search.Suggestions) : (res as Search.Suggestions),
+      ),
+    );
+  }
+
   getWidgets(): Observable<Widgets> {
     return this.nuclia.rest.get<{ widgets: Widgets }>(`${this.path}/widgets`).pipe(map((res) => res.widgets));
   }

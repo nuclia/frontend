@@ -5,7 +5,7 @@
   import InputWidget from './widgets/InputWidget.svelte';
   import FormWidget from './widgets/FormWidget.svelte';
   import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
-  import { getResource, initNuclia, search } from './core/api';
+  import { getResource, initNuclia, search, suggest } from './core/api';
   import { concatMap, filter, switchMap, take, tap } from 'rxjs/operators';
   import { onDestroy, onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
@@ -73,7 +73,7 @@
         tap(() => nucliaStore().suggestions.next(NO_RESULTS)),
         filter((query) => !!query && query.length > 2),
         tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
-        switchMap((query) => search(query, true)),
+        switchMap((query) => suggest(query)),
       )
       .subscribe((results) => nucliaStore().suggestions.next(results));
     nucliaStore()

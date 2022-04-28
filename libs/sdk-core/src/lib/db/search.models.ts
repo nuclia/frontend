@@ -24,6 +24,11 @@ export namespace Search {
     // relations: Optional[Relations] = None
   }
 
+  export interface Suggestions {
+    error?: boolean;
+    paragraphs?: Paragraphs;
+  }
+
   export interface Sentences {
     results: Sentence[];
     facets: FacetsResult;
