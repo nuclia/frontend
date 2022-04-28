@@ -1,0 +1,81 @@
+.entity {
+    margin: 20px;
+    max-width: 400px;
+    min-width: 300px;
+    padding: 20px;
+
+    textarea, input, mat-form-field {
+        min-width: 250px;
+    }
+}
+h3 {
+  font-weight: 800;
+}
+
+.stash {
+  min-width: 400px;
+}
+.new_stash {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc;
+}
+.search-user {
+  stf-input {
+    width: 250px;
+  }
+}
+.actual-user {
+  min-width: 300px;
+}
+.content_area {
+  width: 100%;
+}
+.users_list {
+  margin-top: 10px;
+  padding-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-top: 1px dashed #ccc;
+  border-bottom: 1px dashed #ccc;
+  .user_desc {
+    padding-left: 10px;
+    padding-right: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+
+.account-wrapper {
+  width: 100%;
+  margin: 0 auto;
+}
+.account {
+  height: auto;
+  margin: 0 auto;
+  width: 1100px;
+  overflow-y: scroll;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 0px;
+  overflow-x: hidden;
+  mat-form-field {
+    width: 100%;
+  }
+  .header {
+    mat-form-field {
+      width: 80%;
+    }
+  }
+  .section {
+    border: 1px dashed #ccc;
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .new-user {
+    width: 100%;
+  }
+}

@@ -1,0 +1,49 @@
+@import 'variables';
+
+.activity {
+  padding: 50px var(--app-layout-margin-right) 60px 5%;
+  position: relative;
+  min-height: 200px;
+}
+
+.activity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tabs {
+  display: flex;
+}
+
+.subtitle {
+  font-style: italic;
+  padding-left: 25px;
+}
+
+.tab {
+  min-width: 140px;
+  height: 46px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 2px;
+  background-color: #e7e7e7;
+  cursor: pointer;
+  &.selected {
+    font-weight:bold;
+    background-color: #fff;
+  }
+  @include media-breakpoint('lt-lg') {
+    min-width: 120px;
+  }
+}
+
+.tab-content {
+  height: 70vh;
+  overflow-y: auto;
+  padding: 32px 44px 32px 32px;
+  background-color: #fff;
+  @include scrollbar-black(var(--stf-gray-lighter));
+}

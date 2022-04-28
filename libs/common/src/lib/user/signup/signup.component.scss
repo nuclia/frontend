@@ -1,0 +1,29 @@
+
+.signup_description {
+  text-align: center;
+  margin-bottom: 38px;
+}
+
+.signup_field {
+  margin-bottom: 10px;
+}
+
+.signup_policy {
+  margin: 18px 0 40px var(--stf-input-padding-horizontal);
+  font-size: 10px;
+  a {
+    color: inherit;
+    font-weight: var(--stf-font-weight-semibold);
+    text-decoration: underline;
+  }
+}
+
+.signup_error {
+  margin: 20px 0;
+  text-align: center;
+  color: #f91919; 
+}
+
+.signup_skip {
+  margin-top: 6px;
+}

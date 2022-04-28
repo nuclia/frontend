@@ -1,0 +1,28 @@
+@import 'variables';
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  height: 35px;
+}
+
+.filename {
+  flex: 1 1 0;
+  @include text-truncate();
+}
+
+.error {
+  flex: 1 1 0;
+  min-width: 0; // Allow text truncate
+  @include text-truncate();
+  color: var(--stf-red);
+  svg-icon {
+    margin-right: 6px;
+  }
+}
+
+.time,
+.date {
+  flex: 0 0 100px ;
+  text-align: center;
+}

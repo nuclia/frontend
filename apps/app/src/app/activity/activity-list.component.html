@@ -1,0 +1,18 @@
+<div class="activity-list">
+  <div class="activity-item"
+       *ngFor="let item of items">
+    <div class="filename" *ngIf="!item.error">
+      {{ item.filename }}
+    </div>
+    <div class="error"
+         *ngIf="item.error">
+      <svg-icon src="assets/icons/activity-error.svg"></svg-icon>
+      <span stfTooltip
+            [stfTooltipText]="item.error">
+        {{ item.filename }}
+      </span>
+    </div>
+    <div class="date">{{ item.date | formatDate }}</div>
+    <div class="time">{{ item.date | formatTime }}</div>
+  </div>
+</div>

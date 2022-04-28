@@ -1,0 +1,54 @@
+$spacer: 0.75rem !default; //12px;
+$rythm: (
+  0: 0,
+  0.25: (
+    $spacer * 0.25,
+  ),
+  //3
+  0.5:
+    (
+      $spacer * 0.5,
+    ),
+  //6
+  1: $spacer,
+  //12
+  1.5:
+    (
+      $spacer * 1.5,
+    ),
+  //18
+  2:
+    (
+      $spacer * 2,
+    ),
+  //24
+  2.5:
+    (
+      $spacer * 2.5,
+    ),
+  //30
+  3:
+    (
+      $spacer * 3,
+    ),
+  //36
+  3.5:
+    (
+      $spacer * 3.5,
+    ),
+  //42
+  4:
+    (
+      $spacer * 4,
+    ),
+  //48
+  5:
+    (
+      $spacer * 5,
+    )
+    //60,
+) !default;
+
+@function rythm($spacer-size) {
+  @return map-get($rythm, $spacer-size);
+}

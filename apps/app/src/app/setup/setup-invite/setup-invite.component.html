@@ -1,0 +1,50 @@
+<app-setup-container>
+  <div class="setup-invite">
+    <div class="logo">
+      <img src="assets/logos/logo_text.svg"/>
+    </div>
+    <h2 class="setup-invite-title">{{ 'setup.set_password' | translate }}</h2>
+
+    <form [formGroup]="passwordForm" (submit)="submit()" id="password-form">
+      <div class="mb-8">
+        <stf-input
+          formControlName="username"
+          [noAutocapitalize]="true"
+          type="text"
+          theme="border"
+          [validator]="passwordForm.controls['username']"
+          [validation_messages]="validationMessages.username">
+          {{ 'login.full_name' | translate }}
+        </stf-input>
+      </div>
+      <div class="mb-8">
+        <stf-input
+          type="password"
+          formControlName="password"
+          theme="border"
+          [validator]="passwordForm.controls['password']"
+          [validation_messages]="validationMessages.password">
+          {{ 'login.password' | translate }}
+        </stf-input>
+      </div>
+      <stf-input
+        type="password"
+        formControlName="passwordConfirm"
+        theme="border"
+        [validator]="passwordForm.controls['passwordConfirm']"
+        [validation_messages]="validationMessages.passwordConfirm">
+        {{ 'generic.confirm_password' | translate }}
+      </stf-input>
+    </form>
+
+    <div class="setup-invite-actions">
+      <stf-button
+        minWidth="175px"
+        color="secondary"
+        type="submit"
+        form="password-form">
+        {{ 'generic.go!' | translate }}
+      </stf-button>
+    </div>
+  </div>
+</app-setup-container>

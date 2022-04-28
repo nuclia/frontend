@@ -1,0 +1,36 @@
+@import 'variables';
+
+:host {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 3px 10px 2px 10px;
+  border: 1px solid #ffc4c4;
+  border-radius: 2px;
+
+  &.edit-mode {
+    border-color: #fdedb9;
+  }
+
+  .entity-name-text {
+    flex: 1 1 auto;
+    @include text-truncate();
+  }
+
+  .entity-name-actions {
+    flex: 0 0 auto;
+
+    button {
+      @include reset-button();
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 9px;
+  
+      &.entity-name-delete {
+        svg {
+          width: 13px;
+          height: auto;
+        }
+      }
+    }
+  }
+}

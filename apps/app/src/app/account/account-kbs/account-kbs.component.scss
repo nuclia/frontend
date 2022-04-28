@@ -1,0 +1,63 @@
+@import 'variables';
+
+.account-kbs {
+  max-width: 770px;
+
+  &-description {
+    margin-bottom: 20px;
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  &-list {
+    app-button-action {
+      margin-right: 20px;
+    }
+
+    stf-button {
+      margin-right: 30px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .account-kb {
+    height: 60px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    &:first-child {
+      border-top: 1px solid rgba(0, 0, 0, 0.3);
+    }
+    &-title {
+      @include text-truncate();
+      padding-right: 15px;
+      color: inherit;
+      text-decoration: underline;
+      font-weight: var(--stf-font-weight-semibold);
+      &.disabled {
+        text-decoration: none;
+        font-weight: var(--stf-font-weight-regular);
+      }
+    }
+  }
+
+  &-counter {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  &-empty {
+    font-style: italic;
+  }
+}
+
+.loading-shade {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

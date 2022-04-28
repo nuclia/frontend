@@ -1,0 +1,51 @@
+<div [class]="'stf-toast in '+ toast?.style"
+     [class.is-sibling]="isSibling"
+     [class.out]="isDismissed"
+     role="status"
+     aria-live="polite"
+     attr.aria-labelledby="{{ariaLabeledBy}}"
+     #toastContainer
+     tabindex="-1"
+     (keyup)="dismissWithESC($event)">
+
+  <header class="stf-toast-header">
+    <h2 class="stf-toast-title"
+        [id]="!parsedMessage ? ariaLabeledBy : null">
+      <!-- Leading icon -->
+      <svg-icon *ngIf="!!toast && !!toast.icon"
+                [src]="toast.icon"></svg-icon>
+
+      <div *ngIf="parsedMessage"
+           [innerHTML]="parsedMessage"
+           [id]="parsedMessage ? ariaLabeledBy : null"></div>
+      <div *ngIf="!parsedMessage && !!toast">
+        <strong *ngIf="toast.label"
+                class="label">{{ toast.label }}</strong>
+        <div>{{toast.message}}</div>
+      </div>
+    </h2>
+  </header>
+  <footer class="stf-toast-footer"
+          *ngIf="!!toast && (toast.buttons.length > 0 || toast.closeable)">
+    <div class="stf-toast-footer-wrapper">
+      <!-- Customized buttons -->
+      <ng-container *ngIf="toast.closeable">
+        <div class="close-button">
+          <svg-icon src="assets/icons/cross.svg"
+                    (click)="handleDismiss('close')"></svg-icon>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="toast.buttons.length > 0">
+        <stf-button *ngFor="let button of toast.buttons; let i = index"
+                    [color]="button.color"
+                    [icon]="button.icon"
+                    [iconOnly]="true"
+                    [matTooltip]="button.tooltip"
+                    tabindex="{{i}}"
+                    (click)="handleDismiss(button.text)">
+          <span translate>{{button.text}}</span>
+        </stf-button>
+      </ng-container>
+    </div>
+  </footer>
+</div>

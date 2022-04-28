@@ -1,0 +1,112 @@
+<div class="account-users"
+     *ngIf="users">
+
+  <div class="mb-28">
+    <div class="users-amount" >
+      {{ 'account.users_amount' | translate }} <strong>{{ users.length }}</strong>
+    </div>
+    <div class="users-left"
+         *ngIf="account && account.max_users != null">
+      {{ 'account.users_left' | translate }} <strong>{{ account.max_users - account.current_users }}</strong>
+    </div>
+  </div>
+
+  <div class="add-user"
+       *ngIf="canAddUsers | async">
+    <div fxLayout="row"
+         fxLayoutGap="10px"
+         fxLayoutAlign="start center">
+      <input type="email"
+             [formControl]="email"
+             stfFilterInput
+             [inputHeight]="32"
+             placeholder="{{ 'accounts.add_user_input' | translate }}">
+      <stf-button (click)="addUser()"
+                  [disabled]="email.invalid"
+                  size="small"
+                  color="secondary"
+                  minWidth="160px">
+        {{ 'account.add_user' | translate }}
+      </stf-button>
+    </div>
+  </div>
+
+
+  <table class="user-table mat-elevation-z4"
+         mat-table
+         [dataSource]="users">
+
+    <ng-container matColumnDef="user">
+      <th mat-header-cell 
+          *matHeaderCellDef>
+        {{ 'generic.user' | translate }}
+      </th>
+      <td mat-cell
+          *matCellDef="let user">
+        {{ user.name }}
+      </td>
+    </ng-container>
+  
+    <!--
+    <ng-container matColumnDef="kb">
+      <th mat-header-cell *matHeaderCellDef class="user-stashes-header">{{ 'account.knowledgeboxs' | translate }}</th>
+      <td mat-cell *matCellDef="let element" class="user-stashes">
+        <stf-button *ngIf="!isItMe(element)" color="legacy" size="small" (click)="manageUser(element)">
+          <span class="user-stashes-counter">{{ usersRoles[element.principal]?.length }}</span>
+        </stf-button>
+        <span *ngIf="isItMe(element)">{{ usersRoles[element.principal]?.length }}</span>
+      </td>
+    </ng-container>
+    -->
+  
+    <ng-container matColumnDef="role">
+      <th class="user-role"
+          mat-header-cell
+          *matHeaderCellDef
+          >
+        {{ 'generic.role' | translate }}
+      </th>
+      <td class="user-role"
+          mat-cell
+          *matCellDef="let user" >
+        <select stfSelect
+                selectSize="small"
+                (ngModelChange)="changeRole(user, $event)"
+                [ngModel]="user.role"
+                [disabled]="isItMe(user.id)">
+          <ng-container *ngFor="let role of roles">
+            <option
+              [value]="role[0]">
+              {{ role[1] | translate }}
+            </option>
+          </ng-container>
+        </select>
+      </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="actions">
+      <th class="user-actions"
+          mat-header-cell
+          *matHeaderCellDef></th>
+      <td class="user-actions"
+          mat-cell
+          *matCellDef="let user">
+        <app-button-action *ngIf="!isItMe(user.id)" 
+                           (click)="deleteUserConfirm(user)"
+                           action="delete"
+                           ariaLabel="generic.delete"
+                           stfTooltip
+                           stfTooltipText="generic.delete">
+        </app-button-action>
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row
+        *matHeaderRowDef="columns">
+    </tr>
+    <tr mat-row
+        *matRowDef="let row; columns: columns">
+    </tr>
+  </table>
+  
+</div>

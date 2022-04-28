@@ -1,0 +1,181 @@
+<stf-section-navbar *ngIf="account"
+                    [title]="'account.settings'"
+                    [sections]="sectionsInfo"
+                    [topbarHeight]="topbarHeight">
+  <stf-section-navbar-body class="account-manage-container">
+
+    <div class="section"
+         id="account"
+         #section>
+      <div class="section-container">
+
+        <h2>{{ 'account.manage' | translate }}</h2>
+        <form [formGroup]="accountForm"
+              (ngSubmit)="saveAccount()">
+          <div class="account-field"
+               fxLayout="row">
+            <label for="account-title"
+                   class="account-field-name mt-12"
+                   fxFlex="30%">
+              {{ 'account.title' | translate }}
+            </label>
+            <div fxFlex="70%">
+              <stf-input id="account-title"
+                         formControlName="title"
+                         [validator]="accountForm.controls['title']"
+                         [validation_messages]="validationMessages.title"
+                         theme="white"
+                         [isLessen]="true">
+              </stf-input>
+            </div>
+          </div>
+
+          <div class="account-field"
+               fxLayout="row">
+            <label for="account-description"
+                   class="account-field-name mt-12"
+                   fxFlex="30%">
+              {{ 'generic.description' | translate }}
+            </label>
+            <div fxFlex="70%">
+              <stf-textarea id="account-description"
+                            formControlName="description"
+                            color="white"
+                            initialHeight="150px">
+              </stf-textarea>
+            </div>
+          </div>
+
+          <!--
+          <div class="account-field" fxLayout="row">
+            <label fxFlex="30%" class="account-field-name mt-12">
+              {{ 'account.logotip' | translate }}
+            </label>
+            <div fxFlex="70%">
+              <stf-thumbnail
+                [initialImage]="logo"
+                [show_editable]="true"
+                [base64]="true"
+                color="white"
+                boxSize="account"
+                [reset]="resetLogo"
+                (change)="changeLogo($event)"
+              >
+              </stf-thumbnail>
+            </div>
+          </div>
+          -->
+
+          <div class="mt-44"
+               fxLayout="row">
+            <div fxFlex="30%"></div>
+            <div fxFlex="70%"
+                 fxLayout="row"
+                 fxLayoutGap="10px">
+              <stf-button type="submit"
+                          minWidth="110px"
+                          [disabled]="accountForm.invalid || accountForm.pristine">
+                {{ 'generic.save' | translate }}
+              </stf-button>
+              <stf-button *ngIf="!accountForm.pristine"
+                          (click)="initAccountForm()"
+                          type="button"
+                          color="white"
+                          minWidth="110px">
+                {{ 'generic.cancel' | translate }}
+              </stf-button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="section"
+         id="config"
+         #section>
+      <div class="section-container">
+        <h2>{{ 'account.config' | translate }}</h2>
+
+        <!-- <div class="account-field"
+             fxLayout="row">
+          <div class="account-field-name"
+               fxFlex="30%">{{ 'account.speech_to_text' | translate }}</div>
+          <div fxFlex="70%">
+            <div class="mb-20">{{ 'account.speech_to_text_description' | translate }}</div>
+            <stf-checkbox color="dark"
+                          [selected]="speechToText"
+                          (selectedChange)="saveSpeechToText($event)">
+              {{ 'account.enhanced_model' | translate }}
+            </stf-checkbox>
+          </div>
+        </div> -->
+
+        <div class="account-field"
+             fxLayout="row"
+             *ngIf="zones">
+          <div class="account-field-name"
+               fxFlex="30%">{{ 'generic.zone' | translate }}</div>
+          <div fxFlex="70%">
+            <div class="mb-20">{{ 'account.zone_description' | translate }}</div>
+            <select stfSelect
+                    [formControl]="zone"
+                    class="zone-select">
+              <option *ngFor="let zone of zones"
+                      [value]="zone.id">{{ zone.title }}</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section"
+         id="knowledgeboxes"
+         #section>
+      <div class="section-container">
+        <h2>{{ 'account.knowledgeboxs' | translate }}</h2>
+        <app-account-kbs *ngIf="zones"
+                         [zones]="zones"></app-account-kbs>
+      </div>
+    </div>
+
+    <div *ngIf="isUsersEnabled | async"
+         class="section"
+         id="users"
+         #section>
+      <div class="section-container">
+        <h2>{{ 'account.manage_account_users' | translate }}</h2>
+        <app-account-users></app-account-users>
+      </div>
+    </div>
+
+    <div class="section"
+         id="nucliaDBs"
+         #section>
+      <div class="section-container">
+        <h2>{{ 'account.manage_dbs' | translate }}</h2>
+        <app-account-dbs *ngIf="zones"
+                         [account]="account"
+                         [zones]="zones"></app-account-dbs>
+      </div>
+    </div>
+
+    <!--
+    <div class="section" id="licence" #section>
+      <div class="section-container">
+        <h2>{{ 'account.licence' | translate }}</h2>
+        <div *ngIf="account.kind === 'stash-basic'">
+          <h3>{{ 'account.type.basic' | translate }}</h3>
+          <ul>
+            <li>1 {{ 'account.type.kb' | translate }} </li>
+            <li>10 {{ 'generic.users' | translate }}</li>
+          </ul>
+          <stf-button disabled="true" color="legacy" (click)="goUpgrade()">{{ 'account.type.manage' | translate }}</stf-button>
+        </div>
+        <div *ngIf="account.kind === 'stash-team'">{{ 'account.type.team' | translate }}</div>
+        <div *ngIf="account.kind === 'stash-enterprise'">{{ 'account.type.enterprise' | translate }}</div>
+      </div>
+    </div>
+    -->
+  </stf-section-navbar-body>
+</stf-section-navbar>

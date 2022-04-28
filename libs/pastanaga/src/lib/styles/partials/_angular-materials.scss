@@ -1,0 +1,210 @@
+@use '@angular/material' as mat;
+
+$stf-color-palette: (
+  50: #ececee,
+  100: #c5c6cb,
+  200: #9ea1a9,
+  300: #7d818c,
+  400: #5c616f,
+  500: #3c4252,
+  600: #353a48,
+  700: #2d323e,
+  800: #262933,
+  900: #1e2129,
+  A100: #c5c6cb,
+  A200: #9ea1a9,
+  A400: #5c616f,
+  A700: #2d323e,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.54),
+    200: rgba(black, 0.38),
+    300: rgba(black, 0.12),
+    400: rgba(black, 0.12),
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(black, 0.87),
+    A200: white,
+    A400: white,
+    A700: white,
+  ),
+);
+
+// Angular Material typography
+$typography: mat.define-typography-config(
+  $font-family: var(--stf-font-family),
+  $title: mat.define-typography-level(20px, 32px, 600),
+  $body-2: mat.define-typography-level(14px, 24px, 400),
+  $button: mat.define-typography-level(14px, 14px, 600),
+  $input: mat.define-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,
+);
+
+// Setup the typography
+@include mat.all-component-typographies($typography);
+@include mat.core($typography);
+
+// Define the primary, accent and warn palettes
+$default-primary-palette: mat.define-palette($stf-color-palette);
+$default-accent-palette: mat.define-palette(mat.$pink-palette, 600, 400, 700);
+$default-warn-palette: mat.define-palette(mat.$red-palette);
+
+// Create the Material theme object
+$theme: mat.define-light-theme($default-primary-palette, $default-accent-palette, $default-warn-palette);
+
+// Create an Angular Material theme from the $theme map
+@include mat.all-component-themes($theme);
+
+// Fix: "Remove the cdk-global-scrollblock effects from the HTML"
+html {
+  &.cdk-global-scrollblock {
+    position: relative !important;
+    overflow: hidden !important;
+    top: 0 !important;
+  }
+}
+
+// Fix: "Inconsistent button heights due to inconsistent line heights"
+button,
+a {
+  .mat-button-wrapper {
+    line-height: normal;
+  }
+}
+
+// Fix: "Icon button ripple radius is not correct on Edge & Safari"
+.mat-icon-button {
+  .mat-button-ripple {
+    border-radius: 50%;
+  }
+}
+
+// Fix: "Smooth scrolling for iOS"
+.mat-dialog-container {
+  -webkit-overflow-scrolling: touch;
+}
+
+// Fix: "Inconsistent font sizes across elements"
+.mat-checkbox {
+  font-size: 16px;
+}
+
+.mat-radio-button {
+  font-size: 16px;
+}
+
+// Fix: "Input underlines has wrong color opacity value"
+.mat-form-field-underline {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-underline {
+  bottom: 0;
+}
+
+.mat-form-field {
+  // Fix: "Table-cell and inline-table in mat-select"
+  &.mat-form-field-type-mat-select {
+    .mat-form-field-infix {
+      display: inline-flex;
+      width: auto;
+
+      .mat-select-trigger {
+        display: inline-flex;
+        align-items: center;
+        width: 100%;
+
+        .mat-select-value {
+          display: flex;
+          max-width: none;
+          margin-right: 8px;
+        }
+
+        .mat-select-arrow-wrapper {
+          display: inline-flex;
+        }
+      }
+    }
+  }
+}
+
+mat-horizontal-stepper,
+mat-vertical-stepper {
+  mat-step-header {
+    mat-icon {
+      height: 16px !important;
+      width: 16px !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      color: inherit !important;
+    }
+  }
+}
+
+mat-vertical-stepper {
+  padding: 16px 0;
+}
+
+// Fix: Mat-card-image requires a bigger width than 100%
+.mat-card-image {
+  max-width: none !important;
+}
+
+i,
+mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  line-height: 24px;
+
+  @each $breakpoint, $materialBreakpoint in $helper-breakpoints {
+    @include media-breakpoint($materialBreakpoint) {
+      $infix: if($materialBreakpoint == null, '', '-#{$breakpoint}');
+
+      @for $size from 2 through 128 {
+        &.s#{$infix}-#{$size * 2} {
+          font-size: #{($size * 2) + 'px'} !important;
+          width: #{($size * 2) + 'px'} !important;
+          height: #{($size * 2) + 'px'} !important;
+          min-width: #{($size * 2) + 'px'} !important;
+          min-height: #{($size * 2) + 'px'} !important;
+          line-height: #{($size * 2) + 'px'} !important;
+        }
+      }
+    }
+  }
+}
+
+.mat-icon-button {
+  color: inherit;
+  background: transparent;
+}
+
+.mat-form-field-wrapper {
+  padding-bottom: 0px !important;
+}
+
+.mat-form-field-appearance-fill {
+  .mat-form-field-flex {
+    background-color: var(--stf-input-background);
+    border-radius: 4px !important;
+    padding: 18px 20px 11px !important;
+  }
+
+  .mat-form-field-underline::before {
+    height: 0px !important;
+  }
+
+  .mat-form-field-ripple {
+    height: 0px !important;
+  }
+
+  .mat-form-field-label {
+    color: var(--stf-blue);
+    font-weight: var(--stf-font-weight-light);
+  }
+}

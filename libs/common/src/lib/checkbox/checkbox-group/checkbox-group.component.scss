@@ -1,0 +1,31 @@
+.checkbox-group {
+  
+  &-item {
+    &-tip {
+      margin-left: 4px;
+      font-size: var(--stf-font-size-ssmall);
+      font-weight: var(--stf-font-weight-light);
+    }
+  }
+  &:not(.inline) {
+    .checkbox-group-item {
+      &.spacing-small {
+        margin-bottom: 3px;
+      }
+      &.spacing-normal {
+        margin-bottom: 6px;
+      }
+    }
+  }
+  &.inline {
+    display: flex;
+    .checkbox-group-item {
+      &.spacing-small {
+        margin-right: 12px;
+      }
+      &.spacing-normal {
+        margin-right: 24px;
+      }
+    }
+  }
+}

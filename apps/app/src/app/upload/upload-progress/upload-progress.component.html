@@ -1,0 +1,19 @@
+<div class="upload-progress">
+  <button class="close-button"
+          (click)="close.emit()">
+    <svg-icon src="assets/icons/close-modal.svg"></svg-icon>
+  </button>
+  <h1 class="mb-20">{{ 'upload.uploading_queue' | translate }}</h1>
+
+  <div class="warning">
+    <strong>{{ 'upload.takes_time' | translate }}</strong>
+  </div>
+  <div>
+    <p>{{ 'upload.progress.uploaded' | translate }}: {{ (progress | async)?.uploaded }}</p>
+    <p>{{ 'upload.progress.failed' | translate }}: {{ (progress | async)?.failed }}</p>
+    <p>{{ 'upload.progress.conflicts' | translate }}: {{ (progress | async)?.conflicts }}</p>
+  </div>
+  <div *ngIf="(progress | async)?.completed">
+    {{ 'upload.progress.complete' | translate }}
+  </div>
+</div>

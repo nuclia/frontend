@@ -1,0 +1,29 @@
+@import 'libs/pastanaga/src/lib/styles/stf';
+
+.upload-progress {
+  position: relative;
+  width: 770px;
+  padding: 16px 26px;
+
+  .close-button {
+    @include reset-button();
+    position: absolute;
+    top: 6px;
+    right: 2px;
+    cursor: pointer;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+  }
+
+  .warning {
+    margin-bottom: 25px;
+    line-height: 1.25;
+    strong {
+      font-weight: var(--stf-font-weight-semibold);
+    }
+  }
+}

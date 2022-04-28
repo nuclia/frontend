@@ -1,0 +1,94 @@
+<div class="knowledge-box-home">
+
+  <div fxLayout="row"
+       fxLayoutGap="30px"
+       fxLayoutAlign="start start">
+    <div fxFlex="1 1 auto"
+         class="full-width">
+      <div class="container get-started">
+        <h2>
+          <span>{{ 'stats.get_started' | translate }}.</span>
+          {{ 'stats.endpoint' | translate }}&nbsp;
+        </h2>
+        <span class="endpoint">{{ endpoint | async }}</span>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isAdmin | async"
+       fxLayout="row"
+       fxLayoutGap="30px"
+       fxLayoutAlign="start start">
+    <div class="left-column"
+         fxFlex="1 1 auto">
+      <div class="container chart-container search-stats">
+        <div class="search-stats-header"
+             fxLayout="row"
+             fxLayoutAlign="space-between center">
+          <h2>{{ 'stats.total_search' | translate }}</h2>
+          <div *ngIf="locale | async as loc"
+               class="search-stats-count">{{ totalSearch | async | number:'1.0-0':loc }}</div>
+        </div>
+        <app-empty-chart *ngIf="!(search | async)"
+                         [numLines]="6"></app-empty-chart>
+        <app-line-chart [data]="(search | async) || []"></app-line-chart>
+      </div>
+
+      <div class="container chart-container processing-stats">
+        <h2>{{ 'stats.processing_time' | translate }}</h2>
+        <app-empty-chart *ngIf="!(processing | async)"
+                         [numLines]="3"></app-empty-chart>
+        <app-bar-chart [data]="(processing | async) || []"></app-bar-chart>
+      </div>
+
+    </div>
+
+    <div class="right-column"
+         fxFlex="0 0 auto">
+      <div *ngIf="hasAccountBoard |async"
+           class="container switch-action"><a routerLink="../home">
+          <span [innerHtml]="'account.switch' | translate"></span>
+          <svg-icon src="assets/icons/rounded_chevron_right.svg"></svg-icon>
+        </a>
+      </div>
+
+      <div class="container state-container">
+        <div>
+          {{ 'stash.state' | translate}}: <span class="state">{{ stateLabel | async }}</span>
+        </div>
+        <stf-button *ngIf="(isPublished | async)"
+                    color="secondary"
+                    (click)="retireKb()">{{ 'account.stash.retire' | translate}}</stf-button>
+        <stf-button *ngIf="!(isPublished | async)"
+                    color="secondary"
+                    (click)="publishKb()">{{ 'account.stash.publish' | translate}}</stf-button>
+      </div>
+
+      <div class="container resource-stats">
+        <h2>{{ 'stats.total.title' | translate }}
+          <stf-button [icon]="(refreshing | async) ? 'waiting' : 'refresh'"
+                      [disabled]="(refreshing | async) || false"
+                      size="small"
+                      color="white"
+                      [iconOnly]="true"
+                      (click)="refresh()">
+          </stf-button>
+        </h2>
+        <div>
+          <div class="total-resources">{{ (counters | async)?.resources}}</div>
+          <dl>
+            <dt>{{ 'stats.total.fields' | translate }}</dt>
+            <dd>{{ (counters | async)?.fields }}</dd>
+          </dl>
+          <dl>
+            <dt>{{ 'stats.total.paragraphs' | translate }}</dt>
+            <dd>{{ (counters | async)?.paragraphs }}</dd>
+          </dl>
+          <dl>
+            <dt>{{ 'stats.total.sentences' | translate }}</dt>
+            <dd>{{ (counters | async)?.sentences }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

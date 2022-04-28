@@ -1,0 +1,93 @@
+@import 'variables';
+
+.edit-widget {
+  width: 770px;
+  max-width: 100%;
+  margin: 30px 0 80px 0;
+
+  section {
+    padding: 50px 0 55px 0;
+  }
+
+  h2 {
+    margin: 0 0 36px 0;
+    font-weight: var(--stf-font-weight-bold);
+    span {
+      font-weight: var(--stf-font-weight-light);
+      padding-left: 20px;
+    }
+  }
+
+  .one-col {
+    background-color: #fff;
+    padding: 22px;
+    margin-bottom: 22px;
+    & > div {
+      margin-bottom: 22px;
+      display: flex;
+      & > div {
+        width: 333px;
+      }
+    }
+  }
+  .label {
+    font-size: size(xxl);
+    font-weight: var(--stf-font-weight-light);
+    line-height: 47px;
+  }
+  .two-cols {
+    display: flex;
+    & > div:first-child {
+      width: 333px;
+    }
+    .options {
+      background-color: #fff;
+      margin-right: 22px;
+    }
+    .snippet {
+      background-color: #fff;
+      width: calc(100% - 355px);
+    }
+  }
+}
+pre {
+  overflow-x: scroll;
+}
+.snippet .label {
+  padding-left: 22px;
+  border-bottom: 1px solid var(--stf-gray-lighter-3);
+  position: relative;
+}
+.close-button {
+  @include reset-button();
+  position: absolute;
+  top: 4px;
+  right: 8px;
+  cursor: pointer;
+}
+.tabs {
+  display: flex;
+  & > div {
+    cursor: pointer;
+    width: 50%;
+    text-align: center;
+    background-color: var(--stf-gray-lighter-3);
+    &.selected {
+      background-color: transparent;
+    }
+  }
+}
+.tab-content {
+  padding: 22px;
+  .label,
+  stf-input {
+    font-size: size(l);
+    width: 50%;
+    display: inline-block;
+  }
+}
+.buttons {
+  padding: 22px 0;
+  display: flex;
+  gap: 22px;
+}

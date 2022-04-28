@@ -1,0 +1,109 @@
+<div class="kb-add">
+  <h1>{{ 'stash.create' | translate }}</h1>
+  <button class="close-button"
+          (click)="close()">
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
+  </button>
+
+  <form [formGroup]="kbForm"
+        (ngSubmit)="save()">
+
+    <ng-container *ngIf="step === 0">
+      <div class="mb-24"
+           fxLayout="row">
+        <label for="kb-title"
+               fxFlex="24%"
+               class="kb-add-field-name">
+          {{ 'stash.name' | translate }}
+        </label>
+        <div fxFlex="70%">
+          <stf-input id="kb-title"
+                     formControlName="title"
+                     [validator]="kbForm.controls['title']"
+                     [validation_messages]="validationMessages.title"
+                     [isLessen]="true">
+          </stf-input>
+        </div>
+      </div>
+
+      <div class="mb-36"
+           fxLayout="row">
+        <label for="kb-description"
+               fxFlex="24%"
+               class="kb-add-field-name">
+          {{ 'generic.description' | translate }}
+        </label>
+        <div fxFlex="70%">
+          <stf-textarea id="account-description"
+                        formControlName="description"
+                        initialHeight="100px">
+          </stf-textarea>
+        </div>
+      </div>
+
+      <div class="kb-add-separator"></div>
+
+      <div class="kb-add-zone"
+           *ngIf="data.zones">
+        <h2>{{ 'generic.zone' | translate }}</h2>
+        <div class="mb-24">{{ 'stash.create.zone_description' | translate }}</div>
+        <select stfSelect
+                formControlName="zone"
+                class="kb-add-zone-select">
+          <option *ngFor="let zone of data.zones"
+                  [value]="zone.id">{{ zone.title }}</option>
+        </select>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="step === 1">
+      <h2>{{ 'stash.create.languages' | translate }}</h2>
+      <p>{{ 'stash.create.languages-help' | translate }}</p>
+      <stf-checkbox-group [checkboxes]="languages"
+                          [(selection)]="languageMode"
+                          type="radio">
+      </stf-checkbox-group>
+      <select *ngIf="languageMode[0] === 'monolingual'"
+              stfSelect
+              formControlName="selectedLanguage">
+        <option [value]="lang"
+                *ngFor="let lang of languageList">{{ 'language.' + lang | translate }}</option>
+      </select>
+    </ng-container>
+
+    <ng-container *ngIf="step === 2">
+      <h2>{{ 'stash.create.anonymization' | translate }}</h2>
+      <p>{{ 'stash.create.anonymization-help' | translate }}</p>
+      <stf-checkbox [(selected)]="useAnonymization">{{ (useAnonymization ? 'generic.enabled' : 'generic.disabled') |
+        translate }}</stf-checkbox>
+    </ng-container>
+
+    <div class="mt-52"
+         fxLayout="row"
+         fxLayoutAlign="center center"
+         fxLayoutGap="10px">
+      <stf-button *ngIf="step === 2"
+                  type="submit"
+                  minWidth="110px">
+        {{ 'generic.save' | translate }}
+      </stf-button>
+      <stf-button *ngIf="step < 2"
+                  (click)="next()"
+                  color="secondary"
+                  [disabled]="step === 0 && kbForm.invalid"
+                  minWidth="110px">
+        {{ 'generic.next' | translate }}
+      </stf-button>
+      <stf-button *ngIf="step > 0"
+                  (click)="back()"
+                  color="gray"
+                  minWidth="110px">
+        {{ 'generic.back' | translate }}
+      </stf-button>
+    </div>
+    <div class="steps"
+         *ngIf="step < 2">
+      <small>{{step + 1}} / 3</small>
+    </div>
+  </form>
+</div>

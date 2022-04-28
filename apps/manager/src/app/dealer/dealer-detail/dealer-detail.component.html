@@ -1,0 +1,63 @@
+
+<div fxLayout="row" fxLayoutAlign="start start">
+  <mat-card class="entity">
+    <form [formGroup]="dealerForm">
+      <h2>Dealer</h2> 
+      <mat-form-field>
+        <input matInput formControlName="id" placeholder="Id">
+      </mat-form-field>
+
+      <div formGroupName="data">
+        <h3>Preferences</h3>
+        <p>
+            <mat-form-field>
+                <mat-label>Apps</mat-label>
+                <mat-select formControlName="app"  multiple>
+                  <mat-option *ngFor="let topping of appsList" [value]="topping">{{topping}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <textarea matInput formControlName="street" placeholder="Street"></textarea>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <textarea matInput formControlName="city" placeholder="City"></textarea>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input matInput formControlName="state" placeholder="State">
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <input matInput formControlName="cif" placeholder="CIF">
+          </mat-form-field>
+        </p>
+      </div>
+    </form>
+  </mat-card>
+  <mat-card class="entity" *ngIf="addUsers">
+    <form [formGroup]="userForm">
+      <div>
+        <h3>Managers</h3> 
+        <stf-input formControlName="user">user</stf-input>
+        <stf-input formControlName="email">email</stf-input>
+        <stf-button icon="download" (click)="addUser()">Add User</stf-button>
+        <ul>
+          <li *ngFor="let user of userList">
+            <span>{{user}}</span>
+            <mat-icon (click)="deleteUser(user)">delete</mat-icon>
+            <mat-icon [routerLink]="['/users/' + user]">visibility</mat-icon>
+          </li>
+        </ul>
+      </div>
+    </form>
+  </mat-card>
+</div>
+<div class="save-button">
+  <stf-button (click)="save()">Save</stf-button>
+</div>

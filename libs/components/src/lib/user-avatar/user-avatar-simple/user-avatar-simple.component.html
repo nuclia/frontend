@@ -1,0 +1,7 @@
+<ng-container *ngIf="userPrefs && userPrefs.avatar && userPrefs.avatar !== ''; else renderName">
+  <img class="avatar mr-0 mr-sm-16" [src]="userPrefs.avatar">
+</ng-container>
+
+<ng-template #renderName>
+  <div class="avatar-text" [class.avatar-text-black-mode]="blackMode" [ngClass]="'avatar-text-' + size" fxLayout="row" fxLayoutAlign="center center" >{{getInitials()}}</div>
+</ng-template>

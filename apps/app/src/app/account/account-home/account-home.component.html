@@ -1,0 +1,34 @@
+<div class="account-home">
+
+  <div fxLayout="row"
+       fxLayoutGap="30px"
+       fxLayoutAlign="start start">
+    <div fxFlex="1 1 auto">
+      <div class="container processing-stats">
+        <div class="chart-header">
+          <h2>{{ 'account.characters' | translate }}</h2>
+          <span>{{ 'account.renewal' | translate }}</span>
+        </div>
+        <app-empty-chart *ngIf="!(processing | async)"
+                         [numLines]="3"></app-empty-chart>
+        <app-bar-chart [data]="(processing | async) || []"
+                       [threshold]="300000000"></app-bar-chart>
+      </div>
+    </div>
+
+    <div fxFlex="1 1 auto"
+         class="left-column">
+      <div class="container switch-action"><a [routerLink]="'../' + (kbSlug | async)">
+          <span [innerHtml]="'account.back' | translate"></span>
+          <svg-icon src="assets/icons/rounded_chevron_right.svg"></svg-icon>
+        </a>
+      </div>
+
+      <div class="container">
+        <span class="totals"
+              [innerHtml]="'account.total' | translate:{ total: (kbsTotal | async) || 0, public: (kbsPublic | async) || 0}"></span>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,62 @@
+<div class="stash" fxLayout="column" fxLayoutAlign="start start">
+  <h1 class="go_account" (click)="goAccount()" *ngIf="account">{{ account?.id }}</h1>
+  <h2>{{ stash?.slug }} - {{ stash?.title }}</h2>
+  <form [formGroup]="stashTitle" fxLayout="row" fxLayoutAlign="space-between center">
+    <span>Change title</span>
+    <stf-input formControlName="title">New title</stf-input>
+    <button mat-icon-button (click)="saveTitle()"><mat-icon>save</mat-icon></button>
+  </form>
+  <div class="actual-user">
+    <form [formGroup]="searchUserForm">
+      <h4>Search and Add to Account</h4>
+      <div class="search-user" fxLayout="row" fxLayoutAlign="space-between center">
+        <stf-input formControlName="user" (keyUp)="searching($event)" (enterPressed)="search()">User</stf-input>
+        <button mat-icon-button (click)="search()"><mat-icon>search</mat-icon></button>
+      </div>
+      <div *ngIf="userSearchList.length === 0">
+        No results
+      </div>
+      <div *ngFor="let user of userSearchList" class="users_list">
+        <span class="user_desc">
+          {{ user['id'] }} - {{ user['email'] }} - {{ user['name'] }}
+        </span>
+        <button mat-icon-button (click)="addSeachedUser(user['id'])"><mat-icon>add</mat-icon></button>
+      </div>
+    </form>
+  </div>
+  <div *ngIf="stash">
+    <h3>Members</h3>
+    <ul>
+      <li *ngFor="let member of stash.members">
+        <ng-container *ngIf="member">
+          {{ member.id }} - {{ member.name }} - {{ member.email }}
+          <button mat-icon-button (click)="updateToOwner(member.id)" matTooltip="Update to owner"><mat-icon>verified_user</mat-icon></button>
+          <button mat-icon-button (click)="updateToContributor(member.id)" matTooltip="Update to contributor"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button (click)="remove(member.id)" matTooltip="Delete"><mat-icon>delete</mat-icon></button>
+        </ng-container>
+      </li>
+    </ul>
+    <h3>Owners</h3>
+    <ul>
+      <li *ngFor="let owner of stash.owners">
+        <ng-container *ngIf="owner">
+          {{ owner.id }} - {{ owner.name }} - {{ owner.email }}
+          <button mat-icon-button (click)="updateToMember(owner.id)" matTooltip="Update to member"><mat-icon>accessibility</mat-icon></button>
+          <button mat-icon-button (click)="updateToContributor(owner.id)" matTooltip="Update to contributor"><mat-icon>edit</mat-icon></button>
+          <button mat-icon-button (click)="remove(owner.id)" matTooltip="Delete"><mat-icon>delete</mat-icon></button>
+        </ng-container>
+      </li>
+    </ul>
+    <h3>Contributors</h3>
+    <ul>
+      <li *ngFor="let contributor of stash.contributors">
+        <ng-container *ngIf="contributor">
+          {{ contributor.id }} - {{ contributor.name }} - {{ contributor.email }}
+          <button mat-icon-button (click)="updateToOwner(contributor.id)" matTooltip="Update to owner"><mat-icon>verified_user</mat-icon></button>
+          <button mat-icon-button (click)="updateToMember(contributor.id)" matTooltip="Update to member"><mat-icon>accessibility</mat-icon></button>
+          <button mat-icon-button (click)="remove(contributor.id)" matTooltip="Delete"><mat-icon>delete</mat-icon></button>
+        </ng-container>
+      </li>
+    </ul>
+  </div>
+</div>

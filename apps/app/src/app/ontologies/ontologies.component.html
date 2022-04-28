@@ -1,0 +1,11 @@
+<stf-section-navbar [title]="'generic.ontologies'" [routes]="(routes | async) || []" [hasInnerRoutes]="true">
+  <stf-section-navbar-body class="ontologies">
+    <router-outlet></router-outlet>
+  </stf-section-navbar-body>
+
+  <stf-section-navbar-footer>
+    <stf-button (click)="addOntology()" minWidth="150px" color="secondary">
+      {{ 'ontology.add_ontology' | translate }}
+    </stf-button>
+  </stf-section-navbar-footer>
+</stf-section-navbar>

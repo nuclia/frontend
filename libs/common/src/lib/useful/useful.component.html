@@ -1,0 +1,13 @@
+<div class="useful">
+  <ng-container *ngIf="answered">{{ 'useful.component.answered' | translate}}</ng-container>
+  <ng-container *ngIf="!answered">
+    <ng-container *ngIf="renderText">
+      <span> {{ 'useful.component.question' | translate}}</span>
+    </ng-container>
+    
+    <button (click)="useful()" mat-icon-button aria-label="Es útil"><mat-icon>thumb_up</mat-icon></button>
+    <button (click)="notUseful()" mat-icon-button aria-label="No es útil"><mat-icon>thumb_down</mat-icon></button>
+
+  </ng-container>
+
+</div>

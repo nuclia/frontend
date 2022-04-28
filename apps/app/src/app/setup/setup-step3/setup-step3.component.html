@@ -1,0 +1,55 @@
+<app-setup-container>
+  <div class="setup-step3">
+    <app-setup-header [step]="step" [isSignup]="isSignup"></app-setup-header>
+
+    <h2 class="setup-step3-title">{{ 'setup.upload_file' | translate }}</h2>
+    <div class="setup-step3-desc">{{ 'setup.upload_document' | translate }}</div>
+
+    <div class="setup-step3-file">
+      <div
+        class="setup-step3-drop"
+        fxLayout="row"
+        fxLayoutAlign="center center"
+        (click)="chooseFile($event)"
+      >
+        {{ 'modal.upload.drop' | translate }}
+      </div>
+      <input #file type="file" hidden />
+      <div class="setup-step3-status">
+        <div *ngIf="loading" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+          <app-setup-loader></app-setup-loader>
+          <div>{{ 'setup.processing_file' | translate }}</div>
+        </div>
+        <div *ngIf="uploaded" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="8px">
+          <svg-icon src="assets/icons/check.svg"></svg-icon>
+          <div>{{ 'setup.process_completed' | translate }}</div>
+        </div>
+      </div>
+    </div>
+
+    <stf-expander [expanded]="loading || uploaded">
+      <div class="setup-step3-video" >
+        <div class="setup-step3-video-desc">{{ "setup.watch_tutorial" | translate }}</div>
+        <a href="#" class="setup-step3-video-poster">
+          <img src="assets/images/poster.jpg">
+          <div class="setup-step3-video-play"></div>
+        </a>
+      </div>
+    </stf-expander>
+
+    <div class="setup-step3-actions">
+      <stf-button
+        [routerLink]="['/select']"
+        minWidth="175px"
+        color="secondary"
+        [disabled]="!uploaded"
+      >
+        {{ 'generic.go!' | translate }}
+      </stf-button>
+      <div class="setup-step3-skip">
+        <a stfButtonSkip [routerLink]="['/select']">{{ 'generic.skip' | translate }}</a>
+      </div>
+    </div>
+
+  </div>
+</app-setup-container>

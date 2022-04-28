@@ -1,0 +1,189 @@
+@import '../styles/partials/_variables';
+
+.stf-toast {
+  box-shadow: $shadow-dialog;
+  border-radius: border-radius(m);
+  margin: rythm(2);
+  max-width: $w-dialog;
+  background: rgba($white-smoke, 0.975);
+  @supports (-webkit-backdrop-filter: blur(9px)) {
+    background: rgba($white-smoke, 0.9);
+    -webkit-backdrop-filter: blur(9px);
+  }
+  display: flex;
+  flex: 1 1 0%;
+  flex-flow: row nowrap;
+  place-content: stretch flex-start;
+  align-items: stretch;
+  z-index: $zindex-toast;
+  margin: auto;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-basis: 100%;
+  }
+  &-title {
+    @include font-size(l, l, l);
+    font-weight: var(--stf-font-weight-regular);
+    margin: 0;
+    padding: rythm(1.5);
+    color: $gray-blacky;
+    display: flex;
+    align-items: center;
+    & > div {
+      margin-left: rythm(1.5);
+      line-height: var(--stf-line-height-xxxlarge);
+    }
+    strong {
+      font-weight: var(--stf-font-weight-semibold);
+    }
+    ::ng-deep svg {
+      //icons next to the title
+      width: rythm(2);
+      height: rythm(2);
+      vertical-align: middle;
+      margin: (-rythm(0.25)) (rythm(0.5)) (-rythm(0.25)) (-rythm(0.5));
+      line-height: 0;
+    }
+  }
+  & a {
+    font-weight: var(--stf-font-weight-bold);
+  }
+  &-footer {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-basis: 0;
+
+    &-wrapper {
+      padding: rythm(1) rythm(0.5);
+      white-space: nowrap;
+    }
+    .close-button {
+      margin-right: rythm(1);
+      cursor: pointer;
+      svg {
+        margin-top: rythm(0.5);
+        display: block;
+      }
+    }
+  }
+
+  &.primary {
+    background: $blue;
+
+    .stf-toast-title {
+      color: $white;
+
+      & svg {
+        fill: $white;
+      }
+    }
+  }
+}
+.stf-toast.stf-expanded {
+  border-bottom-left-radius: unset;
+  border-bottom-right-radius: unset;
+}
+.stf-toast-panel {
+  background: $white;
+  box-shadow: $shadow-dialog;
+  padding: rythm(1.5);
+}
+
+.stf-toast.is-sibling:not(.pa-expanded),
+.stf-toast-panel.is-sibling {
+  margin-bottom: rythm(1.5);
+}
+
+@keyframes toast-in {
+  0% {
+    opacity: 0;
+    transform: translateY(120%);
+  }
+  90% {
+    opacity: 0;
+    transform: translateY(-5%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%);
+  }
+}
+@keyframes toast-in-content {
+  0% {
+    opacity: 0;
+    transform: translateY(rythm(1));
+  }
+  25% {
+    opacity: 0;
+    transform: translateY(rythm(1));
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0);
+    filter: blur(5rem);
+  }
+}
+@keyframes toast-out-content {
+  0% {
+    opacity: 1;
+    transform: translateY(rythm(1));
+  }
+  25% {
+    opacity: 0;
+    transform: translateY(rythm(1));
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+.stf-toast.in {
+  animation-name: toast-in;
+  animation-duration: 0.75s;
+  animation-iteration-count: 1;
+
+  .stf-toast-header,
+  .stf-toast-footer {
+    animation-name: toast-in-content;
+    animation-duration: 1.25s;
+    animation-iteration-count: 1;
+  }
+}
+.stf-toast.out {
+  animation-name: toast-out;
+  animation-duration: 0.75s;
+  animation-iteration-count: 1;
+
+  .stf-toast-header,
+  .stf-toast-footer {
+    animation-name: toast-out-content;
+    animation-duration: 1.25s;
+    animation-iteration-count: 1;
+  }
+}
+
+.stf-toast-title > pa-icon > svg {
+  width: rythm(2);
+  height: rythm(2);
+  fill: $gray-contrast;
+  vertical-align: middle;
+  margin: (-rythm(0.25)) (rythm(0.5)) (-rythm(0.25)) (-rythm(0.5));
+  line-height: 0;
+  margin-top: -rythm(0.5); //adjustment for icon
+}

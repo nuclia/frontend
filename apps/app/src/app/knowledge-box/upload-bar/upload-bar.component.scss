@@ -1,0 +1,42 @@
+@import 'libs/pastanaga/src/lib/styles/stf';
+
+.upload-bar {
+  height: 45px;
+  padding: 0 100px 0 48px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 0px 0px 4px 0px;
+  color: #fff;
+
+  &-title {
+    margin-right: 20px;
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  &-progress {
+    margin-right: 10px;
+    height: 5px;
+    background-color: #fff;
+  
+    &-value {
+      height: 100%;
+      transition: width 0.1s linear;
+      background-color: var(--stf-primary);
+    }
+  }
+
+  &-percentage {
+    margin-right: 24px;
+  }
+
+  button {
+    @include reset-button();
+    cursor: pointer;
+    height: 30px;
+    padding: 0 12px;
+    font-weight: var(--stf-font-weight-semibold);
+    color: #000;
+    background: var(--stf-gray-background);
+    border-radius: var(--stf-border-radius-button);
+  }
+
+}

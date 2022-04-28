@@ -1,0 +1,74 @@
+<div class="account-dbs"
+     *ngIf="account && zones">
+
+  <div class="account-dbs-list"
+       *ngIf="nucliaDBs">
+    <div class="account-db"
+         *ngFor="let db of nucliaDBs">
+      <div class="account-db-header"
+           fxLayout="row"
+           fxLayoutAlign="start center">
+        <div class="account-db-title"
+             fxFlex="1 1 0">
+          <button (click)="toggleDB(db.title)"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px">
+            <span>{{ db.title }}</span>
+            <svg-icon src="assets/icons/chevron-right.svg"
+                      class="account-db-title-arrow"
+                      [class.expanded]="isExpanded(db.title)"></svg-icon>
+          </button>
+        </div>
+        <div class="account-db-date"
+             fxFlex="0 0 auto">{{ db.created | formatDate }}</div>
+        <div class="account-db-actions"
+             fxFlex="0 0 auto"
+             fxLayout="row"
+             fxLayoutAlign="end center"
+             fxLayoutGap="5px">
+
+          <!--
+          <app-button-action
+            (click)="openDialog(zones, account, db)"
+            action="edit"
+            ariaLabel="generic.edit"
+            stfTooltip
+            stfTooltipText="generic.edit">
+          </app-button-action>
+          <app-button-action
+            (click)="askConfirmation(db)"
+            action="generate_key"
+            ariaLabel="account.generate_key"
+            stfTooltip
+            stfTooltipText="account.generate_key">
+          </app-button-action>
+          -->
+          <app-button-action (click)="deleteKey()"
+                             action="delete"
+                             ariaLabel="generic.delete"
+                             stfTooltip
+                             stfTooltipText="generic.delete">
+          </app-button-action>
+        </div>
+      </div>
+      <stf-expander [expanded]="isExpanded(db.title)">
+        <stf-expander-content>
+          <div class="account-db-body">
+            <div class="account-db-email">{{ 'account.linked_email' | translate }}: <span>{{ db.contact }}</span></div>
+            <div *ngIf="db.description">{{ db.description }}</div>
+          </div>
+        </stf-expander-content>
+      </stf-expander>
+    </div>
+    <div>
+
+      <div class="mt-28"
+           *ngIf="nucliaDBs.length < maxNucliaDBs">
+        <stf-button (click)="openDialog(zones, account)"
+                    color="secondary"
+                    padding="pd-l">
+          {{ 'account.create_db' | translate }}
+        </stf-button>
+      </div>
+    </div>

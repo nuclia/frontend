@@ -1,0 +1,108 @@
+<div class="knowledge-box-users">
+  <h2>{{ 'account.stash.users' | translate }}</h2>
+
+  <div class="mb-28"
+       *ngIf="account | async as account">
+    <div class="users-amount" >
+      {{ 'account.users_amount' | translate }} <strong>{{ account.current_users }}</strong>
+    </div>
+    <div class="users-left" *ngIf="account.max_users != null">
+      {{ 'account.users_left' | translate }} <strong>{{ account.max_users - account.current_users }}</strong>
+    </div>
+  </div>
+
+  <ng-container *ngIf="isAdmin | async">
+    <div class="add-user"
+        *ngIf="canAddUsers | async">
+      <form (ngSubmit)="addUser()"
+            [formGroup]="addForm"
+            fxLayout="row"
+            fxLayoutGap="24px"
+            fxLayoutAlign="start center">
+        <input type="email"
+              formControlName="email"
+              stfFilterInput
+              [inputHeight]="32"
+              placeholder="{{ 'accounts.add_user_input' | translate }}">
+        <select stfSelect
+                selectSize="small"
+                selectColor="white"
+                formControlName="role">
+          <option value=""
+                  *ngIf="addForm.value.role ===''">
+            {{ 'generic.role' | translate }}
+          </option>
+          <option *ngFor="let role of initialRoles"
+                  [value]="role">
+            {{ roleTitles[role] | translate }}
+          </option>
+        </select>
+        <stf-button type="submit"
+                    [disabled]="addForm.invalid"
+                    size="small"
+                    color="secondary"
+                    minWidth="160px">
+          {{ 'account.add_user' | translate }}
+        </stf-button>
+      </form>
+    </div>
+  </ng-container>
+
+  <table cdk-table
+         [dataSource]="usersKb | async"
+         class="user-table">
+    <ng-container cdkColumnDef="name">
+      <th cdk-header-cell
+          *cdkHeaderCellDef>
+          {{ 'generic.user' | translate }}
+      </th>
+      <td cdk-cell
+          *cdkCellDef="let user">
+        {{ user.name }}
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="role">
+      <th cdk-header-cell
+          *cdkHeaderCellDef>
+        {{ 'stash.users.role' | translate }}
+      </th>
+      <td cdk-cell
+          *cdkCellDef="let user">
+        <select stfSelect
+                selectSize="small"
+                (ngModelChange)="changeRole(user.id, $event)"
+                [ngModel]="user.role"
+                [disabled]="isItMe(user.id)">
+          <ng-container *ngFor="let role of roles">
+            <option
+              [value]="role">
+              {{ roleTitles[role] | translate }}
+            </option>
+          </ng-container>
+        </select>
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="actions">
+      <th cdk-header-cell
+          *cdkHeaderCellDef>
+      </th>
+      <td cdk-cell
+          *cdkCellDef="let user">
+          <app-button-action (click)="deleteUser(user)"
+                             *ngIf="!isItMe(user.id)"
+                             action="delete"
+                             ariaLabel="generic.delete">
+        </app-button-action>
+      </td>
+    </ng-container>
+
+    <tr cdk-header-row
+        *cdkHeaderRowDef="columns">
+    </tr>
+    <tr cdk-row
+        *cdkRowDef="let row;columns: columns">
+    </tr>
+  </table>
+</div>

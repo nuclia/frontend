@@ -1,0 +1,22 @@
+
+.consent {
+  &-subject {
+    margin: 38px 0 8.5vh 0;
+  }
+
+  &-client {
+    margin-bottom: 18px;
+  }
+
+  &-scopes {
+    margin: 0;
+    padding: 0;
+    &-item {
+      margin-bottom: 18px;
+    }
+  }
+
+  &-buttons {
+    margin-top: 36px;
+  }
+}

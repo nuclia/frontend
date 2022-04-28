@@ -1,0 +1,10 @@
+<div [class]="'filters-bar filters-bar-' + color">
+  <div fxFlex="0 0 auto"
+       class="filters-bar-icon">
+    <svg-icon src="assets/icons/filter.svg"></svg-icon>
+  </div>
+  <div fxFlex="1 1 0"
+       [ngClass]="'filters-bar-content ' + contentClass">
+    <ng-content></ng-content>
+  </div>
+</div>

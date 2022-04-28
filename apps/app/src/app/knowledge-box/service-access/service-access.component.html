@@ -1,0 +1,117 @@
+<div class="service-access-container">
+  <h3>{{ 'stash.create_service_access' | translate }}</h3>
+
+  <form [formGroup]="addForm" 
+        (ngSubmit)="addServiceAccess()">
+    <div fxLayout="row" 
+         fxLayoutGap="12px">
+      <input fxFlex="1 1 0"
+             formControlName="title"
+             type="text"
+             stfFilterInput
+             inputColor="gray"
+             [inputHeight]="32"
+             placeholder="{{ 'generic.title' | translate }}">
+
+      <select fxFlex="0 0 auto"
+              formControlName="role"
+              stfSelect
+              selectSize="small">
+        <option value=""
+                *ngIf="addForm.value.role ===''">
+          {{ 'generic.role' | translate }}
+        </option>
+        <option *ngFor="let role of roles"
+                [value]="role">
+          {{ roleTitles[role] | translate }}
+        </option>
+      </select>
+
+      <stf-button type="submit"
+                  [disabled]="addForm.invalid"
+                  fxFlex="0 0 auto"
+                  color="secondary"
+                  size="small"
+                  weight="bold"
+                  minWidth="120px">
+        {{ 'generic.add' | translate }}
+      </stf-button>
+    </div>
+  </form>
+
+  <div *ngIf="serviceAccess && serviceAccess.length > 0"
+       class="mt-28">
+    <h3>{{ 'stash.view_edit_service_access' | translate }}</h3>
+    <div class="service-access-list">
+      <div class="service-access"
+           *ngFor="let sa of serviceAccess">
+        <div class="service-access-header"
+             fxLayout="row"
+             fxLayoutAlign="space-between center">
+          <div class="service-access-title"
+               fxFlex="1 1 0">
+            <button (click)="toggleSA(sa.id)"
+                    [disabled]="!sa.keys || sa.keys.length === 0">
+              <div fxLayout="row"
+                   fxLayoutAlign="start center"
+                   fxLayoutGap="4px">
+                <svg-icon *ngIf="sa.keys && sa.keys.length > 0"
+                          src="assets/icons/chevron-right.svg"
+                          class="service-access-title-arrow"
+                          [class.expanded]="isExpanded(sa.id)">
+                </svg-icon>
+                <span>{{ sa.title }}</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="service-access-actions"
+               fxFlex="0 0 auto">
+            <app-button-action (click)="createKey(sa)"
+                               action="add"
+                               ariaLabel="generic.add"
+                               stfTooltip
+                               stfTooltipText="stash.new_service_access_token">
+            </app-button-action>
+            <app-button-action (click)="deleteServiceAccess(sa)"
+                               action="delete"
+                               iconWidth="15px"
+                               iconHeight="auto"
+                               ariaLabel="generic.delete">
+            </app-button-action>
+          </div>
+        </div>
+
+        <stf-expander [expanded]="isExpanded(sa.id)"
+                      *ngIf="sa.keys && sa.keys.length > 0">
+          <stf-expander-content>
+            <div class="service-access-keys">
+              <div class="service-access-key"
+                   *ngFor="let key of sa.keys"
+                   fxLayout="row"
+                   fxLayoutAlign="start center">
+                <div class="service-access-key-id"
+                     fxFlex="0 0 60%">
+                  {{ key.id }}
+                </div>
+                <div fxFlex="0 0 100px">
+                  {{ key.expires | formatDate }}
+                </div>
+                <div class="service-access-key-actions"
+                     fxFlex="1 1 auto">
+                  <app-button-action (click)="deleteKey(sa, key)"
+                                     action="delete"
+                                     iconWidth="12px"
+                                     iconHeight="auto"
+                                     ariaLabel="generic.delete">
+                  </app-button-action>
+                </div>
+              </div>
+            </div>
+          </stf-expander-content>
+        </stf-expander>
+
+      </div>
+    </div>
+  </div>
+</div>

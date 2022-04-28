@@ -1,0 +1,16 @@
+.label-field {
+  &-names {
+    margin-top: 20px;
+    min-height: 30px; // Avoid a shift when first tag is selected
+  }
+
+  &-arrow {
+    display: inline-block;
+    margin: 0 0 1px 16px;
+    width: 7px;
+    height: 5px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid #000;
+  }
+}

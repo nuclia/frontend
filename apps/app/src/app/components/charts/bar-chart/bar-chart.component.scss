@@ -1,0 +1,32 @@
+
+.bar-chart {
+  --app-chart-line-color: #e1e1e1;
+  
+  .bar {
+    fill: var(--stf-primary);
+    opacity: 0.5;
+    &:last-child {
+      opacity: 1;
+    }
+  }
+
+  .tick {
+    text {
+      font-family: var(--stf-font-family);
+      font-size: var(--stf-font-size-ssmall);
+      font-weight: var(--stf-font-weight-light);
+      cursor: default;
+      user-select: none;
+    }
+  }
+
+  .grid-line {
+    stroke: var(--app-chart-line-color);
+  }
+
+  .y-axis {
+    line {
+      stroke: var(--app-chart-line-color);
+    }
+  }
+}

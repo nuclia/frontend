@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<babeledit_project be_version="2.8.0" version="1.2">
+    <!--
+
+    BabelEdit project file
+    https://www.codeandweb.com/babeledit
+
+    This file contains meta data for all translations, but not the translation texts itself.
+    They are stored in framework-specific message files (.json / .vue / .yaml / .properties)
+
+    -->
+    <preset_collections/>
+    <framework>ngx-translate</framework>
+    <filename>user.babel</filename>
+    <source_root_dir/>
+    <folder_node>
+        <name/>
+        <children/>
+    </folder_node>
+    <isTemplateProject>false</isTemplateProject>
+    <languages>
+        <language>
+            <code>ca-ES</code>
+            <source_id/>
+            <source_file>libs/common/src/assets/i18n/user/ca.json</source_file>
+        </language>
+        <language>
+            <code>en-US</code>
+            <source_id/>
+            <source_file>libs/common/src/assets/i18n/user/en.json</source_file>
+        </language>
+        <language>
+            <code>es-ES</code>
+            <source_id/>
+            <source_file>libs/common/src/assets/i18n/user/es.json</source_file>
+        </language>
+    </languages>
+    <translation_files>
+        <translation_file>
+            <file>libs/common/src/assets/i18n/user/ca.json</file>
+        </translation_file>
+        <translation_file>
+            <file>libs/common/src/assets/i18n/user/en.json</file>
+        </translation_file>
+        <translation_file>
+            <file>libs/common/src/assets/i18n/user/es.json</file>
+        </translation_file>
+    </translation_files>
+    <editor_configuration>
+        <save_empty_translations>true</save_empty_translations>
+        <copy_templates>
+            <copy_template>{{'%1' | translate}}</copy_template>
+            <copy_template>[translate]=&quot;'%1'&quot;</copy_template>
+            <copy_template>_('%1')</copy_template>
+        </copy_templates>
+    </editor_configuration>
+    <primary_language>ca-ES</primary_language>
+    <configuration>
+        <indent>tab</indent>
+        <format>json</format>
+        <support_arrays>true</support_arrays>
+    </configuration>
+</babeledit_project>

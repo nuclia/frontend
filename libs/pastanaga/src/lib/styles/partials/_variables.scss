@@ -1,0 +1,409 @@
+//==================
+//###   COLORS   ###
+
+$entities-gpe-back: #454ade;
+$entities-gpe-color: white;
+$entities-fac-back: #81d8ac;
+$entities-fac-color: black;
+$entities-org-back: #6eb0ec;
+$entities-org-color: white;
+$entities-mail-back: #e81c66;
+$entities-mail-color: white;
+$entities-money-back: #ff8c4b;
+$entities-money-color: white;
+$entities-person-back: #ffe186;
+$entities-person-color: black;
+$entities-date-back: #ff8989;
+$entities-date-color: black;
+$entities-percent-back: #1e264f;
+$entities-percent-color: white;
+$entities-time-back: #21b8a6;
+$entities-time-color: white;
+$entities-event-back: #cba2da;
+$entities-event-color: white;
+$entities-loc-back: #b7a38d;
+$entities-loc-color: white;
+$entities-norp-back: #743ccf;
+$entities-norp-color: white;
+$entities-product-back: #d74f57;
+$entities-product-color: white;
+$entities-work-of-art-back: #ffbccc;
+$entities-work-of-art-color: black;
+$entities-language-back: #d1d3ff;
+$entities-language-color: black;
+
+//GRAYS, AZURES, WHITES       //BLUES, SKIES                //BROWNS                       //REDS                       //GREENS                   //OCHERS, YELLOWS
+$gray-black: #212121;
+$gray-blacky: #4c4c4c;
+$gray-dark: #656565;
+$blue-dark: #00648d;
+$brown-dark: #685454;
+$red-dark: #b60051;
+$green-dark: #21840a;
+$ocher-dark: #a79b06;
+$gray-contrast: #717171;
+$blue-contrast: #00719e;
+$brown-contrast: #745f5f;
+$red-contrast: #cc005b;
+$gray: #767676;
+$blue: #007eb1;
+$brown: #826a6a;
+$red: #e40166;
+$green: #24a506;
+$ocher: #bdb107;
+$gray-light: #959595;
+$blue-light: #4da4c8;
+$brown-light: #a79696;
+$red-light: #ec4d94;
+$green-light: #44da21;
+$ocher-light: #d8ca19;
+$gray-pale: #b8c6c8;
+$blue-pale: #90cbe3;
+$red-shadow: rgba(236, 77, 148, 0.275);
+$azure-dark: #dee7e9;
+$sky-dark: #c6e4f1;
+$azure: #edf1f2;
+$sky: #daeef6;
+$azure-light: #f3f2ef;
+$sky-light: #e8f4f9;
+$yellow-light: rgba(239, 233, 9, 0.95);
+$white-smoke: #f7f6f5;
+$blue-palish: #78c0d7;
+$white-ghost: #fbfaf8;
+$white: #fff;
+
+//COLOR BASIC WHEEL
+$magenta-dark: #ce2c61;
+$salmon-dark: #c75735; /*ocher-dark*/ /*gree-dark*/
+$teal-dark: #197f68; /*blue-dark*/
+$purple-dark: #7f508c; /*red-dark*/
+$magenta: #ec447b;
+$salmon: #ea6e48; /*ocher*/ /*green*/
+$teal: #23a98b; /*blue*/
+$purple: #a872b7; /*red*/
+$magenta-vivid: #fc6a9a;
+$salmon-vivid: #fb8e6c;
+$ocher-vivid: #d2b62d;
+$green-vivid: #8fca23;
+$teal-vivid: #39d0ae;
+$blue-vivid: #41bcef;
+$purple-vivid: #ce95de;
+$red-vivid: #ff5e4f;
+
+//BLUE              //TEAL              //JADE              //GREEN            //LIME
+$b90: #16638c;
+$t90: #167064;
+$j90: #155d45;
+$g90: #316926;
+$l90: #4e7227;
+$b80: #2880a4;
+$t80: #169086;
+$j80: #16785d;
+$g80: #488538;
+$l80: #71903c;
+$b70: #178fb0;
+$t70: #17a397;
+$j70: #168668;
+$g70: #539442;
+$l70: #85a147;
+$b60: #179fbd;
+$t60: #17b6ab;
+$j60: #169575;
+$g60: #5fa44d;
+$l60: #97b151;
+$b50: #17a9c6;
+$t50: #17c3b8;
+$j50: #17a07f;
+$g50: #69b156;
+$l50: #a6be5a;
+$b40: #2fb4cf;
+$t40: #34cbc2;
+$j40: #38ae92;
+$g40: #7fbb6f;
+$l40: #b2c773;
+$b30: #57c1d6;
+$t30: #5bd2cc;
+$j30: #61bca6;
+$g30: #96c689;
+$l30: #b2c773;
+$b20: #88d0e0;
+$t20: #8bded9;
+$j20: #8fccbe;
+$g20: #b3d4aa;
+$l20: #cfdbad;
+$b10: #b5e0ea;
+$t10: #b7e8e4;
+$j10: #b9ddd5;
+$g10: #cde1c8;
+$l10: #dfe6ca;
+$b05: #ddeef1;
+$t05: #def0ef;
+$j05: #deece9;
+$g05: #e5eee3;
+$l05: #edf1e5;
+
+$body-bg: var(--stf-white) !default;
+$body-color: var(--stf-gray-dark) !default;
+$link-color: $blue !default;
+$link-decoration: underline !default;
+$link-hover-color: $blue-contrast !default;
+$link-hover-decoration: underline !default;
+$text-selection: rgba($red-light, 0.35) !default;
+
+// Controls
+$legend-color: darken($green-dark, 12) !default;
+$legend-background: $white-smoke !default;
+$legend-padding: rythm(1) rythm(1.5) !default;
+$legend-margin: 0 (-rythm(1.5)) !default;
+$control-border-color: $blue-light !default;
+
+// Shadows
+$shadow-none: none;
+$shadow-pop: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+$shadow-hover: 0 4px 12px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+$shadow-pressed: 0 8px 36px 0 rgba(0, 0, 0, 0.15), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+$shadow-dialog: 0 8px 36px 0 rgba(0, 0, 0, 0.15), 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+$shadow-blocking: 0 0 72px 0 rgba(0, 0, 0, 0.25), 0 8px 36px 0 rgba(0, 0, 0, 0.15), 0 4px 12px 0 rgba(0, 0, 0, 0.1);
+
+$shadow: (
+  0: $shadow-none,
+  //0
+  1: $shadow-pop,
+  //pop
+  2: $shadow-hover,
+  //hover
+  3: $shadow-pressed,
+  //pressed
+  4: $shadow-dialog,
+  //dialog
+  5: $shadow-blocking,
+  //blocking dialog
+) !default;
+
+// Spacing
+//
+// Control the default styling of most elements by modifying these
+// variables. Mostly focused on spacing.
+// You can add more entries to the $spacers map, should you need more variation.
+
+$spacer: 12px !default; //.75rem
+$rythm: (
+  0: 0,
+  0.25: (
+    $spacer * 0.25,
+  ),
+  //3
+  0.5:
+    (
+      $spacer * 0.5,
+    ),
+  //6
+  0.75:
+    (
+      $spacer * 0.75,
+    ),
+  //6
+  1: $spacer,
+  //12
+  1.5:
+    (
+      $spacer * 1.5,
+    ),
+  //18
+  2:
+    (
+      $spacer * 2,
+    ),
+  //24
+  2.5:
+    (
+      $spacer * 2.5,
+    ),
+  //30
+  3:
+    (
+      $spacer * 3,
+    ),
+  //36
+  3.5:
+    (
+      $spacer * 3.5,
+    ),
+  //42
+  4:
+    (
+      $spacer * 4,
+    ),
+  //48
+  5:
+    (
+      $spacer * 5,
+    ),
+  //60
+  6:
+    (
+      $spacer * 6,
+    ),
+  //36
+  7:
+    (
+      $spacer * 7,
+    ),
+  //36
+) !default;
+
+@function rythm($spacer-size) {
+  @return map-get($rythm, $spacer-size);
+}
+
+//#################
+//###   FONTS   ###
+//#################
+
+$font-family-monospace: var(--stf-font-family-monospace) !default;
+$font-family-base: var(--stf-font-family) !default;
+
+// FONT SIZES
+$font-size: (
+  xs: var(--stf-font-size-ssmall),
+  s: var(--stf-font-size-small),
+  // ~13px - Code (monospace 1px smaller)
+  m: var(--stf-font-size-medium),
+  //  14px - p, body
+  l: var(--stf-font-size-large),
+  // ~15px - buttons, tabs
+  xl: var(--stf-font-size-xlarge),
+  // ~16px - breadcrumbs, section titles, document header
+  xxl: var(--stf-font-size-xxlarge),
+  // ~18px - panels, dialog titles, main search
+  xxxl: var(--stf-font-size-xxxlarge),
+  // ~20px - big buttons
+  //display sizes
+  d: var(--stf-font-size-d),
+  // ~24px - empty screen titles
+  xd: var(--stf-font-size-xd),
+  // ~36px - big article promo title
+  xxd: var(--stf-font-size-xxd),
+  // ~42px - big section primi title
+  xxxd: var(--stf-font-size-xxxd) // ~60px - main hero claim,
+) !default;
+@function size($tshirt-size) {
+  @return map-get($font-size, $tshirt-size);
+}
+
+// LINE HEIGHTS
+$line-height: (
+  xs: var(--stf-line-height-ssmall),
+  // ~12px
+  s: var(--stf-line-height-small),
+  // ~15px
+  m: var(--stf-line-height-m),
+  //  18px
+  l: var(--stf-line-height-large),
+  // ~21px
+  xl: var(--stf-line-height-xlarge),
+  // ~24px
+  xxl: var(--stf-line-height-xxlarge),
+  // ~27px
+  xxxl: var(--stf-line-height-xxxlarge),
+  // ~30px
+  d: var(--stf-line-height-d),
+  // ~33
+  xd: var(--stf-line-height-xd),
+  // ~36
+  xxd: var(--stf-line-height-xxd),
+  // ~42
+  xxxd: var(--stf-line-height-xxxd) // ~60,
+) !default;
+@function line($tshirt-lheight) {
+  @return map-get($line-height, $tshirt-lheight);
+}
+
+// FONT SPACING
+//$line-height-base:            1.5 !default;
+$letter-spacing: (
+  xxl: -0.03em,
+  // display: +24
+  xl: -0.015em,
+  // xlarge text: 24
+  l: 0em,
+  // large text: 18, 20
+  m: 0.015em,
+  // medium text: 14, 15 & 16
+  s: 0.03em // small text: 10, 11, 12 & 13,
+) !default;
+@function spacing($tshirt-lspacing) {
+  @return map-get($letter-spacing, $tshirt-lspacing);
+}
+
+@mixin font-size($fs-size, $fs-line, $fs-spacing) {
+  font-size: size($fs-size);
+  line-height: line($fs-line);
+  letter-spacing: spacing($fs-spacing);
+}
+$small-font-size: 85% !default;
+
+$headings-margin-bottom: calc(rythm(1) / 2) !default;
+$headings-font-family: inherit !default;
+$headings-line-height: 1.2 !default;
+$headings-color: inherit !default;
+$paragraph-margin-bottom: rythm(1) !default;
+
+$rythm-base: 12px;
+
+$rythm-v: $rythm-base;
+$rythm-h: $rythm-base;
+
+$rythm-v: 12px;
+$rythm-h: 12px;
+
+$table-cell-padding: 0.75rem !default;
+$table-cell-padding-sm: 0.3rem !default;
+
+// Widths and heights
+$w-contextual-menu: rythm(1) * 15; //180
+$w-card: rythm(1) * 17.5; //210
+$w-small-menu: rythm(1) * 20; //240
+$w-menu: rythm(1) * 25; //300
+$w-small-dialog: rythm(1) * 35; //420 --> Used in Login
+$w-dialog: rythm(1) * 45; //540
+$w-wide-dialog: rythm(1) * 70; //840 --> Not used anymore
+
+$h-small-band: rythm(1) * 7.5; //90
+$h-small-dialog: rythm(1) * 10; //120
+$h-band: rythm(1) * 12.5; //150
+$h-card: rythm(1) * 17.5; //210
+$h-long-card: rythm(1) * 25; //300
+$h-menu: rythm(1) * 40; //480
+$h-dialog: rythm(1) * 55; //660
+
+// RADIUS
+$radius-base: 3px !default;
+$border-radius: (
+  xs: calc($radius-base * (1 / 3)),
+  // ~1px
+  s: calc($radius-base * (2 / 3)),
+  // ~2px
+  m: $radius-base,
+  //  3px
+  l: calc($radius-base * (2 / 1)),
+  // ~6px
+  xl: calc($radius-base * (4 / 1)) // ~12px,
+) !default;
+@function border-radius($br) {
+  @return map-get($border-radius, $br);
+}
+@mixin border-radius($br) {
+  border-radius: border-radius($br);
+}
+
+//Z-INDEXS
+$zindex-dropdown: 10000 !default;
+$zindex-sticky: 10020 !default;
+$zindex-fixed: 10030 !default;
+$zindex-modal-backdrop: 10040 !default;
+$zindex-modal: 10050 !default;
+$zindex-toast: 10060 !default;
+$zindex-tooltip: 10070 !default;
+
+$mat-form-field-fill-side-padding: 20px;

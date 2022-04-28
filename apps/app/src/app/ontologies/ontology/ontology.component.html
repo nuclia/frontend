@@ -1,0 +1,109 @@
+<div class="ontology" *ngIf="ontology">
+  <h2>{{ addNew ? ('ontology.add_ontology' | translate) : ontology.title }}</h2>
+
+  <form [formGroup]="ontologyForm">
+    <div class="mb-32" fxLayout="row">
+      <label class="field-label mt-12" fxFlex="200px">
+        {{ 'ontology.ontology_name' | translate }}
+      </label>
+      <div fxFlex="1 1 0">
+        <stf-input
+          formControlName="title"
+          [validator]="ontologyForm.controls['title']"
+          [validation_messages]="validationMessages.title"
+          theme="white"
+          [isLessen]="true">
+        </stf-input>
+      </div>
+    </div>
+
+    <!--
+    <div class="mb-44" fxLayout="row">
+      <label class="field-label mt-12" fxFlex="200px">
+        {{ 'generic.description' | translate }}
+      </label>
+      <div fxFlex="1 1 0">
+        <stf-textarea
+          formControlName="description"
+          color="white"
+          initialHeight="130px">
+        </stf-textarea>
+      </div>
+    </div>
+    -->
+  </form>
+
+  <div class="mb-52" fxLayout="row">
+    <label class="field-label" fxFlex="200px">
+      {{ 'generic.color' | translate }}
+    </label>
+    <div fxFlex="1 1 0">
+      <app-color-picker
+        [hexColors]="colors"
+        [value]="ontology.color"
+        (valueChange)="setColor($event)">
+      </app-color-picker>
+    </div>
+  </div>
+
+  <div class="mb-80" fxLayout="row">
+    <label class="field-label" fxFlex="200px">
+      {{ 'ontology.label_classification' | translate }}
+    </label>
+    <div fxFlex="1 1 0">
+      <div>{{ 'ontology.customize_classification' | translate }}</div>
+      <div class="mb-36">{{ 'ontology.manage_labels' | translate }}</div>
+      <div cdkDropList class="label-list" (cdkDropListDropped)="drop($event)">
+        <app-label
+          *ngFor="let title of labelOrder; let i = index;"
+          (labelDelete)="deleteLabel(title)"
+          (labelChange)="modifyLabel(title, $event)"
+          [label]="ontology.getLabel(title)"
+          cdkDrag>
+        </app-label>
+      </div>
+      <app-label
+        [addNew]="true"
+        (labelAdd)="addLabel($event)">
+      </app-label>
+    </div>
+  </div>
+
+  <div fxLayout="row" class="mb-68">
+    <div fxFlex="200px"></div>
+    <div fxFlex="1 1 0" fxLayout="row" fxLayoutGap="12px">
+      <stf-button
+        (click)="saveOntology()"
+        minWidth="110px"
+        [disabled]="ontologyForm.invalid || !hasChanges">
+        {{ 'generic.save' | translate }}
+      </stf-button>
+      <stf-button
+        *ngIf="!addNew && hasChanges"
+        (click)="cancelChanges()"
+        minWidth="110px"
+        color="white">
+        {{ 'generic.reset' | translate }}
+      </stf-button>
+    </div>
+  </div>
+
+  <div *ngIf="!addNew" class="danger-zone" fxLayout="row" fxLayoutAlign="start center">
+    <div class="danger-zone-title" fxFlex="200px" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
+      <svg-icon src="assets/icons/danger.svg"></svg-icon>
+      <span>{{ 'generic.dangerous' | translate }}</span>
+    </div>
+    <div class="danger-zone-warning" fxFlex="1 1 0">
+      {{ 'ontology.delete_warning' | translate }}
+    </div>
+    <div fxFlex="0 0 auto">  
+      <stf-button
+        (click)="deleteOntology()"
+        minWidth="110px"
+        color="destructive">
+        {{ 'generic.delete' | translate }}
+      </stf-button>
+    </div>
+  </div>
+
+</div>

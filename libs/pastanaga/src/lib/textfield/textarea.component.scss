@@ -1,0 +1,153 @@
+
+.stf-field.stf-textarea {
+  position: relative;
+  background-color: var(--stf-input-background);
+  &.stf-color-white {
+    background-color: #fff;
+  }
+
+  .stf-textarea-control-resizer {
+    height: 0px;
+    width: 0px;
+    border-top: 7px solid var(--stf-gray-light);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    transform: rotate(-45deg);
+    position: absolute;
+    margin-top: -6px;
+    right: -4.5px;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.33s ease;
+
+    &::after {
+      content: '';
+      height: 6px;
+      width: 10px;
+      background: #fff;
+      position: absolute;
+      top: -4px;
+      right: -10px;
+      transform: rotate(-45deg);
+      pointer-events: none;
+      z-index: 1;
+    }
+    &::before {
+      content: '';
+      height: 0px;
+      width: 0px;
+      border-top: 4px solid white;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      position: absolute;
+      margin-top: -6px;
+      right: -4px;
+      pointer-events: none;
+      z-index: 1;
+      transition: all 0.33s ease;
+    }
+  }
+
+  .stf-textarea-label {
+    position: absolute;
+    top: 10px;
+    left: var(--stf-input-padding-horizontal);
+    transition: transform var(--stf-input-label-duration) ease;
+    color: var(--stf-input-label-color);
+    transform-origin: left;
+    transform: translateY(0);
+    touch-action: none;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .stf-textarea-control-filled + .stf-textarea-label,
+  .stf-textarea-control:focus:not(:disabled):not(:read-only) + .stf-textarea-label,
+  .stf-textarea-control:active:not(:disabled):not(:read-only) + .stf-textarea-label {
+    transform: scale(0.75) translateY(-8px);
+  }
+
+  // Firefox workaround
+  .stf-textarea-control:focus:not(:disabled):not(:-moz-read-only) + .stf-textarea-label,
+  .stf-textarea-control:active:not(:disabled):not(:-moz-read-only) + .stf-textarea-label {
+    transform: scale(0.75) translateY(-8px);
+  }
+
+  // disabled
+  .stf-textarea-control:disabled {
+    background-image: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="12" height="3" viewBox="0 0 12 3"><circle cx="1.5" cy="1.5" r="1.5" fill="%23' + str_slice(
+        var(--stf-grey),
+        2
+      ) + '" fill-rule="evenodd"/></svg>');
+    background-size: 6px 1px;
+    background-repeat: repeat-x;
+    background-position: bottom left;
+    background-color: transparent;
+    color: var(--stf-grey);
+    padding-bottom: 6px;
+    background-size: 6px 1px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+
+    + .stf-textarea-label {
+      color: var(--stf-grey);
+    }
+  }
+  // read-only
+  .stf-textarea-control:read-only {
+    background-image: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="12" height="3" viewBox="0 0 12 3"><circle cx="1.5" cy="1.5" r="1.5" fill="%23' + str_slice(
+      var(--stf-grey),
+        2
+      ) + '" fill-rule="evenodd"/></svg>');
+    background-repeat: repeat-x;
+    background-position: bottom left;
+    background-color: transparent;
+    color: var(--stf-grey-darker);
+    padding-bottom: 6px;
+    background-size: 6px 1px;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+
+    + .stf-textarea-label {
+      color: var(--stf-grey-light);
+    }
+  }
+
+  .stf-textarea-control {
+    height: auto;
+    min-height: 45px;
+    resize: vertical;
+
+    display: block;
+    width: 100%;
+    padding: 10px var(--stf-input-padding-horizontal);
+    line-height: 1.25;
+    color: var(--stf-black);
+    background-color: transparent;
+    border: 0;
+    transition: all 0.25s ease;
+    -webkit-appearance: none;
+    font-family: var(--stf-font-family);
+
+    &.has-label {
+      padding-top: 24px;
+    }
+
+    &.code {
+      font-family: var(--stf-font-family-monospace);
+      line-height: 1.47;
+    }
+
+    &:not(:disabled):not(:read-only):active,
+    &:not(:disabled):not(:read-only):focus {
+      box-shadow: 0 2px 0 0px var(--stf-primary);
+    }
+
+    &:active ~ .stf-textarea-control-resizer::before,
+    &:focus ~ .stf-textarea-control-resizer::before {
+      opacity: 0;
+    }
+  }
+}

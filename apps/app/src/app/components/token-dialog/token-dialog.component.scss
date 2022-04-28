@@ -1,0 +1,36 @@
+@import 'variables';
+
+.token-dialog {
+  position: relative;
+  padding: 12px 35px;
+  
+  .close-button {
+    @include reset-button();
+    position: absolute;
+    top: -2px;
+    right: -4px;
+    cursor: pointer;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  h1 {
+    margin: 0 0 16px 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+  }
+
+  &-value {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    padding: 0 16px;
+    background-color: var(--stf-gray-background);
+    border-radius: 4px;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}

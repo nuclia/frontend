@@ -1,0 +1,24 @@
+<button [ngClass]="buttonStyle"
+        [disabled]="isDisabled"
+        [type]="checkedType"
+        [id]="id"
+        [attr.aria-label]="ariaLabel | translate"
+        [attr.aria-controls]="ariaControls"
+        [attr.aria-expanded]="ariaExpanded"
+        [attr.form]="form"
+        [style.minWidth]="minWidth ? minWidth : null"
+        tabindex="0"
+        (click)="onClick($event)">
+  <span class="stf-button-wrapper"
+        tabindex="-1">
+    <svg-icon *ngIf="icon"
+              [src]="'assets/icons/' + icon + '.svg'"
+              class="stf-button-icon"
+              [class.icon-only]="iconOnly"></svg-icon>
+    <span *ngIf="!iconOnly"
+          class="stf-button-label"
+          [class.stf-sr]="icon">
+      <ng-content></ng-content>
+    </span>
+  </span>
+</button>

@@ -1,0 +1,87 @@
+@import 'variables';
+
+.select {
+  position: relative;
+  top: 10vh;
+  width: 600px;
+  height: 80vh;
+  margin: 0 auto;
+  padding: 62px 100px;
+  border-radius: 8px;
+  background-color: #fff;
+
+  &-container {
+    width: 100%;
+  }
+
+  .logo {
+    margin-bottom: 68px;
+    text-align: center;
+    img {
+      width: 174px;
+      height: auto;
+    }
+  }
+  &-content {
+    min-height: 0; // Show scrollbar if content overflow
+  }
+}
+
+.select-account {
+  height: 100%;
+
+  &-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    @include scrollbar-black();
+    // Move scrollbar to the edge
+    padding-left: 100px;
+    padding-right: 100px;
+    margin: 0 -100px;
+  }
+
+  &-footer {
+    margin-top: 36px;
+  }
+
+  &-item {
+    margin-bottom: 10px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  .account {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--stf-font-weight-semibold);
+    color: inherit;
+    text-decoration: none;
+    background-color: #f6f6f6;
+    transition: background-color 0.15s, color 0.15s;
+    &-arrow {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      svg {
+        width: 12px;
+        height: auto;
+        display: block;
+        transition: fill 0.15s;
+      }
+    }
+    &:focus,
+    &:hover {
+      outline: 0;
+      background-color: #000;
+      color: #fff;
+      .account-arrow svg {
+        fill: #fff;
+      }
+    }
+  }
+}

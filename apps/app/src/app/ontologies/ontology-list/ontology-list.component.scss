@@ -1,0 +1,78 @@
+
+@import 'variables';
+
+$list-breakpoint: 1550px;
+
+@mixin bordered-scrollbar {
+  &::-webkit-scrollbar {
+    width: 14px;
+    border-left: 8px solid var(--stf-gray-background);
+    background-color: #fff;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 0;
+    border-left: 8px solid var(--stf-gray-background);
+    box-shadow: inset 0 0 0 6px #000;
+  }
+}
+
+.ontology-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 80px;
+
+  .ontology-card {
+    margin-bottom: 60px;
+    @media (min-width: ($list-breakpoint + 1)) {
+      width: 30%;
+      margin-right: 5%;
+      &:nth-child(3n) {
+        margin-right: 0;
+      }
+    }
+    @media (max-width: $list-breakpoint) {
+      width: 47%;
+      margin-right: 6%;
+      &:nth-child(even) {
+        margin-right: 0;
+      }
+    }
+
+    &-title,
+    &-label {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      min-height: 40px;
+      padding: 8px 20px;
+      font-size: var(--stf-font-size-xlarge);
+      line-height: 1.2;
+    }
+
+    &-title {
+      margin-bottom: 5px;
+      font-weight: var(--stf-font-weight-bold);
+      
+      // Fallback colors
+      background-color: var(--stf-gray-lighter-3);
+      color: #000;
+    }
+
+    &-labels {
+      max-height: 300px;
+      overflow-y: auto;
+      @include bordered-scrollbar();
+    }
+
+    &-label {
+      margin-bottom: 3px;
+      background-color: #fff;
+      &:last-child {
+        margin-bottom: 0;
+      }
+      span {
+        @include text-truncate();
+      }
+    }
+  }
+}

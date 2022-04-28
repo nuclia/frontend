@@ -1,0 +1,99 @@
+<div fxLayout="row" fxLayoutAlign="start start">
+  <mat-card class="entity">
+    <form [formGroup]="prefsForm">
+      <h2>User</h2>
+      <p *ngIf="edit">
+        <mat-form-field>
+          <input matInput formControlName="id" placeholder="Id" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field>
+          <input matInput required formControlName="email" placeholder="Email" email />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field>
+          <input matInput required formControlName="name" placeholder="Name" />
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field>
+          <mat-label>Type</mat-label>
+          <select matNativeControl required formControlName="type">
+            <option value="ROOT" *ngIf="isRoot">Root</option>
+            <option value="DEALER">Dealer</option>
+            <option value="USER">User</option>
+          </select>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field>
+          <mat-label>Default language</mat-label>
+          <select matNativeControl required formControlName="language">
+            <option value="CA">Catalan</option>
+            <option value="ES">Spanish</option>
+            <option value="EN">English</option>
+          </select>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field>
+          <input matInput formControlName="providers" placeholder="Providers" />
+        </mat-form-field>
+      </p>
+      <p *ngIf="edit">
+        <mat-form-field>
+          <input matInput formControlName="last_login" placeholder="Last Login" />
+        </mat-form-field>
+      </p>
+      <p></p>
+      <p *ngIf="message">
+        <span>{{ message }}</span>
+      </p>
+    </form>
+  </mat-card>
+
+  <!--
+  <mat-card class="entity">
+    <form [formGroup]="prefsDataForm">
+      <h2>Preferences</h2>
+      <p></p>
+      <p *ngIf="message">
+        <span>{{ message }}</span>
+      </p>
+    </form>
+  </mat-card>
+  -->
+</div>
+
+<div fxLayout="row" fxLayoutAlign="start start" *ngIf="sessions && sessions.length > 0">
+  <mat-card class="sessions">
+    <h2>Sessions</h2>
+    <div *ngFor="let session of sessions">
+      {{ session.data | json }}
+      {{ session.expiration }}
+    </div>
+  </mat-card>
+</div>
+
+<div fxLayout="column" fxLayoutAlign="center center">
+  <div class="error">
+    {{ message }}
+  </div>
+  <div fxLayout="row" fxLayoutAlign="center center">
+    <stf-button class="m-8" position="relative" icon="save" *ngIf="edit" (click)="save()"
+      >Save</stf-button
+    >
+    <stf-button class="m-8" position="relative"  icon="delete" *ngIf="edit" (click)="delete()"
+      >Delete</stf-button
+    >
+    <stf-button *ngIf="edit" class="m-8" position="relative" icon="reset" (click)="reset()"
+    >Reset password</stf-button
+    >
+    <stf-button class="m-8" position="relative" icon="plus" *ngIf="!edit" (click)="add()"
+      >Add</stf-button>
+    <stf-button class="m-8" position="relative" color="legacy" (click)="returnToUsers()"
+      >Cancel</stf-button>
+  </div>
+</div>

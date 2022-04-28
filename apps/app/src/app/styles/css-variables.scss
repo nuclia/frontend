@@ -1,0 +1,10 @@
+:root {
+  --app-min-width: 1024px;
+  --app-background-color: var(--stf-gray-background);
+  --app-topbar-height: 70px;
+  --app-layout-margin-right: 7.3vw;
+  
+  // z-index
+  --app-zindex-topbar: 1000;
+  --app-zindex-filter-sidebar: 800;
+}

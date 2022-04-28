@@ -1,0 +1,54 @@
+.avatar {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin: 0 8px 0 0;
+  border-radius: 50%;
+  font-size: 17px;
+  font-weight: 600;
+  text-align: center;
+
+  &.small {
+    width: 20px;
+    min-width: 20px;
+    height: 20px;
+    line-height: 20px;
+  }
+
+  &.big {
+    width: 72px;
+    min-width: 72px;
+    height: 72px;
+    line-height: 72px;
+  }
+
+  &.huge {
+    width: 96px;
+    min-width: 96px;
+    height: 96px;
+    line-height: 96px;
+  }
+
+  .avatar-text {
+    border-radius: 10em;
+    border: 1px solid #666;
+    padding: 8px;
+    margin-right: 10px;
+    line-height: normal;
+  }
+}
+
+.avatar-wrapper {
+
+  .avatar {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  mat-icon.status {
+    position: absolute;
+    top: 28px;
+    left: 28px;
+  }
+}

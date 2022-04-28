@@ -1,0 +1,58 @@
+@import 'variables';
+
+.account-users {
+
+  .users-left,
+  .users-amount {
+    font-size: var(--stf-font-size-xlarge);
+    strong {
+      margin: 0 4px;
+      text-decoration: underline;
+    }
+  }
+  .users-left {
+    strong {
+      color: var(--stf-primary);
+    }
+  }
+
+  .add-user {
+    margin-bottom: 48px;
+    input {
+      min-width: 240px;
+    }
+  }
+
+  .user-table {
+    width: 100%;
+
+    .user-role {
+      width: 185px;
+      text-align: center;
+
+      button {
+        @include reset-button();
+        cursor: pointer;
+        &[disabled] {
+          cursor: default;
+        }
+        margin-top: 6px; // Vertical align
+        svg {
+          display: block;
+        }
+        .active {
+          path {
+            fill: var(--stf-primary);
+          }
+        }
+      }
+    }
+
+    .user-actions  {
+      width: 110px;
+      text-align: right;
+    }
+  }
+}
+
+

@@ -1,0 +1,46 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app: "{{ .Chart.Name }}"
+    version: "{{ .Values.hash }}"
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      release: "{{ .Release.Name }}"
+      heritage: "{{ .Release.Service }}"
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app: "{{ .Chart.Name }}"
+        version: "{{ .Values.hash }}"
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+    spec:
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      containers:
+      - name: {{ .Release.Name }}
+        image: "{{ .Values.containerRegistry }}/{{ .Values.image }}"
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: "{{ .Release.Name }}-config"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: {{ .Values.service.internalPort }}
+        ports:
+        - name: "http-{{ .Release.Name }}"
+          containerPort: {{ .Values.service.internalPort }}

@@ -1,0 +1,35 @@
+
+.line-chart {
+  --app-chart-line-color: #e1e1e1;
+  
+  .data-line {
+    stroke: var(--stf-primary);
+  }
+
+  .tick {
+    text {
+      font-family: var(--stf-font-family);
+      font-size: var(--stf-font-size-ssmall);
+      font-weight: var(--stf-font-weight-light);
+      cursor: default;
+      user-select: none;
+    }
+  }
+
+  .grid-line {
+    stroke: var(--app-chart-line-color);
+  }
+
+  .y-axis {
+    line {
+      stroke: var(--app-chart-line-color);
+    }
+  }
+
+  .x-axis {
+    line {
+      stroke: #fff;
+      stroke-width: 3px;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+
+app-dashboard {
+    display: flex;
+    flex: 1 1 auto;
+    width: 100%;
+    height: 100%;
+
+    #main {
+        position: relative;
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        min-width: 0;
+
+        // Container 1
+        > .container {
+            position: relative;
+            display: flex;
+            flex: 1 1 0%;
+            width: 100%;
+            height: 100%;
+            overflow-y: scroll;
+            min-height: 0;
+            min-width: 0;
+
+        }
+    }
+}
+
+#main {
+  height: 100%;
+}
+
+.container {
+  height: 100%;
+  overflow-y: scroll;
+}
+
+#content {
+  margin-top: 70px;
+
+}
+.mat-toolbar {
+  position: absolute;
+  top: 0;
+}
+
+.toolbar-icon {
+    padding: 0 14px;
+}
+
+.toolbar-spacer {
+    flex: 1 1 auto;
+}
+
+.user-button {
+    border-radius: 20em;
+    min-height: 40px;
+    min-width: 40px;
+    border: 0;
+}
+.home {
+  cursor: pointer;
+}

@@ -1,0 +1,12 @@
+@import 'libs/pastanaga/src/lib/styles/stf';
+
+.pagination {
+  button {
+    @include reset-button();
+    cursor: pointer;
+    user-select: none;
+    &[disabled] {
+      visibility: hidden;
+    }
+  }
+}
