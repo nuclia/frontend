@@ -50,13 +50,16 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
-    this.user.loggedout.subscribe(() => {
-      this.tracking.logout();
-      this.router.navigate(['/user/login']);
-      this.state.cleanAccount();
-      this.state.cleanStash();
-      this.authService.removeLocalCreds();
-    });
+    this.sdk.nuclia.auth
+      .isAuthenticated()
+      .pipe(filter((isAuth) => !isAuth))
+      .subscribe(() => {
+        this.tracking.logout();
+        this.router.navigate(['/user/login']);
+        this.state.cleanAccount();
+        this.state.cleanStash();
+        this.authService.removeLocalCreds();
+      });
   }
 
   ngOnInit() {
