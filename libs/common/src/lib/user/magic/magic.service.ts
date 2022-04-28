@@ -18,38 +18,35 @@ export class MagicService {
     this.stateService.dbDelStateData();
     this.stateService.cleanAccount();
 
+    if (action.token) {
+      this.sdk.nuclia.auth.authenticate(action.token);
+    }
+
     if (action.action === 'edit') {
-      this.authService.setNextUrl('/edit/' + action.path);
+      this.router.navigate(['/edit/' + action.path]);
     }
 
     if (action.action === 'create') {
-      this.authService.setNextUrl('/edit/' + action.path);
-      this.authService.setNextParams({
-        create: true,
+      this.router.navigate(['/edit/' + action.path], { 
+        queryParams: { create: true } 
       });
     }
 
     if (action.action === 'goaccount' || action.action === 'gostash') {
-      this.authService.setNextUrl('/setup/invite');
-      this.authService.setNextParams({ account: action.account, kb: action.stash });
+      this.router.navigate(['/setup/invite'], { 
+        queryParams: { account: action.account, kb: action.stash } 
+      });
     }
     if (action.action === 'gosetpassword') {
-      this.authService.setNextUrl('/setup/password');
-      this.authService.setNextParams({ signup: true });
+      this.router.navigate(['/setup/password'], { 
+        queryParams: { signup: true } 
+      });
     }
     if (action.action === 'goselectaccount') {
-      this.authService.setNextUrl('/select');
+      this.router.navigate(['/select']);
     }
     if (action.action === 'gosetupaccount') {
-      this.authService.setNextUrl('/setup/account');
-    }
-    if (action.action === 'login') {
-      this.authService.setNextUrl(action.then!);
-      this.router.navigate(['/user/login']);
-    }
-
-    if (action.token) {
-      this.sdk.nuclia.auth.authenticate(action.token);
+      this.router.navigate(['/setup/account']);
     }
   }
 }

@@ -3,6 +3,7 @@
      @dropdown>
   <button *ngFor="let kb of kbs"
           class="kb-switch-item"
+          [disabled]="!kb.role_on_kb"
           (click)="goToKb(kb)">
     <span>{{ kb.title }}</span>
     <svg-icon *ngIf="kb.state === 'PUBLISHED'"

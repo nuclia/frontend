@@ -32,6 +32,9 @@ export interface IKnowledgeBoxCreation {
   description?: string;
   zone: string;
 }
+export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {
+  role_on_kb?: KBRoles;
+}
 export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   get path(): string;
   get fullpath(): string;

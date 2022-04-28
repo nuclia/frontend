@@ -15,11 +15,16 @@
     font-weight: var(--stf-font-weight-semibold);
     color: #707070;
     text-align: left;
-    cursor: pointer;
+    &:not(:disabled) {
+      cursor: pointer;
+    }
+    &:disabled {
+      opacity: 0.3;
+    }
     &:last-child {
       border-bottom-color: transparent;
     }
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: #f3f3f3;
     }
     span {

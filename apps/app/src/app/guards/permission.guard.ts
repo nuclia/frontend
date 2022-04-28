@@ -31,7 +31,7 @@ export class AccountOwnerGuard implements CanActivate {
 @Injectable({
   providedIn: 'root',
 })
-export class KnowledgeBoxRoleGuard implements CanActivate {
+export class KnowledgeBoxOwnerGuard implements CanActivate {
   constructor(private navigation: NavigationService, private router: Router, private sdk: SDKService) {}
 
   canActivate(route: ActivatedRouteSnapshot, routerState: RouterStateSnapshot): Observable<boolean> {

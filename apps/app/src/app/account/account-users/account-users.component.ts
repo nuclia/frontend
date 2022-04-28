@@ -1,12 +1,13 @@
 import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, of } from 'rxjs';
 import { takeUntil, filter, tap, switchMap, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { STFConfirmComponent, ConfirmData } from '@flaps/components';
 import { Account, SDKService, StateService } from '@flaps/auth';
 import { UsersService, AccountUser, AccountRoles, SetUsersAccount } from '@flaps/core';
+import { AppToasterService } from '../../services/app-toaster.service';
 
 @Component({
   selector: 'app-account-users',
@@ -19,7 +20,7 @@ export class AccountUsersComponent implements OnDestroy {
   users?: AccountUser[];
   columns = ['user', 'role', 'actions'];
   email = new FormControl([''], [Validators.required, Validators.email]);
-  addedMessage: string = '';
+  roles: [AccountRoles, string][] = [['AOWNER', 'generic.owner'], ['AMEMBER', 'generic.member']];
 
   account$ = this.stateService.account.pipe(filter((account) => !!account));
   canAddUsers = this.account$.pipe(
@@ -34,6 +35,7 @@ export class AccountUsersComponent implements OnDestroy {
     private stateService: StateService,
     private translate: TranslateService,
     private sdk: SDKService,
+    private toaster: AppToasterService,
     private cdr: ChangeDetectorRef,
   ) {
     this.account$
@@ -65,19 +67,15 @@ export class AccountUsersComponent implements OnDestroy {
   addUser() {
     const data = { email: this.email.value };
     this.usersService.inviteToAccount(this.account!.slug, data).subscribe(() => {
-      this.addedMessage = this.translate.instant('account.invited_user', { user: this.email.value });
+      this.toaster.success(this.translate.instant('account.invited_user', { user: this.email.value }));
       this.email.patchValue('');
       this.cdr?.markForCheck();
-      setTimeout(() => {
-        this.addedMessage = '';
-        this.cdr?.markForCheck();
-      }, 6000);
     });
   }
 
-  toggleRole(user: AccountUser): void {
-    if (user.role === 'AOWNER') {
-      this.changeRole(user, 'AMEMBER')
+  changeRole(user: AccountUser, role: AccountRoles): void {
+    if (role === 'AMEMBER') {
+      this._changeRole(user, role)
         .pipe(switchMap(() => this.updateUsers()))
         .subscribe();
     } else {
@@ -94,9 +92,8 @@ export class AccountUsersComponent implements OnDestroy {
       dialogRef
         .afterClosed()
         .pipe(
-          filter((result) => !!result),
           takeUntil(this.unsubscribeAll),
-          switchMap(() => this.changeRole(user, 'AOWNER')),
+          switchMap((result) => !!result ? this._changeRole(user, role) : of(null)),
           switchMap(() => this.updateUsers()),
         )
         .subscribe();
@@ -128,19 +125,17 @@ export class AccountUsersComponent implements OnDestroy {
       });
   }
 
-  changeRole(user: AccountUser, role: AccountRoles): Observable<void> {
+  private _changeRole(user: AccountUser, role: AccountRoles): Observable<void> {
     const users: SetUsersAccount = {
-      add: [{ user: user.id, role: role }],
-      delete: [],
-    };
+      add: [{ id: user.id, role: role }],
+    }
     return this.usersService.setAccountUsers(this.account!.slug, users);
   }
 
   deleteUser(user: AccountUser): Observable<void> {
     const users: SetUsersAccount = {
-      add: [],
-      delete: [{ user: user.id, role: user.role }],
-    };
+      delete: [user.id]
+    }
     return this.usersService.setAccountUsers(this.account!.slug, users);
   }
 

@@ -10,13 +10,13 @@ export interface AccountUser {
 }
 
 export interface SetUserAccount {
-  user: string;
+  id: string;
   role: AccountRoles;
 }
 
 export interface SetUsersAccount {
-  add: SetUserAccount[];
-  delete: SetUserAccount[];
+  add?: SetUserAccount[];
+  delete?: string[];
 }
 
 export interface KbUser {
@@ -33,7 +33,8 @@ export interface SetUserKb {
 
 export interface SetUsersKb {
   add?: SetUserKb[];
-  delete: string[];
+  updated?: SetUserKb[];
+  delete?: string[];
 }
 
 export interface InviteAccountData {
