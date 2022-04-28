@@ -1,6 +1,6 @@
 replicaCount: 1
 revisionHistoryLimit: 3
-containerRegistry: eu.gcr.io/stashify-218417
+containerRegistry: CONTAINER_REGISTRY_TO_REPLACE
 image: IMAGE_TO_REPLACE
 hash: HASH_VERSION_TO_REPLACE
 resources:

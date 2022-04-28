@@ -128,6 +128,7 @@ jobs:
         id: version_step
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}#" ./charts/app/values.yaml
+          sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
           VERSION=`cat apps/app/VERSION`
           VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
@@ -173,6 +174,7 @@ jobs:
         id: version_step
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}#" ./charts/manager/values.yaml
+          sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/manager/values.yaml
           VERSION=`cat apps/manager/VERSION`
           VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
