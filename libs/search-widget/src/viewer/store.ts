@@ -217,7 +217,7 @@ export function getResourceParagraphs(resource: Resource): WidgetParagraph[] {
 }
 
 function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
-  if (field.extracted && 'file' in field.extracted) {
+  if (field?.extracted && 'file' in field.extracted) {
     if (getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
       return PreviewKind.PDF;
     } else if (paragraph.kind === 'TRANSCRIPT') {
