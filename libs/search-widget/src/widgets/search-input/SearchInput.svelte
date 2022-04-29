@@ -121,13 +121,19 @@
   .input-widget {
     font-size: var(--font-size-base);
     line-height: var(--line-height-body);
-    border: 0.5px dashed var(--color-dark-stronger);
+    padding: var(--input-widget-padding);
+    border-width: var(--input-widget-border-width);
+    border-style: var(--input-widget-border-style);
+    border-color: var(--input-widget-border-color);
+    border-radius: var(--input-widget-border-radius);
     box-sizing: border-box;
-    border-radius: 2px;
   }
   .input-widget:focus,
   .input-widget:active {
-    border-style: solid;
+    border-style: var(--input-widget-border-style-stronger);
+  }
+  .input-widget::placeholder {
+    color: var(--input-widget-placeholder-color);
   }
   .search-icon {
     position: absolute;

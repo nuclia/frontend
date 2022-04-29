@@ -33,7 +33,7 @@
 <style>
   h3 {
     text-transform: uppercase;
-    margin-left: 0 1.3em 1em 0;
+    margin: 0 0 1em 1.3em;
     font-size: 12px;
   }
   .paragraph {
