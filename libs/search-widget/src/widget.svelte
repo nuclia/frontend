@@ -139,6 +139,8 @@
     --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
     --shadow-modal: 2px 2px 20px rgba(0, 0, 0, 0.2);
+    --color-scrollbar-track: #fff;
+    --color-scrollbar-thumb: #000;
 
     color: var(--color-text-accent);
     font-family: var(--font-family-body);

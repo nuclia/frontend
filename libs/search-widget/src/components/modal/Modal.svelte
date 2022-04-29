@@ -113,10 +113,10 @@
     width: 6px;
   }
   .modal.transparent .modal-content::-webkit-scrollbar-thumb {
-    background-color: #000;
+    background-color: var(--color-scrollbar-thumb);
   }
   .modal.transparent .modal-content::-webkit-scrollbar-track {
-    background-color: #fff;
+    background-color: var(--color-scrollbar-track);
   }
 
   :not(.popup) .modal {

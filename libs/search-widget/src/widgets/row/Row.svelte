@@ -82,7 +82,7 @@
     font-size: 12px;
     font-style: italic;
     padding-bottom: 10px;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid var(--color-primary-regular);
   }
 
   .blocks {
