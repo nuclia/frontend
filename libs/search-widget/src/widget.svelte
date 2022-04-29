@@ -139,8 +139,17 @@
     --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
     --shadow-modal: 2px 2px 20px rgba(0, 0, 0, 0.2);
-    --color-scrollbar-track: #fff;
-    --color-scrollbar-thumb: #000;
+
+    --color-scrollbar-track: var(--custom-color-scrollbar-track, #fff);
+    --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, #000);
+
+    --input-widget-padding: var(--custom-input-widget-padding, initial);
+    --input-widget-border-width: var(--custom-input-widget-border-width, 1px);
+    --input-widget-border-style: var(--custom-input-widget-border-style, dashed);
+    --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
+    --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-dark-stronger));
+    --input-widget-border-radius: var(--custom-input-widget-border-radius, 2px);
+    --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, var(--color-dark-stronger));
 
     color: var(--color-text-accent);
     font-family: var(--font-family-body);
