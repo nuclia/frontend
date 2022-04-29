@@ -41,32 +41,35 @@ export class DealerListComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.sort!.sortChange.subscribe(() => (this.paginator!.pageIndex = 0));
+    const paginator = this.paginator;
+    if (this.sort && paginator) {
+      this.sort.sortChange.subscribe(() => (paginator.pageIndex = 0));
 
-    merge(this.sort!.sortChange, this.paginator!.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          return this.dealerService.getDealers();
-          // this.sort.active, this.sort.direction, this.paginator.pageIndex);
-        }),
-        map((data) => {
-          // Flip flag to show that loading has finished.
-          this.isLoadingResults = false;
-          this.isRateLimitReached = false;
-          this.resultsLength = data.length;
+      merge(this.sort.sortChange, paginator.page)
+        .pipe(
+          startWith({}),
+          switchMap(() => {
+            this.isLoadingResults = true;
+            return this.dealerService.getDealers();
+            // this.sort.active, this.sort.direction, paginator.pageIndex);
+          }),
+          map((data) => {
+            // Flip flag to show that loading has finished.
+            this.isLoadingResults = false;
+            this.isRateLimitReached = false;
+            this.resultsLength = data.length;
 
-          return data;
-        }),
-        catchError(() => {
-          this.isLoadingResults = false;
-          // Catch if the GitHub API has reached its rate limit. Return empty data.
-          this.isRateLimitReached = true;
-          return observableOf([]);
-        })
-      )
-      .subscribe((data) => (this.dealers = new MatTableDataSource(data)));
+            return data;
+          }),
+          catchError(() => {
+            this.isLoadingResults = false;
+            // Catch if the GitHub API has reached its rate limit. Return empty data.
+            this.isRateLimitReached = true;
+            return observableOf([]);
+          }),
+        )
+        .subscribe((data) => (this.dealers = new MatTableDataSource(data)));
+    }
   }
 
   addNewDealer() {
@@ -76,7 +79,7 @@ export class DealerListComponent implements AfterViewInit {
   delete(row: any) {
     this.dealerService.deleteDealer(row.id).subscribe(
       (res) => (this.message = 'Deleted'),
-      (error) => console.log(error)
+      (error) => console.log(error),
     );
   }
 

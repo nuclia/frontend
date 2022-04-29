@@ -19,7 +19,7 @@ export const setWidgetActions = (actions: WidgetAction[]) => {
 };
 export const getWidgetActions = () => widgetActions;
 
-let _store: {
+type NucliaStore = {
   query: BehaviorSubject<string>;
   suggestions: BehaviorSubject<Search.Results>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
@@ -28,6 +28,7 @@ let _store: {
   widget: ReplaySubject<Widget>;
   displayedResource: BehaviorSubject<DisplayedResource>;
 };
+let _store: NucliaStore | undefined;
 
 let _state: {
   query: Observable<string>;
@@ -42,7 +43,7 @@ let _state: {
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
 };
 
-export const nucliaStore = () => {
+export const nucliaStore = (): NucliaStore => {
   if (!_store) {
     _store = {
       query: new BehaviorSubject(''),
@@ -54,42 +55,42 @@ export const nucliaStore = () => {
       displayedResource: new BehaviorSubject({ uid: '' }),
     };
     _state = {
-      query: _store.query.asObservable().pipe(
-        tap(() => _store.hasSearchError.next(false)),
+      query: _store!.query.asObservable().pipe(
+        tap(() => _store!.hasSearchError.next(false)),
         map((q) => q.trim()),
         distinctUntilChanged(),
       ),
-      results: _store.searchResults.pipe(
+      results: _store!.searchResults.pipe(
         filter((res) => !!res.resources),
-        map((results) => Object.values(results.resources)),
+        map((results) => (results.resources ? Object.values(results.resources) : [])),
         startWith([] as IResource[]),
       ),
-      paragraphs: _store.suggestions.pipe(
+      paragraphs: _store!.suggestions.pipe(
         filter((res) => !!res.paragraphs?.results),
-        map((res) => Object.values(res.paragraphs?.results)),
+        map((res) => Object.values(res.paragraphs?.results || [])),
         startWith([] as Search.Paragraph[]),
       ),
-      hasSearchError: _store.hasSearchError.asObservable(),
-      pendingSuggestions: _store.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
-      pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
-      widget: _store.widget.asObservable(),
-      customStyle: _store.widget.pipe(
+      hasSearchError: _store!.hasSearchError.asObservable(),
+      pendingSuggestions: _store!.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
+      pendingResults: _store!.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
+      widget: _store!.widget.asObservable(),
+      customStyle: _store!.widget.pipe(
         map((widget) =>
           Object.entries(widget?.style || {})
             .filter(([k, v]) => !!v)
             .reduce((acc, [k, v]) => `${acc}--custom-${k}: ${v};`, ''),
         ),
       ),
-      displayedResource: _store.displayedResource.asObservable(),
+      displayedResource: _store!.displayedResource.asObservable(),
       getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
-        return _store.searchResults.pipe(
+        return _store!.searchResults.pipe(
           map((results) => results.paragraphs?.results || []),
           map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
         );
       },
     };
   }
-  return _store;
+  return _store as NucliaStore;
 };
 
 export const nucliaState = () => {

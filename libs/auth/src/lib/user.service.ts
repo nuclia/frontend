@@ -1,6 +1,4 @@
 import { EventEmitter, Inject, Output, Injectable, PLATFORM_ID } from '@angular/core';
-import { Location, PlatformLocation } from '@angular/common';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserPreferences, User } from './models';
 import { AuthService } from './auth.service';
 import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
@@ -20,14 +18,7 @@ export class UserService {
 
   readonly userPrefs = this.userInfoSubject.pipe(map((user) => user?.preferences));
 
-  constructor(
-    public http: HttpClient,
-    public platformLocation: PlatformLocation,
-    public location: Location,
-    private authService: AuthService,
-    private sdk: SDKService,
-    @Inject(PLATFORM_ID) platformId: any,
-  ) {
+  constructor(private authService: AuthService, private sdk: SDKService, @Inject(PLATFORM_ID) platformId: any) {
     // check if there is local creds
     this.isBrowser = isPlatformBrowser(platformId);
 
@@ -46,18 +37,6 @@ export class UserService {
         switchMap(() => this.updateWelcome()),
       )
       .subscribe();
-  }
-
-  createHeaders(auth = true): HttpHeaders {
-    let headers = new HttpHeaders();
-    headers = headers.set('Content-Type', 'application/json');
-    headers = headers.set('Accept', 'application/json');
-    if (auth) {
-      let auth_header = '';
-      auth_header = 'Bearer ' + this.authService.getToken();
-      headers = headers.set('Authorization', auth_header);
-    }
-    return headers;
   }
 
   private updateWelcome(): Observable<void> {

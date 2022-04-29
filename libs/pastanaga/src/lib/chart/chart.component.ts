@@ -12,19 +12,22 @@ export class ChartComponent implements OnInit, OnChanges {
   @Input() xmax = 45;
   @Input() ymax = 200;
   @Input() hticks = 60;
-  @Input() data: number[];
+  @Input() data?: number[];
   @Input() showLabel = 1;
   hostElement; // Native element hosting the SVG container
-  svg; // Top level SVG element
-  g; // SVG Group element
-  colorScale; // D3 color provider
-  x; // X-axis graphical coordinates
-  y; // Y-axis graphical coordinates
+  //es-lint-disable-next-line
+  svg: any; // Top level SVG element
+  //es-lint-disable-next-line
+  g: any; // SVG Group element
+  //es-lint-disable-next-line
+  colorScale: any; // D3 color provider
+  x: any; // X-axis graphical coordinates
+  y: any; // Y-axis graphical coordinates
   colors = d3.scaleOrdinal(d3.schemeCategory10);
-  bins; // Array of frequency distributions - one for each area chaer
-  paths; // Path elements for each area chart
-  area; // For D3 area function
-  histogram; // For D3 histogram function
+  bins: any; // Array of frequency distributions - one for each area chaer
+  paths: any; // Path elements for each area chart
+  area: any; // For D3 area function
+  histogram: any; // For D3 histogram function
 
   constructor(private elRef: ElementRef) {
     this.hostElement = this.elRef.nativeElement;
@@ -70,9 +73,9 @@ export class ChartComponent implements OnInit, OnChanges {
     this.createAreaCharts();
   }
 
-  private processData(data) {
+  private processData(data: any) {
     this.bins = [];
-    data.forEach((row) => {
+    data.forEach((row: any) => {
       this.bins.push(this.histogram(row));
     });
   }
@@ -108,7 +111,7 @@ export class ChartComponent implements OnInit, OnChanges {
         d3
           .axisBottom(this.x)
           .tickSize(0)
-          .tickFormat(<any>'')
+          .tickFormat(<any>''),
       );
 
     this.g
@@ -130,7 +133,7 @@ export class ChartComponent implements OnInit, OnChanges {
         d3
           .axisLeft(this.y)
           .tickSize(0)
-          .tickFormat(<any>'')
+          .tickFormat(<any>''),
       );
     this.g
       .append('g')
@@ -151,7 +154,7 @@ export class ChartComponent implements OnInit, OnChanges {
   }
   private createAreaCharts() {
     this.paths = [];
-    this.bins.forEach((row, index) => {
+    this.bins.forEach((row: any, index: number) => {
       this.paths.push(
         this.g
           .append('path')
@@ -159,7 +162,7 @@ export class ChartComponent implements OnInit, OnChanges {
           .attr('fill', this.colorScale('' + index))
           .attr('stroke-width', 0.1)
           .attr('opacity', 0.5)
-          .attr('d', (datum: any) => this.area(datum))
+          .attr('d', (datum: any) => this.area(datum)),
       );
     });
   }
@@ -176,7 +179,7 @@ export class ChartComponent implements OnInit, OnChanges {
   }
 
   private updateAreaCharts() {
-    this.paths.forEach((path, index) => {
+    this.paths.forEach((path: any, index: number) => {
       path
         .datum(this.bins[index])
         .transition()
@@ -187,7 +190,7 @@ export class ChartComponent implements OnInit, OnChanges {
             .area()
             .x((datum: any) => this.x(d3.mean([datum.x1, datum.x2])))
             .y0(this.y(0))
-            .y1((datum: any) => this.y(datum.length))
+            .y1((datum: any) => this.y(datum.length)),
         );
     });
   }

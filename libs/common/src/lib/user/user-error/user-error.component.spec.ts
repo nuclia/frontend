@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TranslatePipeMock } from '@flaps/core';
 import { UserErrorComponent } from './user-error.component';
 
 describe('UserErrorComponent', () => {
@@ -8,9 +8,8 @@ describe('UserErrorComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UserErrorComponent ]
-    })
-    .compileComponents();
+      declarations: [UserErrorComponent, TranslatePipeMock],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -21,5 +20,9 @@ describe('UserErrorComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 });

@@ -1,11 +1,22 @@
-import { TestBed, inject, waitForAsync } from '@angular/core/testing';
+import { TestBed, inject } from '@angular/core/testing';
+import { SDKService } from './sdk.service';
+import { AuthService } from './auth.service';
 
 import { LoggedinGuard } from './loggedin.guard';
 
 describe('LoggedinGuard', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [LoggedinGuard],
+      providers: [
+        LoggedinGuard,
+        {
+          provide: SDKService,
+          useValue: {
+            nuclia: { auth: { getToken: () => 'token' } },
+          },
+        },
+        { provide: AuthService, useValue: { setNextParams: () => {}, setNextUrl: () => {} } },
+      ],
     });
   });
 

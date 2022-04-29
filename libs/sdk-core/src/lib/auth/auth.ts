@@ -1,6 +1,6 @@
 import { ReplaySubject, Observable, Subscription, timer, throwError } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { catchError, map, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, skip, switchMap, tap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
@@ -12,6 +12,7 @@ const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
   private _isAuthenticated: ReplaySubject<boolean> = new ReplaySubject(1);
+  private _hasLoggedOut: ReplaySubject<boolean> = new ReplaySubject(1);
   private timerSubscription?: Subscription;
 
   public constructor(nuclia: INuclia) {
@@ -35,6 +36,13 @@ export class Authentication implements IAuthentication {
 
   isAuthenticated(): Observable<boolean> {
     return this._isAuthenticated.asObservable();
+  }
+
+  hasLoggedOut(): Observable<boolean> {
+    return this.isAuthenticated().pipe(
+      skip(1),
+      filter((isAuth) => !isAuth),
+    );
   }
 
   login(username: string, password: string, validation?: string): Observable<boolean> {

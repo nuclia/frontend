@@ -1,9 +1,26 @@
 import { TestBed } from '@angular/core/testing';
-
+import { AppInitService } from './app.init.service';
 import { BackendConfigurationService } from './backend-config.service';
 
 describe('BackendConfigurationService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  beforeEach(() =>
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: 'staticEnviromentConfiguration', useValue: {} },
+        {
+          provide: AppInitService,
+          useValue: {
+            getConfig: () => ({
+              backend: {
+                posthog_key: 'posthog_key',
+                posthog_host: 'posthog_host',
+              },
+            }),
+          },
+        },
+      ],
+    }),
+  );
 
   it('should be created', () => {
     const service: BackendConfigurationService = TestBed.get(BackendConfigurationService);

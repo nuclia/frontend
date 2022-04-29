@@ -19,7 +19,7 @@ export class SwitchComponent {
     private sdk: SDKService,
   ) {}
 
-  goToAccount(account: string) {
+  goToAccount() {
     this.auth.setNextParams(null);
     this.auth.setNextUrl('/');
     this.state.cleanStash();

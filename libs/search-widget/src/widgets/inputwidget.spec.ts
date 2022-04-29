@@ -7,9 +7,13 @@ import type { IResource, Search } from '@nuclia/core';
 describe('Input widget', () => {
   it('should trigger suggestion search', async () => {
     const { container } = render(InputWidget);
-    await fireEvent.input(container.querySelector('input'), { target: { value: 'Who is Batman?' } });
-    const query = await firstValueFrom(nucliaStore().query);
-    expect(query).toEqual('Who is Batman?');
+    const input = container.querySelector('input');
+    expect(input).toBeTruthy();
+    if (input) {
+      await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+      const query = await firstValueFrom(nucliaStore().query);
+      expect(query).toEqual('Who is Batman?');
+    }
   });
 
   it('should display suggestions', async () => {
@@ -18,8 +22,12 @@ describe('Input widget', () => {
       paragraphs: { results: [{ text: 'Knowledge is power, France is bacon' } as Search.Paragraph], facets: {} },
     });
     const { container } = render(InputWidget);
-    await fireEvent.input(container.querySelector('input'), { target: { value: 'Who is Batman?' } });
-    expect(container.querySelector('.popup .modal')).toBeTruthy();
+    const input = container.querySelector('input');
+    expect(input).toBeTruthy();
+    if (input) {
+      await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+      expect(container.querySelector('.popup .modal')).toBeTruthy();
+    }
   });
 
   it('should open modal on enter', async () => {
@@ -29,8 +37,12 @@ describe('Input widget', () => {
       },
     });
     const { container } = render(InputWidget);
-    await fireEvent.input(container.querySelector('input'), { target: { value: 'Who is Batman?' } });
-    await fireEvent.keyPress(container.querySelector('input'), { key: 'Enter' });
-    expect(container.querySelector('.results:not(.empty)')).toBeTruthy();
+    const input = container.querySelector('input');
+    expect(input).toBeTruthy();
+    if (input) {
+      await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+      await fireEvent.keyPress(input, { key: 'Enter' });
+      expect(container.querySelector('.results:not(.empty)')).toBeTruthy();
+    }
   });
 });

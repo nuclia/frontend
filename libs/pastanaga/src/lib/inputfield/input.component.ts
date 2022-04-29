@@ -24,6 +24,8 @@ import {
   HostBinding,
   AfterViewInit,
   Optional,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 
 let nextUniqueId = 0;
@@ -48,6 +50,7 @@ function getSTFInputUnsupportedTypeError(type: string): Error {
     },
   ],
   encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class STFInputComponent
   implements ControlValueAccessor, OnInit, OnChanges, OnDestroy, AfterViewChecked, AfterViewInit
@@ -208,6 +211,7 @@ export class STFInputComponent
     public _defaultErrorStateMatcher: ErrorStateMatcher,
     private translate: TranslateService,
     @Optional() private formDirective: FormGroupDirective,
+    private cdr: ChangeDetectorRef,
   ) {
     this.unsubscribeAll = new Subject();
   }
@@ -228,6 +232,7 @@ export class STFInputComponent
           } else {
             this.updateError();
           }
+          this.cdr?.markForCheck();
         });
     }
 
@@ -257,6 +262,7 @@ export class STFInputComponent
           this.errorHelp += error;
           first = false;
         });
+        this.cdr?.markForCheck();
       });
     }
   }
@@ -267,6 +273,7 @@ export class STFInputComponent
         this.autofilled = event.isAutofilled;
         this.label_float = true;
         this.stateChanges.next();
+        this.cdr?.markForCheck();
       });
     }
   }

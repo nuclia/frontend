@@ -1,6 +1,5 @@
 import { APIService, UserPreferences } from '@flaps/auth';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { UserService } from '@flaps/auth';
 import { Location } from '@angular/common';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -64,7 +63,6 @@ export class ProfileComponent implements OnInit {
   private unsubscribeAll: Subject<void>;
 
   constructor(
-    public user: UserService,
     private formBuilder: FormBuilder,
     private cd: ChangeDetectorRef,
     private translate: TranslateService,

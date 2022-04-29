@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '@flaps/auth';
 
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,13 +15,12 @@ export class DashboardComponent implements OnInit {
   type: string | undefined;
 
   constructor(
-    public user: UserService,
-    public dialog: MatDialog,
+    private dialog: MatDialog,
     private router: Router,
-    public sheet: MatBottomSheet,
+    private sheet: MatBottomSheet,
     private sdk: SDKService,
   ) {
-    this.user.loggedout.subscribe(() => {
+    this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
       this.dialog.closeAll();
       this.sheet.dismiss();
     });

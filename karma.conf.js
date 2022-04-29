@@ -34,7 +34,14 @@ module.exports = () => {
     customLaunchers: {
       ChromeHeadless: {
         base: 'Chrome',
-        flags: ['--enable-logging', '--v=1', '--headless', '--disable-gpu', '--no-sandbox', '--remote-debugging-port=9222'],
+        flags: [
+          '--enable-logging',
+          '--v=1',
+          '--headless',
+          '--disable-gpu',
+          '--no-sandbox',
+          '--remote-debugging-port=9222',
+        ],
       },
     },
   };

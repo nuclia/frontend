@@ -26,6 +26,7 @@ export interface INuclia {
 
 export interface IAuthentication {
   isAuthenticated(): Observable<boolean>;
+  hasLoggedOut(): Observable<boolean>;
   login(username: string, password: string, validation?: string): Observable<boolean>;
   logout(): void;
   getAuthHeaders(): { [key: string]: string };

@@ -2,18 +2,20 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { UserService } from './user.service';
 import { BackendConfigurationService } from './backend-config.service';
 import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
+/**
+ * @deprecated Use the SDKService instead
+ */
 export class APIService {
   constructor(
     private http: HttpClient,
     private config: BackendConfigurationService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {}
 
   createHeaders(auth = true): HttpHeaders {
@@ -47,7 +49,7 @@ export class APIService {
     responseType?: string,
     contentType?: string,
     relative?: boolean,
-    customHeaders?: any[]
+    customHeaders?: any[],
   ): Observable<any> {
     // do a post request to site
     let headers: HttpHeaders = this.createHeaders(auth);
@@ -106,7 +108,7 @@ export class APIService {
     auth?: boolean,
     contentType?: string,
     relative?: boolean,
-    customHeaders?: any[]
+    customHeaders?: any[],
   ): Observable<any> {
     let headers = this.createHeaders(auth);
     if (contentType) {
@@ -150,7 +152,7 @@ export class APIService {
             } else {
               return of('error');
             }
-          })
+          }),
         )
         .subscribe((m) => {
           if (m === 'error') {
@@ -186,7 +188,7 @@ export class APIService {
     data: ArrayBuffer,
     filename: string,
     contentType: string,
-    relative?: boolean
+    relative?: boolean,
   ): Observable<any> {
     const headers = [['X-UPLOAD-FILENAME', filename]];
     if (data.byteLength) {

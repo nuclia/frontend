@@ -6,12 +6,13 @@ describe('STFCheckboxComponent', () => {
   let component: STFCheckboxComponent;
   let fixture: ComponentFixture<STFCheckboxComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [ STFCheckboxComponent ]
-    })
-    .compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [STFCheckboxComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(STFCheckboxComponent);
@@ -21,5 +22,9 @@ describe('STFCheckboxComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 });

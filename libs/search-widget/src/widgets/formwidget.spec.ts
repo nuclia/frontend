@@ -7,9 +7,13 @@ import type { IResource } from '@nuclia/core';
 describe('Input widget', () => {
   it('should trigger search', async () => {
     const { container } = render(FormWidget);
-    await fireEvent.input(container.querySelector('input'), { target: { value: 'Who is Batman?' } });
-    const query = await firstValueFrom(nucliaStore().query);
-    expect(query).toEqual('Who is Batman?');
+    const input = container.querySelector('input');
+    expect(input).toBeTruthy();
+    if (input) {
+      await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+      const query = await firstValueFrom(nucliaStore().query);
+      expect(query).toEqual('Who is Batman?');
+    }
   });
 
   it('should display results', async () => {

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
-import { UserService, SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/auth';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 
 @Component({
@@ -14,7 +14,7 @@ export class AccountComponent implements OnInit {
   stashes: { [slug: string]: IKnowledgeBoxItem[] } = {};
   selectedAccount: string | null = null;
 
-  constructor(public user: UserService, private router: Router, private sdk: SDKService) {}
+  constructor(private router: Router, private sdk: SDKService) {}
 
   ngOnInit() {
     this.sdk.nuclia.db.getAccounts().subscribe((accounts) => {
