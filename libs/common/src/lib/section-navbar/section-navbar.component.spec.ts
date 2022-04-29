@@ -3,6 +3,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { TranslatePipeMock } from '@flaps/core';
 
 import { SectionNavbarComponent } from './section-navbar.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SectionNavComponent', () => {
   let component: SectionNavbarComponent;
@@ -10,10 +11,9 @@ describe('SectionNavComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SectionNavbarComponent, TranslatePipeMock ],
-      imports: [ OverlayModule ]
-    })
-    .compileComponents();
+      declarations: [SectionNavbarComponent, TranslatePipeMock],
+      imports: [OverlayModule, RouterTestingModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -24,5 +24,9 @@ describe('SectionNavComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 });

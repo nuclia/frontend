@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { RouterTestingModule } from '@angular/router/testing';
+import { BackendConfigurationService, OAuthService } from '@flaps/auth';
+import { UserContainerComponent } from '../user-container/user-container.component';
+import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { ConsentComponent } from './consent.component';
 
 describe('ConsentComponent', () => {
@@ -8,9 +11,22 @@ describe('ConsentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConsentComponent ]
-    })
-    .compileComponents();
+      declarations: [ConsentComponent, UserContainerComponent, UserContainerLogoComponent],
+      imports: [RouterTestingModule],
+      providers: [
+        { provide: OAuthService, useValue: { getConsentData: () => {} } },
+        {
+          provide: BackendConfigurationService,
+          useValue: {
+            getAPIURL: () => 'key',
+            getRecaptchaKey: () => 'key',
+            getSAMLLogin: () => {},
+            getSocialLogin: () => {},
+            getOAuthLogin: () => {},
+          },
+        },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
@@ -21,5 +37,9 @@ describe('ConsentComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 });

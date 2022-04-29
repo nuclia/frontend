@@ -1,6 +1,5 @@
 import { Injectable, Inject, EventEmitter, Output, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BackendConfigurationService } from './backend-config.service';
 
 const JWT_KEY = 'JWT_KEY';
 const JWT_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -16,7 +15,7 @@ export class AuthService {
 
   timerRefreshTokenSubscription: any;
 
-  constructor(@Inject(PLATFORM_ID) platformId: any, private config: BackendConfigurationService) {
+  constructor(@Inject(PLATFORM_ID) platformId: any) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 

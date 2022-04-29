@@ -6,11 +6,13 @@ describe('PagePolicyComponent', () => {
   let component: PagePolicyComponent;
   let fixture: ComponentFixture<PagePolicyComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [PagePolicyComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [PagePolicyComponent],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PagePolicyComponent);
@@ -20,5 +22,9 @@ describe('PagePolicyComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  afterEach(() => {
+    fixture.destroy();
   });
 });
