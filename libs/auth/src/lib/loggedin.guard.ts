@@ -8,7 +8,6 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { Injectable } from '@angular/core';
-import { UserService } from './user.service';
 import { AuthService } from './auth.service';
 import { SDKService } from './sdk.service';
 
@@ -16,12 +15,7 @@ import { SDKService } from './sdk.service';
   providedIn: 'root',
 })
 export class LoggedinGuard implements CanActivate, CanActivateChild, CanLoad {
-  constructor(
-    public user: UserService,
-    private authService: AuthService,
-    private router: Router,
-    private sdk: SDKService,
-  ) {}
+  constructor(private authService: AuthService, private router: Router, private sdk: SDKService) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const url: string = state.url;

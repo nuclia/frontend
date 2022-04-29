@@ -12,7 +12,6 @@ export * from './lib/splash-screen.service';
 export * from './lib/state.service';
 
 export * from './lib/api/token.service';
-export * from './lib/api/permissions.service';
 export * from './lib/api/login.service';
 export * from './lib/api/saml.service';
 export * from './lib/api/oauth.service';
