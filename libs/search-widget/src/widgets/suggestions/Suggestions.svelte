@@ -33,8 +33,8 @@
 <style>
   h3 {
     text-transform: uppercase;
-    margin-left: 12px;
-    font-size: 16px;
+    margin-left: 0 1.3em 1em 0;
+    font-size: 12px;
   }
   .paragraph {
     font-size: 15px;
@@ -60,5 +60,6 @@
     text-align: right;
     font-size: small;
     margin: 0;
+    color: #707070;
   }
 </style>

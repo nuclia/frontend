@@ -34,7 +34,7 @@
     </div>
     <div class="block-2">
       <h2 class="title">{decodeURIComponent(result.title || '–')}</h2>
-      <p class="byline">{formatDate(result.created)}</p>
+      <div class="byline">{formatDate(result.created)}</div>
     </div>
     <div class="block-3">
       {#if thumbnail}
@@ -65,18 +65,24 @@
   .row {
     cursor: pointer;
     padding: 16px;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     background-color: var(--color-light-stronger);
   }
-  .row:focus,
-  .row:hover {
+  .row:focus-visible {
     border-color: var(--color-dark-stronger);
     padding-left: 13px;
     border-left: 3px solid var(--color-neutral-strong);
     outline: 0px;
   }
   .title {
+    margin-bottom: 0.4em;
     font-weight: var(--font-weight-bold);
+  }
+  .byline {
+    font-size: 12px;
+    font-style: italic;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #000;
   }
 
   .blocks {
@@ -95,8 +101,16 @@
     padding: 10px;
     margin: 10px;
   }
+  @media (min-width: 640px) {
+    .block-2,
+    .block-4 {
+      padding-right: 30px;
+    }
+  }
 
-  h3 {
+  .block-4 h3 {
+    margin: 2em 0 0 0;
+    font-size: 12px;
     text-transform: uppercase;
   }
 
@@ -116,15 +130,25 @@
     object-position: top;
   }
   .paragraph {
-    margin: 8px 0 8px -16px;
-    padding-left: 16px;
+    position: relative;
+    padding: 16px 0;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.5);
   }
-  .paragraph:hover,
+  .paragraph:last-child {
+    border-bottom: 0;
+  }
   .paragraph:focus {
-    border-color: var(--color-dark-stronger);
-    padding-left: 13px;
-    border-left: 3px solid var(--color-neutral-strong);
     outline: 0px;
+  }
+  .paragraph:hover::before,
+  .paragraph:focus::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: -16px;
+    border-color: var(--color-dark-stronger);
+    border-left: 3px solid var(--color-neutral-strong);
   }
 
   @media (min-width: 640px) {
