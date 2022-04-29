@@ -100,9 +100,23 @@
     max-width: 100vw;
     background-color: transparent;
   }
-  :not(.transparent) .modal-content {
+  .modal:not(.transparent) .modal-content {
     background-color: var(--color-light-stronger);
     box-shadow: var(--shadow-modal);
+  }
+
+  .modal.transparent .modal-content {
+    overflow: auto;
+    padding-right: 16px;
+  }
+  .modal.transparent .modal-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  .modal.transparent .modal-content::-webkit-scrollbar-thumb {
+    background-color: var(--color-scrollbar-thumb);
+  }
+  .modal.transparent .modal-content::-webkit-scrollbar-track {
+    background-color: var(--color-scrollbar-track);
   }
 
   :not(.popup) .modal {

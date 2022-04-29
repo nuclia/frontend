@@ -7,7 +7,7 @@
   import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
   import { getResource, initNuclia, search, suggest } from './core/api';
   import { concatMap, filter, switchMap, take, tap } from 'rxjs/operators';
-  import { onDestroy, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
   import { setCDN } from './core/utils';
   import { setLang } from './core/i18n';
@@ -85,14 +85,16 @@
       )
       .subscribe((results) => nucliaStore().searchResults.next(results));
     ready = true;
+
+    return () => {
+      resetStore();
+    };
   });
 
   const closeModal = () => {
     showModal = false;
     setDisplayedResource({ uid: '' });
   };
-
-  onDestroy(() => resetStore());
 </script>
 
 <div class="nuclia-widget" style={$style} data-version="__NUCLIA_DEV_VERSION__">
@@ -137,6 +139,8 @@
     --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
     --shadow-modal: 2px 2px 20px rgba(0, 0, 0, 0.2);
+    --color-scrollbar-track: #fff;
+    --color-scrollbar-thumb: #000;
 
     color: var(--color-text-accent);
     font-family: var(--font-family-body);
