@@ -1,9 +1,9 @@
 import type { Paragraph, CloudLink, Search } from '@nuclia/core';
 
-export const NO_RESULTS = {
+export const NO_RESULTS: Search.Results = {
   resources: {},
   paragraphs: { results: [], facets: {} },
-};
+} as Search.Results;
 export const PENDING_RESULTS = {
   resources: {},
   paragraphs: { results: [], facets: {} },

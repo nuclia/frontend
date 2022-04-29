@@ -24,11 +24,7 @@ export class AccountListComponent implements AfterViewInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | undefined;
   @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private accountService: AccountService,
-  ) {
+  constructor(private route: ActivatedRoute, private router: Router, private accountService: AccountService) {
     this.route.data.subscribe((data) => {
       this.accounts = new MatTableDataSource(data.accounts);
     });
@@ -43,32 +39,34 @@ export class AccountListComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.sort!.sortChange.subscribe(() => (this.paginator!.pageIndex = 0));
+    if (this.sort) {
+      this.sort.sortChange.subscribe(() => (this.paginator!.pageIndex = 0));
 
-    merge(this.sort!.sortChange, this.paginator!.page)
-      .pipe(
-        startWith({}),
-        switchMap(() => {
-          this.isLoadingResults = true;
-          return this.accountService.getAccounts();
-          // this.sort.active, this.sort.direction, this.paginator.pageIndex);
-        }),
-        map((data) => {
-          // Flip flag to show that loading has finished.
-          this.isLoadingResults = false;
-          this.isRateLimitReached = false;
-          this.resultsLength = data.length;
+      merge(this.sort.sortChange, this.paginator!.page)
+        .pipe(
+          startWith({}),
+          switchMap(() => {
+            this.isLoadingResults = true;
+            return this.accountService.getAccounts();
+            // this.sort.active, this.sort.direction, this.paginator.pageIndex);
+          }),
+          map((data) => {
+            // Flip flag to show that loading has finished.
+            this.isLoadingResults = false;
+            this.isRateLimitReached = false;
+            this.resultsLength = data.length;
 
-          return data;
-        }),
-        catchError(() => {
-          this.isLoadingResults = false;
-          // Catch if the GitHub API has reached its rate limit. Return empty data.
-          this.isRateLimitReached = true;
-          return observableOf([]);
-        })
-      )
-      .subscribe((data) => (this.accounts = new MatTableDataSource(data)));
+            return data;
+          }),
+          catchError(() => {
+            this.isLoadingResults = false;
+            // Catch if the GitHub API has reached its rate limit. Return empty data.
+            this.isRateLimitReached = true;
+            return observableOf([]);
+          }),
+        )
+        .subscribe((data) => (this.accounts = new MatTableDataSource(data)));
+    }
   }
 
   addNewAccount() {
@@ -82,7 +80,7 @@ export class AccountListComponent implements AfterViewInit {
           alert('Done');
           this.refresh();
         },
-        (error) => console.log(error)
+        (error) => console.log(error),
       );
     }
   }

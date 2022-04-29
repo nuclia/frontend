@@ -78,7 +78,7 @@ export class UserComponent implements OnInit, OnDestroy {
               this.avatarText = '--';
               this.cd.markForCheck();
             }
-          }
+          },
         );
     }
   }

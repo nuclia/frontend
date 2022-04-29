@@ -11,7 +11,7 @@ import {
   StateService,
   SDKService,
 } from '@flaps/auth';
-import { catchError, combineLatest, filter, of, skip, Subject, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, of, Subject, switchMap, tap } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
 import { resetStateOn403 } from './resolvers/utils';
 import { Title } from '@angular/platform-browser';
@@ -50,19 +50,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
-    this.sdk.nuclia.auth
-      .isAuthenticated()
-      .pipe(
-        skip(1), // skipping first one we get from the auth service instantiation
-        filter((isAuth) => !isAuth), // only if user is not authenticated anymore
-      )
-      .subscribe(() => {
-        this.tracking.logout();
-        this.router.navigate(['/user/login']);
-        this.state.cleanAccount();
-        this.state.cleanStash();
-        this.authService.removeLocalCreds();
-      });
+    this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
+      this.tracking.logout();
+      this.router.navigate(['/user/login']);
+      this.state.cleanAccount();
+      this.state.cleanStash();
+      this.authService.removeLocalCreds();
+    });
   }
 
   ngOnInit() {

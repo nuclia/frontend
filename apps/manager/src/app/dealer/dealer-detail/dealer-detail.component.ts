@@ -1,8 +1,7 @@
 import { DealerService } from './../../services/dealer.service';
-import { Dealer } from './../../models/dealer.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, FormControl, NgForm, FormArray } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-dealer-detail',
@@ -37,7 +36,7 @@ export class DealerDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private dealerService: DealerService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
     this.userList = [];
     this.route.data.subscribe((data) => {

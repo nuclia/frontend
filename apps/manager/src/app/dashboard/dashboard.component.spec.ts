@@ -1,4 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatMenuModule } from '@angular/material/menu';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SDKService } from '@flaps/auth';
+import { of } from 'rxjs';
+import { UsersService } from '../services/users.service';
 
 import { DashboardComponent } from './dashboard.component';
 
@@ -6,11 +13,21 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [DashboardComponent],
-    }).compileComponents();
-  }));
+  beforeEach(
+    waitForAsync(() => {
+      TestBed.configureTestingModule({
+        declarations: [DashboardComponent],
+        imports: [MatDialogModule, RouterTestingModule, MatBottomSheetModule, MatMenuModule],
+        providers: [
+          { provide: UsersService, useValue: { loggedout: () => of() } },
+          {
+            provide: SDKService,
+            useValue: { nuclia: { auth: { getJWTUser: () => {}, hasLoggedOut: () => of(false) } } },
+          },
+        ],
+      }).compileComponents();
+    }),
+  );
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);

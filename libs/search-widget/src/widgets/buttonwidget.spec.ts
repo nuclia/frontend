@@ -6,8 +6,12 @@ import type { IResource } from '@nuclia/core';
 describe('Button widget', () => {
   it('should open modal', async () => {
     const { container } = render(ButtonWidget);
-    await fireEvent.click(container.querySelector('button'));
-    expect(container.querySelector('input:focus')).toBeTruthy();
+    const button = container.querySelector('button');
+    expect(button).toBeTruthy();
+    if (button) {
+      await fireEvent.click(button);
+      expect(container.querySelector('input:focus')).toBeTruthy();
+    }
   });
 
   it('should display results', async () => {
@@ -17,9 +21,17 @@ describe('Button widget', () => {
       },
     });
     const { container } = render(ButtonWidget);
-    await fireEvent.click(container.querySelector('button'));
-    await fireEvent.input(container.querySelector('input'), { target: { value: 'Who is Batman?' } });
-    await fireEvent.keyPress(container.querySelector('input'), { key: 'Enter' });
-    expect(container.querySelector('.results:not(.empty)')).toBeTruthy();
+    const button = container.querySelector('button');
+    expect(button).toBeTruthy();
+    if (button) {
+      await fireEvent.click(button);
+      const input = container.querySelector('input');
+      expect(input).toBeTruthy();
+      if (input) {
+        await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+        await fireEvent.keyPress(input, { key: 'Enter' });
+        expect(container.querySelector('.results:not(.empty)')).toBeTruthy();
+      }
+    }
   });
 });
