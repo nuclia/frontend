@@ -20,6 +20,7 @@ export class MagicService {
 
     if (action.token) {
       this.sdk.nuclia.auth.authenticate(action.token);
+      this.router.navigate(['/']);
     }
 
     if (action.action === 'edit') {
@@ -27,19 +28,19 @@ export class MagicService {
     }
 
     if (action.action === 'create') {
-      this.router.navigate(['/edit/' + action.path], { 
-        queryParams: { create: true } 
+      this.router.navigate(['/edit/' + action.path], {
+        queryParams: { create: true },
       });
     }
 
     if (action.action === 'goaccount' || action.action === 'gostash') {
-      this.router.navigate(['/setup/invite'], { 
-        queryParams: { account: action.account, kb: action.stash } 
+      this.router.navigate(['/setup/invite'], {
+        queryParams: { account: action.account, kb: action.stash },
       });
     }
     if (action.action === 'gosetpassword') {
-      this.router.navigate(['/setup/password'], { 
-        queryParams: { signup: true } 
+      this.router.navigate(['/setup/password'], {
+        queryParams: { signup: true },
       });
     }
     if (action.action === 'goselectaccount') {
