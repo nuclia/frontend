@@ -1,7 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { SAMLService, GoogleService, BackendConfigurationService, SDKService } from '@flaps/auth';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthTokens } from '@nuclia/core';
 
 @Component({
   selector: 'stf-user-callback',
@@ -15,6 +16,7 @@ export class CallbackComponent implements OnInit {
     private config: BackendConfigurationService,
     @Inject(DOCUMENT) private document: Document,
     private sdk: SDKService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -33,7 +35,7 @@ export class CallbackComponent implements OnInit {
 
   loadUrlToken() {
     this.route.queryParams.subscribe((params) =>
-      this.sdk.nuclia.auth.authenticate({
+      this.authenticate({
         access_token: params['token'],
         refresh_token: '',
       }),
@@ -44,7 +46,7 @@ export class CallbackComponent implements OnInit {
     const token = this.route.snapshot.queryParamMap.get('token');
     if (token) {
       this.samlService.getToken(token).subscribe((token) => {
-        this.sdk.nuclia.auth.authenticate(token);
+        this.authenticate(token);
       });
     }
   }
@@ -67,8 +69,13 @@ export class CallbackComponent implements OnInit {
     const state = this.route.snapshot.queryParamMap.get('state');
     if (code !== null && state !== null) {
       this.googleService.login(code, state).subscribe((token) => {
-        this.sdk.nuclia.auth.authenticate(token);
+        this.authenticate(token);
       });
     }
+  }
+
+  private authenticate(token: AuthTokens): void {
+    this.sdk.nuclia.auth.authenticate(token);
+    this.router.navigate(['/']);
   }
 }
