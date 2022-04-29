@@ -74,8 +74,10 @@
     <ng-container *ngIf="step === 2">
       <h2>{{ 'stash.create.anonymization' | translate }}</h2>
       <p>{{ 'stash.create.anonymization-help' | translate }}</p>
-      <stf-checkbox [(selected)]="useAnonymization">{{ (useAnonymization ? 'generic.enabled' : 'generic.disabled') |
-        translate }}</stf-checkbox>
+      <stf-checkbox-group [checkboxes]="anonimizationOptions"
+                          [(selection)]="useAnonymization"
+                          type="radio">
+      </stf-checkbox-group>
     </ng-container>
 
     <div class="mt-52"
