@@ -22,7 +22,7 @@ spec:
         regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
     route:
     - destination:
-        host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc"
+        host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
         port:
           number: {{ .Values.service.internalPort }}
 {{- end }}
