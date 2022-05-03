@@ -34,7 +34,7 @@
 	"results.paragraphs": "Paragraphes pertinents",
 	"results.semantic": "Phrases pertinentes",
 	"results.summary": "Résumé",
-	"suggest.enter": "Appuyer sur Entrée ⏎ pour voir les résultats",
-	"suggest.more": "Voir plus",
+	"suggest.enter": "Appuyer sur Entrée [] pour voir les résultats",
+	"suggest.more": "",
 	"suggest.paragraphs": "Paragraphes suggérés"
 }

@@ -34,7 +34,7 @@
 	"results.paragraphs": "Relevant paragraphs",
 	"results.semantic": "Relevant sentences",
 	"results.summary": "Summary",
-	"suggest.enter": "Press Enter ⏎ to see results",
-	"suggest.more": "Show more",
+	"suggest.enter": "Press Enter [] to see results",
+	"suggest.more": "Show more results",
 	"suggest.paragraphs": "Suggested paragraphs"
 }

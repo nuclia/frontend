@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Search } from '@nuclia/core';
   import { nucliaState, setDisplayedResource } from '../../core/store';
+  import { getCDN } from '../../core/utils';
   import { _ } from '../../core/i18n';
 
   export let paragraphs: Search.Paragraph[] = [];
@@ -26,7 +27,19 @@
         {paragraph.text}
       </div>
     {/each}
-    {#if !showMore && paragraphs.length > 4}<small on:click={() => (showMore = true)}>{$_('suggest.more')}</small>{/if}
+    {#if !showMore && paragraphs.length > 4}
+      <span
+        class="show-more"
+        tabindex="0"
+        on:click={() => (showMore = true)}
+        on:keyup={(e) => {
+          if (e.key === 'Enter') showMore = true;
+        }}
+      >
+        <img src={`${getCDN()}icons/guillemet.svg`} alt="icon" />
+        <span>{$_('suggest.more')}</span>
+      </span>
+    {/if}
   </div>
 {/if}
 
@@ -50,15 +63,24 @@
     border-left: 3px solid var(--color-neutral-strong);
     outline: 0px;
   }
-  small {
+  .show-more {
+    display: inline-block;
+    margin: 6px 0 0 16px;
     cursor: pointer;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-neutral-strong);
-    padding-left: 16px;
+  }
+  .show-more span {
+    vertical-align: middle;
+    padding-left: 4px;
+    font-size: 15px;
+    font-style: italic;
+  }
+  .show-more:hover span {
+    text-decoration: underline;
   }
   p {
     text-align: right;
     font-size: small;
+    color: var(--color-primary-muted);
     margin: 0;
   }
 </style>
