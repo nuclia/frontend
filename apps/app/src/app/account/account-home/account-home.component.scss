@@ -39,20 +39,24 @@
     }
   }
   .totals {
-    font-size: 20px;
+    font-size: var(--stf-font-size-xxlarge);
     font-weight: var(--stf-font-weight-light);
+    ::ng-deep strong {
+      margin-left: 10px;
+    }
   }
   .chart-header {
     display: flex;
     align-items: baseline;
     h2 {
+      margin-bottom: 60px;
       font-weight: var(--stf-font-weight-light);
     }
     span {
       font-weight: var(--stf-font-weight-light);
       flex-grow: 1;
       text-align: right;
-      font: italic;
+      font-style: italic;
     }
   }
 }

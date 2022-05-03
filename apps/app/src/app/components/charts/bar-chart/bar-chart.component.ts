@@ -15,7 +15,6 @@ import { createYAxis } from '../chart-utils';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 3;
-const CHART_HEIGHT = 125;
 
 @Component({
   selector: 'app-bar-chart',
@@ -35,6 +34,8 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
     this.draw();
   }
   @Input() threshold?: number;
+  @Input() axisYMultiplier: number = 1.5;
+  @Input() height: number = 170;
 
   ngAfterViewInit(): void {
     setTimeout(() => this.draw(), 0);
@@ -66,7 +67,7 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
     const availableWidth = this.container?.nativeElement.offsetWidth;
     const margin = { top: 0, right: 50, bottom: 30, left: 0 },
       width = availableWidth - margin.left - margin.right,
-      height = CHART_HEIGHT - margin.top - margin.bottom;
+      height = this.height - margin.top - margin.bottom;
 
     // Append the svg object to the page
     d3.select(`#${this.id} svg`).remove();
@@ -79,7 +80,7 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
     // Create axis
-    const y = createYAxis(svg, [minValue, maxValue * 1.5], NUM_TICKS, width, height, margin);
+    const y = createYAxis(svg, [minValue, maxValue * this.axisYMultiplier], NUM_TICKS, width, height, margin);
     const x = this.createXAxis(svg, width, height);
     if (this.threshold) {
       this.drawThreshold(svg, this.threshold, width, y);
@@ -130,7 +131,7 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
     y: d3.ScaleLinear<number, number>,
   ) {
     const t = y(threshold);
-    if (t) {
+    if (typeof t === 'number') {
       svg
         .append('line')
         .style('stroke', 'var(--stf-primary)')
