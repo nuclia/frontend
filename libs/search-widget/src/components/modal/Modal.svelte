@@ -109,14 +109,16 @@
     overflow: auto;
     padding-right: 16px;
   }
-  .modal.transparent .modal-content::-webkit-scrollbar {
-    width: 6px;
-  }
-  .modal.transparent .modal-content::-webkit-scrollbar-thumb {
-    background-color: var(--color-scrollbar-thumb);
-  }
-  .modal.transparent .modal-content::-webkit-scrollbar-track {
-    background-color: var(--color-scrollbar-track);
+  @media (min-width: 599px) {
+    .modal.transparent .modal-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .modal.transparent .modal-content::-webkit-scrollbar-thumb {
+      background-color: var(--color-scrollbar-thumb);
+    }
+    .modal.transparent .modal-content::-webkit-scrollbar-track {
+      background-color: var(--color-scrollbar-track);
+    }
   }
 
   :not(.popup) .modal {

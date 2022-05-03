@@ -25,6 +25,8 @@
 	"resource.language": "Langue",
 	"resource.other": "Autres données sur la ressource",
 	"resource.preview": "Prévisualiser",
+	"resource.relevance": "",
+	"resource.sequential": "",
 	"resource.show-all": "Afficher tous les paragraphes",
 	"resource.source": "Document d'origine",
 	"resource.summary": "Résumé",

@@ -5,7 +5,7 @@
   import { _ } from '../core/i18n';
   import { findFileByType, search, getResourceParagraphs, selectParagraph, viewerStore, viewerState } from './store';
   import { onDestroy } from 'svelte';
-  import { combineLatest, filter, of, switchMap } from 'rxjs';
+  import { combineLatest, filter, of, switchMap, take } from 'rxjs';
   import Header from './Header.svelte';
   import Paragraphs from './paragraphs/Paragraphs.svelte';
   import InputViewer from './InputViewer.svelte';
@@ -17,7 +17,6 @@
   let texts: ExtractedText[] = [];
   let imagePath: string | undefined;
   let image: string | undefined;
-  let showSelectedParagraph = false;
 
   const query = viewerState.query;
   const paragraphs = viewerState.paragraphs;
@@ -49,20 +48,18 @@
       )
       .subscribe(([query, displayedResource]) => {
         //viewerStore.query.next(query);
-        showSelectedParagraph = true;
         selectParagraph(resource, displayedResource.paragraph);
       }),
-    query
-      .pipe(switchMap((query) => (query.length > 0 ? search(resource, query) : of(null))))
+    viewerStore.triggerSearch
+      .pipe(
+        switchMap(() => query.pipe(take(1))),
+        switchMap((query) => (query.length > 0 ? search(resource, query) : of(null))),
+      )
       .subscribe((paragraphs) => {
+        viewerStore.onlySelected.next(false);
         viewerStore.results.next(paragraphs);
       }),
   ];
-
-  const showAllParagraphs = () => {
-    viewerStore.query.next('');
-    showSelectedParagraph = false;
-  };
 
   onDestroy(() => {
     if (image) URL.revokeObjectURL(image);
@@ -76,15 +73,14 @@
     <div class="viewer-left">
       <InputViewer />
 
-      {#if showSelectedParagraph}
-        <div class="show-all">
-          <small on:click={showAllParagraphs}>{$_('resource.show-all')}</small>
+      {#if $results}
+        <div class="paragraphs">
+          <Paragraphs paragraphs={$results} />
         </div>
-      {/if}
-      {#if $results && $query.length > 0}
-        <Paragraphs paragraphs={$results} />
       {:else}
-        <Paragraphs paragraphs={$paragraphs} />
+        <div class="paragraphs">
+          <Paragraphs paragraphs={$paragraphs} />
+        </div>
       {/if}
 
       {#if image}
@@ -139,6 +135,9 @@
     background-color: #fbfbfb;
     grid-row: start 1;
   }
+  .paragraphs {
+    margin-top: 2em;
+  }
   pre {
     font-family: var(--font-family-body);
     white-space: pre-wrap;
@@ -146,14 +145,6 @@
   img {
     max-width: 100%;
     height: auto;
-  }
-  .show-all {
-    text-align: right;
-  }
-  .show-all small {
-    cursor: pointer;
-    font-weight: var(--font-weight-bold);
-    color: var(--color-neutral-strong);
   }
 
   @media (min-width: 640px) {

@@ -28,12 +28,15 @@ import type {
   WidgetParagraph,
   SelectedParagraph,
 } from '../core/models';
-import { PreviewKind } from '../core/models';
+import { PreviewKind, SearchOrder } from '../core/models';
 import { getFileUrls } from '../core/api';
+
+const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 
 export const viewerStore: {
   resource: BehaviorSubject<Resource | null>;
   query: BehaviorSubject<string>;
+  triggerSearch: Subject<void>;
   paragraphs: BehaviorSubject<WidgetParagraph[]>;
   results: BehaviorSubject<WidgetParagraph[] | null>;
   showPreview: BehaviorSubject<boolean>;
@@ -41,10 +44,12 @@ export const viewerStore: {
   onlySelected: BehaviorSubject<boolean>;
   setPage: Subject<number>;
   linkPreview: BehaviorSubject<LinkPreviewParams | null>;
+  order: Subject<SearchOrder>;
   init: () => void;
 } = {
   resource: new BehaviorSubject(null),
   query: new BehaviorSubject(''),
+  triggerSearch: new Subject<void>(),
   paragraphs: new BehaviorSubject([]),
   results: new BehaviorSubject(null),
   showPreview: new BehaviorSubject(false),
@@ -52,23 +57,23 @@ export const viewerStore: {
   onlySelected: new BehaviorSubject(false),
   setPage: new Subject(),
   linkPreview: new BehaviorSubject(null),
+  order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   init: initStore,
 };
 
 export const viewerState = {
   query: viewerStore.query.pipe(
-    tap(() => {
-      viewerStore.onlySelected.next(false);
-    }),
     map((q) => q.trim()),
     distinctUntilChanged(),
   ),
   paragraphs: viewerStore.paragraphs.asObservable(),
-  results: viewerStore.results.asObservable(),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
-  searchReady: viewerStore.resource.pipe(filter((resource) => resource && Object.keys(resource.data || {}).length > 0)),
+  searchReady: viewerStore.resource.pipe(filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0)),
+  results: combineLatest([ viewerStore.results, viewerStore.order]).pipe(
+    map(([results, order]) => results && sortParagraphs(results, order))
+  ),
   pdfPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => {
@@ -85,22 +90,23 @@ export const viewerState = {
       return [PreviewKind.VIDEO, PreviewKind.AUDIO].includes(kind);
     }),
     switchMap(([resource, selected]) => getMediaPreviewParams(resource, selected.fieldId, selected.paragraph)),
-  ),
-  selectedParagraphIndex: combineLatest([
-    viewerStore.resource,
-    merge(viewerStore.results, viewerStore.paragraphs),
-    viewerStore.selectedParagraph,
-  ]).pipe(
-    filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
-    map(([resource, paragraphs, selected]) => {
-      return (paragraphs || []).findIndex((result) => {
-        const field = getFileField(resource, selected.fieldId);
-        const text = field && getParagraphText(field, selected.paragraph);
-        return result.text === text;
-      });
-    }),
-  ),
+  )
 };
+
+export const selectedParagraphIndex = combineLatest([
+  viewerStore.resource,
+  merge(viewerState.results, viewerStore.paragraphs),
+  viewerStore.selectedParagraph,
+]).pipe(
+  filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
+  map(([resource, paragraphs, selected]) => {
+    return (paragraphs || []).findIndex((result) => {
+      const field = getFileField(resource, selected.fieldId);
+      const text = field && getParagraphText(field, selected.paragraph);
+      return result.text === text;
+    });
+  }),
+);
 
 export const pdfUrl = combineLatest([
   viewerStore.resource,
@@ -127,6 +133,13 @@ export function initStore() {
   viewerStore.showPreview.next(false);
   viewerStore.selectedParagraph.next(null);
   viewerStore.linkPreview.next(null);
+  viewerStore.order.next(DEFAULT_SEARCH_ORDER);
+}
+
+export function clearSearch() {
+  viewerStore.query.next('');
+  viewerStore.results.next(null);
+  viewerStore.onlySelected.next(false);
 }
 
 export function getPdfPreviewParams(
@@ -216,9 +229,26 @@ export function getResourceParagraphs(resource: Resource): WidgetParagraph[] {
     );
 }
 
+function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
+  if (order === SearchOrder.SEQUENTIAL) {
+    return paragraphs.slice().sort((a, b) => {
+      const aIsNumber = typeof a.paragraph.start === 'number';
+      const bIsNumber = typeof b.paragraph.start === 'number';
+      if (!aIsNumber && !bIsNumber) return 0;
+      if (aIsNumber && !bIsNumber) return 1;
+      if (!aIsNumber && bIsNumber) return -1;
+      if (aIsNumber && bIsNumber) return a.paragraph.start! - b.paragraph.start!;
+    });
+  }
+  return paragraphs;
+}
+
 function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
   if (field?.extracted && 'file' in field.extracted) {
-    if (getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
+    if (
+      getPages(field as FileFieldData).length &&
+      getParagraphPageIndexes(field as FileFieldData, paragraph).length
+    ) {
       return PreviewKind.PDF;
     } else if (paragraph.kind === 'TRANSCRIPT') {
       if (isFileType(field as FileFieldData, 'video/')) {
@@ -233,6 +263,7 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
 
 function getParagraph(fieldType: string, fieldId: string, field: IFieldData, paragraph: Paragraph): WidgetParagraph {
   const baseParagraph = {
+    paragraph: paragraph,
     text: getParagraphText(field, paragraph),
     fieldType: fieldType,
     fieldId: fieldId,
@@ -242,14 +273,12 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     return {
       ...baseParagraph,
       preview: kind,
-      paragraph: paragraph,
       page: getParagraphPageIndexes(field as FileFieldData, paragraph)[0],
     };
   } else if (kind === PreviewKind.VIDEO || kind === PreviewKind.AUDIO) {
     return {
       ...baseParagraph,
       preview: kind,
-      paragraph: paragraph,
       time: paragraph.start_seconds[0],
     };
   } else {

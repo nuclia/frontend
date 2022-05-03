@@ -4,8 +4,8 @@
 
   const dispatch = createEventDispatcher();
 
-  export let currentPage: number = undefined;
-  export let totalPages: number = undefined;
+  export let currentPage: number | undefined = undefined;
+  export let totalPages: number | undefined = undefined;
   export let showNavigation = false;
   export let zoom: number;
 
@@ -18,10 +18,10 @@
   };
 
   const prevPage = () => {
-    dispatch('pageChange', currentPage - 1);
+    dispatch('pageChange', currentPage! - 1);
   };
   const nextPage = () => {
-    dispatch('pageChange', currentPage + 1);
+    dispatch('pageChange', currentPage! + 1);
   };
 </script>
 

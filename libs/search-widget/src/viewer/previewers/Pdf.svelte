@@ -7,8 +7,8 @@
 
   export let src: string;
   export let query: string = '';
-  export let currentPage: number = undefined;
-  export let totalPages: number = undefined;
+  export let currentPage: number | undefined = undefined;
+  export let totalPages: number | undefined = undefined;
 
   const pdfChanged = new Subject<string>();
   const objectsUrl = [];
