@@ -41,6 +41,7 @@ let _state: {
   customStyle: Observable<string>;
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
+  getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -85,6 +86,12 @@ export const nucliaStore = (): NucliaStore => {
       getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
         return _store!.searchResults.pipe(
           map((results) => results.paragraphs?.results || []),
+          map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
+        );
+      },
+      getMatchingSentences: (resId: string): Observable<Search.Sentence[]> => {
+        return _store!.searchResults.pipe(
+          map((results) => results.sentences?.results || []),
           map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
         );
       },
