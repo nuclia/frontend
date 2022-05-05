@@ -118,16 +118,6 @@ export class LoginService {
     );
   }
 
-  logout() {
-    return this.api.post(
-      this.config.getAPIURL() + `/${AUTH}/logout`,
-      JSON.stringify({}),
-      true,
-      'json',
-      'application/json',
-    );
-  }
-
   getMe(): Observable<User> {
     return this.api.get(this.config.getAPIURL() + `/${VERSION}/${USER}`);
   }

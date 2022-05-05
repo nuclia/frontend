@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { LocalState, Account } from '@flaps/auth';
 import { KnowledgeBox } from '@nuclia/core';
+import { Account, LocalState } from './models';
 
 const STATE_DATA = 'STATE_DATA';
 

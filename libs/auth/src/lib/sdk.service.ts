@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { BackendConfigurationService } from '@flaps/auth';
 import { Account, Counters, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import {
   combineLatest,
@@ -15,6 +14,7 @@ import {
   ReplaySubject,
   BehaviorSubject,
 } from 'rxjs';
+import { BackendConfigurationService } from './backend-config.service';
 import { StateService } from './state.service';
 
 @Injectable({ providedIn: 'root' })

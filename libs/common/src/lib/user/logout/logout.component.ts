@@ -1,4 +1,4 @@
-import { UserService } from '@flaps/auth';
+import { SDKService } from '@flaps/auth';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -8,10 +8,10 @@ import { Router } from '@angular/router';
   styleUrls: ['./logout.component.scss'],
 })
 export class LogoutComponent implements OnInit {
-  constructor(private router: Router, private userService: UserService) {}
+  constructor(private router: Router, private sdk: SDKService) {}
 
   ngOnInit() {
-    this.userService.logout();
+    this.sdk.nuclia.auth.logout();
     this.router.navigate(['/user/login']);
   }
 }

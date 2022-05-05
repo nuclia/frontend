@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Toaster } from '@flaps/pastanaga';
 import { STFUtils } from '@flaps/core';
-import { SDKService, BackendConfigurationService, UserService, AuthService } from '@flaps/auth';
+import { SDKService, BackendConfigurationService, UserService } from '@flaps/auth';
 import { filter, Subject } from 'rxjs';
 
 @Component({
@@ -25,7 +25,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private router: Router,
     private toaster: Toaster,
     private user: UserService,
-    private auth: AuthService,
     private translate: TranslateService,
     private config: BackendConfigurationService,
     private sdk: SDKService,
@@ -38,10 +37,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.router.navigate(['/']);
       });
     this.initTranslate(undefined);
-    this.user.loggedout.subscribe(() => {
-      // Invalidate cache when we log out.
+    this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
       this.router.navigate(['/user/login']);
-      this.auth.removeLocalCreds();
     });
     this.user.userPrefs.subscribe((userPrefs) => {
       this.initTranslate(userPrefs?.language?.toLowerCase());
