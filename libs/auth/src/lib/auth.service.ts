@@ -1,8 +1,6 @@
-import { Injectable, Inject, EventEmitter, Output, PLATFORM_ID } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
-const JWT_KEY = 'JWT_KEY';
-const JWT_REFRESH_KEY = 'JWT_REFRESH_KEY';
 const NEXT_URL_KEY = 'NEXT_URL_KEY';
 const NEXT_URL_PARAMS_KEY = 'NEXT_URL_PARAMS';
 
@@ -11,20 +9,11 @@ const NEXT_URL_PARAMS_KEY = 'NEXT_URL_PARAMS';
 })
 export class AuthService {
   isBrowser = true;
-  @Output() expired = new EventEmitter<void>();
 
   timerRefreshTokenSubscription: any;
 
   constructor(@Inject(PLATFORM_ID) platformId: any) {
     this.isBrowser = isPlatformBrowser(platformId);
-  }
-
-  getToken(): string {
-    if (this.isBrowser) {
-      return localStorage.getItem(JWT_KEY) || '';
-    } else {
-      return '';
-    }
   }
 
   getNextUrl(): string | null {
@@ -55,16 +44,5 @@ export class AuthService {
     } else {
       localStorage.removeItem(NEXT_URL_PARAMS_KEY);
     }
-  }
-
-  removeLocalCreds() {
-    if (this.isBrowser) {
-      localStorage.removeItem(JWT_KEY);
-      localStorage.removeItem(JWT_REFRESH_KEY);
-    }
-  }
-
-  clear() {
-    this.removeLocalCreds();
   }
 }
