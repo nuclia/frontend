@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { BackendConfigurationService } from './backend-config.service';
-import { AuthService } from './auth.service';
+import { SDKService } from './sdk.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,11 +12,7 @@ import { AuthService } from './auth.service';
  * @deprecated Use the SDKService instead
  */
 export class APIService {
-  constructor(
-    private http: HttpClient,
-    private config: BackendConfigurationService,
-    private authService: AuthService,
-  ) {}
+  constructor(private http: HttpClient, private config: BackendConfigurationService, private sdk: SDKService) {}
 
   createHeaders(auth = true): HttpHeaders {
     let headers = new HttpHeaders();
@@ -24,7 +20,7 @@ export class APIService {
     headers = headers.set('Accept', 'application/json');
     if (auth) {
       let auth_header = '';
-      auth_header = 'Bearer ' + this.authService.getToken();
+      auth_header = 'Bearer ' + this.sdk.nuclia.auth.getToken();
       headers = headers.set('Authorization', auth_header);
     }
     return headers;

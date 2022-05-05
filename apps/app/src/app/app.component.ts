@@ -7,7 +7,6 @@ import {
   STFTrackingService,
   STFSplashScreenService,
   BackendConfigurationService,
-  AuthService,
   StateService,
   SDKService,
 } from '@flaps/auth';
@@ -32,7 +31,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private router: Router,
     private state: StateService,
     private user: UserService,
-    private authService: AuthService,
     private spashService: STFSplashScreenService,
     private translate: TranslateService,
     private tracking: STFTrackingService,
@@ -55,7 +53,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.router.navigate(['/user/login']);
       this.state.cleanAccount();
       this.state.cleanStash();
-      this.authService.removeLocalCreds();
     });
   }
 
