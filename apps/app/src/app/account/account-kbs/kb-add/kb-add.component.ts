@@ -59,7 +59,7 @@ export class KbAddComponent {
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
       sentence_embedder: this.languageMode[0] === 'multilingual' ? 'multilingual' : this.kbForm.value.selectedLanguage,
-      anonymization: this.useAnonymization[0] === 'yes' ? 'anonymization' : '',
+      anonymization: this.useAnonymization[0] === 'yes' ? 'multilingual' : '',
     });
   }
 
