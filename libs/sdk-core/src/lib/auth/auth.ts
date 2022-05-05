@@ -12,7 +12,6 @@ const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
   private _isAuthenticated: ReplaySubject<boolean> = new ReplaySubject(1);
-  private _hasLoggedOut: ReplaySubject<boolean> = new ReplaySubject(1);
   private timerSubscription?: Subscription;
 
   public constructor(nuclia: INuclia) {
@@ -127,7 +126,6 @@ export class Authentication implements IAuthentication {
       if (expiration) {
         const now = new Date().getTime();
         if (expiration < now) {
-          console.log('expired token, lets refresh');
           this.refresh().subscribe();
         } else {
           // we refresh the token 1 minute before expiration, or immediately if it's less than 1 minute
