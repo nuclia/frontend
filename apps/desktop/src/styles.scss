@@ -1,1 +1,8 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'libs/pastanaga/src/lib/styles/once';
+@import 'libs/pastanaga/src/lib/styles/fonts';
+@import 'apps/app/src/app/styles/css-variables';
+@import 'apps/app/src/styles';
+
+:root {
+  --desktop-background: var(--stf-gray-background);
+}

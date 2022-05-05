@@ -1,0 +1,19 @@
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 70px;
+  z-index: 900;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+}
+.logo {
+  cursor: pointer;
+  margin-left: 70px;
+  ::ng-deep svg {
+    height: 50px;
+    width: 150px;
+  }
+}

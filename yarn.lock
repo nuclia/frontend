@@ -3061,6 +3061,25 @@
   dependencies:
     "@types/node" "*"
 
+"@types/gapi.auth2@^0.0.56":
+  version "0.0.56"
+  resolved "https://registry.yarnpkg.com/@types/gapi.auth2/-/gapi.auth2-0.0.56.tgz#2f7031f79390b8401e7950d8277ada874fd2731c"
+  integrity sha512-kGaBtGVCqGS3Y05L56dGVlBpJflxLfwA0zpMQnQgGRFk1tsMPbQnogG51UQjt1vCuYfRO0Jd9/K5KDtzjAbMkA==
+  dependencies:
+    "@types/gapi" "*"
+
+"@types/gapi.drive@^0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@types/gapi.drive/-/gapi.drive-0.0.2.tgz#13e6917951b4e04cc7df81dccadb5fe7a23cc8cf"
+  integrity sha512-55Xkkcymw/WMOsKLArwb1OyHZDOewFuACBaUf5aB6u4ettYeXQJlxv+bphJH4kcstlfBQXFRiBGkUBbcpYXQsw==
+  dependencies:
+    "@types/gapi" "*"
+
+"@types/gapi@*", "@types/gapi@^0.0.41":
+  version "0.0.41"
+  resolved "https://registry.yarnpkg.com/@types/gapi/-/gapi-0.0.41.tgz#c477ee4f0951c005869219fd10b456ae2bba437e"
+  integrity sha512-tmHO66z/f91JZCDqinj/nNvQEszsz/hBT4+MvCSKT5sDzl5Ld/oXZ8WaecCBjRLw2uWKUInUHM9MhEXWkOiNjw==
+
 "@types/geojson@*":
   version "7946.0.8"
   resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.8.tgz#30744afdb385e2945e22f3b033f897f76b1f12ca"

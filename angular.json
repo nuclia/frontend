@@ -339,39 +339,83 @@
             "polyfills": "apps/desktop/src/polyfills.ts",
             "tsConfig": "apps/desktop/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["apps/desktop/src/favicon.ico", "apps/desktop/src/assets"],
+            "assets": [
+              "apps/desktop/src/favicon.ico",
+              "apps/desktop/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/pastanaga/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/common/src/assets/i18n",
+                "output": "assets/i18n"
+              }
+            ],
             "styles": ["apps/desktop/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["apps/desktop/src"]
+            },
             "scripts": []
           },
           "configurations": {
             "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
-                }
-              ],
+              "outputHashing": "all",
+              "serviceWorker": true,
               "fileReplacements": [
                 {
                   "replace": "apps/desktop/src/environments/environment.ts",
                   "with": "apps/desktop/src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all"
+              "assets": [
+                "apps/desktop/src/favicon.ico",
+                "apps/desktop/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/desktop/src/environments_config/production",
+                  "output": "assets/deployment"
+                }
+              ]
             },
-            "development": {
+            "local-stage": {
+              "aot": false,
               "buildOptimizer": false,
               "optimization": false,
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "assets": [
+                "apps/desktop/src/favicon.ico",
+                "apps/desktop/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/desktop/src/environments_config/local-stage",
+                  "output": "assets/deployment"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -382,11 +426,11 @@
             "production": {
               "browserTarget": "desktop:build:production"
             },
-            "development": {
-              "browserTarget": "desktop:build:development"
+            "local-stage": {
+              "browserTarget": "desktop:build:local-stage"
             }
           },
-          "defaultConfiguration": "development",
+          "defaultConfiguration": "local-stage",
           "options": {
             "proxyConfig": "apps/desktop/proxy.conf.json"
           }
@@ -990,6 +1034,23 @@
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
     }
   }
 }

@@ -1,0 +1,21 @@
+.side-bar {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 8px;
+  margin: 60px 20px 0 0;
+  height: calc(100vh - 70px - 120px);
+  padding: 20px;
+}
+
+a {
+  color: black;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  svg-icon {
+    height: 25px;
+    margin-right: 0.5em;
+  }
+}

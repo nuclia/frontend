@@ -9,13 +9,13 @@ import {
 } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { SDKService } from './sdk.service';
 
+const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 @Injectable({
   providedIn: 'root',
 })
 export class LoggedinGuard implements CanActivate, CanActivateChild, CanLoad {
-  constructor(private authService: AuthService, private router: Router, private sdk: SDKService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const url: string = state.url;
@@ -33,7 +33,7 @@ export class LoggedinGuard implements CanActivate, CanActivateChild, CanLoad {
   }
 
   checkLogin(url: string, params?: any): boolean {
-    if (this.sdk.nuclia.auth.getToken() || this.routeHasMagicToken()) {
+    if (localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || this.routeHasMagicToken()) {
       return true;
     }
     // Store the attempted URL for redirecting

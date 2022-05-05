@@ -2,13 +2,49 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { NxWelcomeComponent } from './nx-welcome.component';
-import { RouterModule } from '@angular/router';
+import { STFConfigModule } from '@flaps/auth';
+import { environment } from '../environments/environment';
+import { AppRoutingModule } from './app-routing.module';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
 
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
+
+// Load locales
+import localeEn from '@angular/common/locales/en';
+import localeEs from '@angular/common/locales/es';
+import localeCa from '@angular/common/locales/ca';
+import { registerLocaleData } from '@angular/common';
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { HomeModule } from './home/home.module';
+import { MainLayoutModule } from './main-layout/main-layout.module';
+import { SourceModule } from './source/source.module';
+import { ConnectorsModule } from './connectors/connectors.module';
+registerLocaleData(localeEn);
+registerLocaleData(localeEs);
+registerLocaleData(localeCa);
 @NgModule({
-  declarations: [AppComponent, NxWelcomeComponent],
-  imports: [BrowserModule, RouterModule.forRoot([], { initialNavigation: 'enabledBlocking' })],
-  providers: [],
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    STFConfigModule.forRoot(environment),
+    AngularSvgIconModule.forRoot(),
+    AppRoutingModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: createTranslateLoader,
+        deps: [HttpClient],
+      },
+    }),
+    HomeModule,
+    MainLayoutModule,
+    SourceModule,
+    ConnectorsModule,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

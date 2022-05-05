@@ -1,0 +1,7 @@
+<div class="connectors-list">
+  <da-connector *ngFor="let connector of connectors"
+                [title]="connector.title"
+                [logo]="connector.logo"
+                [description]="connector.description"
+                (click)="goToConnector(connector.id)"></da-connector>
+</div>

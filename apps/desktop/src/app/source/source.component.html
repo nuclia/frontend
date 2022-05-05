@@ -1,0 +1,6 @@
+<table>
+  <tr *ngFor="let resource of (resources | async)">
+    <td>{{ resource.title }}</td>
+  </tr>
+</table>
+<button (click)="disconnect()">Disconnect</button>
