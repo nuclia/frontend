@@ -13,10 +13,13 @@
   }
 
   .container {
-    padding: 25px 30px;
+    padding: 20px;
     background-color: #fff;
     border-radius: 4px;
     margin-bottom: 30px;
+    @media (min-width: 1600px) {
+      padding: 25px 30px;
+    }
   }
   .chart-container {
     padding-bottom: 40px;
@@ -48,11 +51,24 @@
 
   .resource-stats {
     min-height: 387px;
-    padding: 25px 30px 40px 30px;
+    padding-bottom: 40px;
     background-color: #fff;
     border-radius: 4px;
     h2 {
       margin: 0;
+    }
+    dl {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 0 12px 0;
+      font-size: var(--stf-font-size-xxlarge);
+      dt {
+        font-weight: var(--stf-font-weight-light);
+      }
+      dd {
+        font-weight: var(--stf-font-weight-bold);
+      }
     }
   }
 
@@ -76,14 +92,11 @@
       white-space: nowrap;
     }
   }
-
-  .full-width {
-    max-width: 1173px;
-  }
 }
 
 .total-resources {
   font-size: rythm(3.5);
+  margin-bottom: rythm(2.5);
 }
 
 .switch-action {
@@ -112,9 +125,12 @@
   display: flex;
   align-items: center;
   & > div {
+    font-size: var(--stf-font-size-xxlarge);
+    font-weight: var(--stf-font-weight-light);
     flex-grow: 1;
   }
 }
 .state {
+  padding: 0 rythm(2) 0 rythm(0.5);
   font-weight: var(--stf-font-weight-semibold);
 }

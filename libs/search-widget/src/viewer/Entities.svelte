@@ -4,7 +4,7 @@
   import { _ } from '../core/i18n';
 
   export let entities: [string, string[]][];
-  let expanded = [];
+  let expanded: string[] = [];
 
   const toggle = (group: string) => {
     if (isExpanded(group)) {
@@ -20,6 +20,7 @@
 
   const search = (entity: string) => {
     viewerStore.query.next(entity);
+    viewerStore.triggerSearch.next();
   };
 
   const onKeyUp = (event: KeyboardEvent, entity: string) => {
@@ -27,7 +28,7 @@
   };
 
   const getColor = (group: string) => {
-    const colors = {
+    const colors: { [key: string]: string } = {
       DATE: '#ff8989',
       FAC: '#81d8ac',
       GPE: '#454ade',

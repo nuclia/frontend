@@ -27,29 +27,33 @@ export enum PreviewKind {
   AUDIO,
 }
 
+export enum SearchOrder {
+  SEQUENTIAL,
+  RELEVANCE,
+}
+
 interface BaseWidgetParagraph {
   fieldType: string;
   fieldId: string;
+  paragraph: Paragraph;
   text: string;
   preview: PreviewKind;
 }
 
 export type WidgetParagraph = RegularWidgetParagraph | PdfWidgetParagraph | MediaWidgetParagraph;
 
-export interface RegularWidgetParagraph extends BaseWidgetParagraph {
+export interface RegularWidgetParagraph extends BaseWidgetParagraph { 
   fieldType: string;
   fieldId: string;
   preview: PreviewKind.NONE;
 }
 
 export interface PdfWidgetParagraph extends BaseWidgetParagraph {
-  paragraph: Paragraph;
   page: number;
   preview: PreviewKind.PDF;
 }
 
 export interface MediaWidgetParagraph extends BaseWidgetParagraph {
-  paragraph: Paragraph;
   time: number;
   preview: PreviewKind.VIDEO | PreviewKind.AUDIO;
 }

@@ -2,13 +2,12 @@
   import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph } from '../../core/models';
   import { PreviewKind } from '../../core/models';
   import { formatTime } from '../../core/utils';
-  import { viewerState, viewerStore } from './../store';
+  import { viewerState, viewerStore, selectedParagraphIndex } from './../store';
   import Paragraph from './Paragraph.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
 
   export let paragraphs: WidgetParagraph[] = [];
-  const selectedParagraphIndex = viewerState.selectedParagraphIndex;
   const onlySelected = viewerState.onlySelected;
   const previewParagraph = (paragraph: PdfWidgetParagraph | MediaWidgetParagraph) => {
     viewerStore.showPreview.next(true);

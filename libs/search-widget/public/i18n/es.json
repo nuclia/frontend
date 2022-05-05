@@ -25,6 +25,8 @@
 	"resource.language": "Idioma",
 	"resource.other": "Otros datos del recurso",
 	"resource.preview": "Previsualitzar",
+	"resource.relevance": "Relevancia",
+	"resource.sequential": "Secuencial",
 	"resource.show-all": "Muestra todos los párrafos",
 	"resource.source": "Documento de origen",
 	"resource.summary": "Resumen",
@@ -32,7 +34,7 @@
 	"results.paragraphs": "Párrafos relevantes",
 	"results.semantic": "Oraciones relevantes",
 	"results.summary": "Resumen",
-	"suggest.enter": "Presiona Entrar ⏎ para ver los resultados",
-	"suggest.more": "Mostrar más",
+	"suggest.enter": "Presiona Entrar [] para ver los resultados",
+	"suggest.more": "Mostrar más resultados",
 	"suggest.paragraphs": "Párrafo sugerido"
 }

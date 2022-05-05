@@ -25,6 +25,8 @@
 	"resource.language": "Language",
 	"resource.other": "Other resource data",
 	"resource.preview": "Preview",
+	"resource.relevance": "Relevance",
+	"resource.sequential": "Sequential",
 	"resource.show-all": "Show all paragraphs",
 	"resource.source": "Source document",
 	"resource.summary": "Summary",
@@ -32,7 +34,7 @@
 	"results.paragraphs": "Relevant paragraphs",
 	"results.semantic": "Relevant sentences",
 	"results.summary": "Summary",
-	"suggest.enter": "Press Enter ⏎ to see results",
-	"suggest.more": "Show more",
+	"suggest.enter": "Press Enter [] to see results",
+	"suggest.more": "Show more results",
 	"suggest.paragraphs": "Suggested paragraphs"
 }

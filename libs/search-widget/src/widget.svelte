@@ -120,6 +120,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap');
   .nuclia-widget {
     --color-primary-regular: var(--custom-color-primary-regular, black);
+    --color-primary-muted: var(--custom-color-primary-muted, #707070);
     --color-light-stronger: var(--custom-color-light-stronger, white);
     --color-dark-light: var(--custom-color-dark-stronger, #f7f7f8);
     --color-dark-stronger: var(--custom-color-dark-stronger, #8296a6);

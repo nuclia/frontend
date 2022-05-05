@@ -3,7 +3,7 @@
   <div fxLayout="row"
        fxLayoutGap="30px"
        fxLayoutAlign="start start">
-    <div fxFlex="1 1 auto">
+    <div fxFlex="1 1 0">
       <div class="container processing-stats">
         <div class="chart-header">
           <h2>{{ 'account.characters' | translate }}</h2>
@@ -12,11 +12,13 @@
         <app-empty-chart *ngIf="!(processing | async)"
                          [numLines]="3"></app-empty-chart>
         <app-bar-chart [data]="(processing | async) || []"
-                       [threshold]="300000000"></app-bar-chart>
+                       [threshold]="300000000"
+                       [axisYMultiplier]="1"
+                       [height]="320"></app-bar-chart>
       </div>
     </div>
 
-    <div fxFlex="1 1 auto"
+    <div fxFlex="0 0 auto"
          class="left-column">
       <div class="container switch-action"><a [routerLink]="'../' + (kbSlug | async)">
           <span [innerHtml]="'account.back' | translate"></span>
