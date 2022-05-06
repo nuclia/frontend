@@ -63,7 +63,7 @@ export const nucliaStore = (): NucliaStore => {
       ),
       results: _store!.searchResults.pipe(
         filter((res) => !!res.resources),
-        map((results) => (results.resources ? Object.values(results.resources) : [])),
+        map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
       ),
       paragraphs: _store!.suggestions.pipe(
@@ -115,3 +115,16 @@ export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
   nucliaStore().suggestions.next(NO_RESULTS);
 };
+
+const getSortedResources = (results: Search.Results) => {
+  return Object.values(results.resources || {})
+    .map((res) => {
+      const counter = (
+        ((results.paragraphs?.results || []).filter((p) => p.rid === res.id)).length +
+        ((results.sentences?.results || []).filter((s) => s.rid === res.id)).length
+      );
+      return {res: res, counter};
+    })
+    .sort((a, b) => (b.counter - a.counter))
+    .map((data) => data.res);
+}
