@@ -58,8 +58,13 @@ export class SourceComponent {
     }
   }
 
-  import(account: string, kb: string) {
-    console.log(account, kb, this.selection.selected);
+  import(account: string, kb?: string) {
+    if (!kb) {
+      return;
+    }
+    forkJoin(
+      this.selection.selected.map((selection) => this.sync.providers[this.sourceId].download(selection)),
+    ).subscribe((res) => console.log(res));
   }
 
   next() {

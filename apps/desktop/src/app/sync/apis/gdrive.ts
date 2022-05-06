@@ -1,6 +1,6 @@
 /// <reference path="../../../../../../node_modules/@types/gapi/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
-/// <reference path="../../../../../../node_modules/@types/gapi.drive/index.d.ts" />
+/// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
 import { IConnector, Resource } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, switchMap, take } from 'rxjs';
@@ -59,8 +59,8 @@ export class GDrive implements IConnector {
       take(1),
       switchMap(() =>
         from(
-          window['gapi'].client.drive.files.list({
-            maxResults: 10,
+          gapi.client.drive.files.list({
+            pageSize: 50,
             q: query
               ? `name contains '${query}' and not mimeType = 'application/vnd.google-apps.folder'`
               : `not mimeType = 'application/vnd.google-apps.folder'`,
@@ -77,6 +77,24 @@ export class GDrive implements IConnector {
     return {
       title: raw?.['name'] || '',
       originalId: raw?.['id'] || '',
+      type: raw['mimeType'],
     };
+  }
+
+  download(resource: Resource): Observable<Blob> {
+    const blob = new Blob();
+    return new Observable<Blob>((observer) => {
+      if (resource.type.startsWith('application/vnd.google-apps')) {
+        gapi.client.drive.files
+          .export({ fileId: resource.originalId, mimeType: 'application/pdf' })
+          .on('end', () => observer.next(blob))
+          .pipe(blob);
+      } else {
+        gapi.client.drive.files
+          .get({ fileId: resource.originalId, alt: 'media' })
+          .on('end', () => observer.next(blob))
+          .pipe(blob);
+      }
+    });
   }
 }

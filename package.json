@@ -118,7 +118,7 @@
     "@types/d3": "^5.16.3",
     "@types/gapi": "^0.0.41",
     "@types/gapi.auth2": "^0.0.56",
-    "@types/gapi.drive": "^0.0.2",
+    "@types/gapi.client.drive": "^3.0.13",
     "@types/jasmine": "3.6.11",
     "@types/jest": "27.0.2",
     "@types/jexl": "^2.2.0",
