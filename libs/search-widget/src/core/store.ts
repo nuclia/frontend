@@ -41,6 +41,7 @@ let _state: {
   customStyle: Observable<string>;
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
+  getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -62,7 +63,7 @@ export const nucliaStore = (): NucliaStore => {
       ),
       results: _store!.searchResults.pipe(
         filter((res) => !!res.resources),
-        map((results) => (results.resources ? Object.values(results.resources) : [])),
+        map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
       ),
       paragraphs: _store!.suggestions.pipe(
@@ -88,6 +89,13 @@ export const nucliaStore = (): NucliaStore => {
           map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
         );
       },
+      getMatchingSentences: (resId: string): Observable<Search.Sentence[]> => {
+        return _store!.searchResults.pipe(
+          map((results) => results.sentences?.results || []),
+          map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
+          map((paragraphs) => paragraphs.slice().sort((a,b) => a.score - b.score)),
+        );
+      },
     };
   }
   return _store as NucliaStore;
@@ -107,3 +115,16 @@ export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
   nucliaStore().suggestions.next(NO_RESULTS);
 };
+
+const getSortedResources = (results: Search.Results) => {
+  return Object.values(results.resources || {})
+    .map((res) => {
+      const counter = (
+        ((results.paragraphs?.results || []).filter((p) => p.rid === res.id)).length +
+        ((results.sentences?.results || []).filter((s) => s.rid === res.id)).length
+      );
+      return {res: res, counter};
+    })
+    .sort((a, b) => (b.counter - a.counter))
+    .map((data) => data.res);
+}

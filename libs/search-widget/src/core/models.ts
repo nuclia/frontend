@@ -3,10 +3,12 @@ import type { Paragraph, CloudLink, Search } from '@nuclia/core';
 export const NO_RESULTS: Search.Results = {
   resources: {},
   paragraphs: { results: [], facets: {} },
+  sentences: { results: [], facets: {} },
 } as Search.Results;
 export const PENDING_RESULTS = {
   resources: {},
   paragraphs: { results: [], facets: {} },
+  sentences: { results: [], facets: {} },
   pending: true,
 };
 
@@ -18,6 +20,7 @@ export interface WidgetAction {
 export interface DisplayedResource {
   uid: string;
   paragraph?: Search.Paragraph;
+  sentence?: Search.Paragraph;
 }
 
 export enum PreviewKind {

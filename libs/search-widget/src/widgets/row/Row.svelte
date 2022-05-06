@@ -9,6 +9,7 @@
 
   export let result: IResource;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
+  const sentences = nucliaState().getMatchingSentences(result.id);
   let thumbnail;
   if (result.thumbnail) {
     getFile(result.thumbnail).subscribe((url) => (thumbnail = url));
@@ -34,7 +35,11 @@
     </div>
     <div class="block-2">
       <h2 class="title">{decodeURIComponent(result.title || '–')}</h2>
-      <div class="byline">{formatDate(result.created)}</div>
+      <div class="byline">
+        {#if result.created}
+          {formatDate(result.created)}
+        {/if}
+      </div>
     </div>
     <div class="block-3">
       {#if thumbnail}
@@ -48,15 +53,32 @@
       {/if}
     </div>
     <div class="block-4">
-      <h3>{$_('results.paragraphs')}</h3>
-      {#each $paragraphs as paragraph}
-        <div
-          class="paragraph"
-          on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: paragraph.rid, paragraph })}
-        >
-          {paragraph.text}
+      {#if $sentences.length > 0}
+        <div class="paragraph-list">
+          <h3>{$_('results.semantic')}</h3>
+          {#each $sentences as sentence}
+            <div
+              class="paragraph"
+              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
+            >
+              {sentence.text}
+            </div>
+          {/each}
         </div>
-      {/each}
+      {/if}
+      {#if $paragraphs.length > 0}
+        <div class="paragraph-list">
+          <h3>{$_('results.paragraphs')}</h3>
+          {#each $paragraphs as paragraph}
+            <div
+              class="paragraph"
+              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: paragraph.rid, paragraph })}
+            >
+              {paragraph.text}
+            </div>
+          {/each}
+        </div>
+      {/if}
     </div>
   </div>
 </div>
@@ -129,10 +151,14 @@
     object-fit: cover;
     object-position: top;
   }
+  .paragraph-list:not(:last-child) {
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--color-primary-regular);
+  }
   .paragraph {
     position: relative;
     padding: 16px 0;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.5);
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
   }
   .paragraph:last-child {
     border-bottom: 0;
