@@ -13,7 +13,7 @@
     selectSentence,
   } from './store';
   import { onDestroy } from 'svelte';
-  import { combineLatest, filter, of, switchMap, take } from 'rxjs';
+  import { combineLatest, filter, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';
   import Paragraphs from './paragraphs/Paragraphs.svelte';
   import InputViewer from './InputViewer.svelte';
@@ -64,11 +64,9 @@
           selectParagraph(resource, displayedResource.paragraph);
         }
       }),
-    viewerStore.triggerSearch
-      .pipe(
-        switchMap(() => query.pipe(take(1))),
-        switchMap((query) => (query.length > 0 ? search(resource, query) : of(null))),
-      )
+
+    query
+      .pipe(switchMap((query) => (query.length > 0 ? search(resource, query) : of(null))))
       .subscribe((paragraphs) => {
         viewerStore.onlySelected.next(false);
         viewerStore.results.next(paragraphs);

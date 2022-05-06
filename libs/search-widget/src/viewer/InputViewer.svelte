@@ -3,7 +3,6 @@
   import { getCDN } from '../core/utils';
   import { SearchOrder } from '../core/models';
   import { viewerStore, viewerState, clearSearch } from './store';
-  import { merge, switchMap, map, mapTo, take } from 'rxjs';
 
   const query = viewerStore.query;
   query['set'] = query.next;
@@ -11,29 +10,11 @@
   const order = viewerStore.order;
   order['set'] = order.next;
 
-  const triggerSearch = viewerStore.triggerSearch;
   const results = viewerState.results;
   const onlySelected = viewerState.onlySelected;
 
-  const buttonDisabled = merge(
-    query.pipe(mapTo(false)),
-    triggerSearch.pipe(
-      switchMap(() => viewerState.query.pipe(take(1))),
-      map((query) => query.length > 0),
-    ),
-  );
-
   const showAllParagraphs = () => {
     clearSearch();
-  };
-
-  const onEnter = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      search();
-    }
-  };
-  const search = () => {
-    triggerSearch.next();
   };
 </script>
 
@@ -50,10 +31,9 @@
           autocapitalize="off"
           spellcheck="false"
           aria-label="Search input"
-          on:keypress={onEnter}
           bind:value={$query}
         />
-        <button on:click={search} disabled={$buttonDisabled}>
+        <button>
           <img src={`${getCDN()}icons/search.svg`} alt="search" />
         </button>
       </div>
@@ -138,12 +118,7 @@
     background: transparent;
     -webkit-appearance: none;
     appearance: none;
-  }
-  .search-form button:not(:disabled) {
     cursor: pointer;
-  }
-  .search-form button:disabled {
-    opacity: 0.3;
   }
   .search-form button img {
     display: block;

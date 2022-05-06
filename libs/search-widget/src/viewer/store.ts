@@ -38,7 +38,6 @@ const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 export const viewerStore: {
   resource: BehaviorSubject<Resource | null>;
   query: BehaviorSubject<string>;
-  triggerSearch: Subject<void>;
   paragraphs: BehaviorSubject<WidgetParagraph[]>;
   results: BehaviorSubject<WidgetParagraph[] | null>;
   showPreview: BehaviorSubject<boolean>;
@@ -51,7 +50,6 @@ export const viewerStore: {
 } = {
   resource: new BehaviorSubject(null),
   query: new BehaviorSubject(''),
-  triggerSearch: new Subject<void>(),
   paragraphs: new BehaviorSubject([]),
   results: new BehaviorSubject(null),
   showPreview: new BehaviorSubject(false),
