@@ -20,7 +20,6 @@
 
   const search = (entity: string) => {
     viewerStore.query.next(entity);
-    viewerStore.triggerSearch.next();
   };
 
   const onKeyUp = (event: KeyboardEvent, entity: string) => {
