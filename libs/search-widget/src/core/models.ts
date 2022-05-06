@@ -20,6 +20,7 @@ export interface WidgetAction {
 export interface DisplayedResource {
   uid: string;
   paragraph?: Search.Paragraph;
+  sentence?: Search.Paragraph;
 }
 
 export enum PreviewKind {

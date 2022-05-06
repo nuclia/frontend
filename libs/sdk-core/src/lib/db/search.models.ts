@@ -58,6 +58,8 @@ export namespace Search {
   export interface Sentence {
     score: number;
     rid: string;
+    field_type: string;
+    field: string;
     text: string;
   }
 }

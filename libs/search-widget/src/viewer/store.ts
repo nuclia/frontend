@@ -7,6 +7,8 @@ import type {
   LinkFieldData,
   CloudLink,
   ResourceField,
+  ResourceData,
+  Sentence,
 } from '@nuclia/core';
 import {
   Observable,
@@ -179,15 +181,24 @@ export function getMediaPreviewParams(
   }
 }
 
+export function selectSentence(resource: Resource, searchSentence: Search.Sentence) {
+  const paragraph = findParagraphFromSearchSentence(resource, searchSentence);
+  paragraph && _selectParagraph(resource, paragraph, searchSentence.field_type, searchSentence.field);
+}
+
 export function selectParagraph(resource: Resource, searchParagraph: Search.Paragraph) {
-  const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
   const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
+  paragraph && _selectParagraph(resource, paragraph, searchParagraph.field_type, searchParagraph.field);
+}
+
+function _selectParagraph(resource: Resource, paragraph: Paragraph, fieldType: string, fieldId: string) {
+  const field = getField(resource, getFieldType(fieldType), fieldId);
   if (field && paragraph && getPreviewKind(field, paragraph) !== PreviewKind.NONE) {
     viewerStore.onlySelected.next(true);
     viewerStore.showPreview.next(true);
     viewerStore.selectedParagraph.next({
-      fieldType: getFieldType(searchParagraph.field_type),
-      fieldId: searchParagraph.field,
+      fieldType: getFieldType(fieldType),
+      fieldId: fieldId,
       paragraph,
     });
   }
@@ -314,6 +325,10 @@ export function getParagraphText(field: IFieldData, paragraph: Paragraph): strin
   return field.extracted?.text?.text.slice(paragraph.start, paragraph.end);
 }
 
+export function getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
+  return field.extracted?.text?.text.slice(sentence.start, sentence.end);
+}
+
 export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
   return (fileField.extracted?.file?.file_pages_previews?.positions || []).reduce((acc, current, index) => {
     const overlapping =
@@ -377,4 +392,17 @@ function findParagraphFromSearchParagraph(
   const field = resource.data[getFieldType(searchParagraph.field_type)]?.[searchParagraph.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   return paragraphs?.find((paragraph) => searchParagraph.text === getParagraphText(field, paragraph));
+}
+
+function findParagraphFromSearchSentence(
+  resource: Resource,
+  searchSenctence: Search.Sentence,
+): Paragraph | undefined {
+  const field = resource.data[getFieldType(searchSenctence.field_type) as keyof ResourceData]?.[searchSenctence.field];
+  const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
+  return paragraphs?.find((paragraph) => (
+    paragraph.sentences?.find((sentence) => (
+      searchSenctence.text === getSentenceText(field!, sentence)
+    ))
+  ));
 }

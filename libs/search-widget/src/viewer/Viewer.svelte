@@ -3,7 +3,15 @@
   import { getFile } from '../core/api';
   import { nucliaState } from '../core/store';
   import { _ } from '../core/i18n';
-  import { findFileByType, search, getResourceParagraphs, selectParagraph, viewerStore, viewerState } from './store';
+  import {
+    findFileByType,
+    search,
+    getResourceParagraphs,
+    selectParagraph,
+    viewerStore,
+    viewerState,
+    selectSentence,
+  } from './store';
   import { onDestroy } from 'svelte';
   import { combineLatest, filter, of, switchMap, take } from 'rxjs';
   import Header from './Header.svelte';
@@ -44,11 +52,17 @@
     viewerState.searchReady
       .pipe(
         switchMap(() => combineLatest([nucliaState().query, nucliaState().displayedResource])),
-        filter(([query, displayedResource]) => !!query && !!displayedResource.paragraph),
+        filter(
+          ([query, displayedResource]) => !!query && (!!displayedResource.paragraph || !!displayedResource.sentence),
+        ),
       )
       .subscribe(([query, displayedResource]) => {
         //viewerStore.query.next(query);
-        selectParagraph(resource, displayedResource.paragraph);
+        if (displayedResource.sentence) {
+          selectSentence(resource, displayedResource.sentence);
+        } else if (displayedResource.paragraph) {
+          selectParagraph(resource, displayedResource.paragraph);
+        }
       }),
     viewerStore.triggerSearch
       .pipe(

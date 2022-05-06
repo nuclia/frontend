@@ -59,7 +59,7 @@
           {#each $sentences as sentence}
             <div
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid })}
+              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
             >
               {sentence.text}
             </div>

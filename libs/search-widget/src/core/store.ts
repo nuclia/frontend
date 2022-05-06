@@ -93,6 +93,7 @@ export const nucliaStore = (): NucliaStore => {
         return _store!.searchResults.pipe(
           map((results) => results.sentences?.results || []),
           map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
+          map((paragraphs) => paragraphs.slice().sort((a,b) => a.score - b.score)),
         );
       },
     };
