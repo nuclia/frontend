@@ -25,8 +25,9 @@
 	"resource.language": "Langue",
 	"resource.other": "Autres données sur la ressource",
 	"resource.preview": "Prévisualiser",
-	"resource.relevance": "",
-	"resource.sequential": "",
+	"resource.relevance": "Par pertinence",
+	"resource.search": "Rechercher",
+	"resource.sequential": "Par date",
 	"resource.show-all": "Afficher tous les paragraphes",
 	"resource.source": "Document d'origine",
 	"resource.summary": "Résumé",
@@ -34,7 +35,7 @@
 	"results.paragraphs": "Paragraphes pertinents",
 	"results.semantic": "Phrases pertinentes",
 	"results.summary": "Résumé",
-	"suggest.enter": "Appuyer sur Entrée [] pour voir les résultats",
-	"suggest.more": "",
+	"suggest.enter": "Appuyer sur Entrée ⏎ pour voir les résultats",
+	"suggest.more": "Afficher plus de résultats",
 	"suggest.paragraphs": "Paragraphes suggérés"
 }

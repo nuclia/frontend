@@ -26,6 +26,7 @@
 	"resource.other": "Other resource data",
 	"resource.preview": "Preview",
 	"resource.relevance": "Relevance",
+	"resource.search": "Search",
 	"resource.sequential": "Sequential",
 	"resource.show-all": "Show all paragraphs",
 	"resource.source": "Source document",
@@ -34,7 +35,7 @@
 	"results.paragraphs": "Relevant paragraphs",
 	"results.semantic": "Relevant sentences",
 	"results.summary": "Summary",
-	"suggest.enter": "Press Enter [] to see results",
+	"suggest.enter": "Press Enter ⏎ to see results",
 	"suggest.more": "Show more results",
 	"suggest.paragraphs": "Suggested paragraphs"
 }

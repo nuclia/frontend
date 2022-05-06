@@ -38,7 +38,7 @@
 </script>
 
 <div class="search">
-  <label for="nuclia-resource-search">{$_('Search')}</label>
+  <label for="nuclia-resource-search">{$_('resource.search')}</label>
   <div class="search-form">
     <div class="search-query">
       <div class="search-input">
