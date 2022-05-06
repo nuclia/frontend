@@ -87,13 +87,14 @@ export const nucliaStore = (): NucliaStore => {
         return _store!.searchResults.pipe(
           map((results) => results.paragraphs?.results || []),
           map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
+          map((paragraphs) => paragraphs.slice().sort((a, b) => b.score - a.score)),
         );
       },
       getMatchingSentences: (resId: string): Observable<Search.Sentence[]> => {
         return _store!.searchResults.pipe(
           map((results) => results.sentences?.results || []),
-          map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
-          map((paragraphs) => paragraphs.slice().sort((a,b) => a.score - b.score)),
+          map((sentences) => sentences.filter((p) => p.rid === resId)),
+          map((sentences) => sentences.slice().sort((a, b) => b.score - a.score)),
         );
       },
     };
@@ -119,12 +120,11 @@ export const setDisplayedResource = (resource: DisplayedResource) => {
 const getSortedResources = (results: Search.Results) => {
   return Object.values(results.resources || {})
     .map((res) => {
-      const counter = (
-        ((results.paragraphs?.results || []).filter((p) => p.rid === res.id)).length +
-        ((results.sentences?.results || []).filter((s) => s.rid === res.id)).length
-      );
-      return {res: res, counter};
+      const counter =
+        (results.paragraphs?.results || []).filter((p) => p.rid === res.id).length +
+        (results.sentences?.results || []).filter((s) => s.rid === res.id).length;
+      return { res: res, counter };
     })
-    .sort((a, b) => (b.counter - a.counter))
+    .sort((a, b) => b.counter - a.counter)
     .map((data) => data.res);
-}
+};
