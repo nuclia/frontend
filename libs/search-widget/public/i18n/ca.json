@@ -26,6 +26,7 @@
 	"resource.other": "Altres dades del recurs",
 	"resource.preview": "Previsualitzar",
 	"resource.relevance": "Rellevància",
+	"resource.search": "",
 	"resource.sequential": "Seqüencial",
 	"resource.show-all": "Mostra tots els paràgrafs",
 	"resource.source": "Document d'origen",
@@ -34,7 +35,7 @@
 	"results.paragraphs": "Paràgrafes rellevants",
 	"results.semantic": "Frases rellevants",
 	"results.summary": "Resum",
-	"suggest.enter": "Premeu Enter [] per veure els resultats",
+	"suggest.enter": "Premeu Enter ⏎ per veure els resultats",
 	"suggest.more": "Mostra més resultats",
 	"suggest.paragraphs": "Paràgraf suggerit"
 }
