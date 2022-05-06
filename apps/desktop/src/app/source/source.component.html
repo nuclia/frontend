@@ -1,6 +1,30 @@
-<table>
-  <tr *ngFor="let resource of (resources | async)">
-    <td>{{ resource.title }}</td>
-  </tr>
-</table>
-<button (click)="disconnect()">Disconnect</button>
+<ng-container *ngIf="step === 0">
+  <div class="search-form">
+    <stf-input [(value)]="query"></stf-input>
+    <stf-button (click)="triggerSearch.next()">{{ 'Search' | translate }}</stf-button>
+  </div>
+  <stf-button (click)="next()">{{ 'Next' | translate }}</stf-button>
+  <stf-button (click)="disconnect()">{{ 'Disconnect' | translate }}</stf-button>
+  <table>
+    <tr *ngFor="let resource of (resources | async)">
+      <td>
+        <stf-checkbox [selected]="selection.isSelected(resource)"
+                      (selectedChange)="selection.toggle(resource)"></stf-checkbox>
+      </td>
+      <td>{{ resource.title }}</td>
+    </tr>
+  </table>
+</ng-container>
+<ng-container *ngIf="step === 1">
+  <h2>Push to</h2>
+  <ul>
+    <li *ngFor="let account of (kbs | async)">
+      <strong>{{ account.account }}</strong>
+      <ul>
+        <li *ngFor="let kb of account.kbs">
+          <a (click)="import(account.account, kb.slug)">{{ kb.title }}</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</ng-container>

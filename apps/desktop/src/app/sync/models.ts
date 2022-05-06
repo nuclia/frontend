@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 export interface IConnector {
   data: { [key: string]: string };
   authenticate(): Observable<boolean>;
-  getFiles(): Observable<Resource[]>;
+  getFiles(query?: string): Observable<Resource[]>;
   disconnect(): void;
 }
 

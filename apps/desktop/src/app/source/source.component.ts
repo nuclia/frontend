@@ -1,7 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { SelectionModel } from '@angular/cdk/collections';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { SDKService } from '@flaps/auth';
+import { forkJoin, Observable, Subject } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { Resource } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 
@@ -12,21 +14,56 @@ import { SyncService } from '../sync/sync.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SourceComponent {
+  step = 0;
   sourceId = '';
-  resources: Observable<Resource[]> = this.route.params.pipe(
-    map((res) => res.id),
-    filter((id) => !!id),
-    switchMap((id) => {
-      this.sourceId = id;
-      return this.sync.providers[id].getFiles();
-    })
+  query = '';
+  triggerSearch = new Subject();
+  resources: Observable<Resource[]> = this.triggerSearch.pipe(
+    switchMap(() => this.sync.providers[this.sourceId].getFiles(this.query)),
   );
+  selection = new SelectionModel<Resource>(true, []);
+  kbs = this.sdk.nuclia.db
+    .getAccounts()
+    .pipe(
+      switchMap((accounts) =>
+        forkJoin(
+          accounts
+            .map((account) => account.slug)
+            .map((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account).pipe(map((kbs) => ({ account, kbs })))),
+        ),
+      ),
+    );
 
-  constructor(private route: ActivatedRoute, private sync: SyncService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private sync: SyncService,
+    private sdk: SDKService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.route.params
+      .pipe(
+        map((res) => res.id),
+        filter((id) => !!id),
+        take(1),
+      )
+      .subscribe((id) => {
+        this.sourceId = id;
+        this.triggerSearch.next(id);
+      });
+  }
 
   disconnect() {
     if (this.sourceId) {
       this.sync.providers[this.sourceId].disconnect();
     }
+  }
+
+  import(account: string, kb: string) {
+    console.log(account, kb, this.selection.selected);
+  }
+
+  next() {
+    this.step++;
+    this.cdr.detectChanges();
   }
 }

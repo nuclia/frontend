@@ -53,7 +53,7 @@ export class GDrive implements IConnector {
     }
   }
 
-  getFiles(): Observable<Resource[]> {
+  getFiles(query?: string): Observable<Resource[]> {
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),
@@ -61,6 +61,9 @@ export class GDrive implements IConnector {
         from(
           window['gapi'].client.drive.files.list({
             maxResults: 10,
+            q: query
+              ? `name contains '${query}' and not mimeType = 'application/vnd.google-apps.folder'`
+              : `not mimeType = 'application/vnd.google-apps.folder'`,
           }),
         ),
       ),
