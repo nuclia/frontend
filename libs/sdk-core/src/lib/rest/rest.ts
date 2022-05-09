@@ -1,4 +1,4 @@
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { firstValueFrom, from, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import type { INuclia, IRest } from '../models';
 
@@ -55,22 +55,23 @@ export class Rest implements IRest {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body?: any,
     extraHeaders?: { [key: string]: string },
-    doNotParse?: boolean
+    doNotParse?: boolean,
   ): Observable<T> {
     const specialContentType =
       extraHeaders && extraHeaders['content-type'] && extraHeaders['content-type'] !== 'application/json';
-    return fromFetch<T>(this.getFullUrl(path), {
-      selector: (response) =>
-        doNotParse
-          ? Promise.resolve(response)
-          : response
-              .clone()
-              .json()
-              .catch(() => response.text()),
+    return fromFetch(this.getFullUrl(path), {
+      selector: (response) => Promise.resolve(response),
       headers: this.getHeaders(extraHeaders),
       method,
       body: specialContentType ? body : JSON.stringify(body),
-    });
+    }).pipe(
+      switchMap((response) => {
+        if (!response.ok) {
+          return throwError(response);
+        }
+        return doNotParse ? of(response as unknown as T) : from(response.json());
+      }),
+    );
   }
 
   getFullUrl(path: string): string {
@@ -92,7 +93,7 @@ export class Rest implements IRest {
         }, {});
         this.zones = zones;
         return zones;
-      })
+      }),
     );
   }
 
@@ -101,7 +102,7 @@ export class Rest implements IRest {
       switchMap((res) => from(res.blob())),
       map((blob) => {
         return URL.createObjectURL(blob);
-      })
+      }),
     );
   }
 }
