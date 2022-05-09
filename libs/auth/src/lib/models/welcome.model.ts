@@ -1,4 +1,5 @@
-import { UserType, Language } from './user.model';
+import { UserType } from './user.model';
+import { Language } from '@nuclia/core';
 
 export interface User {
   id: string;
@@ -10,42 +11,9 @@ export interface User {
   avatar?: string;
 }
 
-export interface IUserPreferences {
-  last_login?: string;
-  email: string;
-  name?: string;
-  type: UserType;
-  language?: Language;
-  // is missing the avatar field ??
-}
-
-export class UserPreferences {
-  last_login?: string;
-  email: string;
-  name?: string;
-  type: UserType;
-  language?: Language;
-  avatar?: string;
-
-  constructor(pref: IUserPreferences, user: User) {
-    this.last_login = pref.last_login;
-    this.email = pref.email;
-    this.name = pref.name;
-    this.type = pref.type;
-    this.language = pref.language;
-    this.avatar = user.avatar;
-  }
-}
-
 export interface SetUserPreferences {
   name?: string;
   avatar?: string;
   email?: string;
-  language?: string;
-}
-
-export interface Welcome {
-  preferences: UserPreferences;
-  accounts: string[];
-  create: boolean;
+  language?: Language;
 }
