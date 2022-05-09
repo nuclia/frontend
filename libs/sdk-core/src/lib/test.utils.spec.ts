@@ -3,12 +3,13 @@ export const mockFetch = (response: any) => {
   global.fetch = jest.fn(() =>
     Promise.resolve({
       status: 200,
+      ok: true,
       clone: () => ({
         json: () => Promise.resolve(response),
       }),
       json: () => Promise.resolve(response),
       text: () => Promise.resolve(response),
-    })
+    }),
   ) as jest.Mock;
 };
 
