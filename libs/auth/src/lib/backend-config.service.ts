@@ -8,7 +8,7 @@ import { isPlatformBrowser } from '@angular/common';
 @Injectable({ providedIn: 'root' })
 export class BackendConfigurationService {
   private config: EnviromentConfiguration;
-  private staticConf: StaticEnviromentConfiguration;
+  staticConf: StaticEnviromentConfiguration;
   isBrowser = false;
 
   constructor(

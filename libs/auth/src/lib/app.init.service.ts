@@ -28,6 +28,7 @@ export type EnviromentConfiguration = {
 
 export type StaticEnviromentConfiguration = {
   production: boolean;
+  client: string;
   backend: {
     social_login: boolean;
     oauth_login?: boolean;

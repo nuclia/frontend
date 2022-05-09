@@ -18,6 +18,7 @@
 </ng-container>
 <ng-container *ngIf="step === 1">
   <h2>Push to</h2>
+  <button (click)="import('dsds', 'dsdsds')">dsds</button>
   <ul>
     <li *ngFor="let account of (kbs | async)">
       <strong>{{ account.account }}</strong>

@@ -19,6 +19,7 @@ export interface INuclia {
   options: NucliaOptions;
   auth: IAuthentication;
   rest: IRest;
+  db: IDb;
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;

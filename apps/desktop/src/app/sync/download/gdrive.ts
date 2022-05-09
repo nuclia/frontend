@@ -2,7 +2,7 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
-import { IConnector, Resource } from '../models';
+import { IDownloadConnector, Resource } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, switchMap, take } from 'rxjs';
 import { injectScript } from '../inject';
 
@@ -10,10 +10,10 @@ declare var gapi: any;
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
-export class GDrive implements IConnector {
+export class GDrive implements IDownloadConnector {
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   data: { [key: string]: string };
@@ -82,18 +82,19 @@ export class GDrive implements IConnector {
   }
 
   download(resource: Resource): Observable<Blob> {
-    const blob = new Blob();
     return new Observable<Blob>((observer) => {
       if (resource.type.startsWith('application/vnd.google-apps')) {
         gapi.client.drive.files
           .export({ fileId: resource.originalId, mimeType: 'application/pdf' })
-          .on('end', () => observer.next(blob))
-          .pipe(blob);
+          .then((res: any) => {
+            observer.next(new Blob([res.body], { type: 'application/pdf' }));
+            observer.complete();
+          });
       } else {
-        gapi.client.drive.files
-          .get({ fileId: resource.originalId, alt: 'media' })
-          .on('end', () => observer.next(blob))
-          .pipe(blob);
+        gapi.client.drive.files.get({ fileId: resource.originalId, alt: 'media' }).then((res: any) => {
+          observer.next(new Blob([res.body], { type: resource.type }));
+          observer.complete();
+        });
       }
     });
   }
