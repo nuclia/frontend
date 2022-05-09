@@ -1,6 +1,5 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { UserPreferences, User } from './models';
-import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, forkJoin, throwError, map, Observable, of, switchMap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Welcome } from '@nuclia/core';
 import { SDKService } from './sdk.service';
@@ -25,8 +24,7 @@ export class UserService {
       .subscribe();
   }
 
-  private updateWelcome(): Observable<void> {
-    const mockUser = { avatar: '', email: '', id: '', name: '', type: 'USER' } as User;
+  updateWelcome(): Observable<void> {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
         if (error.status === 403) {
@@ -35,7 +33,6 @@ export class UserService {
         return of(error);
       }),
       map((welcome) => {
-        welcome.preferences = new UserPreferences(welcome.preferences, mockUser);
         this.userInfoSubject.next(welcome);
       }),
     );

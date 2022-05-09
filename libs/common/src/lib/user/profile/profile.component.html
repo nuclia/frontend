@@ -1,88 +1,93 @@
-<div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="50px">
-  <mat-card class="profile_form"  fxLayout="column" fxLayoutAlign="space-around stretch">
-    <mat-card-title>{{ 'profile.edit' | translate }} {{ident}}</mat-card-title>
-    <mat-card-content>
-      <form [formGroup]="profileForm" class="form_wrapper" fxLayout="column" fxLayoutAlign="space-around stretch">
+<div class="profile">
+  <div class="profile-container">
 
-        <stf-input
-          formControlName="name"
-          required
-          type="text"
-          [validator]="profileForm.controls['name']"
-          [validation_messages]="profile_validation_messages.name"
-        >
-          {{ 'profile.name' | translate }}
-        </stf-input>
-        <stf-input
-          formControlName="email"
-          required
-          type="text"
-          [validator]="profileForm.controls['email']"
-          [validation_messages]="profile_validation_messages.email"
-        >
-          {{ 'profile.email' | translate }}
-        </stf-input>
-        <mat-form-field appearance="fill">
-          <mat-label> {{ 'profile.language' | translate }}</mat-label>
-          <mat-select formControlName="language">
-            <mat-option value="ca">Català</mat-option>
-            <mat-option value="es">Español</mat-option>
-            <mat-option value="en">English</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <div class="image">
-            <h4>{{ 'profile.logo' | translate }}</h4>
-            <p>{{ 'profile.logo_description' | translate }}</p>
-            <div fxLayout="row" fxLayoutAlign="start center">
-              <label class="custom-file-upload">
-                <input type="file" (change)="onFileChange($event)" />
-                {{ 'generic.change_file' | translate }}
-              </label>
-              <div class="logo_wrapper">
-                <div *ngIf="!this.image_b64 && this.profileForm.value.logo">
-                  <img *ngIf="this.profileForm.value.logo | getfile as logo_image" [src]="logo_image" width="50" />
-                </div>
-                <img *ngIf="this.image_b64" [src]="this.image_b64" width="50" />
-              </div>
-            </div>
+    <button class="profile-close"
+            (click)="goBack()">
+      <svg-icon src="assets/icons/close.svg"></svg-icon>
+    </button>
+
+    <form [formGroup]="profileForm">
+      <h1>{{ 'generic.user_preferences' | translate }}</h1>
+
+      <div class="field">
+        <div class="field-label">
+          <label>{{ 'profile.name' | translate }}</label>
+        </div>
+        <div class="field-input">
+          <stf-input formControlName="name"
+                     [required]="true"
+                     name="name"
+                     type="text"
+                     [isLessen]="true"
+                     [validator]="profileForm.controls['name']"
+                     [validation_messages]="profile_validation_messages.name">
+          </stf-input>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <label>{{ 'generic.email' | translate }}</label>
+        </div>
+        <div class="field-input">
+          <stf-input formControlName="email"
+                     [required]="true"
+                     name="email"
+                     type="email"
+                     [isLessen]="true"
+                     [validator]="profileForm.controls['email']"
+                     [validation_messages]="profile_validation_messages.email">
+          </stf-input>
+        </div>
+      </div>
+
+      <ng-container *ngIf="canModifyPassword">
+        <div class="field">
+          <div class="field-label">
+            <label>{{ 'profile.new_password' | translate }}</label>
           </div>
-
-        <div class="feedback_error">
-          {{ error }}
-        </div>
-        <div class="login_button" fxLayout="row" fxLayoutAlign="center center" >
-          <stf-button color="secondary"  (click)="do()" >{{'generic.save' | translate}}</stf-button>
-        </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
-
-  <mat-card class="password_form" fxLayout="column" fxLayoutAlign="space-around stretch" fxLayoutGap="20px">
-    <mat-card-title>{{ 'profile.change_password' | translate }}</mat-card-title>
-    <mat-card-content>
-      <div *ngIf="password_changed" class="message">{{ 'profile.password_changed' | translate }}</div>
-      <form [formGroup]="passwordForm" fxLayout="column" fxLayoutAlign="space-around stretch" fxLayoutGap="30px">
-        <stf-input
-          formControlName="password"
-          type="password"
-          [validator]="passwordForm.controls['password']"
-          [validation_messages]="password_validation_messages.password"
-        >
-          {{ 'profile.new_password' | translate }}
-        </stf-input>
-        <stf-input
-          formControlName="passwordConfirm"
-          type="password"
-          [validator]="passwordForm.controls['passwordConfirm']"
-          [validation_messages]="password_validation_messages.passwordConfirm"
-        >
-          {{ 'profile.repeat_password' | translate }}
-        </stf-input>
-        <div class="login_button" fxLayout="row" fxLayoutAlign="center center" >
-          <stf-button color="secondary"  (click)="changePassword()" >{{'generic.save' | translate}}</stf-button>
+          <div class="field-input">
+            <stf-password-input controlName="password"
+                                [isLessen]="true"
+                                [validator]="profileForm.controls['password']"
+                                [validation_messages]="profile_validation_messages.password">
+            </stf-password-input>
+          </div>
         </div>
 
-      </form>
-    </mat-card-content>
-  </mat-card>
+        <div class="field">
+          <div class="field-label">
+            <label>{{ 'profile.repeat_password' | translate }}</label>
+          </div>
+          <div class="field-input">
+            <stf-password-input controlName="passwordConfirm"
+                                [isLessen]="true"
+                                [validator]="profileForm.controls['passwordConfirm']"
+                                [validation_messages]="profile_validation_messages.passwordConfirm">
+            </stf-password-input>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="field">
+        <div class="field-label">
+          <label>{{ 'generic.language' | translate }}</label>
+        </div>
+        <div class="field-input">
+          <stf-checkbox-group [checkboxes]="languages"
+                              [(selection)]="language"
+                              type="radio"
+                              [inline]="true">
+          </stf-checkbox-group>
+        </div>
+      </div>
+
+      <div class="actions">
+        <stf-button minWidth="140px"
+                    (click)="save()">
+          {{ 'generic.save' | translate }}
+        </stf-button>
+      </div>
+    </form>
+  </div>
 </div>

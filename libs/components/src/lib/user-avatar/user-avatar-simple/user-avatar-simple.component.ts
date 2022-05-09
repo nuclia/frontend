@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { UserPreferences } from '@flaps/auth';
+import { WelcomeUser } from '@nuclia/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
@@ -8,7 +8,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   styleUrls: ['./user-avatar-simple.component.scss'],
 })
 export class UserAvatarSimpleComponent implements OnInit {
-  @Input() userPrefs: UserPreferences | undefined;
+  @Input() userPrefs: WelcomeUser | undefined;
   @Input() size: 'normal' | 'small' = 'normal';
   @Input()
   get blackMode(): boolean {
@@ -18,6 +18,7 @@ export class UserAvatarSimpleComponent implements OnInit {
     this._blackMode = coerceBooleanProperty(value);
   }
   private _blackMode = false;
+  avatar?: string = undefined; // TODO
 
   constructor() {}
 

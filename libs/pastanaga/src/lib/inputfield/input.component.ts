@@ -366,6 +366,11 @@ export class STFInputComponent
     this.onChange = handler;
   }
 
+  setDisabledState(isDisabled: boolean) {
+    this._disabled = isDisabled;
+    this.cdr?.markForCheck();
+  }
+
   _focusChanged(isFocused: boolean) {
     if (isFocused) {
       this.label_float = true;

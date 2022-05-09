@@ -1,8 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSelectModule } from '@angular/material/select';
-import { APIService, SDKService } from '@flaps/auth';
+import { ReactiveFormsModule } from '@angular/forms';
+import { UserService, SDKService, LoginService } from '@flaps/auth';
 import { TranslatePipeMock } from '@flaps/core';
 import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,24 +16,26 @@ describe('ProfileComponent', () => {
     waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [ProfileComponent, TranslatePipeMock],
-        imports: [ReactiveFormsModule, FormsModule, STFInputModule, MatSelectModule, NoopAnimationsModule],
+        imports: [ReactiveFormsModule, STFInputModule],
         providers: [
           {
             provide: TranslateService,
-            useValue: { get: () => of('') },
+            useValue: { use: () => {} },
           },
           {
-            provide: APIService,
-            useValue: { get: () => of({}) },
+            provide: UserService,
+            useValue: { userPrefs: of({ email: '', type: 'USER' }) },
+          },
+          {
+            provide: LoginService,
+            useValue: { setPreferences: () => of() },
           },
           {
             provide: SDKService,
             useValue: {
               nuclia: {
                 auth: {
-                  getJWTUser: () => {
-                    sub: 'me';
-                  },
+                  setPassword: () => of(),
                 },
               },
             },
