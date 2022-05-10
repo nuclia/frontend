@@ -24,7 +24,7 @@
 	"account.logotip": "Logo",
 	"account.manage": "Manage account",
 	"account.manage_account_users": "Account Users management",
-	"account.manage_db": "Manage",
+	"account.manage_dbs": "Nuclia undestanding API keys",
 	"account.new_token": "New Token",
 	"account.related_kbs": "Account's Knowledge Boxes",
 	"account.renewal": "Processing consumption is renewed monthly",

@@ -27,7 +27,7 @@
 	"account.logotip": "Logotip",
 	"account.manage": "Gestió del compte",
 	"account.manage_account_users": "Gestió dels Usuaris del compte",
-	"account.manage_db": "Gestiona",
+	"account.manage_dbs": "",
 	"account.new_code": "Nou codi",
 	"account.new_token": "Nou Token",
 	"account.related_kbs": "Knowledge Box relacionats amb l’Account",
