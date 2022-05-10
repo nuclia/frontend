@@ -79,6 +79,7 @@
 	"entity.entity_search": "Entity search",
 	"entity.name_entities_management": "Name entities management",
 	"entity.new_entity": "Create a new entity",
+	"entity.save_changes": "Save changes",
 	"entity.synonym": "Synonyms",
 	"filter.filter_by_name_entities": "Filter by Name Entities",
 	"filter.filters_applied": "Filters applied",

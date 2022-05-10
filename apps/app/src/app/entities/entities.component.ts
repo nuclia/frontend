@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { KeyValue } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -38,11 +39,7 @@ export class EntitiesComponent {
     this.searchService.search(this.searchInput.value)
   }
 
-  preserveOrder() {
-    return 0;
-  }
-
-  trackByFn(index: number, item: AppEntitiesGroup): string {
-    return item.title; 
+  trackByFn(index: number, item: KeyValue<string, AppEntitiesGroup>): string {
+    return item.key;
   }
 }
