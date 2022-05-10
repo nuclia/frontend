@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { Entities } from '@nuclia/core';
+import { GROUP_COLORS } from '../../model';
 
 @Component({
   selector: 'app-group-select',
@@ -16,6 +17,7 @@ export class GroupSelectComponent {
   @Input() disabled: boolean = false;
 
   open: boolean = false;
+  colors = GROUP_COLORS;
 
   constructor() {}
 
