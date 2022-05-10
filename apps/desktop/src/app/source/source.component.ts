@@ -3,8 +3,8 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/auth';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { filter, map, switchMap, take } from 'rxjs/operators';
-import { Resource } from '../sync/models';
+import { concatMap, filter, map, switchMap, take } from 'rxjs/operators';
+import { IUploadConnectorSettings, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
@@ -18,10 +18,10 @@ export class SourceComponent {
   sourceId = '';
   query = '';
   triggerSearch = new Subject();
-  resources: Observable<Resource[]> = this.triggerSearch.pipe(
+  resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     switchMap(() => this.sync.providers[this.sourceId].getFiles(this.query)),
   );
-  selection = new SelectionModel<Resource>(true, []);
+  selection = new SelectionModel<SyncItem>(true, []);
   kbs = this.sdk.nuclia.db
     .getAccounts()
     .pipe(
@@ -52,25 +52,18 @@ export class SourceComponent {
       });
   }
 
-  disconnect() {
-    if (this.sourceId) {
-      this.sync.providers[this.sourceId].disconnect();
-    }
-  }
-
-  import(account: string, kb?: string) {
+  import(kb?: string) {
     if (!kb) {
       return;
     }
-    this.sync.receivers['kb'].init({ kb });
-    forkJoin(
-      this.selection.selected.map((selection) =>
-        this.sync.providers[this.sourceId].download(selection).pipe(
-          switchMap((blob) => this.sync.receivers['kb'].upload(selection.title, blob)),
-          take(1),
-        ),
-      ),
-    ).subscribe((res) => console.log(res));
+    this.sync.addSync({
+      provider: this.sourceId,
+      receiver: {
+        id: 'kb',
+        settings: { kb } as IUploadConnectorSettings,
+      },
+      files: this.selection.selected,
+    });
   }
 
   next() {

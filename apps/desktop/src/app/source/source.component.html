@@ -4,7 +4,6 @@
     <stf-button (click)="triggerSearch.next()">{{ 'Search' | translate }}</stf-button>
   </div>
   <stf-button (click)="next()">{{ 'Next' | translate }}</stf-button>
-  <stf-button (click)="disconnect()">{{ 'Disconnect' | translate }}</stf-button>
   <table>
     <tr *ngFor="let resource of (resources | async)">
       <td>
@@ -23,7 +22,7 @@
       <strong>{{ account.account }}</strong>
       <ul>
         <li *ngFor="let kb of account.kbs">
-          <a (click)="import(account.account, kb.slug)">{{ kb.title }}</a>
+          <a (click)="import(kb.slug)">{{ kb.title }}</a>
         </li>
       </ul>
     </li>

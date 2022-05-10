@@ -3,22 +3,27 @@ import { Observable } from 'rxjs';
 export interface IDownloadConnector {
   data: { [key: string]: string };
   authenticate(): Observable<boolean>;
-  getFiles(query?: string): Observable<Resource[]>;
-  disconnect(): void;
-  download(resource: Resource): Observable<Blob>;
+  getFiles(query?: string): Observable<SyncItem[]>;
+  download(resource: SyncItem): Observable<Blob>;
 }
 
-export interface Resource {
+export enum FileStatus {
+  PENDING = 'PENDING',
+  PROCESSED = 'PROCESSED',
+  UPLOADED = 'UPLOADED',
+}
+
+export interface SyncItem {
   title: string;
   originalId: string;
   type: string;
+  status: FileStatus;
 }
 
 export interface IUploadConnectorSettings {}
 
 export interface IUploadConnector<T extends IUploadConnectorSettings> {
-  init(settings: T): void;
+  init(settings: T): Observable<boolean>;
   authenticate(): Observable<boolean>;
-  disconnect(): void;
   upload(filename: string, blob: Blob): Observable<void>;
 }

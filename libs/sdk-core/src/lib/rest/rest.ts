@@ -69,7 +69,7 @@ export class Rest implements IRest {
         if (!response.ok) {
           return throwError(response);
         }
-        return doNotParse ? of(response as unknown as T) : from(response.json());
+        return doNotParse ? of(response as unknown as T) : from(response.json().catch(() => response));
       }),
     );
   }

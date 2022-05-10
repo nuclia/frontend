@@ -2,7 +2,7 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
-import { IDownloadConnector, Resource } from '../models';
+import { FileStatus, IDownloadConnector, SyncItem } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, switchMap, take } from 'rxjs';
 import { injectScript } from '../inject';
 
@@ -47,13 +47,7 @@ export class GDrive implements IDownloadConnector {
     return this.isAuthenticated.asObservable();
   }
 
-  disconnect() {
-    if (gapi) {
-      gapi.auth2.getAuthInstance().signOut();
-    }
-  }
-
-  getFiles(query?: string): Observable<Resource[]> {
+  getFiles(query?: string): Observable<SyncItem[]> {
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),
@@ -73,15 +67,16 @@ export class GDrive implements IDownloadConnector {
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  map(raw: any): Resource {
+  map(raw: any): SyncItem {
     return {
       title: raw?.['name'] || '',
       originalId: raw?.['id'] || '',
       type: raw['mimeType'],
+      status: FileStatus.PENDING,
     };
   }
 
-  download(resource: Resource): Observable<Blob> {
+  download(resource: SyncItem): Observable<Blob> {
     return new Observable<Blob>((observer) => {
       const request = resource.type.startsWith('application/vnd.google-apps')
         ? `https://www.googleapis.com/drive/v3/files/${resource.originalId}/export?mimeType=application/pdf&supportsAllDrives=true`
