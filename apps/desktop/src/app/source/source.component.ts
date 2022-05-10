@@ -62,8 +62,14 @@ export class SourceComponent {
     if (!kb) {
       return;
     }
+    this.sync.receivers['kb'].init({ kb });
     forkJoin(
-      this.selection.selected.map((selection) => this.sync.providers[this.sourceId].download(selection)),
+      this.selection.selected.map((selection) =>
+        this.sync.providers[this.sourceId].download(selection).pipe(
+          switchMap((blob) => this.sync.receivers['kb'].upload(selection.title, blob)),
+          take(1),
+        ),
+      ),
     ).subscribe((res) => console.log(res));
   }
 

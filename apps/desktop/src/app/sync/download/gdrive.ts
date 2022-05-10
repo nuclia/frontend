@@ -83,19 +83,19 @@ export class GDrive implements IDownloadConnector {
 
   download(resource: Resource): Observable<Blob> {
     return new Observable<Blob>((observer) => {
-      if (resource.type.startsWith('application/vnd.google-apps')) {
-        gapi.client.drive.files
-          .export({ fileId: resource.originalId, mimeType: 'application/pdf' })
-          .then((res: any) => {
-            observer.next(new Blob([res.body], { type: 'application/pdf' }));
-            observer.complete();
-          });
-      } else {
-        gapi.client.drive.files.get({ fileId: resource.originalId, alt: 'media' }).then((res: any) => {
-          observer.next(new Blob([res.body], { type: resource.type }));
+      const request = resource.type.startsWith('application/vnd.google-apps')
+        ? `https://www.googleapis.com/drive/v3/files/${resource.originalId}/export?mimeType=application/pdf&supportsAllDrives=true`
+        : `https://www.googleapis.com/drive/v3/files/${resource.originalId}?alt=media&supportsAllDrives=true`;
+
+      fetch(request, {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${gapi.client.getToken().access_token}` },
+      })
+        .then((response) => response.blob())
+        .then((blob) => {
+          observer.next(blob);
           observer.complete();
         });
-      }
     });
   }
 }

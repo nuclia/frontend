@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  client: 'desktop',
   backend: {
     social_login: true,
     new_api: true,

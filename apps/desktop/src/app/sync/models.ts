@@ -14,7 +14,10 @@ export interface Resource {
   type: string;
 }
 
-export interface IUploadConnector {
+export interface IUploadConnectorSettings {}
+
+export interface IUploadConnector<T extends IUploadConnectorSettings> {
+  init(settings: T): void;
   authenticate(): Observable<boolean>;
   disconnect(): void;
   upload(filename: string, blob: Blob): Observable<void>;
