@@ -31,7 +31,7 @@
       top: 0;
       bottom: -2px;
       width: 10px;
-      background-color: var(--stf-gray-lighter-3); // Fallback color
+      background-color: $entity-fallback-color;
     }
   }
   .cell-name {

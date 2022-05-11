@@ -1,18 +1,20 @@
 <ng-container *ngIf="groups && selected">
-    <button class="group-select"
-            (click)="open = true"
-            cdkOverlayOrigin
-            #groupSelect
-            #trigger="cdkOverlayOrigin"
-            [disabled]="disabled">
-      <div class="group-select-color" 
-           [style.background-color]="groups[selected].color">
-      </div>
-      <div class="group-select-title">{{ groups[selected].title }}</div>
-      <div class="group-select-arrow"
-           *ngIf="!disabled">
-        <svg-icon src="assets/icons/chevron-down.svg"></svg-icon>
-      </div>
+  <button class="group-select"
+          (click)="open = true"
+          cdkOverlayOrigin
+          #groupSelect
+          #trigger="cdkOverlayOrigin"
+          [disabled]="disabled">
+    <div class="group-select-color" 
+         [style.background-color]="groups[selected].color || colors[selected]">
+    </div>
+    <div class="group-select-title">
+      {{ groups[selected].title || ('resource.entities.' + (selected.toLowerCase()) | translate) }}
+    </div>
+    <div class="group-select-arrow"
+         *ngIf="!disabled">
+      <svg-icon src="assets/icons/chevron-down.svg"></svg-icon>
+    </div>
   </button>
 
   <ng-template cdkConnectedOverlay
@@ -31,9 +33,11 @@
               *ngFor="let group of groups | keyvalue: preserveOrder"
               (click)="onSelectGroup(group.key)">
         <div class="option-color"
-             [style.background-color]="group.value.color">
+             [style.background-color]="group.value.color || colors[group.key]">
         </div>
-        <div class="option-title">{{ group.value.title }}</div>
+        <div class="option-title">
+             {{ group.value.title || ('resource.entities.' + (group.key.toLowerCase()) | translate) }}
+        </div>
       </button>
     </div>
   </ng-template>

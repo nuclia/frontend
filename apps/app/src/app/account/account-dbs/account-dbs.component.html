@@ -1,5 +1,5 @@
 <div class="account-dbs"
-     *ngIf="account && zones">
+     *ngIf="zones">
 
   <div class="account-dbs-list"
        *ngIf="nucliaDBs">
@@ -62,13 +62,14 @@
       </stf-expander>
     </div>
     <div>
-
       <div class="mt-28"
            *ngIf="nucliaDBs.length < maxNucliaDBs">
-        <stf-button (click)="openDialog(zones, account)"
+        <stf-button (click)="openDialog(zones)"
                     color="secondary"
                     padding="pd-l">
           {{ 'account.create_db' | translate }}
         </stf-button>
       </div>
     </div>
+  </div>
+</div>

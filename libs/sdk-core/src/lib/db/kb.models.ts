@@ -97,7 +97,7 @@ export interface Entities {
 }
 
 export interface EntitiesGroup {
-  title: string;
+  title?: string;
   color?: string;
   entities: { [key: string]: { value: string; merged?: boolean; represents?: string[] } };
 }

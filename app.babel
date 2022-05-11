@@ -605,7 +605,7 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.manage_db</name>
+                <name>account.manage_dbs</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>

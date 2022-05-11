@@ -1,11 +1,12 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { Account } from '@flaps/auth';
+import { Observable, switchMap, take, filter } from 'rxjs'
+import { Account } from '@nuclia/core';
+import { StateService } from '@flaps/auth';
 import { Zone, NucliaDBMeta, NucliaDBKeyCreation, NucliaDBService } from '@flaps/core';
 
 export interface DBDialogData {
-  account: Account;
   zones: Zone[];
   nucliaDB?: NucliaDBMeta;
 }
@@ -16,6 +17,11 @@ export interface DBDialogData {
   styleUrls: ['./db-dialog.component.scss']
 })
 export class DBDialogComponent implements OnInit {
+
+  account = this.stateService.account.pipe(
+    filter((account) => !!account),
+    take(1)
+  ) as Observable<Account>;
 
   editMode: boolean;
 
@@ -40,6 +46,7 @@ export class DBDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<DBDialogComponent>,
     private nucliaDBService: NucliaDBService,
+    private stateService: StateService,
     @Inject(MAT_DIALOG_DATA) public data: DBDialogData
   ) {
     this.editMode  = !!this.data.nucliaDB;
@@ -51,7 +58,9 @@ export class DBDialogComponent implements OnInit {
       this.dbForm.get('zone')?.patchValue(this.data.nucliaDB.zone);
     }
     else {
-      this.dbForm.get('zone')?.patchValue(this.data.account.zone);
+      this.account.subscribe((account) => {
+        this.dbForm.get('zone')?.patchValue(account.zone);
+      });
     }
   }
 
@@ -75,9 +84,9 @@ export class DBDialogComponent implements OnInit {
       contact: this.dbForm.value.email,
       description: this.dbForm.value.description,
     }
-    this.nucliaDBService.createKey(this.data.account.slug, data).subscribe(res => {
-      this.dialogRef.close(res.token);
-    });
+    this.account
+      .pipe(switchMap((account) => this.nucliaDBService.createKey(account.slug, data)))
+      .subscribe(res => { this.dialogRef.close(res.token) });
   }
 
   close(): void {

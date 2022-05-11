@@ -1,8 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { Account } from '@flaps/auth';
+import { Subject, Observable, takeUntil, switchMap, filter, take, tap, of, map } from 'rxjs';
+import { StateService } from '@flaps/auth';
 import { Zone, NucliaDBService, NucliaDBMeta } from '@flaps/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { DBDialogComponent, DBDialogData } from './db-dialog/db-dialog.component';
@@ -12,34 +11,47 @@ import { TokenDialogComponent } from '../../components/token-dialog/token-dialog
 @Component({
   selector: 'app-account-dbs',
   templateUrl: './account-dbs.component.html',
-  styleUrls: ['./account-dbs.component.scss']
+  styleUrls: ['./account-dbs.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountDBsComponent implements OnInit {
 
-  @Input() account: Account | undefined;
   @Input() zones: Zone[] | undefined;
 
-  nucliaDBs: NucliaDBMeta[] | undefined;
+  accountSlug = this.stateService.account.pipe(
+    filter((account) => !!account),
+    map((account) => account!.slug),
+    take(1)
+  );
+
+  nucliaDBs?: NucliaDBMeta[];
   maxNucliaDBs: number = 1;
   expandedDBs: string[] = [];
   unsubscribeAll = new Subject<void>();
 
-  constructor(private nucliaDBService: NucliaDBService, private dialog: MatDialog) { }
+  constructor(
+    private stateService: StateService,
+    private nucliaDBService: NucliaDBService,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
-    this.updateKeys();
+    this.updateKeys().pipe(takeUntil(this.unsubscribeAll)).subscribe();
   }
 
-  updateKeys() {
-    if (this.account?.slug) {
-      this.nucliaDBService.getKey(this.account.slug).subscribe(data => {
+  updateKeys(): Observable<NucliaDBMeta | null> {
+    return this.accountSlug.pipe(
+      switchMap((account) => this.nucliaDBService.getKey(account)),
+      tap((data) => {
         this.nucliaDBs = data ? [data] : [];
+        this.cdr?.markForCheck();
       })
-    }
+    );
   }
 
   askConfirmation(db: NucliaDBMeta): void {
-    const dialogConfirmationRef = this.dialog.open(STFConfirmComponent, {
+    this.dialog.open(STFConfirmComponent, {
       width: '480px',
       data: {
         title: 'generic.alert',
@@ -47,8 +59,7 @@ export class AccountDBsComponent implements OnInit {
         confirmText: 'account.new_code',
         minWidthButtons: '110px'
       }
-    });
-    dialogConfirmationRef.afterClosed()
+    }).afterClosed()
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(result => {
         if (result) {
@@ -58,7 +69,7 @@ export class AccountDBsComponent implements OnInit {
   }
 
   showToken(token: string) {
-    const dialogRef = this.dialog.open(TokenDialogComponent, {
+    this.dialog.open(TokenDialogComponent, {
       width: '780px',
       data: {
         token: token
@@ -66,30 +77,37 @@ export class AccountDBsComponent implements OnInit {
     });
   }
 
-  openDialog(zones: Zone[], account: Account, db?: NucliaDBMeta) {
-      const data: DBDialogData = {
-        zones: zones,
-        account: account,
-        nucliaDB: db
-      }
-      const dialogRef = this.dialog.open(DBDialogComponent, {
-        width: '780px',
-        data: data
-      });
-      dialogRef.afterClosed()
-        .pipe(takeUntil(this.unsubscribeAll))
-        .subscribe(result => {
+  openDialog(zones: Zone[], db?: NucliaDBMeta) {
+    const data: DBDialogData = {
+      zones: zones,
+      nucliaDB: db
+    }
+    this.dialog.open(DBDialogComponent, {
+      width: '780px',
+      data: data
+    }).afterClosed()
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        switchMap((result) => {
           if (typeof result === 'string') {
             this.showToken(result);
-            this.updateKeys();
+            return this.updateKeys();
           }
-        });
+          else {
+            return of()
+          }
+        })
+      )
+      .subscribe();
   }
 
   deleteKey() {
-    this.nucliaDBService.deleteKey(this.account!.slug).subscribe(() => {
-      this.updateKeys();
-    })
+    this.accountSlug
+      .pipe(
+        switchMap((account) => this.nucliaDBService.deleteKey(account)),
+        switchMap(() => this.updateKeys())
+      )
+      .subscribe();
   }
 
   toggleDB(id: string): void {
@@ -99,6 +117,7 @@ export class AccountDBsComponent implements OnInit {
     else {
       this.expandedDBs = [...this.expandedDBs, id];
     }
+    this.cdr?.markForCheck();
   }
   
   isExpanded(id: string): boolean {
