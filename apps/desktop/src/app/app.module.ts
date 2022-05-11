@@ -21,7 +21,7 @@ import { registerLocaleData } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { HomeModule } from './home/home.module';
 import { MainLayoutModule } from './main-layout/main-layout.module';
-import { SourceModule } from './source/source.module';
+import { UploadModule } from './upload/upload.module';
 import { ConnectorsModule } from './connectors/connectors.module';
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -42,7 +42,7 @@ registerLocaleData(localeCa);
     }),
     HomeModule,
     MainLayoutModule,
-    SourceModule,
+    UploadModule,
     ConnectorsModule,
   ],
   bootstrap: [AppComponent],

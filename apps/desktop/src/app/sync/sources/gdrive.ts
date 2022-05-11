@@ -2,7 +2,7 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
-import { FileStatus, IDownloadConnector, SyncItem } from '../models';
+import { FileStatus, ISourceConnector, SyncItem } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, switchMap, take } from 'rxjs';
 import { injectScript } from '../inject';
 
@@ -13,7 +13,12 @@ declare var gapi: any;
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
-export class GDrive implements IDownloadConnector {
+export class GDrive implements ISourceConnector {
+  id = 'gdrive';
+  title = 'Google Drive';
+  logo = 'assets/logos/gdrive.png';
+  description = 'File storage and synchronization service developed by Google';
+
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   data: { [key: string]: string };

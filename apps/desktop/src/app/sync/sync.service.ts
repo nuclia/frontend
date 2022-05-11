@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { concatMap, forkJoin, switchMap, take, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { GDrive } from './download/gdrive';
-import { FileStatus, IDownloadConnector, IUploadConnector, IUploadConnectorSettings, SyncItem } from './models';
-import { NucliaCloudKB } from './upload/nuclia-cloud';
+import { GDrive } from './sources/gdrive';
+import { FileStatus, ISourceConnector, IDestinationConnector, SyncItem, IConnector, ConnectorSettings } from './models';
+import { NucliaCloudKB } from './destinations/nuclia-cloud';
 
 interface Sync {
-  provider: string;
-  receiver: {
+  source: string;
+  destination: {
     id: string;
-    settings: IUploadConnectorSettings;
+    settings?: ConnectorSettings;
   };
   files: SyncItem[];
   started?: boolean;
@@ -17,11 +17,11 @@ interface Sync {
 }
 @Injectable({ providedIn: 'root' })
 export class SyncService {
-  providers: { [id: string]: IDownloadConnector } = {
+  sources: { [id: string]: ISourceConnector } = {
     gdrive: new GDrive(environment.connectors.gdrive),
   };
-  receivers: { [id: string]: IUploadConnector<any> } = {
-    kb: new NucliaCloudKB({
+  destinations: { [id: string]: IDestinationConnector } = {
+    nucliacloud: new NucliaCloudKB({
       account: 'erictesting',
       backend: 'https://stashify.cloud/api',
       client: 'desktop',
@@ -32,14 +32,18 @@ export class SyncService {
 
   constructor() {}
 
+  getConnectors(type: 'sources' | 'destinations'): IConnector[] {
+    return Object.values(this[type]).sort((a, b) => a.title.localeCompare(b.title)) as IConnector[];
+  }
+
   private start() {
     forkJoin(
       this.queue
         .filter((sync) => !sync.started)
         .map((sync) => {
-          const provider = this.providers[sync.provider];
-          const receiver = this.receivers[sync.receiver.id];
-          return receiver.init(sync.receiver.settings).pipe(
+          const source = this.sources[sync.source];
+          const destination = this.destinations[sync.destination.id];
+          return destination.init(sync.destination.settings).pipe(
             switchMap(() => {
               sync.started = true;
               // TODO: go 6 by 6 maximum
@@ -47,8 +51,8 @@ export class SyncService {
                 sync.files
                   .filter((f) => f.status === FileStatus.PENDING)
                   .map((f) =>
-                    provider.download(f).pipe(
-                      concatMap((blob) => receiver.upload(f.title, blob)),
+                    source.download(f).pipe(
+                      concatMap((blob) => destination.upload(f.title, blob)),
                       tap(() => (f.status = FileStatus.UPLOADED)),
                       take(1),
                     ),

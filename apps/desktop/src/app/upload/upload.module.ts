@@ -4,13 +4,22 @@ import { RouterModule } from '@angular/router';
 import { STFCheckboxModule } from '@flaps/common';
 import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { TranslateModule } from '@ngx-translate/core';
+import { ConnectorsModule } from '../connectors/connectors.module';
 
-import { SourceComponent } from './source.component';
+import { UploadComponent } from './upload.component';
 
 @NgModule({
-  imports: [RouterModule, CommonModule, STFInputModule, STFButtonsModule, TranslateModule, STFCheckboxModule],
+  imports: [
+    RouterModule,
+    CommonModule,
+    STFInputModule,
+    STFButtonsModule,
+    TranslateModule,
+    STFCheckboxModule,
+    ConnectorsModule,
+  ],
   exports: [],
-  declarations: [SourceComponent],
+  declarations: [UploadComponent],
   providers: [],
 })
-export class SourceModule {}
+export class UploadModule {}

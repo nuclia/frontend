@@ -5,7 +5,7 @@ import { PageNotFoundComponent } from '@flaps/common';
 import { ConnectorsComponent } from './connectors/connectors.component';
 import { HomeComponent } from './home/home.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
-import { SourceComponent } from './source/source.component';
+import { UploadComponent } from './upload/upload.component';
 
 const routes: Routes = [
   {
@@ -18,19 +18,12 @@ const routes: Routes = [
         component: HomeComponent,
       },
       {
-        path: 'connectors',
-        component: ConnectorsComponent,
-        data: {
-          hideLeftMenu: true,
-        },
-      },
-      {
-        path: 'source/:id',
-        component: SourceComponent,
+        path: 'add-upload',
+        component: UploadComponent,
       },
       {
         path: 'redirect',
-        component: SourceComponent,
+        component: UploadComponent,
       },
     ],
   },

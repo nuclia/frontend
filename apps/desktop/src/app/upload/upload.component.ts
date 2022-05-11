@@ -3,23 +3,23 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/auth';
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { concatMap, filter, map, switchMap, take } from 'rxjs/operators';
-import { IUploadConnectorSettings, SyncItem } from '../sync/models';
+import { filter, map, switchMap, take } from 'rxjs/operators';
+import { ISourceConnector, ConnectorSettings, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'da-source',
-  templateUrl: './source.component.html',
-  styleUrls: ['./source.component.scss'],
+  selector: 'da-upload',
+  templateUrl: './upload.component.html',
+  styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SourceComponent {
+export class UploadComponent {
   step = 0;
   sourceId = '';
   query = '';
   triggerSearch = new Subject();
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
-    switchMap(() => this.sync.providers[this.sourceId].getFiles(this.query)),
+    switchMap(() => this.sync.sources[this.sourceId].getFiles(this.query)),
   );
   selection = new SelectionModel<SyncItem>(true, []);
   kbs = this.sdk.nuclia.db
@@ -52,22 +52,24 @@ export class SourceComponent {
       });
   }
 
-  import(kb?: string) {
-    if (!kb) {
-      return;
-    }
-    this.sync.addSync({
-      provider: this.sourceId,
-      receiver: {
-        id: 'kb',
-        settings: { kb } as IUploadConnectorSettings,
-      },
-      files: this.selection.selected,
-    });
-  }
-
   next() {
     this.step++;
     this.cdr.detectChanges();
+  }
+
+  selectSource(event: { connector: ISourceConnector; setings?: ConnectorSettings }) {
+    this.sourceId = event.connector.id;
+    this.next();
+  }
+
+  selectDestination(event: { connector: ISourceConnector; settings?: ConnectorSettings }) {
+    this.sync.addSync({
+      source: this.sourceId,
+      destination: {
+        id: event.connector.id,
+        settings: event.settings,
+      },
+      files: this.selection.selected,
+    });
   }
 }

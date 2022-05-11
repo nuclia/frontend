@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SourceComponent } from './source.component';
+import { SourceComponent } from './upload.component';
 
 describe('SourceComponent', () => {
   let component: SourceComponent;
@@ -8,9 +8,8 @@ describe('SourceComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SourceComponent ]
-    })
-    .compileComponents();
+      declarations: [SourceComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

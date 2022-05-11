@@ -1,6 +1,13 @@
 import { Observable } from 'rxjs';
 
-export interface IDownloadConnector {
+export interface IConnector {
+  id: string;
+  title: string;
+  logo: string;
+  description: string;
+}
+
+export interface ISourceConnector extends IConnector {
   data: { [key: string]: string };
   authenticate(): Observable<boolean>;
   getFiles(query?: string): Observable<SyncItem[]>;
@@ -20,10 +27,21 @@ export interface SyncItem {
   status: FileStatus;
 }
 
-export interface IUploadConnectorSettings {}
+export interface ConnectorSettings {
+  [key: string]: string;
+}
 
-export interface IUploadConnector<T extends IUploadConnectorSettings> {
-  init(settings: T): Observable<boolean>;
+export interface IDestinationConnector extends IConnector {
+  getParameters(): Observable<Field[]>;
+  init(settings?: ConnectorSettings): Observable<boolean>;
   authenticate(): Observable<boolean>;
   upload(filename: string, blob: Blob): Observable<void>;
+}
+
+export interface Field {
+  id: string;
+  label: string;
+  help?: string;
+  type: 'text' | 'select';
+  options?: { label: string; value: string }[];
 }

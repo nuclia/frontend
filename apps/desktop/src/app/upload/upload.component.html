@@ -1,9 +1,13 @@
 <ng-container *ngIf="step === 0">
+  <da-connectors type="sources"
+                 (onSelect)="selectSource($event)"></da-connectors>
+</ng-container>
+<ng-container *ngIf="step === 1">
+  <stf-button (click)="next()">{{ 'Next' | translate }}</stf-button>
   <div class="search-form">
     <stf-input [(value)]="query"></stf-input>
     <stf-button (click)="triggerSearch.next()">{{ 'Search' | translate }}</stf-button>
   </div>
-  <stf-button (click)="next()">{{ 'Next' | translate }}</stf-button>
   <table>
     <tr *ngFor="let resource of (resources | async)">
       <td>
@@ -15,9 +19,11 @@
     </tr>
   </table>
 </ng-container>
-<ng-container *ngIf="step === 1">
+<ng-container *ngIf="step === 2">
   <h2>Push to</h2>
-  <ul>
+  <da-connectors type="destinations"
+                 (onSelect)="selectDestination($event)"></da-connectors>
+  <!-- <ul>
     <li *ngFor="let account of (kbs | async)">
       <strong>{{ account.account }}</strong>
       <ul>
@@ -26,5 +32,5 @@
         </li>
       </ul>
     </li>
-  </ul>
+  </ul> -->
 </ng-container>
