@@ -37,7 +37,7 @@ export class AccountDBsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.updateKeys().subscribe();
+    this.updateKeys().pipe(takeUntil(this.unsubscribeAll)).subscribe();
   }
 
   updateKeys(): Observable<NucliaDBMeta | null> {
