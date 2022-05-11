@@ -165,8 +165,8 @@ export function getMediaPreviewParams(
   paragraph: Paragraph,
 ): Observable<MediaPreviewParams | undefined> {
   const field = getFileField(resource, fieldId);
-  const file = field?.value?.file;
-  const time = paragraph.start_seconds[0];
+  const file = field && (getVideoStream(field) || field.value?.file);
+  const time = paragraph.start_seconds?.[0];
   if (file?.uri && typeof time === 'number') {
     return getFileUrls([file.uri]).pipe(
       map((files) => ({
@@ -342,6 +342,10 @@ export function getParagraphPages(fileField: FileFieldData, paragraph: Paragraph
 
 export function getPages(fileField: FileFieldData): CloudLink[] {
   return fileField.extracted?.file?.file_pages_previews?.pages || [];
+}
+
+export function getVideoStream(fileField: FileFieldData):  CloudLink | undefined {
+  return fileField.extracted?.file?.file_generated?.['video.mpd'];
 }
 
 // Temprary functions

@@ -53,6 +53,9 @@ export const getResource = (uid: string) => {
 };
 
 export const getFile = (path: string): Observable<string> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
   return nucliaApi.rest.getObjectURL(path);
 };
 
@@ -63,12 +66,19 @@ export const getRegionalBackend = () => {
   return nucliaApi.regionalBackend + '/v1';
 };
 
+export const getTempToken = (): Observable<string> => {
+  return nucliaApi.knowledgeBox.getTempToken();
+}
+
+export const isPrivateKnowledgeBox = (): boolean => {
+  return STATE === 'PRIVATE';
+}
+
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
-  if (paths.length === 0 || STATE !== 'PRIVATE') {
+  if (paths.length === 0 || !isPrivateKnowledgeBox()) {
     return of(paths.map((path) => `${getRegionalBackend()}${path}`));
   } else {
-    return nucliaApi.knowledgeBox
-      .getTempToken()
+    return getTempToken()
       .pipe(map((token) => paths.map((path) => `${getRegionalBackend()}${path}?eph-token=${token}`)));
   }
 };

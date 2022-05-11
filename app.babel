@@ -12005,7 +12005,7 @@
             <copy_template>_('%1')</copy_template>
         </copy_templates>
     </editor_configuration>
-    <primary_language>ca-ES</primary_language>
+    <primary_language>en-US</primary_language>
     <configuration>
         <indent>tab</indent>
         <format>plaintext-json</format>
