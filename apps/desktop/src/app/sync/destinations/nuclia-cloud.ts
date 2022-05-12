@@ -1,5 +1,5 @@
-import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { INuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { map, Observable, of } from 'rxjs';
 import { Field, IDestinationConnector, ConnectorSettings } from '../models';
 
 export class NucliaCloudKB implements IDestinationConnector {
@@ -12,8 +12,8 @@ export class NucliaCloudKB implements IDestinationConnector {
   kbSlug?: string;
   kb?: WritableKnowledgeBox;
 
-  constructor(data: NucliaOptions) {
-    this.nuclia = new Nuclia(data);
+  constructor(nuclia: INuclia) {
+    this.nuclia = nuclia;
   }
 
   init(settings?: ConnectorSettings): Observable<boolean> {

@@ -71,6 +71,7 @@ export interface IDb {
     period?: StatsPeriod,
     utctime?: string,
   ): Observable<ProcessingStat[]>;
+  upload(file: File): Observable<void>;
 }
 
 export interface NucliaOptions {
@@ -81,6 +82,7 @@ export interface NucliaOptions {
   knowledgeBox?: string;
   kbSlug?: string;
   client?: string;
+  zoneKey?: string;
 }
 
 export type PromiseMapper<T> = {
