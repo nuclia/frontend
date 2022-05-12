@@ -17,7 +17,7 @@ export class BackendConfigurationService {
     @Inject('staticEnviromentConfiguration') private enviromentConf: StaticEnviromentConfiguration,
     private apiConfig: AppInitService,
     public platformLocation: PlatformLocation,
-    @Inject(PLATFORM_ID) platformId: any
+    @Inject(PLATFORM_ID) platformId: any,
   ) {
     this.config = this.apiConfig.getConfig();
     this.staticConf = this.enviromentConf;
@@ -46,10 +46,6 @@ export class BackendConfigurationService {
 
   getEnvironment(): string {
     return this.config.backend.sentry_environment;
-  }
-
-  getAnalyticsKey(): string {
-    return this.config.backend.analytics;
   }
 
   getEditorUrl(): string {

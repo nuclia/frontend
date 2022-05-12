@@ -15,7 +15,6 @@ nodeSelector: {}
 api_path: XXX
 site_key: XXX
 app_name: app
-ganalytics: XXX
 sentry_environment: stage
 sentry_url: XXX
 

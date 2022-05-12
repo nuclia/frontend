@@ -5,7 +5,6 @@
     "app": "STF_DOCKER_CONFIG_APP_NAME",
     "apiPath": "/api",
     "siteKey": "STF_DOCKER_CONFIG_SITE_KEY",
-    "analytics": "STF_DOCKER_CONFIG_GANALYTICS",
     "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
     "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
     "sentry_backend": "https://nuclia.cloud/api"
