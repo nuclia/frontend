@@ -71,10 +71,10 @@
       </select>
     </ng-container>
 
-    <ng-container *ngIf="step === 2">
+    <ng-container *ngIf="step === 2 && (hasAnonymization | async)">
       <h2>{{ 'stash.create.anonymization' | translate }}</h2>
       <p>{{ 'stash.create.anonymization-help' | translate }}</p>
-      <stf-checkbox-group [checkboxes]="anonimizationOptions"
+      <stf-checkbox-group [checkboxes]="anonymizationOptions"
                           [(selection)]="useAnonymization"
                           type="radio">
       </stf-checkbox-group>
@@ -84,12 +84,12 @@
          fxLayout="row"
          fxLayoutAlign="center center"
          fxLayoutGap="10px">
-      <stf-button *ngIf="step === 2"
+      <stf-button *ngIf="step === (lastStep | async)"
                   type="submit"
                   minWidth="110px">
         {{ 'generic.save' | translate }}
       </stf-button>
-      <stf-button *ngIf="step < 2"
+      <stf-button *ngIf="step < ((lastStep | async) || 2)"
                   (click)="next()"
                   color="secondary"
                   [disabled]="step === 0 && kbForm.invalid"
@@ -103,9 +103,8 @@
         {{ 'generic.back' | translate }}
       </stf-button>
     </div>
-    <div class="steps"
-         *ngIf="step < 2">
-      <small>{{step + 1}} / 3</small>
+    <div class="steps">
+      <small>{{step + 1}} / {{ totalSteps | async }}</small>
     </div>
   </form>
 </div>

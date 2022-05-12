@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Account } from '@flaps/auth';
+import { Account, STFTrackingService } from '@flaps/auth';
 import { CheckboxGroupItem, Sluggable } from '@flaps/common';
 import { Zone, STFUtils } from '@flaps/core';
 import { KnowledgeBoxCreation } from '@nuclia/core';
+import { map, share } from 'rxjs';
 
 export interface KbAddData {
   account: Account;
@@ -38,16 +39,20 @@ export class KbAddComponent {
   ];
   languageMode: string[] = ['multilingual'];
   languageList = STFUtils.supportedAudioLanguages();
-  anonimizationOptions: CheckboxGroupItem[] = [
+  anonymizationOptions: CheckboxGroupItem[] = [
     { value: 'no', label: 'generic.disabled' },
     { value: 'yes', label: 'generic.enabled' },
   ];
   useAnonymization = ['no'];
+  hasAnonymization = this.tracking.isFeatureEnabled('kb-anonymization').pipe(share());
+  totalSteps = this.hasAnonymization.pipe(map((hasAnonymization) => (hasAnonymization ? 3 : 2)));
+  lastStep = this.hasAnonymization.pipe(map((hasAnonymization) => (hasAnonymization ? 2 : 1)));
 
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<KbAddComponent, KnowledgeBoxCreation | undefined>,
     private cdr: ChangeDetectorRef,
+    private tracking: STFTrackingService,
     @Inject(MAT_DIALOG_DATA) public data: KbAddData,
   ) {}
 
