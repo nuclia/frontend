@@ -11,23 +11,27 @@ const LOCAL_STORAGE_KEY = 'NUCLIA_TOUR_COMPLETED';
 })
 export class HelpBoxesService {
   constructor(private app: AppService, private tourService: TourService, private tracking: STFTrackingService) {}
+  isTourDisabled = true;
 
   initializeTour() {
     this.tracking.getEnabledFeatures().subscribe((features) => {
       this.tourService.initialize(
-        [], // disable onboarding tour for now
-        // TOUR_STEPS.filter(
-        //   (step) =>
-        //     !step.anchorId ||
-        //     !STEPS_FEATURES_DEPENDENCIES[step.anchorId] ||
-        //     STEPS_FEATURES_DEPENDENCIES[step.anchorId].some((feature) => features.includes(feature)),
-        // ),
+        this.isTourDisabled
+          ? []
+          : TOUR_STEPS.filter(
+            (step) =>
+              !step.anchorId ||
+              !STEPS_FEATURES_DEPENDENCIES[step.anchorId] ||
+              STEPS_FEATURES_DEPENDENCIES[step.anchorId].some((feature) => features.includes(feature)),
+            )
       );
       this.tracking.logEvent('tour_started');
     });
   }
 
   startTour(delay: number = 0) {
+    if (this.isTourDisabled) return;
+
     // Once the tour ends, it's not showed any more (even if the user doesn't see all the steps)
     this.tourService.end$.pipe(take(1)).subscribe(() => {
       this.setTourCompleted();
