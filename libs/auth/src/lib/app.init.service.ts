@@ -10,7 +10,6 @@ export type EnviromentConfiguration = {
     app: string;
     api: string;
     siteKey: string;
-    analytics: string;
     sentry_environment: string;
     sentry_url: string;
     sentry_backend: string;

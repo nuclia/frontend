@@ -1,22 +1,21 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "{{ .Release.Name }}-config"
+  name: '{{ .Release.Name }}-config'
   labels:
-    app: {{ .Release.Name }}
-    version: "{{ .Values.hash }}"
-    chart: "{{ .Chart.Name }}"
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    app: { { .Release.Name } }
+    version: '{{ .Values.hash }}'
+    chart: '{{ .Chart.Name }}'
+    release: '{{ .Release.Name }}'
+    heritage: '{{ .Release.Service }}'
 data:
-  API_PATH: {{ .Values.api_path }}
-  SITE_KEY: "{{ .Values.site_key }}"
-  APP_NAME: {{ .Values.app_name }}
-  GANALYTICS: "{{ .Values.ganalytics }}"
-  SENTRY_ENV: {{ .Values.sentry_environment }}
-  SENTRY_URL: "{{ .Values.sentry_url }}"
-  STF_VERSION: "{{ .Chart.Version }}"
-  POSTHOG_HOST: "{{ .Values.posthog_host }}"
-  POSTHOG_KEY: "{{ .Values.posthog_key }}"
-  ALLOWED_HOST_REDIRECT: "{{ .Values.allowed_host_redirect }}"
-  SAML_ENABLED: "{{ .Values.saml_enabled }}"
+  API_PATH: { { .Values.api_path } }
+  SITE_KEY: '{{ .Values.site_key }}'
+  APP_NAME: { { .Values.app_name } }
+  SENTRY_ENV: { { .Values.sentry_environment } }
+  SENTRY_URL: '{{ .Values.sentry_url }}'
+  STF_VERSION: '{{ .Chart.Version }}'
+  POSTHOG_HOST: '{{ .Values.posthog_host }}'
+  POSTHOG_KEY: '{{ .Values.posthog_key }}'
+  ALLOWED_HOST_REDIRECT: '{{ .Values.allowed_host_redirect }}'
+  SAML_ENABLED: '{{ .Values.saml_enabled }}'
