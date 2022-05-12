@@ -12,7 +12,6 @@ import {
 } from '@flaps/auth';
 import { catchError, combineLatest, filter, of, Subject, switchMap, tap } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
-import { resetStateOn403 } from './resolvers/utils';
 import { Title } from '@angular/platform-browser';
 import { Toaster } from '@flaps/pastanaga';
 
@@ -110,9 +109,15 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
             kbParams && kbParams.get('stash')
               ? this.sdk.setCurrentKnowledgeBox(accountParams.get('account') as string, kbParams.get('stash') as string)
               : of(),
-          ]),
+          ]).pipe(
+            catchError((error) => {
+              if (error.status === 403) {
+                this.navigation.resetState();
+              }
+              return of([{ title: ''}, { title: ''}]);
+            }),
+          ),
         ),
-        catchError(resetStateOn403(this.navigation, this.state, this.router)),
       )
       .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`));
   }

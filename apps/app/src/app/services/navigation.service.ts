@@ -73,4 +73,10 @@ export class NavigationService {
       return '/';
     }
   }
+
+  resetState() {
+    this.stateService.dbDelStateData();
+    this.stateService.cleanAccount();
+    this.router.navigate([this.getAccountSelectUrl()]);
+  }
 }
