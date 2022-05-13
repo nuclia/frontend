@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoggedinGuard } from '@flaps/auth';
 import { PageNotFoundComponent } from '@flaps/common';
-import { ConnectorsComponent } from './connectors/connectors.component';
+import { SelectAccountComponent } from './account/account.component';
 import { HomeComponent } from './home/home.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { UploadComponent } from './upload/upload.component';
@@ -26,6 +26,10 @@ const routes: Routes = [
         component: UploadComponent,
       },
     ],
+  },
+  {
+    path: 'select',
+    component: SelectAccountComponent,
   },
   {
     path: 'user',

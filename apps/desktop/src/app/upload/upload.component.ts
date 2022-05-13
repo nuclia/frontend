@@ -1,10 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { SDKService } from '@flaps/auth';
-import { forkJoin, Observable, Subject } from 'rxjs';
-import { filter, map, switchMap, take } from 'rxjs/operators';
-import { ISourceConnector, ConnectorSettings, SyncItem } from '../sync/models';
+import { Router } from '@angular/router';
+import { BehaviorSubject, filter, Observable, of, Subject, switchMap } from 'rxjs';
+import { ConnectorParameters, SyncItem, ConnectorDefinition } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
@@ -15,61 +13,39 @@ import { SyncService } from '../sync/sync.service';
 })
 export class UploadComponent {
   step = 0;
-  sourceId = '';
+  sourceId = new BehaviorSubject<string>('');
   query = '';
   triggerSearch = new Subject();
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
-    switchMap(() => this.sync.sources[this.sourceId].getFiles(this.query)),
+    switchMap(() => this.sourceId),
+    filter((id) => !!id),
+    switchMap((id) => this.sync.getSource(id)),
+    switchMap((source) => source.getFiles(this.query)),
   );
   selection = new SelectionModel<SyncItem>(true, []);
-  kbs = this.sdk.nuclia.db
-    .getAccounts()
-    .pipe(
-      switchMap((accounts) =>
-        forkJoin(
-          accounts
-            .map((account) => account.slug)
-            .map((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account).pipe(map((kbs) => ({ account, kbs })))),
-        ),
-      ),
-    );
 
-  constructor(
-    private route: ActivatedRoute,
-    private sync: SyncService,
-    private sdk: SDKService,
-    private cdr: ChangeDetectorRef,
-  ) {
-    this.route.params
-      .pipe(
-        map((res) => res.id),
-        filter((id) => !!id),
-        take(1),
-      )
-      .subscribe((id) => {
-        this.sourceId = id;
-        this.triggerSearch.next(id);
-      });
-  }
+  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private router: Router) {}
 
   next() {
     this.step++;
     this.cdr.detectChanges();
   }
 
-  selectSource(event: { connector: ISourceConnector; setings?: ConnectorSettings }) {
-    this.sourceId = event.connector.id;
+  selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
+    this.sourceId.next(event.connector.id);
     this.next();
   }
 
-  selectDestination(event: { connector: ISourceConnector; settings?: ConnectorSettings }) {
+  selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
     this.sync.addSync({
-      source: this.sourceId,
+      date: new Date().toISOString(),
+      source: this.sourceId.getValue(),
       destination: {
         id: event.connector.id,
-        settings: event.settings,
+        params: event.params,
       },
       files: this.selection.selected,
     });
+    this.router.navigate(['/']);
   }
 }

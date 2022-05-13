@@ -23,14 +23,4 @@
   <h2>Push to</h2>
   <da-connectors type="destinations"
                  (onSelect)="selectDestination($event)"></da-connectors>
-  <!-- <ul>
-    <li *ngFor="let account of (kbs | async)">
-      <strong>{{ account.account }}</strong>
-      <ul>
-        <li *ngFor="let kb of account.kbs">
-          <a (click)="import(kb.slug)">{{ kb.title }}</a>
-        </li>
-      </ul>
-    </li>
-  </ul> -->
 </ng-container>

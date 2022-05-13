@@ -22,6 +22,7 @@ const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
 
 interface Sync {
+  date: string;
   source: string;
   destination: {
     id: string;

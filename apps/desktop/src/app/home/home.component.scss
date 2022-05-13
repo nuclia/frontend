@@ -1,0 +1,25 @@
+@import 'variables';
+
+.container {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+.uploads {
+  display: table;
+  width: 100%;
+}
+.row {
+  display: table-row;
+  & > div {
+    border-bottom: 1px solid $gray-light;
+    display: table-cell;
+    width: 150px;
+    padding: rythm(0.75) 0;
+  }
+  .progress {
+    background-color: $red;
+    height: 5px;
+  }
+}

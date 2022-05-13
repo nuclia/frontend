@@ -3,7 +3,7 @@ import { BackendConfigurationService, UserService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 @Component({
-  selector: 'dtp-root',
+  selector: 'da-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

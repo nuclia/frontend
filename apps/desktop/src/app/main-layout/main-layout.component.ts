@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, mergeMap } from 'rxjs';
+import { SyncService } from '../sync/sync.service';
 
 @Component({
   selector: 'da-main-layout',
@@ -9,25 +10,9 @@ import { filter, map, mergeMap } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayoutComponent {
-  hideLeftMenu = false;
-
-  constructor(private router: Router, private activatedRoute: ActivatedRoute, private cdr: ChangeDetectorRef) {
-    this.router.events
-      .pipe(
-        filter((event) => event instanceof NavigationEnd),
-        map(() => {
-          let route = this.activatedRoute;
-          while (route.firstChild) {
-            route = route.firstChild;
-          }
-          return route;
-        }),
-        filter((route) => route.outlet === 'primary'),
-        mergeMap((route) => route.data)
-      )
-      .subscribe((data: { hideLeftMenu?: boolean }) => {
-        this.hideLeftMenu = !!data.hideLeftMenu;
-        this.cdr.markForCheck();
-      });
+  constructor(private router: Router, private sync: SyncService) {
+    if (!this.sync.getAccount()) {
+      this.router.navigate(['/select']);
+    }
   }
 }
