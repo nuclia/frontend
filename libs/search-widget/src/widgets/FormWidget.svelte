@@ -1,10 +1,13 @@
 <script lang="ts">
-  import { mapTo } from 'rxjs';
+  import { merge, mapTo, map } from 'rxjs';
   import { nucliaState, nucliaStore } from '../core/store';
   import Results from './results/Results.svelte';
   import SearchInput from './search-input/SearchInput.svelte';
   const results = nucliaState().results;
-  const showResults = nucliaStore().triggerSearch.pipe(mapTo(true));
+  const showResults = merge(
+    nucliaStore().triggerSearch.pipe(mapTo(true)),
+    nucliaState().results.pipe(map((results) => results.length > 0)),
+  );
 </script>
 
 <div>
