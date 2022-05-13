@@ -32,21 +32,29 @@
 
 <style>
   div {
+    position: relative;
     display: inline-block;
   }
   button {
     border: none;
     border-radius: 15px;
-    font-size: 21px;
+    font-size: 26px;
+    color: var(--color-light-stronger);
     font-weight: bolder;
+    line-height: 1;
     height: 32px;
     width: 32px;
     cursor: pointer;
+    background: none;
+    transition: background-color 0.2s;
+  }
+  button:hover {
+    background-color: var(--color-primary-muted);
   }
   ul {
     position: absolute;
-    top: 130px;
-    left: 176px;
+    top: 10px;
+    left: 32px;
     padding: 0;
     color: var(--color-dark-stronger);
     background-color: var(--color-light-stronger);

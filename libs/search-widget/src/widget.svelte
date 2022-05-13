@@ -144,13 +144,21 @@
     --color-scrollbar-track: var(--custom-color-scrollbar-track, #fff);
     --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, #000);
 
-    --input-widget-padding: var(--custom-input-widget-padding, initial);
-    --input-widget-border-width: var(--custom-input-widget-border-width, 1px);
-    --input-widget-border-style: var(--custom-input-widget-border-style, dashed);
+    --form-widget-padding: var(--custom-form-widget-padding, 4px 30px 4px 4px);
+    --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
+    --form-widget-border-style: var(--custom-form-widget-border-style, solid);
+    --form-widget-border-style-stronger: var(--custom-form-widget-border-style-stronger, solid);
+    --form-widget-border-color: var(--custom-form-widget-border-color, var(--color-dark-stronger));
+    --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
+    --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-dark-stronger);
+
+    --input-widget-padding: var(--custom-input-widget-padding, 2px 30px 2px 2px);
+    --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
+    --input-widget-border-style: var(--custom-input-widget-border-style, solid);
     --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
-    --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-dark-stronger));
-    --input-widget-border-radius: var(--custom-input-widget-border-radius, 2px);
-    --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, var(--color-dark-stronger));
+    --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-primary-regular));
+    --input-widget-border-radius: var(--custom-input-widget-border-radius, 0);
+    --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, transparent);
 
     color: var(--color-text-accent);
     font-family: var(--font-family-body);

@@ -28,16 +28,14 @@
   <div class="icon">
     <MimeIcon type={resource.icon} />
   </div>
-  <div class="title">
-    <h1>
-      {resource.title}
-    </h1>
-    <div>
-      <span class="metadata">{formatDate(resource.modified)}</span>
-      {#if getWidgetActions().length > 0}
-        <span class="action-menu"><ActionMenu uid={resource.id} /></span>
-      {/if}
+  <div class="header-center">
+    <div class="title">
+      <h1>{resource.title}</h1>
+      <div class="metadata">{formatDate(resource.modified)}</div>
     </div>
+    {#if getWidgetActions().length > 0}
+      <span class="action-menu"><ActionMenu uid={resource.id} /></span>
+    {/if}
   </div>
   {#if thumbnail}
     <img class="thumbnail" src={thumbnail} alt={resource.title + ' thumbnail'} />
@@ -56,9 +54,16 @@
     padding: 2em 0;
     text-align: center;
   }
-  .title {
+  .header-center {
     grid-row: span 2;
     padding: 2em 5px 5px 5px;
+    display: flex;
+    min-width: 0;
+  }
+  .title {
+    padding-right: 1.5em;
+    min-width: 0;
+    overflow-wrap: break-word;
   }
   h1 {
     margin: 0 0 0.75em 0;
@@ -71,7 +76,7 @@
     text-overflow: ellipsis;
   }
   .action-menu {
-    margin-left: 0.5em;
+    margin: 0 1em 0 auto;
   }
   .thumbnail {
     width: 100%;
@@ -82,10 +87,6 @@
     font-size: 0.8em;
     font-style: italic;
   }
-  .metadata .separator {
-    font-style: normal;
-    margin: 0 0.5em;
-  }
 
   @media (min-width: 640px) {
     .header {
@@ -94,8 +95,9 @@
     }
     .thumbnail {
       width: 340px;
+      height: 196px;
     }
-    .title {
+    .header-main {
       grid-row: span 1;
       padding: 2em 0;
     }

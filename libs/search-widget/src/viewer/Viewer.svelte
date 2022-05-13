@@ -172,5 +172,8 @@
       padding: 1.75em 3em 0 3em;
       grid-row: start 1;
     }
+    .viewer-right {
+      padding: 2em 3em;
+    }
   }
 </style>
