@@ -123,4 +123,13 @@ export class Db implements IDb {
       tap((res) => console.log(res)),
     );
   }
+
+  pull(): Observable<void> {
+    if (!this.nuclia.options.zoneKey) {
+      throw new Error('zoneKey must be defined in the Nuclia options to be able to call /process');
+    }
+    return this.nuclia.rest
+      .get<void>('/processing/pull', { 'x-stf-zonekey': `Bearer ${this.nuclia.options.zoneKey}` })
+      .pipe(tap((res) => console.log(res)));
+  }
 }

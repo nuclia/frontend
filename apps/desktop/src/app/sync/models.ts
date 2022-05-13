@@ -1,14 +1,22 @@
 import { Observable } from 'rxjs';
 
-export interface IConnector {
+export interface ConnectorDefinition {
   id: string;
   title: string;
   logo: string;
   description: string;
 }
 
+export interface SourceConnectorDefinition extends ConnectorDefinition {
+  factory: (data?: ConnectorSettings) => Observable<ISourceConnector>;
+}
+export interface DestinationConnectorDefinition extends ConnectorDefinition {
+  factory: (data?: ConnectorSettings) => Observable<IDestinationConnector>;
+}
+
+export interface IConnector {}
+
 export interface ISourceConnector extends IConnector {
-  data: { [key: string]: string };
   authenticate(): Observable<boolean>;
   getFiles(query?: string): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob>;
@@ -31,11 +39,14 @@ export interface ConnectorSettings {
   [key: string]: string;
 }
 
+export interface ConnectorParameters {
+  [key: string]: string;
+}
+
 export interface IDestinationConnector extends IConnector {
   getParameters(): Observable<Field[]>;
-  init(settings?: ConnectorSettings): Observable<boolean>;
   authenticate(): Observable<boolean>;
-  upload(filename: string, blob: Blob): Observable<void>;
+  upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void>;
 }
 
 export interface Field {

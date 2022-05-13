@@ -1,32 +1,29 @@
-import { INuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { map, Observable, of } from 'rxjs';
-import { Field, IDestinationConnector, ConnectorSettings } from '../models';
+import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
+import { map, Observable, of, switchMap } from 'rxjs';
+import {
+  Field,
+  IDestinationConnector,
+  ConnectorSettings,
+  DestinationConnectorDefinition,
+  ConnectorParameters,
+} from '../models';
 
-export class NucliaCloudKB implements IDestinationConnector {
-  id = 'nucliacloud';
-  title = 'Nuclia Cloud';
-  description = 'Nuclia Cloud Knowledge Box';
-  logo = '';
-
+export const NucliaCloudKB: DestinationConnectorDefinition = {
+  id: 'nucliacloud',
+  title: 'Nuclia Cloud',
+  description: 'Nuclia Cloud Knowledge Box',
+  logo: '',
+  factory: (data?: ConnectorSettings) => {
+    const nuclia = new Nuclia({ ...data } as unknown as NucliaOptions);
+    return of(new NucliaCloudKBImpl(nuclia));
+  },
+};
+class NucliaCloudKBImpl implements IDestinationConnector {
   nuclia: INuclia;
-  kbSlug?: string;
   kb?: WritableKnowledgeBox;
 
   constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
-  }
-
-  init(settings?: ConnectorSettings): Observable<boolean> {
-    if (!settings) {
-      return of(true);
-    }
-    this.kbSlug = settings['kb'];
-    return this.nuclia.db.getKnowledgeBox(this.nuclia.options.account || '', this.kbSlug).pipe(
-      map((kb) => {
-        this.kb = kb;
-        return true;
-      }),
-    );
   }
 
   getParameters(): Observable<Field[]> {
@@ -46,9 +43,10 @@ export class NucliaCloudKB implements IDestinationConnector {
     return of(true);
   }
 
-  upload(filename: string, blob: Blob): Observable<void> {
-    if (this.kbSlug && this.kb) {
-      return this.kb.upload(new File([blob], filename)).pipe(map(() => undefined));
+  upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void> {
+    if (params && params['kb']) {
+      const kb$ = this.kb ? of(this.kb) : this.nuclia.db.getKnowledgeBox(this.nuclia.options.account!, params['kb']);
+      return kb$.pipe(switchMap((kb) => kb.upload(new File([blob], filename)).pipe(map(() => undefined))));
     } else {
       return of();
     }

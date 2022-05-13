@@ -72,6 +72,7 @@ export interface IDb {
     utctime?: string,
   ): Observable<ProcessingStat[]>;
   upload(file: File): Observable<void>;
+  pull(): Observable<void>;
 }
 
 export interface NucliaOptions {

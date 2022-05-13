@@ -1,17 +1,22 @@
 import { map, Observable, of } from 'rxjs';
-import { Field, IDestinationConnector, ConnectorSettings } from '../models';
+import {
+  Field,
+  IDestinationConnector,
+  ConnectorSettings,
+  ConnectorDefinition,
+  DestinationConnectorDefinition,
+  ConnectorParameters,
+} from '../models';
 
-export class Algolia implements IDestinationConnector {
-  id = 'algolia';
-  title = 'Algolia';
-  description = 'Algolia index';
-  logo = '';
-
+export const Algolia: DestinationConnectorDefinition = {
+  id: 'algolia',
+  title: 'Algolia',
+  description: 'Algolia index',
+  logo: '',
+  factory: (data?: ConnectorSettings) => of(new AlgoliaImpl()),
+};
+class AlgoliaImpl implements IDestinationConnector {
   constructor() {}
-
-  init(settings?: ConnectorSettings): Observable<boolean> {
-    return of(true);
-  }
 
   getParameters(): Observable<Field[]> {
     return of([
@@ -27,7 +32,7 @@ export class Algolia implements IDestinationConnector {
     return of(true);
   }
 
-  upload(filename: string, blob: Blob): Observable<void> {
+  upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void> {
     return of();
   }
 }

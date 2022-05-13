@@ -2,8 +2,15 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
-import { FileStatus, ISourceConnector, SyncItem } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, switchMap, take } from 'rxjs';
+import {
+  ConnectorDefinition,
+  ConnectorSettings,
+  FileStatus,
+  ISourceConnector,
+  SourceConnectorDefinition,
+  SyncItem,
+} from '../models';
+import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { injectScript } from '../inject';
 
 declare var gapi: any;
@@ -13,17 +20,22 @@ declare var gapi: any;
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
-export class GDrive implements ISourceConnector {
-  id = 'gdrive';
-  title = 'Google Drive';
-  logo = 'assets/logos/gdrive.png';
-  description = 'File storage and synchronization service developed by Google';
+export const GDrive: SourceConnectorDefinition = {
+  id: 'gdrive',
+  title: 'Google Drive',
+  logo: 'assets/logos/gdrive.png',
+  description: 'File storage and synchronization service developed by Google',
+  factory: (data?: ConnectorSettings) => of(new GDriveImpl(data)),
+};
 
+class GDriveImpl implements ISourceConnector {
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  API_KEY: string;
+  CLIENT_ID: string;
 
-  data: { [key: string]: string };
-  constructor(data: { [key: string]: string }) {
-    this.data = data;
+  constructor(data?: ConnectorSettings) {
+    this.API_KEY = data?.API_KEY || '';
+    this.CLIENT_ID = data?.CLIENT_ID || '';
   }
 
   authenticate(): Observable<boolean> {
@@ -32,8 +44,8 @@ export class GDrive implements ISourceConnector {
         gapi.load('client:auth2', () => {
           gapi.client
             .init({
-              apiKey: this.data.API_KEY,
-              clientId: this.data.CLIENT_ID,
+              apiKey: this.API_KEY,
+              clientId: this.CLIENT_ID,
               discoveryDocs: DISCOVERY_DOCS,
               scope: SCOPES,
               // redirect_uri: 'http://localhost:4200/redirect',
