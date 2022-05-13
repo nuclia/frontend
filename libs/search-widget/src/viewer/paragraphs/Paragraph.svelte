@@ -20,5 +20,7 @@
   }
   .content {
     flex: 1 1 0;
+    overflow-wrap: break-word;
+    min-width: 0; /* Required for "break-word" to work */
   }
 </style>
