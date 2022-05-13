@@ -19,9 +19,10 @@
   const results = nucliaState().results;
 </script>
 
-<Button size="small" on:click={openModal}
-  >{$_('button.label')} <span class="logo"><Logo darkBackground={true} /></span></Button
->
+<Button size="small" on:click={openModal}>
+  <span class="text">{$_('button.label')}</span>
+  <span class="logo"><Logo darkBackground={true} /></span>
+</Button>
 
 <Modal
   show={showModal}
@@ -48,11 +49,16 @@
 </Modal>
 
 <style>
+  .text {
+    font-weight: 300;
+    padding-left: 4px;
+  }
   .logo {
     line-height: 0;
+    padding: 0 4px 0 6px;
   }
   .logo :global(svg) {
-    height: 15px;
+    height: 20px;
     width: auto;
   }
 

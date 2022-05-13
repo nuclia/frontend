@@ -32,15 +32,15 @@
     white-space: nowrap;
     font-size: var(--font-size-base);
     line-height: var(--line-height-body);
-    padding: 0.5em;
+    padding: 0.4em 0.5em;
     font-family: inherit;
   }
   .button:not(:disabled) {
     cursor: pointer;
   }
   .small {
-    font-size: calc(var(--font-size-base) * 0.5);
-    line-height: calc(var(--line-height-body) * 0.5);
+    font-size: calc(var(--font-size-base) * 0.75);
+    line-height: calc(var(--line-height-body) * 0.75);
   }
   .solid {
     color: var(--color-light-stronger);

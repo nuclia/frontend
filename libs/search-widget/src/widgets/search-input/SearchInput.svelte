@@ -7,6 +7,7 @@
   import { nucliaState, nucliaStore } from '../../core/store';
   import Spinner from '../../components/spinner/Spinner.svelte';
   export let inputWidget = false;
+  export let formWidget = false;
 
   let value = '';
   let previous = '';
@@ -58,6 +59,7 @@
     bind:this={element}
     class="search-field"
     class:input-widget={inputWidget}
+    class:form-widget={formWidget}
     name="nuclia-search-field"
     placeholder={$_('input.placeholder')}
     tabindex="0"
@@ -74,10 +76,10 @@
     on:keypress={onEnter}
     on:keydown
   />
-  {#if inputWidget}
+  {#if inputWidget || formWidget}
     <div class="search-icon">
       {#if $isPending}
-        <Spinner small />
+        <Spinner small single />
       {:else}
         <SearchIcon
           on:click={search}
@@ -105,6 +107,8 @@
     outline: none;
     width: calc(100% - 2px);
     color: inherit;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
 
     -webkit-appearance: none;
   }
@@ -118,6 +122,16 @@
     border-color: var(--color-dark-stronger);
   }
 
+  .form-widget {
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-body);
+    padding: var(--form-widget-padding);
+    border-width: var(--form-widget-border-width);
+    border-style: var(--form-widget-border-style);
+    border-color: var(--form-widget-border-color);
+    border-radius: var(--form-widget-border-radius);
+  }
+
   .input-widget {
     font-size: var(--font-size-base);
     line-height: var(--line-height-body);
@@ -126,7 +140,6 @@
     border-style: var(--input-widget-border-style);
     border-color: var(--input-widget-border-color);
     border-radius: var(--input-widget-border-radius);
-    box-sizing: border-box;
   }
   .input-widget:focus,
   .input-widget:active {
@@ -137,7 +150,8 @@
   }
   .search-icon {
     position: absolute;
-    top: 3px;
+    top: 50%;
     right: 8px;
+    transform: translateY(-50%);
   }
 </style>

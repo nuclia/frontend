@@ -1,16 +1,19 @@
 <script lang="ts">
   export let small = false;
+  export let single = false;
 </script>
 
-<div class="spinner" class:small>
-  <div class="bounce1" />
-  <div class="bounce2" />
+<div class="spinner" class:small class:single>
+  {#if !single}
+    <div class="bounce1" />
+    <div class="bounce2" />
+  {/if}
   <div class="bounce3" />
 </div>
 
 <style>
   /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
-  .spinner:not(.small) {
+  .spinner:not(.small):not(.single) {
     margin: 100px auto 0;
     width: 70px;
     text-align: center;
@@ -18,6 +21,10 @@
 
   .spinner.small {
     width: 44px;
+  }
+
+  .spinner.single {
+    width: auto;
   }
 
   .spinner > div {
