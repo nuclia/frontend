@@ -3,7 +3,8 @@
                  (onSelect)="selectSource($event)"></da-connectors>
 </ng-container>
 <ng-container *ngIf="step === 1">
-  <stf-button (click)="next()">{{ 'Next' | translate }}</stf-button>
+  <stf-button qa="next"
+              (click)="next()">{{ 'Next' | translate }}</stf-button>
   <div class="search-form">
     <stf-input [(value)]="query"></stf-input>
     <stf-button (click)="triggerSearch.next()">{{ 'Search' | translate }}</stf-button>

@@ -15,6 +15,7 @@ export class ConnectorsComponent {
   @Input() set type(value: 'sources' | 'destinations') {
     this._type = value;
     this.connectors = this.sync.getConnectors(value);
+    this.cdr?.markForCheck();
   }
   @Output() onSelect = new EventEmitter<{ connector: ConnectorDefinition; params?: ConnectorParameters }>();
   connectors: ConnectorDefinition[] = [];
