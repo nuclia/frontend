@@ -6,7 +6,7 @@
   import FormWidget from './widgets/FormWidget.svelte';
   import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
   import { getResource, initNuclia, search, suggest } from './core/api';
-  import { concatMap, filter, switchMap, take, tap } from 'rxjs/operators';
+  import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
   import { setCDN } from './core/utils';
@@ -14,7 +14,7 @@
   import Modal from './components/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
-  import type { Observable } from 'rxjs';
+  import { merge, Observable } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -68,8 +68,11 @@
       concatMap((resource) => getResource(resource.uid)),
       tap(() => (showModal = true)),
     );
-    nucliaState()
-      .query.pipe(
+    merge(
+      nucliaStore().query.pipe(filter((query) => query.slice(-1) === ' ')),
+      nucliaStore().query.pipe(debounceTime(500)),
+    )
+      .pipe(
         tap(() => nucliaStore().suggestions.next(NO_RESULTS)),
         filter((query) => !!query && query.length > 2),
         tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
@@ -80,6 +83,7 @@
       .triggerSearch.pipe(
         tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
         switchMap(() => nucliaState().query.pipe(take(1))),
+        map((query) => query.trim()),
         filter((query) => !!query),
         switchMap((query) => search(query)),
       )
