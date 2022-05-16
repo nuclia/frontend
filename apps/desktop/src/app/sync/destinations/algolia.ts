@@ -12,7 +12,7 @@ export const Algolia: DestinationConnectorDefinition = {
   id: 'algolia',
   title: 'Algolia',
   description: 'Algolia index',
-  logo: '',
+  logo: 'assets/logos/algolia.svg',
   factory: (data?: ConnectorSettings) => of(new AlgoliaImpl()),
 };
 class AlgoliaImpl implements IDestinationConnector {

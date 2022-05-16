@@ -13,7 +13,7 @@ export const NucliaCloudKB: DestinationConnectorDefinition = {
   id: 'nucliacloud',
   title: 'Nuclia Cloud',
   description: 'Nuclia Cloud Knowledge Box',
-  logo: '',
+  logo: 'assets/logos/nucliacloud.svg',
   factory: (data?: ConnectorSettings) => {
     const nuclia = new Nuclia({ ...data } as unknown as NucliaOptions);
     return of(new NucliaCloudKBImpl(nuclia));

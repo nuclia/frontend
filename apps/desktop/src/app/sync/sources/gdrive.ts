@@ -23,7 +23,7 @@ const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/r
 export const GDrive: SourceConnectorDefinition = {
   id: 'gdrive',
   title: 'Google Drive',
-  logo: 'assets/logos/gdrive.png',
+  logo: 'assets/logos/gdrive.svg',
   description: 'File storage and synchronization service developed by Google',
   factory: (data?: ConnectorSettings) => of(new GDriveImpl(data)),
 };
