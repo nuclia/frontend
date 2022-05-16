@@ -17,7 +17,10 @@ describe('CallbackComponent', () => {
         providers: [
           { provide: SAMLService, useValue: { checgetTokenkDomain: () => of() } },
           { provide: GoogleService, useValue: { login: () => of() } },
-          { provide: BackendConfigurationService, useValue: { getAllowdHostsRedirect: () => [], getAPIURL: () => '' } },
+          {
+            provide: BackendConfigurationService,
+            useValue: { getAllowdHostsRedirect: () => [], getAPIURL: () => '', staticConf: { client: 'dashboard' } },
+          },
         ],
       }).compileComponents();
     }),

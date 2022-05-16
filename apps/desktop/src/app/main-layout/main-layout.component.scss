@@ -1,0 +1,11 @@
+.page-wrapper {
+  padding: 70px 70px 0 70px;
+  height: 100%;
+  background-color: var(--stf-gray-background);
+  display: flex;
+  overflow: scroll;
+}
+.page-content {
+  padding-top: 20px;
+  width: 100%;
+}

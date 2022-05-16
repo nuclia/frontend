@@ -1,0 +1,18 @@
+.version {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  font-weight: 100;
+  color: #777;
+  background-color: transparent;
+  font-size: 8px;
+  padding-right: 3px;
+  padding-bottom: 3px;
+}
+aside#pa-toasts-block {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 100;
+  align-content: center;
+}

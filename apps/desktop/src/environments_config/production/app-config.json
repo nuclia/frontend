@@ -1,0 +1,20 @@
+{
+  "version": "STF_DOCKER_CONFIG_VERSION",
+  "production": true,
+  "backend": {
+    "app": "STF_DOCKER_CONFIG_APP_NAME",
+    "apiPath": "/api",
+    "siteKey": "STF_DOCKER_CONFIG_SITE_KEY",
+    "analytics": "STF_DOCKER_CONFIG_GANALYTICS",
+    "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
+    "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
+    "sentry_backend": "https://nuclia.cloud/api",
+    "posthog_host": "STF_DOCKER_CONFIG_POSTHOG_HOST",
+    "posthog_key": "STF_DOCKER_CONFIG_POSTHOG_KEY",
+    "saml_login": STF_DOCKER_CONFIG_SAML_ENABLED
+  },
+  "stashify": {
+    "editor": "STF_DOCKER_CONFIG_EDITOR_URL",
+    "email_domain": "STF_DOCKER_CONFIG_EMAIL_DOMAIN"
+  }
+}

@@ -19,6 +19,7 @@ export interface INuclia {
   options: NucliaOptions;
   auth: IAuthentication;
   rest: IRest;
+  db: IDb;
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;
@@ -70,6 +71,8 @@ export interface IDb {
     period?: StatsPeriod,
     utctime?: string,
   ): Observable<ProcessingStat[]>;
+  upload(file: File): Observable<void>;
+  pull(): Observable<void>;
 }
 
 export interface NucliaOptions {
@@ -80,6 +83,7 @@ export interface NucliaOptions {
   knowledgeBox?: string;
   kbSlug?: string;
   client?: string;
+  zoneKey?: string;
 }
 
 export type PromiseMapper<T> = {

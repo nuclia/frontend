@@ -82,16 +82,10 @@ export const uploadFile = (
   buffer: ArrayBuffer,
   metadata?: FileMetadata,
 ): Observable<UploadResponse> => {
-  const headers: { [key: string]: string } = { 'content-type': metadata?.contentType || 'application/octet-stream' };
-  if (metadata?.filename) {
-    headers['x-filename'] = btoa(encodeURIComponent(metadata.filename));
-  }
-  if (metadata?.md5) {
-    headers['x-md5'] = btoa(encodeURIComponent(metadata.md5));
-  }
-  if (metadata?.lang) {
-    headers['x-language'] = btoa(encodeURIComponent(metadata.lang));
-  }
+  const headers: { [key: string]: string } = {
+    'content-type': metadata?.contentType || 'application/octet-stream',
+    ...getFileMetadata(metadata),
+  };
   let retries = 1;
   return nuclia.rest.post<Response>(`${path}/upload`, buffer, headers).pipe(
     repeatWhen((obs) => obs),
@@ -260,4 +254,27 @@ export const batchUpload = (
       return { progress, completed, uploaded, failed, conflicts };
     }),
   );
+};
+
+export const uploadToProcess = (nuclia: INuclia, file: File, metadata?: FileMetadata): Observable<string> => {
+  const headers = {
+    'x-stf-zonekey': `Bearer ${nuclia.options.zoneKey}`,
+    'content-type': metadata?.contentType || 'application/octet-stream',
+    ...getFileMetadata(metadata),
+  };
+  return nuclia.rest.post<string>('/processing/upload', file, headers);
+};
+
+const getFileMetadata = (metadata: FileMetadata | undefined): { [key: string]: string } => {
+  const headers: { [key: string]: string } = {};
+  if (metadata?.filename) {
+    headers['x-filename'] = btoa(encodeURIComponent(metadata.filename));
+  }
+  if (metadata?.md5) {
+    headers['x-md5'] = btoa(encodeURIComponent(metadata.md5));
+  }
+  if (metadata?.lang) {
+    headers['x-language'] = btoa(encodeURIComponent(metadata.lang));
+  }
+  return headers;
 };

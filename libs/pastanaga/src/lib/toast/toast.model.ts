@@ -69,7 +69,7 @@ export class ToastButtonModel {
 
   id: string;
   text: string;
-  color: string;
+  color: 'primary' | 'secondary' | 'destructive';
   icon: string;
   tooltip: string;
 

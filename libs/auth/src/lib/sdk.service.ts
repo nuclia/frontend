@@ -19,7 +19,7 @@ import { StateService } from './state.service';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
-  nuclia: Nuclia = new Nuclia({ backend: this.config.getAPIURL(), client: 'dashboard' });
+  nuclia: Nuclia = new Nuclia({ backend: this.config.getAPIURL(), client: this.config.staticConf.client });
 
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
   currentKb = this._currentKB.asObservable();

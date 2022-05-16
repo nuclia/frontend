@@ -3,6 +3,7 @@ import type { INuclia, IDb } from '../models';
 import { Account, AccountCreation, AccountStatus, ProcessingStat, StatsPeriod, StatsType, Welcome } from './db.models';
 import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
+import { upload, uploadToProcess } from './upload';
 
 export class Db implements IDb {
   private nuclia: INuclia;
@@ -101,5 +102,34 @@ export class Db implements IDb {
       map((response) => response.data),
       filter((data) => !!data),
     );
+  }
+
+  upload(file: File): Observable<void> {
+    if (!this.nuclia.options.zoneKey) {
+      throw new Error('zoneKey must be defined in the Nuclia options to be able to call /process');
+    }
+    return uploadToProcess(this.nuclia, file).pipe(
+      switchMap((token) =>
+        this.nuclia.rest.post<void>(
+          '/processing/push',
+          {
+            uuid: 'fake',
+            kbid: 'fake',
+            filefield: { file: token },
+          },
+          { 'x-stf-zonekey': `Bearer ${this.nuclia.options.zoneKey}` },
+        ),
+      ),
+      tap((res) => console.log(res)),
+    );
+  }
+
+  pull(): Observable<void> {
+    if (!this.nuclia.options.zoneKey) {
+      throw new Error('zoneKey must be defined in the Nuclia options to be able to call /process');
+    }
+    return this.nuclia.rest
+      .get<void>('/processing/pull', { 'x-stf-zonekey': `Bearer ${this.nuclia.options.zoneKey}` })
+      .pipe(tap((res) => console.log(res)));
   }
 }

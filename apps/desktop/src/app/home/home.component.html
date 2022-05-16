@@ -1,0 +1,17 @@
+<div class="container">
+  <stf-button color="secondary"
+              routerLink="/add-upload">{{ 'home.add' | translate }}</stf-button>
+  <div class="uploads">
+    <div class="row"
+         *ngFor="let upload of (queue | async)">
+      <div>{{ upload.date }}</div>
+      <div>{{ upload.from }}</div>
+      <div>{{ upload.to }}</div>
+      <div>{{ upload.total }}</div>
+      <div>
+        <div class="progress"
+             [style.width]="upload.progress + '%'"></div>
+      </div>
+    </div>
+  </div>
+</div>

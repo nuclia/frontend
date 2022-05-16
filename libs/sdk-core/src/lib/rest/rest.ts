@@ -38,10 +38,11 @@ export class Rest implements IRest {
   }
 
   private getHeaders(extraHeaders?: { [key: string]: string }): { [key: string]: string } {
+    const auth = extraHeaders && extraHeaders['x-stf-zonekey'] ? {} : this.nuclia.auth.getAuthHeaders();
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
-      ...this.nuclia.auth.getAuthHeaders(),
+      ...auth,
     };
     return {
       ...defaultHeaders,
@@ -69,7 +70,14 @@ export class Rest implements IRest {
         if (!response.ok) {
           return throwError(response);
         }
-        return doNotParse ? of(response as unknown as T) : from(response.json());
+        return doNotParse
+          ? of(response as unknown as T)
+          : from(
+              response
+                .clone()
+                .json()
+                .catch(() => response.text()),
+            );
       }),
     );
   }

@@ -5,12 +5,10 @@ import { AppInitService, EnviromentConfiguration, StaticEnviromentConfiguration 
 import posthog from 'posthog-js';
 import { isPlatformBrowser } from '@angular/common';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class BackendConfigurationService {
   private config: EnviromentConfiguration;
-  private staticConf: StaticEnviromentConfiguration;
+  staticConf: StaticEnviromentConfiguration;
   isBrowser = false;
 
   constructor(
