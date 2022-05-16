@@ -58,7 +58,6 @@ export const nucliaStore = (): NucliaStore => {
     _state = {
       query: _store!.query.asObservable().pipe(
         tap(() => _store!.hasSearchError.next(false)),
-        map((q) => q.trim()),
         distinctUntilChanged(),
       ),
       results: _store!.searchResults.pipe(
