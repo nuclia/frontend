@@ -41,6 +41,7 @@
       <app-entity-name
         [entity]="entity"
         [editMode]="editMode"
+        [group]="group"
         (delete)="deleteEntity(entity)">
       </app-entity-name>
     </div>
@@ -58,7 +59,8 @@
           (unlink)="unlinkSynonym(entity, $event)"
           (delete)="deleteEntity($event)"
           [editMode]="editMode"
-          [synonyms]="entitiesGroup?.getSynonyms(entity.value) || []">
+          [synonyms]="entitiesGroup?.getSynonyms(entity.value) || []"
+          [group]="group">
         </app-synonym-list>
       </div>
     </div>

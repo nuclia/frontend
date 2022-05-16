@@ -15,7 +15,6 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { MatDialog } from '@angular/material/dialog';
 import { AppEntitiesGroup, MutableEntitiesGroup, Entity } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
-import { EntitiesSearchService } from '../entities-search.service';
 import {
   EntityDialogComponent,
   EntityDialogMode,
@@ -32,7 +31,6 @@ import {
 })
 export class EntityListComponent implements OnInit, OnDestroy {
   @Input() editMode: boolean = false;
-  @Input() groupKey: string = '';
   @Input() group: AppEntitiesGroup | undefined;
   @Input() searchTerm: string = '';
   @Input() searchResults: string[] | null = null;
@@ -48,8 +46,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
   constructor(
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private editService: EntitiesEditService,
-    private searchService: EntitiesSearchService,
+    private editService: EntitiesEditService
   ) {}
 
   get entitiesGroup(): AppEntitiesGroup | undefined {
@@ -57,14 +54,14 @@ export class EntityListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.editService.getGroup(this.groupKey)
+    this.editService.getGroup(this.group!.key)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((entitiesGroup) => {
         this.editableGroup = entitiesGroup;
         this.cdr.markForCheck();
       });
 
-    this.editService.getAddedEntity(this.groupKey)
+    this.editService.getAddedEntity(this.group!.key)
       .pipe(
         delay(10), // Wait until the new entity is added to the DOM
         takeUntil(this.unsubscribeAll))
@@ -92,19 +89,19 @@ export class EntityListComponent implements OnInit, OnDestroy {
 
   addSynonym(entity: Entity, synonym: Entity) {
     this.editableGroup!.addSynonym(entity.value, synonym.value);
-    this.editService.setGroup(this.groupKey, this.editableGroup!);
+    this.editService.setGroup(this.group!.key, this.editableGroup!);
     this.cdr.markForCheck();
   }
 
   unlinkSynonym(entity: Entity, synonym: Entity) {
     this.editableGroup!.unlinkSynonym(entity.value, synonym.value);
-    this.editService.setGroup(this.groupKey, this.editableGroup!);
+    this.editService.setGroup(this.group!.key, this.editableGroup!);
     this.cdr.markForCheck();
   }
 
   deleteEntity(entity: Entity) {
     this.editableGroup?.deleteEntity(entity.value);
-    this.editService.setGroup(this.groupKey, this.editableGroup!);
+    this.editService.setGroup(this.group!.key, this.editableGroup!);
     this.cdr.markForCheck();
   }
 
@@ -131,7 +128,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
       EntityDialogResponse>
       (EntityDialogComponent, {
         width: '630px',
-        data: { mode, entity, group: this.groupKey }
+        data: { mode, entity, group: this.group!.key }
       });
 
     return dialogRef;

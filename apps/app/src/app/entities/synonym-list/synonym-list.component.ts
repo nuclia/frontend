@@ -16,7 +16,7 @@ import {
 import { ViewportRuler } from '@angular/cdk/scrolling';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Entity } from '../model';
+import { AppEntitiesGroup, Entity } from '../model';
 
 const COUNTER_WIDTH = 36;
 
@@ -28,6 +28,7 @@ const COUNTER_WIDTH = 36;
 })
 export class SynonymListComponent implements OnChanges, AfterViewInit {
 
+  @Input() group?: AppEntitiesGroup;
   @Input() synonyms: Entity[] = [];
   @Input() editMode: boolean = false;
   @Output() unlink = new EventEmitter<Entity>();

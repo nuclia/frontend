@@ -41,8 +41,8 @@
       <div class="entity-table-header-cell cell-actions"></div>
     </div>
 
-    <div *ngFor="let group of (groups | async) | keyvalue; trackBy: trackByFn">
-      <app-entity-group [group]="group.value" [groupKey]="group.key" [searchTerm]="searchTerm | async"></app-entity-group>
+    <div *ngFor="let group of (groups | async); trackBy: trackByFn">
+      <app-entity-group [group]="group" [searchTerm]="searchTerm | async"></app-entity-group>
     </div>
   </div>
 </div>

@@ -16,7 +16,6 @@ import { EntitiesService } from '../../services/entities.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntityGroupComponent implements OnInit, OnDestroy {
-  @Input() groupKey: string  = '';
   @Input() searchTerm: string  = '';
 
   @Input() 
@@ -44,9 +43,9 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
     private dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.searchResults$ = this.searchService.getSearchResults(this.groupKey);
+    this.searchResults$ = this.searchService.getSearchResults(this.group!.key);
 
-    this.editService.isEditMode(this.groupKey)
+    this.editService.isEditMode(this.group!.key)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((editMode) => {
         this.editMode = editMode;
@@ -56,7 +55,7 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
 
-    merge(this.searchResults$, this.editService.getGroup(this.groupKey))
+    merge(this.searchResults$, this.editService.getGroup(this.group!.key))
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(() => {
         this.updateExpander++;
@@ -90,10 +89,10 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
 
   toggleEditMode(): void {
     if (this.editMode) {
-      this.editService.clearGroup(this.groupKey);
+      this.editService.clearGroup(this.group!.key);
     }
     else {
-      this.editService.initGroup(this.groupKey, this.group!);
+      this.editService.initGroup(this.group!.key, this.group!);
     }
   }
 
@@ -104,7 +103,7 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
       EntityDialogResponse>
       (EntityDialogComponent, {
         width: '630px',
-        data: { mode: 'add', group: this.groupKey }
+        data: { mode: 'add', group: this.group!.key }
       });
       
     dialogRef
@@ -131,13 +130,13 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((result) => {
         if (result) {
-          this.entitiesService.deleteGroup(this.groupKey);
+          this.entitiesService.deleteGroup(this.group!.key).subscribe();
         }
       });
   }
 
   saveGroup() {
-    this.editService.saveGroup(this.groupKey).subscribe(() => {
+    this.editService.saveGroup(this.group!.key).subscribe(() => {
       this.toggleEditMode();
     });
   }

@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { KeyValue } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
@@ -24,10 +23,11 @@ export class EntitiesComponent {
 
   groups = this.entitiesService.getEntities().pipe(
     filter((entities): entities is Entities => !!entities),
-    map(entities => Object.entries(entities).reduce((acc, [groupKey, group])=> {
-      acc[groupKey] = new AppEntitiesGroup(group);
-      return acc;
-    }, {} as { [key: string]: AppEntitiesGroup })),
+    map(entities => (
+      Object.entries(entities)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([groupKey, group])=> (new AppEntitiesGroup(group, groupKey))
+    )))
   );
   
   constructor(
@@ -39,7 +39,7 @@ export class EntitiesComponent {
     this.searchService.search(this.searchInput.value)
   }
 
-  trackByFn(index: number, item: KeyValue<string, AppEntitiesGroup>): string {
+  trackByFn(index: number, item: AppEntitiesGroup): string {
     return item.key;
   }
 }
