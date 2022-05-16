@@ -100,6 +100,9 @@ export default class App {
       if (!App.application.isPackaged) {
         App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
       } else {
+        console.log('rendererAppName', rendererAppName);
+        console.log('dirname', __dirname);
+        console.log('path', join(__dirname, '..', rendererAppName, 'index.html'));
         App.mainWindow.loadURL(
           format({
             pathname: join(__dirname, '..', rendererAppName, 'index.html'),
