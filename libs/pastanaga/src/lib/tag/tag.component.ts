@@ -88,11 +88,11 @@ export class STFTagComponent implements OnInit {
     }
   }
 
-  addElement($event: string) {
-    this.add.emit($event);
+  addElement() {
+    this.add.emit(this.value);
   }
 
-  delElement($event: string) {
-    this.del.emit($event);
+  delElement() {
+    this.del.emit(this.value);
   }
 }

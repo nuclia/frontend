@@ -357,7 +357,7 @@
           "configurations": {
             "production": {
               "outputHashing": "all",
-              "serviceWorker": true,
+              "serviceWorker": false,
               "fileReplacements": [
                 {
                   "replace": "apps/desktop/src/environments/environment.ts",
