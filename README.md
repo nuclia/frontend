@@ -37,3 +37,18 @@ nx build search-widget
 ## SDK
 
 [Documentation](https://docs.nuclia.dev/docs/sdk)
+
+## Desktop app
+
+Run in the browser:
+
+```
+nx serve desktop
+```
+
+Run in electron:
+
+```
+nx serve desktop
+nx serve desktop-electron
+```

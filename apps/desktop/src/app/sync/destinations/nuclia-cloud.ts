@@ -7,6 +7,7 @@ import {
   DestinationConnectorDefinition,
   ConnectorParameters,
 } from '../models';
+const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 
 export const NucliaCloudKB: DestinationConnectorDefinition = {
   id: 'nucliacloud',
@@ -27,7 +28,7 @@ class NucliaCloudKBImpl implements IDestinationConnector {
   }
 
   getParameters(): Observable<Field[]> {
-    return this.nuclia.db.getKnowledgeBoxes(this.nuclia.options.account || '').pipe(
+    return this.nuclia.db.getKnowledgeBoxes(localStorage.getItem(ACCOUNT_KEY) || '').pipe(
       map((kbs) => [
         {
           id: 'kb',
@@ -45,7 +46,9 @@ class NucliaCloudKBImpl implements IDestinationConnector {
 
   upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void> {
     if (params && params['kb']) {
-      const kb$ = this.kb ? of(this.kb) : this.nuclia.db.getKnowledgeBox(this.nuclia.options.account!, params['kb']);
+      const kb$ = this.kb
+        ? of(this.kb)
+        : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
       return kb$.pipe(switchMap((kb) => kb.upload(new File([blob], filename)).pipe(map(() => undefined))));
     } else {
       return of();
