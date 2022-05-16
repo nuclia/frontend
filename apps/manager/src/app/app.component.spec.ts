@@ -18,7 +18,7 @@ describe('AppComponent', () => {
           },
           {
             provide: BackendConfigurationService,
-            useValue: { getVersion: () => '1.0', getAPIURL: () => 'key' },
+            useValue: { getVersion: () => '1.0', getAPIURL: () => 'key', staticConf: { client: 'dashboard' } },
           },
         ],
       }).compileComponents();
