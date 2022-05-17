@@ -124,12 +124,12 @@ export class Authentication implements IAuthentication {
       const helper = new JwtHelper(token);
       const expiration = helper.getTokenExpirationDate()?.getTime();
       if (expiration) {
-        const nowInSeconds = new Date().getTime() / 1000;
-        if (expiration < nowInSeconds) {
+        const now = new Date().getTime();
+        if (expiration < now) {
           this.logout();
         } else {
           // we refresh the token 2 days before expiration (or immediately if it's less than 2 days)
-          const timeout = Math.max(expiration - nowInSeconds - 48 * 60 * 60, 0);
+          const timeout = Math.max(expiration - now - 48 * 60 * 60 * 1000, 0);
           this.timerSubscription?.unsubscribe();
           this.timerSubscription = timer(timeout)
             .pipe(switchMap(() => this.refresh()))
