@@ -213,8 +213,14 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
+      - name: Set version
+        id: version_step
+        run: |-
+          VERSION=`cat apps/desktop/VERSION`
+          VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
+          sed -i.bak "s#__VERSION__#$VERSION_SHA#" ./apps/desktop/src/environments_config/production/app-config.json
+          echo "::set-output name=version_number::$VERSION_SHA"
       - name: Build desktop app
-        if: steps.check-deploy.outputs.deploy-desktop == 'yes'
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
         run: |-

@@ -1,5 +1,5 @@
 {
-  "version": "STF_DOCKER_CONFIG_VERSION",
+  "version": "__VERSION__",
   "production": true,
   "backend": {
     "app": "desktop",
