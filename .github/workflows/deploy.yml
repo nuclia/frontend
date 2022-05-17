@@ -21,6 +21,7 @@ jobs:
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
       deploy-login: ${{ steps.check-deploy.outputs.deploy-login }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
+      deploy-desktop: ${{ steps.check-deploy.outputs.deploy-desktop }}
 
     steps:
       - uses: actions/checkout@v2
@@ -65,6 +66,7 @@ jobs:
           (test -d dist/apps/app && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
           (test -d dist/apps/login && echo "::set-output name=deploy-login::yes") || echo "Login unchanged"
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
+          (test -d dist/apps/desktop && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
 
       - uses: google-github-actions/auth@v0
         with:
@@ -199,3 +201,23 @@ jobs:
       - name: Trigger internal Jenkins
         run: |-
           curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=manager" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
+
+  deploy-desktop:
+    name: Deploy desktop
+    needs: build
+    if: needs.build.outputs.deploy-desktop == 'yes'
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Build desktop app
+        if: steps.check-deploy.outputs.deploy-desktop == 'yes'
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        run: |-
+          npx nx build desktop -c production
+          npx nx build desktop-electron -c production
+          npx nx run desktop-electron:make --publish always

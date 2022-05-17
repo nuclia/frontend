@@ -1,7 +1,42 @@
 {
   "$schema": "../../../../../../node_modules/nx-electron/src/validation/maker.schema.json",
-  "productName": "nuclia-desktop",
+  "appId": "cloud.nuclia.desktop",
+  "productName": "NucliaDesktop",
+  "copyright": "Copyright 2022 BOSUTECH XXI SL",
+  "npmRebuild": false,
+  "electronCompile": false,
+  "asar": true,
+  "asarUnpack": ["dist/apps/desktop-electron/jobs/main.js"],
+  "win": {
+    "icon": "apps/desktop/electron/icons/win/icon.ico",
+    "publish": ["github"]
+  },
   "mac": {
-    "identity": null
-  }
+    "category": "public.app-category.productivity",
+    "icon": "apps/desktop/electron/icons/mac/icon.icns",
+    "target": ["pkg"],
+    "type": "distribution",
+    "hardenedRuntime": true,
+    "gatekeeperAssess": false,
+    "entitlements": "apps/desktop/electron/entitlements.mac.plist",
+    "entitlementsInherit": "apps/desktop/electron/entitlements.mac.plist",
+    "publish": ["github"]
+  },
+  "dmg": {
+    "backgroundColor": "#000"
+  },
+  "pkg": {
+    "welcome": "apps/desktop/electron/pkg/welcome.txt",
+    "conclusion": "apps/desktop/electron/pkg/conclusion.txt"
+  },
+  "linux": {
+    "icon": "apps/desktop/electron/icons/png",
+    "publish": ["github"]
+  },
+  "files": [
+    {
+      "from": "./dist/apps/desktop-electron",
+      "to": "electron"
+    }
+  ]
 }
