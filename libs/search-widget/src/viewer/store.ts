@@ -404,10 +404,8 @@ function findParagraphFromSearchSentence(
   const field = resource.data[getFieldType(searchSenctence.field_type) as keyof ResourceData]?.[searchSenctence.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   return paragraphs?.find((paragraph) => (
-    paragraph.sentences?.find((sentence) => (
-      strict 
-        ? searchSenctence.text === getSentenceText(field!, sentence)
-        : (getParagraphText(field!, paragraph) || '').includes(searchSenctence.text.trim())
-    ))
+    strict
+      ? paragraph.sentences?.find((sentence) => (searchSenctence.text === getSentenceText(field!, sentence)))
+      : (getParagraphText(field!, paragraph) || '').includes(searchSenctence.text.trim())
   ));
 }
