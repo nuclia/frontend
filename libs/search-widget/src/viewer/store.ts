@@ -180,7 +180,7 @@ export function getMediaPreviewParams(
 }
 
 export function selectSentence(resource: Resource, searchSentence: Search.Sentence) {
-  const paragraph = findParagraphFromSearchSentence(resource, searchSentence);
+  const paragraph = findParagraphFromSearchSentence(resource, searchSentence, false);  
   paragraph && _selectParagraph(resource, paragraph, searchSentence.field_type, searchSentence.field);
 }
 
@@ -399,12 +399,13 @@ function findParagraphFromSearchParagraph(
 function findParagraphFromSearchSentence(
   resource: Resource,
   searchSenctence: Search.Sentence,
+  strict: boolean,
 ): Paragraph | undefined {
   const field = resource.data[getFieldType(searchSenctence.field_type) as keyof ResourceData]?.[searchSenctence.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   return paragraphs?.find((paragraph) => (
-    paragraph.sentences?.find((sentence) => (
-      searchSenctence.text === getSentenceText(field!, sentence)
-    ))
+    strict
+      ? paragraph.sentences?.find((sentence) => (searchSenctence.text === getSentenceText(field!, sentence)))
+      : (getParagraphText(field!, paragraph) || '').includes(searchSenctence.text.trim())
   ));
 }
