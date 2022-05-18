@@ -13,6 +13,13 @@
   padding: 0 var(--app-layout-margin-right) 0 22px;
   background-color: #fff;
 
+  .is-stage {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    left: 125px;
+    top: 12px;
+  }
   &-logo {
     @include reset-button();
     cursor: pointer;

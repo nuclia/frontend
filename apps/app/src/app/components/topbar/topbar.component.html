@@ -4,6 +4,9 @@
           tourAnchor="step1">
     <svg-icon src="assets/logos/logo-beta.svg"
               class="topbar-logo-expanded"></svg-icon>
+    <svg-icon *ngIf="isStage"
+              src="assets/icons/experimenting.svg"
+              class="is-stage"></svg-icon>
     <svg-icon src="assets/logos/symbol.svg"
               class="topbar-logo-collapsed"></svg-icon>
   </button>
