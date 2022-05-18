@@ -18,6 +18,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 export class TopbarComponent implements AfterViewInit {
   userPrefs = this.userService.userPrefs;
   kb = this.sdk.currentKb;
+  isStage = location.hostname === 'stashify.cloud';
   searchWidget = this.kb.pipe(
     map((kb) =>
       this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
