@@ -73,6 +73,7 @@ export class STFInputComponent
       // this.label_float = !this.empty;
       this.label_float = value !== '';
       this.stateChanges.next();
+      this.cdr?.markForCheck();
     }
   }
   private _value = '';

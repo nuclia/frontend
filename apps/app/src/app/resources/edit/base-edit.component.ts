@@ -1,13 +1,13 @@
-import { Directive } from '@angular/core';
+import { Directive, OnDestroy } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/auth';
 import { Resource } from '@nuclia/core';
-import { combineLatest, switchMap, filter, tap, take, Subject, startWith, share } from 'rxjs';
+import { combineLatest, switchMap, filter, tap, Subject, startWith, share, takeUntil } from 'rxjs';
 import { AppToasterService } from '../../services/app-toaster.service';
 
 @Directive()
-export abstract class BaseEditComponent {
+export abstract class BaseEditComponent implements OnDestroy {
   refresh = new Subject<boolean>();
   resource = combineLatest([
     this.sdk.currentKb,
@@ -23,6 +23,7 @@ export abstract class BaseEditComponent {
   );
   form = this.formBuilder.group({});
   currentValue?: Resource;
+  unsubscribeAll = new Subject<void>();
 
   constructor(
     protected route: ActivatedRoute,
@@ -31,6 +32,12 @@ export abstract class BaseEditComponent {
     protected toaster: AppToasterService,
   ) {
     this.refresh.next(true);
+    this.resource.pipe(takeUntil(this.unsubscribeAll)).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   save() {
