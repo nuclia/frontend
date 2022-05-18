@@ -1,5 +1,9 @@
 {
-	"home.add": "",
+	"home.active": "Actiu",
+	"home.add": "Nova pujada",
+	"home.completed": "Completat",
+	"home.files": "{{num}} fitxers",
+	"home.pending": "Pendent",
 	"login.access_request": "vol accedir al teu compte de Nuclia i poder: ",
 	"login.check_email": "Comprova el teu correu!",
 	"login.continue_with": "Continua amb",

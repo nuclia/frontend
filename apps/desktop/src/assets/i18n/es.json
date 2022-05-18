@@ -1,5 +1,9 @@
 {
-	"home.add": "",
+	"home.active": "Activo",
+	"home.add": "Nueva subida",
+	"home.completed": "Completado",
+	"home.files": "{{num}} ficheros",
+	"home.pending": "Pendiente",
 	"login.access_request": "quiere acceder a tu cuenta de Nuclia y poder: ",
 	"login.check_email": "!Revisa tu correo!",
 	"login.continue_with": "Continua con",

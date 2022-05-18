@@ -21,4 +21,5 @@ export * from './lib/filters-bar/filters-bar.module';
 export * from './lib/pagination/pagination.module';
 export * from './lib/section-navbar/section-navbar.module';
 export * from './lib/section-navbar/section-navbar.component';
+export * from './lib/progress-bar/progress-bar.module';
 export * from './lib/utils/clonedeep';

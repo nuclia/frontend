@@ -4,6 +4,70 @@
   width: 80%;
   height: 100%;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.add {
+  flex-shrink: 0;
+  margin-bottom: rythm(2);
+  .plus {
+    font-weight: var(--stf-font-weight-bold);
+    padding-right: rythm(0.25);
+  }
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: 28px 38px;
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: rythm(1);
+  &:last-child {
+    margin-bottom: 0;
+  }
+  &.selected {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: var(--stf-font-size-xxlarge);
+  &.has-files {
+    cursor: pointer;
+  }
+  .title {
+    width: 135px;
+    font-weight: var(--stf-font-weight-bold);
+  }
+  .counter {
+    font-weight: var(--stf-font-weight-light);
+  }
+  .arrow {
+    margin-left: auto;
+    width: 12px;
+    height: 12px;
+    border-bottom: 3px solid #000;
+    border-right: 3px solid #000;
+    transform: rotate(-45deg);
+    .selected > & {
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.section-body {
+  margin-top: rythm(2);
+  padding-right: rythm(1);
+  min-height: 0;
+  overflow-y: auto;
+  @include scrollbar-black();
 }
 
 .uploads {
@@ -12,11 +76,15 @@
 }
 .row {
   display: table-row;
+  height: 45px;
   & > div {
     border-bottom: 1px solid $gray-light;
     display: table-cell;
     width: 150px;
     padding: rythm(0.75) 0;
+  }
+  &:first-child > div {
+    border-top: 1px solid $gray-light;
   }
   .progress {
     background-color: $red;

@@ -1,0 +1,15 @@
+.progress-bar {
+  height: 5px;
+  &-white {
+    background-color: #fff;
+  }
+  &-gray {
+    background-color: var(--stf-gray-lighter);
+  }
+
+  .progress {
+    height: 100%;
+    transition: width 0.1s linear;
+    background-color: var(--stf-primary);
+  }
+}
