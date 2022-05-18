@@ -40,6 +40,11 @@ export class SynonymAddComponent {
       ));
   }
 
+  toggle() {
+    this.openAutocomplete = !this.openAutocomplete;
+    this.filterInput.reset();
+  }
+
   addSynonym(entity: Entity) {
     this.openAutocomplete = false;
     this.add.emit(entity);

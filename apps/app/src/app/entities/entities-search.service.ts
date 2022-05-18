@@ -70,7 +70,7 @@ export class EntitiesSearchService implements OnDestroy {
       keys: ['value'],
       minMatchCharLength: 3,
       ignoreLocation: true,
-      threshold: 0.3,
+      threshold: 0.2,
     };
     const fuse = new Fuse(list, options);
     return fuse.search(searchTerm).map((entity) => entity.value);

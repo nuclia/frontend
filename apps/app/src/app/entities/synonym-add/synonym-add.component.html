@@ -1,5 +1,5 @@
 <button
-  (click)="openAutocomplete = true"
+  (click)="toggle()"
   cdkOverlayOrigin
   #trigger="cdkOverlayOrigin"
   fxFlex="0 0 auto"
@@ -15,7 +15,7 @@
   [cdkConnectedOverlayHasBackdrop]="true"
   [cdkConnectedOverlayOffsetY]="-10"
   [cdkConnectedOverlayOffsetX]="16"
-  (backdropClick)="openAutocomplete = false"
+  (backdropClick)="toggle()"
   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
     <div class="entity-autocomplete" cdkTrapFocus cdkTrapFocusAutoCapture>
       <label [for]="id">{{ 'entity.search_synonym' | translate }}</label>

@@ -6,12 +6,13 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   ViewChild,
-  ElementRef,
+  Renderer2,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil, delay } from 'rxjs/operators';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { SelectionModel } from '@angular/cdk/collections';
+import { CdkDragDrop, CdkDragEnter, CdkDragExit } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material/dialog';
 import { AppEntitiesGroup, MutableEntitiesGroup, Entity } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
@@ -37,16 +38,17 @@ export class EntityListComponent implements OnInit, OnDestroy {
   
   editableGroup: MutableEntitiesGroup | null = null;
   highlightedEntities = new SelectionModel<string>(true);
-  minVirtualScrollItems = 50;
+  entityHeight = 50;
+  maxListHeight = 500;
   unsubscribeAll = new Subject<void>();
 
   @ViewChild('virtualContainer') virtualContainer?: CdkVirtualScrollViewport;
-  @ViewChild('container') container?: ElementRef; 
 
   constructor(
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private editService: EntitiesEditService
+    private editService: EntitiesEditService,
+    private renderer2: Renderer2,
   ) {}
 
   get entitiesGroup(): AppEntitiesGroup | undefined {
@@ -85,6 +87,23 @@ export class EntityListComponent implements OnInit, OnDestroy {
       entities = entities.filter((entity) => this.searchResults!.includes(entity.value));
     }
     return entities.sort((a, b) => a.value.localeCompare(b.value));
+  }
+
+  dragEnter(event: CdkDragEnter<any>) {
+    if (event.container.data.value !== event.item.data.value) {
+      this.renderer2.setStyle(event.container.element.nativeElement, 'background-color', 'rgba(255, 220, 27,0.1)');
+    }
+  }
+
+  dragExit(event: CdkDragExit<any>) {
+    if (event.container.data.value !== event.item.data.value) {
+      this.renderer2.removeStyle(event.container.element.nativeElement, 'background-color');
+    }
+  }
+
+  dragDrop(event: CdkDragDrop<Entity, any, Entity>) {
+    this.addSynonym(event.container.data, event.item.data);
+    this.renderer2.removeStyle(event.container.element.nativeElement, 'background-color');
   }
 
   addSynonym(entity: Entity, synonym: Entity) {
@@ -133,6 +152,9 @@ export class EntityListComponent implements OnInit, OnDestroy {
 
     return dialogRef;
   }
+  getListHeight(): number {
+    return Math.min(this.filteredEntities().length * this.entityHeight, this.maxListHeight);
+  }
 
   isHighlighted(entity: Entity): boolean {
     return this.highlightedEntities.isSelected(entity.value);
@@ -142,9 +164,6 @@ export class EntityListComponent implements OnInit, OnDestroy {
     const index = this.filteredEntities().findIndex((item) => item.value === entity.value);
     if (this.virtualContainer) {
       this.virtualContainer.scrollToIndex(index);
-    }
-    else if(this.container) {
-      this.container.nativeElement.scrollTop = index * 50;
     }
   }
 
