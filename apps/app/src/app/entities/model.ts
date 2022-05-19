@@ -27,11 +27,13 @@ export interface Entity {
 }
 
 export class AppEntitiesGroup {
+  key: string;
   title?: string;
   color?: string;
   entities: { [entityName: string]: Entity };
 
-  constructor(group: EntitiesGroup) {
+  constructor(group: EntitiesGroup, key: string) {
+    this.key = key;
     this.title = group.title;
     this.color = group.color;
     this.entities = group.entities;
@@ -46,7 +48,7 @@ export class AppEntitiesGroup {
   }
 
   getEntityList(): Entity[] {
-    return Object.keys(this.entities || {}).map((key) => this.entities![key]);
+    return Object.values(this.entities);
   }
 
   getSynonyms(entityValue: string): Entity[] {
@@ -56,8 +58,8 @@ export class AppEntitiesGroup {
 }
 
 export class MutableEntitiesGroup extends AppEntitiesGroup {
-  constructor(group: EntitiesGroup) {
-    super(group);
+  constructor(group: EntitiesGroup, key: string) {
+    super(group, key);
     // Enforce deep copy
     this.entities = cloneDeep(group.entities);
   }

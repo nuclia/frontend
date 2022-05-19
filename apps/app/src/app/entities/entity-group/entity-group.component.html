@@ -8,11 +8,11 @@
   [attr.aria-expanded]="expanded"
   (click)="editMode ? null : toggleExpanded($event)">
   <div class="entity-group-cell cell-color">
-    <div class="color-border" [style.background-color]="group?.color || colors[groupKey]"></div>
+    <div class="color-border" [style.background-color]="group?.color || colors[this.group?.key]"></div>
   </div>
   <div class="entity-group-cell cell-name">
     <svg-icon src="assets/icons/chevron-right.svg"></svg-icon>
-    <span>{{ group?.title || ('resource.entities.' + (groupKey.toLowerCase()) | translate ) }}</span>
+    <span>{{ group?.title || ('resource.entities.' + (this.group?.key.toLowerCase()) | translate ) }}</span>
   </div>
   <div class="entity-group-cell cell-synonyms"></div>
   <div class="entity-group-cell cell-description"></div>
@@ -64,7 +64,6 @@
   <stf-expander-content>
     <div *ngIf="expanded">
       <app-entity-list
-        [groupKey]="groupKey"
         [group]="group"
         [editMode]="editMode"
         [searchTerm]="searchTerm"

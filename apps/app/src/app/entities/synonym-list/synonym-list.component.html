@@ -4,6 +4,7 @@
       [entity]="entity"
       [editMode]="editMode"
       [isSynonym]="true"
+      [group]="group"
       (unlink)="unlink.emit(entity)"
       (delete)="delete.emit(entity)">
     </app-entity-name>
@@ -34,6 +35,7 @@
         [entity]="entity"
         [editMode]="editMode"
         [isSynonym]="true"
+        [group]="group"
         (unlink)="unlink.emit(entity)"
         (delete)="delete.emit(entity)">
       </app-entity-name>

@@ -59,7 +59,7 @@ export class EntitiesSearchService implements OnDestroy {
   ): SearchResutls {
     if (searchTerm.length === 0) return {};
     return Object.entries(groups).reduce((all: SearchResutls, [key, group]) => {
-      all[key] = this.fuzzySearch(searchTerm, editableGroups[key] || new AppEntitiesGroup(group));
+      all[key] = this.fuzzySearch(searchTerm, editableGroups[key] || new AppEntitiesGroup(group, key));
       return all;
     }, {});
   }
@@ -70,7 +70,7 @@ export class EntitiesSearchService implements OnDestroy {
       keys: ['value'],
       minMatchCharLength: 3,
       ignoreLocation: true,
-      threshold: 0.3,
+      threshold: 0.2,
     };
     const fuse = new Fuse(list, options);
     return fuse.search(searchTerm).map((entity) => entity.value);

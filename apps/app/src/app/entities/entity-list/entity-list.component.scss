@@ -1,34 +1,25 @@
 @import '../tokens';
 @import 'variables';
 
+$itemHeight: 50px;
+
 .entity-list {
   background-color: #fff;
 
-  &-virtual,
-  &-container {
-    @include scrollbar-black(var(--stf-gray-lighter));
-  }
-
   &-virtual {
-    height: 500px;
+    @include scrollbar-black(var(--stf-gray-lighter));
     .entity-list-item {
       padding-right: 30px;
     }
   }
 
-  &-container {
-    max-height: 500px;
-    padding-right: 30px;
-    overflow-y: scroll; // scrollbar always visible to avoid misalignments
-  }
-
   &-empty {
-    height: 50px;
+    height: $itemHeight;
   }
 
   &-item {
     display: flex;
-    height: 50px;
+    height: $itemHeight;
     transition: 0.2s background-color;
     &.highlighted {
       background-color: rgba(var(--stf-yellow-rgb), 0.1);
@@ -65,6 +56,13 @@
     .cell-name {
       min-width: 0;
       padding: 0 15px 0 2px;
+      .drag {
+        max-width: 100%;
+        &.active {
+          cursor: move;
+          background-color: #fff;
+        }
+      }
     }
   }
 }

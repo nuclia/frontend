@@ -6,16 +6,16 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   ViewChild,
-  ElementRef,
+  Renderer2,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil, delay } from 'rxjs/operators';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { SelectionModel } from '@angular/cdk/collections';
+import { CdkDragDrop, CdkDragEnter, CdkDragExit } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material/dialog';
 import { AppEntitiesGroup, MutableEntitiesGroup, Entity } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
-import { EntitiesSearchService } from '../entities-search.service';
 import {
   EntityDialogComponent,
   EntityDialogMode,
@@ -32,24 +32,23 @@ import {
 })
 export class EntityListComponent implements OnInit, OnDestroy {
   @Input() editMode: boolean = false;
-  @Input() groupKey: string = '';
   @Input() group: AppEntitiesGroup | undefined;
   @Input() searchTerm: string = '';
   @Input() searchResults: string[] | null = null;
   
   editableGroup: MutableEntitiesGroup | null = null;
   highlightedEntities = new SelectionModel<string>(true);
-  minVirtualScrollItems = 50;
+  entityHeight = 50;
+  maxListHeight = 500;
   unsubscribeAll = new Subject<void>();
 
   @ViewChild('virtualContainer') virtualContainer?: CdkVirtualScrollViewport;
-  @ViewChild('container') container?: ElementRef; 
 
   constructor(
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private editService: EntitiesEditService,
-    private searchService: EntitiesSearchService,
+    private renderer2: Renderer2,
   ) {}
 
   get entitiesGroup(): AppEntitiesGroup | undefined {
@@ -57,14 +56,14 @@ export class EntityListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.editService.getGroup(this.groupKey)
+    this.editService.getGroup(this.group!.key)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((entitiesGroup) => {
         this.editableGroup = entitiesGroup;
         this.cdr.markForCheck();
       });
 
-    this.editService.getAddedEntity(this.groupKey)
+    this.editService.getAddedEntity(this.group!.key)
       .pipe(
         delay(10), // Wait until the new entity is added to the DOM
         takeUntil(this.unsubscribeAll))
@@ -90,21 +89,38 @@ export class EntityListComponent implements OnInit, OnDestroy {
     return entities.sort((a, b) => a.value.localeCompare(b.value));
   }
 
+  dragEnter(event: CdkDragEnter<any>) {
+    if (event.container.data.value !== event.item.data.value) {
+      this.renderer2.setStyle(event.container.element.nativeElement, 'background-color', 'rgba(255, 220, 27,0.1)');
+    }
+  }
+
+  dragExit(event: CdkDragExit<any>) {
+    if (event.container.data.value !== event.item.data.value) {
+      this.renderer2.removeStyle(event.container.element.nativeElement, 'background-color');
+    }
+  }
+
+  dragDrop(event: CdkDragDrop<Entity, any, Entity>) {
+    this.addSynonym(event.container.data, event.item.data);
+    this.renderer2.removeStyle(event.container.element.nativeElement, 'background-color');
+  }
+
   addSynonym(entity: Entity, synonym: Entity) {
     this.editableGroup!.addSynonym(entity.value, synonym.value);
-    this.editService.setGroup(this.groupKey, this.editableGroup!);
+    this.editService.setGroup(this.group!.key, this.editableGroup!);
     this.cdr.markForCheck();
   }
 
   unlinkSynonym(entity: Entity, synonym: Entity) {
     this.editableGroup!.unlinkSynonym(entity.value, synonym.value);
-    this.editService.setGroup(this.groupKey, this.editableGroup!);
+    this.editService.setGroup(this.group!.key, this.editableGroup!);
     this.cdr.markForCheck();
   }
 
   deleteEntity(entity: Entity) {
     this.editableGroup?.deleteEntity(entity.value);
-    this.editService.setGroup(this.groupKey, this.editableGroup!);
+    this.editService.setGroup(this.group!.key, this.editableGroup!);
     this.cdr.markForCheck();
   }
 
@@ -131,10 +147,13 @@ export class EntityListComponent implements OnInit, OnDestroy {
       EntityDialogResponse>
       (EntityDialogComponent, {
         width: '630px',
-        data: { mode, entity, group: this.groupKey }
+        data: { mode, entity, group: this.group!.key }
       });
 
     return dialogRef;
+  }
+  getListHeight(): number {
+    return Math.min(this.filteredEntities().length * this.entityHeight, this.maxListHeight);
   }
 
   isHighlighted(entity: Entity): boolean {
@@ -145,9 +164,6 @@ export class EntityListComponent implements OnInit, OnDestroy {
     const index = this.filteredEntities().findIndex((item) => item.value === entity.value);
     if (this.virtualContainer) {
       this.virtualContainer.scrollToIndex(index);
-    }
-    else if(this.container) {
-      this.container.nativeElement.scrollTop = index * 50;
     }
   }
 

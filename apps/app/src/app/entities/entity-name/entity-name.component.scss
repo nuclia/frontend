@@ -1,15 +1,12 @@
 @import 'variables';
+@import '../tokens';
 
 :host {
   display: inline-flex;
   max-width: 100%;
   padding: 3px 10px 2px 10px;
-  border: 1px solid #ffc4c4;
+  border: 1px solid $entity-fallback-color;
   border-radius: 2px;
-
-  &.edit-mode {
-    border-color: #fdedb9;
-  }
 
   .entity-name-text {
     flex: 1 1 auto;

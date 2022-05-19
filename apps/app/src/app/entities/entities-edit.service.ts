@@ -37,27 +37,27 @@ export class EntitiesEditService {
     }))
   }
 
-  addEntity(group: string, entityName: string) {
-    const isEditMode = !!this.groups.getValue()[group];
+  addEntity(groupKey: string, entityName: string) {
+    const isEditMode = !!this.groups.getValue()[groupKey];
     let editableGroup$: Observable<MutableEntitiesGroup>;
     if (isEditMode)  {
-      editableGroup$ = of(this.groups.getValue()[group]);
+      editableGroup$ = of(this.groups.getValue()[groupKey]);
     }
     else {
-      editableGroup$ = this.entitiesService.getGroup(group).pipe(
+      editableGroup$ = this.entitiesService.getGroup(groupKey).pipe(
         filter((group): group is EntitiesGroup => !!group),
-        map(group => new MutableEntitiesGroup(group))
+        map(group => new MutableEntitiesGroup(group, groupKey))
       );
     }
     editableGroup$.pipe(take(1)).subscribe((editableGroup) => {
       const entity = editableGroup.addEntity(entityName);
       if (isEditMode) {
-        this.setGroup(group, editableGroup);
-        this.addedEntity.next({entity, group: group});
+        this.setGroup(groupKey, editableGroup);
+        this.addedEntity.next({entity, group: groupKey});
       }
       else {
-        this.entitiesService.setGroup(group, editableGroup).subscribe(() => {
-          this.addedEntity.next({entity, group: group});
+        this.entitiesService.setGroup(groupKey, editableGroup).subscribe(() => {
+          this.addedEntity.next({entity, group: groupKey});
         })
       }
     })
@@ -72,7 +72,7 @@ export class EntitiesEditService {
 
   initGroup(groupKey: string, group: EntitiesGroup) {
     const groups = this.groups.getValue();
-    groups[groupKey] = new MutableEntitiesGroup(group);
+    groups[groupKey] = new MutableEntitiesGroup(group, groupKey);
     this.groups.next(groups);
   }
 

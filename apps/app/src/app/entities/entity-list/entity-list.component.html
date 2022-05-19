@@ -1,24 +1,9 @@
-<div class="entity-list" *ngIf="filteredEntities() as entities">
-  <cdk-virtual-scroll-viewport
-    class="entity-list-virtual"
-    itemSize="50"
-    #virtualContainer
-    *ngIf="entities.length >= minVirtualScrollItems"
-  >
-    <ng-container *cdkVirtualFor="let entity of entities">
-      <ng-template *ngTemplateOutlet="entityItem; context: { $implicit: entity, entities }">
-      </ng-template>
-    </ng-container>
-  </cdk-virtual-scroll-viewport>
+<div class="entity-list"
+     cdkDropListGroup
+     *ngIf="filteredEntities() as entities">
 
-  <div class="entity-list-container" #container *ngIf="entities.length < minVirtualScrollItems">
-    <ng-container *ngFor="let entity of entities">
-      <ng-template *ngTemplateOutlet="entityItem; context: { $implicit: entity, entities }">
-      </ng-template>
-    </ng-container>
-  </div>
-
-  <div class="entity-list-empty" *ngIf="searchResults && entities.length === 0">
+  <div class="entity-list-empty"
+       *ngIf="searchResults && entities.length === 0">
     <div class="entity-list-item">
       <div class="entity-list-item-cell cell-color">
         <div class="color-border"></div>
@@ -30,55 +15,77 @@
       </div>
     </div>
   </div>
-</div>
 
-<ng-template #entityItem let-entity let-entities="entities">
-  <div class="entity-list-item" [class.highlighted]="isHighlighted(entity)">
-    <div class="entity-list-item-cell cell-color">
-      <div class="color-border"></div>
-    </div>
-    <div class="entity-list-item-cell cell-name">
-      <app-entity-name
-        [entity]="entity"
-        [editMode]="editMode"
-        (delete)="deleteEntity(entity)">
-      </app-entity-name>
-    </div>
-    <div class="entity-list-item-cell cell-synonyms min-width-0">
-      <div fxLayout="row" fxLayoutGap="10px" class="min-width-0">
-        <app-synonym-add
-          *ngIf="editMode"
-          (add)="addSynonym(entity, $event)"
-          [entities]="entities"
-          [ignore]="[entity]">
-        </app-synonym-add>
-        <app-synonym-list
-          fxFlex="1 1 0"
-          class="min-width-0"
-          (unlink)="unlinkSynonym(entity, $event)"
-          (delete)="deleteEntity($event)"
-          [editMode]="editMode"
-          [synonyms]="entitiesGroup?.getSynonyms(entity.value) || []">
-        </app-synonym-list>
+  <cdk-virtual-scroll-viewport class="entity-list-virtual"
+                               [itemSize]="entityHeight"
+                               #virtualContainer
+                               [style.height.px]="getListHeight()">
+    <ng-container *cdkVirtualFor="let entity of entities">
+      <div class="entity-list-item"
+           [class.highlighted]="isHighlighted(entity)"
+           cdkDropList
+           (cdkDropListDropped)="dragDrop($event)"
+           [cdkDropListData]="entity"
+           (cdkDropListEntered)="dragEnter($event)"
+           (cdkDropListExited)="dragExit($event)"
+           [cdkDropListSortingDisabled]="true"
+           cdkDropListOrientation="horizontal">
+        <div class="entity-list-item-cell cell-color">
+          <div class="color-border"></div>
+        </div>
+        <div class="entity-list-item-cell cell-name">
+          <span class="drag"
+                [class.active]="editMode"
+                cdkDrag
+                [cdkDragDisabled]="!editMode"
+                [cdkDragData]="entity">
+            <app-entity-name [entity]="entity"
+                             [editMode]="editMode"
+                             [group]="group"
+                             (delete)="deleteEntity(entity)">
+            </app-entity-name>
+            <div class="empty-placeholder" 
+                 *cdkDragPlaceholder></div>
+          </span>
+        </div>
+        <div class="entity-list-item-cell cell-synonyms min-width-0">
+          <div fxLayout="row"
+               fxLayoutGap="10px"
+               class="min-width-0">
+            <app-synonym-add *ngIf="editMode"
+                             (add)="addSynonym(entity, $event)"
+                             [entities]="entities"
+                             [ignore]="[entity]">
+            </app-synonym-add>
+            <app-synonym-list fxFlex="1 1 0"
+                              class="min-width-0"
+                              (unlink)="unlinkSynonym(entity, $event)"
+                              (delete)="deleteEntity($event)"
+                              [editMode]="editMode"
+                              [synonyms]="entitiesGroup?.getSynonyms(entity.value) || []"
+                              [group]="group">
+            </app-synonym-list>
+          </div>
+        </div>
+        <div class="entity-list-item-cell cell-description">
+          <!--
+          <app-button-action
+            *ngIf="!editMode"
+            action="view"
+            (click)="viewEntity(entity)">
+          </app-button-action>
+          <app-button-action
+            *ngIf="editMode"
+            action="edit"
+            iconWidth="17px"
+            iconHeight="auto"
+            (click)="editEntity(entity)">
+          </app-button-action>
+          -->
+        </div>
+        <div class="entity-list-item-cell cell-presence"></div>
+        <div class="entity-list-item-cell cell-actions"></div>
       </div>
-    </div>
-    <div class="entity-list-item-cell cell-description">
-      <!--
-      <app-button-action
-        *ngIf="!editMode"
-        action="view"
-        (click)="viewEntity(entity)">
-      </app-button-action>
-      <app-button-action
-        *ngIf="editMode"
-        action="edit"
-        iconWidth="17px"
-        iconHeight="auto"
-        (click)="editEntity(entity)">
-      </app-button-action>
-      -->
-    </div>
-    <div class="entity-list-item-cell cell-presence"></div>
-    <div class="entity-list-item-cell cell-actions"></div>      
-  </div>
-</ng-template>
+    </ng-container>
+  </cdk-virtual-scroll-viewport>
+</div>
