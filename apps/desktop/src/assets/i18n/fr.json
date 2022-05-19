@@ -1,5 +1,9 @@
 {
+	"home.active": "",
 	"home.add": "Nouveau téléchargement",
+	"home.completed": "",
+	"home.files": "",
+	"home.pending": "",
 	"login.access_request": "",
 	"login.check_email": "",
 	"login.continue_with": "",

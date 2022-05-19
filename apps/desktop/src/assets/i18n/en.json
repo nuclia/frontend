@@ -1,5 +1,9 @@
 {
+	"home.active": "Active",
 	"home.add": "New upload",
+	"home.completed": "Completed",
+	"home.files": "{{num}} files",
+	"home.pending": "Pending",
 	"login.access_request": "",
 	"login.check_email": "",
 	"login.continue_with": "",

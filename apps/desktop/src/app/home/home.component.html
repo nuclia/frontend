@@ -1,17 +1,50 @@
 <div class="container">
-  <stf-button color="secondary"
-              routerLink="/add-upload">{{ 'home.add' | translate }}</stf-button>
+  <div class="add">
+      <stf-button color="secondary"
+                  padding="pd-xl"
+                  routerLink="/add-upload"><span class="plus">+</span> {{ 'home.add' | translate }}</stf-button>
+  </div>
+  <ng-container *ngFor="let sec of sections">
+    <ng-template *ngTemplateOutlet="section; context: { $implicit: sec, hasFiles: (sec.items | async).length > 0 }">
+    </ng-template>
+  </ng-container>
+</div>
+
+<ng-template #section 
+             let-section
+             let-hasFiles="hasFiles">
+  <div class="section"
+        [class.selected]="section.type === selected">
+    <div class="section-header"
+         [class.has-files]="hasFiles"
+         (click)="hasFiles ? toggle(section.type) : null"
+         (keydown.enter)="hasFiles ? toggle(section.type) : null"
+         tabIndex="0">
+      <div class="title">{{ section.title | translate }}</div>
+      <div class="counter">{{ 'home.files' | translate: { num: (section.items | async).length } }}</div>
+      <div class="arrow" *ngIf="hasFiles"></div>
+    </div>
+    <div class="section-body"
+          *ngIf="section.type === selected">
+      <ng-template *ngTemplateOutlet="uploads; context: { $implicit: (section.items | async) }"></ng-template>
+    </div>
+  </div>
+</ng-template>
+
+
+<ng-template #uploads 
+             let-uploads>
   <div class="uploads">
     <div class="row"
-         *ngFor="let upload of (queue | async)">
+         *ngFor="let upload of uploads">
       <div>{{ upload.date }}</div>
       <div>{{ upload.from }}</div>
       <div>{{ upload.to }}</div>
       <div>{{ upload.total }}</div>
       <div>
-        <div class="progress"
-             [style.width]="upload.progress + '%'"></div>
+        <stf-progress-bar [progress]="upload.progress"></stf-progress-bar>
       </div>
+      <div></div>
     </div>
   </div>
-</div>
+</ng-template>

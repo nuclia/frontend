@@ -5,10 +5,11 @@
        fxFlex="0 0 auto"
        [innerHTML]="'upload.uploading_files' | translate"></div>
 
+
   <div class="upload-bar-progress"
        fxFlex="1 1 auto">
-    <div class="upload-bar-progress-value"
-         [style.width.%]="progress | async"></div>
+       <stf-progress-bar track="white"
+                         [progress]="progress | async"></stf-progress-bar>
   </div>
 
   <div class="upload-bar-percentage"
