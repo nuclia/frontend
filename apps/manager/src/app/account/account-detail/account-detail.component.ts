@@ -3,13 +3,21 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AccountService } from './../../services/account.service';
 import { UserSearch } from '../../models/user.model';
-import { Account, AccountPatch, AccountCreation, ActiveCampaignStart } from '../../models/account.model';
+import {
+  Account,
+  AccountPatch,
+  AccountCreation,
+  ActiveCampaignStart,
+  AccountBlockingState,
+} from '../../models/account.model';
 import { KnowledgeBoxCreation } from '../../models/stash.model';
 import { UsersService } from '../../services/users.service';
 import { ZoneService } from '../../services/zone.service';
 import { validSlug } from '../../models/form.validator';
 import { SDKService } from '@flaps/auth';
+import { map, of } from 'rxjs';
 
+const STATUSES = { 0: 'Active', 1: 'Blocked due to quota', 2: 'Blocked by manager' };
 @Component({
   selector: 'app-account-detail',
   templateUrl: './account-detail.component.html',
@@ -56,6 +64,8 @@ export class AccountDetailComponent implements OnInit {
     title: ['', [Validators.required]],
   });
 
+  state = '';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -69,6 +79,7 @@ export class AccountDetailComponent implements OnInit {
     this.route.data.subscribe((data: { [account: string]: Account }) => {
       if (data.account) {
         this.account = data.account;
+        this.state = STATUSES[this.account.blocking_state];
         const user = this.sdk.nuclia.auth.getJWTUser();
         this.isRoot = user?.ext.type === 'r';
         this.isDealer = user?.ext.type === 'd';
@@ -196,5 +207,27 @@ export class AccountDetailComponent implements OnInit {
         },
       );
     }
+  }
+
+  block() {
+    this.changeState(AccountBlockingState.MANAGER);
+  }
+
+  unblock() {
+    this.changeState(AccountBlockingState.NONE);
+  }
+
+  private changeState(state: AccountBlockingState) {
+    const obs = this.account?.id
+      ? this.accountService
+          .edit(this.account.id, { blocking_state: AccountBlockingState.MANAGER })
+          .pipe(map(() => true))
+      : of(false);
+    obs.subscribe((res) => {
+      if (res && this.account) {
+        this.account.blocking_state = state;
+        this.state = STATUSES[this.account.blocking_state];
+      }
+    });
   }
 }

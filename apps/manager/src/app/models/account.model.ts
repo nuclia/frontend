@@ -24,6 +24,13 @@ export interface Account {
   stashes: AccountStashes;
   zone: string;
   indexer_slow_replicas: number;
+  blocking_state: AccountBlockingState;
+}
+
+export enum AccountBlockingState {
+  NONE = 0,
+  QUOTA = 1,
+  MANAGER = 2,
 }
 
 export interface ActiveCampaignStart {
@@ -57,6 +64,7 @@ export interface AccountPatch {
   kbs?: number;
   indexer_slow_replicas?: number;
   data?: object;
+  blocking_state?: AccountBlockingState;
 }
 
 export interface AccountUserCreation {
