@@ -64,6 +64,17 @@ export class AccountDetailComponent implements OnInit {
     title: ['', [Validators.required]],
   });
 
+  limitsForm = this.fb.group({
+    upload: this.fb.group({
+      upload_limit_max_media_file_size: this.fb.control(0),
+      upload_limit_max_non_media_file_size: this.fb.control(0),
+    }),
+    processing: this.fb.group({
+      monthly_limit_chars_processed: this.fb.control(0),
+      monthly_limit_media_seconds_processed: this.fb.control(0),
+      monthly_limit_non_media_files_processed: this.fb.control(0),
+    }),
+  });
   state = '';
 
   constructor(
@@ -99,6 +110,7 @@ export class AccountDetailComponent implements OnInit {
 
         this.accountForm.patchValue(formData);
         this.accountForm.controls.zone.disable();
+        this.limitsForm.patchValue(this.account.limits);
       }
     });
   }
@@ -152,6 +164,7 @@ export class AccountDetailComponent implements OnInit {
         email: this.accountForm.controls.email.value,
         type: this.accountForm.controls.type.value,
         kbs: this.accountForm.controls.kbs.value,
+        limits: this.limitsForm.value,
       };
       if (this.accountForm.controls.indexer_slow_replicas.value !== this.account.indexer_slow_replicas) {
         account.indexer_slow_replicas = this.accountForm.controls.indexer_slow_replicas.value;
