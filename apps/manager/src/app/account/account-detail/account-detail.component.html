@@ -219,6 +219,59 @@
             </div>
           </div>
         </mat-tab>
+        <mat-tab label="Limits">
+          <div fxLayout="column"
+               fxLayoutAlign="start start"
+               class="content_area"
+               *ngIf="this.account">
+            <form [formGroup]="limitsForm">
+              <div class="section">
+                <h3>Limits</h3>
+                <div formGroupName="upload">
+                  <h4>Upload</h4>
+                  <mat-form-field>
+                    <mat-label>Media file max size (bytes)</mat-label>
+                    <input matInput
+                           type="number"
+                           required
+                           formControlName="upload_limit_max_media_file_size" />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Non-media file max size (bytes)</mat-label>
+                    <input matInput
+                           type="number"
+                           required
+                           formControlName="upload_limit_max_non_media_file_size" />
+                  </mat-form-field>
+                </div>
+                <div formGroupName="processing">
+                  <h4>Processing</h4>
+                  <mat-form-field>
+                    <mat-label>Max number of processed characters monthly</mat-label>
+                    <input matInput
+                           type="number"
+                           required
+                           formControlName="monthly_limit_chars_processed" />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Media files max processing time monthly (seconds)</mat-label>
+                    <input matInput
+                           type="number"
+                           required
+                           formControlName="monthly_limit_media_seconds_processed" />
+                  </mat-form-field>
+                  <mat-form-field>
+                    <mat-label>Non-media files max processing time monthly (seconds)</mat-label>
+                    <input matInput
+                           type="number"
+                           required
+                           formControlName="monthly_limit_non_media_files_processed" />
+                  </mat-form-field>
+                </div>
+              </div>
+            </form>
+          </div>
+        </mat-tab>
       </mat-tab-group>
     </div>
     <div class="box"

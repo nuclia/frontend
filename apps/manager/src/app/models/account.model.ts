@@ -25,6 +25,7 @@ export interface Account {
   zone: string;
   indexer_slow_replicas: number;
   blocking_state: AccountBlockingState;
+  limits: AccountManagerLimits;
 }
 
 export enum AccountBlockingState {
@@ -35,6 +36,18 @@ export enum AccountBlockingState {
 
 export interface ActiveCampaignStart {
   contact_list: number;
+}
+
+export interface AccountManagerLimits {
+  upload: {
+    upload_limit_max_media_file_size: number;
+    upload_limit_max_non_media_file_size: number;
+  };
+  processing: {
+    monthly_limit_chars_processed: number;
+    monthly_limit_media_seconds_processed: number;
+    monthly_limit_non_media_files_processed: number;
+  };
 }
 
 export interface AccountSummary {
@@ -65,6 +78,7 @@ export interface AccountPatch {
   indexer_slow_replicas?: number;
   data?: object;
   blocking_state?: AccountBlockingState;
+  limits?: AccountManagerLimits;
 }
 
 export interface AccountUserCreation {
