@@ -1,7 +1,6 @@
 import { APIService } from '@flaps/auth';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 import {
   Account,
   AccountSummary,
@@ -25,7 +24,6 @@ const STF_ACCOUNTS = '/manage/@accounts';
 
 const STF_STASHES = '@stashes';
 const STF_AC = '@ac';
-
 
 @Injectable({
   providedIn: 'root',
@@ -73,28 +71,51 @@ export class AccountService {
     return this.api.patch(STF_ACCOUNT + '/' + accountId + '/' + userId, data, true, undefined, true);
   }
 
-  createStash( accountId: string, data: KnowledgeBoxCreation): Observable<StashCreated> {
-    return this.api.post(STF_ACCOUNT + '/' + accountId + '/' +STF_STASHES, data, true, undefined, undefined, true);
+  createStash(accountId: string, data: KnowledgeBoxCreation): Observable<StashCreated> {
+    return this.api.post(STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES, data, true, undefined, undefined, true);
   }
 
   getStash(accountId: string, stashId: string): Observable<ManagerStash> {
-    return this.api.get(STF_ACCOUNT + '/' + accountId + '/' +STF_STASHES + '/' + stashId, true, undefined, true);
+    return this.api.get(STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId, true, undefined, true);
   }
 
   editStash(accountId: string, stashId: string, data: StashPatch) {
-    return this.api.patch(STF_ACCOUNT + '/' + accountId + '/' +STF_STASHES + '/' + stashId, data, true, undefined, true);
+    return this.api.patch(
+      STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId,
+      data,
+      true,
+      undefined,
+      true,
+    );
   }
 
   addStashUser(accountId: string, stashId: string, user: StashAddUser) {
-    return this.api.post(STF_ACCOUNT + '/' + accountId + '/' +STF_STASHES + '/' + stashId, user, true, undefined, undefined, true);
+    return this.api.post(
+      STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId,
+      user,
+      true,
+      undefined,
+      undefined,
+      true,
+    );
   }
 
   setStashUser(accountId: string, stashId: string, user: string, data: StashPatchUser) {
-    return this.api.patch(STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId + '/' + user, data, true, undefined, true);
+    return this.api.patch(
+      STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId + '/' + user,
+      data,
+      true,
+      undefined,
+      true,
+    );
   }
 
   delStashUser(accountId: string, stashId: string, userId: string) {
-    return this.api.delete(STF_ACCOUNT + '/' + accountId + '/' +STF_STASHES + '/' + stashId + '/' + userId, true, true);
+    return this.api.delete(
+      STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId + '/' + userId,
+      true,
+      true,
+    );
   }
 
   getStashes(accountId: string): Observable<StashSummary> {

@@ -1,18 +1,20 @@
 <div class="account-wrapper">
-  <div
-    class="account"
-    gdGap="20px"
-    gdColumns="300px 400px 400px"
-    gdAreas="header  header  header | sidebar content content | footer  footer  footer"
-  >
-    <div class="header" gdArea="header">
+  <div class="account"
+       gdGap="20px"
+       gdColumns="300px 400px 400px"
+       gdAreas="header  header  header | sidebar content content | footer  footer  footer">
+    <div class="header"
+         gdArea="header">
       <form [formGroup]="accountTitleForm">
         <mat-form-field>
-          <h1>Account: <input matInput formControlName="id" /></h1>
+          <h1>Account: <input matInput
+                   formControlName="id" /></h1>
         </mat-form-field>
       </form>
-      <div class="actions" *ngIf="edit">
-        <stf-button color="secondary" (click)="sendtoac3mt()">Start three months trial</stf-button>
+      <div class="actions"
+           *ngIf="edit">
+        <stf-button color="secondary"
+                    (click)="sendtoac3mt()">Start three months trial</stf-button>
         <div>
           {{ acmessage }}
         </div>
@@ -25,70 +27,113 @@
           <h3>Config</h3>
           <mat-form-field>
             <mat-label>Email address</mat-label>
-            <input matInput type="email" required formControlName="email" placeholder="bob@example.org" />
+            <input matInput
+                   type="email"
+                   required
+                   formControlName="email"
+                   placeholder="bob@example.org" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>Type</mat-label>
-            <mat-select matNativeControl required formControlName="type">
+            <mat-select matNativeControl
+                        required
+                        formControlName="type">
               <mat-option value="stash-basic">Basic</mat-option>
-              <mat-option value="stash-team" *ngIf="isRoot">Teams</mat-option>
-              <mat-option value="stash-enterprise" *ngIf="isRoot">Enterprise</mat-option>
+              <mat-option value="stash-team"
+                          *ngIf="isRoot">Teams</mat-option>
+              <mat-option value="stash-enterprise"
+                          *ngIf="isRoot">Enterprise</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>Available stashes</mat-label>
-            <input matInput type="number" formControlName="kbs" placeholder="Knowledge boxes" />
+            <input matInput
+                   type="number"
+                   formControlName="kbs"
+                   placeholder="Knowledge boxes" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>Replicas indexer slow</mat-label>
-            <input matInput type="number" formControlName="indexer_slow_replicas" placeholder="Indexer slow replicas" />
+            <input matInput
+                   type="number"
+                   formControlName="indexer_slow_replicas"
+                   placeholder="Indexer slow replicas" />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>Zone</mat-label>
-            <select matNativeControl required formControlName="zone">
-              <option *ngFor="let zone of zones" [value]="zone.id">{{ zone.title }}</option>
+            <select matNativeControl
+                    required
+                    formControlName="zone">
+              <option *ngFor="let zone of zones"
+                      [value]="zone.id">{{ zone.title }}</option>
             </select>
           </mat-form-field>
         </div>
 
-        <div class="section" *ngIf="edit">
+        <div class="section"
+             *ngIf="edit">
+          <h3>State</h3>
+          <div>{{ state }}</div>
+          <stf-button *ngIf="account.blocking_state === 0"
+                      (click)="block()">Block</stf-button>
+          <stf-button *ngIf="account.blocking_state !== 0"
+                      (click)="unblock()">Unblock</stf-button>
+
           <h3>Info</h3>
           <mat-form-field>
             <mat-label>Creator</mat-label>
-            <input matInput formControlName="creator" placeholder="Creator" />
+            <input matInput
+                   formControlName="creator"
+                   placeholder="Creator" />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>Api URL</mat-label>
-            <input matInput formControlName="url" placeholder="Url" />
+            <input matInput
+                   formControlName="url"
+                   placeholder="Url" />
           </mat-form-field>
         </div>
-        <div fxLayout="row" fxLayoutAlign="end center">
+        <div fxLayout="row"
+             fxLayoutAlign="end center">
           <stf-button (click)="save()">Save</stf-button>
         </div>
       </form>
     </div>
 
-    <div *ngIf="edit" gdArea="content" style="position: relative">
+    <div *ngIf="edit"
+         gdArea="content"
+         style="position: relative">
       <mat-tab-group mat-align-tabs="start">
         <mat-tab label="Users">
-          <div fxLayout="column" fxLayoutAlign="start start" class="content_area" *ngIf="this.account?.id">
+          <div fxLayout="column"
+               fxLayoutAlign="start start"
+               class="content_area"
+               *ngIf="this.account?.id">
             <h3>Account Users</h3>
 
             <div class="actual-user">
               <form [formGroup]="searchUserForm">
                 <h4>Search and Add to Account</h4>
-                <div class="search-user" fxLayout="row" fxLayoutAlign="space-between center">
+                <div class="search-user"
+                     fxLayout="row"
+                     fxLayoutAlign="space-between center">
                   <stf-input formControlName="user">User</stf-input>
-                  <button mat-icon-button (click)="search()"><mat-icon>search</mat-icon></button>
+                  <button mat-icon-button
+                          (click)="search()">
+                    <mat-icon>search</mat-icon>
+                  </button>
                 </div>
                 <div *ngIf="userSearchList.length === 0">No results</div>
-                <div *ngFor="let user of userSearchList" class="users_list">
-                  <span class="user_desc"
-                    >{{ user['id'] }} - {{ user['email'] }} - {{ user['name'] }} - {{ user['provider'] }}</span
-                  >
-                  <button mat-icon-button (click)="addSeachedUser(user['id'])"><mat-icon>add</mat-icon></button>
+                <div *ngFor="let user of userSearchList"
+                     class="users_list">
+                  <span class="user_desc">{{ user['id'] }} - {{ user['email'] }} - {{ user['name'] }} - {{
+                    user['provider'] }}</span>
+                  <button mat-icon-button
+                          (click)="addSeachedUser(user['id'])">
+                    <mat-icon>add</mat-icon>
+                  </button>
                 </div>
               </form>
             </div>
@@ -96,20 +141,22 @@
             <h4>Actual Account Users</h4>
             <ul>
               <li *ngFor="let user of this.account.users">
-                <button mat-icon-button (click)="deleteUser(user.id)"><mat-icon>delete</mat-icon></button>
-                <button mat-icon-button [routerLink]="['/users/' + user.id]"><mat-icon>input</mat-icon></button>
-                <button
-                  mat-icon-button
-                  *ngIf="this.account.managers.indexOf(user.id) === -1"
-                  (click)="setAdminStashifyUser(user.id)"
-                >
+                <button mat-icon-button
+                        (click)="deleteUser(user.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button mat-icon-button
+                        [routerLink]="['/users/' + user.id]">
+                  <mat-icon>input</mat-icon>
+                </button>
+                <button mat-icon-button
+                        *ngIf="this.account.managers.indexOf(user.id) === -1"
+                        (click)="setAdminStashifyUser(user.id)">
                   <mat-icon>accessibility</mat-icon>
                 </button>
-                <button
-                  mat-icon-button
-                  *ngIf="this.account.managers.indexOf(user.id) >= 0"
-                  (click)="delAdminStashifyUser(user.id)"
-                >
+                <button mat-icon-button
+                        *ngIf="this.account.managers.indexOf(user.id) >= 0"
+                        (click)="delAdminStashifyUser(user.id)">
                   <mat-icon>verified_user</mat-icon>
                 </button>
                 <span>{{ user.name }} {{ user.email }}</span>
@@ -117,16 +164,15 @@
             </ul>
           </div>
         </mat-tab>
-        <mat-tab label="Stashes"
-          ><div
-            fxLayout="column"
-            fxLayoutAlign="start start"
-            class="content_area"
-            *ngIf="this.account && this.account.stashes"
-          >
+        <mat-tab label="Stashes">
+          <div fxLayout="column"
+               fxLayoutAlign="start start"
+               class="content_area"
+               *ngIf="this.account && this.account.stashes">
             <h3>Stashs {{ this.account.type }} max:{{ this.account.stashes.max_stashes }}</h3>
             <mat-accordion>
-              <mat-expansion-panel class="stash" *ngFor="let stash of this.account.stashes.items">
+              <mat-expansion-panel class="stash"
+                                   *ngFor="let stash of this.account.stashes.items">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
                     {{ stash.slug }}
@@ -138,7 +184,8 @@
                 <stf-button (click)="goToStash(stash.slug)">
                   Edit
                 </stf-button>
-                -<!--
+                -
+                <!--
                 <ul>
                   <li><b>Owners: </b>
                     <ul><li *ngFor="let user of stash.owners"> {{ user }}</li></ul>
@@ -157,14 +204,16 @@
               <form [formGroup]="newStashForm">
                 <mat-form-field>
                   <mat-label>Id</mat-label>
-                  <input matInput formControlName="id" />
+                  <input matInput
+                         formControlName="id" />
                 </mat-form-field>
 
                 <mat-form-field>
                   <mat-label>Title</mat-label>
-                  <input matInput formControlName="title" />
+                  <input matInput
+                         formControlName="title" />
                 </mat-form-field>
-                  {{stashmessage}}
+                {{stashmessage}}
                 <stf-button (click)="newStash()">New</stf-button>
               </form>
             </div>
@@ -172,6 +221,7 @@
         </mat-tab>
       </mat-tab-group>
     </div>
-    <div class="box" gdArea="footer"></div>
+    <div class="box"
+         gdArea="footer"></div>
   </div>
 </div>
