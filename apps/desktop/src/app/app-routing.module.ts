@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoggedinGuard } from '@flaps/auth';
 import { PageNotFoundComponent } from '@flaps/common';
 import { SelectAccountComponent } from './account/account.component';
 import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './login/login.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { UploadComponent } from './upload/upload.component';
 
@@ -11,7 +11,6 @@ const routes: Routes = [
   {
     path: '',
     component: MainLayoutComponent,
-    canActivate: [LoggedinGuard],
     children: [
       {
         path: '',
@@ -33,8 +32,10 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    loadChildren: () => import('./lazy-user.module').then((m) => m.LazyUserModule),
-    data: { preload: true },
+    children: [
+      { path: 'login', component: LoginComponent },
+      { path: '**', redirectTo: 'login' },
+    ],
   },
   { path: '**', component: PageNotFoundComponent },
 ];

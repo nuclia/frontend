@@ -32,6 +32,7 @@ export interface IAuthentication {
   logout(): void;
   getAuthHeaders(): { [key: string]: string };
   getToken(): string;
+  getRefreshToken(): string;
   authenticate(tokens: AuthTokens): boolean;
   setPassword(password: string): Observable<boolean>;
   getJWTUser(): JwtUser | null;

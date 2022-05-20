@@ -1,6 +1,7 @@
 <da-topbar></da-topbar>
 <div class="page-wrapper">
-  <div class="page-content">
+  <div class="page-content"
+       *ngIf="isLogged">
     <router-outlet></router-outlet>
   </div>
 </div>

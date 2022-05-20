@@ -38,5 +38,6 @@
       "from": "./dist/apps/desktop-electron",
       "to": "electron"
     }
-  ]
+  ],
+  "protocols": [{ "name": "Nuclia Desktop", "schemes": ["nuclia-desktop"] }]
 }

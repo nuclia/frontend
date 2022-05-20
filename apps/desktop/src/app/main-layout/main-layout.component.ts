@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map, mergeMap } from 'rxjs';
+import { SDKService } from '@flaps/auth';
+import { filter, map, mergeMap, take } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
@@ -10,9 +11,25 @@ import { SyncService } from '../sync/sync.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MainLayoutComponent {
-  constructor(private router: Router, private sync: SyncService) {
-    if (!this.sync.getAccount()) {
-      this.router.navigate(['/select']);
-    }
+  isLogged = false;
+  constructor(
+    private router: Router,
+    private sync: SyncService,
+    private sdk: SDKService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.sdk.nuclia.auth
+      .isAuthenticated()
+      .pipe(
+        filter((yes) => yes),
+        take(1),
+      )
+      .subscribe(() => {
+        if (!this.sync.getAccount()) {
+          this.router.navigate(['/select']);
+        }
+        this.isLogged = true;
+        this.cdr?.markForCheck();
+      });
   }
 }

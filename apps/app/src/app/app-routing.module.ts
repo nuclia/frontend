@@ -30,6 +30,7 @@ import { AccountKbsComponent } from './account/account-kbs/account-kbs.component
 import { AccountOwnerGuard, KnowledgeBoxOwnerGuard } from './guards/permission.guard';
 import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
+import { RedirectComponent } from './redirect/redirect.component';
 
 @Component({
   template: '<ng-container></ng-container>',
@@ -48,6 +49,10 @@ const routes: Routes = [
         path: '',
         component: EmptyComponent,
         canActivate: [RootGuard],
+      },
+      {
+        path: 'redirect',
+        component: RedirectComponent,
       },
       {
         path: `at/:account`,

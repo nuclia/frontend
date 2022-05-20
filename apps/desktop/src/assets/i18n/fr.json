@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"generic.cancel": "",
 	"generic.logout": "",
 	"generic.upload": "",
@@ -47,4 +48,11 @@
 	"upload.steps.files": "",
 	"upload.steps.sources": "",
 	"upload.steps.upload": ""
+=======
+  "home.active": "Actif",
+  "home.add": "Nouveau téléchargement",
+  "home.completed": "Terminé",
+  "home.files": "Fichiers",
+  "home.pending": "En attente"
+>>>>>>> 3e3faea (get token via dashboard (WIP))
 }

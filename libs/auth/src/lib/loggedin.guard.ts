@@ -41,7 +41,7 @@ export class LoggedinGuard implements CanActivate, CanActivateChild, CanLoad {
     this.authService.setNextUrl(url);
 
     // Navigate to the login page with extras
-    this.router.navigate(['/user/login']);
+    this.router.navigate(['/user/login'], { queryParams: params });
     return false;
   }
 
