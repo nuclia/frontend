@@ -4,7 +4,7 @@ import { SDKService } from '@flaps/auth';
 import { take } from 'rxjs';
 
 @Component({
-  template: 'Redirecting…',
+  template: 'Redirecting to Nuclia Desktop…',
 })
 export class RedirectComponent {
   constructor(private sdk: SDKService, private route: ActivatedRoute) {
