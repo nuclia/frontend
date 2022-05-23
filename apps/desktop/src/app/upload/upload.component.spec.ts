@@ -1,12 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipeMock } from '@flaps/core';
 import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
 import { ConnectorsComponent } from '../connectors/connectors.component';
+import { StepsComponent } from './steps/steps.component';
+import { ConfirmFilesModule } from './confirm-files/confirm-files.module';
 import { SyncService } from '../sync/sync.service';
 
 import { UploadComponent } from './upload.component';
@@ -18,8 +22,16 @@ describe('UploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UploadComponent, ConnectorsComponent, ConnectorComponent, TranslatePipeMock],
-      imports: [RouterTestingModule, ReactiveFormsModule, STFButtonsModule, STFInputModule],
+      declarations: [UploadComponent, ConnectorsComponent, ConnectorComponent, StepsComponent, TranslatePipeMock],
+      imports: [
+        NoopAnimationsModule,
+        RouterTestingModule,
+        ReactiveFormsModule,
+        STFButtonsModule,
+        STFInputModule,
+        MatDialogModule,
+        ConfirmFilesModule
+      ],
       providers: [
         {
           provide: SyncService,
@@ -81,6 +93,7 @@ describe('UploadComponent', () => {
     expect(component.step).toEqual(2);
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     fixture.debugElement.nativeElement.querySelector('[qa="validate"]').click();
+    (document.querySelector('[qa="confirm"]') as HTMLElement).click();
     expect(sync.addSync).toHaveBeenCalled();
   });
 });
