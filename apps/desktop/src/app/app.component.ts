@@ -45,17 +45,14 @@ export class AppComponent implements OnInit {
   authenticate() {
     if (!this.sdk.nuclia.auth.getToken()) {
       const interval = setInterval(() => {
-        console.log('refreshing token');
         if (!this.sdk.nuclia.auth.getToken()) {
           const deeplink = (window as any)['deeplink'];
           if (deeplink && deeplink.includes('?')) {
-            console.log(deeplink);
             const querystring = new URLSearchParams(deeplink.split('?')[1]);
             this.sdk.nuclia.auth.authenticate({
               access_token: querystring.get('access_token') || '',
               refresh_token: querystring.get('refresh_token') || '',
             });
-            console.log('YEPA!!!!!!!!!!!');
             clearInterval(interval);
           }
         } else {
