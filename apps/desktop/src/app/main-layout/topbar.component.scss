@@ -6,6 +6,7 @@
   left: 0;
   width: 100%;
   height: 70px;
+  padding-right: 90px;
   z-index: 900;
   background-color: $gray-black;
   display: flex;
@@ -14,4 +15,46 @@
 .logo {
   cursor: pointer;
   margin-left: rythm(2);
+}
+.accounts {
+  margin-left: auto;
+}
+.separator {
+  width: 1px;
+  height: 100%;
+  margin: 0 rythm(3);
+  background-color: $gray-light;
+}
+.user {
+  width: rythm(3);
+  height: rythm(3);
+  background-color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--stf-font-size-xlarge);
+  font-weight: var(--stf-font-weight-bold);
+  cursor: pointer;
+}
+.user-menu {
+  background-color: #fff;
+  box-shadow: var(--stf-shadow-dropdown);
+
+  &-item {
+    display: flex;
+    align-items: center;
+    gap: rythm(1);
+    width: 100%;
+    height: 40px;
+    padding: 0 rythm(1);
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      background-color: rgba(0,0,0,.04);
+    }
+    svg {
+      display: block;
+    }
+  }
 }

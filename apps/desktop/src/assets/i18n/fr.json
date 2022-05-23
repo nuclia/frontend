@@ -1,4 +1,7 @@
 {
+	"generic.cancel": "",
+	"generic.logout": "",
+	"generic.upload": "",
 	"home.active": "",
 	"home.add": "Nouveau téléchargement",
 	"home.completed": "",
@@ -37,5 +40,11 @@
 	"login.token_expired": "",
 	"login.try_again": "",
 	"login.user_registered_as_external_user": "",
-	"login.validate_and_explore": ""
+	"login.validate_and_explore": "",
+	"upload.files": "",
+	"upload.review": "",
+	"upload.steps.destination": "",
+	"upload.steps.files": "",
+	"upload.steps.sources": "",
+	"upload.steps.upload": ""
 }

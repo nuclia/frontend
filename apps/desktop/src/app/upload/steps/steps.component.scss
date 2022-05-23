@@ -1,0 +1,46 @@
+@import 'variables';
+
+.steps {
+  display: flex;
+}
+
+.step {
+  flex: 1 1 0;
+  position: relative;
+  font-size: var(--stf-font-size-ssmall);
+  &.done {
+    color:  var(--stf-primary);
+  }
+  &:last-child {
+    flex: 0 1 auto;
+  }
+}
+
+.bullet {
+  display: flex;
+  align-items: center;
+  margin-bottom: rythm(0.5);
+  &::before {
+    content: "";
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background-color: var(--stf-gray-lighter-3);
+    .active > &,
+    .done > & {
+      background-color: var(--stf-primary);
+    }
+  }
+  &::after {
+    content: "";
+    flex-grow: 1;
+    height: 1px;
+    background-color: var(--stf-gray-lighter-3);
+    .done > & {
+      background-color: var(--stf-primary);
+    }
+    :last-child > & {
+      content: none;
+    }
+  }
+}

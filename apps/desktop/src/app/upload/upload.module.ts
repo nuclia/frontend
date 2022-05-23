@@ -3,9 +3,12 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { STFCheckboxModule } from '@flaps/common';
 import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConnectorsModule } from '../connectors/connectors.module';
+import { ConfirmFilesModule } from './confirm-files/confirm-files.module';
 
+import { StepsComponent } from './steps/steps.component';
 import { UploadComponent } from './upload.component';
 
 @NgModule({
@@ -14,12 +17,14 @@ import { UploadComponent } from './upload.component';
     CommonModule,
     STFInputModule,
     STFButtonsModule,
+    MatDialogModule,
     TranslateModule,
     STFCheckboxModule,
     ConnectorsModule,
+    ConfirmFilesModule,
   ],
   exports: [],
-  declarations: [UploadComponent],
+  declarations: [UploadComponent, StepsComponent],
   providers: [],
 })
 export class UploadModule {}

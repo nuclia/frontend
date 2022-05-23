@@ -1,4 +1,7 @@
 {
+	"generic.cancel": "Cancel",
+	"generic.logout": "Logout",
+	"generic.upload": "Upload",
 	"home.active": "Active",
 	"home.add": "New upload",
 	"home.completed": "Completed",
@@ -37,5 +40,11 @@
 	"login.token_expired": "",
 	"login.try_again": "",
 	"login.user_registered_as_external_user": "",
-	"login.validate_and_explore": ""
+	"login.validate_and_explore": "",
+	"upload.files": "Files to upload",
+	"upload.review": "You have selected {{num}} files. Review the selected files and begin the process.",
+	"upload.steps.destination": "Define destination",
+	"upload.steps.files": "Define the files",
+	"upload.steps.sources": "Select the sources",
+	"upload.steps.upload": "Uploading!"
 }

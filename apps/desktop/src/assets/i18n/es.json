@@ -1,4 +1,7 @@
 {
+	"generic.cancel": "Cancelar",
+	"generic.logout": "Salir",
+	"generic.upload": "Subir",
 	"home.active": "Activo",
 	"home.add": "Nueva subida",
 	"home.completed": "Completado",
@@ -37,5 +40,11 @@
 	"login.token_expired": "El token ha caducado",
 	"login.try_again": "Vuelva a intentarlo o recupera la contraseña.",
 	"login.user_registered_as_external_user": "Ya existe un usuario con ese correo electrónico. Por favor, trate de entrar con su cuenta de Google.",
-	"login.validate_and_explore": "Verifica la cuenta y empieza a explorar "
+	"login.validate_and_explore": "Verifica la cuenta y empieza a explorar ",
+	"upload.files": "Ficheros a subir",
+	"upload.review": "Has seleccionado {{num}} ficheros. Revisa los ficheros seleccionados y empieza el proceso.",
+	"upload.steps.destination": "Selecciona el destino",
+	"upload.steps.files": "Escoge los ficheros",
+	"upload.steps.sources": "Selecciona el origen",
+	"upload.steps.upload": "Súbelo!"
 }
