@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService, UserService } from '@flaps/auth';
-import { map, of, switchMap } from 'rxjs';
-import { stfAnimations } from '@flaps/pastanaga';
-import { SyncService } from '../sync/sync.service';
+import { UserService, StateService } from '@flaps/auth';
+import { map } from 'rxjs';
+import { stfAnimations } from '@flaps/pastanaga'; 
 
 
 @Component({
@@ -17,15 +16,11 @@ export class TopbarComponent {
   constructor(
     private router: Router,
     private user: UserService,
-    private sync: SyncService,
-    private sdk: SDKService,
+    private state: StateService,
   ) {}
 
   menuOpen = false;
-
-  account = of(this.sync.getAccount()).pipe(
-    switchMap((account) => this.sdk.setCurrentAccount(account)),
-  );
+  account = this.state.account;
 
   initials = this.user.userPrefs.pipe(
     map((prefs) => prefs?.name?.split(' ').slice(0,2).map((word) => word[0]).join('').toUpperCase() || '')

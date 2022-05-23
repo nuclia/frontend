@@ -1,11 +1,12 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SyncItem } from '../../sync/models';
 
 @Component({
   selector: 'da-confirm-files',
   templateUrl: './confirm-files.component.html',
-  styleUrls: ['./confirm-files.component.scss']
+  styleUrls: ['./confirm-files.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmFilesComponent {
 

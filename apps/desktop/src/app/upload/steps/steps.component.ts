@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'da-steps',
   templateUrl: './steps.component.html',
-  styleUrls: ['./steps.component.scss']
+  styleUrls: ['./steps.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StepsComponent {
   @Input() currentStep = 0;

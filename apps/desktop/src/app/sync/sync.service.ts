@@ -59,7 +59,7 @@ export class SyncService {
     this.watchProcessing();
     const account = this.getAccount();
     if (account) {
-      this.sdk.setCurrentAccount(account);
+      this.sdk.setCurrentAccount(account).subscribe();
     }
     this._queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
     this.onQueueUpdate();
@@ -149,6 +149,6 @@ export class SyncService {
 
   setAccount(account: string) {
     localStorage.setItem(ACCOUNT_KEY, account);
-    this.sdk.setCurrentAccount(account);
+    this.sdk.setCurrentAccount(account).subscribe();
   }
 }
