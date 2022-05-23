@@ -1,9 +1,9 @@
 {
-  "name": "flaps",
-  "version": "0.0.0",
+  "name": "nuclia",
+  "version": "1.0.0",
   "license": "MIT",
-  "author": "Flaps.io",
-  "description": "Flaps Desktop synchronization app",
+  "author": "Nuclia.cloud",
+  "description": "Nuclia frontend apps and libs",
   "scripts": {
     "ng": "nx",
     "nx": "nx",
@@ -136,6 +136,7 @@
     "codelyzer": "6.0.2",
     "dotenv": "10.0.0",
     "electron": "^17.0.0",
+    "electron-builder": "^23.0.2",
     "eslint": "8.7.0",
     "eslint-config-prettier": "6.0.0",
     "eslint-plugin-svelte3": "^3.2.1",

@@ -356,6 +356,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "./",
               "outputHashing": "all",
               "serviceWorker": false,
               "fileReplacements": [
@@ -375,6 +376,25 @@
                 {
                   "glob": "**/*",
                   "input": "apps/desktop/src/environments_config/production",
+                  "output": "assets/deployment"
+                }
+              ]
+            },
+            "stage": {
+              "baseHref": "./",
+              "outputHashing": "all",
+              "serviceWorker": false,
+              "assets": [
+                "apps/desktop/src/favicon.ico",
+                "apps/desktop/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/desktop/src/environments_config/local-stage",
                   "output": "assets/deployment"
                 }
               ]

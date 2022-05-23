@@ -24,6 +24,7 @@ import { MainLayoutModule } from './main-layout/main-layout.module';
 import { UploadModule } from './upload/upload.module';
 import { ConnectorsModule } from './connectors/connectors.module';
 import { AccountModule } from './account/account.module';
+import { LoginModule } from './login/login.module';
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
@@ -46,6 +47,7 @@ registerLocaleData(localeCa);
     UploadModule,
     ConnectorsModule,
     AccountModule,
+    LoginModule,
   ],
   bootstrap: [AppComponent],
 })

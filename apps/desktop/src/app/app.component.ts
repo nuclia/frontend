@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { BackendConfigurationService, UserService } from '@flaps/auth';
+import { BackendConfigurationService, SDKService, UserService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
+
 @Component({
   selector: 'da-root',
   templateUrl: './app.component.html',
@@ -13,11 +14,13 @@ export class AppComponent implements OnInit {
     private config: BackendConfigurationService,
     private translate: TranslateService,
     private user: UserService,
+    private sdk: SDKService,
   ) {
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
+    this.authenticate();
   }
 
   ngOnInit(): void {
@@ -36,6 +39,32 @@ export class AppComponent implements OnInit {
       this.translate.use(browserLang);
     } else {
       this.translate.use('en');
+    }
+  }
+
+  authenticate() {
+    if (!this.sdk.nuclia.auth.getToken()) {
+      const interval = setInterval(() => {
+        if (!this.sdk.nuclia.auth.getToken()) {
+          const deeplink = (window as any)['deeplink'];
+          if (deeplink && deeplink.includes('?')) {
+            const querystring = new URLSearchParams(deeplink.split('?')[1]);
+            this.sdk.nuclia.auth.authenticate({
+              access_token: querystring.get('access_token') || '',
+              refresh_token: querystring.get('refresh_token') || '',
+            });
+            clearInterval(interval);
+          }
+        } else {
+          clearInterval(interval);
+        }
+      }, 500);
+      if ((window as any)['electron']) {
+        (window as any)['electron'].openExternal('http://localhost:4200/redirect?redirect=nuclia-desktop://');
+      } else {
+        // dev mode in browser
+        location.href = 'https://stashify.cloud/redirect?redirect=http://localhost:4200';
+      }
     }
   }
 }

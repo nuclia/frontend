@@ -1,20 +1,20 @@
 {
-  "version": "STF_DOCKER_CONFIG_VERSION",
+  "version": "__VERSION__",
   "production": true,
   "backend": {
-    "app": "STF_DOCKER_CONFIG_APP_NAME",
-    "apiPath": "/api",
-    "siteKey": "STF_DOCKER_CONFIG_SITE_KEY",
-    "analytics": "STF_DOCKER_CONFIG_GANALYTICS",
-    "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
-    "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
-    "sentry_backend": "https://nuclia.cloud/api",
-    "posthog_host": "STF_DOCKER_CONFIG_POSTHOG_HOST",
-    "posthog_key": "STF_DOCKER_CONFIG_POSTHOG_KEY",
-    "saml_login": STF_DOCKER_CONFIG_SAML_ENABLED
+    "app": "desktop",
+    "apiPath": "https://nuclia.cloud",
+    "siteKey": "6Ld-y4QcAAAAAD6rp7xj0PMEpGcflsJEPJ9D3oyG",
+    "analytics": "G-QLPEN1JVZC",
+    "sentry_environment": "prod",
+    "sentry_url": "https://76bfd6392db6450a8f3174877b9bac9d@o393980.ingest.sentry.io/5425081",
+    "sentry_backend": "nuclia.cloud",
+    "posthog_host": "https://track.nuclia.cloud",
+    "posthog_key": "phc_rmNH5tm5llUb8hEplHl12i0E32scH2L16Ani846xYlA",
+    "saml_login": true
   },
   "stashify": {
-    "editor": "STF_DOCKER_CONFIG_EDITOR_URL",
-    "email_domain": "STF_DOCKER_CONFIG_EMAIL_DOMAIN"
+    "editor": "",
+    "email_domain": ""
   }
 }

@@ -107,6 +107,13 @@ export default class App {
             slashes: true,
           }),
         );
+        App.application.setAsDefaultProtocolClient('nuclia-desktop');
+
+        // Protocol handler for osx
+        App.application.on('open-url', function (event, url) {
+          event.preventDefault();
+          App.mainWindow?.webContents.executeJavaScript(`window.deeplink='${url}';`);
+        });
       }
     }
   }

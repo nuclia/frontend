@@ -108,7 +108,7 @@ export class Authentication implements IAuthentication {
     return null;
   }
 
-  private getRefreshToken(): string {
+  getRefreshToken(): string {
     return localStorage.getItem(LOCALSTORAGE_REFRESH_KEY) || '';
   }
 
