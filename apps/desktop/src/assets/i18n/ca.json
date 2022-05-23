@@ -1,4 +1,7 @@
 {
+	"generic.cancel": "Cancel·lar",
+	"generic.logout": "Sortir",
+	"generic.upload": "Pujar",
 	"home.active": "Actiu",
 	"home.add": "Nova pujada",
 	"home.completed": "Completat",
@@ -37,5 +40,11 @@
 	"login.token_expired": "El token ha caducat",
 	"login.try_again": "Torna-ho a intentar o recupera la contrasenya.",
 	"login.user_registered_as_external_user": "Ja existeix un usuari amb aquest correu electrònic. Si us plau, intenta entrar amb el teu compte de Google.",
-	"login.validate_and_explore": "Verifica el compte i comença a explorar"
+	"login.validate_and_explore": "Verifica el compte i comença a explorar",
+	"upload.files": "Fitxers a pujar",
+	"upload.review": "Has seleccionat {{num}} fitxers. Revisa els fitxers seleccionats i comença el procés.",
+	"upload.steps.destination": "Selecciona la destinació",
+	"upload.steps.files": "Escull els fitxers",
+	"upload.steps.sources": "Selecciona l'origen",
+	"upload.steps.upload": "Puja-ho!"
 }

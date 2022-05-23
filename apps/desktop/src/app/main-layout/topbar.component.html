@@ -3,4 +3,34 @@
        (click)="goHome()">
     <img src="assets/nuclia-desktop-white.svg">
   </div>
+  <div class="accounts">
+    <stf-button *ngIf="(account | async) as account"
+                (click)="goSelect()"
+                color="gray"
+                padding="pd-l"
+                size="small">{{ account.title }}</stf-button>
+  </div>
+  <div class="separator"></div>
+  <div class="user"
+       (click)="menuOpen = true"
+       cdkOverlayOrigin
+       #trigger="cdkOverlayOrigin"
+       tabindex="0">{{ initials | async }}</div>
 </div>
+
+<ng-template cdkConnectedOverlay
+             [cdkConnectedOverlayOrigin]="trigger"
+             [cdkConnectedOverlayOpen]="menuOpen"
+             [cdkConnectedOverlayHasBackdrop]="true"
+             [cdkConnectedOverlayOffsetY]="6"
+             (backdropClick)="menuOpen = false"
+             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+  <div class="user-menu"
+       @dropdownTopRight>
+    <a class="user-menu-item"
+       [routerLink]="'/user/logout'">
+      <svg-icon src="assets/icons/logout.svg"></svg-icon>
+      <span>{{'generic.logout' | translate}}</span>
+    </a>
+  </div>
+</ng-template>

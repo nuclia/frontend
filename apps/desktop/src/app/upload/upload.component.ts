@@ -2,8 +2,10 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, filter, Observable, of, Subject, switchMap } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 import { ConnectorParameters, SyncItem, ConnectorDefinition } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
+import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 @Component({
   selector: 'da-upload',
@@ -24,7 +26,12 @@ export class UploadComponent {
   );
   selection = new SelectionModel<SyncItem>(true, []);
 
-  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private router: Router) {}
+  constructor(
+    private sync: SyncService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private dialog: MatDialog
+  ) {}
 
   next() {
     this.step++;
@@ -37,15 +44,22 @@ export class UploadComponent {
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
-    this.sync.addSync({
-      date: new Date().toISOString(),
-      source: this.sourceId.getValue(),
-      destination: {
-        id: event.connector.id,
-        params: event.params,
-      },
-      files: this.selection.selected,
-    });
-    this.router.navigate(['/']);
+    this.dialog.open(ConfirmFilesComponent, {
+      data: { files: this.selection.selected },
+    })
+    .afterClosed()
+      .pipe(filter((result) => !!result))
+      .subscribe(() => {
+        this.sync.addSync({
+          date: new Date().toISOString(),
+          source: this.sourceId.getValue(),
+          destination: {
+            id: event.connector.id,
+            params: event.params,
+          },
+          files: this.selection.selected,
+        });
+        this.router.navigate(['/']); 
+      })
   }
 }

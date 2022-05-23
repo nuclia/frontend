@@ -1,16 +1,41 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { UserService, StateService } from '@flaps/auth';
+import { map } from 'rxjs';
+import { stfAnimations } from '@flaps/pastanaga'; 
+
 
 @Component({
   selector: 'da-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [stfAnimations],
 })
 export class TopbarComponent {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private user: UserService,
+    private state: StateService,
+  ) {}
+
+  menuOpen = false;
+  account = this.state.account;
+
+  initials = this.user.userPrefs.pipe(
+    map((prefs) => prefs?.name?.split(' ').slice(0,2).map((word) => word[0]).join('').toUpperCase() || '')
+  );
 
   goHome() {
     this.router.navigate(['/']);
   }
+
+  goSelect() {
+    this.router.navigate(['/select']);
+  }
+
+  logout() {
+    this.router.navigate(['/user/logout']);
+  }
+
 }
