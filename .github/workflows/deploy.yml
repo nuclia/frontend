@@ -114,8 +114,7 @@ jobs:
     name: Deploy dashboard
     runs-on: ubuntu-latest
     needs: build
-    # if: needs.build.outputs.deploy-app == 'yes'
-    if: ${{ false }} # disable for now
+    if: needs.build.outputs.deploy-app == 'yes'
 
     steps:
       - name: Checkout repository
@@ -203,28 +202,28 @@ jobs:
         run: |-
           curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=manager" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
 
-  deploy-desktop:
-    name: Deploy desktop
-    needs: build
-    if: needs.build.outputs.deploy-desktop == 'yes'
-    runs-on: ${{ matrix.os }}
+  # deploy-desktop:
+  #   name: Deploy desktop
+  #   needs: build
+  #   if: needs.build.outputs.deploy-desktop == 'yes'
+  #   runs-on: ${{ matrix.os }}
 
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+  #   strategy:
+  #     matrix:
+  #       os: [macos-latest, ubuntu-latest, windows-latest]
 
-    steps:
-      - name: Set version
-        id: version_step
-        run: |-
-          VERSION=`cat apps/desktop/VERSION`
-          VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
-          sed -i.bak "s#__VERSION__#$VERSION_SHA#" ./apps/desktop/src/environments_config/production/app-config.json
-          echo "::set-output name=version_number::$VERSION_SHA"
-      - name: Build desktop app
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        run: |-
-          npx nx build desktop -c production
-          npx nx build desktop-electron -c production
-          npx nx run desktop-electron:make --publish always
+  #   steps:
+  #     - name: Set version
+  #       id: version_step
+  #       run: |-
+  #         VERSION=`cat apps/desktop/VERSION`
+  #         VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
+  #         sed -i.bak "s#__VERSION__#$VERSION_SHA#" ./apps/desktop/src/environments_config/production/app-config.json
+  #         echo "::set-output name=version_number::$VERSION_SHA"
+  #     - name: Build desktop app
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.github_token }}
+  #       run: |-
+  #         npx nx build desktop -c production
+  #         npx nx build desktop-electron -c production
+  #         npx nx run desktop-electron:make --publish always
