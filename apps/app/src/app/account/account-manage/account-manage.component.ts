@@ -13,7 +13,8 @@ import { FormBuilder, FormControl } from '@angular/forms';
 import { Subject, Observable } from 'rxjs';
 import { switchMap, concatMap, takeUntil, tap, filter, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { ZoneService, Zone } from '@flaps/core';
-import { Account, AccountModification, SDKService, StateService, STFTrackingService } from '@flaps/auth';
+import { AccountModification, SDKService, StateService, STFTrackingService } from '@flaps/auth';
+import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { SectionInfo, Sluggable } from '@flaps/common';
 

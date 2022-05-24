@@ -3,10 +3,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { switchMap, tap, filter, takeUntil, take } from 'rxjs/operators';
-import { Account, StateService, SDKService } from '@flaps/auth';
+import { StateService, SDKService } from '@flaps/auth';
 import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
 import { SORTED_KB_ROLES, KB_ROLE_TITLES } from '../utils';
-import { KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
+import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 
 @Component({
   selector: 'app-service-access',

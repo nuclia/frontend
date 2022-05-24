@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Account, STFTrackingService } from '@flaps/auth';
+import { STFTrackingService } from '@flaps/auth';
 import { CheckboxGroupItem, Sluggable } from '@flaps/common';
 import { Zone, STFUtils } from '@flaps/core';
-import { KnowledgeBoxCreation } from '@nuclia/core';
+import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { map, share } from 'rxjs';
 
 export interface KbAddData {

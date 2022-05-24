@@ -5,7 +5,8 @@ import { Subject, Observable, of } from 'rxjs';
 import { takeUntil, filter, tap, switchMap, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { STFConfirmComponent, ConfirmData } from '@flaps/components';
-import { Account, SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/auth';
+import { Account } from '@nuclia/core';
 import { UsersService, AccountUser, AccountRoles, SetUsersAccount } from '@flaps/core';
 import { AppToasterService } from '../../services/app-toaster.service';
 

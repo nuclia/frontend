@@ -4,6 +4,7 @@ export interface Account {
   id: string;
   slug: string;
   title: string;
+  description?: string;
   zone: string;
   type: AccountTypes;
   can_manage_account: boolean;
@@ -11,6 +12,24 @@ export interface Account {
   max_kbs: number;
   current_users: number;
   max_users: number | null;
+  config?: AccountConfig;
+  limits: AccountLimits;
+}
+
+export interface AccountConfig {
+  g_speech_to_text: boolean;
+}
+
+export interface AccountLimits {
+  upload: {
+    upload_limit_max_media_file_size: number;
+    upload_limit_max_non_media_file_size: number;
+  };
+  processing: {
+    monthly_limit_chars_processed: number;
+    monthly_limit_media_seconds_processed: number;
+    monthly_limit_non_media_files_processed: number;
+  };
 }
 
 export interface AccountCreation {

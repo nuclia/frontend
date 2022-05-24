@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { KnowledgeBox } from '@nuclia/core';
-import { Account, LocalState } from './models';
+import { KnowledgeBox, Account } from '@nuclia/core';
+import { LocalState } from './models';
 
 const STATE_DATA = 'STATE_DATA';
 
