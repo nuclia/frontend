@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { Observable, switchMap, take, filter } from 'rxjs'
+import { switchMap, take, filter } from 'rxjs'
 import { Account } from '@nuclia/core';
 import { StateService } from '@flaps/auth';
 import { Zone, NucliaDBMeta, NucliaDBKeyCreation, NucliaDBService } from '@flaps/core';
@@ -19,9 +19,9 @@ export interface DBDialogData {
 export class DBDialogComponent implements OnInit {
 
   account = this.stateService.account.pipe(
-    filter((account) => !!account),
+    filter((account): account is Account => !!account),
     take(1)
-  ) as Observable<Account>;
+  );
 
   editMode: boolean;
 

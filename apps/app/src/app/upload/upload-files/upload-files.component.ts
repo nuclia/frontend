@@ -1,7 +1,8 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { STFTrackingService } from '@flaps/auth';
+import { filter, take } from 'rxjs';
+import { STFTrackingService, StateService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
 import { FileWithMetadata, ICreateResource, LabelValue } from '@nuclia/core';
 import { UploadService } from '../upload.service';
@@ -27,12 +28,23 @@ export class UploadFilesComponent {
   languageList = STFUtils.supportedAudioLanguages();
   pendingLangs = 0;
   fileSelection = new SelectionModel<FileWithMetadata>(true, []);
+  limitsExceeded = false;
+  maxFileSize = 0;
+  maxMediaFileSize = 0;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
     private tracking: STFTrackingService,
-  ) {}
+    private stateService: StateService,
+  ) {
+    this.stateService.account
+      .pipe(filter((account => !!account)),take(1))
+      .subscribe((account) => {
+        this.maxFileSize = account!.limits.upload.upload_limit_max_media_file_size;
+        this.maxMediaFileSize = account!.limits.upload.upload_limit_max_non_media_file_size;
+      });
+  }
 
   chooseFiles($event: any) {
     $event.preventDefault();
@@ -43,9 +55,19 @@ export class UploadFilesComponent {
 
   addFiles(files: File[] | FileList) {
     this.files = [...this.files, ...Array.from(files)];
+    this.updateFiles();
+  }
+
+  removeFile(file: File) {
+    this.files = this.files.filter((item) => item !== file);
+    this.updateFiles();
+  }
+
+  private updateFiles() {
     this.filesWithAudio = this.getFilesByType(this.files, true);
     this.filesWithoutAudio = this.getFilesByType(this.files, false);
     this.pendingLangs = this.getPendingLangs();
+    this.limitsExceeded = this.files.length > this.getAllowedFiles().length;
     this.cdr?.markForCheck();
   }
 
@@ -77,13 +99,26 @@ export class UploadFilesComponent {
   }
 
   startUpload() {
-    this.upload.emit();
-    const payload: ICreateResource = {};
-    if (this.selectedLabels.length > 0) {
-      payload.usermetadata = { classifications: this.selectedLabels };
+    const files = this.getAllowedFiles();
+    if (files.length > 0) {
+      this.upload.emit();
+      const payload: ICreateResource = {};
+      if (this.selectedLabels.length > 0) {
+        payload.usermetadata = { classifications: this.selectedLabels };
+      }
+      this.uploadService.uploadFiles(files, payload);
+      this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     }
-    this.uploadService.uploadFiles(this.files, payload);
-    this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
+    else {
+      this.close.emit();
+    }
+  }
+
+  getAllowedFiles() {
+    return [
+      ...this.filesWithoutAudio.filter((file) => file.size <= this.maxFileSize),
+      ...this.filesWithAudio.filter((file) => file.size <= this.maxMediaFileSize)
+    ];
   }
 
   onSelectLanguageMulti(event: Event) {

@@ -556,6 +556,8 @@
 	"upload.progress.failed": "Failed",
 	"upload.progress.uploaded": "Uploaded",
 	"upload.select_file": "Drop your files here or click here",
+	"upload.size_warning_1": "Media files can not exceed {{ maxMedia }} and non media files {{ max }}.",
+	"upload.size_warning_2": "The files that exceed that weight will not be upload",
 	"upload.takes_time": "Nuclia needs some time to process the files. You can close this dialog box and keep working.",
 	"upload.uploading_files": "<strong>Uploading files.</strong> You can keep working ",
 	"upload.uploading_queue": "Uploading queue",

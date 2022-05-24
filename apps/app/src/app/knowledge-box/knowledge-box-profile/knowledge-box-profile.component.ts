@@ -2,9 +2,9 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { FormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, concatMap } from 'rxjs/operators';
-import { Account, StateService, SDKService } from '@flaps/auth';
+import { StateService, SDKService } from '@flaps/auth';
 import { Sluggable } from '@flaps/common';
-import { KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
 
 @Component({
   selector: 'app-knowledge-box-profile',

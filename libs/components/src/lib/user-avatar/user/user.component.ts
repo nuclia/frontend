@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Account } from '@flaps/auth';
+import { Account } from '@nuclia/core';
 import { UsersService } from '@flaps/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

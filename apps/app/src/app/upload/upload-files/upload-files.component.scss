@@ -23,6 +23,18 @@ h1 {
   font-weight: var(--stf-font-weight-bold);
 }
 
+.size-warning {
+  display: flex;
+  margin-bottom: 20px;
+  color: var(--stf-orange);
+  strong {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+  svg-icon {
+    margin-right: 8px;
+  }
+}
+
 .dropzone {
   margin-bottom: 30px;
   border: 2px dashed #ccc;
@@ -50,15 +62,43 @@ app-label-field {
   max-height: 13vh;
   overflow-y: auto;
   margin-bottom: 26px;
+}
 
-  &-item {
-    display: flex;
-    align-items: center;
-    height: 37px;
-    margin-right: 10px;
-    border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
-    &:first-child {
-      border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+.file-item {
+  display: flex;
+  align-items: center;
+  height: 37px;
+  margin-right: 10px;
+  border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+  &:first-child {
+    border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+  }
+  .file-select {
+    flex: 0 0 24px;
+  }
+  .file-name {
+    flex: 0 1 290px;
+    @include text-truncate();
+    padding-right: 20px;
+  }
+  .file-size {
+    flex: 0 0 80px;
+  }
+  .file-lang {
+    flex: 1 0 50px;
+    text-align: center;
+  }
+  .file-actions {
+    flex: 0 0 auto;
+    padding-right: 10px;
+    button {
+      @include reset-button();
+      display: block;
+      cursor: pointer;
+      svg {
+        display: block;
+        width: 14px;
+      }
     }
   }
 }
@@ -75,17 +115,5 @@ app-label-field {
   select {
     min-width: 200px;
     margin-bottom: 4px;
-  }
-
-  .audio-file {
-    &-checkbox {
-      width: 24px;
-    }
-
-    &-title {
-      @include text-truncate();
-      width: 290px;
-      padding-right: 20px;
-    }
   }
 }

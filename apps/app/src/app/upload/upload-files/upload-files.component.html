@@ -9,6 +9,21 @@
     <h1>{{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}</h1>
   </div>
   <div mat-dialog-content>
+    <div class="size-warning" *ngIf="limitsExceeded">
+      <svg-icon src="assets/icons/toast-warning.svg"></svg-icon>
+      <span>
+        <strong>
+          {{ 'upload.size_warning_1' | translate:
+            { 
+              maxMedia: (maxMediaFileSize | size),
+              max: (maxFileSize | size)
+            }
+          }}
+        </strong>
+        <span>{{ 'upload.size_warning_2' | translate }}</span>
+      </span>
+    </div>
+
     <div stfFileDrop
          [class.file-over]="hasBaseDropZoneOver"
          (fileOver)="fileOverBase($event)"
@@ -39,9 +54,16 @@
 
     <div class="file-list"
          *ngIf="filesWithoutAudio.length > 0">
-      <div class="file-list-item"
+      <div class="file-item"
            *ngFor="let file of filesWithoutAudio">
-        {{ file.name }}
+        <div class="file-name">{{ file.name }}</div>
+        <div class="file-size">{{ file.size | size }}</div>
+        <div class="file-lang"></div>
+        <div class="file-actions">
+          <button (click)="removeFile(file)">
+            <svg-icon src="assets/icons/delete.svg"></svg-icon>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -57,8 +79,8 @@
 
       <div class="file-list">
         <ng-container *ngFor="let file of filesWithAudio; let i = index;">
-          <div class="file-list-item audio-file">
-            <div class="audio-file-checkbox"
+          <div class="file-item">
+            <div class="file-select"
                  *ngIf="filesWithAudio.length > 1">
               <stf-checkbox [id]="'upload-file-' + i"
                             [externalLabel]="true"
@@ -67,10 +89,16 @@
                             color="dark">
               </stf-checkbox>
             </div>
-            <div class="audio-file-title">
+            <div class="file-name">
               <label [for]="'upload-file-' + i">{{ file.name }}</label>
             </div>
-            <div>{{ file.lang || '-' }}</div>
+            <div class="file-size">{{ file.size | size }}</div>
+            <div class="file-lang">{{ file.lang || '-' }}</div>
+            <div class="file-actions">
+              <button (click)="removeFile(file)">
+                <svg-icon src="assets/icons/delete.svg"></svg-icon>
+              </button>
+            </div>
           </div>
         </ng-container>
       </div>

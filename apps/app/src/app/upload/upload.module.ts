@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { STFButtonsModule, STFInputModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
 import { STFCheckboxModule } from '@flaps/common';
 import { FileUploadModule } from '@flaps/core';
+import { STFPipesModule } from '@flaps/auth';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { UploadFilesComponent } from './upload-files/upload-files.component';
@@ -40,6 +41,7 @@ const Components = [
     STFTooltipModule,
     STFCheckboxModule,
     FileUploadModule,
+    STFPipesModule,
     LabelModule,
   ],
   declarations: [...Components],
