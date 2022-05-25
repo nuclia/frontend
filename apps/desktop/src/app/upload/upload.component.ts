@@ -1,12 +1,13 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, filter, Observable, of, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConnectorParameters, SyncItem, ConnectorDefinition } from '../sync/models';
+import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
+const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
 @Component({
   selector: 'da-upload',
   templateUrl: './upload.component.html',
@@ -15,14 +16,12 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 })
 export class UploadComponent {
   step = 0;
-  sourceId = new BehaviorSubject<string>('');
   query = '';
-  triggerSearch = new Subject();
+  triggerSearch = new Subject<void>();
+  sourceId = '';
+  source?: ISourceConnector;
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
-    switchMap(() => this.sourceId),
-    filter((id) => !!id),
-    switchMap((id) => this.sync.getSource(id)),
-    switchMap((source) => source.getFiles(this.query)),
+    switchMap(() => (this.source ? this.source.getFiles(this.query) : of([]))),
   );
   selection = new SelectionModel<SyncItem>(true, []);
 
@@ -30,8 +29,21 @@ export class UploadComponent {
     private sync: SyncService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+  ) {
+    this.sourceId = localStorage.getItem(SOURCE_ID_KEY) || '';
+    if (this.sourceId) {
+      this.step = 1;
+      this.sync
+        .getSource(this.sourceId)
+        .pipe(take(1))
+        .pipe(
+          tap((source) => (this.source = source)),
+          switchMap((source) => source.authenticate()),
+        )
+        .subscribe(() => localStorage.removeItem(SOURCE_ID_KEY));
+    }
+  }
 
   next() {
     this.step++;
@@ -39,27 +51,31 @@ export class UploadComponent {
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
-    this.sourceId.next(event.connector.id);
-    this.next();
+    localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
+    this.sync
+      .getSource(event.connector.id)
+      .pipe(take(1))
+      .subscribe((source) => source.goToOAuth());
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
-    this.dialog.open(ConfirmFilesComponent, {
-      data: { files: this.selection.selected },
-    })
-    .afterClosed()
+    this.dialog
+      .open(ConfirmFilesComponent, {
+        data: { files: this.selection.selected },
+      })
+      .afterClosed()
       .pipe(filter((result) => !!result))
       .subscribe(() => {
         this.sync.addSync({
           date: new Date().toISOString(),
-          source: this.sourceId.getValue(),
+          source: localStorage.getItem(SOURCE_ID_KEY) || '',
           destination: {
             id: event.connector.id,
             params: event.params,
           },
           files: this.selection.selected,
         });
-        this.router.navigate(['/']); 
-      })
+        this.router.navigate(['/']);
+      });
   }
 }

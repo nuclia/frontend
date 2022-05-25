@@ -46,7 +46,7 @@ export class AppComponent implements OnInit {
     if (!this.sdk.nuclia.auth.getToken()) {
       const interval = setInterval(() => {
         if (!this.sdk.nuclia.auth.getToken()) {
-          const deeplink = (window as any)['deeplink'];
+          const deeplink = (window as any)['deeplink'] || location.search;
           if (deeplink && deeplink.includes('?')) {
             const querystring = new URLSearchParams(deeplink.split('?')[1]);
             this.sdk.nuclia.auth.authenticate({
@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
       }, 500);
       if ((window as any)['electron']) {
         (window as any)['electron'].openExternal('http://localhost:4200/redirect?redirect=nuclia-desktop://');
-      } else {
+      } else if (!location.search) {
         // dev mode in browser
         location.href = 'https://stashify.cloud/redirect?redirect=http://localhost:4200';
       }

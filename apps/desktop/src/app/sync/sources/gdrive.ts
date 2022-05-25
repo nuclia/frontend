@@ -20,6 +20,8 @@ declare var gapi: any;
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
+const GDRIVE_TOKEN = 'NUCLIA_GDRIVE_TOKEN';
+
 export const GDrive: SourceConnectorDefinition = {
   id: 'gdrive',
   title: 'Google Drive',
@@ -38,6 +40,12 @@ class GDriveImpl implements ISourceConnector {
     this.CLIENT_ID = data?.CLIENT_ID || '';
   }
 
+  goToOAuth(): void {
+    // fetch(`http://127.0.0.1:8000/gdrive/authorize?redirect=${location.href}`)
+    //   .then((res) => res.json())
+    //   .then((res) => (location.href = res.url));
+  }
+
   authenticate(): Observable<boolean> {
     if (!this.isAuthenticated.getValue()) {
       injectScript('https://apis.google.com/js/api.js').subscribe(() => {
@@ -48,8 +56,6 @@ class GDriveImpl implements ISourceConnector {
               clientId: this.CLIENT_ID,
               discoveryDocs: DISCOVERY_DOCS,
               scope: SCOPES,
-              // redirect_uri: 'http://localhost:4200/redirect',
-              // ux_mode: 'redirect',
             })
             .then(() => {
               gapi.auth2.getAuthInstance().signIn();
@@ -57,6 +63,11 @@ class GDriveImpl implements ISourceConnector {
               gapi.auth2
                 .getAuthInstance()
                 .isSignedIn.listen((isSigned: boolean) => this.isAuthenticated.next(isSigned));
+              // const params = new URLSearchParams(location.search);
+              // const token = params.get('token') || '';
+              // localStorage.setItem(GDRIVE_TOKEN, token);
+              // gapi.client.setToken(token);
+              // this.isAuthenticated.next(true);
             });
         });
       });

@@ -17,6 +17,7 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
 export interface IConnector {}
 
 export interface ISourceConnector extends IConnector {
+  goToOAuth(): void;
   authenticate(): Observable<boolean>;
   getFiles(query?: string): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob>;
