@@ -3,11 +3,10 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { Router } from '@angular/router';
 import { filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector } from '../sync/models';
+import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector, SOURCE_ID_KEY } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
-const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
 @Component({
   selector: 'da-upload',
   templateUrl: './upload.component.html',
@@ -32,7 +31,8 @@ export class UploadComponent {
     private dialog: MatDialog,
   ) {
     this.sourceId = localStorage.getItem(SOURCE_ID_KEY) || '';
-    if (this.sourceId) {
+    // useful for dev mode in browser (in Electron, as the page is not reloaded, authneticate is already waiting for an answer)
+    if (this.sourceId && !this.source) {
       this.step = 1;
       this.sync
         .getSource(this.sourceId)
@@ -56,14 +56,12 @@ export class UploadComponent {
       .pipe(
         take(1),
         switchMap((source) => {
+          this.source = source;
           if (source.hasServerSideAuth) {
             localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
             source.goToOAuth();
-            return of(true);
-          } else {
-            this.source = source;
-            return source.authenticate();
           }
+          return this.source.authenticate();
         }),
         filter((yes) => yes),
       )
@@ -80,7 +78,7 @@ export class UploadComponent {
       .subscribe(() => {
         this.sync.addSync({
           date: new Date().toISOString(),
-          source: localStorage.getItem(SOURCE_ID_KEY) || '',
+          source: this.sourceId,
           destination: {
             id: event.connector.id,
             params: event.params,

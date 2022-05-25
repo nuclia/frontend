@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 
+export const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
 export interface ConnectorDefinition {
   id: string;
   title: string;
@@ -33,7 +34,7 @@ export enum FileStatus {
 export interface SyncItem {
   title: string;
   originalId: string;
-  type: string;
+  metadata: { [key: string]: string };
   status: FileStatus;
 }
 

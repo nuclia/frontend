@@ -93,14 +93,14 @@ class GDriveImpl implements ISourceConnector {
     return {
       title: raw?.['name'] || '',
       originalId: raw?.['id'] || '',
-      type: raw['mimeType'],
+      metadata: { mimeType: raw['mimeType'] },
       status: FileStatus.PENDING,
     };
   }
 
   download(resource: SyncItem): Observable<Blob> {
     return new Observable<Blob>((observer) => {
-      const request = resource.type.startsWith('application/vnd.google-apps')
+      const request = resource.metadata['mimeType'].startsWith('application/vnd.google-apps')
         ? `https://www.googleapis.com/drive/v3/files/${resource.originalId}/export?mimeType=application/pdf&supportsAllDrives=true`
         : `https://www.googleapis.com/drive/v3/files/${resource.originalId}?alt=media&supportsAllDrives=true`;
 
