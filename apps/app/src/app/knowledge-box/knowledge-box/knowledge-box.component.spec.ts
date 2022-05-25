@@ -14,7 +14,10 @@ describe('KnowledgeBoxComponent', () => {
       providers: [
         {
           provide: UploadService,
-          useValue: { progress: new BehaviorSubject({ completed: true }).asObservable() },
+          useValue: {
+            progress: new BehaviorSubject({ completed: true }).asObservable(),
+            barDisabled: new BehaviorSubject(false).asObservable()
+          },
         },
       ],
     }).compileComponents();

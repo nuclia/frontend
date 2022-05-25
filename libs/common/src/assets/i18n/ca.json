@@ -445,6 +445,8 @@
 	"upload.audios_detected": "Hem detectat arxius d’audio. Per a continuar, selecciona l’arxiu i el seu idioma.",
 	"upload.check_files": "Comprova l'estat dels fitxers",
 	"upload.completed": "completat",
+	"upload.duplicated": "Fitxer duplicat",
+	"upload.error": "Error desconegut",
 	"upload.invalid_image": "El fitxer seleccionat no és una imatge vàlida",
 	"upload.once_uploaded": "Un cop  pujats, des de la pàgina \"Llistat de recursos\", podràs veure'n l'estat. Quan el semàfor del recurs sigui verd el podràs cercar i visualitzar.",
 	"upload.select_file": "Arrossegueu els fitxers o feu clic aquí",

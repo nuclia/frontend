@@ -41,8 +41,8 @@ export class UploadFilesComponent {
     this.stateService.account
       .pipe(filter((account => !!account)),take(1))
       .subscribe((account) => {
-        this.maxFileSize = account!.limits.upload.upload_limit_max_media_file_size;
-        this.maxMediaFileSize = account!.limits.upload.upload_limit_max_non_media_file_size;
+        this.maxFileSize = account!.limits.upload.upload_limit_max_non_media_file_size;
+        this.maxMediaFileSize = account!.limits.upload.upload_limit_max_media_file_size;
       });
   }
 
