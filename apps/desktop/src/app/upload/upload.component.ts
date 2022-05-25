@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
+import { filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
@@ -51,11 +51,23 @@ export class UploadComponent {
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
-    localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
     this.sync
       .getSource(event.connector.id)
-      .pipe(take(1))
-      .subscribe((source) => source.goToOAuth());
+      .pipe(
+        take(1),
+        switchMap((source) => {
+          if (source.hasServerSideAuth) {
+            localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
+            source.goToOAuth();
+            return of(true);
+          } else {
+            this.source = source;
+            return source.authenticate();
+          }
+        }),
+        filter((yes) => yes),
+      )
+      .subscribe(() => this.next());
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {

@@ -17,6 +17,7 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
 export interface IConnector {}
 
 export interface ISourceConnector extends IConnector {
+  hasServerSideAuth: boolean;
   goToOAuth(): void;
   authenticate(): Observable<boolean>;
   getFiles(query?: string): Observable<SyncItem[]>;

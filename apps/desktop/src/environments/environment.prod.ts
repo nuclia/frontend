@@ -8,8 +8,8 @@ export const environment = {
   locales: ['en-US', 'es', 'ca'],
   connectors: {
     gdrive: {
-      CLIENT_ID: '422664282538-jektheticij15q9ond3eldg3kvbi27de.apps.googleusercontent.com',
-      API_KEY: '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',
+      CLIENT_ID: '422664282538-m7mf0hh07h8u93kacss0f4clhnpp656v.apps.googleusercontent.com',
+      API_KEY: 'AIzaSyDeDskGoRmFQNofNXwg66zYoa3pNPQJM2Q',
     },
     nucliacloud: {
       backend: 'https://stashify.cloud/api',
