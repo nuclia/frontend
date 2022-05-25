@@ -549,6 +549,8 @@
 	"upload.audios_detected": "We detected audio files. To continue, select the file and its language.",
 	"upload.check_files": "Check files status",
 	"upload.completed": "completed",
+	"upload.duplicated": "Duplicated file",
+	"upload.error": "Unknown error",
 	"upload.invalid_image": "Selected file is not a valid image",
 	"upload.once_uploaded": "",
 	"upload.progress.complete": "Upload complete",

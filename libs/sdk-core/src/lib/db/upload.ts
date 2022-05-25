@@ -30,11 +30,20 @@ export interface UploadResponse {
 }
 
 export interface UploadStatus {
+  files: FileUploadStatus[];
   progress: number;
   completed: boolean;
   uploaded: number;
   failed: number;
   conflicts?: number;
+}
+
+export interface FileUploadStatus {
+  file: File,
+  progress: number;
+  uploaded: boolean;
+  failed: boolean;
+  conflicts?: boolean;
 }
 
 export interface FileWithMetadata extends File {
@@ -146,6 +155,7 @@ export const TUSuploadFile = (
   return nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true).pipe(
     repeatWhen((obs) => obs),
     filter((res) => retries-- === 0 || res.status !== 503),
+    catchError((error) => of(error)),
     take(1),
     concatMap((res) =>
       merge(
@@ -205,15 +215,14 @@ export const batchUpload = (
   creationPayload?: ICreateResource,
 ): Observable<UploadStatus> => {
   const fileList = Array.from(files);
-  const totalFiles = fileList.length;
   const totalSize = fileList.reduce((acc, file) => acc + (file.size || 0), 0);
   const fieldIds: string[] = [];
-  let failed = 0;
-  let conflicts = 0;
-  let uploaded = 0;
-  let uploadedSize = 0;
-  let completed = false;
-  let progress = 0;
+  const filesStatus: FileUploadStatus[] = fileList.map((file) => ({
+    file,
+    progress: 0,
+    uploaded: false,
+    failed: false,
+  }))
   const uploadAll = fileList.map((file) => {
     let uploadPath = path;
     if (isResource) {
@@ -229,29 +238,35 @@ export const batchUpload = (
       : creationPayload;
     return upload(nuclia, uploadPath, file, true, {}, payload).pipe(
       startWith({ progress: 0, completed: false } as UploadResponse),
-      map((status) => ({ status, size: file.size || 0 })),
+      map((status) => ({ status, file: file })),
     );
   });
   return from(uploadAll).pipe(
     mergeMap((upload) => upload, 6), // restrict to 6 concurrent uploads
     map((res) => {
+      const fileStatus = filesStatus.find((item) => item.file === res.file)!;
       if (res.status.failed) {
-        failed += 1;
+        fileStatus.failed = true;
       }
       if (res.status.conflict) {
-        conflicts += 1;
+        fileStatus.conflicts = true;
       }
       if (res.status.completed) {
-        uploaded += 1;
+        fileStatus.uploaded = true;
       }
       if (!res.status.failed && !res.status.conflict && !res.status.completed) {
-        progress = Math.round(((uploadedSize + ((res.status.progress || 0) * res.size) / 100) / totalSize) * 100);
+        fileStatus.progress = res.status.progress || 0;
       } else {
-        uploadedSize += res.size;
-        progress = Math.round((uploadedSize / totalSize) * 100);
+        fileStatus.progress = 100;
       }
-      completed = uploaded + failed === totalFiles;
-      return { progress, completed, uploaded, failed, conflicts };
+      const failed = filesStatus.filter((item) => item.failed).length;
+      const conflicts = filesStatus.filter((item) => item.conflicts).length;
+      const uploaded = filesStatus.filter((item) => item.uploaded).length;
+      const completed = uploaded + failed === filesStatus.length;
+      const progress = Math.round(
+        filesStatus.reduce((acc, status) => (acc + status.file.size * status.progress / 100), 0) / totalSize * 100
+      );
+      return { files: filesStatus, progress, completed, uploaded, failed, conflicts };
     }),
   );
 };

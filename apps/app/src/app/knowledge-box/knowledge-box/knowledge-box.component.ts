@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { UploadService } from '../../upload/upload.service';
 
 @Component({
@@ -8,7 +8,9 @@ import { UploadService } from '../../upload/upload.service';
   styleUrls: ['./knowledge-box.component.scss'],
 })
 export class KnowledgeBoxComponent {
-  uploading = this.uploadService.progress.pipe(map((p) => !p.completed));
+  showBar = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
+    map(([progress, disabled]) => !progress.completed && !disabled)
+  );
 
   constructor(private uploadService: UploadService) {}
 }

@@ -17,4 +17,8 @@ export class UploadBarComponent {
   checkFiles() {
     this.dialog.open(UploadProgressDialogComponent);
   }
+
+  close() {
+    this.uploadService.disableBar();
+  }
 }

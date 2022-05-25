@@ -17,7 +17,13 @@
     <strong>{{progress | async}}%</strong> {{ 'upload.completed' | translate }}
   </div>
 
-  <button (click)="checkFiles()">
+  <button class="check-files" 
+         (click)="checkFiles()">
     {{ 'upload.check_files' | translate }}
+  </button>
+
+  <button class="close" 
+          (click)="close()">
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
   </button>
 </div>

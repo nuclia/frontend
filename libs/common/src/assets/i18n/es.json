@@ -445,6 +445,8 @@
 	"upload.audios_detected": "Hemos detectado ficheros  de audio. Para continuar, selecciona el archivo y su idioma.",
 	"upload.check_files": "Comprueba el estado de los ficheros",
 	"upload.completed": "completado",
+	"upload.duplicated": "Fichero duplicado",
+	"upload.error": "Error desconocido",
 	"upload.invalid_image": "El archivo seleccionad no es una imagen válida",
 	"upload.once_uploaded": "Una vez subidos, desde la página \"Listado de recursos\", podrás ver su estado. Cuando el semáforo del recurso sea verde lo podrás buscar y visualizar.",
 	"upload.select_file": "Arrastre sus archivos o haga clic aquí",
