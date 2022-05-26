@@ -4,3 +4,18 @@
   max-width: 100%;
   margin: 30px 0 80px 0;
 }
+
+.warning {
+  margin-top: 50px;
+  color: var(--stf-orange);
+  @media (max-width: 1279px) {
+    display: none;
+  }
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  ::ng-deep strong {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+}

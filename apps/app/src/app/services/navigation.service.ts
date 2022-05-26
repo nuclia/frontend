@@ -1,12 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, StateService } from '@flaps/auth';
+import { Observable, combineLatest, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
   constructor(private stateService: StateService, private router: Router, private authService: AuthService) {}
+
+  homeUrl: Observable<string> = combineLatest([
+    this.stateService.account,
+    this.stateService.stash
+  ]).pipe(map(([account, kb]) => {
+    if (account && kb) {
+      return this.getKbUrl(account.slug, kb.slug!);
+    } else if (account) {
+      return this.getKbSelectUrl(account.slug);
+    } else {
+      return '/';
+    }
+  }));
 
   getAccountUrl(accountSlug: string): string {
     return `/at/${accountSlug}`;
@@ -60,18 +74,6 @@ export class NavigationService {
     this.authService.setNextParams(null);
     this.authService.setNextUrl(null);
     this.router.navigate([goToUrl], { queryParams: goToParams });
-  }
-
-  getHomeUrl(): string {
-    const account = this.stateService.getAccount();
-    const kb = this.stateService.getStash();
-    if (account && kb) {
-      return this.getKbUrl(account.slug, kb.slug!);
-    } else if (account) {
-      return this.getKbSelectUrl(account.slug);
-    } else {
-      return '/';
-    }
   }
 
   resetState() {

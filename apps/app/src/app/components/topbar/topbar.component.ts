@@ -53,7 +53,9 @@ export class TopbarComponent implements AfterViewInit {
   ) {}
 
   goToHome(): void {
-    this.router.navigate([this.navigationService.getHomeUrl()]);
+    this.navigationService.homeUrl.pipe(take(1)).subscribe((url) => {
+      this.router.navigate([url]);
+    })
   }
 
   ngAfterViewInit(): void {

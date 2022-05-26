@@ -7,6 +7,7 @@
 
   <div class="warning">
     <strong>{{ 'upload.takes_time' | translate }}</strong>
+    <span> {{ 'upload.once_uploaded' | translate }}</span>
   </div>
   <div class="upload-list"
        *ngIf="((progress | async)?.files || []).length > 0">
