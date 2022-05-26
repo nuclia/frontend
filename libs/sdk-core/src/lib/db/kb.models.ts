@@ -143,7 +143,6 @@ export interface Counters {
   paragraphs: number;
   fields: number;
   sentences: number;
-  shards?: [string, string, string];
 }
 
 export interface ResourceList {
