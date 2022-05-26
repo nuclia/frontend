@@ -24,7 +24,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   counters = this.sdk.counters.pipe(
     map((counters) =>
       Object.entries(counters).reduce((acc: { [key: string]: string }, [key, value]) => {
-        acc[key] = value.toLocaleString();
+        if (typeof value === 'number') {
+          acc[key] = value.toLocaleString();
+        }
         return acc;
       }, {}),
     ),
