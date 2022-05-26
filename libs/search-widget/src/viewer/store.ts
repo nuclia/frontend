@@ -6,7 +6,6 @@ import type {
   FileFieldData,
   LinkFieldData,
   CloudLink,
-  ResourceField,
   ResourceData,
   Sentence,
 } from '@nuclia/core';
@@ -18,7 +17,6 @@ import {
   combineLatest,
   switchMap,
   map,
-  tap,
   filter,
   distinctUntilChanged,
   of,
@@ -77,19 +75,19 @@ export const viewerState = {
   pdfPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => {
-      const field = getField(resource, selected.fieldType, selected.fieldId);
-      return getPreviewKind(field, selected.paragraph) === PreviewKind.PDF;
+      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
+      return !!field && getPreviewKind(field, selected!.paragraph) === PreviewKind.PDF;
     }),
-    map(([resource, selected]) => getPdfPreviewParams(resource, selected.fieldId, selected.paragraph)),
+    map(([resource, selected]) => getPdfPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   ),
   mediaPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => {
-      const field = getField(resource, selected.fieldType, selected.fieldId);
-      const kind = getPreviewKind(field, selected.paragraph);
-      return [PreviewKind.VIDEO, PreviewKind.AUDIO].includes(kind);
+      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
+      const kind = field && getPreviewKind(field, selected!.paragraph);
+      return !!kind && [PreviewKind.VIDEO, PreviewKind.AUDIO].includes(kind);
     }),
-    switchMap(([resource, selected]) => getMediaPreviewParams(resource, selected.fieldId, selected.paragraph)),
+    switchMap(([resource, selected]) => getMediaPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   )
 };
 
@@ -101,8 +99,8 @@ export const selectedParagraphIndex = combineLatest([
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
     return (paragraphs || []).findIndex((result) => {
-      const field = getFileField(resource, selected.fieldId);
-      const text = field && getParagraphText(field, selected.paragraph);
+      const field = getFileField(resource!, selected!.fieldId);
+      const text = field && getParagraphText(field, selected!.paragraph);
       return result.text === text;
     });
   }),
@@ -115,16 +113,17 @@ export const pdfUrl = combineLatest([
     viewerStore.setPage,
     viewerState.pdfPreview.pipe(
       filter((p) => !!p),
-      map((p) => p.page),
+      map((p) => p!.page),
     ),
   ),
 ]).pipe(
   filter(([resource, selected]) => !!resource && !!selected),
   map(([resource, selected, pageIndex]) => {
-    const field = getFileField(resource, selected.fieldId);
-    return getPages(field)[pageIndex];
+    const field = getFileField(resource!, selected!.fieldId);
+    return field && getPages(field)[pageIndex];
   }),
-);
+  filter((pages) => !!pages)
+) as Observable<CloudLink>;
 
 export function initStore() {
   viewerStore.resource.next(null);
@@ -206,32 +205,29 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
   return resource.search(query, [Search.Features.PARAGRAPH]).pipe(
     map((results) => results.paragraphs?.results || []),
     map((paragraphs) =>
-      paragraphs.map((searchParagraph) => {
-        const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
-        const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
-        if (field && paragraph) {
-          return getParagraph(getFieldType(searchParagraph.field_type), searchParagraph.field, field, paragraph);
-        } else {
-          return {
-            fieldType: getFieldType(searchParagraph.field_type),
-            fieldId: searchParagraph.field,
-            text: searchParagraph.text,
-            preview: PreviewKind.NONE,
-          };
-        }
-      }),
-    ),
+      paragraphs
+        .map((searchParagraph) => {
+          const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
+          const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
+          if (field && paragraph) {
+            return getParagraph(getFieldType(searchParagraph.field_type), searchParagraph.field, field, paragraph);
+          } else {
+            return null;
+          }
+        })
+        .filter((p)=> !!p) as WidgetParagraph[],
+    )
   );
 }
 
 export function getResourceParagraphs(resource: Resource): WidgetParagraph[] {
   return getFields(resource)
-    .filter((field) => !!field.extracted?.metadata?.metadata?.paragraphs)
+    .filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs)
     .reduce(
       (acc, current) =>
         acc.concat(
-          current.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
-            return getParagraph(current.field_type, current.field_id, current, paragraph);
+          current.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
+            return getParagraph(current.field_type, current.field_id, current.field, paragraph);
           }),
         ),
       [] as WidgetParagraph[],
@@ -243,10 +239,18 @@ function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
     return paragraphs.slice().sort((a, b) => {
       const aIsNumber = typeof a.paragraph.start === 'number';
       const bIsNumber = typeof b.paragraph.start === 'number';
-      if (!aIsNumber && !bIsNumber) return 0;
-      if (aIsNumber && !bIsNumber) return 1;
-      if (!aIsNumber && bIsNumber) return -1;
-      if (aIsNumber && bIsNumber) return a.paragraph.start! - b.paragraph.start!;
+      if (!aIsNumber && !bIsNumber) {
+        return 0;
+      }
+      else if (aIsNumber && !bIsNumber) {
+        return 1;
+      }
+      else if (!aIsNumber && bIsNumber) {
+        return -1;
+      }
+      else {
+        return a.paragraph.start! - b.paragraph.start!;
+      }
     });
   }
   return paragraphs;
@@ -273,7 +277,7 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
 function getParagraph(fieldType: string, fieldId: string, field: IFieldData, paragraph: Paragraph): WidgetParagraph {
   const baseParagraph = {
     paragraph: paragraph,
-    text: getParagraphText(field, paragraph),
+    text: getParagraphText(field, paragraph) || '',
     fieldType: fieldType,
     fieldId: fieldId,
   };
@@ -288,7 +292,7 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     return {
       ...baseParagraph,
       preview: kind,
-      time: paragraph.start_seconds[0],
+      time: paragraph.start_seconds?.[0] || 0,
     };
   } else {
     return {
@@ -298,21 +302,22 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
   }
 }
 
-export function getFields(resource: Resource): ResourceField[] {
+export function getFields(resource: Resource) {
   return Object.keys(resource.data)
     .reduce((acc, fieldType) => {
-      const fields = Object.keys(resource.data[fieldType]).map((fieldId) => [fieldType, fieldId]);
+      const fieldKeys = Object.keys(resource.data[fieldType as keyof ResourceData] || {});
+      const fields = fieldKeys.map((fieldId) => [fieldType, fieldId]);
       return acc.concat(fields);
-    }, [])
+    }, [] as string[][])
     .map(([fieldType, fieldId]) => ({
-      ...resource.data[fieldType][fieldId],
+      field: resource.data[fieldType as keyof ResourceData]![fieldId],
       field_type: fieldType,
       field_id: fieldId,
     }));
 }
 
 export function getField(resource: Resource, fieldType: string, fieldId: string): IFieldData | undefined {
-  return resource.data[fieldType]?.[fieldId];
+  return resource.data[fieldType as keyof ResourceData]?.[fieldId];
 }
 
 export function getFileField(resource: Resource, fieldId: string): FileFieldData | undefined {
@@ -320,18 +325,24 @@ export function getFileField(resource: Resource, fieldId: string): FileFieldData
 }
 
 export function getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
-  return field.extracted?.text?.text.slice(paragraph.start, paragraph.end);
+  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end);
 }
 
 export function getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
-  return field.extracted?.text?.text.slice(sentence.start, sentence.end);
+  return field.extracted?.text?.text?.slice(sentence.start, sentence.end);
 }
 
 export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
-  return (fileField.extracted?.file?.file_pages_previews?.positions || []).reduce((acc, current, index) => {
+  return (fileField.extracted?.file?.file_pages_previews?.positions || []).reduce((acc, page, index) => {
+    if (
+      typeof paragraph.start !== 'number' || typeof paragraph.end !== 'number' || 
+      typeof page.start !== 'number' || typeof page.end !== 'number' 
+    ) {
+      return acc;
+    }
     const overlapping =
-      (paragraph.start >= current.start && paragraph.start <= current.end) ||
-      (paragraph.end >= current.start && paragraph.end <= current.end);
+      (paragraph.start >= page.start && paragraph.start <= page.end) ||
+      (paragraph.end >= page.start && paragraph.end <= page.end);
     return overlapping ? acc.concat([index]) : acc;
   }, [] as number[]);
 }
@@ -353,15 +364,15 @@ export function getVideoStream(fileField: FileFieldData):  CloudLink | undefined
 export function getLinks(resource: Resource): string[] {
   return resource
     .getFields(['links'])
-    .filter((field) => !!field.value)
-    .map((field) => (field as LinkFieldData)!.value!.uri);
+    .map((field) => (field as LinkFieldData).value?.uri) 
+    .filter((uri) => !!uri) as string[];
 }
 
 export function getLinksPreviews(resource: Resource): CloudLink[] {
   return resource
     .getFields(['links'])
     .map((field) => (field as LinkFieldData).extracted?.link?.link_preview)
-    .filter((preview) => !!preview);
+    .filter((preview) => !!preview) as CloudLink[];
 }
 
 export function findFileByType(resource: Resource, type: string): string | undefined {
@@ -377,7 +388,7 @@ function isFileType(fileField: FileFieldData, type: string): boolean {
   return contentType === type || contentType.slice(0, type.length) === type;
 }
 
-function getFieldType(fieldType: string): string {
+function getFieldType(fieldType: string): keyof ResourceData {
   if (fieldType === 'f') {
     return 'files';
   } else if (fieldType === 'u') {
