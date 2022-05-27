@@ -21,6 +21,7 @@ export const DropboxConnector: SourceConnectorDefinition = {
 
 const DROPBOX_VERIFIER_CODE_KEY = 'DROPBOX_VERIFIER_CODE';
 const DROPBOX_TOKEN_KEY = 'DROPBOX_TOKEN';
+const DROPBOX_REFRESH_TOKEN_KEY = 'DROPBOX_REFRESH_TOKEN';
 class DropboxImpl implements ISourceConnector {
   hasServerSideAuth = true;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -34,46 +35,73 @@ class DropboxImpl implements ISourceConnector {
 
   goToOAuth() {
     injectScript('https://cdnjs.cloudflare.com/ajax/libs/dropbox.js/10.30.0/Dropbox-sdk.min.js').subscribe(() => {
-      this.dbxAuth = new Dropbox.DropboxAuth({
-        clientId: this.CLIENT_ID,
-      });
-      this.dbxAuth
-        .getAuthenticationUrl(this.getRedirect(), undefined, 'code', 'offline', undefined, undefined, true)
-        .then((authUrl: string) => {
-          localStorage.setItem(DROPBOX_VERIFIER_CODE_KEY, this.dbxAuth.codeVerifier);
-          if ((window as any)['electron']) {
-            (window as any)['electron'].openExternal(authUrl);
-          } else {
-            location.href = authUrl;
-          }
+      const token = localStorage.getItem(DROPBOX_TOKEN_KEY);
+      if (!token) {
+        this.dbxAuth = new Dropbox.DropboxAuth({
+          clientId: this.CLIENT_ID,
         });
+        this.dbxAuth
+          .getAuthenticationUrl(this.getRedirect(), undefined, 'code', 'offline', undefined, undefined, true)
+          .then((authUrl: string) => {
+            localStorage.setItem(DROPBOX_VERIFIER_CODE_KEY, this.dbxAuth.codeVerifier);
+            if ((window as any)['electron']) {
+              (window as any)['electron'].openExternal(authUrl);
+            } else {
+              location.href = authUrl;
+            }
+          });
+      } else {
+        this.dbxAuth = new Dropbox.DropboxAuth({
+          clientId: this.CLIENT_ID,
+          accessToken: token,
+          refreshToken: localStorage.getItem(DROPBOX_REFRESH_TOKEN_KEY),
+        });
+      }
     });
   }
 
   authenticate(): Observable<boolean> {
     if (!this.isAuthenticated.getValue()) {
       injectScript('https://cdnjs.cloudflare.com/ajax/libs/dropbox.js/10.30.0/Dropbox-sdk.min.js').subscribe(() => {
-        if (!this.dbxAuth) {
-          this.dbxAuth = new Dropbox.DropboxAuth({
-            clientId: this.CLIENT_ID,
-          });
-          this.dbxAuth.setCodeVerifier(localStorage.getItem(DROPBOX_VERIFIER_CODE_KEY));
-        }
-        const interval = setInterval(() => {
-          const deeplink = (window as any)['deeplink'] || location.search;
-          if (deeplink && deeplink.includes('?')) {
-            const code = new URLSearchParams(deeplink.split('?')[1]).get('code');
-            clearInterval(interval);
-            this.dbxAuth.getAccessTokenFromCode(this.getRedirect(), code).then((response: any) => {
-              localStorage.setItem(DROPBOX_TOKEN_KEY, response.result.access_token);
-              this.dbxAuth.setAccessToken(response.result.access_token);
-              this.dbx = new Dropbox.Dropbox({
-                auth: this.dbxAuth,
-              });
-              this.isAuthenticated.next(true);
+        const token = localStorage.getItem(DROPBOX_TOKEN_KEY);
+        if (!token) {
+          if (!this.dbxAuth) {
+            this.dbxAuth = new Dropbox.DropboxAuth({
+              clientId: this.CLIENT_ID,
             });
+            this.dbxAuth.setCodeVerifier(localStorage.getItem(DROPBOX_VERIFIER_CODE_KEY));
           }
-        }, 500);
+          const interval = setInterval(() => {
+            const deeplink = (window as any)['deeplink'] || location.search;
+            if (deeplink && deeplink.includes('?')) {
+              const code = new URLSearchParams(deeplink.split('?')[1]).get('code');
+              clearInterval(interval);
+              this.dbxAuth.getAccessTokenFromCode(this.getRedirect(), code).then((response: any) => {
+                localStorage.setItem(DROPBOX_TOKEN_KEY, response.result.access_token);
+                localStorage.setItem(DROPBOX_REFRESH_TOKEN_KEY, response.result.refresh_token);
+                this.dbxAuth.setAccessToken(response.result.access_token);
+                this.dbxAuth.setRefreshToken(response.result.refresh_token);
+                this.dbx = new Dropbox.Dropbox({
+                  auth: this.dbxAuth,
+                });
+                this.isAuthenticated.next(true);
+              });
+            }
+          }, 500);
+        } else {
+          if (!this.dbxAuth) {
+            this.dbxAuth = new Dropbox.DropboxAuth({
+              clientId: this.CLIENT_ID,
+              accessToken: token,
+              refreshToken: localStorage.getItem(DROPBOX_REFRESH_TOKEN_KEY),
+            });
+            this.dbxAuth.setCodeVerifier(localStorage.getItem(DROPBOX_VERIFIER_CODE_KEY));
+          }
+          this.dbx = new Dropbox.Dropbox({
+            auth: this.dbxAuth,
+          });
+          this.isAuthenticated.next(true);
+        }
       });
     }
     return this.isAuthenticated.asObservable();

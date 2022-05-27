@@ -40,13 +40,20 @@ export class UploadComponent {
         .pipe(
           tap((source) => (this.source = source)),
           switchMap((source) => source.authenticate()),
+          filter((yes) => yes),
         )
-        .subscribe(() => localStorage.removeItem(SOURCE_ID_KEY));
+        .subscribe(() => {
+          this.triggerSearch.next();
+          localStorage.removeItem(SOURCE_ID_KEY);
+        });
     }
   }
 
   next() {
     this.step++;
+    if (this.step === 1) {
+      this.triggerSearch.next();
+    }
     this.cdr.detectChanges();
   }
 
