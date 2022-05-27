@@ -7,6 +7,7 @@
   "electronCompile": false,
   "asar": true,
   "asarUnpack": ["dist/apps/desktop-electron/jobs/main.js"],
+  "afterSign": "apps/desktop/electron/scripts/notarize.js",
   "win": {
     "icon": "apps/desktop/electron/icons/win/icon.ico",
     "publish": ["github"]
@@ -14,7 +15,7 @@
   "mac": {
     "category": "public.app-category.productivity",
     "icon": "apps/desktop/electron/icons/mac/icon.icns",
-    "target": ["pkg"],
+    "target": ["dmg", "zip"],
     "type": "distribution",
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
@@ -23,7 +24,8 @@
     "publish": ["github"]
   },
   "dmg": {
-    "backgroundColor": "#000"
+    "backgroundColor": "#000",
+    "sign": false
   },
   "pkg": {
     "welcome": "apps/desktop/electron/pkg/welcome.txt",
