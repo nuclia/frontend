@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { STFTrackingService } from '@flaps/auth';
+import { STFTrackingService, SDKService } from '@flaps/auth';
 import { filter, map, switchMap } from 'rxjs';
 import { AddWidgetDialogComponent } from './add/add-widget.component';
 import { WidgetService } from './widget.service';
+import { NavigationService } from '../services/navigation.service';
 
 const DEFAULT_WIDGET = 'dashboard';
 @Component({
@@ -25,13 +26,17 @@ export class WidgetsComponent {
       }));
     })
   );
+  showLink = this.sdk.currentKb.pipe(map((kb) => !!kb.admin && kb.state === 'PRIVATE'));
+  homeUrl = this.navigation.homeUrl;
 
   constructor(
     private dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private widgetService: WidgetService,
-    private tracking: STFTrackingService
+    private tracking: STFTrackingService,
+    private sdk: SDKService,
+    private navigation: NavigationService,
   ) {}
 
   addWidget() {

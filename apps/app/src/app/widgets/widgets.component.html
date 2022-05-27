@@ -10,5 +10,17 @@
                 color="secondary">
       {{ 'stash.widgets.add' | translate }}
     </stf-button>
+    <div class="warning">
+      <svg-icon src="assets/icons/toast-warning.svg"></svg-icon>
+      <div>
+        <span [innerHTML]="'stash.widgets.warning' | translate"></span>
+        <ng-container *ngIf="showLink | async">
+          <span>&nbsp;</span>
+          <span [innerHTML]="'stash.widgets.publish_kb' | translate"></span>
+          <span>&nbsp;</span>
+          <a [routerLink]="homeUrl | async">{{ 'stash.widgets.publish_kb_link' | translate }}</a>
+        </ng-container>
+      </div>
+    </div>
   </stf-section-navbar-footer>
 </stf-section-navbar>
