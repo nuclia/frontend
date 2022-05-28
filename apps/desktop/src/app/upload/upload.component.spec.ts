@@ -30,7 +30,7 @@ describe('UploadComponent', () => {
         STFButtonsModule,
         STFInputModule,
         MatDialogModule,
-        ConfirmFilesModule
+        ConfirmFilesModule,
       ],
       providers: [
         {
@@ -67,6 +67,10 @@ describe('UploadComponent', () => {
                       type: 'text',
                     },
                   ]),
+              }),
+            getSource: (id: string) =>
+              of({
+                authenticate: () => of(true),
               }),
           },
         },
