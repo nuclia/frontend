@@ -107,27 +107,43 @@ class DropboxImpl implements ISourceConnector {
     return this.isAuthenticated.asObservable();
   }
 
-  getFiles(query?: string): Observable<SyncItem[]> {
+  getFiles(query?: string, start?: number): Observable<SyncItem[]> {
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),
       switchMap(() =>
-        from(
-          this.dbx.filesListFolder({
-            path: '',
-          }),
-        ),
+        !query
+          ? from(
+              this.dbx.filesListFolder({
+                path: '',
+              }),
+            ).pipe(
+              /* eslint-disable  @typescript-eslint/no-explicit-any */
+              map((res: any) => res.result.entries?.map(this.mapFiles) || []),
+            )
+          : from(this.dbx.filesSearch({ path: '', query })).pipe(
+              /* eslint-disable  @typescript-eslint/no-explicit-any */
+              map((res: any) => res.result?.matches?.map(this.mapResults) || []),
+            ),
       ),
-      /* eslint-disable  @typescript-eslint/no-explicit-any */
-      map((res: any) => res.result.entries.map(this.map)),
     );
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  map(raw: any): SyncItem {
+  private mapFiles(raw: any): SyncItem {
     return {
       title: raw?.['name'] || '',
       originalId: raw?.['id'] || '',
+      metadata: {},
+      status: FileStatus.PENDING,
+    };
+  }
+
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  private mapResults(raw: any): SyncItem {
+    return {
+      title: raw.metadata?.['name'] || '',
+      originalId: raw.metadata?.['id'] || '',
       metadata: {},
       status: FileStatus.PENDING,
     };

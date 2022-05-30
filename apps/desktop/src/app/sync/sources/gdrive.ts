@@ -69,7 +69,7 @@ class GDriveImpl implements ISourceConnector {
     return this.isAuthenticated.asObservable();
   }
 
-  getFiles(query?: string): Observable<SyncItem[]> {
+  getFiles(query?: string, start?: number): Observable<SyncItem[]> {
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),

@@ -57,6 +57,9 @@ export class AppComponent implements OnInit {
               access_token: querystring.get('access_token') || '',
               refresh_token: querystring.get('refresh_token') || '',
             });
+            if (!(window as any)['deeplink']) {
+              location.search = '';
+            }
             clearInterval(interval);
           }
         } else {

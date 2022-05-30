@@ -28,7 +28,6 @@ describe('UploadComponent', () => {
         RouterTestingModule,
         ReactiveFormsModule,
         STFButtonsModule,
-        STFInputModule,
         MatDialogModule,
         ConfirmFilesModule,
       ],
