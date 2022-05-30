@@ -4,19 +4,21 @@
   </div>
   <div class="content">
     <ng-container *ngIf="step === 0">
+      <h3>{{ 'upload.source.title' | translate}}</h3>
+      <p>{{ 'upload.source.help' | translate}}</p>
       <da-connectors type="sources"
                      (onSelect)="selectSource($event)"></da-connectors>
     </ng-container>
     <ng-container *ngIf="step === 1">
-      <stf-button qa="next"
-                  (click)="next()">{{ 'Next' | translate }}</stf-button>
+      <h3>{{ 'upload.select.title' | translate}}</h3>
       <div class="search-form">
         <stf-input [(value)]="query"></stf-input>
-        <stf-button (click)="triggerSearch.next()">{{ 'Search' | translate }}</stf-button>
+        <stf-button (click)="triggerSearch.next()"
+                    size="small">{{ 'upload.select.search' | translate }}</stf-button>
       </div>
       <table>
         <tr *ngFor="let resource of (resources | async)">
-          <td>
+          <td class="checkbox">
             <stf-checkbox [selected]="selection.isSelected(resource)"
                           (selectedChange)="selection.toggle(resource)"></stf-checkbox>
           </td>
@@ -24,6 +26,8 @@
           <td>{{ resource.type }}</td>
         </tr>
       </table>
+      <stf-button qa="next"
+                  (click)="next()">{{ 'generic.next' | translate }}</stf-button>
     </ng-container>
     <ng-container *ngIf="step === 2">
       <h2>Push to</h2>
@@ -32,4 +36,3 @@
     </ng-container>
   </div>
 </div>
-

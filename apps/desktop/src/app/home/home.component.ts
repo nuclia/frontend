@@ -26,9 +26,9 @@ export class HomeComponent {
     ),
   );
   pending = this.queue.pipe(map((syncs) => syncs.filter((sync) => !sync.completed && !sync.started)));
-  active = this.queue.pipe(map((syncs) => syncs.filter((sync) => sync.started)));
+  active = this.queue.pipe(map((syncs) => syncs.filter((sync) => !sync.completed && sync.started)));
   completed = this.queue.pipe(map((syncs) => syncs.filter((sync) => sync.completed)));
-  
+
   sections = [
     { title: 'home.pending', type: 'pending', items: this.pending },
     { title: 'home.active', type: 'active', items: this.active },
@@ -41,7 +41,7 @@ export class HomeComponent {
     this.active.pipe(take(1)).subscribe((syncs) => {
       this.selected = syncs.length > 0 ? 'active' : null;
       this.cdr?.markForCheck();
-    })
+    });
   }
 
   toggle(section: SectionType) {

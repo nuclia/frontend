@@ -29,6 +29,7 @@ export const GDrive: SourceConnectorDefinition = {
 };
 
 class GDriveImpl implements ISourceConnector {
+  hasServerSideAuth = false;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   API_KEY: string;
   CLIENT_ID: string;
@@ -36,6 +37,10 @@ class GDriveImpl implements ISourceConnector {
   constructor(data?: ConnectorSettings) {
     this.API_KEY = data?.API_KEY || '';
     this.CLIENT_ID = data?.CLIENT_ID || '';
+  }
+
+  goToOAuth() {
+    // no backend oauth flow for Google
   }
 
   authenticate(): Observable<boolean> {
@@ -88,14 +93,14 @@ class GDriveImpl implements ISourceConnector {
     return {
       title: raw?.['name'] || '',
       originalId: raw?.['id'] || '',
-      type: raw['mimeType'],
+      metadata: { mimeType: raw['mimeType'] },
       status: FileStatus.PENDING,
     };
   }
 
   download(resource: SyncItem): Observable<Blob> {
     return new Observable<Blob>((observer) => {
-      const request = resource.type.startsWith('application/vnd.google-apps')
+      const request = resource.metadata['mimeType'].startsWith('application/vnd.google-apps')
         ? `https://www.googleapis.com/drive/v3/files/${resource.originalId}/export?mimeType=application/pdf&supportsAllDrives=true`
         : `https://www.googleapis.com/drive/v3/files/${resource.originalId}?alt=media&supportsAllDrives=true`;
 

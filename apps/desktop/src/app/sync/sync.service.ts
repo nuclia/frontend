@@ -17,6 +17,7 @@ import {
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
 import { SDKService } from '@flaps/auth';
+import { DropboxConnector } from './sources/dropbox';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
@@ -37,6 +38,7 @@ interface Sync {
 export class SyncService {
   sources: { [id: string]: { definition: SourceConnectorDefinition; settings: ConnectorSettings } } = {
     gdrive: { definition: GDrive, settings: environment.connectors.gdrive },
+    dropbox: { definition: DropboxConnector, settings: environment.connectors.dropbox },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {

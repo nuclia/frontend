@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from '../environments/environment';
+import { SOURCE_ID_KEY } from './sync/models';
 
 @Component({
   selector: 'da-root',
@@ -15,6 +18,7 @@ export class AppComponent implements OnInit {
     private translate: TranslateService,
     private user: UserService,
     private sdk: SDKService,
+    private router: Router,
   ) {
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
@@ -45,8 +49,8 @@ export class AppComponent implements OnInit {
   authenticate() {
     if (!this.sdk.nuclia.auth.getToken()) {
       const interval = setInterval(() => {
+        const deeplink = (window as any)['deeplink'] || location.search;
         if (!this.sdk.nuclia.auth.getToken()) {
-          const deeplink = (window as any)['deeplink'];
           if (deeplink && deeplink.includes('?')) {
             const querystring = new URLSearchParams(deeplink.split('?')[1]);
             this.sdk.nuclia.auth.authenticate({
@@ -60,11 +64,19 @@ export class AppComponent implements OnInit {
         }
       }, 500);
       if ((window as any)['electron']) {
-        (window as any)['electron'].openExternal('http://localhost:4200/redirect?redirect=nuclia-desktop://');
-      } else {
+        (window as any)['electron'].openExternal(`${environment.dashboard}/redirect?redirect=nuclia-desktop://`);
+      } else if (!location.search) {
         // dev mode in browser
-        location.href = 'https://stashify.cloud/redirect?redirect=http://localhost:4200';
+        location.href = `${environment.dashboard}/redirect?redirect=http://localhost:4200`;
       }
+    } else if (localStorage.getItem(SOURCE_ID_KEY)) {
+      const interval = setInterval(() => {
+        const deeplink = (window as any)['deeplink'] || location.search;
+        if (deeplink && deeplink.includes('?')) {
+          this.router.navigateByUrl(`/add-upload${deeplink}`);
+          clearInterval(interval);
+        }
+      }, 500);
     }
   }
 }

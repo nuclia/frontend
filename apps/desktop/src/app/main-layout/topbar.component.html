@@ -28,7 +28,7 @@
   <div class="user-menu"
        @dropdownTopRight>
     <a class="user-menu-item"
-       [routerLink]="'/user/logout'">
+       (click)="logout()">
       <svg-icon src="assets/icons/logout.svg"></svg-icon>
       <span>{{'generic.logout' | translate}}</span>
     </a>

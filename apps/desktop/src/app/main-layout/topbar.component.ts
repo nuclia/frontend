@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService, StateService } from '@flaps/auth';
+import { UserService, StateService, SDKService } from '@flaps/auth';
 import { map } from 'rxjs';
-import { stfAnimations } from '@flaps/pastanaga'; 
-
+import { stfAnimations } from '@flaps/pastanaga';
 
 @Component({
   selector: 'da-topbar',
@@ -17,13 +16,22 @@ export class TopbarComponent {
     private router: Router,
     private user: UserService,
     private state: StateService,
+    private sdk: SDKService,
   ) {}
 
   menuOpen = false;
   account = this.state.account;
 
   initials = this.user.userPrefs.pipe(
-    map((prefs) => prefs?.name?.split(' ').slice(0,2).map((word) => word[0]).join('').toUpperCase() || '')
+    map(
+      (prefs) =>
+        prefs?.name
+          ?.split(' ')
+          .slice(0, 2)
+          .map((word) => word[0])
+          .join('')
+          .toUpperCase() || '',
+    ),
   );
 
   goHome() {
@@ -35,7 +43,7 @@ export class TopbarComponent {
   }
 
   logout() {
-    this.router.navigate(['/user/logout']);
+    this.sdk.nuclia.auth.logout();
+    window.close();
   }
-
 }

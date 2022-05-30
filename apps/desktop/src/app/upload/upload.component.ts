@@ -1,9 +1,9 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, filter, Observable, of, Subject, switchMap } from 'rxjs';
+import { filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConnectorParameters, SyncItem, ConnectorDefinition } from '../sync/models';
+import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector, SOURCE_ID_KEY } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
@@ -15,14 +15,12 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 })
 export class UploadComponent {
   step = 0;
-  sourceId = new BehaviorSubject<string>('');
   query = '';
-  triggerSearch = new Subject();
+  triggerSearch = new Subject<void>();
+  sourceId = '';
+  source?: ISourceConnector;
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
-    switchMap(() => this.sourceId),
-    filter((id) => !!id),
-    switchMap((id) => this.sync.getSource(id)),
-    switchMap((source) => source.getFiles(this.query)),
+    switchMap(() => (this.source ? this.source.getFiles(this.query) : of([]))),
   );
   selection = new SelectionModel<SyncItem>(true, []);
 
@@ -30,36 +28,71 @@ export class UploadComponent {
     private sync: SyncService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private dialog: MatDialog
-  ) {}
+    private dialog: MatDialog,
+  ) {
+    this.sourceId = localStorage.getItem(SOURCE_ID_KEY) || '';
+    // useful for dev mode in browser (in Electron, as the page is not reloaded, authneticate is already waiting for an answer)
+    if (this.sourceId && !this.source) {
+      this.step = 1;
+      this.sync
+        .getSource(this.sourceId)
+        .pipe(take(1))
+        .pipe(
+          tap((source) => (this.source = source)),
+          switchMap((source) => source.authenticate()),
+          filter((yes) => yes),
+        )
+        .subscribe(() => {
+          this.triggerSearch.next();
+          localStorage.removeItem(SOURCE_ID_KEY);
+        });
+    }
+  }
 
   next() {
     this.step++;
+    if (this.step === 1) {
+      this.triggerSearch.next();
+    }
     this.cdr.detectChanges();
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
-    this.sourceId.next(event.connector.id);
-    this.next();
+    this.sync
+      .getSource(event.connector.id)
+      .pipe(
+        take(1),
+        switchMap((source) => {
+          this.source = source;
+          if (source.hasServerSideAuth) {
+            localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
+            source.goToOAuth();
+          }
+          return this.source.authenticate();
+        }),
+        filter((yes) => yes),
+      )
+      .subscribe(() => this.next());
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
-    this.dialog.open(ConfirmFilesComponent, {
-      data: { files: this.selection.selected },
-    })
-    .afterClosed()
+    this.dialog
+      .open(ConfirmFilesComponent, {
+        data: { files: this.selection.selected },
+      })
+      .afterClosed()
       .pipe(filter((result) => !!result))
       .subscribe(() => {
         this.sync.addSync({
           date: new Date().toISOString(),
-          source: this.sourceId.getValue(),
+          source: this.sourceId,
           destination: {
             id: event.connector.id,
             params: event.params,
           },
           files: this.selection.selected,
         });
-        this.router.navigate(['/']); 
-      })
+        this.router.navigate(['/']);
+      });
   }
 }

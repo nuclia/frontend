@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 
+export const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
 export interface ConnectorDefinition {
   id: string;
   title: string;
@@ -17,6 +18,8 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
 export interface IConnector {}
 
 export interface ISourceConnector extends IConnector {
+  hasServerSideAuth: boolean;
+  goToOAuth(): void;
   authenticate(): Observable<boolean>;
   getFiles(query?: string): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob>;
@@ -31,7 +34,7 @@ export enum FileStatus {
 export interface SyncItem {
   title: string;
   originalId: string;
-  type: string;
+  metadata: { [key: string]: string };
   status: FileStatus;
 }
 
