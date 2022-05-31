@@ -1,6 +1,6 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipeMock } from '@flaps/core';
 import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
@@ -26,8 +26,10 @@ describe('UploadComponent', () => {
       imports: [
         NoopAnimationsModule,
         RouterTestingModule,
+        FormsModule,
         ReactiveFormsModule,
         STFButtonsModule,
+        STFInputModule,
         MatDialogModule,
         ConfirmFilesModule,
       ],
@@ -92,11 +94,16 @@ describe('UploadComponent', () => {
     expect(component.step).toEqual(0);
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     expect(component.step).toEqual(1);
+    fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="next"]').click();
     expect(component.step).toEqual(2);
+    fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('.connector').click();
+    fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="validate"]').click();
+    fixture.detectChanges();
     (document.querySelector('[qa="confirm"]') as HTMLElement).click();
+    fixture.detectChanges();
     expect(sync.addSync).toHaveBeenCalled();
   });
 });
