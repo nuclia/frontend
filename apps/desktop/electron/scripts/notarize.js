@@ -12,7 +12,7 @@ exports.default = async function notarizing(context) {
   return await notarize({
     appBundleId: 'cloud.nuclia.desktop',
     appPath: `${appOutDir}/${appName}.app`,
-    appleId: process.env.APPLEID,
-    appleIdPassword: process.env.APPLEIDPASS,
+    appleApiIssuer: process.env.APPLE_API_ISSUER,
+    appleApiKey: process.env.APPLE_API_KEY,
   });
 };
