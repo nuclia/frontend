@@ -8,6 +8,8 @@ import type {
   IKnowledgeBoxItem,
   KnowledgeBox,
   KnowledgeBoxCreation,
+  NUAClient,
+  NUAClientPayload,
   ProcessingStat,
   StatsPeriod,
   StatsType,
@@ -74,6 +76,11 @@ export interface IDb {
   ): Observable<ProcessingStat[]>;
   upload(file: File): Observable<void>;
   pull(): Observable<void>;
+  getNUAClients(account: string): Observable<NUAClient[]>;
+  getNUAClient(account: string, client_id: string): Observable<NUAClient>;
+  createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
+  renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
+  deleteNUAClient(account: string, client_id: string): Observable<void>;
 }
 
 export interface NucliaOptions {
