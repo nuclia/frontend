@@ -18,7 +18,7 @@ export class LoggedinGuard implements CanActivate, CanActivateChild, CanLoad {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const url: string = state.url;
+    const url: string = state.url.split('?')[0];
 
     return this.checkLogin(url, next.queryParams);
   }
