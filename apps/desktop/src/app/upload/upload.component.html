@@ -11,11 +11,13 @@
     </ng-container>
     <ng-container *ngIf="step === 1">
       <h3>{{ 'upload.select.title' | translate}}</h3>
-      <div class="search-form">
-        <stf-input [(value)]="query"></stf-input>
-        <stf-button (click)="triggerSearch.next()"
+      <form class="search-form"
+            #form="ngForm">
+        <input ngModel
+               name="query">
+        <stf-button (click)="search(form.value.query)"
                     size="small">{{ 'upload.select.search' | translate }}</stf-button>
-      </div>
+      </form>
       <table>
         <tr *ngFor="let resource of (resources | async)">
           <td class="checkbox">

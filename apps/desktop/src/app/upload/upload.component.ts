@@ -1,5 +1,5 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -13,14 +13,15 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
   styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadComponent {
+export class UploadComponent implements OnInit {
   step = 0;
   query = '';
   triggerSearch = new Subject<void>();
   sourceId = '';
   source?: ISourceConnector;
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
-    switchMap(() => (this.source ? this.source.getFiles(this.query) : of([]))),
+    filter(() => !!this.source),
+    switchMap(() => (this.source as ISourceConnector).getFiles(this.query)),
   );
   selection = new SelectionModel<SyncItem>(true, []);
 
@@ -29,11 +30,12 @@ export class UploadComponent {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private dialog: MatDialog,
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.sourceId = localStorage.getItem(SOURCE_ID_KEY) || '';
     // useful for dev mode in browser (in Electron, as the page is not reloaded, authneticate is already waiting for an answer)
     if (this.sourceId && !this.source) {
-      this.step = 1;
       this.sync
         .getSource(this.sourceId)
         .pipe(take(1))
@@ -43,7 +45,7 @@ export class UploadComponent {
           filter((yes) => yes),
         )
         .subscribe(() => {
-          this.triggerSearch.next();
+          this.next();
           localStorage.removeItem(SOURCE_ID_KEY);
         });
     }
@@ -52,7 +54,7 @@ export class UploadComponent {
   next() {
     this.step++;
     if (this.step === 1) {
-      this.triggerSearch.next();
+      setTimeout(() => this.triggerSearch.next(), 200);
     }
     this.cdr.detectChanges();
   }
@@ -94,5 +96,10 @@ export class UploadComponent {
         });
         this.router.navigate(['/']);
       });
+  }
+
+  search(query: string) {
+    this.query = query;
+    this.triggerSearch.next();
   }
 }

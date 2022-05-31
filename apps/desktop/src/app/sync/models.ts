@@ -21,7 +21,7 @@ export interface ISourceConnector extends IConnector {
   hasServerSideAuth: boolean;
   goToOAuth(): void;
   authenticate(): Observable<boolean>;
-  getFiles(query?: string): Observable<SyncItem[]>;
+  getFiles(query?: string, start?: number): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob>;
 }
 
