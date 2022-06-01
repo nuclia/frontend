@@ -16,7 +16,7 @@ describe('SelectAccountComponent', () => {
       declarations: [SelectAccountComponent],
       imports: [RouterTestingModule],
       providers: [
-        { provide: SyncService, useValue: { setAccount: jest.fn() } },
+        { provide: SyncService, useValue: { selectAccount: jest.fn() } },
         {
           provide: SDKService,
           useValue: {
@@ -37,6 +37,6 @@ describe('SelectAccountComponent', () => {
   it('should select account', () => {
     const element = fixture.debugElement.nativeElement.querySelector('li');
     element.click();
-    expect(sync.setAccount).toHaveBeenCalledWith('account1');
+    expect(sync.selectAccount).toHaveBeenCalledWith('account1');
   });
 });

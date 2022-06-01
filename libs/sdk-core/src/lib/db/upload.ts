@@ -15,6 +15,7 @@ import {
   take,
 } from 'rxjs';
 import type { INuclia } from '../models';
+import { NUA_CLIENT, NUA_KEY } from './db.models';
 import type { ICreateResource } from './resource.models';
 
 const CHUNK_SIZE = 512 * 1024; // minimum size accepted by GCS
@@ -39,7 +40,7 @@ export interface UploadStatus {
 }
 
 export interface FileUploadStatus {
-  file: File,
+  file: File;
   progress: number;
   uploaded: boolean;
   failed: boolean;
@@ -222,7 +223,7 @@ export const batchUpload = (
     progress: 0,
     uploaded: false,
     failed: false,
-  }))
+  }));
   const uploadAll = fileList.map((file) => {
     let uploadPath = path;
     if (isResource) {
@@ -264,7 +265,7 @@ export const batchUpload = (
       const uploaded = filesStatus.filter((item) => item.uploaded).length;
       const completed = uploaded + failed === filesStatus.length;
       const progress = Math.round(
-        filesStatus.reduce((acc, status) => (acc + status.file.size * status.progress / 100), 0) / totalSize * 100
+        (filesStatus.reduce((acc, status) => acc + (status.file.size * status.progress) / 100, 0) / totalSize) * 100,
       );
       return { files: filesStatus, progress, completed, uploaded, failed, conflicts };
     }),
@@ -273,7 +274,8 @@ export const batchUpload = (
 
 export const uploadToProcess = (nuclia: INuclia, file: File, metadata?: FileMetadata): Observable<string> => {
   const headers = {
-    'x-stf-zonekey': `Bearer ${nuclia.options.zoneKey}`,
+    'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+    'x-stf-nua-internal-client-id': localStorage.getItem(NUA_CLIENT) || '',
     'content-type': metadata?.contentType || 'application/octet-stream',
     ...getFileMetadata(metadata),
   };

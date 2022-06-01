@@ -5,6 +5,7 @@ import type {
   Account,
   AccountCreation,
   AccountStatus,
+  AccountTypes,
   IKnowledgeBoxItem,
   KnowledgeBox,
   KnowledgeBoxCreation,
@@ -51,6 +52,7 @@ export interface IRest {
   delete(path: string, extraHeaders?: { [key: string]: string }): Observable<void>;
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response>;
   getZones(): Observable<{ [key: string]: string }>;
+  getZoneSlug(zoneId: string): Observable<string>;
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
 }
@@ -81,6 +83,7 @@ export interface IDb {
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(account: string, client_id: string): Observable<void>;
+  hasNUAClient(): boolean;
 }
 
 export interface NucliaOptions {
@@ -88,10 +91,10 @@ export interface NucliaOptions {
   zone?: string;
   apiKey?: string;
   account?: string;
+  accountType?: AccountTypes;
   knowledgeBox?: string;
   kbSlug?: string;
   client?: string;
-  zoneKey?: string;
 }
 
 export type PromiseMapper<T> = {

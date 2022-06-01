@@ -60,6 +60,7 @@ export class UploadComponent implements OnInit {
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
+    this.sourceId = event.connector.id;
     this.sync
       .getSource(event.connector.id)
       .pipe(

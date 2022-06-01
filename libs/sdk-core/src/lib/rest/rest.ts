@@ -38,7 +38,7 @@ export class Rest implements IRest {
   }
 
   private getHeaders(extraHeaders?: { [key: string]: string }): { [key: string]: string } {
-    const auth = extraHeaders && extraHeaders['x-stf-zonekey'] ? {} : this.nuclia.auth.getAuthHeaders();
+    const auth = extraHeaders && extraHeaders['x-stf-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders();
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
@@ -84,7 +84,11 @@ export class Rest implements IRest {
 
   getFullUrl(path: string): string {
     const isGlobal =
-      path.startsWith('/account') || path.startsWith('/user') || path.startsWith('/auth') || path.startsWith('/zones') || path.includes('/activity');
+      path.startsWith('/account') ||
+      path.startsWith('/user') ||
+      path.startsWith('/auth') ||
+      path.startsWith('/zones') ||
+      path.includes('/activity');
     const backend = isGlobal ? this.nuclia.backend : this.nuclia.regionalBackend;
     return `${backend}/v1${path}`;
   }
@@ -103,6 +107,10 @@ export class Rest implements IRest {
         return zones;
       }),
     );
+  }
+
+  getZoneSlug(zoneId: string): Observable<string> {
+    return this.getZones().pipe(map((zones) => zones[zoneId]));
   }
 
   getObjectURL(path: string): Observable<string> {
