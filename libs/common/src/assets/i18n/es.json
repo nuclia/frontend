@@ -15,7 +15,6 @@
 	"account.enhanced_model": "Modelo mejorado",
 	"account.full_name": "Nombre y Apellidos",
 	"account.generate_key": "Generar un nuevo código",
-	"account.invalid_code": "El código introducido no es válido",
 	"account.invited_user": "Hemos enviado un correo a {{user}} invitándolo en esta cuenta",
 	"account.knowledgeboxs": "Cajas de conocimiento",
 	"account.licence": "Licencia",

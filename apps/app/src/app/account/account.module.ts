@@ -29,8 +29,8 @@ import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
 import { KbAddComponent } from './account-kbs/kb-add/kb-add.component';
-import { AccountDBsComponent } from './account-dbs/account-dbs.component';
-import { DBDialogComponent } from './account-dbs/db-dialog/db-dialog.component';
+import { AccountNUAComponent } from './account-nua/account-nua.component';
+import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
 import { ChartsModule } from '../components/charts/charts.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -41,8 +41,8 @@ const Components = [
   AccountManageComponent,
   AccountKbsComponent,
   KbAddComponent,
-  AccountDBsComponent,
-  DBDialogComponent,
+  AccountNUAComponent,
+  ClientDialogComponent,
   AccountUsersComponent,
 ];
 

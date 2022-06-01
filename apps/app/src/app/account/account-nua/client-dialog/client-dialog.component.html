@@ -1,0 +1,84 @@
+<div class="client-dialog">
+  <h1>{{ (editMode ? 'account.edit_db' : 'account.create_db') | translate }}</h1>
+  <button class="close-button"
+          (click)="close()">
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
+  </button>
+
+  <form [formGroup]="clientForm"
+        (ngSubmit)="save()">
+    <div class="mb-12"
+         fxLayout="row">
+      <label for="client-title"
+             fxFlex="24%">
+        {{ 'account.title' | translate }}
+      </label>
+      <div fxFlex="70%">
+        <stf-input id="client-title"
+                   formControlName="title"
+                   [validator]="clientForm.controls['title']"
+                   [validation_messages]="validationMessages.title"
+                   [isLessen]="true">
+        </stf-input>
+      </div>
+    </div>
+
+    <div class="mb-12"
+         fxLayout="row">
+      <label for="client-email"
+             fxFlex="24%">
+        {{ 'generic.email' | translate }}
+      </label>
+      <div fxFlex="70%">
+        <stf-input id="client-email"
+                   formControlName="email"
+                   [validator]="clientForm.controls['email']"
+                   [validation_messages]="validationMessages.email"
+                   [isLessen]="true">
+        </stf-input>
+      </div>
+    </div>
+
+    <div class="mb-40"
+         fxLayout="row">
+      <label for="client-description"
+             fxFlex="24%">
+        {{ 'generic.description' | translate }}
+      </label>
+      <div fxFlex="70%">
+        <stf-textarea id="client-description"
+                      formControlName="description"
+                      initialHeight="100px">
+        </stf-textarea>
+      </div>
+    </div>
+
+    <div class="zone"
+         *ngIf="data.zones">
+      <h2>{{ 'generic.zone' | translate }}</h2>
+      <div class="mb-24">{{ 'account.db_zone_description' | translate }}</div>  
+      <select stfSelect
+              formControlName="zone"
+              class="zone-select">
+        <option *ngFor="let zone of data.zones"
+                [value]="zone.id">{{ zone.title }}</option>
+      </select>
+    </div>
+
+    <div class="mt-40"
+         fxLayout="row"
+         fxLayoutAlign="center center"
+         fxLayoutGap="10px">
+      <stf-button type="submit"
+                  minWidth="110px">
+        {{ 'generic.save' | translate }}
+      </stf-button>
+      <stf-button (click)="close()"
+                  type="button"
+                  color="gray"
+                  minWidth="110px">
+        {{ 'generic.cancel' | translate }}
+      </stf-button>
+    </div>
+  </form>
+</div>

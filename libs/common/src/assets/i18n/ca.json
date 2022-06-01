@@ -15,7 +15,6 @@
 	"account.enhanced_model": "Model millorat",
 	"account.full_name": "Nom i Cognoms",
 	"account.generate_key": "Generar un nou codi",
-	"account.invalid_code": "El codi introduït no és vàlid.",
 	"account.invited_user": "L'usuari {{user}} ha rebut un correu amb una invitació a participar en aquest compte",
 	"account.knowledgeboxs": "Caixes de coneixement",
 	"account.licence": "Llicència",
