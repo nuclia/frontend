@@ -24,7 +24,10 @@ export class FormatDatePipe implements PipeTransform {
   name: 'formatTime',
 })
 export class FormatTimePipe implements PipeTransform {
-  transform(date: Date, args?: any): string {
+  transform(date: Date | string, args?: any): string {
+    if (typeof date === 'string') {
+      date = new Date(date);
+    }
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
   }
 }

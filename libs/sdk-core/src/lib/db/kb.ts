@@ -11,7 +11,7 @@ import {
   ServiceAccountCreation,
 } from './kb.models';
 import type { INuclia } from '../models';
-import type { IKnowledgeBox, Widget, Widgets, Entities, EntitiesGroup, LabelSet, Labels } from './kb.models';
+import type { IKnowledgeBox, Widget, Widgets, Entities, EntitiesGroup, LabelSet, Labels, EventList, EventType } from './kb.models';
 import { Resource } from './resource';
 import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
 import { upload, batchUpload, FileWithMetadata, FileMetadata, UploadStatus } from './upload';
@@ -130,6 +130,15 @@ export class KnowledgeBox implements IKnowledgeBox {
           )
           .pipe(map((res) => res.token))
       : of('');
+  }
+
+  listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {
+    const params = [
+      type ? `type=${type}` : '',
+      page ? `page=${page}` : '',
+      size ? `size=${size}` : ''
+    ].filter((p) => p).join('&');
+    return this.nuclia.rest.get<EventList>(`/kb/${this.id}/activity${params ? '?' + params : ''}`);
   }
 }
 
