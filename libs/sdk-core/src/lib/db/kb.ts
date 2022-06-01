@@ -11,7 +11,17 @@ import {
   ServiceAccountCreation,
 } from './kb.models';
 import type { INuclia } from '../models';
-import type { IKnowledgeBox, Widget, Widgets, Entities, EntitiesGroup, LabelSet, Labels, EventList, EventType } from './kb.models';
+import type {
+  IKnowledgeBox,
+  Widget,
+  Widgets,
+  Entities,
+  EntitiesGroup,
+  LabelSet,
+  Labels,
+  EventList,
+  EventType,
+} from './kb.models';
 import { Resource } from './resource';
 import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
 import { upload, batchUpload, FileWithMetadata, FileMetadata, UploadStatus } from './upload';
@@ -133,11 +143,9 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {
-    const params = [
-      type ? `type=${type}` : '',
-      page ? `page=${page}` : '',
-      size ? `size=${size}` : ''
-    ].filter((p) => p).join('&');
+    const params = [type ? `type=${type}` : '', page ? `page=${page}` : '', size ? `size=${size}` : '']
+      .filter((p) => p)
+      .join('&');
     return this.nuclia.rest.get<EventList>(`/kb/${this.id}/activity${params ? '?' + params : ''}`);
   }
 }
@@ -179,7 +187,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }> {
-    return this.createResource({ links: { link }, usermetadata: metadata });
+    return this.createResource({ links: { link }, usermetadata: metadata, title: link.uri });
   }
 
   saveWidget(id: string, widget: Partial<Widget>): Observable<void> {
