@@ -81,3 +81,16 @@ export interface WelcomeUser {
 
 export type UserType = 'ROOT' | 'DEALER' | 'USER';
 export type Language = 'CA' | 'ES' | 'EN';
+
+export interface NUAClientPayload {
+  client_id: string;
+  contact: string;
+  description?: string;
+  title: string;
+}
+
+export interface NUAClient extends NUAClientPayload {
+  created: string;
+  partitions: 0;
+  zone: string;
+}

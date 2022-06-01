@@ -56,7 +56,5 @@ nx serve desktop-electron
 Build for stage:
 
 ```
-nx build desktop -c stage && \
-nx build desktop-electron -c production && \
-nx run desktop-electron:make
+./tools/build-desktop.sh
 ```

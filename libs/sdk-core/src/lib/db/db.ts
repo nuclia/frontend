@@ -1,6 +1,16 @@
 import { filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { INuclia, IDb } from '../models';
-import { Account, AccountCreation, AccountStatus, ProcessingStat, StatsPeriod, StatsType, Welcome } from './db.models';
+import {
+  Account,
+  AccountCreation,
+  AccountStatus,
+  NUAClient,
+  NUAClientPayload,
+  ProcessingStat,
+  StatsPeriod,
+  StatsType,
+  Welcome,
+} from './db.models';
 import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
 import { upload, uploadToProcess } from './upload';
@@ -131,5 +141,30 @@ export class Db implements IDb {
     return this.nuclia.rest
       .get<void>('/processing/pull', { 'x-stf-zonekey': `Bearer ${this.nuclia.options.zoneKey}` })
       .pipe(tap((res) => console.log(res)));
+  }
+
+  getNUAClients(account: string): Observable<NUAClient[]> {
+    return this.nuclia.rest
+      .get<{ clients: NUAClient[] }>(`/account/${account}/nua_clients`)
+      .pipe(map((res) => res.clients));
+  }
+
+  getNUAClient(account: string, client_id: string): Observable<NUAClient> {
+    return this.nuclia.rest.get<NUAClient>(`/account/${account}/nua_client/${client_id}`);
+  }
+
+  createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }> {
+    return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, data);
+  }
+
+  renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }> {
+    return this.nuclia.rest.put<{ client_id: string; token: string }>(
+      `/account/${account}/nua_client/${client_id}/key`,
+      {},
+    );
+  }
+
+  deleteNUAClient(account: string, client_id: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${account}/nua_client/${client_id}`);
   }
 }
