@@ -187,7 +187,12 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }> {
-    return this.createResource({ links: { link }, usermetadata: metadata, title: link.uri });
+    return this.createResource({
+      links: { link },
+      usermetadata: metadata,
+      title: link.uri,
+      icon: 'application/stf-link',
+    });
   }
 
   saveWidget(id: string, widget: Partial<Widget>): Observable<void> {
