@@ -6,6 +6,8 @@ import {
   AccountStatus,
   NUAClient,
   NUAClientPayload,
+  NUA_CLIENT,
+  NUA_KEY,
   ProcessingStat,
   StatsPeriod,
   StatsType,
@@ -13,7 +15,7 @@ import {
 } from './db.models';
 import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
-import { upload, uploadToProcess } from './upload';
+import { uploadToProcess } from './upload';
 
 export class Db implements IDb {
   private nuclia: INuclia;
@@ -68,8 +70,8 @@ export class Db implements IDb {
         switchMap((kb) =>
           this.nuclia.options.zone
             ? of(kb)
-            : this.nuclia.rest.getZones().pipe(
-                tap((zones) => (this.nuclia.options.zone = zones[kb.zone])),
+            : this.nuclia.rest.getZoneSlug(kb.zone).pipe(
+                tap((zone) => (this.nuclia.options.zone = zone)),
                 map(() => kb),
               ),
         ),
@@ -115,19 +117,24 @@ export class Db implements IDb {
   }
 
   upload(file: File): Observable<void> {
-    if (!this.nuclia.options.zoneKey) {
-      throw new Error('zoneKey must be defined in the Nuclia options to be able to call /process');
+    if (!this.hasNUAClient()) {
+      throw new Error('NUA key is needed to be able to call /process');
     }
     return uploadToProcess(this.nuclia, file).pipe(
       switchMap((token) =>
         this.nuclia.rest.post<void>(
           '/processing/push',
           {
-            uuid: 'fake',
-            kbid: 'fake',
             filefield: { file: token },
+            // RANDOM VALUES (TO BE FIXED IN THE API)
+            uuid: '691ec452-c010-4730-bc9b-c617dc85143d',
+            kbid: '691ec452-c010-4730-bc9b-c617dc85143d',
           },
-          { 'x-stf-zonekey': `Bearer ${this.nuclia.options.zoneKey}` },
+          {
+            'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+            'x-stf-nua-internal-client-id': localStorage.getItem(NUA_CLIENT) || '',
+            'x-stf-account-type': this.nuclia.options.accountType || '',
+          },
         ),
       ),
       tap((res) => console.log(res)),
@@ -135,11 +142,14 @@ export class Db implements IDb {
   }
 
   pull(): Observable<void> {
-    if (!this.nuclia.options.zoneKey) {
-      throw new Error('zoneKey must be defined in the Nuclia options to be able to call /process');
+    if (!this.hasNUAClient()) {
+      throw new Error('NUA key is needed to be able to call /process');
     }
     return this.nuclia.rest
-      .get<void>('/processing/pull', { 'x-stf-zonekey': `Bearer ${this.nuclia.options.zoneKey}` })
+      .get<void>('/processing/pull', {
+        'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+        'x-stf-nua-internal-client-id': localStorage.getItem(NUA_CLIENT) || '',
+      })
       .pipe(tap((res) => console.log(res)));
   }
 
@@ -153,8 +163,17 @@ export class Db implements IDb {
     return this.nuclia.rest.get<NUAClient>(`/account/${account}/nua_client/${client_id}`);
   }
 
+  hasNUAClient(): boolean {
+    return !!localStorage.getItem(NUA_CLIENT) && !!localStorage.getItem(NUA_KEY);
+  }
+
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }> {
-    return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, data);
+    return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, data).pipe(
+      tap((key) => {
+        localStorage.setItem(NUA_KEY, key.token);
+        localStorage.setItem(NUA_CLIENT, key.client_id);
+      }),
+    );
   }
 
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }> {

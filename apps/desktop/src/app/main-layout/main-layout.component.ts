@@ -25,7 +25,7 @@ export class MainLayoutComponent {
         take(1),
       )
       .subscribe(() => {
-        if (!this.sync.getAccount()) {
+        if (!this.sync.getAccountId()) {
           this.router.navigate(['/select']);
         }
         this.isLogged = true;

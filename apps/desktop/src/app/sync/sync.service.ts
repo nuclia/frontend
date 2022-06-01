@@ -1,5 +1,19 @@
 import { Injectable } from '@angular/core';
-import { concatMap, forkJoin, Observable, ReplaySubject, Subject, switchMap, take, tap } from 'rxjs';
+import {
+  concatMap,
+  delay,
+  forkJoin,
+  interval,
+  Observable,
+  of,
+  repeatWhen,
+  ReplaySubject,
+  Subject,
+  switchMap,
+  switchMapTo,
+  take,
+  tap,
+} from 'rxjs';
 import { environment } from '../../environments/environment';
 import { GDrive } from './sources/gdrive';
 import {
@@ -7,7 +21,6 @@ import {
   ISourceConnector,
   IDestinationConnector,
   SyncItem,
-  IConnector,
   ConnectorSettings,
   ConnectorDefinition,
   SourceConnectorDefinition,
@@ -16,7 +29,7 @@ import {
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
-import { SDKService } from '@flaps/auth';
+import { SDKService, UserService } from '@flaps/auth';
 import { DropboxConnector } from './sources/dropbox';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
@@ -50,24 +63,25 @@ export class SyncService {
 
   private _queue: Sync[] = [];
   queue = new ReplaySubject<Sync[]>(1);
+  ready = new Subject<void>();
 
-  constructor(private sdk: SDKService) {
+  constructor(private sdk: SDKService, private user: UserService) {
     //     create a key first time we launch desktop
     //     use header X-STF-Zonekey to push and pull
     //     - first call /upload https://github.com/nuclia/backend/blob/master/processing/proxy/nucliadb_proxy/api/v1/tus_api.py#L315
     //     with as many field I want, I get a json token for each
     // - then I call push with a PushPayload indicating all the fields (the values are the tokens), I get an id
     // - then pull regularly to see what is processed (it returns a protobuf)
-    this.watchProcessing();
-    const account = this.getAccount();
+    this.ready.subscribe(() => {
+      this.watchProcessing();
+      this.start();
+    });
+    const account = this.getAccountId();
     if (account) {
-      this.sdk.setCurrentAccount(account).subscribe();
+      this.setAccount();
     }
     this._queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
     this.onQueueUpdate();
-    this.sdk.nuclia.options.zoneKey =
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InprIn0.eyJpc3MiOiJodHRwczovL3N0YXNoaWZ5LmNsb3VkLyIsImV4cCI6MjUzMzcwNzY0ODAwLCJpYXQiOjE2NTIzMzkyOTEsInN1YiI6IjlhOGRmMWU2LWYyNzAtNGFiZS1iMTA2LWQ2ZTcwNWMwZTk0ZSIsImtleSI6IjQyMWJmY2QyLWI0ZmEtNDcwNy04NmQ5LTQ1YjBiNjgwNzFjMSJ9.oqiieZopJjsoEMUzLGwU0drb9Sux9xtPyaqDdhVQ21DEZ5YV9rx-NFFn8T4N_Gp3Moem5_EFo6acCgrMP0VoMftdG4pwp9fALWWlzrs0tPKWLMB_tliNC78wTLrEoWGWtB4Souww8BaFnS0NlUIjqkjRwX5S6tbSViAPhb7eEOMz_MM4ehDxduvCSr-qrkhe4DISih5OHzaw_7XsWHmO2BSsf_u0P1y9SNGhDhRDqLSkWxtKOEmGaGwyTJQaWolIfvUy4mVXbALXwjPDc6V9d2xqucH0q_gmrSUh5QWjUVaxv-ggxgN6cPmp4_ztaT-2WCyLNJ7kbtuPj_CTHF4NtP_0kLAI0TbiVTVAqffAzo2iy_LJcsJ1cnsqFMKoaRDl1DHo6KtOVXxQeJ3-uhuGyRHu7hm06_N4IP_gYvWV-eKvr5gS4GFQja8S2vNtdSpDv57xmFUmq5U5WkpVuPXk7Rm91R758wIgHRYpMtTfGd_ykjHDQ3P9agQcAyciD9cJp4a0Cde4Cp2sbF1kM0W8lwUwHfsh8eeC7xTSzfkI80hlJRnOQG56IOMXs-sAQu0TuaEvO4_qasDc22e3G3v3mesUFeG2ugiVFOb_uXQVLszrONW6zX3IYM9s0C_8EWOyPHgLhZlL9ziGlIaOGotg5fZKII99IRT21A1amnr58Ck';
-    this.start();
   }
 
   getConnectors(type: 'sources' | 'destinations'): ConnectorDefinition[] {
@@ -107,7 +121,7 @@ export class SyncService {
                           );
                         } else {
                           return this.sdk.nuclia.db.upload(new File([blob], f.title)).pipe(
-                            tap((token) => {
+                            tap(() => {
                               f.status = FileStatus.PROCESSED;
                               this.onQueueUpdate();
                             }),
@@ -135,9 +149,10 @@ export class SyncService {
   }
 
   private watchProcessing() {
-    // timer(0, 10000)
-    //   .pipe(switchMap(() => this.nuclia.db.pull()))
-    //   .subscribe();
+    return this.sdk.nuclia.db
+      .pull()
+      .pipe(repeatWhen((obs) => obs.pipe(delay(10000))))
+      .subscribe();
   }
 
   onQueueUpdate() {
@@ -145,12 +160,44 @@ export class SyncService {
     localStorage.setItem(QUEUE_KEY, JSON.stringify(this._queue));
   }
 
-  getAccount(): string {
+  getAccountId(): string {
     return localStorage.getItem(ACCOUNT_KEY) || '';
   }
 
-  setAccount(account: string) {
+  selectAccount(account: string) {
     localStorage.setItem(ACCOUNT_KEY, account);
-    this.sdk.setCurrentAccount(account).subscribe();
+    this.setAccount();
+  }
+
+  setAccount() {
+    this.sdk
+      .setCurrentAccount(this.getAccountId())
+      .pipe(
+        take(1),
+        switchMap(() =>
+          !this.sdk.nuclia.db.hasNUAClient()
+            ? this.user.userPrefs.pipe(
+                switchMap((prefs) => {
+                  const client_id = (window as any)['electron']
+                    ? (window as any)['electron'].getMachineId()
+                    : this.sdk.nuclia.auth.getJWTUser()?.sub || '';
+                  return this.sdk.nuclia.db.createNUAClient(this.getAccountId(), {
+                    client_id,
+                    contact: prefs?.email || '',
+                    title: 'NDA NUA key',
+                  });
+                }),
+              )
+            : of(true),
+        ),
+        switchMap(() =>
+          this.sdk.nuclia.db.getAccount(this.getAccountId()).pipe(
+            tap((account) => (this.sdk.nuclia.options.accountType = account.type)),
+            switchMap((account) => this.sdk.nuclia.rest.getZoneSlug(account.zone)),
+            tap((zone) => (this.sdk.nuclia.options.zone = zone)),
+          ),
+        ),
+      )
+      .subscribe(() => this.ready.next());
   }
 }

@@ -14,7 +14,7 @@ export class SelectAccountComponent {
   constructor(private sdk: SDKService, private sync: SyncService, private router: Router) {}
 
   selectAccount(account: string) {
-    this.sync.setAccount(account);
+    this.sync.selectAccount(account);
     this.router.navigate(['/']);
   }
 }
