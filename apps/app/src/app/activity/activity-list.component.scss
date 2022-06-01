@@ -11,18 +11,13 @@
   @include text-truncate();
 }
 
-.error {
-  flex: 1 1 0;
-  min-width: 0; // Allow text truncate
-  @include text-truncate();
-  color: var(--stf-red);
-  svg-icon {
-    margin-right: 6px;
-  }
+.date {
+  flex: 0 0 250px;
+  max-width: 20%;
 }
 
-.time,
-.date {
-  flex: 0 0 100px ;
-  text-align: center;
+.user {
+  flex: 0 0 250px;
+  max-width: 20%;
+  @include text-truncate();
 }

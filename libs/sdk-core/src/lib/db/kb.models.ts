@@ -24,6 +24,17 @@ export enum ExtractedDataTypes {
   FILE = 'file',
 }
 
+export enum EventType {
+  VISITED = 'VISITED',
+  MODIFIED = 'MODIFIED',
+  DELETED = 'DELETED',
+  NEW = 'NEW',
+  STARTED = 'STARTED',
+  STOPPED = 'STOPPED',
+  SEARCH = 'SEARCH',
+  PROCESSED = 'PROCESSED',
+}
+
 export interface IKnowledgeBoxCreation {
   id: string;
   slug?: string;
@@ -49,6 +60,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   counters(): Observable<Counters>;
   listResources(page?: number, size?: number): Observable<ResourceList>;
   getTempToken(): Observable<string>;
+  listActivity(type?: EventType, page?: number, size?: number): Observable<EventList>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -155,6 +167,13 @@ export interface ResourcePagination {
   size: number;
   last: boolean;
 }
+
+export interface EventList {
+  events: Event[];
+  pagination: ResourcePagination;
+}
+
+export type Event = { [key: string]: any }
 
 export interface ServiceAccountKey {
   id: string;

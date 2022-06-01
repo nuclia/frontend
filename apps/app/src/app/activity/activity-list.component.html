@@ -1,18 +1,16 @@
 <div class="activity-list">
   <div class="activity-item"
        *ngFor="let item of items">
-    <div class="filename" *ngIf="!item.error">
-      {{ item.filename }}
+    <div class="filename">
+      {{ item.resource | async }}
     </div>
-    <div class="error"
-         *ngIf="item.error">
-      <svg-icon src="assets/icons/activity-error.svg"></svg-icon>
-      <span stfTooltip
-            [stfTooltipText]="item.error">
-        {{ item.filename }}
-      </span>
+    <div class="date">
+      <ng-container *ngIf="item.date">
+        {{ item.date | formatDate: { default: true } }} {{ item.date | formatTime }}
+      </ng-container>
     </div>
-    <div class="date">{{ item.date | formatDate }}</div>
-    <div class="time">{{ item.date | formatTime }}</div>
+    <div class="user">
+      {{ item.username | async }}
+    </div>
   </div>
 </div>

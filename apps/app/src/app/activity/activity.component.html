@@ -1,24 +1,27 @@
 <div class="activity">
   <div class="activity-header">
     <div class="tabs"
-         *ngIf="currentTab$ | async as currentTab">
+         *ngIf="currentTab | async as currentTab">
       <div *ngFor="let tab of tabs"
            class="tab"
-           [class.selected]="currentTab === tab.key"
-           (click)="selectTab(tab.key)"
-           (keydown.enter)="selectTab(tab.key)"
+           [class.selected]="currentTab === tab.type"
+           (click)="selectTab(tab.type)"
+           (keydown.enter)="selectTab(tab.type)"
            tabIndex="0"
            role="tab"
-           [attr.aria-expanded]="currentTab === tab.key">
+           [attr.aria-expanded]="currentTab === tab.type">
         {{ tab.title | translate }}
       </div>
-    </div>
-    <div class="subtitle">
-      {{ 'activity.subtitle' | translate }}
     </div>
   </div>
 
   <div class="tab-content">
-    <app-activity-list [items]="activity | async"></app-activity-list>
+    <app-activity-list [items]="(data | async).events"></app-activity-list>
+    <div class="more-results">
+      <stf-button (click)="loadMoreEvents()"
+                  *ngIf="(data | async).pagination?.last === false"
+                  color="gray"
+                  padding="pd-l">{{ 'search.more_results' | translate }}</stf-button>
+    </div>
   </div>
 </div>
