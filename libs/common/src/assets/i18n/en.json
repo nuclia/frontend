@@ -46,7 +46,7 @@
 	"account.title": "Account name",
 	"account.title_help": "Account name",
 	"account.token_description": "<strong>Important!</strong> Copy and save the Token code. It will disappear once added.",
-	"account.token_generation_warning": "If you generate a new key you will lose access with the current key",
+	"account.token_generation_warning": "If you generate a new key, the current key will be disabled and the on-going jobs (if any) will be lost",
 	"account.total": "State: <strong>{{total}}</strong> Knowledge Box, <strong>{{public}}</strong> public",
 	"account.type.basic": "Basic Account",
 	"account.type.kb": "Knowledge box",

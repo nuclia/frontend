@@ -40,7 +40,7 @@
 	"account.title": "Nom del compte",
 	"account.title_help": "Nom del compte",
 	"account.token_description": "<strong>Important!</strong> Copia i guarda el codi del Token. Un cop afegit, desapareixerà. ",
-	"account.token_generation_warning": "Si generes un nou codi perdàs l’accés amb la clau actual",
+	"account.token_generation_warning": "Si generes un nou codi perdràs l’accés amb la clau actual i es perdran els processos que s'estiguin executant en aquests moments.",
 	"account.type.basic": "Compte Bàsic",
 	"account.type.kb": "Caixes de coneixement",
 	"account.type.manage": "Gestionar",

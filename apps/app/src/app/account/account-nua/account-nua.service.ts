@@ -19,6 +19,8 @@ export class AccountNUAService {
     switchMap((account) => this.sdk.nuclia.db.getNUAClients(account))
   )
 
+  constructor(private sdk: SDKService, private stateService: StateService) {}
+
   updateClients() {
     this.onUpdate.next();
   }
@@ -40,6 +42,4 @@ export class AccountNUAService {
       switchMap((account) => this.sdk.nuclia.db.deleteNUAClient(account, id))
     );
   }
-
-  constructor(private sdk: SDKService, private stateService: StateService) {}
 }
