@@ -202,6 +202,20 @@ jobs:
         run: |-
           curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=manager" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
 
+  pre-release:
+    name: 'Pre Release'
+    needs: build
+    if: needs.build.outputs.deploy-desktop == 'yes'
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - uses: 'marvinpinto/action-automatic-releases@latest'
+        with:
+          repo_token: '${{ secrets.GITHUB_TOKEN }}'
+          automatic_release_tag: 'latest'
+          prerelease: true
+          title: 'Development Build'
+
   deploy-desktop:
     name: Deploy desktop
     needs: build
@@ -267,3 +281,15 @@ jobs:
           echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY }}" >> .env
       - name: Package and publish electron app
         run: npx nx run desktop-electron:make --publish always
+      - name: Release MacOSX installer
+        uses: softprops/action-gh-release@v1
+        if: startsWith(matrix.os, 'macos')
+        with:
+          name: latest
+          files: dist/executables/*.dmg
+      - name: Release Linux installer
+        uses: softprops/action-gh-release@v1
+        if: startsWith(matrix.os, 'ubuntu')
+        with:
+          name: latest
+          files: dist/executables/*.snap
