@@ -202,28 +202,68 @@ jobs:
         run: |-
           curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=manager" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
 
-  # deploy-desktop:
-  #   name: Deploy desktop
-  #   needs: build
-  #   if: needs.build.outputs.deploy-desktop == 'yes'
-  #   runs-on: ${{ matrix.os }}
+  deploy-desktop:
+    name: Deploy desktop
+    needs: build
+    if: needs.build.outputs.deploy-desktop == 'yes'
+    runs-on: ${{ matrix.os }}
 
-  #   strategy:
-  #     matrix:
-  #       os: [macos-latest, ubuntu-latest, windows-latest]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
-  #   steps:
-  #     - name: Set version
-  #       id: version_step
-  #       run: |-
-  #         VERSION=`cat apps/desktop/VERSION`
-  #         VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
-  #         sed -i.bak "s#__VERSION__#$VERSION_SHA#" ./apps/desktop/src/environments_config/production/app-config.json
-  #         echo "::set-output name=version_number::$VERSION_SHA"
-  #     - name: Build desktop app
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.github_token }}
-  #       run: |-
-  #         npx nx build desktop -c production
-  #         npx nx build desktop-electron -c production
-  #         npx nx run desktop-electron:make --publish always
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v2
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: actions/cache@v2
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install project dependencies
+        run: yarn --prefer-offline
+      - name: Build desktop app
+        run: npx nx build desktop -c production
+      - name: Build electron app
+        run: |-
+          npx nx build desktop-electron -c production
+          mv ./dist/apps/desktop-electron/main.preload.ts.js ./dist/apps/desktop-electron/main.preload.js
+      - name: Install the Apple certificate
+        if: startsWith(matrix.os, 'macos')
+        env:
+          BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+          P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          # create variables
+          CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
+
+          # import certificate from secrets
+          echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
+
+          # create temporary keychain
+          security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
+
+          # import certificate to keychain
+          security import $CERTIFICATE_PATH -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
+          security list-keychain -d user -s $KEYCHAIN_PATH
+      - name: Prepare for app notarization
+        if: startsWith(matrix.os, 'macos')
+        run: |-
+          mkdir -p ~/private_keys/
+          echo '${{ secrets.APPLE_API_SECRET }}' > ~/private_keys/AuthKey_${{ secrets.APPLE_API_KEY }}.p8
+          echo "APPLE_API_ISSUER=${{ secrets.APPLE_API_ISSUER }}" > .env
+          echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY }}" >> .env
+      - name: Package and publish electron app
+        run: npx nx run desktop-electron:make --publish always
