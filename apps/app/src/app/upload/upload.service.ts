@@ -27,7 +27,9 @@ export class UploadService {
           }
         }),
       )
-      .subscribe(this._progress);
+      .subscribe((progress) => {
+        this._progress.next(progress);
+      });
     this._barDisabled.next(false);
   }
 
