@@ -86,13 +86,14 @@ export type UserType = 'ROOT' | 'DEALER' | 'USER';
 export type Language = 'CA' | 'ES' | 'EN';
 
 export interface NUAClientPayload {
-  client_id: string;
+  client_id?: string;
   contact: string;
   description?: string;
   title: string;
 }
 
 export interface NUAClient extends NUAClientPayload {
+  client_id: string;
   created: string;
   partitions: 0;
   zone: string;

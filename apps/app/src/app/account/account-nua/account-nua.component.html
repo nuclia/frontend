@@ -1,0 +1,71 @@
+<div class="account-nua"
+     *ngIf="zones">
+
+  <div *ngIf="clients | async as clients">
+    <div class="client"
+         *ngFor="let client of clients">
+      <div class="client-header"
+           fxLayout="row"
+           fxLayoutAlign="start center">
+        <div class="client-title"
+             fxFlex="1 1 0">
+          <button (click)="toggleClient(client.client_id)"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                  fxLayoutGap="4px">
+            <span>{{ client.title }}</span>
+            <svg-icon src="assets/icons/chevron-right.svg"
+                      class="client-title-arrow"
+                      [class.expanded]="isExpanded(client.client_id)"></svg-icon>
+          </button>
+        </div>
+        <div class="client-date"
+             fxFlex="0 0 auto">{{ client.created | formatDate }}</div>
+        <div class="client-actions"
+             fxFlex="0 0 auto"
+             fxLayout="row"
+             fxLayoutAlign="end center"
+             fxLayoutGap="5px">
+          <!--
+          <app-button-action
+            (click)="openDialog(zones, client)"
+            action="edit"
+            ariaLabel="generic.edit"
+            stfTooltip
+            stfTooltipText="generic.edit">
+          </app-button-action>
+          -->
+          <app-button-action (click)="askConfirmation(client)"
+                             action="generate_key"
+                             ariaLabel="account.generate_key"
+                             stfTooltip
+                             stfTooltipText="account.generate_key">
+          </app-button-action>
+          <app-button-action (click)="deleteClient(client.client_id)"
+                             action="delete"
+                             ariaLabel="generic.delete"
+                             stfTooltip
+                             stfTooltipText="generic.delete">
+          </app-button-action>
+        </div>
+      </div>
+      <stf-expander [expanded]="isExpanded(client.client_id)">
+        <stf-expander-content>
+          <div class="client-body">
+            <div class="client-email">{{ 'account.linked_email' | translate }}: <span>{{ client.contact }}</span></div>
+            <div *ngIf="client.description">{{ client.description }}</div>
+          </div>
+        </stf-expander-content>
+      </stf-expander>
+    </div>
+    <div>
+      <div class="mt-28">
+        <stf-button (click)="openDialog(zones)"
+                    color="secondary"
+                    padding="pd-l">
+          {{ 'account.create_db' | translate }}
+        </stf-button>
+      </div>
+    </div>
+  </div>
+</div>

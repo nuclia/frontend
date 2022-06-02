@@ -1,6 +1,6 @@
 @import 'variables';
 
-.db-dialog {
+.client-dialog {
   position: relative;
   padding: 16px 35px;
 
@@ -27,12 +27,12 @@
     }
   }
 
-  &-field-name {
+  label {
     margin-top: 12px;
     font-weight: var(--stf-font-weight-semibold);
   }
 
-  &-zone {
+  .zone {
     width: 90%;
     &-select {
       min-width: 305px;
