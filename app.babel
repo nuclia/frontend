@@ -227,7 +227,7 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.create_db</name>
+                <name>account.create_account</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -249,6 +249,27 @@
             </concept_node>
             <concept_node>
                 <name>account.create_new_db</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>account.create_nua_account</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -311,7 +332,28 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.edit_db</name>
+                <name>account.edit_nua_account</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>account.email_info</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>

@@ -32,6 +32,11 @@
     font-weight: var(--stf-font-weight-semibold);
   }
 
+  .email-info {
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+
   .zone {
     width: 90%;
     &-select {
