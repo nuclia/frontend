@@ -53,6 +53,8 @@
 	"accounts.filter_by": "Encuentra usuarios por nombre o correo electrónico",
 	"accounts.no_users_found": "No hemos encontrado a ningún usuario con este correo",
 	"accounts.users": "usuario/s",
+	"activity.actor": "Actor",
+	"activity.file": "Archivo",
 	"activity.modified": "Modificados",
 	"activity.new": "Creados",
 	"activity.processed": "Procesados",

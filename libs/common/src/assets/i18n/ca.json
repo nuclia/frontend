@@ -53,6 +53,8 @@
 	"accounts.filter_by": "Troba l’usuari pel nom o correu electrònic",
 	"accounts.no_users_found": "no existeix cap usuari amb aquest correu",
 	"accounts.users": "usuari/s",
+	"activity.actor": "Actor",
+	"activity.file": "Fitxer",
 	"activity.modified": "Modificats",
 	"activity.new": "Creats",
 	"activity.processed": "Processats",

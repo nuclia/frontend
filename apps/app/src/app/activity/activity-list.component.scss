@@ -1,5 +1,14 @@
 @import 'variables';
 
+.activity-header {
+  display: flex;
+  align-items: center;
+  font-size: var(--stf-font-size-ssmall);
+  padding-bottom: rythm(0.5);
+  border-bottom: 1px solid #000;
+  margin-bottom: rythm(1);
+}
+
 .activity-item {
   display: flex;
   align-items: center;
@@ -8,16 +17,15 @@
 
 .filename {
   flex: 1 1 0;
+  padding-right: 30px;
   @include text-truncate();
 }
-
+.user,
 .date {
   flex: 0 0 250px;
   max-width: 20%;
 }
 
 .user {
-  flex: 0 0 250px;
-  max-width: 20%;
   @include text-truncate();
 }
