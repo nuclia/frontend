@@ -286,10 +286,19 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         with:
           name: latest
+          tag_name: latest
           files: dist/executables/*.dmg
+      - name: Release Windows installer
+        uses: softprops/action-gh-release@v1
+        if: startsWith(matrix.os, 'windows')
+        with:
+          name: latest
+          tag_name: latest
+          files: dist/executables/*.exe
       - name: Release Linux installer
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'ubuntu')
         with:
           name: latest
+          tag_name: latest
           files: dist/executables/*.snap
