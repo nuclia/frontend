@@ -245,7 +245,9 @@ jobs:
       - name: Install project dependencies
         run: yarn --prefer-offline
       - name: Build desktop app
-        run: npx nx build desktop -c production
+        run: |-
+          sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
+          npx nx build desktop -c production
       - name: Build electron app
         run: |-
           npx nx build desktop-electron -c production
