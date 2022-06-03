@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject, Observable, of } from 'rxjs';
-import { takeUntil, take, map, switchMap, concatMap, catchError, tap, shareReplay } from 'rxjs/operators';
-import { SDKService } from '@flaps/auth';
+import { takeUntil, take, map, switchMap, concatMap, catchError, tap, shareReplay, filter } from 'rxjs/operators';
+import { SDKService, StateService } from '@flaps/auth';
 import { UsersService } from '@flaps/core';
 import { ResourcePagination, ResourceProperties, EventType } from '@nuclia/core';
 
@@ -37,7 +37,7 @@ export class ActivityService implements OnDestroy {
 
   activity = this._activity.asObservable();
 
-  constructor(private sdk: SDKService, private users: UsersService) {
+  constructor(private sdk: SDKService, private users: UsersService, private stateService: StateService) {
     this.triggerLoad
       .pipe(
         concatMap((type) => {
@@ -86,10 +86,11 @@ export class ActivityService implements OnDestroy {
 
   private getUser(id: string) {
     if (!this._users[id]) {
-      this._users[id] = this.sdk.currentKb.pipe(
+      this._users[id] = this.stateService.account.pipe(
+        filter((account) => !!account),
         take(1),
-        switchMap((kb) =>
-          this.users.getAccountUser(kb.slug!, id).pipe(
+        switchMap((account) =>
+          this.users.getAccountUser(account!.slug!, id).pipe(
             map((user) => user.name || ''),
             catchError(() => of(id)) // In case the user no longer exists
           )
