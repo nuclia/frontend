@@ -1,0 +1,29 @@
+@import 'variables';
+.splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: $zindex-modal;
+  background-color: $gray-black;
+}
+
+img {
+  width: 300px;
+}
+
+.container {
+  position: relative;
+  top: 10vh;
+  width: 600px;
+  height: 80vh;
+  margin: 0 auto;
+  padding: rythm(5) rythm(8);
+  border-radius: rythm(1);
+  background-color: $white;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
