@@ -3,6 +3,10 @@
   "affected": {
     "defaultBase": "main"
   },
+  "cli": {
+    "defaultCollection": "@nrwl/angular",
+    "packageManager": "yarn"
+  },
   "implicitDependencies": {
     "angular.json": "*",
     "package.json": {
@@ -34,5 +38,19 @@
         "projects": "dependencies"
       }
     ]
+  },
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss"
+    }
   }
 }
