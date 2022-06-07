@@ -219,6 +219,11 @@ $rythm: (
       $spacer * 7,
     ),
   //36
+  8:
+    (
+      $spacer * 8,
+    )
+    //96,,
 ) !default;
 
 @function rythm($spacer-size) {
@@ -254,7 +259,7 @@ $font-size: (
   // ~36px - big article promo title
   xxd: var(--stf-font-size-xxd),
   // ~42px - big section primi title
-  xxxd: var(--stf-font-size-xxxd) // ~60px - main hero claim,
+  xxxd: var(--stf-font-size-xxxd) // ~60px - main hero claim,,
 ) !default;
 @function size($tshirt-size) {
   @return map-get($font-size, $tshirt-size);
@@ -282,7 +287,7 @@ $line-height: (
   // ~36
   xxd: var(--stf-line-height-xxd),
   // ~42
-  xxxd: var(--stf-line-height-xxxd) // ~60,
+  xxxd: var(--stf-line-height-xxxd) // ~60,,
 ) !default;
 @function line($tshirt-lheight) {
   @return map-get($line-height, $tshirt-lheight);
@@ -299,7 +304,7 @@ $letter-spacing: (
   // large text: 18, 20
   m: 0.015em,
   // medium text: 14, 15 & 16
-  s: 0.03em // small text: 10, 11, 12 & 13,
+  s: 0.03em // small text: 10, 11, 12 & 13,,
 ) !default;
 @function spacing($tshirt-lspacing) {
   @return map-get($letter-spacing, $tshirt-lspacing);
@@ -357,7 +362,7 @@ $border-radius: (
   //  3px
   l: calc($radius-base * (2 / 1)),
   // ~6px
-  xl: calc($radius-base * (4 / 1)) // ~12px,
+  xl: calc($radius-base * (4 / 1)) // ~12px,,
 ) !default;
 @function border-radius($br) {
   @return map-get($border-radius, $br);

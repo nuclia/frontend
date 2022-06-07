@@ -5,8 +5,12 @@
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: 99999;
+  z-index: $zindex-modal;
   background-color: $gray-black;
+}
+
+img {
+  width: 300px;
 }
 
 .container {
@@ -15,10 +19,11 @@
   width: 600px;
   height: 80vh;
   margin: 0 auto;
-  padding: 62px 100px;
-  border-radius: 8px;
+  padding: rythm(5) rythm(8);
+  border-radius: rythm(1);
   background-color: $white;
   display: flex;
   flex-direction: column;
   text-align: center;
+  align-items: center;
 }
