@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
@@ -13,12 +13,14 @@ import { SOURCE_ID_KEY } from './sync/models';
 })
 export class AppComponent implements OnInit {
   version = '';
+  isAuthenticated = true;
   constructor(
     private config: BackendConfigurationService,
     private translate: TranslateService,
     private user: UserService,
     private sdk: SDKService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
@@ -57,6 +59,8 @@ export class AppComponent implements OnInit {
               access_token: querystring.get('access_token') || '',
               refresh_token: querystring.get('refresh_token') || '',
             });
+            this.isAuthenticated = true;
+            this.cdr?.markForCheck();
             if (!(window as any)['deeplink']) {
               location.search = '';
             }
@@ -66,12 +70,11 @@ export class AppComponent implements OnInit {
           clearInterval(interval);
         }
       }, 500);
-      if ((window as any)['electron']) {
-        (window as any)['electron'].openExternal(`${environment.dashboard}/redirect?redirect=nuclia-desktop://`);
-      } else if (!location.search) {
-        // dev mode in browser
-        location.href = `${environment.dashboard}/redirect?redirect=http://localhost:4200`;
-      }
+      // delay a bit the login button display to avoid ugly flash
+      setTimeout(() => {
+        this.isAuthenticated = false;
+        this.cdr?.markForCheck();
+      }, 500);
     } else if (localStorage.getItem(SOURCE_ID_KEY)) {
       const interval = setInterval(() => {
         const deeplink = (window as any)['deeplink'] || location.search;
