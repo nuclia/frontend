@@ -12,6 +12,7 @@ import { ConnectorsComponent } from '../connectors/connectors.component';
 import { StepsComponent } from './steps/steps.component';
 import { ConfirmFilesModule } from './confirm-files/confirm-files.module';
 import { SyncService } from '../sync/sync.service';
+import { SelectFilesComponent } from './select-files/select-files.component';
 
 import { UploadComponent } from './upload.component';
 
@@ -22,7 +23,14 @@ describe('UploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UploadComponent, ConnectorsComponent, ConnectorComponent, StepsComponent, TranslatePipeMock],
+      declarations: [
+        UploadComponent,
+        ConnectorsComponent,
+        ConnectorComponent,
+        StepsComponent,
+        TranslatePipeMock,
+        SelectFilesComponent
+      ],
       imports: [
         NoopAnimationsModule,
         RouterTestingModule,

@@ -3,7 +3,7 @@
 .container {
   display: flex;
   flex-direction: column;
-  min-height: calc(100% - 20px);
+  height: calc(100% - 20px);
 }
 .steps {
   flex: 0 0 auto;
@@ -17,19 +17,4 @@
   padding: 30px 40px;
   background: #fff;
   border-radius: 8px;
-}
-.search-form {
-  display: flex;
-  width: 100%;
-  border-bottom: 2px solid $gray-dark;
-  justify-content: flex-end;
-}
-table {
-  width: 100%;
-}
-td {
-  border-bottom: 1px solid $gray-dark;
-  &.checkbox {
-    width: rythm(2);
-  }
 }

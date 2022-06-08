@@ -11,6 +11,7 @@ import { ConfirmFilesModule } from './confirm-files/confirm-files.module';
 import { StepsComponent } from './steps/steps.component';
 import { UploadComponent } from './upload.component';
 import { FormsModule } from '@angular/forms';
+import { SelectFilesComponent } from './select-files/select-files.component';
 
 @NgModule({
   imports: [
@@ -25,7 +26,7 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
   ],
   exports: [],
-  declarations: [UploadComponent, StepsComponent],
+  declarations: [UploadComponent, StepsComponent, SelectFilesComponent],
   providers: [],
 })
 export class UploadModule {}
