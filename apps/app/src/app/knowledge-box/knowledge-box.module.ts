@@ -36,11 +36,13 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { HintModule } from '../components/hint/hint.module';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 
 const Components = [
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
   KnowledgeBoxManageComponent,
+  KnowledgeBoxProcessesComponent,
   KnowledgeBoxProfileComponent,
   KnowledgeBoxUsersComponent,
   KnowledgeBoxKeysComponent,

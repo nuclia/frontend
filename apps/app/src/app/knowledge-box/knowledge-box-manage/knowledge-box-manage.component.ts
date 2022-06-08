@@ -7,10 +7,14 @@ import { RouteInfo } from '@flaps/common';
 })
 export class KnowledgeBoxManageComponent implements OnInit {
 
-  routes: RouteInfo[] = [ 
+  routes: RouteInfo[] = [
     {
       title: 'generic.profile',
       relativeRoute: 'profile',
+    },
+    {
+      title: 'stash.settings.processes',
+      relativeRoute: 'processes'
     }
   ];
 
