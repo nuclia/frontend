@@ -91,7 +91,7 @@ class DropboxImpl implements ISourceConnector {
               refreshToken: localStorage.getItem(DROPBOX_REFRESH_TOKEN_KEY),
             });
             this.dbxAuth.setCodeVerifier(localStorage.getItem(DROPBOX_VERIFIER_CODE_KEY));
-            this.dbxAuth.checkAndRefreshAccessToken().then((res: any) => {
+            this.dbxAuth.checkAndRefreshAccessToken().then(() => {
               localStorage.setItem(DROPBOX_TOKEN_KEY, this.dbxAuth.getAccessToken());
               this.dbx = new Dropbox.Dropbox({
                 auth: this.dbxAuth,

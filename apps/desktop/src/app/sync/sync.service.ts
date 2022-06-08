@@ -108,10 +108,9 @@ export class SyncService {
   getSource(id: string): Observable<ISourceConnector> {
     if (!this.sources[id].instance) {
       this.sources[id].instance = new ReplaySubject(1);
-      this.sources[id].definition.factory(this.sources[id].settings).subscribe((instance) => {
-        console.log('next', id);
-        (this.sources[id].instance as ReplaySubject<ISourceConnector>).next(instance);
-      });
+      this.sources[id].definition
+        .factory(this.sources[id].settings)
+        .subscribe(this.sources[id].instance as ReplaySubject<ISourceConnector>);
     }
     return (this.sources[id].instance as ReplaySubject<ISourceConnector>).asObservable();
   }
@@ -127,25 +126,11 @@ export class SyncService {
             this._queue
               .filter((sync) => !sync.started && !sync.completed)
               .map((sync) => {
-                console.log('start', sync);
-                // this.getSource(sync.source).subscribe((source) => console.log('YEAP', source));
-                // this.getDestination(sync.destination.id).subscribe((source) => console.log('BLA', source));
-                // combineLatest([
-                //   this.getSource(sync.source).pipe(
-                //     take(1),
-                //     tap(() => console.log('get', sync.source)),
-                //   ),
-                //   this.getDestination(sync.destination.id),
-                // ]).subscribe((source) => console.log('YEAP', source));
                 return combineLatest([
-                  this.getSource(sync.source).pipe(
-                    take(1),
-                    tap(() => console.log('get', sync.source)),
-                  ),
+                  this.getSource(sync.source).pipe(take(1)),
                   this.getDestination(sync.destination.id).pipe(take(1)),
                 ]).pipe(
                   switchMap(([sourceInstance, destinationInstance]) => {
-                    console.log('go');
                     sync.started = true;
                     // TODO: go 6 by 6 maximum
                     return forkJoin(
@@ -197,7 +182,6 @@ export class SyncService {
             concatMap((source) => {
               if (source.hasServerSideAuth) {
                 // TODO: we cannot redirect to several third party login pages at the same time
-                console.log('oauth', sync.source);
                 source.goToOAuth();
               }
               return source.authenticate();
