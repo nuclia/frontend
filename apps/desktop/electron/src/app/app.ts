@@ -3,6 +3,7 @@ import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
+import { autoUpdater } from 'electron-updater';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -45,6 +46,7 @@ export default class App {
     // Some APIs can only be used after this event occurs.
     App.initMainWindow();
     App.loadMainWindow();
+    autoUpdater.checkForUpdatesAndNotify();
   }
 
   private static onActivate() {

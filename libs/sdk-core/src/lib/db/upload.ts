@@ -275,7 +275,6 @@ export const batchUpload = (
 export const uploadToProcess = (nuclia: INuclia, file: File, metadata?: FileMetadata): Observable<string> => {
   const headers = {
     'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-    'x-stf-nua-internal-client-id': localStorage.getItem(NUA_CLIENT) || '',
     'content-type': metadata?.contentType || 'application/octet-stream',
     ...getFileMetadata(metadata),
   };
