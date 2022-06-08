@@ -5,6 +5,7 @@ import {
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
+  SearchResults,
 } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { injectScript } from '../inject';
@@ -107,23 +108,36 @@ class DropboxImpl implements ISourceConnector {
     return this.isAuthenticated.asObservable();
   }
 
-  getFiles(query?: string, start?: number): Observable<SyncItem[]> {
+  getFiles(query?: string, pageSize?: number): Observable<SearchResults> {
+    return this._getFiles(query, pageSize);
+  }
+
+  private _getFiles(query?: string, pageSize: number = 50, nextPage?: string | number): Observable<SearchResults> {
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),
       switchMap(() =>
         !query
           ? from(
-              this.dbx.filesListFolder({
-                path: '',
-              }),
+              nextPage 
+                ? this.dbx.filesListFolderContinue({ cursor: nextPage })
+                : this.dbx.filesListFolder({
+                    path: '',
+                    limit: pageSize,
+                    recursive: true,
+                  }),
             ).pipe(
-              /* eslint-disable  @typescript-eslint/no-explicit-any */
-              map((res: any) => res.result.entries?.map(this.mapFiles) || []),
+              map(({result}) => ({
+                items: result.entries?.filter(this.filterFiles).map(this.mapFiles) || [],
+                nextPage: result.has_more ? this._getFiles(query, pageSize, result.cursor) : undefined
+              })),
             )
-          : from(this.dbx.filesSearch({ path: '', query })).pipe(
-              /* eslint-disable  @typescript-eslint/no-explicit-any */
-              map((res: any) => res.result?.matches?.map(this.mapResults) || []),
+          : from(this.dbx.filesSearch({ path: '', query, max_results: pageSize, start: nextPage || 0 })
+            ).pipe(
+              map(({result}) => ({
+                items: result?.matches?.filter(this.filterResults).map(this.mapResults) || [],
+                nextPage: result.more ?  this._getFiles(query, pageSize, result.start) : undefined,
+              })),
             ),
       ),
     );
@@ -147,6 +161,16 @@ class DropboxImpl implements ISourceConnector {
       metadata: {},
       status: FileStatus.PENDING,
     };
+  }
+
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  private filterFiles(raw: any): boolean {
+    return raw?.['.tag'] !== 'folder';
+  }
+
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  private filterResults(raw: any): boolean {
+    return raw.metadata?.['.tag'] !== 'folder';
   }
 
   download(resource: SyncItem): Observable<Blob> {

@@ -10,26 +10,9 @@
                      (onSelect)="selectSource($event)"></da-connectors>
     </ng-container>
     <ng-container *ngIf="step === 1">
-      <h3>{{ 'upload.select.title' | translate}}</h3>
-      <form class="search-form"
-            #form="ngForm">
-        <input ngModel
-               name="query">
-        <stf-button (click)="search(form.value.query)"
-                    size="small">{{ 'upload.select.search' | translate }}</stf-button>
-      </form>
-      <table>
-        <tr *ngFor="let resource of (resources | async)">
-          <td class="checkbox">
-            <stf-checkbox [selected]="selection.isSelected(resource)"
-                          (selectedChange)="selection.toggle(resource)"></stf-checkbox>
-          </td>
-          <td>{{ resource.title }}</td>
-          <td>{{ resource.type }}</td>
-        </tr>
-      </table>
-      <stf-button qa="next"
-                  (click)="next()">{{ 'generic.next' | translate }}</stf-button>
+      <da-select-files [source]="source"
+                       (next)="next()"
+                       [(selection)]="selection"></da-select-files>
     </ng-container>
     <ng-container *ngIf="step === 2">
       <h2>Push to</h2>

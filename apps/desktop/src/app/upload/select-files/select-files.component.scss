@@ -1,0 +1,43 @@
+@import 'variables';
+
+.select-files {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  flex: 0 0 auto;
+}
+
+.body {
+  flex: 1 1 0;
+  overflow-y: auto;
+}
+
+.footer {
+  flex: 0 0 auto;
+  text-align: center;
+  padding-top: rythm(3);
+}
+
+.search-form {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  padding-bottom: rythm(2);
+}
+
+table {
+  width: calc(100% - 14px);
+  border-spacing: 0;
+  border-top: 2px solid $gray-dark;
+}
+
+td {
+  height: rythm(2);
+  border-bottom: 1px solid $gray-dark;
+  &.checkbox {
+    width: rythm(2);
+  }
+}

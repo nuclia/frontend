@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, Observable, of, Subject, switchMap, take, tap } from 'rxjs';
+import { filter, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector, SOURCE_ID_KEY } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
@@ -15,14 +15,8 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 })
 export class UploadComponent implements OnInit {
   step = 0;
-  query = '';
-  triggerSearch = new Subject<void>();
   sourceId = '';
   source?: ISourceConnector;
-  resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
-    filter(() => !!this.source),
-    switchMap(() => (this.source as ISourceConnector).getFiles(this.query)),
-  );
   selection = new SelectionModel<SyncItem>(true, []);
 
   constructor(
@@ -53,9 +47,6 @@ export class UploadComponent implements OnInit {
 
   next() {
     this.step++;
-    if (this.step === 1) {
-      setTimeout(() => this.triggerSearch.next(), 200);
-    }
     this.cdr.detectChanges();
   }
 
@@ -97,10 +88,5 @@ export class UploadComponent implements OnInit {
         });
         this.router.navigate(['/']);
       });
-  }
-
-  search(query: string) {
-    this.query = query;
-    this.triggerSearch.next();
   }
 }

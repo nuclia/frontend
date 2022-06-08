@@ -9,8 +9,9 @@ import {
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
+  SearchResults,
 } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take } from 'rxjs';
 import { injectScript } from '../inject';
 
 declare var gapi: any;
@@ -69,14 +70,19 @@ class GDriveImpl implements ISourceConnector {
     return this.isAuthenticated.asObservable();
   }
 
-  getFiles(query?: string, start?: number): Observable<SyncItem[]> {
+  getFiles(query?: string, pageSize?: number) {
+    return this._getFiles(query, pageSize);
+  }
+
+  private _getFiles(query?: string, pageSize: number = 50, nextPageToken?: string): Observable<SearchResults> {
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),
-      switchMap(() =>
+      concatMap(() =>
         from(
           gapi.client.drive.files.list({
-            pageSize: 50,
+            pageSize,
+            pageToken: nextPageToken,
             q: query
               ? `name contains '${query}' and not mimeType = 'application/vnd.google-apps.folder'`
               : `not mimeType = 'application/vnd.google-apps.folder'`,
@@ -84,7 +90,12 @@ class GDriveImpl implements ISourceConnector {
         ),
       ),
       /* eslint-disable  @typescript-eslint/no-explicit-any */
-      map((res: any) => res.result.files.map(this.map)),
+      map((res: any) => ({
+        items: res.result.files.map(this.map),
+        nextPage: res.result.nextPageToken 
+          ? this._getFiles(query, pageSize, res.result.nextPageToken)
+          : undefined,
+      })),
     );
   }
 
