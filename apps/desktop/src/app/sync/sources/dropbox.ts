@@ -7,7 +7,7 @@ import {
   SyncItem,
   SearchResults,
 } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, filter, from, map, Observable, of, switchMap, switchMapTo, take } from 'rxjs';
 import { injectScript } from '../inject';
 
 declare var Dropbox: any;
@@ -51,12 +51,6 @@ class DropboxImpl implements ISourceConnector {
               location.href = authUrl;
             }
           });
-      } else {
-        this.dbxAuth = new Dropbox.DropboxAuth({
-          clientId: this.CLIENT_ID,
-          accessToken: token,
-          refreshToken: localStorage.getItem(DROPBOX_REFRESH_TOKEN_KEY),
-        });
       }
     });
   }
@@ -97,11 +91,19 @@ class DropboxImpl implements ISourceConnector {
               refreshToken: localStorage.getItem(DROPBOX_REFRESH_TOKEN_KEY),
             });
             this.dbxAuth.setCodeVerifier(localStorage.getItem(DROPBOX_VERIFIER_CODE_KEY));
+            this.dbxAuth.checkAndRefreshAccessToken().then((res: any) => {
+              localStorage.setItem(DROPBOX_TOKEN_KEY, this.dbxAuth.getAccessToken());
+              this.dbx = new Dropbox.Dropbox({
+                auth: this.dbxAuth,
+              });
+              this.isAuthenticated.next(true);
+            });
+          } else {
+            this.dbx = new Dropbox.Dropbox({
+              auth: this.dbxAuth,
+            });
+            this.isAuthenticated.next(true);
           }
-          this.dbx = new Dropbox.Dropbox({
-            auth: this.dbxAuth,
-          });
-          this.isAuthenticated.next(true);
         }
       });
     }
@@ -119,7 +121,7 @@ class DropboxImpl implements ISourceConnector {
       switchMap(() =>
         !query
           ? from(
-              nextPage 
+              nextPage
                 ? this.dbx.filesListFolderContinue({ cursor: nextPage })
                 : this.dbx.filesListFolder({
                     path: '',
@@ -127,16 +129,15 @@ class DropboxImpl implements ISourceConnector {
                     recursive: true,
                   }),
             ).pipe(
-              map(({result}) => ({
+              map(({ result }) => ({
                 items: result.entries?.filter(this.filterFiles).map(this.mapFiles) || [],
-                nextPage: result.has_more ? this._getFiles(query, pageSize, result.cursor) : undefined
+                nextPage: result.has_more ? this._getFiles(query, pageSize, result.cursor) : undefined,
               })),
             )
-          : from(this.dbx.filesSearch({ path: '', query, max_results: pageSize, start: nextPage || 0 })
-            ).pipe(
-              map(({result}) => ({
+          : from(this.dbx.filesSearch({ path: '', query, max_results: pageSize, start: nextPage || 0 })).pipe(
+              map(({ result }) => ({
                 items: result?.matches?.filter(this.filterResults).map(this.mapResults) || [],
-                nextPage: result.more ?  this._getFiles(query, pageSize, result.start) : undefined,
+                nextPage: result.more ? this._getFiles(query, pageSize, result.start) : undefined,
               })),
             ),
       ),
@@ -175,17 +176,18 @@ class DropboxImpl implements ISourceConnector {
 
   download(resource: SyncItem): Observable<Blob> {
     return this.getInstance().pipe(
-      switchMap(
-        () =>
-          new Observable<Blob>((observer) => {
-            this.dbx
-              .filesDownload({ path: resource.originalId })
-              .then((data: any) => data.result.fileBlob)
-              .then((blob: Blob) => {
-                observer.next(blob);
-                observer.complete();
-              });
-          }),
+      switchMapTo(this.isAuthenticated),
+      filter((yes) => yes),
+      switchMapTo(
+        new Observable<Blob>((observer) => {
+          this.dbx
+            .filesDownload({ path: resource.originalId })
+            .then((data: any) => data.result.fileBlob)
+            .then((blob: Blob) => {
+              observer.next(blob);
+              observer.complete();
+            });
+        }),
       ),
     );
   }

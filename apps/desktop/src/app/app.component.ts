@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from '../environments/environment';
 import { SOURCE_ID_KEY } from './sync/models';
 
 @Component({

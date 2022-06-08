@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 import {
+  combineLatest,
   concatMap,
+  concatMapTo,
   delay,
   forkJoin,
   interval,
+  map,
   Observable,
   of,
   repeatWhen,
@@ -49,7 +52,13 @@ interface Sync {
 
 @Injectable({ providedIn: 'root' })
 export class SyncService {
-  sources: { [id: string]: { definition: SourceConnectorDefinition; settings: ConnectorSettings } } = {
+  sources: {
+    [id: string]: {
+      definition: SourceConnectorDefinition;
+      settings: ConnectorSettings;
+      instance?: ReplaySubject<ISourceConnector>;
+    };
+  } = {
     gdrive: { definition: GDrive, settings: environment.connectors.gdrive },
     dropbox: { definition: DropboxConnector, settings: environment.connectors.dropbox },
   };
@@ -80,7 +89,13 @@ export class SyncService {
     if (account) {
       this.setAccount();
     }
-    this._queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    const queue: Sync[] = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    Object.values(queue).forEach((sync) => {
+      if (!sync.completed) {
+        sync.started = false;
+      }
+    });
+    this._queue = queue;
     this.onQueueUpdate();
   }
 
@@ -91,55 +106,107 @@ export class SyncService {
   }
 
   getSource(id: string): Observable<ISourceConnector> {
-    return this.sources[id].definition.factory(this.sources[id].settings);
+    if (!this.sources[id].instance) {
+      this.sources[id].instance = new ReplaySubject(1);
+      this.sources[id].definition.factory(this.sources[id].settings).subscribe((instance) => {
+        console.log('next', id);
+        (this.sources[id].instance as ReplaySubject<ISourceConnector>).next(instance);
+      });
+    }
+    return (this.sources[id].instance as ReplaySubject<ISourceConnector>).asObservable();
   }
   getDestination(id: string): Observable<IDestinationConnector> {
     return this.destinations[id].definition.factory(this.destinations[id].settings);
   }
 
   private start() {
-    forkJoin(
-      this._queue
-        .filter((sync) => !sync.started)
-        .map((sync) =>
-          forkJoin([this.getSource(sync.source), this.getDestination(sync.destination.id)]).pipe(
-            switchMap(([sourceInstance, destinationInstance]) => {
-              sync.started = true;
-              // TODO: go 6 by 6 maximum
-              return forkJoin(
-                sync.files
-                  .filter((f) => f.status === FileStatus.PENDING)
-                  .map((f) =>
-                    sourceInstance.download(f).pipe(
-                      concatMap((blob) => {
-                        if (sync.destination.id === 'nucliacloud') {
-                          return destinationInstance.upload(f.title, blob, sync.destination.params).pipe(
-                            tap(() => {
-                              f.status = FileStatus.UPLOADED;
-                              this.onQueueUpdate();
-                            }),
-                          );
-                        } else {
-                          return this.sdk.nuclia.db.upload(new File([blob], f.title)).pipe(
-                            tap(() => {
-                              f.status = FileStatus.PROCESSED;
-                              this.onQueueUpdate();
-                            }),
-                          );
-                        }
-                      }),
-                      take(1),
-                    ),
+    this.authenticateAllPendingConnectors()
+      .pipe(
+        concatMapTo(
+          combineLatest(
+            this._queue
+              .filter((sync) => !sync.started && !sync.completed)
+              .map((sync) => {
+                console.log('start', sync);
+                // this.getSource(sync.source).subscribe((source) => console.log('YEAP', source));
+                // this.getDestination(sync.destination.id).subscribe((source) => console.log('BLA', source));
+                // combineLatest([
+                //   this.getSource(sync.source).pipe(
+                //     take(1),
+                //     tap(() => console.log('get', sync.source)),
+                //   ),
+                //   this.getDestination(sync.destination.id),
+                // ]).subscribe((source) => console.log('YEAP', source));
+                return combineLatest([
+                  this.getSource(sync.source).pipe(
+                    take(1),
+                    tap(() => console.log('get', sync.source)),
                   ),
-              );
-            }),
-            tap(() => {
-              sync.completed = true;
-              this.onQueueUpdate();
-            }),
+                  this.getDestination(sync.destination.id).pipe(take(1)),
+                ]).pipe(
+                  switchMap(([sourceInstance, destinationInstance]) => {
+                    console.log('go');
+                    sync.started = true;
+                    // TODO: go 6 by 6 maximum
+                    return forkJoin(
+                      sync.files
+                        .filter((f) => f.status === FileStatus.PENDING)
+                        .map((f) =>
+                          sourceInstance.download(f).pipe(
+                            concatMap((blob) => {
+                              if (sync.destination.id === 'nucliacloud') {
+                                return destinationInstance.upload(f.title, blob, sync.destination.params).pipe(
+                                  tap(() => {
+                                    f.status = FileStatus.UPLOADED;
+                                    this.onQueueUpdate();
+                                  }),
+                                );
+                              } else {
+                                return this.sdk.nuclia.db.upload(new File([blob], f.title)).pipe(
+                                  tap(() => {
+                                    f.status = FileStatus.PROCESSED;
+                                    this.onQueueUpdate();
+                                  }),
+                                );
+                              }
+                            }),
+                            take(1),
+                          ),
+                        ),
+                    );
+                  }),
+                  tap(() => {
+                    sync.completed = true;
+                    this.onQueueUpdate();
+                  }),
+                );
+              }),
           ),
         ),
-    ).subscribe();
+      )
+      .subscribe();
+  }
+
+  authenticateAllPendingConnectors(): Observable<void> {
+    const sources = this._queue
+      .filter((sync) => !sync.started && !sync.completed)
+      .reduce((acc, sync) => {
+        if (!acc[sync.source]) {
+          acc[sync.source] = this.getSource(sync.source).pipe(
+            take(1),
+            concatMap((source) => {
+              if (source.hasServerSideAuth) {
+                // TODO: we cannot redirect to several third party login pages at the same time
+                console.log('oauth', sync.source);
+                source.goToOAuth();
+              }
+              return source.authenticate();
+            }),
+          );
+        }
+        return acc;
+      }, {} as { [id: string]: Observable<boolean> });
+    return combineLatest(sources).pipe(map(() => undefined));
   }
 
   addSync(sync: Sync) {

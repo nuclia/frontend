@@ -126,14 +126,9 @@ export class Db implements IDb {
           '/processing/push',
           {
             filefield: { file: token },
-            // RANDOM VALUES (TO BE FIXED IN THE API)
-            uuid: '691ec452-c010-4730-bc9b-c617dc85143d',
-            kbid: '691ec452-c010-4730-bc9b-c617dc85143d',
           },
           {
             'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-            'x-stf-nua-internal-client-id': localStorage.getItem(NUA_CLIENT) || '',
-            'x-stf-account-type': this.nuclia.options.accountType || '',
           },
         ),
       ),
@@ -148,7 +143,6 @@ export class Db implements IDb {
     return this.nuclia.rest
       .get<void>('/processing/pull', {
         'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-        'x-stf-nua-internal-client-id': localStorage.getItem(NUA_CLIENT) || '',
       })
       .pipe(tap((res) => console.log(res)));
   }
