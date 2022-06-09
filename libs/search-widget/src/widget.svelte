@@ -9,7 +9,7 @@
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
-  import { setCDN, formatQueryKey } from './core/utils';
+  import { setCDN, formatQueryKey, updateQueryParams } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
@@ -78,7 +78,7 @@
           const urlParams = new URLSearchParams(window.location.search);
           if (urlParams.get(previewQueryKey) !== resource.uuid) {
             urlParams.set(previewQueryKey, resource.uuid);
-            history.pushState(null, '', `?${urlParams.toString()}`);
+            updateQueryParams(urlParams);
           }
         }
       })
@@ -116,7 +116,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get(previewQueryKey)) {
       urlParams.delete(previewQueryKey);
-      history.pushState(null, '', `?${urlParams.toString()}`);
+      updateQueryParams(urlParams);
     }
   };
 

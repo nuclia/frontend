@@ -19,3 +19,9 @@ export const formatTime = (secons: number) => {
 export const formatQueryKey = (key: string): string => {
   return `__nuclia_${key}__`;
 }
+
+export const updateQueryParams = (urlParams: URLSearchParams) => {
+  const params = urlParams.toString();
+  const url = params ? `${location.pathname}?${params}` : location.pathname;
+  history.pushState(null, '', url);
+}
