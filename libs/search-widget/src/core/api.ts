@@ -42,7 +42,7 @@ export const suggest = (query: string) => {
   );
 };
 
-export const getResource = (uid: string) => {
+export const getResource = (uid: string): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }

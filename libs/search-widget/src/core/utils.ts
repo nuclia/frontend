@@ -15,3 +15,7 @@ export const formatTime = (secons: number) => {
   const secondsLabel = seconds < 10 ? '0' + seconds : seconds.toString();
   return `${minutesLabel}.${secondsLabel}`
 }
+
+export const formatQueryKey = (key: string): string => {
+  return `__nuclia_${key}__`;
+}

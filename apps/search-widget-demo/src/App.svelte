@@ -22,7 +22,7 @@
       },
       {
         label: 'Close',
-        action: (uid: string) => {
+        action: () => {
           widget.displayResource('');
         },
       },
@@ -35,11 +35,12 @@
     <NucliaWidget
       bind:this={widget}
       zone="europe-1"
-      knowledgebox="d1a08e42-fdea-4be2-9397-adb7b539145a"
+      knowledgebox="fdfb71d7-fe0c-46ad-91e4-c61237127df9"
       backend="https://stashify.cloud/api"
       cdn="/"
       widgetid="dashboard"
       type="input"
+      permalink
     />
   </nav>
 {/if}
