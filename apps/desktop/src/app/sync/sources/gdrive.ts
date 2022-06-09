@@ -11,10 +11,11 @@ import {
   SyncItem,
   SearchResults,
 } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take } from 'rxjs';
+import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take, tap, concatMapTo } from 'rxjs';
 import { injectScript } from '../inject';
 
 declare var gapi: any;
+declare var google: any;
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
@@ -30,7 +31,7 @@ export const GDrive: SourceConnectorDefinition = {
 };
 
 class GDriveImpl implements ISourceConnector {
-  hasServerSideAuth = false;
+  hasServerSideAuth = true;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   API_KEY: string;
   CLIENT_ID: string;
@@ -41,32 +42,57 @@ class GDriveImpl implements ISourceConnector {
   }
 
   goToOAuth() {
-    // no backend oauth flow for Google
-  }
+    let tokenClient: any;
+    injectScript('https://accounts.google.com/gsi/client')
+      .pipe(
+        tap(
+          () => {
+            google.accounts.id.initialize({
+              client_id: this.CLIENT_ID,
+              callback: () => console.log('yepa'),
+            });
 
-  authenticate(): Observable<boolean> {
-    if (!this.isAuthenticated.getValue()) {
-      injectScript('https://apis.google.com/js/api.js').subscribe(() => {
-        gapi.load('client:auth2', () => {
+            // Display the One Tap prompt
+            google.accounts.id.prompt();
+          },
+          // (tokenClient = google.accounts.oauth2.initTokenClient({
+          //   client_id: this.CLIENT_ID,
+          //   client_secret: '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',
+          //   scope: SCOPES,
+          //   callback: '', // defined later
+          // })),
+        ),
+        concatMapTo(injectScript('https://apis.google.com/js/api.js')),
+      )
+      .subscribe(() => {
+        gapi.load('client', () => {
           gapi.client
             .init({
               apiKey: this.API_KEY,
-              clientId: this.CLIENT_ID,
               discoveryDocs: DISCOVERY_DOCS,
-              scope: SCOPES,
-              // redirect_uri: 'http://localhost:4200/redirect',
-              // ux_mode: 'redirect',
             })
             .then(() => {
-              gapi.auth2.getAuthInstance().signIn();
-              this.isAuthenticated.next(!!gapi.auth2.getAuthInstance().isSignedIn.get());
-              gapi.auth2
-                .getAuthInstance()
-                .isSignedIn.listen((isSigned: boolean) => this.isAuthenticated.next(isSigned));
+              tokenClient.callback = (resp: any) => {
+                if (resp.error !== undefined) {
+                  throw resp;
+                }
+                this.isAuthenticated.next(true);
+              };
+
+              // if (gapi.client.getToken() === null) {
+              //   // Prompt the user to select a Google Account and ask for consent to share their data
+              //   // when establishing a new session.
+              //   tokenClient.requestAccessToken({ prompt: 'consent' });
+              // } else {
+              // Skip display of account chooser and consent dialog for an existing session.
+              tokenClient.requestAccessToken({ prompt: 'none' });
+              // }
             });
         });
       });
-    }
+  }
+
+  authenticate(): Observable<boolean> {
     return this.isAuthenticated.asObservable();
   }
 
@@ -92,9 +118,7 @@ class GDriveImpl implements ISourceConnector {
       /* eslint-disable  @typescript-eslint/no-explicit-any */
       map((res: any) => ({
         items: res.result.files.map(this.map),
-        nextPage: res.result.nextPageToken 
-          ? this._getFiles(query, pageSize, res.result.nextPageToken)
-          : undefined,
+        nextPage: res.result.nextPageToken ? this._getFiles(query, pageSize, res.result.nextPageToken) : undefined,
       })),
     );
   }
