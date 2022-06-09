@@ -10,15 +10,22 @@ yarn
 
 ## Dashboard
 
-Run locally:
+Start by creating an account with an email and password (as SSO doesn't work locally).
+
+The dashboard is named `app` in the source code and can be accessed through `frontend/apps/app`.
+In `apps/app/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
+
+Then you can run the dashboard locally and use the credential created previously to log in:
 
 ```
 nx serve app -c local-stage
 ```
 
-(make sure to create `apps/app/src/environments_config/local-stage/app-config.json` with the correct configuration)
 
 ## Widget
+
+In the demo, the knowledge box id is hardcoded in `apps/search-widget-demo/src/App.svelte`. 
+Before launching the demo, replace this id by the one for your own **public** knowledge box.
 
 Run the demo:
 
