@@ -22,15 +22,16 @@ export class TopbarComponent implements AfterViewInit {
   searchWidget = this.kb.pipe(
     map((kb) =>
       this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
-    zone="${this.sdk.nuclia.options.zone}"
-    widgetid="dashboard"
-    client="dashboard"
-    cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
-    backend="${this.backendConfig.getAPIURL()}"
-    state="${kb.state || ''}"
-    kbslug="${kb.slug || ''}"
-    account="${kb.account || ''}"
-    type="input"></nuclia-search>`),
+        zone="${this.sdk.nuclia.options.zone}"
+        widgetid="dashboard"
+        client="dashboard"
+        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
+        backend="${this.backendConfig.getAPIURL()}"
+        state="${kb.state || ''}"
+        kbslug="${kb.slug || ''}"
+        account="${kb.account || ''}"
+        type="input"
+        permalink></nuclia-search>`),
     ),
   );
 

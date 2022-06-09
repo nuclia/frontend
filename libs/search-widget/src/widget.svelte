@@ -9,7 +9,7 @@
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
-  import { setCDN } from './core/utils';
+  import { setCDN, formatQueryKey, updateQueryParams, coerceBooleanProperty } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
@@ -28,6 +28,9 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
+  export let permalink = false;
+
+  $: permalinkEnabled = coerceBooleanProperty(permalink);
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -42,6 +45,7 @@
   let showModal = false;
   let resource: Observable<Resource>;
   let ready = false;
+  const previewQueryKey = formatQueryKey('preview');
 
   onMount(() => {
     initNuclia(
@@ -54,6 +58,7 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
+        permalink: permalinkEnabled,
       },
       state,
     );
@@ -63,10 +68,22 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
     style = nucliaState().customStyle;
+
+    checkUrlParams();
+
     resource = nucliaState().displayedResource.pipe(
       filter((resource) => !!resource?.uid),
       concatMap((resource) => getResource(resource.uid)),
-      tap(() => (showModal = true)),
+      tap((resource) => {
+        showModal = true;
+        if (permalinkEnabled) {
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.get(previewQueryKey) !== resource.uuid) {
+            urlParams.set(previewQueryKey, resource.uuid);
+            updateQueryParams(urlParams);
+          }
+        }
+      })
     );
     merge(
       nucliaStore().query.pipe(filter((query) => query.slice(-1) === ' ')),
@@ -98,6 +115,19 @@
   const closeModal = () => {
     showModal = false;
     setDisplayedResource({ uid: '' });
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get(previewQueryKey)) {
+      urlParams.delete(previewQueryKey);
+      updateQueryParams(urlParams);
+    }
+  };
+
+  const checkUrlParams = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const uuid = urlParams.get(previewQueryKey);
+    if (uuid) {
+      displayResource(uuid);
+    }
   };
 </script>
 

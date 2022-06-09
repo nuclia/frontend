@@ -1,4 +1,4 @@
-import { Nuclia, ResourceProperties, Search } from '../../../sdk-core/src';
+import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/src';
 import type { NucliaOptions, KBStates } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
@@ -42,7 +42,7 @@ export const suggest = (query: string) => {
   );
 };
 
-export const getResource = (uid: string) => {
+export const getResource = (uid: string): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
