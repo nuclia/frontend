@@ -18,7 +18,9 @@
 
   $: {
     summaries = [resource.summary].concat(resource.getExtractedSummaries()).filter((s) => !!s);
-    entities = Object.entries(resource.getNamedEntities()).sort((a, b) => a[0].localeCompare(b[0]));
+    entities = Object.entries(resource.getNamedEntities())
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map((e) => [e[0], e[1].sort((a, b) => a.localeCompare(b))]);
     files = getFileUrls(resource.getFiles().reduce((acc, f) => (f.uri ? acc.concat(f.uri) : acc), []));
     linksPreviews = getLinksPreviews(resource);
     links = getLinks(resource);

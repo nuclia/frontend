@@ -4,10 +4,12 @@
   import { viewerState, viewerStore, pdfUrl } from './store';
   import Pdf from './previewers/Pdf.svelte';
   import Player from './previewers/Player.svelte';
+  import Youtube from './previewers/Youtube.svelte';
 
   const pdfPreview = viewerState.pdfPreview;
   const linkPreview = viewerState.linkPreview;
   const mediaPreview = viewerState.mediaPreview;
+  const youtubePreview = viewerState.youtubePreview;
 
   const closePreview = () => {
     viewerStore.showPreview.next(false);
@@ -24,6 +26,9 @@
   {/if}
   {#if $mediaPreview}
     <Player time={$mediaPreview.time} src={$mediaPreview.file.uri} type={$mediaPreview.file.content_type} />
+  {/if}
+  {#if $youtubePreview}
+    <Youtube time={$youtubePreview.time} uri={$youtubePreview.uri} />
   {/if}
   {#if $linkPreview}
     <Pdf src={$linkPreview.file.uri} />

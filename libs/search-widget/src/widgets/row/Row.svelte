@@ -49,7 +49,7 @@
       {/if}
       {#if result.summary}
         <h3>{$_('results.summary')}</h3>
-        <div class="body">{result.summary}</div>
+        <div class="summary">{result.summary}</div>
       {/if}
     </div>
     <div class="block-4">
@@ -150,6 +150,13 @@
     height: 100%;
     object-fit: cover;
     object-position: top;
+  }
+  .summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .paragraph-list:not(:last-child) {
     padding-bottom: 12px;
