@@ -1,4 +1,4 @@
-import { Nuclia, ResourceProperties, Search } from '../../../sdk-core/src';
+import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/src';
 import type { NucliaOptions, KBStates } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
