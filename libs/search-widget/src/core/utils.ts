@@ -25,3 +25,12 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
   const url = params ? `${location.pathname}?${params}` : location.pathname;
   history.pushState(null, '', url);
 }
+
+/**
+ * Coerces a value (usually a string coming from a prop) to a boolean.
+ * Credit to Angular: https://github.com/angular/components/blob/2f9a59a24c0464cbed7f54cbeb5cba73e6007715/src/cdk/coercion/boolean-property.ts
+ * @param value
+ */
+export const coerceBooleanProperty = (value: any): boolean => {
+  return value != null && `${value}` !== 'false';
+}
