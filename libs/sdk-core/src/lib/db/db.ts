@@ -15,7 +15,7 @@ import {
 } from './db.models';
 import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
-import { uploadToProcess } from './upload';
+import { FileWithMetadata, uploadToProcess } from './upload';
 
 export class Db implements IDb {
   private nuclia: INuclia;
@@ -116,11 +116,11 @@ export class Db implements IDb {
     );
   }
 
-  upload(file: File): Observable<void> {
+  upload(file: FileWithMetadata): Observable<void> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /process');
     }
-    return uploadToProcess(this.nuclia, file).pipe(
+    return uploadToProcess(this.nuclia, file, { md5: file.md5 }).pipe(
       switchMap((token) =>
         this.nuclia.rest.post<void>(
           '/processing/push',

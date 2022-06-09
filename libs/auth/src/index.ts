@@ -25,3 +25,4 @@ export * from './lib/pipes';
 export * from './lib/pipes/stf-pipes.module';
 
 export * from './lib/models';
+export * from './lib/md5';

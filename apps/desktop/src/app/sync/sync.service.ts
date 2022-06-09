@@ -32,7 +32,7 @@ import {
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
-import { SDKService, UserService } from '@flaps/auth';
+import { SDKService, UserService, md5 } from '@flaps/auth';
 import { DropboxConnector } from './sources/dropbox';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
@@ -130,7 +130,7 @@ export class SyncService {
                   this.getSource(sync.source).pipe(take(1)),
                   this.getDestination(sync.destination.id).pipe(take(1)),
                 ]).pipe(
-                  switchMap(([sourceInstance, destinationInstance]) => {
+                  concatMap(([sourceInstance, destinationInstance]) => {
                     sync.started = true;
                     // TODO: go 6 by 6 maximum
                     return forkJoin(
@@ -147,7 +147,8 @@ export class SyncService {
                                   }),
                                 );
                               } else {
-                                return this.sdk.nuclia.db.upload(new File([blob], f.title)).pipe(
+                                return md5(new File([blob], f.title)).pipe(
+                                  concatMap((file) => this.sdk.nuclia.db.upload(file)),
                                   tap(() => {
                                     f.status = FileStatus.PROCESSED;
                                     this.onQueueUpdate();
