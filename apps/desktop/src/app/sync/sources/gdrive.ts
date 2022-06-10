@@ -46,21 +46,13 @@ class GDriveImpl implements ISourceConnector {
     injectScript('https://accounts.google.com/gsi/client')
       .pipe(
         tap(
-          () => {
-            google.accounts.id.initialize({
+          () =>
+            (tokenClient = google.accounts.oauth2.initTokenClient({
               client_id: this.CLIENT_ID,
-              callback: () => console.log('yepa'),
-            });
-
-            // Display the One Tap prompt
-            google.accounts.id.prompt();
-          },
-          // (tokenClient = google.accounts.oauth2.initTokenClient({
-          //   client_id: this.CLIENT_ID,
-          //   client_secret: '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',
-          //   scope: SCOPES,
-          //   callback: '', // defined later
-          // })),
+              client_secret: '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',
+              scope: SCOPES,
+              callback: '', // defined later
+            })),
         ),
         concatMapTo(injectScript('https://apis.google.com/js/api.js')),
       )
@@ -79,14 +71,14 @@ class GDriveImpl implements ISourceConnector {
                 this.isAuthenticated.next(true);
               };
 
-              // if (gapi.client.getToken() === null) {
-              //   // Prompt the user to select a Google Account and ask for consent to share their data
-              //   // when establishing a new session.
-              //   tokenClient.requestAccessToken({ prompt: 'consent' });
-              // } else {
-              // Skip display of account chooser and consent dialog for an existing session.
-              tokenClient.requestAccessToken({ prompt: 'none' });
-              // }
+              if (gapi.client.getToken() === null) {
+                // Prompt the user to select a Google Account and ask for consent to share their data
+                // when establishing a new session.
+                tokenClient.requestAccessToken({ prompt: 'consent' });
+              } else {
+                // Skip display of account chooser and consent dialog for an existing session.
+                tokenClient.requestAccessToken({ prompt: 'none' });
+              }
             });
         });
       });
