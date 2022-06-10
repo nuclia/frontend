@@ -4,6 +4,7 @@
 
   export let uri: string;
   export let time: number;
+  let playerElement: HTMLElement;
   let player: any;
   let apiReady = false;
   let videoReady = false;
@@ -37,7 +38,7 @@
   };
 
   const loadVideo = () => {
-    player = new (window as any).YT.Player('nuclia-yt-player', {
+    player = new (window as any).YT.Player(playerElement, {
       width: 'auto',
       height: 'auto',
       videoId: getYoutubeId(uri),
@@ -58,7 +59,7 @@
 </svelte:head>
 
 <div class="container">
-  <div id="nuclia-yt-player" />
+  <div class="player" bind:this={playerElement} />
 </div>
 
 <style>
@@ -67,7 +68,7 @@
     padding-bottom: 56.25%;
     height: 0;
   }
-  .container #nuclia-yt-player {
+  .container .player {
     position: absolute;
     top: 0;
     left: 0;
