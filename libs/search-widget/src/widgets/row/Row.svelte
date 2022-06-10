@@ -188,6 +188,7 @@
     .blocks {
       display: grid;
       grid-template-columns: 46px calc(75% - 46px) 25%;
+      grid-template-rows: min-content 1fr;
     }
     .block-4 {
       grid-column: 2 / 2;
