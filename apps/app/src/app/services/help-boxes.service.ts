@@ -11,7 +11,7 @@ const LOCAL_STORAGE_KEY = 'NUCLIA_TOUR_COMPLETED';
 })
 export class HelpBoxesService {
   constructor(private app: AppService, private tourService: TourService, private tracking: STFTrackingService) {}
-  isTourDisabled = true;
+  isTourDisabled = false;
 
   initializeTour() {
     this.tracking.getEnabledFeatures().subscribe((features) => {
@@ -19,11 +19,11 @@ export class HelpBoxesService {
         this.isTourDisabled
           ? []
           : TOUR_STEPS.filter(
-            (step) =>
-              !step.anchorId ||
-              !STEPS_FEATURES_DEPENDENCIES[step.anchorId] ||
-              STEPS_FEATURES_DEPENDENCIES[step.anchorId].some((feature) => features.includes(feature)),
-            )
+              (step) =>
+                !step.anchorId ||
+                !STEPS_FEATURES_DEPENDENCIES[step.anchorId] ||
+                STEPS_FEATURES_DEPENDENCIES[step.anchorId].some((feature) => features.includes(feature)),
+            ),
       );
       this.tracking.logEvent('tour_started');
     });
