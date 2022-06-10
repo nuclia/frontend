@@ -15,7 +15,7 @@ import {
   take,
 } from 'rxjs';
 import type { INuclia } from '../models';
-import { NUA_CLIENT, NUA_KEY } from './db.models';
+import { NUA_KEY } from './db.models';
 import type { ICreateResource } from './resource.models';
 
 const CHUNK_SIZE = 512 * 1024; // minimum size accepted by GCS
@@ -281,7 +281,7 @@ export const uploadToProcess = (nuclia: INuclia, file: File, metadata?: FileMeta
   return nuclia.rest.post<string>('/processing/upload', file, headers);
 };
 
-const getFileMetadata = (metadata: FileMetadata | undefined): { [key: string]: string } => {
+export const getFileMetadata = (metadata: FileMetadata | undefined): { [key: string]: string } => {
   const headers: { [key: string]: string } = {};
   if (metadata?.filename) {
     headers['x-filename'] = btoa(encodeURIComponent(metadata.filename));

@@ -1,4 +1,4 @@
-import { 
+import {
   Component,
   AfterViewInit,
   OnDestroy,
@@ -8,7 +8,7 @@ import {
   ViewChild,
   ElementRef,
   ChangeDetectorRef,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
@@ -33,40 +33,47 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   triggerNextPage = new Subject<void>();
   unsubscribeAll = new Subject<void>();
   nextPage?: Observable<SearchResults>;
-  loading = false; 
+  loading = false;
 
   items: SyncItem[] = [];
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     filter(() => !!this.source),
-    tap(() => { this.loading = true }),
-    switchMap(() => 
+    tap(() => {
+      this.loading = true;
+    }),
+    switchMap(() =>
       concat(
         (this.source as ISourceConnector).getFiles(this.query),
         this.triggerNextPage.pipe(
           filter(() => !this.loading),
-          tap(() => { this.loading = true }),
-          concatMap(() => this.nextPage ? this.nextPage : of({ items: [], nextPage: undefined }))
-        )
+          tap(() => {
+            this.loading = true;
+          }),
+          concatMap(() => (this.nextPage ? this.nextPage : of({ items: [], nextPage: undefined }))),
+        ),
       ).pipe(
-        tap((res) => { this.nextPage =  res.nextPage; this.loading = false; }),
-        scan((acc, current) => acc.concat(current.items), [] as SyncItem[])
+        tap((res) => {
+          this.nextPage = res.nextPage;
+          this.loading = false;
+        }),
+        scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
       ),
     ),
-    share()
+    share(),
   );
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
-    setTimeout(() => { this.triggerSearch.next() }, 200);
+    setTimeout(() => {
+      this.triggerSearch.next();
+    }, 200);
 
     // TODO: can't use async pipe in the template because (unexpectedly) it doesn't work on GDrive connector.
-    this.resources
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((resources) => {
-        this.items = resources;
-        this.cdr.detectChanges();
-      });
+    this.resources.pipe(takeUntil(this.unsubscribeAll)).subscribe((resources) => {
+      this.items = resources;
+      this.cdr.detectChanges();
+    });
 
     // Infinite scroll
     const container = this.scroll?.nativeElement;
@@ -75,8 +82,8 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
         .pipe(
           auditTime(300),
           filter(() => !!this.nextPage && !this.loading),
-          filter(() => container.scrollTop > (container.scrollHeight - container.clientHeight) - 400),
-          takeUntil(this.unsubscribeAll)
+          filter(() => container.scrollTop > container.scrollHeight - container.clientHeight - 400),
+          takeUntil(this.unsubscribeAll),
         )
         .subscribe(() => {
           this.triggerNextPage.next();

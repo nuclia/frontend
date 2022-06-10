@@ -8,13 +8,12 @@
   "asar": true,
   "asarUnpack": ["dist/apps/desktop-electron/jobs/main.js"],
   "afterSign": "apps/desktop/electron/scripts/notarize.js",
-  "publish": {
-    "publishAutoUpdate": true,
-    "provider": "github"
-  },
   "win": {
     "icon": "apps/desktop/electron/icons/win/icon.ico",
-    "publish": ["github"]
+    "publish": {
+      "publishAutoUpdate": true,
+      "provider": "github"
+    }
   },
   "mac": {
     "category": "public.app-category.productivity",
@@ -25,7 +24,10 @@
     "gatekeeperAssess": false,
     "entitlements": "apps/desktop/electron/entitlements.mac.plist",
     "entitlementsInherit": "apps/desktop/electron/entitlements.mac.plist",
-    "publish": ["github"]
+    "publish": {
+      "publishAutoUpdate": true,
+      "provider": "github"
+    }
   },
   "dmg": {
     "backgroundColor": "#000",
@@ -37,7 +39,10 @@
   },
   "linux": {
     "icon": "apps/desktop/electron/icons/png",
-    "publish": ["github"]
+    "publish": {
+      "publishAutoUpdate": true,
+      "provider": "github"
+    }
   },
   "files": [
     {
