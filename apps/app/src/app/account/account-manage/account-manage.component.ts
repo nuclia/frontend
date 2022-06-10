@@ -23,9 +23,9 @@ type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 const SECTION_TITLES: { [section in Section]: string } = {
   account: 'account.manage',
   config: 'generic.settings',
-  knowledgeboxes: 'account.knowledgeboxs',
+  knowledgeboxes: 'account.knowledgeboxes',
   users: 'account.users',
-  nucliaDBs: 'generic.nuclia_db',
+  nucliaDBs: 'account.nua_keys',
 };
 
 @Component({
