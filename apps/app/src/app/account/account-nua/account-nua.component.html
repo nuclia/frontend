@@ -26,15 +26,6 @@
              fxLayout="row"
              fxLayoutAlign="end center"
              fxLayoutGap="5px">
-          <!--
-          <app-button-action
-            (click)="openDialog(zones, client)"
-            action="edit"
-            ariaLabel="generic.edit"
-            stfTooltip
-            stfTooltipText="generic.edit">
-          </app-button-action>
-          -->
           <app-button-action (click)="askConfirmation(client)"
                              action="generate_key"
                              ariaLabel="account.generate_key"
@@ -63,7 +54,7 @@
         <stf-button (click)="openDialog(zones)"
                     color="secondary"
                     padding="pd-l">
-          {{ 'account.create_account' | translate }}
+          {{ 'account.create_nua_key' | translate }}
         </stf-button>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="2.9.2" version="1.2">
+<babeledit_project be_version="3.0.0" version="1.2">
     <!--
 
     BabelEdit project file
@@ -227,27 +227,6 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.create_account</name>
-                <definition_loaded>false</definition_loaded>
-                <description/>
-                <comment/>
-                <default_text/>
-                <translations>
-                    <translation>
-                        <language>ca-ES</language>
-                        <approved>false</approved>
-                    </translation>
-                    <translation>
-                        <language>en-US</language>
-                        <approved>false</approved>
-                    </translation>
-                    <translation>
-                        <language>es-ES</language>
-                        <approved>false</approved>
-                    </translation>
-                </translations>
-            </concept_node>
-            <concept_node>
                 <name>account.create_new_db</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -269,7 +248,7 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.create_nua_account</name>
+                <name>account.create_nua_key</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -332,7 +311,7 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.edit_nua_account</name>
+                <name>account.edit_nua_key</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -458,7 +437,7 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.knowledgeboxs</name>
+                <name>account.knowledgeboxes</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -669,6 +648,48 @@
             </concept_node>
             <concept_node>
                 <name>account.new_token</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>account.nua_client</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>account.nua_keys</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -12235,6 +12256,7 @@
             <copy_template>[translate]=&quot;'%1'&quot;</copy_template>
             <copy_template>_('%1')</copy_template>
         </copy_templates>
+        <custom_languages/>
     </editor_configuration>
     <primary_language>en-US</primary_language>
     <configuration>

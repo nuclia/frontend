@@ -1,5 +1,5 @@
 <div class="client-dialog">
-  <h1>{{ (editMode ? 'account.edit_nua_account' : 'account.create_nua_account') | translate }}</h1>
+  <h1>{{ (editMode ? 'account.edit_nua_key' : 'account.create_nua_key') | translate }}</h1>
   <button class="close-button"
           (click)="close()">
     <svg-icon src="assets/icons/close.svg"></svg-icon>
@@ -11,7 +11,7 @@
          fxLayout="row">
       <label for="client-title"
              fxFlex="24%">
-        {{ 'account.title' | translate }}
+        {{ 'account.nua_client' | translate }}
       </label>
       <div fxFlex="70%">
         <stf-input id="client-title"
@@ -26,13 +26,12 @@
     <div class="mb-40"
          fxLayout="row">
       <label for="client-email"
-           fxFlex="24%">
+             fxFlex="24%">
         <span>{{ 'generic.email' | translate }}</span>
-        <svg-icon
-          class="email-info"
-          src="assets/icons/info.svg"
-          stfTooltip
-          stfTooltipText="account.email_info">
+        <svg-icon class="email-info"
+                  src="assets/icons/info.svg"
+                  stfTooltip
+                  stfTooltipText="account.email_info">
         </svg-icon>
       </label>
       <div fxFlex="70%">
