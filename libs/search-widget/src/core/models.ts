@@ -28,6 +28,7 @@ export enum PreviewKind {
   PDF,
   VIDEO,
   AUDIO,
+  YOUTUBE,
 }
 
 export enum SearchOrder {
@@ -58,7 +59,7 @@ export interface PdfWidgetParagraph extends BaseWidgetParagraph {
 
 export interface MediaWidgetParagraph extends BaseWidgetParagraph {
   time: number;
-  preview: PreviewKind.VIDEO | PreviewKind.AUDIO;
+  preview: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE;
 }
 
 export interface SelectedParagraph {
@@ -75,6 +76,11 @@ export interface PdfPreviewParams {
 
 export interface MediaPreviewParams {
   file: CloudLink;
+  time: number;
+}
+
+export interface YoutubePreviewParams {
+  uri: string;
   time: number;
 }
 

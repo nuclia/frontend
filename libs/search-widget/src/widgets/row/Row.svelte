@@ -49,7 +49,7 @@
       {/if}
       {#if result.summary}
         <h3>{$_('results.summary')}</h3>
-        <div class="body">{result.summary}</div>
+        <div class="summary">{result.summary}</div>
       {/if}
     </div>
     <div class="block-4">
@@ -151,6 +151,13 @@
     object-fit: cover;
     object-position: top;
   }
+  .summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .paragraph-list:not(:last-child) {
     padding-bottom: 12px;
     border-bottom: 1px solid var(--color-primary-regular);
@@ -181,6 +188,7 @@
     .blocks {
       display: grid;
       grid-template-columns: 46px calc(75% - 46px) 25%;
+      grid-template-rows: min-content 1fr;
     }
     .block-4 {
       grid-column: 2 / 2;

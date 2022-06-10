@@ -31,7 +31,7 @@
             active={$selectedParagraphIndex === i}
             on:click={() => previewParagraph(paragraph)}
           />
-        {:else if paragraph.preview === PreviewKind.VIDEO || paragraph.preview === PreviewKind.AUDIO}
+        {:else if paragraph.preview === PreviewKind.VIDEO || paragraph.preview === PreviewKind.AUDIO || paragraph.preview === PreviewKind.YOUTUBE}
           <ParagraphWithIcon
             text={paragraph.text}
             textIcon={formatTime(paragraph.time)}

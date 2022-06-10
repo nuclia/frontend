@@ -25,11 +25,13 @@ import type {
   PdfPreviewParams,
   MediaPreviewParams,
   LinkPreviewParams,
+  YoutubePreviewParams,
   WidgetParagraph,
   SelectedParagraph,
 } from '../core/models';
 import { PreviewKind, SearchOrder } from '../core/models';
 import { getFileUrls } from '../core/api';
+import { isYoutubeUrl } from '../core/utils';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 
@@ -74,21 +76,21 @@ export const viewerState = {
   ),
   pdfPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
-    filter(([resource, selected]) => {
-      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
-      return !!field && getPreviewKind(field, selected!.paragraph) === PreviewKind.PDF;
-    }),
+    filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.PDF])),
     map(([resource, selected]) => getPdfPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   ),
   mediaPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
-    filter(([resource, selected]) => {
-      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
-      const kind = field && getPreviewKind(field, selected!.paragraph);
-      return !!kind && [PreviewKind.VIDEO, PreviewKind.AUDIO].includes(kind);
-    }),
+    filter(([resource, selected]) => 
+      isParagraphOfKind(resource!, selected!, [PreviewKind.VIDEO, PreviewKind.AUDIO])
+    ),
     switchMap(([resource, selected]) => getMediaPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
-  )
+  ),
+  youtubePreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
+    filter(([resource, selected]) => !!resource && !!selected),
+    filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.YOUTUBE])),
+    map(([resource, selected]) => getYoutubePreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
+  ),
 };
 
 export const selectedParagraphIndex = combineLatest([
@@ -178,6 +180,27 @@ export function getMediaPreviewParams(
   }
 }
 
+export function getYoutubePreviewParams(
+  resource: Resource,
+  fieldId: string,
+  paragraph: Paragraph,
+): YoutubePreviewParams | undefined {
+  const field = getLinkField(resource, fieldId);
+  const uri = field?.value?.uri;
+  const time = paragraph.start_seconds?.[0];
+  if (uri && typeof time === 'number') {
+    return { uri, time };
+  } else {
+    return undefined;
+  }
+}
+
+function isParagraphOfKind(resource: Resource, selected: SelectedParagraph, kinds: PreviewKind[]) {
+  const field = getField(resource!, selected!.fieldType, selected!.fieldId);
+  const kind = field && getPreviewKind(field, selected!.paragraph);
+  return !!kind && kinds.includes(kind);
+}
+
 export function selectSentence(resource: Resource, searchSentence: Search.Sentence) {
   const paragraph = findParagraphFromSearchSentence(resource, searchSentence, false);  
   paragraph && _selectParagraph(resource, paragraph, searchSentence.field_type, searchSentence.field);
@@ -257,7 +280,7 @@ function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
 }
 
 function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
-  if (field?.extracted && 'file' in field.extracted) {
+  if (field.extracted && 'file' in field.extracted) {
     if (
       getPages(field as FileFieldData).length &&
       getParagraphPageIndexes(field as FileFieldData, paragraph).length
@@ -269,6 +292,11 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
       } else if (isFileType(field as FileFieldData, 'audio/')) {
         return PreviewKind.AUDIO;
       }
+    }
+  }
+  else if (field.value && 'uri' in field.value) {
+    if (paragraph.kind === 'INCEPTION') {
+      return PreviewKind.YOUTUBE;
     }
   }
   return PreviewKind.NONE;
@@ -288,7 +316,7 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
       preview: kind,
       page: getParagraphPageIndexes(field as FileFieldData, paragraph)[0],
     };
-  } else if (kind === PreviewKind.VIDEO || kind === PreviewKind.AUDIO) {
+  } else if (kind === PreviewKind.VIDEO || kind === PreviewKind.AUDIO || kind === PreviewKind.YOUTUBE) {
     return {
       ...baseParagraph,
       preview: kind,
@@ -322,6 +350,10 @@ export function getField(resource: Resource, fieldType: string, fieldId: string)
 
 export function getFileField(resource: Resource, fieldId: string): FileFieldData | undefined {
   return resource.data.files?.[fieldId];
+}
+
+export function getLinkField(resource: Resource, fieldId: string): LinkFieldData | undefined {
+  return resource.data.links?.[fieldId];
 }
 
 export function getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
@@ -371,6 +403,7 @@ export function getLinks(resource: Resource): string[] {
 export function getLinksPreviews(resource: Resource): CloudLink[] {
   return resource
     .getFields(['links'])
+    .filter((field) => !isYoutubeField(field as LinkFieldData))
     .map((field) => (field as LinkFieldData).extracted?.link?.link_preview)
     .filter((preview) => !!preview) as CloudLink[];
 }
@@ -396,6 +429,10 @@ function getFieldType(fieldType: string): keyof ResourceData {
   } else {
     return 'texts';
   }
+}
+
+function isYoutubeField(field: LinkFieldData): boolean {
+  return field.value?.uri ?  isYoutubeUrl(field.value.uri) : false;
 }
 
 function findParagraphFromSearchParagraph(
