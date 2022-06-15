@@ -10,34 +10,31 @@ let nextId = 0;
   selector: 'app-synonym-add',
   templateUrl: './synonym-add.component.html',
   styleUrls: ['./synonym-add.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SynonymAddComponent {
-
   @Input() entities: Entity[] = [];
   @Input() ignore: Entity[] = [];
   @Output() add = new EventEmitter<Entity>();
   id: string;
   openAutocomplete: boolean = false;
   filterInput = new FormControl();
-  items$: Observable<Entity[]>
+  items$: Observable<Entity[]>;
 
   constructor() {
     this.id = `synonym-add${nextId++}`;
 
     this.items$ = this.filterInput.valueChanges.pipe(
       startWith([]),
-      map(input => input.length > 2 ? this.filterEntities(input) : [])
+      map((input) => (input?.length > 2 ? this.filterEntities(input) : [])),
     );
   }
 
   filterEntities(text: string): Entity[] {
     const regex = new RegExp(`(${text})`, 'i');
-    return this.entities
-      .filter(entity => (
-        regex.test(entity.value) &&
-        this.ignore.every(item => item.value !== entity.value)
-      ));
+    return this.entities.filter(
+      (entity) => regex.test(entity.value) && this.ignore.every((item) => item.value !== entity.value),
+    );
   }
 
   toggle() {
