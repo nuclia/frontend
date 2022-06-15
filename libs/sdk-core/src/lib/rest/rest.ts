@@ -90,7 +90,8 @@ export class Rest implements IRest {
       path.startsWith('/zones') ||
       path.includes('/activity');
     const backend = isGlobal ? this.nuclia.backend : this.nuclia.regionalBackend;
-    return `${backend}/v1${path}`;
+    const version = path.startsWith('/auth') ? '' : '/v1';
+    return `${backend}${version}${path}`;
   }
 
   getZones(): Observable<{ [key: string]: string }> {
