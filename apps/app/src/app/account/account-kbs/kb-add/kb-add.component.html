@@ -80,13 +80,19 @@
       </stf-checkbox-group>
     </ng-container>
 
+    <div *ngIf="error"
+         class="error"><strong>
+        {{ error | translate }}
+      </strong>
+    </div>
     <div class="mt-52"
          fxLayout="row"
          fxLayoutAlign="center center"
          fxLayoutGap="10px">
       <stf-button *ngIf="step === (lastStep | async)"
                   type="submit"
-                  minWidth="110px">
+                  minWidth="110px"
+                  [disabled]="loading">
         {{ 'generic.save' | translate }}
       </stf-button>
       <stf-button *ngIf="step < ((lastStep | async) || 2)"

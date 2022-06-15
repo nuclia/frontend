@@ -4,7 +4,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap, shareReplay } from 'rxjs/operators';
-import { Account, IKnowledgeBox, KBStates, KnowledgeBoxCreation, WritableKnowledgeBox, IKnowledgeBoxItem } from '@nuclia/core';
+import {
+  Account,
+  IKnowledgeBox,
+  KBStates,
+  KnowledgeBoxCreation,
+  WritableKnowledgeBox,
+  IKnowledgeBoxItem,
+} from '@nuclia/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { Zone, ZoneService } from '@flaps/core';
 import { STFTrackingService, StateService, SDKService } from '@flaps/auth';
@@ -93,20 +100,15 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         takeUntil(this.unsubscribeAll),
-        filter((result) => !!result),
-        switchMap((result) => {
-          this.setLoading(true);
-          return this.sdk.nuclia.db.createKnowledgeBox(this.account!.slug, result as KnowledgeBoxCreation);
+        filter((result) => {
+          if (result?.success === false) {
+            this.toaster.error('stash.create.failure');
+          }
+          return !!result?.success;
         }),
         switchMap(() => this.updateKbs()),
       )
-      .subscribe({
-        next: () => this.setLoading(false),
-        error: () => {
-          this.setLoading(false);
-          this.toaster.error('stash.create.error');
-        },
-      });
+      .subscribe(() => this.cdr?.markForCheck());
   }
 
   publishKb(kb: IKnowledgeBoxItem) {
