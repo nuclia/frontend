@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { STFTrackingService } from '@flaps/auth';
+import { SDKService, STFTrackingService } from '@flaps/auth';
 import { CheckboxGroupItem, Sluggable } from '@flaps/common';
 import { Zone, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
-import { map, share } from 'rxjs';
+import { map, share, switchMap } from 'rxjs';
 
 export interface KbAddData {
   account: Account;
@@ -47,24 +47,44 @@ export class KbAddComponent {
   hasAnonymization = this.tracking.isFeatureEnabled('kb-anonymization').pipe(share());
   totalSteps = this.hasAnonymization.pipe(map((hasAnonymization) => (hasAnonymization ? 3 : 2)));
   lastStep = this.hasAnonymization.pipe(map((hasAnonymization) => (hasAnonymization ? 2 : 1)));
+  loading = false;
+  failures = 0;
+  error = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private dialogRef: MatDialogRef<KbAddComponent, KnowledgeBoxCreation | undefined>,
+    private dialogRef: MatDialogRef<KbAddComponent, { success: boolean } | undefined>,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
     @Inject(MAT_DIALOG_DATA) public data: KbAddData,
+    private sdk: SDKService,
   ) {}
 
   save() {
     if (this.kbForm.invalid) return;
-    this.dialogRef.close({
+    const payload: KnowledgeBoxCreation = {
       slug: STFUtils.generateSlug(this.kbForm.value.title),
       zone: this.kbForm.value.zone,
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
       sentence_embedder: this.languageMode[0] === 'multilingual' ? 'multilingual' : this.kbForm.value.selectedLanguage,
       anonymization: this.useAnonymization[0] === 'yes' ? 'multilingual' : '',
+    };
+    this.loading = true;
+    this.error = '';
+    this.cdr?.markForCheck();
+    this.sdk.nuclia.db.createKnowledgeBox(this.data.account.slug, payload).subscribe({
+      next: () => this.dialogRef.close({ success: true }),
+      error: () => {
+        this.failures += 1;
+        this.loading = false;
+        if (this.failures < 4) {
+          this.error = 'stash.create.error';
+        } else {
+          this.dialogRef.close({ success: false });
+        }
+        this.cdr?.markForCheck();
+      },
     });
   }
 
