@@ -12,10 +12,12 @@
   </button>
 
   <div class="search-widget">
-    <span tourAnchor="step2">{{ 'searchbar.help' | translate}}</span>
-    <div tourAnchor="step3"
-         [innerHtml]="searchWidget | async">
-    </div>
+    <ng-container *ngIf="searchEnabled | async">
+      <span tourAnchor="step2">{{ 'searchbar.help' | translate}}</span>
+      <div tourAnchor="step3"
+           [innerHtml]="searchWidget | async">
+      </div>
+    </ng-container>
   </div>
 
   <a class="topbar-report"

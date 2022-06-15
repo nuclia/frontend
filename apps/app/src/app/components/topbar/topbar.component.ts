@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { BackendConfigurationService, UserService, SDKService } from '@flaps/auth';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { NavigationService } from '../../services/navigation.service';
-import { filter, map, switchMap, take, tap } from 'rxjs';
+import { filter, map, switchMap, take, tap, distinctUntilKeyChanged } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { STFConfirmComponent } from '@flaps/components';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-topbar',
@@ -19,7 +20,12 @@ export class TopbarComponent implements AfterViewInit {
   userPrefs = this.userService.userPrefs;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
+  searchEnabled = this.appService.searchEnabled;
   searchWidget = this.kb.pipe(
+    distinctUntilKeyChanged('id'),
+    tap(() => {
+      document.getElementById('search-widget')?.remove();
+    }),
     map((kb) =>
       this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
@@ -49,6 +55,7 @@ export class TopbarComponent implements AfterViewInit {
     private sdk: SDKService,
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
+    private appService: AppService,
     private dialog: MatDialog,
     private translate: TranslatePipe,
   ) {}
@@ -56,7 +63,7 @@ export class TopbarComponent implements AfterViewInit {
   goToHome(): void {
     this.navigationService.homeUrl.pipe(take(1)).subscribe((url) => {
       this.router.navigate([url]);
-    })
+    });
   }
 
   ngAfterViewInit(): void {

@@ -5,7 +5,7 @@
   import InputWidget from './widgets/InputWidget.svelte';
   import FormWidget from './widgets/FormWidget.svelte';
   import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
-  import { getResource, initNuclia, search, suggest } from './core/api';
+  import { getResource, initNuclia, resetNuclia, search, suggest } from './core/api';
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
@@ -109,6 +109,7 @@
 
     return () => {
       resetStore();
+      resetNuclia();
     };
   });
 

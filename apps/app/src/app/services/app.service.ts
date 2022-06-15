@@ -16,6 +16,9 @@ export class AppService {
   );
   readonly currentLocale = this.currentLocaleSubject.asObservable();
 
+  private _searchEnabled = new BehaviorSubject<boolean>(true);
+  readonly searchEnabled = this._searchEnabled.asObservable();
+
   constructor(
     private config: BackendConfigurationService,
     private translateService: TranslateService
@@ -29,6 +32,10 @@ export class AppService {
 
   getCurrentLocale(): string {
     return this.currentLocaleSubject.getValue();
+  }
+
+  setSearchEnabled(value: boolean): void {
+    this._searchEnabled.next(value);
   }
 
   private listenLanguageChange(): void {

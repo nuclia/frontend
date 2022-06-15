@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { STFTrackingService, SDKService } from '@flaps/auth';
@@ -6,6 +6,7 @@ import { filter, map, switchMap } from 'rxjs';
 import { AddWidgetDialogComponent } from './add/add-widget.component';
 import { WidgetService } from './widget.service';
 import { NavigationService } from '../services/navigation.service';
+import { AppService } from '../services/app.service';
 
 const DEFAULT_WIDGET = 'dashboard';
 @Component({
@@ -14,7 +15,7 @@ const DEFAULT_WIDGET = 'dashboard';
   styleUrls: ['widgets.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetsComponent {
+export class WidgetsComponent implements OnDestroy {
   routes = this.widgetService.widgets.pipe(
     map((widgets) => {
       widgets = widgets.sort((a, b) =>
@@ -37,7 +38,10 @@ export class WidgetsComponent {
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private navigation: NavigationService,
-  ) {}
+    private appService: AppService,
+  ) {
+    this.appService.setSearchEnabled(false);
+  }
 
   addWidget() {
     this.dialog
@@ -60,5 +64,12 @@ export class WidgetsComponent {
         this.widgetService.updateWidgets();
         this.router.navigate([id], { relativeTo: this.route });
       });
+  }
+
+  ngOnDestroy() {
+    setTimeout(() => {
+      // Wait until the component is destroyed
+      this.appService.setSearchEnabled(true);
+    }, 100);
   }
 }
