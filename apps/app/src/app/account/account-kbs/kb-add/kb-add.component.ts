@@ -6,6 +6,7 @@ import { CheckboxGroupItem, Sluggable } from '@flaps/common';
 import { Zone, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { map, share, switchMap } from 'rxjs';
+import * as Sentry from '@sentry/angular';
 
 export interface KbAddData {
   account: Account;
@@ -81,6 +82,7 @@ export class KbAddComponent {
         if (this.failures < 4) {
           this.error = 'stash.create.error';
         } else {
+          Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
           this.dialogRef.close({ success: false });
         }
         this.cdr?.markForCheck();
