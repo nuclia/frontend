@@ -24,7 +24,6 @@ node_modules
 
 # config
 environment.dev.ts
-environment.ts
 apps/**/local-stage/*.json
 
 # IDE - VSCode
