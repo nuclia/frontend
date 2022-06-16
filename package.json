@@ -72,6 +72,7 @@
     "electron-updater": "^5.0.1",
     "fuse.js": "^3.6.1",
     "latinize": "^0.5.0",
+    "mrs-developer": "^1.7.1",
     "ngx-captcha": "^9.0.1",
     "ngx-quill": "^13.3.1",
     "ngx-ui-tour-core": "^7.0.2",
