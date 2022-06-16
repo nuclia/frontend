@@ -1,0 +1,84 @@
+@import "palette.tokens";
+@import "../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens";
+
+//=====================================
+// BUTTONS
+//=====================================
+// Borders
+$border-radius-button: rhythm(.5);
+
+//---------------------------------------------------------------
+// PRIMARY
+//---------------------------------------------------------------
+
+$color-background-button-primary-solid-active: $color-primary-lighter;
+
+$color-text-button-primary-basic: $color-primary-regular;
+$color-text-button-primary-basic-hover: $color-primary-strong;
+$color-text-button-primary-basic-active: $color-primary-strong;
+
+//---------------------------------------------------------------
+// SECONDARY
+//---------------------------------------------------------------
+// solid
+$color-text-button-secondary-solid: $color-light-stronger;
+$color-text-button-secondary-solid-hover: $color-light-stronger;
+$color-text-button-secondary-solid-active: $color-light-stronger;
+
+$color-background-button-secondary-solid: $color-dark-stronger;
+$color-background-button-secondary-solid-hover: $color-dark-stronger;
+$color-background-button-secondary-solid-active: $color-dark-strong;
+
+//---------------------------------------------------------------
+// DESTRUCTIVE
+//---------------------------------------------------------------
+// solid
+$color-text-button-destructive-solid: $color-light-stronger;
+$color-text-button-destructive-solid-hover: $color-light-stronger;
+$color-text-button-destructive-solid-active: $color-light-stronger;
+
+// Stripes
+//$color-background-button-destructive-solid: repeating-linear-gradient(
+//                -45deg,
+//                $color-primary-stronger,
+//                $color-primary-stronger 4px,
+//                $color-primary-regular 4px,
+//                $color-primary-regular 8px
+//);
+$color-background-button-destructive-solid: $color-primary-stronger;
+$color-background-button-destructive-solid-hover: $color-primary-stronger;
+$color-background-button-destructive-solid-active: $color-primary-strong;
+
+// basic
+$color-text-button-destructive-basic: $color-primary-stronger;
+$color-text-button-destructive-basic-hover: $color-light-stronger;
+$color-text-button-destructive-basic-active: $color-light-stronger;
+
+$color-background-button-destructive-basic-hover: $color-primary-strong;
+$color-background-button-destructive-basic-active: $color-primary-strong;
+
+//---------------------------------------------------------------
+// INVERTED
+//---------------------------------------------------------------
+$color-text-button-inverted-solid: $color-dark-regular;
+$color-text-button-inverted-solid-hover: $color-dark-regular;
+$color-text-button-inverted-solid-active: $color-light-stronger;
+
+$color-background-button-inverted-solid: $color-neutral-lightest;
+$color-background-button-inverted-solid-hover: $color-neutral-lightest;
+$color-background-button-inverted-solid-active: $color-neutral-regular;
+
+
+//---------------------------------------------------------------
+// DISABLED
+//---------------------------------------------------------------
+$color-text-button-solid-disabled: $color-light-stronger;
+$color-text-button-basic-disabled: $color-light-stronger;
+$color-text-button-inverted-solid-disabled: $color-light-stronger;
+$color-text-button-inverted-basic-disabled: $color-light-stronger;
+
+$color-background-button-solid-disabled: $color-neutral-light;
+$color-background-button-basic-disabled: $color-neutral-light;
+$color-background-button-inverted-solid-disabled: $color-neutral-light;
+
+
