@@ -163,74 +163,6 @@
       },
       "tags": []
     },
-    "desktop-electron": {
-      "root": "apps/desktop/electron",
-      "sourceRoot": "apps/desktop/electron/src",
-      "projectType": "application",
-      "architect": {
-        "build": {
-          "builder": "nx-electron:build",
-          "outputs": ["{options.outputPath}"],
-          "options": {
-            "outputPath": "dist/apps/desktop-electron",
-            "main": "apps/desktop/electron/src/main.ts",
-            "tsConfig": "apps/desktop/electron/tsconfig.app.json",
-            "assets": ["apps/desktop/electron/src/assets"]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/desktop/electron/src/environments/environment.ts",
-                  "with": "apps/desktop/electron/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "nx-electron:execute",
-          "options": {
-            "buildTarget": "desktop-electron:build"
-          }
-        },
-        "package": {
-          "builder": "nx-electron:package",
-          "options": {
-            "name": "desktop-electron",
-            "frontendProject": "desktop",
-            "outputPath": "dist/packages",
-            "prepackageOnly": true
-          }
-        },
-        "make": {
-          "builder": "nx-electron:make",
-          "options": {
-            "name": "desktop-electron",
-            "frontendProject": "desktop",
-            "outputPath": "dist/executables"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
-          "options": {
-            "lintFilePatterns": ["apps/desktop/electron/**/*.ts"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/desktop/electron"],
-          "options": {
-            "jestConfig": "apps/desktop/electron/jest.config.js",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "auth": {
       "projectType": "library",
       "root": "libs/auth",
@@ -462,6 +394,74 @@
         }
       },
       "tags": []
+    },
+    "desktop-electron": {
+      "root": "apps/desktop/electron",
+      "sourceRoot": "apps/desktop/electron/src",
+      "projectType": "application",
+      "architect": {
+        "build": {
+          "builder": "nx-electron:build",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/desktop-electron",
+            "main": "apps/desktop/electron/src/main.ts",
+            "tsConfig": "apps/desktop/electron/tsconfig.app.json",
+            "assets": ["apps/desktop/electron/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/desktop/electron/src/environments/environment.ts",
+                  "with": "apps/desktop/electron/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "nx-electron:execute",
+          "options": {
+            "buildTarget": "desktop-electron:build"
+          }
+        },
+        "package": {
+          "builder": "nx-electron:package",
+          "options": {
+            "name": "desktop-electron",
+            "frontendProject": "desktop",
+            "outputPath": "dist/packages",
+            "prepackageOnly": true
+          }
+        },
+        "make": {
+          "builder": "nx-electron:make",
+          "options": {
+            "name": "desktop-electron",
+            "frontendProject": "desktop",
+            "outputPath": "dist/executables"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["apps/desktop/electron/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/desktop/electron"],
+          "options": {
+            "jestConfig": "apps/desktop/electron/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
     },
     "login-login": {
       "projectType": "application",
@@ -1035,23 +1035,162 @@
           }
         }
       }
-    }
-  },
-  "schematics": {
-    "@nrwl/angular:application": {
-      "style": "scss",
-      "linter": "eslint",
-      "unitTestRunner": "jest",
-      "e2eTestRunner": "cypress"
     },
-    "@nrwl/angular:library": {
-      "style": "scss",
-      "linter": "eslint",
-      "unitTestRunner": "jest"
+    "sistema": {
+      "projectType": "library",
+      "root": "libs/sistema",
+      "sourceRoot": "libs/sistema/src",
+      "prefix": "nsi",
+      "architect": {
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/sistema"],
+          "options": {
+            "jestConfig": "libs/sistema/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["libs/sistema/src/**/*.ts", "libs/sistema/src/**/*.html"]
+          }
+        }
+      },
+      "tags": []
     },
-    "@nrwl/angular:component": {
-      "style": "scss",
-      "changeDetection": "OnPush"
+    "sistema-demo": {
+      "projectType": "application",
+      "root": "apps/sistema-demo",
+      "sourceRoot": "apps/sistema-demo/src",
+      "prefix": "nsd",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/apps/sistema-demo",
+            "index": "apps/sistema-demo/src/index.html",
+            "main": "apps/sistema-demo/src/main.ts",
+            "polyfills": "apps/sistema-demo/src/polyfills.ts",
+            "tsConfig": "apps/sistema-demo/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "apps/sistema-demo/src/favicon.ico",
+              "apps/sistema-demo/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/sistema/assets",
+                "output": "/assets/"
+              }
+            ],
+            "styles": ["apps/sistema-demo/src/styles.scss"],
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "apps/sistema-demo/src"
+              ]
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "2mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "apps/sistema-demo/src/environments/environment.ts",
+                  "with": "apps/sistema-demo/src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "sistema-demo:build:production"
+            },
+            "development": {
+              "browserTarget": "sistema-demo:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "sistema-demo:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": ["apps/sistema-demo/src/**/*.ts", "apps/sistema-demo/src/**/*.html"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/sistema-demo"],
+          "options": {
+            "jestConfig": "apps/sistema-demo/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "inlineStyle": true,
+          "style": "scss",
+          "skipTests": true,
+          "changeDetection": "OnPush"
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        },
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
+      "tags": []
     }
   }
 }

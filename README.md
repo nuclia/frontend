@@ -8,6 +8,11 @@
 yarn
 ```
 
+Pastanaga-angular installation must be done through [missdev](https://github.com/collective/mrs-developer) so `sistema-demo` can run:
+``` 
+missdev --output=../libs
+```
+
 ## Dashboard
 
 Start by creating an account with an email and password (as SSO doesn't work locally).

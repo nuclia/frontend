@@ -1,0 +1,81 @@
+<pa-demo-page>
+  <pa-demo-title>Scrollbar</pa-demo-title>
+  <pa-demo-description>
+    <p>The scrollbar style and behavior of any html element can be customized using css and/or the <code>paScrollableContainer</code>
+      directive provided in <code>SharedModule</code>.</p>
+    <h3><code>paScrollableContainer</code> directive:</h3>
+    <p>Applied to a container, the directive will add the appropriate css classes following these rules:</p>
+    <ul>
+      <li><code>pa-scrollable-container</code> class is added to the container and set the property
+        <code>overflow-y</code>.
+      </li>
+      <li><code>pa-scrolling</code> class is added when user scrolls the container.</li>
+      <li><code>pa-fading-scrollbar</code> class is added in the absence of scroll event during 1.5 sec.</li>
+      <li><code>pa-scrolling</code> and <code>o-fading-scrollbar</code> classes are removed in the absence of scroll
+        event during 3 sec.
+      </li>
+    </ul>
+    <h3>Available css tokens:</h3>
+    <ul>
+      <li><code>$scrollbar-width-mobile</code>: 12px by default.</li>
+      <li><code>$scrollbar-width-desktop</code>: 24px by default.</li>
+      <li><code>$color-scrollbar-thumb-active</code>: color used while the user is scrolling and the scrollbar is
+        visible.
+      </li>
+      <li><code>$color-scrollbar-thumb-border</code>: color used for the 'space' around the scrollbar-thumb (transparent
+        cannot be used).
+      </li>
+      <li><code>$color-scrollbar-thumb-fading</code>: color used as a transition after scrolling and before hiding the
+        scrollbar.
+      </li>
+
+    </ul>
+    <h3>Available css classes:</h3>
+    <ul>
+      <li><code>pa-scrollable-container</code> set the property <code>overflow-y</code> on this container.</li>
+      <li><code>pa-scrollable</code>: scrollbar is hidden (transparent) in this container.</li>
+      <li><code>pa-scrolling</code>: scrollbar is visible with active color.</li>
+      <li><code>pa-fading-scrollbar</code>: scrollbar is visible with fading color.</li>
+    </ul>
+  </pa-demo-description>
+  <pa-demo-examples>
+    <div class="pa-scrollable" style="height: 120px; overflow: auto" paScrollableContainer>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</p>
+    </div>
+
+    <div class="pa-scrollable grey-background" style="height: 120px; overflow: auto" paScrollableContainer>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+        dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+        ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+        deserunt mollit anim id est laborum.</p>
+    </div>
+  </pa-demo-examples>
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>
