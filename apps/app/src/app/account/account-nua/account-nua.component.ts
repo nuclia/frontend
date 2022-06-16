@@ -1,8 +1,7 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, takeUntil, switchMap, filter } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
-import { Zone } from '@flaps/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
@@ -15,8 +14,6 @@ import { TokenDialogComponent } from '../../components/token-dialog/token-dialog
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountNUAComponent {
-  @Input() zones: Zone[] | undefined;
-
   clients = this.nua.clients;
   expanded: string[] = [];
   unsubscribeAll = new Subject<void>();
@@ -61,8 +58,8 @@ export class AccountNUAComponent {
     });
   }
 
-  openDialog(zones: Zone[], client?: NUAClient) {
-    const data: ClientDialogData = { zones, client };
+  openDialog(client?: NUAClient) {
+    const data: ClientDialogData = { client };
     this.dialog
       .open(ClientDialogComponent, {
         width: '780px',

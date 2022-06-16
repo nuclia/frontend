@@ -1,6 +1,5 @@
-<div class="account-nua"
-     *ngIf="zones">
-
+<div class="account-nua">
+  <h1>{{ 'account.nua_keys' | translate }}</h1>
   <div *ngIf="clients | async as clients">
     <div class="client"
          *ngFor="let client of clients">
@@ -57,7 +56,7 @@
     </div>
     <div>
       <div class="mt-28">
-        <stf-button (click)="openDialog(zones)"
+        <stf-button (click)="openDialog()"
                     color="secondary"
                     padding="pd-l">
           {{ 'account.create_nua_key' | translate }}
