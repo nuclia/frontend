@@ -810,13 +810,9 @@
       "projectType": "library",
       "architect": {
         "build": {
-          "builder": "@nrwl/js:tsc",
-          "outputs": ["{options.outputPath}"],
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "dist/libs/sdk-core",
-            "main": "libs/sdk-core/src/index.ts",
-            "tsConfig": "libs/sdk-core/tsconfig.lib.json",
-            "assets": ["libs/sdk-core/*.md"]
+            "commands": ["yarn sdk:build"]
           }
         },
         "lint": {
