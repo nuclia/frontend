@@ -84,14 +84,11 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  deletePreview() {
     const customElement = document.getElementById('preview')?.getElementsByTagName('nuclia-search')[0];
-    if (customElement) {
-      //es-linter-disable-next-line
-      const destroyFn = (customElement as any)['$$']?.on_destroy[0];
-      if (destroyFn) {
-        destroyFn();
-      }
-    }
+    customElement?.remove();
   }
 
   save() {
@@ -110,6 +107,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     if (!this.widget) {
       return;
     }
+    this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
     this.snippet = `<script src="${cdn}/nuclia-widget.umd.js"></script>
 <nuclia-search

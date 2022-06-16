@@ -109,9 +109,5 @@ export interface RefreshResult {
   token: string;
 }
 
-export interface SAMLInquiryResult {
-  account_id: string;
-}
-
 // tslint:disable-next-line: no-empty-interface
 export interface ResetResponse {}

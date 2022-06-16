@@ -3,13 +3,20 @@ import type { NucliaOptions, KBStates } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
 
-let nucliaApi: Nuclia;
+let nucliaApi: Nuclia | null;
 let STATE: KBStates;
 
 export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates) => {
+  if (nucliaApi) {
+    throw new Error('Cannot exist more than one Nuclia widget at the same time');
+  }
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe(nucliaStore().widget);
   STATE = state;
+};
+
+export const resetNuclia = () => {
+  nucliaApi = null;
 };
 
 export const search = (query: string) => {
@@ -67,6 +74,9 @@ export const getRegionalBackend = () => {
 };
 
 export const getTempToken = (): Observable<string> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
   return nucliaApi.knowledgeBox.getTempToken();
 }
 

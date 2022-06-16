@@ -1,6 +1,6 @@
-import { ReplaySubject, Observable, Subscription, timer, throwError } from 'rxjs';
+import { ReplaySubject, Observable, Subscription, timer, throwError, from } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { catchError, filter, map, skip, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
@@ -150,11 +150,18 @@ export class Authentication implements IAuthentication {
     if (withAuth) {
       headers.Authorization = `Bearer ${this.getToken()}`;
     }
-    return fromFetch<T>(`${this.nuclia.backend}${path}`, {
+    return fromFetch(`${this.nuclia.backend}${path}`, {
       method: 'POST',
-      selector: (response) => response.json(),
+      selector: (response) => Promise.resolve(response),
       headers,
       body: JSON.stringify(body),
-    });
+    }).pipe(
+      switchMap((response) => {
+        if (!response.ok) {
+          return throwError(response);
+        }
+        return from(response.clone().json())
+      }),
+    );
   }
 }
