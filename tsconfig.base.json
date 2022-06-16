@@ -31,6 +31,7 @@
       "@flaps/core": ["libs/core/src/index.ts"],
       "@flaps/pastanaga": ["libs/pastanaga/src/index.ts"],
       "@nuclia/core": ["libs/sdk-core/src/index.ts"],
+      "@nuclia/sistema": ["libs/sistema/src/index.ts"],
       "@nuclia/widget": ["libs/search-widget/src/index.ts"]
     }
   },
