@@ -1,0 +1,26 @@
+<pa-modal-advanced>
+  <pa-modal-title>Modal title</pa-modal-title>
+  <pa-modal-content>
+    <div>
+      <p>Some advanced content, like a long list or a complex form.</p>
+      <pa-input>Field 1</pa-input>
+      <pa-input>Field 2</pa-input>
+      <pa-input>Field 3</pa-input>
+      <pa-input>Field 4</pa-input>
+      <pa-input>Field 5</pa-input>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
+        laborum.</p>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button kind="primary" (click)="modal.close('from primary')">Primary CTA</pa-button>
+    <pa-button *ngIf="!modal.config.data?.['oneButton']"
+               kind="secondary"
+               aspect="basic"
+               (click)="modal.close('from secondary')">Secondary CTA
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

@@ -1075,9 +1075,22 @@
             "polyfills": "apps/sistema-demo/src/polyfills.ts",
             "tsConfig": "apps/sistema-demo/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
-            "assets": ["apps/sistema-demo/src/favicon.ico", "apps/sistema-demo/src/assets"],
+            "assets": [
+              "apps/sistema-demo/src/favicon.ico",
+              "apps/sistema-demo/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/sistema/assets",
+                "output": "/assets/"
+              }
+            ],
             "styles": ["apps/sistema-demo/src/styles.scss"],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "apps/sistema-demo/src"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -1085,7 +1098,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -1143,6 +1156,38 @@
             "jestConfig": "apps/sistema-demo/jest.config.js",
             "passWithNoTests": true
           }
+        }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "inlineStyle": true,
+          "style": "scss",
+          "skipTests": true,
+          "changeDetection": "OnPush"
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:interceptor": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:resolver": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
+        },
+        "@schematics/angular:application": {
+          "strict": true
         }
       },
       "tags": []
