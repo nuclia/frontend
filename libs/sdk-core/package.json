@@ -9,6 +9,12 @@
   ],
   "main": "umd/index.js",
   "module": "esm/index.js",
+  "exports": {
+    ".": {
+      "import": "./esm/index.js",
+      "require": "./umd/index.js"
+    }
+  },
   "types": "types/index.d.ts",
   "peerDependencies": {
     "rxjs": "^7.5.2"
