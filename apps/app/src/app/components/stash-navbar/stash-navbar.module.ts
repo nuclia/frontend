@@ -9,7 +9,6 @@ import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 import { STFButtonsModule } from '@flaps/pastanaga';
 
 import { StashNavbarComponent } from './stash-navbar.component';
-import { QuickStartComponent } from './quick-start/quick-start.component';
 
 @NgModule({
   imports: [
@@ -22,7 +21,7 @@ import { QuickStartComponent } from './quick-start/quick-start.component';
     TourMatMenuModule,
     STFButtonsModule,
   ],
-  declarations: [StashNavbarComponent, QuickStartComponent],
+  declarations: [StashNavbarComponent],
   exports: [StashNavbarComponent],
 })
 export class StashNavbarModule {}

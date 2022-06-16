@@ -2,12 +2,12 @@ import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@
 import { trigger, animate, style, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, map, shareReplay } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AppService } from '../../services/app.service';
 import { NavigationService } from '../../services/navigation.service';
 import { CreateLinkComponent } from '../../upload/create-link/create-link.component';
 import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
-import { STFTrackingService, SDKService } from '@flaps/auth';
+import { STFTrackingService, SDKService, StateService } from '@flaps/auth';
 
 @Component({
   selector: 'app-stash-navbar',
@@ -22,9 +22,9 @@ import { STFTrackingService, SDKService } from '@flaps/auth';
 })
 export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() isUnfolded: boolean = false;
+  @Input() inAccount: boolean = false;
 
   kbUrl: string = '';
-  showQuickStart: boolean = false;
   unsubscribeAll = new Subject<void>();
   isLinkEnabled = this.tracking.isFeatureEnabled('upload-link').pipe(shareReplay(1));
   isUploadEnabled = this.tracking.isFeatureEnabled('upload-files').pipe(shareReplay(1));
@@ -39,6 +39,9 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
 
   isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  account = this.stateService.account.pipe(filter((account) => !!account));
+  accountUrl = this.account.pipe(map((account) => this.navigation.getAccountUrl(account!.slug)));
+  isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
   constructor(
     private app: AppService,
@@ -46,6 +49,7 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
     private navigation: NavigationService,
     private tracking: STFTrackingService,
     private sdk: SDKService,
+    private stateService: StateService,
   ) {}
 
   ngOnInit(): void {
@@ -68,10 +72,6 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
     this.dialog.open(UploadFilesDialogComponent, {
       data: { folderMode: folderMode },
     });
-  }
-
-  toggleQuickStart() {
-    this.showQuickStart = !this.showQuickStart;
   }
 
   ngOnDestroy() {

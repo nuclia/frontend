@@ -121,3 +121,8 @@ $height-breakpoint: 730px;
 .group-items.touranchor--is-active {
   border: 1px solid var(--stf-primary);
 }
+
+.dark {
+  background-color: $gray-black;
+  color: $white;
+}
