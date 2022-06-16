@@ -32,6 +32,8 @@
 	"account.new_token": "New Token",
 	"account.nua_client": "Client name",
 	"account.nua_key_activity": "NU-API key activity log",
+	"account.nua_key_activity_subtitle": "Last 30 days Knowledge box activity",
+	"account.nua_key_activity_title": "{{key}} activity log",
 	"account.nua_keys": "Understanding API keys",
 	"account.related_kbs": "Account's Knowledge Boxes",
 	"account.renewal": "Processing consumption is renewed monthly",

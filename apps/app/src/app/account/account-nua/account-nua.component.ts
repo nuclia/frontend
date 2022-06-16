@@ -6,6 +6,7 @@ import { STFConfirmComponent } from '@flaps/components';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account-nua',
@@ -18,7 +19,12 @@ export class AccountNUAComponent {
   expanded: string[] = [];
   unsubscribeAll = new Subject<void>();
 
-  constructor(private nua: AccountNUAService, private dialog: MatDialog, private cdr: ChangeDetectorRef) {
+  constructor(
+    private nua: AccountNUAService,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+  ) {
     this.nua.updateClients();
   }
 
@@ -46,7 +52,12 @@ export class AccountNUAComponent {
   }
 
   goToActivity(client: NUAClient): void {
-    console.log('Go to Activity logs for', client);
+    const currentPath = location.pathname;
+    let baseUrl = currentPath;
+    if (currentPath.endsWith('/manage')) {
+      baseUrl = `${currentPath.substring(0, currentPath.indexOf('/manage'))}/nua`;
+    }
+    this.router.navigateByUrl(`${baseUrl}/${client.client_id}/activity`);
   }
 
   showToken(token: string) {
