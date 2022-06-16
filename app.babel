@@ -689,6 +689,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>account.nua_key_activity</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>account.nua_keys</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>

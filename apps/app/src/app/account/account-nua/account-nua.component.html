@@ -32,6 +32,12 @@
                              stfTooltip
                              stfTooltipText="account.generate_key">
           </app-button-action>
+          <app-button-action (click)="goToActivity(client)"
+                             action="activity"
+                             ariaLabel="account.nua_key_activity"
+                             stfTooltip
+                             stfTooltipText="account.nua_key_activity">
+          </app-button-action>
           <app-button-action (click)="deleteClient(client.client_id)"
                              action="delete"
                              ariaLabel="generic.delete"
