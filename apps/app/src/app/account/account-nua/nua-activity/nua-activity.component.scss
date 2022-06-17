@@ -1,0 +1,33 @@
+@import 'variables';
+
+.nua-activity {
+  max-width: 770px;
+  padding: rythm(2);
+}
+.nua-activity-title {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  small {
+    color: $gray-contrast;
+    font-style: italic;
+  }
+}
+
+.activity-container {
+  background: $white;
+}
+
+table {
+  border-spacing: 0;
+  width: 100%;
+
+  .cdk-header-cell {
+    border-bottom: 1px solid $gray-black;
+  }
+
+  .cdk-column-file {
+    width: 50%;
+  }
+}

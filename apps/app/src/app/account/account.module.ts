@@ -34,6 +34,8 @@ import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog
 import { AccountUsersComponent } from './account-users/account-users.component';
 import { ChartsModule } from '../components/charts/charts.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
+import { CdkTableModule } from '@angular/cdk/table';
 
 const Components = [
   AccountComponent,
@@ -74,8 +76,9 @@ const Components = [
     ToasterModule,
     ChartsModule,
     MatProgressSpinnerModule,
+    CdkTableModule,
   ],
-  declarations: [...Components],
+  declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
 })
 export class AccountModule {}

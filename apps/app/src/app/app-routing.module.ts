@@ -31,6 +31,8 @@ import { AccountOwnerGuard, KnowledgeBoxOwnerGuard } from './guards/permission.g
 import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
 import { RedirectComponent } from './redirect/redirect.component';
+import { AccountNUAComponent } from './account/account-nua/account-nua.component';
+import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 
 @Component({
   template: '<ng-container></ng-container>',
@@ -71,6 +73,14 @@ const routes: Routes = [
             path: 'home',
             component: AccountHomeComponent,
             canActivate: [AccountOwnerGuard],
+          },
+          {
+            path: 'nua',
+            component: AccountNUAComponent,
+          },
+          {
+            path: 'nua/:id/activity',
+            component: NuaActivityComponent,
           },
           {
             path: `:stash`,

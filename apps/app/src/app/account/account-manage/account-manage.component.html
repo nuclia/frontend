@@ -46,26 +46,6 @@
             </div>
           </div>
 
-          <!--
-          <div class="account-field" fxLayout="row">
-            <label fxFlex="30%" class="account-field-name mt-12">
-              {{ 'account.logotip' | translate }}
-            </label>
-            <div fxFlex="70%">
-              <stf-thumbnail
-                [initialImage]="logo"
-                [show_editable]="true"
-                [base64]="true"
-                color="white"
-                boxSize="account"
-                [reset]="resetLogo"
-                (change)="changeLogo($event)"
-              >
-              </stf-thumbnail>
-            </div>
-          </div>
-          -->
-
           <div class="mt-44"
                fxLayout="row">
             <div fxFlex="30%"></div>
@@ -95,20 +75,6 @@
          #section>
       <div class="section-container">
         <h2>{{ 'account.config' | translate }}</h2>
-
-        <!-- <div class="account-field"
-             fxLayout="row">
-          <div class="account-field-name"
-               fxFlex="30%">{{ 'account.speech_to_text' | translate }}</div>
-          <div fxFlex="70%">
-            <div class="mb-20">{{ 'account.speech_to_text_description' | translate }}</div>
-            <stf-checkbox color="dark"
-                          [selected]="speechToText"
-                          (selectedChange)="saveSpeechToText($event)">
-              {{ 'account.enhanced_model' | translate }}
-            </stf-checkbox>
-          </div>
-        </div> -->
 
         <div class="account-field"
              fxLayout="row"
@@ -154,27 +120,9 @@
          #section>
       <div class="section-container">
         <h2>{{ 'account.manage_dbs' | translate }}</h2>
-        <app-account-nua *ngIf="zones"
-                         [zones]="zones"></app-account-nua>
+        <app-account-nua></app-account-nua>
       </div>
     </div>
 
-    <!--
-    <div class="section" id="licence" #section>
-      <div class="section-container">
-        <h2>{{ 'account.licence' | translate }}</h2>
-        <div *ngIf="account.kind === 'stash-basic'">
-          <h3>{{ 'account.type.basic' | translate }}</h3>
-          <ul>
-            <li>1 {{ 'account.type.kb' | translate }} </li>
-            <li>10 {{ 'generic.users' | translate }}</li>
-          </ul>
-          <stf-button disabled="true" color="legacy" (click)="goUpgrade()">{{ 'account.type.manage' | translate }}</stf-button>
-        </div>
-        <div *ngIf="account.kind === 'stash-team'">{{ 'account.type.team' | translate }}</div>
-        <div *ngIf="account.kind === 'stash-enterprise'">{{ 'account.type.enterprise' | translate }}</div>
-      </div>
-    </div>
-    -->
   </stf-section-navbar-body>
 </stf-section-navbar>

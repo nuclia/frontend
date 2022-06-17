@@ -13,7 +13,7 @@
     padding: 0 12px;
     border-bottom: 2px solid #f1f1f3;
     font-weight: var(--stf-font-weight-semibold);
-    color: #707070;
+    color: $gray-contrast;
     text-align: left;
     &:not(:disabled) {
       cursor: pointer;
@@ -38,7 +38,7 @@
       display: block;
       width: 16px;
       height: auto;
-      fill: #707070;
+      fill: $gray-contrast;
     }
   }
 }

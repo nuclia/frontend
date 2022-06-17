@@ -1,6 +1,5 @@
-<div class="account-nua"
-     *ngIf="zones">
-
+<div class="account-nua">
+  <h1>{{ 'account.nua_keys' | translate }}</h1>
   <div *ngIf="clients | async as clients">
     <div class="client"
          *ngFor="let client of clients">
@@ -32,6 +31,13 @@
                              stfTooltip
                              stfTooltipText="account.generate_key">
           </app-button-action>
+          <app-button-action *ngIf="isNuaActivityEnabled | async"
+                             (click)="goToActivity(client)"
+                             action="activity"
+                             ariaLabel="account.nua_key_activity"
+                             stfTooltip
+                             stfTooltipText="account.nua_key_activity">
+          </app-button-action>
           <app-button-action (click)="deleteClient(client.client_id)"
                              action="delete"
                              ariaLabel="generic.delete"
@@ -51,7 +57,7 @@
     </div>
     <div>
       <div class="mt-28">
-        <stf-button (click)="openDialog(zones)"
+        <stf-button (click)="openDialog()"
                     color="secondary"
                     padding="pd-l">
           {{ 'account.create_nua_key' | translate }}
