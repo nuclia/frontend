@@ -1,4 +1,4 @@
-import { firstValueFrom, from, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { from, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import type { INuclia, IRest } from '../models';
 
@@ -88,7 +88,7 @@ export class Rest implements IRest {
       path.startsWith('/user') ||
       path.startsWith('/auth') ||
       path.startsWith('/zones') ||
-      path.includes('/activity');
+      (path.includes('/activity') && !path.startsWith('/process'));
     const backend = isGlobal ? this.nuclia.backend : this.nuclia.regionalBackend;
     const version = path.startsWith('/auth') ? '' : '/v1';
     return `${backend}${version}${path}`;

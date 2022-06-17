@@ -17,6 +17,7 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
+import { EventList } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -84,6 +85,7 @@ export interface IDb {
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(account: string, client_id: string): Observable<void>;
   hasNUAClient(): boolean;
+  getNUAActivity(account: string, client_id: string): Observable<EventList>;
 }
 
 export interface NucliaOptions {

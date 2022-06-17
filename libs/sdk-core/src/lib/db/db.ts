@@ -16,6 +16,7 @@ import {
 import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
+import { EventList } from './kb.models';
 
 export class Db implements IDb {
   private nuclia: INuclia;
@@ -150,6 +151,15 @@ export class Db implements IDb {
         'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
       })
       .pipe(tap((res) => console.log(res)));
+  }
+
+  getNUAActivity(account: string, client_id: string): Observable<EventList> {
+    return this.nuclia.rest.get<EventList>('/processing/activity', {
+      'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+      'x-stf-account': account,
+      'x-stf-nua-internal-client-id': client_id,
+      // 'x-stf-account-type': 'stash-basic', //"stash-team" "stash-basic" "stash-enterprise"
+    });
   }
 
   getNUAClients(account: string): Observable<NUAClient[]> {
