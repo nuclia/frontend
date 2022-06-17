@@ -1,8 +1,23 @@
 @import "palette.tokens";
 
-$color-text-field-label-error: $color-primary-stronger;
-$color-caret-field-control-error: $color-primary-stronger;
+//=====================================
+// COLORS
+//=====================================
+$color-text-field-label-regular: $color-neutral-strong;
+$color-text-field-control-placeholder-regular: $color-neutral-strong;
 
-$border-field-error: 1px solid $color-primary-stronger;
-$border-field-error-hover: 1px solid $color-primary-stronger;
-$border-field-error-active: 1px solid $color-primary-stronger;
+$color-text-field-label-error: $color-secondary-stronger;
+$color-caret-field-control-error: $color-secondary-strong;
+
+$color-background-field-error: $color-secondary-lightest;
+
+
+//=====================================
+// BORDERS
+//=====================================
+$border-field-regular: 1px solid $color-neutral-regular;
+
+$border-field-error: 1px solid $color-secondary-regular;
+$border-field-error-hover: 1px solid $color-secondary-regular;
+$border-field-error-active: 1px solid $color-secondary-regular;
+
