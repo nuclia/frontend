@@ -99,28 +99,6 @@
   margin-bottom: rythm(2.5);
 }
 
-.switch-action {
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.16);
-  a {
-    color: var(--stf-black);
-    text-decoration: none;
-    display: flex;
-    font-size: 20px;
-    font-weight: var(--stf-font-weight-light);
-  }
-  span {
-    flex-grow: 1;
-    line-height: 24px;
-    ::ng-deep strong {
-      font-weight: var(--stf-font-weight-semibold);
-    }
-  }
-  svg-icon ::ng-deep svg {
-    width: 24px;
-    height: 24px;
-  }
-}
-
 .state-container {
   display: flex;
   align-items: center;
