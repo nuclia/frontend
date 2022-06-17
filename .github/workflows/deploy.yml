@@ -7,7 +7,6 @@ on:
 
 env:
   APP_IMAGE_NAME: app
-  LOGIN_IMAGE_NAME: auth
   MANAGER_IMAGE_NAME: manager
   CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
   CONTAINER_REGISTRY: eu.gcr.io/${{ secrets.PROJECT_ID }}
@@ -19,7 +18,6 @@ jobs:
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
-      deploy-login: ${{ steps.check-deploy.outputs.deploy-login }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-desktop: ${{ steps.check-deploy.outputs.deploy-desktop }}
 
@@ -64,7 +62,6 @@ jobs:
         run: |-
           (test -d dist/libs/search-widget && echo "::set-output name=deploy-widget::yes") || echo "Widget unchanged"
           (test -d dist/apps/app && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
-          (test -d dist/apps/login && echo "::set-output name=deploy-login::yes") || echo "Login unchanged"
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
           (test -d dist/apps/desktop && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
 
@@ -93,14 +90,6 @@ jobs:
           docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
-
-      # - name: Build login image
-      #   if: steps.check-deploy.outputs.deploy-login == 'yes'
-      #   run: |-
-      #     docker build -t $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} -f docker/Dockerfile  --build-arg appId=auth --build-arg appFolder=login/login .
-      #     docker tag $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
-      #     docker push $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
-      #     docker push $CONTAINER_REGISTRY/$LOGIN_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
 
       - name: Build manager image
         if: steps.check-deploy.outputs.deploy-manager == 'yes'

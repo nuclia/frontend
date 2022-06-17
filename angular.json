@@ -468,167 +468,6 @@
         }
       }
     },
-    "login-login": {
-      "projectType": "application",
-      "schematics": {
-        "@nrwl/angular:component": {
-          "style": "scss",
-          "changeDetection": "OnPush"
-        }
-      },
-      "root": "apps/login/login",
-      "sourceRoot": "apps/login/login/src",
-      "prefix": "flaps",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist/apps/login/login",
-            "index": "apps/login/login/src/index.html",
-            "main": "apps/login/login/src/main.ts",
-            "polyfills": "apps/login/login/src/polyfills.ts",
-            "tsConfig": "apps/login/login/tsconfig.app.json",
-            "aot": true,
-            "assets": [
-              "apps/login/login/src/favicon.ico",
-              "apps/login/login/src/assets",
-              {
-                "glob": "**/*",
-                "input": "libs/pastanaga/src/assets",
-                "output": "assets"
-              },
-              {
-                "glob": "**/*",
-                "input": "libs/common/src/assets/i18n",
-                "output": "assets/i18n"
-              },
-              {
-                "glob": "**/*",
-                "input": "apps/app/src/environments_config/local",
-                "output": "assets/deployment"
-              }
-            ],
-            "styles": ["apps/login/login/src/styles.scss"],
-            "scripts": [],
-            "allowedCommonJsDependencies": ["lodash", "@swimlane/dragula", "lru-cache", "url-parse", "js-base64"],
-            "budgets": [
-              {
-                "type": "initial",
-                "maximumWarning": "2mb",
-                "maximumError": "30mb"
-              },
-              {
-                "type": "anyComponentStyle",
-                "maximumWarning": "50kb",
-                "maximumError": "100kb"
-              }
-            ]
-          },
-          "configurations": {
-            "production": {
-              "aot": true,
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "serviceWorker": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/login/login/src/environments/environment.ts",
-                  "with": "apps/login/login/src/environments/environment.prod.ts"
-                }
-              ],
-              "assets": [
-                "apps/login/login/src/favicon.ico",
-                "apps/login/login/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/common/src/assets/i18n",
-                  "output": "assets/i18n"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/login/login/src/environments_config/production",
-                  "output": "assets/deployment"
-                }
-              ]
-            },
-            "local-stage": {
-              "aot": false,
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "assets": [
-                "apps/login/login/src/favicon.ico",
-                "apps/login/login/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/common/src/assets/i18n",
-                  "output": "assets/i18n"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/login/login/src/environments_config/local-stage",
-                  "output": "assets/deployment"
-                }
-              ]
-            },
-            "defaultConfiguration": "production"
-          },
-          "outputs": ["{options.outputPath}"]
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "login-login:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "login-login:build:production"
-            },
-            "local-stage": {
-              "browserTarget": "login-login:build:local-stage"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "login-login:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "apps/login/login/src/test.ts",
-            "tsConfig": "apps/login/login/tsconfig.spec.json",
-            "karmaConfig": "apps/login/login/karma.conf.js",
-            "polyfills": "apps/login/login/src/polyfills.ts",
-            "styles": [],
-            "scripts": [],
-            "assets": []
-          },
-          "outputs": ["coverage/apps/login/login"]
-        }
-      },
-      "tags": []
-    },
     "manager": {
       "projectType": "application",
       "schematics": {
@@ -820,7 +659,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["yarn sdk:build"]
+            "commands": ["yarn sdk-build"]
           }
         },
         "lint": {
@@ -1095,9 +934,7 @@
             "styles": ["apps/sistema-demo/src/styles.scss"],
             "scripts": [],
             "stylePreprocessorOptions": {
-              "includePaths": [
-                "apps/sistema-demo/src"
-              ]
+              "includePaths": ["apps/sistema-demo/src"]
             }
           },
           "configurations": {

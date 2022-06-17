@@ -39,7 +39,9 @@
     "i18n-editor:extract": "ngx-translate-extract --input ./apps/editor/src ./libs/**/src --output ./apps/editor/src/assets/i18n/{en,ca,es}.json --clean --format json",
     "public-ssr:serve": "node dist/public-public/server/main.js",
     "workspace-generator": "nx workspace-generator",
-    "sdk:build": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cp package.json README.md ../../dist/sdk-core && cd - && cp ./LICENSE.md dist/sdk-core",
+    "sdk-build": "run-script-os",
+    "sdk-build:win32": "echo 'NO WIN32 BUILD'",
+    "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cp package.json README.md ../../dist/sdk-core && cd - && cp ./LICENSE.md dist/sdk-core",
     "widget:build": "ng build widget --prod --single-bundle --output-hashing none",
     "postinstall": "ngcc --properties es2015 browser module main"
   },
@@ -86,6 +88,7 @@
     "quill-cursors": "^3.0.0",
     "quill-image-resize": "^3.0.9",
     "quill-mention": "^2.2.5",
+    "run-script-os": "^1.1.6",
     "rxjs": "7.5.2",
     "spark-md5": "^3.0.1",
     "tslib": "^2.0.1",
