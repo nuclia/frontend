@@ -20,15 +20,41 @@
 
     <div fxFlex="0 0 auto"
          class="left-column">
-      <div class="container switch-action"><a [routerLink]="'../' + (kbSlug | async)">
-          <span [innerHtml]="'account.back' | translate"></span>
-          <svg-icon src="assets/icons/rounded_chevron_right.svg"></svg-icon>
-        </a>
-      </div>
-
       <div class="container">
         <span class="totals"
               [innerHtml]="'account.total' | translate:{ total: (kbsTotal | async) || 0, public: (kbsPublic | async) || 0}"></span>
+      </div>
+      <div class="container">
+        <h2>{{ 'account.total_queries' | translate }}</h2>
+        <div class="total-queries">{{ ((totalQueries | async) || '').toLocaleString() }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container activity"
+       *ngIf="showActivity">
+    <h2>{{ 'account.consuming' | translate }}</h2>
+    <div>
+      <div class class="activity-header">
+        <div class="title">{{ 'activity.resource' | translate }}</div>
+        <div class="date">{{ 'activity.timestamp' | translate }}</div>
+        <div class="user">{{ 'activity.actor' | translate }}</div>
+      </div>
+      <div class="activity-items">
+        <div class="activity-item"
+             *ngFor="let item of items">
+          <div class="title">
+            {{ item.resource | async }}
+          </div>
+          <div class="date">
+            <ng-container *ngIf="item.date">
+              {{ item.date | formatDate: { default: true } }} {{ item.date | formatTime }}
+            </ng-container>
+          </div>
+          <div class="user">
+            {{ item.username | async }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
