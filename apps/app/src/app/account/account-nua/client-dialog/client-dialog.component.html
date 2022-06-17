@@ -44,14 +44,13 @@
       </div>
     </div>
 
-    <div class="zone"
-         *ngIf="data.zones">
+    <div class="zone">
       <h2>{{ 'generic.zone' | translate }}</h2>
       <div class="mb-24">{{ 'account.db_zone_description' | translate }}</div>
       <select stfSelect
               formControlName="zone"
               class="zone-select">
-        <option *ngFor="let zone of data.zones"
+        <option *ngFor="let zone of (zones | async)"
                 [value]="zone.id">{{ zone.title }}</option>
       </select>
     </div>

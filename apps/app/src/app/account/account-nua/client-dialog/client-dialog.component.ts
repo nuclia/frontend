@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { take, filter, map } from 'rxjs';
+import { take, filter, map, Observable } from 'rxjs';
 import { Account, NUAClient } from '@nuclia/core';
-import { StateService, UserService } from '@flaps/auth';
+import { SDKService, StateService, UserService } from '@flaps/auth';
 import { AccountNUAService } from '../account-nua.service';
 
 export interface ClientDialogData {
@@ -45,12 +45,17 @@ export class ClientDialogComponent {
     },
   };
 
+  zones: Observable<{ id: string; title: string }[]> = this.sdkService.nuclia.rest
+    .getZones()
+    .pipe(map((zoneMap) => Object.entries(zoneMap).map(([key, title]) => ({ id: key, title }))));
+
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<ClientDialogComponent>,
     private stateService: StateService,
     private userService: UserService,
     private nua: AccountNUAService,
+    private sdkService: SDKService,
     @Inject(MAT_DIALOG_DATA) public data: ClientDialogData,
   ) {
     this.editMode = !!this.data.client;
