@@ -1,7 +1,7 @@
 <div class="stash-navbar"
      [class.is-unfolded]="isUnfolded">
   <div class="navbar-scroll-container">
-    <div *ngIf="!inAccount"
+    <div *ngIf="!(inAccount| async)"
          class="navbar-content">
       <div class="nav-group">
         <div *ngIf="isAdminOrContrib | async"
@@ -108,7 +108,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="inAccount && (isAccountManager | async)"
+    <div *ngIf="(inAccount| async) && (isAccountManager | async)"
          class="navbar-content dark">
       <div class="nav-group">
         <div class="group-items">

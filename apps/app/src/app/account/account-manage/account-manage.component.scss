@@ -1,3 +1,10 @@
+.container {
+  padding: 70px var(--app-layout-margin-right) 60px 5%;
+}
+h2 {
+  margin: 0 0 36px 0;
+  font-weight: var(--stf-font-weight-bold);
+}
 .account-manage-container {
   display: block;
   margin: 30px 0 80px 0;

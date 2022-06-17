@@ -91,7 +91,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   }
 
   goToAccountManage() {
-    this.router.navigate([this.navigation.getAccountMangeUrl(this.account!.slug)]);
+    this.router.navigate([this.navigation.getAccountManageUrl(this.account!.slug)]);
   }
 
   ngOnDestroy(): void {
