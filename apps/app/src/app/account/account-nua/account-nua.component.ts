@@ -1,12 +1,14 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, takeUntil, switchMap, filter } from 'rxjs';
+import { Subject, takeUntil, switchMap, filter, map, take } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
 import { Router } from '@angular/router';
+import { StateService } from '@flaps/auth';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-account-nua',
@@ -24,6 +26,8 @@ export class AccountNUAComponent {
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private stateService: StateService,
+    private navigation: NavigationService,
   ) {
     this.nua.updateClients();
   }
@@ -52,12 +56,13 @@ export class AccountNUAComponent {
   }
 
   goToActivity(client: NUAClient): void {
-    const currentPath = location.pathname;
-    let baseUrl = currentPath;
-    if (currentPath.endsWith('/manage')) {
-      baseUrl = `${currentPath.substring(0, currentPath.indexOf('/manage'))}/nua`;
-    }
-    this.router.navigateByUrl(`${baseUrl}/${client.client_id}/activity`);
+    this.stateService.account
+      .pipe(
+        filter((account) => !!account),
+        take(1),
+        map((account) => this.navigation.getAccountUrl(account!.slug)),
+      )
+      .subscribe((accountUrl) => this.router.navigateByUrl(`${accountUrl}/nua/${client.client_id}/activity`));
   }
 
   showToken(token: string) {
