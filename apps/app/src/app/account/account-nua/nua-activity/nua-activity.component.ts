@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { map, Observable, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -16,6 +16,7 @@ export interface Activity {
   selector: 'app-nua-activity',
   templateUrl: './nua-activity.component.html',
   styleUrls: ['./nua-activity.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NuaActivityComponent implements OnInit, OnDestroy {
   private _terminator = new Subject<void>();

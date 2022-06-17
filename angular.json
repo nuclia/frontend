@@ -5,7 +5,8 @@
       "projectType": "application",
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "root": "apps/app",
@@ -181,7 +182,8 @@
       },
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "tags": []
@@ -204,7 +206,8 @@
       },
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "tags": []
@@ -227,7 +230,8 @@
       },
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "tags": []
@@ -250,7 +254,8 @@
       },
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "tags": []
@@ -467,7 +472,8 @@
       "projectType": "application",
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "root": "apps/login/login",
@@ -627,7 +633,8 @@
       "projectType": "application",
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "root": "apps/manager",
@@ -799,7 +806,8 @@
       },
       "schematics": {
         "@nrwl/angular:component": {
-          "style": "scss"
+          "style": "scss",
+          "changeDetection": "OnPush"
         }
       },
       "tags": []
@@ -1159,34 +1167,34 @@
         }
       },
       "schematics": {
-        "@schematics/angular:component": {
+        "@nrwl/angular:component": {
           "inlineStyle": true,
           "style": "scss",
           "skipTests": true,
           "changeDetection": "OnPush"
         },
-        "@schematics/angular:class": {
+        "@nrwl/angular:class": {
           "skipTests": true
         },
-        "@schematics/angular:directive": {
+        "@nrwl/angular:directive": {
           "skipTests": true
         },
-        "@schematics/angular:guard": {
+        "@nrwl/angular:guard": {
           "skipTests": true
         },
-        "@schematics/angular:interceptor": {
+        "@nrwl/angular:interceptor": {
           "skipTests": true
         },
-        "@schematics/angular:pipe": {
+        "@nrwl/angular:pipe": {
           "skipTests": true
         },
-        "@schematics/angular:resolver": {
+        "@nrwl/angular:resolver": {
           "skipTests": true
         },
-        "@schematics/angular:service": {
+        "@nrwl/angular:service": {
           "skipTests": true
         },
-        "@schematics/angular:application": {
+        "@nrwl/angular:application": {
           "strict": true
         }
       },
