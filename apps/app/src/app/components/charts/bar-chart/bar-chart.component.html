@@ -1,3 +1,8 @@
 <div class="bar-chart"
      #container
-     [id]="id"></div>
+     [id]="id">
+  <div class="tooltip"
+       [style.opacity]="showTooltip ? '1' : '0'"
+       [style.bottom.px]="tooltipBottom"
+       [style.left.px]="tooltipLeft">{{ (tooltipContent || '').toLocaleString() }}</div>
+</div>

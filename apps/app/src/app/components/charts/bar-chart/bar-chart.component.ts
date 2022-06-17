@@ -7,6 +7,7 @@ import {
   ViewEncapsulation,
   Input,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
@@ -36,6 +37,14 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
   @Input() threshold?: number;
   @Input() axisYMultiplier: number = 1.5;
   @Input() height: number = 170;
+  @Input() tooltipEnabled = false;
+
+  showTooltip = false;
+  tooltipContent?: number;
+  tooltipLeft = 0;
+  tooltipBottom = 0;
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     setTimeout(() => this.draw(), 0);
@@ -86,6 +95,22 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
       this.drawThreshold(svg, this.threshold, width, y);
     }
 
+    // Tooltip event handlers
+    const mouseover = (data: [string, number], index: number, group: any) => {
+      if (!this.tooltipEnabled) return;
+      const { bottom, left, height, width } = group[index].getBoundingClientRect();
+      this.tooltipBottom = this.container!.nativeElement.getBoundingClientRect().bottom - bottom + height + 8;
+      this.tooltipLeft = left - this.container!.nativeElement.getBoundingClientRect().left + width / 2;
+      this.showTooltip = true;
+      this.tooltipContent = data[1];
+      this.cdr.markForCheck();
+    };
+    const mouseleave = () => {
+      if (!this.tooltipEnabled) return;
+      this.showTooltip = false;
+      this.cdr.markForCheck();
+    };
+
     // Add the bars
     svg
       .append('g')
@@ -96,7 +121,9 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
       .attr('x', (d) => x(d[0])!)
       .attr('y', (d) => y(d[1])!)
       .attr('height', (d) => y(0)! - y(d[1])!)
-      .attr('width', x.bandwidth());
+      .attr('width', x.bandwidth())
+      .on('mouseover', mouseover)
+      .on('mouseleave', mouseleave);
   }
 
   private createXAxis(svg: d3.Selection<any, any, any, any>, width: number, height: number) {
