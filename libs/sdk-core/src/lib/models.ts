@@ -6,6 +6,7 @@ import type {
   AccountCreation,
   AccountStatus,
   AccountTypes,
+  EventList,
   IKnowledgeBoxItem,
   KnowledgeBox,
   KnowledgeBoxCreation,
@@ -17,7 +18,6 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
-import { EventList } from './db';
 
 export interface INuclia {
   options: NucliaOptions;

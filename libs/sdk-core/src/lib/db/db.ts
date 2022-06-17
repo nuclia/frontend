@@ -13,10 +13,9 @@ import {
   StatsType,
   Welcome,
 } from './db.models';
-import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
+import type { EventList, IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
-import { EventList } from './kb.models';
 
 export class Db implements IDb {
   private nuclia: INuclia;
