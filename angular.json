@@ -659,7 +659,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["yarn sdk:build"]
+            "commands": ["yarn sdk-build"]
           }
         },
         "lint": {
