@@ -3,11 +3,6 @@
 .account-kbs {
   max-width: 770px;
 
-  &-description {
-    margin-bottom: 20px;
-    font-weight: var(--stf-font-weight-semibold);
-  }
-
   &-list {
     app-button-action {
       margin-right: 20px;

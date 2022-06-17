@@ -6,6 +6,9 @@
 .section {
   padding: 50px 0 55px 0;
   border-bottom: 1px solid var(--stf-gray-lighter-2);
+  &:first-child {
+    padding-top: 0;
+  }
   &:last-child {
     border-bottom: 0;
   }
@@ -13,11 +16,6 @@
     width: 825px;
     max-width: 100%;
   }
-}
-
-h2 {
-  margin: 0 0 36px 0;
-  font-weight: var(--stf-font-weight-bold);
 }
 
 .account-field {
