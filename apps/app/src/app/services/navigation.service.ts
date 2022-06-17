@@ -3,24 +3,31 @@ import { Router } from '@angular/router';
 import { AuthService, StateService } from '@flaps/auth';
 import { Observable, combineLatest, map } from 'rxjs';
 
+const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
+
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
   constructor(private stateService: StateService, private router: Router, private authService: AuthService) {}
 
-  homeUrl: Observable<string> = combineLatest([
-    this.stateService.account,
-    this.stateService.stash
-  ]).pipe(map(([account, kb]) => {
-    if (account && kb) {
-      return this.getKbUrl(account.slug, kb.slug!);
-    } else if (account) {
-      return this.getKbSelectUrl(account.slug);
-    } else {
-      return '/';
-    }
-  }));
+  homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.stash]).pipe(
+    map(([account, kb]) => {
+      if (account && this.inAccountManagement(location.pathname)) {
+        return this.getAccountManageUrl(account.slug);
+      } else if (account && kb) {
+        return this.getKbUrl(account.slug, kb.slug!);
+      } else if (account) {
+        return this.getKbSelectUrl(account.slug);
+      } else {
+        return '/';
+      }
+    }),
+  );
+
+  inAccountManagement(path: string): boolean {
+    return path.match(IN_ACCOUNT_MANAGEMENT) !== null;
+  }
 
   getAccountUrl(accountSlug: string): string {
     return `/at/${accountSlug}`;
@@ -38,7 +45,7 @@ export class NavigationService {
     return `/select/${accountSlug}`;
   }
 
-  getAccountMangeUrl(accountSlug: string): string {
+  getAccountManageUrl(accountSlug: string): string {
     return `${this.getAccountUrl(accountSlug)}/manage`;
   }
 

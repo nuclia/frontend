@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { STFTrackingService, SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/auth';
 import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KBStates, StatsType } from '@nuclia/core';
@@ -73,7 +73,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
         .reverse(),
     ),
   );
-  hasAccountBoard = this.tracking.isFeatureEnabled('account-board');
   isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
 
   constructor(
@@ -85,7 +84,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private toaster: AppToasterService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit(): void {

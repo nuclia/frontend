@@ -1,10 +1,13 @@
 @import 'variables';
 
 .account-users {
-
+  padding: 70px var(--app-layout-margin-right) 60px 5%;
+  h2 {
+    margin: 0 0 36px 0;
+    font-weight: var(--stf-font-weight-bold);
+  }
   .users-left,
   .users-amount {
-    font-size: var(--stf-font-size-xlarge);
     strong {
       margin: 0 4px;
       text-decoration: underline;
@@ -48,11 +51,9 @@
       }
     }
 
-    .user-actions  {
+    .user-actions {
       width: 110px;
       text-align: right;
     }
   }
 }
-
-

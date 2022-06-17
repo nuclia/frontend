@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MatDialogModule } from '@angular/material/dialog';
-import { STFTrackingService } from '@flaps/auth';
 
 function createTranslateLoader() {
   return {
@@ -61,12 +60,6 @@ describe('KnowledgeBoxHomeComponent', () => {
           },
         },
         { provide: TranslatePipe, useClass: TranslatePipeMock },
-        {
-          provide: STFTrackingService,
-          useValue: {
-            isFeatureEnabled: () => of(true),
-          },
-        },
       ],
     }).compileComponents();
   });

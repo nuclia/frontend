@@ -43,13 +43,6 @@
 
     <div class="right-column"
          fxFlex="0 0 auto">
-      <div *ngIf="hasAccountBoard |async"
-           class="container switch-action"><a routerLink="../home">
-          <span [innerHtml]="'account.switch' | translate"></span>
-          <svg-icon src="assets/icons/rounded_chevron_right.svg"></svg-icon>
-        </a>
-      </div>
-
       <div class="container state-container">
         <div>
           {{ 'stash.state' | translate}}: <span class="state">{{ stateLabel | async }}</span>

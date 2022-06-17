@@ -11,13 +11,12 @@ import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { ButtonActionModule } from '../components/button-action/button-action.module';
-import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
 import { ChartsModule } from '../components/charts/charts.module';
 import { HelpBoxModule } from '../components/help-box/help-box.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { UserAvatarModule } from '@flaps/components';
-import { STFSectionNavbarModule, STFCheckboxModule, STFSidebarModule, ProgressBarModule } from '@flaps/common';
+import { STFSectionNavbarModule, STFCheckboxModule, ProgressBarModule } from '@flaps/common';
 import {
   STFButtonsModule,
   STFInputModule,
@@ -59,7 +58,6 @@ const Components = [
     MatDialogModule,
     CdkTableModule,
     TourMatMenuModule,
-    STFSidebarModule,
     ProgressBarModule,
     STFSectionNavbarModule,
     STFCheckboxModule,
@@ -72,7 +70,6 @@ const Components = [
     STFExpanderModule,
     ButtonActionModule,
     TokenDialogModule,
-    StashNavbarModule,
     ChartsModule,
     HelpBoxModule,
     PipesModule,

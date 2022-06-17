@@ -1,14 +1,9 @@
 <div class="user-menu"
      @dropdownTopRight>
-  <button class="user-menu-item" (click)="goProfile()">
+  <button class="user-menu-item"
+          (click)="goProfile()">
     <svg-icon src="assets/icons/usuari.svg"></svg-icon>
     <span>{{'generic.user_preferences' | translate}}</span>
-  </button>
-  <button class="user-menu-item"
-          *ngIf="account && account.can_manage_account"
-          (click)="manageAccount()">
-    <svg-icon src="assets/icons/gear.svg"></svg-icon>
-    <span>{{'generic.manage_account' | translate}}</span>
   </button>
   <button class="user-menu-item"
           *ngIf="accounts.length > 1"

@@ -1,0 +1,8 @@
+:host > ::ng-deep app-account-kbs {
+  margin: 22px;
+  display: block;
+}
+
+stf-sidebar {
+  top: var(--app-topbar-height) !important;
+}

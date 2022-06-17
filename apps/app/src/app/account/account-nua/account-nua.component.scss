@@ -1,14 +1,18 @@
 @import 'variables';
 
 .account-nua {
+  padding: 70px var(--app-layout-margin-right) 60px 5%;
+  h2 {
+    margin: 0 0 36px 0;
+    font-weight: var(--stf-font-weight-bold);
+  }
   max-width: 770px;
-  padding: rythm(2);
 
   .client {
-    border-bottom: 1px solid rgba(0,0,0,0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
     padding-right: 26px;
     &:first-child {
-      border-top: 1px solid rgba(0,0,0,0.3);
+      border-top: 1px solid rgba(0, 0, 0, 0.3);
     }
 
     &-header {

@@ -44,12 +44,6 @@ export class UserMenuComponent implements OnDestroy {
     this.router.navigate(['/user/profile']);
   }
 
-  manageAccount() {
-    this.close.emit();
-    const path = this.navigation.getAccountMangeUrl(this.account!.slug);
-    this.router.navigate([path]);
-  }
-
   switchAccount() {
     this.close.emit();
     this.stateService.cleanAccount();

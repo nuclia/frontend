@@ -13,7 +13,7 @@ import { TokenDialogModule } from '../components/token-dialog/token-dialog.modul
 import { ButtonActionModule } from '../components/button-action/button-action.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { STFConfirmModule, UserAvatarModule } from '@flaps/components';
-import { STFSectionNavbarModule, STFCheckboxModule } from '@flaps/common';
+import { STFSectionNavbarModule, STFCheckboxModule, STFSidebarModule } from '@flaps/common';
 import {
   STFButtonsModule,
   STFInputModule,
@@ -36,6 +36,7 @@ import { ChartsModule } from '../components/charts/charts.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
+import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
 
 const Components = [
   AccountComponent,
@@ -77,6 +78,8 @@ const Components = [
     ChartsModule,
     MatProgressSpinnerModule,
     CdkTableModule,
+    STFSidebarModule,
+    StashNavbarModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],

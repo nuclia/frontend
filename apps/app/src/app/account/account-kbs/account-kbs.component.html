@@ -4,7 +4,7 @@
 </div>
 <div class="account-kbs"
      *ngIf="zones && account && knowledgeBoxes">
-  <div class="account-kbs-description">{{ 'account.related_kbs' | translate }}</div>
+  <h2>{{ 'account.related_kbs' | translate }}</h2>
 
   <div class="account-kbs-list">
     <div class="account-kb"
@@ -83,12 +83,6 @@
                 padding="pd-l">
       {{ 'account.stash.add' | translate }}
     </stf-button>
-
-    <!--
-    <div *ngIf="stashes.count === stashes.max_stashes">
-        <stf-button (click)="goUpgrade()">{{ 'account.stash.upgrade' | translate }}</stf-button>
-    </div
-    -->
   </div>
 
   <div class="account-kbs-empty"

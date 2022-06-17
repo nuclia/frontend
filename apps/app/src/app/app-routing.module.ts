@@ -33,6 +33,7 @@ import { AccountHomeComponent } from './account/account-home/account-home.compon
 import { RedirectComponent } from './redirect/redirect.component';
 import { AccountNUAComponent } from './account/account-nua/account-nua.component';
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
+import { AccountUsersComponent } from './account/account-users/account-users.component';
 
 @Component({
   template: '<ng-container></ng-container>',
@@ -62,25 +63,48 @@ const routes: Routes = [
         children: [
           {
             path: '',
-            component: AccountKbsComponent,
+            redirectTo: 'manage',
+            pathMatch: 'full',
           },
           {
-            path: 'manage',
-            component: AccountManageComponent,
-            canActivate: [AccountOwnerGuard],
-          },
-          {
-            path: 'home',
-            component: AccountHomeComponent,
-            canActivate: [AccountOwnerGuard],
-          },
-          {
-            path: 'nua',
-            component: AccountNUAComponent,
-          },
-          {
-            path: 'nua/:id/activity',
-            component: NuaActivityComponent,
+            path: `manage`,
+            children: [
+              {
+                path: '',
+                redirectTo: 'home',
+                pathMatch: 'full',
+              },
+              {
+                path: 'settings',
+                component: AccountManageComponent,
+                canActivate: [AccountOwnerGuard],
+              },
+              {
+                path: 'home',
+                component: AccountHomeComponent,
+                canActivate: [AccountOwnerGuard],
+              },
+              {
+                path: 'nua',
+                component: AccountNUAComponent,
+                canActivate: [AccountOwnerGuard],
+              },
+              {
+                path: 'nua/:id/activity',
+                component: NuaActivityComponent,
+                canActivate: [AccountOwnerGuard],
+              },
+              {
+                path: 'kbs',
+                component: AccountKbsComponent,
+                canActivate: [AccountOwnerGuard],
+              },
+              {
+                path: 'users',
+                component: AccountUsersComponent,
+                canActivate: [AccountOwnerGuard],
+              },
+            ],
           },
           {
             path: `:stash`,

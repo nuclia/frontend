@@ -2,10 +2,10 @@
 
 .account-kbs {
   max-width: 770px;
-
-  &-description {
-    margin-bottom: 20px;
-    font-weight: var(--stf-font-weight-semibold);
+  padding: 70px var(--app-layout-margin-right) 60px 5%;
+  h2 {
+    margin: 0 0 36px 0;
+    font-weight: var(--stf-font-weight-bold);
   }
 
   &-list {
