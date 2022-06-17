@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService } from '@flaps/auth';
 import { StatsPeriod, StatsType } from '@nuclia/core';
-import { filter, map, share, switchMap } from 'rxjs';
+import { filter, map, of, share, switchMap, scan } from 'rxjs';
 
 @Component({
   selector: 'app-account-home',
@@ -18,7 +18,6 @@ export class AccountHomeComponent {
   );
   kbsTotal = this.kbs.pipe(map((kbs) => kbs.length));
   kbsPublic = this.kbs.pipe(map((kbs) => kbs.filter((kb) => kb.state === 'PUBLISHED').length));
-  kbSlug = this.sdk.currentKb.pipe(map((kb) => kb.slug));
   private _processing = this.account.pipe(
     switchMap((account) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.CHARS, undefined, StatsPeriod.MONTH)),
     share(),
@@ -34,5 +33,15 @@ export class AccountHomeComponent {
         .reverse(),
     ),
   );
+  totalQueries = this.account.pipe(
+    switchMap((account) =>
+      this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, undefined, StatsPeriod.MONTH),
+    ),
+    map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
+  );
+
+  showActivity = false;
+  activity = [{ resource: of('resource'), date: '', username: of('username') }];
+
   constructor(private sdk: SDKService, private stateService: StateService) {}
 }

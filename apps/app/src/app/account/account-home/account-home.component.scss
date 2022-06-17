@@ -8,30 +8,14 @@
     background-color: #fff;
     border-radius: 4px;
     margin-bottom: 30px;
+    h2 {
+      margin: 0;
+      font-size: var(--stf-font-size-xxlarge);
+      font-weight: var(--stf-font-weight-light);
+    }
   }
   .left-column {
     width: 371px;
-  }
-  .switch-action {
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.16);
-    a {
-      color: var(--stf-black);
-      text-decoration: none;
-      display: flex;
-      font-size: 20px;
-      font-weight: var(--stf-font-weight-light);
-    }
-    span {
-      flex-grow: 1;
-      line-height: 24px;
-      ::ng-deep strong {
-        font-weight: var(--stf-font-weight-semibold);
-      }
-    }
-    svg-icon ::ng-deep svg {
-      width: 24px;
-      height: 24px;
-    }
   }
   .processing-stats {
     h2 {
@@ -45,12 +29,15 @@
       margin-left: 10px;
     }
   }
+  .total-queries {
+    font-size: rythm(3.5);
+    font-weight: var(--stf-font-weight-bold);
+  }
   .chart-header {
     display: flex;
     align-items: baseline;
     h2 {
       margin-bottom: 60px;
-      font-weight: var(--stf-font-weight-light);
     }
     span {
       font-weight: var(--stf-font-weight-light);
@@ -58,5 +45,50 @@
       text-align: right;
       font-style: italic;
     }
+  }
+
+  .activity {
+    h2 {
+      margin-bottom: rythm(1.5);
+    }
+  }
+
+  .activity-header {
+    display: flex;
+    align-items: center;
+    font-size: var(--stf-font-size-ssmall);
+    font-weight: var(--stf-font-weight-light);
+    padding-bottom: rythm(0.5);
+    border-bottom: 1px solid #000;
+    margin-bottom: rythm(1);
+  }
+  
+  .activity-items {
+    max-height: 310px;
+    overflow-y: auto;
+    @include scrollbar-black();
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    height: rythm(3);
+    border-bottom: 1px solid #000;
+  }
+  
+  .title {
+    flex: 1 1 0;
+    padding-right: rythm(3);
+    @include text-truncate();
+  }
+
+  .user,
+  .date {
+    flex: 0 0 250px;
+    max-width: 20%;
+  }
+
+  .user {
+    @include text-truncate();
   }
 }
