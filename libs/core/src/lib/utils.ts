@@ -11,7 +11,7 @@ const DATE_FORMATS: { [locale: string]: string } = {
 };
 
 export class STFUtils {
-  // Generete a slug from arbitrary text.
+  // Generate a slug from arbitrary text.
   // Slugs only have alphanumeric lowercase characters (a-z, 0-9) and separators (-_)
   public static generateSlug(text: string): string {
     if (!text) {
@@ -42,6 +42,16 @@ export class STFUtils {
       i++;
     }
     return slug;
+  }
+
+  // Download json
+  public static downloadJson(content: any, filename: string) {
+    const json = JSON.stringify(content);
+    const a = document.createElement('a');
+    const file = new Blob([json], { type: 'application/json' });
+    a.href = URL.createObjectURL(file);
+    a.download = filename;
+    a.click();
   }
 
   public static get REGEX() {

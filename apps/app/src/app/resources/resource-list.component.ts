@@ -10,6 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SimpleSelectOption } from '@flaps/components';
 import { Resource, ResourceList, RESOURCE_STATUS } from '@nuclia/core';
 import { SDKService } from '@flaps/auth';
+import { STFUtils } from '@flaps/core';
+import { resourceToAlgoliaFormat } from '../../../../../libs/sdk-core/src/lib/db/resource.mapper';
 
 interface ListFilters {
   type?: string;
@@ -318,5 +320,12 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   private setLoading(isLoading: boolean) {
     this.isLoading = isLoading;
     this.cdr?.markForCheck();
+  }
+
+  downloadAlgoliaJson(resource: Resource) {
+    this.sdk.currentKb.pipe(switchMap((kb) => kb.getResource(resource.uuid))).subscribe((fullResource) => {
+      console.log(`download as Algolia JSON:`, fullResource);
+      STFUtils.downloadJson(resourceToAlgoliaFormat(fullResource), `algolia_record.json`);
+    });
   }
 }

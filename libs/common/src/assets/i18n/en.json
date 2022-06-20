@@ -132,6 +132,7 @@
 	"generic.dismiss": "Dismiss",
 	"generic.done": "Done",
 	"generic.download": "Download",
+	"generic.download_algolia_json": "Download JSON for Algolia ",
 	"generic.edit": "Edit",
 	"generic.email": "Email",
 	"generic.enabled": "Enabled",
