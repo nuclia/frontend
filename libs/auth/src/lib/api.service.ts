@@ -25,13 +25,11 @@ export class APIService {
     return headers;
   }
 
-  get(url: string, auth?: boolean, responseType?: string, relative?: boolean, zone?: string): Observable<any> {
+  get(url: string, auth?: boolean, responseType?: string, relative?: boolean): Observable<any> {
     // do a get request to site
     if (relative) {
-      const baseUrl = !!zone ? this.config.getAPIURL().replace('//', `//${zone}.`) : this.config.getAPIURL();
-      url = baseUrl + url;
+      url = this.config.getAPIURL() + url;
     }
-
     const options: any = { headers: this.createHeaders(auth) };
     if (responseType) {
       options.responseType = responseType;

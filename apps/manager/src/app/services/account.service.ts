@@ -19,7 +19,6 @@ import {
   StashAddUser,
   StashPatchUser,
 } from '../models/stash.model';
-import { Counters } from '@nuclia/core';
 const STF_ACCOUNT = '/manage/@account';
 const STF_ACCOUNTS = '/manage/@accounts';
 
@@ -78,10 +77,6 @@ export class AccountService {
 
   getStash(accountId: string, stashId: string): Observable<ManagerStash> {
     return this.api.get(STF_ACCOUNT + '/' + accountId + '/' + STF_STASHES + '/' + stashId, true, undefined, true);
-  }
-
-  getStashCount(zone: string, kbId: string): Observable<Counters> {
-    return this.api.get(`/v1/kb/${kbId}/counters`, true, undefined, true, zone);
   }
 
   editStash(accountId: string, stashId: string, data: StashPatch) {

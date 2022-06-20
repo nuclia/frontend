@@ -18,7 +18,7 @@ import { SDKService } from '@flaps/auth';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { ZoneSummary } from '../../models/zone.model';
-import { Counters } from '@nuclia/core';
+import { Counters, Nuclia } from '@nuclia/core';
 import { catchError } from 'rxjs/operators';
 
 const STATUSES = { 0: 'Active', 1: 'Blocked due to quota', 2: 'Blocked by manager' };
@@ -261,8 +261,9 @@ export class AccountDetailComponent implements OnInit {
     this.account?.stashes.items?.forEach((kb) => {
       const zone = this.zones.find((zone) => zone.id === kb.zone);
       if (zone) {
+        const specificNuclia = new Nuclia({ ...this.sdk.nuclia.options, zone: zone.slug, knowledgeBox: kb.id });
         requests.push(
-          this.accountService.getStashCount(zone.slug, kb.id).pipe(
+          specificNuclia.knowledgeBox.counters().pipe(
             map((counters) => ({ kbId: kb.id, counters })),
             catchError((error) => {
               console.error(`Loading counters for ${kb.title} failed`, error);
