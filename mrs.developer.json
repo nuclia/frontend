@@ -3,6 +3,6 @@
     "url": "git@github.com:plone/pastanaga-angular.git",
     "path": "/projects/pastanaga-angular/src",
     "package": "@guillotinaweb/pastanaga-angular",
-    "tag": "2.50.5"
+    "tag": "2.50.7"
   }
 }

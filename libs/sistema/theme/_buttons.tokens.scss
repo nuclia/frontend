@@ -14,8 +14,8 @@ $border-radius-button: rhythm(.5);
 $color-background-button-primary-solid-active: $color-primary-lighter;
 
 $color-text-button-primary-basic: $color-primary-regular;
-$color-text-button-primary-basic-hover: $color-primary-strong;
-$color-text-button-primary-basic-active: $color-primary-strong;
+$color-text-button-primary-basic-hover: $color-primary-regular;
+$color-text-button-primary-basic-active: $color-primary-regular;
 
 //---------------------------------------------------------------
 // SECONDARY
@@ -27,33 +27,36 @@ $color-text-button-secondary-solid-active: $color-light-stronger;
 
 $color-background-button-secondary-solid: $color-dark-stronger;
 $color-background-button-secondary-solid-hover: $color-dark-stronger;
-$color-background-button-secondary-solid-active: $color-dark-strong;
+$color-background-button-secondary-solid-active: $color-neutral-light;
+
+// basic
+$color-background-button-secondary-basic-hover: $color-neutral-lightest;
 
 //---------------------------------------------------------------
 // DESTRUCTIVE
 //---------------------------------------------------------------
 // solid
-$color-text-button-destructive-solid: $color-light-stronger;
-$color-text-button-destructive-solid-hover: $color-light-stronger;
-$color-text-button-destructive-solid-active: $color-light-stronger;
+$color-text-button-destructive-solid: $color-dark-stronger;
+$color-text-button-destructive-solid-hover: $color-dark-stronger;
+$color-text-button-destructive-solid-active: $color-dark-stronger;
 
-$color-background-button-destructive-solid: $color-primary-stronger;
-$color-background-button-destructive-solid-hover: $color-primary-stronger;
-$color-background-button-destructive-solid-active: $color-primary-strong;
+$color-background-button-destructive-solid: $color-secondary-regular;
+$color-background-button-destructive-solid-hover: $color-secondary-regular;
+$color-background-button-destructive-solid-active: $color-secondary-lighter;
 
 // basic
-$color-text-button-destructive-basic: $color-primary-stronger;
-$color-text-button-destructive-basic-hover: $color-light-stronger;
-$color-text-button-destructive-basic-active: $color-light-stronger;
+$color-text-button-destructive-basic: $color-secondary-strong;
+$color-text-button-destructive-basic-hover: $color-secondary-stronger;
+$color-text-button-destructive-basic-active: $color-secondary-stronger;
 
-$color-background-button-destructive-basic-hover: $color-primary-strong;
-$color-background-button-destructive-basic-active: $color-primary-strong;
+$color-background-button-destructive-basic-hover: $color-secondary-lightest;
+$color-background-button-destructive-basic-active: $color-secondary-lighter;
 
 //---------------------------------------------------------------
 // INVERTED
 //---------------------------------------------------------------
-$color-text-button-inverted-solid: $color-dark-regular;
-$color-text-button-inverted-solid-hover: $color-dark-regular;
+$color-text-button-inverted-solid: $color-neutral-strong;
+$color-text-button-inverted-solid-hover: $color-neutral-regular;
 $color-text-button-inverted-solid-active: $color-light-stronger;
 
 $color-background-button-inverted-solid: $color-neutral-lightest;
@@ -65,12 +68,8 @@ $color-background-button-inverted-solid-active: $color-neutral-regular;
 // DISABLED
 //---------------------------------------------------------------
 $color-text-button-solid-disabled: $color-light-stronger;
-$color-text-button-basic-disabled: $color-light-stronger;
-$color-text-button-inverted-solid-disabled: $color-light-stronger;
-$color-text-button-inverted-basic-disabled: $color-light-stronger;
+$color-text-button-basic-disabled: $color-neutral-lighter;
 
-$color-background-button-solid-disabled: $color-neutral-light;
-$color-background-button-basic-disabled: $color-neutral-light;
-$color-background-button-inverted-solid-disabled: $color-neutral-light;
+$color-background-button-solid-disabled: $color-neutral-lighter;
 
 
