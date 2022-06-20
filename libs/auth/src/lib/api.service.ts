@@ -19,18 +19,19 @@ export class APIService {
     headers = headers.set('Content-Type', 'application/json');
     headers = headers.set('Accept', 'application/json');
     if (auth) {
-      let auth_header = '';
-      auth_header = 'Bearer ' + this.sdk.nuclia.auth.getToken();
+      const auth_header = 'Bearer ' + this.sdk.nuclia.auth.getToken();
       headers = headers.set('Authorization', auth_header);
     }
     return headers;
   }
 
-  get(url: string, auth?: boolean, responseType?: string, relative?: boolean): Observable<any> {
+  get(url: string, auth?: boolean, responseType?: string, relative?: boolean, zone?: string): Observable<any> {
     // do a get request to site
     if (relative) {
-      url = this.config.getAPIURL() + url;
+      const baseUrl = !!zone ? this.config.getAPIURL().replace('//', `//${zone}.`) : this.config.getAPIURL();
+      url = baseUrl + url;
     }
+
     const options: any = { headers: this.createHeaders(auth) };
     if (responseType) {
       options.responseType = responseType;

@@ -1,4 +1,3 @@
-
 export type StashStates = 'PUBLISHED' | 'PRIVATE';
 export type StashRoles = 'SOWNER' | 'SMEMBER' | 'SCONTRIBUTOR';
 
@@ -19,13 +18,15 @@ export interface Stash {
   id: string;
   slug: string;
   title?: string;
+  description?: string;
   avatar?: string;
-  state: StashStates
+  state: StashStates;
   account: string;
+  creator: string;
   zone: string;
   created: string;
   modified: string;
-  data: StashPreferences
+  data: StashPreferences;
 }
 
 export interface ManagerStash {

@@ -105,7 +105,8 @@
     <div *ngIf="edit"
          gdArea="content"
          style="position: relative">
-      <mat-tab-group mat-align-tabs="start">
+      <mat-tab-group mat-align-tabs="start"
+                     (selectedTabChange)="onTabSelection($event)">
         <mat-tab label="Users">
           <div fxLayout="column"
                fxLayoutAlign="start start"
@@ -179,25 +180,14 @@
                   </mat-panel-title>
                   <mat-panel-description>
                     {{ stash.title }}
+                    <ng-container *ngIf="kbResourceCount[stash.id] !== undefined">
+                      – {{ kbResourceCount[stash.id] }} resources
+                    </ng-container>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
                 <stf-button (click)="goToStash(stash.slug)">
                   Edit
                 </stf-button>
-                -
-                <!--
-                <ul>
-                  <li><b>Owners: </b>
-                    <ul><li *ngFor="let user of stash.owners"> {{ user }}</li></ul>
-                  </li>
-                  <li><b>Contributors: </b>
-                    <ul><li *ngFor="let user of stash.contributors"> {{ user }}</li></ul>
-                  </li>
-                  <li><b>Readers: </b>
-                    <ul><li *ngFor="let user of stash.readers"> {{ user }}</li></ul>
-                  </li>
-                </ul>
-                -->
               </mat-expansion-panel>
             </mat-accordion>
             <div class="new_stash">

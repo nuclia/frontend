@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AccountService } from './../../services/account.service';
 import { UserSearch } from '../../models/user.model';
@@ -15,7 +15,11 @@ import { UsersService } from '../../services/users.service';
 import { ZoneService } from '../../services/zone.service';
 import { validSlug } from '../../models/form.validator';
 import { SDKService } from '@flaps/auth';
-import { map, of } from 'rxjs';
+import { forkJoin, map, Observable, of } from 'rxjs';
+import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
+import { ZoneSummary } from '../../models/zone.model';
+import { Counters } from '@nuclia/core';
+import { catchError } from 'rxjs/operators';
 
 const STATUSES = { 0: 'Active', 1: 'Blocked due to quota', 2: 'Blocked by manager' };
 @Component({
@@ -33,7 +37,8 @@ export class AccountDetailComponent implements OnInit {
   stashmessage: string = '';
   acmessage: string = '';
   url: string | undefined;
-  zones: any[] = [];
+  zones: ZoneSummary[] = [];
+  kbResourceCount: { [kbId: string]: number } = {};
 
   accountTitleForm = this.fb.group({
     id: ['', [Validators.required, validSlug()]],
@@ -85,6 +90,7 @@ export class AccountDetailComponent implements OnInit {
     private zoneService: ZoneService,
     private fb: FormBuilder,
     private sdk: SDKService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.userSearchList = [];
     this.route.data.subscribe((data: { [account: string]: Account }) => {
@@ -197,7 +203,7 @@ export class AccountDetailComponent implements OnInit {
         zone: this.account.zone,
       };
       this.accountService.createStash(this.account.id, stash).subscribe(
-        (res: any) => this.refresh(),
+        () => this.refresh(),
         (err: any) => {
           this.stashmessage = err.message;
         },
@@ -212,7 +218,7 @@ export class AccountDetailComponent implements OnInit {
         contact_list: 2,
       };
       this.accountService.startACCampaign(this.account.id, campaign).subscribe(
-        (res: any) => {
+        () => {
           this.acmessage = 'done';
         },
         (err: any) => {
@@ -242,5 +248,42 @@ export class AccountDetailComponent implements OnInit {
         this.state = STATUSES[this.account.blocking_state];
       }
     });
+  }
+
+  onTabSelection($event: MatTabChangeEvent) {
+    if ($event.index === 1) {
+      this._loadKbCount();
+    }
+  }
+
+  private _loadKbCount() {
+    const requests: Observable<{ kbId: string; counters: Counters } | null>[] = [];
+    this.account?.stashes.items?.forEach((kb) => {
+      const zone = this.zones.find((zone) => zone.id === kb.zone);
+      if (zone) {
+        requests.push(
+          this.accountService.getStashCount(zone.slug, kb.id).pipe(
+            map((counters) => ({ kbId: kb.id, counters })),
+            catchError((error) => {
+              console.error(`Loading counters for ${kb.title} failed`, error);
+              return of(null);
+            }),
+          ),
+        );
+      } else {
+        console.error(`No zone found for KB ${kb.title}`, kb, this.zones);
+      }
+    });
+
+    if (requests.length > 0) {
+      forkJoin(requests).subscribe((responses) => {
+        responses.forEach((response) => {
+          if (response) {
+            this.kbResourceCount[response.kbId] = response.counters.resources;
+          }
+        });
+        this.cdr.markForCheck();
+      });
+    }
   }
 }
