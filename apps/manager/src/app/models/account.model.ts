@@ -105,5 +105,5 @@ export interface AccountUser {
 
 export interface AccountStashes {
   max_stashes: number | null;
-  stashes: Stash[] | null;
+  items: Stash[] | null;
 }

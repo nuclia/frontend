@@ -19,8 +19,7 @@ export class APIService {
     headers = headers.set('Content-Type', 'application/json');
     headers = headers.set('Accept', 'application/json');
     if (auth) {
-      let auth_header = '';
-      auth_header = 'Bearer ' + this.sdk.nuclia.auth.getToken();
+      const auth_header = 'Bearer ' + this.sdk.nuclia.auth.getToken();
       headers = headers.set('Authorization', auth_header);
     }
     return headers;

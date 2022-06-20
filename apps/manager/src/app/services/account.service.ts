@@ -1,6 +1,6 @@
 import { APIService } from '@flaps/auth';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   Account,
   AccountSummary,
