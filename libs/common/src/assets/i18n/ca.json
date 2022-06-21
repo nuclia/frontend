@@ -240,7 +240,7 @@
 	"modal.upload.success": "Fitxer pujat correctament",
 	"modal.upload.title": "Puja els teus fitxers",
 	"modal.upload_folder": "Afegeix una carpeta",
-	"ontology.add_ontology": "Afegir etiqueta",
+	"ontology.add_ontology": "Afegir etiquetas",
 	"ontology.customize_classification": "Personalitza la classificació.",
 	"ontology.delete_warning": "Si elimines aquesta família d'etiquetes, perdràs tota la classificació existent",
 	"ontology.duplicated_label": "Ja existeix una etiqueta amb el nom <strong>{{title}}</strong>",

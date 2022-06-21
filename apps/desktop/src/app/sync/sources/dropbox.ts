@@ -8,7 +8,7 @@ import {
   SearchResults,
 } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, of, switchMap, switchMapTo, take } from 'rxjs';
-import { injectScript } from '../inject';
+import { injectScript } from '@flaps/core';
 
 declare var Dropbox: any;
 

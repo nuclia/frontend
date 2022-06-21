@@ -39,14 +39,14 @@ export class UploadComponent implements OnInit {
           filter((yes) => yes),
         )
         .subscribe(() => {
-          this.next();
+          this.goTo(1);
           localStorage.removeItem(SOURCE_ID_KEY);
         });
     }
   }
 
-  next() {
-    this.step++;
+  goTo(step: number) {
+    this.step = step;
     this.cdr.detectChanges();
   }
 
@@ -66,7 +66,9 @@ export class UploadComponent implements OnInit {
         }),
         filter((yes) => yes),
       )
-      .subscribe(() => this.next());
+      .subscribe(() => {
+        this.goTo(1);
+      });
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {

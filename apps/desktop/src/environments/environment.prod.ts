@@ -12,8 +12,8 @@ export const environment = {
       CLIENT_ID: '__DROPBOX_KEY__',
     },
     gdrive: {
-      CLIENT_ID: '422664282538-m7mf0hh07h8u93kacss0f4clhnpp656v.apps.googleusercontent.com',
-      API_KEY: 'AIzaSyDeDskGoRmFQNofNXwg66zYoa3pNPQJM2Q',
+      CLIENT_ID: '__GOOGLE_CLIENT_ID__',
+      API_KEY: '__GOOGLE_API_KEY__',
     },
     nucliacloud: {
       backend: 'https://stashify.cloud/api',

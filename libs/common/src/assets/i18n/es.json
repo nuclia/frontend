@@ -240,7 +240,7 @@
 	"modal.upload.success": "Archivo cargado con éxito",
 	"modal.upload.title": "Sube tus ficheros",
 	"modal.upload_folder": "Añade una carpeta",
-	"ontology.add_ontology": "Añadir etiqueta",
+	"ontology.add_ontology": "Añadir etiquetas",
 	"ontology.customize_classification": "Personaliza la clasificación.",
 	"ontology.delete_warning": "Si eliminas esta família de etiquetas perderás toda la clasificación existente",
 	"ontology.duplicated_label": "Ya existe una etiqueta con el nombre <strong>{{title}}</strong>",
