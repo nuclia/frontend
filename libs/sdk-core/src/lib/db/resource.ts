@@ -18,6 +18,7 @@ import type {
   KeywordSetField,
 } from './resource.models';
 import type { Search } from './search.models';
+import { forkJoin } from 'rxjs';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Resource extends IResource {}
@@ -82,6 +83,14 @@ export class Resource implements IResource {
       .map((field) => (field as FileFieldData).extracted?.file?.file_thumbnail)
       .concat(this.getFields(['links']).map((field) => (field as LinkFieldData).extracted?.link?.link_thumbnail))
       .filter((thumb) => !!thumb) as CloudLink[];
+  }
+
+  getThumbnailsUrl(): Observable<string[]> {
+    return forkJoin(
+      this.getThumbnails()
+        .filter((cloudLink) => cloudLink.uri)
+        .map((cloudLink) => this.nuclia.rest.getObjectURL(cloudLink.uri as string)),
+    );
   }
 
   getNamedEntities(): { [key: string]: string[] } {

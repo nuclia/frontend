@@ -160,6 +160,10 @@
                       (click)="reindex(resource)">
                 {{ 'generic.reindex' | translate }}
               </button>
+              <button mat-menu-item
+                      (click)="downloadAlgoliaJson(resource)">
+                {{'generic.download_algolia_json' | translate}}
+              </button>
             </mat-menu>
           </td>
         </ng-container>
