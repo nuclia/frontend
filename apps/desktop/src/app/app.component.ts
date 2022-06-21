@@ -78,7 +78,11 @@ export class AppComponent implements OnInit {
       const interval = setInterval(() => {
         const deeplink = (window as any)['deeplink'] || location.search;
         if (deeplink && deeplink.includes('?')) {
-          this.router.navigateByUrl(`/add-upload${deeplink}`);
+          if ((window as any)['electron']) {
+            this.router.navigate(['/add-upload']);
+          } else {
+            this.router.navigateByUrl(`/add-upload${deeplink}`);
+          }
           clearInterval(interval);
         }
       }, 500);

@@ -11,7 +11,7 @@
     </ng-container>
     <ng-container *ngIf="step === 1">
       <da-select-files [source]="source"
-                       (next)="next()"
+                       (next)="goTo(2)"
                        [(selection)]="selection"></da-select-files>
     </ng-container>
     <ng-container *ngIf="step === 2">

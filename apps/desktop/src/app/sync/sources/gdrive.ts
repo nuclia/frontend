@@ -3,7 +3,6 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
 import {
-  ConnectorDefinition,
   ConnectorSettings,
   FileStatus,
   ISourceConnector,
@@ -12,13 +11,12 @@ import {
   SearchResults,
 } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take, tap, concatMapTo } from 'rxjs';
-import { injectScript } from '../inject';
+import { injectScript } from '@flaps/core';
+import { environment } from 'apps/desktop/src/environments/environment';
 
 declare var gapi: any;
 declare var google: any;
 
-// Authorization scopes required by the API; multiple scopes can be
-// included, separated by spaces.
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 
@@ -49,7 +47,7 @@ class GDriveImpl implements ISourceConnector {
           () =>
             (tokenClient = google.accounts.oauth2.initTokenClient({
               client_id: this.CLIENT_ID,
-              client_secret: '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',
+              redirect_uri: environment.dashboard,
               scope: SCOPES,
               callback: '', // defined later
             })),
@@ -71,13 +69,12 @@ class GDriveImpl implements ISourceConnector {
                 this.isAuthenticated.next(true);
               };
 
-              if (gapi.client.getToken() === null) {
-                // Prompt the user to select a Google Account and ask for consent to share their data
-                // when establishing a new session.
-                tokenClient.requestAccessToken({ prompt: 'consent' });
+              if ((window as any)['electron']) {
+                (window as any)['electron'].openExternal(
+                  `${environment.dashboard}/redirect?google=true&redirect=nuclia-desktop://&CLIENT_ID=${this.CLIENT_ID}&API_KEY=${this.API_KEY}`,
+                );
               } else {
-                // Skip display of account chooser and consent dialog for an existing session.
-                tokenClient.requestAccessToken({ prompt: 'none' });
+                location.href = `${environment.dashboard}/redirect?google=true&redirect=http://localhost:4200&CLIENT_ID=${this.CLIENT_ID}&API_KEY=${this.API_KEY}`;
               }
             });
         });
@@ -85,6 +82,25 @@ class GDriveImpl implements ISourceConnector {
   }
 
   authenticate(): Observable<boolean> {
+    if (!this.isAuthenticated.getValue()) {
+      injectScript('https://apis.google.com/js/api.js').subscribe(() => {
+        gapi.load('client', () => {
+          gapi.client.init({
+            apiKey: this.API_KEY,
+            discoveryDocs: DISCOVERY_DOCS,
+          });
+          const interval = setInterval(() => {
+            const deeplink = (window as any)['deeplink'] || location.search;
+            if (deeplink && deeplink.includes('?')) {
+              const param = new URLSearchParams(deeplink.split('?')[1]).get('google');
+              gapi.client.setToken(JSON.parse(decodeURIComponent(param || '{}')));
+              clearInterval(interval);
+              this.isAuthenticated.next(true);
+            }
+          }, 500);
+        });
+      });
+    }
     return this.isAuthenticated.asObservable();
   }
 

@@ -236,6 +236,8 @@ jobs:
       - name: Build desktop app
         run: |-
           sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
+          sed -i.bak "s#__GOOGLE_CLIENT_ID__#${{ secrets.GOOGLE_CLIENT_ID }}#g" apps/desktop/src/environments/environment.prod.ts
+          sed -i.bak "s#__GOOGLE_API_KEY__#${{ secrets.GOOGLE_API_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
           npx nx build desktop -c production
       - name: Build electron app
         run: |-

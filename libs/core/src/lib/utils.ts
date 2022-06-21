@@ -1,4 +1,5 @@
 import latinize from 'latinize';
+import { of, Subject } from 'rxjs';
 
 export const MIN_PASSWORD_LENGTH = 8;
 
@@ -10,6 +11,28 @@ const DATE_FORMATS: { [locale: string]: string } = {
   'en-US': 'LL - dd - yyyy',
 };
 
+const INJECTED: string[] = [];
+
+export function injectScript(url: string) {
+  if (INJECTED.includes(url)) {
+    return of(true);
+  } else {
+    const isInit: Subject<boolean> = new Subject();
+    const script = window.document.createElement('script');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.defer = true;
+    script.src = url;
+    script.onload = () => {
+      INJECTED.push(url);
+      isInit.next(true);
+    };
+    script.onerror = () => isInit.next(false);
+    window.document.body.appendChild(script);
+
+    return isInit.asObservable();
+  }
+}
 export class STFUtils {
   // Generete a slug from arbitrary text.
   // Slugs only have alphanumeric lowercase characters (a-z, 0-9) and separators (-_)
