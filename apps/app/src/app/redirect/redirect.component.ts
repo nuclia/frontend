@@ -7,6 +7,8 @@ import { take, tap, concatMapTo } from 'rxjs';
 declare var gapi: any;
 declare var google: any;
 
+const AUTHORIZED_REDIRECTS = ['nuclia-desktop://', 'http://localhost:4200'];
+
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 @Component({
@@ -16,6 +18,10 @@ export class RedirectComponent {
   constructor(private sdk: SDKService, private route: ActivatedRoute) {
     this.route.queryParams.pipe(take(1)).subscribe((params) => {
       let redirectUrl: string = params['redirect'] || '';
+      if (!AUTHORIZED_REDIRECTS.includes(redirectUrl)) {
+        console.warn('Redirect URL not authorized');
+        return;
+      }
       if (params['google']) {
         this.goToGoogleOAuth(redirectUrl, params['API_KEY'], params['CLIENT_ID']);
       } else {
