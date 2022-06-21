@@ -28,5 +28,5 @@ export const resourceToAlgoliaFormat = (resource: Resource): Record => {
     }
   });
 
-  return record;
+  return { ...record, ...resource.getNamedEntities() };
 };
