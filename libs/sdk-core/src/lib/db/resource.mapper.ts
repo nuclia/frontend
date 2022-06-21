@@ -1,15 +1,14 @@
 import { Resource } from './resource';
 import { Classification } from '@nuclia/core';
-import { map, Observable } from 'rxjs';
 
-interface Record {
+interface AlgoliaRecord {
   title?: string;
   fullText?: string[];
   images?: string[];
 }
 
-export const resourceToAlgoliaFormat = (resource: Resource): Observable<Record> => {
-  const record: Record = {
+export const resourceToAlgoliaFormat = (resource: Resource, backend: string): AlgoliaRecord => {
+  const record: AlgoliaRecord = {
     title: resource.title,
     fullText: resource
       .getExtractedTexts()
@@ -25,9 +24,10 @@ export const resourceToAlgoliaFormat = (resource: Resource): Observable<Record> 
     }
   });
 
-  return resource.getThumbnailsUrl().pipe(
-    map((images) => {
-      return { ...record, images, ...resource.getNamedEntities() };
-    }),
-  );
+  const images = resource
+    .getThumbnails()
+    .filter((link) => !!link.uri)
+    .map((link) => `${backend}/v1${link.uri}`);
+
+  return { ...record, images, ...resource.getNamedEntities() };
 };

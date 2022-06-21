@@ -8,10 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { STFConfirmComponent } from '@flaps/components';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SimpleSelectOption } from '@flaps/components';
-import { Resource, ResourceList, RESOURCE_STATUS } from '@nuclia/core';
+import { Resource, ResourceList, RESOURCE_STATUS, resourceToAlgoliaFormat } from '@nuclia/core';
 import { SDKService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
-import { resourceToAlgoliaFormat } from '../../../../../libs/sdk-core/src/lib/db/resource.mapper';
 
 interface ListFilters {
   type?: string;
@@ -324,10 +323,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   downloadAlgoliaJson(resource: Resource) {
     this.sdk.currentKb.pipe(switchMap((kb) => kb.getResource(resource.uuid))).subscribe((fullResource) => {
-      console.log(`download as Algolia JSON:`, fullResource);
-      resourceToAlgoliaFormat(fullResource).subscribe((jsonContent) =>
-        STFUtils.downloadJson(jsonContent, `algolia_record.json`),
-      );
+      const formatted = resourceToAlgoliaFormat(fullResource, this.sdk.nuclia.regionalBackend);
+      STFUtils.downloadJson(formatted, `algolia_record.json`);
     });
   }
 }
