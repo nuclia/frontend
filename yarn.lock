@@ -3228,14 +3228,6 @@
   resolved "https://registry.yarnpkg.com/@types/ms/-/ms-0.7.31.tgz#31b7ca6407128a3d2bbc27fe2d21b345397f6197"
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
-"@types/node-static@^0.7.7":
-  version "0.7.7"
-  resolved "https://registry.yarnpkg.com/@types/node-static/-/node-static-0.7.7.tgz#47a5adacc6fa79f77ad336bf572bf49953bea635"
-  integrity sha512-Cq3c9lfC9zRrGxe7ox073219Mpy/kmWNsISG0yEG7aUEk33xv/g+uqz/+4b7hM4WN9LsGageBzGuvy09inaGhg==
-  dependencies:
-    "@types/mime" "^1"
-    "@types/node" "*"
-
 "@types/node@*":
   version "17.0.25"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.25.tgz#527051f3c2f77aa52e5dc74e45a3da5fb2301448"
