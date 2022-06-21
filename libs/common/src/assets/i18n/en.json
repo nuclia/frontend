@@ -254,7 +254,7 @@
 	"modal.upload.success": "File uploaded successfully",
 	"modal.upload.title": "Upload your files",
 	"modal.upload_folder": "Add a folder",
-	"ontology.add_ontology": "Add label",
+	"ontology.add_ontology": "Add label set",
 	"ontology.customize_classification": "Customize the classification.",
 	"ontology.delete_warning": "Deleting this label set will make you lose all existing classifications",
 	"ontology.delete_warning_extra": "If you delete this classification it will disappear from all resources and search suggestions",
