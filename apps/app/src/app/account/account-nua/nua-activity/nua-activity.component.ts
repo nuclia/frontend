@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { map, Observable, Subject, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/auth';
 import { AccountNUAService } from '../account-nua.service';
-import { NUAClient } from '@nuclia/core';
+import { Account, NUAClient } from '@nuclia/core';
 
 export interface Activity {
   file: string;
@@ -31,10 +31,22 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['file', 'timestamp', 'actor'];
   activity: Activity[] = [];
 
-  constructor(private activatedRoute: ActivatedRoute, private sdk: SDKService, private nua: AccountNUAService) {}
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private sdk: SDKService,
+    private nua: AccountNUAService,
+    private stateService: StateService,
+  ) {}
 
   ngOnInit(): void {
-    // TODO load activity logs
+    // FIXME: no activity logs on the testing account so far, we need to get some to map the response properly to the table
+    combineLatest([this.stateService.account, this.client])
+      .pipe(
+        filter(([account, client]) => !!account && !!client),
+        map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
+        switchMap(({ account, client }) => this.sdk.nuclia.db.getNUAActivity(account.slug, client.client_id)),
+      )
+      .subscribe(console.log);
   }
 
   ngOnDestroy() {

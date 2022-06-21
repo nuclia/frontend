@@ -1,11 +1,11 @@
 import type { Observable } from 'rxjs';
-import type { AuthTokens } from './auth/auth.models';
-import type { JwtUser } from './auth/jwt-helpers';
+import type { AuthTokens, JwtUser } from './auth';
 import type {
   Account,
   AccountCreation,
   AccountStatus,
   AccountTypes,
+  EventList,
   IKnowledgeBoxItem,
   KnowledgeBox,
   KnowledgeBoxCreation,
@@ -84,6 +84,7 @@ export interface IDb {
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(account: string, client_id: string): Observable<void>;
   hasNUAClient(): boolean;
+  getNUAActivity(accountSlug: string, client_id: string): Observable<EventList>;
 }
 
 export interface NucliaOptions {

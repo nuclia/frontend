@@ -13,7 +13,7 @@ import {
   StatsType,
   Welcome,
 } from './db.models';
-import type { IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
+import type { EventList, IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
@@ -150,6 +150,10 @@ export class Db implements IDb {
         'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
       })
       .pipe(tap((res) => console.log(res)));
+  }
+
+  getNUAActivity(accountSlug: string, client_id: string): Observable<EventList> {
+    return this.nuclia.rest.get<EventList>(`/account/${accountSlug}/nua_client/${client_id}/activity`);
   }
 
   getNUAClients(account: string): Observable<NUAClient[]> {

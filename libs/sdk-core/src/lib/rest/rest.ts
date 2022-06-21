@@ -1,4 +1,4 @@
-import { firstValueFrom, from, map, Observable, of, switchMap, throwError } from 'rxjs';
+import { from, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import type { INuclia, IRest } from '../models';
 

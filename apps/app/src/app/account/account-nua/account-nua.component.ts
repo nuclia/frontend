@@ -68,7 +68,7 @@ export class AccountNUAComponent {
         take(1),
         map((account) => this.navigation.getAccountUrl(account!.slug)),
       )
-      .subscribe((accountUrl) => this.router.navigateByUrl(`${accountUrl}/nua/${client.client_id}/activity`));
+      .subscribe((accountUrl) => this.router.navigateByUrl(`${accountUrl}/manage/nua/${client.client_id}/activity`));
   }
 
   showToken(token: string) {
