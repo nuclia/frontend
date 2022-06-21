@@ -1,5 +1,6 @@
 import { Resource } from './resource';
 import { Classification } from '@nuclia/core';
+import { map, Observable } from 'rxjs';
 
 interface Record {
   title?: string;
@@ -7,17 +8,13 @@ interface Record {
   images?: string[];
 }
 
-export const resourceToAlgoliaFormat = (resource: Resource): Record => {
+export const resourceToAlgoliaFormat = (resource: Resource): Observable<Record> => {
   const record: Record = {
     title: resource.title,
     fullText: resource
       .getExtractedTexts()
       .filter((extracted) => extracted)
       .map((extracted) => extracted.text as string),
-    images: resource
-      .getThumbnails()
-      .filter((cloudLink) => cloudLink.uri)
-      .map((cloudLink) => cloudLink.uri as string),
   };
 
   // The typing is incorrect: the type is usermetadata while what we really got is user_metadata (but usermetadata is in use in other places, so we need to be careful when fixing it)
@@ -28,5 +25,9 @@ export const resourceToAlgoliaFormat = (resource: Resource): Record => {
     }
   });
 
-  return { ...record, ...resource.getNamedEntities() };
+  return resource.getThumbnailsUrl().pipe(
+    map((images) => {
+      return { ...record, images, ...resource.getNamedEntities() };
+    }),
+  );
 };

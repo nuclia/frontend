@@ -325,7 +325,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   downloadAlgoliaJson(resource: Resource) {
     this.sdk.currentKb.pipe(switchMap((kb) => kb.getResource(resource.uuid))).subscribe((fullResource) => {
       console.log(`download as Algolia JSON:`, fullResource);
-      STFUtils.downloadJson(resourceToAlgoliaFormat(fullResource), `algolia_record.json`);
+      resourceToAlgoliaFormat(fullResource).subscribe((jsonContent) =>
+        STFUtils.downloadJson(jsonContent, `algolia_record.json`),
+      );
     });
   }
 }
