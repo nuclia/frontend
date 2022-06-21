@@ -152,13 +152,8 @@ export class Db implements IDb {
       .pipe(tap((res) => console.log(res)));
   }
 
-  getNUAActivity(account: string, client_id: string): Observable<EventList> {
-    return this.nuclia.rest.get<EventList>('/processing/activity', {
-      'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-      'x-stf-account': account,
-      'x-stf-nua-internal-client-id': client_id,
-      // 'x-stf-account-type': 'stash-basic', //"stash-team" "stash-basic" "stash-enterprise"
-    });
+  getNUAActivity(accountSlug: string, client_id: string): Observable<EventList> {
+    return this.nuclia.rest.get<EventList>(`/account/${accountSlug}/nua_client/${client_id}/activity`);
   }
 
   getNUAClients(account: string): Observable<NUAClient[]> {

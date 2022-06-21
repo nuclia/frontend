@@ -39,13 +39,12 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // FIXME: wasn't able to go through the whole process, always got the following response:
-    // 403: {"detail":"Nuclia Understanding API key token is either unexistent or revoked"}
+    // FIXME: no activity logs on the testing account so far, we need to get some to map the response properly to the table
     combineLatest([this.stateService.account, this.client])
       .pipe(
         filter(([account, client]) => !!account && !!client),
         map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
-        switchMap(({ account, client }) => this.sdk.nuclia.db.getNUAActivity(account.id, client.client_id)),
+        switchMap(({ account, client }) => this.sdk.nuclia.db.getNUAActivity(account.slug, client.client_id)),
       )
       .subscribe(console.log);
   }
