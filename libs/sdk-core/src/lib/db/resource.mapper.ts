@@ -1,5 +1,5 @@
-import { Resource } from './resource';
-import { Classification } from '@nuclia/core';
+import type { Resource } from './resource';
+import type { Classification } from '@nuclia/core';
 
 interface AlgoliaRecord {
   title?: string;
