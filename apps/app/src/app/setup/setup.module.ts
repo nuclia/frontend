@@ -19,7 +19,6 @@ import { SetupStep1Component } from './setup-step1/setup-step1.component';
 import { SetupContainerComponent } from './setup-container/setup-container.component';
 import { SetupHeaderComponent } from './setup-header/setup-header.component';
 import { SetupStep2Component } from './setup-step2/setup-step2.component';
-import { SetupStep3Component } from './setup-step3/setup-step3.component';
 import { SetupLoaderComponent } from './setup-loader/setup-loader.component';
 import { SetupInviteComponent } from './setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup-account/setup-account.component';
@@ -30,7 +29,6 @@ const Components = [
   SetupLoaderComponent,
   SetupStep1Component,
   SetupStep2Component,
-  SetupStep3Component,
   SetupInviteComponent,
   SetupAccountComponent,
 ];

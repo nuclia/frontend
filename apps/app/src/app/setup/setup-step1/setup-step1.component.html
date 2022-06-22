@@ -33,14 +33,6 @@
         form="password-form">
         {{ 'generic.next_step' | translate }}
       </stf-button>
-      <div class="setup-step1-skip">
-        <a
-          stfButtonSkip
-          [routerLink]="['/setup/account']"
-          queryParamsHandling="merge">
-          {{ 'generic.skip' | translate }}
-        </a>
-      </div>
     </div>
   </div>
 </app-setup-container>

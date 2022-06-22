@@ -159,12 +159,6 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
   nextStep(accountSlug: string, kbSlug: string) {
     const path = this.navigation.getKbUrl(accountSlug, kbSlug);
     this.router.navigate([path]);
-    // TODO: go to step 3
-    /*
-    this.router.navigate(['/setup/upload'], {
-      queryParamsHandling: 'merge', // Preserve 'signup' param
-    });
-    */
   }
 
   ngOnDestroy() {

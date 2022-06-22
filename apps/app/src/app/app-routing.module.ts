@@ -21,7 +21,6 @@ import { OntologyComponent } from './ontologies/ontology/ontology.component';
 import { OntologyListComponent } from './ontologies/ontology-list/ontology-list.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
-import { SetupStep3Component } from './setup/setup-step3/setup-step3.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup/setup-account/setup-account.component';
 
@@ -204,11 +203,6 @@ const routes: Routes = [
   {
     path: 'setup/account',
     component: SetupStep2Component,
-    canActivate: [LoggedinGuard],
-  },
-  {
-    path: 'setup/upload',
-    component: SetupStep3Component,
     canActivate: [LoggedinGuard],
   },
   {
