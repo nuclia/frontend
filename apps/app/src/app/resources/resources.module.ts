@@ -34,6 +34,7 @@ import { ResourceTextComponent } from './edit/text.component';
 import { ResourceLinkComponent } from './edit/link.component';
 import { ResourceFileComponent } from './edit/file.component';
 import { LabelModule } from '../components/label/label.module';
+import { HintModule } from '../components/hint/hint.module';
 
 const Components = [
   ResourceListComponent,
@@ -115,6 +116,7 @@ const ROUTES = [
     PipesModule,
     STFSectionNavbarModule,
     LabelModule,
+    HintModule,
   ],
   declarations: [...Components],
   exports: [],

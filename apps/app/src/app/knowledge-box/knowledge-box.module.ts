@@ -34,6 +34,7 @@ import { KnowledgeBoxUsersComponent } from './knowledge-box-users/knowledge-box-
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
+import { HintModule } from '../components/hint/hint.module';
 
 const Components = [
   KnowledgeBoxComponent,
@@ -73,6 +74,7 @@ const Components = [
     ChartsModule,
     HelpBoxModule,
     PipesModule,
+    HintModule,
   ],
   declarations: [...Components],
   exports: [],

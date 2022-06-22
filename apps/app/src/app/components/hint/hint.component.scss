@@ -1,0 +1,35 @@
+@import 'variables';
+.hint {
+  background-color: var(--stf-gray-background);
+  padding: rythm(0.5);
+  ::ng-deep {
+    pre {
+      overflow: scroll;
+    }
+    a {
+      color: $gray-black;
+      font-weight: var(--stf-font-weight-semibold);
+    }
+    a:hover {
+      color: var(--stf-primary);
+    }
+  }
+}
+.hint-title {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: $gray-contrast;
+  svg-icon {
+    transition: transform 0.2s ease-in-out;
+    display: inline-block;
+    margin-right: rythm(0.5);
+
+    ::ng-deep svg {
+      stroke: $gray-contrast;
+      display: block;
+      width: rythm(1);
+      height: auto;
+    }
+  }
+}
