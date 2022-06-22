@@ -3,13 +3,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
-import { concatMap, takeUntil } from 'rxjs/operators';
+import { concatMap, takeUntil, take } from 'rxjs/operators';
 import { ZoneService, Zone, STFUtils } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { STFConfirmComponent } from '@flaps/components';
 import { NavigationService } from '../../services/navigation.service';
 import { SetupStep } from '../setup-header/setup-header.component';
-import { SDKService } from '@flaps/auth';
+import { SDKService, STFTrackingService } from '@flaps/auth';
 
 @Component({
   selector: 'app-setup-step2',
@@ -45,8 +45,16 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
     private sdk: SDKService,
     private zoneService: ZoneService,
     private navigation: NavigationService,
+    private tracking: STFTrackingService,
     private dialog: MatDialog,
   ) {
+    this.tracking
+      .isFeatureEnabled('onboarding-v2')
+      .pipe(take(1))
+      .subscribe((enabled) => {
+        if (enabled) this.router.navigate(['/setup/account-config']);
+      });
+
     this.zoneService.getZones().subscribe((zones) => {
       this.zones = zones;
       if (this.zones.length === 1) {

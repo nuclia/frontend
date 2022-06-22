@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="3.0.0" version="1.2">
+<babeledit_project be_version="2.9.2" version="1.2">
     <!--
 
     BabelEdit project file
@@ -2579,6 +2579,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>generic.create</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>generic.creation_date</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -3966,27 +3987,6 @@
             </concept_node>
             <concept_node>
                 <name>generic.title</name>
-                <definition_loaded>false</definition_loaded>
-                <description/>
-                <comment/>
-                <default_text/>
-                <translations>
-                    <translation>
-                        <language>ca-ES</language>
-                        <approved>false</approved>
-                    </translation>
-                    <translation>
-                        <language>en-US</language>
-                        <approved>false</approved>
-                    </translation>
-                    <translation>
-                        <language>es-ES</language>
-                        <approved>false</approved>
-                    </translation>
-                </translations>
-            </concept_node>
-            <concept_node>
-                <name>generic.try_again</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -8333,7 +8333,91 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>setup.account_preferences</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>setup.account_validated</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>setup.create_account</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>setup.data_storage</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>setup.kb_created</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -8459,6 +8543,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>setup.push_data</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>setup.set_password</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -8523,6 +8628,27 @@
             </concept_node>
             <concept_node>
                 <name>setup.upload_file</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>setup.upload_using_api</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -12340,7 +12466,6 @@
             <copy_template>[translate]=&quot;'%1'&quot;</copy_template>
             <copy_template>_('%1')</copy_template>
         </copy_templates>
-        <custom_languages/>
     </editor_configuration>
     <primary_language>en-US</primary_language>
     <configuration>

@@ -1,0 +1,100 @@
+@import 'variables';
+
+.top-bar {
+  background-color: $white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+}
+
+.logo svg {
+  width: auto;
+  height: 42px;
+  margin-left: rythm(1.5);
+}
+
+.setup-account {
+  margin: 60px 12%;
+}
+
+header {
+  border-radius: 4px;
+  padding: rythm(1.5) rythm(2);
+  background-color: $gray-black;
+  color: $white;
+  margin-bottom: rythm(2);
+}
+
+h1 {
+  margin: 0;
+}
+
+main {
+  display: flex;
+}
+
+.col-left {
+  flex: 2 1 0;
+  margin-right: rythm(2);
+}
+
+.col-right {
+  flex: 1 1 0;
+}
+
+.box {
+  background-color: $white;
+  border-radius: 4px;
+  padding: rythm(2) rythm(3);
+  margin-bottom: rythm(1);
+}
+
+h2 {
+  margin: 0 0 rythm(1) 0;
+  font-size: var(--stf-font-size-xxlarge);
+  font-weight: var(--stf-font-weight-light);
+  &.mute {
+    color: $gray-contrast;
+    margin: 0;
+  }
+}
+
+form {
+  padding-left: rythm(1.5);
+}
+
+.field {
+  background-color: $white-smoke;
+  padding: rythm(1.5) rythm(2);
+  margin-bottom: rythm(1);
+}
+
+.description {
+  line-height: 1.2;
+  margin-bottom: 10px;
+  strong {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+}
+
+stf-input {
+  display: inline-block;
+  width: 300px;
+}
+
+mat-radio-button {
+  margin-right: rythm(3);
+}
+
+stf-button {
+  margin-top: rythm(1);
+}
+
+a {
+  margin-left: rythm(3);
+  color: $gray-contrast;
+}
+
+.docs {
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.12);
+}

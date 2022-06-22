@@ -5,6 +5,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { MatRadioModule } from '@angular/material/radio';
 import {
   STFButtonsModule,
   STFInputModule,
@@ -21,6 +22,7 @@ import { SetupStep2Component } from './setup-step2/setup-step2.component';
 import { SetupStep3Component } from './setup-step3/setup-step3.component';
 import { SetupLoaderComponent } from './setup-loader/setup-loader.component';
 import { SetupInviteComponent } from './setup-invite/setup-invite.component';
+import { SetupAccountComponent } from './setup-account/setup-account.component';
 
 const Components = [
   SetupContainerComponent,
@@ -30,6 +32,7 @@ const Components = [
   SetupStep2Component,
   SetupStep3Component,
   SetupInviteComponent,
+  SetupAccountComponent,
 ];
 
 @NgModule({
@@ -46,6 +49,7 @@ const Components = [
     STFTooltipModule,
     STFFormDirectivesModule,
     STFButtonDirectivesModule,
+    MatRadioModule,
   ],
   declarations: [...Components],
   exports: [],
