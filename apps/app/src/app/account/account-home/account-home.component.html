@@ -15,7 +15,8 @@
                        [threshold]="300000000"
                        [axisYMultiplier]="1"
                        [height]="320"
-                       [tooltipEnabled]="true"></app-bar-chart>
+                       [locale]="locale | async"
+                       [tooltipsEnabled]="true"></app-bar-chart>
       </div>
     </div>
 
@@ -27,7 +28,10 @@
       </div>
       <div class="container">
         <h2>{{ 'account.total_queries' | translate }}</h2>
-        <div class="total-queries">{{ ((totalQueries | async) || '').toLocaleString() }}</div>
+        <div class="total-queries"
+             *ngIf="locale | async as locale">
+          {{ totalQueries | async | number:'1.0-0':locale}}
+        </div>
       </div>
     </div>
   </div>

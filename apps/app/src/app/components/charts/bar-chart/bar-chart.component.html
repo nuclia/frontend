@@ -4,5 +4,7 @@
   <div class="tooltip"
        [style.opacity]="showTooltip ? '1' : '0'"
        [style.bottom.px]="tooltipBottom"
-       [style.left.px]="tooltipLeft">{{ (tooltipContent || '').toLocaleString() }}</div>
+       [style.left.px]="tooltipLeft">
+    {{ tooltipContent | number:undefined:locale }}
+  </div>
 </div>

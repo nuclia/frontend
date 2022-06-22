@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BehaviorSubject } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { MatDialogModule } from '@angular/material/dialog';
+import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { UploadService } from '../../upload/upload.service';
@@ -10,6 +12,7 @@ describe('KnowledgeBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [ MatDialogModule ],
       declarations: [KnowledgeBoxComponent],
       providers: [
         {
@@ -19,6 +22,12 @@ describe('KnowledgeBoxComponent', () => {
             barDisabled: new BehaviorSubject(false).asObservable()
           },
         },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            queryParams: of({})
+          }
+        }
       ],
     }).compileComponents();
   });

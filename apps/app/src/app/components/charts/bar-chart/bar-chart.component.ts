@@ -37,7 +37,8 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
   @Input() threshold?: number;
   @Input() axisYMultiplier: number = 1.5;
   @Input() height: number = 170;
-  @Input() tooltipEnabled = false;
+  @Input() locale: string = 'en-US';
+  @Input() tooltipsEnabled = false;
 
   showTooltip = false;
   tooltipContent?: number;
@@ -97,7 +98,7 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
 
     // Tooltip event handlers
     const mouseover = (data: [string, number], index: number, group: any) => {
-      if (!this.tooltipEnabled) return;
+      if (!this.tooltipsEnabled) return;
       const { bottom, left, height, width } = group[index].getBoundingClientRect();
       this.tooltipBottom = this.container!.nativeElement.getBoundingClientRect().bottom - bottom + height + 8;
       this.tooltipLeft = left - this.container!.nativeElement.getBoundingClientRect().left + width / 2;
@@ -106,7 +107,7 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
       this.cdr.markForCheck();
     };
     const mouseleave = () => {
-      if (!this.tooltipEnabled) return;
+      if (!this.tooltipsEnabled) return;
       this.showTooltip = false;
       this.cdr.markForCheck();
     };

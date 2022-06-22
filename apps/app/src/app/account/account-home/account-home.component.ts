@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService } from '@flaps/auth';
 import { StatsPeriod, StatsType } from '@nuclia/core';
 import { filter, map, of, share, switchMap, scan } from 'rxjs';
+import { AppService } from '../../services/app.service';
 
 @Component({
   selector: 'app-account-home',
@@ -39,9 +40,10 @@ export class AccountHomeComponent {
     ),
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
   );
+  locale = this.appService.currentLocale;
 
   showActivity = false;
   activity = [{ resource: of('resource'), date: '', username: of('username') }];
 
-  constructor(private sdk: SDKService, private stateService: StateService) {}
+  constructor(private sdk: SDKService, private stateService: StateService, private appService: AppService) {}
 }
