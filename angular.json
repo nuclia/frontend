@@ -216,7 +216,7 @@
       "projectType": "library",
       "root": "libs/components",
       "sourceRoot": "libs/components/src",
-      "prefix": "nui",
+      "prefix": "ncom",
       "architect": {
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
