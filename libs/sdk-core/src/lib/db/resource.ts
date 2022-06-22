@@ -28,6 +28,10 @@ export class Resource implements IResource {
   private nuclia: INuclia;
   data: ResourceData = {};
 
+  get path(): string {
+    return `/kb/${this.kb}/resource/${this.uuid}`;
+  }
+
   constructor(nuclia: INuclia, kb: string, uuid: string, data: IResource) {
     this.nuclia = nuclia;
     this.kb = kb;
@@ -36,19 +40,19 @@ export class Resource implements IResource {
   }
 
   modify(data: Partial<IResource>): Observable<void> {
-    return this.nuclia.rest.patch<void>(`/kb/${this.kb}/resource/${this.uuid}`, data);
+    return this.nuclia.rest.patch<void>(this.path, data);
   }
 
   delete(): Observable<void> {
-    return this.nuclia.rest.delete(`/kb/${this.kb}/resource/${this.uuid}`);
+    return this.nuclia.rest.delete(this.path);
   }
 
   reprocess(): Observable<void> {
-    return this.nuclia.rest.post<void>(`/kb/${this.kb}/resource/${this.uuid}/reprocess`, {});
+    return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {});
   }
 
   getField(type: FIELD_TYPE, field: string): Observable<ResourceField> {
-    return this.nuclia.rest.get<ResourceField>(`/kb/${this.kb}/resource/${this.uuid}/${type}/${field}`);
+    return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}`);
   }
 
   getFields(types: (keyof ResourceData)[] = ['files', 'links', 'texts', 'keywordsets']): IFieldData[] {
@@ -111,7 +115,7 @@ export class Resource implements IResource {
   }
 
   deleteField(type: FIELD_TYPE, field: string): Observable<void> {
-    return this.nuclia.rest.delete(`/kb/${this.kb}/resource/${this.uuid}/${type}/${field}`);
+    return this.nuclia.rest.delete(`${this.path}/${type}/${field}`);
   }
 
   addField(
@@ -119,7 +123,7 @@ export class Resource implements IResource {
     field: string,
     data: TextField | LinkField | FileField | KeywordSetField,
   ): Observable<void> {
-    return this.nuclia.rest.put(`/kb/${this.kb}/resource/${this.uuid}/${type}/${field}`, data);
+    return this.nuclia.rest.put(`${this.path}/${type}/${field}`, data);
   }
 
   upload(field: string, file: File, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
@@ -130,15 +134,15 @@ export class Resource implements IResource {
     TUS?: boolean,
     metadata?: FileMetadata,
   ): Observable<UploadResponse> {
-    return upload(this.nuclia, `/kb/${this.kb}/resource/${this.uuid}/file/${field}`, data, !!TUS, metadata);
+    return upload(this.nuclia, `${this.path}/file/${field}`, data, !!TUS, metadata);
   }
 
   batchUpload(files: FileList | File[]): Observable<UploadStatus> {
-    return batchUpload(this.nuclia, `/kb/${this.kb}/resource/${this.uuid}`, files, true);
+    return batchUpload(this.nuclia, this.path, files, true);
   }
 
   search(query: string, features: Search.ResourceFeatures[] = []): Observable<Search.Results> {
     const params = [`query=${encodeURIComponent(query)}`, ...features.map((f) => `features=${f}`)];
-    return this.nuclia.rest.get<Search.Results>(`/kb/${this.kb}/resource/${this.uuid}/search?${params.join('&')}`);
+    return this.nuclia.rest.get<Search.Results>(`${this.path}/search?${params.join('&')}`);
   }
 }

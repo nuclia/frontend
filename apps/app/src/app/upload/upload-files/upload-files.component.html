@@ -9,15 +9,16 @@
     <h1>{{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}</h1>
   </div>
   <div mat-dialog-content>
-    <div class="size-warning" *ngIf="limitsExceeded">
+    <div class="size-warning"
+         *ngIf="limitsExceeded">
       <svg-icon src="assets/icons/toast-warning.svg"></svg-icon>
       <span>
         <strong>
           {{ 'upload.size_warning_1' | translate:
-            { 
-              maxMedia: (maxMediaFileSize | size),
-              max: (maxFileSize | size)
-            }
+          {
+          maxMedia: (maxMediaFileSize | size),
+          max: (maxFileSize | size)
+          }
           }}
         </strong>
         <span>{{ 'upload.size_warning_2' | translate }}</span>
@@ -111,6 +112,17 @@
       </select>
 
     </div>
+
+    <ncom-hint label="How to upload a file with the API">
+      <pre><code class="highlight">curl $$KB_URL$$/upload \
+     -X POST \
+     -H "authorization: Bearer $$AUTH_TOKEN$$" \
+     -T /path/to/file</code></pre>
+      <p>Note: the authorization token here will expired, if you want a long-term approach, you should use a service
+        access token and put it in the <code>X-STF-Serviceaccount</code> header.</p>
+      <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
+         target="_new">Learn more</a>
+    </ncom-hint>
   </div>
 
   <div class="mt-28"

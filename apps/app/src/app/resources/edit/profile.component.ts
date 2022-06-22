@@ -32,6 +32,12 @@ export class ResourceProfileComponent extends BaseEditComponent {
     ),
   );
   currentLabels: LabelValue[] = [];
+  hintValues = this.resource.pipe(
+    map((res) => ({
+      RESOURCE: this.sdk.nuclia.rest.getFullUrl(res.path),
+      DATA: JSON.stringify(this.getValue()),
+    })),
+  );
 
   constructor(
     protected route: ActivatedRoute,

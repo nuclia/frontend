@@ -1,4 +1,4 @@
-import { Directive, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Directive, OnDestroy } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/auth';

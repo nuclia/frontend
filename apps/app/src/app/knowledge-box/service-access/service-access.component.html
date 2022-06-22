@@ -1,9 +1,9 @@
 <div class="service-access-container">
   <h3>{{ 'stash.create_service_access' | translate }}</h3>
 
-  <form [formGroup]="addForm" 
+  <form [formGroup]="addForm"
         (ngSubmit)="addServiceAccess()">
-    <div fxLayout="row" 
+    <div fxLayout="row"
          fxLayoutGap="12px">
       <input fxFlex="1 1 0"
              formControlName="title"
@@ -115,3 +115,13 @@
     </div>
   </div>
 </div>
+<ncom-hint label="How to use your service access token in the API">
+  <p>The service access token can use on any call to the API. It goes in the <code>X-STF-Serviceaccount</code> header
+    and replaces the <code>Authorization</code> header</p>
+  <pre><code class="highlight">curl $$KB_URL$$/upload \
+ -X POST \
+ -H "X-STF-Serviceaccount: Bearer YOUR-SERVICE-ACCESS-TOKEN" \
+ -T /path/to/file</code></pre>
+  <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
+     target="_new">Learn more</a>
+</ncom-hint>

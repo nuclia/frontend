@@ -17,6 +17,7 @@ import { UploadFilesDialogComponent } from './upload-files/upload-files-dialog.c
 import { UploadProgressComponent } from './upload-progress/upload-progress.component';
 import { UploadProgressDialogComponent } from './upload-progress/upload-progress-dialog.component';
 import { LabelModule } from '../components/label/label.module';
+import { HintModule } from '../components/hint/hint.module';
 
 const Components = [
   CreateLinkComponent,
@@ -43,6 +44,7 @@ const Components = [
     FileUploadModule,
     STFPipesModule,
     LabelModule,
+    HintModule,
   ],
   declarations: [...Components],
   exports: [],
