@@ -50,6 +50,7 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
   isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   account = this.stateService.account.pipe(filter((account) => !!account));
+  kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigation.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
