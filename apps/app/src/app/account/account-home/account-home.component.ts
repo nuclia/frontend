@@ -36,7 +36,7 @@ export class AccountHomeComponent {
   );
   totalQueries = this.account.pipe(
     switchMap((account) =>
-      this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, undefined, StatsPeriod.MONTH),
+      this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR),
     ),
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
   );
