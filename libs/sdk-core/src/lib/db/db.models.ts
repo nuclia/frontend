@@ -51,7 +51,7 @@ export enum StatsPeriod {
   DAY = 'day',
   WEEK = 'week',
   MONTH = 'month',
-  YEAR = 'year,',
+  YEAR = 'year',
 }
 
 export interface ProcessingStat {

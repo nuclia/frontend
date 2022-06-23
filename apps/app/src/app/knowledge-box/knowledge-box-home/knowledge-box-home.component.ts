@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SDKService, StateService } from '@flaps/auth';
 import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
-import { KBStates, StatsType } from '@nuclia/core';
+import { KBStates, StatsPeriod, StatsType } from '@nuclia/core';
 import { filter, map, Observable, share, switchMap, combineLatest, take, tap } from 'rxjs';
 import { AppToasterService } from '../../services/app-toaster.service';
 import { AppService } from '../../services/app.service';
@@ -53,7 +53,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   );
   private _search = combineLatest([this.stateService.account, this.sdk.currentKb]).pipe(
     filter(([account, kb]) => !!account),
-    switchMap(([account, kb]) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, kb.id)),
+    switchMap(([account, kb]) =>
+      this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, kb.id, StatsPeriod.YEAR),
+    ),
     share(),
   );
   totalSearch = this._search.pipe(map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)));
@@ -64,9 +66,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
         .map(
           (stat) =>
             [
-              `${stat[0].getHours().toLocaleString(undefined, { minimumIntegerDigits: 2 })}:${stat[0]
-                .getMinutes()
-                .toLocaleString(undefined, { minimumIntegerDigits: 2 })}`,
+              `${(stat[0].getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 })}/${
+                stat[0].getFullYear() % 100
+              }`,
               stat[1],
             ] as [string, number],
         )
@@ -113,6 +115,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   private changeState(actionLabel: string, state: KBStates): void {
     this.sdk.currentKb
       .pipe(
+        take(1),
         switchMap((kb) =>
           this.dialog
             .open(STFConfirmComponent, {
