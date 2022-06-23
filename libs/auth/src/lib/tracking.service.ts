@@ -6,6 +6,7 @@ import posthog from 'posthog-js';
 import { filter, Observable } from 'rxjs';
 import { SDKService } from './sdk.service';
 
+const STATUS_ALERT = 'NUCLIA_STATUS_ALERT';
 @Injectable({
   providedIn: 'root',
 })
@@ -86,6 +87,22 @@ export class STFTrackingService {
         observer.next(flags);
         observer.complete();
       });
+    });
+  }
+
+  getStatusAlert(): Observable<string> {
+    return new Observable<string>((observer) => {
+      const lastAlert = parseInt(localStorage.getItem(STATUS_ALERT) || '0', 10);
+      fetch('https://raw.githubusercontent.com/nuclia/status/main/status.json')
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.active && data.id > lastAlert) {
+            observer.next(data.message);
+            localStorage.setItem(STATUS_ALERT, data.id.toString());
+          } else {
+            observer.next('');
+          }
+        });
     });
   }
 }

@@ -10,10 +10,12 @@ import {
   StateService,
   SDKService,
 } from '@flaps/auth';
-import { catchError, combineLatest, filter, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, combineLatest, filter, of, Subject, switchMap, tap, take } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
 import { Title } from '@angular/platform-browser';
 import { Toaster } from '@flaps/pastanaga';
+import { STFConfirmComponent } from '@flaps/components';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +40,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private sdk: SDKService,
     private titleService: Title,
     private toaster: Toaster,
+    private dialog: MatDialog,
   ) {
     this.unsubscribeAll = new Subject();
 
@@ -62,6 +65,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.toastsContainer) {
       this.toaster.registerContainer(this.toastsContainer);
     }
+    this.checkStatusAlert();
   }
 
   ngOnDestroy(): void {
@@ -114,11 +118,30 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
               if (error.status === 403) {
                 this.navigation.resetState();
               }
-              return of([{ title: ''}, { title: ''}]);
+              return of([{ title: '' }, { title: '' }]);
             }),
           ),
         ),
       )
       .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`));
+  }
+
+  private checkStatusAlert() {
+    this.tracking
+      .getStatusAlert()
+      .pipe(
+        take(1),
+        filter((statusAlert) => !!statusAlert),
+      )
+      .subscribe((message) => {
+        this.dialog.open(STFConfirmComponent, {
+          data: {
+            title: 'generic.alert',
+            message,
+            minWidthButtons: '420px',
+            onlyConfirm: true,
+          },
+        });
+      });
   }
 }
