@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntypedFormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { of, concatMap, map, catchError } from 'rxjs';
+import { of, concatMap, map, filter, catchError } from 'rxjs';
 import { ZoneService, Zone, STFUtils } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { NavigationService } from '../../services/navigation.service';
 import { AppToasterService } from '../../services/app-toaster.service';
-import { SDKService } from '@flaps/auth';
+import { SDKService, UserService } from '@flaps/auth';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 
@@ -19,6 +19,10 @@ const DEFAULT_KB_NAME = 'Basic';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SetupAccountComponent {
+  user = this.userService.userPrefs.pipe(
+    filter((prefs) => !!prefs),
+    map((prefs) => prefs!.name),
+  );
   accountForm = this.formBuilder.group({
     account: [
       '',
@@ -56,6 +60,7 @@ export class SetupAccountComponent {
     private zoneService: ZoneService,
     private navigation: NavigationService,
     private toaster: AppToasterService,
+    private userService: UserService,
   ) {
     this.kb.patchValue(DEFAULT_KB_NAME);
     this.zoneService.getZones().subscribe((zones) => {

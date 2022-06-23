@@ -4,10 +4,9 @@
 </div>
 
 <div class="setup-account">
-  <header>
-    <h1>{{ 'setup.create_account' | translate }}</h1>
+  <header *ngIf="user | async as user">
+    <h1>{{ 'setup.create_account' | translate: { user } }}</h1>
   </header>
-
   <main>
     <div class="col-left">
       <div class="box">

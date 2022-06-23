@@ -17,16 +17,10 @@
   margin: 60px 12%;
 }
 
-header {
-  border-radius: 4px;
-  padding: rythm(1.5) rythm(2);
-  background-color: $gray-black;
-  color: $white;
-  margin-bottom: rythm(2);
-}
-
 h1 {
-  margin: 0;
+  margin: 0 0 rythm(2) 0;
+  font-weight: var(--stf-font-weight-bold);
+  font-size: var(--stf-font-size-xxxlarge);
 }
 
 main {
@@ -57,10 +51,6 @@ h2 {
     color: $gray-contrast;
     margin: 0;
   }
-}
-
-form {
-  padding-left: rythm(1.5);
 }
 
 .field {
