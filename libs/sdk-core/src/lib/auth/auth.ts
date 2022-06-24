@@ -8,6 +8,7 @@ import type { AuthTokens } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
+const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
 
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
@@ -128,8 +129,8 @@ export class Authentication implements IAuthentication {
         if (expiration < now) {
           this.logout();
         } else {
-          // we refresh the token 2 days before expiration (or immediately if it's less than 2 days)
-          const timeout = Math.max(expiration - now - 48 * 60 * 60 * 1000, 0);
+          // we refresh the token in 6 hours (or immediately if it should expire sooner)
+          const timeout = expiration - now < REFRESH_DELAY ? 0 : REFRESH_DELAY;
           this.timerSubscription?.unsubscribe();
           this.timerSubscription = timer(timeout)
             .pipe(switchMap(() => this.refresh()))
@@ -160,7 +161,7 @@ export class Authentication implements IAuthentication {
         if (!response.ok) {
           return throwError(response);
         }
-        return from(response.clone().json())
+        return from(response.clone().json());
       }),
     );
   }
