@@ -2,9 +2,9 @@
   "extends": "./tsconfig.json",
   "include": ["**/*.ts"],
   "compilerOptions": {
-    "types": ["jasmine", "node"],
+    "types": ["jest", "node"]
   },
   "angularCompilerOptions": {
-    "strictTemplates": true,
-  },
+    "strictTemplates": true
+  }
 }
