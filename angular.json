@@ -222,13 +222,12 @@
       "prefix": "ncom",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/components"],
           "options": {
-            "main": "libs/components/src/test.ts",
-            "tsConfig": "libs/components/tsconfig.spec.json",
-            "karmaConfig": "libs/components/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/components"]
+            "jestConfig": "libs/components/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
