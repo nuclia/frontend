@@ -24,4 +24,3 @@ export * from './lib/mat-colors';
 export * from './lib/inputfield/input.component';
 export * from './lib/inputfield/password-input/password-input.component';
 export * from './lib/confirm-dialog/confirm-dialog.component';
-export * from './lib/richtext/richtext.module';
