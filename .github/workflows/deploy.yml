@@ -48,7 +48,7 @@ jobs:
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,auth,core,sistema-demo
 
       - name: Build affected apps
-        run: npx nx affected --target=build --parallel=3 -c production --exclude=sdk-demo,search-widget-demo,sdk-core,sistema-demo
+        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core,sistema-demo
 
       - name: Check apps to deploy
         id: check-deploy
@@ -225,10 +225,10 @@ jobs:
           sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
           sed -i.bak "s#__GOOGLE_CLIENT_ID__#${{ secrets.GOOGLE_CLIENT_ID }}#g" apps/desktop/src/environments/environment.prod.ts
           sed -i.bak "s#__GOOGLE_API_KEY__#${{ secrets.GOOGLE_API_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
-          npx nx build desktop -c production
+          npx nx build desktop --configuration production
       - name: Build electron app
         run: |-
-          npx nx build desktop-electron -c production
+          npx nx build desktop-electron --configuration production
           mv ./dist/apps/desktop-electron/main.preload.ts.js ./dist/apps/desktop-electron/main.preload.js
       - name: Install the Apple certificate
         if: startsWith(matrix.os, 'macos')
