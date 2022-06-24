@@ -33,6 +33,7 @@ describe('LoginComponent', () => {
               getRecaptchaKey: () => 'key',
               getSAMLLogin: () => {},
               getSocialLogin: () => {},
+              getOAuthLogin: () => false,
               staticConf: { client: 'dashboard' },
             },
           },
