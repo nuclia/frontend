@@ -16,10 +16,10 @@ import { ZoneService } from '../../services/zone.service';
 import { validSlug } from '../../models/form.validator';
 import { SDKService } from '@flaps/auth';
 import { forkJoin, map, Observable, of } from 'rxjs';
-import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { ZoneSummary } from '../../models/zone.model';
 import { Counters, Nuclia } from '@nuclia/core';
 import { catchError } from 'rxjs/operators';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 const STATUSES = { 0: 'Active', 1: 'Blocked due to quota', 2: 'Blocked by manager' };
 @Component({

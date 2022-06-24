@@ -5,6 +5,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { AccountService } from '../../services/account.service';
+import { MatTableModule } from '@angular/material/table';
 
 describe('AccountListComponent', () => {
   let component: AccountListComponent;
@@ -15,7 +16,7 @@ describe('AccountListComponent', () => {
       TestBed.configureTestingModule({
         declarations: [AccountListComponent],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        imports: [RouterTestingModule],
+        imports: [RouterTestingModule, MatTableModule],
         providers: [
           {
             provide: AccountService,
