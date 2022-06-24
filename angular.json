@@ -42,9 +42,13 @@
                 "output": "assets/deployment"
               }
             ],
-            "styles": ["apps/app/src/styles.scss"],
+            "styles": [
+              "apps/app/src/styles.scss"
+            ],
             "stylePreprocessorOptions": {
-              "includePaths": ["apps/app/src"]
+              "includePaths": [
+                "apps/app/src"
+              ]
             },
             "scripts": [],
             "ngswConfigPath": "apps/app/src/ngsw-config.json",
@@ -123,7 +127,9 @@
             },
             "defaultConfiguration": "production"
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -156,10 +162,14 @@
             "scripts": [],
             "assets": [],
             "stylePreprocessorOptions": {
-              "includePaths": ["apps/app/src"]
+              "includePaths": [
+                "apps/app/src"
+              ]
             }
           },
-          "outputs": ["coverage/apps/app"]
+          "outputs": [
+            "coverage/apps/app"
+          ]
         }
       },
       "tags": []
@@ -177,7 +187,9 @@
             "tsConfig": "libs/auth/tsconfig.spec.json",
             "karmaConfig": "libs/auth/karma.conf.js"
           },
-          "outputs": ["coverage/libs/auth"]
+          "outputs": [
+            "coverage/libs/auth"
+          ]
         }
       },
       "schematics": {
@@ -201,7 +213,9 @@
             "tsConfig": "libs/common/tsconfig.spec.json",
             "karmaConfig": "libs/common/karma.conf.js"
           },
-          "outputs": ["coverage/libs/common"]
+          "outputs": [
+            "coverage/libs/common"
+          ]
         }
       },
       "schematics": {
@@ -225,7 +239,9 @@
             "tsConfig": "libs/components/tsconfig.spec.json",
             "karmaConfig": "libs/components/karma.conf.js"
           },
-          "outputs": ["coverage/libs/components"]
+          "outputs": [
+            "coverage/libs/components"
+          ]
         }
       },
       "schematics": {
@@ -249,7 +265,9 @@
             "tsConfig": "libs/core/tsconfig.spec.json",
             "karmaConfig": "libs/core/karma.conf.js"
           },
-          "outputs": ["coverage/libs/core"]
+          "outputs": [
+            "coverage/libs/core"
+          ]
         }
       },
       "schematics": {
@@ -268,7 +286,9 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/desktop",
             "index": "apps/desktop/src/index.html",
@@ -285,9 +305,13 @@
                 "output": "assets"
               }
             ],
-            "styles": ["apps/desktop/src/styles.scss"],
+            "styles": [
+              "apps/desktop/src/styles.scss"
+            ],
             "stylePreprocessorOptions": {
-              "includePaths": ["apps/desktop/src"]
+              "includePaths": [
+                "apps/desktop/src"
+              ]
             },
             "scripts": []
           },
@@ -386,12 +410,17 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/desktop/src/**/*.ts", "apps/desktop/src/**/*.html"]
+            "lintFilePatterns": [
+              "apps/desktop/src/**/*.ts",
+              "apps/desktop/src/**/*.html"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/desktop"],
+          "outputs": [
+            "coverage/apps/desktop"
+          ],
           "options": {
             "jestConfig": "apps/desktop/jest.config.js",
             "passWithNoTests": true
@@ -407,12 +436,16 @@
       "architect": {
         "build": {
           "builder": "nx-electron:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/desktop-electron",
             "main": "apps/desktop/electron/src/main.ts",
             "tsConfig": "apps/desktop/electron/tsconfig.app.json",
-            "assets": ["apps/desktop/electron/src/assets"]
+            "assets": [
+              "apps/desktop/electron/src/assets"
+            ]
           },
           "configurations": {
             "production": {
@@ -453,14 +486,20 @@
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
-          "outputs": ["{options.outputFile}"],
+          "outputs": [
+            "{options.outputFile}"
+          ],
           "options": {
-            "lintFilePatterns": ["apps/desktop/electron/**/*.ts"]
+            "lintFilePatterns": [
+              "apps/desktop/electron/**/*.ts"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/desktop/electron"],
+          "outputs": [
+            "coverage/apps/desktop/electron"
+          ],
           "options": {
             "jestConfig": "apps/desktop/electron/jest.config.js",
             "passWithNoTests": true
@@ -488,7 +527,9 @@
             "main": "apps/manager/src/main.ts",
             "polyfills": "apps/manager/src/polyfills.ts",
             "tsConfig": "apps/manager/tsconfig.app.json",
-            "allowedCommonJsDependencies": ["lru-cache"],
+            "allowedCommonJsDependencies": [
+              "lru-cache"
+            ],
             "budgets": [
               {
                 "type": "initial",
@@ -520,7 +561,9 @@
                 "output": "assets/deployment"
               }
             ],
-            "styles": ["apps/manager/src/styles.scss"],
+            "styles": [
+              "apps/manager/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -589,7 +632,9 @@
             },
             "defaultConfiguration": "production"
           },
-          "outputs": ["{options.outputPath}"]
+          "outputs": [
+            "{options.outputPath}"
+          ]
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -622,7 +667,9 @@
             "scripts": [],
             "assets": []
           },
-          "outputs": ["coverage/apps/manager"]
+          "outputs": [
+            "coverage/apps/manager"
+          ]
         }
       },
       "tags": []
@@ -640,7 +687,9 @@
             "tsConfig": "libs/pastanaga/tsconfig.spec.json",
             "karmaConfig": "libs/pastanaga/karma.conf.js"
           },
-          "outputs": ["coverage/libs/pastanaga"]
+          "outputs": [
+            "coverage/libs/pastanaga"
+          ]
         }
       },
       "schematics": {
@@ -659,19 +708,27 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["yarn sdk-build"]
+            "commands": [
+              "yarn sdk-build"
+            ]
           }
         },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/sdk-core/**/*.ts"]
+            "lintFilePatterns": [
+              "libs/sdk-core/**/*.ts"
+            ]
           },
-          "outputs": ["{options.outputFile}"]
+          "outputs": [
+            "{options.outputFile}"
+          ]
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/sdk-core"],
+          "outputs": [
+            "coverage/libs/sdk-core"
+          ],
           "options": {
             "jestConfig": "libs/sdk-core/jest.config.js",
             "passWithNoTests": true
@@ -695,8 +752,13 @@
             "polyfills": "apps/sdk-demo/src/polyfills.ts",
             "tsConfig": "apps/sdk-demo/tsconfig.app.json",
             "aot": true,
-            "assets": ["apps/sdk-demo/src/favicon.ico", "apps/sdk-demo/src/assets"],
-            "styles": ["apps/sdk-demo/src/styles.scss"],
+            "assets": [
+              "apps/sdk-demo/src/favicon.ico",
+              "apps/sdk-demo/src/assets"
+            ],
+            "styles": [
+              "apps/sdk-demo/src/styles.scss"
+            ],
             "scripts": []
           },
           "configurations": {
@@ -761,7 +823,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/sdk-demo"],
+          "outputs": [
+            "coverage/apps/sdk-demo"
+          ],
           "options": {
             "jestConfig": "apps/sdk-demo/jest.config.js",
             "passWithNoTests": true
@@ -778,7 +842,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/search-widget/**/*.{ts,svelte,spec.ts}"]
+            "lintFilePatterns": [
+              "libs/search-widget/**/*.{ts,svelte,spec.ts}"
+            ]
           }
         },
         "check": {
@@ -801,7 +867,9 @@
         },
         "build-original": {
           "builder": "@nxext/svelte:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/libs/search-widget",
             "entryFile": "libs/search-widget/src/index.ts",
@@ -823,7 +891,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/search-widget"],
+          "outputs": [
+            "coverage/libs/search-widget"
+          ],
           "options": {
             "jestConfig": "libs/search-widget/jest.config.js",
             "passWithNoTests": true
@@ -838,7 +908,9 @@
       "architect": {
         "build": {
           "builder": "@nxext/vite:build",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/search-widget-demo",
             "assets": [
@@ -863,7 +935,9 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/search-widget-demo/**/*.{ts,svelte,spec.ts}"]
+            "lintFilePatterns": [
+              "apps/search-widget-demo/**/*.{ts,svelte,spec.ts}"
+            ]
           }
         },
         "check": {
@@ -875,7 +949,9 @@
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/search-widget-demo"],
+          "outputs": [
+            "coverage/apps/search-widget-demo"
+          ],
           "options": {
             "jestConfig": "apps/search-widget-demo/jest.config.js",
             "passWithNoTests": true
@@ -891,7 +967,9 @@
       "architect": {
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/libs/sistema"],
+          "outputs": [
+            "coverage/libs/sistema"
+          ],
           "options": {
             "jestConfig": "libs/sistema/jest.config.js",
             "passWithNoTests": true
@@ -900,7 +978,10 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["libs/sistema/src/**/*.ts", "libs/sistema/src/**/*.html"]
+            "lintFilePatterns": [
+              "libs/sistema/src/**/*.ts",
+              "libs/sistema/src/**/*.html"
+            ]
           }
         }
       },
@@ -914,7 +995,9 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "outputs": ["{options.outputPath}"],
+          "outputs": [
+            "{options.outputPath}"
+          ],
           "options": {
             "outputPath": "dist/apps/sistema-demo",
             "index": "apps/sistema-demo/src/index.html",
@@ -931,10 +1014,14 @@
                 "output": "/assets/"
               }
             ],
-            "styles": ["apps/sistema-demo/src/styles.scss"],
+            "styles": [
+              "apps/sistema-demo/src/styles.scss"
+            ],
             "scripts": [],
             "stylePreprocessorOptions": {
-              "includePaths": ["apps/sistema-demo/src"]
+              "includePaths": [
+                "apps/sistema-demo/src"
+              ]
             }
           },
           "configurations": {
@@ -991,12 +1078,17 @@
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "options": {
-            "lintFilePatterns": ["apps/sistema-demo/src/**/*.ts", "apps/sistema-demo/src/**/*.html"]
+            "lintFilePatterns": [
+              "apps/sistema-demo/src/**/*.ts",
+              "apps/sistema-demo/src/**/*.html"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
-          "outputs": ["coverage/apps/sistema-demo"],
+          "outputs": [
+            "coverage/apps/sistema-demo"
+          ],
           "options": {
             "jestConfig": "apps/sistema-demo/jest.config.js",
             "passWithNoTests": true
