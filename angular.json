@@ -237,13 +237,12 @@
       "prefix": "stf",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/core"],
           "options": {
-            "main": "libs/core/src/test.ts",
-            "tsConfig": "libs/core/tsconfig.spec.json",
-            "karmaConfig": "libs/core/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/core"]
+            "jestConfig": "libs/core/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
