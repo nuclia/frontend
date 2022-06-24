@@ -93,7 +93,7 @@ export class STFTrackingService {
   getStatusAlert(): Observable<string> {
     return new Observable<string>((observer) => {
       const lastAlert = parseInt(localStorage.getItem(STATUS_ALERT) || '0', 10);
-      fetch('https://raw.githubusercontent.com/nuclia/status/main/status.json')
+      fetch('https://nuclia.github.io/status/status.json')
         .then((res) => res.json())
         .then((data) => {
           if (data && data.active && data.id > lastAlert) {
