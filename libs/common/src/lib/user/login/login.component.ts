@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject, ElementRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { ReCaptchaV3Service } from 'ngx-captcha';
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
   });
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private samlService: SAMLService,
     private oAuthService: OAuthService,
     private googleService: GoogleService,

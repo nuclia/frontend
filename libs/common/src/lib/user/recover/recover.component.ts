@@ -1,7 +1,7 @@
 import { Component, Inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { FormBuilder, Validators, NgForm } from '@angular/forms';
+import { UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginService, BackendConfigurationService, RecoverData } from '@flaps/auth';
@@ -28,7 +28,7 @@ export class RecoverComponent {
   @ViewChild('form') form?: NgForm;
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute,

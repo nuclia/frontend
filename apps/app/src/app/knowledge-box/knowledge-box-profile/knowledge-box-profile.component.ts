@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, concatMap } from 'rxjs/operators';
 import { StateService, SDKService } from '@flaps/auth';
@@ -31,7 +31,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,

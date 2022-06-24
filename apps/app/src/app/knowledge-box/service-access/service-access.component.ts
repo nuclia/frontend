@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subject, combineLatest } from 'rxjs';
 import { switchMap, tap, filter, takeUntil, take } from 'rxjs/operators';
@@ -32,7 +32,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
 
   constructor(
     private stateService: StateService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private sdk: SDKService,

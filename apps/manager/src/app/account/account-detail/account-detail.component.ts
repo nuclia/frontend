@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { AccountService } from './../../services/account.service';
 import { UserSearch } from '../../models/user.model';
 import {
@@ -88,7 +88,7 @@ export class AccountDetailComponent implements OnInit {
     private accountService: AccountService,
     private usersService: UsersService,
     private zoneService: ZoneService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
   ) {

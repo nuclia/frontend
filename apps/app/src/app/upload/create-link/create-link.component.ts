@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { STFTrackingService } from '@flaps/auth';
 import { SDKService } from '@flaps/auth';
@@ -29,7 +29,7 @@ export class CreateLinkComponent {
 
   constructor(
     public dialogRef: MatDialogRef<CreateLinkComponent>,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private sdk: SDKService,
     private tracking: STFTrackingService,
     private toaster: AppToasterService,

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { Entity } from '../model';
@@ -18,7 +18,7 @@ export class SynonymAddComponent {
   @Output() add = new EventEmitter<Entity>();
   id: string;
   openAutocomplete: boolean = false;
-  filterInput = new FormControl();
+  filterInput = new UntypedFormControl();
   items$: Observable<Entity[]>;
 
   constructor() {

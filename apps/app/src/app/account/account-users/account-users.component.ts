@@ -1,5 +1,5 @@
 import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, Observable, of } from 'rxjs';
 import { takeUntil, filter, tap, switchMap, map } from 'rxjs/operators';
@@ -20,7 +20,7 @@ export class AccountUsersComponent implements OnDestroy {
   account?: Account;
   users?: AccountUser[];
   columns = ['user', 'role', 'actions'];
-  email = new FormControl([''], [Validators.required, Validators.email]);
+  email = new UntypedFormControl([''], [Validators.required, Validators.email]);
   roles: [AccountRoles, string][] = [['AOWNER', 'generic.owner'], ['AMEMBER', 'generic.member']];
 
   account$ = this.stateService.account.pipe(filter((account) => !!account));

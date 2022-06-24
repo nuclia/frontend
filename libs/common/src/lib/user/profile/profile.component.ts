@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Location } from '@angular/common';
-import { FormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, Observable, of, forkJoin, takeUntil, switchMap, filter } from 'rxjs';
 import { SDKService, SetUserPreferences, UserService, LoginService } from '@flaps/auth';
@@ -52,7 +52,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private userService: UserService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private translate: TranslateService,
     private location: Location,
     private loginService: LoginService,

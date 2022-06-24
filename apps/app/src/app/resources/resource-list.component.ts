@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Observable, Subject, forkJoin, of, from, mergeMap } from 'rxjs';
@@ -67,7 +67,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   resultsLength = 0;
   isLoading = true;
   selection = new SelectionModel<Resource>(true, []);
-  filterTitle: FormControl;
+  filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
 
@@ -112,7 +112,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {
     const title = this.filters.title;
-    this.filterTitle = new FormControl([title ? title : '']);
+    this.filterTitle = new UntypedFormControl([title ? title : '']);
 
     this.filterTitle.valueChanges.pipe(takeUntil(this.unsubscribeAll), debounceTime(200)).subscribe(() => {
       const title = this.filterTitle.value;

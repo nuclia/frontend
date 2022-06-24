@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, Validators, AbstractControl } from '@angular/forms';
+import { UntypedFormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { of, concatMap, map, catchError } from 'rxjs';
 import { ZoneService, Zone, STFUtils } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
@@ -50,7 +50,7 @@ export class SetupAccountComponent {
 
   constructor(
     private router: Router,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private zoneService: ZoneService,

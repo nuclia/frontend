@@ -9,7 +9,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { Subject, Observable } from 'rxjs';
 import { switchMap, concatMap, takeUntil, tap, filter, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { ZoneService, Zone } from '@flaps/core';
@@ -55,13 +55,13 @@ export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy 
   isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
 
   zones: Zone[] | undefined;
-  zone = new FormControl();
+  zone = new UntypedFormControl();
   speechToText: boolean = false;
   initialValues = { title: '', description: '' };
 
   constructor(
     private stateService: StateService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private zoneService: ZoneService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,

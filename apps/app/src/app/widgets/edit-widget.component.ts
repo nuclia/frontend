@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -52,7 +52,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   copyIcon = 'assets/icons/copy.svg';
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private sanitized: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,

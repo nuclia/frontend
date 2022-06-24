@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Entities } from '@nuclia/core';
@@ -16,7 +16,7 @@ import { EntitiesSearchService } from './entities-search.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntitiesComponent {
-  searchInput = new FormControl('');
+  searchInput = new UntypedFormControl('');
   unsubscribeAll = new Subject<void>();
   searchTerm = this.searchService.getSearchTerm();
   noResults = this.searchService.hasNoResults();
