@@ -5,6 +5,7 @@ import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { UploadService } from '../../upload/upload.service';
+import { AppService } from '../../services/app.service';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -12,22 +13,28 @@ describe('KnowledgeBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ MatDialogModule ],
+      imports: [MatDialogModule],
       declarations: [KnowledgeBoxComponent],
       providers: [
         {
           provide: UploadService,
           useValue: {
             progress: new BehaviorSubject({ completed: true }).asObservable(),
-            barDisabled: new BehaviorSubject(false).asObservable()
+            barDisabled: new BehaviorSubject(false).asObservable(),
           },
         },
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: of({})
-          }
-        }
+            queryParams: of({}),
+          },
+        },
+        {
+          provide: AppService,
+          useValue: {
+            checkEmptyKBAlert: () => of(false),
+          },
+        },
       ],
     }).compileComponents();
   });
