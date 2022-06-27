@@ -357,7 +357,7 @@
 	"setup.account_name_not_available": "Este nombre de cuenta no está disponible. Prueba con otro.",
 	"setup.account_preferences": "1. Empezamos con las preferencias de tu cuenta",
 	"setup.account_validated": "Tu cuenta ha sido validada",
-	"setup.create_account": "TODO",
+	"setup.create_account": "Hola {{user}}! Bienvenido! 👋 😄",
 	"setup.data_storage": "¿Done quieres alojar tus datos ?",
 	"setup.kb_created": "TODO",
 	"setup.knowledge_box_creation": "Se creará una Caja de conocimiento con el mismo nombre para guardar toda la documentación vinculada que subas. Será procesada con la zona y proveedor escogido.",

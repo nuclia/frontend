@@ -357,7 +357,7 @@
 	"setup.account_name_not_available": "Aquest nom de compte no està disponible. Prova'n un altre.",
 	"setup.account_preferences": "1. Comencem amb les preferències del teu compte",
 	"setup.account_validated": "El teu compte ha estat validat",
-	"setup.create_account": "TODO",
+	"setup.create_account": "Hola {{user}}! Benvingut! 👋 😄",
 	"setup.data_storage": "On vols allotjar les teves dades ?",
 	"setup.kb_created": "TODO",
 	"setup.knowledge_box_creation": "Es crearà una Caixa de coneixament amb el mateix nom per a guardar tota la documentació vinculada que pugis. Serà processada amb la zona i proveïdor escollit.",
