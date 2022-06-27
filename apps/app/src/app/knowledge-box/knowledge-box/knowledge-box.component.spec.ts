@@ -32,7 +32,7 @@ describe('KnowledgeBoxComponent', () => {
         {
           provide: AppService,
           useValue: {
-            checkEmptyKBAlert: () => of(false),
+            isKbStillEmptyAfterFirstDay: () => of(false),
           },
         },
       ],
