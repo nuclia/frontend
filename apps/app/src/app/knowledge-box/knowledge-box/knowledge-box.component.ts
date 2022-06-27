@@ -36,7 +36,7 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.appService
-      .checkEmptyKBAlert()
+      .isKbStillEmptyAfterFirstDay()
       .pipe(
         takeUntil(this.unsubscribeAll),
         switchMap((result) => (result ? this.showKBEmptyAlert() : of())),

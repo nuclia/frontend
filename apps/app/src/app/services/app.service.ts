@@ -48,7 +48,7 @@ export class AppService {
     return this.config.getLocales().includes(lang) ? lang : 'en-US';
   }
 
-  checkEmptyKBAlert() {
+  isKbStillEmptyAfterFirstDay() {
     return this.sdk.counters.pipe(
       take(1),
       map((counters) => {
