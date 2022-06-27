@@ -1,6 +1,6 @@
 import { Component, Inject, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { FormBuilder, Validators, NgForm } from '@angular/forms';
+import { UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { Router, ActivatedRoute } from '@angular/router';
 import { STFInputComponent } from '@flaps/pastanaga';
@@ -39,7 +39,7 @@ export class ResetComponent {
   };
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute,

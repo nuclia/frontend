@@ -6,7 +6,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { Label } from '@nuclia/core';
 
 @Component({
@@ -24,7 +24,7 @@ export class LabelComponent {
   @Output() labelDelete = new EventEmitter<void>();
   
   editMode: boolean = false;
-  title = new FormControl([''], [Validators.required]);
+  title = new UntypedFormControl([''], [Validators.required]);
 
   constructor(private cdr: ChangeDetectorRef) { }
 

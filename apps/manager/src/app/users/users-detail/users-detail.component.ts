@@ -3,7 +3,7 @@ import { formatDate } from '@angular/common';
 import { UsersService } from './../../services/users.service';
 import { User, UserPatch, UserCreation, Session } from './../../models/user.model';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { SDKService } from '@flaps/auth';
 
 @Component({
@@ -37,7 +37,7 @@ export class UsersDetailComponent implements OnInit {
     private router: Router,
     private usersService: UsersService,
     private sdk: SDKService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
   ) {
     this.route.data.subscribe((data: { [user: string]: User }) => {
       const user = data.user;

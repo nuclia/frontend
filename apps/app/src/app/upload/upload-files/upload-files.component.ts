@@ -1,6 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
 import { STFTrackingService, StateService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
@@ -23,8 +23,8 @@ export class UploadFilesComponent {
   filesWithoutAudio: FileWithMetadata[] = [];
   selectedLabels: LabelValue[] = [];
   hasBaseDropZoneOver: boolean = false;
-  langSelect = new FormControl('');
-  langMultiSelect = new FormControl('');
+  langSelect = new UntypedFormControl('');
+  langMultiSelect = new UntypedFormControl('');
   languageList = STFUtils.supportedAudioLanguages();
   pendingLangs = 0;
   fileSelection = new SelectionModel<FileWithMetadata>(true, []);

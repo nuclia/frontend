@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Directive, OnDestroy } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/auth';
 import { Resource } from '@nuclia/core';
@@ -28,7 +28,7 @@ export abstract class BaseEditComponent implements OnDestroy {
   constructor(
     protected route: ActivatedRoute,
     protected sdk: SDKService,
-    protected formBuilder: FormBuilder,
+    protected formBuilder: UntypedFormBuilder,
     protected toaster: AppToasterService,
   ) {
     this.refresh.next(true);

@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Sluggable } from '@flaps/common';
 
@@ -20,7 +20,7 @@ export class AddWidgetDialogComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AddWidgetDialogComponent>,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: { rename: boolean }
   ) {}
 

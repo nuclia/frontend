@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take, filter, map, Observable } from 'rxjs';
 import { Account, NUAClient } from '@nuclia/core';
@@ -50,7 +50,7 @@ export class ClientDialogComponent {
     .pipe(map((zoneMap) => Object.entries(zoneMap).map(([key, title]) => ({ id: key, title }))));
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private dialogRef: MatDialogRef<ClientDialogComponent>,
     private stateService: StateService,
     private userService: UserService,

@@ -1,4 +1,4 @@
-import { ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
+import { ControlValueAccessor, UntypedFormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR, Validator } from '@angular/forms';
 import {
   EventEmitter,
   Input,
@@ -132,7 +132,7 @@ export class TextareaComponent implements ControlValueAccessor, OnInit, Validato
 
   onBlur() {
     this._validate(this.value);
-    this.validate(<FormControl>{});
+    this.validate(<UntypedFormControl>{});
     this.blur.emit(this.value || '');
   }
 
@@ -142,7 +142,7 @@ export class TextareaComponent implements ControlValueAccessor, OnInit, Validato
     }
   }
 
-  validate(control: FormControl) {
+  validate(control: UntypedFormControl) {
     if (!this.errors.required) {
       this.hasError = false;
       return null;

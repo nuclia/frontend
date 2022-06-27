@@ -2,6 +2,7 @@
   "version": 1,
   "projects": {
     "app": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "schematics": {
         "@nrwl/angular:component": {
@@ -146,38 +147,30 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/app"],
           "options": {
-            "main": "apps/app/src/test.ts",
-            "tsConfig": "apps/app/tsconfig.spec.json",
-            "karmaConfig": "apps/app/karma.conf.js",
-            "polyfills": "apps/app/src/polyfills.ts",
-            "styles": [],
-            "scripts": [],
-            "assets": [],
-            "stylePreprocessorOptions": {
-              "includePaths": ["apps/app/src"]
-            }
-          },
-          "outputs": ["coverage/apps/app"]
+            "jestConfig": "apps/app/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "tags": []
     },
     "auth": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/auth",
       "sourceRoot": "libs/auth/src",
       "prefix": "stf",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/auth"],
           "options": {
-            "main": "libs/auth/src/test.ts",
-            "tsConfig": "libs/auth/tsconfig.spec.json",
-            "karmaConfig": "libs/auth/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/auth"]
+            "jestConfig": "libs/auth/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
@@ -189,19 +182,19 @@
       "tags": []
     },
     "common": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/common",
       "sourceRoot": "libs/common/src",
       "prefix": "stf",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/common"],
           "options": {
-            "main": "libs/common/src/test.ts",
-            "tsConfig": "libs/common/tsconfig.spec.json",
-            "karmaConfig": "libs/common/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/common"]
+            "jestConfig": "libs/common/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
@@ -213,19 +206,19 @@
       "tags": []
     },
     "components": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/components",
       "sourceRoot": "libs/components/src",
       "prefix": "ncom",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/components"],
           "options": {
-            "main": "libs/components/src/test.ts",
-            "tsConfig": "libs/components/tsconfig.spec.json",
-            "karmaConfig": "libs/components/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/components"]
+            "jestConfig": "libs/components/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
@@ -237,19 +230,19 @@
       "tags": []
     },
     "core": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/core",
       "sourceRoot": "libs/core/src",
       "prefix": "stf",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/core"],
           "options": {
-            "main": "libs/core/src/test.ts",
-            "tsConfig": "libs/core/tsconfig.spec.json",
-            "karmaConfig": "libs/core/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/core"]
+            "jestConfig": "libs/core/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
@@ -261,6 +254,7 @@
       "tags": []
     },
     "desktop": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/desktop",
       "sourceRoot": "apps/desktop/src",
@@ -401,6 +395,7 @@
       "tags": []
     },
     "desktop-electron": {
+      "$schema": "../../../node_modules/nx/schemas/project-schema.json",
       "root": "apps/desktop/electron",
       "sourceRoot": "apps/desktop/electron/src",
       "projectType": "application",
@@ -469,6 +464,7 @@
       }
     },
     "manager": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "schematics": {
         "@nrwl/angular:component": {
@@ -612,35 +608,30 @@
           }
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/apps/manager"],
           "options": {
-            "main": "apps/manager/src/test.ts",
-            "tsConfig": "apps/manager/tsconfig.spec.json",
-            "karmaConfig": "apps/manager/karma.conf.js",
-            "polyfills": "apps/manager/src/polyfills.ts",
-            "styles": [],
-            "scripts": [],
-            "assets": []
-          },
-          "outputs": ["coverage/apps/manager"]
+            "jestConfig": "apps/manager/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "tags": []
     },
     "pastanaga": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/pastanaga",
       "sourceRoot": "libs/pastanaga/src",
       "prefix": "stf",
       "architect": {
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/pastanaga"],
           "options": {
-            "main": "libs/pastanaga/src/test.ts",
-            "tsConfig": "libs/pastanaga/tsconfig.spec.json",
-            "karmaConfig": "libs/pastanaga/karma.conf.js"
-          },
-          "outputs": ["coverage/libs/pastanaga"]
+            "jestConfig": "libs/pastanaga/jest.config.js",
+            "passWithNoTests": true
+          }
         }
       },
       "schematics": {
@@ -652,6 +643,7 @@
       "tags": []
     },
     "sdk-core": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "libs/sdk-core",
       "sourceRoot": "libs/sdk-core/src",
       "projectType": "library",
@@ -681,6 +673,7 @@
       "tags": []
     },
     "sdk-demo": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/sdk-demo",
       "sourceRoot": "apps/sdk-demo/src",
@@ -771,6 +764,7 @@
       "tags": []
     },
     "search-widget": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "libs/search-widget",
       "sourceRoot": "libs/search-widget/src",
       "projectType": "library",
@@ -832,6 +826,7 @@
       }
     },
     "search-widget-demo": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "apps/search-widget-demo",
       "sourceRoot": "apps/search-widget-demo/src",
       "projectType": "application",
@@ -884,6 +879,7 @@
       }
     },
     "sistema": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "library",
       "root": "libs/sistema",
       "sourceRoot": "libs/sistema/src",
@@ -907,6 +903,7 @@
       "tags": []
     },
     "sistema-demo": {
+      "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "projectType": "application",
       "root": "apps/sistema-demo",
       "sourceRoot": "apps/sistema-demo/src",

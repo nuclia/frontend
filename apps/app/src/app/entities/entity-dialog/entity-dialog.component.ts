@@ -1,5 +1,5 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Observable, Subject, map, takeUntil } from 'rxjs';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Entities } from '@nuclia/core';
@@ -28,7 +28,7 @@ export interface EntityDialogResponse {
 })
 export class EntityDialogComponent implements OnDestroy {
 
-  entityForm: FormGroup;
+  entityForm: UntypedFormGroup;
   validationMessages = {
     name: {
       required: 'validation.required',
@@ -41,7 +41,7 @@ export class EntityDialogComponent implements OnDestroy {
 
   constructor(
     private dialogRef: MatDialogRef<EntityDialogComponent>,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private entitiesService: EntitiesService,
     @Inject(MAT_DIALOG_DATA) public data: EntityDialogData,
   ) {

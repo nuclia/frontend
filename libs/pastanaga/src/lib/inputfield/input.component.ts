@@ -1,7 +1,7 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Platform } from '@angular/cdk/platform';
 import { AutofillMonitor } from '@angular/cdk/text-field';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl, FormGroupDirective } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, UntypedFormControl, FormGroupDirective } from '@angular/forms';
 import { Subject, forkJoin, merge } from 'rxjs';
 import { takeUntil, take, tap, map } from 'rxjs/operators';
 import { ErrorStateMatcher } from '../error';
@@ -174,7 +174,7 @@ export class STFInputComponent
 
   @Input() isLabelHidden: boolean = false;
   @Input() validation_messages: any;
-  @Input() validator: FormControl | undefined;
+  @Input() validator: UntypedFormControl | undefined;
 
   @Output() valueChange: EventEmitter<any> = new EventEmitter();
   @Output() keyUp: EventEmitter<any> = new EventEmitter();

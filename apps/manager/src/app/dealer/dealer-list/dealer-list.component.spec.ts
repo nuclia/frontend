@@ -6,6 +6,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { DealerService } from '../../services/dealer.service';
 import { of } from 'rxjs';
 import { MatSortModule } from '@angular/material/sort';
+import { STFButtonsModule } from '@flaps/pastanaga';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('DealerListComponent', () => {
   let component: DealerListComponent;
@@ -16,7 +18,7 @@ describe('DealerListComponent', () => {
       TestBed.configureTestingModule({
         declarations: [DealerListComponent],
         schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        imports: [RouterTestingModule, MatSortModule],
+        imports: [RouterTestingModule, MatSortModule, STFButtonsModule],
         providers: [
           {
             provide: DealerService,
@@ -24,6 +26,10 @@ describe('DealerListComponent', () => {
               getDealers: () => of({}),
               deleteDealer: () => of({}),
             },
+          },
+          {
+            provide: TranslateService,
+            useValue: { get: () => of('') },
           },
         ],
       }).compileComponents();

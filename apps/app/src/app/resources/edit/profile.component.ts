@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/auth';
@@ -42,7 +42,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
   constructor(
     protected route: ActivatedRoute,
     protected sdk: SDKService,
-    protected formBuilder: FormBuilder,
+    protected formBuilder: UntypedFormBuilder,
     protected toaster: AppToasterService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,

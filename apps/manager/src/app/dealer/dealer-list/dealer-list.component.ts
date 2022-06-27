@@ -65,7 +65,7 @@ export class DealerListComponent implements AfterViewInit {
             this.isLoadingResults = false;
             // Catch if the GitHub API has reached its rate limit. Return empty data.
             this.isRateLimitReached = true;
-            return observableOf([]);
+            return observableOf([] as Dealer[]);
           }),
         )
         .subscribe((data) => (this.dealers = new MatTableDataSource(data)));

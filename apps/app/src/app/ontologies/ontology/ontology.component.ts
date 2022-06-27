@@ -1,5 +1,5 @@
 import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -48,7 +48,7 @@ export class OntologyComponent implements OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private labelsService: LabelsService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private dialog: MatDialog,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

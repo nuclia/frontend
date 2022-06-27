@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { switchMap, take } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
@@ -20,10 +20,10 @@ export class ConnectorsComponent {
   @Output() onSelect = new EventEmitter<{ connector: ConnectorDefinition; params?: ConnectorParameters }>();
   connectors: ConnectorDefinition[] = [];
   fields?: Field[];
-  form?: FormGroup;
+  form?: UntypedFormGroup;
   selectedConnector?: ConnectorDefinition;
 
-  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: FormBuilder) {}
+  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {}
 
   selectConnector(connectorId: string) {
     this.selectedConnector = this.sync[this._type][connectorId].definition;

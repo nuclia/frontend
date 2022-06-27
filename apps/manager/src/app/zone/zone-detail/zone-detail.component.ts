@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Zone, ZonePatch, ZoneAdd } from './../../models/zone.model';
 import { ZoneService } from './../../services/zone.service';
 import { SDKService } from '@flaps/auth';
@@ -33,7 +33,7 @@ export class ZoneDetailComponent {
     private router: Router,
     private zoneService: ZoneService,
     private sdk: SDKService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
   ) {
     this.route.data.subscribe((data) => {
       const zone = data.zone as Zone | null;

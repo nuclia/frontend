@@ -1,5 +1,5 @@
 import { Component, Input, Output, OnInit, EventEmitter, ElementRef, ViewChild } from '@angular/core';
-import { ControlContainer, FormGroupDirective, FormControl } from '@angular/forms';
+import { ControlContainer, FormGroupDirective, UntypedFormControl } from '@angular/forms';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { STFInputComponent, Theme } from '../input.component';
 
@@ -18,7 +18,7 @@ export class STFPasswordInputComponent implements OnInit {
   @Input() controlName: string | undefined;
   @Input() name: string | undefined;
   @Input() validation_messages: object | undefined;
-  @Input() validator: FormControl | undefined;
+  @Input() validator: UntypedFormControl | undefined;
   @Input() theme: Theme = 'gray';
 
   @Input()

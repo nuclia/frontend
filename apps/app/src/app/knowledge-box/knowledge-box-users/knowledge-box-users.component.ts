@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { KbUser } from '@flaps/core';
@@ -35,7 +35,7 @@ export class KnowledgeBoxUsersComponent {
 
   constructor(
     private users: KnowledgeBoxUsersService,
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private translate: TranslateService,
     private state: StateService,
     private sdk: SDKService,

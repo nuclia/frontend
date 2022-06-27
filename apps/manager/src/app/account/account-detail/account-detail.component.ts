@@ -1,6 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { AccountService } from './../../services/account.service';
 import { UserSearch } from '../../models/user.model';
 import {
@@ -16,10 +16,10 @@ import { ZoneService } from '../../services/zone.service';
 import { validSlug } from '../../models/form.validator';
 import { SDKService } from '@flaps/auth';
 import { forkJoin, map, Observable, of } from 'rxjs';
-import { MatTabChangeEvent } from '@angular/material/tabs/tab-group';
 import { ZoneSummary } from '../../models/zone.model';
 import { Counters, Nuclia } from '@nuclia/core';
 import { catchError } from 'rxjs/operators';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 const STATUSES = { 0: 'Active', 1: 'Blocked due to quota', 2: 'Blocked by manager' };
 @Component({
@@ -88,7 +88,7 @@ export class AccountDetailComponent implements OnInit {
     private accountService: AccountService,
     private usersService: UsersService,
     private zoneService: ZoneService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
   ) {

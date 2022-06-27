@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SDKService, STFTrackingService } from '@flaps/auth';
 import { CheckboxGroupItem, Sluggable } from '@flaps/common';
@@ -53,7 +53,7 @@ export class KbAddComponent {
   error = '';
 
   constructor(
-    private formBuilder: FormBuilder,
+    private formBuilder: UntypedFormBuilder,
     private dialogRef: MatDialogRef<KbAddComponent, { success: boolean } | undefined>,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,

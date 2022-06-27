@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, map, switchMap, share } from 'rxjs/operators';
 import { SimpleAccount, SDKService } from '@flaps/auth';
@@ -29,7 +29,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   canAddKb = this.accountData.pipe(
     map((account) => account.can_manage_account && account.max_kbs > account.current_kbs),
   );
-  kbName = new FormControl('', [Sluggable()]);
+  kbName = new UntypedFormControl('', [Sluggable()]);
   unsubscribeAll = new Subject<void>();
 
   constructor(
