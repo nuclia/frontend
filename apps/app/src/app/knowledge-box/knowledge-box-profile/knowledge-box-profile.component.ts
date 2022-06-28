@@ -26,7 +26,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
 
   validationMessages = {
     slug: {
-      sluggable: 'stash.kb_name_invalid',
+      sluggable: 'stash.kb_slug_invalid',
     },
   };
 
