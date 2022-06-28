@@ -10,12 +10,41 @@
            fxLayout="row">
         <label class="kb-field-name mt-12"
                fxFlex="30%">
+          {{ 'generic.uid' | translate }}
+        </label>
+        <div fxFlex="70%">
+          <stf-input formControlName="uid"
+                     theme="white"
+                     [readonly]="true"
+                     [isLessen]="true">
+          </stf-input>
+        </div>
+      </div>
+
+      <div class="mb-24"
+           fxLayout="row">
+        <label class="kb-field-name mt-12"
+               fxFlex="30%">
+          {{ 'generic.slug' | translate }}
+        </label>
+        <div fxFlex="70%">
+          <stf-input formControlName="slug"
+                     [validator]="kbForm.controls['slug']"
+                     [validation_messages]="validationMessages.slug"
+                     theme="white"
+                     [isLessen]="true">
+          </stf-input>
+        </div>
+      </div>
+
+      <div class="mb-24"
+           fxLayout="row">
+        <label class="kb-field-name mt-12"
+               fxFlex="30%">
           {{ 'generic.name' | translate }}
         </label>
         <div fxFlex="70%">
           <stf-input formControlName="title"
-                     [validator]="kbForm.controls['title']"
-                     [validation_messages]="validationMessages.title"
                      theme="white"
                      [isLessen]="true">
           </stf-input>

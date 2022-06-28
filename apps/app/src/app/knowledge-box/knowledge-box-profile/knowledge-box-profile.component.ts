@@ -5,6 +5,7 @@ import { takeUntil, concatMap } from 'rxjs/operators';
 import { StateService, SDKService } from '@flaps/auth';
 import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
+import { STFUtils } from '@flaps/core';
 
 @Component({
   selector: 'app-knowledge-box-profile',
@@ -17,12 +18,14 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   account: Account | undefined;
 
   kbForm = this.formBuilder.group({
-    title: ['', [Sluggable()]],
+    uid: [''],
+    slug: ['', [Sluggable()]],
+    title: [''],
     description: [''],
   });
 
   validationMessages = {
-    title: {
+    slug: {
       sluggable: 'stash.kb_name_invalid',
     },
   };
@@ -51,20 +54,23 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   }
 
   initKbForm(): void {
+    this.kbForm.get('uid')?.patchValue(this.kb?.id);
+    this.kbForm.get('slug')?.patchValue(this.kb?.slug);
     this.kbForm.get('title')?.patchValue(this.kb?.title);
     this.kbForm.get('description')?.patchValue(this.kb?.description);
   }
 
   saveKb(): void {
     if (this.kbForm.invalid) return;
+    const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
     const data: Partial<KnowledgeBox> = {
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
-      // anonymization: this.useAnonymization ? 'anonymization' : '',
+      slug: newSlug,
     };
     (this.kb as WritableKnowledgeBox)
       .modify(data)
-      .pipe(concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, this.kb!.slug!)))
+      .pipe(concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, newSlug)))
       .subscribe((kb) => {
         this.stateService.setStash(kb);
       });
