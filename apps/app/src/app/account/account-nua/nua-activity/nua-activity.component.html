@@ -22,5 +22,12 @@
       <tr cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
       <tr cdk-row *cdkRowDef="let row; columns: displayedColumns"></tr>
     </table>
+
+    <div class="load-more">
+      <stf-button *ngIf="(hasMore | async) === true"
+                  (click)="loadMoreActivity()"
+                  color="gray"
+                  padding="pd-l">{{ 'activity.load-more' | translate }}</stf-button>
+    </div>
   </div>
 </div>

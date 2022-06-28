@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, map, Observable, Subject, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { StateService } from '@flaps/auth';
 import { AccountNUAService } from '../account-nua.service';
@@ -13,7 +13,7 @@ import { Activity, NuaActivityService } from './nua-activity.service';
   styleUrls: ['./nua-activity.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NuaActivityComponent implements OnDestroy {
+export class NuaActivityComponent implements OnInit, OnDestroy {
   private _terminator = new Subject<void>();
 
   client: Observable<NUAClient | undefined> = this.activatedRoute.params.pipe(
@@ -24,11 +24,9 @@ export class NuaActivityComponent implements OnDestroy {
   );
 
   displayedColumns: string[] = ['file', 'timestamp', 'actor'];
-  activity: Observable<Activity[]> = combineLatest([this.stateService.account, this.client]).pipe(
-    filter(([account, client]) => !!account && !!client),
-    map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
-    switchMap(({ account, client }) => this.nuaActivity.getActivity(account.slug, client.client_id)),
-  );
+
+  activity: Observable<Activity[]> = this.nuaActivity.activityLogs;
+  hasMore: Observable<boolean> = this.nuaActivity.hasMore;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -37,8 +35,22 @@ export class NuaActivityComponent implements OnDestroy {
     private nuaActivity: NuaActivityService,
   ) {}
 
+  ngOnInit() {
+    combineLatest([this.stateService.account, this.client])
+      .pipe(
+        filter(([account, client]) => !!account && !!client),
+        map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
+        take(1),
+      )
+      .subscribe(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id));
+  }
+
   ngOnDestroy() {
     this._terminator.next();
     this._terminator.complete();
+  }
+
+  loadMoreActivity() {
+    this.nuaActivity.loadMore();
   }
 }

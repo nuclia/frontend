@@ -62,6 +62,7 @@
 	"accounts.no_users_found": "no existeix cap usuari amb aquest correu",
 	"accounts.users": "usuari/s",
 	"activity.actor": "Actor",
+	"activity.load-more": "TODO",
 	"activity.modified": "Modificats",
 	"activity.new": "Creats",
 	"activity.processed": "Processats",

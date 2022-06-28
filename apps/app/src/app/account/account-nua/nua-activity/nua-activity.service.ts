@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/auth';
-import { map, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { catchError, shareReplay, switchMap, take } from 'rxjs/operators';
-import { ResourceProperties } from '@nuclia/core';
+import { EventList, ResourceProperties } from '@nuclia/core';
 import { UsersService } from '@flaps/core';
 
 export interface Activity {
@@ -18,18 +18,40 @@ export class NuaActivityService {
   private _resourceNames: { [key: string]: Observable<string> } = {};
   private _userNames: { [key: string]: Observable<string> } = {};
 
+  private _activityLogs: BehaviorSubject<Activity[]> = new BehaviorSubject<Activity[]>([]);
+  private _hasMore: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private _nextPage?: number;
+  private _account?: { accountSlug: string; clientId: string };
+
+  get activityLogs() {
+    return this._activityLogs.asObservable();
+  }
+
+  get hasMore() {
+    return this._hasMore.asObservable();
+  }
+
   constructor(private sdk: SDKService, private userService: UsersService) {}
 
-  getActivity(accountSlug: string, clientId: string): Observable<Activity[]> {
-    return this.sdk.nuclia.db.getNUAActivity(accountSlug, clientId).pipe(
-      map((data) =>
-        data.events.map((event) => ({
-          resourceId: this.sdk.isKbLoaded ? this.getResource(event.rid) : of(event.rid),
-          timestamp: event.time,
-          userId: this.getUserName(event.userid, accountSlug),
-        })),
-      ),
-    );
+  loadActivity(accountSlug: string, clientId: string) {
+    this._account = { accountSlug, clientId };
+    this.sdk.nuclia.db.getNUAActivity(accountSlug, clientId).subscribe((data) => {
+      this._activityLogs.next(this.mapEventsToActivityLogs(data, accountSlug));
+      this._hasMore.next(!data.pagination.last);
+      this._nextPage = data.pagination.page + 1;
+    });
+  }
+
+  loadMore() {
+    if (!this._account || !this._nextPage) {
+      return;
+    }
+    const accountSlug = this._account.accountSlug;
+    this.sdk.nuclia.db.getNUAActivity(accountSlug, this._account.clientId, this._nextPage).subscribe((data) => {
+      this._activityLogs.next(this._activityLogs.value.concat(this.mapEventsToActivityLogs(data, accountSlug)));
+      this._hasMore.next(!data.pagination.last);
+      this._nextPage = data.pagination.page + 1;
+    });
   }
 
   private getUserName(userId: string, accountSlug: string): Observable<string> {
@@ -61,5 +83,13 @@ export class NuaActivityService {
       );
     }
     return this._resourceNames[id];
+  }
+
+  private mapEventsToActivityLogs(data: EventList, accountSlug: string) {
+    return data.events.map((event) => ({
+      resourceId: this.sdk.isKbLoaded ? this.getResource(event.rid) : of(event.rid),
+      timestamp: event.time,
+      userId: this.getUserName(event.userid, accountSlug),
+    }));
   }
 }

@@ -152,8 +152,10 @@ export class Db implements IDb {
       .pipe(tap((res) => console.log(res)));
   }
 
-  getNUAActivity(accountSlug: string, client_id: string): Observable<EventList> {
-    return this.nuclia.rest.get<EventList>(`/account/${accountSlug}/nua_client/${client_id}/activity`);
+  getNUAActivity(accountSlug: string, client_id: string, pageIndex = 0): Observable<EventList> {
+    return this.nuclia.rest.get<EventList>(
+      `/account/${accountSlug}/nua_client/${client_id}/activity?page=${pageIndex}`,
+    );
   }
 
   getNUAClients(account: string): Observable<NUAClient[]> {
