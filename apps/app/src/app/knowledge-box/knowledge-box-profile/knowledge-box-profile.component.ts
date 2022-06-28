@@ -26,7 +26,6 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
       sluggable: 'stash.kb_name_invalid',
     },
   };
-  useAnonymization = false;
 
   unsubscribeAll = new Subject<void>();
 
@@ -74,10 +73,5 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  changeAnonymization(value: boolean): void {
-    this.useAnonymization = value;
-    this.kbForm.markAsDirty();
   }
 }
