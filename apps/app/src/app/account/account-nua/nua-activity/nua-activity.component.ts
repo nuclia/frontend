@@ -41,8 +41,9 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
         filter(([account, client]) => !!account && !!client),
         map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
         take(1),
+        switchMap(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id)),
       )
-      .subscribe(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id));
+      .subscribe();
   }
 
   ngOnDestroy() {

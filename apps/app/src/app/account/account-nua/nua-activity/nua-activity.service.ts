@@ -33,13 +33,15 @@ export class NuaActivityService {
 
   constructor(private sdk: SDKService, private userService: UsersService) {}
 
-  loadActivity(accountSlug: string, clientId: string) {
+  loadActivity(accountSlug: string, clientId: string): Observable<EventList> {
     this._account = { accountSlug, clientId };
-    this.sdk.nuclia.db.getNUAActivity(accountSlug, clientId).subscribe((data) => {
-      this._activityLogs.next(this.mapEventsToActivityLogs(data, accountSlug));
-      this._hasMore.next(!data.pagination.last);
-      this._nextPage = data.pagination.page + 1;
-    });
+    return this.sdk.nuclia.db.getNUAActivity(accountSlug, clientId).pipe(
+      tap((data) => {
+        this._activityLogs.next(this.mapEventsToActivityLogs(data, accountSlug));
+        this._hasMore.next(!data.pagination.last);
+        this._nextPage = data.pagination.page + 1;
+      }),
+    );
   }
 
   loadMore() {
