@@ -30,6 +30,11 @@ export class SDKService {
   refreshing = this._refreshCounter.asObservable();
   private _repetitiveRefreshCounter = new Subject<void>();
 
+  private _isKbLoaded = false;
+  get isKbLoaded() {
+    return this._isKbLoaded;
+  }
+
   constructor(private config: BackendConfigurationService, private stateService: StateService) {
     combineLatest([this.stateService.stash, this.stateService.account])
       .pipe(
@@ -39,6 +44,7 @@ export class SDKService {
             .getKnowledgeBox(account!.slug, kb!.slug!)
             .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account!.slug, data))),
         ),
+        tap(() => (this._isKbLoaded = true)),
       )
       .subscribe(this._currentKB);
     this.countersRefreshSubcriptions();
