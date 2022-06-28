@@ -1,6 +1,6 @@
 <div [class]="'stf-field stf-input-'+ type"
      [class.stf-field-required]="required"
-     [class.stf-field-disabled]="disabled"
+     [class.stf-field-disabled]="disabled || readonly"
      [class.stf-field-focused]="focused"
      [class.stf-field-empty]="empty"
      [class.stf-label-float]="label_float">

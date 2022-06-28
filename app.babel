@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="2.9.2" version="1.2">
+<babeledit_project be_version="3.0.0" version="1.2">
     <!--
 
     BabelEdit project file
@@ -3902,6 +3902,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>generic.slug</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>generic.suggeriment</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -3987,6 +4008,27 @@
             </concept_node>
             <concept_node>
                 <name>generic.title</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>generic.uid</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -9320,6 +9362,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>stash.kb_slug_invalid</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>stash.logotip</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -12445,6 +12508,7 @@
             <copy_template>[translate]=&quot;'%1'&quot;</copy_template>
             <copy_template>_('%1')</copy_template>
         </copy_templates>
+        <custom_languages/>
     </editor_configuration>
     <primary_language>en-US</primary_language>
     <configuration>
