@@ -32,7 +32,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   refreshing = this.sdk.pendingRefresh;
   private _processing = combineLatest([this.stateService.account, this.sdk.currentKb]).pipe(
     filter(([account, kb]) => !!account),
-    switchMap(([account, kb]) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.PROCESSING_TIME, kb.id)),
+    switchMap(([account, kb]) =>
+      this.sdk.nuclia.db.getStats(account!.slug, StatsType.PROCESSING_TIME, kb.id, StatsPeriod.YEAR),
+    ),
     share(),
   );
   processing = this._processing.pipe(
@@ -42,9 +44,9 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
         .map(
           (stat) =>
             [
-              `${stat[0].getHours().toLocaleString(undefined, { minimumIntegerDigits: 2 })}:${stat[0]
-                .getMinutes()
-                .toLocaleString(undefined, { minimumIntegerDigits: 2 })}`,
+              `${(stat[0].getMonth() + 1).toLocaleString(undefined, { minimumIntegerDigits: 2 })}/${
+                stat[0].getFullYear() % 100
+              }`,
               stat[1],
             ] as [string, number],
         )
