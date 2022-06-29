@@ -16,6 +16,8 @@ import { Title } from '@angular/platform-browser';
 import { Toaster } from '@flaps/pastanaga';
 import { STFConfirmComponent } from '@flaps/components';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -32,8 +34,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private router: Router,
     private state: StateService,
     private user: UserService,
-    private spashService: STFSplashScreenService,
-    private translate: TranslateService,
+    private splashScreenService: STFSplashScreenService,
+    private ngxTranslate: TranslateService,
     private tracking: STFTrackingService,
     private config: BackendConfigurationService,
     private navigation: NavigationService,
@@ -41,6 +43,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private titleService: Title,
     private toaster: Toaster,
     private dialog: MatDialog,
+    private paTranslate: PaTranslateService,
   ) {
     this.unsubscribeAll = new Subject();
 
@@ -74,20 +77,24 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.spashService.hide();
+    this.splashScreenService.hide();
   }
 
   initTranslate(userLocale?: string) {
-    this.translate.setDefaultLang('en');
-    const browserLang = this.translate.getBrowserLang();
+    this.ngxTranslate.setDefaultLang('en');
+    const browserLang = this.ngxTranslate.getBrowserLang();
 
     if (userLocale && userLocale !== '') {
-      this.translate.use(userLocale);
+      this.ngxTranslate.use(userLocale);
     } else if (browserLang && STFUtils.supportedLanguages().indexOf(browserLang) > -1) {
-      this.translate.use(browserLang);
+      this.ngxTranslate.use(browserLang);
     } else {
-      this.translate.use('en');
+      this.ngxTranslate.use('en');
     }
+
+    this.ngxTranslate.onLangChange
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((event) => this.paTranslate.initTranslationsAndUse(event.lang, event.translations));
   }
 
   private updateStateOnRouteChange() {
