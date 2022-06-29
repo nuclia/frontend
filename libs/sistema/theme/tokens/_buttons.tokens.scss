@@ -17,6 +17,9 @@ $padding-button-icon-text-large: rhythm(1) rhythm(2) rhythm(1) rhythm(1.5);
 $padding-button-icon-small: rhythm(1);
 $padding-button-icon-large: rhythm(1.5);
 
+// Shadows
+$shadow-button-basic-hover: none;
+
 //---------------------------------------------------------------
 // PRIMARY
 //---------------------------------------------------------------
@@ -40,7 +43,9 @@ $color-background-button-secondary-solid-hover: $color-dark-stronger;
 $color-background-button-secondary-solid-active: $color-neutral-regular;
 
 // basic
-$color-background-button-secondary-basic-hover: $color-neutral-lightest;
+$color-background-button-secondary-basic: $color-light-stronger;
+$color-background-button-secondary-basic-hover: $color-neutral-light;
+$color-background-button-secondary-basic-active: $color-neutral-regular;
 
 //---------------------------------------------------------------
 // DESTRUCTIVE
@@ -66,7 +71,7 @@ $color-background-button-destructive-basic-active: $color-secondary-lighter;
 // INVERTED
 //---------------------------------------------------------------
 $color-text-button-inverted-solid: $color-neutral-strong;
-$color-text-button-inverted-solid-hover: $color-neutral-regular;
+$color-text-button-inverted-solid-hover: $color-dark-stronger;
 $color-text-button-inverted-solid-active: $color-light-stronger;
 
 $color-background-button-inverted-solid: $color-neutral-lightest;

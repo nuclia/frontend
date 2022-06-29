@@ -6,6 +6,7 @@ import { Size } from '@guillotinaweb/pastanaga-angular';
   templateUrl: './sistema-buttons.component.html',
   styleUrls: [
     '../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/button-page/button-page.component.scss',
+    './sistema-buttons.component.scss',
   ],
 })
 export class SistemaButtonsComponent {
