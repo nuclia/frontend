@@ -24,6 +24,12 @@ export enum ExtractedDataTypes {
   FILE = 'file',
 }
 
+export enum LabelSetKind {
+  RESOURCES = "RESOURCES",
+  PARAGRAPHS = "PARAGRAPHS",
+  SENTENCES = "SENTENCES",
+}
+
 export enum EventType {
   VISITED = 'VISITED',
   MODIFIED = 'MODIFIED',
@@ -124,6 +130,8 @@ export interface Label {
 export interface LabelSet {
   title: string;
   color: string;
+  multiple: boolean;
+  kind: LabelSetKind[];
   labels: Label[];
 }
 

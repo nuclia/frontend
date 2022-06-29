@@ -1,12 +1,8 @@
 const LABEL_COLORS = [
-  { mainColor: '#FFEEF4', textColor: '#E81C66', borderColor: '#E81C66' },
-  { mainColor: '#E6E6F9', textColor: '#454ADE', borderColor: '#454ADE' },
-  { mainColor: '#CCCED6', textColor: '#1E264F', borderColor: '#1E264F' },
-  { mainColor: '#DAF3E6', textColor: '#0CAD55', borderColor: '#0CAD55' },
-  { mainColor: '#FFF5D7', textColor: '#FFA928', borderColor: '#FFA928' },
-  { mainColor: '#FF8989', textColor: '#ffffff', borderColor: '#000000' },
-  { mainColor: '#81D8AC', textColor: '#ffffff', borderColor: '#000000' },
-  { mainColor: '#FFDC73', textColor: '#ffffff', borderColor: '#000000' },
+  { mainColor: '#E6E6F9', textColor: '#454ADE' },
+  { mainColor: '#DAF3E6', textColor: '#0CAD55' },
+  { mainColor: '#FFE8D9', textColor: '#EF670A' },
+  { mainColor: '#CCCED6', textColor: '#1E264F' },
 ];
 
 export const LABEL_MAIN_COLORS = LABEL_COLORS.map((color) => color.mainColor);

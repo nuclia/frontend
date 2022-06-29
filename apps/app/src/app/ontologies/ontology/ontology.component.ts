@@ -10,7 +10,7 @@ import { LabelsService } from '../../services/labels.service';
 import { Sluggable } from '@flaps/common';
 import { STFConfirmComponent } from '@flaps/components';
 import { STFUtils } from '@flaps/core';
-import { Label, Labels } from '@nuclia/core';
+import { Label, Labels, LabelSetKind } from '@nuclia/core';
 import { MutableLabelSet, EMTPY_LABEL_SET } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 
@@ -28,7 +28,12 @@ export class OntologyComponent implements OnDestroy {
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
-  
+  kinds = [
+    { id: LabelSetKind.RESOURCES, name: 'ontology.resources'},
+    { id: LabelSetKind.PARAGRAPHS, name: 'ontology.paragraphs'},
+    { id: LabelSetKind.SENTENCES, name: 'ontology.sentences'},
+  ];
+
   validationMessages = {
     title: {
       required: 'validation.title_required',
@@ -42,6 +47,7 @@ export class OntologyComponent implements OnDestroy {
   labelOrder: string[] = [];
   initialLabels?: Labels;
   hasChanges: boolean = false;
+  showMultiple = false; // TODO: delete when multiple field works
   unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -59,7 +65,7 @@ export class OntologyComponent implements OnDestroy {
           this.ontologySlug = params.ontology;
           this.addNew = params.ontology === undefined;
         }),
-        switchMap(() => this.labelsService.getLabels()),
+        switchMap(() => this.labelsService.labels),
         filter((labels) => !!labels),
         filter((labels) => !this.ontologySlug || !!(this.ontologySlug && labels![this.ontologySlug])),
         takeUntil(this.unsubscribeAll)
@@ -192,6 +198,31 @@ export class OntologyComponent implements OnDestroy {
 
   isDuplicatedLabel(title: string): boolean {
     return !!this.ontology?.labels?.find((label) => label.title === title);
+  }
+
+  isSelectedKind(kind: LabelSetKind): boolean {
+    return !!this.ontology?.kind.includes(kind);
+  }
+
+  setKind(kind: LabelSetKind, selected: boolean) {
+    if (this.ontology) {
+      if (selected) {
+        this.ontology.kind = this.ontology.kind.concat([kind]);
+      }
+      else {
+        this.ontology.kind = this.ontology.kind.filter(item => item !== kind);
+      }
+      this.hasChanges = true;
+      this.cdr.markForCheck();
+    }
+  }
+
+  setMultiple(selected: boolean) {
+    if (this.ontology) {
+      this.ontology.multiple = selected;
+      this.hasChanges = true;
+      this.cdr.markForCheck();
+    }    
   }
 
   showDuplicationWarning(title: string) {
