@@ -19,14 +19,13 @@ import { Label, Labels, LabelValue } from '@nuclia/core';
 })
 export class LabelSelectComponent implements OnInit {
   @Input() labelSets: Labels = {};
-  @Input() multi: boolean = true;
   @Input() selected: LabelValue[] = [];
   @Output() selectedChange: EventEmitter<LabelValue[]> = new EventEmitter();
 
   @HostBinding('style.width') @Input() width?: string;
   expanded = new SelectionModel<string>(true);
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.initExpandedLabelSets();
@@ -48,7 +47,10 @@ export class LabelSelectComponent implements OnInit {
   changeSelected(label: LabelValue, selected: boolean) {
     let newSelectedLabels;
     if (selected) {
-      newSelectedLabels = this.multi ? this.selected.concat([label]) : [label];
+      const isMultiple = this.labelSets[label.labelset]?.multiple;
+      newSelectedLabels = isMultiple
+        ? this.selected.concat([label])
+        : this.selected.filter((item) => item.labelset !== label.labelset).concat([label]);
     } else {
       newSelectedLabels = this.selected.filter(
         (item) => !(item.label === label.label && item.labelset === label.labelset)

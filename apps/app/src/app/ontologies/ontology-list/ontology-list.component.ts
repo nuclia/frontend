@@ -20,7 +20,7 @@ export class OntologyListComponent implements OnDestroy {
     private labelsService: LabelsService,
     private cdr: ChangeDetectorRef
   ) {
-    this.labelsService.getLabels()
+    this.labelsService.labels
       .pipe(filter((labels) => !!labels),
       takeUntil(this.unsubscribeAll))
       .subscribe((labels) => {

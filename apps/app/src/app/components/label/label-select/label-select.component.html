@@ -14,6 +14,7 @@
             <stf-checkbox [selected]="isSelected({labelset: labelSet.key, label: label.title})"
                           (selectedChange)="changeSelected({labelset: labelSet.key, label: label.title}, $event)"
                           color="dark"
+                          [type]="labelSet.value.multiple ? 'checkbox' : 'radio'"
                           size="small">
               {{ label.title }}
             </stf-checkbox>

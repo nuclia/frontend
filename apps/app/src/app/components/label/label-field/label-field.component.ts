@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { LabelValue } from '@nuclia/core';
-import { map } from 'rxjs';
+import { LabelValue, LabelSetKind, Labels } from '@nuclia/core';
+import { filter, map } from 'rxjs';
 import { LabelsService } from '../../../services/labels.service';
 
 @Component({
@@ -11,9 +11,10 @@ import { LabelsService } from '../../../services/labels.service';
 })
 export class LabelFieldComponent {
   @Input() selected: LabelValue[] = [];
+  @Input() kind: LabelSetKind = LabelSetKind.RESOURCES;
   @Output() selectedChange = new EventEmitter<LabelValue[]>();
 
-  labelSets = this.labelsService.getLabels();
+  labelSets = this.labelsService.getLabelsByKind(this.kind);
   hasLabels = this.labelSets.pipe(map((labels) => labels && Object.keys(labels).length > 0));
   open: boolean = false;
 

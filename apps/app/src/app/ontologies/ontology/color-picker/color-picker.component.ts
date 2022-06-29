@@ -34,10 +34,6 @@ export class ColorPickerComponent {
     return getLabelColors(color)?.textColor;
   }
 
-  getBorderColor(color: string): string | undefined {
-    return getLabelColors(color)?.borderColor;
-  }
-
   isSameHexColor(color1: string, color2: string) {
     return isSameHexColor(color1, color2);
   }

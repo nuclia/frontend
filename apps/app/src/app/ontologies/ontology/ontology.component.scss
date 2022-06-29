@@ -1,3 +1,5 @@
+@import 'variables';
+
 .ontology {
   margin: 70px 0 50px 0;
   max-width: 770px;
@@ -10,6 +12,30 @@
 
   .field-label {
     font-weight: var(--stf-font-weight-semibold);
+  }
+
+  .important {
+    display: flex;
+    align-items: center;
+    margin-top: 2px;
+    font-weight: var(--stf-font-weight-semibold);
+    color: #937F12;
+    svg-icon {
+      margin-right: rythm(0.5);
+    }
+    svg {
+      display: block;
+      fill: currentColor;
+    }
+  }
+
+  .disabled-color {
+    color: var(--stf-gray-lighter-3);
+  }
+
+  stf-checkbox {
+    display: inline-block;
+    margin: rythm(1) rythm(3) 0 0;
   }
 
   .label-list {

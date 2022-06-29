@@ -11,7 +11,7 @@ import { Labels } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OntologiesComponent {
-  routes = this.labelsService.getLabels().pipe(
+  routes = this.labelsService.labels.pipe(
     filter((labels) => !!labels),
     map((labels) => this.createRoutes(labels!) )
   );
