@@ -12,6 +12,7 @@ import {
   PaScrollModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormsModule } from '@angular/forms';
 import { SistemaTableComponent } from './sistema-tables/sistema-table.component';
@@ -19,6 +20,7 @@ import { SistemaScrollbarComponent } from './sistema-scrollbar/sistema-scrollbar
 import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { RouterModule } from '@angular/router';
 import { DialogExampleComponent, ModalExampleComponent, SistemaModalComponent } from './sistema-modal';
+import { SistemaButtonsComponent } from './sistema-buttons/sistema-buttons.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +32,7 @@ import { DialogExampleComponent, ModalExampleComponent, SistemaModalComponent } 
     SistemaScrollbarComponent,
     SistemaTableComponent,
     SistemaLabelComponent,
+    SistemaButtonsComponent,
   ],
   imports: [
     CommonModule,
@@ -45,6 +48,7 @@ import { DialogExampleComponent, ModalExampleComponent, SistemaModalComponent } 
     PaScrollModule,
     PaTableModule,
     PaTextFieldModule,
+    PaTogglesModule,
   ],
 })
 export class SistemaPagesModule {}
