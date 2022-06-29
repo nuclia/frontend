@@ -32,6 +32,7 @@ export class ClientDialogComponent {
   clientForm = this.formBuilder.group({
     title: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
+    webhook: [''],
     zone: ['', [Validators.required]],
   });
 
@@ -88,6 +89,7 @@ export class ClientDialogComponent {
     const payload = {
       title: this.clientForm.value.title,
       contact: this.clientForm.value.email,
+      webhook: this.clientForm.value.webhook,
     };
     this.nua.createClient(payload).subscribe(({ token }) => {
       this.dialogRef.close(token);

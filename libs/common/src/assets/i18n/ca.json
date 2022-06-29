@@ -33,6 +33,8 @@
 	"account.nua_key_activity_subtitle": "TODO",
 	"account.nua_key_activity_title": "TODO",
 	"account.nua_keys": "TODO",
+	"account.nua_webhook": "Webhook URL",
+	"account.nua_webhook.help": "Un cop processades les teves dades, el resultat es publica a aquest URL",
 	"account.related_kbs": "Knowledge Box relacionats amb l’Account",
 	"account.replace_config": "Reemplaçar configuració",
 	"account.settings": "Preferències de l’Account",
