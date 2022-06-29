@@ -1,0 +1,61 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/search-widget/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/search-widget/**/*.{ts,svelte,spec.ts}"]
+      }
+    },
+    "check": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "svelte-check",
+        "cwd": "libs/search-widget"
+      }
+    },
+    "build": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          "yarn vite build -c=libs/search-widget/vite.config.js && cp -r libs/search-widget/public/i18n dist/libs/search-widget"
+        ]
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "build-original": {
+      "executor": "@nxext/svelte:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/search-widget",
+        "entryFile": "libs/search-widget/src/index.ts",
+        "tsConfig": "libs/search-widget/tsconfig.lib.json",
+        "svelteConfig": "libs/search-widget/svelte.config.cjs",
+        "assets": [
+          {
+            "glob": "/*",
+            "input": "./public/**",
+            "output": "./"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "dev": false
+        }
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/search-widget"],
+      "options": {
+        "jestConfig": "libs/search-widget/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  }
+}

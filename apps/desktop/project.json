@@ -1,0 +1,140 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/desktop/src",
+  "prefix": "da",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/desktop",
+        "index": "apps/desktop/src/index.html",
+        "main": "apps/desktop/src/main.ts",
+        "polyfills": "apps/desktop/src/polyfills.ts",
+        "tsConfig": "apps/desktop/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/desktop/src/favicon.ico",
+          "apps/desktop/src/assets",
+          {
+            "glob": "**/*",
+            "input": "libs/pastanaga/src/assets",
+            "output": "assets"
+          }
+        ],
+        "styles": ["apps/desktop/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/desktop/src"]
+        },
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "baseHref": "./",
+          "outputHashing": "all",
+          "serviceWorker": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/desktop/src/environments/environment.ts",
+              "with": "apps/desktop/src/environments/environment.prod.ts"
+            }
+          ],
+          "assets": [
+            "apps/desktop/src/favicon.ico",
+            "apps/desktop/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/desktop/src/environments_config/production",
+              "output": "assets/deployment"
+            }
+          ]
+        },
+        "stage": {
+          "baseHref": "./",
+          "outputHashing": "all",
+          "serviceWorker": false,
+          "assets": [
+            "apps/desktop/src/favicon.ico",
+            "apps/desktop/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/desktop/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            }
+          ]
+        },
+        "local-stage": {
+          "aot": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/desktop/src/favicon.ico",
+            "apps/desktop/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/desktop/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "desktop:build:production"
+        },
+        "local-stage": {
+          "browserTarget": "desktop:build:local-stage"
+        }
+      },
+      "defaultConfiguration": "local-stage",
+      "options": {
+        "proxyConfig": "apps/desktop/proxy.conf.json"
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "desktop:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/desktop/src/**/*.ts", "apps/desktop/src/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/desktop"],
+      "options": {
+        "jestConfig": "apps/desktop/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
