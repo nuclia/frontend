@@ -1,7 +1,7 @@
 {
   "name": "@nuclia/core-node",
   "version": "0.0.1",
-  "description": "SDK allowing to integrate the Nuclia services in your Node application",
+  "description": "SDK allowing to integrate Nuclia services in your Node application",
   "license": "MIT",
   "keywords": [
     "Nuclia",
