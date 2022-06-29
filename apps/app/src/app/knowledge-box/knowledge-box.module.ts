@@ -35,6 +35,7 @@ import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-ke
 import { ServiceAccessComponent } from './service-access/service-access.component';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { HintModule } from '../components/hint/hint.module';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   KnowledgeBoxComponent,
@@ -75,6 +76,7 @@ const Components = [
     HelpBoxModule,
     PipesModule,
     HintModule,
+    PaButtonModule,
   ],
   declarations: [...Components],
   exports: [],

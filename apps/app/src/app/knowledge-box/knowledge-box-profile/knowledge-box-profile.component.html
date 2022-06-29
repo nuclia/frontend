@@ -70,18 +70,12 @@
         <div fxFlex="70%"
              fxLayout="row"
              fxLayoutGap="10px">
-          <stf-button type="submit"
-                      minWidth="110px"
-                      [disabled]="kbForm.invalid || kbForm.pristine">
-            {{ 'generic.save' | translate }}
-          </stf-button>
-          <stf-button *ngIf="!kbForm.pristine"
-                      (click)="initKbForm()"
-                      type="button"
-                      color="white"
-                      minWidth="110px">
-            {{ 'generic.cancel' | translate }}
-          </stf-button>
+          <pa-button type="submit"
+                     kind="primary"
+                     [disabled]="kbForm.invalid || kbForm.pristine">{{ 'generic.save' | translate }}</pa-button>
+          <pa-button *ngIf="!kbForm.pristine"
+                     aspect="basic"
+                     (click)="initKbForm()">{{ 'generic.cancel' | translate }}</pa-button>
         </div>
       </div>
     </form>
