@@ -11,6 +11,9 @@ env:
   CDN_STORAGE: ${{ secrets.CDN_STORAGE }}
   CONTAINER_REGISTRY: eu.gcr.io/${{ secrets.PROJECT_ID }}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +23,7 @@ jobs:
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-desktop: ${{ steps.check-deploy.outputs.deploy-desktop }}
+      deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
       - uses: actions/checkout@v2
@@ -42,13 +46,15 @@ jobs:
           echo "::set-output name=branch::$BRANCH"
 
       - name: Install project dependencies
-        run: yarn --prefer-offline
+        run: |-
+          yarn --prefer-offline
+          yarn missdev
 
       - name: Unit tests
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,auth,core,sistema-demo
 
       - name: Build affected apps
-        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core,sistema-demo
+        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core
 
       - name: Check apps to deploy
         id: check-deploy
@@ -57,6 +63,7 @@ jobs:
           (test -d dist/apps/app && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
           (test -d dist/apps/desktop && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
+          (test -d dist/apps/sistema-demo && echo "::set-output name=deploy-sistema::yes") || echo "Sistema demo unchanged"
 
       - uses: google-github-actions/auth@v0
         with:
@@ -91,6 +98,12 @@ jobs:
           docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
+
+      - name: Deploy sistema-demo to GH pages
+        if: steps.check-deploy.outputs.deploy-sistema == 'yes'
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist/apps/sistema-demo
 
   deploy-app:
     name: Deploy dashboard
@@ -219,7 +232,9 @@ jobs:
           node-version: 16
           cache: 'yarn'
       - name: Install project dependencies
-        run: yarn --prefer-offline
+        run: |-
+          yarn --prefer-offline
+          yarn missdev
       - name: Build desktop app
         run: |-
           sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" apps/desktop/src/environments/environment.prod.ts

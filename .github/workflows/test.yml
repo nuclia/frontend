@@ -7,6 +7,9 @@ on:
     branches-ignore:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -21,8 +24,10 @@ jobs:
           node-version: 16
           cache: 'yarn'
       - name: Install project dependencies
-        run: yarn --prefer-offline
+        run: |-
+          yarn --prefer-offline
+          yarn missdev
       - name: Unit tests
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,auth,core,sistema-demo
       - name: Check if build succeeds
-        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core,sistema-demo
+        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core
