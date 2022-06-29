@@ -1,8 +1,9 @@
 {
   "pastanaga-angular": {
     "url": "git@github.com:plone/pastanaga-angular.git",
+    "https": "https://github.com/plone/pastanaga-angular.git",
     "path": "/projects/pastanaga-angular/src",
     "package": "@guillotinaweb/pastanaga-angular",
-    "tag": "2.50.7"
+    "tag": "2.52.0"
   }
 }

@@ -9,7 +9,8 @@ yarn
 ```
 
 Pastanaga-angular installation must be done through [missdev](https://github.com/collective/mrs-developer) so `sistema-demo` can run:
-``` 
+
+```
 missdev --output=../libs
 ```
 
@@ -26,12 +27,11 @@ Then you can run the dashboard locally and use the credential created previously
 nx serve app -c local-stage
 ```
 
-
 ## Widget
 
 [Documentation](https://docs.nuclia.dev/docs/widget/api)
 
-In the demo, the knowledge box id is hardcoded in `apps/search-widget-demo/src/App.svelte`. 
+In the demo, the knowledge box id is hardcoded in `apps/search-widget-demo/src/App.svelte`.
 Before launching the demo, replace this id by the one for your own **public** knowledge box.
 
 Run the demo:
@@ -47,9 +47,10 @@ nx build search-widget
 ```
 
 When you have some local changes to the widget you'd like to test on the dashboard, you need to:
+
 - build the widget
 - copy the resulting `nuclia-widget.umd.js` to `assets` folder of dashboard app
-- in `app.init.service.ts`, replace the line `injectWidget(config.backend.cdn);` to `injectWidget('/assets');` 
+- in `app.init.service.ts`, replace the line `injectWidget(config.backend.cdn);` to `injectWidget('/assets');`
 
 ## SDK
 
@@ -75,3 +76,9 @@ Build for stage:
 ```
 ./tools/build-desktop.sh
 ```
+
+## Sistema
+
+Sistema is Nuclia's design system. It is based on [Pastanaga](https://github.com/plone/pastanaga-angular).
+
+The demo is available at [https://nuclia.github.io/frontend](https://nuclia.github.io/frontend).
