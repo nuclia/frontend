@@ -99,6 +99,11 @@ jobs:
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
 
+      - name: Create 404 page for gh-pages
+        if: steps.check-deploy.outputs.deploy-sistema == 'yes'
+        run: |-
+          cp dist/apps/sistema-demo/index.html dist/apps/sistema-demo/404.html
+
       - name: Deploy sistema-demo to GH pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes'
         uses: JamesIves/github-pages-deploy-action@v4
