@@ -1,11 +1,11 @@
-@import "./palette.tokens";
-@import "../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens";
+@import './palette.tokens';
+@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
 
 //=====================================
 // BUTTONS
 //=====================================
 // Borders
-$border-radius-button: rhythm(.5);
+$border-radius-button: rhythm(0.5);
 
 //---------------------------------------------------------------
 // PRIMARY
@@ -63,7 +63,6 @@ $color-background-button-inverted-solid: $color-neutral-lightest;
 $color-background-button-inverted-solid-hover: $color-neutral-lightest;
 $color-background-button-inverted-solid-active: $color-neutral-regular;
 
-
 //---------------------------------------------------------------
 // DISABLED
 //---------------------------------------------------------------
@@ -71,5 +70,3 @@ $color-text-button-solid-disabled: $color-light-stronger;
 $color-text-button-basic-disabled: $color-neutral-lighter;
 
 $color-background-button-solid-disabled: $color-neutral-lighter;
-
-
