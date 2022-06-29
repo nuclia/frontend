@@ -1,13 +1,13 @@
 # Nuclia JavaScript SDK
 
-Nuclia SDK is an open-source library wrapping Nuclia API in order to integrate [Nuclia](https://nuclia.com) services in your frontend application.
+Nuclia SDK is an open-source library wrapping Nuclia API in order to integrate [Nuclia](https://nuclia.com) services in your Node application.
 
 The full documentation is available at [https://docs.nuclia.dev/docs/sdk/sdk_api](https://docs.nuclia.dev/docs/sdk/sdk_api).
 
 Basic usage:
 
 ```ts
-import { Nuclia } from '@nuclia/core';
+import { Nuclia } from '@nuclia/core-node';
 
 const nuclia = new Nuclia({
   backend: 'https://stashify.cloud/api',
