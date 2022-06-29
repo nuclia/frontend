@@ -84,7 +84,7 @@ export interface IDb {
   renewNUAClient(account: string, client_id: string): Observable<{ client_id: string; token: string }>;
   deleteNUAClient(account: string, client_id: string): Observable<void>;
   hasNUAClient(): boolean;
-  getNUAActivity(accountSlug: string, client_id: string): Observable<EventList>;
+  getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
 }
 
 export interface NucliaOptions {

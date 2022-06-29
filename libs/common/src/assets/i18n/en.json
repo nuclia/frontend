@@ -67,6 +67,7 @@
 	"accounts.no_users_found": "we didn't find any user with this email",
 	"accounts.users": "user/s",
 	"activity.actor": "Actor",
+	"activity.load-more": "Load more",
 	"activity.modified": "Edited",
 	"activity.new": "Created",
 	"activity.processed": "Processed",

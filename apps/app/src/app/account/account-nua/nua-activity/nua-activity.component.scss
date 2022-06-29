@@ -1,9 +1,11 @@
 @import 'variables';
 
 .nua-activity {
-  max-width: 770px;
-  padding: rythm(2);
+  padding: 50px var(--app-layout-margin-right) 60px 5%;
+  position: relative;
+  min-height: 200px;
 }
+
 .nua-activity-title {
   align-items: center;
   display: flex;
@@ -21,6 +23,7 @@
 
 table {
   border-spacing: 0;
+  padding: 8px rythm(2);
   width: 100%;
 
   .cdk-header-cell {
@@ -28,6 +31,16 @@ table {
   }
 
   .cdk-column-file {
-    width: 50%;
+    width: 40%;
   }
+
+  .cdk-cell {
+    padding: 8px;
+  }
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding: rythm(1);
 }

@@ -1,16 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, map, Observable, Subject, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SDKService, StateService } from '@flaps/auth';
+import { StateService } from '@flaps/auth';
 import { AccountNUAService } from '../account-nua.service';
 import { Account, NUAClient } from '@nuclia/core';
-
-export interface Activity {
-  file: string;
-  timestamp: string;
-  actor: string;
-}
+import { Activity, NuaActivityService } from './nua-activity.service';
 
 @Component({
   selector: 'app-nua-activity',
@@ -29,28 +24,34 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
   );
 
   displayedColumns: string[] = ['file', 'timestamp', 'actor'];
-  activity: Activity[] = [];
+
+  activity: Observable<Activity[]> = this.nuaActivity.activityLogs;
+  hasMore: Observable<boolean> = this.nuaActivity.hasMore;
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private sdk: SDKService,
-    private nua: AccountNUAService,
     private stateService: StateService,
+    private nua: AccountNUAService,
+    private nuaActivity: NuaActivityService,
   ) {}
 
-  ngOnInit(): void {
-    // FIXME: no activity logs on the testing account so far, we need to get some to map the response properly to the table
+  ngOnInit() {
     combineLatest([this.stateService.account, this.client])
       .pipe(
         filter(([account, client]) => !!account && !!client),
         map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
-        switchMap(({ account, client }) => this.sdk.nuclia.db.getNUAActivity(account.slug, client.client_id)),
+        take(1),
+        switchMap(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id)),
       )
-      .subscribe(console.log);
+      .subscribe();
   }
 
   ngOnDestroy() {
     this._terminator.next();
     this._terminator.complete();
+  }
+
+  loadMoreActivity() {
+    this.nuaActivity.loadMore();
   }
 }
