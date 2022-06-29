@@ -173,7 +173,12 @@ export class Db implements IDb {
   }
 
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }> {
-    return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, data).pipe(
+    const payload: NUAClientPayload & { processing_webhook?: { uri: string } } = { ...data };
+    if (payload.webhook) {
+      payload.processing_webhook = { uri: payload.webhook };
+      delete payload.webhook;
+    }
+    return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, payload).pipe(
       tap((key) => {
         localStorage.setItem(NUA_KEY, key.token);
         localStorage.setItem(NUA_CLIENT, key.client_id);

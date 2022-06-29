@@ -37,6 +37,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
 import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
+import { HintModule } from '../components/hint/hint.module';
 
 const Components = [
   AccountComponent,
@@ -80,6 +81,7 @@ const Components = [
     CdkTableModule,
     STFSidebarModule,
     StashNavbarModule,
+    HintModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],

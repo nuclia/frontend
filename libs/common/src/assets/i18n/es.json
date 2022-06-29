@@ -33,6 +33,8 @@
 	"account.nua_key_activity_subtitle": "TODO",
 	"account.nua_key_activity_title": "TODO",
 	"account.nua_keys": "TODO",
+	"account.nua_webhook": "Webhook URL",
+	"account.nua_webhook.help": "Una vez que se procesan sus datos, el resultado se publica en esta URL",
 	"account.related_kbs": "Cajas de conocimiento de la cuenta",
 	"account.replace_config": "Reemplazar configuración",
 	"account.settings": "Preferencias de la cuenta",

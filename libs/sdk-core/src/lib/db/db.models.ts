@@ -90,6 +90,7 @@ export interface NUAClientPayload {
   contact: string;
   description?: string;
   title: string;
+  webhook?: string;
 }
 
 export interface NUAClient extends NUAClientPayload {
