@@ -1,0 +1,132 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/sistema-demo/src",
+  "prefix": "nsd",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/sistema-demo",
+        "index": "apps/sistema-demo/src/index.html",
+        "main": "apps/sistema-demo/src/main.ts",
+        "polyfills": "apps/sistema-demo/src/polyfills.ts",
+        "tsConfig": "apps/sistema-demo/tsconfig.app.json",
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/sistema-demo/src/favicon.ico",
+          "apps/sistema-demo/src/assets",
+          {
+            "glob": "**/*",
+            "input": "libs/sistema/assets",
+            "output": "/assets/"
+          }
+        ],
+        "styles": ["apps/sistema-demo/src/styles.scss"],
+        "scripts": [],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/sistema-demo/src"]
+        }
+      },
+      "configurations": {
+        "production": {
+          "baseHref": "/frontend/",
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "2mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/sistema-demo/src/environments/environment.ts",
+              "with": "apps/sistema-demo/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "sistema-demo:build:production"
+        },
+        "development": {
+          "browserTarget": "sistema-demo:build:development"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "sistema-demo:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/sistema-demo/src/**/*.ts", "apps/sistema-demo/src/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/sistema-demo"],
+      "options": {
+        "jestConfig": "apps/sistema-demo/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "generators": {
+    "@nrwl/angular:component": {
+      "inlineStyle": true,
+      "style": "scss",
+      "skipTests": true,
+      "changeDetection": "OnPush"
+    },
+    "@nrwl/angular:class": {
+      "skipTests": true
+    },
+    "@nrwl/angular:directive": {
+      "skipTests": true
+    },
+    "@nrwl/angular:guard": {
+      "skipTests": true
+    },
+    "@nrwl/angular:interceptor": {
+      "skipTests": true
+    },
+    "@nrwl/angular:pipe": {
+      "skipTests": true
+    },
+    "@nrwl/angular:resolver": {
+      "skipTests": true
+    },
+    "@nrwl/angular:service": {
+      "skipTests": true
+    },
+    "@nrwl/angular:application": {
+      "strict": true
+    }
+  },
+  "tags": []
+}
