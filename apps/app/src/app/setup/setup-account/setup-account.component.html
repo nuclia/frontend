@@ -66,9 +66,18 @@
           </stf-button>
           <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
              target="_blank"
+             class="doc-link"
              rel="noopener noreferrer">
             {{ 'setup.upload_using_api' | translate }}
           </a>
+          <p>
+            …or just
+            visit
+            a
+            <a class="demo-link"
+               [routerLink]="'/at/' + createdAccount + '/__demo'"><strong>demo knowledge box</strong></a> with existing
+            contents.
+          </p>
         </div>
       </div>
     </div>

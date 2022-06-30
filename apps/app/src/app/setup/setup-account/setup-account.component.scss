@@ -80,11 +80,14 @@ stf-button {
   margin-top: rythm(1);
 }
 
-a {
+.doc-link {
   margin-left: rythm(3);
   color: $gray-contrast;
 }
 
 .docs {
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.12);
+}
+.demo-link {
+  color: currentColor;
 }
