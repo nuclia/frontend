@@ -82,21 +82,6 @@ $height-breakpoint: 730px;
             font-size: var(--stf-font-size-medium);
           }
         }
-
-        &.quick-start {
-          margin-top: 8px;
-          margin-bottom: 8px;
-          padding: 0 0 0 12px;
-          svg {
-            width: 30px;
-          }
-          .quick-start-title {
-            font-weight: var(--stf-font-weight-bold);
-          }
-          .quick-start-tasks {
-            font-size: 14px;
-          }
-        }
       }
     }
   }
@@ -115,16 +100,6 @@ $height-breakpoint: 730px;
       }
     }
   }
-}
-
-.quick-start-container {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 100%;
-  width: 376px;
-  overflow-y: auto;
-  background-color: var(--stf-gray-lighter);
 }
 
 .group-items.touranchor--is-active {
