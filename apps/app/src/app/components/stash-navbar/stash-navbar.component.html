@@ -4,24 +4,26 @@
     <div *ngIf="!(inAccount| async)"
          class="navbar-content">
       <div class="nav-group">
-        <div *ngIf="isAdminOrContrib | async"
-             class="group-items"
+        <div class="group-items"
              tourAnchor="step5">
           <a *ngIf="isLinkEnabled | async"
              (click)="createNewLink()"
-             class="nav-link">
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
             <svg-icon src="assets/icons/link.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.link' | translate }}</span>
           </a>
           <a *ngIf="isUploadEnabled | async"
              (click)="uploadNewFiles(false)"
-             class="nav-link">
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
             <svg-icon src="assets/icons/file.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.file' | translate }}</span>
           </a>
           <a *ngIf="isUploadFolderEnabled | async"
              (click)="uploadNewFiles(true)"
-             class="nav-link">
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
             <svg-icon src="assets/icons/folder.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.folder' | translate }}</span>
           </a>
@@ -35,39 +37,39 @@
             <svg-icon src="assets/icons/llistat.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
           </a>
-          <ng-container *ngIf="isAdminOrContrib | async">
-            <a *ngIf="isActivityEnabled | async"
-               [routerLink]="kbUrl + '/activity'"
-               routerLinkActive="active"
-               class="nav-link">
-              <svg-icon src="assets/icons/activity.svg"></svg-icon>
-              <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
-            </a>
-            <a *ngIf="isOntologiesEnabled | async"
-               [routerLink]="kbUrl + '/ontologies'"
-               routerLinkActive="active"
-               class="nav-link">
-              <svg-icon src="assets/icons/ontologies.svg"></svg-icon>
-              <span class="nav-link-title">{{ 'resource.classification' | translate }}</span>
-            </a>
-            <a *ngIf="isEntitiesEnabled | async"
-               [routerLink]="[kbUrl + '/entities']"
-               routerLinkActive="active"
-               class="nav-link">
-              <svg-icon src="assets/icons/entity-list.svg"></svg-icon>
-              <span class="nav-link-title">{{ 'generic.insights' | translate }}</span>
-            </a>
-          </ng-container>
+
+          <a *ngIf="isActivityEnabled | async"
+             [routerLink]="kbUrl + '/activity'"
+             routerLinkActive="active"
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
+            <svg-icon src="assets/icons/activity.svg"></svg-icon>
+            <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
+          </a>
+          <a *ngIf="isOntologiesEnabled | async"
+             [routerLink]="kbUrl + '/ontologies'"
+             routerLinkActive="active"
+             class="nav-link">
+            <svg-icon src="assets/icons/ontologies.svg"></svg-icon>
+            <span class="nav-link-title">{{ 'resource.classification' | translate }}</span>
+          </a>
+          <a *ngIf="isEntitiesEnabled | async"
+             [routerLink]="[kbUrl + '/entities']"
+             routerLinkActive="active"
+             class="nav-link">
+            <svg-icon src="assets/icons/entity-list.svg"></svg-icon>
+            <span class="nav-link-title">{{ 'generic.insights' | translate }}</span>
+          </a>
         </div>
       </div>
 
-      <div class="nav-group"
-           *ngIf="isAdminOrContrib | async">
+      <div class="nav-group">
         <div class="group-items"
              tourAnchor="step7">
           <a [routerLink]="kbUrl + '/manage'"
              routerLinkActive="active"
-             class="nav-link">
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
             <svg-icon src="assets/icons/preferences.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
@@ -77,7 +79,8 @@
              tourAnchor="step8">
           <a [routerLink]="kbUrl + '/widgets'"
              routerLinkActive="active"
-             class="nav-link">
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
             <svg-icon src="assets/icons/widget.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
@@ -87,7 +90,8 @@
              tourAnchor="step9">
           <a [routerLink]="kbUrl + '/users'"
              routerLinkActive="active"
-             class="nav-link">
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)">
             <svg-icon src="assets/icons/manage-users.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
           </a>
@@ -105,12 +109,12 @@
           </div>
         </ng-container>
       </div>
-      <div class="nav-group dark"
-           *ngIf="isAccountManager | async">
+      <div class="nav-group dark">
         <div class="group-items">
           <a [routerLink]="(accountUrl | async) + '/home'"
+             class="nav-link"
              routerLinkActive="active"
-             class="nav-link">
+             [class.disabled]="!(isAccountManager | async)">
             <svg-icon src="assets/icons/account.svg"></svg-icon>
             <span class="nav-link-title">{{ 'account.manage' | translate }}</span>
           </a>

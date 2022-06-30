@@ -110,3 +110,9 @@ $height-breakpoint: 730px;
   background-color: $gray-black;
   color: $white;
 }
+
+.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
