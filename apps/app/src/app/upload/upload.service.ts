@@ -3,6 +3,8 @@ import { SDKService, md5 } from '@flaps/auth';
 import { FileWithMetadata, ICreateResource, UploadStatus } from '@nuclia/core';
 import { forkJoin, startWith, Subject, BehaviorSubject, switchMap, tap, take } from 'rxjs';
 
+export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
+
 @Injectable({ providedIn: 'root' })
 export class UploadService {
   private _progress = new Subject<UploadStatus>();

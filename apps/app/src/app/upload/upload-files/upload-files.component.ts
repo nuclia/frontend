@@ -5,7 +5,7 @@ import { filter, take } from 'rxjs';
 import { STFTrackingService, StateService } from '@flaps/auth';
 import { STFUtils } from '@flaps/core';
 import { FileWithMetadata, ICreateResource, LabelValue } from '@nuclia/core';
-import { UploadService } from '../upload.service';
+import { UploadService, FILES_TO_IGNORE } from '../upload.service';
 
 @Component({
   selector: 'app-upload-files',
@@ -39,7 +39,10 @@ export class UploadFilesComponent {
     private stateService: StateService,
   ) {
     this.stateService.account
-      .pipe(filter((account => !!account)),take(1))
+      .pipe(
+        filter((account) => !!account),
+        take(1),
+      )
       .subscribe((account) => {
         this.maxFileSize = account!.limits.upload.upload_limit_max_non_media_file_size;
         this.maxMediaFileSize = account!.limits.upload.upload_limit_max_media_file_size;
@@ -54,7 +57,7 @@ export class UploadFilesComponent {
   }
 
   addFiles(files: File[] | FileList) {
-    this.files = [...this.files, ...Array.from(files)];
+    this.files = [...this.files, ...Array.from(files).filter((file) => !FILES_TO_IGNORE.includes(file.name))];
     this.updateFiles();
   }
 
@@ -108,8 +111,7 @@ export class UploadFilesComponent {
       }
       this.uploadService.uploadFiles(files, payload);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
-    }
-    else {
+    } else {
       this.close.emit();
     }
   }
@@ -117,7 +119,7 @@ export class UploadFilesComponent {
   getAllowedFiles() {
     return [
       ...this.filesWithoutAudio.filter((file) => file.size <= this.maxFileSize),
-      ...this.filesWithAudio.filter((file) => file.size <= this.maxMediaFileSize)
+      ...this.filesWithAudio.filter((file) => file.size <= this.maxMediaFileSize),
     ];
   }
 
