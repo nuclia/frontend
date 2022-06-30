@@ -49,7 +49,7 @@
                 "libs/pastanaga/src/index.ts"
             ],
             "@guillotinaweb/pastanaga-angular": [
-                "src/../libs/pastanaga-angular/projects/pastanaga-angular/src"
+                "/libs/pastanaga-angular/projects/pastanaga-angular/src"
             ],
             "@nuclia/core": [
                 "libs/sdk-core/src/index.ts"
