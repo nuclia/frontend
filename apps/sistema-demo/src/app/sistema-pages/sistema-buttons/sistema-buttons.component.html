@@ -152,6 +152,7 @@
             aspect="basic"
             [size]="selectedSize"
             [disabled]="disabledState"
+            [active]="activeState"
             (click)="clickOn($event)">Basic</pa-button>
           <pa-button icon="search"
                      iconAndText
@@ -160,6 +161,7 @@
                      [size]="selectedSize"
                      [iconSize]="selectedSize === 'large' ? 'medium' : 'small'"
                      [disabled]="disabledState"
+                     [active]="activeState"
                      (click)="clickOn($event)">Basic</pa-button>
           <pa-button icon="search"
                      kind="destructive"
@@ -167,6 +169,7 @@
                      [size]="selectedSize"
                      [iconSize]="selectedSize === 'large' ? 'medium' : 'small'"
                      [disabled]="disabledState"
+                     [active]="activeState"
                      (click)="clickOn($event)">Basic</pa-button>
         </div>
       </div>
