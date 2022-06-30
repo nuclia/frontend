@@ -10,4 +10,10 @@
               src="assets/icons/unlock.svg">
     </svg-icon>
   </button>
+  <button *ngIf="showDemo | async"
+          class="kb-switch-item demo"
+          (click)="goToDemo()">
+    <span>Demo</span>
+    <svg-icon src="assets/icons/unlock.svg"></svg-icon>
+  </button>
 </div>
