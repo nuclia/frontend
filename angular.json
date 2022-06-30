@@ -1,5 +1,6 @@
 {
-  "version": 1,
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json",
+  "version": 2,
   "projects": {
     "app": {
       "$schema": "../../node_modules/nx/schemas/project-schema.json",
