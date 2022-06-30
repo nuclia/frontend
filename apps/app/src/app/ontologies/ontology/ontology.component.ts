@@ -18,10 +18,9 @@ import { LABEL_MAIN_COLORS } from '../utils';
   selector: 'app-ontology',
   templateUrl: './ontology.component.html',
   styleUrls: ['./ontology.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OntologyComponent implements OnDestroy {
-  
   ontologyForm = this.formBuilder.group({
     title: ['', [Validators.required, Sluggable()]],
     description: [''],
@@ -29,16 +28,16 @@ export class OntologyComponent implements OnDestroy {
 
   colors: string[] = LABEL_MAIN_COLORS;
   kinds = [
-    { id: LabelSetKind.RESOURCES, name: 'ontology.resources'},
-    { id: LabelSetKind.PARAGRAPHS, name: 'ontology.paragraphs'},
-    { id: LabelSetKind.SENTENCES, name: 'ontology.sentences'},
+    { id: LabelSetKind.RESOURCES, name: 'ontology.resources' },
+    { id: LabelSetKind.PARAGRAPHS, name: 'ontology.paragraphs' },
+    { id: LabelSetKind.SENTENCES, name: 'ontology.sentences' },
   ];
 
   validationMessages = {
     title: {
       required: 'validation.title_required',
       sluggable: 'ontology.invalid_name',
-    }
+    },
   };
 
   ontology?: MutableLabelSet;
@@ -68,31 +67,28 @@ export class OntologyComponent implements OnDestroy {
         switchMap(() => this.labelsService.labels),
         filter((labels) => !!labels),
         filter((labels) => !this.ontologySlug || !!(this.ontologySlug && labels![this.ontologySlug])),
-        takeUntil(this.unsubscribeAll)
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe((labels) => {
         this.initialLabels = labels || undefined;
         this.initState(labels!);
       });
 
-    this.ontologyForm.valueChanges
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((data) => {
-        if (this.ontology) {
-          this.ontology.title = data.title;
-          // TODO: description field doesn't exist
-          //this.ontology.description = data.description;
-          this.hasChanges = true;
-          this.cdr.markForCheck();
-        }
-      });
+    this.ontologyForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+      if (this.ontology) {
+        this.ontology.title = data.title;
+        // TODO: description field doesn't exist
+        //this.ontology.description = data.description;
+        this.hasChanges = true;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   initState(labels: Labels) {
     if (this.ontologySlug) {
       this.ontology = new MutableLabelSet(labels![this.ontologySlug]);
-    }
-    else {
+    } else {
       this.ontology = new MutableLabelSet(EMTPY_LABEL_SET);
     }
     this.ontologyForm.get('title')?.patchValue(this.ontology.title);
@@ -157,11 +153,11 @@ export class OntologyComponent implements OnDestroy {
     if (this.addNew) {
       const slugs = Object.keys(this.initialLabels!);
       slug = STFUtils.generateUniqueSlug(this.ontologyForm.value.title, slugs);
-    }
-    else {
+    } else {
       slug = this.ontologySlug!;
     }
-    this.labelsService.saveLabelSet(slug, this.ontology!.getCopy())
+    this.labelsService
+      .saveLabelSet(slug, this.ontology!.getCopy())
       .pipe(switchMap(() => this.labelsService.refreshLabelsSets()))
       .subscribe(() => {
         this.goToOntologyList();
@@ -174,8 +170,8 @@ export class OntologyComponent implements OnDestroy {
       data: {
         title: 'generic.alert',
         message: 'ontology.delete_warning_extra',
-        minWidthButtons: '110px'
-      }
+        minWidthButtons: '110px',
+      },
     });
     dialogRef
       .afterClosed()
@@ -183,7 +179,7 @@ export class OntologyComponent implements OnDestroy {
         filter((result) => !!result),
         takeUntil(this.unsubscribeAll),
         switchMap(() => this.labelsService.deleteLabelSet(this.ontologySlug!)),
-        switchMap(() => this.labelsService.refreshLabelsSets())
+        switchMap(() => this.labelsService.refreshLabelsSets()),
       )
       .subscribe(() => {
         this.goToOntologyList();
@@ -192,7 +188,7 @@ export class OntologyComponent implements OnDestroy {
 
   cancelChanges(): void {
     if (this.initialLabels) {
-      this.initState(this.initialLabels)
+      this.initState(this.initialLabels);
     }
   }
 
@@ -208,9 +204,8 @@ export class OntologyComponent implements OnDestroy {
     if (this.ontology) {
       if (selected) {
         this.ontology.kind = this.ontology.kind.concat([kind]);
-      }
-      else {
-        this.ontology.kind = this.ontology.kind.filter(item => item !== kind);
+      } else {
+        this.ontology.kind = this.ontology.kind.filter((item) => item !== kind);
       }
       this.hasChanges = true;
       this.cdr.markForCheck();
@@ -222,7 +217,7 @@ export class OntologyComponent implements OnDestroy {
       this.ontology.multiple = selected;
       this.hasChanges = true;
       this.cdr.markForCheck();
-    }    
+    }
   }
 
   showDuplicationWarning(title: string) {
@@ -232,8 +227,8 @@ export class OntologyComponent implements OnDestroy {
         title: 'generic.alert',
         messageHtml$: this.translate.get('ontology.duplicated_label', { title: title }),
         onlyConfirm: true,
-        minWidthButtons: '110px'
-      }
+        minWidthButtons: '110px',
+      },
     });
   }
 
