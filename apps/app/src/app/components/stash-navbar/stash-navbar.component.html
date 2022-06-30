@@ -30,6 +30,7 @@
              tourAnchor="step6">
           <a *ngIf="isResourcesEnabled | async"
              [routerLink]="kbUrl + '/resources'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/llistat.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
@@ -37,18 +38,21 @@
           <ng-container *ngIf="isAdminOrContrib | async">
             <a *ngIf="isActivityEnabled | async"
                [routerLink]="kbUrl + '/activity'"
+               routerLinkActive="active"
                class="nav-link">
               <svg-icon src="assets/icons/activity.svg"></svg-icon>
               <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
             </a>
             <a *ngIf="isOntologiesEnabled | async"
                [routerLink]="kbUrl + '/ontologies'"
+               routerLinkActive="active"
                class="nav-link">
               <svg-icon src="assets/icons/ontologies.svg"></svg-icon>
               <span class="nav-link-title">{{ 'resource.classification' | translate }}</span>
             </a>
             <a *ngIf="isEntitiesEnabled | async"
                [routerLink]="[kbUrl + '/entities']"
+               routerLinkActive="active"
                class="nav-link">
               <svg-icon src="assets/icons/entity-list.svg"></svg-icon>
               <span class="nav-link-title">{{ 'generic.insights' | translate }}</span>
@@ -62,6 +66,7 @@
         <div class="group-items"
              tourAnchor="step7">
           <a [routerLink]="kbUrl + '/manage'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/preferences.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
@@ -71,6 +76,7 @@
              class="group-items"
              tourAnchor="step8">
           <a [routerLink]="kbUrl + '/widgets'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/widget.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
@@ -80,6 +86,7 @@
              class="group-items"
              tourAnchor="step9">
           <a [routerLink]="kbUrl + '/users'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/manage-users.svg"></svg-icon>
             <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
@@ -90,6 +97,7 @@
                class="group-items"
                tourAnchor="step10">
             <a [routerLink]="kbUrl + '/keys'"
+               routerLinkActive="active"
                class="nav-link">
               <svg-icon src="assets/icons/keys.svg"></svg-icon>
               <span class="nav-link-title">{{ 'stash.side.api_keys' | translate }}</span>
@@ -101,6 +109,7 @@
            *ngIf="isAccountManager | async">
         <div class="group-items">
           <a [routerLink]="(accountUrl | async) + '/home'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/account.svg"></svg-icon>
             <span class="nav-link-title">{{ 'account.manage' | translate }}</span>
@@ -113,6 +122,7 @@
       <div class="nav-group">
         <div class="group-items">
           <a [routerLink]="(accountUrl | async) + '/settings'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/preferences-white.svg"></svg-icon>
             <span class="nav-link-title">{{ 'account.settings' | translate }}</span>
@@ -120,6 +130,7 @@
         </div>
         <div class="group-items">
           <a [routerLink]="(accountUrl | async) + '/kbs'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/kb.svg"></svg-icon>
             <span class="nav-link-title">{{ 'account.knowledgeboxes' | translate }}</span>
@@ -127,6 +138,7 @@
         </div>
         <div class="group-items">
           <a [routerLink]="(accountUrl | async) + '/users'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/user-white.svg"></svg-icon>
             <span class="nav-link-title">{{ 'account.users' | translate }}</span>
@@ -134,6 +146,7 @@
         </div>
         <div class="group-items">
           <a [routerLink]="(accountUrl | async) + '/nua'"
+             routerLinkActive="active"
              class="nav-link">
             <svg-icon src="assets/icons/key.svg"></svg-icon>
             <span class="nav-link-title">{{ 'account.nua_keys' | translate }}</span>
