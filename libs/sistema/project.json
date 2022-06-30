@@ -1,0 +1,23 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/sistema/src",
+  "prefix": "nsi",
+  "targets": {
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/sistema"],
+      "options": {
+        "jestConfig": "libs/sistema/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/sistema/src/**/*.ts", "libs/sistema/src/**/*.html"]
+      }
+    }
+  },
+  "tags": []
+}
