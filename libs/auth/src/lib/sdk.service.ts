@@ -52,7 +52,7 @@ export class SDKService {
         ),
         tap(() => (this._isKbLoaded = true)),
       )
-      .subscribe(this._currentKB);
+      .subscribe((kb) => this._currentKB.next(kb));
     this.countersRefreshSubcriptions();
     this.refreshCounter(true);
   }
