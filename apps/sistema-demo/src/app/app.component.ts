@@ -4,7 +4,6 @@ import {
   AvatarPageComponent,
   AvatarPilePageComponent,
   BreakpointPageComponent,
-  ButtonPageComponent,
   CardPageComponent,
   CheckboxPageComponent,
   ChipPageComponent,
@@ -47,6 +46,7 @@ import { SistemaTableComponent } from './sistema-pages/sistema-tables/sistema-ta
 import { SistemaScrollbarComponent } from './sistema-pages/sistema-scrollbar/sistema-scrollbar.component';
 import { SistemaLabelComponent } from './sistema-pages/sistema-label/sistema-label.component';
 import { SistemaModalComponent } from './sistema-pages/sistema-modal';
+import { SistemaButtonsComponent } from './sistema-pages/sistema-buttons/sistema-buttons.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -70,7 +70,7 @@ export const menu: IDemoMenuSection[] = [
     pages: [
       { view: 'avatar', title: 'Avatar', type: AvatarPageComponent },
       { view: 'avatar-pile', title: 'Avatar pile', type: AvatarPilePageComponent },
-      { view: 'button', title: 'Button', type: ButtonPageComponent },
+      { view: 'button', title: 'Button', type: SistemaButtonsComponent },
       { view: 'card', title: 'Card', type: CardPageComponent },
       { view: 'chip', title: 'Chip', type: ChipPageComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
@@ -93,7 +93,7 @@ export const menu: IDemoMenuSection[] = [
   {
     title: 'Tables',
     pages: [
-      // { view: 'table', title: 'Table', type: SistemaTableComponent },
+      { view: 'table', title: 'Table', type: SistemaTableComponent },
       { view: 'table-row', title: 'Table row', type: TableRowPageComponent },
       { view: 'table-cell', title: 'Table cell', type: TableCellPageComponent },
       {
