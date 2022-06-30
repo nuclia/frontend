@@ -6,7 +6,7 @@ import { ZoneService, Zone, STFUtils } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { NavigationService } from '../../services/navigation.service';
 import { AppToasterService } from '../../services/app-toaster.service';
-import { SDKService, UserService } from '@flaps/auth';
+import { SDKService, STFTrackingService, UserService } from '@flaps/auth';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 
@@ -61,7 +61,9 @@ export class SetupAccountComponent {
     private navigation: NavigationService,
     private toaster: AppToasterService,
     private userService: UserService,
+    private tracking: STFTrackingService,
   ) {
+    this.tracking.logEvent('account_creation_start');
     this.kb.patchValue(DEFAULT_KB_NAME);
     this.zoneService.getZones().subscribe((zones) => {
       this.zones = zones;
@@ -103,12 +105,14 @@ export class SetupAccountComponent {
 
     this.loading = true;
     this.cdr.markForCheck();
+    this.tracking.logEvent('account_creation_submitted');
 
     const createAccount = this.failures > 0 ? of({} as Account) : this.sdk.nuclia.db.createAccount(accountData);
     createAccount
       .pipe(
         catchError((error) => {
           this.toaster.error('login.error.oops');
+          this.tracking.logEvent('account_creation_failed');
           this.loading = false;
           this.cdr.markForCheck();
           throw error;
@@ -118,6 +122,7 @@ export class SetupAccountComponent {
       .subscribe(() => {
         this.createdAccount = accountSlug;
         this.createdKb = kbSlug;
+        this.tracking.logEvent('account_creation_success');
         this.cdr.markForCheck();
       });
   }
@@ -125,6 +130,7 @@ export class SetupAccountComponent {
   createKb(account: string, data: KnowledgeBoxCreation) {
     return this.sdk.nuclia.db.createKnowledgeBox(account, data).pipe(
       catchError((error) => {
+        this.tracking.logEvent('account_creation_kb_failed');
         this.failures += 1;
         this.loading = false;
         this.account.disable();
@@ -141,6 +147,7 @@ export class SetupAccountComponent {
   }
 
   uploadFile() {
+    this.tracking.logEvent('account_creation_go_to_upload');
     const path = this.navigation.getKbUrl(this.createdAccount!, this.createdKb!);
     this.router.navigate([path], { queryParams: { firstUpload: 'true' } });
   }
