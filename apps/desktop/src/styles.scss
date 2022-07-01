@@ -1,8 +1,9 @@
 @import 'libs/pastanaga/src/lib/styles/once';
 @import 'libs/pastanaga/src/lib/styles/fonts';
 @import 'apps/app/src/app/styles/css-variables';
-@import 'apps/app/src/styles';
+@import 'libs/sistema/styles/apps-common';
 
 :root {
   --desktop-background: var(--stf-gray-background);
 }
+

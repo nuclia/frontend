@@ -282,6 +282,11 @@
                 "glob": "**/*",
                 "input": "libs/pastanaga/src/assets",
                 "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/sistema/assets",
+                "output": "assets"
               }
             ],
             "styles": ["apps/desktop/src/styles.scss"],
