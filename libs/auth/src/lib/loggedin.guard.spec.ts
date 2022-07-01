@@ -1,26 +1,21 @@
-import { TestBed, inject } from '@angular/core/testing';
-import { SDKService } from './sdk.service';
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from './auth.service';
 
 import { LoggedinGuard } from './loggedin.guard';
 
-describe('LoggedinGuard', () => {
+describe('ExampleGuard', () => {
+  let guard: LoggedinGuard;
+
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        LoggedinGuard,
-        {
-          provide: SDKService,
-          useValue: {
-            nuclia: { auth: { getToken: () => 'token' } },
-          },
-        },
-        { provide: AuthService, useValue: { setNextParams: () => {}, setNextUrl: () => {} } },
-      ],
+      imports: [RouterTestingModule],
+      providers: [{ provide: AuthService, useValue: { setNextParams: () => {}, setNextUrl: () => {} } }],
     });
+    guard = TestBed.inject(LoggedinGuard);
   });
 
-  it('should ...', inject([LoggedinGuard], (guard: LoggedinGuard) => {
+  it('should be created', () => {
     expect(guard).toBeTruthy();
-  }));
+  });
 });

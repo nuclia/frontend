@@ -12,8 +12,8 @@ describe('BackendConfigurationService', () => {
           useValue: {
             getConfig: () => ({
               backend: {
-                posthog_key: 'posthog_key',
-                posthog_host: 'posthog_host',
+                posthog_key: '',
+                posthog_host: '',
               },
             }),
           },
