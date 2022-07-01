@@ -155,73 +155,73 @@ $shadow: (
 // variables. Mostly focused on spacing.
 // You can add more entries to the $spacers map, should you need more variation.
 
-$spacer: 12px !default; //.75rem
+$oldSpacer: 12px !default; //.75rem
 $rythm: (
   0: 0,
   0.25: (
-    $spacer * 0.25,
+    $oldSpacer * 0.25,
   ),
   //3
   0.5:
     (
-      $spacer * 0.5,
+      $oldSpacer * 0.5,
     ),
   //6
   0.75:
     (
-      $spacer * 0.75,
+      $oldSpacer * 0.75,
     ),
   //6
-  1: $spacer,
+  1: $oldSpacer,
   //12
   1.5:
     (
-      $spacer * 1.5,
+      $oldSpacer * 1.5,
     ),
   //18
   2:
     (
-      $spacer * 2,
+      $oldSpacer * 2,
     ),
   //24
   2.5:
     (
-      $spacer * 2.5,
+      $oldSpacer * 2.5,
     ),
   //30
   3:
     (
-      $spacer * 3,
+      $oldSpacer * 3,
     ),
   //36
   3.5:
     (
-      $spacer * 3.5,
+      $oldSpacer * 3.5,
     ),
   //42
   4:
     (
-      $spacer * 4,
+      $oldSpacer * 4,
     ),
   //48
   5:
     (
-      $spacer * 5,
+      $oldSpacer * 5,
     ),
   //60
   6:
     (
-      $spacer * 6,
+      $oldSpacer * 6,
     ),
   //36
   7:
     (
-      $spacer * 7,
+      $oldSpacer * 7,
     ),
   //36
   8:
     (
-      $spacer * 8,
+      $oldSpacer * 8,
     )
     //96,,
 ) !default;
@@ -234,11 +234,11 @@ $rythm: (
 //###   FONTS   ###
 //#################
 
-$font-family-monospace: var(--stf-font-family-monospace) !default;
-$font-family-base: var(--stf-font-family) !default;
+$old-font-family-monospace: var(--stf-font-family-monospace) !default;
+$old-font-family-base: var(--stf-font-family) !default;
 
 // FONT SIZES
-$font-size: (
+$old-font-size: (
   xs: var(--stf-font-size-ssmall),
   s: var(--stf-font-size-small),
   // ~13px - Code (monospace 1px smaller)
@@ -262,11 +262,11 @@ $font-size: (
   xxxd: var(--stf-font-size-xxxd) // ~60px - main hero claim,,
 ) !default;
 @function size($tshirt-size) {
-  @return map-get($font-size, $tshirt-size);
+  @return map-get($old-font-size, $tshirt-size);
 }
 
 // LINE HEIGHTS
-$line-height: (
+$old-line-height: (
   xs: var(--stf-line-height-ssmall),
   // ~12px
   s: var(--stf-line-height-small),
@@ -290,12 +290,12 @@ $line-height: (
   xxxd: var(--stf-line-height-xxxd) // ~60,,
 ) !default;
 @function line($tshirt-lheight) {
-  @return map-get($line-height, $tshirt-lheight);
+  @return map-get($old-line-height, $tshirt-lheight);
 }
 
 // FONT SPACING
 //$line-height-base:            1.5 !default;
-$letter-spacing: (
+$old-letter-spacing: (
   xxl: -0.03em,
   // display: +24
   xl: -0.015em,
@@ -307,7 +307,7 @@ $letter-spacing: (
   s: 0.03em // small text: 10, 11, 12 & 13,,
 ) !default;
 @function spacing($tshirt-lspacing) {
-  @return map-get($letter-spacing, $tshirt-lspacing);
+  @return map-get($old-letter-spacing, $tshirt-lspacing);
 }
 
 @mixin font-size($fs-size, $fs-line, $fs-spacing) {
@@ -315,7 +315,7 @@ $letter-spacing: (
   line-height: line($fs-line);
   letter-spacing: spacing($fs-spacing);
 }
-$small-font-size: 85% !default;
+$old-small-font-size: 85% !default;
 
 $headings-margin-bottom: calc(rythm(1) / 2) !default;
 $headings-font-family: inherit !default;

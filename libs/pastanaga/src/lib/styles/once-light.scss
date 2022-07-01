@@ -1,0 +1,20 @@
+// Only once, lighter to not interfere with sistema style
+@import 'partials/css_variables';
+@import 'stf';
+
+@import 'partials/scrollbars';
+@import 'partials/helpers';
+
+@import 'partials/angular-materials';
+@import 'partials/colors';
+@import 'partials/table';
+@import 'partials/typography-utils';
+@import 'partials/page-layouts';
+@import 'partials/cards';
+@import 'partials/navigation';
+@import 'partials/forms';
+@import 'partials/field';
+@import 'partials/avatar';
+@import 'partials/directives';
+
+@import 'partials/movie-player';
