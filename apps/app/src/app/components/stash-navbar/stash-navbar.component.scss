@@ -58,6 +58,7 @@ $height-breakpoint: 730px;
           display: block;
           width: 25px;
         }
+        &:hover::before,
         &.active::before {
           content: "";
           position: absolute;
