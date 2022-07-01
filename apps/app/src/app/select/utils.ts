@@ -11,19 +11,13 @@ export const selectAnimations = [
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '100%'
-        })
+          width: '100%',
+        }),
       ]),
-      query(':enter', [
-        style({ left: '100%', opacity: 0 })
-      ]),
+      query(':enter', [style({transform: 'translateX(100%)', opacity: 0 })]),
       group([
-        query(':leave', [
-          animate(duration, style({ left: '-100%', opacity: 0 }))
-        ]),
-        query(':enter', [
-          animate(duration, style({ left: '0%', opacity: 1 }))
-        ])
+        query(':leave', [animate(duration, style({ transform: 'translateX(-100%)', opacity: 0 }))]),
+        query(':enter', [animate(duration, style({ transform: 'translateX(0)', opacity: 1 }))]),
       ]),
     ]),
     transition('true => false', [
@@ -33,19 +27,13 @@ export const selectAnimations = [
           position: 'absolute',
           top: 0,
           left: 0,
-          width: '100%'
-        })
+          width: '100%',
+        }),
       ]),
-      query(':enter', [
-        style({ left: '-100%', opacity: 0 })
-      ]),
+      query(':enter', [style({ transform: 'translateX(-100%)', opacity: 0 })]),
       group([
-        query(':leave', [
-          animate(duration, style({ left: '100%', opacity: 0 }))
-        ]),
-        query(':enter', [
-          animate(duration, style({ left: '0%', opacity: 1 }))
-        ])
+        query(':leave', [animate(duration, style({ transform: 'translateX(100%)', opacity: 0 }))]),
+        query(':enter', [animate(duration, style({ transform: 'translateX(0)', opacity: 1 }))]),
       ]),
     ]),
   ]),
