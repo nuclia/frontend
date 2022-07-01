@@ -6,4 +6,5 @@ export const environment = {
     new_api: true,
   },
   locales: ['en-US', 'es', 'ca'],
+  demoKb: 'f57eec29-c291-4492-b51f-55bb7c10ef3a',
 };

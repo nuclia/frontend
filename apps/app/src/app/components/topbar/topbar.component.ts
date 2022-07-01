@@ -106,19 +106,28 @@ export class TopbarComponent implements AfterViewInit {
   }
 
   delete(uid: string) {
-    this.dialog
-      .open(STFConfirmComponent, {
-        width: '470px',
-        data: {
-          title: 'generic.alert',
-          message: 'resource.delete_resource_warning',
-          minWidthButtons: '120px',
-        },
-      })
-      .afterClosed()
+    this.sdk.currentKb
       .pipe(
-        filter((yes) => !!yes),
-        switchMap(() => this.sdk.currentKb),
+        take(1),
+        filter((kb) => !!kb.admin || !!kb.contrib),
+        switchMap((kb) =>
+          this.dialog
+            .open(STFConfirmComponent, {
+              width: '470px',
+              data: {
+                title: 'generic.alert',
+                message: 'resource.delete_resource_warning',
+                minWidthButtons: '120px',
+              },
+            })
+            .afterClosed()
+            .pipe(
+              filter((yes) => !!yes),
+              map(() => kb),
+            ),
+        ),
+      )
+      .pipe(
         switchMap((kb) => kb.getResource(uid)),
         switchMap((res) => res.delete()),
         tap(() => this.closeViewer()),
@@ -132,10 +141,15 @@ export class TopbarComponent implements AfterViewInit {
   }
 
   edit(uid: string) {
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      this.closeViewer();
-      this.router.navigate([`/at/${kb.account}/${kb.slug}/resources/${uid}/profile`]);
-    });
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        filter((kb) => !!kb.admin || !!kb.contrib),
+      )
+      .subscribe((kb) => {
+        this.closeViewer();
+        this.router.navigate([`/at/${kb.account}/${kb.slug}/resources/${uid}/profile`]);
+      });
   }
 
   showUID(uid: string) {

@@ -1,24 +1,29 @@
 import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Subject, Observable, merge } from 'rxjs';
-import { takeUntil, switchMap } from 'rxjs/operators';
+import { takeUntil, switchMap, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { STFConfirmComponent } from '@flaps/components';
-import { EntityDialogComponent, EntityDialogData, EntityDialogResponse } from '../entity-dialog/entity-dialog.component';
+import {
+  EntityDialogComponent,
+  EntityDialogData,
+  EntityDialogResponse,
+} from '../entity-dialog/entity-dialog.component';
 import { AppEntitiesGroup, GROUP_COLORS } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
 import { EntitiesSearchService } from '../entities-search.service';
 import { EntitiesService } from '../../services/entities.service';
+import { SDKService } from '@flaps/auth';
 
 @Component({
   selector: 'app-entity-group',
   templateUrl: './entity-group.component.html',
   styleUrls: ['./entity-group.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntityGroupComponent implements OnInit, OnDestroy {
-  @Input() searchTerm: string  = '';
+  @Input() searchTerm: string = '';
 
-  @Input() 
+  @Input()
   set group(group: AppEntitiesGroup | undefined) {
     this._group = group;
     this.updateExpander++;
@@ -34,18 +39,22 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   updateExpander: number = 1;
   colors = GROUP_COLORS;
   unsubscribeAll = new Subject<void>();
+  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
 
   constructor(
     private entitiesService: EntitiesService,
     private editService: EntitiesEditService,
     private searchService: EntitiesSearchService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog) {}
+    private sdk: SDKService,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     this.searchResults$ = this.searchService.getSearchResults(this.group!.key);
 
-    this.editService.isEditMode(this.group!.key)
+    this.editService
+      .isEditMode(this.group!.key)
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((editMode) => {
         this.editMode = editMode;
@@ -62,16 +71,16 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
 
-    this.searchService.getSearchTerm()
+    this.searchService
+      .getSearchTerm()
       .pipe(
         switchMap(() => this.searchResults$!),
-        takeUntil(this.unsubscribeAll)
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe((searchResults) => {
         if (searchResults !== null && searchResults.length > 0) {
           this.expanded = true;
-        }
-        else {
+        } else {
           this.expanded = this.editMode;
         }
         this.cdr.markForCheck();
@@ -90,22 +99,20 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   toggleEditMode(): void {
     if (this.editMode) {
       this.editService.clearGroup(this.group!.key);
-    }
-    else {
+    } else {
       this.editService.initGroup(this.group!.key, this.group!);
     }
   }
 
   addEntity() {
-    const dialogRef = this.dialog.open<
+    const dialogRef = this.dialog.open<EntityDialogComponent, EntityDialogData, EntityDialogResponse>(
       EntityDialogComponent,
-      EntityDialogData,
-      EntityDialogResponse>
-      (EntityDialogComponent, {
+      {
         width: '630px',
-        data: { mode: 'add', group: this.group!.key }
-      });
-      
+        data: { mode: 'add', group: this.group!.key },
+      },
+    );
+
     dialogRef
       .afterClosed()
       .pipe(takeUntil(this.unsubscribeAll))
@@ -122,8 +129,8 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
       data: {
         title: 'generic.alert',
         message: 'entity.delete_entities_warning',
-        minWidthButtons: '110px'
-      }
+        minWidthButtons: '110px',
+      },
     });
     dialogRef
       .afterClosed()

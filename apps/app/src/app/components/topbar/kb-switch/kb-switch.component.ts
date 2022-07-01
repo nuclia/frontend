@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
-import { StateService, SDKService } from '@flaps/auth';
+import { StateService, SDKService, STFTrackingService } from '@flaps/auth';
 import { IKnowledgeBoxItem, Account } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { NavigationService } from '../../../services/navigation.service';
@@ -24,16 +24,22 @@ export class KbSwitchComponent {
     }),
     switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account!.slug)),
   );
+  showDemo = this.tracking.isFeatureEnabled('show-demo-kb');
 
   constructor(
     private sdk: SDKService,
     private router: Router,
     private navigation: NavigationService,
     private stateService: StateService,
+    private tracking: STFTrackingService,
   ) {}
 
   goToKb(kb: IKnowledgeBoxItem) {
     this.router.navigate([this.navigation.getKbUrl(this.account!.slug, kb.slug!)]);
+    this.close.emit();
+  }
+  goToDemo() {
+    this.router.navigate([this.navigation.getKbUrl(this.account!.slug, this.sdk.DEMO_SLUG)]);
     this.close.emit();
   }
 }

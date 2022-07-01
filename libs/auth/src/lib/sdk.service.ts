@@ -19,7 +19,11 @@ import { StateService } from './state.service';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
-  nuclia: Nuclia = new Nuclia({ backend: this.config.getAPIURL(), client: this.config.staticConf.client });
+  DEMO_SLUG = '__demo';
+  nuclia: Nuclia = new Nuclia({
+    backend: this.config.getAPIURL(),
+    client: this.config.staticConf.client,
+  });
 
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
   currentKb = this._currentKB.asObservable();
@@ -40,13 +44,15 @@ export class SDKService {
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
         switchMap(([kb, account]) =>
-          this.nuclia.db
-            .getKnowledgeBox(account!.slug, kb!.slug!)
-            .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account!.slug, data))),
+          kb && kb.slug === this.DEMO_SLUG
+            ? this.getDemoKb()
+            : this.nuclia.db
+                .getKnowledgeBox(account!.slug, kb!.slug!)
+                .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account!.slug, data))),
         ),
         tap(() => (this._isKbLoaded = true)),
       )
-      .subscribe(this._currentKB);
+      .subscribe((kb) => this._currentKB.next(kb));
     this.countersRefreshSubcriptions();
     this.refreshCounter(true);
   }
@@ -64,9 +70,34 @@ export class SDKService {
     const currentKb = this.stateService.getStash();
     if (currentKb && currentKb.slug === kbSlug && !force) {
       return of(currentKb as WritableKnowledgeBox);
+    } else if (kbSlug === this.DEMO_SLUG) {
+      return this.getDemoKb().pipe(
+        tap((kb) => {
+          this.nuclia.options.zone = 'europe-1';
+          this.stateService.setStash(kb);
+        }),
+      );
     } else {
-      return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(tap((kb) => this.stateService.setStash(kb)));
+      return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
+        switchMap((kb) => this.nuclia.rest.getZoneSlug(kb.zone).pipe(map((zoneSlug) => ({ kb, zoneSlug })))),
+        map(({ kb, zoneSlug }) => {
+          this.nuclia.options.zone = zoneSlug;
+          this.stateService.setStash(kb);
+          return kb;
+        }),
+      );
     }
+  }
+
+  getDemoKb(): Observable<WritableKnowledgeBox> {
+    return of(
+      new WritableKnowledgeBox(this.nuclia, this.stateService.getAccount()?.slug || '', {
+        id: this.config.staticConf.demoKb,
+        zone: 'europe-1',
+        slug: this.DEMO_SLUG,
+        title: 'Demo',
+      }),
+    );
   }
 
   refreshCounter(singleTry = false): void {

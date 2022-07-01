@@ -1,14 +1,14 @@
-<div
-  class="entity-group"
-  [class.expanded]="expanded"
-  [class.disabled]="editMode"
-  [attr.role]="'button'"
-  [attr.aria-disabled]="editMode ? 'true' : null"
-  [attr.tabindex]="editMode ? '-1' : '0'"
-  [attr.aria-expanded]="expanded"
-  (click)="editMode ? null : toggleExpanded($event)">
+<div class="entity-group"
+     [class.expanded]="expanded"
+     [class.disabled]="editMode"
+     [attr.role]="'button'"
+     [attr.aria-disabled]="editMode ? 'true' : null"
+     [attr.tabindex]="editMode ? '-1' : '0'"
+     [attr.aria-expanded]="expanded"
+     (click)="editMode ? null : toggleExpanded($event)">
   <div class="entity-group-cell cell-color">
-    <div class="color-border" [style.background-color]="group?.color || colors[this.group?.key]"></div>
+    <div class="color-border"
+         [style.background-color]="group?.color || colors[this.group?.key]"></div>
   </div>
   <div class="entity-group-cell cell-name">
     <svg-icon src="assets/icons/chevron-right.svg"></svg-icon>
@@ -18,56 +18,51 @@
   <div class="entity-group-cell cell-description"></div>
   <div class="entity-group-cell cell-presence"></div>
   <div class="entity-group-cell cell-actions">
-    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">
-      <ng-container *ngIf="!editMode">
-        <app-button-action
-          (click)="toggleEditMode()"
-          *ngIf="!editMode"
-          action="edit"
-          ariaLabel="generic.edit">
+    <div fxLayout="row"
+         fxLayoutAlign="end center"
+         fxLayoutGap="10px">
+      <ng-container *ngIf="!editMode && (isAdminOrContrib | async)">
+        <app-button-action (click)="toggleEditMode()"
+                           *ngIf="!editMode"
+                           action="edit"
+                           ariaLabel="generic.edit">
         </app-button-action>
-        <app-button-action
-          (click)="addEntity()"
-          action="add_many"
-          ariaLabel="generic.add"
-          stfTooltip
-          stfTooltipText="entity.new_entity">
+        <app-button-action (click)="addEntity()"
+                           action="add_many"
+                           ariaLabel="generic.add"
+                           stfTooltip
+                           stfTooltipText="entity.new_entity">
         </app-button-action>
-        <app-button-action
-          (click)="deleteGroup()"
-          action="delete"
-          ariaLabel="generic.delete">
+        <app-button-action (click)="deleteGroup()"
+                           action="delete"
+                           ariaLabel="generic.delete">
         </app-button-action>
       </ng-container>
       <ng-container *ngIf="editMode">
-        <app-button-action
-          (click)="saveGroup()"
-          action="save"
-          ariaLabel="generic.save"
-          stfTooltip
-          stfTooltipText="entity.save_changes">
+        <app-button-action (click)="saveGroup()"
+                           action="save"
+                           ariaLabel="generic.save"
+                           stfTooltip
+                           stfTooltipText="entity.save_changes">
         </app-button-action>
-        <app-button-action
-          (click)="toggleEditMode()"
-          action="close"
-          ariaLabel="generic.cancel"
-          stfTooltip
-          stfTooltipText="generic.cancel">
+        <app-button-action (click)="toggleEditMode()"
+                           action="close"
+                           ariaLabel="generic.cancel"
+                           stfTooltip
+                           stfTooltipText="generic.cancel">
         </app-button-action>
       </ng-container>
     </div>
   </div>
 </div>
-<stf-expander
-  [expanded]="expanded"
-  [contentLoaded]="updateExpander">
+<stf-expander [expanded]="expanded"
+              [contentLoaded]="updateExpander">
   <stf-expander-content>
     <div *ngIf="expanded">
-      <app-entity-list
-        [group]="group"
-        [editMode]="editMode"
-        [searchTerm]="searchTerm"
-        [searchResults]="(searchResults$ | async)">
+      <app-entity-list [group]="group"
+                       [editMode]="editMode"
+                       [searchTerm]="searchTerm"
+                       [searchResults]="(searchResults$ | async)">
       </app-entity-list>
     </div>
   </stf-expander-content>

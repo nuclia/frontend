@@ -149,15 +149,18 @@
             <mat-menu #menu="matMenu"
                       class="resource-actions">
               <button mat-menu-item
-                      (click)="edit(resource.id)">
+                      (click)="edit(resource.id)"
+                      [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.edit' | translate }}
               </button>
               <button mat-menu-item
-                      (click)="delete([resource])">
+                      (click)="delete([resource])"
+                      [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.delete' | translate }}
               </button>
               <button mat-menu-item
-                      (click)="reindex(resource)">
+                      (click)="reindex(resource)"
+                      [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.reindex' | translate }}
               </button>
               <button mat-menu-item

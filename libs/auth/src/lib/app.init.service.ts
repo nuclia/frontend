@@ -36,6 +36,7 @@ export type StaticEnviromentConfiguration = {
   };
   base_asset_url?: string;
   locales?: string[]; // List of registred locales in the app
+  demoKb: string;
 };
 
 declare var window: any;
