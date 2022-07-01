@@ -2,7 +2,16 @@
 
 # Nuclia frontend apps and libraries
 
-## Install
+## Table of content
+- [Installation](#installation)
+- [Dashboard](#dashboard)
+- [Widget](#widget)
+- [SDK](#sdk)
+- [Desktop app](#desktop-app)
+- [Sistema](#sistema)
+
+
+## Installation
 
 ```
 yarn
@@ -82,3 +91,10 @@ Build for stage:
 Sistema is Nuclia's design system. It is based on [Pastanaga](https://github.com/plone/pastanaga-angular).
 
 The demo is available at [https://nuclia.github.io/frontend](https://nuclia.github.io/frontend).
+
+To update the glyphs sprite:
+- add/remove/edit glyphs in `libs/sistema/glyphs` folder
+- run `update_icons` script:
+```shell
+./libs/sistema/scripts/update_icons.sh
+```
