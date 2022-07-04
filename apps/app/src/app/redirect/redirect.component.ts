@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { injectScript } from '@flaps/core';
 import { take, tap, concatMapTo } from 'rxjs';
 

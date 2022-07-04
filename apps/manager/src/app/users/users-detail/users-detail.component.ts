@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
-import { UsersService } from './../../services/users.service';
-import { User, UserPatch, UserCreation, Session } from './../../models/user.model';
+import { UsersService } from '../../services/users.service';
+import { User, UserPatch, UserCreation, Session } from '../../models/user.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-users-detail',
@@ -73,7 +73,7 @@ export class UsersDetailComponent implements OnInit {
 
   reset() {
     this.usersService.reset(this.prefsForm.controls.id.value).subscribe(
-      (res: any) => {
+      () => {
         this.returnToUsers();
       },
       (err: any) => {
@@ -95,7 +95,7 @@ export class UsersDetailComponent implements OnInit {
         name: this.prefsForm.controls.name.value,
       };
       this.usersService.edit(this.prefsForm.controls.id.value, data).subscribe(
-        (res: any) => {
+        () => {
           this.returnToUsers();
         },
         (err: any) => {
@@ -112,7 +112,7 @@ export class UsersDetailComponent implements OnInit {
   delete() {
     if (confirm('Are you sure?')) {
       this.usersService.deleteUser(this.prefsForm.controls.id.value).subscribe(
-        (res: any) => {
+        () => {
           this.returnToUsers();
         },
         (err: any) => {
@@ -135,7 +135,7 @@ export class UsersDetailComponent implements OnInit {
         type: this.prefsForm.controls.type.value,
       };
       this.usersService.create(data).subscribe(
-        (res: any) => {
+        () => {
           this.returnToUsers();
         },
         (err: any) => {

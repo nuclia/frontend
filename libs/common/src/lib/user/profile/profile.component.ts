@@ -3,7 +3,7 @@ import { Location } from '@angular/common';
 import { UntypedFormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, Observable, of, forkJoin, takeUntil, switchMap, filter } from 'rxjs';
-import { SDKService, SetUserPreferences, UserService, LoginService } from '@flaps/auth';
+import { SDKService, SetUserPreferences, UserService, LoginService } from '@flaps/core';
 import { STFUtils, MIN_PASSWORD_LENGTH, DEFAULT_LANG } from '@flaps/core';
 import { WelcomeUser, Language } from '@nuclia/core';
 import { SamePassword } from '../../validators/form.validator';
@@ -17,18 +17,16 @@ import { SamePassword } from '../../validators/form.validator';
 export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;
   language: string[] = [];
-  languages = STFUtils.supportedLanguages().map((lang) => (
-    { label: 'language.' + lang, value: lang}
-  ));
+  languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
   canModifyPassword: boolean = false; // TODO
   canModifyEmail: boolean = false; // TODO
 
   profileForm = this.formBuilder.group({
     name: ['', [Validators.required]],
-    email: [{value: '', disabled: !this.canModifyEmail}, [Validators.required, Validators.email]],
+    email: [{ value: '', disabled: !this.canModifyEmail }, [Validators.required, Validators.email]],
     password: ['', this.optionalPassword('passwordConfirm', [Validators.minLength(MIN_PASSWORD_LENGTH)])],
-    passwordConfirm: ['', this.optionalPassword('password',[SamePassword('password')])],
+    passwordConfirm: ['', this.optionalPassword('password', [SamePassword('password')])],
   });
 
   profile_validation_messages = {
@@ -62,8 +60,11 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.userService.userPrefs
-      .pipe(filter((prefs) => !!prefs), takeUntil(this.unsubscribeAll))
-      .subscribe(prefs => {
+      .pipe(
+        filter((prefs) => !!prefs),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((prefs) => {
         this.userPrefs = prefs;
         this.language = [(prefs!.language || DEFAULT_LANG).toLowerCase()];
         this.profileForm.get('name')?.setValue(prefs?.name);

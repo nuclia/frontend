@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 
 import { AccountComponent } from './account.component';
@@ -9,27 +9,25 @@ describe('AccountComponent', () => {
   let component: AccountComponent;
   let fixture: ComponentFixture<AccountComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [AccountComponent],
-        imports: [RouterTestingModule],
-        providers: [
-          {
-            provide: SDKService,
-            useValue: {
-              nuclia: {
-                db: {
-                  getKnowledgeBoxes: () => of([]),
-                  getAccounts: () => of([]),
-                },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [AccountComponent],
+      imports: [RouterTestingModule],
+      providers: [
+        {
+          provide: SDKService,
+          useValue: {
+            nuclia: {
+              db: {
+                getKnowledgeBoxes: () => of([]),
+                getAccounts: () => of([]),
               },
             },
           },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AccountComponent);

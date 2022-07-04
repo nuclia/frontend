@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject, Observable, of } from 'rxjs';
 import { takeUntil, take, map, switchMap, concatMap, catchError, tap, shareReplay, filter } from 'rxjs/operators';
-import { SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/core';
 import { UsersService } from '@flaps/core';
 import { ResourcePagination, ResourceProperties, EventType } from '@nuclia/core';
 
@@ -11,18 +11,16 @@ export interface ActivityEvent {
   username: Observable<string>;
 }
 
-export type ActivityData = { 
-  [type in EventType]?: { events: ActivityEvent[], pagination: ResourcePagination | null }
-}
+export type ActivityData = {
+  [type in EventType]?: { events: ActivityEvent[]; pagination: ResourcePagination | null };
+};
 
 export const VISIBLE_TYPES = [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED];
 
 const RESULTS_PER_PAGE = 30;
 
-
 @Injectable()
 export class ActivityService implements OnDestroy {
-
   private _resources: { [key: string]: Observable<string> } = {};
   private _users: { [key: string]: Observable<string> } = {};
   private triggerLoad = new Subject<EventType>();
@@ -32,7 +30,7 @@ export class ActivityService implements OnDestroy {
     VISIBLE_TYPES.reduce((acc, type) => {
       acc[type] = { events: [], pagination: null };
       return acc;
-    }, {} as ActivityData)
+    }, {} as ActivityData),
   );
 
   activity = this._activity.asObservable();
@@ -44,13 +42,13 @@ export class ActivityService implements OnDestroy {
           const { events, pagination } = this._activity.getValue()[type]!;
           const nextPage = typeof pagination?.page === 'number' ? pagination.page + 1 : 0;
           return this.getEvents(type, nextPage).pipe(
-            map((res) => ({ events: [...events, ...res.events], pagination: res.pagination})),
-            tap((res) => { 
+            map((res) => ({ events: [...events, ...res.events], pagination: res.pagination })),
+            tap((res) => {
               const activity = this._activity.getValue();
               activity[type] = res;
-              this._activity.next(activity)
-            })
-          )
+              this._activity.next(activity);
+            }),
+          );
         }),
         takeUntil(this.unsubscribeAll),
       )
@@ -69,7 +67,7 @@ export class ActivityService implements OnDestroy {
   private getEvents(type: EventType, page: number) {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => 
+      switchMap((kb) =>
         kb.listActivity(type, page, RESULTS_PER_PAGE).pipe(
           map((res) => ({
             pagination: res.pagination,
@@ -77,11 +75,11 @@ export class ActivityService implements OnDestroy {
               resource: this.getResource(event.rid),
               date: event.time || undefined,
               username: event.userid ? this.getUser(event.userid) : of(''),
-            }))
+            })),
           })),
-        )
-      )
-    )
+        ),
+      ),
+    );
   }
 
   private getUser(id: string) {
@@ -92,15 +90,15 @@ export class ActivityService implements OnDestroy {
         switchMap((account) =>
           this.users.getAccountUser(account!.slug!, id).pipe(
             map((user) => user.name || ''),
-            catchError(() => of(id)) // In case the user no longer exists
-          )
+            catchError(() => of(id)), // In case the user no longer exists
+          ),
         ),
-        shareReplay(1)
+        shareReplay(1),
       );
     }
     return this._users[id];
   }
-  
+
   private getResource(id: string) {
     if (!this._resources[id]) {
       this._resources[id] = this.sdk.currentKb.pipe(
@@ -108,10 +106,10 @@ export class ActivityService implements OnDestroy {
         switchMap((kb) =>
           kb.getResource(id, [ResourceProperties.BASIC], []).pipe(
             map((resource) => resource.title || ''),
-            catchError(() => of(id)) // In case the resource no longer exists
-          )
+            catchError(() => of(id)), // In case the resource no longer exists
+          ),
         ),
-        shareReplay(1)
+        shareReplay(1),
       );
     }
     return this._resources[id];

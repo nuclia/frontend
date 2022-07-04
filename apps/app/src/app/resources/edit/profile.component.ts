@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { LabelValue, Resource } from '@nuclia/core';
 import { forkJoin, map, switchMap } from 'rxjs';
 import { AppToasterService } from '../../services/app-toaster.service';

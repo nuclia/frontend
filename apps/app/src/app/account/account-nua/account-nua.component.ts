@@ -7,7 +7,7 @@ import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
 import { Router } from '@angular/router';
-import { StateService, STFTrackingService } from '@flaps/auth';
+import { StateService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 
 @Component({

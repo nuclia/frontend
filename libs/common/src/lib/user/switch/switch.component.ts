@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthService, SDKService, StateService } from '@flaps/auth';
+import { AuthService, SDKService, StateService } from '@flaps/core';
 import { Router } from '@angular/router';
 
 @Component({

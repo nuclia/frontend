@@ -7,7 +7,7 @@ import {
   OnChanges,
   ViewChild,
 } from '@angular/core';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { delay, map, take } from 'rxjs';
 
 @Component({

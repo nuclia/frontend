@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { map, filter, take, switchMap, tap, catchError } from 'rxjs/operators';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { Entities, EntitiesGroup, IKnowledgeBox } from '@nuclia/core';
 import { MutableEntitiesGroup } from '../entities/model';
 

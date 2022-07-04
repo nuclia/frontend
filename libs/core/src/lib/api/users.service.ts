@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { APIService, User } from '@flaps/auth';
-import { AccountUser, SetUsersAccount, InviteAccountData, KbUser, InviteKbData, SetUsersKb } from '../models/users.model';
+import { DeprecatedApiService } from './deprecated-api.service';
+import { AccountUser, SetUsersAccount, InviteAccountData, KbUser, InviteKbData, SetUsersKb, User } from '../models';
 import { Observable } from 'rxjs';
 
 const VERSION = 'v1';
@@ -10,7 +10,7 @@ const ACCOUNT = 'account';
   providedIn: 'root',
 })
 export class UsersService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getAccountUser(slug: string, id: string): Observable<Partial<User>> {
     return this.api.get(`/${VERSION}/${ACCOUNT}/${slug}/user/${id}`, true, undefined, true);

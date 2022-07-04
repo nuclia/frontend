@@ -9,7 +9,7 @@ import {
   BackendConfigurationService,
   StateService,
   SDKService,
-} from '@flaps/auth';
+} from '@flaps/core';
 import { catchError, combineLatest, filter, of, Subject, switchMap, tap, take } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
 import { Title } from '@angular/platform-browser';
@@ -113,7 +113,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
             this.router.routerState.root.firstChild?.firstChild?.firstChild?.paramMap || of(),
           ]),
         ),
-        filter(([accountParams, kbParams]) => !!accountParams.get('account')),
+        filter(([accountParams]) => !!accountParams.get('account')),
         switchMap(([accountParams, kbParams]) =>
           combineLatest([
             this.sdk.setCurrentAccount(accountParams.get('account') as string),

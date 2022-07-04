@@ -4,7 +4,7 @@ import { RouteInfo } from '@flaps/common';
 import { filter, map, switchMapTo } from 'rxjs/operators';
 import { LabelsService } from '../services/labels.service';
 import { Labels } from '@nuclia/core';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-ontologies',

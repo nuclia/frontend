@@ -9,7 +9,7 @@ import { STFConfirmComponent } from '@flaps/components';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SimpleSelectOption } from '@flaps/components';
 import { Resource, ResourceList, RESOURCE_STATUS, resourceToAlgoliaFormat } from '@nuclia/core';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { STFUtils } from '@flaps/core';
 
 interface ListFilters {

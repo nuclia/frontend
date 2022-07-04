@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { STFTrackingService } from '@flaps/auth';
-import { SDKService } from '@flaps/auth';
+import { STFTrackingService } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { LabelValue } from '@nuclia/core';
 import { switchMap } from 'rxjs';
 import { AppToasterService } from '../../services/app-toaster.service';

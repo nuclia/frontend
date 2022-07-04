@@ -5,7 +5,6 @@ import {
   concatMapTo,
   delay,
   forkJoin,
-  interval,
   map,
   Observable,
   of,
@@ -13,7 +12,6 @@ import {
   ReplaySubject,
   Subject,
   switchMap,
-  switchMapTo,
   take,
   tap,
 } from 'rxjs';
@@ -32,7 +30,7 @@ import {
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
-import { SDKService, UserService, md5 } from '@flaps/auth';
+import { SDKService, UserService, md5 } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';

@@ -1,7 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { AccountService } from './../../services/account.service';
+import { AccountService } from '../../services/account.service';
 import { UserSearch } from '../../models/user.model';
 import {
   Account,
@@ -14,7 +14,7 @@ import { KnowledgeBoxCreation } from '../../models/stash.model';
 import { UsersService } from '../../services/users.service';
 import { ZoneService } from '../../services/zone.service';
 import { validSlug } from '../../models/form.validator';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import { ZoneSummary } from '../../models/zone.model';
 import { Counters, Nuclia } from '@nuclia/core';

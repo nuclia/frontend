@@ -6,7 +6,7 @@ import { ZoneService, Zone, STFUtils } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { NavigationService } from '../../services/navigation.service';
 import { AppToasterService } from '../../services/app-toaster.service';
-import { SDKService, STFTrackingService, UserService } from '@flaps/auth';
+import { SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 

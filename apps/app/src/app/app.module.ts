@@ -10,7 +10,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 import { OverlayModule } from '@angular/cdk/overlay';
 
-import { STFPipesModule, STFConfigModule } from '@flaps/auth';
+import { STFPipesModule, STFConfigModule } from '@flaps/core';
 import { STFButtonsModule } from '@flaps/pastanaga';
 import { AuthInterceptor } from './guards/auth.interceptor';
 import { environment } from '../environments/environment';

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/core';
 import { StatsPeriod, StatsType } from '@nuclia/core';
-import { filter, map, of, share, switchMap, scan } from 'rxjs';
+import { filter, map, of, share, switchMap } from 'rxjs';
 import { AppService } from '../../services/app.service';
 
 @Component({
@@ -35,9 +35,7 @@ export class AccountHomeComponent {
     ),
   );
   totalQueries = this.account.pipe(
-    switchMap((account) =>
-      this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR),
-    ),
+    switchMap((account) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR)),
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
   );
   locale = this.appService.currentLocale;

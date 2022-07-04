@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { NavigationService } from '../services/navigation.service';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +16,15 @@ export class AccountOwnerGuard implements CanActivate {
     if (!slug) {
       return of(false);
     } else {
-      return this.sdk.setCurrentAccount(slug).pipe(
-        switchMap((account) => account.can_manage_account 
-          ? of(true) 
-          : this.navigation.homeUrl.pipe(map((url => this.router.createUrlTree([url]))))
-        )
-      );
+      return this.sdk
+        .setCurrentAccount(slug)
+        .pipe(
+          switchMap((account) =>
+            account.can_manage_account
+              ? of(true)
+              : this.navigation.homeUrl.pipe(map((url) => this.router.createUrlTree([url]))),
+          ),
+        );
     }
   }
 }
@@ -38,12 +41,13 @@ export class KnowledgeBoxOwnerGuard implements CanActivate {
     if (!accountSlug || !kbSlug) {
       return of(false);
     } else {
-      return this.sdk.setCurrentKnowledgeBox(accountSlug, kbSlug).pipe(
-        switchMap((kb) =>!!kb.admin
-          ? of(true) 
-          : this.navigation.homeUrl.pipe(map((url => this.router.createUrlTree([url]))))
-        )
-      );
+      return this.sdk
+        .setCurrentKnowledgeBox(accountSlug, kbSlug)
+        .pipe(
+          switchMap((kb) =>
+            !!kb.admin ? of(true) : this.navigation.homeUrl.pipe(map((url) => this.router.createUrlTree([url]))),
+          ),
+        );
     }
   }
 }

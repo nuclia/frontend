@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Toaster } from '@flaps/pastanaga';
 import { STFUtils } from '@flaps/core';
-import { SDKService, BackendConfigurationService, UserService } from '@flaps/auth';
+import { SDKService, BackendConfigurationService, UserService } from '@flaps/core';
 import { filter, Subject } from 'rxjs';
 
 @Component({

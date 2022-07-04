@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { SamePassword } from '@flaps/common';
-import { AuthService, SDKService } from '@flaps/auth';
+import { AuthService, SDKService } from '@flaps/core';
 import { SetupStep } from '../setup-header/setup-header.component';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
 

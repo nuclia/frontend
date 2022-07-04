@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import { LoggedinGuard } from '@flaps/auth';
+import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -19,7 +19,6 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { ZoneResolve } from '../resolvers/zone.resolver';
 import { ZonesResolve } from '../resolvers/zones.resolver';
-import { AccountsResolve } from '../resolvers/accounts.resolver';
 import { ZoneListComponent } from './zone-list/zone-list.component';
 import { ZoneDetailComponent } from './zone-detail/zone-detail.component';
 

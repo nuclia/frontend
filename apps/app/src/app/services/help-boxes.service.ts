@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { take, takeUntil } from 'rxjs/operators';
 import { TourService, IStepOption } from 'ngx-ui-tour-md-menu';
 import { AppService } from './app.service';
-import { STFTrackingService } from '@flaps/auth';
+import { STFTrackingService } from '@flaps/core';
 
 const LOCAL_STORAGE_KEY = 'NUCLIA_TOUR_COMPLETED';
 

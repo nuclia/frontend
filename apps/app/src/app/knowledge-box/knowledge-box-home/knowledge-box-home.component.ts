@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { filter, map, Observable, share, switchMap, combineLatest, take, tap } from 'rxjs';
+import { filter, map, Observable, share, switchMap, combineLatest, take } from 'rxjs';
 import { AppToasterService } from '../../services/app-toaster.service';
 import { AppService } from '../../services/app.service';
 import { HelpBoxesService } from '../../services/help-boxes.service';
@@ -31,7 +31,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   );
   refreshing = this.sdk.pendingRefresh;
   private _processing = combineLatest([this.stateService.account, this.sdk.currentKb]).pipe(
-    filter(([account, kb]) => !!account),
+    filter(([account]) => !!account),
     switchMap(([account, kb]) =>
       this.sdk.nuclia.db.getStats(account!.slug, StatsType.PROCESSING_TIME, kb.id, StatsPeriod.YEAR),
     ),
@@ -54,7 +54,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     ),
   );
   private _search = combineLatest([this.stateService.account, this.sdk.currentKb]).pipe(
-    filter(([account, kb]) => !!account),
+    filter(([account]) => !!account),
     switchMap(([account, kb]) =>
       this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, kb.id, StatsPeriod.YEAR),
     ),

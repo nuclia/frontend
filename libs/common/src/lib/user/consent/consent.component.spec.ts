@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, OAuthService } from '@flaps/auth';
+import { BackendConfigurationService, OAuthService } from '@flaps/core';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { ConsentComponent } from './consent.component';

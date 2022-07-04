@@ -5,7 +5,7 @@ import { Subject, Observable, of } from 'rxjs';
 import { takeUntil, filter, tap, switchMap, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { STFConfirmComponent, ConfirmData } from '@flaps/components';
-import { SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { UsersService, AccountUser, AccountRoles, SetUsersAccount } from '@flaps/core';
 import { AppToasterService } from '../../services/app-toaster.service';
@@ -21,7 +21,10 @@ export class AccountUsersComponent implements OnDestroy {
   users?: AccountUser[];
   columns = ['user', 'role', 'actions'];
   email = new UntypedFormControl([''], [Validators.required, Validators.email]);
-  roles: [AccountRoles, string][] = [['AOWNER', 'generic.owner'], ['AMEMBER', 'generic.member']];
+  roles: [AccountRoles, string][] = [
+    ['AOWNER', 'generic.owner'],
+    ['AMEMBER', 'generic.member'],
+  ];
 
   account$ = this.stateService.account.pipe(filter((account) => !!account));
   canAddUsers = this.account$.pipe(
@@ -94,7 +97,7 @@ export class AccountUsersComponent implements OnDestroy {
         .afterClosed()
         .pipe(
           takeUntil(this.unsubscribeAll),
-          switchMap((result) => !!result ? this._changeRole(user, role) : of(null)),
+          switchMap((result) => (!!result ? this._changeRole(user, role) : of(null))),
           switchMap(() => this.updateUsers()),
         )
         .subscribe();
@@ -129,14 +132,14 @@ export class AccountUsersComponent implements OnDestroy {
   private _changeRole(user: AccountUser, role: AccountRoles): Observable<void> {
     const users: SetUsersAccount = {
       add: [{ id: user.id, role: role }],
-    }
+    };
     return this.usersService.setAccountUsers(this.account!.slug, users);
   }
 
   deleteUser(user: AccountUser): Observable<void> {
     const users: SetUsersAccount = {
-      delete: [user.id]
-    }
+      delete: [user.id],
+    };
     return this.usersService.setAccountUsers(this.account!.slug, users);
   }
 

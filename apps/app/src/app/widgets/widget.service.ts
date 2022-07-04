@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { Widget, WritableKnowledgeBox } from '@nuclia/core';
 import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
 

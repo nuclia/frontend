@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { STFTrackingService, SDKService } from '@flaps/auth';
+import { STFTrackingService, SDKService } from '@flaps/core';
 import { filter, map, switchMap } from 'rxjs';
 import { AddWidgetDialogComponent } from './add/add-widget.component';
 import { WidgetService } from './widget.service';
@@ -19,13 +19,13 @@ export class WidgetsComponent implements OnDestroy {
   routes = this.widgetService.widgets.pipe(
     map((widgets) => {
       widgets = widgets.sort((a, b) =>
-        a.id === DEFAULT_WIDGET ? -1 : b.id === DEFAULT_WIDGET ? 1 : a.id.localeCompare(b.id)
+        a.id === DEFAULT_WIDGET ? -1 : b.id === DEFAULT_WIDGET ? 1 : a.id.localeCompare(b.id),
       );
       return widgets.map((widget) => ({
         title: widget.id === DEFAULT_WIDGET ? 'Dashboard widget' : widget.id,
         relativeRoute: widget.id,
       }));
-    })
+    }),
   );
   showLink = this.sdk.currentKb.pipe(map((kb) => !!kb.admin && kb.state === 'PRIVATE'));
   homeUrl = this.navigation.homeUrl;
@@ -58,7 +58,7 @@ export class WidgetsComponent implements OnDestroy {
               mode: 'button',
             })
             .pipe(map(() => result.id));
-        })
+        }),
       )
       .subscribe((id) => {
         this.widgetService.updateWidgets();

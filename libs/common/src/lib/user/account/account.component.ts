@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 
 @Component({

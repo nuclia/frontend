@@ -1,7 +1,5 @@
 # core
 
-This library was generated with [Nx](https://nx.dev).
+This is the `core` library, containing services managing the communication with all the backend services (nuclia, posthog,…).
 
-## Running unit tests
-
-Run `nx test core` to execute the unit tests.
+Any library or application can depend on `core`, but core should not depend on any other library.

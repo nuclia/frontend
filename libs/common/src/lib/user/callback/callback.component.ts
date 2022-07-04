@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { SAMLService, GoogleService, BackendConfigurationService, SDKService } from '@flaps/auth';
+import { SAMLService, GoogleService, BackendConfigurationService, SDKService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
 

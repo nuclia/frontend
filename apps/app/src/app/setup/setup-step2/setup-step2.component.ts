@@ -9,7 +9,7 @@ import { Sluggable } from '@flaps/common';
 import { STFConfirmComponent } from '@flaps/components';
 import { NavigationService } from '../../services/navigation.service';
 import { SetupStep } from '../setup-header/setup-header.component';
-import { SDKService, STFTrackingService } from '@flaps/auth';
+import { SDKService, STFTrackingService } from '@flaps/core';
 
 @Component({
   selector: 'app-setup-step2',

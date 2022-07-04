@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { SDKService } from '@flaps/auth';
-import { filter, map, mergeMap, take } from 'rxjs';
+import { Router } from '@angular/router';
+import { SDKService } from '@flaps/core';
+import { filter, take } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 
 @Component({

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, LoginService } from '@flaps/auth';
+import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslatePipeMock } from '@flaps/core';
 import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';

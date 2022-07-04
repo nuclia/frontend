@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, SDKService, UserService } from '@flaps/auth';
+import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { STFUtils } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SOURCE_ID_KEY } from './sync/models';

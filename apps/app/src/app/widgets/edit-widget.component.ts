@@ -3,7 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, STFTrackingService } from '@flaps/auth';
+import { BackendConfigurationService, STFTrackingService } from '@flaps/core';
 import { Widget } from '@nuclia/core';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddWidgetDialogComponent } from './add/add-widget.component';
@@ -60,7 +60,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     private widgetService: WidgetService,
     private dialog: MatDialog,
     private backendConfig: BackendConfigurationService,
-    private tracking: STFTrackingService
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit() {
@@ -68,7 +68,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.unsubscribeAll),
         filter((params) => !!params.id),
-        switchMap((params) => this.widgetService.getWidgetInfo(params.id))
+        switchMap((params) => this.widgetService.getWidgetInfo(params.id)),
       )
       .subscribe(({ widget, kbId, kbState, zone }) => {
         this.kbId = kbId;
@@ -131,8 +131,8 @@ ${styles.join('\n')}
       this.snippet.replace(
         'zone=',
         `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
-      state="${this.kbState}" zone=`
-      ) + styleStr
+      state="${this.kbState}" zone=`,
+      ) + styleStr,
     );
     this.cdr?.markForCheck();
   }
@@ -160,8 +160,8 @@ ${styles.join('\n')}
         .pipe(
           filter((result) => !!result && !!result.id),
           switchMap((result) =>
-            this.widgetService.saveWidget(widget.id, { id: result.id as string }).pipe(map(() => result.id))
-          )
+            this.widgetService.saveWidget(widget.id, { id: result.id as string }).pipe(map(() => result.id)),
+          ),
         )
         .subscribe((id) => {
           this.widgetService.updateWidgets();

@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, LoginService } from '@flaps/auth';
+import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslatePipeMock } from '@flaps/core';
 import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,31 +14,29 @@ describe('ResetComponent', () => {
   let component: ResetComponent;
   let fixture: ComponentFixture<ResetComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [ResetComponent, TranslatePipeMock],
-        imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule],
-        providers: [
-          {
-            provide: BackendConfigurationService,
-            useValue: { getRecaptchaKey: () => 'key', getOAuthLogin: () => false },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [ResetComponent, TranslatePipeMock],
+      imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule],
+      providers: [
+        {
+          provide: BackendConfigurationService,
+          useValue: { getRecaptchaKey: () => 'key', getOAuthLogin: () => false },
+        },
+        {
+          provide: LoginService,
+          useValue: {
+            reset: of(),
           },
-          {
-            provide: LoginService,
-            useValue: {
-              reset: of(),
-            },
-          },
-          { provide: ReCaptchaV3Service, useValue: { execute: () => {} } },
-          {
-            provide: TranslateService,
-            useValue: { get: () => of('') },
-          },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+        { provide: ReCaptchaV3Service, useValue: { execute: () => {} } },
+        {
+          provide: TranslateService,
+          useValue: { get: () => of('') },
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ResetComponent);

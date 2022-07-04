@@ -1,13 +1,13 @@
 /*
  * Public API Surface of @flaps/core
  */
-
-export * from './lib/api/zone.service';
-export * from './lib/models/zone.model';
-export * from './lib/api/users.service';
-export * from './lib/models/users.model';
-export * from './lib/sidebar.service';
-export * from './lib/load-script.service';
-export * from './lib/file-upload/';
+export * from './lib/analytics';
+export * from './lib/api';
+export * from './lib/auth';
+export * from './lib/config';
+export * from './lib/models';
+export * from './lib/testing';
+export * from './lib/ui';
 export * from './lib/utils';
-export * from './lib/testing/utils';
+
+export * from './lib/state.service';

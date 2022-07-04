@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Zone, ZonePatch, ZoneAdd } from './../../models/zone.model';
-import { ZoneService } from './../../services/zone.service';
-import { SDKService } from '@flaps/auth';
+import { Zone, ZonePatch, ZoneAdd } from '../../models/zone.model';
+import { ZoneService } from '../../services/zone.service';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-zone-detail',
@@ -61,7 +61,7 @@ export class ZoneDetailComponent {
         title: this.form.controls.title.value,
       };
       this.zoneService.edit(this.zone!.id, data).subscribe(
-        (res: any) => {
+        () => {
           this.returnToZones();
         },
         (err: any) => {
@@ -83,7 +83,7 @@ export class ZoneDetailComponent {
         creator: this.sdk.nuclia.auth.getJWTUser()?.sub || '',
       };
       this.zoneService.create(newZone).subscribe(
-        (res: any) => {
+        () => {
           this.returnToZones();
         },
         (err: any) => {

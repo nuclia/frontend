@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, UrlTree, Router } from '@angular/router';
 import { Observable, combineLatest, map, switchMap, of, filter, take } from 'rxjs';
-import { UserService, SDKService } from '@flaps/auth';
+import { UserService, SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',

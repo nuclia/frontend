@@ -4,17 +4,16 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { MatDialog } from '@angular/material/dialog';
-import { LoginService, BackendConfigurationService, RecoverData } from '@flaps/auth';
+import { LoginService, BackendConfigurationService, RecoverData } from '@flaps/core';
 import { STFConfirmComponent } from '@flaps/components';
 
 @Component({
   selector: 'stf-recover',
   templateUrl: './recover.component.html',
   styleUrls: ['./recover.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecoverComponent {
-
   recoverForm = this.formBuilder.group({
     email: ['', [Validators.required]],
   });
@@ -39,7 +38,7 @@ export class RecoverComponent {
   ) {}
 
   goLogin() {
-    this.router.navigate(['../login'], { 
+    this.router.navigate(['../login'], {
       relativeTo: this.route,
       queryParamsHandling: 'merge', // Preserve login_challenge
     });
@@ -59,19 +58,17 @@ export class RecoverComponent {
 
   recover(token: string) {
     const recoverInfo = new RecoverData(this.recoverForm.value.email, this.config.getAppName());
-    this.loginService.recover(recoverInfo, token)
-      .subscribe(() => {
-        this.dialog.open(STFConfirmComponent, {
-          width: '420px',
-          data: {
-            title: 'login.check_email',
-            messages: ['login.email_sent', 'recover.verify'],
-            confirmText: 'Ok',
-            onlyConfirm: true,
-            minWidthButtons: '110px'
-          }
-        });
-      }
-    );
+    this.loginService.recover(recoverInfo, token).subscribe(() => {
+      this.dialog.open(STFConfirmComponent, {
+        width: '420px',
+        data: {
+          title: 'login.check_email',
+          messages: ['login.email_sent', 'recover.verify'],
+          confirmText: 'Ok',
+          onlyConfirm: true,
+          minWidthButtons: '110px',
+        },
+      });
+    });
   }
 }

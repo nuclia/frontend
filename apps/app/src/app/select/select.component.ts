@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SimpleAccount } from '@flaps/auth';
+import { SimpleAccount } from '@flaps/core';
 import { SelectService, AccountsKbs } from './select.service';
 import { selectAnimations } from './utils';
 
@@ -11,10 +11,10 @@ import { selectAnimations } from './utils';
   templateUrl: './select.component.html',
   styleUrls: ['./select.component.scss'],
   animations: [selectAnimations],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectComponent implements OnInit, OnDestroy {
-  accounts: SimpleAccount[] | null = null
+  accounts: SimpleAccount[] | null = null;
   kbs: AccountsKbs | null = null;
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();
@@ -23,7 +23,7 @@ export class SelectComponent implements OnInit, OnDestroy {
     private selectService: SelectService,
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {

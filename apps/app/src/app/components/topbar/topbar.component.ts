@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, UserService, SDKService } from '@flaps/auth';
+import { BackendConfigurationService, UserService, SDKService } from '@flaps/core';
 import { ConnectionPositionPair } from '@angular/cdk/overlay';
 import { NavigationService } from '../../services/navigation.service';
 import { filter, map, switchMap, take, tap, distinctUntilKeyChanged } from 'rxjs';

@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { STFTrackingService } from '@flaps/auth';
+import { STFTrackingService } from '@flaps/core';
 import { TranslatePipeMock } from '@flaps/core';
 
 import { STFUsefulComponent } from './useful.component';
@@ -8,21 +8,19 @@ describe('STFUsefulComponent', () => {
   let component: STFUsefulComponent;
   let fixture: ComponentFixture<STFUsefulComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [STFUsefulComponent, TranslatePipeMock],
-        providers: [
-          {
-            provide: STFTrackingService,
-            useValue: {
-              successResult: () => {},
-            },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [STFUsefulComponent, TranslatePipeMock],
+      providers: [
+        {
+          provide: STFTrackingService,
+          useValue: {
+            successResult: () => {},
           },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(STFUsefulComponent);
