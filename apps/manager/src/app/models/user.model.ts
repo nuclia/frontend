@@ -1,14 +1,13 @@
-import { Language, UserType } from '@flaps/auth';
+import { Language, UserType } from '@flaps/core';
 
 export type LoginProvider = 'GOOGLE' | 'APPLE' | 'LOCAL' | 'SAML';
-
 
 export interface User {
   id: string;
   name?: string;
   email: string;
   language?: Language;
-  type: UserType
+  type: UserType;
   providers: LoginProvider[];
   data: { [key: string]: any };
   last_login: string | null;
@@ -19,7 +18,7 @@ export interface UserSummary {
   name: string;
   email: string;
   last_login: string | null;
-  "@id": string;
+  '@id': string;
 }
 
 export interface UserSearch {
@@ -29,7 +28,7 @@ export interface UserSearch {
 }
 
 export interface UserPatch {
-  type?: UserType
+  type?: UserType;
   email?: string;
   language?: Language;
   name?: string;
@@ -50,7 +49,6 @@ export interface UserCreation {
 export interface UserCreated {
   id: string;
 }
-
 
 // Sessions
 

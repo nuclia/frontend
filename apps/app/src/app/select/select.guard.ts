@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SimpleAccount } from '@flaps/auth';
+import { SimpleAccount } from '@flaps/core';
 import { SelectService, AccountsKbs } from './select.service';
 import { NavigationService } from '../services/navigation.service';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',

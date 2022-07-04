@@ -3,7 +3,7 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { UsersService } from '../services/users.service';
 
@@ -13,21 +13,19 @@ describe('DashboardComponent', () => {
   let component: DashboardComponent;
   let fixture: ComponentFixture<DashboardComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [DashboardComponent],
-        imports: [MatDialogModule, RouterTestingModule, MatBottomSheetModule, MatMenuModule],
-        providers: [
-          { provide: UsersService, useValue: { loggedout: () => of() } },
-          {
-            provide: SDKService,
-            useValue: { nuclia: { auth: { getJWTUser: () => {}, hasLoggedOut: () => of(false) } } },
-          },
-        ],
-      }).compileComponents();
-    }),
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [DashboardComponent],
+      imports: [MatDialogModule, RouterTestingModule, MatBottomSheetModule, MatMenuModule],
+      providers: [
+        { provide: UsersService, useValue: { loggedout: () => of() } },
+        {
+          provide: SDKService,
+          useValue: { nuclia: { auth: { getJWTUser: () => {}, hasLoggedOut: () => of(false) } } },
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DashboardComponent);

@@ -4,7 +4,7 @@ import { UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { Router, ActivatedRoute } from '@angular/router';
 import { STFInputComponent } from '@flaps/pastanaga';
-import { LoginService, BackendConfigurationService, ResetData } from '@flaps/auth';
+import { LoginService, BackendConfigurationService, ResetData } from '@flaps/core';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
 import { SamePassword } from '../../validators/form.validator';
 
@@ -12,7 +12,7 @@ import { SamePassword } from '../../validators/form.validator';
   selector: 'stf-reset',
   templateUrl: './reset.component.html',
   styleUrls: ['./reset.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResetComponent {
   @ViewChild('form') form?: NgForm;
@@ -35,7 +35,7 @@ export class ResetComponent {
     passwordConfirm: {
       required: 'validation.required',
       passwordMismatch: 'validation.password_mismatch',
-    }
+    },
   };
 
   constructor(
@@ -57,8 +57,7 @@ export class ResetComponent {
     if (formField === 'passwordConfirm') {
       (this.document.activeElement as HTMLElement).blur(); // Update password confirm before submit
       this.form?.onSubmit({} as Event);
-    }
-    else {
+    } else {
       this.passwordConfirm?.element?.nativeElement.focus();
     }
   }
@@ -77,8 +76,7 @@ export class ResetComponent {
         if (this.oauth) {
           this.passwordRecovered = true;
           this.cdr.markForCheck();
-        }
-        else {
+        } else {
           this.goLogin();
         }
       });
@@ -87,7 +85,7 @@ export class ResetComponent {
 
   goLogin() {
     this.router.navigate(['../login'], {
-      relativeTo: this.route
+      relativeTo: this.route,
     });
   }
 }

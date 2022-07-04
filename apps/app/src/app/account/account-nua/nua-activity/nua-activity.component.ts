@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { ActivatedRoute } from '@angular/router';
 import { combineLatest, filter, map, Observable, Subject, switchMap, take } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { StateService } from '@flaps/auth';
+import { StateService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
 import { Account, NUAClient } from '@nuclia/core';
 import { Activity, NuaActivityService } from './nua-activity.service';

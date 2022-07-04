@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 
 export type AccountsKbs = { [account: string]: IKnowledgeBoxItem[] };

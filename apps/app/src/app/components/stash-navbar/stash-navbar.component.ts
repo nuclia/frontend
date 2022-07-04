@@ -2,12 +2,12 @@ import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@
 import { trigger, animate, style, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, map, shareReplay, of, merge } from 'rxjs';
-import { filter, startWith, takeUntil, switchMapTo } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { AppService } from '../../services/app.service';
 import { NavigationService } from '../../services/navigation.service';
 import { CreateLinkComponent } from '../../upload/create-link/create-link.component';
 import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
-import { STFTrackingService, SDKService, StateService } from '@flaps/auth';
+import { STFTrackingService, SDKService, StateService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({

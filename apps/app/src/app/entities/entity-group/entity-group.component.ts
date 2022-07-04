@@ -12,7 +12,7 @@ import { AppEntitiesGroup, GROUP_COLORS } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
 import { EntitiesSearchService } from '../entities-search.service';
 import { EntitiesService } from '../../services/entities.service';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-entity-group',

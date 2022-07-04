@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslatePipeMock } from '@flaps/core';
-import { SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/core';
 import { HelpBoxesService } from '../../services/help-boxes.service';
 import { AppService } from '../../services/app.service';
 

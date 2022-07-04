@@ -1,16 +1,14 @@
-import { APIService } from '@flaps/auth';
+import { APIService } from '@flaps/core';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
 import { User, UserSummary, UserSearch, UserPatch, UserCreation, UserCreated } from '../models/user.model';
 import { Observable, of } from 'rxjs';
 
 const STF_USER = '/manage/@user';
 const STF_USERS = '/manage/@users';
-const STF_SEARCHUSERS = '/manage/@search_users'
+const STF_SEARCHUSERS = '/manage/@search_users';
 const STF_SEARCHUSERSACCOUNT = '/manage/@search_users_account';
 const STF_SEARCHUSERSSTASH = '/manage/@search_users_stash';
 const STF_RESET = '@reset';
-
 
 @Injectable({
   providedIn: 'root',

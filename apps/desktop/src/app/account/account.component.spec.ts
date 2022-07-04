@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 

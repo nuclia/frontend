@@ -1,6 +1,6 @@
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, Input, OnInit } from '@angular/core';
-import { STFTrackingService } from '@flaps/auth';
+import { STFTrackingService } from '@flaps/core';
 
 @Component({
   selector: 'stf-useful',

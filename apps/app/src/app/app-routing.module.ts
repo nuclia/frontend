@@ -2,7 +2,7 @@ import { NgModule, Component } from '@angular/core';
 import { RouterModule, Routes, ExtraOptions } from '@angular/router';
 
 import { PageNotFoundComponent, PageNotFoundModule } from '@flaps/common';
-import { LoggedinGuard } from '@flaps/auth';
+import { LoggedinGuard } from '@flaps/core';
 
 import { BaseComponent } from './base/base.component';
 import { SelectComponent } from './select/select.component';

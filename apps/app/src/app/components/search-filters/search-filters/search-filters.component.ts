@@ -3,10 +3,10 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CheckboxGroupItem } from '@flaps/common';
-import { StateService } from '@flaps/auth';
+import { StateService } from '@flaps/core';
 import { NavigationService } from '../../../services/navigation.service';
 
-export type FilterType = 'tags' | 'documents' | 'origins' | 'results' | 'tags';
+export type FilterType = 'tags' | 'documents' | 'origins' | 'results';
 export type Order = 'relevance' | 'date';
 
 const PARAM_SEPARATOR = ',';

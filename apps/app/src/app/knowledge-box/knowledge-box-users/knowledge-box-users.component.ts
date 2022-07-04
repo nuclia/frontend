@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { KbUser } from '@flaps/core';
-import { SDKService, StateService } from '@flaps/auth';
+import { SDKService, StateService } from '@flaps/core';
 import { SORTED_KB_ROLES, KB_ROLE_TITLES } from '../utils';
 import { KnowledgeBoxUsersService } from './knowledge-box-users.service';
 import { KBRoles } from '@nuclia/core';
@@ -53,13 +53,12 @@ export class KnowledgeBoxUsersComponent {
       email: this.addForm.value.email,
       role: this.addForm.value.role,
     };
-    this.users
-      .inviteUser(data).subscribe(() => {
-        this.users.updateUsers();
-        this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email }));
-        this.addForm.get('email')?.reset();
-        this.cdr?.markForCheck();
-      });
+    this.users.inviteUser(data).subscribe(() => {
+      this.users.updateUsers();
+      this.toaster.success(this.translate.instant('stash.invited_user', { user: this.addForm.value.email }));
+      this.addForm.get('email')?.reset();
+      this.cdr?.markForCheck();
+    });
   }
 
   changeRole(userId: string, newRole: KBRoles) {

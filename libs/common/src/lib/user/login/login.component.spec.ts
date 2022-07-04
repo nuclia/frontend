@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, GoogleService, OAuthService, SAMLService } from '@flaps/auth';
+import { BackendConfigurationService, GoogleService, OAuthService, SAMLService } from '@flaps/core';
 import { TranslatePipeMock } from '@flaps/core';
 import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,36 +15,34 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [LoginComponent, TranslatePipeMock],
-        imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule, AngularSvgIconModule],
-        providers: [
-          { provide: SAMLService, useValue: { checkDomain: () => of() } },
-          { provide: OAuthService, useValue: { loginUrl: () => {} } },
-          { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
-          { provide: GoogleService, useValue: { getGoogleLoginUrl: () => {} } },
-          { provide: ReCaptchaV3Service, useValue: { execute: () => {} } },
-          {
-            provide: BackendConfigurationService,
-            useValue: {
-              getAPIURL: () => 'key',
-              getRecaptchaKey: () => 'key',
-              getSAMLLogin: () => {},
-              getSocialLogin: () => {},
-              getOAuthLogin: () => false,
-              staticConf: { client: 'dashboard' },
-            },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [LoginComponent, TranslatePipeMock],
+      imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule, AngularSvgIconModule],
+      providers: [
+        { provide: SAMLService, useValue: { checkDomain: () => of() } },
+        { provide: OAuthService, useValue: { loginUrl: () => {} } },
+        { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
+        { provide: GoogleService, useValue: { getGoogleLoginUrl: () => {} } },
+        { provide: ReCaptchaV3Service, useValue: { execute: () => {} } },
+        {
+          provide: BackendConfigurationService,
+          useValue: {
+            getAPIURL: () => 'key',
+            getRecaptchaKey: () => 'key',
+            getSAMLLogin: () => {},
+            getSocialLogin: () => {},
+            getOAuthLogin: () => false,
+            staticConf: { client: 'dashboard' },
           },
-          {
-            provide: TranslateService,
-            useValue: { get: () => of('') },
-          },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+        {
+          provide: TranslateService,
+          useValue: { get: () => of('') },
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);

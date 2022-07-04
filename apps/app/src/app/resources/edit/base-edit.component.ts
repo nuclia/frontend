@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Directive, OnDestroy } from '@angular/core';
+import { Directive, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { Resource } from '@nuclia/core';
 import { combineLatest, switchMap, filter, tap, Subject, startWith, share, takeUntil } from 'rxjs';
 import { AppToasterService } from '../../services/app-toaster.service';

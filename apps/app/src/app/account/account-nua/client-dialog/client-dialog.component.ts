@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { take, filter, map, Observable } from 'rxjs';
 import { Account, NUAClient } from '@nuclia/core';
-import { SDKService, StateService, UserService } from '@flaps/auth';
+import { SDKService, StateService, UserService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
 
 export interface ClientDialogData {

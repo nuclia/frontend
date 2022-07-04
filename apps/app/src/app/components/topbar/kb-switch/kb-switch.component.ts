@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
-import { StateService, SDKService, STFTrackingService } from '@flaps/auth';
+import { StateService, SDKService, STFTrackingService } from '@flaps/core';
 import { IKnowledgeBoxItem, Account } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { NavigationService } from '../../../services/navigation.service';

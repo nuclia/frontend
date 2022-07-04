@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ElementRef, Inject, Renderer2, HostBinding } 
 import { DOCUMENT } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { TourService, IStepOption } from 'ngx-ui-tour-md-menu';
-import { STFTrackingService } from '@flaps/auth';
+import { STFTrackingService } from '@flaps/core';
 
 @Component({
   selector: 'app-help-box',
@@ -21,7 +21,7 @@ export class HelpBoxComponent implements OnInit {
     private elementRef: ElementRef,
     @Inject(DOCUMENT) private document: Document,
     private renderer: Renderer2,
-    private tracking: STFTrackingService
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit(): void {

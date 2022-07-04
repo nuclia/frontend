@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, filter, tap, take, map, catchError, EMPTY } from 'rxjs';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { Labels, LabelSet, LabelSetKind } from '@nuclia/core';
 
 @Injectable({

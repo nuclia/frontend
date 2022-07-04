@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {

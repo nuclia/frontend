@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, take, map, tap } from 'rxjs';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-import { BackendConfigurationService, SDKService } from '@flaps/auth';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
 
 const EMPTY_KB_ALERT = 'NUCLIA_EMPTY_KB_ALERT';
 

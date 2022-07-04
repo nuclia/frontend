@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SDKService, md5 } from '@flaps/auth';
+import { SDKService, md5 } from '@flaps/core';
 import { FileWithMetadata, ICreateResource, UploadStatus } from '@nuclia/core';
 import { forkJoin, startWith, Subject, BehaviorSubject, switchMap, tap, take } from 'rxjs';
 

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 
 @Component({
   selector: 'app-dashboard',

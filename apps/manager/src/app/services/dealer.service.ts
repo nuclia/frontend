@@ -1,4 +1,4 @@
-import { APIService } from '@flaps/auth';
+import { APIService } from '@flaps/core';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Dealer } from '../models/dealer.model';

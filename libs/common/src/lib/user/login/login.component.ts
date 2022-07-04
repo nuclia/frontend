@@ -4,8 +4,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
-import { OAuthService, SAMLService, BackendConfigurationService, GoogleService } from '@flaps/auth';
-import { OAuthErrors, SDKService } from '@flaps/auth';
+import { OAuthService, SAMLService, BackendConfigurationService, GoogleService } from '@flaps/core';
+import { OAuthErrors, SDKService } from '@flaps/core';
 import { STFPasswordInputComponent, STFInputComponent } from '@flaps/pastanaga';
 
 @Component({
@@ -126,7 +126,7 @@ export class LoginComponent implements OnInit {
             const challenge = this.oauth ? this.loginChallenge : undefined;
             this.document.location.href = this.samlService.ssoUrl(result.account_id, challenge);
           },
-          (error) => {
+          () => {
             // Continue
           },
         );

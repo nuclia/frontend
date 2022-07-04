@@ -1,4 +1,4 @@
-import { Language, UserType } from '@flaps/auth';
+import { Language, UserType } from '@flaps/core';
 import { Stash } from './stash.model';
 
 export interface AccountPreferences {}

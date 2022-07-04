@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { StateService, AuthService, MagicAction, SDKService } from '@flaps/auth';
+import { StateService, AuthService, MagicAction, SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',

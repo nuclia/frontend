@@ -1,14 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OAuthService, OAuthConsentData } from '@flaps/auth';
-
+import { OAuthService, OAuthConsentData } from '@flaps/core';
 
 const INVISIBLE_SCOPES = ['offline'];
 
 @Component({
   selector: 'stf-consent',
   templateUrl: './consent.component.html',
-  styleUrls: ['./consent.component.scss']
+  styleUrls: ['./consent.component.scss'],
 })
 export class ConsentComponent implements OnInit {
   consentChallenge: string | null = null;
@@ -16,7 +15,7 @@ export class ConsentComponent implements OnInit {
   error: string | null = null;
   @ViewChild('form') form: ElementRef | undefined;
 
-  constructor(private route: ActivatedRoute, private oAuthService: OAuthService) { }
+  constructor(private route: ActivatedRoute, private oAuthService: OAuthService) {}
 
   ngOnInit(): void {
     const params = this.route.snapshot.queryParamMap;
@@ -26,16 +25,18 @@ export class ConsentComponent implements OnInit {
     }
     this.consentChallenge = params.get('consent_challenge');
     if (this.consentChallenge) {
-      this.oAuthService.getConsentData(this.consentChallenge).subscribe(data => {
-        this.consentData = data;
-        if (this.consentData.skip_consent) {
-          setTimeout(() => this.acceptConsent(), 10);
-        }
-      }, (error) => {
-        this.error = 'login.error.unknown_consent_challenge';
-      });
-    }
-    else {
+      this.oAuthService.getConsentData(this.consentChallenge).subscribe(
+        (data) => {
+          this.consentData = data;
+          if (this.consentData.skip_consent) {
+            setTimeout(() => this.acceptConsent(), 10);
+          }
+        },
+        () => {
+          this.error = 'login.error.unknown_consent_challenge';
+        },
+      );
+    } else {
       this.error = 'login.error.unknown_consent_challenge';
     }
   }
@@ -45,9 +46,7 @@ export class ConsentComponent implements OnInit {
   }
 
   visibleScopes(): string[] {
-    return (this.consentData?.requested_scope || []).filter((scope: string) => 
-      INVISIBLE_SCOPES.indexOf(scope) == -1
-    );
+    return (this.consentData?.requested_scope || []).filter((scope: string) => INVISIBLE_SCOPES.indexOf(scope) == -1);
   }
 
   acceptedScopes(): string {

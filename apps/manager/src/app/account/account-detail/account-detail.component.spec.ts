@@ -4,7 +4,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { AccountService } from '../../services/account.service';
 import { UsersService } from '../../services/users.service';
@@ -16,33 +16,31 @@ describe('AccountDetailComponent', () => {
   let component: AccountDetailComponent;
   let fixture: ComponentFixture<AccountDetailComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [AccountDetailComponent],
-        imports: [RouterTestingModule, ReactiveFormsModule, MatInputModule, MatSelectModule, NoopAnimationsModule],
-        providers: [
-          {
-            provide: AccountService,
-            useValue: {
-              getAccount: () => of(),
-              addAccountUser: () => of(),
-              delAdminStashifyUser: () => of(),
-              setAdminStashifyUser: () => of(),
-              deleteUser: () => of(),
-              edit: () => of(),
-              create: () => of(),
-              createStash: () => of(),
-              startACCampaign: () => of(),
-            },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [AccountDetailComponent],
+      imports: [RouterTestingModule, ReactiveFormsModule, MatInputModule, MatSelectModule, NoopAnimationsModule],
+      providers: [
+        {
+          provide: AccountService,
+          useValue: {
+            getAccount: () => of(),
+            addAccountUser: () => of(),
+            delAdminStashifyUser: () => of(),
+            setAdminStashifyUser: () => of(),
+            deleteUser: () => of(),
+            edit: () => of(),
+            create: () => of(),
+            createStash: () => of(),
+            startACCampaign: () => of(),
           },
-          { provide: UsersService, useValue: { searchUser: () => of([]) } },
-          { provide: ZoneService, useValue: { getZones: () => of([]) } },
-          { provide: SDKService, useValue: { nuclia: { auth: { getJWTUser: () => {} } } } },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+        { provide: UsersService, useValue: { searchUser: () => of([]) } },
+        { provide: ZoneService, useValue: { getZones: () => of([]) } },
+        { provide: SDKService, useValue: { nuclia: { auth: { getJWTUser: () => {} } } } },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AccountDetailComponent);

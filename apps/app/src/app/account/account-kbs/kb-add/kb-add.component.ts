@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SDKService, STFTrackingService } from '@flaps/auth';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { CheckboxGroupItem, Sluggable } from '@flaps/common';
 import { Zone, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
-import { map, share, switchMap } from 'rxjs';
+import { map, share } from 'rxjs';
 import * as Sentry from '@sentry/angular';
 
 export interface KbAddData {

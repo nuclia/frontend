@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from '@flaps/auth';
+import { SDKService } from '@flaps/core';
 import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { catchError, shareReplay, switchMap, take } from 'rxjs/operators';
 import { EventList, ResourceProperties } from '@nuclia/core';

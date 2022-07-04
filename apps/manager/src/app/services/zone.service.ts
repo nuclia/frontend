@@ -1,12 +1,10 @@
-import { APIService } from '@flaps/auth';
+import { APIService } from '@flaps/core';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ZoneAdd, Zone, ZoneSummary, ZonePatch } from '../models/zone.model';
 
-
 const STF_ZONES = '/manage/@zones';
 const STF_ZONE = '/manage/@zone';
-
 
 @Injectable({
   providedIn: 'root',

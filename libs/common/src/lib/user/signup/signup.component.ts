@@ -5,18 +5,16 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { STFConfirmComponent } from '@flaps/components'
+import { STFConfirmComponent } from '@flaps/components';
 import { STFInputComponent } from '@flaps/pastanaga';
-import { LoginService, SignupData, BackendConfigurationService } from '@flaps/auth';
-
+import { LoginService, SignupData, BackendConfigurationService } from '@flaps/core';
 
 @Component({
   selector: 'stf-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss']
+  styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent implements OnInit, OnDestroy {
-
   // TODO: convert checkboxes into standard form fields
   acceptedConditions: boolean = false;
   acceptedPrivacy: boolean = false;
@@ -33,7 +31,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     email: {
       required: 'validation.required',
       email: 'validation.email',
-    }
+    },
   };
 
   emailAlreadyExists: boolean = false;
@@ -50,16 +48,16 @@ export class SignupComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
   ) {
     const emailControl = this.signupForm.controls['email'];
-    emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe( ()=> {
+    emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       if (this.emailAlreadyExists) {
         this.emailAlreadyExists = false;
       }
-    })
+    });
   }
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParams.token;
-    if (token)  {
+    if (token) {
       // Token is set when coming from confirmation email link
       this.router.navigate(['../magic'], {
         relativeTo: this.route,
@@ -79,7 +77,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   submit() {
     if (!this.signupForm.valid) return;
     if (!this.acceptedConditions || !this.acceptedPrivacy) return;
-    
+
     this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'login', (token) => {
       this.signup(token);
     });
@@ -89,15 +87,14 @@ export class SignupComponent implements OnInit, OnDestroy {
     const signupData: SignupData = {
       name: this.signupForm.value.username,
       email: this.signupForm.value.email,
-    }
-    this.loginService.signup(signupData, token).subscribe(response => {
+    };
+    this.loginService.signup(signupData, token).subscribe((response) => {
       if (response.action === 'check-mail') {
         this.showConfirmation();
-      }
-      else if (response.action === 'user-exists') {
+      } else if (response.action === 'user-exists') {
         this.emailAlreadyExists = true;
       }
-    })
+    });
   }
 
   showConfirmation() {
@@ -108,8 +105,8 @@ export class SignupComponent implements OnInit, OnDestroy {
         messages: ['login.email_sent', 'login.validate_and_explore'],
         confirmText: 'Ok',
         onlyConfirm: true,
-        minWidthButtons: '110px'
-      }
+        minWidthButtons: '110px',
+      },
     });
     dialogRef
       .afterClosed()

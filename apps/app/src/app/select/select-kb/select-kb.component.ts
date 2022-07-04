@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, filter, map, switchMap, share } from 'rxjs/operators';
-import { SimpleAccount, SDKService } from '@flaps/auth';
+import { SimpleAccount, SDKService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { SelectService } from '../select.service';
 import { Sluggable } from '@flaps/common';

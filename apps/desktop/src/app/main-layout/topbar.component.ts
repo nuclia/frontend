@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService, StateService, SDKService } from '@flaps/auth';
+import { UserService, StateService, SDKService } from '@flaps/core';
 import { map } from 'rxjs';
 import { stfAnimations } from '@flaps/pastanaga';
 

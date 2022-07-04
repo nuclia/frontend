@@ -4,17 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap, shareReplay } from 'rxjs/operators';
-import {
-  Account,
-  IKnowledgeBox,
-  KBStates,
-  KnowledgeBoxCreation,
-  WritableKnowledgeBox,
-  IKnowledgeBoxItem,
-} from '@nuclia/core';
+import { Account, KBStates, WritableKnowledgeBox, IKnowledgeBoxItem } from '@nuclia/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { Zone, ZoneService } from '@flaps/core';
-import { STFTrackingService, StateService, SDKService } from '@flaps/auth';
+import { STFTrackingService, StateService, SDKService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
 import { AppToasterService } from '../../services/app-toaster.service';

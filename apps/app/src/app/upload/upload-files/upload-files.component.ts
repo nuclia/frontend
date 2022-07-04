@@ -2,7 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
-import { STFTrackingService, StateService } from '@flaps/auth';
+import { STFTrackingService, StateService } from '@flaps/core';
 import { STFUtils } from '@flaps/core';
 import { FileWithMetadata, ICreateResource, LabelValue } from '@nuclia/core';
 import { UploadService, FILES_TO_IGNORE } from '../upload.service';
