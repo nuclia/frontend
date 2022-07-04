@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { APIService } from './api.service';
+import { DeprecatedApiService } from './deprecated-api.service';
 import { AuthTokens } from '../models';
 import { BackendConfigurationService } from '../config';
 
@@ -8,7 +8,7 @@ import { BackendConfigurationService } from '../config';
   providedIn: 'root',
 })
 export class GoogleService {
-  constructor(private api: APIService, private config: BackendConfigurationService) {}
+  constructor(private api: DeprecatedApiService, private config: BackendConfigurationService) {}
 
   getGoogleLoginUrl(): string {
     return this.config.getAPIURL() + `/auth/google/authorize`;

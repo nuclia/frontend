@@ -1,4 +1,4 @@
-export * from './api.service';
+export * from './deprecated-api.service';
 export * from './google.service';
 export * from './sdk.service';
 export * from './user.service';

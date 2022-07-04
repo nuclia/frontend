@@ -1,4 +1,4 @@
-import { APIService } from '@flaps/core';
+import { DeprecatedApiService } from '@flaps/core';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ZoneAdd, Zone, ZoneSummary, ZonePatch } from '../models/zone.model';
@@ -10,7 +10,7 @@ const STF_ZONE = '/manage/@zone';
   providedIn: 'root',
 })
 export class ZoneService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getZones(): Observable<ZoneSummary[]> {
     return this.api.get(STF_ZONES, true, undefined, true);

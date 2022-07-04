@@ -1,4 +1,4 @@
-import { APIService } from '@flaps/core';
+import { DeprecatedApiService } from '@flaps/core';
 import { Injectable } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { Dealer } from '../models/dealer.model';
@@ -10,7 +10,7 @@ const STF_DEALER = '/@dealer';
   providedIn: 'root',
 })
 export class DealerService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getDealer(id: string | null): Observable<Dealer | null> {
     if (id) {

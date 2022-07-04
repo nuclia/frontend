@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
-import { APIService } from '../api';
+import { DeprecatedApiService } from '../api';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
@@ -23,7 +23,11 @@ export class GetFilePipe implements PipeTransform, OnDestroy {
   private result = this._result.asObservable();
   private _internalSubscription: Subscription | undefined;
 
-  constructor(private _ref: ChangeDetectorRef, private apiService: APIService, private sanitizer: DomSanitizer) {
+  constructor(
+    private _ref: ChangeDetectorRef,
+    private apiService: DeprecatedApiService,
+    private sanitizer: DomSanitizer,
+  ) {
     this._obj = null;
   }
 

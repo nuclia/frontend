@@ -11,7 +11,7 @@ import { SDKService } from './sdk.service';
 @Injectable({
   providedIn: 'root',
 })
-export class APIService {
+export class DeprecatedApiService {
   constructor(private http: HttpClient, private config: BackendConfigurationService, private sdk: SDKService) {}
 
   createHeaders(auth = true): HttpHeaders {

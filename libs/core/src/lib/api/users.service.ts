@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { APIService } from './api.service';
+import { DeprecatedApiService } from './deprecated-api.service';
 import { AccountUser, SetUsersAccount, InviteAccountData, KbUser, InviteKbData, SetUsersKb, User } from '../models';
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ const ACCOUNT = 'account';
   providedIn: 'root',
 })
 export class UsersService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getAccountUser(slug: string, id: string): Observable<Partial<User>> {
     return this.api.get(`/${VERSION}/${ACCOUNT}/${slug}/user/${id}`, true, undefined, true);

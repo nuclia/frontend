@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, NavigationStart } from '@angular/router';
-import { APIService, SDKService } from '../api';
+import { DeprecatedApiService, SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
 import posthog from 'posthog-js';
 import { filter, Observable } from 'rxjs';
@@ -13,7 +13,11 @@ export class STFTrackingService {
   splashScreenEl: any;
   isBrowser = false;
 
-  constructor(private config: BackendConfigurationService, private apiService: APIService, private sdk: SDKService) {
+  constructor(
+    private config: BackendConfigurationService,
+    private apiService: DeprecatedApiService,
+    private sdk: SDKService,
+  ) {
     this.sdk.nuclia.auth
       .isAuthenticated()
       .pipe(filter((yes) => yes))
@@ -68,7 +72,7 @@ export class STFTrackingService {
 
     this.apiService
       .get(resource + '/@feedback?' + success + '=' + search_query, true, undefined, true)
-      .subscribe((res) => {});
+      .subscribe(() => {});
   }
 
   isFeatureEnabled(feature: string): Observable<boolean> {

@@ -1,4 +1,4 @@
-import { APIService } from '@flaps/core';
+import { DeprecatedApiService } from '@flaps/core';
 import { Injectable } from '@angular/core';
 import { User, UserSummary, UserSearch, UserPatch, UserCreation, UserCreated } from '../models/user.model';
 import { Observable, of } from 'rxjs';
@@ -14,7 +14,7 @@ const STF_RESET = '@reset';
   providedIn: 'root',
 })
 export class UsersService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getUser(userId: string): Observable<User> {
     return this.api.get(STF_USER + '/' + userId, true, undefined, true);

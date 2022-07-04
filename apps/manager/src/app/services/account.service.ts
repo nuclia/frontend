@@ -1,4 +1,4 @@
-import { APIService } from '@flaps/core';
+import { DeprecatedApiService } from '@flaps/core';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
@@ -29,7 +29,7 @@ const STF_AC = '@ac';
   providedIn: 'root',
 })
 export class AccountService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getAccounts(): Observable<AccountSummary[]> {
     return this.api.get(STF_ACCOUNTS, true, undefined, true);

@@ -12,7 +12,7 @@ import {
   User,
   SetUserPreferences,
 } from '../models';
-import { APIService } from '../api';
+import { DeprecatedApiService } from '../api';
 import { BackendConfigurationService } from '../config';
 import { Welcome } from '@nuclia/core';
 
@@ -27,7 +27,7 @@ const STF_RESET = '/@reset';
   providedIn: 'root',
 })
 export class LoginService {
-  constructor(private config: BackendConfigurationService, private api: APIService) {}
+  constructor(private config: BackendConfigurationService, private api: DeprecatedApiService) {}
 
   login(data: LoginData, token: string): Observable<AuthTokens> {
     const headers = [['X-STF-VALIDATION', token]];

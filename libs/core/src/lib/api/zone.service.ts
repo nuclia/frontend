@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { APIService } from './api.service';
+import { DeprecatedApiService } from './deprecated-api.service';
 import { Zone } from '../models';
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ const ZONES = 'zones';
   providedIn: 'root',
 })
 export class ZoneService {
-  constructor(private api: APIService) {}
+  constructor(private api: DeprecatedApiService) {}
 
   getZones(): Observable<Zone[]> {
     return this.api.get(`/${VERSION}/${ZONES}`, true, undefined, true);
