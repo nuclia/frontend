@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { BackendConfigurationService } from '../config';
+import { BackendConfigurationService } from '../../config';
 
 @Pipe({
   name: 'assetUrl',

@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
-import { DeprecatedApiService } from '../api';
+import { DeprecatedApiService } from '../../api';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';
