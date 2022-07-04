@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import * as Sentry from '@sentry/angular';
 import { Integrations } from '@sentry/tracing';
 
-export type EnviromentConfiguration = {
+export type EnvironmentConfiguration = {
   version: string;
   backend: {
     app: string;
@@ -26,7 +26,7 @@ export type EnviromentConfiguration = {
   graphql: string | undefined;
 };
 
-export type StaticEnviromentConfiguration = {
+export type StaticEnvironmentConfiguration = {
   production: boolean;
   client: string;
   backend: {
@@ -85,7 +85,7 @@ export class AppInitService {
     );
   }
 
-  public getConfig(): EnviromentConfiguration {
+  public getConfig(): EnvironmentConfiguration {
     return window.config;
   }
 }

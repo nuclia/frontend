@@ -1,18 +1,18 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
 import { PlatformLocation } from '@angular/common';
-import { AppInitService, EnviromentConfiguration, StaticEnviromentConfiguration } from './app.init.service';
+import { AppInitService, EnvironmentConfiguration, StaticEnvironmentConfiguration } from './app.init.service';
 import posthog from 'posthog-js';
 import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class BackendConfigurationService {
-  private config: EnviromentConfiguration;
-  staticConf: StaticEnviromentConfiguration;
+  private config: EnvironmentConfiguration;
+  staticConf: StaticEnvironmentConfiguration;
   isBrowser = false;
 
   constructor(
-    @Inject('staticEnviromentConfiguration') private enviromentConf: StaticEnviromentConfiguration,
+    @Inject('staticEnviromentConfiguration') private enviromentConf: StaticEnvironmentConfiguration,
     private apiConfig: AppInitService,
     public platformLocation: PlatformLocation,
     @Inject(PLATFORM_ID) platformId: any,
