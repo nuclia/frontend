@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthTokens } from '@nuclia/core';
-import { SDKService } from '../sdk.service';
+import { SDKService } from '../api';
 
 @Injectable({
   providedIn: 'root',

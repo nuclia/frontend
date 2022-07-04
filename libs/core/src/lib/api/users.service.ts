@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { APIService, User } from '@flaps/auth';
-import { AccountUser, SetUsersAccount, InviteAccountData, KbUser, InviteKbData, SetUsersKb } from '../models/users.model';
+import { APIService } from './api.service';
+import { AccountUser, SetUsersAccount, InviteAccountData, KbUser, InviteKbData, SetUsersKb, User } from '../models';
 import { Observable } from 'rxjs';
 
 const VERSION = 'v1';

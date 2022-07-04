@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, NavigationStart } from '@angular/router';
-import { APIService } from './api.service';
-import { BackendConfigurationService } from './backend-config.service';
+import { APIService, SDKService } from '../api';
+import { BackendConfigurationService } from '../config';
 import posthog from 'posthog-js';
 import { filter, Observable } from 'rxjs';
-import { SDKService } from './sdk.service';
 
 const STATUS_ALERT = 'NUCLIA_STATUS_ALERT';
 @Injectable({

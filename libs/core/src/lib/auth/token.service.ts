@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { APIService } from '../api.service';
-import { BackendConfigurationService } from '../backend-config.service';
-import { MagicAction } from '../models/magic.model';
-
+import { APIService } from '../api';
+import { BackendConfigurationService } from '../config';
+import { MagicAction } from '../models';
 
 const AUTH = 'auth';
 const MAGIC = 'magic';

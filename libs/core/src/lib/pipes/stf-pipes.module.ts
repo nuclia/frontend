@@ -1,4 +1,3 @@
-
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -13,7 +12,7 @@ import { GetFilePipe } from './get-file.pipe';
 import { FilterPipe } from './filter.pipe';
 import { TimeAgoDatePipe } from './time-ago-date.pipe';
 import { AssetUrlPipe } from './asset-url.pipe';
-import { SanitizeTagsPipe, TrimPipe } from './';
+import { SanitizeTagsPipe, TrimPipe } from './index';
 
 const PIPES = [
   BoldPipe,
@@ -36,5 +35,4 @@ const PIPES = [
   imports: [CommonModule],
   exports: [...PIPES],
 })
-
 export class STFPipesModule {}

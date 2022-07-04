@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
-import { APIService } from '../api.service';
+import { APIService } from '../api';
 import { Subscription } from 'rxjs';
 import { Observable } from 'rxjs';
 import { BehaviorSubject } from 'rxjs';

@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginData, RecoverData, AuthTokens } from '../models';
 import {
+  LoginData,
+  RecoverData,
+  AuthTokens,
   SignupData,
   SignupResponse,
   ResetData,
@@ -10,8 +12,8 @@ import {
   User,
   SetUserPreferences,
 } from '../models';
-import { APIService } from '../api.service';
-import { BackendConfigurationService } from '../backend-config.service';
+import { APIService } from '../api';
+import { BackendConfigurationService } from '../config';
 import { Welcome } from '@nuclia/core';
 
 const VERSION = 'v1';

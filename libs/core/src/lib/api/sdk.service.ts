@@ -14,8 +14,8 @@ import {
   ReplaySubject,
   BehaviorSubject,
 } from 'rxjs';
-import { BackendConfigurationService } from './backend-config.service';
-import { StateService } from './state.service';
+import { BackendConfigurationService } from '../config';
+import { StateService } from '../state.service';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {

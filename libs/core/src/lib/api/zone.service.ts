@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { APIService } from '@flaps/auth';
-import { Zone } from '../models/zone.model';
-import { Observable, of } from 'rxjs';
+import { APIService } from './api.service';
+import { Zone } from '../models';
+import { Observable } from 'rxjs';
 
 const VERSION = 'v1';
 const ZONES = 'zones';

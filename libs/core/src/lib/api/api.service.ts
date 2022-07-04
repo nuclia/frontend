@@ -2,15 +2,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { BackendConfigurationService } from './backend-config.service';
+import { BackendConfigurationService } from '../config';
 import { SDKService } from './sdk.service';
 
-@Injectable({
-  providedIn: 'root',
-})
 /**
  * @deprecated Use the SDKService instead
  */
+@Injectable({
+  providedIn: 'root',
+})
 export class APIService {
   constructor(private http: HttpClient, private config: BackendConfigurationService, private sdk: SDKService) {}
 

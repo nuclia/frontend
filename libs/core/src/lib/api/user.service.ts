@@ -1,5 +1,5 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, catchError, filter, forkJoin, throwError, map, Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, Observable, of, switchMap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Welcome } from '@nuclia/core';
 import { SDKService } from './sdk.service';
