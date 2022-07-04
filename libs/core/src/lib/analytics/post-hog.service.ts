@@ -35,6 +35,15 @@ export class PostHogService {
     });
   }
 
+  getFeatureFlag(feature: string): Observable<string | boolean | undefined> {
+    return new Observable((observer) => {
+      posthog.onFeatureFlags(() => {
+        observer.next(posthog.getFeatureFlag(feature, { send_event: false }));
+        observer.complete();
+      });
+    });
+  }
+
   getEnabledFeatures(): Observable<string[]> {
     return new Observable<string[]>((observer) => {
       posthog.onFeatureFlags((flags) => {

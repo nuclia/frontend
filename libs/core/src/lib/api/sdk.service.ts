@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { BackendConfigurationService } from '../config';
 import { StateService } from '../state.service';
+import { PostHogService } from '../analytics';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
@@ -39,7 +40,11 @@ export class SDKService {
     return this._isKbLoaded;
   }
 
-  constructor(private config: BackendConfigurationService, private stateService: StateService) {
+  constructor(
+    private config: BackendConfigurationService,
+    private stateService: StateService,
+    private postHogService: PostHogService,
+  ) {
     combineLatest([this.stateService.stash, this.stateService.account])
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
@@ -90,13 +95,16 @@ export class SDKService {
   }
 
   getDemoKb(): Observable<WritableKnowledgeBox> {
-    return of(
-      new WritableKnowledgeBox(this.nuclia, this.stateService.getAccount()?.slug || '', {
-        id: this.config.staticConf.demoKb,
-        zone: 'europe-1',
-        slug: this.DEMO_SLUG,
-        title: 'Demo',
-      }),
+    return this.postHogService.getFeatureFlag('demo-kb-id').pipe(
+      map(
+        (kbId) =>
+          new WritableKnowledgeBox(this.nuclia, this.stateService.getAccount()?.slug || '', {
+            id: kbId as string,
+            zone: 'europe-1',
+            slug: this.DEMO_SLUG,
+            title: 'Demo',
+          }),
+      ),
     );
   }
 
