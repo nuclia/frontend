@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core';
 import { NavigationEnd, NavigationStart } from '@angular/router';
 import { DeprecatedApiService, SDKService } from '../api';
 import { BackendConfigurationService } from '../config';
-import posthog from 'posthog-js';
 import { filter, Observable } from 'rxjs';
+import { PostHogService } from './post-hog.service';
 
 const STATUS_ALERT = 'NUCLIA_STATUS_ALERT';
 @Injectable({
   providedIn: 'root',
 })
 export class STFTrackingService {
-  splashScreenEl: any;
   isBrowser = false;
 
   constructor(
     private config: BackendConfigurationService,
     private apiService: DeprecatedApiService,
     private sdk: SDKService,
+    private postHogService: PostHogService,
   ) {
     this.sdk.nuclia.auth
       .isAuthenticated()
@@ -33,39 +33,39 @@ export class STFTrackingService {
     }
   }
 
+  /**
+   * Log event in PostHog by calling `postHogService.logEvent`.
+   * Kept for backward compatibility.
+   * @param event
+   * @param properties
+   */
   logEvent(event: string, properties?: { [key: string]: string }) {
-    if (!this.config.isBrowser) return;
-    posthog.capture(event, properties);
+    this.postHogService.logEvent(event, properties);
   }
 
   navigation(event: NavigationEnd | NavigationStart) {
-    if (!this.config.isBrowser) return;
     if (this.sdk.nuclia.auth.getJWTUser()) {
-      posthog.capture('visited', {
+      this.postHogService.logEvent('visited', {
         page_path: event.url,
       });
     } else {
-      posthog.capture('public', {
+      this.postHogService.logEvent('public', {
         page_path: event.url,
       });
     }
   }
 
-  login(user: string) {
-    if (!this.config.isBrowser) return;
-    posthog.identify(user);
-    // Set email or any other data
-    posthog.people.set({ email: user });
+  login(email: string) {
+    this.postHogService.init(email);
   }
 
   logout() {
-    if (!this.config.isBrowser) return;
-    posthog.reset(true);
+    this.postHogService.reset();
   }
 
   successResult(search_query: string, success: string, resource: string | undefined) {
     if (!this.config.isBrowser) return;
-    posthog.capture('success', {
+    this.postHogService.logEvent('success', {
       search_query: search_query,
       success: success,
     });
@@ -75,22 +75,19 @@ export class STFTrackingService {
       .subscribe(() => {});
   }
 
+  /**
+   * Return an observable emitting true if the corresponding feature is enabled in postHog.
+   * @param feature
+   */
   isFeatureEnabled(feature: string): Observable<boolean> {
-    return new Observable<boolean>((observer) => {
-      posthog.onFeatureFlags(() => {
-        observer.next(posthog.isFeatureEnabled(feature, { send_event: false }));
-        observer.complete();
-      });
-    });
+    return this.postHogService.isFeatureEnabled(feature);
   }
 
+  /**
+   * Return the list of flags enabled in PostHog.
+   */
   getEnabledFeatures(): Observable<string[]> {
-    return new Observable<string[]>((observer) => {
-      posthog.onFeatureFlags((flags) => {
-        observer.next(flags);
-        observer.complete();
-      });
-    });
+    return this.postHogService.getEnabledFeatures();
   }
 
   getStatusAlert(): Observable<string> {
