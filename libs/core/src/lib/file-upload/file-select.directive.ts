@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, HostListener, Output, EventEmitter } from '@angular/core';
+import { Directive, ElementRef, HostListener, Output, EventEmitter } from '@angular/core';
 
 // todo: filters
 
