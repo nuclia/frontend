@@ -180,7 +180,7 @@ export class Db implements IDb {
     }
     return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, payload).pipe(
       catchError((err) => {
-        if (err.status === 409) {
+        if (err.status === 409 && data.client_id) {
           return this.renewNUAClient(account, data.client_id);
         } else {
           throw err;
