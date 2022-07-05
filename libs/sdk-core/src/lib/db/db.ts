@@ -1,4 +1,4 @@
-import { filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { INuclia, IDb } from '../models';
 import {
   Account,
@@ -179,6 +179,13 @@ export class Db implements IDb {
       delete payload.webhook;
     }
     return this.nuclia.rest.post<{ client_id: string; token: string }>(`/account/${account}/nua_clients`, payload).pipe(
+      catchError((err) => {
+        if (err.status === 409 && data.client_id) {
+          return this.renewNUAClient(account, data.client_id);
+        } else {
+          throw err;
+        }
+      }),
       tap((key) => {
         localStorage.setItem(NUA_KEY, key.token);
         localStorage.setItem(NUA_CLIENT, key.client_id);
