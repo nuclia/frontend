@@ -1,0 +1,35 @@
+<pa-demo-page>
+  <pa-demo-title>Toast</pa-demo-title>
+  <pa-demo-description>
+    <p>Sistema provides a system for displaying toast messages simply by calling <code>SisToastService</code>. This service is based on Pastanaga <code>ToastService</code>.</p>
+    <p>Sistema toasts are displayed with a title, an icon on the left, and a close button on the right. The title and icon depends on the toast type:</p>
+    <ul>
+      <li><strong>info</strong>: neutral toast with "Information" title and an info icon. Closing automatically after 5 seconds.</li>
+      <li><strong>success</strong>: neutral toast with "Success" title and a circle-check icon. Closing automatically after 5 seconds.</li>
+      <li><strong>warning</strong>: black toast with "Warning" title and a warning icon. Stay open until the user clicks on the button.</li>
+      <li><strong>error</strong>: destructive toast with "Error" title and a circle-cross icon. Stay open until the user clicks on the button.</li>
+    </ul>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <pa-button kind="primary" (click)="openToast()">Display toast</pa-button>
+  </pa-demo-examples>
+  <pa-demo-configuration>
+    <div class="pa-demo-configuration-field">
+      <pa-select label="Toast type" [(ngModel)]="selectedType">
+        <pa-option value="info">Info</pa-option>
+        <pa-option value="success">Success</pa-option>
+        <pa-option value="warning">Warning</pa-option>
+        <pa-option value="error">Error</pa-option>
+      </pa-select>
+    </div>
+  </pa-demo-configuration>
+
+  <pa-demo-usage>
+    <p>Make sure to import <code>PaToastModule</code> in your application, and then use <code>SisToastService</code> to display toasts.</p>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <pre><code>{{code}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

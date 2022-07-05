@@ -34,7 +34,6 @@ import {
   TableSortableHeaderPageComponent,
   TabsPageComponent,
   TextareaPageComponent,
-  ToastPageComponent,
   TogglePageComponent,
   TooltipPageComponent,
   TranslatePageComponent,
@@ -47,6 +46,7 @@ import { SistemaScrollbarComponent } from './sistema-pages/sistema-scrollbar/sis
 import { SistemaLabelComponent } from './sistema-pages/sistema-label/sistema-label.component';
 import { SistemaModalComponent } from './sistema-pages/sistema-modal';
 import { SistemaButtonsComponent } from './sistema-pages/sistema-buttons/sistema-buttons.component';
+import { SistemaToastComponent } from './sistema-pages/sistema-toasts/sistema-toast.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -85,7 +85,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'popover', title: 'Popover', type: PopoverPageComponent },
       { view: 'sidenav', title: 'Sidenav', type: SidenavPageComponent },
       { view: 'tabs', title: 'Tabs', type: TabsPageComponent },
-      { view: 'toast', title: 'Toast', type: ToastPageComponent },
+      { view: 'toast', title: 'Toast', type: SistemaToastComponent },
       { view: 'tooltip', title: 'Tooltip', type: TooltipPageComponent },
       { view: 'tooltip-ellipsis', title: 'Ellipsis tooltip', type: EllipsisTooltipPageComponent },
     ],

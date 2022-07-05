@@ -1,5 +1,9 @@
 @import "./palette.tokens";
+@import "../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens";
 
+//=====================================
+// COLORS
+//=====================================
 $background-toast-error: $color-secondary-regular;
 $color-toast-error: $color-dark-stronger;
 
@@ -12,3 +16,16 @@ $color-toast-info: $color-dark-stronger;
 $background-toast-success: $color-neutral-lighter;
 $color-toast-success: $color-dark-stronger;
 
+$background-toast-button-info-hover: rgba($color-dark-stronger, 0.15);
+$background-toast-button-success-hover: rgba($color-dark-stronger, 0.15);
+$background-toast-button-error-hover: rgba($color-dark-stronger, 0.15);
+
+$background-toast-button-info-active: rgba($color-dark-stronger, 0.25);
+$background-toast-button-success-active: rgba($color-dark-stronger, 0.25);
+$background-toast-button-error-active: rgba($color-dark-stronger, 0.25);
+
+//=====================================
+// SPACING
+//=====================================
+$min-width-toast: rhythm(56);
+$padding-toast: rhythm(1) rhythm(1) rhythm(1) rhythm(2);
