@@ -1,7 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36">
-  <g fill-rule="evenodd">
-    <path d="M7,23 L23,23 L23,21 L7,21 L7,23 Z M7,19 L23,19 L23,7 L7,7 L7,19 Z M5,25 L25,25 L25,5 L5,5 L5,25 Z"/>
-    <polygon points="13.021 11.979 15.843 16.681 17.91 14.357 20.183 17.578 21.817 16.422 18.09 11.143 16.157 13.319 12.979 8.021 8.132 16.503 9.868 17.497"/>
-    <polygon points="27 9 27 11 29 11 29 29 11 29 11 27 9 27 9 31 31 31 31 9"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <path fill-rule="evenodd" d="M4.667 15.333h10.666V14H4.667v1.333Zm0-2.666h10.666v-8H4.667v8Zm-1.334 4h13.334V3.333H3.333v13.334Z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="m8.68 7.986 1.882 3.135 1.378-1.55 1.515 2.148 1.09-.771-2.485-3.52-1.289 1.451-2.118-3.532-3.232 5.655 1.158.662L8.68 7.987Z" clip-rule="evenodd"/>
+  <path fill-rule="evenodd" d="M18 6v1.333h1.333v12h-12V18H6v2.667h14.667V6H18Z" clip-rule="evenodd"/>
 </svg>
