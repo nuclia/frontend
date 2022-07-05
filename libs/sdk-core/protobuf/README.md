@@ -18,7 +18,7 @@ yarn add @nuclia/protobuf
 
 ## Usage
 
-When using a [webhook with the Nuclia Understanding API](https://docs.nuclia.dev/docs/understanding/intro#use-a-webhook), the posted message is directly a protobuffer message. It can be decoded using the NucliaProtobufConverter.
+When using a [webhook with the Nuclia Understanding API](https://docs.nuclia.dev/docs/understanding/intro#use-a-webhook), the message sent to the webhook is a protobuffer message. It can be decoded using the NucliaProtobufConverter.
 
 ```js
 import { NucliaProtobufConverter } from '@nuclia/protobuf';
@@ -30,7 +30,7 @@ router.post('/handle', (request, response) => {
 });
 ```
 
-When calling the [Nuclia Understanding API `/pull` endpoint](https://docs.nuclia.dev/docs/api#operation/Get_processed_data_processing_pull_get), you get a JSOn message containing a `payload` entry with base64 encoded protobuffer message. Processing it could be done as follows:
+When calling [Nuclia Understanding API `/pull` endpoint](https://docs.nuclia.dev/docs/api#operation/Get_processed_data_processing_pull_get), you get a JSON message containing a `payload` entry with base64 encoded protobuffer message. Processing it could be done as follows:
 
 ```js
 import { NucliaProtobufConverter } from '@nuclia/protobuf';
