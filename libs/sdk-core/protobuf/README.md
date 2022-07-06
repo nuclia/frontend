@@ -6,7 +6,7 @@ JavaScript utility to handle Nuclia protobuffer messages.
 
 - `NucliaProtobufConverter` is a function accepting a buffer and returning a Promise that resolves to a parsed protobuffer message.
 
-- `extractParagraphTexts` is function adding to each Paragraph object a `text` attribute containing the actual text of the paragraph (by default, Paragraph objects only contain the position of their first and last characters).
+- `extractParagraphTexts` is a function adding to each Paragraph object a `text` attribute containing the actual text of the paragraph (by default, Paragraph objects only contain the position of their first and last characters).
 
 ## Installation
 

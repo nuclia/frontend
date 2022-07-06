@@ -39,7 +39,9 @@ export const extractParagraphTexts = (payload) => ({
                 ...field.metadata.metadata,
                 paragraphs: field.metadata.metadata.paragraphs?.map((paragraph) => ({
                   ...paragraph,
-                  text: payload.extractedText[index]?.body?.text?.slice(paragraph.start || 0, paragraph.end).trim(),
+                  text: payload.extractedText
+                    ? payload.extractedText[index]?.body?.text?.slice(paragraph.start || 0, paragraph.end).trim()
+                    : undefined,
                 })),
               }
             : undefined,
