@@ -28,4 +28,6 @@ $background-toast-button-error-active: rgba($color-dark-stronger, 0.25);
 // SPACING
 //=====================================
 $min-width-toast: rhythm(56);
-$padding-toast: rhythm(1) rhythm(1) rhythm(1) rhythm(2);
+
+$padding-toast: rhythm(1.5) rhythm(2);
+$padding-toast-with-button: rhythm(1) rhythm(1) rhythm(1) rhythm(2);
