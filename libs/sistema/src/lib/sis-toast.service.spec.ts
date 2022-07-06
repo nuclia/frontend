@@ -17,17 +17,17 @@ describe('SisToastService', () => {
   });
 
   it('should open info toast', () => {
-    service.openInfo(message);
+    service.info(message);
     expect(mockToastService.openInfo).toHaveBeenCalledWith(message, { title: 'Information', icon: 'info' });
   });
 
   it('should open success toast', () => {
-    service.openSuccess(message);
+    service.success(message);
     expect(mockToastService.openSuccess).toHaveBeenCalledWith(message, { title: 'Success', icon: 'circle-check' });
   });
 
   it('should open warning toast', () => {
-    service.openWarning(message);
+    service.warning(message);
     expect(mockToastService.openWarning).toHaveBeenCalledWith(message, {
       title: 'Warning',
       icon: 'warning',
@@ -36,7 +36,7 @@ describe('SisToastService', () => {
   });
 
   it('should open error toast', () => {
-    service.openError(message);
+    service.error(message);
     expect(mockToastService.openError).toHaveBeenCalledWith(message, {
       title: 'Error',
       icon: 'circle-cross',

@@ -5,9 +5,9 @@ import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
 import { KBStates, StatsPeriod, StatsType } from '@nuclia/core';
 import { filter, map, Observable, share, switchMap, combineLatest, take } from 'rxjs';
-import { AppToasterService } from '../../services/app-toaster.service';
 import { AppService } from '../../services/app.service';
 import { HelpBoxesService } from '../../services/help-boxes.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -86,7 +86,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     private stateService: StateService,
     private translate: TranslatePipe,
     private dialog: MatDialog,
-    private toaster: AppToasterService,
+    private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 

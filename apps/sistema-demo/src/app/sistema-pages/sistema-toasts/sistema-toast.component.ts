@@ -26,16 +26,16 @@ this.toaster.openError(message);`;
   private _openToast(message: string) {
     switch (this.selectedType) {
       case 'info':
-        this.toaster.openInfo(message);
+        this.toaster.info(message);
         break;
       case 'success':
-        this.toaster.openSuccess(message);
+        this.toaster.success(message);
         break;
       case 'warning':
-        this.toaster.openWarning(message);
+        this.toaster.warning(message);
         break;
       case 'error':
-        this.toaster.openError(message);
+        this.toaster.error(message);
         break;
     }
   }

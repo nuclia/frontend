@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { Resource } from '@nuclia/core';
 import { combineLatest, switchMap, filter, tap, Subject, startWith, share, takeUntil } from 'rxjs';
-import { AppToasterService } from '../../services/app-toaster.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Directive()
 export abstract class BaseEditComponent implements OnDestroy {
@@ -29,7 +29,7 @@ export abstract class BaseEditComponent implements OnDestroy {
     protected route: ActivatedRoute,
     protected sdk: SDKService,
     protected formBuilder: UntypedFormBuilder,
-    protected toaster: AppToasterService,
+    protected toaster: SisToastService,
   ) {
     this.refresh.next(true);
     this.resource.pipe(takeUntil(this.unsubscribeAll)).subscribe();

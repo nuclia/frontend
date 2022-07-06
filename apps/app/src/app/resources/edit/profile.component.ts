@@ -5,8 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { LabelValue, Resource } from '@nuclia/core';
 import { forkJoin, map, switchMap } from 'rxjs';
-import { AppToasterService } from '../../services/app-toaster.service';
 import { BaseEditComponent } from './base-edit.component';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-resource-profile',
@@ -43,7 +43,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
     protected route: ActivatedRoute,
     protected sdk: SDKService,
     protected formBuilder: UntypedFormBuilder,
-    protected toaster: AppToasterService,
+    protected toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
   ) {

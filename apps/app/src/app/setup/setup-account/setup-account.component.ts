@@ -5,10 +5,10 @@ import { of, concatMap, map, filter, catchError } from 'rxjs';
 import { ZoneService, Zone, STFUtils } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { NavigationService } from '../../services/navigation.service';
-import { AppToasterService } from '../../services/app-toaster.service';
 import { SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
+import { SisToastService } from '@nuclia/sistema';
 
 const DEFAULT_KB_NAME = 'Basic';
 
@@ -59,7 +59,7 @@ export class SetupAccountComponent {
     private cdr: ChangeDetectorRef,
     private zoneService: ZoneService,
     private navigation: NavigationService,
-    private toaster: AppToasterService,
+    private toaster: SisToastService,
     private userService: UserService,
     private tracking: STFTrackingService,
   ) {

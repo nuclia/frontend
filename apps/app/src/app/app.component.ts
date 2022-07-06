@@ -13,7 +13,6 @@ import {
 import { catchError, combineLatest, filter, of, Subject, switchMap, tap, take } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
 import { Title } from '@angular/platform-browser';
-import { Toaster } from '@flaps/pastanaga';
 import { STFConfirmComponent } from '@flaps/components';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
@@ -41,7 +40,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private navigation: NavigationService,
     private sdk: SDKService,
     private titleService: Title,
-    private toaster: Toaster,
     private dialog: MatDialog,
     private paTranslate: PaTranslateService,
   ) {
@@ -64,9 +62,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit() {
     if (this.config.getVersion()) {
       this.version = this.config.getVersion();
-    }
-    if (this.toastsContainer) {
-      this.toaster.registerContainer(this.toastsContainer);
     }
     this.checkStatusAlert();
   }

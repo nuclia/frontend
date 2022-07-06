@@ -17,22 +17,22 @@ export const closeButtonConf: ToastConfig = {
 export class SisToastService {
   constructor(private paToaster: ToastService) {}
 
-  openInfo(message: string) {
+  info(message: string) {
     const conf = { title: 'Information', icon: 'info' };
     this.paToaster.openInfo(message, conf);
   }
 
-  openSuccess(message: string) {
+  success(message: string) {
     const conf = { title: 'Success', icon: 'circle-check' };
     this.paToaster.openSuccess(message, conf);
   }
 
-  openWarning(message: string) {
+  warning(message: string) {
     const conf = { ...closeButtonConf, title: 'Warning', icon: 'warning' };
     this.paToaster.openWarning(message, conf);
   }
 
-  openError(message: string) {
+  error(message: string) {
     const conf = { ...closeButtonConf, title: 'Error', icon: 'circle-cross' };
     this.paToaster.openError(message, conf);
   }
