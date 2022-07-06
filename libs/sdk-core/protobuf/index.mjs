@@ -24,3 +24,26 @@ export const NucliaProtobufConverter = (buffer) =>
       });
     }
   });
+
+// By default, paragraphs are just defined by their start and end character positions.
+// This function will add in each paragraph object a `text` attribute containing the actual text of the paragraph.
+export const extractParagraphTexts = (payload) => ({
+  ...payload,
+  fieldMetadata: payload.fieldMetadata?.map((field, index) => ({
+    ...field,
+    metadata: field.metadata
+      ? {
+          ...field.metadata,
+          metadata: field.metadata.metadata
+            ? {
+                ...field.metadata.metadata,
+                paragraphs: field.metadata.metadata.paragraphs?.map((paragraph) => ({
+                  ...paragraph,
+                  text: payload.extractedText[index]?.body?.text?.slice(paragraph.start || 0, paragraph.end).trim(),
+                })),
+              }
+            : undefined,
+        }
+      : undefined,
+  })),
+});
