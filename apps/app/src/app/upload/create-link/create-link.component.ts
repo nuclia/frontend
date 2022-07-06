@@ -5,7 +5,7 @@ import { STFTrackingService } from '@flaps/core';
 import { SDKService } from '@flaps/core';
 import { LabelValue } from '@nuclia/core';
 import { switchMap } from 'rxjs';
-import { AppToasterService } from '../../services/app-toaster.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-create-link',
@@ -32,7 +32,7 @@ export class CreateLinkComponent {
     private formBuilder: UntypedFormBuilder,
     private sdk: SDKService,
     private tracking: STFTrackingService,
-    private toaster: AppToasterService,
+    private toaster: SisToastService,
   ) {}
 
   add() {

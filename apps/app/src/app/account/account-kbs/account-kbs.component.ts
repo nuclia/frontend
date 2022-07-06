@@ -10,7 +10,7 @@ import { Zone, ZoneService } from '@flaps/core';
 import { STFTrackingService, StateService, SDKService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
-import { AppToasterService } from '../../services/app-toaster.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-account-kbs',
@@ -40,7 +40,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     private zoneService: ZoneService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
-    private toaster: AppToasterService,
+    private toaster: SisToastService,
     private sdk: SDKService,
   ) {}
 

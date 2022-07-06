@@ -9,6 +9,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 import { OverlayModule } from '@angular/cdk/overlay';
+import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
 
 import { STFPipesModule, STFConfigModule } from '@flaps/core';
 import { STFButtonsModule } from '@flaps/pastanaga';
@@ -36,6 +37,7 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
+
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
@@ -81,6 +83,7 @@ const appModules = [
         deps: [HttpClient],
       },
     }),
+    PaToastModule,
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, TranslatePipe],
   bootstrap: [AppComponent],

@@ -21,7 +21,6 @@ import {
   STFFormDirectivesModule,
   STFTooltipModule,
   STFExpanderModule,
-  ToasterModule,
 } from '@flaps/pastanaga';
 
 import { AccountComponent } from './account.component';
@@ -75,7 +74,6 @@ const Components = [
     ButtonActionModule,
     PipesModule,
     TokenDialogModule,
-    ToasterModule,
     ChartsModule,
     MatProgressSpinnerModule,
     CdkTableModule,

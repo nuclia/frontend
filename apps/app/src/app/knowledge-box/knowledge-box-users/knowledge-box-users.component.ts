@@ -7,7 +7,7 @@ import { SDKService, StateService } from '@flaps/core';
 import { SORTED_KB_ROLES, KB_ROLE_TITLES } from '../utils';
 import { KnowledgeBoxUsersService } from './knowledge-box-users.service';
 import { KBRoles } from '@nuclia/core';
-import { AppToasterService } from '../../services/app-toaster.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-knowledge-box-users',
@@ -40,7 +40,7 @@ export class KnowledgeBoxUsersComponent {
     private state: StateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-    private toaster: AppToasterService,
+    private toaster: SisToastService,
   ) {}
 
   isItMe(userId: string) {

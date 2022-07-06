@@ -8,7 +8,7 @@ import { STFConfirmComponent, ConfirmData } from '@flaps/components';
 import { SDKService, StateService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { UsersService, AccountUser, AccountRoles, SetUsersAccount } from '@flaps/core';
-import { AppToasterService } from '../../services/app-toaster.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-account-users',
@@ -39,7 +39,7 @@ export class AccountUsersComponent implements OnDestroy {
     private stateService: StateService,
     private translate: TranslateService,
     private sdk: SDKService,
-    private toaster: AppToasterService,
+    private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {
     this.account$
