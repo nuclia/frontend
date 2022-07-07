@@ -273,6 +273,11 @@
                 "glob": "**/*",
                 "input": "libs/sistema/assets",
                 "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/sdk-core/protobuf/nucliadb_protos",
+                "output": "assets/nucliadb_protos"
               }
             ],
             "styles": ["apps/desktop/src/styles.scss"],
@@ -304,6 +309,11 @@
                   "glob": "**/*",
                   "input": "apps/desktop/src/environments_config/production",
                   "output": "assets/deployment"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sdk-core/protobuf/nucliadb_protos",
+                  "output": "assets/nucliadb_protos"
                 }
               ]
             },
@@ -323,6 +333,11 @@
                   "glob": "**/*",
                   "input": "apps/desktop/src/environments_config/local-stage",
                   "output": "assets/deployment"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sdk-core/protobuf/nucliadb_protos",
+                  "output": "assets/nucliadb_protos"
                 }
               ]
             },
@@ -346,6 +361,11 @@
                   "glob": "**/*",
                   "input": "apps/desktop/src/environments_config/local-stage",
                   "output": "assets/deployment"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sdk-core/protobuf/nucliadb_protos",
+                  "output": "assets/nucliadb_protos"
                 }
               ]
             }
