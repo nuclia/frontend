@@ -1,5 +1,4 @@
 import {
-  ConnectorSettings,
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
