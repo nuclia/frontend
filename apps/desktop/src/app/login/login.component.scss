@@ -5,8 +5,8 @@
   left: 0;
   height: 100%;
   width: 100%;
-  z-index: $zindex-modal;
-  background-color: $gray-black;
+  z-index: 10050;
+  background-color: $color-dark-stronger;
 }
 
 img {
@@ -19,9 +19,9 @@ img {
   width: 600px;
   height: 80vh;
   margin: 0 auto;
-  padding: rythm(5) rythm(8);
-  border-radius: rythm(1);
-  background-color: $white;
+  padding: rhythm(7) rhythm(12);
+  border-radius: rhythm(1.5);
+  background-color: $color-light-stronger;
   display: flex;
   flex-direction: column;
   text-align: center;

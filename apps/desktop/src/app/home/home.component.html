@@ -1,8 +1,6 @@
 <div class="container">
   <div class="add">
-      <stf-button color="secondary"
-                  padding="pd-xl"
-                  routerLink="/add-upload"><span class="plus">+</span> {{ 'home.add' | translate }}</stf-button>
+    <pa-button (click)="addUpload()">{{ 'home.add' | translate }}</pa-button>
   </div>
   <ng-container *ngFor="let sec of sections">
     <ng-template *ngTemplateOutlet="section; context: { $implicit: sec, hasFiles: (sec.items | async).length > 0 }">
@@ -10,7 +8,7 @@
   </ng-container>
 </div>
 
-<ng-template #section 
+<ng-template #section
              let-section
              let-hasFiles="hasFiles">
   <div class="section"
@@ -32,7 +30,7 @@
 </ng-template>
 
 
-<ng-template #uploads 
+<ng-template #uploads
              let-uploads>
   <div class="uploads">
     <div class="row"

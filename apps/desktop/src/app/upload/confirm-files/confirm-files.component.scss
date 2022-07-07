@@ -24,23 +24,23 @@ p {
 .files {
   max-height: 50vh;
   overflow-y: auto;
-  @include scrollbar-black(--stf-background-color);
+  // FIXME include scrollbar mixin in sistema?
+  //@include scrollbar-black(--stf-background-color);
 }
 
 .file {
   display: flex;
   align-items: center;
   padding: 0.5em 0;
-  @include text-truncate();
-  border-top: 1px solid $gray-light;
+  border-top: 1px solid $color-neutral-regular;
   &:last-child {
-    border-bottom: 1px solid $gray-light;
+    border-bottom: 1px solid $color-neutral-regular;
   }
 }
 
 .actions {
   display: flex;
   justify-content: center;
-  margin-top: rythm(3);
-  gap: rythm(1);
+  margin-top: rhythm(4);
+  gap: rhythm(1.5);
 }

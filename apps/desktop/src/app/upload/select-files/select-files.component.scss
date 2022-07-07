@@ -18,26 +18,26 @@
 .footer {
   flex: 0 0 auto;
   text-align: center;
-  padding-top: rythm(3);
+  padding-top: rhythm(4);
 }
 
 .search-form {
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  padding-bottom: rythm(2);
+  padding-bottom: rhythm(8);
 }
 
 table {
-  width: calc(100% - 14px);
+  width: calc(100% - #{rhythm(2)});
   border-spacing: 0;
-  border-top: 2px solid $gray-dark;
+  border-top: 2px solid $color-neutral-strong;
 }
 
 td {
-  height: rythm(2);
-  border-bottom: 1px solid $gray-dark;
+  height: rhythm(3);
+  border-bottom: 1px solid $color-neutral-strong;
   &.checkbox {
-    width: rythm(2);
+    width: rhythm(3);
   }
 }

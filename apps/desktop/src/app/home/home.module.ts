@@ -6,9 +6,10 @@ import { ProgressBarModule } from '@flaps/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { HomeComponent } from './home.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  imports: [CommonModule, RouterModule, TranslateModule, STFButtonsModule, ProgressBarModule],
+  imports: [CommonModule, RouterModule, TranslateModule, STFButtonsModule, ProgressBarModule, PaButtonModule],
   exports: [],
   declarations: [HomeComponent],
   providers: [],

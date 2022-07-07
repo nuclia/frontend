@@ -5,14 +5,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ConfirmFilesComponent } from './confirm-files.component';
+import { PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    STFButtonsModule,
-    MatDialogModule,
-    TranslateModule,
-  ],
+  imports: [CommonModule, STFButtonsModule, MatDialogModule, TranslateModule, PaTooltipModule],
   exports: [],
   declarations: [ConfirmFilesComponent],
   providers: [],

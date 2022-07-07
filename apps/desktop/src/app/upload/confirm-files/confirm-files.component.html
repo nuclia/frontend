@@ -3,6 +3,7 @@
   <p>{{ 'upload.review' | translate: { num: data.files.length } }}</p>
   <div class="files">
     <div class="file"
+         paEllipsisTooltip
          *ngFor="let file of data.files">
       {{ file.title }}
     </div>
