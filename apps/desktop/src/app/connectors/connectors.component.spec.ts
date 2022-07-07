@@ -40,7 +40,7 @@ describe('ConnectorsComponent', () => {
                       description: '',
                     },
                   ],
-            getDestination: (id: string) =>
+            getDestination: () =>
               of({
                 getParameters: () =>
                   of([
@@ -74,10 +74,10 @@ describe('ConnectorsComponent', () => {
     });
 
     it('should select a source', () => {
-      jest.spyOn(component.onSelect, 'emit');
+      jest.spyOn(component.selectConnector, 'emit');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
-      expect(component.onSelect.emit).toHaveBeenCalledWith({ connector: { id: 'source1' } });
+      expect(component.selectConnector.emit).toHaveBeenCalledWith({ connector: { id: 'source1' } });
     });
   });
 

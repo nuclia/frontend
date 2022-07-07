@@ -4,7 +4,7 @@
                 [title]="connector.title"
                 [logo]="connector.logo"
                 [description]="connector.description"
-                (click)="selectConnector(connector.id)"></nde-connector>
+                (click)="onSelectConnector(connector.id)"></nde-connector>
 </div>
 <form *ngIf="!!fields && !!form"
       [formGroup]="form"

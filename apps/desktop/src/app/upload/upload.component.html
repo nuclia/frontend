@@ -7,7 +7,7 @@
       <h3>{{ 'upload.source.title' | translate}}</h3>
       <p>{{ 'upload.source.help' | translate}}</p>
       <nde-connectors type="sources"
-                     (onSelect)="selectSource($event)"></nde-connectors>
+                     (selectConnector)="selectSource($event)"></nde-connectors>
     </ng-container>
     <ng-container *ngIf="step === 1">
       <nde-select-files [source]="source"
@@ -17,7 +17,7 @@
     <ng-container *ngIf="step === 2">
       <h2>Push to</h2>
       <nde-connectors type="destinations"
-                     (onSelect)="selectDestination($event)"></nde-connectors>
+                     (selectConnector)="selectDestination($event)"></nde-connectors>
     </ng-container>
   </div>
 </div>
