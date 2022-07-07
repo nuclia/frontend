@@ -40,7 +40,7 @@ export class KnowledgeBoxUsersService {
     return this._slugs.pipe(
       switchMap(([accountSlug, kbSlug]) =>
         this.users.setKbUsers(accountSlug, kbSlug, {
-          updated: [{ id, role }],
+          update: [{ id, role }],
         }),
       ),
       tap(() => {
