@@ -1,9 +1,8 @@
-import { map, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   Field,
   IDestinationConnector,
   ConnectorSettings,
-  ConnectorDefinition,
   DestinationConnectorDefinition,
   ConnectorParameters,
 } from '../models';
@@ -16,13 +15,21 @@ export const Algolia: DestinationConnectorDefinition = {
   factory: (data?: ConnectorSettings) => of(new AlgoliaImpl()),
 };
 class AlgoliaImpl implements IDestinationConnector {
-  constructor() {}
-
   getParameters(): Observable<Field[]> {
     return of([
       {
-        id: 'key',
-        label: 'API key',
+        id: 'apiKey',
+        label: 'Algolia API Key',
+        type: 'text',
+      },
+      {
+        id: 'appKId',
+        label: 'Algolia Application Id',
+        type: 'text',
+      },
+      {
+        id: 'index',
+        label: 'Index name',
         type: 'text',
       },
     ]);
@@ -32,7 +39,10 @@ class AlgoliaImpl implements IDestinationConnector {
     return of(true);
   }
 
-  upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void> {
+  upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void> {
+    // TODO: integrate algolia js client
+    //  https://www.algolia.com/doc/api-client/getting-started/install/javascript/?client=javascript
+    console.log(filename, params, data);
     return of();
   }
 }

@@ -4,6 +4,7 @@ import {
   concatMap,
   concatMapTo,
   delay,
+  filter,
   forkJoin,
   map,
   Observable,
@@ -18,21 +19,23 @@ import {
 import { environment } from '../../environments/environment';
 import { GDrive } from './sources/gdrive';
 import {
-  FileStatus,
-  ISourceConnector,
-  IDestinationConnector,
-  SyncItem,
-  ConnectorSettings,
   ConnectorDefinition,
-  SourceConnectorDefinition,
-  DestinationConnectorDefinition,
   ConnectorParameters,
+  ConnectorSettings,
+  DestinationConnectorDefinition,
+  FileStatus,
+  IDestinationConnector,
+  ISourceConnector,
+  SourceConnectorDefinition,
+  SyncItem,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
-import { SDKService, UserService, md5 } from '@flaps/core';
+import { md5, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
 import { FolderConnector } from './sources/folder';
+import { ProcessingPullResponse } from '@nuclia/core';
+import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
@@ -42,9 +45,10 @@ interface Sync {
   source: string;
   destination: {
     id: string;
-    params?: ConnectorParameters;
+    params: ConnectorParameters;
   };
   files: SyncItem[];
+  fileUUIDs: string[];
   started?: boolean;
   completed?: boolean;
   resumable?: boolean;
@@ -76,12 +80,6 @@ export class SyncService {
   ready = new Subject<void>();
 
   constructor(private sdk: SDKService, private user: UserService) {
-    //     create a key first time we launch desktop
-    //     use header X-STF-Zonekey to push and pull
-    //     - first call /upload https://github.com/nuclia/backend/blob/master/processing/proxy/nucliadb_proxy/api/v1/tus_api.py#L315
-    //     with as many field I want, I get a json token for each
-    // - then I call push with a PushPayload indicating all the fields (the values are the tokens), I get an id
-    // - then pull regularly to see what is processed (it returns a protobuf)
     this.ready.subscribe(() => {
       this.watchProcessing();
       this.start();
@@ -141,17 +139,20 @@ export class SyncService {
                           sourceInstance.download(f).pipe(
                             concatMap((blob) => {
                               if (sync.destination.id === 'nucliacloud') {
-                                return destinationInstance.upload(f.title, blob, sync.destination.params).pipe(
+                                return destinationInstance.upload(f.title, sync.destination.params, { blob }).pipe(
                                   tap(() => {
                                     f.status = FileStatus.UPLOADED;
+                                    sync.completed = true;
                                     this.onQueueUpdate();
                                   }),
                                 );
                               } else {
                                 return md5(new File([blob], f.title)).pipe(
                                   concatMap((file) => this.sdk.nuclia.db.upload(file)),
-                                  tap(() => {
-                                    f.status = FileStatus.PROCESSED;
+                                  tap((response) => {
+                                    f.status = FileStatus.PROCESSING;
+                                    f.uuid = response.uuid;
+                                    sync.fileUUIDs.push(response.uuid);
                                     this.onQueueUpdate();
                                   }),
                                 );
@@ -163,7 +164,6 @@ export class SyncService {
                     );
                   }),
                   tap(() => {
-                    sync.completed = true;
                     this.onQueueUpdate();
                   }),
                 );
@@ -192,7 +192,8 @@ export class SyncService {
         }
         return acc;
       }, {} as { [id: string]: Observable<boolean> });
-    return combineLatest(sources).pipe(map(() => undefined));
+    // combine latest is expecting an array of observables
+    return combineLatest(Object.values(sources)).pipe(map(() => undefined));
   }
 
   addSync(sync: Sync) {
@@ -204,7 +205,36 @@ export class SyncService {
   private watchProcessing() {
     return this.sdk.nuclia.db
       .pull()
-      .pipe(repeatWhen((obs) => obs.pipe(delay(10000))))
+      .pipe(
+        repeatWhen((obs) => obs.pipe(delay(10000))),
+        filter((res: ProcessingPullResponse) => res.status !== 'empty' && !!res.payload),
+        map((res) => res.payload as string),
+        switchMap((base64) => NucliaProtobufConverter(convertDataURIToBinary(base64))),
+        map((data: any) => {
+          const sync = this._queue.find((sync) => sync.fileUUIDs.includes(data.uuid));
+          let item: SyncItem | undefined;
+          if (sync) {
+            item = sync.files.find((file) => file.uuid === data.uuid);
+          }
+          return { data, sync, item } as { data: any; sync: Sync | null; item?: SyncItem };
+        }),
+        filter(({ sync, item }) => !!sync && !!item),
+        map(({ data, sync, item }) => ({ data, sync, item } as { data: any; sync: Sync; item: SyncItem })),
+        switchMap(({ data, sync, item }) => {
+          return this.getDestination(sync.destination.id).pipe(
+            switchMap((dest) =>
+              dest.upload(item.title, sync.destination.params, {
+                metadata: data,
+              }),
+            ),
+            tap(() => {
+              item.status = FileStatus.UPLOADED;
+              sync.completed = sync.files.every((file) => file.status === FileStatus.UPLOADED);
+              this.onQueueUpdate();
+            }),
+          );
+        }),
+      )
       .subscribe();
   }
 

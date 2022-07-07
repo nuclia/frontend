@@ -71,7 +71,7 @@ export class UploadComponent implements OnInit {
       });
   }
 
-  selectDestination(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
+  selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
     this.dialog
       .open(ConfirmFilesComponent, {
         data: { files: this.selection.selected },

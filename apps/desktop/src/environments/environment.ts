@@ -9,7 +9,7 @@ export const environment = {
   locales: ['en-US', 'es', 'ca'],
   connectors: {
     dropbox: {
-      CLIENT_ID: 'kaqruhinfl76dar',
+      CLIENT_ID: 'z178e757arn1jvo',
     },
     gdrive: {
       CLIENT_ID: '422664282538-m7mf0hh07h8u93kacss0f4clhnpp656v.apps.googleusercontent.com',

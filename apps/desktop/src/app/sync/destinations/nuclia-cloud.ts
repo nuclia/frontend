@@ -34,7 +34,12 @@ class NucliaCloudKBImpl implements IDestinationConnector {
           id: 'kb',
           label: 'Knowledge Box',
           type: 'select',
-          options: kbs.filter((kb) => !!kb.slug).map((kb) => ({ label: kb.title || kb.slug!, value: kb.slug! })),
+          options: kbs
+            .filter((kb) => !!kb.slug)
+            .map((kb) => {
+              const slug = kb.slug || '';
+              return { label: kb.title || slug, value: slug };
+            }),
         },
       ]),
     );
@@ -44,8 +49,9 @@ class NucliaCloudKBImpl implements IDestinationConnector {
     return of(true);
   }
 
-  upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void> {
-    if (params && params['kb']) {
+  upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void> {
+    if (params && params['kb'] && data.blob) {
+      const blob = data.blob;
       const kb$ = this.kb
         ? of(this.kb)
         : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
