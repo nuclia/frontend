@@ -33,7 +33,7 @@ export interface SetUserKb {
 
 export interface SetUsersKb {
   add?: SetUserKb[];
-  updated?: SetUserKb[];
+  update?: SetUserKb[];
   delete?: string[];
 }
 
