@@ -5,7 +5,7 @@ import { map } from 'rxjs';
 import { stfAnimations } from '@flaps/pastanaga';
 
 @Component({
-  selector: 'da-topbar',
+  selector: 'nde-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

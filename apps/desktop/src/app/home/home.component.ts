@@ -2,11 +2,12 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/
 import { map, take } from 'rxjs';
 import { FileStatus } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
+import { Router } from '@angular/router';
 
 type SectionType = 'pending' | 'active' | 'completed';
 
 @Component({
-  selector: 'da-home',
+  selector: 'nde-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,7 +38,7 @@ export class HomeComponent {
 
   selected: SectionType | null = null;
 
-  constructor(private sync: SyncService, private cdr: ChangeDetectorRef) {
+  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private router: Router) {
     this.active.pipe(take(1)).subscribe((syncs) => {
       this.selected = syncs.length > 0 ? 'active' : null;
       this.cdr?.markForCheck();
@@ -47,5 +48,9 @@ export class HomeComponent {
   toggle(section: SectionType) {
     this.selected = this.selected === section ? null : section;
     this.cdr?.markForCheck();
+  }
+
+  addUpload() {
+    this.router.navigateByUrl('/add-upload');
   }
 }

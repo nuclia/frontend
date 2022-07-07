@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { SOURCE_ID_KEY } from './sync/models';
 
 @Component({
-  selector: 'da-root',
+  selector: 'nde-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })

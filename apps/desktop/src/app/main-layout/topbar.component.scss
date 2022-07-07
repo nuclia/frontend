@@ -8,13 +8,13 @@
   height: 70px;
   padding-right: 90px;
   z-index: 900;
-  background-color: $gray-black;
+  background-color: $color-dark-stronger;
   display: flex;
   align-items: center;
 }
 .logo {
   cursor: pointer;
-  margin-left: rythm(2);
+  margin-left: rhythm(3);
 }
 .accounts {
   margin-left: auto;
@@ -22,13 +22,13 @@
 .separator {
   width: 1px;
   height: 100%;
-  margin: 0 rythm(3);
-  background-color: $gray-light;
+  margin: 0 rhythm(4);
+  background-color: $color-neutral-regular;
 }
 .user {
-  width: rythm(3);
-  height: rythm(3);
-  background-color: #fff;
+  width: rhythm(4);
+  height: rhythm(4);
+  background-color: $color-light-stronger;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -38,16 +38,16 @@
   cursor: pointer;
 }
 .user-menu {
-  background-color: #fff;
+  background-color: $color-light-stronger;
   box-shadow: var(--stf-shadow-dropdown);
 
   &-item {
     display: flex;
     align-items: center;
-    gap: rythm(1);
+    gap: rhythm(1.5);
     width: 100%;
     height: 40px;
-    padding: 0 rythm(1);
+    padding: 0 rhythm(1.5);
     color: inherit;
     text-decoration: none;
     &:hover {

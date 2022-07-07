@@ -23,6 +23,7 @@
     "noImplicitThis": true,
     "noFallthroughCasesInSwitch": true,
     "strictNullChecks": true,
+    "resolveJsonModule": true,
     "paths": {
       "@flaps/common": ["libs/common/src/index.ts"],
       "@flaps/components": ["libs/components/src/index.ts"],

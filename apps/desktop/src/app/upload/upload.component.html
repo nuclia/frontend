@@ -1,23 +1,23 @@
 <div class="container">
   <div class="steps">
-    <da-steps [currentStep]="step"></da-steps>
+    <nde-steps [currentStep]="step"></nde-steps>
   </div>
   <div class="content">
     <ng-container *ngIf="step === 0">
       <h3>{{ 'upload.source.title' | translate}}</h3>
       <p>{{ 'upload.source.help' | translate}}</p>
-      <da-connectors type="sources"
-                     (onSelect)="selectSource($event)"></da-connectors>
+      <nde-connectors type="sources"
+                     (selectConnector)="selectSource($event)"></nde-connectors>
     </ng-container>
     <ng-container *ngIf="step === 1">
-      <da-select-files [source]="source"
+      <nde-select-files [source]="source"
                        (next)="goTo(2)"
-                       [(selection)]="selection"></da-select-files>
+                       [(selection)]="selection"></nde-select-files>
     </ng-container>
     <ng-container *ngIf="step === 2">
       <h2>Push to</h2>
-      <da-connectors type="destinations"
-                     (onSelect)="selectDestination($event)"></da-connectors>
+      <nde-connectors type="destinations"
+                     (selectConnector)="selectDestination($event)"></nde-connectors>
     </ng-container>
   </div>
 </div>

@@ -249,7 +249,7 @@
       "projectType": "application",
       "root": "apps/desktop",
       "sourceRoot": "apps/desktop/src",
-      "prefix": "da",
+      "prefix": "nde",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -314,6 +314,11 @@
                   "glob": "**/*",
                   "input": "libs/sdk-core/protobuf/nucliadb_protos",
                   "output": "assets/nucliadb_protos"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
                 }
               ]
             },
@@ -338,6 +343,11 @@
                   "glob": "**/*",
                   "input": "libs/sdk-core/protobuf/nucliadb_protos",
                   "output": "assets/nucliadb_protos"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
                 }
               ]
             },
@@ -366,6 +376,11 @@
                   "glob": "**/*",
                   "input": "libs/sdk-core/protobuf/nucliadb_protos",
                   "output": "assets/nucliadb_protos"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
                 }
               ]
             }

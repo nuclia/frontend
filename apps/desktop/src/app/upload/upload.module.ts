@@ -1,8 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { STFCheckboxModule } from '@flaps/common';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConnectorsModule } from '../connectors/connectors.module';
@@ -12,18 +10,20 @@ import { StepsComponent } from './steps/steps.component';
 import { UploadComponent } from './upload.component';
 import { FormsModule } from '@angular/forms';
 import { SelectFilesComponent } from './select-files/select-files.component';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
     RouterModule,
     CommonModule,
-    STFButtonsModule,
     MatDialogModule,
     TranslateModule,
-    STFCheckboxModule,
     ConnectorsModule,
     ConfirmFilesModule,
     FormsModule,
+    PaTextFieldModule,
+    PaButtonModule,
+    PaTogglesModule,
   ],
   exports: [],
   declarations: [UploadComponent, StepsComponent, SelectFilesComponent],

@@ -2,23 +2,21 @@
 
 .connector {
   cursor: pointer;
-  padding: 21px;
-  width: 300px;
+  padding: rhythm(3);
+  width: rhythm(32);
   display: flex;
   &:hover {
     background-color: var(--desktop-background);
   }
 }
 .logo {
-  width: 48px;
-  margin-right: 12px;
+  width: rhythm(6);
+  margin-right: rhythm(1.5);
   img {
     width: 100%;
     height: auto;
   }
 }
-.title {
-  @include font-size(xl, xl, xl);
-  font-weight: bold;
-  padding: 8px 0;
+.title-xs {
+  padding: rhythm(1) 0;
 }

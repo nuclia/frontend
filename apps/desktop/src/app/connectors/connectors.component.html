@@ -1,26 +1,26 @@
 <div class="connectors-list"
      *ngIf="!fields">
-  <da-connector *ngFor="let connector of connectors"
+  <nde-connector *ngFor="let connector of connectors"
                 [title]="connector.title"
                 [logo]="connector.logo"
                 [description]="connector.description"
-                (click)="selectConnector(connector.id)"></da-connector>
+                (click)="onSelectConnector(connector.id)"></nde-connector>
 </div>
 <form *ngIf="!!fields && !!form"
       [formGroup]="form"
+      qa="fields-form"
       (ngSubmit)="validate()">
   <div *ngFor="let field of fields">
-    <label>{{ field.label }}
-      <stf-input *ngIf="field.type === 'text'"
-                 [formControlName]="field.id"></stf-input>
-      <select stfSelect
-              [formControlName]="field.id"
-              *ngIf="field.type === 'select'">
-        <option *ngFor="let option of field.options"
-                [value]="option.value">{{ option.label }}</option>
-      </select>
-    </label>
+    <pa-input *ngIf="field.type === 'text'"
+              [formControlName]="field.id">{{ field.label }}</pa-input>
+
+    <pa-select *ngIf="field.type === 'select'"
+               [formControlName]="field.id"
+               [label]="field.label">
+      <pa-option *ngFor="let option of field.options"
+                 [value]="option.value">{{ option.label }}</pa-option>
+    </pa-select>
   </div>
-  <stf-button (click)="validate()"
-              qa="validate">Upload</stf-button>
+
+  <pa-button qa="validate" type="submit" kind="primary">Upload</pa-button>
 </form>

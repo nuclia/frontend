@@ -8,7 +8,7 @@ import { SyncService } from '../sync/sync.service';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 @Component({
-  selector: 'da-upload',
+  selector: 'nde-upload',
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

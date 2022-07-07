@@ -1,9 +1,8 @@
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslatePipeMock } from '@flaps/core';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -15,6 +14,7 @@ import { SyncService } from '../sync/sync.service';
 import { SelectFilesComponent } from './select-files/select-files.component';
 
 import { UploadComponent } from './upload.component';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -29,17 +29,17 @@ describe('UploadComponent', () => {
         ConnectorComponent,
         StepsComponent,
         TranslatePipeMock,
-        SelectFilesComponent
+        SelectFilesComponent,
       ],
       imports: [
         NoopAnimationsModule,
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        STFButtonsModule,
-        STFInputModule,
         MatDialogModule,
         ConfirmFilesModule,
+        PaButtonModule,
+        PaTextFieldModule,
       ],
       providers: [
         {
@@ -66,7 +66,7 @@ describe('UploadComponent', () => {
                       description: '',
                     },
                   ],
-            getDestination: (id: string) =>
+            getDestination: () =>
               of({
                 getParameters: () =>
                   of([
@@ -77,7 +77,7 @@ describe('UploadComponent', () => {
                     },
                   ]),
               }),
-            getSource: (id: string) =>
+            getSource: () =>
               of({
                 authenticate: () => of(true),
               }),
@@ -108,7 +108,7 @@ describe('UploadComponent', () => {
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     fixture.detectChanges();
-    fixture.debugElement.nativeElement.querySelector('[qa="validate"]').click();
+    fixture.debugElement.nativeElement.querySelector('[qa="fields-form"]').submit();
     fixture.detectChanges();
     (document.querySelector('[qa="confirm"]') as HTMLElement).click();
     fixture.detectChanges();

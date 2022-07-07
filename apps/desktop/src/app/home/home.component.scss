@@ -10,11 +10,7 @@
 
 .add {
   flex-shrink: 0;
-  margin-bottom: rythm(2);
-  .plus {
-    font-weight: var(--stf-font-weight-bold);
-    padding-right: rythm(0.25);
-  }
+  margin-bottom: rhythm(3);
 }
 
 .section {
@@ -22,9 +18,9 @@
   flex-direction: column;
   flex-shrink: 0;
   padding: 28px 38px;
-  background-color: #fff;
+  background-color: $color-light-stronger;
   border-radius: 8px;
-  margin-bottom: rythm(1);
+  margin-bottom: rhythm(1.5);
   &.selected {
     flex: 1 1 auto;
     min-height: 0;
@@ -60,11 +56,12 @@
 }
 
 .section-body {
-  margin-top: rythm(2);
-  padding-right: rythm(1);
+  margin-top: rhythm(3);
+  padding-right: rhythm(1.5);
   min-height: 0;
   overflow-y: auto;
-  @include scrollbar-black();
+  // FIXME include scrollbar mixin in sistema?
+  //@include scrollbar-black();
 }
 
 .uploads {
@@ -73,18 +70,18 @@
 }
 .row {
   display: table-row;
-  height: 45px;
+  height: rhythm(5);
   & > div {
-    border-bottom: 1px solid $gray-light;
+    border-bottom: 1px solid $color-neutral-regular;
     display: table-cell;
     width: 150px;
-    padding: rythm(0.75) 0;
+    padding: rhythm(1) 0;
   }
   &:first-child > div {
-    border-top: 1px solid $gray-light;
+    border-top: 1px solid $color-neutral-regular;
   }
   .progress {
-    background-color: $red;
+    background-color: $color-primary-regular;
     height: 5px;
   }
 }

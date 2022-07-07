@@ -4,31 +4,26 @@
     <form class="search-form"
           #form="ngForm"
           (ngSubmit)="search(form.value.query)">
-      <input ngModel
-             name="query">
-      <stf-button (click)="search(form.value.query)"
-                  size="small">{{ 'upload.select.search' | translate }}</stf-button>
+      <pa-input [(ngModel)]="query" name="query"></pa-input>
+      <pa-button size="small"
+                 kind="primary"
+                 type="submit">{{ 'upload.select.search' | translate }}</pa-button>
     </form>
   </div>
   <div class="body"
        #scroll>
     <table>
       <tr *ngFor="let resource of items">
-        <td class="checkbox">
-          <stf-checkbox color="dark"
-                        [selected]="selection.isSelected(resource)"
-                        (selectedChange)="toggle(resource)"></stf-checkbox>
+        <td>
+          <pa-checkbox [value]="selection.isSelected(resource)"
+                       (valueChange)="toggle(resource)">{{ resource.title }}</pa-checkbox>
         </td>
-        <td>{{ resource.title }}</td>
-        <td>{{ resource.type }}</td>
       </tr>
     </table>
   </div>
   <div class="footer">
-    <stf-button qa="next"
-                color="secondary"
-                padding="pd-xl"
-                [disabled]="selection.isEmpty()"
-                (click)="next.emit()">{{ 'generic.next' | translate }}</stf-button>
+    <pa-button qa="next"
+               [disabled]="selection.isEmpty()"
+               (click)="next.emit()">{{ 'generic.next' | translate }}</pa-button>
   </div>
 </div>

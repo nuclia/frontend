@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { STFInputModule, STFFormDirectivesModule, STFButtonsModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 import { ConnectorComponent } from './connector/connector.component';
 
 import { ConnectorsComponent } from './connectors.component';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('ConnectorsComponent', () => {
   let component: ConnectorsComponent;
@@ -15,7 +15,7 @@ describe('ConnectorsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ConnectorsComponent, ConnectorComponent],
-      imports: [STFInputModule, STFFormDirectivesModule, ReactiveFormsModule, FormsModule, STFButtonsModule],
+      imports: [ReactiveFormsModule, FormsModule, PaButtonModule, PaTextFieldModule],
       providers: [
         {
           provide: SyncService,
@@ -40,7 +40,7 @@ describe('ConnectorsComponent', () => {
                       description: '',
                     },
                   ],
-            getDestination: (id: string) =>
+            getDestination: () =>
               of({
                 getParameters: () =>
                   of([
@@ -74,10 +74,10 @@ describe('ConnectorsComponent', () => {
     });
 
     it('should select a source', () => {
-      jest.spyOn(component.onSelect, 'emit');
+      jest.spyOn(component.selectConnector, 'emit');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
-      expect(component.onSelect.emit).toHaveBeenCalledWith({ connector: { id: 'source1' } });
+      expect(component.selectConnector.emit).toHaveBeenCalledWith({ connector: { id: 'source1' } });
     });
   });
 

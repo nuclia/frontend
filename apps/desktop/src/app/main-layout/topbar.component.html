@@ -1,14 +1,13 @@
 <div class="top-bar">
   <div class="logo"
        (click)="goHome()">
-    <img src="assets/nuclia-desktop-white.svg">
+    <img src="assets/nuclia-desktop-white.svg" alt="Nuclia Desktop">
   </div>
   <div class="accounts">
-    <stf-button *ngIf="(account | async) as account"
-                (click)="goSelect()"
-                color="gray"
-                padding="pd-l"
-                size="small">{{ account.title }}</stf-button>
+    <pa-button *ngIf="(account | async) as account"
+               size="small"
+               kind="inverted"
+               (click)="goSelect()">{{ account.title }}</pa-button>
   </div>
   <div class="separator"></div>
   <div class="user"

@@ -4,7 +4,7 @@ import { SDKService } from '@flaps/core';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'da-select-account',
+  selector: 'nde-select-account',
   templateUrl: 'account.component.html',
   styleUrls: ['account.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

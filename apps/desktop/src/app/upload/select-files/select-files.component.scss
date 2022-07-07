@@ -18,26 +18,31 @@
 .footer {
   flex: 0 0 auto;
   text-align: center;
-  padding-top: rythm(3);
+  padding-top: rhythm(4);
 }
 
 .search-form {
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  padding-bottom: rythm(2);
+  margin-bottom: rhythm(8);
+
+  pa-input ::ng-deep .pa-field-control {
+    height: rhythm(4);
+  }
+
+  pa-button {
+    margin-left: rhythm(0.5);
+  }
 }
 
 table {
-  width: calc(100% - 14px);
+  width: calc(100% - #{rhythm(2)});
   border-spacing: 0;
-  border-top: 2px solid $gray-dark;
+  border-top: 2px solid $color-neutral-strong;
 }
 
 td {
-  height: rythm(2);
-  border-bottom: 1px solid $gray-dark;
-  &.checkbox {
-    width: rythm(2);
-  }
+  height: rhythm(3);
+  border-bottom: 1px solid $color-neutral-strong;
 }

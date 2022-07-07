@@ -3,16 +3,16 @@
   <p>{{ 'upload.review' | translate: { num: data.files.length } }}</p>
   <div class="files">
     <div class="file"
+         paEllipsisTooltip
          *ngFor="let file of data.files">
       {{ file.title }}
     </div>
   </div>
   <div class="actions">
-    <stf-button (click)="upload()"
-                minWidth="110px"
-                qa="confirm">{{ 'generic.upload' | translate }}</stf-button>
-    <stf-button (click)="close()"
-                minWidth="110px"
-                color="gray">{{ 'generic.cancel' | translate }}</stf-button>
+    <pa-button qa="confirm"
+               kind="primary"
+               (click)="upload()">{{ 'generic.upload' | translate }}</pa-button>
+
+    <pa-button aspect="basic" (click)="close()">{{ 'generic.cancel' | translate }}</pa-button>
   </div>
 </div>
