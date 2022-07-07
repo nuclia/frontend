@@ -11,14 +11,15 @@
          *ngFor="let kb of knowledgeBoxes"
          fxLayoutAlign="space-between center">
       <a class="account-kb-title"
-         [class.disabled]="!kb.role_on_kb"
+         [class.disabled]="!kb.role_on_kb && !account.can_manage_account"
          [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
         {{ kb.title }}
       </a>
       <div fxLayout="row"
            fxLayoutAlign="start center">
 
-        <ng-container *ngIf="kb.role_on_kb === 'SOWNER' || kb.role_on_kb === 'SCONTRIBUTOR'">
+        <ng-container
+                      *ngIf="kb.role_on_kb === 'SOWNER' || kb.role_on_kb === 'SCONTRIBUTOR' || account.can_manage_account">
           <app-button-action *ngIf="isUsersEnabled | async"
                              (click)="manageKbUsers(kb.slug!)"
                              action="users"
@@ -36,7 +37,7 @@
           </app-button-action>
         </ng-container>
 
-        <ng-container *ngIf="kb.role_on_kb === 'SOWNER'">
+        <ng-container *ngIf="kb.role_on_kb === 'SOWNER' || account.can_manage_account">
           <stf-button class="account-kbs-retire"
                       *ngIf="kb.state === 'PUBLISHED'"
                       icon="lock"
