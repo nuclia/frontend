@@ -16,7 +16,7 @@ import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share } 
 import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
 
 @Component({
-  selector: 'da-select-files',
+  selector: 'nde-select-files',
   templateUrl: './select-files.component.html',
   styleUrls: ['./select-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

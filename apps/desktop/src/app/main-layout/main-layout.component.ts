@@ -5,7 +5,7 @@ import { filter, take } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'da-main-layout',
+  selector: 'nde-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

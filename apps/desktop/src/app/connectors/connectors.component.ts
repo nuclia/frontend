@@ -5,7 +5,7 @@ import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models'
 import { SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'da-connectors',
+  selector: 'nde-connectors',
   templateUrl: './connectors.component.html',
   styleUrls: ['./connectors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

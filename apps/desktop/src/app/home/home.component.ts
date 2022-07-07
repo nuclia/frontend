@@ -6,7 +6,7 @@ import { SyncService } from '../sync/sync.service';
 type SectionType = 'pending' | 'active' | 'completed';
 
 @Component({
-  selector: 'da-home',
+  selector: 'nde-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

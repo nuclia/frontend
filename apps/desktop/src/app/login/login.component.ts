@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { environment } from '../../environments/environment';
 
 @Component({
-  selector: 'da-login',
+  selector: 'nde-login',
   templateUrl: 'login.component.html',
   styleUrls: ['./login.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

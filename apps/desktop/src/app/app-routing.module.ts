@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SelectAccountComponent } from './account/account.component';
-import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { UploadComponent } from './upload/upload.component';

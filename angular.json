@@ -249,7 +249,7 @@
       "projectType": "application",
       "root": "apps/desktop",
       "sourceRoot": "apps/desktop/src",
-      "prefix": "da",
+      "prefix": "nde",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",

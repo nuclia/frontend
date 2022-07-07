@@ -1,10 +1,10 @@
 <div class="connectors-list"
      *ngIf="!fields">
-  <da-connector *ngFor="let connector of connectors"
+  <nde-connector *ngFor="let connector of connectors"
                 [title]="connector.title"
                 [logo]="connector.logo"
                 [description]="connector.description"
-                (click)="selectConnector(connector.id)"></da-connector>
+                (click)="selectConnector(connector.id)"></nde-connector>
 </div>
 <form *ngIf="!!fields && !!form"
       [formGroup]="form"
