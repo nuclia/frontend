@@ -314,6 +314,11 @@
                   "glob": "**/*",
                   "input": "libs/sdk-core/protobuf/nucliadb_protos",
                   "output": "assets/nucliadb_protos"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
                 }
               ]
             },
@@ -338,6 +343,11 @@
                   "glob": "**/*",
                   "input": "libs/sdk-core/protobuf/nucliadb_protos",
                   "output": "assets/nucliadb_protos"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
                 }
               ]
             },
@@ -366,6 +376,11 @@
                   "glob": "**/*",
                   "input": "libs/sdk-core/protobuf/nucliadb_protos",
                   "output": "assets/nucliadb_protos"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
                 }
               ]
             }
