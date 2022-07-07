@@ -70,7 +70,7 @@ When you have some local changes to the widget you'd like to test on the dashboa
 Run in the browser:
 
 ```
-nx serve desktop -c local-stage
+nx serve desktop
 ```
 
 Run in electron:
