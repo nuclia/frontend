@@ -1,5 +1,11 @@
+@import 'variables';
+
 .connectors-list {
-  padding: 8px;
+  padding: rhythm(1);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+}
+
+.field {
+  margin-bottom: rhythm(2);
 }

@@ -32,6 +32,7 @@ import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
 import { SDKService, UserService, md5 } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
+import { FolderConnector } from './sources/folder';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
@@ -46,6 +47,7 @@ interface Sync {
   files: SyncItem[];
   started?: boolean;
   completed?: boolean;
+  resumable?: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -59,6 +61,7 @@ export class SyncService {
   } = {
     gdrive: { definition: GDrive, settings: environment.connectors.gdrive },
     dropbox: { definition: DropboxConnector, settings: environment.connectors.dropbox },
+    folder: { definition: FolderConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
@@ -207,7 +210,10 @@ export class SyncService {
 
   onQueueUpdate() {
     this.queue.next(this._queue);
-    localStorage.setItem(QUEUE_KEY, JSON.stringify(this._queue));
+    localStorage.setItem(
+      QUEUE_KEY,
+      JSON.stringify(this._queue.filter((sync) => !(!sync.resumable && !sync.completed))),
+    );
   }
 
   getAccountId(): string {

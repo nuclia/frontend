@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { switchMap, take } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
@@ -28,7 +28,17 @@ export class ConnectorsComponent {
   onSelectConnector(connectorId: string) {
     this.selectedConnector = this.sync[this._type][connectorId].definition;
     if (this._type === 'sources') {
-      this.selectConnector.emit({ connector: this.selectedConnector });
+      this.sync
+        .getSource(this.selectedConnector.id)
+        .pipe(
+          switchMap((source) => source.getParameters()),
+          take(1),
+        )
+        .subscribe((fields) => {
+          fields.length > 0
+            ? this.showFields(fields)
+            : this.selectedConnector && this.selectConnector.emit({ connector: this.selectedConnector });
+        });
     } else {
       this.sync
         .getDestination(connectorId)
@@ -37,11 +47,17 @@ export class ConnectorsComponent {
           take(1),
         )
         .subscribe((fields) => {
-          this.fields = fields;
-          this.form = this.formBuilder.group(fields.reduce((acc, field) => ({ ...acc, [field.id]: '' }), {}));
-          this.cdr?.detectChanges();
+          this.showFields(fields);
         });
     }
+  }
+
+  showFields(fields: Field[]) {
+    this.fields = fields;
+    this.form = this.formBuilder.group(
+      fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
+    );
+    this.cdr?.detectChanges();
   }
 
   validate() {
