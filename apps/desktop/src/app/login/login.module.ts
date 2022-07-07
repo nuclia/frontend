@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { STFButtonsModule } from '@flaps/pastanaga';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LoginComponent } from './login.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  imports: [CommonModule, STFButtonsModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, PaButtonModule],
   exports: [LoginComponent],
   declarations: [LoginComponent],
   providers: [],

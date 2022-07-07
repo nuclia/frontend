@@ -25,7 +25,15 @@
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  padding-bottom: rhythm(8);
+  margin-bottom: rhythm(8);
+
+  pa-input ::ng-deep .pa-field-control {
+    height: rhythm(4);
+  }
+
+  pa-button {
+    margin-left: rhythm(0.5);
+  }
 }
 
 table {
@@ -37,7 +45,4 @@ table {
 td {
   height: rhythm(3);
   border-bottom: 1px solid $color-neutral-strong;
-  &.checkbox {
-    width: rhythm(3);
-  }
 }
