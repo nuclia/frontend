@@ -1,16 +1,21 @@
+affinity: {}
+nodeSelector: {}
+tolerations: []
 replicaCount: 1
 revisionHistoryLimit: 3
+
 containerRegistry: CONTAINER_REGISTRY_TO_REPLACE
 image: IMAGE_TO_REPLACE
 hash: HASH_VERSION_TO_REPLACE
-resources:
-  limits:
-    memory: '50Mi'
-    cpu: '50m'
+
+resources: {}
+  # limits:
+  #   memory: '50Mi'
+  #   cpu: '50m'
+
 service:
   internalPort: 80
   externalPort: 80
-nodeSelector: {}
 
 api_path: XXX
 site_key: XXX
