@@ -17,6 +17,7 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
+import type { ProcessingPullResponse, ProcessingPushResponse } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -76,8 +77,8 @@ export interface IDb {
     period?: StatsPeriod,
     utctime?: string,
   ): Observable<ProcessingStat[]>;
-  upload(file: File): Observable<void>;
-  pull(): Observable<void>;
+  upload(file: File): Observable<ProcessingPushResponse>;
+  pull(): Observable<ProcessingPullResponse>;
   getNUAClients(account: string): Observable<NUAClient[]>;
   getNUAClient(account: string, client_id: string): Observable<NUAClient>;
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }>;

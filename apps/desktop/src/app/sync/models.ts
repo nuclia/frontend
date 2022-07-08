@@ -15,9 +15,7 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
   factory: (data?: ConnectorSettings) => Observable<IDestinationConnector>;
 }
 
-export interface IConnector {}
-
-export interface ISourceConnector extends IConnector {
+export interface ISourceConnector {
   hasServerSideAuth: boolean;
   resumable: boolean;
   getParameters(): Observable<Field[]>;
@@ -29,11 +27,12 @@ export interface ISourceConnector extends IConnector {
 
 export enum FileStatus {
   PENDING = 'PENDING',
-  PROCESSED = 'PROCESSED',
+  PROCESSING = 'PROCESSING',
   UPLOADED = 'UPLOADED',
 }
 
 export interface SyncItem {
+  uuid: string;
   title: string;
   originalId: string;
   metadata: { [key: string]: string };
@@ -53,10 +52,10 @@ export interface ConnectorParameters {
   [key: string]: any;
 }
 
-export interface IDestinationConnector extends IConnector {
+export interface IDestinationConnector {
   getParameters(): Observable<Field[]>;
   authenticate(): Observable<boolean>;
-  upload(filename: string, blob: Blob, params?: ConnectorParameters): Observable<void>;
+  upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void>;
 }
 
 export interface Field {

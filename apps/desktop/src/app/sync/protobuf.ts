@@ -21,6 +21,19 @@ export const NucliaProtobufConverter = (buffer: Uint8Array) =>
     }
   });
 
+const BASE64_MARKER = ';base64,';
+export const convertDataURIToBinary = (dataURI: string) => {
+  const base64 = dataURI.includes(BASE64_MARKER) ? dataURI.split(dataURI)[1] : dataURI;
+  const raw = window.atob(base64);
+  const rawLength = raw.length;
+  const array = new Uint8Array(new ArrayBuffer(rawLength));
+
+  for (let i = 0; i < rawLength; i++) {
+    array[i] = raw.charCodeAt(i);
+  }
+  return array;
+};
+
 // By default, paragraphs are just defined by their start and end character positions.
 // This function will add in each paragraph object a `text` attribute containing the actual text of the paragraph.
 export const extractParagraphTexts = (payload: any) => ({

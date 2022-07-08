@@ -99,3 +99,14 @@ export interface NUAClient extends NUAClientPayload {
   partitions: 0;
   zone: string;
 }
+
+export interface ProcessingPushResponse {
+  seqid: number;
+  uuid: string;
+}
+
+export interface ProcessingPullResponse {
+  status: string;
+  payload?: string; // protobuf base64 encoded
+  msgid?: string;
+}

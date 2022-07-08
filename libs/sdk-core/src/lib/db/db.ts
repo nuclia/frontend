@@ -12,6 +12,8 @@ import {
   StatsPeriod,
   StatsType,
   Welcome,
+  ProcessingPullResponse,
+  ProcessingPushResponse,
 } from './db.models';
 import type { EventList, IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
@@ -121,13 +123,13 @@ export class Db implements IDb {
     );
   }
 
-  upload(file: FileWithMetadata): Observable<void> {
+  upload(file: FileWithMetadata): Observable<ProcessingPushResponse> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /process');
     }
     return uploadToProcess(this.nuclia, file, { md5: file.md5 }).pipe(
       switchMap((token) =>
-        this.nuclia.rest.post<void>(
+        this.nuclia.rest.post<ProcessingPushResponse>(
           '/processing/push',
           {
             filefield: { file: token },
@@ -137,19 +139,16 @@ export class Db implements IDb {
           },
         ),
       ),
-      tap((res) => console.log(res)),
     );
   }
 
-  pull(): Observable<void> {
+  pull(): Observable<ProcessingPullResponse> {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /process');
     }
-    return this.nuclia.rest
-      .get<void>('/processing/pull', {
-        'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-      })
-      .pipe(tap((res) => console.log(res)));
+    return this.nuclia.rest.get<ProcessingPullResponse>('/processing/pull', {
+      'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+    });
   }
 
   getNUAActivity(accountSlug: string, client_id: string, pageIndex = 0): Observable<EventList> {

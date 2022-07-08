@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="2.9.2" version="1.2">
+<babeledit_project be_version="3.0.1" version="1.2">
     <!--
 
     BabelEdit project file
@@ -703,6 +703,7 @@
             <copy_template/>
             <copy_template/>
         </copy_templates>
+        <custom_languages/>
     </editor_configuration>
     <primary_language>en-US</primary_language>
     <configuration>

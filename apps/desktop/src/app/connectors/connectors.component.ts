@@ -17,7 +17,7 @@ export class ConnectorsComponent {
     this.connectors = this.sync.getConnectors(value);
     this.cdr?.markForCheck();
   }
-  @Output() selectConnector = new EventEmitter<{ connector: ConnectorDefinition; params?: ConnectorParameters }>();
+  @Output() selectConnector = new EventEmitter<{ connector: ConnectorDefinition; params: ConnectorParameters }>();
   connectors: ConnectorDefinition[] = [];
   fields?: Field[];
   form?: UntypedFormGroup;
@@ -37,7 +37,7 @@ export class ConnectorsComponent {
         .subscribe((fields) => {
           fields.length > 0
             ? this.showFields(fields)
-            : this.selectedConnector && this.selectConnector.emit({ connector: this.selectedConnector });
+            : this.selectedConnector && this.selectConnector.emit({ connector: this.selectedConnector, params: {} });
         });
     } else {
       this.sync
@@ -62,7 +62,7 @@ export class ConnectorsComponent {
 
   validate() {
     if (this.selectedConnector) {
-      this.selectConnector.emit({ connector: this.selectedConnector, params: this.form?.value });
+      this.selectConnector.emit({ connector: this.selectedConnector, params: this.form?.value || {} });
     }
   }
 }

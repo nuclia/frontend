@@ -82,7 +82,7 @@ describe('ConnectorsComponent', () => {
       jest.spyOn(component.selectConnector, 'emit');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
-      expect(component.selectConnector.emit).toHaveBeenCalledWith({ connector: { id: 'source1' } });
+      expect(component.selectConnector.emit).toHaveBeenCalledWith({ connector: { id: 'source1' }, params: {} });
     });
   });
 
