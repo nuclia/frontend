@@ -62,7 +62,7 @@ export class UploadComponent implements OnInit {
             localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
             source.goToOAuth();
           }
-          return this.source.authenticate();
+          return this.source.authenticate(event.params);
         }),
         filter((yes) => yes),
       )
@@ -87,6 +87,7 @@ export class UploadComponent implements OnInit {
             params: event.params,
           },
           files: this.selection.selected,
+          resumable: !!this.source?.resumable
         });
         this.router.navigate(['/']);
       });

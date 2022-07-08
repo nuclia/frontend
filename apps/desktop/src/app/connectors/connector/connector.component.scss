@@ -3,15 +3,16 @@
 .connector {
   cursor: pointer;
   padding: rhythm(3);
-  width: rhythm(32);
+  width: rhythm(40);
   display: flex;
   &:hover {
     background-color: var(--desktop-background);
   }
 }
 .logo {
-  width: rhythm(6);
+  width: rhythm(4);
   margin-right: rhythm(1.5);
+  flex: 0 0 auto;
   img {
     width: 100%;
     height: auto;

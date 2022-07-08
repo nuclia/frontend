@@ -1,7 +1,7 @@
 {
 	"generic.cancel": "Cancelar",
 	"generic.logout": "Salir",
-	"generic.next": "",
+	"generic.next": "Siguiente",
 	"generic.upload": "Subir",
 	"home.active": "Activo",
 	"home.add": "Nueva subida",
@@ -12,6 +12,8 @@
 	"login.headline": "",
 	"login.not-connected": "",
 	"upload.files": "Ficheros a subir",
+	"upload.folder.drop": "Arrastra una carpeta",
+	"upload.folder.selected": "La carpeta contiene {{num}} archivos",
 	"upload.review": "Has seleccionado {{num}} ficheros. Revisa los ficheros seleccionados y empieza el proceso.",
 	"upload.select.search": "",
 	"upload.select.title": "",

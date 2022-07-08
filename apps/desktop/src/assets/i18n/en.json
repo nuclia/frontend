@@ -12,6 +12,8 @@
 	"login.headline": "The easy and fastest way to ingest data",
 	"login.not-connected": "You're not connected, click on the button to log in the browser",
 	"upload.files": "Files to upload",
+	"upload.folder.drop": "Drop folders here",
+	"upload.folder.selected": "Selected folder has {{num}} files",
 	"upload.review": "You have selected {{num}} files. Review the selected files and begin the process.",
 	"upload.select.search": "Search",
 	"upload.select.title": "Select the files",

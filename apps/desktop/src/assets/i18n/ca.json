@@ -1,7 +1,7 @@
 {
 	"generic.cancel": "Cancel·lar",
 	"generic.logout": "Sortir",
-	"generic.next": "",
+	"generic.next": "Següent",
 	"generic.upload": "Pujar",
 	"home.active": "Actiu",
 	"home.add": "Nova pujada",
@@ -12,6 +12,8 @@
 	"login.headline": "",
 	"login.not-connected": "",
 	"upload.files": "Fitxers a pujar",
+	"upload.folder.drop": "Arrossega una carpeta",
+	"upload.folder.selected": "La carpeta conté {{num}} arxius",
 	"upload.review": "Has seleccionat {{num}} fitxers. Revisa els fitxers seleccionats i comença el procés.",
 	"upload.select.search": "",
 	"upload.select.title": "",

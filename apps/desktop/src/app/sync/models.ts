@@ -19,8 +19,10 @@ export interface IConnector {}
 
 export interface ISourceConnector extends IConnector {
   hasServerSideAuth: boolean;
+  resumable: boolean;
+  getParameters(): Observable<Field[]>;
   goToOAuth(): void;
-  authenticate(): Observable<boolean>;
+  authenticate(params?: ConnectorParameters): Observable<boolean>;
   getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
   download(resource: SyncItem): Observable<Blob>;
 }
@@ -48,7 +50,7 @@ export interface ConnectorSettings {
 }
 
 export interface ConnectorParameters {
-  [key: string]: string;
+  [key: string]: any;
 }
 
 export interface IDestinationConnector extends IConnector {
@@ -61,6 +63,7 @@ export interface Field {
   id: string;
   label: string;
   help?: string;
-  type: 'text' | 'select';
+  type: 'text' | 'select' | 'folder';
   options?: { label: string; value: string }[];
+  required?: boolean;
 }

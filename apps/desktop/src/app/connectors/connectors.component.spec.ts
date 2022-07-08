@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { TranslatePipeMock } from '@flaps/core';
 import { of } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 import { ConnectorComponent } from './connector/connector.component';
@@ -14,7 +15,7 @@ describe('ConnectorsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ConnectorsComponent, ConnectorComponent],
+      declarations: [ConnectorsComponent, ConnectorComponent, TranslatePipeMock],
       imports: [ReactiveFormsModule, FormsModule, PaButtonModule, PaTextFieldModule],
       providers: [
         {
@@ -40,6 +41,10 @@ describe('ConnectorsComponent', () => {
                       description: '',
                     },
                   ],
+            getSource: () =>
+              of({
+                getParameters: () => of([]),
+              }),
             getDestination: () =>
               of({
                 getParameters: () =>

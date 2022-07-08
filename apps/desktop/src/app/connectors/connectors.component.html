@@ -10,7 +10,8 @@
       [formGroup]="form"
       qa="fields-form"
       (ngSubmit)="validate()">
-  <div *ngFor="let field of fields">
+  <div *ngFor="let field of fields"
+       class="field">
     <pa-input *ngIf="field.type === 'text'"
               [formControlName]="field.id">{{ field.label }}</pa-input>
 
@@ -20,7 +21,15 @@
       <pa-option *ngFor="let option of field.options"
                  [value]="option.value">{{ option.label }}</pa-option>
     </pa-select>
+    <nde-folder-upload *ngIf="field.type === 'folder'"
+                       [formControlName]="field.id"></nde-folder-upload>
   </div>
 
-  <pa-button qa="validate" type="submit" kind="primary">Upload</pa-button>
+  <pa-button qa="validate"
+             type="submit"
+             kind="primary"
+             [disabled]="form.invalid">
+    {{ (_type === 'sources' ? 'generic.next' : 'Upload') | translate }}
+  </pa-button>
 </form>
+

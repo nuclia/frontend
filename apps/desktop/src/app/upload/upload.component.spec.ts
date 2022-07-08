@@ -80,6 +80,7 @@ describe('UploadComponent', () => {
             getSource: () =>
               of({
                 authenticate: () => of(true),
+                getParameters: () => of([]),
               }),
           },
         },
