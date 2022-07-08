@@ -8,7 +8,14 @@
     font-weight: var(--stf-font-weight-bold);
   }
 
-  &-list {
+  .account-kbs-list {
+    pa-button:not(:last-child) {
+      margin-right: rhythm(2);
+
+      &.icon-button {
+        margin-right: rhythm(1);
+      }
+    }
     app-button-action {
       margin-right: 20px;
     }

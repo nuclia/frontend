@@ -37,6 +37,7 @@ import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.co
 import { CdkTableModule } from '@angular/cdk/table';
 import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
 import { HintModule } from '../components/hint/hint.module';
+import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   AccountComponent,
@@ -80,6 +81,8 @@ const Components = [
     STFSidebarModule,
     StashNavbarModule,
     HintModule,
+    PaButtonModule,
+    PaTooltipModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
