@@ -25,6 +25,8 @@
              fxLayout="row"
              fxLayoutAlign="end center"
              fxLayoutGap="5px">
+
+          <!-- TODO: Not sure what sistema icon should be used for generate_key action (key or refresh) -->
           <app-button-action (click)="askConfirmation(client)"
                              action="generate_key"
                              ariaLabel="account.generate_key"
@@ -57,11 +59,9 @@
     </div>
     <div>
       <div class="mt-28">
-        <stf-button (click)="openDialog()"
-                    color="secondary"
-                    padding="pd-l">
+        <pa-button (click)="openDialog()">
           {{ 'account.create_nua_key' | translate }}
-        </stf-button>
+        </pa-button>
       </div>
     </div>
   </div>
