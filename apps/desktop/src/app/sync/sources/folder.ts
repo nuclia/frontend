@@ -55,6 +55,7 @@ class FolderImpl implements ISourceConnector {
       originalId: file.path,
       metadata: { mimeType: file.type },
       status: FileStatus.PENDING,
+      uuid: '',
     }));
   }
 
