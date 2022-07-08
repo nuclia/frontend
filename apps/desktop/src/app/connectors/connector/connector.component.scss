@@ -10,8 +10,9 @@
   }
 }
 .logo {
-  width: rhythm(6);
+  width: rhythm(4);
   margin-right: rhythm(1.5);
+  flex: 0 0 auto;
   img {
     width: 100%;
     height: auto;

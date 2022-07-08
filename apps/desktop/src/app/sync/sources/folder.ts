@@ -15,7 +15,7 @@ const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const FolderConnector: SourceConnectorDefinition = {
   id: 'folder',
   title: 'Folder',
-  logo: 'assets/logos/folder.png',
+  logo: 'assets/logos/folder.svg',
   description: 'Upload a folder from your device',
   factory: () => of(new FolderImpl()),
 };
