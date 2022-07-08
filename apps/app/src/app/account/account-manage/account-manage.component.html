@@ -46,18 +46,13 @@
           <div fxFlex="70%"
                fxLayout="row"
                fxLayoutGap="10px">
-            <stf-button type="submit"
-                        minWidth="110px"
-                        [disabled]="accountForm.invalid || accountForm.pristine">
-              {{ 'generic.save' | translate }}
-            </stf-button>
-            <stf-button *ngIf="!accountForm.pristine"
-                        (click)="initAccountForm()"
-                        type="button"
-                        color="white"
-                        minWidth="110px">
-              {{ 'generic.cancel' | translate }}
-            </stf-button>
+            <pa-button type="submit"
+                       kind="primary"
+                       [disabled]="accountForm.invalid || accountForm.pristine">{{ 'generic.save' | translate }}</pa-button>
+
+            <pa-button *ngIf="!accountForm.pristine"
+                       aspect="basic"
+                       (click)="initAccountForm()">{{ 'generic.cancel' | translate }}</pa-button>
           </div>
         </div>
       </form>
