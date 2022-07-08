@@ -7,7 +7,7 @@ import {
   FileStatus,
   SearchResults,
 } from '../models';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 
 type ElectronFile = File & { path: string };
 const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
@@ -81,6 +81,6 @@ class FolderImpl implements ISourceConnector {
     if (file) {
       return of(file);
     }
-    return of();
+    return throwError(() => 'Error');
   }
 }
