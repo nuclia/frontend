@@ -213,25 +213,18 @@ export class SyncService {
         filter((res: ProcessingPullResponse) => res.status !== 'empty' && !!res.payload),
         map((res) => res.payload as string),
         switchMap((base64) => NucliaProtobufConverter(convertDataURIToBinary(base64))),
-        map((data: any) => {
-          const sync = this._queue.find((sync) => sync.fileUUIDs.includes(data.uuid));
-          let item: SyncItem | undefined;
-          if (sync) {
-            item = sync.files.find((file) => file.uuid === data.uuid);
-          }
-          return { data, sync, item } as { data: any; sync: Sync | null; item?: SyncItem };
-        }),
-        filter(({ sync, item }) => !!sync && !!item),
-        tap(({ data }) => console.log(data)),
+        map((data: any) => ({ data, sync: this._queue.find((sync) => sync.fileUUIDs.includes(data.uuid)) })),
+        filter(({ sync }) => !!sync),
+        map(({ data, sync }) => ({ data, sync, item: (sync as Sync).files.find((file) => file.uuid === data.uuid) })),
+        filter(({ data, sync, item }) => !!item),
         map(
           ({ data, sync, item }) =>
-            ({ data: this.formatProtobufData(data), sync, item } as {
+            ({ data, sync, item } as {
               data: any;
               sync: Sync;
               item: SyncItem;
             }),
         ),
-        tap(({ data }) => console.log(data)),
         switchMap(({ data, sync, item }) => {
           return this.getDestination(sync.destination.id).pipe(
             switchMap((dest) =>
@@ -297,27 +290,5 @@ export class SyncService {
         ),
       )
       .subscribe(() => this.ready.next());
-  }
-
-  private formatProtobufData(data: any) {
-    return {
-      ...data,
-      fileExtractedData: (data.fileExtractedData || []).map((extractedData: any) => ({
-        ...extractedData,
-        fileThumbnail: {
-          uri: extractedData.fileThumbnail?.uri ? this.getProcessingDownloadUrl(extractedData.fileThumbnail.uri) : '',
-        },
-        fileGenerated: Object.entries(extractedData.fileGenerated).reduce((agg, [key, value]) => {
-          agg[key] = {
-            uri: this.getProcessingDownloadUrl((value as { uri: string }).uri),
-          };
-          return agg;
-        }, {} as any),
-      })),
-    };
-  }
-
-  private getProcessingDownloadUrl(uriToken: string) {
-    return `${this.sdk.nuclia.regionalBackend}/v1/processing/download?token=${uriToken}`;
   }
 }

@@ -1,11 +1,5 @@
 import { from, map, Observable, of, throwError } from 'rxjs';
-import {
-  Field,
-  IDestinationConnector,
-  ConnectorSettings,
-  DestinationConnectorDefinition,
-  ConnectorParameters,
-} from '../models';
+import { Field, IDestinationConnector, DestinationConnectorDefinition, ConnectorParameters } from '../models';
 import algoliasearch from 'algoliasearch';
 
 export const Algolia: DestinationConnectorDefinition = {
@@ -13,7 +7,7 @@ export const Algolia: DestinationConnectorDefinition = {
   title: 'Algolia',
   description: 'Algolia index',
   logo: 'assets/logos/algolia.svg',
-  factory: (data?: ConnectorSettings) => of(new AlgoliaImpl()),
+  factory: () => of(new AlgoliaImpl()),
 };
 class AlgoliaImpl implements IDestinationConnector {
   getParameters(): Observable<Field[]> {
@@ -48,9 +42,6 @@ class AlgoliaImpl implements IDestinationConnector {
         objectID: data.metadata.uuid,
         title: filename,
         fullText: data.metadata.extractedText?.[0]?.body?.text,
-        images: (data.metadata.fileExtractedData || [])
-          .map((extractedData: { fileThumbnail?: { uri?: string } }) => extractedData.fileThumbnail?.uri)
-          .filter((imageUri: string | undefined) => !!imageUri),
       };
       return from(index.saveObject(newObject)).pipe(map(() => undefined));
     }

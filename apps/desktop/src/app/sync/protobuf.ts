@@ -23,9 +23,7 @@ export const NucliaProtobufConverter = (buffer: Uint8Array) =>
 
 const BASE64_MARKER = ';base64,';
 export const convertDataURIToBinary = (dataURI: string) => {
-  const base64MarkerIndex = dataURI.indexOf(BASE64_MARKER);
-  const base64Index = base64MarkerIndex === -1 ? 0 : dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
-  const base64 = dataURI.substring(base64Index);
+  const base64 = dataURI.includes(BASE64_MARKER) ? dataURI.split(dataURI)[1] : dataURI;
   const raw = window.atob(base64);
   const rawLength = raw.length;
   const array = new Uint8Array(new ArrayBuffer(rawLength));
