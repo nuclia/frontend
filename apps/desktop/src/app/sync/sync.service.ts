@@ -72,7 +72,10 @@ export class SyncService {
       definition: NucliaCloudKB,
       settings: environment.connectors.nucliacloud,
     },
-    algolia: { definition: Algolia, settings: {} },
+    algolia: {
+      definition: Algolia,
+      settings: {},
+    },
   };
 
   private _queue: Sync[] = [];
@@ -219,7 +222,16 @@ export class SyncService {
           return { data, sync, item } as { data: any; sync: Sync | null; item?: SyncItem };
         }),
         filter(({ sync, item }) => !!sync && !!item),
-        map(({ data, sync, item }) => ({ data, sync, item } as { data: any; sync: Sync; item: SyncItem })),
+        tap(({ data }) => console.log(data)),
+        map(
+          ({ data, sync, item }) =>
+            ({ data: this.formatProtobufData(data), sync, item } as {
+              data: any;
+              sync: Sync;
+              item: SyncItem;
+            }),
+        ),
+        tap(({ data }) => console.log(data)),
         switchMap(({ data, sync, item }) => {
           return this.getDestination(sync.destination.id).pipe(
             switchMap((dest) =>
@@ -229,7 +241,7 @@ export class SyncService {
             ),
             tap(() => {
               item.status = FileStatus.UPLOADED;
-              sync.completed = sync.files.every((file) => file.status === FileStatus.UPLOADED);
+              sync.completed = sync.files.every((file: SyncItem) => file.status === FileStatus.UPLOADED);
               this.onQueueUpdate();
             }),
           );
@@ -285,5 +297,27 @@ export class SyncService {
         ),
       )
       .subscribe(() => this.ready.next());
+  }
+
+  private formatProtobufData(data: any) {
+    return {
+      ...data,
+      fileExtractedData: (data.fileExtractedData || []).map((extractedData: any) => ({
+        ...extractedData,
+        fileThumbnail: {
+          uri: extractedData.fileThumbnail?.uri ? this.getProcessingDownloadUrl(extractedData.fileThumbnail.uri) : '',
+        },
+        fileGenerated: Object.entries(extractedData.fileGenerated).reduce((agg, [key, value]) => {
+          agg[key] = {
+            uri: this.getProcessingDownloadUrl((value as { uri: string }).uri),
+          };
+          return agg;
+        }, {} as any),
+      })),
+    };
+  }
+
+  private getProcessingDownloadUrl(uriToken: string) {
+    return `${this.sdk.nuclia.regionalBackend}/v1/processing/download?token=${uriToken}`;
   }
 }

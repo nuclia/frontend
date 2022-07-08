@@ -48,7 +48,9 @@ class AlgoliaImpl implements IDestinationConnector {
         objectID: data.metadata.uuid,
         title: filename,
         fullText: data.metadata.extractedText?.[0]?.body?.text,
-        images: data.metadata.fileExtractedData?.[0]?.fileThumbnail?.uri,
+        images: (data.metadata.fileExtractedData || [])
+          .map((extractedData: { fileThumbnail?: { uri?: string } }) => extractedData.fileThumbnail?.uri)
+          .filter((imageUri: string | undefined) => !!imageUri),
       };
       return from(index.saveObject(newObject)).pipe(map(() => undefined));
     }
