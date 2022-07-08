@@ -17,7 +17,7 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
-import { ProcessingPullResponse, ProcessingPushResponse } from './db';
+import type { ProcessingPullResponse, ProcessingPushResponse } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
