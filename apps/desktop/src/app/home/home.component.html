@@ -19,7 +19,7 @@
          (keydown.enter)="hasFiles ? toggle(section.type) : null"
          tabIndex="0">
       <div class="title">{{ section.title | translate }}</div>
-      <div class="counter">{{ 'home.files' | translate: { num: (section.items | async).length } }}</div>
+      <div class="counter">{{ 'home.files' | translate: { num: (section.count | async) } }}</div>
       <div class="arrow" *ngIf="hasFiles"></div>
     </div>
     <div class="section-body"
