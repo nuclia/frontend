@@ -1,5 +1,4 @@
 import {
-  ConnectorDefinition,
   ConnectorSettings,
   FileStatus,
   ISourceConnector,
@@ -151,10 +150,11 @@ class DropboxImpl implements ISourceConnector {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   private mapFiles(raw: any): SyncItem {
     return {
-      title: raw?.['name'] || '',
-      originalId: raw?.['id'] || '',
+      title: raw.name || '',
+      originalId: raw.id || '',
       metadata: {},
       status: FileStatus.PENDING,
+      uuid: raw.uuid || '',
     };
   }
 
@@ -165,6 +165,7 @@ class DropboxImpl implements ISourceConnector {
       originalId: raw.metadata?.['id'] || '',
       metadata: {},
       status: FileStatus.PENDING,
+      uuid: raw.metadata?.['uuid'] || '',
     };
   }
 

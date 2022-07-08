@@ -139,10 +139,11 @@ class GDriveImpl implements ISourceConnector {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   map(raw: any): SyncItem {
     return {
-      title: raw?.['name'] || '',
-      originalId: raw?.['id'] || '',
+      title: raw.name || '',
+      originalId: raw.id || '',
       metadata: { mimeType: raw['mimeType'] },
       status: FileStatus.PENDING,
+      uuid: raw.uuid || '',
     };
   }
 

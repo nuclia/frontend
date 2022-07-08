@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { from, map, Observable, of, throwError } from 'rxjs';
 import {
   Field,
   IDestinationConnector,
@@ -6,6 +6,7 @@ import {
   DestinationConnectorDefinition,
   ConnectorParameters,
 } from '../models';
+import algoliasearch from 'algoliasearch';
 
 export const Algolia: DestinationConnectorDefinition = {
   id: 'algolia',
@@ -18,13 +19,13 @@ class AlgoliaImpl implements IDestinationConnector {
   getParameters(): Observable<Field[]> {
     return of([
       {
-        id: 'apiKey',
-        label: 'Algolia API Key',
+        id: 'appId',
+        label: 'Algolia Application Id',
         type: 'text',
       },
       {
-        id: 'appKId',
-        label: 'Algolia Application Id',
+        id: 'apiKey',
+        label: 'Algolia Admin API Key',
         type: 'text',
       },
       {
@@ -40,9 +41,24 @@ class AlgoliaImpl implements IDestinationConnector {
   }
 
   upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void> {
-    // TODO: integrate algolia js client
-    //  https://www.algolia.com/doc/api-client/getting-started/install/javascript/?client=javascript
-    console.log(filename, params, data);
-    return of();
+    if (!!params.appId && !!params.apiKey && !!params.index && !!data.metadata) {
+      const client = algoliasearch(params.appId, params.apiKey);
+      const index = client.initIndex(params.index);
+      const newObject = {
+        objectID: data.metadata.uuid,
+        title: filename,
+        fullText: data.metadata.extractedText?.[0]?.body?.text,
+        images: data.metadata.fileExtractedData?.[0]?.fileThumbnail?.uri,
+      };
+      return from(index.saveObject(newObject)).pipe(map(() => undefined));
+    }
+    return throwError(() => {
+      return `Algolia upload requires:
+        ${!params.appId ? 'an application id' : ''}
+        ${!params.apiKey ? 'an api key' : ''}
+        ${!params.index ? 'an index name' : ''}
+        ${!data.metadata ? 'the file metadata' : ''}
+      `;
+    });
   }
 }

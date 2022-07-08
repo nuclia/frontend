@@ -133,6 +133,7 @@ export class Db implements IDb {
           '/processing/push',
           {
             filefield: { file: token },
+            processing_options: { ml_text: false },
           },
           {
             'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,

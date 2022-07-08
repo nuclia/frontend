@@ -87,7 +87,8 @@ export class UploadComponent implements OnInit {
             params: event.params,
           },
           files: this.selection.selected,
-          resumable: !!this.source?.resumable
+          resumable: !!this.source?.resumable,
+          fileUUIDs: [],
         });
         this.router.navigate(['/']);
       });
