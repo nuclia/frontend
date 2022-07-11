@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SDKService, StateService } from '@flaps/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
-import { KBStates, StatsPeriod, StatsType } from '@nuclia/core';
+import { KBStates, StatsPeriod, StatsType, Account } from '@nuclia/core';
 import { filter, map, Observable, share, switchMap, combineLatest, take } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { HelpBoxesService } from '../../services/help-boxes.service';
@@ -21,6 +21,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   state = this.sdk.currentKb.pipe(map((kb) => kb.state));
   stateLabel = this.state.pipe(map((state) => this.translate.transform(`stash.state.${state?.toLowerCase()}`)));
   isPublished = this.state.pipe(map((state) => state === 'PUBLISHED'));
+  account = this.stateService.account.pipe(filter((account) => !!account)) as Observable<Account>;
   counters = this.sdk.counters.pipe(
     map((counters) =>
       Object.entries(counters).reduce((acc: { [key: string]: string }, [key, value]) => {
@@ -30,8 +31,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     ),
   );
   refreshing = this.sdk.pendingRefresh;
-  private _processing = combineLatest([this.stateService.account, this.sdk.currentKb]).pipe(
-    filter(([account]) => !!account),
+  private _processing = combineLatest([this.account, this.sdk.currentKb]).pipe(
     switchMap(([account, kb]) =>
       this.sdk.nuclia.db.getStats(account!.slug, StatsType.PROCESSING_TIME, kb.id, StatsPeriod.YEAR),
     ),
@@ -53,8 +53,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
         .reverse(),
     ),
   );
-  private _search = combineLatest([this.stateService.account, this.sdk.currentKb]).pipe(
-    filter(([account]) => !!account),
+  private _search = combineLatest([this.account, this.sdk.currentKb]).pipe(
     switchMap(([account, kb]) =>
       this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, kb.id, StatsPeriod.YEAR),
     ),
@@ -77,7 +76,8 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
         .reverse(),
     ),
   );
-  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
+  isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
+  isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
   constructor(
     private app: AppService,

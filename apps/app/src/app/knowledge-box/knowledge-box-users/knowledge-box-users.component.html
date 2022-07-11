@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <ng-container *ngIf="isAdmin | async">
+  <ng-container *ngIf="isAccountManager | async">
     <div class="add-user"
         *ngIf="canAddUsers | async">
       <form (ngSubmit)="addUser()"
@@ -73,7 +73,7 @@
                 selectSize="small"
                 (ngModelChange)="changeRole(user.id, $event)"
                 [ngModel]="user.role"
-                [disabled]="isItMe(user.id)">
+                [disabled]="isItMe(user.id) || !(isAccountManager | async)">
           <ng-container *ngFor="let role of roles">
             <option
               [value]="role">
@@ -91,7 +91,7 @@
       <td cdk-cell
           *cdkCellDef="let user">
           <app-button-action (click)="deleteUser(user)"
-                             *ngIf="!isItMe(user.id)"
+                             *ngIf="!isItMe(user.id) && (isAccountManager | async)"
                              action="delete"
                              ariaLabel="generic.delete">
         </app-button-action>
