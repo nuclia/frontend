@@ -30,7 +30,7 @@
     }
   },
   "dmg": {
-    "backgroundColor": "#000",
+    "backgroundColor": "#fff",
     "sign": false
   },
   "pkg": {
