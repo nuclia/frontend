@@ -12,7 +12,18 @@ import {
 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
-import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share } from 'rxjs/operators';
+import {
+  tap,
+  filter,
+  takeUntil,
+  auditTime,
+  scan,
+  switchMap,
+  concatMap,
+  share,
+  catchError,
+  mapTo,
+} from 'rxjs/operators';
 import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
 
 @Component({
@@ -43,7 +54,18 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     }),
     switchMap(() =>
       concat(
-        (this.source as ISourceConnector).getFiles(this.query),
+        (this.source as ISourceConnector).getFiles(this.query).pipe(
+          catchError((error) => {
+            if (this.source && error.status === 403) {
+              if (this.source.hasServerSideAuth) {
+                this.source.goToOAuth();
+              }
+              return this.source.authenticate().pipe(mapTo({ items: [], nextPage: undefined }));
+            } else {
+              return of({ items: [], nextPage: undefined });
+            }
+          }),
+        ),
         this.triggerNextPage.pipe(
           filter(() => !this.loading),
           tap(() => {
