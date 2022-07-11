@@ -27,7 +27,7 @@ import { SetupAccountComponent } from './setup/setup-account/setup-account.compo
 import { RootGuard } from './guards/root.guard';
 import { SelectGuard } from './select/select.guard';
 import { AccountKbsComponent } from './account/account-kbs/account-kbs.component';
-import { AccountOwnerGuard, KnowledgeBoxOwnerGuard } from './guards/permission.guard';
+import { AccountOwnerGuard } from './guards/permission.guard';
 import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
 import { RedirectComponent } from './redirect/redirect.component';
@@ -172,7 +172,7 @@ const routes: Routes = [
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
-                canActivate: [KnowledgeBoxOwnerGuard],
+                canActivate: [AccountOwnerGuard],
               },
               {
                 path: 'widgets',

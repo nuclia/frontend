@@ -24,7 +24,10 @@ export class KnowledgeBoxUsersComponent {
   columns: string[] = ['name', 'role', 'actions'];
   usersKb = this.users.usersKb;
   account = this.state.account.pipe(filter((account) => !!account));
-  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
+  isAccountManager = this.account.pipe(
+    filter((account) => !!account),
+    map((account) => account!.can_manage_account),
+  );
   canAddUsers = this.account.pipe(
     map((account) => account!.max_users == null || account!.current_users < account!.max_users),
   );

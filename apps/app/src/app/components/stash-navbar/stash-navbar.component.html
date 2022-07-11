@@ -96,7 +96,7 @@
             <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
           </a>
         </div>
-        <ng-container *ngIf="isAdmin | async">
+        <ng-container *ngIf="isAccountManager | async">
           <div *ngIf="isAPIKeysEnabled | async"
                class="group-items"
                tourAnchor="step10">
