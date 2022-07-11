@@ -17,7 +17,7 @@
 	"upload.review": "Has seleccionado {{num}} ficheros. Revisa los ficheros seleccionados y empieza el proceso.",
 	"upload.select.search": "Busca",
 	"upload.select.title": "Selecciona los archivos",
-	"upload.source.help": "Elige la origen desde la que quieres subir todos los archivos",
+	"upload.source.help": "Elige el origen desde la que quieres subir todos los archivos",
 	"upload.source.title": "Origen",
 	"upload.steps.destination": "Selecciona el destino",
 	"upload.steps.files": "Escoge los ficheros",
