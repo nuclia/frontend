@@ -8,6 +8,9 @@
 
 .header {
   flex: 0 0 auto;
+  h3 {
+    margin: 0;
+  }
 }
 
 .body {
@@ -25,7 +28,7 @@
   display: flex;
   width: 100%;
   justify-content: flex-end;
-  margin-bottom: rhythm(8);
+  margin-bottom: rhythm(1);
 
   pa-input ::ng-deep .pa-field-control {
     height: rhythm(4);
