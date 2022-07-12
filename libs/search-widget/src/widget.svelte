@@ -161,6 +161,7 @@
     --color-dark-stronger: var(--custom-color-dark-stronger, #8296a6);
     --color-neutral-strong: var(--custom-color-neutral-strong, #ff0066);
     --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
+    --color-light-regular: var(--custom-color-light-regular, #c4c4c4);
 
     --font-size-base: var(--custom-font-size-base, 16px);
     --font-weight-body: var(--custom-font-weight-body, 300);

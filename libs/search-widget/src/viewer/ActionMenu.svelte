@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { WidgetAction } from '../core/models';
   import { getWidgetActions } from '../core/store';
+  import { getCDN } from '../core/utils';
 
   export let uid: string;
 
@@ -17,7 +18,9 @@
 
 {#if actions.length > 0}
   <div>
-    <button on:click|preventDefault={toggleMenu}>⋮</button>
+    <button on:click|preventDefault={toggleMenu}>
+      <img src={`${getCDN()}icons/more-vertical.svg`} alt="more" >
+    </button>
     {#if displayMenu}
       <ul class="menu">
         {#each actions as item}
@@ -37,29 +40,25 @@
   }
   button {
     border: none;
-    border-radius: 15px;
-    font-size: 26px;
-    color: var(--color-light-stronger);
-    font-weight: bolder;
-    line-height: 1;
+    border-radius: 50%;
     height: 32px;
     width: 32px;
+    padding: 0;
     cursor: pointer;
     background: none;
     transition: background-color 0.2s;
+    text-align: center;
   }
   button:hover {
-    background-color: var(--color-primary-muted);
+    background-color: var(--color-dark-light);
   }
   ul {
     position: absolute;
-    top: 10px;
-    left: 32px;
+    top: 4px;
+    right: 24px;
     padding: 0;
-    color: var(--color-dark-stronger);
     background-color: var(--color-light-stronger);
     box-shadow: var(--shadow-modal);
-    border: 0.3px solid var(--color-dark-stronger);
     border-bottom: 0;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-body);
@@ -67,10 +66,11 @@
   li {
     display: block;
     cursor: pointer;
-    padding: 0.2em 1em;
-    border-bottom: 0.3px solid var(--color-dark-stronger);
+    padding: 0.4em 1.25em;
+    border-bottom: 1px solid var(--color-dark-light);
+    white-space: nowrap;
   }
   li:hover {
-    color: var(--color-primary-regular);
+    background-color: var(--color-dark-light);
   }
 </style>
