@@ -22,7 +22,6 @@ export class Authentication implements IAuthentication {
       this._isAuthenticated.next(true);
     } else {
       this.checkTokenExpiration();
-      this._isAuthenticated.next(!!this.getToken());
     }
   }
 
@@ -129,6 +128,7 @@ export class Authentication implements IAuthentication {
         if (expiration < now) {
           this.logout();
         } else {
+          this._isAuthenticated.next(true);
           // we refresh the token in 6 hours (or immediately if it should expire sooner)
           const timeout = expiration - now < REFRESH_DELAY ? 0 : REFRESH_DELAY;
           this.timerSubscription?.unsubscribe();
@@ -136,7 +136,11 @@ export class Authentication implements IAuthentication {
             .pipe(switchMap(() => this.refresh()))
             .subscribe();
         }
+      } else {
+        this._isAuthenticated.next(false);
       }
+    } else {
+      this._isAuthenticated.next(false);
     }
   }
 
