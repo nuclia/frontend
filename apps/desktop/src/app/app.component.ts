@@ -48,44 +48,46 @@ export class AppComponent implements OnInit {
   }
 
   authenticate() {
-    if (!this.sdk.nuclia.auth.getToken()) {
-      const interval = setInterval(() => {
-        const deeplink = (window as any)['deeplink'] || location.search;
-        if (!this.sdk.nuclia.auth.getToken()) {
+    this.sdk.nuclia.auth.isAuthenticated().subscribe((isAuthenticated) => {
+      if (!isAuthenticated) {
+        const interval = setInterval(() => {
+          const deeplink = (window as any)['deeplink'] || location.search;
+          if (!this.sdk.nuclia.auth.getToken()) {
+            if (deeplink && deeplink.includes('?')) {
+              const querystring = new URLSearchParams(deeplink.split('?')[1]);
+              this.sdk.nuclia.auth.authenticate({
+                access_token: querystring.get('access_token') || '',
+                refresh_token: querystring.get('refresh_token') || '',
+              });
+              this.isAuthenticated = true;
+              this.cdr?.markForCheck();
+              if (!(window as any)['deeplink']) {
+                location.search = '';
+              }
+              clearInterval(interval);
+            }
+          } else {
+            clearInterval(interval);
+          }
+        }, 500);
+        // delay a bit the login button display to avoid ugly flash
+        setTimeout(() => {
+          this.isAuthenticated = false;
+          this.cdr?.markForCheck();
+        }, 500);
+      } else if (localStorage.getItem(SOURCE_ID_KEY)) {
+        const interval = setInterval(() => {
+          const deeplink = (window as any)['deeplink'] || location.search;
           if (deeplink && deeplink.includes('?')) {
-            const querystring = new URLSearchParams(deeplink.split('?')[1]);
-            this.sdk.nuclia.auth.authenticate({
-              access_token: querystring.get('access_token') || '',
-              refresh_token: querystring.get('refresh_token') || '',
-            });
-            this.isAuthenticated = true;
-            this.cdr?.markForCheck();
-            if (!(window as any)['deeplink']) {
-              location.search = '';
+            if ((window as any)['electron']) {
+              this.router.navigate(['/add-upload']);
+            } else {
+              this.router.navigateByUrl(`/add-upload${deeplink}`);
             }
             clearInterval(interval);
           }
-        } else {
-          clearInterval(interval);
-        }
-      }, 500);
-      // delay a bit the login button display to avoid ugly flash
-      setTimeout(() => {
-        this.isAuthenticated = false;
-        this.cdr?.markForCheck();
-      }, 500);
-    } else if (localStorage.getItem(SOURCE_ID_KEY)) {
-      const interval = setInterval(() => {
-        const deeplink = (window as any)['deeplink'] || location.search;
-        if (deeplink && deeplink.includes('?')) {
-          if ((window as any)['electron']) {
-            this.router.navigate(['/add-upload']);
-          } else {
-            this.router.navigateByUrl(`/add-upload${deeplink}`);
-          }
-          clearInterval(interval);
-        }
-      }, 500);
-    }
+        }, 500);
+      }
+    });
   }
 }

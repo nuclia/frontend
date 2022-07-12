@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {
+  catchError,
   combineLatest,
   concatMap,
-  concatMapTo,
   delay,
   filter,
   forkJoin,
@@ -121,82 +121,62 @@ export class SyncService {
   }
 
   private start() {
-    this.authenticateAllPendingConnectors()
-      .pipe(
-        concatMapTo(
-          combineLatest(
-            this._queue
-              .filter((sync) => !sync.started && !sync.completed)
-              .map((sync) => {
-                return combineLatest([
-                  this.getSource(sync.source).pipe(take(1)),
-                  this.getDestination(sync.destination.id).pipe(take(1)),
-                ]).pipe(
-                  concatMap(([sourceInstance, destinationInstance]) => {
-                    sync.started = true;
-                    // TODO: go 6 by 6 maximum
-                    return forkJoin(
-                      sync.files
-                        .filter((f) => f.status === FileStatus.PENDING)
-                        .map((f) =>
-                          sourceInstance.download(f).pipe(
-                            concatMap((blob) => {
-                              if (sync.destination.id === 'nucliacloud') {
-                                return destinationInstance.upload(f.title, sync.destination.params, { blob }).pipe(
-                                  tap(() => {
-                                    f.status = FileStatus.UPLOADED;
-                                    sync.completed = true;
-                                    this.onQueueUpdate();
-                                  }),
-                                );
-                              } else {
-                                return md5(new File([blob], f.title)).pipe(
-                                  concatMap((file) => this.sdk.nuclia.db.upload(file)),
-                                  tap((response) => {
-                                    f.status = FileStatus.PROCESSING;
-                                    f.uuid = response.uuid;
-                                    sync.fileUUIDs.push(response.uuid);
-                                    this.onQueueUpdate();
-                                  }),
-                                );
-                              }
+    combineLatest(
+      this._queue
+        .filter((sync) => !sync.started && !sync.completed)
+        .map((sync) => {
+          return combineLatest([
+            this.getSource(sync.source).pipe(take(1)),
+            this.getDestination(sync.destination.id).pipe(take(1)),
+          ]).pipe(
+            concatMap(([sourceInstance, destinationInstance]) => {
+              sync.started = true;
+              // TODO: go 6 by 6 maximum
+              return forkJoin(
+                sync.files
+                  .filter((f) => f.status === FileStatus.PENDING)
+                  .map((f) =>
+                    sourceInstance.download(f).pipe(
+                      catchError((error) => {
+                        if (error.status === 403) {
+                          if (sourceInstance.hasServerSideAuth) {
+                            sourceInstance.goToOAuth();
+                          }
+                        }
+                        throw error;
+                      }),
+                      concatMap((blob) => {
+                        if (sync.destination.id === 'nucliacloud') {
+                          return destinationInstance.upload(f.title, sync.destination.params, { blob }).pipe(
+                            tap(() => {
+                              f.status = FileStatus.UPLOADED;
+                              sync.completed = true;
+                              this.onQueueUpdate();
                             }),
-                            take(1),
-                          ),
-                        ),
-                    );
-                  }),
-                  tap(() => {
-                    this.onQueueUpdate();
-                  }),
-                );
-              }),
-          ),
-        ),
-      )
-      .subscribe();
-  }
-
-  authenticateAllPendingConnectors(): Observable<void> {
-    const sources = this._queue
-      .filter((sync) => !sync.started && !sync.completed)
-      .reduce((acc, sync) => {
-        if (!acc[sync.source]) {
-          acc[sync.source] = this.getSource(sync.source).pipe(
-            take(1),
-            concatMap((source) => {
-              if (source.hasServerSideAuth) {
-                // TODO: we cannot redirect to several third party login pages at the same time
-                source.goToOAuth();
-              }
-              return source.authenticate();
+                          );
+                        } else {
+                          return md5(new File([blob], f.title)).pipe(
+                            concatMap((file) => this.sdk.nuclia.db.upload(file)),
+                            tap((response) => {
+                              f.status = FileStatus.PROCESSING;
+                              f.uuid = response.uuid;
+                              sync.fileUUIDs.push(response.uuid);
+                              this.onQueueUpdate();
+                            }),
+                          );
+                        }
+                      }),
+                      take(1),
+                    ),
+                  ),
+              );
+            }),
+            tap(() => {
+              this.onQueueUpdate();
             }),
           );
-        }
-        return acc;
-      }, {} as { [id: string]: Observable<boolean> });
-    // combine latest is expecting an array of observables
-    return combineLatest(Object.values(sources)).pipe(map(() => undefined));
+        }),
+    ).subscribe();
   }
 
   addSync(sync: Sync) {

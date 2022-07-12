@@ -12,7 +12,7 @@ import {
 } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take, tap, concatMapTo } from 'rxjs';
 import { injectScript } from '@flaps/core';
-import { environment } from 'apps/desktop/src/environments/environment';
+import { environment } from '../../../environments/environment';
 
 declare var gapi: any;
 declare var google: any;
@@ -114,7 +114,7 @@ class GDriveImpl implements ISourceConnector {
   }
 
   private _getFiles(query?: string, pageSize: number = 50, nextPageToken?: string): Observable<SearchResults> {
-    return this.authenticate().pipe(
+    return injectScript('https://apis.google.com/js/api.js').pipe(
       filter((isSigned) => isSigned),
       take(1),
       concatMap(() =>
@@ -153,15 +153,26 @@ class GDriveImpl implements ISourceConnector {
         ? `https://www.googleapis.com/drive/v3/files/${resource.originalId}/export?mimeType=application/pdf&supportsAllDrives=true`
         : `https://www.googleapis.com/drive/v3/files/${resource.originalId}?alt=media&supportsAllDrives=true`;
 
-      fetch(request, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${gapi.client.getToken().access_token}` },
-      })
-        .then((response) => response.blob())
-        .then((blob) => {
-          observer.next(blob);
-          observer.complete();
-        });
+      injectScript('https://apis.google.com/js/api.js').subscribe(() =>
+        gapi.load('client', () =>
+          gapi.client
+            .init({
+              apiKey: this.API_KEY,
+              discoveryDocs: DISCOVERY_DOCS,
+            })
+            .then(() =>
+              fetch(request, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${gapi.client.getToken().access_token}` },
+              })
+                .then((response) => response.blob())
+                .then((blob) => {
+                  observer.next(blob);
+                  observer.complete();
+                }),
+            ),
+        ),
+      );
     });
   }
 }

@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   client: 'desktop',
-  dashboard: 'https://stashify.cloud',
+  dashboard: 'https://nuclia.cloud',
   backend: {
     social_login: true,
     new_api: true,
@@ -16,7 +16,7 @@ export const environment = {
       API_KEY: '__GOOGLE_API_KEY__',
     },
     nucliacloud: {
-      backend: 'https://stashify.cloud/api',
+      backend: 'https://nuclia.cloud/api',
       client: 'desktop',
       zone: 'europe-1',
     },

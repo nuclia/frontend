@@ -27,7 +27,7 @@ export class UserService {
   updateWelcome(): Observable<void> {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
-        if (error.status === 403) {
+        if (error.status === 403 || error.status === 400) {
           this.sdk.nuclia.auth.logout();
         }
         return of(error);
