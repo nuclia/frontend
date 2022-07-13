@@ -70,9 +70,10 @@ export class AppInitService {
               });
             });
           }
-          const apiOrigin = config.production
-            ? location.origin.replace('manage.', '').replace('auth.', '')
-            : config.backend.apiOrigin;
+          const apiOrigin =
+            config.production && location.origin.startsWith('http')
+              ? location.origin.replace('manage.', '').replace('auth.', '')
+              : config.backend.apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
           config.backend.cdn = apiOrigin.replace('//', '//cdn.');
           if (config.backend.cdn && !JS_INJECTED) {

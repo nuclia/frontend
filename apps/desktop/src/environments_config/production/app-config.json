@@ -3,7 +3,8 @@
   "production": true,
   "backend": {
     "app": "desktop",
-    "apiPath": "https://nuclia.cloud",
+    "apiOrigin": "https://nuclia.cloud",
+    "apiPath": "/api",
     "siteKey": "6Ld-y4QcAAAAAD6rp7xj0PMEpGcflsJEPJ9D3oyG",
     "analytics": "G-QLPEN1JVZC",
     "sentry_environment": "prod",
