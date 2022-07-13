@@ -9,6 +9,10 @@
   }
 
   .left-column {
+    width: calc(100% - 400px);
+  }
+
+  .right-column {
     width: 371px;
   }
 
@@ -90,6 +94,18 @@
       font-family: var(--stf-font-family-monospace);
       font-size: 14px;
       white-space: nowrap;
+    }
+  }
+  .go-to-desktop {
+    background-color: $gray-black;
+    color: $white;
+    padding: rythm;
+  }
+  .desktop-button {
+    margin-top: rythm(3);
+    text-align: center;
+    i {
+      font-size: size(xs);
     }
   }
 }

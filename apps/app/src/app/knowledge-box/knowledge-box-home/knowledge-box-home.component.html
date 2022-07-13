@@ -82,6 +82,18 @@
           </dl>
         </div>
       </div>
+      <div class="container go-to-desktop">
+        <img src="assets/nuclia-desktop-white.svg"
+             alt="Nuclia Desktop">
+        <p>{{ 'stash.desktop.description' | translate }}</p>
+        <div class="desktop-button">
+          <pa-button kind="inverted"
+                     icon="download-cloud"
+                     iconAndText
+                     (click)="downloadDesktop()">{{ 'stash.desktop.button' | translate }}</pa-button>
+          <p><i>{{ 'stash.desktop.text' | translate }}</i></p>
+        </div>
+      </div>
     </div>
   </div>
 </div>
