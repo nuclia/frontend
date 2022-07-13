@@ -19,37 +19,31 @@
 </script>
 
 <div class="search">
-  <label for="nuclia-resource-search">{$_('resource.search')}</label>
   <div class="search-form">
     <div class="search-query">
-      <div class="search-input">
-        <input
-          id="nuclia-resource-search"
-          autocomplete="off"
-          autocorrect="off"
-          autofill="off"
-          autocapitalize="off"
-          spellcheck="false"
-          aria-label="Search input"
-          bind:value={$query}
-        />
-        <button>
-          <img src={`${getCDN()}icons/search.svg`} alt="search" />
-        </button>
+      <input
+        autocomplete="off"
+        autocorrect="off"
+        autofill="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Search input"
+        bind:value={$query}
+        style:background-image={`url(${getCDN()}icons/search.svg)`}
+      />
+      <div class="sort">
+        <select bind:value={$order}>
+          <option value={SearchOrder.RELEVANCE}>{$_('resource.relevance')}</option>
+          <option value={SearchOrder.SEQUENTIAL}>{$_('resource.sequential')}</option>
+        </select>
       </div>
-      {#if $results !== null || $onlySelected}
-        <button class="show-all" on:click={showAllParagraphs}>
-          <img src={`${getCDN()}icons/close.svg`} alt="reset" />
-          <span>{$_('resource.show-all')}</span>
-        </button>
-      {/if}
     </div>
-    <div class="sort">
-      <select bind:value={$order}>
-        <option value={SearchOrder.RELEVANCE}>{$_('resource.relevance')}</option>
-        <option value={SearchOrder.SEQUENTIAL}>{$_('resource.sequential')}</option>
-      </select>
-    </div>
+    {#if $results !== null || $onlySelected}
+    <button class="show-all" on:click={showAllParagraphs}>
+      <img src={`${getCDN()}icons/close.svg`} alt="reset" />
+      <span>{$_('resource.show-all')}</span>
+    </button>
+  {/if}
   </div>
 </div>
 
@@ -59,58 +53,33 @@
     top: 0;
     background-color: #fff;
     padding: 1em 0;
-    display: flex;
-    align-items: flex-start;
     z-index: 1;
-  }
-  .search label {
-    flex: 0 0 auto;
-    width: 66px;
-    padding-right: 12px;
-  }
-  .search-form {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    flex: 1 1 0;
   }
   .search-query {
     display: flex;
-    flex-direction: column;
-  }
-  @media (min-width: 1700px) {
-    .search-query {
-      flex-direction: row;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-  }
-  .search-input {
-    display: flex;
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
   }
-  .search-input input {
-    flex: 0 0 auto;
-    width: 240px;
+  input {
+    flex: 0 1 auto;
+    width: 380px;
+    height: 40px;
+    padding-left: 2.75em;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-body);
     line-height: var(--line-height-body);
     border: 0;
-    border-bottom: 1px solid #000;
+    border-radius: 2px;
     font-family: inherit;
     outline: none;
     color: inherit;
+    background-color: var(--color-dark-light);
+    background-position: 0.75em center;
+    background-repeat: no-repeat;
     text-overflow: ellipsis;
     -webkit-appearance: none;
     appearance: none;
-  }
-  @media (max-width: 1200px) {
-    .search-query,
-    .search-input,
-    .search-input input {
-      flex: 1 1 auto;
-      width: auto;
-    }
   }
   .search-form button {
     border: 0;
@@ -122,17 +91,13 @@
   }
   .search-form button img {
     display: block;
+    width: 18px;
   }
   .show-all {
     display: flex;
     align-items: center;
-    margin: 1.5em 0 0 0;
+    margin: 1em 0 0 1em;
     font-weight: var(--font-weight-bold);
-  }
-  @media (min-width: 1700px) {
-    .show-all {
-      margin: 0 0 0 2em;
-    }
   }
   .show-all span {
     margin-left: 8px;
@@ -140,26 +105,20 @@
   .sort {
     flex: 0 1 auto;
   }
-  @media (max-width: 1200px) {
-    .sort {
-      display: none;
-    }
-  }
   select {
     margin-left: 26px;
-    height: 32px;
-    padding: 0 24px 0 14px;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.16);
+    padding-right: 20px;
     border: 0;
     font: inherit;
     font-weight: var(--font-weight-semi-bold);
-    border-radius: 4px;
-    background-color: var(--color-dark-light);
+    background-image: url('data:image/svg+xml; utf8, <svg width="8" height="6" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.91237 1.66244L7.08742 0.83743L3.99989 3.92496L0.912358 0.83743L0.0874022 1.66244L3.99989 5.57489L7.91237 1.66244Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right center;
     -webkit-appearance: none;
     appearance: none;
   }
   select:focus-visible {
     outline: 0;
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: var(--color-primary-muted);
   }
 </style>
