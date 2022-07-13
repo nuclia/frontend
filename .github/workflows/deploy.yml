@@ -56,6 +56,18 @@ jobs:
       - name: Build affected apps
         run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core
 
+      - name: Get package version
+        run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+
+      - name: Tag if new version
+        uses: pkgdeps/git-tag-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repo: ${{ github.repository }}
+          version: ${{ env.PACKAGE_VERSION }}
+          git_commit_sha: ${{ github.sha }}
+          git_tag_prefix: 'v'
+
       - name: Check apps to deploy
         id: check-deploy
         run: |-
