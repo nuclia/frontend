@@ -144,4 +144,8 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
         error: () => this.toaster.error(`stash.${actionLabel}.error`),
       });
   }
+
+  downloadDesktop() {
+    window.open('https://github.com/nuclia/frontend/releases/tag/latest');
+  }
 }
