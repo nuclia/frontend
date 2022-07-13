@@ -56,6 +56,18 @@ jobs:
       - name: Build affected apps
         run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core
 
+      - name: Get package version
+        run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+
+      - name: Tag if new version
+        uses: pkgdeps/git-tag-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repo: ${{ github.repository }}
+          version: ${{ env.PACKAGE_VERSION }}
+          git_commit_sha: ${{ github.sha }}
+          git_tag_prefix: 'v'
+
       - name: Check apps to deploy
         id: check-deploy
         run: |-
@@ -242,10 +254,11 @@ jobs:
           yarn missdev
       - name: Build desktop app
         run: |-
-          sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
-          sed -i.bak "s#__GOOGLE_CLIENT_ID__#${{ secrets.GOOGLE_CLIENT_ID }}#g" apps/desktop/src/environments/environment.prod.ts
-          sed -i.bak "s#__GOOGLE_API_KEY__#${{ secrets.GOOGLE_API_KEY }}#g" apps/desktop/src/environments/environment.prod.ts
           npx nx build desktop --configuration production
+          sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" ./dist/apps/desktop/main.*.js
+          sed -i.bak "s#__GOOGLE_CLIENT_ID__#${{ secrets.GOOGLE_CLIENT_ID }}#g" ./dist/apps/desktop/main.*.js
+          sed -i.bak "s#__GOOGLE_API_KEY__#${{ secrets.GOOGLE_API_KEY }}#g" ./dist/apps/desktop/main.*.js
+          rm dist/apps/desktop/main.*.js.bak
       - name: Build electron app
         run: |-
           npx nx build desktop-electron --configuration production
