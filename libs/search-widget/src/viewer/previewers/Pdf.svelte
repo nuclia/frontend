@@ -11,16 +11,16 @@
   export let totalPages: number | undefined = undefined;
 
   const pdfChanged = new Subject<string>();
-  const objectsUrl = [];
+  const objectsUrl: string[] = [];
 
   let pdfLoaded = false;
   let isInitialized = false;
-  let pdfViewer;
-  let pdfjsLib;
-  let pdfjsViewer;
-  let pdfLinkService;
-  let eventBus;
-  let pdfContainer;
+  let pdfViewer: any;
+  let pdfjsLib: any;
+  let pdfjsViewer: any;
+  let pdfLinkService: any;
+  let eventBus: any;
+  let pdfContainer: HTMLElement;
 
   let zoom: number = 1;
 
@@ -109,7 +109,16 @@
   };
 
   const find = (query: string) => {
-    eventBus.dispatch('find', { type: '', query: query });
+    // TODO: pdf search is still not reliable enough
+    /*
+    eventBus.dispatch('find', {
+      caseSensitive: true,
+      findPrevious: undefined,
+      highlightAll: true,
+      phraseSearch: true,
+      query: query,
+    });
+    */
   };
 
   const onLoad = () => {
@@ -117,8 +126,8 @@
   };
 
   const onLoadViewer = () => {
-    pdfjsLib = window['pdfjs-dist/build/pdf'];
-    pdfjsViewer = window['pdfjs-dist/web/pdf_viewer'];
+    pdfjsLib = (window as any)['pdfjs-dist/build/pdf'];
+    pdfjsViewer = (window as any)['pdfjs-dist/web/pdf_viewer'];
     if (!pdfjsLib?.getDocument || !pdfjsViewer?.PDFSinglePageViewer) {
       return;
     }
@@ -159,7 +168,7 @@
   .pdf {
     position: relative;
     width: 100%;
-    padding-top: 70%;
+    padding-top: 60%;
     background-color: #fff;
   }
   #viewerContainer {
@@ -171,7 +180,7 @@
     overflow: auto;
   }
   .controls {
-    margin-bottom: 0.75em;
+    margin: -2.25em 0 0.75em 0;
     text-align: right;
   }
 </style>

@@ -81,7 +81,7 @@
 
 <div class="viewer">
   <Header {resource} />
-  <div class="viewer-body">
+  <div class="viewer-body" class:preview={$showPreview}>
     <div class="viewer-left">
       <InputViewer />
 
@@ -132,8 +132,11 @@
     max-width: 100vw;
     width: calc(100vw - 10px);
     height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
   }
   .viewer-body {
+    flex: 1 1 0;
     display: grid;
     grid-template-columns: 100%;
     background-color: #fff;
@@ -144,7 +147,7 @@
   }
   .viewer-right {
     padding: 2em 1em;
-    background-color: #fbfbfb;
+    background-color: #efefef;
     grid-row: start 1;
   }
   .paragraphs {
@@ -167,13 +170,18 @@
     }
     .viewer-body {
       grid-template-columns: 60% 40%;
+      grid-template-rows: 100%;
+    }
+    .viewer-body.preview {
+      grid-template-columns: 33% 66%;
     }
     .viewer-left {
-      padding: 1.75em 3em 0 3em;
-      grid-row: start 1;
+      padding: 1.75em 3em 0 2em;
+      grid-row: auto;
     }
     .viewer-right {
       padding: 2em 3em;
+      grid-row: auto;
     }
   }
 </style>

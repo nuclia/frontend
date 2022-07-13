@@ -83,7 +83,7 @@ export class TopbarComponent implements AfterViewInit {
               },
             ];
             if (kb.admin) {
-              actions.push({
+              actions.unshift({
                 label: this.translate.transform('widget.show-api'),
                 action: this.showUID.bind(this),
               });
