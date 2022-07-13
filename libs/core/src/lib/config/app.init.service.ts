@@ -70,6 +70,9 @@ export class AppInitService {
               });
             });
           }
+          // on a prod build, this code can run on stage, nuclia.cloud or in electron app
+          // - when stage or nuclia.cloud, the backend is the same as the current domain
+          // - when electron, the backend is the one we have in the config
           const apiOrigin =
             config.production && location.origin.startsWith('http')
               ? location.origin.replace('manage.', '').replace('auth.', '')
