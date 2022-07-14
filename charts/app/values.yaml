@@ -1,6 +1,7 @@
 affinity: {}
 nodeSelector: {}
 tolerations: []
+topologySpreadConstraints: []
 replicaCount: 1
 revisionHistoryLimit: 3
 
