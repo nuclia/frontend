@@ -25,6 +25,8 @@
   let texts: ExtractedText[] = [];
   let imagePath: string | undefined;
   let image: string | undefined;
+  let header: HTMLElement;
+  let headerHeight = '0px';
 
   const query = viewerState.query;
   const paragraphs = viewerState.paragraphs;
@@ -41,6 +43,8 @@
       });
     }
   }
+
+  $: headerHeight = header?.clientHeight + 'px' || '0px';
 
   const subscriptions = [
     nucliaState().displayedResource.subscribe(() => {
@@ -79,8 +83,10 @@
   });
 </script>
 
-<div class="viewer">
-  <Header {resource} />
+<div class="viewer" style="--header-height: {headerHeight}">
+  <div class="viewer-header" bind:this={header}>
+    <Header {resource} />
+  </div>
   <div class="viewer-body" class:preview={$showPreview}>
     <div class="viewer-left">
       <InputViewer />
@@ -129,11 +135,11 @@
 <style>
   .viewer {
     background-color: #fff;
-    max-width: 100vw;
-    width: calc(100vw - 10px);
-    height: calc(100vh - 60px);
-    display: flex;
-    flex-direction: column;
+  }
+  .viewer-header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
   }
   .viewer-body {
     flex: 1 1 0;
@@ -164,8 +170,6 @@
 
   @media (min-width: 640px) {
     .viewer {
-      width: 80vw;
-      height: 85vh;
       max-width: 1920px;
     }
     .viewer-body {

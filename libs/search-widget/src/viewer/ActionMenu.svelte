@@ -24,7 +24,7 @@
     {#if displayMenu}
       <ul class="menu">
         {#each actions as item}
-          <li on:click={() => clickMenu(item)}>
+          <li on:click={() => clickMenu(item)} class:destructive={item.destructive}>
             {item.label}
           </li>
         {/each}
@@ -66,11 +66,19 @@
   li {
     display: block;
     cursor: pointer;
-    padding: 0.4em 1.25em;
-    border-bottom: 1px solid var(--color-dark-light);
+    padding: 0.5em 1.25em;
+    font-weight: var(--font-weight-semi-bold);
     white-space: nowrap;
   }
   li:hover {
     background-color: var(--color-dark-light);
+  }
+  li.destructive {
+    border-top: 1px solid var(--color-dark-light);
+    border-bottom: 1px solid var(--color-dark-light);
+    color: var(--color-secondary-stronger);
+  }
+  li.destructive:hover {
+    background-color: var(--color-secondary-lightest);
   }
 </style>

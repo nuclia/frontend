@@ -180,7 +180,6 @@
     overflow: auto;
   }
   .controls {
-    margin: -2.25em 0 0.75em 0;
-    text-align: right;
+    margin: -2.75em 0 0.75em 0;
   }
 </style>

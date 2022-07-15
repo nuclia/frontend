@@ -1,14 +1,14 @@
 <script lang="ts">
   import { getCDN } from '../../core/utils';
   export let type: string;
-  export let size: 'small' | 'normal' = 'normal';
+  export let small: boolean = false;
 
   const handleError = () => {
     type = 'application/generic';
   };
 </script>
 
-<img src={`${getCDN()}icons/${type}.svg`} alt={type} on:error={handleError} class={size} />
+<img src={`${getCDN()}icons/${type}.svg`} alt={type} on:error={handleError} class:small />
 
 <style>
   img.small {

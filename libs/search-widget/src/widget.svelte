@@ -143,7 +143,15 @@
     {:else}
       {type} widget is not implemented yet
     {/if}
-    <Modal show={showModal} transparent={true} on:close={closeModal} closeButton={true}>
+    <Modal
+      show={showModal}
+      on:close={closeModal}
+      closeButton={true}
+      --modal-width="var(--resource-modal-width)"
+      --modal-width-md="var(--resource-modal-width-md)"
+      --modal-height="var(--resource-modal-height)"
+      --modal-height-md="var(--resource-modal-height-md)"
+    >
       {#if $resource}
         <Viewer resource={$resource} />
       {/if}
@@ -162,6 +170,8 @@
     --color-neutral-strong: var(--custom-color-neutral-strong, #ff0066);
     --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
     --color-light-regular: var(--custom-color-light-regular, #c4c4c4);
+    --color-secondary-stronger: var(--custom-color-secondary-stronger, hsl(51, 78%, 32%));
+    --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
 
     --font-size-base: var(--custom-font-size-base, 16px);
     --font-weight-body: var(--custom-font-weight-body, 300);
@@ -195,6 +205,11 @@
     --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-primary-regular));
     --input-widget-border-radius: var(--custom-input-widget-border-radius, 0);
     --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, transparent);
+
+    --resource-modal-width: var(--custom-resource-modal-width, calc(100vw - 10px));
+    --resource-modal-width-md: var(--custom-resource-modal-width-md, 80vw);
+    --resource-modal-height: var(--custom-resource-modal-height, calc(100vw - 60px));
+    --resource-modal-height-md: var(--custom-resource-modal-height-md, 85vh);
 
     color: var(--color-text-accent);
     font-family: var(--font-family-body);
