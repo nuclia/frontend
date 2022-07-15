@@ -235,7 +235,7 @@
 	"login.password": "Password",
 	"login.privacy_policy": "Privacy Policy",
 	"login.recover": "Recover password",
-	"login.recover_help": "Problems loggin in?",
+	"login.recover_help": "Problems logging in?",
 	"login.scope.kbs_read": "View your Knowledge boxes",
 	"login.scope.kbs_write": "Modify your Knowledge boxes",
 	"login.signup": "Sign Up!",
