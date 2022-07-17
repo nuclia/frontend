@@ -190,7 +190,7 @@
     --color-scrollbar-track: var(--custom-color-scrollbar-track, #fff);
     --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, #000);
 
-    --form-widget-padding: var(--custom-form-widget-padding, 4px 30px 4px 4px);
+    --form-widget-padding: var(--custom-form-widget-padding, 4px 42px 4px 4px);
     --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
     --form-widget-border-style: var(--custom-form-widget-border-style, solid);
     --form-widget-border-style-stronger: var(--custom-form-widget-border-style-stronger, solid);
@@ -198,7 +198,7 @@
     --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
     --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-dark-stronger);
 
-    --input-widget-padding: var(--custom-input-widget-padding, 2px 30px 2px 2px);
+    --input-widget-padding: var(--custom-input-widget-padding, 2px 42px 2px 2px);
     --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
     --input-widget-border-style: var(--custom-input-widget-border-style, solid);
     --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
@@ -208,7 +208,7 @@
 
     --resource-modal-width: var(--custom-resource-modal-width, calc(100vw - 10px));
     --resource-modal-width-md: var(--custom-resource-modal-width-md, 80vw);
-    --resource-modal-height: var(--custom-resource-modal-height, calc(100vw - 60px));
+    --resource-modal-height: var(--custom-resource-modal-height, calc(100vh - 120px));
     --resource-modal-height-md: var(--custom-resource-modal-height-md, 85vh);
 
     color: var(--color-text-accent);

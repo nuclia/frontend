@@ -8,12 +8,15 @@
   import MimeIcon from '../../components/icons/mime.svelte';
 
   export let result: IResource;
+  export let semantic = false;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
   const sentences = nucliaState().getMatchingSentences(result.id);
-  let thumbnail;
+  let thumbnail: string;
   if (result.thumbnail) {
     getFile(result.thumbnail).subscribe((url) => (thumbnail = url));
   }
+  let labels: string[];
+  $: labels = (result.user_metadata?.classifications || []).map((label) => label.label);
 
   onDestroy(() => {
     if (thumbnail) URL.revokeObjectURL(thumbnail);
@@ -31,53 +34,57 @@
 >
   <div class="blocks">
     <div class="block-1">
-      <MimeIcon type={result.icon} />
+      {#if result.icon}
+        <MimeIcon type={result.icon} small />
+      {/if}
     </div>
     <div class="block-2">
       <h2 class="title">{decodeURIComponent(result.title || '–')}</h2>
+      {#if semantic && $sentences.length > 0}
+        <ul class="paragraph-list">
+          {#each $sentences as sentence}
+            <li
+              class="paragraph"
+              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
+            >
+              {sentence.text}
+            </li>
+          {/each}
+          </ul>
+      {/if}
+      {#if !semantic && $paragraphs.length > 0}
+        <ul class="paragraph-list">
+          {#each $paragraphs as paragraph}
+            <li
+              class="paragraph"
+              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: paragraph.rid, paragraph })}
+            >
+              {paragraph.text}
+            </li>
+          {/each}
+          </ul>
+      {/if}
+    </div>
+    <div class="block-3">
       <div class="byline">
         {#if result.created}
           {formatDate(result.created)}
         {/if}
       </div>
-    </div>
-    <div class="block-3">
-      {#if thumbnail}
-        <div class="thumbnail">
-          <img src={thumbnail} alt="Thumbnail" />
-        </div>
-      {/if}
-      {#if result.summary}
-        <h3>{$_('results.summary')}</h3>
-        <div class="summary">{result.summary}</div>
-      {/if}
+      <div class="labels">
+        {#each labels.slice(0,4) as label}
+          <div class="label">{ label }</div>
+        {/each}
+        {#if labels.length > 4}
+          <div class="label">+</div>
+        {/if}
+      </div>
     </div>
     <div class="block-4">
-      {#if $sentences.length > 0}
-        <div class="paragraph-list">
-          <h3>{$_('results.semantic')}</h3>
-          {#each $sentences as sentence}
-            <div
-              class="paragraph"
-              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
-            >
-              {sentence.text}
-            </div>
-          {/each}
-        </div>
-      {/if}
-      {#if $paragraphs.length > 0}
-        <div class="paragraph-list">
-          <h3>{$_('results.paragraphs')}</h3>
-          {#each $paragraphs as paragraph}
-            <div
-              class="paragraph"
-              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: paragraph.rid, paragraph })}
-            >
-              {paragraph.text}
-            </div>
-          {/each}
-        </div>
+      {#if thumbnail}
+      <div class="thumbnail">
+        <img src={thumbnail} alt="Thumbnail" />
+      </div>
       {/if}
     </div>
   </div>
@@ -86,56 +93,72 @@
 <style>
   .row {
     cursor: pointer;
-    padding: 16px;
-    margin-bottom: 40px;
-    background-color: var(--color-light-stronger);
   }
   .row:focus-visible {
-    border-color: var(--color-dark-stronger);
     padding-left: 13px;
     border-left: 3px solid var(--color-neutral-strong);
     outline: 0px;
   }
   .title {
-    margin-bottom: 0.4em;
+    margin: 0 0 0.75em 0;
+    font-size: 1.125em;
     font-weight: var(--font-weight-bold);
   }
   .byline {
-    font-size: 12px;
-    font-style: italic;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--color-primary-regular);
+    font-size: 0.75em;
+  }
+  .labels {
+    margin-top: 0.5em;
+  }
+  .label {
+    display: inline-block;
+    margin-right: 4px;
+    padding: 0.25em 1em;
+    max-width: 100%;
+    font-size: 0.75em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #454ade;
+    background-color: #e6e6f9;
+    border-radius: 2px;
   }
 
   .blocks {
     display: grid;
     grid-template-columns: 46px auto;
-  }
-  .block-1 {
-    padding-top: 20px;
-  }
-  .block-4,
-  .block-3 {
-    grid-column: span 2;
+    grid-template-rows: min-content;
   }
   .block-3 {
-    border-left: 1px solid var(--color-dark-light);
-    padding: 10px;
-    margin: 10px;
+    grid-row: 2/2;
+    grid-column: 2/2;
+  }
+  .block-4 {
+    display: none;
   }
   @media (min-width: 640px) {
-    .block-2,
-    .block-4 {
+    .blocks {
+      grid-template-columns: 46px auto 200px;
+      grid-template-rows: min-content;
+    }
+    .block-2 {
+      padding-right: 30px;
+    }
+    .block-3 {
+      grid-row: auto;
+      grid-column: auto;
+      padding-top: 0.25em;
       padding-right: 30px;
     }
   }
-
-  .block-4 h3 {
-    margin: 2em 0 0 0;
-    font-size: 12px;
-    text-transform: uppercase;
+  @media (min-width: 1024px) {
+    .blocks {
+      grid-template-columns: 60px auto min(22%, 290px) 220px;
+    }
+    .block-4 {
+      display: block;
+    }
   }
-
   .thumbnail {
     position: relative;
     width: 100%;
@@ -151,21 +174,12 @@
     object-fit: cover;
     object-position: top;
   }
-  .summary {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .paragraph-list:not(:last-child) {
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--color-primary-regular);
+  .paragraph-list {
+    padding: 0 0 0 1em;
   }
   .paragraph {
     position: relative;
-    padding: 16px 0;
-    border-bottom: 1px dashed rgba(0, 0, 0, 0.2);
+    margin: 0 0 0.5em 0;
   }
   .paragraph:last-child {
     border-bottom: 0;
@@ -177,25 +191,10 @@
   .paragraph:focus::before {
     content: '';
     position: absolute;
-    top: 8px;
-    bottom: 8px;
-    left: -16px;
+    top: 4px;
+    bottom: 4px;
+    left: -30px;
     border-color: var(--color-dark-stronger);
     border-left: 3px solid var(--color-neutral-strong);
-  }
-
-  @media (min-width: 640px) {
-    .blocks {
-      display: grid;
-      grid-template-columns: 46px calc(75% - 46px) 25%;
-      grid-template-rows: min-content 1fr;
-    }
-    .block-4 {
-      grid-column: 2 / 2;
-    }
-    .block-3 {
-      grid-row: span 2;
-      grid-column: span 1;
-    }
   }
 </style>

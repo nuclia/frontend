@@ -4,7 +4,6 @@
 
   export let show = false;
   export let popup = false;
-  export let transparent = false;
   export let closeButton = false;
   export let backButton = false;
   export let parentPosition: DOMRect | undefined = undefined;
@@ -43,7 +42,6 @@
   <div class="modal-backdrop fade" class:popup class:align-right={alignTo === 'right'} on:click={outsideClick}>
     <dialog
       class="modal"
-      class:transparent
       on:click={insideClick}
       style="--popup-top: {parentPosition?.bottom || 0}px; --popup-left: {alignTo === 'right'
         ? parentPosition?.right || 0
@@ -100,23 +98,22 @@
     max-width: 100vw;
     background-color: transparent;
   }
-  .modal:not(.transparent) .modal-content {
+  .modal .modal-content {
+    overflow: auto;
     background-color: var(--color-light-stronger);
+  }
+  .popup .modal .modal-content {
     box-shadow: var(--shadow-modal);
   }
 
-  .modal.transparent .modal-content {
-    overflow: auto;
-    padding-right: 16px;
-  }
   @media (min-width: 599px) {
-    .modal.transparent .modal-content::-webkit-scrollbar {
+    .modal .modal-content::-webkit-scrollbar {
       width: 6px;
     }
-    .modal.transparent .modal-content::-webkit-scrollbar-thumb {
+    .modal .modal-content::-webkit-scrollbar-thumb {
       background-color: var(--color-scrollbar-thumb);
     }
-    .modal.transparent .modal-content::-webkit-scrollbar-track {
+    .modal .modal-content::-webkit-scrollbar-track {
       background-color: var(--color-scrollbar-track);
     }
   }
@@ -126,6 +123,11 @@
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
+  }
+
+  :not(.popup) .modal-content {
+    width: var(--modal-width, fit-content);
+    height: var(--modal-height, fit-content);
   }
 
   .popup .modal {
@@ -140,10 +142,6 @@
     z-index: 0;
     overflow: scroll;
   }
-  .modal:not(.transparent) .modal-content {
-    padding: 16px;
-  }
-
   @media (min-width: 599px) {
     .modal {
       max-height: calc(100vh - var(--popup-top));
@@ -156,6 +154,10 @@
     .popup.align-right .modal {
       left: max(calc(var(--popup-left) - 500px), 0px);
       width: 500px;
+    }
+    :not(.popup) .modal-content {
+      width: var(--modal-width-md, fit-content);
+      height: var(--modal-height-md, fit-content);
     }
   }
 </style>

@@ -134,6 +134,9 @@
 
 <style>
   .viewer {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
     background-color: #fff;
   }
   .viewer-header {
@@ -168,7 +171,7 @@
     height: auto;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 1024px) {
     .viewer {
       max-width: 1920px;
     }
