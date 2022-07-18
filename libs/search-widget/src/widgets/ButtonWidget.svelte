@@ -27,25 +27,26 @@
 <Modal
   show={showModal}
   on:close={() => (showModal = false)}
-  transparent={showResults}
   closeButton={true}
   backButton={showResults}
   on:back={() => {
     showResults = false;
   }}
 >
-  {#if !showResults}
-    <div class="input">
-      <SearchInput on:search={() => (showResults = true)} />
-    </div>
-    <div class="container results suggestions" class:empty={$paragraphs.length === 0}>
-      <Suggestions paragraphs={$paragraphs} />
-    </div>
-  {:else}
-    <div class="container results" class:empty={$results.length === 0}>
-      <Results results={$results} />
-    </div>
-  {/if}
+    {#if !showResults}
+      <div class="container">
+        <div class="input">
+          <SearchInput on:search={() => (showResults = true)} />
+        </div>
+        <div class="results suggestions" class:empty={$paragraphs.length === 0}>
+          <Suggestions paragraphs={$paragraphs} />
+        </div>
+      </div>
+    {:else}
+      <div class="results" class:empty={$results.length === 0}>
+        <Results results={$results} />
+      </div>
+    {/if}
 </Modal>
 
 <style>
@@ -61,18 +62,20 @@
     height: 20px;
     width: auto;
   }
-
   .container {
-    width: 600px;
-    max-width: 100vw;
-    background-color: var(--color-light-stronger);
+    padding: 1em;
   }
   .input {
     padding: 0 10px;
   }
+  .suggestions {
+    width: 600px;
+    max-width: 100vw;
+  }
   .results {
     height: calc(100vh - 139px);
     width: 1005;
+    max-width: 100vw;
   }
   .results.empty,
   .results:not(.suggestions) {

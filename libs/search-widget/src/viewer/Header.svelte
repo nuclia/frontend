@@ -13,7 +13,7 @@
 <div class="header">
   <div class="icon">
     {#if resource.icon}
-      <MimeIcon type={resource.icon} size="small" />
+      <MimeIcon type={resource.icon} small />
     {/if}
   </div>
   <div class="header-center">
@@ -84,6 +84,9 @@
     background: none;
     text-align: center;
     margin-right: 0.5em;
+  }
+  button:hover {
+    background-color: var(--color-dark-light);
   }
   @media (min-width: 640px) {
     .header {

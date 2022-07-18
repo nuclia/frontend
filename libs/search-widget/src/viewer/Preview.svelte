@@ -17,10 +17,11 @@
 </script>
 
 <div class="preview">
-  <button on:click={closePreview}>
-    <img src={`${getCDN()}icons/close.svg`} alt="icon" />
-    <span>{$_('resource.close_preview')}</span>
-  </button>
+  <div class="actions">
+    <button on:click={closePreview}>
+      <img src={`${getCDN()}icons/close.svg`} alt="icon" />
+    </button>
+  </div>
   {#if $pdfPreview}
     <Pdf src={$pdfUrl.uri} query={$pdfPreview.query} currentPage={$pdfPreview.page} totalPages={$pdfPreview.total} />
   {/if}
@@ -38,24 +39,17 @@
 <style>
   .preview {
     position: sticky;
-    top: 1em;
+    top: calc(var(--header-height) + 1em)
   }
-  .preview button {
-    display: flex;
-    align-items: center;
+  .actions {
+    text-align: right;
     margin-bottom: 1em;
+  }
+  .actions button {
     border: 0;
     padding: 0;
     background: transparent;
-    color: inherit;
-    font: inherit;
-    font-weight: var(--font-weight-bold);
     cursor: pointer;
     -webkit-appearance: none;
-  }
-  .preview button img {
-    width: 12px;
-    height: auto;
-    margin-right: 10px;
   }
 </style>

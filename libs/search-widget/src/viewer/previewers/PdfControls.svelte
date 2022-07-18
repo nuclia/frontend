@@ -54,9 +54,9 @@
   .pdf-controls {
     display: inline-flex;
     align-items: center;
-    height: 29px;
+    height: 32px;
     padding: 0 13px;
-    background: #e5e5e5;
+    background-color: var(--color-light-stronger);
     border-radius: 4px;
     color: rgba(0, 0, 0, 0.7);
   }
@@ -75,8 +75,8 @@
   }
   .pdf-controls button img {
     display: block;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
   }
   .button-group {
     display: inline-flex;
@@ -87,14 +87,14 @@
     margin-right: 0;
   }
   .pagination {
-    font-size: 10px;
+    font-size: 0.8125em;
   }
   .pagination span {
     text-decoration: underline;
   }
   .zoom {
-    padding-left: 2px;
-    font-size: 10px;
+    padding-left: 0.25em;
+    font-size: 0.8125em;
     text-decoration: underline;
   }
 </style>

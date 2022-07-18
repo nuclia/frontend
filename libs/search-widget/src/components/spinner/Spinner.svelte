@@ -1,13 +1,10 @@
 <script lang="ts">
   export let small = false;
-  export let single = false;
 </script>
 
-<div class="spinner" class:small class:single>
-  {#if !single}
-    <div class="bounce1" />
-    <div class="bounce2" />
-  {/if}
+<div class="spinner" class:small>
+  <div class="bounce1" />
+  <div class="bounce2" />
   <div class="bounce3" />
 </div>
 
@@ -20,11 +17,7 @@
   }
 
   .spinner.small {
-    width: 44px;
-  }
-
-  .spinner.single {
-    width: auto;
+    width: 32px;
   }
 
   .spinner > div {
@@ -39,8 +32,8 @@
   }
 
   .spinner.small > div {
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
   }
 
   .spinner .bounce1 {

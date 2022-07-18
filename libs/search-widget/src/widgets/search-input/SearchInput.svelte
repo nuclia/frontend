@@ -79,7 +79,7 @@
   {#if inputWidget || formWidget}
     <div class="search-icon">
       {#if $isPending}
-        <Spinner small single />
+        <Spinner small />
       {:else}
         <SearchIcon
           on:click={search}

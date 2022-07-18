@@ -21,7 +21,7 @@
   {/if}
   {#if closeButton}
     <button class="close" on:click={close}>
-      <img src={`${getCDN()}icons/modal-close.svg`} alt="icon" />
+      <img src={`${getCDN()}icons/close-light.svg`} alt="icon" />
     </button>
   {/if}
 </div>
@@ -50,5 +50,8 @@
   }
   .close {
     margin-left: auto;
+  }
+  .close img {
+    width: 30px;
   }
 </style>

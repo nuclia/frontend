@@ -79,6 +79,7 @@ export class TopbarComponent implements AfterViewInit {
               },
               {
                 label: this.translate.transform('generic.delete'),
+                destructive: true,
                 action: this.delete.bind(this),
               },
             ];

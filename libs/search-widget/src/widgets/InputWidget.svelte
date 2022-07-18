@@ -35,16 +35,21 @@
   parentPosition={position}
   {alignTo}
 >
-  <Suggestions paragraphs={$paragraphs} />
+  <div class="suggestions">
+    <Suggestions paragraphs={$paragraphs} />
+  </div>
 </Modal>
 
-<Modal show={showModal} on:close={() => (showModal = false)} transparent={true} closeButton={true}>
+<Modal show={showModal} on:close={() => (showModal = false)} closeButton={true}>
   <div class="results">
     <Results results={$results} />
   </div>
 </Modal>
 
 <style>
+  .suggestions {
+    padding: 16px;
+  }
   .results {
     max-width: 100vw;
     width: calc(100vw - 10px);

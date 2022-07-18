@@ -50,7 +50,7 @@
 <style>
   .search {
     position: sticky;
-    top: 0;
+    top: var(--header-height);
     background-color: #fff;
     padding: 1em 0;
     z-index: 1;
@@ -65,6 +65,7 @@
     flex: 0 1 auto;
     width: 380px;
     height: 40px;
+    min-width: 0;
     padding-left: 2.75em;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-body);
