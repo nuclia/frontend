@@ -6,4 +6,6 @@ export * from './resource';
 export * from './resource.mapper';
 export * from './resource.models';
 export * from './search.models';
+export * from './training';
+export * from './training.models';
 export * from './upload';

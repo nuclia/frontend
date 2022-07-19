@@ -27,6 +27,7 @@ import type { ICreateResource, IResource, LinkField, UserMetadata } from './reso
 import { upload, batchUpload, FileWithMetadata, FileMetadata, UploadStatus } from './upload';
 import type { UploadResponse } from './upload';
 import type { Search } from './search.models';
+import { Training } from './training';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
@@ -153,6 +154,14 @@ export class KnowledgeBox implements IKnowledgeBox {
 export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowledgeBox {
   admin?: boolean;
   contrib?: boolean;
+  private _training?: Training;
+
+  get training(): Training {
+    if (!this._training) {
+      this._training = new Training(this, this.nuclia);
+    }
+    return this._training;
+  }
 
   modify(data: Partial<IKnowledgeBox>): Observable<void> {
     return this.nuclia.rest.patch<void>(`/account/${this.account}/kb/${this.slug}`, data);

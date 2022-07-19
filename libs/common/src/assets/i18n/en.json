@@ -494,6 +494,7 @@
 	"stash.settings.processes.training.intent": "Intent",
 	"stash.settings.processes.training.labels": "Labels",
 	"stash.settings.processes.training.last_run": "Last run: {{ runDate }}",
+	"stash.settings.processes.training.not-allowed": "The training feature is not available on basic accounts.",
 	"stash.settings.processes.training.start": "Start training",
 	"stash.settings.processes.training.stop": "Stop training",
 	"stash.settings.processes.training.time_requirement": "The time required to train is about {{hours}} hours which will be subtracted from the available hours.",
