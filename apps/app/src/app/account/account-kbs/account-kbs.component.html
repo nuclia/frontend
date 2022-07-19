@@ -18,13 +18,13 @@
       <div fxLayout="row"
            fxLayoutAlign="start center">
 
-        <ng-container *ngIf="kb.role_on_kb === 'SOWNER' || kb.role_on_kb === 'SCONTRIBUTOR' || account.can_manage_account">
+        <ng-container *ngIf="!!kb.role_on_kb && account.can_manage_account">
           <pa-button *ngIf="isUsersEnabled | async"
                      class="icon-button"
                      icon="add-user"
                      aspect="basic"
                      paTooltip="account.stash.users"
-                     (click)="manageKbUsers(kb.slug!)">{{'account.stash.users' | translate}}</pa-button>
+                     (click)="manageKbUsers(kb)">{{'account.stash.users' | translate}}</pa-button>
 
           <pa-button *ngIf="isUsersEnabled | async"
                      class="icon-button"

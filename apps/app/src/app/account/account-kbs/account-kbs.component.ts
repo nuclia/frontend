@@ -10,6 +10,7 @@ import { Zone, ZoneService } from '@flaps/core';
 import { STFTrackingService, StateService, SDKService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
+import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -79,8 +80,12 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     this.router.navigate([this.navigation.getKbMangeUrl(this.account!.slug, slug)]);
   }
 
-  manageKbUsers(slug: string): void {
-    this.router.navigate([this.navigation.getKbUsersUrl(this.account!.slug, slug)]);
+  manageKbUsers(kb: IKnowledgeBoxItem): void {
+    if (kb.role_on_kb) {
+      this.router.navigate([this.navigation.getKbUsersUrl(this.account!.slug, kb.slug!)]);
+    } else {
+      this.dialog.open(UsersDialogComponent, { width: '920px', data: { kb: kb.slug } });
+    }
   }
 
   addKb(zones: Zone[], account: Account) {
