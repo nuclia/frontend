@@ -1,0 +1,49 @@
+@import 'variables';
+
+.knowledge-box-processes {
+  width: 770px;
+  max-width: 100%;
+  margin: rythm(2.5) 0 rythm(6) 0;
+
+  section {
+    padding: rythm(4) 0;
+  }
+}
+
+h2 {
+  margin: 0;
+  font-weight: var(--stf-font-weight-bold);
+}
+
+.last-run {
+  color: $gray-light;
+  font-style: italic;
+  margin-top: 0;
+}
+
+.checkbox-container {
+  display: flex;
+  margin-bottom: rythm(3);
+
+  stf-checkbox {
+    flex: 1 0 auto;
+  }
+}
+
+stf-checkbox {
+  font-weight: var(--stf-font-weight-semibold);
+}
+
+.warning {
+  color: var(--stf-orange);
+}
+
+.cta-container {
+  align-items: center;
+  display: flex;
+  margin-top: rythm(2);
+
+  .active-training {
+    margin-left: rythm(1.5);
+  }
+}
