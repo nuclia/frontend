@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { SDKService, TranslatePipeMock } from '@flaps/core';
+import { of } from 'rxjs';
 
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-processes.component';
 
@@ -8,9 +10,16 @@ describe('KnowledgeBoxProcessComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ KnowledgeBoxProcessesComponent ]
-    })
-    .compileComponents();
+      declarations: [KnowledgeBoxProcessesComponent, TranslatePipeMock],
+      providers: [
+        {
+          provide: SDKService,
+          useValue: {
+            currentKb: of({ getStatus: () => 'not_running' }),
+          },
+        },
+      ],
+    }).compileComponents();
   });
 
   beforeEach(() => {
