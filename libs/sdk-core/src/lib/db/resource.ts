@@ -141,8 +141,11 @@ export class Resource implements IResource {
     return batchUpload(this.nuclia, this.path, files, true);
   }
 
-  search(query: string, features: Search.ResourceFeatures[] = []): Observable<Search.Results> {
+  search(query: string, features: Search.ResourceFeatures[] = [], highlight = false): Observable<Search.Results> {
     const params = [`query=${encodeURIComponent(query)}`, ...features.map((f) => `features=${f}`)];
+    if (highlight) {
+      params.push(`highlight=true&split=true`);
+    }
     return this.nuclia.rest.get<Search.Results>(`${this.path}/search?${params.join('&')}`);
   }
 }

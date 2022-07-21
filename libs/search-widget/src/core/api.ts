@@ -24,7 +24,7 @@ export const search = (query: string) => {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox
-    .search(query, [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT])
+    .search(query, [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT], true)
     .pipe(
       filter((res) => {
         if (res.error) {
@@ -78,17 +78,18 @@ export const getTempToken = (): Observable<string> => {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox.getTempToken();
-}
+};
 
 export const isPrivateKnowledgeBox = (): boolean => {
   return STATE === 'PRIVATE';
-}
+};
 
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
   if (paths.length === 0 || !isPrivateKnowledgeBox()) {
     return of(paths.map((path) => `${getRegionalBackend()}${path}`));
   } else {
-    return getTempToken()
-      .pipe(map((token) => paths.map((path) => `${getRegionalBackend()}${path}?eph-token=${token}`)));
+    return getTempToken().pipe(
+      map((token) => paths.map((path) => `${getRegionalBackend()}${path}?eph-token=${token}`)),
+    );
   }
 };

@@ -47,10 +47,10 @@
               class="paragraph"
               on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
             >
-              {sentence.text}
+              {@html sentence.text}
             </li>
           {/each}
-          </ul>
+        </ul>
       {/if}
       {#if !semantic && $paragraphs.length > 0}
         <ul class="paragraph-list">
@@ -59,10 +59,10 @@
               class="paragraph"
               on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: paragraph.rid, paragraph })}
             >
-              {paragraph.text}
+              {@html paragraph.text}
             </li>
           {/each}
-          </ul>
+        </ul>
       {/if}
     </div>
     <div class="block-3">
@@ -72,8 +72,8 @@
         {/if}
       </div>
       <div class="labels">
-        {#each labels.slice(0,4) as label}
-          <div class="label">{ label }</div>
+        {#each labels.slice(0, 4) as label}
+          <div class="label">{label}</div>
         {/each}
         {#if labels.length > 4}
           <div class="label">+</div>
@@ -82,9 +82,9 @@
     </div>
     <div class="block-4">
       {#if thumbnail}
-      <div class="thumbnail">
-        <img src={thumbnail} alt="Thumbnail" />
-      </div>
+        <div class="thumbnail">
+          <img src={thumbnail} alt="Thumbnail" />
+        </div>
       {/if}
     </div>
   </div>

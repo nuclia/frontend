@@ -25,9 +25,9 @@ export enum ExtractedDataTypes {
 }
 
 export enum LabelSetKind {
-  RESOURCES = "RESOURCES",
-  PARAGRAPHS = "PARAGRAPHS",
-  SENTENCES = "SENTENCES",
+  RESOURCES = 'RESOURCES',
+  PARAGRAPHS = 'PARAGRAPHS',
+  SENTENCES = 'SENTENCES',
 }
 
 export enum EventType {
@@ -59,7 +59,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
   getLabels(): Observable<Labels>;
   getResource(uuid: string): Observable<IResource>;
-  search(query: string): Observable<Search.Results>;
+  search(query: string, features?: Search.Features[], highlight?: boolean): Observable<Search.Results>;
   suggest(query: string): Observable<Search.Suggestions>;
   getWidgets(): Observable<Widgets>;
   getWidget(widgetId: string): Observable<Widget>;
@@ -181,7 +181,7 @@ export interface EventList {
   pagination: ResourcePagination;
 }
 
-export type Event = { [key: string]: any }
+export type Event = { [key: string]: any };
 
 export interface ServiceAccountKey {
   id: string;
