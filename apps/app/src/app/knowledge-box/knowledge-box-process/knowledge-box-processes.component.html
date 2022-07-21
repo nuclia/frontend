@@ -1,44 +1,44 @@
 <div class="knowledge-box-processes">
-  <section>
-    <h2>{{'stash.settings.processes.training' | translate}}</h2>
+  <div *ngIf="cannotTrain | async"
+       class="warning">{{ 'stash.settings.processes.training.not-allowed' | translate}}</div>
+  <section *ngFor="let type of [trainingTypes.classifier, trainingTypes.labeller]">
+    <h2>{{'stash.settings.processes.' + type | translate}}</h2>
     <p class="last-run">
       <small>{{'stash.settings.processes.training.last_run' | translate:{runDate: lastRun} }}</small>
     </p>
 
-    <p>{{'stash.settings.processes.training.info' | translate}}</p>
+    <div [class.running]="running[type]">
+      <p>{{'stash.settings.processes.' + type + '.info' | translate}}</p>
 
-    <div class="checkbox-container">
-      <stf-checkbox [(selected)]="intent"
-                    [disabled]="cannotTrain | async"
-                    color="dark">Intent</stf-checkbox>
-      <stf-checkbox [(selected)]="labels"
-                    [disabled]="cannotTrain | async"
-                    color="dark">Labels</stf-checkbox>
+      <pa-select [label]="'stash.settings.processes.training.select-labelsets' | translate"
+                 [(value)]="selectedLabelsets[type]">
+        <pa-option value="">{{ 'generic.all' | translate }}</pa-option>
+        <pa-option *ngFor="let option of labelsets | async"
+                   [value]="option.value">{{ option.title }}</pa-option>
+      </pa-select>
+
+      <p [class.warning]="!agreement">
+        {{'stash.settings.processes.training.time_requirement' | translate:{hours: hoursRequired} }}
+      </p>
+
+      <div class="agreement-container">
+        <stf-checkbox [(selected)]="agreement[type]"
+                      [disabled]="cannotTrain | async"
+                      color="dark">{{'stash.settings.processes.training.agreement' | translate}}</stf-checkbox>
+      </div>
     </div>
-
-    <p *ngIf="intent || labels"
-       [class.warning]="!agreement">
-      {{'stash.settings.processes.training.time_requirement' | translate:{hours: hoursRequired} }}
-    </p>
-
-    <div class="agreement-container">
-      <stf-checkbox [(selected)]="agreement"
-                    [disabled]="cannotTrain | async"
-                    color="dark">{{'stash.settings.processes.training.agreement' | translate}}</stf-checkbox>
+    <div *ngIf="running[type]"
+         class="active-training warning">
+      {{'stash.settings.processes.training.active' | translate}}
     </div>
-
-    <div *ngIf="cannotTrain | async"
-         class="warning">{{ 'stash.settings.processes.training.not-allowed' | translate}}</div>
     <div class="cta-container">
       <stf-button minWidth="110px"
-                  [color]="training ? 'secondary' : 'primary'"
-                  [disabled]="(training && (!intent || !labels) && !agreement) || (cannotTrain | async)"
-                  (click)="startOrStopTraining()">{{('stash.settings.processes.training.' + (training ? 'stop' :
+                  [color]="running[type] ? 'secondary' : 'primary'"
+                  [disabled]="(!running[type] && !agreement[type]) || (cannotTrain | async)"
+                  (click)="startOrStopTraining(type)">{{('stash.settings.processes.training.' +
+        (running[type] ? 'stop' :
         'start')) | translate}}</stf-button>
-      <div *ngIf="training"
-           class="active-training warning">
-        {{'stash.settings.processes.training.active' | translate}}
-      </div>
+
     </div>
 
   </section>

@@ -70,7 +70,7 @@ export class SectionNavbarComponent implements OnInit, OnChanges, OnDestroy {
     private viewportScroller: ViewportScroller,
     private cd: ChangeDetectorRef,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
     this.unsubscribeAll = new Subject();
   }
@@ -81,7 +81,7 @@ export class SectionNavbarComponent implements OnInit, OnChanges, OnDestroy {
       this.router.events
         .pipe(
           filter((event) => event instanceof NavigationEnd),
-          takeUntil(this.unsubscribeAll)
+          takeUntil(this.unsubscribeAll),
         )
         .subscribe(() => {
           this.updateActiveRoute();
@@ -91,7 +91,7 @@ export class SectionNavbarComponent implements OnInit, OnChanges, OnDestroy {
         .pipe(
           auditTime(100),
           filter(() => !this.disableScrollEvents),
-          takeUntil(this.unsubscribeAll)
+          takeUntil(this.unsubscribeAll),
         )
         .subscribe(() => {
           this.updateActiveSection();
@@ -131,11 +131,11 @@ export class SectionNavbarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   updateActiveRoute() {
-    const index = this.routes.findIndex((route) => {
-      const urlTree = this.router.createUrlTree([route.relativeRoute], { relativeTo: this.route });
-      return this.router.isActive(urlTree, true);
-    });
-    this.activeIndex = index;
+    this.activeIndex =
+      this.routes?.findIndex((route) => {
+        const urlTree = this.router.createUrlTree([route.relativeRoute], { relativeTo: this.route });
+        return this.router.isActive(urlTree, true);
+      }) || 0;
     this.cd.markForCheck();
   }
 
