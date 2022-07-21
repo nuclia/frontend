@@ -21,21 +21,16 @@ h2 {
   margin-top: 0;
 }
 
-.checkbox-container {
-  display: flex;
-  margin-bottom: rythm(3);
-
-  stf-checkbox {
-    flex: 1 0 auto;
-  }
-}
-
 stf-checkbox {
   font-weight: var(--stf-font-weight-semibold);
 }
 
 .warning {
   color: var(--stf-orange);
+}
+
+.running {
+  color: $gray-light;
 }
 
 .cta-container {

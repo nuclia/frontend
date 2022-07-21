@@ -12,8 +12,11 @@ export class Training {
     this.nuclia = nuclia;
   }
 
-  start(type: TrainingType): Observable<TrainingTask> {
-    return this.nuclia.rest.post<TrainingTask>(`${this.kb.path}/train/${type}/start`, {});
+  start(type: TrainingType, labelsets?: string[]): Observable<TrainingTask> {
+    return this.nuclia.rest.post<TrainingTask>(
+      `${this.kb.path}/train/${type}/start`,
+      labelsets ? { valid_labelsets: labelsets } : {},
+    );
   }
 
   stop(type: TrainingType): Observable<TrainingTask> {

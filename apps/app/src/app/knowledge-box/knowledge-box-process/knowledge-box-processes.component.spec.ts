@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, TranslatePipeMock } from '@flaps/core';
+import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-processes.component';
@@ -15,7 +16,7 @@ describe('KnowledgeBoxProcessComponent', () => {
         {
           provide: SDKService,
           useValue: {
-            currentKb: of({ getStatus: () => 'not_running' }),
+            currentKb: of({ getStatus: () => TrainingStatus.not_running }),
           },
         },
       ],
