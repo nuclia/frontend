@@ -13,7 +13,7 @@ export interface Plan {
 export const PLAN_PARAMETERS = [
   ['ml_characters', 'docs_no_media', 'media', 'searches', 'train_hours'],
   ['max_storage_bytes', 'max_storage_docs'],
-  ['max_size_file_media', 'max_size_file_no_media', 'multiple_kb', 'parallel_processing']
+  ['max_size_file_media', 'max_size_file_no_media', 'multiple_kb', 'parallel_processing'],
 ];
 
 export const BASIC_PLAN: Plan = {
