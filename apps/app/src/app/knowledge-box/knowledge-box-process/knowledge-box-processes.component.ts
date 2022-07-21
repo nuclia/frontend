@@ -29,7 +29,10 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
         map((status) => status.status !== 'not_running'), // we need an enum for the status values, but I do not know them for now
       )
       .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((isTraining) => (this.training = isTraining));
+      .subscribe((isTraining) => {
+        this.training = isTraining;
+        this.cdr?.markForCheck();
+      });
   }
 
   ngOnDestroy(): void {
@@ -46,7 +49,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.training = !this.training;
-        this.cdr.markForCheck();
+        this.cdr?.markForCheck();
       });
   }
 }
