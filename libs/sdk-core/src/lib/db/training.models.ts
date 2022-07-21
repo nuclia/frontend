@@ -7,6 +7,8 @@ export enum TrainingStatus {
   finished = 'finished',
   not_running = 'not_running',
   running = 'running',
+  started = 'started',
+  stopped = 'stopped',
 }
 
 export interface TrainingTask {
