@@ -13,25 +13,14 @@ export class Training {
   }
 
   start(type: TrainingType): Observable<TrainingTask> {
-    return this.nuclia.rest.post<TrainingTask>(
-      `${this.kb.path}/train/${type}/start`,
-      {},
-      { 'x-stf-knowledge-box': 'TEMPORARY' }, // TODO: remove this when backend fixed
-    );
+    return this.nuclia.rest.post<TrainingTask>(`${this.kb.path}/train/${type}/start`, {});
   }
 
   stop(type: TrainingType): Observable<TrainingTask> {
-    return this.nuclia.rest.post<TrainingTask>(
-      `${this.kb.path}/train/${type}/stop`,
-      {},
-      { 'x-stf-knowledge-box': 'TEMPORARY' }, // TODO: remove this when backend fixed
-    );
+    return this.nuclia.rest.post<TrainingTask>(`${this.kb.path}/train/${type}/stop`, {});
   }
 
   getStatus(type: TrainingType): Observable<TrainingTask> {
-    return this.nuclia.rest.get<TrainingTask>(
-      `${this.kb.path}/train/${type}/inspect`,
-      { 'x-stf-knowledge-box': 'TEMPORARY' }, // TODO: remove this when backend fixed
-    );
+    return this.nuclia.rest.get<TrainingTask>(`${this.kb.path}/train/${type}/inspect`);
   }
 }

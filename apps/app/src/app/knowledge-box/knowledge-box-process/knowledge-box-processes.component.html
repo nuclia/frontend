@@ -32,7 +32,7 @@
     <div class="cta-container">
       <stf-button minWidth="110px"
                   [color]="training ? 'secondary' : 'primary'"
-                  [disabled]="((!intent || !labels) && !agreement) || (cannotTrain | async)"
+                  [disabled]="(training && (!intent || !labels) && !agreement) || (cannotTrain | async)"
                   (click)="startOrStopTraining()">{{('stash.settings.processes.training.' + (training ? 'stop' :
         'start')) | translate}}</stf-button>
       <div *ngIf="training"

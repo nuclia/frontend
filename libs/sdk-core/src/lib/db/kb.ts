@@ -85,8 +85,11 @@ export class KnowledgeBox implements IKnowledgeBox {
       .pipe(map((res) => new Resource(this.nuclia, this.id, uuid, res)));
   }
 
-  search(query: string, features: Search.Features[] = []): Observable<Search.Results> {
+  search(query: string, features: Search.Features[] = [], highlight = false): Observable<Search.Results> {
     const params = [`query=${encodeURIComponent(query)}`, ...features.map((f) => `features=${f}`)];
+    if (highlight) {
+      params.push(`highlight=true&split=true`);
+    }
     return this.nuclia.rest.get<Search.Results | { detail: string }>(`${this.path}/search?${params.join('&')}`).pipe(
       catchError(() => of({ error: true } as Search.Results)),
       map((res) =>
