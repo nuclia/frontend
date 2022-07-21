@@ -6,7 +6,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
-import { CdkTableModule } from '@angular/cdk/table';
 import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
@@ -35,6 +34,7 @@ import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-ke
 import { ServiceAccessComponent } from './service-access/service-access.component';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { HintModule } from '../components/hint/hint.module';
+import { UsersManageModule } from './knowledge-box-users/users-manage/users-manage.module';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 
@@ -60,7 +60,6 @@ const Components = [
     FormsModule,
     RouterModule,
     MatDialogModule,
-    CdkTableModule,
     TourMatMenuModule,
     ProgressBarModule,
     STFSectionNavbarModule,
@@ -78,6 +77,7 @@ const Components = [
     HelpBoxModule,
     PipesModule,
     HintModule,
+    UsersManageModule,
     PaButtonModule,
   ],
   declarations: [...Components],

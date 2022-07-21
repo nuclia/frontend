@@ -112,6 +112,7 @@
     border: 0;
     font: inherit;
     font-weight: var(--font-weight-semi-bold);
+    background-color: transparent;
     background-image: url('data:image/svg+xml; utf8, <svg width="8" height="6" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.91237 1.66244L7.08742 0.83743L3.99989 3.92496L0.912358 0.83743L0.0874022 1.66244L3.99989 5.57489L7.91237 1.66244Z"/></svg>');
     background-repeat: no-repeat;
     background-position: right center;
