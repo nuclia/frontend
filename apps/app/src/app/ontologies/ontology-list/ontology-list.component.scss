@@ -19,6 +19,7 @@ $list-breakpoint: 1550px;
 .ontology-list {
   display: flex;
   flex-wrap: wrap;
+  max-width: 750px;
   margin-top: 80px;
 
   .ontology-card {

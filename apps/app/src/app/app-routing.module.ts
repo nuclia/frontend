@@ -105,6 +105,10 @@ const routes: Routes = [
                 component: AccountUsersComponent,
                 canActivate: [AccountOwnerGuard],
               },
+              {
+                path: 'billing',
+                loadChildren: () => import('./account/billing/billing.module').then((m) => m.BillingModule),
+              },
             ],
           },
           {

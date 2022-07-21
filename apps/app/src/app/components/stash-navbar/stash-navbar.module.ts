@@ -6,7 +6,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
-import { STFButtonsModule } from '@flaps/pastanaga';
+import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 import { StashNavbarComponent } from './stash-navbar.component';
 
@@ -19,7 +19,7 @@ import { StashNavbarComponent } from './stash-navbar.component';
     TranslateModule.forChild(),
     MatDialogModule,
     TourMatMenuModule,
-    STFButtonsModule,
+    PaIconModule,
   ],
   declarations: [StashNavbarComponent],
   exports: [StashNavbarComponent],

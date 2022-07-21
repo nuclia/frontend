@@ -46,6 +46,7 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
   isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
   isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets').pipe(shareReplay(1));
   isAPIKeysEnabled = this.tracking.isFeatureEnabled('manage-api-keys').pipe(shareReplay(1));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
 
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   account = this.stateService.account.pipe(filter((account) => !!account));

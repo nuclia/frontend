@@ -156,6 +156,15 @@
             <span class="nav-link-title">{{ 'account.nua_keys' | translate }}</span>
           </a>
         </div>
+        <div *ngIf="isBillingEnabled | async"
+             class="group-items">
+          <a [routerLink]="(accountUrl | async) + '/billing'"
+             routerLinkActive="active"
+             class="nav-link">
+            <pa-icon name="payment"></pa-icon>
+            <span class="nav-link-title">{{ 'account.billing' | translate }}</span>
+          </a>
+        </div>
       </div>
       <div class="nav-group"
            *ngIf="kb | async">
