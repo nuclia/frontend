@@ -9,6 +9,7 @@
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
+  import { loadModel } from './core/tensor';
   import { setCDN, formatQueryKey, updateQueryParams, coerceBooleanProperty } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -83,7 +84,7 @@
             updateQueryParams(urlParams);
           }
         }
-      })
+      }),
     );
     merge(
       nucliaStore().query.pipe(filter((query) => query.slice(-1) === ' ')),
@@ -133,6 +134,9 @@
 </script>
 
 <div class="nuclia-widget" style={$style} data-version="__NUCLIA_DEV_VERSION__">
+  <button on:click={() => loadModel('/public/use_json_model/model.json', '/public/use_json_model/pos_to_lab.json')}
+    >Load</button
+  >
   {#if ready}
     {#if type === 'button'}
       <ButtonWidget />

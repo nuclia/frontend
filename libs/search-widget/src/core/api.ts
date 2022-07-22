@@ -2,6 +2,7 @@ import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/
 import type { NucliaOptions, KBStates } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
+import { predict } from './tensor';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -39,6 +40,9 @@ export const suggest = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
+
+  predict(query).subscribe(console.log);
+
   return nucliaApi.knowledgeBox.suggest(query).pipe(
     filter((res) => {
       if (res.error) {
