@@ -35,10 +35,10 @@
     <NucliaWidget
       bind:this={widget}
       zone="europe-1"
-      knowledgebox="fdfb71d7-fe0c-46ad-91e4-c61237127df9"
+      knowledgebox="7bc716b2-9ee0-4bc8-bff2-585a16171694"
       backend="https://stashify.cloud/api"
       cdn="/"
-      widgetid="dashboard"
+      widgetid="test1"
       type="input"
       permalink
     />
@@ -58,20 +58,20 @@
     <h2>Button widget</h2>
     <NucliaWidget
       zone="europe-1"
-      knowledgebox="d1a08e42-fdea-4be2-9397-adb7b539145a"
+      knowledgebox="7bc716b2-9ee0-4bc8-bff2-585a16171694"
       backend="https://stashify.cloud/api"
       cdn="/"
-      widgetid="dashboard"
+      widgetid="test1"
     />
   {/if}
   {#if selected === 'form'}
     <h2>Form widget</h2>
     <NucliaWidget
       zone="europe-1"
-      knowledgebox="d1a08e42-fdea-4be2-9397-adb7b539145a"
+      knowledgebox="7bc716b2-9ee0-4bc8-bff2-585a16171694"
       backend="https://stashify.cloud/api"
       cdn="/"
-      widgetid="dashboard"
+      widgetid="test1"
       type="form"
     />
   {/if}

@@ -47,7 +47,7 @@ interface BaseWidgetParagraph {
 
 export type WidgetParagraph = RegularWidgetParagraph | PdfWidgetParagraph | MediaWidgetParagraph;
 
-export interface RegularWidgetParagraph extends BaseWidgetParagraph { 
+export interface RegularWidgetParagraph extends BaseWidgetParagraph {
   fieldType: string;
   fieldId: string;
   preview: PreviewKind.NONE;
@@ -87,4 +87,8 @@ export interface YoutubePreviewParams {
 
 export interface LinkPreviewParams {
   file: CloudLink;
+}
+
+export interface Intents {
+  labels?: string[];
 }

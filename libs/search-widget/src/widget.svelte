@@ -9,13 +9,13 @@
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
-  import { loadModel } from './core/tensor';
+  import { loadModel, predict } from './core/tensor';
   import { setCDN, formatQueryKey, updateQueryParams, coerceBooleanProperty } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
-  import { merge, Observable } from 'rxjs';
+  import { forkJoin, merge, Observable } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -91,12 +91,26 @@
       nucliaStore().query.pipe(debounceTime(500)),
     )
       .pipe(
-        tap(() => nucliaStore().suggestions.next(NO_RESULTS)),
+        tap(() => {
+          nucliaStore().suggestions.next(NO_RESULTS);
+          nucliaStore().intents.next({});
+        }),
         filter((query) => !!query && query.length > 2),
         tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
-        switchMap((query) => suggest(query)),
+        switchMap((query) =>
+          forkJoin([
+            suggest(query).pipe(tap((results) => nucliaStore().suggestions.next(results))),
+            predict(query).pipe(
+              tap((predictions) =>
+                nucliaStore().intents.next({
+                  labels: predictions,
+                }),
+              ),
+            ),
+          ]),
+        ),
       )
-      .subscribe((results) => nucliaStore().suggestions.next(results));
+      .subscribe();
     nucliaStore()
       .triggerSearch.pipe(
         tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
@@ -134,9 +148,6 @@
 </script>
 
 <div class="nuclia-widget" style={$style} data-version="__NUCLIA_DEV_VERSION__">
-  <button on:click={() => loadModel('/public/use_json_model/model.json', '/public/use_json_model/pos_to_lab.json')}
-    >Load</button
-  >
   {#if ready}
     {#if type === 'button'}
       <ButtonWidget />
