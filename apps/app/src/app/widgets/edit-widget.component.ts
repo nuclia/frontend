@@ -3,9 +3,9 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, PostHogService, STFTrackingService } from '@flaps/core';
 import { Widget } from '@nuclia/core';
-import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { filter, map, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddWidgetDialogComponent } from './add/add-widget.component';
 import { WidgetService } from './widget.service';
 
@@ -32,6 +32,9 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   styleFormFields = Object.keys(this.styleForm.controls);
   mainForm = this.fb.group({
     mode: ['button'],
+    features: this.fb.group({
+      suggestEntities: [false], // TODO: replace with suggestLabels when implemented in backend
+    }),
     style: this.styleForm,
   });
   validationMessages = {
@@ -50,6 +53,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   isDefaultWidget = false;
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'assets/icons/copy.svg';
+  isTrainingEnabled = this.posthog.isFeatureEnabled('training');
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -61,9 +65,16 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private backendConfig: BackendConfigurationService,
     private tracking: STFTrackingService,
+    private posthog: PostHogService,
   ) {}
 
   ngOnInit() {
+    this.mainForm.valueChanges.pipe(skip(1), takeUntil(this.unsubscribeAll)).subscribe(() => {
+      // FIX: re-rendering the widget triggers a loading of the widget params from backend,
+      // so it reinitializes the widget with the currently saved params, hence the local changes are not reflected.
+      this.generateSnippet();
+      this.mainForm.markAsDirty();
+    });
     this.route.params
       .pipe(
         takeUntil(this.unsubscribeAll),

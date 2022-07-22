@@ -27,13 +27,15 @@
             <div *ngIf="currentTab === 'pref'"
                  class="tab-content">
               <pa-select [label]="'stash.widgets.mode' | translate"
-                         formControlName="mode"
-                         (valueChange)="generateSnippet()">
+                         formControlName="mode">
                 <pa-option value="button">{{ 'stash.widgets.mode.button' | translate }}</pa-option>
                 <pa-option value="input">{{ 'stash.widgets.mode.input' | translate }}</pa-option>
                 <pa-option value="form">{{ 'stash.widgets.mode.form' | translate }}</pa-option>
               </pa-select>
-
+              <div formGroupName="features">
+                <pa-toggle *ngIf="isTrainingEnabled | async"
+                           formControlName="suggestEntities">{{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
+              </div>
             </div>
             <div *ngIf="currentTab === 'style'"
                  class="tab-content"

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { STFSectionNavbarModule } from '@flaps/common';
 import { STFButtonsModule, STFFormDirectivesModule, STFInputModule } from '@flaps/pastanaga';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AddWidgetDialogModule } from './add/add-widget.module';
@@ -35,6 +35,7 @@ const routes = [
     PaTextFieldModule,
     PaDropdownModule,
     PaButtonModule,
+    PaTogglesModule,
     AddWidgetDialogModule,
     AngularSvgIconModule,
   ],
