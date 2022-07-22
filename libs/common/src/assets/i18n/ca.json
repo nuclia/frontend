@@ -78,6 +78,8 @@
 	"billing.automatically_renewed": "Es renova automàticament cada mes",
 	"billing.monthly": "Mensual",
 	"billing.monthly_consumibles": "Consums mensuals",
+	"billing.plan_settings": "Opcions del pla",
+	"billing.plans": "Plans",
 	"billing.plans_available": "Plans disponibles",
 	"billing.upgrade": "Actualitzar",
 	"confirm.delete_body": "Eliminar recurs",

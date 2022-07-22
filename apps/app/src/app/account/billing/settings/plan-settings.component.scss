@@ -1,0 +1,51 @@
+@import 'variables';
+
+.plan-settings {
+  padding: 70px 0;
+}
+
+.current-plan {
+  text-transform: uppercase;
+  margin-bottom: rhythm(1);
+}
+
+.container {
+  max-width: 888px;
+  background-color: $color-light-stronger;
+  padding: rhythm(2);
+}
+
+.description {
+  color: $color-neutral-strong;
+}
+
+input {
+  
+  padding: rhythm(.5);
+  color: $color-neutral-regular;
+  border: 1px solid $color-neutral-regular;
+  text-align: center;
+}
+
+pa-input {
+  display: inline-block;
+  width: 128px;
+  margin: rhythm(1.5) rhythm(.5) 0 0;
+}
+
+.customize {
+  margin-top: rhythm(.5);
+  padding-left: rhythm(2);
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+}
+
+.buttons {
+  margin-top: rhythm(4);
+  display: flex;
+  pa-button {
+    margin-right: rhythm(1);
+  }
+}

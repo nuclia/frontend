@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { StateService } from '@flaps/core';
+import { filter, map } from 'rxjs';
 
 export interface PlanParameter {
   key: string;
@@ -51,5 +53,9 @@ export const TEAM_PLAN: Plan = {
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
-  constructor() {}
+  type = this.stateService.account.pipe(
+    filter((account) => !!account),
+    map((account) => account!.type),
+  );
+  constructor(private stateService: StateService) {}
 }
