@@ -5,25 +5,22 @@
     <svg-icon src="assets/icons/close.svg"></svg-icon>
   </button>
 
-  {{ 'stash.widgets.add-help' | translate }}
-
   <form [formGroup]="mainForm"
         (ngSubmit)="save()">
-    <stf-input formControlName="id"
-               [validator]="mainForm.controls['id']"
-               [validation_messages]="validationMessages.title">id</stf-input>
+    <pa-input formControlName="id"
+              [help]="'stash.widgets.add-help' | translate"
+              [showAllErrors]="false"
+              [errorMessages]="validationMessages">Id</pa-input>
 
     <div class="buttons">
-      <stf-button type="submit"
-                  minWidth="110px"
-                  [disabled]="!mainForm.valid || mainForm.pristine">
+      <pa-button type="submit"
+                 kind="primary"
+                 [disabled]="!mainForm.valid || mainForm.pristine">
         {{ 'generic.save' | translate }}
-      </stf-button>
-      <stf-button (click)="close()"
-                  color="gray"
-                  minWidth="110px">
+      </pa-button>
+      <pa-button (click)="close()">
         {{ 'generic.cancel' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </form>
 

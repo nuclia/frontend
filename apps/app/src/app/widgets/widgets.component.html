@@ -5,11 +5,9 @@
     <router-outlet></router-outlet>
   </stf-section-navbar-body>
   <stf-section-navbar-footer>
-    <stf-button (click)="addWidget()"
-                minWidth="150px"
-                color="secondary">
+    <pa-button (click)="addWidget()">
       {{ 'stash.widgets.add' | translate }}
-    </stf-button>
+    </pa-button>
     <div class="warning">
       <svg-icon src="assets/icons/toast-warning.svg"></svg-icon>
       <div>

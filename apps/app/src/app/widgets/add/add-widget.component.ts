@@ -13,15 +13,13 @@ export class AddWidgetDialogComponent {
     id: ['', [Validators.required, Sluggable()]],
   });
   validationMessages = {
-    title: {
-      sluggable: 'stash.widgets.invalid-id',
-    },
+    sluggable: 'stash.widgets.invalid-id',
   };
 
   constructor(
     private dialogRef: MatDialogRef<AddWidgetDialogComponent>,
     private fb: UntypedFormBuilder,
-    @Inject(MAT_DIALOG_DATA) public data: { rename: boolean }
+    @Inject(MAT_DIALOG_DATA) public data: { rename: boolean },
   ) {}
 
   close() {
