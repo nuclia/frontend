@@ -5,6 +5,7 @@
   import { _ } from '../../core/i18n';
 
   export let paragraphs: Search.Paragraph[] = [];
+  export let intents: string[] = [];
   const hasSearchError = nucliaState().hasSearchError;
   let showMore = false;
 </script>
@@ -13,6 +14,16 @@
   <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
 {:else}
   <p>{$_('suggest.enter')}</p>
+  {#if intents.length > 0}
+    <h3>{$_('suggest.intents')}</h3>
+    <ul class="intents">
+      {#each intents as intent}
+        <li>
+          {intent}
+        </li>
+      {/each}
+    </ul>
+  {/if}
   {#if paragraphs.length > 0}
     <h3>{$_('suggest.paragraphs')}</h3>
     <div>
@@ -84,5 +95,9 @@
     font-size: small;
     color: var(--color-primary-muted);
     margin: 0;
+  }
+  .intents li {
+    display: inline;
+    padding: 0 4px;
   }
 </style>

@@ -1,5 +1,5 @@
 import { NO_RESULTS, PENDING_RESULTS } from './models';
-import type { WidgetAction, DisplayedResource } from './models';
+import type { Intents, WidgetAction, DisplayedResource } from './models';
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -21,6 +21,7 @@ export const getWidgetActions = () => widgetActions;
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
+  intents: BehaviorSubject<Intents>;
   suggestions: BehaviorSubject<Search.Results>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
   triggerSearch: Subject<void>;
@@ -33,6 +34,7 @@ let _store: NucliaStore | undefined;
 let _state: {
   query: Observable<string>;
   results: Observable<IResource[]>;
+  labelIntents: Observable<string[]>;
   paragraphs: Observable<Search.Paragraph[]>;
   hasSearchError: Observable<boolean>;
   pendingSuggestions: Observable<boolean>;
@@ -48,6 +50,7 @@ export const nucliaStore = (): NucliaStore => {
   if (!_store) {
     _store = {
       query: new BehaviorSubject(''),
+      intents: new BehaviorSubject({}),
       suggestions: new BehaviorSubject(NO_RESULTS),
       searchResults: new BehaviorSubject(NO_RESULTS),
       triggerSearch: new Subject(),
@@ -70,6 +73,7 @@ export const nucliaStore = (): NucliaStore => {
         map((res) => Object.values(res.paragraphs?.results || [])),
         startWith([] as Search.Paragraph[]),
       ),
+      labelIntents: _store!.intents.pipe(map((intents) => intents.labels || [])),
       hasSearchError: _store!.hasSearchError.asObservable(),
       pendingSuggestions: _store!.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       pendingResults: _store!.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
@@ -114,6 +118,7 @@ export const resetStore = () => {
 export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
   nucliaStore().suggestions.next(NO_RESULTS);
+  nucliaStore().intents.next({});
 };
 
 const getSortedResources = (results: Search.Results) => {

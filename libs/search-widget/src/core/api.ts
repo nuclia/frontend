@@ -2,6 +2,7 @@ import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/
 import type { NucliaOptions, KBStates } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
+import { loadModel } from './tensor';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -11,7 +12,13 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
   nucliaApi = new Nuclia(options);
-  nucliaApi.knowledgeBox.getWidget(widgetId).subscribe(nucliaStore().widget);
+  nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
+    nucliaStore().widget.next(widget);
+    if (widget.features.suggestLabels) {
+      // TEMPORARY (we need to get the model from the backend)
+      loadModel('/public/use_json_model/model.json', '/public/use_json_model/pos_to_lab.json');
+    }
+  });
   STATE = state;
 };
 
@@ -39,6 +46,7 @@ export const suggest = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
+
   return nucliaApi.knowledgeBox.suggest(query).pipe(
     filter((res) => {
       if (res.error) {

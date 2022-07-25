@@ -5,7 +5,6 @@
 	"entities.fac": "Constructions",
 	"entities.gpe": "Lieux",
 	"entities.language": "Langages",
-	"entities.law": "",
 	"entities.loc": "Géographie",
 	"entities.mail": "Emails",
 	"entities.money": "Montants",
@@ -14,7 +13,6 @@
 	"entities.percent": "Pourcentage",
 	"entities.person": "Personnes",
 	"entities.product": "Produits",
-	"entities.quantity": "",
 	"entities.time": "Temps",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Œuvres",
@@ -38,6 +36,7 @@
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
 	"suggest.enter": "Appuyer sur Entrée ⏎ pour voir les résultats",
+	"suggest.intents": "Labels",
 	"suggest.more": "Afficher plus de résultats",
 	"suggest.paragraphs": "Paragraphes suggérés"
 }

@@ -26,25 +26,23 @@
             </div>
             <div *ngIf="currentTab === 'pref'"
                  class="tab-content">
-              <label for="mode-select"
-                     class="label">{{ 'stash.widgets.mode' | translate }}</label>
-              <select stfSelect
-                      formControlName="mode"
-                      selectSize="small"
-                      id="mode-select">
-                <option value="button">{{ 'stash.widgets.mode.button' | translate }}</option>
-                <option value="input">{{ 'stash.widgets.mode.input' | translate }}</option>
-                <option value="form">{{ 'stash.widgets.mode.form' | translate }}</option>
-              </select>
-
+              <pa-select [label]="'stash.widgets.mode' | translate"
+                         formControlName="mode">
+                <pa-option value="button">{{ 'stash.widgets.mode.button' | translate }}</pa-option>
+                <pa-option value="input">{{ 'stash.widgets.mode.input' | translate }}</pa-option>
+                <pa-option value="form">{{ 'stash.widgets.mode.form' | translate }}</pa-option>
+              </pa-select>
+              <div formGroupName="features">
+                <pa-toggle *ngIf="isTrainingEnabled | async"
+                           formControlName="suggestLabels">{{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
+                <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
+              </div>
             </div>
             <div *ngIf="currentTab === 'style'"
                  class="tab-content"
                  formGroupName="style">
               <div *ngFor="let field of styleFormFields">
-                <label class="label"
-                       [for]="field">{{ field }}</label>
-                <stf-input [formControlName]="field"></stf-input>
+                <pa-input [formControlName]="field">{{ field }}</pa-input>
               </div>
             </div>
           </div>
@@ -64,29 +62,27 @@
         </div>
       </div>
       <div class="buttons">
-        <stf-button minWidth="110px"
-                    [disabled]="!mainForm.valid || mainForm.pristine"
-                    (click)="save()">
+        <pa-button kind="primary"
+                   [disabled]="!mainForm.valid || mainForm.pristine"
+                   (click)="save()">
           {{ 'generic.save' | translate }}
-        </stf-button>
-        <stf-button color="white"
-                    minWidth="110px"
-                    [disabled]="mainForm.pristine"
-                    (click)="cancel()">
+        </pa-button>
+        <pa-button minWidth="110px"
+                   [disabled]="mainForm.pristine"
+                   (click)="cancel()">
           {{ 'generic.cancel' | translate }}
-        </stf-button>
-        <stf-button color="white"
-                    minWidth="110px"
-                    [disabled]="isDefaultWidget"
-                    (click)="rename()">
+        </pa-button>
+        <pa-button minWidth="110px"
+                   [disabled]="isDefaultWidget"
+                   (click)="rename()">
           {{ 'stash.widgets.rename' | translate }}
-        </stf-button>
-        <stf-button color="white"
-                    minWidth="110px"
-                    [disabled]="isDefaultWidget"
-                    (click)="deleteWidget()">
+        </pa-button>
+        <pa-button kind="destructive"
+                   minWidth="110px"
+                   [disabled]="isDefaultWidget"
+                   (click)="deleteWidget()">
           {{ 'generic.delete' | translate }}
-        </stf-button>
+        </pa-button>
       </div>
     </form>
   </section>

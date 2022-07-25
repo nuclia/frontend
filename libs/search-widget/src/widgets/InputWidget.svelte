@@ -5,6 +5,7 @@
   import SearchInput from './search-input/SearchInput.svelte';
   import Suggestions from './suggestions/Suggestions.svelte';
   import { _ } from '../core/i18n';
+  import { map } from 'rxjs';
 
   let showModal = false;
   let showSuggestions = false;
@@ -23,6 +24,7 @@
   const results = nucliaState().results;
   const paragraphs = nucliaState().paragraphs;
   const hasSearchError = nucliaState().hasSearchError;
+  const intents = nucliaState().labelIntents;
 </script>
 
 <div bind:this={inputElement}>
@@ -36,7 +38,7 @@
   {alignTo}
 >
   <div class="suggestions">
-    <Suggestions paragraphs={$paragraphs} />
+    <Suggestions paragraphs={$paragraphs} intents={$intents} />
   </div>
 </Modal>
 

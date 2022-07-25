@@ -7,6 +7,7 @@
   import SearchInput from './search-input/SearchInput.svelte';
   import Suggestions from './suggestions/Suggestions.svelte';
   import { _ } from '../core/i18n';
+  import { map } from 'rxjs';
 
   let showModal = false;
   let showResults = false;
@@ -17,6 +18,7 @@
   };
   const paragraphs = nucliaState().paragraphs;
   const results = nucliaState().results;
+  const intents = nucliaState().labelIntents;
 </script>
 
 <Button size="small" on:click={openModal}>
@@ -33,20 +35,20 @@
     showResults = false;
   }}
 >
-    {#if !showResults}
-      <div class="container">
-        <div class="input">
-          <SearchInput on:search={() => (showResults = true)} />
-        </div>
-        <div class="results suggestions" class:empty={$paragraphs.length === 0}>
-          <Suggestions paragraphs={$paragraphs} />
-        </div>
+  {#if !showResults}
+    <div class="container">
+      <div class="input">
+        <SearchInput on:search={() => (showResults = true)} />
       </div>
-    {:else}
-      <div class="results" class:empty={$results.length === 0}>
-        <Results results={$results} />
+      <div class="results suggestions" class:empty={$paragraphs.length === 0}>
+        <Suggestions paragraphs={$paragraphs} intents={$intents} />
       </div>
-    {/if}
+    </div>
+  {:else}
+    <div class="results" class:empty={$results.length === 0}>
+      <Results results={$results} />
+    </div>
+  {/if}
 </Modal>
 
 <style>

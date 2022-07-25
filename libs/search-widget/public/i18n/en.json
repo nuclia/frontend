@@ -5,8 +5,9 @@
 	"entities.fac": "Constructions",
 	"entities.gpe": "Locations",
 	"entities.language": "Languages",
-	"entities.loc": "Geography",
 	"entities.law": "Legal",
+	"entities.legal": "",
+	"entities.loc": "Geography",
 	"entities.mail": "Emails",
 	"entities.money": "Money",
 	"entities.norp": "Nationalities",
@@ -38,6 +39,7 @@
 	"results.sentences": "Relevant sentences",
 	"results.summary": "Summary",
 	"suggest.enter": "Press Enter ⏎ to see results",
+	"suggest.intents": "Labels",
 	"suggest.more": "Show more results",
 	"suggest.paragraphs": "Suggested paragraphs"
 }

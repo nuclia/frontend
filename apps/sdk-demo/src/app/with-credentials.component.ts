@@ -32,7 +32,7 @@ export class WithCredentialsComponent {
   pending = false;
   accounts = this.isAuthenticated.pipe(
     filter((isAuthenticated) => isAuthenticated),
-    switchMap(() => this.service.nuclia.db.getAccounts())
+    switchMap(() => this.service.nuclia.db.getAccounts()),
   );
   kbs: IKnowledgeBox[] = [];
   currentAccount = '';
@@ -52,7 +52,7 @@ export class WithCredentialsComponent {
   constructor(
     private service: MyService,
     private reCaptchaV3Service: ReCaptchaV3Service,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.service.reinit(false);
     this.isAuthenticated.subscribe((isAuthenticated) => {
@@ -103,7 +103,7 @@ export class WithCredentialsComponent {
             this.kbs.push(kb);
             this.newKbSlug = '';
           }),
-          switchMap((kb) => this.setCurrentKb(kb))
+          switchMap((kb) => this.setCurrentKb(kb)),
         )
         .subscribe();
     }
@@ -140,7 +140,7 @@ export class WithCredentialsComponent {
         this.widgets = widgets;
         this.labels = labels;
         this.cdr?.markForCheck();
-      })
+      }),
     );
   }
 
@@ -183,7 +183,7 @@ export class WithCredentialsComponent {
       ?.getResource(
         this.currentRessourceUUID,
         [ResourceProperties.BASIC, ResourceProperties.EXTRACTED, ResourceProperties.VALUES],
-        [ExtractedDataTypes.TEXT, ExtractedDataTypes.FILE]
+        [ExtractedDataTypes.TEXT, ExtractedDataTypes.FILE],
       )
       .subscribe((res) => {
         this.currentResource = res;
@@ -285,6 +285,8 @@ export class WithCredentialsComponent {
             suggestEntities: false,
             suggestSentences: false,
             suggestParagraphs: false,
+            suggestLabels: false,
+            editLabels: false,
           },
         })
         .pipe(switchMap(() => currentKb.getWidgets()))
