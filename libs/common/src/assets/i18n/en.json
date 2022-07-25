@@ -540,6 +540,7 @@
 	"stash.widgets": "Widgets",
 	"stash.widgets.add": "Add search widget",
 	"stash.widgets.add-help": "Name your widget to save and identify it",
+	"stash.widgets.editLabels": "Edit labels",
 	"stash.widgets.invalid-id": "Invalid widget id",
 	"stash.widgets.mode": "Mode",
 	"stash.widgets.mode.button": "Button",

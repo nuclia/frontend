@@ -152,6 +152,8 @@ export interface Widget {
     suggestEntities: boolean;
     suggestSentences: boolean;
     suggestParagraphs: boolean;
+    suggestLabels: boolean;
+    editLabels: boolean;
   };
   filters?: string[];
   topEntities?: string[];

@@ -34,7 +34,8 @@
               </pa-select>
               <div formGroupName="features">
                 <pa-toggle *ngIf="isTrainingEnabled | async"
-                           formControlName="suggestEntities">{{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
+                           formControlName="suggestLabels">{{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
+                <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
               </div>
             </div>
             <div *ngIf="currentTab === 'style'"
