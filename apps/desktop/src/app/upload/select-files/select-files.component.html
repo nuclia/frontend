@@ -1,16 +1,21 @@
 <div class="select-files">
+  <h3>{{ 'upload.select.title' | translate}}</h3>
   <div class="header">
-    <h3>{{ 'upload.select.title' | translate}}</h3>
-    <form class="search-form"
+    <pa-checkbox [value]="isSelectingAll"
+                 (valueChange)="toggleSelectAll($event)">{{ 'upload.select.all' | translate }}</pa-checkbox>
+    <form *ngIf="!isSelectingAll"
+          class="search-form"
           #form="ngForm"
           (ngSubmit)="search(form.value.query)">
-      <pa-input [(ngModel)]="query" name="query"></pa-input>
+      <pa-input [(ngModel)]="query"
+                name="query"></pa-input>
       <pa-button size="small"
                  kind="primary"
                  type="submit">{{ 'upload.select.search' | translate }}</pa-button>
     </form>
   </div>
-  <div class="body"
+  <div *ngIf="!isSelectingAll"
+       class="body"
        #scroll>
     <table>
       <tr *ngFor="let resource of items">
