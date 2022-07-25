@@ -36,12 +36,12 @@ export class PlansSettingsComponent {
       .pipe(filter((result) => result === false))
       .subscribe(() => {
         // TODO: save bugdet
-        this.router.navigate(['payment'], { relativeTo: this.route });
+        this.router.navigate(['../payment'], { relativeTo: this.route });
       });
   }
 
   save() {
     // TODO: save bugdet
-    this.router.navigate(['payment'], { relativeTo: this.route });
+    this.router.navigate(['../payment'], { relativeTo: this.route });
   }
 }
