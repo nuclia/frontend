@@ -29,8 +29,8 @@ export const predict = (text: string) => {
   return from(encoder.embed([text])).pipe(
     map((encodings) => model.predict(encodings)),
     switchMap((predictions: any) => from(predictions.array())),
-    map((predictions: number[][]) =>
-      predictions[0]
+    map((predictions: any) =>
+      (predictions as number[][])[0]
         .map((score, i) => ({ score, label: labels[`${i}`] || 'Unknown' }))
         .filter((result) => result.score > 0.5)
         .sort((a, b) => b.score - a.score)
