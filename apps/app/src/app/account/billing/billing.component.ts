@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { filter, map, take } from 'rxjs';
-import { StateService } from '@flaps/core';
+import { map, take } from 'rxjs';
+import { BillingService } from './billing.service';
 
 @Component({
   selector: 'app-billing',
@@ -10,24 +10,20 @@ import { StateService } from '@flaps/core';
 })
 export class BillingComponent {
   routesBasic = [
-    { title: 'Plans', relativeRoute: 'plans' },
+    { title: 'billing.plans', relativeRoute: 'plans' },
     { title: 'History', relativeRoute: 'history' },
   ];
   routesTeam = [
-    { title: 'Plans', relativeRoute: 'plans' },
-    { title: 'Plan settings', relativeRoute: 'settings' },
+    { title: 'billing.plans', relativeRoute: 'plans' },
+    { title: 'billing.plan_settings', relativeRoute: 'settings' },
     { title: 'Payment details', relativeRoute: 'payment' },
     { title: 'History', relativeRoute: 'history' },
   ];
 
-  type = this.stateService.account.pipe(
-    filter((account) => !!account),
-    map((account) => account!.type),
-  );
-  routes = this.type.pipe(map((type) => (type === 'stash-basic' ? this.routesBasic : this.routesTeam)));
+  routes = this.billing.type.pipe(map((type) => (type === 'stash-basic' ? this.routesBasic : this.routesTeam)));
 
-  constructor(private stateService: StateService, private router: Router, private route: ActivatedRoute) {
-    this.type.pipe(take(1)).subscribe((type) => {
+  constructor(private router: Router, private route: ActivatedRoute, private billing: BillingService) {
+    this.billing.type.pipe(take(1)).subscribe((type) => {
       const path = type === 'stash-basic' ? 'plans' : 'settings';
       this.router.navigate([path], { relativeTo: this.route, replaceUrl: true });
     });

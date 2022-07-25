@@ -21,6 +21,6 @@ export class PlansComponent {
   }
 
   upgrade() {
-    this.router.navigate(['settings'], { relativeTo: this.route });
+    this.router.navigate(['../settings'], { relativeTo: this.route });
   }
 }
