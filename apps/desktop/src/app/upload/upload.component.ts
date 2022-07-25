@@ -93,4 +93,23 @@ export class UploadComponent implements OnInit {
         this.router.navigate(['/']);
       });
   }
+
+  private reset() {
+    localStorage.removeItem(SOURCE_ID_KEY);
+    this.sourceId = '';
+    this.source = undefined;
+  }
+
+  cancel() {
+    this.reset();
+    this.router.navigate(['/']);
+  }
+
+  goBackTo(step: number) {
+    this.step = step;
+    if (step === 0) {
+      this.reset();
+    }
+    this.cdr?.markForCheck();
+  }
 }

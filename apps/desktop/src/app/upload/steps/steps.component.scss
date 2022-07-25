@@ -9,7 +9,7 @@
   position: relative;
   font-size: var(--stf-font-size-ssmall);
   &.done {
-    color:  var(--stf-primary);
+    color: var(--stf-primary);
   }
   &:last-child {
     flex: 0 1 auto;
@@ -21,7 +21,7 @@
   align-items: center;
   margin-bottom: rhythm(0.5);
   &::before {
-    content: "";
+    content: '';
     width: 11px;
     height: 11px;
     border-radius: 50%;
@@ -32,7 +32,7 @@
     }
   }
   &::after {
-    content: "";
+    content: '';
     flex-grow: 1;
     height: 1px;
     background-color: var(--stf-gray-lighter-3);
@@ -43,4 +43,8 @@
       content: none;
     }
   }
+}
+
+.clickable {
+  cursor: pointer;
 }

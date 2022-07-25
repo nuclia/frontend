@@ -38,6 +38,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   @Input() selection: SelectionModel<SyncItem>;
   @Output() selectionChange = new EventEmitter<SelectionModel<SyncItem>>();
   @Output() next = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
   @ViewChild('scroll') private scroll?: ElementRef;
 
   query = '';

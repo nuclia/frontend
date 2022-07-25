@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'nde-steps',
@@ -8,5 +8,12 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 })
 export class StepsComponent {
   @Input() currentStep = 0;
+  @Output() goBackTo = new EventEmitter<number>();
   steps = ['upload.steps.sources', 'upload.steps.files', 'upload.steps.destination', 'upload.steps.upload'];
+
+  goToStep(step: number) {
+    if (step < this.currentStep) {
+      this.goBackTo.emit(step);
+    }
+  }
 }

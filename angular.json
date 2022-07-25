@@ -359,6 +359,12 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/desktop/src/environments/environment.ts",
+                  "with": "apps/desktop/src/environments/environment.dev.ts"
+                }
+              ],
               "assets": [
                 "apps/desktop/src/favicon.ico",
                 "apps/desktop/src/assets",

@@ -1,10 +1,10 @@
 <div class="connectors-list"
      *ngIf="!fields">
   <nde-connector *ngFor="let connector of connectors"
-                [title]="connector.title"
-                [logo]="connector.logo"
-                [description]="connector.description"
-                (click)="onSelectConnector(connector.id)"></nde-connector>
+                 [title]="connector.title"
+                 [logo]="connector.logo"
+                 [description]="connector.description"
+                 (click)="onSelectConnector(connector.id)"></nde-connector>
 </div>
 <form *ngIf="!!fields && !!form"
       [formGroup]="form"
@@ -25,11 +25,16 @@
                        [formControlName]="field.id"></nde-folder-upload>
   </div>
 
-  <pa-button qa="validate"
+</form>
+<div class="buttons">
+  <pa-button qa="cancel"
+             kind="inverted"
+             (click)="cancel.next()">{{ 'generic.cancel' | translate }}</pa-button>
+  <pa-button *ngIf="!!fields && !!form"
+             qa="validate"
              type="submit"
              kind="primary"
              [disabled]="form.invalid">
     {{ (_type === 'sources' ? 'generic.next' : 'Upload') | translate }}
   </pa-button>
-</form>
-
+</div>

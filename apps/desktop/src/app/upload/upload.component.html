@@ -1,23 +1,27 @@
 <div class="container">
   <div class="steps">
-    <nde-steps [currentStep]="step"></nde-steps>
+    <nde-steps [currentStep]="step"
+               (goBackTo)="goBackTo($event)"></nde-steps>
   </div>
   <div class="content">
     <ng-container *ngIf="step === 0">
       <h3>{{ 'upload.source.title' | translate}}</h3>
       <p>{{ 'upload.source.help' | translate}}</p>
       <nde-connectors type="sources"
-                     (selectConnector)="selectSource($event)"></nde-connectors>
+                      (selectConnector)="selectSource($event)"
+                      (cancel)="cancel()"></nde-connectors>
     </ng-container>
     <ng-container *ngIf="step === 1">
       <nde-select-files [source]="source"
-                       (next)="goTo(2)"
-                       [(selection)]="selection"></nde-select-files>
+                        (next)="goTo(2)"
+                        [(selection)]="selection"
+                        (cancel)="cancel()"></nde-select-files>
     </ng-container>
     <ng-container *ngIf="step === 2">
       <h2>Push to</h2>
       <nde-connectors type="destinations"
-                     (selectConnector)="selectDestination($event)"></nde-connectors>
+                      (selectConnector)="selectDestination($event)"
+                      (cancel)="cancel()"></nde-connectors>
     </ng-container>
   </div>
 </div>

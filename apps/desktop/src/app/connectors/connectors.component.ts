@@ -17,6 +17,7 @@ export class ConnectorsComponent {
     this.connectors = this.sync.getConnectors(value);
     this.cdr?.markForCheck();
   }
+  @Output() cancel = new EventEmitter<void>();
   @Output() selectConnector = new EventEmitter<{ connector: ConnectorDefinition; params: ConnectorParameters }>();
   connectors: ConnectorDefinition[] = [];
   fields?: Field[];

@@ -20,8 +20,9 @@ h3 {
 }
 
 .footer {
-  flex: 0 0 auto;
-  text-align: center;
+  display: flex;
+  align-self: center;
+  gap: rhythm(1);
   padding-top: rhythm(4);
 }
 

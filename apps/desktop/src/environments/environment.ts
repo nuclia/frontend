@@ -9,11 +9,11 @@ export const environment = {
   locales: ['en-US', 'es', 'ca'],
   connectors: {
     dropbox: {
-      CLIENT_ID: 'z178e757arn1jvo',
+      CLIENT_ID: 'FAKE',
     },
     gdrive: {
-      CLIENT_ID: '422664282538-m7mf0hh07h8u93kacss0f4clhnpp656v.apps.googleusercontent.com',
-      API_KEY: 'AIzaSyDeDskGoRmFQNofNXwg66zYoa3pNPQJM2Q',
+      CLIENT_ID: 'FAKE',
+      API_KEY: 'FAKE',
     },
     nucliacloud: {
       backend: 'https://stashify.cloud/api',
