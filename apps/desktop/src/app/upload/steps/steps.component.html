@@ -1,9 +1,10 @@
 <div class="steps">
-  <div class="step" 
+  <div class="step"
        *ngFor="let step of steps; let i = index;"
        [class.active]="i === currentStep"
        [class.done]="i < currentStep">
     <div class="bullet"></div>
-    <div>{{ step | translate }}</div>
+    <div [class.clickable]="i < currentStep"
+         (click)="goToStep(i)">{{ step | translate }}</div>
   </div>
 </div>

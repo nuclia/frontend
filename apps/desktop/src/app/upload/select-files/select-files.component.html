@@ -27,6 +27,9 @@
     </table>
   </div>
   <div class="footer">
+    <pa-button qa="cancel"
+               kind="inverted"
+               (click)="cancel.next()">{{ 'generic.cancel' | translate }}</pa-button>
     <pa-button qa="next"
                [disabled]="selection.isEmpty()"
                (click)="next.emit()">{{ 'generic.next' | translate }}</pa-button>
