@@ -6,11 +6,12 @@
   height: 100%;
 }
 
+h3 {
+  margin: 0;
+}
 .header {
   flex: 0 0 auto;
-  h3 {
-    margin: 0;
-  }
+  display: flex;
 }
 
 .body {

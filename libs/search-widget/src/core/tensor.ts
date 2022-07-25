@@ -1,13 +1,17 @@
-import { from, map, of, Subject, switchMap, switchMapTo } from 'rxjs';
+import { from, map, of, Subject, switchMap } from 'rxjs';
 
 let encoder: any;
 let model: any;
 let labels: { [key: string]: string } = {};
 
 export const loadModel = (modelPath: string, labelsPath: string) => {
-  fetch(labelsPath)
-    .then((res) => res.json())
-    .then((res) => (labels = res));
+  fetch(labelsPath).then((res) => {
+    if (res.ok) {
+      res.json().then((res) => (labels = res));
+    } else {
+      console.info('No trained labels in knowledge box');
+    }
+  });
   injectDependencies().subscribe(() => {
     (window as any)['use']
       .load()
@@ -15,10 +19,13 @@ export const loadModel = (modelPath: string, labelsPath: string) => {
         encoder = enc;
         return (window as any)['tf'].loadLayersModel(modelPath);
       })
-      .then((m: any) => {
-        model = m;
-        console.log(model, encoder);
-      });
+      .then(
+        (m: any) => {
+          model = m;
+          console.log(model, encoder);
+        },
+        () => console.info('No trained model in knowledge box'),
+      );
   });
 };
 
@@ -54,9 +61,6 @@ const injectScript = (url: string, callback: () => void) => {
   script.async = true;
   script.defer = true;
   script.src = url;
-  script.onload = () => {
-    console.log('injected', url);
-    callback();
-  };
+  script.onload = callback;
   window.document.body.appendChild(script);
 };

@@ -23,6 +23,7 @@ import {
   share,
   catchError,
   mapTo,
+  map,
 } from 'rxjs/operators';
 import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
 
@@ -45,6 +46,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   nextPage?: Observable<SearchResults>;
   loading = false;
+  isSelectingAll = false;
 
   items: SyncItem[] = [];
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
@@ -127,5 +129,39 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     this.selection.toggle(resource);
     this.selectionChange.emit(this.selection);
     this.cdr.detectChanges();
+  }
+
+  toggleSelectAll(selectAll: boolean) {
+    this.isSelectingAll = selectAll;
+    if (this.isSelectingAll) {
+      this.loading = true;
+      this.cdr?.markForCheck();
+      this.getAllFiles().subscribe((items) => {
+        this.selection = new SelectionModel(true, items);
+        this.selectionChange.emit(this.selection);
+        this.loading = false;
+        this.cdr?.markForCheck();
+      });
+    } else {
+      this.selection = new SelectionModel(true, []);
+      this.selectionChange.emit(this.selection);
+      this.cdr?.markForCheck();
+    }
+  }
+
+  getAllFiles(): Observable<SyncItem[]> {
+    return (this.source as ISourceConnector).getFiles().pipe(
+      concatMap((res) => this._getAllFiles(res)),
+      map((res) => res.items),
+    );
+  }
+
+  private _getAllFiles(currentResults?: SearchResults): Observable<SearchResults> {
+    return currentResults && currentResults.nextPage
+      ? currentResults.nextPage.pipe(
+          map((res) => ({ ...res, items: [...currentResults.items, ...res.items] })),
+          concatMap((res) => this._getAllFiles(res)),
+        )
+      : of(currentResults || { items: [] });
   }
 }
