@@ -1,0 +1,26 @@
+<div class="card">
+  <h2>{{ 'billing.enter_card_details' | translate }}</h2>
+  <div>
+    <pa-icon name="arrow-right"
+             size="small"></pa-icon>
+    {{ 'billing.total_now' | translate }}
+  </div>
+  <div class="subscription">
+    <pa-icon name="arrow-right"
+             size="small"></pa-icon>
+    {{ 'billing.subscribing_to' | translate }} <span>{{ 'billing.teams_account' | translate }}</span>
+  </div> 
+  <form [formGroup]="form">
+    <pa-input formControlName="name">{{ 'login.full_name' | translate }}</pa-input>
+    <div class="card-input">
+      <div #card></div>
+      <div class="card-error">{{ cardError }}</div>
+    </div>
+    <pa-input formControlName="company">{{ 'billing.company_name' | translate }}</pa-input>
+    <pa-input formControlName="vat">{{ 'billing.vat_id' | translate }}</pa-input>
+  </form>
+  <div class="button">
+    <pa-button kind="primary"
+               (click)="subscribe()">{{ 'billing.subscribe' | translate }}</pa-button>
+  </div>
+</div>

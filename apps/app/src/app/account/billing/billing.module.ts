@@ -7,10 +7,12 @@ import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { STFSectionNavbarModule } from '@flaps/common';
 import { STFConfirmModule } from '@flaps/components';
-import { PaButtonModule, PaTooltipModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTooltipModule, PaTextFieldModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
 import { PlansComponent } from './plans/plans.component';
 import { PlansSettingsComponent } from './settings/plan-settings.component';
+import { PaymentComponent } from './payment/payment.component';
+import { CardComponent } from './card/card.component';
 
 const routes = [
   {
@@ -24,6 +26,10 @@ const routes = [
       {
         path: 'settings',
         component: PlansSettingsComponent,
+      },
+      {
+        path: 'payment',
+        component: PaymentComponent,
       },
     ],
   },
@@ -42,8 +48,9 @@ const routes = [
     PaButtonModule,
     PaTextFieldModule,
     PaTooltipModule,
+    PaIconModule,
   ],
-  declarations: [BillingComponent, PlansComponent, PlansSettingsComponent],
+  declarations: [BillingComponent, PlansComponent, PlansSettingsComponent, PaymentComponent, CardComponent],
   exports: [],
 })
 export class BillingModule {}

@@ -11,13 +11,13 @@ import { BillingService } from './billing.service';
 export class BillingComponent {
   routesBasic = [
     { title: 'billing.plans', relativeRoute: 'plans' },
-    { title: 'History', relativeRoute: 'history' },
+    //{ title: 'History', relativeRoute: 'history' },
   ];
   routesTeam = [
     { title: 'billing.plans', relativeRoute: 'plans' },
     { title: 'billing.plan_settings', relativeRoute: 'settings' },
-    { title: 'Payment details', relativeRoute: 'payment' },
-    { title: 'History', relativeRoute: 'history' },
+    { title: 'billing.payment_details', relativeRoute: 'payment' },
+    //{ title: 'History', relativeRoute: 'history' },
   ];
 
   routes = this.billing.type.pipe(map((type) => (type === 'stash-basic' ? this.routesBasic : this.routesTeam)));
