@@ -8,11 +8,13 @@
 <script lang="ts">
   import Paragraph from './Paragraph.svelte';
   import { getCDN } from '../../core/utils';
-
+  import type { Classification }  from '@nuclia/core'
+  
   export let text: string;
   export let textIcon: string;
   export let active: boolean = false;
   export let icon: ParagraphIcon;
+  export let labels: Classification[];
   let hover = false;
 
   const enter = () => {
@@ -23,7 +25,7 @@
   };
 </script>
 
-<Paragraph>
+<Paragraph labels={labels}>
   <div slot="icon" class="icon" class:active={active || hover} on:mouseenter={enter} on:mouseleave={leave} on:click>
     {#if active || hover}
       <img src={`${getCDN()}icons/${icon}.svg`} alt="Expand" />

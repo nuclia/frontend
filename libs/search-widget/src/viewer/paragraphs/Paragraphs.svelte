@@ -28,6 +28,7 @@
             text={paragraph.text}
             textIcon={'p. ' + (paragraph.page + 1)}
             icon={ParagraphIcon.EXPAND}
+            labels={paragraph.paragraph.classifications || []}
             active={$selectedParagraphIndex === i}
             on:click={() => previewParagraph(paragraph)}
           />
@@ -36,10 +37,11 @@
             text={paragraph.text}
             textIcon={formatTime(paragraph.time)}
             icon={ParagraphIcon.PLAY}
+            labels={paragraph.paragraph.classifications || []}
             on:click={() => previewParagraph(paragraph)}
           />
         {:else}
-          <Paragraph>
+          <Paragraph labels={paragraph.paragraph.classifications || []}>
             <span slot="content">{paragraph.text}</span>
           </Paragraph>
         {/if}
