@@ -12,7 +12,7 @@ export const environment = {
       CLIENT_ID: 'FAKE',
     },
     gdrive: {
-      CLIENT_ID: 'FAKE',
+      endpoint: 'http://127.0.0.1:5000/gdrive/authorize',
       API_KEY: 'FAKE',
     },
     nucliacloud: {

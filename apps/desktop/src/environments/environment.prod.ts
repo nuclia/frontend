@@ -12,7 +12,7 @@ export const environment = {
       CLIENT_ID: '__DROPBOX_KEY__',
     },
     gdrive: {
-      CLIENT_ID: '__GOOGLE_CLIENT_ID__',
+      endpoint: 'http://127.0.0.1:5000/gdrive/authorize',
       API_KEY: '__GOOGLE_API_KEY__',
     },
     nucliacloud: {

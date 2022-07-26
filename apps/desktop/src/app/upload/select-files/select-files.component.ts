@@ -61,7 +61,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
           catchError((error) => {
             if (this.source && error.status === 403) {
               if (this.source.hasServerSideAuth) {
-                this.source.goToOAuth();
+                this.source.goToOAuth(true);
               }
               return this.source.authenticate().pipe(mapTo({ items: [], nextPage: undefined }));
             } else {

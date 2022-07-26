@@ -37,7 +37,12 @@ class DropboxImpl implements ISourceConnector {
     return of([]);
   }
 
-  goToOAuth() {
+  goToOAuth(reset?: boolean) {
+    if (reset) {
+      localStorage.removeItem(DROPBOX_TOKEN_KEY);
+      localStorage.removeItem(DROPBOX_VERIFIER_CODE_KEY);
+      localStorage.removeItem(DROPBOX_REFRESH_TOKEN_KEY);
+    }
     injectScript('https://cdnjs.cloudflare.com/ajax/libs/dropbox.js/10.30.0/Dropbox-sdk.min.js').subscribe(() => {
       const token = localStorage.getItem(DROPBOX_TOKEN_KEY);
       if (!token) {
