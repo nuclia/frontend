@@ -2,10 +2,12 @@
   import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph } from '../../core/models';
   import { PreviewKind } from '../../core/models';
   import { formatTime } from '../../core/utils';
+  import { nucliaState } from '../../core/store';
   import { viewerState, viewerStore, selectedParagraphIndex } from './../store';
   import Paragraph from './Paragraph.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
+  import { filter, map } from 'rxjs';
 
   export let paragraphs: WidgetParagraph[] = [];
   const onlySelected = viewerState.onlySelected;
@@ -17,6 +19,10 @@
       paragraph: paragraph.paragraph,
     });
   };
+  const showLabels = nucliaState().widget.pipe(
+    filter((widget) => !!widget),
+    map((widget) => widget.features.editLabels)
+  )
 </script>
 
 <div class="paragraph-list">
@@ -28,6 +34,7 @@
             text={paragraph.text}
             textIcon={'p. ' + (paragraph.page + 1)}
             icon={ParagraphIcon.EXPAND}
+            labels={$showLabels &&  paragraph.paragraph.classifications || []}
             active={$selectedParagraphIndex === i}
             on:click={() => previewParagraph(paragraph)}
           />
@@ -36,10 +43,11 @@
             text={paragraph.text}
             textIcon={formatTime(paragraph.time)}
             icon={ParagraphIcon.PLAY}
+            labels={$showLabels && paragraph.paragraph.classifications || []}
             on:click={() => previewParagraph(paragraph)}
           />
         {:else}
-          <Paragraph>
+          <Paragraph labels={$showLabels && paragraph.paragraph.classifications || []}>
             <span slot="content">{paragraph.text}</span>
           </Paragraph>
         {/if}
