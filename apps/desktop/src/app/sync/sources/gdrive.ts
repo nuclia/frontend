@@ -10,15 +10,15 @@ import {
   SyncItem,
   SearchResults,
 } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take, tap, concatMapTo } from 'rxjs';
+import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take } from 'rxjs';
 import { injectScript } from '@flaps/core';
 import { environment } from '../../../environments/environment';
 
 declare var gapi: any;
-declare var google: any;
 
-const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
+
+const TOKEN = 'GDRIVE_TOKEN';
 
 export const GDrive: SourceConnectorDefinition = {
   id: 'gdrive',
@@ -33,57 +33,40 @@ class GDriveImpl implements ISourceConnector {
   resumable = true;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   API_KEY: string;
-  CLIENT_ID: string;
 
   constructor(data?: ConnectorSettings) {
     this.API_KEY = data?.API_KEY || '';
-    this.CLIENT_ID = data?.CLIENT_ID || '';
   }
 
   getParameters() {
     return of([]);
   }
 
-  goToOAuth() {
-    let tokenClient: any;
-    injectScript('https://accounts.google.com/gsi/client')
-      .pipe(
-        tap(
-          () =>
-            (tokenClient = google.accounts.oauth2.initTokenClient({
-              client_id: this.CLIENT_ID,
-              redirect_uri: environment.dashboard,
-              scope: SCOPES,
-              callback: '', // defined later
-            })),
-        ),
-        concatMapTo(injectScript('https://apis.google.com/js/api.js')),
-      )
-      .subscribe(() => {
+  goToOAuth(reset?: boolean) {
+    if (reset) {
+      localStorage.removeItem(TOKEN);
+    }
+    const token = localStorage.getItem(TOKEN);
+    if (token) {
+      injectScript('https://apis.google.com/js/api.js').subscribe(() =>
         gapi.load('client', () => {
-          gapi.client
-            .init({
-              apiKey: this.API_KEY,
-              discoveryDocs: DISCOVERY_DOCS,
-            })
-            .then(() => {
-              tokenClient.callback = (resp: any) => {
-                if (resp.error !== undefined) {
-                  throw resp;
-                }
-                this.isAuthenticated.next(true);
-              };
-
-              if ((window as any)['electron']) {
-                (window as any)['electron'].openExternal(
-                  `${environment.dashboard}/redirect?google=true&redirect=nuclia-desktop://&CLIENT_ID=${this.CLIENT_ID}&API_KEY=${this.API_KEY}`,
-                );
-              } else {
-                location.href = `${environment.dashboard}/redirect?google=true&redirect=http://localhost:4200&CLIENT_ID=${this.CLIENT_ID}&API_KEY=${this.API_KEY}`;
-              }
-            });
-        });
-      });
+          gapi.client.init({
+            apiKey: this.API_KEY,
+            discoveryDocs: DISCOVERY_DOCS,
+          });
+          gapi.client.setToken({ access_token: token });
+          this.isAuthenticated.next(true);
+        }),
+      );
+    } else {
+      if ((window as any)['electron']) {
+        (window as any)['electron'].openExternal(
+          `${environment.connectors.gdrive.endpoint}?redirect=nuclia-desktop://`,
+        );
+      } else {
+        location.href = `${environment.connectors.gdrive.endpoint}?redirect=http://localhost:4200`;
+      }
+    }
   }
 
   authenticate(): Observable<boolean> {
@@ -97,10 +80,15 @@ class GDriveImpl implements ISourceConnector {
           const interval = setInterval(() => {
             const deeplink = (window as any)['deeplink'] || location.search;
             if (deeplink && deeplink.includes('?')) {
-              const param = new URLSearchParams(deeplink.split('?')[1]).get('google');
-              gapi.client.setToken(JSON.parse(decodeURIComponent(param || '{}')));
-              clearInterval(interval);
-              this.isAuthenticated.next(true);
+              const params = new URLSearchParams(deeplink.split('?')[1]);
+              const isGoogle = params.get('google');
+              if (isGoogle) {
+                const token = params.get('token') || '';
+                localStorage.setItem(TOKEN, token);
+                gapi.client.setToken({ access_token: token });
+                clearInterval(interval);
+                this.isAuthenticated.next(true);
+              }
             }
           }, 500);
         });

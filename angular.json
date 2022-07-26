@@ -326,6 +326,12 @@
               "baseHref": "./",
               "outputHashing": "all",
               "serviceWorker": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/desktop/src/environments/environment.ts",
+                  "with": "apps/desktop/src/environments/environment.dev.ts"
+                }
+              ],
               "assets": [
                 "apps/desktop/src/favicon.ico",
                 "apps/desktop/src/assets",

@@ -19,7 +19,7 @@ export interface ISourceConnector {
   hasServerSideAuth: boolean;
   resumable: boolean;
   getParameters(): Observable<Field[]>;
-  goToOAuth(): void;
+  goToOAuth(reset?: boolean): void;
   authenticate(params?: ConnectorParameters): Observable<boolean>;
   getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
   download(resource: SyncItem): Observable<Blob>;

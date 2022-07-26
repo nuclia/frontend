@@ -140,7 +140,7 @@ export class SyncService {
                       catchError((error) => {
                         if (error.status === 403) {
                           if (sourceInstance.hasServerSideAuth) {
-                            sourceInstance.goToOAuth();
+                            sourceInstance.goToOAuth(true);
                           }
                         }
                         throw error;
