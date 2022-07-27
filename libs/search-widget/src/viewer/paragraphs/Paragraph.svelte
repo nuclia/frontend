@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Classification }  from '@nuclia/core';
+  import Label from '../../components/label-menu/label.svelte';
   export let labels: Classification[] = [];
 </script>
 
@@ -12,7 +13,9 @@
     {#if labels.length > 0}
       <div class="labels">
         {#each labels as label}
-          <div class="label">{ label.label }</div>
+          <div class="label">
+            <Label {label}></Label>
+          </div>
         {/each}
       </div>
     {/if}
@@ -38,14 +41,6 @@
     margin-top: 0.5em;
   }
   .label {
-    display: inline-block;
     margin: 0 4px 4px 0;
-    padding: 0 0.5em;
-    font-size: 0.75em;
-    line-height: 1.25;
-    white-space: nowrap;
-    color: #454ade;
-    background-color: #e6e6f9;
-    border-radius: 1px;
   }
 </style>

@@ -3,7 +3,7 @@
   import { PreviewKind } from '../../core/models';
   import { formatTime } from '../../core/utils';
   import { viewerState, viewerStore, selectedParagraphIndex } from './../store';
-  import Paragraph from './Paragraph.svelte';
+  import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
 
@@ -41,9 +41,9 @@
             on:click={() => previewParagraph(paragraph)}
           />
         {:else}
-          <Paragraph labels={paragraph.paragraph.classifications || []}>
+          <ParagraphWithMenu labels={paragraph.paragraph.classifications || []}>
             <span slot="content">{paragraph.text}</span>
-          </Paragraph>
+          </ParagraphWithMenu>
         {/if}
       </div>
     {/if}

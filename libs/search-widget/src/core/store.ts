@@ -1,5 +1,6 @@
 import { NO_RESULTS, PENDING_RESULTS } from './models';
 import type { Intents, WidgetAction, DisplayedResource } from './models';
+import { getLabels } from './api';
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -7,11 +8,12 @@ import {
   map,
   Observable,
   ReplaySubject,
+  shareReplay,
   startWith,
   Subject,
   tap,
 } from 'rxjs';
-import type { IResource, Search, SearchOptions, Widget, Classification } from '@nuclia/core';
+import type { IResource, Search, SearchOptions, Widget, Classification, Labels } from '@nuclia/core';
 
 let widgetActions: WidgetAction[] = [];
 export const setWidgetActions = (actions: WidgetAction[]) => {
@@ -46,6 +48,7 @@ let _state: {
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
   getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
+  labels: Observable<Labels>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -104,6 +107,7 @@ export const nucliaStore = (): NucliaStore => {
           map((sentences) => sentences.slice().sort((a, b) => b.score - a.score)),
         );
       },
+      labels: getLabels().pipe(shareReplay()),
     };
   }
   return _store as NucliaStore;
