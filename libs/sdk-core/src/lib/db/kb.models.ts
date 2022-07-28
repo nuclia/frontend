@@ -59,7 +59,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
   getLabels(): Observable<Labels>;
   getResource(uuid: string): Observable<IResource>;
-  search(query: string, features?: Search.Features[], highlight?: boolean): Observable<Search.Results>;
+  search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
   suggest(query: string): Observable<Search.Suggestions>;
   getWidgets(): Observable<Widgets>;
   getWidget(widgetId: string): Observable<Widget>;
@@ -201,4 +201,9 @@ export interface ServiceAccount {
 export interface ServiceAccountCreation {
   title: string;
   role: KBRoles;
+}
+
+export interface SearchOptions {
+  highlight?: boolean;
+  inTitleOnly?: boolean;
 }

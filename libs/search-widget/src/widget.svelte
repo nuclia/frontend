@@ -117,7 +117,8 @@
         switchMap(() => nucliaState().query.pipe(take(1))),
         map((query) => query.trim()),
         filter((query) => !!query),
-        switchMap((query) => search(query)),
+        switchMap((query) => nucliaStore().searchOptions.pipe(map((options) => ({ query, options })))),
+        switchMap(({ query, options }) => search(query, options)),
       )
       .subscribe((results) => nucliaStore().searchResults.next(results));
     ready = true;

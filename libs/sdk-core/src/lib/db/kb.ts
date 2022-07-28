@@ -21,6 +21,7 @@ import type {
   Labels,
   EventList,
   EventType,
+  SearchOptions,
 } from './kb.models';
 import { Resource } from './resource';
 import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
@@ -85,10 +86,13 @@ export class KnowledgeBox implements IKnowledgeBox {
       .pipe(map((res) => new Resource(this.nuclia, this.id, uuid, res)));
   }
 
-  search(query: string, features: Search.Features[] = [], highlight = false): Observable<Search.Results> {
+  search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
     const params = [`query=${encodeURIComponent(query)}`, ...features.map((f) => `features=${f}`)];
-    if (highlight) {
+    if (options?.highlight) {
       params.push(`highlight=true&split=true`);
+    }
+    if (options?.inTitleOnly) {
+      params.push(`fields=a/title`);
     }
     return this.nuclia.rest.get<Search.Results | { detail: string }>(`${this.path}/search?${params.join('&')}`).pipe(
       catchError(() => of({ error: true } as Search.Results)),
