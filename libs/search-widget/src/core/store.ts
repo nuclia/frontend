@@ -11,7 +11,7 @@ import {
   Subject,
   tap,
 } from 'rxjs';
-import type { IResource, Search, Widget } from '@nuclia/core';
+import type { IResource, Search, SearchOptions, Widget } from '@nuclia/core';
 
 let widgetActions: WidgetAction[] = [];
 export const setWidgetActions = (actions: WidgetAction[]) => {
@@ -21,6 +21,7 @@ export const getWidgetActions = () => widgetActions;
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
+  searchOptions: BehaviorSubject<SearchOptions>;
   intents: BehaviorSubject<Intents>;
   suggestions: BehaviorSubject<Search.Results>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
@@ -33,6 +34,7 @@ let _store: NucliaStore | undefined;
 
 let _state: {
   query: Observable<string>;
+  searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
   labelIntents: Observable<string[]>;
   paragraphs: Observable<Search.Paragraph[]>;
@@ -50,6 +52,7 @@ export const nucliaStore = (): NucliaStore => {
   if (!_store) {
     _store = {
       query: new BehaviorSubject(''),
+      searchOptions: new BehaviorSubject({ inTitleOnly: false, highlight: true } as SearchOptions),
       intents: new BehaviorSubject({}),
       suggestions: new BehaviorSubject(NO_RESULTS),
       searchResults: new BehaviorSubject(NO_RESULTS),
@@ -63,6 +66,7 @@ export const nucliaStore = (): NucliaStore => {
         tap(() => _store!.hasSearchError.next(false)),
         distinctUntilChanged(),
       ),
+      searchOptions: _store!.searchOptions.asObservable(),
       results: _store!.searchResults.pipe(
         filter((res) => !!res.resources),
         map((results) => getSortedResources(results)),

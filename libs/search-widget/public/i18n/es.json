@@ -20,6 +20,7 @@
 	"entities.work_of_art": "Obras",
 	"error.search": "¡Cáspita, algo ha ido mal!",
 	"error.search-beta": "Suerte que te hemos avisado que aún estamos en beta! 🙃",
+	"form.title-only": "Buscar solo en el título",
 	"input.placeholder": "Escribe tu pregunta aqui",
 	"modal.back": "Volver",
 	"resource.creation": "Fecha de creación",

@@ -1,5 +1,5 @@
 import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/src';
-import type { NucliaOptions, KBStates } from '@nuclia/core';
+import type { NucliaOptions, KBStates, SearchOptions } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
@@ -28,12 +28,12 @@ export const resetNuclia = () => {
   nucliaApi = null;
 };
 
-export const search = (query: string) => {
+export const search = (query: string, options: SearchOptions) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox
-    .search(query, [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT], true)
+    .search(query, [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT], options)
     .pipe(
       filter((res) => {
         if (res.error) {

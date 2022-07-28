@@ -21,6 +21,7 @@
 	"entities.work_of_art": "Art",
 	"error.search": "Oops! Something is wrong right now!",
 	"error.search-beta": "Luckily we've warned that we're in beta! 🙃",
+	"form.title-only": "Search in title only",
 	"input.placeholder": "Type your question here",
 	"modal.back": "Back",
 	"resource.creation": "Date of creation",
