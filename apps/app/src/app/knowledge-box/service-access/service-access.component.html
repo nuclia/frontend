@@ -1,20 +1,17 @@
 <div class="service-access-container">
-  <h3>{{ 'stash.create_service_access' | translate }}</h3>
-
+<div>
   <form [formGroup]="addForm"
         (ngSubmit)="addServiceAccess()">
-    <div fxLayout="row"
-         fxLayoutGap="12px">
-      <input fxFlex="1 1 0"
-             formControlName="title"
+    <h3>{{ 'stash.create_service_access' | translate }}</h3>
+    <div fxLayout="row">
+      <input formControlName="title"
              type="text"
              stfFilterInput
              inputColor="gray"
              [inputHeight]="32"
-             placeholder="{{ 'generic.title' | translate }}">
+             placeholder="{{ 'generic.name' | translate }}">
 
-      <select fxFlex="0 0 auto"
-              formControlName="role"
+      <select formControlName="role"
               stfSelect
               selectSize="small">
         <option value=""
@@ -26,21 +23,16 @@
           {{ roleTitles[role] | translate }}
         </option>
       </select>
-
-      <stf-button type="submit"
-                  [disabled]="addForm.invalid"
-                  fxFlex="0 0 auto"
-                  color="secondary"
-                  size="small"
-                  weight="bold"
-                  minWidth="120px">
+      <pa-button type="submit"
+                 size="small"
+                 [disabled]="addForm.invalid">
         {{ 'generic.add' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </form>
 
   <div *ngIf="serviceAccess && serviceAccess.length > 0"
-       class="mt-28">
+       class="container">
     <h3>{{ 'stash.view_edit_service_access' | translate }}</h3>
     <div class="service-access-list">
       <div class="service-access"
@@ -64,21 +56,20 @@
               </div>
             </button>
           </div>
-
           <div class="service-access-actions"
                fxFlex="0 0 auto">
-            <app-button-action (click)="createKey(sa)"
-                               action="add"
-                               ariaLabel="generic.add"
-                               stfTooltip
-                               stfTooltipText="stash.new_service_access_token">
-            </app-button-action>
-            <app-button-action (click)="deleteServiceAccess(sa)"
-                               action="delete"
-                               iconWidth="15px"
-                               iconHeight="auto"
-                               ariaLabel="generic.delete">
-            </app-button-action>
+            <pa-button (click)="createKey(sa)"
+                       aspect="basic"
+                       icon="plus"
+                       size="small"
+                       paTooltip="stash.new_service_access_token">
+            </pa-button>
+            <pa-button (click)="deleteServiceAccess(sa)"
+                       aspect="basic"
+                       icon="trash"
+                       size="small"
+                       paTooltip="generic.delete">
+            </pa-button>
           </div>
         </div>
 
@@ -99,12 +90,14 @@
                 </div>
                 <div class="service-access-key-actions"
                      fxFlex="1 1 auto">
-                  <app-button-action (click)="deleteKey(sa, key)"
-                                     action="delete"
-                                     iconWidth="12px"
-                                     iconHeight="auto"
-                                     ariaLabel="generic.delete">
-                  </app-button-action>
+                  <pa-button (click)="deleteKey(sa, key)"
+                             class="delete-key"
+                             aspect="basic"
+                             icon="trash"
+                             size="small"
+                             iconSize="small"
+                             paTooltip="generic.delete">
+                  </pa-button>
                 </div>
               </div>
             </div>

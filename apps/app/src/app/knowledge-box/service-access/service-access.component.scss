@@ -1,17 +1,32 @@
 @import 'variables';
 
 .service-access-container {
-  padding: 20px 28px 34px 20px;
-  background-color: #fff;
-
   h3 {
-    margin: 0 0 12px 0;
+    margin: 0 0 rhythm(.5) 0;
     font-size: var(--stf-font-size-medium);
     font-weight: var(--stf-font-weight-semibold);
   }
 
   form {
-    max-width: 720px;
+    max-width: 1000px;
+    padding: rhythm(1) rhythm(2) rhythm(2);
+    margin-bottom: rhythm(2);
+    background-color: $color-light-stronger;
+  }
+
+  input {
+    width: 250px;
+    margin-right: rhythm(2);
+  }
+
+  select {
+    margin-right: rhythm(2);
+  }
+
+  .container {
+    max-width: 1000px;
+    padding: rhythm(2) rhythm(2) rhythm(3);
+    background-color: $color-light-stronger;
   }
 
   .service-access-list {
@@ -19,10 +34,10 @@
   }
 
   .service-access {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid $color-neutral-light;
 
     &-header {
-      min-height: 44px;
+      min-height: rhythm(4);
     }
 
     &-title {
@@ -57,6 +72,10 @@
       &-actions {
         text-align: right;
       }
+    }
+
+    .delete-key {
+      margin-right: rhythm(0.25);
     }
   }
 }

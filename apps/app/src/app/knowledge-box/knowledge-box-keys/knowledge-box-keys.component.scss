@@ -1,10 +1,10 @@
+@import 'variables';
+
 .knowledge-box-keys {
   padding: 70px var(--app-layout-margin-right);
 
   h2 {
-    margin: 0 0 8px 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
+    margin: 0 0 rhythm(0.25) 0;
   }
 
   .warning {
