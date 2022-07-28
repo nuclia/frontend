@@ -15,8 +15,10 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
     nucliaStore().widget.next(widget);
     if (!widget.features.suggestLabels) {
-      // TEMPORARY (we need to get the model from the backend)
-      loadModel('/public/use_json_model/model.json', '/public/use_json_model/pos_to_lab.json');
+      const kbPath = nucliaApi?.knowledgeBox.fullpath;
+      if (kbPath) {
+        loadModel(`${kbPath}/train/classifier/model/model.json`, `${kbPath}/train/classifier/model/pos_to_lab.json`);
+      }
     }
   });
   STATE = state;

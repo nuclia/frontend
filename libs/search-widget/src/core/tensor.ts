@@ -20,10 +20,7 @@ export const loadModel = (modelPath: string, labelsPath: string) => {
         return (window as any)['tf'].loadLayersModel(modelPath);
       })
       .then(
-        (m: any) => {
-          model = m;
-          console.log(model, encoder);
-        },
+        (m: any) => (model = m),
         () => console.info('No trained model in knowledge box'),
       );
   });
