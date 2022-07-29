@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Classification }  from '@nuclia/core';
-  import Label from '../../components/label-menu/label.svelte';
+  import Label from '../../components/label/Label.svelte';
   export let labels: Classification[] = [];
 </script>
 

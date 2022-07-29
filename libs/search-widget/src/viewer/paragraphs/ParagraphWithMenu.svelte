@@ -3,7 +3,7 @@
   import { nucliaState } from '../../core/store';
   import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
-  import LabelMenu from '../../components/label-menu/labelMenu.svelte';
+  import LabelMenu from '../LabelMenu.svelte';
 
   const MENU_ENABLED = false; // TODO: remove when backend is ready
 
