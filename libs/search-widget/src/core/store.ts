@@ -12,6 +12,7 @@ import {
   startWith,
   Subject,
   tap,
+  switchMap,
 } from 'rxjs';
 import type { IResource, Search, SearchOptions, Widget, Classification, Labels } from '@nuclia/core';
 
@@ -31,6 +32,7 @@ type NucliaStore = {
   hasSearchError: ReplaySubject<boolean>;
   widget: ReplaySubject<Widget>;
   displayedResource: BehaviorSubject<DisplayedResource>;
+  labels: Subject<Labels>;
 };
 let _store: NucliaStore | undefined;
 
@@ -63,6 +65,7 @@ export const nucliaStore = (): NucliaStore => {
       hasSearchError: new ReplaySubject(1),
       widget: new ReplaySubject(1),
       displayedResource: new BehaviorSubject({ uid: '' }),
+      labels: new Subject<Labels>(),
     };
     _state = {
       query: _store!.query.asObservable().pipe(
@@ -107,7 +110,11 @@ export const nucliaStore = (): NucliaStore => {
           map((sentences) => sentences.slice().sort((a, b) => b.score - a.score)),
         );
       },
-      labels: getLabels().pipe(shareReplay()),
+      labels: _store.labels.pipe(
+        startWith({}),
+        switchMap(() => getLabels()),
+        shareReplay(),
+      ),
     };
   }
   return _store as NucliaStore;
