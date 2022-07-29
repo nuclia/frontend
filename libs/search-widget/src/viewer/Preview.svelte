@@ -1,10 +1,11 @@
 <script lang="ts">
   import { getCDN } from '../core/utils';
   import { _ } from '../core/i18n';
-  import { viewerState, viewerStore, pdfUrl } from './store';
+  import { viewerState, viewerStore, pdfUrl, clearSearch } from './store';
   import Pdf from './previewers/Pdf.svelte';
   import Player from './previewers/Player.svelte';
   import Youtube from './previewers/Youtube.svelte';
+  import { take } from 'rxjs';
 
   const pdfPreview = viewerState.pdfPreview;
   const linkPreview = viewerState.linkPreview;
@@ -12,7 +13,12 @@
   const youtubePreview = viewerState.youtubePreview;
 
   const closePreview = () => {
-    viewerStore.showPreview.next(false);
+    viewerState.onlySelected.pipe(take(1)).subscribe((onlySelected) => {
+      viewerStore.showPreview.next(false);
+      if (onlySelected) {
+        clearSearch();
+      }
+    });
   };
 </script>
 

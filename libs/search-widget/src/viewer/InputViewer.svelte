@@ -31,19 +31,18 @@
         bind:value={$query}
         style:background-image={`url(${getCDN()}icons/search.svg)`}
       />
-      <div class="sort">
-        <select bind:value={$order}>
-          <option value={SearchOrder.RELEVANCE}>{$_('resource.relevance')}</option>
-          <option value={SearchOrder.SEQUENTIAL}>{$_('resource.sequential')}</option>
-        </select>
-      </div>
+      {#if $results !== null || $onlySelected}
+        <button on:click={showAllParagraphs}>
+          <img src={`${getCDN()}icons/close.svg`} alt={$_('resource.show-all')} />
+        </button>
+      {/if}
     </div>
-    {#if $results !== null || $onlySelected}
-    <button class="show-all" on:click={showAllParagraphs}>
-      <img src={`${getCDN()}icons/close.svg`} alt="reset" />
-      <span>{$_('resource.show-all')}</span>
-    </button>
-  {/if}
+    <div class="sort">
+      <select bind:value={$order}>
+        <option value={SearchOrder.RELEVANCE}>{$_('resource.relevance')}</option>
+        <option value={SearchOrder.SEQUENTIAL}>{$_('resource.sequential')}</option>
+      </select>
+    </div>
   </div>
 </div>
 
@@ -55,18 +54,21 @@
     padding: 1em 0;
     z-index: 1;
   }
-  .search-query {
+  .search-form {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
   }
+  .search-query {
+    position: relative;
+    flex: 0 1 380px;
+  }
   input {
-    flex: 0 1 auto;
-    width: 380px;
+    width: 100%;
     height: 40px;
     min-width: 0;
-    padding-left: 2.75em;
+    padding: 0 2.5em 0 2.75em;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-body);
     line-height: var(--line-height-body);
@@ -81,8 +83,14 @@
     text-overflow: ellipsis;
     -webkit-appearance: none;
     appearance: none;
+    box-sizing: border-box;
   }
   .search-form button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0.5em;
+    z-index: 1;
     border: 0;
     padding: 0;
     background: transparent;
@@ -92,19 +100,9 @@
   }
   .search-form button img {
     display: block;
-    width: 18px;
-  }
-  .show-all {
-    display: flex;
-    align-items: center;
-    margin: 1em 0 0 1em;
-    font-weight: var(--font-weight-bold);
-  }
-  .show-all span {
-    margin-left: 8px;
   }
   .sort {
-    flex: 0 1 auto;
+    flex: 0 0 auto;
   }
   select {
     margin-left: 26px;
