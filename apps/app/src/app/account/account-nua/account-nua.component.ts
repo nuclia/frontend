@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, takeUntil, switchMap, filter, map, take } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
@@ -18,7 +18,6 @@ import { NavigationService } from '../../services/navigation.service';
 })
 export class AccountNUAComponent {
   clients = this.nua.clients;
-  expanded: string[] = [];
   unsubscribeAll = new Subject<void>();
 
   isNuaActivityEnabled = this.tracking.isFeatureEnabled('view-nua-activity');
@@ -26,7 +25,6 @@ export class AccountNUAComponent {
   constructor(
     private nua: AccountNUAService,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private router: Router,
     private stateService: StateService,
     private navigation: NavigationService,
@@ -102,18 +100,5 @@ export class AccountNUAComponent {
     this.nua.deleteClient(id).subscribe(() => {
       this.nua.updateClients();
     });
-  }
-
-  toggleClient(id: string): void {
-    if (this.isExpanded(id)) {
-      this.expanded = this.expanded.filter((item) => item !== id);
-    } else {
-      this.expanded = [...this.expanded, id];
-    }
-    this.cdr?.markForCheck();
-  }
-
-  isExpanded(id: string): boolean {
-    return this.expanded.includes(id);
   }
 }

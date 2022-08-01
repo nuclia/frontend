@@ -2,59 +2,59 @@
 
 .account-nua {
   padding: 70px var(--app-layout-margin-right) 60px 5%;
-  h2 {
-    margin: 0 0 36px 0;
-    font-weight: var(--stf-font-weight-bold);
+}
+
+h2 {
+  margin: 0 0 rhythm(0.25) 0;
+}
+
+.warning {
+  font-style: italic;
+  margin-bottom: rhythm(3)
+}
+
+h3 {
+  margin: 0 0 rhythm(.5) 0;
+  font-size: var(--stf-font-size-medium);
+  font-weight: var(--stf-font-weight-semibold);
+}
+
+.container {
+  max-width: 1000px;
+  padding: rhythm(1) rhythm(2) rhythm(2);
+  background-color: $color-light-stronger;
+}
+
+.client {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $color-neutral-light;
+  &:first-of-type {
+    border-top: 1px solid $color-dark-stronger;
   }
-  max-width: 770px;
+}
 
-  .client {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-    padding-right: 26px;
-    &:first-child {
-      border-top: 1px solid rgba(0, 0, 0, 0.3);
-    }
+.title {
+  flex: 1 1 0;
+  @include text-truncate();
+  padding-right: rhythm(1);
+}
 
-    &-header {
-      height: 50px;
-    }
+.date {
+  width: 140px;
+}
 
-    &-title {
-      button {
-        @include reset-button();
-        cursor: pointer;
-        font-weight: var(--stf-font-weight-semibold);
-      }
-      &-arrow {
-        transition: transform 0.2s;
-        &.expanded {
-          transform: rotate(90deg);
-        }
-        svg {
-          display: block;
-          width: 14px;
-          height: auto;
-        }
-      }
-    }
+.email {
+  width: 33%;
+  @include text-truncate();
+  padding-right: rhythm(1);
+}
 
-    &-date {
-      min-width: 120px;
-    }
+.buttons {
+  display: flex;
+}
 
-    &-actions {
-      min-width: 120px;
-    }
-
-    &-body {
-      padding-bottom: 20px;
-    }
-
-    &-email {
-      margin-bottom: 14px;
-      span {
-        font-weight: var(--stf-font-weight-semibold);
-      }
-    }
-  }
+.add {
+  margin-top: rhythm(2);
 }
