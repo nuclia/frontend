@@ -84,7 +84,13 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/app/src/assets/deployment/app-config.json",
+                  "with": "apps/app/src/assets/deployment/app-config.dev.json"
+                }
+              ]
             },
             "defaultConfiguration": "production"
           },
@@ -268,6 +274,10 @@
                 {
                   "replace": "apps/desktop/src/environments/environment.ts",
                   "with": "apps/desktop/src/environments/environment.dev.ts"
+                },
+                {
+                  "replace": "apps/desktop/src/assets/deployment/app-config.json",
+                  "with": "apps/desktop/src/assets/deployment/app-config.dev.json"
                 }
               ]
             }
@@ -460,7 +470,13 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "apps/manager/src/assets/deployment/app-config.json",
+                  "with": "apps/manager/src/assets/deployment/app-config.dev.json"
+                }
+              ]
             },
             "defaultConfiguration": "production"
           },

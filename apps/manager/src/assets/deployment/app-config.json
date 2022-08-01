@@ -1,0 +1,17 @@
+{
+  "version": "local-stage",
+  "production": false,
+  "backend": {
+    "app": "manager",
+    "apiOrigin": "https://stashify.cloud",
+    "apiPath": "/api",
+    "siteKey": "FAKE_SITE_KEY",
+    "analytics": "FAKE_ANALYTICS",
+    "sentry_environment": "stage",
+    "sentry_url": "FAKE_SENTRY_URL",
+    "sentry_backend": "https://stashify.cloud/api"
+  },
+  "stashify": {
+    "email_domain": "stashify.tech"
+  }
+}

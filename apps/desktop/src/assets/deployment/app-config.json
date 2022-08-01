@@ -1,0 +1,21 @@
+{
+  "version": "local-stage",
+  "production": false,
+  "backend": {
+    "app": "desktop",
+    "apiOrigin": "https://stashify.cloud",
+    "apiPath": "/api",
+    "siteKey": "FAKE_SITE_KEY",
+    "analytics": "FAKE_ANALYTICS",
+    "sentry_environment": "stage",
+    "sentry_url": "FAKE_SENTRY_URL",
+    "sentry_backend": "stashify.cloud",
+    "posthog_host": "https://track.stashify.cloud",
+    "posthog_key": "FAKE_POSTHOG_KEY",
+    "saml_login": true
+  },
+  "stashify": {
+    "editor": "https://stashify.cloud/editor",
+    "email_domain": "stashify.cloud"
+  }
+}
