@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="section" id="account">
+    <div class="section-container">
+      <h2>{{ 'account.manage' | translate }}</h2>
+      <form [formGroup]="accountForm" (ngSubmit)="saveAccount()">
+        <div class="account-field" fxLayout="row">
+          <label for="account-title" class="account-field-name mt-12" fxFlex="30%">
+            {{ 'account.title' | translate }}
+          </label>
+          <div fxFlex="70%">
+            <stf-input
+              id="account-title"
+              formControlName="title"
+              [validator]="accountForm.controls['title']"
+              [validation_messages]="validationMessages.title"
+              theme="white"
+              [isLessen]="true"
+            >
+            </stf-input>
+          </div>
+        </div>
+
+        <div class="account-field" fxLayout="row">
+          <label for="account-description" class="account-field-name mt-12" fxFlex="30%">
+            {{ 'generic.description' | translate }}
+          </label>
+          <div fxFlex="70%">
+            <stf-textarea id="account-description" formControlName="description" color="white" initialHeight="150px">
+            </stf-textarea>
+          </div>
+        </div>
+
+        <div class="mt-44" fxLayout="row">
+          <div fxFlex="30%"></div>
+          <div fxFlex="70%" fxLayout="row" fxLayoutGap="10px">
+            <pa-button type="submit" kind="primary" [disabled]="accountForm.invalid || accountForm.pristine">{{
+              'generic.save' | translate
+            }}</pa-button>
+
+            <pa-button *ngIf="!accountForm.pristine" aspect="basic" (click)="initAccountForm()">{{
+              'generic.cancel' | translate
+            }}</pa-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="section" id="config">
+    <div class="section-container">
+      <h2>{{ 'account.config' | translate }}</h2>
+
+      <div class="account-field" fxLayout="row" *ngIf="zones">
+        <div class="account-field-name" fxFlex="30%">{{ 'generic.zone' | translate }}</div>
+        <div fxFlex="70%">
+          <div class="mb-20">{{ 'account.zone_description' | translate }}</div>
+          <select stfSelect [formControl]="zone" class="zone-select">
+            <option *ngFor="let zone of zones" [value]="zone.id">{{ zone.title }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

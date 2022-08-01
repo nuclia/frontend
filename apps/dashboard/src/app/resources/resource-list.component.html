@@ -1,0 +1,161 @@
+<router-outlet></router-outlet>
+<div class="resource-list">
+  <div class="loading-shade" *ngIf="isLoading">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  </div>
+
+  <div class="resource-list-content">
+    <div class="resource-list-header">
+      <div
+        class="resource-bulk-actions"
+        *ngIf="isAdminOrContrib | async"
+        [class.disabled]="selection.selected.length === 0"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+      >
+        <stf-checkbox
+          color="dark"
+          [selected]="selection.selected.length > 0"
+          [disabled]="selection.selected.length === 0"
+          (selectedChange)="clearSelected()"
+          stfTooltip
+          stfTooltipText="generic.deselect_all"
+          [stfTooltipDisabled]="selection.selected.length === 0"
+        >
+        </stf-checkbox>
+        <div class="resource-counter" [class.disabled]="selection.selected.length === 0">
+          {{ 'resource.selected_count' | translate: { num: selection.selected.length || '' } }}
+        </div>
+        <stf-button
+          *ngIf="selection.selected.length > 0"
+          color="legacy"
+          size="small"
+          padding="pd-l"
+          (click)="bulkDelete()"
+        >
+          {{ 'generic.delete' | translate }}
+        </stf-button>
+      </div>
+      <div class="resource-number">
+        <div>
+          <span>{{ 'resource.total' | translate }}: {{ refreshing ? '…' : resultsLength }}</span>
+        </div>
+        <div *ngIf="pageSizeOptions | async as options">
+          <span>{{ 'generic.showing' | translate }}</span>
+          <stf-simple-select
+            [options]="options"
+            [value]="filters.size"
+            (changeSelected)="setPageSize($event)"
+            theme="gray"
+          >
+          </stf-simple-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table *ngIf="currentKb | async" [dataSource]="data" cdk-table>
+        <ng-container cdkColumnDef="select">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            <stf-checkbox
+              [selected]="selection.hasValue() && isAllSelected()"
+              (selectedChange)="masterToggle()"
+              [ariaLabel]="getCheckboxLabel()"
+              color="dark"
+            >
+            </stf-checkbox>
+          </th>
+          <td cdk-cell *cdkCellDef="let row">
+            <stf-checkbox
+              [selected]="selection.isSelected(row)"
+              (selectedChange)="selection.toggle(row)"
+              [ariaLabel]="getCheckboxLabel(row)"
+              color="dark"
+            >
+            </stf-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="icon">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'resource.type' | translate }}
+          </th>
+          <td cdk-cell class="clickable" *cdkCellDef="let resource" (click)="viewResource(resource.id)">
+            <div fxLayout="row">
+              <div *ngIf="resource.icon | mimeIcon as icon">
+                <svg-icon src="assets/icons/{{ icon }}"></svg-icon>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="title">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'resource.title' | translate }}
+          </th>
+          <td cdk-cell class="clickable" *cdkCellDef="let resource" (click)="viewResource(resource.id)">
+            {{ resource.title }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="modification">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'generic.date' | translate }}
+          </th>
+          <td cdk-cell *cdkCellDef="let resource">
+            {{ resource.created | formatDate: { default: true } }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="status">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'resource.status' | translate }}
+          </th>
+          <td cdk-cell *cdkCellDef="let resource" [title]="resource.metadata.status">
+            <svg-icon [src]="getStatusIcon(resource.metadata.status)"></svg-icon>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="language">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'generic.language' | translate }}
+          </th>
+          <td cdk-cell *cdkCellDef="let resource">
+            {{ resource.metadata.language || '–' }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="actions">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'generic.actions' | translate }}
+          </th>
+          <td cdk-cell *cdkCellDef="let resource">
+            <app-button-action action="more" ariaLabel="generic.actions" [matMenuTriggerFor]="menu">
+            </app-button-action>
+            <mat-menu #menu="matMenu" class="resource-actions">
+              <button mat-menu-item (click)="edit(resource.id)" [disabled]="!(isAdminOrContrib | async)">
+                {{ 'generic.edit' | translate }}
+              </button>
+              <button mat-menu-item (click)="delete([resource])" [disabled]="!(isAdminOrContrib | async)">
+                {{ 'generic.delete' | translate }}
+              </button>
+              <button mat-menu-item (click)="reindex(resource)" [disabled]="!(isAdminOrContrib | async)">
+                {{ 'generic.reindex' | translate }}
+              </button>
+              <button mat-menu-item (click)="downloadAlgoliaJson(resource)">
+                {{ 'generic.download_algolia_json' | translate }}
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr cdk-header-row *cdkHeaderRowDef="displayedColumns | async"></tr>
+        <tr cdk-row *cdkRowDef="let row; columns: displayedColumns | async"></tr>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <stf-pagination [page]="page" [total]="totalPages" (prev)="prevPage()" (next)="nextPage()"> </stf-pagination>
+    </div>
+  </div>
+</div>

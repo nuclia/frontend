@@ -1,0 +1,30 @@
+<div class="filter-ontology">
+  <div *ngFor="let ontology of ontologies | keyvalue">
+    <button
+      class="filter-ontology-button"
+      [class.open]="isOpenOntology(ontology.key)"
+      (click)="toggleOntology(ontology.key)"
+      fxLayout="row"
+      fxLayoutAlign="start center"
+    >
+      <svg-icon src="assets/icons/chevron-right.svg"></svg-icon>
+      <span>{{ ontology.key }}</span>
+      <span class="filter-ontology-counter">(2)</span>
+    </button>
+    <stf-expander [expanded]="isOpenOntology(ontology.key)">
+      <stf-expander-content>
+        <div class="filter-ontology-list">
+          <stf-checkbox-group
+            [checkboxes]="ontology.value"
+            [selection]="_selection?.getSelection(ontology.key) || []"
+            (selectionChange)="setSelection(ontology.key, $event)"
+            color="dark"
+            spacing="small"
+            size="small"
+          >
+          </stf-checkbox-group>
+        </div>
+      </stf-expander-content>
+    </stf-expander>
+  </div>
+</div>

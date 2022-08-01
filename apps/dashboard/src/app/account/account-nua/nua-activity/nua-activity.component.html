@@ -1,0 +1,34 @@
+<div class="nua-activity">
+  <header class="nua-activity-title">
+    <h1>{{ 'account.nua_key_activity_title' | translate: { key: (client | async)?.title } }}</h1>
+    <small>{{ 'account.nua_key_activity_subtitle' | translate }}</small>
+  </header>
+
+  <div class="activity-container">
+    <table cdk-table [dataSource]="activity | async">
+      <ng-container cdkColumnDef="file">
+        <th cdk-header-cell *cdkHeaderCellDef>{{ 'activity.resource' | translate }}</th>
+        <td cdk-cell *cdkCellDef="let activity">{{ activity.resourceId | async }}</td>
+      </ng-container>
+      <ng-container cdkColumnDef="timestamp">
+        <th cdk-header-cell *cdkHeaderCellDef>{{ 'activity.timestamp' | translate }}</th>
+        <td cdk-cell *cdkCellDef="let activity">
+          {{ activity.timestamp | formatDate }} {{ activity.timestamp | formatTime }}
+        </td>
+      </ng-container>
+      <ng-container cdkColumnDef="actor">
+        <th cdk-header-cell *cdkHeaderCellDef>{{ 'activity.actor' | translate }}</th>
+        <td cdk-cell *cdkCellDef="let activity">{{ activity.userId | async }}</td>
+      </ng-container>
+
+      <tr cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+      <tr cdk-row *cdkRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <div class="load-more">
+      <stf-button *ngIf="(hasMore | async) === true" (click)="loadMoreActivity()" color="gray" padding="pd-l">{{
+        'activity.load-more' | translate
+      }}</stf-button>
+    </div>
+  </div>
+</div>

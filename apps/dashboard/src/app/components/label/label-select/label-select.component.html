@@ -1,0 +1,27 @@
+<div class="label-select">
+  <div *ngFor="let labelSet of labelSets | keyvalue: preserveOrder">
+    <div class="label-select-header">
+      <button (click)="toggleExpanded(labelSet.key)">
+        <svg-icon src="assets/icons/chevron-right.svg"></svg-icon>
+        <div class="label-select-title">{{ labelSet.value.title }}</div>
+      </button>
+    </div>
+    <stf-expander [expanded]="isExpanded(labelSet.key)">
+      <stf-expander-content>
+        <div class="label-select-list">
+          <div *ngFor="let label of labelSet.value.labels || []" class="label-select-item">
+            <stf-checkbox
+              [selected]="isSelected({ labelset: labelSet.key, label: label.title })"
+              (selectedChange)="changeSelected({ labelset: labelSet.key, label: label.title }, $event)"
+              color="dark"
+              [type]="labelSet.value.multiple ? 'checkbox' : 'radio'"
+              size="small"
+            >
+              {{ label.title }}
+            </stf-checkbox>
+          </div>
+        </div>
+      </stf-expander-content>
+    </stf-expander>
+  </div>
+</div>

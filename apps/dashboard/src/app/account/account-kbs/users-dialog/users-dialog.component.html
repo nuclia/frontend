@@ -1,0 +1,7 @@
+<div class="users-dialog">
+  <button class="close-button" (click)="close()">
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
+  </button>
+  <h2 class="display-s">{{ 'account.stash.users' | translate }}</h2>
+  <app-users-manage [kb]="data.kb" [modal]="true"></app-users-manage>
+</div>

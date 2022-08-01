@@ -1,0 +1,37 @@
+<div class="label" *ngIf="label && !editMode">
+  <div class="label-content">
+    <div class="label-title">{{ label.title }}</div>
+  </div>
+  <div class="label-actions">
+    <app-button-action (click)="edit()" action="edit" ariaLabel="generic.edit"> </app-button-action>
+    <app-button-action (click)="delete()" action="delete" ariaLabel="generic.delete"> </app-button-action>
+  </div>
+</div>
+
+<div *ngIf="addNew && !editMode" class="label add-new" tabindex="0" (click)="edit()" (keyup.enter)="edit()">
+  <div class="label-content">
+    <div class="label-title">+</div>
+  </div>
+</div>
+
+<div class="label" *ngIf="editMode" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
+  <div class="label-content">
+    <input
+      type="text"
+      [formControl]="title"
+      cdkFocusInitial
+      (keydown.enter)="title.valid ? save() : null"
+      (mousedown)="preventDragAndDrop($event)"
+    />
+  </div>
+  <div class="label-actions">
+    <app-button-action
+      (click)="save()"
+      action="save"
+      [disabled]="title.invalid || title.value === label?.title"
+      ariaLabel="generic.save"
+    >
+    </app-button-action>
+    <app-button-action (click)="close()" action="close" ariaLabel="generic.close"> </app-button-action>
+  </div>
+</div>

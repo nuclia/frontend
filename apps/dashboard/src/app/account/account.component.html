@@ -1,0 +1,20 @@
+<stf-sidebar
+  class="main-sidebar"
+  name="main-sidebar"
+  lockedOpen="gt-xs"
+  [folded]="true"
+  [foldedWidth]="68"
+  [foldedAutoTriggerOnHover]="true"
+  zIndex="900"
+  zIndexBackdrop="850"
+>
+  <ng-template #sidebarContent let-unfolded="unfolded">
+    <app-stash-navbar [isUnfolded]="unfolded"></app-stash-navbar>
+  </ng-template>
+</stf-sidebar>
+
+<div class="container">
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>

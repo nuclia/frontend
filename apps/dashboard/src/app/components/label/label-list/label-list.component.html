@@ -1,0 +1,5 @@
+<div class="label-list" *ngIf="labels && labels.length > 0">
+  <ng-container *ngFor="let label of labels">
+    <stf-tag [tag]="label.label" [secondary]="false" [size]="size"></stf-tag>
+  </ng-container>
+</div>

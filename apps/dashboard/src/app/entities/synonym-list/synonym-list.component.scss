@@ -1,0 +1,55 @@
+@import 'variables';
+
+:host {
+  position: relative;
+  padding-right: 36px; // Make room for the counter
+}
+.synonym-list {
+  overflow: hidden;
+  white-space: nowrap;
+  &-item {
+    display: inline-block;
+    max-width: 100%;
+    margin-right: 12px;
+    opacity: 0;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+.synonym-counter {
+  position: absolute;
+  top: 2px;
+  margin-left: 12px;
+  user-select: none;
+  opacity: 0;
+  button {
+    @include reset-button();
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    font-size: var(--stf-font-size-ssmall);
+    line-height: 1;
+  }
+}
+
+.synonym-overflow {
+  width: 280px;
+  max-height: 240px;
+  overflow-y: auto;
+  background-color: #fff;
+  padding: 16px;
+  box-shadow: var(--stf-shadow-dropdown);
+  @include scrollbar-black(var(--stf-gray-lighter));
+  &-item {
+    margin-bottom: 8px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

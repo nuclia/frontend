@@ -1,0 +1,42 @@
+@import 'variables';
+
+.card {
+  padding: rhythm(2);
+}
+
+h2 {
+  margin: 0 0 rhythm(1) 0;
+}
+
+.subscription {
+  margin-bottom: rhythm(2);
+  span {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+}
+
+form {
+  margin: rhythm(3) 0;
+}
+
+.button {
+  text-align: center;
+}
+
+.card-input {
+  margin-bottom: rhythm(2);
+}
+
+.card-error {
+  margin-top: rhythm(0.25);
+  @include size(xs);
+  color: $color-text-field-label-error;
+}
+
+.StripeElement {
+  padding: rhythm(1);
+  border: 1px solid $color-neutral-regular;
+  &--focus {
+    border-color: $color-primary-regular;
+  }
+}

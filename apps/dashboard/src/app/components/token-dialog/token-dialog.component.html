@@ -1,0 +1,22 @@
+<div class="token-dialog">
+  <h1>{{ 'account.new_token' | translate }}</h1>
+  <button class="close-button" (click)="close()">
+    <svg-icon src="assets/icons/close.svg"></svg-icon>
+  </button>
+
+  <div class="mb-48" [innerHTML]="'account.token_description' | translate"></div>
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+    <div class="token-dialog-value" fxFlex="1 1 0">{{ data.token | slice: 1:30 }}...</div>
+    <div *ngIf="clipboardSuppordted" fxFlex="0 0 auto">
+      <stf-button (click)="copy()" color="legacy" minWidth="105px">
+        {{ (successMessage ? 'generic.copied' : 'generic.copy') | translate }}
+      </stf-button>
+    </div>
+  </div>
+
+  <div class="mt-40 mb-12" fxLayout="row" fxLayoutAlign="center center">
+    <stf-button (click)="close()" color="gray" minWidth="110px">
+      {{ 'generic.close' | translate }}
+    </stf-button>
+  </div>
+</div>

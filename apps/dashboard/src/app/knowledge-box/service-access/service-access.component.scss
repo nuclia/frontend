@@ -1,0 +1,81 @@
+@import 'variables';
+
+.service-access-container {
+  h3 {
+    margin: 0 0 rhythm(0.5) 0;
+    font-size: var(--stf-font-size-medium);
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  form {
+    max-width: 1000px;
+    padding: rhythm(1) rhythm(2) rhythm(2);
+    margin-bottom: rhythm(2);
+    background-color: $color-light-stronger;
+  }
+
+  input {
+    width: 250px;
+    margin-right: rhythm(2);
+  }
+
+  select {
+    margin-right: rhythm(2);
+  }
+
+  .container {
+    max-width: 1000px;
+    padding: rhythm(2) rhythm(2) rhythm(3);
+    background-color: $color-light-stronger;
+  }
+
+  .service-access-list {
+    border-top: 1px solid #000;
+  }
+
+  .service-access {
+    border-bottom: 1px solid $color-neutral-light;
+
+    &-header {
+      min-height: rhythm(4);
+    }
+
+    &-title {
+      button {
+        @include reset-button();
+        cursor: pointer;
+        &[disabled] {
+          cursor: default;
+        }
+        text-align: left;
+      }
+      &-arrow {
+        transition: transform 0.2s;
+        &.expanded {
+          transform: rotate(90deg);
+        }
+        svg {
+          display: block;
+          width: 14px;
+          height: auto;
+        }
+      }
+    }
+
+    &-keys {
+      padding: 0 0 12px 18px;
+    }
+    &-key {
+      width: 100%;
+      height: 28px;
+      font-size: var(--stf-font-size-ssmall);
+      &-actions {
+        text-align: right;
+      }
+    }
+
+    .delete-key {
+      margin-right: rhythm(0.25);
+    }
+  }
+}
