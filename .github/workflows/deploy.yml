@@ -72,7 +72,7 @@ jobs:
         id: check-deploy
         run: |-
           (test -d dist/libs/search-widget && echo "::set-output name=deploy-widget::yes") || echo "Widget unchanged"
-          (test -d dist/apps/app && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
+          (test -d dist/apps/dashboard && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
           (test -d dist/apps/desktop && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "::set-output name=deploy-sistema::yes") || echo "Sistema demo unchanged"
@@ -143,7 +143,7 @@ jobs:
         run: |-
           sed -i.bak "s#IMAGE_TO_REPLACE#$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}#" ./charts/app/values.yaml
           sed -i.bak "s#CONTAINER_REGISTRY_TO_REPLACE#$CONTAINER_REGISTRY#" ./charts/app/values.yaml
-          VERSION=`cat apps/app/VERSION`
+          VERSION=`cat apps/dashboard/VERSION`
           VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
           echo "::set-output name=version_number::$VERSION_SHA"
