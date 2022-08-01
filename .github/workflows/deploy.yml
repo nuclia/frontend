@@ -98,7 +98,7 @@ jobs:
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'
         run: |-
-          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=app .
+          docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
           docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.short_sha }}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${{ steps.env-vars.outputs.branch }}
