@@ -70,9 +70,11 @@ export const viewerState = {
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
-  searchReady: viewerStore.resource.pipe(filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0)),
-  results: combineLatest([ viewerStore.results, viewerStore.order]).pipe(
-    map(([results, order]) => results && sortParagraphs(results, order))
+  searchReady: viewerStore.resource.pipe(
+    filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0),
+  ),
+  results: combineLatest([viewerStore.results, viewerStore.order]).pipe(
+    map(([results, order]) => results && sortParagraphs(results, order)),
   ),
   pdfPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
@@ -81,9 +83,7 @@ export const viewerState = {
   ),
   mediaPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
-    filter(([resource, selected]) => 
-      isParagraphOfKind(resource!, selected!, [PreviewKind.VIDEO, PreviewKind.AUDIO])
-    ),
+    filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.VIDEO, PreviewKind.AUDIO])),
     switchMap(([resource, selected]) => getMediaPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   ),
   youtubePreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
@@ -124,7 +124,7 @@ export const pdfUrl = combineLatest([
     const field = getFileField(resource!, selected!.fieldId);
     return field && getPages(field)[pageIndex];
   }),
-  filter((pages) => !!pages)
+  filter((pages) => !!pages),
 ) as Observable<CloudLink>;
 
 export function initStore() {
@@ -202,7 +202,7 @@ function isParagraphOfKind(resource: Resource, selected: SelectedParagraph, kind
 }
 
 export function selectSentence(resource: Resource, searchSentence: Search.Sentence) {
-  const paragraph = findParagraphFromSearchSentence(resource, searchSentence, false);  
+  const paragraph = findParagraphFromSearchSentence(resource, searchSentence, false);
   paragraph && _selectParagraph(resource, paragraph, searchSentence.field_type, searchSentence.field);
 }
 
@@ -227,19 +227,20 @@ function _selectParagraph(resource: Resource, paragraph: Paragraph, fieldType: s
 export function search(resource: Resource, query: string): Observable<WidgetParagraph[]> {
   return resource.search(query, [Search.Features.PARAGRAPH]).pipe(
     map((results) => results.paragraphs?.results || []),
-    map((paragraphs) =>
-      paragraphs
-        .map((searchParagraph) => {
-          const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
-          const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
-          if (field && paragraph) {
-            return getParagraph(getFieldType(searchParagraph.field_type), searchParagraph.field, field, paragraph);
-          } else {
-            return null;
-          }
-        })
-        .filter((p)=> !!p) as WidgetParagraph[],
-    )
+    map(
+      (paragraphs) =>
+        paragraphs
+          .map((searchParagraph) => {
+            const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
+            const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
+            if (field && paragraph) {
+              return getParagraph(getFieldType(searchParagraph.field_type), searchParagraph.field, field, paragraph);
+            } else {
+              return null;
+            }
+          })
+          .filter((p) => !!p) as WidgetParagraph[],
+    ),
   );
 }
 
@@ -264,14 +265,11 @@ function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
       const bIsNumber = typeof b.paragraph.start === 'number';
       if (!aIsNumber && !bIsNumber) {
         return 0;
-      }
-      else if (aIsNumber && !bIsNumber) {
+      } else if (aIsNumber && !bIsNumber) {
         return 1;
-      }
-      else if (!aIsNumber && bIsNumber) {
+      } else if (!aIsNumber && bIsNumber) {
         return -1;
-      }
-      else {
+      } else {
         return a.paragraph.start! - b.paragraph.start!;
       }
     });
@@ -281,10 +279,7 @@ function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
 
 function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
   if (field.extracted && 'file' in field.extracted) {
-    if (
-      getPages(field as FileFieldData).length &&
-      getParagraphPageIndexes(field as FileFieldData, paragraph).length
-    ) {
+    if (getPages(field as FileFieldData).length && getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
       return PreviewKind.PDF;
     } else if (paragraph.kind === 'TRANSCRIPT') {
       if (isFileType(field as FileFieldData, 'video/')) {
@@ -293,9 +288,8 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
         return PreviewKind.AUDIO;
       }
     }
-  }
-  else if (field.value && 'uri' in field.value) {
-    if (paragraph.kind === 'INCEPTION') {
+  } else if (field.value && 'uri' in field.value) {
+    if (paragraph.kind === 'INCEPTION' || paragraph.kind === 'TRANSCRIPT') {
       return PreviewKind.YOUTUBE;
     }
   }
@@ -367,8 +361,10 @@ export function getSentenceText(field: IFieldData, sentence: Sentence): string |
 export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
   return (fileField.extracted?.file?.file_pages_previews?.positions || []).reduce((acc, page, index) => {
     if (
-      typeof paragraph.start !== 'number' || typeof paragraph.end !== 'number' || 
-      typeof page.start !== 'number' || typeof page.end !== 'number' 
+      typeof paragraph.start !== 'number' ||
+      typeof paragraph.end !== 'number' ||
+      typeof page.start !== 'number' ||
+      typeof page.end !== 'number'
     ) {
       return acc;
     }
@@ -387,7 +383,7 @@ export function getPages(fileField: FileFieldData): CloudLink[] {
   return fileField.extracted?.file?.file_pages_previews?.pages || [];
 }
 
-export function getVideoStream(fileField: FileFieldData):  CloudLink | undefined {
+export function getVideoStream(fileField: FileFieldData): CloudLink | undefined {
   return fileField.extracted?.file?.file_generated?.['video.mpd'];
 }
 
@@ -396,7 +392,7 @@ export function getVideoStream(fileField: FileFieldData):  CloudLink | undefined
 export function getLinks(resource: Resource): string[] {
   return resource
     .getFields(['links'])
-    .map((field) => (field as LinkFieldData).value?.uri) 
+    .map((field) => (field as LinkFieldData).value?.uri)
     .filter((uri) => !!uri) as string[];
 }
 
@@ -432,7 +428,7 @@ function getFieldType(fieldType: string): keyof ResourceData {
 }
 
 function isYoutubeField(field: LinkFieldData): boolean {
-  return field.value?.uri ?  isYoutubeUrl(field.value.uri) : false;
+  return field.value?.uri ? isYoutubeUrl(field.value.uri) : false;
 }
 
 function findParagraphFromSearchParagraph(
@@ -451,9 +447,9 @@ function findParagraphFromSearchSentence(
 ): Paragraph | undefined {
   const field = resource.data[getFieldType(searchSenctence.field_type) as keyof ResourceData]?.[searchSenctence.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
-  return paragraphs?.find((paragraph) => (
+  return paragraphs?.find((paragraph) =>
     strict
-      ? paragraph.sentences?.find((sentence) => (searchSenctence.text === getSentenceText(field!, sentence)))
-      : (getParagraphText(field!, paragraph) || '').includes(searchSenctence.text.trim())
-  ));
+      ? paragraph.sentences?.find((sentence) => searchSenctence.text === getSentenceText(field!, sentence))
+      : (getParagraphText(field!, paragraph) || '').includes(searchSenctence.text.trim()),
+  );
 }
