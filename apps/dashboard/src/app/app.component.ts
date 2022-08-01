@@ -43,7 +43,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private dialog: MatDialog,
     private paTranslate: PaTranslateService,
   ) {
-    // dummy change
     this.unsubscribeAll = new Subject();
 
     this.updateStateOnRouteChange();

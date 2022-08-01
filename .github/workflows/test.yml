@@ -31,5 +31,3 @@ jobs:
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,sistema-demo
       - name: Check if build succeeds
         run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core
-      - name: Build dashboard image (dry run)
-        run: docker build -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
