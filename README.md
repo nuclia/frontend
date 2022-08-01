@@ -28,7 +28,7 @@ missdev --output=../libs
 Start by creating an account with an email and password (as SSO doesn't work locally).
 
 The dashboard is named `app` in the source code and can be accessed through `frontend/apps/app`.
-In `apps/app/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
+In `apps/app/src/assets/deployment`, create a file `app-config.json` with the correct configuration.
 
 Then you can run the dashboard locally and use the credential created previously to log in:
 

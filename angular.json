@@ -39,11 +39,6 @@
               },
               {
                 "glob": "**/*",
-                "input": "apps/app/src/environments_config/local",
-                "output": "assets/deployment"
-              },
-              {
-                "glob": "**/*",
                 "input": "libs/sistema/assets",
                 "output": "assets"
               }
@@ -75,31 +70,10 @@
                 {
                   "replace": "apps/app/src/environments/environment.ts",
                   "with": "apps/app/src/environments/environment.prod.ts"
-                }
-              ],
-              "assets": [
-                "apps/app/src/favicon.ico",
-                "apps/app/src/assets",
-                "apps/app/src/manifest.webmanifest",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
                 },
                 {
-                  "glob": "**/*",
-                  "input": "libs/common/src/assets/i18n",
-                  "output": "assets/i18n"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/app/src/environments_config/production",
-                  "output": "assets/deployment"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sistema/assets",
-                  "output": "assets"
+                  "replace": "apps/app/src/assets/deployment/app-config.json",
+                  "with": "apps/app/src/assets/deployment/app-config.prod.json"
                 }
               ]
             },
@@ -110,32 +84,7 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "assets": [
-                "apps/app/src/favicon.ico",
-                "apps/app/src/assets",
-                "apps/app/src/manifest.webmanifest",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/common/src/assets/i18n",
-                  "output": "assets/i18n"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/app/src/environments_config/local-stage",
-                  "output": "assets/deployment"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sistema/assets",
-                  "output": "assets"
-                }
-              ]
+              "namedChunks": true
             },
             "defaultConfiguration": "production"
           },
@@ -295,61 +244,17 @@
                 {
                   "replace": "apps/desktop/src/environments/environment.ts",
                   "with": "apps/desktop/src/environments/environment.prod.ts"
-                }
-              ],
-              "assets": [
-                "apps/desktop/src/favicon.ico",
-                "apps/desktop/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
                 },
                 {
-                  "glob": "**/*",
-                  "input": "apps/desktop/src/environments_config/production",
-                  "output": "assets/deployment"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sdk-core/protobuf/nucliadb_protos",
-                  "output": "assets/nucliadb_protos"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sistema/assets",
-                  "output": "assets"
+                  "replace": "apps/desktop/src/assets/deployment/app-config.json",
+                  "with": "apps/desktop/src/assets/deployment/app-config.prod.json"
                 }
               ]
             },
             "stage": {
               "baseHref": "./",
               "outputHashing": "all",
-              "serviceWorker": false,
-              "assets": [
-                "apps/desktop/src/favicon.ico",
-                "apps/desktop/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/desktop/src/environments_config/local-stage",
-                  "output": "assets/deployment"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sdk-core/protobuf/nucliadb_protos",
-                  "output": "assets/nucliadb_protos"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sistema/assets",
-                  "output": "assets"
-                }
-              ]
+              "serviceWorker": false
             },
             "local-stage": {
               "aot": false,
@@ -363,30 +268,6 @@
                 {
                   "replace": "apps/desktop/src/environments/environment.ts",
                   "with": "apps/desktop/src/environments/environment.dev.ts"
-                }
-              ],
-              "assets": [
-                "apps/desktop/src/favicon.ico",
-                "apps/desktop/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/desktop/src/environments_config/local-stage",
-                  "output": "assets/deployment"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sdk-core/protobuf/nucliadb_protos",
-                  "output": "assets/nucliadb_protos"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/sistema/assets",
-                  "output": "assets"
                 }
               ]
             }
@@ -546,11 +427,6 @@
                 "glob": "**/*",
                 "input": "libs/common/src/assets/i18n",
                 "output": "assets/i18n"
-              },
-              {
-                "glob": "**/*",
-                "input": "apps/manager/src/environments_config/local",
-                "output": "assets/deployment"
               }
             ],
             "styles": ["apps/manager/src/styles.scss"],
@@ -570,25 +446,10 @@
                 {
                   "replace": "apps/manager/src/environments/environment.ts",
                   "with": "apps/manager/src/environments/environment.prod.ts"
-                }
-              ],
-              "assets": [
-                "apps/manager/src/favicon.ico",
-                "apps/manager/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
                 },
                 {
-                  "glob": "**/*",
-                  "input": "libs/common/src/assets/i18n",
-                  "output": "assets/i18n"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/manager/src/environments_config/production",
-                  "output": "assets/deployment"
+                  "replace": "apps/manager/src/assets/deployment/app-config.json",
+                  "with": "apps/manager/src/assets/deployment/app-config.prod.json"
                 }
               ]
             },
@@ -599,26 +460,7 @@
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true,
-              "assets": [
-                "apps/manager/src/favicon.ico",
-                "apps/manager/src/assets",
-                {
-                  "glob": "**/*",
-                  "input": "libs/pastanaga/src/assets",
-                  "output": "assets"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "libs/common/src/assets/i18n",
-                  "output": "assets/i18n"
-                },
-                {
-                  "glob": "**/*",
-                  "input": "apps/manager/src/environments_config/local-stage",
-                  "output": "assets/deployment"
-                }
-              ]
+              "namedChunks": true
             },
             "defaultConfiguration": "production"
           },

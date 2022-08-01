@@ -42,7 +42,7 @@
         "files": [
           "/assets/**",
           "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)",
-          "!/assets/deployment/app-config.json",
+          "!/assets/deployment/*",
           "!/assets/i18n/*"
         ]
       }
