@@ -101,7 +101,7 @@ export const selectedParagraphIndex = combineLatest([
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
     return (paragraphs || []).findIndex((result) => {
-      const field = getFileField(resource!, selected!.fieldId);
+      const field = getField(resource!, selected?.fieldType, selected!.fieldId);
       const text = field && getParagraphText(field, selected!.paragraph);
       return result.text === text;
     });
@@ -437,7 +437,8 @@ function findParagraphFromSearchParagraph(
 ): Paragraph | undefined {
   const field = resource.data[getFieldType(searchParagraph.field_type)]?.[searchParagraph.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
-  return paragraphs?.find((paragraph) => searchParagraph.text === getParagraphText(field, paragraph));
+  const text = normalizeSearchParagraphText(searchParagraph.text);
+  return paragraphs?.find((paragraph) => text === getParagraphText(field, paragraph));
 }
 
 function findParagraphFromSearchSentence(
@@ -447,9 +448,15 @@ function findParagraphFromSearchSentence(
 ): Paragraph | undefined {
   const field = resource.data[getFieldType(searchSenctence.field_type) as keyof ResourceData]?.[searchSenctence.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
+  const text = normalizeSearchParagraphText(searchSenctence.text);
   return paragraphs?.find((paragraph) =>
     strict
-      ? paragraph.sentences?.find((sentence) => searchSenctence.text === getSentenceText(field!, sentence))
-      : (getParagraphText(field!, paragraph) || '').includes(searchSenctence.text.trim()),
+      ? paragraph.sentences?.find((sentence) => text === getSentenceText(field!, sentence))
+      : (getParagraphText(field!, paragraph) || '').includes(text.trim()),
   );
 }
+
+function normalizeSearchParagraphText(text: string) {
+  return text.replace('<mark>','').replace('</mark>', '');
+}
+
