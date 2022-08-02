@@ -457,6 +457,6 @@ function findParagraphFromSearchSentence(
 }
 
 function normalizeSearchParagraphText(text: string) {
-  return text.replace('<mark>','').replace('</mark>', '');
+  return text.replace(/<mark>/g,'').replace(/<\/mark>/g, '');
 }
 
