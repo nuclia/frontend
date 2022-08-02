@@ -395,7 +395,7 @@
                 </translations>
             </concept_node>
             <concept_node>
-                <name>account.full_name</name>
+                <name>account.existing_keys</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>

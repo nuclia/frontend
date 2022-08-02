@@ -5,7 +5,10 @@ stf-section-navbar-body {
   display: block;
   ::ng-deep {
     form > div {
+      align-items: center;
       display: flex;
+      margin-bottom: rhythm(2);
+
       & > :first-child {
         width: 160px;
       }
@@ -13,9 +16,12 @@ stf-section-navbar-body {
         padding-left: rythm(1);
         width: 100%;
       }
+      .pa-field {
+        margin-bottom: 0;
+      }
+
       label {
-        font-weight: bold;
-        line-height: 54px;
+        font-weight: $font-weight-semi-bold;
       }
       .form-buttons {
         margin-top: rythm(2);
@@ -32,23 +38,16 @@ stf-section-navbar-body {
 }
 
 stf-section-navbar-header {
-  ::ng-deep {
-    a {
-      position: absolute;
-      top: rythm(1.5);
-      color: var(--stf-black);
-      &:hover {
-        text-decoration: none;
-      }
-    }
-    h2 {
-      font-size: size(xxl);
-      font-weight: bold;
-      margin: 0 0 rythm(1) 0;
-    }
-    h3 {
-      margin: 0 0 rythm(2) 0;
-      overflow-wrap: break-word;
-    }
+  .back-button {
+    position: absolute;
+    top: rythm(1.5);
+    left: 4px;
+  }
+
+  h1 {
+    margin-bottom: rythm(1);
+  }
+  .body-s {
+    margin-bottom: rythm(2);
   }
 }

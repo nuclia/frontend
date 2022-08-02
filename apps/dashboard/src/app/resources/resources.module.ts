@@ -29,12 +29,13 @@ import { ResourceListComponent } from './resource-list.component';
 import { TableHeaderComponent } from './table-header/table-header.component';
 import { EditResourceComponent } from './edit/edit-resource.component';
 import { ResourcesComponent } from './resources.component';
-import { ResourceProfileComponent } from './edit/profile.component';
-import { ResourceTextComponent } from './edit/text.component';
-import { ResourceLinkComponent } from './edit/link.component';
-import { ResourceFileComponent } from './edit/file.component';
+import { ResourceProfileComponent } from './edit/profile/profile.component';
+import { ResourceTextComponent } from './edit/text/text.component';
+import { ResourceLinkComponent } from './edit/link/link.component';
+import { ResourceFileComponent } from './edit/file/file.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
+import {PaButtonModule, PaTextFieldModule} from "@guillotinaweb/pastanaga-angular";
 
 const Components = [
   ResourceListComponent,
@@ -117,6 +118,8 @@ const ROUTES: Routes = [
     STFSectionNavbarModule,
     LabelModule,
     HintModule,
+    PaTextFieldModule,
+    PaButtonModule,
   ],
   declarations: [...Components],
   exports: [],
