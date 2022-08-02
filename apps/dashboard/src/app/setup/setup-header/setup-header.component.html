@@ -1,0 +1,25 @@
+<div class="setup-header">
+  <div class="logo">
+    <img src="assets/logos/logo_text.svg" />
+  </div>
+
+  <div class="coundown" *ngIf="isSignup">
+    <div class="coundown-step active">3</div>
+    <div class="coundown-separator first" [class.active]="step >= setupStep.Account"></div>
+    <div class="coundown-step" [class.active]="step >= setupStep.Account">2</div>
+    <div class="coundown-separator" [class.active]="step === setupStep.Upload"></div>
+    <div class="coundown-rocket" [class.active]="step === setupStep.Upload">
+      <svg-icon src="assets/icons/rocket.svg"></svg-icon>
+    </div>
+    <div class="coundown-step" [class.active]="step == setupStep.Upload">1</div>
+  </div>
+
+  <div class="coundown" *ngIf="!isSignup">
+    <div class="coundown-step active">2</div>
+    <div class="coundown-separator" [class.active]="step == setupStep.Upload"></div>
+    <div class="coundown-rocket" [class.active]="step == setupStep.Upload">
+      <svg-icon src="assets/icons/rocket.svg"></svg-icon>
+    </div>
+    <div class="coundown-step" [class.active]="step == setupStep.Upload">1</div>
+  </div>
+</div>

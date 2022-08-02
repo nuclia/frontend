@@ -1,0 +1,16 @@
+<div class="ontology-list" *ngIf="labelSets">
+  <div class="ontology-card" *ngFor="let labelSet of labelSets | keyvalue: sortByTitle">
+    <div
+      class="ontology-card-title"
+      [style.background-color]="getBackgroundColor(labelSet.value.color)"
+      [style.color]="getTextColor(labelSet.value.color)"
+    >
+      {{ labelSet.value.title }}
+    </div>
+    <div class="ontology-card-labels">
+      <div class="ontology-card-label" *ngFor="let label of labelSet.value.labels || []">
+        <span [stfEllipsisTooltip]="label.title">{{ label.title }}</span>
+      </div>
+    </div>
+  </div>
+</div>

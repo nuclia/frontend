@@ -1,0 +1,29 @@
+<div class="label-field" *ngIf="hasLabels | async" #selectLabels>
+  <stf-button color="legacy" weight="regular" (click)="open = !open" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
+    <span>{{ 'generic.select_tags' | translate }}</span>
+    <span class="label-field-arrow"></span>
+  </stf-button>
+  <div class="label-field-names">
+    <app-label-list [labels]="selected" size="small"> </app-label-list>
+  </div>
+  <ng-template
+    cdkConnectedOverlay
+    [cdkConnectedOverlayOrigin]="trigger"
+    [cdkConnectedOverlayOpen]="open"
+    [cdkConnectedOverlayHasBackdrop]="true"
+    [cdkConnectedOverlayOffsetY]="6"
+    (backdropClick)="open = false"
+    [cdkConnectedOverlayWidth]="selectLabels.clientWidth"
+    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  >
+    <ng-container *ngIf="labelSets">
+      <app-label-select
+        [labelSets]="(labelSets | async) || {}"
+        [selected]="selected"
+        (selectedChange)="setSelected($event)"
+      >
+        width="100%">
+      </app-label-select>
+    </ng-container>
+  </ng-template>
+</div>

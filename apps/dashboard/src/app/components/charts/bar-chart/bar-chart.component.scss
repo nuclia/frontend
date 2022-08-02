@@ -1,0 +1,53 @@
+@import 'variables';
+
+.bar-chart {
+  position: relative;
+  --app-chart-line-color: #e1e1e1;
+
+  .bar {
+    fill: var(--stf-primary);
+    opacity: 0.5;
+    &:last-child {
+      opacity: 1;
+    }
+  }
+
+  .tick {
+    text {
+      font-family: var(--stf-font-family);
+      font-size: var(--stf-font-size-ssmall);
+      font-weight: var(--stf-font-weight-light);
+      cursor: default;
+      user-select: none;
+    }
+  }
+
+  .grid-line {
+    stroke: var(--app-chart-line-color);
+  }
+
+  .y-axis {
+    line {
+      stroke: var(--app-chart-line-color);
+    }
+  }
+
+  .tooltip {
+    background-color: #000;
+    position: absolute;
+    transform: translateX(-50%);
+    padding: rythm(0.5);
+    font-size: var(--stf-font-size-ssmall);
+    color: #fff;
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: calc(50% - 5px);
+      height: 0;
+      border-top: 5px solid #000;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+    }
+  }
+}

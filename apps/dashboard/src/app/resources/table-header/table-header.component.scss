@@ -1,0 +1,26 @@
+.table-header {
+  color: inherit;
+  font-weight: var(--stf-font-weight-bold);
+  text-decoration: none !important;
+  white-space: nowrap;
+
+  &::after {
+    content: '';
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 3px;
+    width: 7px;
+    height: 5px;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+  }
+  &.sort-desc::after {
+    border-top: 5px solid #000;
+  }
+  &.sort-asc::after {
+    border-bottom: 5px solid #000;
+  }
+  &:not(.sort-desc):not(.sort-asc):hover::after {
+    border-top: 5px solid rgba(0, 0, 0, 0.3);
+  }
+}

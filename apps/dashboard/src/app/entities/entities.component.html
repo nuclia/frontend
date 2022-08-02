@@ -1,0 +1,41 @@
+<div class="entities">
+  <h1>{{ 'entity.name_entities_management' | translate }}</h1>
+
+  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+    <div class="entities-search" fxLayout="row" fxLayoutAlign="start center">
+      <label fxFlex="0 0 auto" for="entity-search">{{ 'entity.entity_search' | translate }}</label>
+      <input fxFlex="1 1 auto" type="text" id="entity-search" [formControl]="searchInput" (keydown.enter)="search()" />
+      <button fxFlex="0 0 auto" (click)="search()">
+        <svg-icon src="assets/icons/search.svg"></svg-icon>
+      </button>
+    </div>
+    <!--
+    <button class="entities-download">
+      <svg-icon src="assets/icons/text/csv.svg"></svg-icon>
+    </button>
+    -->
+  </div>
+
+  <ng-container *ngIf="searchTerm | async as term">
+    <div *ngIf="noResults | async" class="entities-no-results">
+      <span [innerHtml]="'generic.no_results_for' | translate"></span>
+      <span>&nbsp;</span>
+      <strong>{{ term }}</strong>
+    </div>
+  </ng-container>
+
+  <div class="entity-table">
+    <div class="entity-table-header">
+      <div class="entity-table-header-cell cell-color"></div>
+      <div class="entity-table-header-cell cell-name">{{ 'entity.entity' | translate }}</div>
+      <div class="entity-table-header-cell cell-synonyms">{{ 'entity.synonym' | translate }}</div>
+      <div class="entity-table-header-cell cell-description">{{ 'generic.description' | translate }}</div>
+      <div class="entity-table-header-cell cell-presence">{{ 'generic.presence' | translate }}</div>
+      <div class="entity-table-header-cell cell-actions"></div>
+    </div>
+
+    <div *ngFor="let group of groups | async; trackBy: trackByFn">
+      <app-entity-group [group]="group" [searchTerm]="searchTerm | async"></app-entity-group>
+    </div>
+  </div>
+</div>

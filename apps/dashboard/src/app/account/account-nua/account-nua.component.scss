@@ -1,0 +1,60 @@
+@import 'variables';
+
+.account-nua {
+  padding: 70px var(--app-layout-margin-right) 60px 5%;
+}
+
+h2 {
+  margin: 0 0 rhythm(0.25) 0;
+}
+
+.warning {
+  font-style: italic;
+  margin-bottom: rhythm(3);
+}
+
+h3 {
+  margin: 0 0 rhythm(0.5) 0;
+  font-size: var(--stf-font-size-medium);
+  font-weight: var(--stf-font-weight-semibold);
+}
+
+.container {
+  max-width: 1000px;
+  padding: rhythm(1) rhythm(2) rhythm(2);
+  background-color: $color-light-stronger;
+}
+
+.client {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $color-neutral-light;
+  &:first-of-type {
+    border-top: 1px solid $color-dark-stronger;
+  }
+}
+
+.title {
+  flex: 1 1 0;
+  @include text-truncate();
+  padding-right: rhythm(1);
+}
+
+.date {
+  width: 140px;
+}
+
+.email {
+  width: 33%;
+  @include text-truncate();
+  padding-right: rhythm(1);
+}
+
+.buttons {
+  display: flex;
+}
+
+.add {
+  margin-top: rhythm(2);
+}

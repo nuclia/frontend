@@ -1,0 +1,74 @@
+<div class="edit-widget">
+  <section>
+    <form [formGroup]="mainForm" (change)="generateSnippet()">
+      <h2>
+        {{ 'stash.widgets.title' | translate }} <span>{{ isDefaultWidget ? 'Dashboard widget' : widget?.id }}</span>
+      </h2>
+      <div class="one-col">
+        <div>
+          <span class="label">{{ 'stash.widgets.preview' | translate }}</span>
+        </div>
+        <div>
+          <div id="preview" [innerHtml]="snippetPreview"></div>
+        </div>
+      </div>
+      <div class="two-cols">
+        <div>
+          <div class="options">
+            <div class="tabs">
+              <div class="label" [class.selected]="currentTab === 'pref'" (click)="currentTab = 'pref'">
+                {{ 'stash.widgets.preferences' | translate }}
+              </div>
+              <div class="label" [class.selected]="currentTab === 'style'" (click)="currentTab = 'style'">
+                {{ 'stash.widgets.style' | translate }}
+              </div>
+            </div>
+            <div *ngIf="currentTab === 'pref'" class="tab-content">
+              <pa-select [label]="'stash.widgets.mode' | translate" formControlName="mode">
+                <pa-option value="button">{{ 'stash.widgets.mode.button' | translate }}</pa-option>
+                <pa-option value="input">{{ 'stash.widgets.mode.input' | translate }}</pa-option>
+                <pa-option value="form">{{ 'stash.widgets.mode.form' | translate }}</pa-option>
+              </pa-select>
+              <div formGroupName="features">
+                <pa-toggle *ngIf="isTrainingEnabled | async" formControlName="suggestLabels">{{
+                  'stash.widgets.suggestLabels' | translate
+                }}</pa-toggle>
+                <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
+              </div>
+            </div>
+            <div *ngIf="currentTab === 'style'" class="tab-content" formGroupName="style">
+              <div *ngFor="let field of styleFormFields">
+                <pa-input [formControlName]="field">{{ field }}</pa-input>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="snippet">
+          <div class="label">
+            <span>
+              {{ 'stash.widgets.snippet' | translate }}
+            </span>
+            <button *ngIf="clipboardSupported" class="close-button" (click)="copy()">
+              <svg-icon [src]="copyIcon"></svg-icon>
+            </button>
+          </div>
+          <pre><code class="highlight">{{ snippet }}</code></pre>
+        </div>
+      </div>
+      <div class="buttons">
+        <pa-button kind="primary" [disabled]="!mainForm.valid || mainForm.pristine" (click)="save()">
+          {{ 'generic.save' | translate }}
+        </pa-button>
+        <pa-button minWidth="110px" [disabled]="mainForm.pristine" (click)="cancel()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+        <pa-button minWidth="110px" [disabled]="isDefaultWidget" (click)="rename()">
+          {{ 'stash.widgets.rename' | translate }}
+        </pa-button>
+        <pa-button kind="destructive" minWidth="110px" [disabled]="isDefaultWidget" (click)="deleteWidget()">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
+      </div>
+    </form>
+  </section>
+</div>

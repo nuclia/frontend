@@ -1,0 +1,29 @@
+<div class="knowledge-box-options">
+  <div class="section">
+    <h2>{{ 'stash.filter_options' | translate }}</h2>
+    <div class="mb-20">{{ 'stash.filter_options_description' | translate }}</div>
+    <stf-checkbox-group
+      [checkboxes]="filters"
+      [selection]="selectedFilters"
+      (selectionChange)="saveFilters($event)"
+      color="dark"
+    >
+    </stf-checkbox-group>
+  </div>
+  <div class="section">
+    <h2>{{ 'search.top_insights' | translate }}</h2>
+    <div class="mb-20">{{ 'stash.top_insights_description' | translate }}</div>
+    <div class="insight-categories">
+      <div class="insight-category" *ngFor="let category of categories">
+        <stf-checkbox
+          [selected]="selectedCategories.isSelected(category)"
+          (selectedChange)="toggleCategory(category)"
+          [disabled]="isDisabled(category)"
+          color="dark"
+        >
+          {{ 'resource.entities.' + category | translate }}
+        </stf-checkbox>
+      </div>
+    </div>
+  </div>
+</div>
