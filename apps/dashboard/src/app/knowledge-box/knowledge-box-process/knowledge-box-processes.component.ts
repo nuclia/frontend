@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
-import { SDKService, StateService } from '@flaps/core';
+import {PostHogService, SDKService, StateService} from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { TrainingStatus, TrainingType } from '@nuclia/core';
-import { forkJoin, Subject } from 'rxjs';
+import {forkJoin, shareReplay, Subject} from 'rxjs';
 
 @Component({
   selector: 'app-knowledge-box-processes',
@@ -11,20 +11,22 @@ import { forkJoin, Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
+  private unsubscribeAll: Subject<void> = new Subject();
+
   agreement = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
   running = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
   selectedLabelsets = { [TrainingType.classifier]: '', [TrainingType.labeller]: '' };
   lastRun = '20-04-21';
   hoursRequired = 10;
   cannotTrain = this.stateService.account.pipe(map((account) => account && account.type === 'stash-basic'));
-  private unsubscribeAll: Subject<void> = new Subject();
   trainingTypes = TrainingType;
   labelsets = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getLabels()),
     map((labelsets) => Object.entries(labelsets).map(([id, labelset]) => ({ value: id, title: labelset.title }))),
   );
+  isBillingEnabled = this.postHogService.isFeatureEnabled('billing').pipe(shareReplay(1));
 
-  constructor(private sdk: SDKService, private stateService: StateService, private cdr: ChangeDetectorRef) {}
+  constructor(private sdk: SDKService, private stateService: StateService, private cdr: ChangeDetectorRef, private postHogService: PostHogService) {}
 
   ngOnInit() {
     this.sdk.currentKb
