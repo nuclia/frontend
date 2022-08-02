@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService, TranslatePipeMock } from '@flaps/core';
+import {PostHogService, SDKService, TranslatePipeMock} from '@flaps/core';
 import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-processes.component';
+import {MockModule} from "ng-mocks";
+import {PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule} from "@guillotinaweb/pastanaga-angular";
 
 describe('KnowledgeBoxProcessComponent', () => {
   let component: KnowledgeBoxProcessesComponent;
@@ -11,6 +13,7 @@ describe('KnowledgeBoxProcessComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [MockModule(PaTextFieldModule), MockModule(PaDropdownModule), MockModule(PaButtonModule), MockModule(PaTogglesModule)],
       declarations: [KnowledgeBoxProcessesComponent, TranslatePipeMock],
       providers: [
         {
@@ -19,6 +22,12 @@ describe('KnowledgeBoxProcessComponent', () => {
             currentKb: of({ getStatus: () => TrainingStatus.not_running }),
           },
         },
+        {
+          provide: PostHogService,
+          useValue: {
+            isFeatureEnabled: jest.fn(() => of(true))
+          }
+        }
       ],
     }).compileComponents();
   });

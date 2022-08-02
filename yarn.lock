@@ -12467,6 +12467,11 @@ netmask@^1.0.6:
   resolved "https://registry.yarnpkg.com/netmask/-/netmask-1.0.6.tgz#20297e89d86f6f6400f250d9f4f6b4c1945fcd35"
   integrity sha1-ICl+idhvb2QA8lDZ9Pa0wZRfzTU=
 
+ng-mocks@^14.1.1:
+  version "14.1.1"
+  resolved "https://registry.yarnpkg.com/ng-mocks/-/ng-mocks-14.1.1.tgz#09f8b553243c7fafa6a9f7203f5e6b5b5da8d17b"
+  integrity sha512-8KrVD+GC2Q5J38K6voOAcPVXh3KxrgF+thoCF4yB/v8eykRn2kvA5Qxa46/ku9oo0q4O+amQhi9xAqZp0unXVQ==
+
 ng-packagr@14.0.2:
   version "14.0.2"
   resolved "https://registry.yarnpkg.com/ng-packagr/-/ng-packagr-14.0.2.tgz#5c824b753a4c5e2851c0e130fd98f4df77f6c04b"

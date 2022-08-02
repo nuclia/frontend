@@ -155,6 +155,7 @@
     "jest": "27.5.1",
     "jest-preset-angular": "11.1.2",
     "jsrsasign": "^10.1.0",
+    "ng-mocks": "^14.1.1",
     "ng-packagr": "14.0.2",
     "ngx-build-plus": "11.0.0",
     "nx": "14.3.6",

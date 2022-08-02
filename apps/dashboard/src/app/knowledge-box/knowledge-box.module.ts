@@ -35,7 +35,13 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { HintModule } from '../components/hint/hint.module';
 import { UsersManageModule } from './knowledge-box-users/users-manage/users-manage.module';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule
+} from '@guillotinaweb/pastanaga-angular';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 
 const Components = [
@@ -82,6 +88,7 @@ const Components = [
     PaTextFieldModule,
     PaDropdownModule,
     PaTooltipModule,
+    PaTogglesModule,
   ],
   declarations: [...Components],
   exports: [],
