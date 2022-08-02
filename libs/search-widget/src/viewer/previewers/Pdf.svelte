@@ -110,7 +110,6 @@
 
   const find = (query: string) => {
     // TODO: pdf search is still not reliable enough
-    /*
     eventBus.dispatch('find', {
       caseSensitive: true,
       findPrevious: undefined,
@@ -118,7 +117,6 @@
       phraseSearch: true,
       query: query,
     });
-    */
   };
 
   const onLoad = () => {
