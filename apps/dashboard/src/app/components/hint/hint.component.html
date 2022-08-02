@@ -1,13 +1,18 @@
-<div class="hint">
-  <div class="hint-title" (click)="isExpanded = !isExpanded">
-    <svg-icon src="assets/icons/info.svg" [class.expanded]="isExpanded"></svg-icon>
-    <span>{{ label }}</span>
-  </div>
-  <stf-expander [expanded]="isExpanded">
-    <stf-expander-content>
+<div class="hint"
+     #container
+     [class.inverted]="inverted"
+     [style.max-width]="containerWidth">
+  <pa-expander card>
+    <pa-expander-header>
+      <div class="hint-title">
+        <pa-icon name="info"></pa-icon>
+        <span>{{ label }}</span>
+      </div>
+    </pa-expander-header>
+    <pa-expander-body>
       <div #content>
         <ng-content></ng-content>
       </div>
-    </stf-expander-content>
-  </stf-expander>
+    </pa-expander-body>
+  </pa-expander>
 </div>

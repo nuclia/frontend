@@ -1,14 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { STFExpanderModule } from '@flaps/pastanaga';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-
+import { PaExpanderModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { HintComponent } from './hint.component';
 
 @NgModule({
-  imports: [CommonModule, STFExpanderModule, AngularSvgIconModule],
+  imports: [CommonModule, PaIconModule, PaExpanderModule],
   exports: [HintComponent],
   declarations: [HintComponent],
-  providers: [],
 })
 export class HintModule {}
