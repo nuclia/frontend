@@ -177,6 +177,7 @@ const routes: Routes = [
               {
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
+                canActivate: [AccountOwnerGuard],
               },
               {
                 path: 'keys',

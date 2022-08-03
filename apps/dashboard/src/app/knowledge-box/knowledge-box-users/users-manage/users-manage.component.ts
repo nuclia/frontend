@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 import { KbUser } from '@flaps/core';
-import { SDKService, StateService } from '@flaps/core';
+import { StateService } from '@flaps/core';
 import { SORTED_KB_ROLES, KB_ROLE_TITLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
 import { KBRoles } from '@nuclia/core';
@@ -55,14 +55,9 @@ export class UsersManageComponent {
     private formBuilder: UntypedFormBuilder,
     private translate: TranslateService,
     private state: StateService,
-    private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
   ) {}
-
-  isItMe(userId: string) {
-    return this.sdk.nuclia.auth.getJWTUser()?.sub === userId;
-  }
 
   addUser() {
     if (this.addForm.invalid) return;
