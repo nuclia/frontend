@@ -68,13 +68,21 @@ export class TopbarComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      if (kb.admin || kb.contrib) {
-        const waitForWidget = window.setInterval(() => {
-          const widget = document.getElementById('search-widget') as unknown as any;
-          if (widget) {
-            const actions = [
+      const waitForWidget = window.setInterval(() => {
+        const widget = document.getElementById('search-widget') as unknown as any;
+        if (widget) {
+          const actions = [
+            {
+              label: this.translate.transform('widget.show-api'),
+              destructive: false,
+              action: this.showUID.bind(this),
+            },
+          ];
+          if (kb.admin || kb.contrib) {
+            actions.push(
               {
                 label: this.translate.transform('generic.edit'),
+                destructive: false,
                 action: this.edit.bind(this),
               },
               {
@@ -82,18 +90,12 @@ export class TopbarComponent implements AfterViewInit {
                 destructive: true,
                 action: this.delete.bind(this),
               },
-            ];
-            if (kb.admin) {
-              actions.unshift({
-                label: this.translate.transform('widget.show-api'),
-                action: this.showUID.bind(this),
-              });
-            }
-            widget.setActions(actions);
-            clearInterval(waitForWidget);
+            );
           }
-        }, 500);
-      }
+          widget.setActions(actions);
+          clearInterval(waitForWidget);
+        }
+      }, 500);
     });
     this.sdk.nuclia.auth
       .isAuthenticated()
