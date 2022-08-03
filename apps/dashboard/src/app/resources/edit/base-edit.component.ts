@@ -3,7 +3,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { Resource } from '@nuclia/core';
-import { combineLatest, switchMap, filter, tap, Subject, startWith, share, takeUntil, catchError, delay } from 'rxjs';
+import { catchError, combineLatest, delay, filter, share, startWith, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 
 @Directive()
@@ -62,6 +62,7 @@ export abstract class BaseEditComponent implements OnDestroy {
   cancel() {
     if (this.currentValue) {
       this.updateForm(this.currentValue);
+      this.form.markAsPristine();
     }
   }
   abstract updateForm(data: Resource): void;

@@ -1,5 +1,6 @@
-<div class="label-list" *ngIf="labels && labels.length > 0">
-  <ng-container *ngFor="let label of labels">
-    <stf-tag [tag]="label.label" [secondary]="false" [size]="size"></stf-tag>
-  </ng-container>
+<div class="label-list" *ngIf="labelSelection && labelSelection.length > 0">
+  <pa-chip-closeable *ngFor="let label of labelSelection"
+                     [backgroundColor]="labelSets[label.labelset]?.color"
+                     (closed)="removeLabel(label)">{{label.label}}
+  </pa-chip-closeable>
 </div>

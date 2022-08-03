@@ -1,6 +1,6 @@
 <h2>{{ 'resource.profile' | translate }}</h2>
 <form [formGroup]="form" (ngSubmit)="save()">
-  <div class="form-field">
+  <div>
     <label class="title-xxs" for="title">{{ 'resource.title' | translate }}</label>
     <pa-input id="title" formControlName="title"></pa-input>
   </div>
@@ -26,10 +26,11 @@
       </div>
     </div>
   </div>
-  <div>
+  <div class="classification-container">
     <label>{{ 'resource.classification' | translate }}</label>
     <div>
-      <app-label-field [selected]="currentLabels" (selectedChange)="updateLabels($event)"></app-label-field>
+      <app-label-field [selection]="currentLabels"
+                       (selectionChange)="updateLabels($event)"></app-label-field>
     </div>
   </div>
 

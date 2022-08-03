@@ -56,7 +56,7 @@
       hidden
     />
 
-    <app-label-field [(selected)]="selectedLabels"></app-label-field>
+    <app-label-field [(selection)]="selectedLabels"></app-label-field>
 
     <div class="file-list" *ngIf="filesWithoutAudio.length > 0">
       <div class="file-item" *ngFor="let file of filesWithoutAudio">

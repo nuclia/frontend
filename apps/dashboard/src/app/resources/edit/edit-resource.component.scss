@@ -13,7 +13,6 @@ stf-section-navbar-body {
         width: 160px;
       }
       & > :last-child {
-        padding-left: rythm(1);
         width: 100%;
       }
       .pa-field {
@@ -23,15 +22,16 @@ stf-section-navbar-body {
       label {
         font-weight: $font-weight-semi-bold;
       }
-      .form-buttons {
-        margin-top: rythm(2);
-        :first-child {
-          margin-right: rythm(1);
-        }
+
+      &.classification-container {
+        margin-top: rhythm(4);
       }
-      app-label-field {
-        margin-top: rythm(1.5);
-        display: block;
+      &.form-buttons {
+        margin-top: rhythm(20);
+
+        pa-button {
+          margin-right: rhythm(2);
+        }
       }
     }
   }
