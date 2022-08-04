@@ -40,7 +40,9 @@ import {
   PaDropdownModule,
   PaTextFieldModule,
   PaTogglesModule,
-  PaTooltipModule
+  PaTooltipModule,
+  PaPopupModule,
+  PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 
@@ -89,6 +91,8 @@ const Components = [
     PaDropdownModule,
     PaTooltipModule,
     PaTogglesModule,
+    PaPopupModule,
+    PaIconModule,
   ],
   declarations: [...Components],
   exports: [],

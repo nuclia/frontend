@@ -21,8 +21,27 @@ h2 {
   margin-top: 0;
 }
 
-stf-checkbox {
-  font-weight: var(--stf-font-weight-semibold);
+.labelset-selection {
+  margin-bottom: rhythm(2);
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+}
+
+.labelset-selection-button {
+  ::ng-deep {
+    .pa-button {
+      min-width: rhythm(16) !important;
+    }
+    .pa-button-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+}
+.selection {
+  font-style: italic;
 }
 
 .warning {

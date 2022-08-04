@@ -438,6 +438,8 @@
 	"stash.service_access": "Service Access",
 	"stash.service_access_description": "¡Importante! Copia y guarda el código del Token. Una vez añadido, desaparecerá.",
 	"stash.settings": "Preferencias de la caja de conocimiento",
+	"stash.settings.processes.training.all_labelsets": "Todas las etiquetas",
+	"stash.settings.processes.training.select-labelsets": "Escoge las etiquetas",
 	"stash.side.activity": "Registro de actividad",
 	"stash.side.audit": "Auditoría",
 	"stash.side.create": "Creación de contenido",

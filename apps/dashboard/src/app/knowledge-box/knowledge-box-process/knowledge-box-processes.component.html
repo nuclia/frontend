@@ -11,13 +11,32 @@
     <div [class.running]="running[type]">
       <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
 
-      <pa-select
-        [label]="'stash.settings.processes.training.select-labelsets' | translate"
-        [(value)]="selectedLabelsets[type]"
-      >
-        <pa-option value="">{{ 'generic.all' | translate }}</pa-option>
-        <pa-option *ngFor="let option of labelsets | async" [value]="option.value">{{ option.title }}</pa-option>
-      </pa-select>
+      <div class="labelset-selection">
+        <pa-button class="labelset-selection-button"
+                   [paPopup]="dropdown">
+          {{ 'stash.settings.processes.training.select-labelsets' | translate }}
+          <pa-icon [name]="open[type] ? 'chevron-up' : 'chevron-down'"></pa-icon>
+        </pa-button>
+        <div class="selection">{{ selectedLabelsets[type].join(', ') }}</div>
+      </div>
+
+      <pa-dropdown #dropdown
+                   (onOpen)="open[type] = true"
+                   (onClose)="open[type] = false">
+        <pa-option *ngIf="labelsets | async as labelsets"
+                   dontCloseOnSelect>
+          <pa-checkbox [value]="selectedLabelsets[type].length === labelsets.length"
+                       (change)="toggleAll(type)">
+            {{ 'stash.settings.processes.training.all_labelsets' | translate }}
+          </pa-checkbox>
+        </pa-option>
+        <pa-separator></pa-separator>
+        <pa-option *ngFor="let labelset of labelsets | async"
+                   dontCloseOnSelect>
+          <pa-checkbox [value]="selectedLabelsets[type].includes(labelset.value)"
+                       (change)="toggleLabelset(type, labelset.value)">{{labelset.title}}</pa-checkbox>
+        </pa-option>
+      </pa-dropdown>
 
       <ng-container *ngIf="isBillingEnabled | async">
         <p [class.warning]="!agreement">

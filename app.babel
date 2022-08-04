@@ -11147,6 +11147,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>stash.settings.processes.training.all_labelsets</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>stash.settings.processes.training.last_run</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
