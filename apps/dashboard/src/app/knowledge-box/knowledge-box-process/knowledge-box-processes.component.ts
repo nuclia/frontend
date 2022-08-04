@@ -15,7 +15,8 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
 
   agreement = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
   running = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
-  selectedLabelsets = { [TrainingType.classifier]: '', [TrainingType.labeller]: '' };
+  selectedLabelsets = { [TrainingType.classifier]: [] as string[], [TrainingType.labeller]: [] as string[]};
+  open = { [TrainingType.classifier]: false, [TrainingType.labeller]: false};
   lastRun = '20-04-21';
   hoursRequired = 10;
   cannotTrain = this.stateService.account.pipe(map((account) => account && account.type === 'stash-basic'));
@@ -49,13 +50,23 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  toggleLabelset(type: TrainingType, labelset: string) {
+    if (this.selectedLabelsets[type].includes(labelset)) {
+      this.selectedLabelsets[type] = this.selectedLabelsets[type].filter((item) => item !== labelset)
+    }
+    else {
+      this.selectedLabelsets[type] = [...this.selectedLabelsets[type], labelset];
+    }
+    this.cdr?.markForCheck();
+  }
+
   startOrStopTraining(type: TrainingType) {
     this.sdk.currentKb
       .pipe(
         switchMap((kb) =>
           this.running[type]
             ? kb.training.stop(type)
-            : kb.training.start(type, this.selectedLabelsets[type] ? [this.selectedLabelsets[type]] : undefined),
+            : kb.training.start(type, this.selectedLabelsets[type].length > 0 ? this.selectedLabelsets[type] : undefined),
         ),
       )
       .subscribe(() => {

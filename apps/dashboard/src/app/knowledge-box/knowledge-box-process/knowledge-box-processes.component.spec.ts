@@ -1,11 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import {PostHogService, SDKService, TranslatePipeMock} from '@flaps/core';
+import { PostHogService, SDKService, TranslatePipeMock } from '@flaps/core';
 import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-processes.component';
-import {MockModule} from "ng-mocks";
-import {PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule} from "@guillotinaweb/pastanaga-angular";
+import { MockModule } from 'ng-mocks';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaIconModule,
+  PaPopupModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 describe('KnowledgeBoxProcessComponent', () => {
   let component: KnowledgeBoxProcessesComponent;
@@ -13,7 +20,14 @@ describe('KnowledgeBoxProcessComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaTextFieldModule), MockModule(PaDropdownModule), MockModule(PaButtonModule), MockModule(PaTogglesModule)],
+      imports: [
+        MockModule(PaTextFieldModule),
+        MockModule(PaDropdownModule),
+        MockModule(PaButtonModule),
+        MockModule(PaTogglesModule),
+        MockModule(PaIconModule),
+        MockModule(PaPopupModule),
+      ],
       declarations: [KnowledgeBoxProcessesComponent, TranslatePipeMock],
       providers: [
         {
@@ -25,9 +39,9 @@ describe('KnowledgeBoxProcessComponent', () => {
         {
           provide: PostHogService,
           useValue: {
-            isFeatureEnabled: jest.fn(() => of(true))
-          }
-        }
+            isFeatureEnabled: jest.fn(() => of(true)),
+          },
+        },
       ],
     }).compileComponents();
   });
