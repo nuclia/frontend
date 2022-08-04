@@ -22,7 +22,7 @@
     </div>
     <div>
       <div *ngFor="let thumb of (thumbnails | async); let index=index">
-        <img width="224px" [src]="thumb" alt="thumbnail {{index}}">
+        <img class="resource-thumbnail" [src]="thumb" alt="thumbnail {{index}}">
       </div>
     </div>
   </div>

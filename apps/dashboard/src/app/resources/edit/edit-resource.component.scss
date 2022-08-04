@@ -33,6 +33,11 @@ stf-section-navbar-body {
           margin-right: rhythm(2);
         }
       }
+
+      .resource-thumbnail {
+        max-height: rhythm(28);
+        max-width: rhythm(28);
+      }
     }
   }
 }
