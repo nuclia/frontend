@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
+import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import {PostHogService, SDKService, StateService} from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { TrainingStatus, TrainingType } from '@nuclia/core';
@@ -42,7 +43,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
       .subscribe((statuses) => {
         this.running[TrainingType.classifier] = statuses[0];
         this.running[TrainingType.labeller] = statuses[1];
-        this.cdr?.markForCheck();
+        markForCheck(this.cdr)
       });
   }
 
@@ -57,14 +58,14 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     } else {
       this.selectedLabelsets[type] = [...this.selectedLabelsets[type], labelset];
     }
-    this.cdr?.markForCheck();
+    markForCheck(this.cdr)
   }
 
   toggleAll(type: TrainingType) {
     this.labelsets.pipe(take(1)).subscribe((labelsets) => {
       const selectAll = this.selectedLabelsets[type].length < labelsets.length;
       this.selectedLabelsets[type] = selectAll ? labelsets.map((item) => item.value) : [];
-      this.cdr?.markForCheck();
+      markForCheck(this.cdr)
     });
   }
 
@@ -82,7 +83,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.running[type] = !this.running[type];
-        this.cdr?.markForCheck();
+        markForCheck(this.cdr)
       });
   }
 }
