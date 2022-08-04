@@ -35,7 +35,7 @@
     <NucliaWidget
       bind:this={widget}
       zone="europe-1"
-      knowledgebox="f694f1a4-d3f2-42f7-8642-b027bb9e54fe"
+      knowledgebox="b199ca95-4619-4219-9fa4-8caafc36d40f"
       backend="https://stashify.cloud/api"
       cdn="/"
       widgetid="test1"

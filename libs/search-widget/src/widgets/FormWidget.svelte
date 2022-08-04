@@ -19,19 +19,26 @@
 </script>
 
 <div>
-  <SearchInput formWidget={true} />
+  <div class="search-input-container">
+    <SearchInput formWidget={true} />
+  </div>
   <div class="options">
     <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)} />
   </div>
   {#if $showResults}
     <div class="results" class:empty={$results.length === 0}>
-      <Results results={$results} />
+      <Results results={$results} formWidget={true}/>
     </div>
   {/if}
 </div>
 
 <style>
+  .search-input-container {
+    display: flex;
+    justify-content: center;
+  }
   .options {
     padding: 0.5rem 0;
+    display: none;
   }
 </style>
