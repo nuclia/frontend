@@ -1,8 +1,11 @@
+@import "variables";
+
 .label-list {
   display: flex;
   flex-wrap: wrap;
-  stf-tag {
-    margin-right: 10px;
-    margin-bottom: 10px;
+
+  pa-chip-closeable {
+    margin-bottom: rhythm(.5);
+    margin-right: rhythm(.5);
   }
 }

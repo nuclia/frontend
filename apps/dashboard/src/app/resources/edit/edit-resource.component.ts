@@ -14,18 +14,18 @@ export class EditResourceComponent {
       title: 'resource.profile',
       relativeRoute: 'profile',
     },
-    {
-      title: 'resource.text',
-      relativeRoute: 'text',
-    },
-    {
-      title: 'resource.link',
-      relativeRoute: 'link',
-    },
-    {
-      title: 'resource.file',
-      relativeRoute: 'file',
-    },
+    // {
+    //   title: 'resource.text',
+    //   relativeRoute: 'text',
+    // },
+    // {
+    //   title: 'resource.link',
+    //   relativeRoute: 'link',
+    // },
+    // {
+    //   title: 'resource.file',
+    //   relativeRoute: 'file',
+    // },
   ];
   resourceTitle = combineLatest([this.sdk.currentKb, this.route.params.pipe(filter((params) => !!params.id))]).pipe(
     switchMap(([kb, params]) => kb.getResource(params.id)),

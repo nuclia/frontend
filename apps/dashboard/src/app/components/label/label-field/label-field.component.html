@@ -1,29 +1,46 @@
-<div class="label-field" *ngIf="hasLabels | async" #selectLabels>
-  <stf-button color="legacy" weight="regular" (click)="open = !open" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
-    <span>{{ 'generic.select_tags' | translate }}</span>
-    <span class="label-field-arrow"></span>
-  </stf-button>
-  <div class="label-field-names">
-    <app-label-list [labels]="selected" size="small"> </app-label-list>
+<!-- FIXME: what happen when there is no labels? (hasLabels false) -->
+<div #selectLabels
+     *ngIf="hasLabels | async"
+     class="label-field">
+  <div class="label-selector">
+    <pa-button class="label-selection-button"
+               [paPopup]="labelSelection">
+      {{ 'generic.select_tags' | translate }}
+      <pa-icon [name]="open ? 'chevron-up' : 'chevron-down'"></pa-icon>
+    </pa-button>
+
+    <pa-dropdown #labelSelection
+                 dontAdjustPosition
+                 [companionElement]="level2Element?.nativeElement"
+                 (onClose)="closeDropdowns()"
+                 (onOpen)="open = true">
+      <ng-container *ngFor="let labelSet of (labelSets$ | async) | keyvalue; let index=index">
+        <pa-option *ngIf="labelSet.value.labels.length > 0"
+                   icon="chevron-right"
+                   iconOnRight
+                   dontCloseOnSelect
+                   [popupPosition]="{position: 'relative', left: '100%', top: (index * 40 + 4) + 'px'}"
+                   [paPopup]="level2"
+                   [selected]="labelSetExpanded === labelSet.key"
+                   (selectOption)="onLevel1Selection(labelSet.key, labelSet.value)">
+          <span class="label-color" [style.background-color]="labelSet.value.color"></span>
+          {{labelSet.value.title}}
+        </pa-option>
+      </ng-container>
+    </pa-dropdown>
+
+    <pa-dropdown #level2 dontAdjustPosition>
+      <pa-option *ngFor="let labelValue of labelValues"
+                 dontCloseOnSelect>
+        <pa-checkbox [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
+                     (valueChange)="toggleLabel(labelValue)">{{labelValue.label}}</pa-checkbox>
+      </pa-option>
+    </pa-dropdown>
   </div>
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="open"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayOffsetY]="6"
-    (backdropClick)="open = false"
-    [cdkConnectedOverlayWidth]="selectLabels.clientWidth"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  >
-    <ng-container *ngIf="labelSets">
-      <app-label-select
-        [labelSets]="(labelSets | async) || {}"
-        [selected]="selected"
-        (selectedChange)="setSelected($event)"
-      >
-        width="100%">
-      </app-label-select>
-    </ng-container>
-  </ng-template>
+
+  <div class="label-field-names">
+    <app-label-list [labelSets]="labelSets$ | async"
+                    [labelSelection]="selection"
+                    (labelSelectionChange)="selectionChange.emit($event)"></app-label-list>
+  </div>
 </div>

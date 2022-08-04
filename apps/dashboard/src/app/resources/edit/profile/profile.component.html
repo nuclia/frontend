@@ -1,0 +1,56 @@
+<h2>{{ 'resource.profile' | translate }}</h2>
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div>
+    <label class="title-xxs" for="title">{{ 'resource.title' | translate }}</label>
+    <pa-input id="title" formControlName="title"></pa-input>
+  </div>
+  <div>
+    <label for="authors">{{ 'resource.authorship' | translate }}</label>
+    <pa-input id="authors" formControlName="authors"></pa-input>
+  </div>
+  <div>
+    <div>
+      <label for="summary">{{ 'resource.summary' | translate }}</label>
+      <div class="body-xs">{{ 'resource.summary.help' | translate }}</div>
+    </div>
+    <pa-textarea id="summary" formControlName="summary" rows="3"></pa-textarea>
+  </div>
+  <div>
+    <div>
+      <label>{{ 'resource.thumbnail' | translate }}</label>
+<!--      <div class="body-xs">{{ 'resource.thumbnail.help' | translate }}</div>-->
+    </div>
+    <div>
+      <div *ngFor="let thumb of (thumbnails | async); let index=index">
+        <img class="resource-thumbnail" [src]="thumb" alt="thumbnail {{index}}">
+      </div>
+    </div>
+  </div>
+  <div class="classification-container">
+    <label>{{ 'resource.classification' | translate }}</label>
+    <div>
+      <app-label-field [selection]="currentLabels"
+                       (selectionChange)="updateLabels($event)"></app-label-field>
+    </div>
+  </div>
+
+  <div class="form-buttons">
+    <pa-button kind="primary"
+               [disabled]="!form.valid || form.pristine"
+               (click)="save()">{{ 'generic.save' | translate }}</pa-button>
+
+    <pa-button aspect="basic"
+               [disabled]="form.pristine"
+               (click)="cancel()">{{ 'generic.cancel' | translate }}</pa-button>
+  </div>
+</form>
+
+<ncom-hint label="How to modify a resource with the API"
+           inverted
+           [values]="hintValues | async">
+  <pre><code class="highlight">curl $$RESOURCE$$ \
+ -X PATCH \
+ -H "authorization: Bearer $$AUTH_TOKEN$$" \
+ --data-raw '$$DATA$$'</code></pre>
+  <a href="https://docs.nuclia.dev/docs/api#operation/Modify_Resource_kb__kbid__resource__rid__patch" target="_new">Learn more</a>
+</ncom-hint>

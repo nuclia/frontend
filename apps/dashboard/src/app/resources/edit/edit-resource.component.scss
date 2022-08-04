@@ -5,50 +5,54 @@ stf-section-navbar-body {
   display: block;
   ::ng-deep {
     form > div {
+      align-items: center;
       display: flex;
+      margin-bottom: rhythm(2);
+
       & > :first-child {
         width: 160px;
       }
       & > :last-child {
-        padding-left: rythm(1);
         width: 100%;
       }
-      label {
-        font-weight: bold;
-        line-height: 54px;
+      .pa-field {
+        margin-bottom: 0;
       }
-      .form-buttons {
-        margin-top: rythm(2);
-        :first-child {
-          margin-right: rythm(1);
+
+      label {
+        font-weight: $font-weight-semi-bold;
+      }
+
+      &.classification-container {
+        margin-top: rhythm(4);
+      }
+      &.form-buttons {
+        margin-top: rhythm(20);
+
+        pa-button {
+          margin-right: rhythm(2);
         }
       }
-      app-label-field {
-        margin-top: rythm(1.5);
-        display: block;
+
+      .resource-thumbnail {
+        max-height: rhythm(28);
+        max-width: rhythm(28);
       }
     }
   }
 }
 
 stf-section-navbar-header {
-  ::ng-deep {
-    a {
-      position: absolute;
-      top: rythm(1.5);
-      color: var(--stf-black);
-      &:hover {
-        text-decoration: none;
-      }
-    }
-    h2 {
-      font-size: size(xxl);
-      font-weight: bold;
-      margin: 0 0 rythm(1) 0;
-    }
-    h3 {
-      margin: 0 0 rythm(2) 0;
-      overflow-wrap: break-word;
-    }
+  .back-button {
+    position: absolute;
+    top: rythm(1.5);
+    left: 4px;
+  }
+
+  h1 {
+    margin-bottom: rythm(1);
+  }
+  .body-s {
+    margin-bottom: rythm(2);
   }
 }

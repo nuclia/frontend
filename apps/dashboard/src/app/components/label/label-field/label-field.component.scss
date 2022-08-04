@@ -1,16 +1,40 @@
+@import "variables";
+
+:host {
+  display: block;
+}
+
 .label-field {
-  &-names {
-    margin-top: 20px;
-    min-height: 30px; // Avoid a shift when first tag is selected
+  display: flex;
+  align-items: flex-start;
+
+  .label-selection-button {
+    ::ng-deep {
+      .pa-button {
+        min-width: rhythm(24); // corresponding to pa-popup min-width so the button match the dropdown width
+      }
+
+      .pa-button-label {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    pa-icon {
+      margin-left: rhythm(2);
+    }
   }
 
-  &-arrow {
+  pa-option ::ng-deep .label-color {
+    background: $color-neutral-light;
     display: inline-block;
-    margin: 0 0 1px 16px;
-    width: 7px;
-    height: 5px;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-top: 5px solid #000;
+    margin-right: rhythm(1.5);
+    height: rhythm(1);
+    width: rhythm(1);
+  }
+
+  .label-field-names {
+    margin-left: rhythm(4);
+    margin-top: rhythm(0.5);
   }
 }
