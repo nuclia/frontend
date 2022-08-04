@@ -7,6 +7,7 @@
   import Spinner from '../../components/spinner/Spinner.svelte';
   import { map, switchMap, take, forkJoin } from 'rxjs';
 
+  export let formWidget = false;
   export let results: IResource[] = [];
 
     const enhancedResults = nucliaState().results.pipe(
@@ -27,7 +28,7 @@
       ),
     ),
   );
-  
+
   const paragraphResults = enhancedResults.pipe(
     map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource))
   );
@@ -56,7 +57,7 @@
       <div>
         {#each $paragraphResults.slice(0,3) as result}
           <div class="result">
-            <Row {result} />
+            <Row {result} {formWidget}/>
           </div>
         {/each}
       </div>

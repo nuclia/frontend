@@ -2,11 +2,11 @@
   import { onDestroy } from 'svelte';
   import type { IResource } from '@nuclia/core';
   import { formatDate } from '../../core/utils';
-  import { _ } from '../../core/i18n';
   import { nucliaState, setDisplayedResource } from '../../core/store';
   import { getFile } from '../../core/api';
   import MimeIcon from '../../components/icons/mime.svelte';
 
+  export let formWidget = false;
   export let result: IResource;
   export let semantic = false;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
@@ -67,7 +67,7 @@
     </div>
     <div class="block-3">
       <div class="byline">
-        {#if result.created}
+        {#if result.created && !formWidget}
           {formatDate(result.created)}
         {/if}
       </div>

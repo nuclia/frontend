@@ -54,7 +54,7 @@
   };
 </script>
 
-<form role="search" autocomplete="off" class="search-input">
+<form role="search" autocomplete="off" class="search-input" class:form-widget-container={formWidget}>
   <input
     bind:this={element}
     class="search-field"
@@ -97,6 +97,9 @@
 <style>
   form {
     position: relative;
+  }
+  form.form-widget-container {
+    width: 448px;
   }
   input {
     font-size: calc(var(--font-size-base) * 1.5);
