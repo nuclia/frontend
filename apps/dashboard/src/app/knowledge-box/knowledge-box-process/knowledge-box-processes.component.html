@@ -23,10 +23,18 @@
       <pa-dropdown #dropdown
                    (onOpen)="open[type] = true"
                    (onClose)="open[type] = false">
+        <pa-option class="toggle-all"
+                   *ngIf="labelsets | async as labelsets"
+                   dontCloseOnSelect>
+          <pa-checkbox [value]="selectedLabelsets[type].length === labelsets.length"
+                       (change)="toggleAll(type)">
+            {{ 'stash.settings.processes.training.all_labelsets' | translate }}
+          </pa-checkbox>
+        </pa-option>
         <pa-option *ngFor="let labelset of labelsets | async"
                    dontCloseOnSelect>
-        <pa-checkbox [value]="selectedLabelsets[type].includes(labelset.value)"
-                     (valueChange)="toggleLabelset(type, labelset.value)">{{labelset.title}}</pa-checkbox>
+          <pa-checkbox [value]="selectedLabelsets[type].includes(labelset.value)"
+                       (change)="toggleLabelset(type, labelset.value)">{{labelset.title}}</pa-checkbox>
         </pa-option>
       </pa-dropdown>
 
