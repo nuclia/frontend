@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { combineLatest, filter, map, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, switchMap } from 'rxjs';
+import { Resource } from '@nuclia/core';
 
 @Component({
   selector: 'app-edit-resource',
@@ -27,10 +28,12 @@ export class EditResourceComponent {
     //   relativeRoute: 'file',
     // },
   ];
-  resourceTitle = combineLatest([this.sdk.currentKb, this.route.params.pipe(filter((params) => !!params.id))]).pipe(
-    switchMap(([kb, params]) => kb.getResource(params.id)),
-    map((res) => res.title),
-  );
+
+  resource: Observable<Resource> = combineLatest([
+    this.sdk.currentKb,
+    this.route.params.pipe(filter((params) => !!params.id)),
+  ]).pipe(switchMap(([kb, params]) => kb.getResource(params.id)));
+  resourceTitle = this.resource.pipe(map((res) => res.title));
 
   constructor(private sdk: SDKService, private route: ActivatedRoute) {}
 }
