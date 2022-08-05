@@ -47,6 +47,7 @@ import { SistemaLabelComponent } from './sistema-pages/sistema-label/sistema-lab
 import { SistemaModalComponent } from './sistema-pages/sistema-modal';
 import { SistemaButtonsComponent } from './sistema-pages/sistema-buttons/sistema-buttons.component';
 import { SistemaToastComponent } from './sistema-pages/sistema-toasts/sistema-toast.component';
+import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -113,6 +114,7 @@ export const menu: IDemoMenuSection[] = [
     title: 'Form elements',
     pages: [
       { view: 'checkbox', title: 'Checkbox', type: CheckboxPageComponent },
+      { view: 'radio', title: 'Radio', type: RadioPageComponent },
       { view: 'input', title: 'Input', type: InputPageComponent },
       { view: 'select', title: 'Select', type: SelectPageComponent },
       { view: 'textarea', title: 'Textarea', type: TextareaPageComponent },
