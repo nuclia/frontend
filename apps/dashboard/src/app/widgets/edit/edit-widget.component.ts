@@ -6,8 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, PostHogService, STFTrackingService } from '@flaps/core';
 import { Widget } from '@nuclia/core';
 import { filter, map, skip, Subject, switchMap, takeUntil } from 'rxjs';
-import { AddWidgetDialogComponent } from './add/add-widget.component';
-import { WidgetService } from './widget.service';
+import { AddWidgetDialogComponent } from '../add/add-widget.component';
+import { WidgetService } from '../widget.service';
+import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-edit-widget',
@@ -146,7 +147,7 @@ ${styles.join('\n')}
       state="${this.kbState}" zone=`,
       ) + styleStr,
     );
-    this.cdr?.markForCheck();
+    markForCheck(this.cdr);
   }
 
   deleteWidget() {
@@ -166,13 +167,15 @@ ${styles.join('\n')}
   rename() {
     const widget = this.widget;
     if (widget) {
+      const oldId = widget.id;
       this.dialog
         .open(AddWidgetDialogComponent, { width: '530px', data: { rename: true } })
         .afterClosed()
         .pipe(
           filter((result) => !!result && !!result.id),
+          switchMap((result) => this.widgetService.deleteWidget(oldId).pipe(map(() => result))),
           switchMap((result) =>
-            this.widgetService.saveWidget(widget.id, { id: result.id as string }).pipe(map(() => result.id)),
+            this.widgetService.saveWidget(result.id, { ...widget, id: result.id as string }).pipe(map(() => result.id)),
           ),
         )
         .subscribe((id) => {
@@ -185,10 +188,10 @@ ${styles.join('\n')}
   copy() {
     navigator.clipboard.writeText(this.snippet);
     this.copyIcon = 'assets/icons/check.svg';
-    this.cdr?.markForCheck();
+    markForCheck(this.cdr);
     setTimeout(() => {
       this.copyIcon = 'assets/icons/copy.svg';
-      this.cdr?.markForCheck();
+      markForCheck(this.cdr);
     }, 1000);
   }
 
