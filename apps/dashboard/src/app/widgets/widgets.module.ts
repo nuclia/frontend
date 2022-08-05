@@ -7,7 +7,7 @@ import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } 
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AddWidgetDialogModule } from './add/add-widget.module';
-import { EditWidgetComponent } from './edit-widget.component';
+import { EditWidgetComponent } from './edit/edit-widget.component';
 
 import { WidgetsComponent } from './widgets.component';
 

@@ -56,16 +56,22 @@
         </div>
       </div>
       <div class="buttons">
-        <pa-button kind="primary" [disabled]="!mainForm.valid || mainForm.pristine" (click)="save()">
+        <pa-button kind="primary"
+                   [disabled]="!mainForm.valid || mainForm.pristine"
+                   (click)="save()">
           {{ 'generic.save' | translate }}
         </pa-button>
-        <pa-button minWidth="110px" [disabled]="mainForm.pristine" (click)="cancel()">
+        <pa-button [disabled]="mainForm.pristine"
+                   (click)="cancel()">
           {{ 'generic.cancel' | translate }}
         </pa-button>
-        <pa-button minWidth="110px" [disabled]="isDefaultWidget" (click)="rename()">
+        <pa-button [disabled]="isDefaultWidget"
+                   (click)="rename()">
           {{ 'stash.widgets.rename' | translate }}
         </pa-button>
-        <pa-button kind="destructive" minWidth="110px" [disabled]="isDefaultWidget" (click)="deleteWidget()">
+        <pa-button kind="destructive"
+                   [disabled]="isDefaultWidget"
+                   (click)="deleteWidget()">
           {{ 'generic.delete' | translate }}
         </pa-button>
       </div>
