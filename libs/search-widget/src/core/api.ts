@@ -1,5 +1,5 @@
 import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/src';
-import type { NucliaOptions, KBStates, SearchOptions, Labels } from '@nuclia/core';
+import type { NucliaOptions, KBStates, SearchOptions, Labels, Classification } from '@nuclia/core';
 import { Observable, map, merge, of, filter } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
@@ -78,6 +78,34 @@ export const getLabels = (): Observable<Labels> => {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox.getLabels();
+};
+
+export const setLabels = (
+  resource: Resource,
+  fieldType: string,
+  fieldId: string,
+  paragraphId: string,
+  labels: Classification[],
+): Observable<void> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return resource.modify({
+    fieldmetadata: [
+      {
+        field: {
+          field: fieldId,
+          field_type: fieldType,
+        },
+        paragraphs: [
+          {
+            key: paragraphId,
+            classifications: labels,
+          },
+        ],
+      },
+    ],
+  });
 };
 
 export const getFile = (path: string): Observable<string> => {

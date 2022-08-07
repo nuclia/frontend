@@ -16,6 +16,7 @@ import type {
   LinkField,
   FileField,
   KeywordSetField,
+  ICreateResource,
 } from './resource.models';
 import type { Search } from './search.models';
 import { catchError, forkJoin, map, of } from 'rxjs';
@@ -39,7 +40,7 @@ export class Resource implements IResource {
     Object.assign(this, { ...data, title: data.title ? decodeURIComponent(data.title) : '–' });
   }
 
-  modify(data: Partial<IResource>): Observable<void> {
+  modify(data: Partial<ICreateResource>): Observable<void> {
     return this.nuclia.rest.patch<void>(this.path, data);
   }
 
