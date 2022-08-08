@@ -1,9 +1,9 @@
-import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { takeUntil, switchMap, tap, filter } from 'rxjs/operators';
+import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material/dialog';
 import { LabelsService } from '../../services/labels.service';
@@ -11,7 +11,7 @@ import { Sluggable } from '@flaps/common';
 import { STFConfirmComponent } from '@flaps/components';
 import { STFUtils } from '@flaps/core';
 import { Label, Labels, LabelSetKind } from '@nuclia/core';
-import { MutableLabelSet, EMTPY_LABEL_SET } from '../model';
+import { EMTPY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 
 @Component({
@@ -158,7 +158,10 @@ export class OntologyComponent implements OnDestroy {
     }
     this.labelsService
       .saveLabelSet(slug, this.ontology!.getCopy())
-      .pipe(switchMap(() => this.labelsService.refreshLabelsSets()))
+      .pipe(
+        switchMap(() => this.labelsService.refreshLabelsSets()),
+        takeUntil(this.unsubscribeAll),
+      )
       .subscribe(() => {
         this.goToOntologyList();
       });
@@ -177,9 +180,9 @@ export class OntologyComponent implements OnDestroy {
       .afterClosed()
       .pipe(
         filter((result) => !!result),
-        takeUntil(this.unsubscribeAll),
         switchMap(() => this.labelsService.deleteLabelSet(this.ontologySlug!)),
         switchMap(() => this.labelsService.refreshLabelsSets()),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => {
         this.goToOntologyList();
