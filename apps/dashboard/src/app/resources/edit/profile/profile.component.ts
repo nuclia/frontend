@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { LabelValue, Resource } from '@nuclia/core';
-import { forkJoin, map, switchMap } from 'rxjs';
+import { forkJoin, map, Observable, switchMap } from 'rxjs';
 import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -18,15 +18,16 @@ export class ResourceProfileComponent extends BaseEditComponent {
     title: ['', [Validators.required]],
     authors: [''],
     summary: [''],
+    thumbnail: [''],
   });
-  thumbnails = this.resource.pipe(
+  thumbnails: Observable<{ uri: string; blob: SafeUrl }[]> = this.resource.pipe(
     map((res) => res.getThumbnails()),
     switchMap((thumbnails) =>
       forkJoin(
         thumbnails.map((thumbnail) =>
           this.sdk.nuclia.rest
             .getObjectURL(thumbnail.uri!)
-            .pipe(map((url) => this.sanitizer.bypassSecurityTrustUrl(url))),
+            .pipe(map((url) => ({ uri: thumbnail.uri as string, blob: this.sanitizer.bypassSecurityTrustUrl(url) }))),
         ),
       ),
     ),
@@ -55,6 +56,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
       title: data.title,
       summary: data.summary,
       authors: (data.origin?.colaborators || []).join(', '),
+      thumbnail: data.thumbnail,
     });
     this.currentLabels = this.currentValue?.usermetadata?.classifications || [];
     this.cdr?.markForCheck();
@@ -71,6 +73,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
       ? {
           title: this.form.value.title,
           summary: this.form.value.summary,
+          thumbnail: this.form.value.thumbnail,
           usermetadata: { ...this.currentValue.usermetadata, classifications: this.currentLabels },
           origin: {
             ...this.currentValue.origin,

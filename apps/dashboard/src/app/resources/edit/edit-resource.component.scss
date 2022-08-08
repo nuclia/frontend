@@ -3,6 +3,7 @@
 stf-section-navbar-body {
   margin-top: 70px;
   display: block;
+
   ::ng-deep {
     form > div {
       align-items: center;
@@ -12,9 +13,11 @@ stf-section-navbar-body {
       & > :first-child {
         width: 160px;
       }
+
       & > :last-child {
         width: 100%;
       }
+
       .pa-field {
         margin-bottom: 0;
       }
@@ -24,13 +27,29 @@ stf-section-navbar-body {
       }
 
       &.classification-container {
-        margin-top: rhythm(4);
+        margin-top: rhythm(5);
       }
+
       &.form-buttons {
         margin-top: rhythm(20);
 
         pa-button {
           margin-right: rhythm(2);
+        }
+      }
+
+      .thumbnails-container {
+        display: flex;
+
+        .radio-thumbnail-container {
+          align-items: center;
+          display: flex;
+          flex-direction: column;
+          margin-right: rhythm(6);
+
+          img {
+            margin-bottom: rhythm(2);
+          }
         }
       }
 
@@ -52,6 +71,7 @@ stf-section-navbar-header {
   h1 {
     margin-bottom: rythm(1);
   }
+
   .body-s {
     margin-bottom: rythm(2);
   }

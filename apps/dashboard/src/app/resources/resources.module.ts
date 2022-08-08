@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
 import { CdkTableModule } from '@angular/cdk/table';
@@ -13,14 +13,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import {
   STFButtonsModule,
-  STFInputModule,
   STFExpanderModule,
-  STFTooltipModule,
-  STFIconsModule,
   STFFormDirectivesModule,
+  STFIconsModule,
+  STFInputModule,
   STFTextFieldModule,
+  STFTooltipModule,
 } from '@flaps/pastanaga';
-import { STFCheckboxModule, FiltersBarModule, PaginationModule, STFSectionNavbarModule } from '@flaps/common';
+import { FiltersBarModule, PaginationModule, STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
 import { STFSimpleSelectModule } from '@flaps/components';
 import { ButtonActionModule } from '../components/button-action/button-action.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
@@ -35,7 +35,7 @@ import { ResourceLinkComponent } from './edit/link/link.component';
 import { ResourceFileComponent } from './edit/file/file.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
-import {PaButtonModule, PaTextFieldModule} from "@guillotinaweb/pastanaga-angular";
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   ResourceListComponent,
@@ -120,6 +120,8 @@ const ROUTES: Routes = [
     HintModule,
     PaTextFieldModule,
     PaButtonModule,
+    PaTogglesModule,
+    FormsModule,
   ],
   declarations: [...Components],
   exports: [],
