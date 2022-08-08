@@ -8,6 +8,9 @@
   import Spinner from '../../components/spinner/Spinner.svelte';
   export let inputWidget = false;
   export let formWidget = false;
+  export let placeholder = '';
+
+  const defaultPlaceholder = 'input.placeholder'
 
   let value = '';
   let previous = '';
@@ -61,7 +64,7 @@
     class:input-widget={inputWidget}
     class:form-widget={formWidget}
     name="nuclia-search-field"
-    placeholder={$_('input.placeholder')}
+    placeholder={$_(placeholder || defaultPlaceholder)}
     tabindex="0"
     autocomplete="off"
     autocorrect="off"

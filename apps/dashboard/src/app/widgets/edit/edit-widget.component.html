@@ -35,6 +35,9 @@
                 }}</pa-toggle>
                 <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
               </div>
+              <div *ngIf="mainForm.controls.mode.value === 'form'">
+                <pa-input [(value)]="placeholder" (valueChange)="onPlaceholderChange($event)">{{'stash.widgets.placeholder' | translate}}</pa-input>
+              </div>
             </div>
             <div *ngIf="currentTab === 'style'" class="tab-content" formGroupName="style">
               <div *ngFor="let field of styleFormFields">
@@ -57,7 +60,7 @@
       </div>
       <div class="buttons">
         <pa-button kind="primary"
-                   [disabled]="!mainForm.valid || mainForm.pristine"
+                   [disabled]="(!mainForm.valid || mainForm.pristine) && (placeholder === widget?.placeholder)"
                    (click)="save()">
           {{ 'generic.save' | translate }}
         </pa-button>

@@ -6,6 +6,8 @@
   import SearchInput from './search-input/SearchInput.svelte';
   import { _ } from '../core/i18n';
 
+  export let placeholder = '';
+
   const results = nucliaState().results;
   const showResults = merge(
     nucliaStore().triggerSearch.pipe(mapTo(true)),
@@ -20,7 +22,7 @@
 
 <div>
   <div class="search-input-container">
-    <SearchInput formWidget={true} />
+    <SearchInput formWidget={true} placeholder="{placeholder}" />
   </div>
   <div class="options">
     <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)} />

@@ -146,6 +146,7 @@ export interface Widgets {
 export interface Widget {
   id: string;
   mode: 'button' | 'input' | 'form';
+  placeholder?: string;
   description?: string;
   features: {
     useFilters: boolean;

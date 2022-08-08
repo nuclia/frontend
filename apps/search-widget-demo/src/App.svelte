@@ -41,6 +41,7 @@
       widgetid="test1"
       type="input"
       permalink
+      placeholder="Test"
     />
   </nav>
 {/if}
