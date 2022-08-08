@@ -5,13 +5,29 @@
   max-width: 770px;
 
   h2 {
-    margin: 0 0 24px 0;
-    font-size: var(--stf-font-size-xxlarge);
-    font-weight: var(--stf-font-weight-bold);
+    margin-bottom: rhythm(3);
   }
 
-  .field-label {
-    font-weight: var(--stf-font-weight-semibold);
+  .form-section-container {
+    align-items: center;
+    display: flex;
+    margin-bottom: rhythm(4);
+
+    & > :first-child {
+      flex: 1 0 auto;
+      width: rhythm(24);
+    }
+    & > :last-child {
+      width: 100%;
+    }
+
+    ::ng-deep .pa-field {
+      margin-bottom: 0;
+    }
+
+    &.classification-label {
+      align-items: flex-start;
+    }
   }
 
   .important {
@@ -33,15 +49,17 @@
     color: var(--stf-gray-lighter-3);
   }
 
-  stf-checkbox {
+  pa-checkbox {
     display: inline-block;
     margin: rythm(1) rythm(3) 0 0;
   }
 
   .label-list {
+    margin-top: rhythm(4);
+
     app-label {
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: rhythm(1);
     }
 
     .cdk-drag-placeholder {
@@ -54,19 +72,31 @@
     }
   }
 
+  .button-container {
+    margin-bottom: rhythm(8);
+
+    pa-button {
+      margin-right: rhythm(2);
+    }
+  }
+
   .danger-zone {
+    background: $color-secondary-regular;
+    padding: rhythm(3) rhythm(1);
     width: 100%;
-    padding: 26px 0;
-    border-top: 1px dashed #f91919;
-    border-bottom: 1px dashed #f91919;
-    &-title {
-      font-weight: var(--stf-font-weight-semibold);
-      svg {
-        display: block;
+
+    .danger-zone-title {
+      font-weight: $font-weight-semi-bold;
+      pa-icon {
+        margin-right: rhythm(1.5);
       }
     }
-    &-warning {
-      padding-right: 20px;
+    .danger-zone-action-container {
+      display: flex;
+    }
+    .danger-zone-warning {
+      flex: 1 1 auto;
+      padding-right: rhythm(3);
     }
   }
 }

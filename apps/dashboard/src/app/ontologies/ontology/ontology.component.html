@@ -2,131 +2,126 @@
   <h2>{{ addNew ? ('ontology.add_ontology' | translate) : ontology.title }}</h2>
 
   <form [formGroup]="ontologyForm">
-    <div class="mb-32" fxLayout="row">
-      <label class="field-label mt-12" fxFlex="200px">
+    <div class="form-section-container">
+      <label class="title-xxs" for="title">
         {{ 'ontology.ontology_name' | translate }}
       </label>
-      <div fxFlex="1 1 0">
-        <stf-input
-          formControlName="title"
-          [validator]="ontologyForm.controls['title']"
-          [validation_messages]="validationMessages.title"
-          theme="white"
-          [isLessen]="true"
-        >
-        </stf-input>
+      <div>
+        <pa-input id="title"
+                  formControlName="title"
+                  [errorMessages]="validationMessages.title"
+        ></pa-input>
+        <!--        <stf-input-->
+        <!--          formControlName="title"-->
+        <!--          [validator]="ontologyForm.controls['title']"-->
+        <!--          [validation_messages]="validationMessages.title"-->
+        <!--          theme="white"-->
+        <!--          [isLessen]="true"-->
+        <!--        >-->
+        <!--        </stf-input>-->
       </div>
     </div>
-
-    <!--
-    <div class="mb-44" fxLayout="row">
-      <label class="field-label mt-12" fxFlex="200px">
-        {{ 'generic.description' | translate }}
-      </label>
-      <div fxFlex="1 1 0">
-        <stf-textarea
-          formControlName="description"
-          color="white"
-          initialHeight="130px">
-        </stf-textarea>
-      </div>
-    </div>
-    -->
   </form>
 
-  <div class="mb-52" fxLayout="row">
-    <label class="field-label" fxFlex="200px">
+  <div class="form-section-container">
+    <label class="title-xxs">
       {{ 'generic.color' | translate }}
     </label>
-    <div fxFlex="1 1 0">
+    <div>
       <app-color-picker [hexColors]="colors" [value]="ontology.color" (valueChange)="setColor($event)">
       </app-color-picker>
     </div>
   </div>
 
-  <div class="mb-52" fxLayout="row">
-    <label class="field-label" fxFlex="200px">
-      {{ 'ontology.type_classification' | translate }}
-    </label>
-    <div fxFlex="1 1 0">
-      <div [class.disabled-color]="!addNew">{{ 'ontology.type_classification_subtitle' | translate }}</div>
+  <div class="form-section-container">
+    <div>
+      <label class="title-xxs">
+        {{ 'ontology.type_classification' | translate }}
+      </label>
+      <div class="body-xs">{{ 'ontology.type_classification_subtitle' | translate }}</div>
+    </div>
+
+    <div>
       <div class="important" [class.disabled-color]="!addNew">
         <svg-icon src="assets/icons/caution.svg"></svg-icon>
         {{ 'ontology.type_classification_important' | translate }}
       </div>
       <div>
-        <stf-checkbox
-          *ngFor="let kind of kinds"
-          [selected]="isSelectedKind(kind.id)"
-          (selectedChange)="setKind(kind.id, $event)"
-          [disabled]="!addNew"
-          color="dark"
-        >
+        <pa-checkbox *ngFor="let kind of kinds"
+                     [value]="isSelectedKind(kind.id)"
+                     (valueChange)="setKind(kind.id, $event)"
+                     [disabled]="!addNew">
           {{ kind.name | translate }}
-        </stf-checkbox>
+        </pa-checkbox>
       </div>
     </div>
   </div>
 
-  <div *ngIf="showMultiple" class="mb-52" fxLayout="row">
-    <label class="field-label" fxFlex="200px">
+  <div *ngIf="showMultiple" class="form-section-container">
+    <label class="title-xxs">
       {{ 'ontology.type_labels' | translate }}
     </label>
-    <div fxFlex="1 1 0">
+    <div>
       <div>{{ 'ontology.type_labels_subtitle' | translate }}</div>
       <div>
-        <stf-checkbox [selected]="!ontology.multiple" (selectedChange)="setMultiple(!$event)" color="dark">
+        <pa-checkbox [value]="!ontology.multiple"
+                     (valueChange)="setMultiple(!$event)">
           {{ 'ontology.excluding_labels' | translate }}
-        </stf-checkbox>
+        </pa-checkbox>
       </div>
     </div>
   </div>
 
-  <div class="mb-80" fxLayout="row">
-    <label class="field-label" fxFlex="200px">
+  <div class="form-section-container classification-label">
+    <label class="title-xxs">
       {{ 'ontology.label_classification' | translate }}
     </label>
-    <div fxFlex="1 1 0">
+    <div>
       <div>{{ 'ontology.customize_classification' | translate }}</div>
-      <div class="mb-36">{{ 'ontology.manage_labels' | translate }}</div>
+      <div>{{ 'ontology.manage_labels' | translate }}</div>
       <div cdkDropList class="label-list" (cdkDropListDropped)="drop($event)">
-        <app-label
-          *ngFor="let title of labelOrder; let i = index"
-          (labelDelete)="deleteLabel(title)"
-          (labelChange)="modifyLabel(title, $event)"
-          [label]="ontology.getLabel(title)"
-          cdkDrag
+        <app-label *ngFor="let title of labelOrder; let i = index"
+                   (labelDelete)="deleteLabel(title)"
+                   (labelChange)="modifyLabel(title, $event)"
+                   [label]="ontology.getLabel(title)"
+                   cdkDrag
         >
         </app-label>
       </div>
-      <app-label [addNew]="true" (labelAdd)="addLabel($event)"> </app-label>
+      <app-label [addNew]="true" (labelAdd)="addLabel($event)"></app-label>
     </div>
   </div>
 
-  <div fxLayout="row" class="mb-68">
-    <div fxFlex="200px"></div>
-    <div fxFlex="1 1 0" fxLayout="row" fxLayoutGap="12px">
-      <stf-button (click)="saveOntology()" minWidth="110px" [disabled]="ontologyForm.invalid || !hasChanges">
+  <div class="form-section-container">
+    <div></div>
+    <div class="button-container">
+      <pa-button kind="primary"
+                 (click)="saveOntology()"
+                 [disabled]="ontologyForm.invalid || !hasChanges">
         {{ 'generic.save' | translate }}
-      </stf-button>
-      <stf-button *ngIf="!addNew && hasChanges" (click)="cancelChanges()" minWidth="110px" color="white">
+      </pa-button>
+      <pa-button *ngIf="!addNew && hasChanges"
+                 aspect="basic"
+                 (click)="cancelChanges()">
         {{ 'generic.reset' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </div>
 
-  <div *ngIf="!addNew" class="danger-zone" fxLayout="row" fxLayoutAlign="start center">
-    <div class="danger-zone-title" fxFlex="200px" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="12px">
-      <svg-icon src="assets/icons/danger.svg"></svg-icon>
+  <div *ngIf="!addNew"
+       class="form-section-container danger-zone">
+    <div class="danger-zone-title">
+      <pa-icon name="warning"></pa-icon>
       <span>{{ 'generic.dangerous' | translate }}</span>
     </div>
-    <div class="danger-zone-warning" fxFlex="1 1 0">
-      {{ 'ontology.delete_warning' | translate }}
-    </div>
-    <div fxFlex="0 0 auto">
-      <stf-button (click)="deleteOntology()" minWidth="110px" color="destructive">
+    <div class="danger-zone-action-container">
+      <div class="danger-zone-warning">
+        {{ 'ontology.delete_warning' | translate }}
+      </div>
+      <pa-button kind="secondary"
+                 (click)="deleteOntology()">
         {{ 'generic.delete' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </div>
 </div>

@@ -4,8 +4,8 @@
   </stf-section-navbar-body>
 
   <stf-section-navbar-footer>
-    <stf-button (click)="addOntology()" minWidth="150px" color="secondary" [disabled]="!(isAdminOrContrib | async)">
+    <pa-button (click)="addOntology()" [disabled]="!(isAdminOrContrib | async)">
       {{ 'ontology.add_ontology' | translate }}
-    </stf-button>
+    </pa-button>
   </stf-section-navbar-footer>
 </stf-section-navbar>
