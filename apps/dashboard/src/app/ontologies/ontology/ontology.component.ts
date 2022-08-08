@@ -13,6 +13,12 @@ import { STFUtils } from '@flaps/core';
 import { Label, Labels, LabelSetKind } from '@nuclia/core';
 import { EMTPY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+
+interface OntologyTitleError extends IErrorMessages {
+  required: string;
+  sluggable: string;
+}
 
 @Component({
   selector: 'app-ontology',
@@ -33,7 +39,7 @@ export class OntologyComponent implements OnDestroy {
     { id: LabelSetKind.SENTENCES, name: 'ontology.sentences' },
   ];
 
-  validationMessages = {
+  validationMessages: { [key: string]: OntologyTitleError } = {
     title: {
       required: 'validation.title_required',
       sluggable: 'ontology.invalid_name',
