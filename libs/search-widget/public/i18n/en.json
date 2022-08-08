@@ -24,6 +24,7 @@
 	"form.title-only": "Search in title only",
 	"input.placeholder": "Type your question here",
 	"modal.back": "Back",
+	"resource.classification": "Classification",
 	"resource.creation": "Date of creation",
 	"resource.language": "Language",
 	"resource.other": "Other resource data",
