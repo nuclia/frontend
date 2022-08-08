@@ -25,7 +25,7 @@
   };
 </script>
 
-<ParagraphWithMenu labels={labels}>
+<ParagraphWithMenu labels={labels} on:labelsChange>
   <div slot="icon" class="icon" class:active={active || hover} on:mouseenter={enter} on:mouseleave={leave} on:click>
     {#if active || hover}
       <img src={`${getCDN()}icons/${icon}.svg`} alt="Expand" />

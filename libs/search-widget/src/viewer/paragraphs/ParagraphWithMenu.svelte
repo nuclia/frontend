@@ -36,7 +36,7 @@
     <slot name="content" slot="content" />
   </Paragraph>
   {#if isOpenMenu}
-    <LabelMenu labels={labels} position={position} on:close={() => { isOpenMenu = false }}></LabelMenu>
+    <LabelMenu labels={labels} position={position} on:close={() => { isOpenMenu = false }} on:labelsChange></LabelMenu>
   {/if}
 </div>
 

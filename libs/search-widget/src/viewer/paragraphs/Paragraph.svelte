@@ -12,7 +12,7 @@
     <slot name="content" />
     {#if labels.length > 0}
       <div class="labels">
-        {#each labels as label}
+        {#each labels as label (label.labelset + label.label)}
           <div class="label">
             <Label {label}></Label>
           </div>

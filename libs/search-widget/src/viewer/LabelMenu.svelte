@@ -4,6 +4,7 @@
   import { map } from 'rxjs';
   import { getCDN } from '../core/utils';
   import { nucliaState } from '../core/store';
+  import { viewerStore } from './store';
   import { clickOutside } from '../components/actions/actions';
   import Label from '../components/label/Label.svelte';
   import type { Classification }  from '@nuclia/core';
@@ -12,17 +13,20 @@
   export let position: { top: number, left: number } | undefined = undefined;
   export let labels: Classification[] = [];
 
+  const savingLabels = viewerStore.savingLabels;
   let selected: { [key: string]: boolean } = {};
   $: selected = labels.reduce((acc, current) => {
         acc[`${current.labelset}-${current.label}`] = true;
         return acc;
       }, {} as { [key: string]: boolean });
 
-  const labelsSets = nucliaState().labels.pipe(map((labels) =>  
-    Object.entries(labels)
-      .filter((labelSet) => labelSet[1].kind.length === 0 || labelSet[1].kind.includes(LabelSetKind.PARAGRAPHS))
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-  ));
+  const labelsSets = nucliaState().labels.pipe(
+    map((labels) =>
+      Object.entries(labels)
+        .filter((labelSet) => labelSet[1].kind.length === 0 || labelSet[1].kind.includes(LabelSetKind.PARAGRAPHS))
+        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)),
+    ),
+  );
 
   let openLabelset: string | null = null;
   const enter = (labelSet: string) => {
@@ -30,7 +34,10 @@
   }
 
   const toggleLabel = (labelset: string, label: string) => {
-    // TODO: API call
+    const newLabels = !!selected[`${labelset}-${label}`]
+      ? labels.filter((item) => !(item.labelset === labelset && item.label === label))
+      : [...labels, { labelset, label }];
+    dispatch('labelsChange', newLabels);
   }
   const leave = () => {
     openLabelset = null;
@@ -47,13 +54,16 @@
   on:outclick={close}
 >
   <div class="current-labels">
-    {#each labels as label}
+    {#each labels as label (label.labelset + label.label)}
       <span class="current-label">
-        <Label {label} removable></Label>
+        <Label
+          {label}
+          removable
+          on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)}>
+        </Label>
       </span>
     {/each}
   </div>
-  <div class="last-used"></div>
   <div class="labelsets">
     {#each ($labelsSets || []) as labelset}
       <div class="labelset" on:mouseenter={() => enter(labelset[0])} on:mouseleave={leave}>
@@ -70,6 +80,7 @@
                 type="checkbox"
                 bind:checked={selected[`${labelset[0]}-${label.title}`]}
                 on:change={() => {toggleLabel(labelset[0], label.title)}}
+                disabled={$savingLabels}
               >
               <label for={`${labelset[0]}-${i}`}>{ label.title }</label>
             </div>
