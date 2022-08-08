@@ -5,7 +5,7 @@
   <section *ngFor="let type of [trainingTypes.classifier, trainingTypes.labeller]">
     <h2>{{ 'stash.settings.processes.' + type | translate }}</h2>
     <p class="last-run">
-      <small>{{ 'stash.settings.processes.training.last_run' | translate: { runDate: lastRun } }}</small>
+      <small>{{ 'stash.settings.processes.training.last_run' | translate: { runDate: lastRun[type] ? (lastRun[type] | date:'YYYY-MM-dd HH:mm') : '–' } }}</small>
     </p>
 
     <div [class.running]="running[type]">
