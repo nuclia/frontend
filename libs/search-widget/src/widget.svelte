@@ -22,6 +22,7 @@
   export let zone = '';
   export let knowledgebox = '';
   export let type = 'button'; // button, input, form
+  export let placeholder = '';
   export let lang = '';
   export let cdn;
   export let apikey;
@@ -153,9 +154,9 @@
     {#if type === 'button'}
       <ButtonWidget />
     {:else if type === 'input'}
-      <InputWidget />
+      <InputWidget placeholder="{placeholder}" />
     {:else if type === 'form'}
-      <FormWidget />
+      <FormWidget placeholder="{placeholder}" />
     {:else}
       {type} widget is not implemented yet
     {/if}

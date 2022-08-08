@@ -9,6 +9,7 @@ import { filter, map, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddWidgetDialogComponent } from '../add/add-widget.component';
 import { WidgetService } from '../widget.service';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-widget',
@@ -44,6 +45,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
       sluggable: 'stash.widgets.invalid-id',
     },
   };
+  placeholder?: string;
   snippet = '';
   snippetPreview: SafeHtml = '';
   currentTab = 'pref';
@@ -56,6 +58,8 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'assets/icons/copy.svg';
   isTrainingEnabled = this.posthog.isFeatureEnabled('training');
+
+  debouncePlaceholder = new Subject<string>();
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -92,6 +96,11 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
         this.mainForm.patchValue(widget);
         this.generateSnippet();
       });
+
+    this.debouncePlaceholder.pipe(debounceTime(500)).subscribe((placeholder) => {
+      this.placeholder = placeholder || undefined;
+      this.generateSnippet();
+    });
   }
 
   ngOnDestroy(): void {
@@ -107,12 +116,14 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   save() {
     if (this.widget) {
       this.trackChanges();
-      this.widgetService
-        .saveWidget(this.widget.id, {
-          ...this.widget,
-          ...this.mainForm.value,
-        })
-        .subscribe();
+      const widget = {
+        ...this.widget,
+        ...this.mainForm.value,
+      };
+      if (this.hasPlaceholder(widget.mode)) {
+        widget.placeholder = this.placeholder;
+      }
+      this.widgetService.saveWidget(this.widget.id, widget).subscribe();
     }
   }
 
@@ -122,12 +133,17 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     }
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
+    const mode = this.mainForm.get('mode')?.value || '';
+    const placeholder = this.hasPlaceholder(mode)
+      ? `
+  placeholder="${this.placeholder}"`
+      : '';
     this.snippet = `<script src="${cdn}/nuclia-widget.umd.js"></script>
 <nuclia-search
   knowledgebox="${this.kbId}"
   zone="${this.zone}"
   widgetid="${this.widget.id}"
-  type="${this.mainForm.get('mode')?.value || ''}"
+  type="${mode}" ${placeholder}
 ></nuclia-search>`;
     const styles = Object.entries(this.styleForm.value)
       .filter(([key, value]) => !!value)
@@ -148,6 +164,10 @@ ${styles.join('\n')}
       ) + styleStr,
     );
     markForCheck(this.cdr);
+  }
+
+  private hasPlaceholder(mode: any) {
+    return mode !== 'button' && !!this.placeholder;
   }
 
   deleteWidget() {
@@ -202,5 +222,9 @@ ${styles.join('\n')}
     if (Object.entries(this.mainForm.value.style).some(([key, value]) => value !== this.widget?.style?.[key])) {
       this.tracking.logEvent('mode_widget_style');
     }
+  }
+
+  onPlaceholderChange(value: string) {
+    this.debouncePlaceholder.next(value);
   }
 }

@@ -583,6 +583,7 @@
 	"stash.widgets.mode.button": "Button",
 	"stash.widgets.mode.form": "Form",
 	"stash.widgets.mode.input": "Input",
+	"stash.widgets.placeholder": "Placeholder",
 	"stash.widgets.preferences": "Preferences",
 	"stash.widgets.preview": "Preview",
 	"stash.widgets.publish_kb": "You can publish it from the",

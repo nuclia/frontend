@@ -4,8 +4,8 @@
   import Results from './results/Results.svelte';
   import SearchInput from './search-input/SearchInput.svelte';
   import Suggestions from './suggestions/Suggestions.svelte';
-  import { _ } from '../core/i18n';
-  import { map } from 'rxjs';
+
+  export let placeholder = '';
 
   let showModal = false;
   let showSuggestions = false;
@@ -28,7 +28,7 @@
 </script>
 
 <div bind:this={inputElement}>
-  <SearchInput on:typeahead={openSuggestions} on:search={openResults} inputWidget={true} />
+  <SearchInput on:typeahead={openSuggestions} on:search={openResults} inputWidget={true} placeholder="{placeholder}" />
 </div>
 <Modal
   show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
