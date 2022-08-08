@@ -11,7 +11,14 @@ export enum TrainingStatus {
   stopped = 'stopped',
 }
 
+export interface TrainingExecution {
+  start: string;
+  end: string;
+  result: string;
+}
+
 export interface TrainingTask {
-  id: string;
+  task: string;
   status: TrainingStatus;
+  last_execution?: TrainingExecution;
 }

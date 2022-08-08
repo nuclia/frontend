@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import {PostHogService, SDKService, StateService} from '@flaps/core';
+import { PostHogService, SDKService, StateService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { TrainingStatus, TrainingType } from '@nuclia/core';
-import { forkJoin, shareReplay, Subject, take } from 'rxjs';
+import { TrainingStatus, TrainingTask, TrainingType } from '@nuclia/core';
+import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
 
 @Component({
   selector: 'app-knowledge-box-processes',
@@ -18,7 +18,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   running = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
   selectedLabelsets = { [TrainingType.classifier]: [] as string[], [TrainingType.labeller]: [] as string[] };
   open = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
-  lastRun = '20-04-21';
+  lastRun = { [TrainingType.classifier]: '', [TrainingType.labeller]: '' };
   hoursRequired = 10;
   cannotTrain = this.stateService.account.pipe(map((account) => account && account.type === 'stash-basic'));
   trainingTypes = TrainingType;
@@ -29,7 +29,12 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   );
   isBillingEnabled = this.postHogService.isFeatureEnabled('billing').pipe(shareReplay(1));
 
-  constructor(private sdk: SDKService, private stateService: StateService, private cdr: ChangeDetectorRef, private postHogService: PostHogService) {}
+  constructor(
+    private sdk: SDKService,
+    private stateService: StateService,
+    private cdr: ChangeDetectorRef,
+    private postHogService: PostHogService,
+  ) {}
 
   ngOnInit() {
     this.sdk.currentKb
@@ -37,13 +42,17 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
         switchMap((kb) =>
           forkJoin([kb.training.getStatus(TrainingType.classifier), kb.training.getStatus(TrainingType.labeller)]),
         ),
+        tap(([classifierStatus, labellerStatus]: TrainingTask[]) => {
+          this.lastRun[TrainingType.classifier] = classifierStatus.last_execution?.end || '';
+          this.lastRun[TrainingType.labeller] = labellerStatus.last_execution?.end || '';
+        }),
         map((statuses) => statuses.map((status) => status.status === TrainingStatus.running)),
       )
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((statuses) => {
         this.running[TrainingType.classifier] = statuses[0];
         this.running[TrainingType.labeller] = statuses[1];
-        markForCheck(this.cdr)
+        markForCheck(this.cdr);
       });
   }
 
@@ -58,14 +67,14 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     } else {
       this.selectedLabelsets[type] = [...this.selectedLabelsets[type], labelset];
     }
-    markForCheck(this.cdr)
+    markForCheck(this.cdr);
   }
 
   toggleAll(type: TrainingType) {
     this.labelsets.pipe(take(1)).subscribe((labelsets) => {
       const selectAll = this.selectedLabelsets[type].length < labelsets.length;
       this.selectedLabelsets[type] = selectAll ? labelsets.map((item) => item.value) : [];
-      markForCheck(this.cdr)
+      markForCheck(this.cdr);
     });
   }
 
@@ -83,7 +92,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.running[type] = !this.running[type];
-        markForCheck(this.cdr)
+        markForCheck(this.cdr);
       });
   }
 }

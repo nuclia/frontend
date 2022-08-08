@@ -79,9 +79,9 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     });
     this.route.params
       .pipe(
-        takeUntil(this.unsubscribeAll),
         filter((params) => !!params.id),
         switchMap((params) => this.widgetService.getWidgetInfo(params.id)),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ widget, kbId, kbState, zone }) => {
         this.kbId = kbId;
