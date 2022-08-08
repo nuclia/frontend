@@ -68,6 +68,17 @@
   </div>
 {/if}
 
+{#if (resource.usermetadata?.classifications || []).length > 0}
+  <div class="metadata-value">
+    <h3>{$_('resource.classification')}</h3>
+    <div class="labels">
+      {#each (resource.usermetadata?.classifications || []) as label}
+        <div class="label">{label.label}</div>
+      {/each}
+    </div>
+  </div>
+{/if}
+
 {#if resource.metadata?.language}
   <div class="metadata-value">
     <h3>{$_('resource.language')}</h3>
@@ -130,5 +141,22 @@
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-semi-bold);
     font-style: italic;
+  }
+
+  .labels {
+    margin-top: 0.5em;
+  }
+  .label {
+    display: inline-block;
+    margin: 0 4px 4px 0;
+    padding: 0.25em 1em;
+    max-width: 100%;
+    font-size: 0.75em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #454ade;
+    background-color: #e6e6f9;
+    border-radius: 2px;
   }
 </style>

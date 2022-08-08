@@ -12,7 +12,7 @@
     getFile(result.thumbnail).subscribe((url) => (thumbnail = url));
   }
   let labels: string[];
-  $: labels = (result.user_metadata?.classifications || []).map((label) => label.label);
+  $: labels = (result.usermetadata?.classifications || []).map((label) => label.label);
 
   onDestroy(() => {
     if (thumbnail) URL.revokeObjectURL(thumbnail);
