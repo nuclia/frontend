@@ -10,26 +10,15 @@
                (click)="goSelect()">{{ account.title }}</pa-button>
   </div>
   <div class="separator"></div>
-  <div class="user"
-       (click)="menuOpen = true"
-       cdkOverlayOrigin
-       #trigger="cdkOverlayOrigin"
-       tabindex="0">{{ initials | async }}</div>
+
+  <pa-avatar [avatar]="avatar | async"
+             [paPopup]="userMenu"></pa-avatar>
 </div>
 
-<ng-template cdkConnectedOverlay
-             [cdkConnectedOverlayOrigin]="trigger"
-             [cdkConnectedOverlayOpen]="menuOpen"
-             [cdkConnectedOverlayHasBackdrop]="true"
-             [cdkConnectedOverlayOffsetY]="6"
-             (backdropClick)="menuOpen = false"
-             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
-  <div class="user-menu"
-       @dropdownTopRight>
-    <a class="user-menu-item"
-       (click)="logout()">
-      <svg-icon src="assets/icons/logout.svg"></svg-icon>
-      <span>{{'generic.logout' | translate}}</span>
-    </a>
-  </div>
-</ng-template>
+<pa-dropdown #userMenu>
+  <pa-option icon="reload" (selectOption)="goSelect()">{{ 'generic.switch_account' | translate }}</pa-option>
+  <pa-separator></pa-separator>
+  <pa-option icon="log-out" (selectOption)="logout()">{{ 'generic.logout' | translate }}</pa-option>
+</pa-dropdown>
+
+
