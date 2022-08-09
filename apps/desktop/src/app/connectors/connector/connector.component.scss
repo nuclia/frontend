@@ -1,23 +1,19 @@
 @import 'variables';
 
+pa-card {
+  margin-right: rhythm(4);
+}
+
 .connector {
-  cursor: pointer;
-  padding: rhythm(3);
-  width: rhythm(40);
+  align-items: center;
   display: flex;
-  &:hover {
-    background-color: var(--desktop-background);
-  }
-}
-.logo {
-  width: rhythm(4);
-  margin-right: rhythm(1.5);
-  flex: 0 0 auto;
+  flex-direction: column;
+  justify-content: space-between;
+  height: rhythm(12);
+  width: rhythm(12);
+
   img {
-    width: 100%;
-    height: auto;
+    margin-top: rhythm(1.5);
+    width: rhythm(6);
   }
-}
-.title-xs {
-  padding: rhythm(1) 0;
 }

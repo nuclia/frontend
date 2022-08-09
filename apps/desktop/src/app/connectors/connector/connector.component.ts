@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'nde-connector',
@@ -10,4 +10,6 @@ export class ConnectorComponent {
   @Input() title?: string;
   @Input() logo?: string;
   @Input() description?: string;
+
+  @Output() selectConnector: EventEmitter<MouseEvent | KeyboardEvent> = new EventEmitter<MouseEvent | KeyboardEvent>();
 }
