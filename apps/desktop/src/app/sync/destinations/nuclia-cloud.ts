@@ -1,12 +1,13 @@
 import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 import {
-  Field,
-  IDestinationConnector,
+  ConnectorParameters,
   ConnectorSettings,
   DestinationConnectorDefinition,
-  ConnectorParameters,
+  Field,
+  IDestinationConnector,
 } from '../models';
+
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 
 export const NucliaCloudKB: DestinationConnectorDefinition = {
@@ -38,7 +39,11 @@ class NucliaCloudKBImpl implements IDestinationConnector {
             .filter((kb) => !!kb.slug)
             .map((kb) => {
               const slug = kb.slug || '';
-              return { label: kb.title || slug, value: slug };
+              return {
+                label: kb.title || slug,
+                value: slug,
+                disabled: kb.role_on_kb === 'SMEMBER',
+              };
             }),
         },
       ]),
