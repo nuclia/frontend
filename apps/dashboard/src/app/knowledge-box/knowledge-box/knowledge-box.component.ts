@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, combineLatest, map, filter, takeUntil, tap, switchMap, of } from 'rxjs';
+import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { UploadService } from '../../upload/upload.service';
 import { AppService } from '../../services/app.service';
 import { STFConfirmComponent } from '@flaps/components';
@@ -26,8 +26,8 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   ) {
     this.activatedRoute.queryParams
       .pipe(
-        takeUntil(this.unsubscribeAll),
         filter((params) => !!params.firstUpload),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => {
         this.openUploadDialog();
@@ -38,8 +38,8 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
     this.appService
       .isKbStillEmptyAfterFirstDay()
       .pipe(
+        switchMap((result) => (result ? this.showKBEmptyAlert() : of(undefined))),
         takeUntil(this.unsubscribeAll),
-        switchMap((result) => (result ? this.showKBEmptyAlert() : of())),
       )
       .subscribe();
   }
@@ -57,11 +57,11 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
       })
       .afterClosed()
       .pipe(
-        takeUntil(this.unsubscribeAll),
         filter((result) => !!result),
         tap(() => {
           this.openUploadDialog();
         }),
+        takeUntil(this.unsubscribeAll),
       );
   }
 
