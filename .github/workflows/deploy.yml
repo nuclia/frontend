@@ -255,10 +255,9 @@ jobs:
       - name: Build desktop app
         run: |-
           npx nx build desktop --configuration production
-          sed -i.bak "s#__DROPBOX_KEY__#${{ secrets.DROPBOX_KEY }}#g" ./dist/apps/desktop/main.*.js
-          sed -i.bak "s#__GOOGLE_CLIENT_ID__#${{ secrets.GOOGLE_CLIENT_ID }}#g" ./dist/apps/desktop/main.*.js
-          sed -i.bak "s#__GOOGLE_API_KEY__#${{ secrets.GOOGLE_API_KEY }}#g" ./dist/apps/desktop/main.*.js
-          rm dist/apps/desktop/main.*.js.bak
+          npx replace-in-file __DROPBOX_KEY__ ${{ secrets.DROPBOX_KEY }} ./dist/apps/desktop/main.*.js
+          npx replace-in-file __GOOGLE_CLIENT_ID__ ${{ secrets.GOOGLE_CLIENT_ID }} ./dist/apps/desktop/main.*.js
+          npx replace-in-file __GOOGLE_API_KEY__ ${{ secrets.GOOGLE_API_KEY }} ./dist/apps/desktop/main.*.js
       - name: Build electron app
         run: |-
           npx nx build desktop-electron --configuration production
