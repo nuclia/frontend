@@ -20,6 +20,7 @@
 
 <style>
   svg {
+    display: block;
     cursor: pointer;
   }
 </style>

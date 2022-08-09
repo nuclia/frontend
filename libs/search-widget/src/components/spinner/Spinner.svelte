@@ -10,14 +10,9 @@
 
 <style>
   /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
-  .spinner:not(.small):not(.single) {
+  .spinner:not(.small) {
     margin: 100px auto 0;
-    width: 70px;
     text-align: center;
-  }
-
-  .spinner.small {
-    width: 32px;
   }
 
   .spinner > div {
