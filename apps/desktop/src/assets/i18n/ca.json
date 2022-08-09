@@ -15,6 +15,7 @@
 	"upload.files": "Fitxers a pujar",
 	"upload.folder.drop": "Arrossega una carpeta",
 	"upload.folder.selected": "La carpeta conté {{num}} arxius",
+	"upload.refresh": "Actualització {{field}}",
 	"upload.review": "Has seleccionat {{num}} fitxers. Revisa els fitxers seleccionats i comença el procés.",
 	"upload.select.all": "Seleccionar tot",
 	"upload.select.search": "Cerca",

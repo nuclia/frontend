@@ -2,6 +2,10 @@
 
 pa-card {
   margin-right: rhythm(4);
+
+  &.selected ::ng-deep .pa-card-wrapper {
+    border-color: $color-primary-regular;
+  }
 }
 
 .connector {

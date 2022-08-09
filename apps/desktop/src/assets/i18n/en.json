@@ -15,6 +15,7 @@
 	"upload.files": "Files to upload",
 	"upload.folder.drop": "Drop folder here",
 	"upload.folder.selected": "Selected folder has {{num}} files",
+	"upload.refresh": "Refresh {{field}}",
 	"upload.review": "You have selected {{num}} files. Review the selected files and begin the process.",
 	"upload.select.all": "Select all",
 	"upload.select.search": "Search",

@@ -1,17 +1,36 @@
 @import 'variables';
 
 .connectors-list {
-  padding: rhythm(1);
   display: flex;
   flex-wrap: wrap;
+  padding: rhythm(1);
+  margin-bottom: rhythm(8);
 }
 
 .field {
   margin-bottom: rhythm(2);
 }
+
+.select-field-container {
+  display: flex;
+  margin-bottom: $margin-bottom-field;
+
+  pa-select {
+    flex: 1 0 auto;
+
+    ::ng-deep .pa-field{
+      margin-bottom: 0;
+    }
+  }
+  pa-button {
+    margin-left: rhythm(2);
+  }
+}
+
 .buttons {
   display: flex;
   justify-content: center;
+  margin-top: rhythm(5);
 
   pa-button {
     margin: 0 rhythm(1);

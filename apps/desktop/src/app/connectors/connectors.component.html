@@ -1,6 +1,6 @@
-<div class="connectors-list"
-     *ngIf="!fields">
+<div class="connectors-list">
   <nde-connector *ngFor="let connector of connectors"
+                 [selected]="selectedConnector?.id === connector.id"
                  [title]="connector.title"
                  [logo]="connector.logo"
                  [description]="connector.description"
@@ -15,13 +15,20 @@
     <pa-input *ngIf="field.type === 'text'"
               [formControlName]="field.id">{{ field.label }}</pa-input>
 
-    <pa-select *ngIf="field.type === 'select'"
-               [formControlName]="field.id"
-               [label]="field.label">
-      <pa-option *ngFor="let option of field.options"
-                 [disabled]="option.disabled"
-                 [value]="option.value">{{ option.label }}</pa-option>
-    </pa-select>
+    <div *ngIf="field.type === 'select'" class="select-field-container">
+      <pa-select [formControlName]="field.id"
+                 [label]="field.label">
+        <pa-option *ngFor="let option of field.options"
+                   [disabled]="option.disabled"
+                   [value]="option.value">{{ option.label }}</pa-option>
+      </pa-select>
+
+      <pa-button *ngIf="field.canBeRefreshed"
+                 icon="refresh"
+                 [paTooltip]="'upload.refresh' | translate:{field: field.label}"
+                 (click)="refreshField(field.id)">{{'upload.refresh' | translate:{field: field.label} }}</pa-button>
+    </div>
+
     <nde-folder-upload *ngIf="field.type === 'folder'"
                        [formControlName]="field.id"></nde-folder-upload>
   </div>

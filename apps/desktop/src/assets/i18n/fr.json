@@ -15,6 +15,7 @@
 	"upload.files": "Fichiers à télécharger",
 	"upload.folder.drop": "Poser le dossier ici",
 	"upload.folder.selected": "Le dossier sélectionné a {{num}} fichiers",
+	"upload.refresh": "Rafraîchir {{field}}",
 	"upload.review": "Vous avez sélectionné {{num}} fichiers. Vérifiez la sélection puis lancez le traitement.",
 	"upload.select.all": "Sélectionner tout",
 	"upload.select.search": "Rechercher",

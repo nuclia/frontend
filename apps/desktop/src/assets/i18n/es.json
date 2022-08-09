@@ -15,6 +15,7 @@
 	"upload.files": "Ficheros a subir",
 	"upload.folder.drop": "Arrastra una carpeta",
 	"upload.folder.selected": "La carpeta contiene {{num}} archivos",
+	"upload.refresh": "Refrescar {{field}}",
 	"upload.review": "Has seleccionado {{num}} ficheros. Revisa los ficheros seleccionados y empieza el proceso.",
 	"upload.select.all": "Seleccionar todo",
 	"upload.select.search": "Busca",

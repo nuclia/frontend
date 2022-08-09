@@ -1,4 +1,5 @@
-<pa-card (cardClick)="selectConnector.emit($event)">
+<pa-card [class.selected]="selected"
+         (cardClick)="selectConnector.emit($event)">
   <div class="connector" (click)="selectConnector.emit($event)">
     <img [src]="logo" [alt]="title + ' logo'">
     <div>{{title}}</div>

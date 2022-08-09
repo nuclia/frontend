@@ -53,6 +53,7 @@ export interface ConnectorParameters {
 }
 
 export interface IDestinationConnector {
+  refreshField(fieldId: string): Observable<Field | undefined>;
   getParameters(): Observable<Field[]>;
   authenticate(): Observable<boolean>;
   upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void>;
@@ -65,4 +66,5 @@ export interface Field {
   type: 'text' | 'select' | 'folder';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
+  canBeRefreshed?: boolean;
 }
