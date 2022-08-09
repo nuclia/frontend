@@ -1,9 +1,10 @@
 @import 'variables';
 
 .connectors-list {
-  padding: rhythm(1);
   display: flex;
   flex-wrap: wrap;
+  padding: rhythm(1);
+  margin-bottom: rhythm(8);
 }
 
 .field {

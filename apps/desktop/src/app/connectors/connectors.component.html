@@ -1,6 +1,6 @@
-<div class="connectors-list"
-     *ngIf="!fields">
+<div class="connectors-list">
   <nde-connector *ngFor="let connector of connectors"
+                 [selected]="selectedConnector?.id === connector.id"
                  [title]="connector.title"
                  [logo]="connector.logo"
                  [description]="connector.description"
