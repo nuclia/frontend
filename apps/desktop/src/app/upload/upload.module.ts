@@ -10,7 +10,7 @@ import { StepsComponent } from './steps/steps.component';
 import { UploadComponent } from './upload.component';
 import { FormsModule } from '@angular/forms';
 import { SelectFilesComponent } from './select-files/select-files.component';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
@@ -24,6 +24,7 @@ import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaw
     PaTextFieldModule,
     PaButtonModule,
     PaTogglesModule,
+    PaIconModule,
   ],
   exports: [],
   declarations: [UploadComponent, StepsComponent, SelectFilesComponent],
