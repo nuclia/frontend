@@ -14,10 +14,14 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
     nucliaStore().widget.next(widget);
-    if (!widget.features.suggestLabels) {
+    if (widget.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
       if (kbPath) {
-        loadModel(`${kbPath}/train/classifier/model/json_models/model.json`, `${kbPath}/train/classifier/model/model_files/pos_to_lab.json`);
+        loadModel(
+          `${kbPath}/train/classifier/model/json_models/model.json`,
+          `${kbPath}/train/classifier/model/model_files/pos_to_lab.json`,
+          state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {},
+        );
       }
     }
   });

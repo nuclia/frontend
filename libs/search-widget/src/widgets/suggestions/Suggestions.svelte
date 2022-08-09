@@ -96,8 +96,21 @@
     color: var(--color-primary-muted);
     margin: 0;
   }
+  .intents {
+    margin: 0 0 0.5em 1em;
+    padding: 0;
+  }
   .intents li {
-    display: inline;
-    padding: 0 4px;
+    display: inline-block;
+    margin: 0 4px 4px 0;
+    padding: 0.25em 1em;
+    max-width: 100%;
+    font-size: 0.75em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #454ade;
+    background-color: #e6e6f9;
+    border-radius: 2px;
   }
 </style>
