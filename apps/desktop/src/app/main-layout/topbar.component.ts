@@ -1,15 +1,14 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService, StateService, SDKService } from '@flaps/core';
-import { map } from 'rxjs';
-import { stfAnimations } from '@flaps/pastanaga';
+import { SDKService, StateService, UserService } from '@flaps/core';
+import { map, Observable } from 'rxjs';
+import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nde-topbar',
   templateUrl: 'topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [stfAnimations],
 })
 export class TopbarComponent {
   constructor(
@@ -22,6 +21,13 @@ export class TopbarComponent {
   menuOpen = false;
   account = this.state.account;
 
+  avatar: Observable<AvatarModel> = this.user.userPrefs.pipe(
+    map((pref) => ({
+      userName: pref?.name,
+      userId: pref?.email,
+      size: 'small',
+    })),
+  );
   initials = this.user.userPrefs.pipe(
     map(
       (prefs) =>

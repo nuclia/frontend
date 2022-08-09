@@ -7,10 +7,20 @@ import { OverlayModule } from '@angular/cdk/overlay';
 
 import { MainLayoutComponent } from './main-layout.component';
 import { TopbarComponent } from './topbar.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaAvatarModule, PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  imports: [AngularSvgIconModule, RouterModule, CommonModule, TranslateModule, OverlayModule, PaButtonModule],
+  imports: [
+    AngularSvgIconModule,
+    RouterModule,
+    CommonModule,
+    TranslateModule,
+    OverlayModule,
+    PaButtonModule,
+    PaAvatarModule,
+    PaDropdownModule,
+    PaPopupModule,
+  ],
   exports: [],
   declarations: [MainLayoutComponent, TopbarComponent],
   providers: [],

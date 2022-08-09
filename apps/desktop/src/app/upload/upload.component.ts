@@ -1,9 +1,9 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { ConnectorParameters, SyncItem, ConnectorDefinition, ISourceConnector, SOURCE_ID_KEY } from '../sync/models';
+import { ConnectorDefinition, ConnectorParameters, ISourceConnector, SOURCE_ID_KEY, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
@@ -72,6 +72,7 @@ export class UploadComponent implements OnInit {
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
+    this.goTo(3);
     this.dialog
       .open(ConfirmFilesComponent, {
         data: { files: this.selection.selected },

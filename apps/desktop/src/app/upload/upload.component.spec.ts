@@ -14,7 +14,14 @@ import { SyncService } from '../sync/sync.service';
 import { SelectFilesComponent } from './select-files/select-files.component';
 
 import { UploadComponent } from './upload.component';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaCardModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { MockModule } from 'ng-mocks';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -38,8 +45,11 @@ describe('UploadComponent', () => {
         ReactiveFormsModule,
         MatDialogModule,
         ConfirmFilesModule,
-        PaButtonModule,
-        PaTextFieldModule,
+        MockModule(PaButtonModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaCardModule),
+        MockModule(PaTogglesModule),
+        MockModule(PaIconModule),
       ],
       providers: [
         {

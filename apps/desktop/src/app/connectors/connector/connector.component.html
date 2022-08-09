@@ -1,10 +1,7 @@
-<div class="connector">
-  <div class="logo">
-    <img [src]="logo"
-         [alt]="title + ' logo'">
+<pa-card (cardClick)="selectConnector.emit($event)">
+  <div class="connector" (click)="selectConnector.emit($event)">
+    <img [src]="logo" [alt]="title + ' logo'">
+    <div>{{title}}</div>
   </div>
-  <div>
-    <div class="title-s">{{ title }}</div>
-    <div>{{ description }}</div>
-  </div>
-</div>
+</pa-card>
+

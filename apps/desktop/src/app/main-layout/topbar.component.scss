@@ -1,16 +1,16 @@
 @import 'variables';
 
 .top-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 70px;
-  padding-right: 90px;
-  z-index: 900;
+  align-items: center;
   background-color: $color-dark-stronger;
   display: flex;
-  align-items: center;
+  height: rhythm(9);
+  left: 0;
+  padding-right: rhythm(12);
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 900;
 }
 .logo {
   cursor: pointer;
@@ -25,36 +25,12 @@
   margin: 0 rhythm(4);
   background-color: $color-neutral-regular;
 }
-.user {
-  width: rhythm(4);
-  height: rhythm(4);
-  background-color: $color-light-stronger;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--stf-font-size-xlarge);
-  font-weight: var(--stf-font-weight-bold);
-  cursor: pointer;
-}
-.user-menu {
-  background-color: $color-light-stronger;
-  box-shadow: var(--stf-shadow-dropdown);
 
-  &-item {
-    display: flex;
-    align-items: center;
-    gap: rhythm(1.5);
-    width: 100%;
-    height: 40px;
-    padding: 0 rhythm(1.5);
-    color: inherit;
-    text-decoration: none;
-    &:hover {
-      background-color: rgba(0,0,0,.04);
-    }
-    svg {
-      display: block;
-    }
+:host {
+  pa-avatar ::ng-deep .pa-avatar {
+    cursor: pointer;
+  }
+  pa-dropdown ::ng-deep .pa-popup {
+    z-index: 910;
   }
 }

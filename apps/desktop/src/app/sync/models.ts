@@ -63,6 +63,6 @@ export interface Field {
   label: string;
   help?: string;
   type: 'text' | 'select' | 'folder';
-  options?: { label: string; value: string }[];
+  options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
 }
