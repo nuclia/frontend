@@ -4,8 +4,8 @@ let encoder: any;
 let model: any;
 let labels: { [key: string]: string } = {};
 
-export const loadModel = (modelPath: string, labelsPath: string) => {
-  fetch(labelsPath).then((res) => {
+export const loadModel = (modelPath: string, labelsPath: string, headers: { [key: string]: string }) => {
+  fetch(labelsPath, { headers }).then((res) => {
     if (res.ok) {
       res.json().then((res) => (labels = res));
     } else {
@@ -17,7 +17,8 @@ export const loadModel = (modelPath: string, labelsPath: string) => {
       .load()
       .then((enc: any) => {
         encoder = enc;
-        return (window as any)['tf'].loadLayersModel(modelPath);
+        const options = { requestInit: { headers } };
+        return (window as any)['tf'].loadLayersModel((window as any)['tf'].io.http(modelPath, options));
       })
       .then(
         (m: any) => (model = m),
