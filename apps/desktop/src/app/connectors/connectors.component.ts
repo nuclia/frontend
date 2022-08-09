@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { switchMap, take } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
@@ -12,13 +12,20 @@ import { SyncService } from '../sync/sync.service';
 })
 export class ConnectorsComponent {
   private _type: 'sources' | 'destinations' = 'sources';
-  @Input() set type(value: 'sources' | 'destinations') {
+
+  @Input()
+  set type(value: 'sources' | 'destinations') {
     this._type = value;
     this.connectors = this.sync.getConnectors(value);
     this.cdr?.markForCheck();
   }
+  get type() {
+    return this._type;
+  }
+
   @Output() cancel = new EventEmitter<void>();
   @Output() selectConnector = new EventEmitter<{ connector: ConnectorDefinition; params: ConnectorParameters }>();
+
   connectors: ConnectorDefinition[] = [];
   fields?: Field[];
   form?: UntypedFormGroup;

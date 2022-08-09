@@ -19,22 +19,23 @@
                [formControlName]="field.id"
                [label]="field.label">
       <pa-option *ngFor="let option of field.options"
+                 [disabled]="option.disabled"
                  [value]="option.value">{{ option.label }}</pa-option>
     </pa-select>
     <nde-folder-upload *ngIf="field.type === 'folder'"
                        [formControlName]="field.id"></nde-folder-upload>
   </div>
 
+  <div class="buttons">
+    <pa-button qa="cancel"
+               kind="inverted"
+               (click)="cancel.next()">{{ 'generic.cancel' | translate }}</pa-button>
+    <pa-button *ngIf="!!fields && !!form"
+               qa="validate"
+               type="submit"
+               kind="primary"
+               [disabled]="form.invalid || form.pristine">
+      {{ (type === 'sources' ? 'generic.next' : 'Upload') | translate }}
+    </pa-button>
+  </div>
 </form>
-<div class="buttons">
-  <pa-button qa="cancel"
-             kind="inverted"
-             (click)="cancel.next()">{{ 'generic.cancel' | translate }}</pa-button>
-  <pa-button *ngIf="!!fields && !!form"
-             qa="validate"
-             type="submit"
-             kind="primary"
-             [disabled]="form.invalid">
-    {{ (_type === 'sources' ? 'generic.next' : 'Upload') | translate }}
-  </pa-button>
-</div>
