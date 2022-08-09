@@ -10,7 +10,7 @@
   border-radius: 8px;
   background-color: #fff;
 
-  &-container {
+  .select-container {
     width: 100%;
   }
 
@@ -22,7 +22,7 @@
       height: auto;
     }
   }
-  &-content {
+  .select-content {
     min-height: 0; // Show scrollbar if content overflow
   }
 }
@@ -30,7 +30,7 @@
 .select-account {
   height: 100%;
 
-  &-list {
+  .select-account-list {
     overflow-y: auto;
     overflow-x: hidden;
     @include scrollbar-black();
@@ -40,11 +40,11 @@
     margin: 0 -100px;
   }
 
-  &-footer {
+  .select-account-footer {
     margin-top: 36px;
   }
 
-  &-item {
+  .select-account-item {
     margin-bottom: 10px;
     &:last-child {
       margin-bottom: 0;
@@ -62,7 +62,7 @@
     text-decoration: none;
     background-color: #f6f6f6;
     transition: background-color 0.15s, color 0.15s;
-    &-arrow {
+    .select-account-arrow {
       position: absolute;
       top: 50%;
       right: 15px;

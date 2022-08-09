@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { switchMap, take } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
+import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nde-connectors',
@@ -17,7 +18,7 @@ export class ConnectorsComponent {
   set type(value: 'sources' | 'destinations') {
     this._type = value;
     this.connectors = this.sync.getConnectors(value);
-    this.cdr?.markForCheck();
+    markForCheck(this.cdr);
   }
   get type() {
     return this._type;
@@ -65,12 +66,28 @@ export class ConnectorsComponent {
     this.form = this.formBuilder.group(
       fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
     );
-    this.cdr?.detectChanges();
+    markForCheck(this.cdr);
   }
 
   validate() {
     if (this.selectedConnector) {
       this.selectConnector.emit({ connector: this.selectedConnector, params: this.form?.value || {} });
+    }
+  }
+
+  refreshField(id: string) {
+    if (this.selectedConnector) {
+      this.sync
+        .getDestination(this.selectedConnector.id)
+        .pipe(
+          take(1),
+          switchMap((destination) => destination.refreshField(id)),
+          filter((field) => !!field),
+        )
+        .subscribe((field: Field) => {
+          this.fields = (this.fields || []).map((f) => (f.id === field.id ? field : f));
+          markForCheck(this.cdr);
+        });
     }
   }
 }

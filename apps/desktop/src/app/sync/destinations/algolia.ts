@@ -1,5 +1,5 @@
 import { from, map, Observable, of, throwError } from 'rxjs';
-import { Field, IDestinationConnector, DestinationConnectorDefinition, ConnectorParameters } from '../models';
+import { ConnectorParameters, DestinationConnectorDefinition, Field, IDestinationConnector } from '../models';
 import algoliasearch from 'algoliasearch';
 
 export const Algolia: DestinationConnectorDefinition = {
@@ -10,6 +10,10 @@ export const Algolia: DestinationConnectorDefinition = {
   factory: () => of(new AlgoliaImpl()),
 };
 class AlgoliaImpl implements IDestinationConnector {
+  refreshField(): Observable<Field | undefined> {
+    return of(undefined);
+  }
+
   getParameters(): Observable<Field[]> {
     return of([
       {

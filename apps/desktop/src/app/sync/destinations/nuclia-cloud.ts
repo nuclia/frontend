@@ -20,6 +20,7 @@ export const NucliaCloudKB: DestinationConnectorDefinition = {
     return of(new NucliaCloudKBImpl(nuclia));
   },
 };
+
 class NucliaCloudKBImpl implements IDestinationConnector {
   nuclia: INuclia;
   kb?: WritableKnowledgeBox;
@@ -28,26 +29,17 @@ class NucliaCloudKBImpl implements IDestinationConnector {
     this.nuclia = nuclia;
   }
 
+  refreshField(fieldId: string): Observable<Field | undefined> {
+    switch (fieldId) {
+      case 'kb':
+        return this.getKbField();
+      default:
+        return of(undefined);
+    }
+  }
+
   getParameters(): Observable<Field[]> {
-    return this.nuclia.db.getKnowledgeBoxes(localStorage.getItem(ACCOUNT_KEY) || '').pipe(
-      map((kbs) => [
-        {
-          id: 'kb',
-          label: 'Knowledge Box',
-          type: 'select',
-          options: kbs
-            .filter((kb) => !!kb.slug)
-            .map((kb) => {
-              const slug = kb.slug || '';
-              return {
-                label: kb.title || slug,
-                value: slug,
-                disabled: kb.role_on_kb === 'SMEMBER',
-              };
-            }),
-        },
-      ]),
-    );
+    return this.getKbField().pipe(map((kbField) => [kbField]));
   }
 
   authenticate(): Observable<boolean> {
@@ -62,7 +54,28 @@ class NucliaCloudKBImpl implements IDestinationConnector {
         : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
       return kb$.pipe(switchMap((kb) => kb.upload(new File([blob], filename)).pipe(map(() => undefined))));
     } else {
-      return of();
+      return of(undefined);
     }
+  }
+
+  private getKbField(): Observable<Field> {
+    return this.nuclia.db.getKnowledgeBoxes(localStorage.getItem(ACCOUNT_KEY) || '').pipe(
+      map((kbs) => ({
+        id: 'kb',
+        label: 'Knowledge Box',
+        type: 'select',
+        canBeRefreshed: true,
+        options: kbs
+          .filter((kb) => !!kb.slug)
+          .map((kb) => {
+            const slug = kb.slug || '';
+            return {
+              label: kb.title || slug,
+              value: slug,
+              disabled: kb.role_on_kb === 'SMEMBER',
+            };
+          }),
+      })),
+    );
   }
 }
