@@ -38,6 +38,7 @@
 	"account.stash.delete": "Borrar",
 	"account.stash.edit": "Editar preferencias",
 	"account.stash.publish": "Publicar",
+	"account.stash.refresh_counters": "Actualizar contadores",
 	"account.stash.retire": "Mover a privado",
 	"account.stash.upgrade": "Incrementar el máximo de KB",
 	"account.stash.users": "Gestión de usuarios",

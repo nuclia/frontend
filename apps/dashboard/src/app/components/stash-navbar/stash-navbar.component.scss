@@ -97,8 +97,7 @@ $height-breakpoint: 730px;
 }
 
 .dark {
-  background-color: $color-dark-stronger;
-  color: $color-light-stronger;
+  @include dark-mode();
 }
 
 .disabled {

@@ -3,107 +3,106 @@
 .knowledge-box-home {
   padding: 4.5vw var(--app-layout-margin-right);
 
-  h2 {
-    font-size: var(--stf-font-size-xxlarge);
-    font-weight: var(--stf-font-weight-light);
+  $flex-gap: rhythm(4);
+  $width-right-column: rhythm(40) + rhythm(6);
+  .home-main-layout {
+    display: flex;
+    width: 100%;
+    gap: $flex-gap;
   }
 
   .left-column {
-    width: calc(100% - 400px);
+    flex: 1 1 auto;
+    max-width: calc(100% - #{$width-right-column} - #{$flex-gap});
   }
 
   .right-column {
-    width: 371px;
+    flex: 0 0 auto;
+    width: $width-right-column;
   }
 
   .container {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 4px;
-    margin-bottom: 30px;
-    @media (min-width: 1600px) {
-      padding: 25px 30px;
-    }
+    padding: rhythm(3);
+    background-color: $color-light-stronger;
+    border-radius: rhythm(0.5);
+    margin-bottom: $flex-gap;
   }
+
   .chart-container {
-    padding-bottom: 40px;
+    padding-bottom: rhythm(5);
+    margin-bottom: $flex-gap;
   }
 
-  .search-stats {
-    margin-bottom: 30px;
-
-    &-header {
-      margin-bottom: 36px;
-      line-height: 1;
-    }
-
-    h2 {
-      margin: 0 0 0 10px;
-    }
-
-    &-count {
-      font-size: 30px;
-      font-weight: var(--stf-font-weight-bold);
-    }
-  }
-
-  .processing-stats {
-    h2 {
-      margin: 0 0 25px 0;
-    }
+  .chart-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    line-height: 1;
+    margin-bottom: rhythm(4);
   }
 
   .resource-stats {
-    min-height: 387px;
-    padding-bottom: 40px;
-    background-color: #fff;
-    border-radius: 4px;
-    h2 {
+    min-height: rhythm(48);
+
+    .title-m {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
       margin: 0;
     }
+
     dl {
-      display: flex;
       align-items: center;
+      display: flex;
       justify-content: space-between;
-      margin: 0 0 12px 0;
-      font-size: var(--stf-font-size-xxlarge);
+      flex-wrap: wrap;
+      font-size: font-size(xl);
+      row-gap: rhythm(3);
+
       dt {
-        font-weight: var(--stf-font-weight-light);
+        flex: 1 0 75%;
+        font-weight: $font-weight-thin;
       }
+
       dd {
-        font-weight: var(--stf-font-weight-bold);
+        flex: 1 0 25%;
+        font-weight: $font-weight-bold;
+        margin-bottom: 0;
+        text-align: right;
       }
     }
   }
 
   .get-started {
-    padding-bottom: 25px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    h2 {
-      display: inline-block;
-      margin: 0 58px 0 0;
-      span {
-        font-weight: var(--stf-font-weight-regular);
-        margin-right: 8px;
-      }
+    @include dark-mode();
+
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    gap: rhythm(1);
+    padding: rhythm(3);
+
+    .subtitle {
+      font-weight: $font-weight-thin;
+      margin-right: rhythm(6);
     }
+
     .endpoint {
       display: inline-block;
-      margin-top: 8px;
-      font-family: var(--stf-font-family-monospace);
-      font-size: 14px;
+      font-family: $font-family-monospace;
+      font-size: font-size(s);
       white-space: nowrap;
     }
   }
+
   .go-to-desktop {
-    background-color: $gray-black;
-    color: $white;
-    padding: rythm;
+    @include dark-mode();
   }
+
   .desktop-button {
-    margin-top: rythm(3);
+    margin-top: rhythm(4);
     text-align: center;
+
     i {
       font-size: size(xs);
     }
@@ -111,20 +110,20 @@
 }
 
 .total-resources {
-  font-size: rythm(3.5);
-  margin-bottom: rythm(2.5);
+  font-size: rhythm(5);
+  margin-bottom: rhythm(4);
 }
 
 .state-container {
-  display: flex;
   align-items: center;
-  & > div {
-    font-size: var(--stf-font-size-xxlarge);
-    font-weight: var(--stf-font-weight-light);
-    flex-grow: 1;
+  display: flex;
+
+  .title-m {
+    flex: 1 0 auto;
+    font-weight: $font-weight-thin;
   }
 }
+
 .state {
-  padding: 0 rythm(2) 0 rythm(0.5);
-  font-weight: var(--stf-font-weight-semibold);
+  font-weight: $font-weight-semi-bold;
 }
