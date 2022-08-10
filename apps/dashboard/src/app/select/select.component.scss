@@ -6,16 +6,19 @@
   width: 600px;
   height: 80vh;
   margin: 0 auto;
-  padding: 62px 100px;
-  border-radius: 8px;
-  background-color: #fff;
+  padding: rhythm(8) rhythm(12);
+  border-radius: rhythm(1);
+  background-color: $color-light-stronger;
 
   .select-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     width: 100%;
   }
 
   .logo {
-    margin-bottom: 68px;
+    margin-bottom: rhythm(8);
     text-align: center;
     img {
       width: 174px;
@@ -23,6 +26,7 @@
     }
   }
   .select-content {
+    flex: 1 1 auto;
     min-height: 0; // Show scrollbar if content overflow
   }
 }
@@ -35,52 +39,46 @@
     overflow-x: hidden;
     @include scrollbar-black();
     // Move scrollbar to the edge
-    padding-left: 100px;
-    padding-right: 100px;
-    margin: 0 -100px;
+    padding: 0 rhythm(12);
+    margin: 0 -#{rhythm(12)};
   }
 
   .select-account-footer {
-    margin-top: 36px;
+    display: flex;
+    justify-content: center;
+    margin-top: rhythm(8);
   }
 
-  .select-account-item {
-    margin-bottom: 10px;
-    &:last-child {
-      margin-bottom: 0;
-    }
+  .select-account-item:not(:last-child) {
+    margin-bottom: rhythm(1);
   }
+
   .account {
-    position: relative;
-    display: flex;
-    width: 100%;
-    height: 42px;
     align-items: center;
-    justify-content: center;
-    font-weight: var(--stf-font-weight-semibold);
+    background-color: $color-neutral-lighter;
     color: inherit;
+    display: flex;
+    font-weight: $font-weight-semi-bold;
+    height: rhythm(5);
+    justify-content: center;
+    position: relative;
     text-decoration: none;
-    background-color: #f6f6f6;
-    transition: background-color 0.15s, color 0.15s;
-    .select-account-arrow {
+    transition: background-color $transition-hint, color $transition-hint;
+    width: 100%;
+
+    .account-arrow {
       position: absolute;
       top: 50%;
-      right: 15px;
+      right: rhythm(2);
       transform: translateY(-50%);
-      svg {
-        width: 12px;
-        height: auto;
-        display: block;
-        transition: fill 0.15s;
-      }
     }
     &:focus,
     &:hover {
       outline: 0;
-      background-color: #000;
-      color: #fff;
+      background-color: $color-dark-stronger;
+      color: $color-light-stronger;
       .account-arrow svg {
-        fill: #fff;
+        fill: $color-light-stronger;
       }
     }
   }

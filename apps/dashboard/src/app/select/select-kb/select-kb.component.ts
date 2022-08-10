@@ -1,14 +1,14 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormControl } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil, filter, map, switchMap, share } from 'rxjs/operators';
-import { SimpleAccount, SDKService } from '@flaps/core';
+import { filter, map, share, switchMap, takeUntil } from 'rxjs/operators';
+import { SDKService, SimpleAccount, STFUtils } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { SelectService } from '../select.service';
 import { Sluggable } from '@flaps/common';
-import { STFUtils } from '@flaps/core';
 import { IKnowledgeBoxItem } from '@nuclia/core';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-select-kb',
@@ -29,8 +29,9 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   canAddKb = this.accountData.pipe(
     map((account) => account.can_manage_account && account.max_kbs > account.current_kbs),
   );
-  kbName = new UntypedFormControl('', [Sluggable()]);
+  kbName = new FormControl<string>('', [Sluggable()]);
   unsubscribeAll = new Subject<void>();
+  errorMessages: IErrorMessages = { sluggable: 'stash.kb_name_invalid' } as IErrorMessages;
 
   constructor(
     private navigation: NavigationService,
@@ -44,8 +45,8 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.paramMap
       .pipe(
-        takeUntil(this.unsubscribeAll),
         filter((params) => params.get('account') !== null),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe((params) => {
         const accountSlug = params.get('account')!;
@@ -73,7 +74,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   }
 
   save() {
-    if (this.kbName.invalid) return;
+    if (this.kbName.invalid || !this.kbName.value) return;
 
     const kbSlug = STFUtils.generateSlug(this.kbName.value);
     const kbData = {
