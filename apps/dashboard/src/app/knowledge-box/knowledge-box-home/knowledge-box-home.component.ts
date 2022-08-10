@@ -1,10 +1,10 @@
-import { Component, OnInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SDKService, StateService } from '@flaps/core';
 import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
-import { KBStates, StatsPeriod, StatsType, Account } from '@nuclia/core';
-import { filter, map, Observable, share, switchMap, combineLatest, take } from 'rxjs';
+import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
+import { combineLatest, filter, map, Observable, share, switchMap, take } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { HelpBoxesService } from '../../services/help-boxes.service';
 import { SisToastService } from '@nuclia/sistema';
@@ -22,14 +22,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   stateLabel = this.state.pipe(map((state) => this.translate.transform(`stash.state.${state?.toLowerCase()}`)));
   isPublished = this.state.pipe(map((state) => state === 'PUBLISHED'));
   account = this.stateService.account.pipe(filter((account) => !!account)) as Observable<Account>;
-  counters = this.sdk.counters.pipe(
-    map((counters) =>
-      Object.entries(counters).reduce((acc: { [key: string]: string }, [key, value]) => {
-        acc[key] = value.toLocaleString();
-        return acc;
-      }, {}),
-    ),
-  );
+  counters: Observable<Counters> = this.sdk.counters;
   refreshing = this.sdk.pendingRefresh;
   private _processing = combineLatest([this.account, this.sdk.currentKb]).pipe(
     switchMap(([account, kb]) =>
@@ -106,12 +99,12 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     this.sdk.refreshCounter(true);
   }
 
-  publishKb() {
-    this.changeState('publish', 'PUBLISHED');
-  }
-
-  retireKb() {
-    this.changeState('retire', 'PRIVATE');
+  toggleKbState() {
+    this.isPublished.pipe(take(1)).subscribe((isPublished) => {
+      const label = isPublished ? 'retire' : 'publish';
+      const state = isPublished ? 'PRIVATE' : 'PUBLISHED';
+      return this.changeState(label, state);
+    });
   }
 
   private changeState(actionLabel: string, state: KBStates): void {

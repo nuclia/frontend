@@ -47,6 +47,7 @@
 	"account.stash.delete": "Delete",
 	"account.stash.edit": "Edit preferences",
 	"account.stash.publish": "Publish",
+	"account.stash.refresh_counters": "Refresh counters",
 	"account.stash.retire": "Move to private",
 	"account.stash.upgrade": "Increase KB maximum",
 	"account.stash.users": "Users management",

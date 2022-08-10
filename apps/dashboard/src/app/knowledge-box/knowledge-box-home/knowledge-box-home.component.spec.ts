@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslatePipeMock } from '@flaps/core';
-import { SDKService, StateService } from '@flaps/core';
+import { SDKService, StateService, TranslatePipeMock } from '@flaps/core';
 import { HelpBoxesService } from '../../services/help-boxes.service';
 import { AppService } from '../../services/app.service';
 
@@ -44,7 +43,7 @@ describe('KnowledgeBoxHomeComponent', () => {
           useValue: {
             currentKb: of({ fullpath: 'http://somewhere/api' }),
             counters: of({ resources: 0 }),
-            nuclia: { db: { getStats: (account: string, type: 'search' | 'processing') => of([]) } },
+            nuclia: { db: { getStats: () => of([]) } },
           },
         },
         {
@@ -76,6 +75,6 @@ describe('KnowledgeBoxHomeComponent', () => {
 
   it('should translate properly', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.get-started span').textContent).toContain('Get started');
+    expect(compiled.querySelector('.get-started .title-m').textContent).toContain('Get started');
   });
 });

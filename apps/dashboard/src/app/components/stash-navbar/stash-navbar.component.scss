@@ -22,8 +22,8 @@ $height-breakpoint: 730px;
 .navbar-scroll-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 100%;
+  justify-content: space-between;
   overflow-y: auto;
   overflow-x: hidden;
   > .navbar-content {
@@ -36,49 +36,41 @@ $height-breakpoint: 730px;
   }
 
   .nav-group {
-    padding: 12px 0;
-    border-bottom: 1px solid #dfdfdf;
+    border-bottom: 1px solid $color-neutral-regular;
+    padding: rhythm(1.5) 0;
     @media (max-height: $height-breakpoint) {
-      padding: 4px 0 6px 0;
+      padding: rhythm(0.5) 0;
     }
+
     > .group-items {
       > .nav-link {
-        position: relative;
-        height: 44px;
-        padding: 0 0 0 21px;
-        margin-right: 16px;
-        color: inherit;
-        text-decoration: none;
-        display: flex;
         align-items: center;
-        overflow: hidden;
+        color: inherit;
         cursor: pointer;
+        display: flex;
+        overflow: hidden;
+        padding: rhythm(1) rhythm(2);
+        position: relative;
+        text-decoration: none;
         user-select: none;
-        svg {
-          display: block;
-          width: 25px;
-        }
+
         &:hover::before,
         &.active::before {
+          background-color: $color-primary-regular;
+          bottom: 0;
           content: '';
           position: absolute;
-          top: 0;
           left: 0;
-          bottom: 0;
-          width: 3px;
-          background-color: var(--stf-primary);
+          top: 0;
+          width: rhythm(0.25);
         }
         > .nav-link-title {
           flex: 1 1 auto;
-          white-space: nowrap;
-          padding-left: 15px;
+          padding-left: rhythm(2);
           font-size: var(--stf-font-size-large);
+          white-space: nowrap;
         }
         @media (max-height: $height-breakpoint) {
-          height: 38px;
-          svg {
-            width: 21px;
-          }
           > .nav-link-title {
             font-size: var(--stf-font-size-medium);
           }
@@ -93,9 +85,6 @@ $height-breakpoint: 730px;
     .navbar-content {
       padding-top: 0;
 
-      .nav-link {
-        margin-right: 5px;
-      }
       .nav-link-title {
         display: none;
       }
@@ -104,16 +93,15 @@ $height-breakpoint: 730px;
 }
 
 .group-items.touranchor--is-active {
-  border: 1px solid var(--stf-primary);
+  border: 1px solid $color-primary-regular;
 }
 
 .dark {
-  background-color: $gray-black;
-  color: $white;
+  @include dark-mode();
 }
 
 .disabled {
-  opacity: 0.3;
+  color: $color-text-menu-option-disabled;
   cursor: not-allowed;
   pointer-events: none;
 }

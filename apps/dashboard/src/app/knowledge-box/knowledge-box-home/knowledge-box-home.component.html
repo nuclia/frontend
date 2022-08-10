@@ -1,21 +1,20 @@
 <div class="knowledge-box-home">
-  <div fxLayout="row" fxLayoutGap="30px" fxLayoutAlign="start start">
-    <div fxFlex="1 1 auto">
-      <div class="container get-started">
-        <h2>
-          <span>{{ 'stats.get_started' | translate }}.</span>
-          {{ 'stats.endpoint' | translate }}&nbsp;
-        </h2>
-        <span class="endpoint">{{ endpoint | async }}</span>
-      </div>
+  <div class="container get-started">
+    <div class="title-m">
+      {{ 'stats.get_started' | translate }}.
     </div>
+    <div class="title-m subtitle">{{ 'stats.endpoint' | translate }}</div>
+
+    <div class="endpoint">{{ endpoint | async }}</div>
   </div>
-  <div fxLayout="row" fxLayoutGap="30px" fxLayoutAlign="start start">
-    <div *ngIf="isAccountManager | async" class="left-column" fxFlex="1 1 auto">
-      <div class="container chart-container search-stats">
-        <div class="search-stats-header" fxLayout="row" fxLayoutAlign="space-between center">
-          <h2>{{ 'stats.total_search' | translate }}</h2>
-          <div *ngIf="locale | async as loc" class="search-stats-count">
+
+  <div class="home-main-layout">
+    <div *ngIf="isAccountManager | async" class="left-column">
+      <div class="container chart-container">
+        <div class="chart-header">
+          <div class="title-m">{{ 'stats.total_search' | translate }}</div>
+          <div *ngIf="locale | async as loc"
+               class="display-m">
             {{ totalSearch | async | number: '1.0-0':loc }}
           </div>
         </div>
@@ -23,62 +22,61 @@
         <app-line-chart [data]="(search | async) || []"></app-line-chart>
       </div>
 
-      <div class="container chart-container processing-stats">
-        <h2>{{ 'stats.processing_time' | translate }}</h2>
+      <div class="container chart-container">
+        <div class="chart-header">
+          <div class="title-m">{{ 'stats.processing_time' | translate }}</div>
+        </div>
         <app-empty-chart *ngIf="!(processing | async)" [numLines]="3"></app-empty-chart>
         <app-bar-chart [data]="(processing | async) || []"></app-bar-chart>
       </div>
     </div>
 
-    <div *ngIf="isKbAdmin | async" class="right-column" fxFlex="0 0 auto">
+    <div *ngIf="isKbAdmin | async" class="right-column">
       <div class="container state-container">
-        <div>
+        <div class="title-m">
           {{ 'stash.state' | translate }}: <span class="state">{{ stateLabel | async }}</span>
         </div>
-        <stf-button *ngIf="isPublished | async" color="secondary" (click)="retireKb()">{{
-          'account.stash.retire' | translate
-        }}</stf-button>
-        <stf-button *ngIf="!(isPublished | async)" color="secondary" (click)="publishKb()">{{
-          'account.stash.publish' | translate
-        }}</stf-button>
+        <pa-button (click)="toggleKbState()">
+          {{ ((isPublished | async) ? 'account.stash.retire' : 'account.stash.publish') | translate }}
+        </pa-button>
       </div>
 
       <div class="container resource-stats">
-        <h2>
+        <div class="title-m">
           {{ 'stats.total.title' | translate }}
-          <stf-button
-            [icon]="(refreshing | async) ? 'waiting' : 'refresh'"
-            [disabled]="(refreshing | async) || false"
-            size="small"
-            color="white"
-            [iconOnly]="true"
-            (click)="refresh()"
-          >
-          </stf-button>
-        </h2>
-        <div>
-          <div class="total-resources">{{ (counters | async)?.resources }}</div>
+          <pa-button aspect="basic"
+                     icon="refresh"
+                     size="small"
+                     [disabled]="(refreshing | async) === true"
+                     (click)="refresh()">
+            {{'account.stash.refresh_counters' | translate}}
+          </pa-button>
+        </div>
+        <div *ngIf="locale | async as loc">
+          <div class="total-resources">{{ (counters | async)?.resources | number:'1.0-0':loc }}</div>
           <dl>
             <dt>{{ 'stats.total.fields' | translate }}</dt>
-            <dd>{{ (counters | async)?.fields }}</dd>
-          </dl>
-          <dl>
+            <dd>{{ (counters | async)?.fields | number:'1.0-0':loc }}</dd>
+
             <dt>{{ 'stats.total.paragraphs' | translate }}</dt>
-            <dd>{{ (counters | async)?.paragraphs }}</dd>
-          </dl>
-          <dl>
+            <dd>{{ (counters | async)?.paragraphs | number:'1.0-0':loc }}</dd>
+
             <dt>{{ 'stats.total.sentences' | translate }}</dt>
-            <dd>{{ (counters | async)?.sentences }}</dd>
+            <dd>{{ (counters | async)?.sentences | number:'1.0-0':loc }}</dd>
           </dl>
         </div>
       </div>
+
       <div class="container go-to-desktop">
-        <img src="assets/nuclia-desktop-white.svg" alt="Nuclia Desktop" />
+        <img src="assets/nuclia-desktop-white.svg" alt="Nuclia Desktop"/>
         <p>{{ 'stash.desktop.description' | translate }}</p>
         <div class="desktop-button">
-          <pa-button kind="inverted" icon="download-cloud" iconAndText (click)="downloadDesktop()">{{
-            'stash.desktop.button' | translate
-          }}</pa-button>
+          <pa-button kind="inverted"
+                     icon="download-cloud"
+                     iconAndText
+                     (click)="downloadDesktop()">
+            {{ 'stash.desktop.button' | translate }}
+          </pa-button>
           <p>
             <i>{{ 'stash.desktop.text' | translate }}</i>
           </p>
