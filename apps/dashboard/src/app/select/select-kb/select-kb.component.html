@@ -1,11 +1,12 @@
 <div class="select-kb" *ngIf="account && kbs">
   <div class="select-kb-header">
-    <pa-button iconAndText
+    <pa-button routerLink="/select"
+               iconAndText
                icon="chevron-left"
                aspect="basic"
                size="small"
                class="select-kb-back">
-      <a [routerLink]="'/select'">{{ 'generic.back' | translate }} </a>
+      <a routerLink="/select">{{ 'generic.back' | translate }}</a>
     </pa-button>
 
     <h2 class="select-kb-title">{{ account.title }}</h2>
@@ -24,9 +25,12 @@
   <div class="select-kb-body">
     <div class="select-kb-list" *ngIf="kbs.length > 0">
       <ng-container *ngFor="let kb of kbs">
-        <a class="kb" *ngIf="kb.slug" [routerLink]="getKbUrl(kb.slug)">
+        <a *ngIf="kb.slug"
+           class="kb"
+           [class.disabled]="!kb.role_on_kb"
+           [routerLink]="!!kb.role_on_kb ? getKbUrl(kb.slug) : null">
           {{ kb.title }}
-          <pa-icon name="chevron-right" size="small"></pa-icon>
+          <pa-icon *ngIf="!!kb.role_on_kb" name="chevron-right" size="small"></pa-icon>
         </a>
       </ng-container>
     </div>

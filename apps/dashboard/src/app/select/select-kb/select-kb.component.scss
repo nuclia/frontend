@@ -70,6 +70,12 @@
     transition: background-color $transition-hint;
     width: 100%;
 
+    &.disabled {
+      cursor: default;
+      color: $color-text-menu-option-disabled;
+      pointer-events: none;
+    }
+
     &:hover {
       background-color: $color-background-menu-option-hover;
     }
