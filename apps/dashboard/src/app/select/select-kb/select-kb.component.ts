@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { filter, map, share, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { SDKService, SimpleAccount, STFUtils } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { SelectService } from '../select.service';
@@ -23,7 +23,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   accountData = this.route.paramMap.pipe(
     filter((params) => params.get('account') !== null),
     switchMap((params) => this.sdk.nuclia.db.getAccount(params.get('account')!)),
-    share(),
+    shareReplay(),
   );
   canManage = this.accountData.pipe(map((account) => account.can_manage_account));
   canAddKb = this.accountData.pipe(

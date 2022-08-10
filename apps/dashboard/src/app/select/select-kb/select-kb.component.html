@@ -33,11 +33,11 @@
 
     <div class="select-kb-empty" *ngIf="kbs.length === 0 && !addKb">
       <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
-      <pa-button *ngIf="canAddKb | async"
+      <pa-button *ngIf="(canAddKb | async) === true"
                  (click)="toggleForm()">
         {{ 'stash.create' | translate }}
       </pa-button>
-      <div *ngIf="!(canAddKb | async)" class="select-kb-empty-message">{{ 'stash.contact_admin' | translate }}</div>
+      <div *ngIf="(canAddKb | async) === false" class="select-kb-empty-message">{{ 'stash.contact_admin' | translate }}</div>
     </div>
 
     <ng-container *ngIf="addKb">
