@@ -4,6 +4,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SelectService } from './select.service';
 
 import { SelectComponent } from './select.component';
+import { subscriptionPipeFn, TranslatePipeMock } from '@flaps/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MockModule } from 'ng-mocks';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('SelectComponent', () => {
   let component: SelectComponent;
@@ -11,8 +15,8 @@ describe('SelectComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, RouterTestingModule],
-      // declarations: [SelectComponent, TranslatePipeMock],
+      imports: [NoopAnimationsModule, RouterTestingModule, MockModule(PaButtonModule)],
+      declarations: [SelectComponent, TranslatePipeMock],
       providers: [
         {
           provide: SelectService,
@@ -21,29 +25,28 @@ describe('SelectComponent', () => {
             getKbs: () => ({}),
           },
         },
-        // {
-        //   provide: ActivatedRoute,
-        //   useValue: {
-        //     url: subscriptionPipeFn(),
-        //     children: [],
-        //   },
-        // },
-        // {
-        //   provide: Router,
-        //   useValue: {},
-        // },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            url: subscriptionPipeFn(),
+            children: [],
+          },
+        },
+        {
+          provide: Router,
+          useValue: {},
+        },
       ],
     }).compileComponents();
   }));
 
-  // beforeEach(() => {
-  //   fixture = TestBed.createComponent(SelectComponent);
-  //   component = fixture.componentInstance;
-  //   fixture.detectChanges();
-  // });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(SelectComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
   it('should create', () => {
-    expect(true).toBeTruthy();
-    // expect(component).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 });

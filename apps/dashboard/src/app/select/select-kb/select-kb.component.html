@@ -1,60 +1,72 @@
-<div class="select-kb" fxLayout="column" *ngIf="account && kbs">
-  <div class="select-kb-header" fxFlex="0 0 auto">
-    <h2>{{ account.title }}</h2>
-    <a [routerLink]="'/select'" class="select-kb-back"> &lt; {{ 'generic.back' | translate }} </a>
-    <app-button-action
-      *ngIf="canManage | async"
-      (click)="goToAccountManage()"
-      action="settings"
-      ariaLabel="generic.manage_account"
-      [raised]="true"
-      stfTooltip
-      stfTooltipText="generic.manage_account"
-    >
-    </app-button-action>
+<div class="select-kb" *ngIf="account && kbs">
+  <div class="select-kb-header">
+    <nsi-back-button class="select-kb-back"
+                     link="/select"></nsi-back-button>
+
+    <h2 class="select-kb-title">{{ account.title }}</h2>
+
+    <pa-button *ngIf="canManage | async"
+               icon="gear"
+               size="small"
+               aspect="basic"
+               class="manage-account-button"
+               [paTooltip]="'generic.manage_account' | translate"
+               (click)="goToAccountManage()">
+      {{ 'generic.manage_account' | translate }}
+    </pa-button>
   </div>
 
-  <div class="select-kb-body" fxFlex="1 1 0">
+  <div class="select-kb-body">
     <div class="select-kb-list" *ngIf="kbs.length > 0">
       <ng-container *ngFor="let kb of kbs">
-        <a class="kb" *ngIf="kb.slug" [routerLink]="getKbUrl(kb.slug)">
+        <a *ngIf="kb.slug"
+           class="kb"
+           [class.disabled]="!kb.role_on_kb"
+           [routerLink]="!!kb.role_on_kb ? getKbUrl(kb.slug) : null">
           {{ kb.title }}
-          <svg-icon class="kb-arrow" src="assets/icons/chevron-right.svg"> </svg-icon>
+          <pa-icon *ngIf="!!kb.role_on_kb" name="chevron-right" size="small"></pa-icon>
         </a>
       </ng-container>
     </div>
 
     <div class="select-kb-empty" *ngIf="kbs.length === 0 && !addKb">
       <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
-      <stf-button *ngIf="canAddKb | async" (click)="toggleForm()" color="secondary" padding="pd-xl">
+      <pa-button *ngIf="(canAddKb | async) === true"
+                 (click)="toggleForm()">
         {{ 'stash.create' | translate }}
-      </stf-button>
-      <div *ngIf="!(canAddKb | async)" class="select-kb-empty-message">{{ 'stash.contact_admin' | translate }}</div>
+      </pa-button>
+      <div *ngIf="(canAddKb | async) === false" class="select-kb-empty-message">{{ 'stash.contact_admin' | translate }}</div>
     </div>
 
     <ng-container *ngIf="addKb">
       <div class="select-kb-input">
-        <input type="text" [stfAutoFocus] [formControl]="kbName" [placeholder]="'stash.name_your_kb' | translate" />
-      </div>
-      <div class="select-kb-error" *ngIf="kbName.invalid && (kbName.dirty || kbName.touched)">
-        {{ 'stash.kb_name_invalid' | translate }}
+        <pa-input hasFocus
+                  [formControl]="kbName"
+                  [errorMessages]="errorMessages">
+          {{'stash.name_your_kb' | translate}}
+        </pa-input>
       </div>
     </ng-container>
   </div>
 
-  <div class="select-kb-footer" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
-    <ng-container *ngIf="!addKb">
-      <stf-button color="gray" minWidth="175px" (click)="back()">
-        {{ 'generic.back_to_accounts' | translate }}
-      </stf-button>
-    </ng-container>
+  <div class="select-kb-footer">
+    <pa-button *ngIf="!addKb"
+               kind="inverted"
+               (click)="back()">
+      {{ 'generic.back_to_accounts' | translate }}
+    </pa-button>
+
     <ng-container *ngIf="addKb">
-      <stf-button minWidth="110px" (click)="save()" [disabled]="kbName.invalid">
-        {{ 'generic.save' | translate }}
-      </stf-button>
-      <stf-button color="gray" minWidth="110px" (click)="toggleForm()">
+      <pa-button aspect="basic"
+                 [disabled]="kbName.pristine"
+                 (click)="toggleForm()">
         {{ 'generic.cancel' | translate }}
-      </stf-button>
+      </pa-button>
+
+      <pa-button [disabled]="kbName.invalid"
+                 (click)="save()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
     </ng-container>
   </div>
 </div>

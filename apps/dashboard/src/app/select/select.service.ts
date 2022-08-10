@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, of } from 'rxjs';
 import { switchMap, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
@@ -33,13 +33,12 @@ export class SelectService {
       switchMap((acc) =>
         acc.length === 0 ? of([]) : forkJoin(acc.map((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug))),
       ),
-      switchMap((allKbs) => {
+      switchMap((allKbs: IKnowledgeBoxItem[][]) => {
         const accountKbs: AccountsKbs = {};
-        allKbs
-          .map((kbs) => kbs.filter((kb) => !!kb.role_on_kb))
-          .forEach((kbs, index) => {
-            return (accountKbs[accounts[index].slug] = kbs);
-          });
+        allKbs.forEach((kbs, index) => {
+          const account = accounts[index];
+          return (accountKbs[account.slug] = kbs);
+        });
 
         this.accountsSubject.next(accounts);
         this.kbsSubject.next(accountKbs);

@@ -1,11 +1,6 @@
 <stf-section-navbar [routes]="routes" [hasInnerRoutes]="true">
   <stf-section-navbar-header>
-    <pa-button class="back-button"
-               aspect="basic"
-               iconAndText
-               icon="chevron-left">
-      <a routerLink="..">{{ 'generic.back' | translate }}</a>
-    </pa-button>
+    <nsi-back-button class="back-button" link=".."></nsi-back-button>
 
     <h1>{{ 'resource.edit' | translate }}</h1>
     <div class="body-s">{{ resourceTitle | async }}</div>

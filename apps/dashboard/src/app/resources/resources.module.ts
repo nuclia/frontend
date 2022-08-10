@@ -36,6 +36,7 @@ import { ResourceFileComponent } from './edit/file/file.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { BackButtonComponent } from '@nuclia/sistema';
 
 const Components = [
   ResourceListComponent,
@@ -122,6 +123,7 @@ const ROUTES: Routes = [
     PaButtonModule,
     PaTogglesModule,
     FormsModule,
+    BackButtonComponent,
   ],
   declarations: [...Components],
   exports: [],
