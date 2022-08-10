@@ -1,35 +1,47 @@
 @import 'variables';
 
 .kb-add {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 70vh;
+  padding: rhythm(2) rhythm(4);
   position: relative;
-  padding: 16px 35px;
 
   h1 {
-    margin: 0 0 42px 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
+    margin-bottom: rhythm(5);
   }
 
   h2 {
-    margin: 0 0 6px 0;
-    font-weight: var(--stf-font-weight-bold);
+    margin-bottom: rhythm(1);
   }
 
   .close-button {
-    @include reset-button();
     position: absolute;
-    top: -2px;
-    right: -4px;
-    cursor: pointer;
-    svg {
-      width: 24px;
-      height: 24px;
+    top: 0;
+    right: 0;
+  }
+
+  .form-container {
+    display: flex;
+    flex-direction: column;
+    flex: 2 0 auto;
+    justify-content: space-between;
+  }
+
+  pa-radio-group {
+    display: block;
+    margin-bottom: rhythm(2);
+
+    pa-radio {
+      display: block;
+      margin-bottom: rhythm(1);
     }
   }
 
-  &-separator {
-    height: 1px;
+  .kb-add-separator {
     border-bottom: 1px solid var(--stf-gray-lighter-2);
+    margin: rhythm(4) 0;
   }
 
   &-field-name {
@@ -45,11 +57,22 @@
   }
 
   .steps {
+    color: $color-neutral-regular;
+    margin-top: rhythm(1);
     text-align: center;
-    color: var(--stf-gray-lighter-3);
   }
 
   .error {
-    color: $red-dark;
+    background-color: $color-secondary-regular;
+    text-align: center;
+    padding: rhythm(1);
+  }
+
+  .footer-buttons {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    gap: rhythm(2);
+    margin-top: rhythm(3);
   }
 }

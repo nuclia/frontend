@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -13,14 +13,14 @@ import { TokenDialogModule } from '../components/token-dialog/token-dialog.modul
 import { ButtonActionModule } from '../components/button-action/button-action.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { STFConfirmModule, UserAvatarModule } from '@flaps/components';
-import { STFSectionNavbarModule, STFCheckboxModule, STFSidebarModule } from '@flaps/common';
+import { STFCheckboxModule, STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
 import {
   STFButtonsModule,
+  STFExpanderModule,
+  STFFormDirectivesModule,
   STFInputModule,
   STFTextFieldModule,
-  STFFormDirectivesModule,
   STFTooltipModule,
-  STFExpanderModule,
 } from '@flaps/pastanaga';
 
 import { AccountComponent } from './account.component';
@@ -39,7 +39,13 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
 import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';
 import { HintModule } from '../components/hint/hint.module';
-import { PaButtonModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   AccountComponent,
@@ -87,6 +93,9 @@ const Components = [
     HintModule,
     PaButtonModule,
     PaTooltipModule,
+    PaTextFieldModule,
+    PaDropdownModule,
+    PaTogglesModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
