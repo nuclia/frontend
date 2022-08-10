@@ -1,13 +1,7 @@
 <div class="select-kb" *ngIf="account && kbs">
   <div class="select-kb-header">
-    <pa-button routerLink="/select"
-               iconAndText
-               icon="chevron-left"
-               aspect="basic"
-               size="small"
-               class="select-kb-back">
-      <a routerLink="/select">{{ 'generic.back' | translate }}</a>
-    </pa-button>
+    <nsi-back-button class="select-kb-back"
+                     link="/select"></nsi-back-button>
 
     <h2 class="select-kb-title">{{ account.title }}</h2>
 

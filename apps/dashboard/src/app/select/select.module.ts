@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { SelectComponent } from './select.component';
 import { SelectKbComponent } from './select-kb/select-kb.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { BackButtonComponent } from '@nuclia/sistema';
 
 const Components = [SelectComponent, SelectKbComponent];
 
@@ -22,6 +23,7 @@ const Components = [SelectComponent, SelectKbComponent];
     PaIconModule,
     PaTooltipModule,
     PaTextFieldModule,
+    BackButtonComponent,
   ],
   declarations: [...Components],
   exports: [],

@@ -20,9 +20,10 @@
   .logo {
     margin-bottom: rhythm(8);
     text-align: center;
+
     img {
-      width: 174px;
       height: auto;
+      width: rhythm(20);
     }
   }
   .select-content {
