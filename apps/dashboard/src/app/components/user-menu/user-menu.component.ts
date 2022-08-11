@@ -1,10 +1,19 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService, StateService } from '@flaps/core';
-import { Account } from '@nuclia/core';
+import { StateService } from '@flaps/core';
+import { Account, Welcome } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { NavigationService } from '../../services/navigation.service';
 import { Subject, takeUntil } from 'rxjs';
+import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-user-menu',
@@ -14,20 +23,31 @@ import { Subject, takeUntil } from 'rxjs';
   animations: stfAnimations,
 })
 export class UserMenuComponent implements OnDestroy {
+  @Input() set userInfo(userInfo: Welcome | undefined | null) {
+    if (userInfo) {
+      this.accounts = userInfo.accounts || [];
+      if (userInfo.preferences) {
+        this.avatar = {
+          userName: userInfo.preferences.name,
+          userId: userInfo.preferences.email,
+        };
+      }
+    }
+  }
+
   @Output() close = new EventEmitter<void>();
 
-  accounts: string[];
+  avatar: AvatarModel = {};
+  accounts: string[] = [];
   account: Account | null = null;
   private unsubscribeAll = new Subject<void>();
 
   constructor(
     private router: Router,
-    private userService: UserService,
     private stateService: StateService,
     private navigation: NavigationService,
     private cdr: ChangeDetectorRef,
   ) {
-    this.accounts = this.userService.getUserinfo()?.accounts || [];
     this.stateService.account.pipe(takeUntil(this.unsubscribeAll)).subscribe((account) => {
       this.account = account;
       this.cdr?.markForCheck();

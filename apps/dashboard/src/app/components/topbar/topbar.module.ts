@@ -9,6 +9,13 @@ import { UserMenuModule } from '../user-menu/user-menu.module';
 
 import { TopbarComponent } from './topbar.component';
 import { KbSwitchComponent } from './kb-switch/kb-switch.component';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
@@ -19,6 +26,11 @@ import { KbSwitchComponent } from './kb-switch/kb-switch.component';
     UserMenuModule,
     TourMatMenuModule,
     TranslateModule,
+    PaIconModule,
+    PaButtonModule,
+    PaDropdownModule,
+    PaPopupModule,
+    PaTooltipModule,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],

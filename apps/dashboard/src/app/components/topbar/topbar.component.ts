@@ -1,9 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, UserService, SDKService } from '@flaps/core';
-import { ConnectionPositionPair } from '@angular/cdk/overlay';
+import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
-import { filter, map, switchMap, take, tap, distinctUntilKeyChanged } from 'rxjs';
+import { distinctUntilKeyChanged, filter, map, switchMap, take, tap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { STFConfirmComponent } from '@flaps/components';
 import { MatDialog } from '@angular/material/dialog';
@@ -17,7 +16,7 @@ import { AppService } from '../../services/app.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent implements AfterViewInit {
-  userPrefs = this.userService.userPrefs;
+  userInfo = this.userService.userInfo;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
   searchEnabled = this.appService.searchEnabled;
@@ -40,13 +39,6 @@ export class TopbarComponent implements AfterViewInit {
         permalink></nuclia-search>`),
     ),
   );
-
-  menuOpen: boolean = false;
-  menuPosition = [
-    new ConnectionPositionPair({ originX: 'end', originY: 'bottom' }, { overlayX: 'end', overlayY: 'top' }),
-  ];
-
-  switchOpen: boolean = false;
 
   constructor(
     private router: Router,

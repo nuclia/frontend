@@ -1,14 +1,13 @@
-<div class="user-menu" @dropdownTopRight>
-  <button class="user-menu-item" (click)="goProfile()">
-    <svg-icon src="assets/icons/usuari.svg"></svg-icon>
-    <span>{{ 'generic.user_preferences' | translate }}</span>
-  </button>
-  <button class="user-menu-item" *ngIf="accounts.length > 1" (click)="switchAccount()">
-    <svg-icon src="assets/icons/switch.svg"></svg-icon>
-    <span>{{ 'generic.switch_account' | translate }}</span>
-  </button>
-  <button class="user-menu-item" (click)="logout()">
-    <svg-icon src="assets/icons/logout.svg"></svg-icon>
-    <span>{{ 'generic.logout' | translate }}</span>
-  </button>
-</div>
+<pa-avatar [avatar]="avatar" [paPopup]="userMenu"></pa-avatar>
+
+<pa-dropdown #userMenu>
+  <pa-option icon="user"
+             (click)="goProfile()">{{ 'generic.user_preferences' | translate }}</pa-option>
+  <pa-separator></pa-separator>
+  <pa-option *ngIf="accounts.length > 1"
+             icon="reload"
+             (click)="switchAccount()">{{ 'generic.switch_account' | translate }}</pa-option>
+  <pa-separator></pa-separator>
+  <pa-option icon="log-out"
+             (click)="logout()">{{ 'generic.logout' | translate }}</pa-option>
+</pa-dropdown>

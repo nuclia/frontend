@@ -10,6 +10,7 @@ import { SDKService } from './sdk.service';
 export class UserService {
   isBrowser = false;
   private userInfoSubject = new BehaviorSubject<Welcome | undefined>(undefined);
+  readonly userInfo = this.userInfoSubject.asObservable();
   readonly userPrefs = this.userInfoSubject.pipe(map((user) => user?.preferences));
 
   constructor(private sdk: SDKService, @Inject(PLATFORM_ID) platformId: any) {
