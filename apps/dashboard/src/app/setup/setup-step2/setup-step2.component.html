@@ -19,9 +19,11 @@
         placeholder="{{ 'setup.name_account_placeholder' | translate }}"
         fxFlex="1 1 auto"
       />
-      <stf-button type="submit" padding="pd-l" [disabled]="accountName.value.length === 0" fxFlex="0 0 auto">
+      <pa-button type="submit"
+                 fxFlex="0 0 auto"
+                 [disabled]="accountName.value.length === 0">
         {{ 'generic.verify' | translate }}
-      </stf-button>
+      </pa-button>
     </form>
 
     <div
@@ -32,7 +34,7 @@
     </div>
     <ng-container *ngIf="verified">
       <div class="setup-step2-success" *ngIf="available" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="6px">
-        <svg-icon src="assets/icons/check.svg"></svg-icon>
+        <pa-icon name="check"></pa-icon>
         <span>{{ 'setup.account_validated' | translate }}</span>
       </div>
       <div class="setup-step2-error" *ngIf="!available">
@@ -69,23 +71,16 @@
       <div class="setup-step2-kb-info">{{ 'setup.knowledge_box_creation' | translate }}</div>
 
       <div class="setup-step2-kb-name" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-        <input
-          fxFlex="1 1 auto"
-          type="text"
-          formControlName="kbName"
-          [attr.readonly]="editKbName ? null : 'true'"
-          #kbInput
+        <input fxFlex="1 1 auto"
+               type="text"
+               formControlName="kbName"
+               [attr.readonly]="editKbName ? null : 'true'"
+               #kbInput
         />
-        <button
-          *ngIf="!editKbName"
-          type="button"
-          fxFlex="0 0 auto"
-          class="setup-step2-kb-edit"
-          (click)="edit()"
-          [attr.aria-label]="'generic.edit' | translate"
-        >
-          <svg-icon src="assets/icons/edit2.svg"></svg-icon>
-        </button>
+        <pa-button *ngIf="!editKbName"
+                   aspect="basic"
+                   icon="edit"
+                   (click)="edit()">{{'generic.edit' | translate}}</pa-button>
       </div>
 
       <div class="setup-step2-error" *ngIf="kbName.invalid && (kbName.dirty || kbName.touched)">
@@ -94,14 +89,10 @@
     </form>
 
     <div class="setup-step2-actions">
-      <stf-button
-        (click)="save()"
-        minWidth="175px"
-        color="secondary"
-        [disabled]="!(verified && available && kbForm.valid)"
-      >
+      <pa-button [disabled]="!(verified && available && kbForm.valid)"
+                 (click)="save()">
         {{ 'generic.next_step' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </div>
 </app-setup-container>

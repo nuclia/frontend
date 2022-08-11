@@ -6,10 +6,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
-import { STFButtonsModule, STFInputModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
+import { STFButtonsModule, STFFormDirectivesModule, STFInputModule, STFTooltipModule } from '@flaps/pastanaga';
 import { STFCheckboxModule } from '@flaps/common';
-import { FileUploadModule } from '@flaps/core';
-import { STFPipesModule } from '@flaps/core';
+import { FileUploadModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
 import { UploadFilesComponent } from './upload-files/upload-files.component';
@@ -18,6 +17,7 @@ import { UploadProgressComponent } from './upload-progress/upload-progress.compo
 import { UploadProgressDialogComponent } from './upload-progress/upload-progress-dialog.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
+import { PaButtonModule, PaIconModule, PaTogglesModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   CreateLinkComponent,
@@ -45,6 +45,10 @@ const Components = [
     STFPipesModule,
     LabelModule,
     HintModule,
+    PaButtonModule,
+    PaIconModule,
+    PaTogglesModule,
+    PaTooltipModule,
   ],
   declarations: [...Components],
   exports: [],

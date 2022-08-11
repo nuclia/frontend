@@ -42,7 +42,7 @@
               <span *ngIf="param.value !== 'True'">
                 {{ param.value }}
               </span>
-              <svg-icon *ngIf="param.value === 'True'" src="assets/icons/check.svg"></svg-icon>
+              <pa-icon *ngIf="param.value === 'True'" class="check-icon" name="check"></pa-icon>
             </span>
             <span *ngIf="!teamPlan.parameters[param]">-</span>
             <span class="overspend">{{

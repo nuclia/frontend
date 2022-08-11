@@ -1,8 +1,8 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, switchMap, tap } from 'rxjs';
-import { StateService, SDKService, STFTrackingService } from '@flaps/core';
-import { IKnowledgeBoxItem, Account } from '@nuclia/core';
+import { SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { NavigationService } from '../../../services/navigation.service';
 
@@ -15,6 +15,8 @@ import { NavigationService } from '../../../services/navigation.service';
 })
 export class KbSwitchComponent {
   @Output() close = new EventEmitter<void>();
+
+  kb = this.sdk.currentKb;
   account?: Account;
 
   knowledgeBoxes = this.stateService.account.pipe(

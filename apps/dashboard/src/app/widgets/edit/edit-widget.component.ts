@@ -56,7 +56,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   widget?: Widget;
   isDefaultWidget = false;
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
-  copyIcon = 'assets/icons/copy.svg';
+  copyIcon = 'copy';
   isTrainingEnabled = this.posthog.isFeatureEnabled('training');
 
   debouncePlaceholder = new Subject<string>();
@@ -207,10 +207,10 @@ ${styles.join('\n')}
 
   copy() {
     navigator.clipboard.writeText(this.snippet);
-    this.copyIcon = 'assets/icons/check.svg';
+    this.copyIcon = 'check';
     markForCheck(this.cdr);
     setTimeout(() => {
-      this.copyIcon = 'assets/icons/copy.svg';
+      this.copyIcon = 'copy';
       markForCheck(this.cdr);
     }, 1000);
   }

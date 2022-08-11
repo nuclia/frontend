@@ -1,7 +1,8 @@
 <div class="entity-dialog">
-  <button (click)="close()" class="entity-dialog-close" [attr.ariaLabel]="'generic.close' | translate">
-    <svg-icon src="assets/icons/close-modal.svg"></svg-icon>
-  </button>
+  <pa-button class="close-button"
+             icon="cross"
+             aspect="basic"
+             (click)="close()">{{'generic.close' | translate}}</pa-button>
 
   <div class="mb-44">
     <app-group-select [(selected)]="group" [groups]="(groups$ | async) || {}" [disabled]="mode !== 'add'">

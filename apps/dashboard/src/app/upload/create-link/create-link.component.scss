@@ -1,41 +1,35 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .create-link {
   position: relative;
-  padding: 16px 26px;
+  padding: rhythm(2) rhythm(3);
 }
 
 h1 {
-  margin: 0 0 20px 0;
-  font-size: var(--stf-font-size-title);
-  font-weight: var(--stf-font-weight-bold);
-}
-
-.close-button {
-  @include reset-button();
-  position: absolute;
-  top: 6px;
-  right: 2px;
-  cursor: pointer;
+  margin: 0 0 rhythm(3) 0;
 }
 
 .new-link {
-  width: 50vw;
   min-width: 350px;
   max-width: 672px;
+  width: 50vw;
+
+  stf-input {
+    display: block;
+    margin-bottom: rhythm(3);
+  }
 }
 
 .link-input {
-  margin-bottom: 25px;
   min-width: 300px;
   width: 100%;
 }
 
 .message {
-  padding: 10px 10px 0 10px;
+  padding: rhythm(1) rhythm(1) 0 rhythm(1);
   color: var(--stf-primary);
 }
 
 .link-actions {
-  margin-top: 32px;
+  margin-top: rhythm(4);
 }

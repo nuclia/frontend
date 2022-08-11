@@ -1,8 +1,9 @@
 <div class="widget-dialog">
   <h1>{{ (data?.rename ? 'stash.widgets.rename-title' : 'stash.widgets.add') | translate }}</h1>
-  <button class="close-button" (click)="close()">
-    <svg-icon src="assets/icons/close.svg"></svg-icon>
-  </button>
+  <pa-button class="close-button"
+             icon="cross"
+             aspect="basic"
+             (click)="close()">{{'generic.close' | translate}}</pa-button>
 
   <form [formGroup]="mainForm" (ngSubmit)="save()">
     <pa-input
@@ -14,11 +15,14 @@
     >
 
     <div class="buttons">
-      <pa-button type="submit" kind="primary" [disabled]="!mainForm.valid || mainForm.pristine">
-        {{ 'generic.save' | translate }}
-      </pa-button>
-      <pa-button (click)="close()">
+      <pa-button aspect="basic"
+                 (click)="close()">
         {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button type="submit"
+                 kind="primary"
+                 [disabled]="!mainForm.valid || mainForm.pristine">
+        {{ 'generic.save' | translate }}
       </pa-button>
     </div>
   </form>

@@ -13,10 +13,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { STFConfirmModule } from '@flaps/components';
 import {
   STFButtonsModule,
-  STFInputModule,
   STFExpanderModule,
-  STFTooltipModule,
+  STFInputModule,
   STFTextFieldModule,
+  STFTooltipModule,
 } from '@flaps/pastanaga';
 import { ButtonActionModule } from '../components/button-action/button-action.module';
 
@@ -28,6 +28,7 @@ import { SynonymListComponent } from './synonym-list/synonym-list.component';
 import { SynonymAddComponent } from './synonym-add/synonym-add.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { GroupSelectComponent } from './entity-dialog/group-select/group-select.component';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   EntitiesComponent,
@@ -60,6 +61,8 @@ const Components = [
     STFTextFieldModule,
     STFExpanderModule,
     STFTooltipModule,
+    PaTextFieldModule,
+    PaButtonModule,
   ],
   declarations: [...Components],
   exports: [],

@@ -15,26 +15,15 @@
     font-weight: var(--stf-font-weight-bold);
   }
 
-  .close-button {
-    @include reset-button();
-    position: absolute;
-    top: -2px;
-    right: -4px;
-    cursor: pointer;
-    svg {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
   label {
     margin-top: 12px;
     font-weight: var(--stf-font-weight-semibold);
   }
 
   .info {
-    vertical-align: middle;
-    margin-left: 6px;
+    color: $color-neutral-regular;
+    margin-left: rhythm(1);
+    vertical-align: text-bottom;
   }
 
   .zone {

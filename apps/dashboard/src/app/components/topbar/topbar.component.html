@@ -19,39 +19,8 @@
 
   <div class="topbar-separator"></div>
 
-  <button class="topbar-kb" (click)="switchOpen = true" cdkOverlayOrigin #currentKb #triggerSwitch="cdkOverlayOrigin">
-    <span>{{ (kb | async)?.title }}</span>
-    <svg-icon *ngIf="(kb | async)?.state === 'PUBLISHED'" src="assets/icons/unlock.svg"> </svg-icon>
-  </button>
+  <app-kb-switch class="topbar-kb"></app-kb-switch>
 
-  <button class="topbar-user" (click)="menuOpen = true" cdkOverlayOrigin #trigger="cdkOverlayOrigin">
-    <stf-user-avatar-simple tourAnchor="step4" [userPrefs]="userPrefs | async" [blackMode]="true">
-    </stf-user-avatar-simple>
-  </button>
+  <app-user-menu tourAnchor="step4" [userInfo]="userInfo | async"></app-user-menu>
 
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="menuOpen"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayPositions]="menuPosition"
-    [cdkConnectedOverlayOffsetY]="7"
-    (backdropClick)="menuOpen = false"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  >
-    <app-user-menu (close)="menuOpen = false"></app-user-menu>
-  </ng-template>
-
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="triggerSwitch"
-    [cdkConnectedOverlayOpen]="switchOpen"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayOffsetY]="5"
-    (backdropClick)="switchOpen = false"
-    [cdkConnectedOverlayWidth]="currentKb.clientWidth"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  >
-    <app-kb-switch (close)="switchOpen = false" [style.width.px]="currentKb.clientWidth"> </app-kb-switch>
-  </ng-template>
 </div>

@@ -7,11 +7,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import {
+  STFButtonDirectivesModule,
   STFButtonsModule,
-  STFInputModule,
   STFExpanderModule,
   STFFormDirectivesModule,
-  STFButtonDirectivesModule,
+  STFInputModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
 
@@ -22,6 +22,7 @@ import { SetupStep2Component } from './setup-step2/setup-step2.component';
 import { SetupLoaderComponent } from './setup-loader/setup-loader.component';
 import { SetupInviteComponent } from './setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup-account/setup-account.component';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   SetupContainerComponent,
@@ -48,6 +49,8 @@ const Components = [
     STFFormDirectivesModule,
     STFButtonDirectivesModule,
     MatRadioModule,
+    PaIconModule,
+    PaButtonModule,
   ],
   declarations: [...Components],
   exports: [],

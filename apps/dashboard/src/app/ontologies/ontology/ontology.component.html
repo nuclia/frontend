@@ -11,14 +11,6 @@
                   formControlName="title"
                   [errorMessages]="validationMessages.title"
         ></pa-input>
-        <!--        <stf-input-->
-        <!--          formControlName="title"-->
-        <!--          [validator]="ontologyForm.controls['title']"-->
-        <!--          [validation_messages]="validationMessages.title"-->
-        <!--          theme="white"-->
-        <!--          [isLessen]="true"-->
-        <!--        >-->
-        <!--        </stf-input>-->
       </div>
     </div>
   </form>
@@ -43,7 +35,7 @@
 
     <div>
       <div class="important" [class.disabled-color]="!addNew">
-        <svg-icon src="assets/icons/caution.svg"></svg-icon>
+        <pa-icon name="warning"></pa-icon>
         {{ 'ontology.type_classification_important' | translate }}
       </div>
       <div>

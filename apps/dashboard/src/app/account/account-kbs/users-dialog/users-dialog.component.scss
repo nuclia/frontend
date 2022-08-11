@@ -4,11 +4,3 @@
   position: relative;
   padding: rhythm(3);
 }
-
-.close-button {
-  @include reset-button();
-  position: absolute;
-  top: 0;
-  right: 0;
-  cursor: pointer;
-}

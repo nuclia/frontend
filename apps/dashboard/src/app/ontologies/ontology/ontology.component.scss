@@ -35,13 +35,9 @@
     align-items: center;
     margin-top: 2px;
     font-weight: var(--stf-font-weight-semibold);
-    color: #937f12;
-    svg-icon {
-      margin-right: rythm(0.5);
-    }
-    svg {
-      display: block;
-      fill: currentColor;
+    color: $color-secondary-stronger;
+    pa-icon {
+      margin-right: rhythm(1);
     }
   }
 

@@ -1,10 +1,23 @@
-<div *ngIf="knowledgeBoxes | async as kbs" class="kb-switch" @dropdown>
-  <button *ngFor="let kb of kbs" class="kb-switch-item" [disabled]="!kb.role_on_kb" (click)="goToKb(kb)">
-    <span>{{ kb.title }}</span>
-    <svg-icon *ngIf="kb.state === 'PUBLISHED'" src="assets/icons/unlock.svg"> </svg-icon>
-  </button>
-  <button *ngIf="showDemo | async" class="kb-switch-item demo" (click)="goToDemo()">
-    <span>Demo</span>
-    <svg-icon src="assets/icons/unlock.svg"></svg-icon>
-  </button>
-</div>
+<pa-button class="kb-switch"
+           kind="inverted"
+           size="small"
+           [paPopup]="kbSwitch">
+  {{ (kb | async)?.title }}
+  <pa-icon *ngIf="(kb | async)?.state === 'PUBLISHED'" size="small" name="unlock"></pa-icon>
+</pa-button>
+
+<pa-dropdown #kbSwitch>
+  <ng-container *ngFor="let kb of knowledgeBoxes | async; let last=last">
+    <pa-option [disabled]="!kb.role_on_kb"
+               iconOnRight
+               [paTooltip]="kb.title"
+               [icon]="kb.state === 'PUBLISHED' ? 'unlock' : ''"
+               (selectOption)="goToKb(kb)">{{ kb.title }}</pa-option>
+    <pa-separator *ngIf="!last || (last && (showDemo | async))"></pa-separator>
+  </ng-container>
+  <pa-option *ngIf="showDemo | async"
+             class="demo-kb"
+             icon="unlock"
+             iconOnRight
+             (selectOption)="goToDemo()">Demo</pa-option>
+</pa-dropdown>

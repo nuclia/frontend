@@ -4,18 +4,6 @@
   position: relative;
   padding: 12px 35px;
 
-  .close-button {
-    @include reset-button();
-    position: absolute;
-    top: -2px;
-    right: -4px;
-    cursor: pointer;
-    svg {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
   h1 {
     margin: 0 0 16px 0;
     font-size: var(--stf-font-size-title);

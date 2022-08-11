@@ -1,4 +1,4 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .upload-files {
   position: relative;
@@ -6,15 +6,7 @@
   min-width: 350px;
   max-width: 722px;
   max-height: 85vh;
-  padding: 16px 26px 14px 26px;
-}
-
-.close-button {
-  @include reset-button();
-  position: absolute;
-  top: 6px;
-  right: 2px;
-  cursor: pointer;
+  padding: rhythm(2) rhythm(3);
 }
 
 h1 {
@@ -24,14 +16,15 @@ h1 {
 }
 
 .size-warning {
+  background-color: $color-secondary-regular;
+  padding: rhythm(1);
   display: flex;
-  margin-bottom: 20px;
-  color: var(--stf-orange);
+  margin-bottom: rhythm(3);
   strong {
     font-weight: var(--stf-font-weight-semibold);
   }
-  svg-icon {
-    margin-right: 8px;
+  pa-icon {
+    margin-right: rhythm(1);
   }
 }
 
@@ -90,16 +83,6 @@ app-label-field {
   }
   .file-actions {
     flex: 0 0 auto;
-    padding-right: 10px;
-    button {
-      @include reset-button();
-      display: block;
-      cursor: pointer;
-      svg {
-        display: block;
-        width: 14px;
-      }
-    }
   }
 }
 

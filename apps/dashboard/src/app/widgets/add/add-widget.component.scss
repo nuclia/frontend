@@ -2,30 +2,16 @@
 
 .widget-dialog {
   position: relative;
-  padding: 12px 35px;
-
-  .close-button {
-    @include reset-button();
-    position: absolute;
-    top: -2px;
-    right: -4px;
-    cursor: pointer;
-    svg {
-      width: 24px;
-      height: 24px;
-    }
-  }
+  padding: rhythm(1.5) rhythm(4);
 
   h1 {
-    margin: 0 0 16px 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
+    margin: 0 0 rhythm(2) 0;
   }
 
   .buttons {
     display: flex;
     justify-content: center;
-    margin-top: 16px;
-    gap: 14px;
+    margin-top: rhythm(2);
+    gap: rhythm(2);
   }
 }

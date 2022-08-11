@@ -83,43 +83,18 @@
     }
     svg {
       display: block;
-      margin-right: 12px;
+      margin-right: rhythm(1.5);
     }
   }
 
   &-separator {
     height: 100%;
     width: 1px;
-    margin: 0 30px 0 20px;
-    background-color: #dfdfdf;
+    margin: 0 rhythm(4) 0 rhythm(3);
+    background-color: $color-neutral-light;
   }
 
-  &-kb {
-    @include reset-button();
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    height: 32px;
-    margin-right: 30px;
-    padding: 0 12px;
-    width: 170px;
-    background-color: #f3f3f3;
-    border-radius: var(--stf-border-radius-button);
-    font-weight: var(--stf-font-weight-semibold);
-    color: $gray-contrast;
-    text-align: left;
-    span {
-      flex: 1 1 0;
-      @include text-truncate();
-    }
-    svg-icon {
-      flex: 0 0 auto;
-    }
-    svg {
-      display: block;
-      width: 16px;
-      height: auto;
-      fill: $gray-contrast;
-    }
+  .topbar-kb {
+    margin-right: rhythm(4);
   }
 }

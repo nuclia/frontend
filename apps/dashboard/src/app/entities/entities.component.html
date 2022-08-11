@@ -1,19 +1,14 @@
 <div class="entities">
   <h1>{{ 'entity.name_entities_management' | translate }}</h1>
 
-  <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
-    <div class="entities-search" fxLayout="row" fxLayoutAlign="start center">
-      <label fxFlex="0 0 auto" for="entity-search">{{ 'entity.entity_search' | translate }}</label>
-      <input fxFlex="1 1 auto" type="text" id="entity-search" [formControl]="searchInput" (keydown.enter)="search()" />
-      <button fxFlex="0 0 auto" (click)="search()">
-        <svg-icon src="assets/icons/search.svg"></svg-icon>
-      </button>
-    </div>
-    <!--
-    <button class="entities-download">
-      <svg-icon src="assets/icons/text/csv.svg"></svg-icon>
-    </button>
-    -->
+  <div class="entities-search">
+    <pa-input id="entity-search"
+              [formControl]="searchInput"
+              (keydown.enter)="search()">{{ 'entity.entity_search' | translate }}</pa-input>
+
+    <pa-button icon="search"
+               aspect="basic"
+               (click)="search()">{{'generic.search' | translate}}</pa-button>
   </div>
 
   <ng-container *ngIf="searchTerm | async as term">

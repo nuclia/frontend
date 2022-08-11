@@ -7,6 +7,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { STFButtonsModule } from '@flaps/pastanaga';
 
 import { TokenDialogComponent } from './token-dialog.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import { TokenDialogComponent } from './token-dialog.component';
     TranslateModule.forChild(),
     MatDialogModule,
     STFButtonsModule,
+    PaButtonModule,
   ],
   declarations: [TokenDialogComponent],
   exports: [TokenDialogComponent],

@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { SDKService, STFTrackingService } from '@flaps/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { SDKService, STFTrackingService, STFUtils, Zone } from '@flaps/core';
 import { CheckboxGroupItem, Sluggable } from '@flaps/common';
-import { Zone, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { map, share } from 'rxjs';
 import * as Sentry from '@sentry/angular';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 export interface KbAddData {
   account: Account;
@@ -26,31 +26,39 @@ export class KbAddComponent {
     description: [''],
     zone: [this.data.account.zone],
     selectedLanguage: ['en'],
+    languageMode: ['multilingual'],
+    useAnonymization: ['no'],
   });
 
-  validationMessages = {
+  validationMessages: { [key: string]: IErrorMessages } = {
     title: {
       sluggable: 'stash.kb_name_invalid',
-    },
+    } as IErrorMessages,
   };
 
   languages: CheckboxGroupItem[] = [
     { value: 'multilingual', label: 'stash.create.language.multi' },
     { value: 'monolingual', label: 'stash.create.language.mono' },
   ];
-  languageMode: string[] = ['multilingual'];
   languageList = STFUtils.supportedAudioLanguages();
   anonymizationOptions: CheckboxGroupItem[] = [
     { value: 'no', label: 'generic.disabled' },
     { value: 'yes', label: 'generic.enabled' },
   ];
-  useAnonymization = ['no'];
   hasAnonymization = this.tracking.isFeatureEnabled('kb-anonymization').pipe(share());
   totalSteps = this.hasAnonymization.pipe(map((hasAnonymization) => (hasAnonymization ? 3 : 2)));
-  lastStep = this.hasAnonymization.pipe(map((hasAnonymization) => (hasAnonymization ? 2 : 1)));
+  lastStep = this.hasAnonymization.pipe(
+    map((hasAnonymization) => {
+      const last = hasAnonymization ? 2 : 1;
+      this._lastStep = last;
+      return last;
+    }),
+  );
   loading = false;
   failures = 0;
   error = '';
+
+  private _lastStep = 1;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -62,14 +70,22 @@ export class KbAddComponent {
   ) {}
 
   save() {
+    // Prevent submitting the form by pressing "enter" in the kb input on first step
+    if (this.step < this._lastStep) {
+      this.next();
+      return;
+    }
+
     if (this.kbForm.invalid) return;
+
     const payload: KnowledgeBoxCreation = {
       slug: STFUtils.generateSlug(this.kbForm.value.title),
       zone: this.kbForm.value.zone,
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
-      sentence_embedder: this.languageMode[0] === 'multilingual' ? 'multilingual' : this.kbForm.value.selectedLanguage,
-      anonymization: this.useAnonymization[0] === 'yes' ? 'multilingual' : '',
+      sentence_embedder:
+        this.kbForm.value.languageMode === 'multilingual' ? 'multilingual' : this.kbForm.value.selectedLanguage,
+      anonymization: this.kbForm.value.useAnonymization === 'yes' ? 'multilingual' : '',
     };
     this.loading = true;
     this.error = '';

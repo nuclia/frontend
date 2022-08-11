@@ -4,14 +4,6 @@
   position: relative;
   padding: 20px 20px 14px 20px;
 
-  &-close {
-    @include reset-button();
-    position: absolute;
-    top: 14px;
-    right: 18px;
-    cursor: pointer;
-  }
-
   h2 {
     margin: 0;
     font-size: var(--stf-font-size-title);

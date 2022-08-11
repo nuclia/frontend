@@ -3,7 +3,13 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { STFSectionNavbarModule } from '@flaps/common';
-import { PaButtonModule, PaDropdownModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { AddWidgetDialogModule } from './add/add-widget.module';
@@ -37,6 +43,7 @@ const routes = [
     PaTogglesModule,
     AddWidgetDialogModule,
     AngularSvgIconModule,
+    PaIconModule,
   ],
   exports: [],
   declarations: [EditWidgetComponent, WidgetsComponent],
