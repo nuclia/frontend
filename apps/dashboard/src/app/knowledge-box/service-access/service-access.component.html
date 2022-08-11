@@ -34,33 +34,29 @@
             <div class="service-access-title" fxFlex="1 1 0">
               <button (click)="toggleSA(sa.id)" [disabled]="!sa.keys || sa.keys.length === 0">
                 <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
-                  <svg-icon
-                    *ngIf="sa.keys && sa.keys.length > 0"
-                    src="assets/icons/chevron-right.svg"
-                    class="service-access-title-arrow"
-                    [class.expanded]="isExpanded(sa.id)"
-                  >
-                  </svg-icon>
+                  <pa-icon *ngIf="sa.keys && sa.keys.length > 0"
+                           name="chevron-right"
+                           size="small"
+                           class="service-access-title-arrow"
+                           [class.expanded]="isExpanded(sa.id)"></pa-icon>
                   <span>{{ sa.title }}</span>
                 </div>
               </button>
             </div>
             <div class="service-access-actions" fxFlex="0 0 auto">
-              <pa-button
-                (click)="createKey(sa)"
-                aspect="basic"
-                icon="plus"
-                size="small"
-                paTooltip="stash.new_service_access_token"
-              >
+              <pa-button (click)="createKey(sa)"
+                         aspect="basic"
+                         icon="plus"
+                         size="small"
+                         paTooltip="stash.new_service_access_token">
+                {{'stash.new_service_access_token' | translate}}
               </pa-button>
-              <pa-button
-                (click)="deleteServiceAccess(sa)"
-                aspect="basic"
-                icon="trash"
-                size="small"
-                paTooltip="generic.delete"
-              >
+              <pa-button (click)="deleteServiceAccess(sa)"
+                         aspect="basic"
+                         icon="trash"
+                         size="small"
+                         paTooltip="generic.delete">
+                {{'generic.delete' | translate}}
               </pa-button>
             </div>
           </div>
@@ -76,16 +72,14 @@
                     {{ key.expires | formatDate }}
                   </div>
                   <div class="service-access-key-actions" fxFlex="1 1 auto">
-                    <pa-button
-                      (click)="deleteKey(sa, key)"
-                      class="delete-key"
-                      aspect="basic"
-                      icon="trash"
-                      size="small"
-                      iconSize="small"
-                      paTooltip="generic.delete"
-                    >
-                    </pa-button>
+                    <pa-button (click)="deleteKey(sa, key)"
+                               class="delete-key"
+                               aspect="basic"
+                               icon="trash"
+                               size="small"
+                               iconSize="small"
+                               paTooltip="generic.delete"
+                    >{{'generic.delete' | translate}}</pa-button>
                   </div>
                 </div>
               </div>

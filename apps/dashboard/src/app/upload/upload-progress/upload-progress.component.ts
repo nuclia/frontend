@@ -1,6 +1,8 @@
-import { Component, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { map, takeUntil } from 'rxjs/operators';
 import { UploadService } from '../upload.service';
+import { Observable } from 'rxjs';
+import { FileUploadStatus } from '@nuclia/core';
 
 @Component({
   selector: 'app-upload-progress',
@@ -10,7 +12,10 @@ import { UploadService } from '../upload.service';
 })
 export class UploadProgressComponent {
   @Output() close = new EventEmitter<void>();
-  progress = this.uploadService.progress.pipe(takeUntil(this.close));
+  files: Observable<FileUploadStatus[]> = this.uploadService.progress.pipe(
+    map((progress) => progress.files || []),
+    takeUntil(this.close),
+  );
 
   constructor(private uploadService: UploadService) {}
 }

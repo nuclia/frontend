@@ -1,33 +1,39 @@
 <div class="create-link">
   <h1>{{ 'modal.create_link.title' | translate }}</h1>
-  <button class="close-button" (click)="close()">
-    <svg-icon src="assets/icons/close-modal.svg"></svg-icon>
-  </button>
-  <div class="new-link">
-    <form [formGroup]="linkForm" class="link-input" id="link-form" (ngSubmit)="add()">
-      <stf-input
-        formControlName="link"
-        required
-        type="text"
-        [noAutocapitalize]="true"
-        (valueChange)="message = undefined"
-        [validator]="linkForm.controls['link']"
-        [validation_messages]="validationMessages.link"
-      >
-        {{ 'modal.create_link.input' | translate }}
-      </stf-input>
-      <div class="message" *ngIf="message">{{ message | translate }}</div>
-    </form>
+  <pa-button class="close-button"
+             icon="cross"
+             aspect="basic"
+             (click)="close()">{{'generic.close' | translate}}</pa-button>
 
-    <app-label-field [(selection)]="selectedLabels"></app-label-field>
-  </div>
+  <form class="link-input"
+        id="link-form"
+        [formGroup]="linkForm"
+        (ngSubmit)="add()">
+    <div class="new-link">
+        <stf-input formControlName="link"
+                   required
+                   type="text"
+                   [noAutocapitalize]="true"
+                   (valueChange)="message = undefined"
+                   [validator]="linkForm.controls['link']"
+                   [validation_messages]="validationMessages.link"
+        >
+          {{ 'modal.create_link.input' | translate }}
+        </stf-input>
+        <div class="message" *ngIf="message">{{ message | translate }}</div>
 
-  <div class="link-actions" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px">
-    <stf-button type="submit" form="link-form" color="primary" minWidth="110px" [disabled]="!linkForm.valid">
-      {{ 'generic.add' | translate }}
-    </stf-button>
-    <stf-button (click)="close()" color="gray" minWidth="110px">
-      {{ 'generic.cancel' | translate }}
-    </stf-button>
-  </div>
+      <app-label-field [(selection)]="selectedLabels"></app-label-field>
+    </div>
+
+    <div class="link-actions" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px">
+      <pa-button aspect="basic"
+                 (click)="close()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+
+      <pa-button type="submit"
+                 kind="primary"
+                 [disabled]="!linkForm.valid">{{ 'generic.add' | translate }}</pa-button>
+    </div>
+  </form>
 </div>

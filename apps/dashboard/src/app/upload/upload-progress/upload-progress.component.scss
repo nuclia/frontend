@@ -3,15 +3,8 @@
 .upload-progress {
   position: relative;
   width: 700px;
-  padding: 16px 26px;
+  padding: rhythm(2) rhythm(3);
 
-  .close-button {
-    @include reset-button();
-    position: absolute;
-    top: 6px;
-    right: 2px;
-    cursor: pointer;
-  }
 
   h1 {
     margin: 0;
@@ -20,7 +13,7 @@
   }
 
   .warning {
-    margin-bottom: 25px;
+    margin-bottom: rhythm(3);
     line-height: 1.25;
     strong {
       font-weight: var(--stf-font-weight-semibold);
@@ -31,15 +24,15 @@
     max-height: 50vh;
     overflow: auto;
     @include scrollbar-black();
-    padding: 20px 25px;
+    padding: rhythm(2) rhythm(3);
     background-color: var(--stf-gray-background);
   }
 
   .upload {
-    display: flex;
     align-items: center;
-    height: 32px;
-    padding-bottom: 8px;
+    display: flex;
+    height: rhythm(4);
+    padding-bottom: rhythm(1);
     > div {
       width: 50%;
     }
@@ -63,16 +56,9 @@
     padding-right: 30px;
   }
 
-  .status {
-    svg {
-      width: 14px;
-      height: auto;
-    }
-  }
-
   .progress-bar {
-    height: 5px;
-    background-color: #fff;
+    height: rhythm(0.5);
+    background-color: $color-light-stronger;
     div {
       height: 100%;
       background-color: var(--stf-primary);
@@ -81,10 +67,10 @@
   }
 
   .footer {
+    align-items: center;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-top: 50px;
+    margin-top: rhythm(6);
     font-weight: var(--stf-font-weight-semibold);
   }
 }
