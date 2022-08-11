@@ -9,6 +9,12 @@ body {
   background-color: var(--app-background-color);
 }
 
+.close-button {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
 #pa-toasts-block .stf-toast {
   &.toast-info {
     background-color: var(--stf-gray-lighter) !important;

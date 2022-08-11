@@ -1,8 +1,9 @@
 <div class="client-dialog">
   <h1>{{ (editMode ? 'account.edit_nua_key' : 'account.create_nua_key') | translate }}</h1>
-  <button class="close-button" (click)="close()">
-    <svg-icon src="assets/icons/close.svg"></svg-icon>
-  </button>
+  <pa-button class="close-button"
+             icon="cross"
+             aspect="basic"
+             (click)="close()">{{'generic.close' | translate}}</pa-button>
 
   <form [formGroup]="clientForm" (ngSubmit)="save()">
     <div class="mb-12" fxLayout="row">
@@ -22,7 +23,7 @@
     <div class="mb-40" fxLayout="row">
       <label for="client-email" fxFlex="24%">
         <span>{{ 'generic.email' | translate }}*</span>
-        <svg-icon class="info" src="assets/icons/info.svg" stfTooltip stfTooltipText="account.email_info"> </svg-icon>
+        <pa-icon class="info" name="info" size="small" paTooltip="account.email_info"></pa-icon>
       </label>
       <div fxFlex="auto">
         <stf-input
@@ -40,8 +41,7 @@
       <div fxLayout="row">
         <label for="client-webhook" fxFlex="24%">
           <span>{{ 'account.nua_webhook' | translate }}</span>
-          <svg-icon class="info" src="assets/icons/info.svg" stfTooltip stfTooltipText="account.nua_webhook.help">
-          </svg-icon>
+          <pa-icon class="info" name="info" size="small" paTooltip="account.nua_webhook.help"></pa-icon>
         </label>
         <div fxFlex="auto">
           <stf-input id="client-webhook" formControlName="webhook" [isLessen]="true"> </stf-input>

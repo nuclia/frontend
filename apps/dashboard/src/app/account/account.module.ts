@@ -42,6 +42,7 @@ import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
   PaDropdownModule,
+  PaIconModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
@@ -96,6 +97,7 @@ const Components = [
     PaTextFieldModule,
     PaDropdownModule,
     PaTogglesModule,
+    PaIconModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],

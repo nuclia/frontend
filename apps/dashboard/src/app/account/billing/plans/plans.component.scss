@@ -6,6 +6,10 @@ $column-header: 128px;
   padding: 70px 0;
 }
 
+.check-icon {
+  color: $color-primary-regular;
+}
+
 .container {
   display: grid;
   width: 100%;
