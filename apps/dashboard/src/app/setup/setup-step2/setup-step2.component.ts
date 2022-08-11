@@ -1,15 +1,14 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
-import { concatMap, takeUntil, take } from 'rxjs/operators';
-import { ZoneService, Zone, STFUtils } from '@flaps/core';
+import { Subject, take } from 'rxjs';
+import { concatMap, takeUntil } from 'rxjs/operators';
+import { SDKService, STFTrackingService, STFUtils, Zone, ZoneService } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { STFConfirmComponent } from '@flaps/components';
 import { NavigationService } from '../../services/navigation.service';
 import { SetupStep } from '../setup-header/setup-header.component';
-import { SDKService, STFTrackingService } from '@flaps/core';
 
 @Component({
   selector: 'app-setup-step2',
@@ -32,7 +31,7 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
   zones: Zone[] = [];
   verified: boolean = false;
   available: boolean = false;
-  editKbName: boolean = false;
+  editKbName: boolean = true;
   unsubscribeAll = new Subject<void>();
 
   @ViewChild('accountInput') accountInput: ElementRef | undefined;

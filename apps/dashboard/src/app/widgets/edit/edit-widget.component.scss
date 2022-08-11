@@ -3,14 +3,14 @@
 .edit-widget {
   width: 770px;
   max-width: 100%;
-  margin: 30px 0 80px 0;
+  margin: rhythm(4) 0 rhythm(10) 0;
 
   section {
-    padding: 50px 0 55px 0;
+    padding: rhythm(6) 0 rhythm(7) 0;
   }
 
   h2 {
-    margin: 0 0 36px 0;
+    margin: 0 0 rhythm(4) 0;
     font-weight: var(--stf-font-weight-bold);
     span {
       font-weight: var(--stf-font-weight-light);
@@ -19,11 +19,11 @@
   }
 
   .one-col {
-    background-color: #fff;
-    padding: 22px;
-    margin-bottom: 22px;
+    background-color: $color-light-stronger;
+    padding: rhythm(3);
+    margin-bottom: rhythm(3);
     & > div {
-      margin-bottom: 22px;
+      margin-bottom: rhythm(3);
       display: flex;
       & > div {
         width: 333px;
@@ -33,7 +33,7 @@
   .label {
     font-size: size(xxl);
     font-weight: var(--stf-font-weight-light);
-    line-height: 47px;
+    line-height: rhythm(6);
   }
   .two-cols {
     display: flex;
@@ -41,11 +41,11 @@
       width: 333px;
     }
     .options {
-      background-color: #fff;
-      margin-right: 22px;
+      background-color: $color-light-stronger;
+      margin-right: rhythm(3);
     }
     .snippet {
-      background-color: #fff;
+      background-color: $color-light-stronger;
       width: calc(100% - 355px);
     }
   }
@@ -54,17 +54,14 @@ pre {
   overflow-x: scroll;
 }
 .snippet .label {
-  padding-left: 22px;
+  align-items: center;
   border-bottom: 1px solid var(--stf-gray-lighter-3);
+  display: flex;
+  justify-content: space-between;
+  padding-left: rhythm(2);
   position: relative;
 }
-.close-button {
-  @include reset-button();
-  position: absolute;
-  top: 4px;
-  right: 8px;
-  cursor: pointer;
-}
+
 .tabs {
   display: flex;
   & > div {
@@ -78,7 +75,7 @@ pre {
   }
 }
 .tab-content {
-  padding: 22px;
+  padding: rhythm(3);
   .label,
   stf-input {
     font-size: size(l);
@@ -87,7 +84,7 @@ pre {
   }
 }
 .buttons {
-  padding: 22px 0;
+  padding: rhythm(3) 0;
   display: flex;
-  gap: 22px;
+  gap: rhythm(3);
 }

@@ -1,10 +1,9 @@
 <div class="profile">
   <div class="profile-container">
-
-    <button class="profile-close"
-            (click)="goBack()">
-      <svg-icon src="assets/icons/close.svg"></svg-icon>
-    </button>
+    <pa-button class="close-button"
+               icon="cross"
+               aspect="basic"
+               (click)="goBack()">{{'generic.close' | translate}}</pa-button>
 
     <form [formGroup]="profileForm">
       <h1>{{ 'generic.user_preferences' | translate }}</h1>
@@ -83,10 +82,10 @@
       </div>
 
       <div class="actions">
-        <stf-button minWidth="140px"
-                    (click)="save()">
+        <pa-button kind="primary"
+                   (click)="save()">
           {{ 'generic.save' | translate }}
-        </stf-button>
+        </pa-button>
       </div>
     </form>
   </div>

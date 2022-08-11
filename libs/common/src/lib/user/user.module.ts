@@ -12,7 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { STFInputModule, STFButtonsModule, STFButtonDirectivesModule } from '@flaps/pastanaga';
+import { STFButtonDirectivesModule, STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { STFCheckboxModule } from '../checkbox/checkbox.module';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
@@ -31,6 +31,7 @@ import { SignupComponent } from './signup/signup.component';
 import { UserContainerComponent } from './user-container/user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import { UserErrorComponent } from './user-error/user-error.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -111,6 +112,7 @@ export const userRoutes: Routes = [
     UserAvatarModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
+    PaButtonModule,
   ],
   exports: [RouterModule],
 })

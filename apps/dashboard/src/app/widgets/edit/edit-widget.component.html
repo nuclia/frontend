@@ -51,9 +51,11 @@
             <span>
               {{ 'stash.widgets.snippet' | translate }}
             </span>
-            <button *ngIf="clipboardSupported" class="close-button" (click)="copy()">
-              <svg-icon [src]="copyIcon"></svg-icon>
-            </button>
+            <pa-button *ngIf="clipboardSupported"
+                       aspect="basic"
+                       size="small"
+                       [icon]="copyIcon"
+                       (click)="copy()">Copy snippet</pa-button>
           </div>
           <pre><code class="highlight">{{ snippet }}</code></pre>
         </div>
