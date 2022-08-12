@@ -21,8 +21,25 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 })
 export class DropdownButtonComponent {
   @Input() popupRef?: DropdownComponent;
-  @Input() size?: Size;
-  @Input() kind?: Kind;
+  @Input()
+  set size(value: Size | undefined) {
+    if (value) {
+      this._size = value;
+    }
+  }
+  get size(): Size {
+    return this._size;
+  }
+
+  @Input()
+  set kind(value: Kind | undefined) {
+    if (value) {
+      this._kind = value;
+    }
+  }
+  get kind(): Kind {
+    return this._kind;
+  }
 
   @Input()
   set open(value: any) {
@@ -31,5 +48,8 @@ export class DropdownButtonComponent {
   get open() {
     return this._open;
   }
+
+  private _kind: Kind = 'secondary';
+  private _size: Size = 'medium';
   private _open = false;
 }
