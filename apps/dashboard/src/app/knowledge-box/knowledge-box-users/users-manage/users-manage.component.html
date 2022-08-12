@@ -67,13 +67,11 @@
   <ng-container cdkColumnDef="actions">
     <th cdk-header-cell *cdkHeaderCellDef></th>
     <td cdk-cell *cdkCellDef="let user">
-      <app-button-action
-        (click)="deleteUser(user)"
-        *ngIf="isAccountManager | async"
-        action="delete"
-        ariaLabel="generic.delete"
-      >
-      </app-button-action>
+      <pa-button *ngIf="isAccountManager | async"
+                 aspect="basic"
+                 icon="trash"
+                 size="small"
+                 (click)="deleteUser(user)">{{'generic.delete' | translate}}</pa-button>
     </td>
   </ng-container>
 

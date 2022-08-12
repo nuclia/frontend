@@ -130,8 +130,11 @@
             {{ 'generic.actions' | translate }}
           </th>
           <td cdk-cell *cdkCellDef="let resource">
-            <app-button-action action="more" ariaLabel="generic.actions" [matMenuTriggerFor]="menu">
-            </app-button-action>
+            <pa-button icon="more-vertical"
+                       aspect="basic"
+                       size="small"
+                       paTooltip="generic.actions"
+                       [matMenuTriggerFor]="menu">{{'generic.actions' | translate}}</pa-button>
             <mat-menu #menu="matMenu" class="resource-actions">
               <button mat-menu-item (click)="edit(resource.id)" [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.edit' | translate }}

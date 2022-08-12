@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Subject, Observable, merge } from 'rxjs';
-import { takeUntil, switchMap, map } from 'rxjs/operators';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { merge, Observable, Subject } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { STFConfirmComponent } from '@flaps/components';
 import {
@@ -90,7 +90,7 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   toggleExpanded(event: MouseEvent): void {
     // If the user clicks a button, do nothing
     const target = event.target as Element;
-    if (target?.closest('app-button-action')) return;
+    if (target?.closest('pa-button')) return;
 
     this.expanded = !this.expanded;
     this.cdr.markForCheck();

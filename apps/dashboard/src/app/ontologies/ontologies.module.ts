@@ -16,7 +16,13 @@ import { OntologyListComponent } from './ontology-list/ontology-list.component';
 import { OntologyComponent } from './ontology/ontology.component';
 import { ColorPickerComponent } from './ontology/color-picker/color-picker.component';
 import { LabelComponent } from './ontology/label/label.component';
-import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   OntologiesComponent,
@@ -47,6 +53,7 @@ const Components = [
     PaTogglesModule,
     PaButtonModule,
     PaIconModule,
+    PaTooltipModule,
   ],
   declarations: [...Components],
   exports: [],
