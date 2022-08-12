@@ -9,7 +9,7 @@
     <strong>{{ 'upload.takes_time' | translate }}</strong>
     <span> {{ 'upload.once_uploaded' | translate }}</span>
   </div>
-  <div class="upload-list" *ngIf="(files | async).length > 0">
+  <div class="upload-list" *ngIf="(files | async)?.length > 0">
     <div class="upload" *ngFor="let file of files | async">
       <div class="file" [class.failed]="file.failed">
         <span class="file-name">{{ file.file.name }}</span>
@@ -35,8 +35,9 @@
   </div>
 
   <div class="footer">
-    <div>{{ 'modal.upload.queue_length' | translate }}: {{ (files | async).length }}</div>
-    <pa-button (click)="close.emit()" kind="inverted">
+    <div>{{ 'modal.upload.queue_length' | translate }}: {{ (files | async)?.length }}</div>
+    <pa-button kind="inverted"
+               (click)="close.emit()">
       {{ 'generic.close' | translate }}
     </pa-button>
   </div>

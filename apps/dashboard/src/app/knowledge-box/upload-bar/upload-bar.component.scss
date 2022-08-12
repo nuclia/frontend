@@ -1,49 +1,27 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .upload-bar {
+  @include dark-mode();
+  height: rhythm(6);
+  padding: 0 var(--app-layout-margin-right) 0 rhythm(6);
   position: relative;
-  height: 45px;
-  padding: 0 var(--app-layout-margin-right) 0 48px;
-  background-color: rgba(0, 0, 0, 0.7);
-  border-radius: 0px 0px 4px 0px;
-  color: #fff;
 
   &-title {
-    margin-right: 20px;
+    margin-right: rhythm(3);
     font-weight: var(--stf-font-weight-semibold);
   }
 
   &-progress {
-    margin-right: 10px;
+    margin-right: rhythm(1.5);
   }
 
   &-percentage {
-    margin-right: 24px;
+    margin-right: rhythm(3);
   }
 
-  .check-files {
-    @include reset-button();
-    cursor: pointer;
-    height: 30px;
-    padding: 0 12px;
-    font-weight: var(--stf-font-weight-semibold);
-    color: #000;
-    background: var(--stf-gray-background);
-    border-radius: var(--stf-border-radius-button);
-  }
-
-  .close {
-    @include reset-button();
-    cursor: pointer;
-    position: absolute;
-    right: 22px;
+  .close-button {
+    right: rhythm(2);
     top: 50%;
     transform: translateY(-50%);
-    svg {
-      display: block;
-      width: 20px;
-      height: auto;
-      fill: #fff;
-    }
   }
 }
