@@ -3,11 +3,12 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { TranslatePipeMock } from '@flaps/core';
-import { SDKService } from '@flaps/core';
+import { SDKService, TranslatePipeMock } from '@flaps/core';
 
 import { ResourceListComponent } from './resource-list.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MockModule } from 'ng-mocks';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -15,7 +16,7 @@ describe('ResourceListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatDialogModule],
+      imports: [MatDialogModule, MockModule(PaButtonModule), MockModule(PaTextFieldModule)],
       declarations: [ResourceListComponent, TranslatePipeMock],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
