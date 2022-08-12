@@ -64,6 +64,13 @@ $height-breakpoint: 730px;
           top: 0;
           width: rhythm(0.25);
         }
+
+        &.disabled {
+          color: $color-text-menu-option-disabled;
+          cursor: not-allowed;
+          pointer-events: none;
+        }
+
         > .nav-link-title {
           flex: 1 1 auto;
           padding-left: rhythm(2);
@@ -98,10 +105,4 @@ $height-breakpoint: 730px;
 
 .dark {
   @include dark-mode();
-}
-
-.disabled {
-  color: $color-text-menu-option-disabled;
-  cursor: not-allowed;
-  pointer-events: none;
 }
