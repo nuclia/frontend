@@ -9,7 +9,7 @@
         <div class="consent-client"><strong>{{ consentData?.client_name }}</strong> {{ 'login.access_request' | translate }}</div>
         <ul class="consent-scopes">
           <li class="consent-scopes-item" *ngFor="let scope of visibleScopes()" fxLayout="row" fxLayoutGap="10px">
-            <svg-icon src="assets/icons/check.svg" fxFlex="0 0 auto"></svg-icon>
+            <pa-icon name="check" fxFlex="0 0 auto"></pa-icon>
             <span fxFlex="1 1" [ngSwitch]="scope">
               <span *ngSwitchCase="'flaps.kbs:read'">{{ 'login.scope.kbs_read' | translate }}</span>
               <span *ngSwitchCase="'flaps.kbs:write'">{{ 'login.scope.kbs_write' | translate }}</span>

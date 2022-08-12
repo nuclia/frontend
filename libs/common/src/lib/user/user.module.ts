@@ -31,7 +31,7 @@ import { SignupComponent } from './signup/signup.component';
 import { UserContainerComponent } from './user-container/user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import { UserErrorComponent } from './user-error/user-error.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -113,6 +113,7 @@ export const userRoutes: Routes = [
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
     PaButtonModule,
+    PaIconModule,
   ],
   exports: [RouterModule],
 })
