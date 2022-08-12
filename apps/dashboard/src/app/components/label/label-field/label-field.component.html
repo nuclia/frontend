@@ -3,11 +3,8 @@
      *ngIf="hasLabels | async"
      class="label-field">
   <div class="label-selector">
-    <pa-button class="label-selection-button"
-               [paPopup]="labelSelection">
-      {{ 'generic.select_tags' | translate }}
-      <pa-icon [name]="open ? 'chevron-up' : 'chevron-down'"></pa-icon>
-    </pa-button>
+    <nsi-dropdown-button [popupRef]="labelSelection"
+                         [open]="open">{{ 'generic.select_tags' | translate }}</nsi-dropdown-button>
 
     <pa-dropdown #labelSelection
                  dontAdjustPosition

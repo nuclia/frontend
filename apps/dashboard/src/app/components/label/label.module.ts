@@ -13,6 +13,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 const components = [LabelListComponent, LabelFieldComponent];
 
@@ -27,6 +28,7 @@ const components = [LabelListComponent, LabelFieldComponent];
     PaDropdownModule,
     PaPopupModule,
     PaTogglesModule,
+    DropdownButtonComponent,
   ],
   declarations: [...components],
   exports: [...components],

@@ -1,49 +1,39 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 $table-breakpoint: 1400px;
 
 .resource-list {
-  padding: 40px var(--app-layout-margin-right) 60px 5%;
+  padding: rhythm(5) var(--app-layout-margin-right) rhythm(8) 5%;
   position: relative;
-  min-height: 200px;
+  min-height: rhythm(24);
 }
 
 .resource-filters {
-  padding: 0 26px 0 10x;
+  padding: 0 rhythm(3) 0 rhythm(1.5);
   .title-filter {
     max-width: 35%;
-  }
-  .status-filter {
-    stf-simple-select {
-      min-width: 84px;
-    }
-  }
-  .type-filter {
-    stf-simple-select {
-      min-width: 84px;
-    }
   }
 }
 
 .resource-list-header {
   position: sticky;
   top: var(--app-topbar-height);
-  height: 60px;
-  border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb), 0.3);
+  height: rhythm(8);
+  border-bottom: 1px solid $color-neutral-lighter;
   z-index: 10;
   display: flex;
   align-items: center;
-  background-color: #fff;
+  background-color: $color-light-stronger;
 
   .resource-bulk-actions {
-    padding-left: 4px;
+    padding-left: rhythm(0.5);
     &.disabled .resource-counter {
       opacity: 0.2;
     }
   }
 
   .resource-counter {
-    margin-right: 16px;
+    margin-right: rhythm(2);
   }
 
   .resource-number {
@@ -52,22 +42,23 @@ $table-breakpoint: 1400px;
     justify-content: space-between;
     align-items: center;
     margin-left: auto;
-    stf-simple-select {
+
+    nsi-dropdown-button {
       display: inline-block;
-      min-width: 125px;
-      margin-left: 8px;
+      min-width: rhythm(16);
+      margin-left: rhythm(1);
     }
   }
 }
 
 .resource-list-content {
   margin-top: 4px;
-  padding: 0 48px 0 44px;
-  background-color: #fff;
+  padding: 0 rhythm(6) 0 rhythm(5);
+  background-color: $color-light-stronger;
 }
 
 .table-container {
-  padding-top: 36px;
+  padding-top: rhythm(4);
   position: relative;
   max-height: 100%;
   overflow: auto;
@@ -78,22 +69,22 @@ table {
   border-spacing: 0;
 
   .cdk-header-cell {
-    height: 40px;
-    border-bottom: 1px solid #000;
+    height: rhythm(5);
+    border-bottom: 1px solid $color-dark-stronger;
   }
 
   .cdk-cell {
     height: 50px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    border-bottom: 1px solid $color-neutral-regular;
   }
 
   .cdk-column-select {
-    width: 37px;
-    padding-left: 4px;
+    width: rhythm(5);
+    padding-left: rhythm(0.5);
   }
 
   .cdk-column-icon {
-    width: 80px;
+    width: rhythm(10);
     svg {
       display: block;
     }
@@ -114,36 +105,32 @@ table {
   }
 
   .cdk-column-modification {
-    width: 180px;
+    width: rhythm(22);
     @media (max-width: $table-breakpoint) {
-      width: 120px;
+      width: rhythm(16);
     }
   }
 
   .cdk-column-status {
-    width: 150px;
+    width: rhythm(20);
     @media (max-width: $table-breakpoint) {
-      width: 95px;
+      width: rhythm(12);
     }
   }
 
   .cdk-column-language {
-    width: 160px;
+    width: rhythm(20);
     @media (max-width: $table-breakpoint) {
-      width: 120px;
+      width: rhythm(16);
     }
   }
 
   .cdk-column-actions {
-    width: 115px;
-    padding-left: 35px;
+    width: rhythm(14);
+    padding-left: rhythm(4);
     @media (max-width: $table-breakpoint) {
-      width: 85px;
-      padding-left: 15px;
-    }
-    button {
-      @include reset-button();
-      cursor: pointer;
+      width: rhythm(10);
+      padding-left: rhythm(2);
     }
   }
   .clickable {
@@ -152,7 +139,7 @@ table {
 }
 
 .pagination {
-  padding: 40px 0;
+  padding: rhythm(5) 0;
 }
 
 ::ng-deep .mat-menu-panel.resource-actions {
@@ -169,7 +156,7 @@ table {
   position: absolute;
   top: 0;
   left: 0;
-  bottom: 56px;
+  bottom: rhythm(7);
   right: 0;
   background: rgba(0, 0, 0, 0.15);
   z-index: 20;

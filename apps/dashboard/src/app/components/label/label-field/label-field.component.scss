@@ -8,23 +8,6 @@
   display: flex;
   align-items: flex-start;
 
-  .label-selection-button {
-    ::ng-deep {
-      .pa-button {
-        min-width: rhythm(24); // corresponding to pa-popup min-width so the button match the dropdown width
-      }
-
-      .pa-button-label {
-        align-items: center;
-        display: flex;
-        justify-content: space-between;
-      }
-    }
-    pa-icon {
-      margin-left: rhythm(2);
-    }
-  }
-
   pa-option ::ng-deep .label-color {
     background: $color-neutral-light;
     display: inline-block;

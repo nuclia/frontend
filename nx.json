@@ -37,7 +37,8 @@
       "unitTestRunner": "jest"
     },
     "@nrwl/angular:component": {
-      "style": "scss"
+      "style": "scss",
+      "changeDetection": "OnPush"
     }
   },
   "$schema": "./node_modules/nx/schemas/nx-schema.json",

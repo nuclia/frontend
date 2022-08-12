@@ -12,11 +12,11 @@
       <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
 
       <div class="labelset-selection">
-        <pa-button class="labelset-selection-button"
-                   [paPopup]="dropdown">
+        <nsi-dropdown-button [popupRef]="dropdown"
+                             [open]="open[type]">
           {{ 'stash.settings.processes.training.select-labelsets' | translate }}
-          <pa-icon [name]="open[type] ? 'chevron-up' : 'chevron-down'"></pa-icon>
-        </pa-button>
+        </nsi-dropdown-button>
+
         <div class="selection">{{ selectedLabelsets[type].join(', ') }}</div>
       </div>
 

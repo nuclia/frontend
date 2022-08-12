@@ -5,7 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { SimpleSelectOption, STFConfirmComponent } from '@flaps/components';
+import { STFConfirmComponent } from '@flaps/components';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
 import { SDKService, STFUtils } from '@flaps/core';
@@ -21,6 +21,11 @@ interface ListFilters {
 }
 
 const STATUS_LIST: RESOURCE_STATUS[] = [RESOURCE_STATUS.PENDING, RESOURCE_STATUS.PROCESSED, RESOURCE_STATUS.ERROR];
+
+interface KeyValue {
+  key: string;
+  value: string;
+}
 
 interface TypeOption {
   key: string;
@@ -69,6 +74,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   refreshing = true;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // FIXME: those options are not used anywhere, can we remove them or is there a reason to keep them here?
   statusOptions = STATUS_LIST.map((status) => ({
     key: status,
     value: status.charAt(0).toUpperCase() + status.slice(1),
@@ -80,7 +87,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     value: type.label ? this.translate.instant(type.label) : type.key,
   }));
 
-  pageSizeOptions: Observable<SimpleSelectOption[]> = forkJoin(
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
       of(size.toString()).pipe(
         switchMap((size) =>
@@ -236,13 +245,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     return `assets/icons/status-${status.toLowerCase()}.svg`;
   }
 
-  setStatus(status: SimpleSelectOption) {
+  setStatus(status: KeyValue) {
     this.applyFilter({
       status: status ? status.key : undefined,
     });
   }
 
-  setPageSize(size: SimpleSelectOption) {
+  setPageSize(size: KeyValue) {
     this.applyFilter({
       size: size.key,
     });
@@ -256,12 +265,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   prevPage() {
     const params = { page: (this.page - 1).toString() };
     this.changeQueryParams(params);
-  }
-
-  setType(type: SimpleSelectOption) {
-    this.applyFilter({
-      type: type ? type.key : undefined,
-    });
   }
 
   sortBy(attribute: string) {
@@ -287,11 +290,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       relativeTo: this.route,
       replaceUrl: true,
     });
-  }
-
-  getMimes(selectedType: string) {
-    const option = TYPE_FILTER_OPTIONS.find((option: TypeOption) => selectedType === option.key);
-    return option ? option.mime : [];
   }
 
   getResources(): Observable<ResourceList> {

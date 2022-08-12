@@ -28,18 +28,6 @@ h2 {
   gap: rhythm(2);
 }
 
-.labelset-selection-button {
-  ::ng-deep {
-    .pa-button {
-      min-width: rhythm(16) !important;
-    }
-    .pa-button-label {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-}
 .selection {
   font-style: italic;
 }

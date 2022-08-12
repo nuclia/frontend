@@ -1,0 +1,20 @@
+@import "../../../styles/variables";
+
+:host {
+  display: block;
+
+  .nsi-dropdown-button ::ng-deep {
+    .pa-button {
+      min-width: rhythm(16);
+    }
+
+    .pa-button-label {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+  pa-icon {
+    margin-left: rhythm(2);
+  }
+}
