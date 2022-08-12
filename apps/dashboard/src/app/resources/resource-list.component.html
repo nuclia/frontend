@@ -24,7 +24,7 @@
         >
         </stf-checkbox>
         <div class="resource-counter" [class.disabled]="selection.selected.length === 0">
-          {{ 'resource.selected_count' | translate: { num: selection.selected.length || '' } }}
+          {{ 'resource.selected_count' | translate: {num: selection.selected.length || ''} }}
         </div>
         <stf-button
           *ngIf="selection.selected.length > 0"
@@ -40,15 +40,19 @@
         <div>
           <span>{{ 'resource.total' | translate }}: {{ refreshing ? '…' : resultsLength }}</span>
         </div>
-        <div *ngIf="pageSizeOptions | async as options">
+        <div *ngIf="(pageSizeOptions | async) as options">
           <span>{{ 'generic.showing' | translate }}</span>
-          <stf-simple-select
-            [options]="options"
-            [value]="filters.size"
-            (changeSelected)="setPageSize($event)"
-            theme="gray"
-          >
-          </stf-simple-select>
+
+          <nsi-dropdown-button size="small"
+                               kind="inverted"
+                               [popupRef]="pageSizeMenu">
+            {{ 'resource.resource_number' | translate:{num: filters.size} }}
+          </nsi-dropdown-button>
+          <pa-dropdown #pageSizeMenu>
+            <pa-option *ngFor="let option of options"
+                       [value]="option.key"
+                       (selectOption)="setPageSize($event)">{{option.value}}</pa-option>
+          </pa-dropdown>
         </div>
       </div>
     </div>
@@ -103,7 +107,7 @@
             {{ 'generic.date' | translate }}
           </th>
           <td cdk-cell *cdkCellDef="let resource">
-            {{ resource.created | formatDate: { default: true } }}
+            {{ resource.created | formatDate: {default: true} }}
           </td>
         </ng-container>
 
@@ -158,7 +162,7 @@
     </div>
 
     <div class="pagination">
-      <stf-pagination [page]="page" [total]="totalPages" (prev)="prevPage()" (next)="nextPage()"> </stf-pagination>
+      <stf-pagination [page]="page" [total]="totalPages" (prev)="prevPage()" (next)="nextPage()"></stf-pagination>
     </div>
   </div>
 </div>

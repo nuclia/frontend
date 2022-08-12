@@ -8,10 +8,10 @@ import { MockModule } from 'ng-mocks';
 import {
   PaButtonModule,
   PaDropdownModule,
-  PaTextFieldModule,
-  PaTogglesModule,
   PaIconModule,
   PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 
 describe('KnowledgeBoxProcessComponent', () => {

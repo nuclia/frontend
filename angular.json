@@ -551,9 +551,17 @@
                 "glob": "**/*",
                 "input": "apps/manager/src/environments_config/local",
                 "output": "assets/deployment"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/sistema/assets",
+                "output": "assets"
               }
             ],
             "styles": ["apps/manager/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["apps/manager/src"]
+            },
             "scripts": []
           },
           "configurations": {

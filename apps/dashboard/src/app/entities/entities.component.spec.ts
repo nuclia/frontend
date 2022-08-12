@@ -5,6 +5,8 @@ import { of } from 'rxjs';
 import { EntitiesService } from '../services/entities.service';
 
 import { EntitiesComponent } from './entities.component';
+import { MockModule } from 'ng-mocks';
+import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('EntitiesComponent', () => {
   let component: EntitiesComponent;
@@ -12,7 +14,7 @@ describe('EntitiesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatDialogModule],
+      imports: [MatDialogModule, MockModule(PaTextFieldModule)],
       declarations: [EntitiesComponent, TranslatePipeMock],
       providers: [
         {

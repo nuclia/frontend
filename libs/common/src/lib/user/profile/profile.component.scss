@@ -1,4 +1,4 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .profile {
   padding: 10vh 0;
@@ -11,31 +11,24 @@
     background-color: #fff;
   }
 
-  &-close {
-    @include reset-button();
-    position: absolute;
-    top: 30px;
-    right: 26px;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
+  .close-button {
+    top: rhythm(3);
+    right: rhythm(3);
   }
 
   form {
     display: flex;
     flex-direction: column;
     min-height: 80vh;
-    padding: 35px 48px;
+    padding: rhythm(4) rhythm(6);
   }
 
   h1 {
-    margin: 36px 0 28px 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
+    margin: rhythm(4) 0 rhythm(3) 0;
   }
 
   .field {
-    margin-bottom: 24px;
+    margin-bottom: rhythm(3);
     display: flex;
     align-items: center;
     &-label {
@@ -50,13 +43,13 @@
   }
 
   label {
-    padding-right: 15px;
+    padding-right: rhythm(2);
     font-weight: var(--stf-font-weight-semibold);
   }
 
   .actions {
     margin-top: auto;
-    padding-top: 50px;
+    padding-top: rhythm(6);
     text-align: center;
   }
 }

@@ -5,20 +5,6 @@
   padding-bottom: 22px;
 }
 
-.close-button {
-  background: none;
-  border: 0;
-  padding: 0;
-  position: absolute;
-  top: -5px;
-  right: -7px;
-  cursor: pointer;
-  svg {
-    width: 24px;
-    height: 24px;
-  }
-}
-
 h1 {
   margin: 0;
   font-size: var(--stf-font-size-title);

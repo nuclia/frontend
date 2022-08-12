@@ -44,6 +44,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 const Components = [
   KnowledgeBoxComponent,
@@ -91,6 +92,7 @@ const Components = [
     PaTogglesModule,
     PaPopupModule,
     PaIconModule,
+    DropdownButtonComponent,
   ],
   declarations: [...Components],
   exports: [],

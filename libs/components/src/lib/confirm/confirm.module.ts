@@ -7,6 +7,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { STFButtonsModule } from '@flaps/pastanaga';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { STFConfirmComponent } from './confirm.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   declarations: [STFConfirmComponent],
@@ -18,6 +19,7 @@ import { STFConfirmComponent } from './confirm.component';
     AngularSvgIconModule,
     STFButtonsModule,
     FlexLayoutModule,
+    PaButtonModule,
   ],
   exports: [STFConfirmComponent],
 })

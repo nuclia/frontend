@@ -21,7 +21,6 @@ import {
   STFTooltipModule,
 } from '@flaps/pastanaga';
 import { PaginationModule, STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
-import { STFSimpleSelectModule } from '@flaps/components';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { ResourceListComponent } from './resource-list.component';
@@ -34,8 +33,14 @@ import { ResourceLinkComponent } from './edit/link/link.component';
 import { ResourceFileComponent } from './edit/file/file.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent } from '@nuclia/sistema';
+import {
+  PaButtonModule,
+  PaDropdownModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { BackButtonComponent, DropdownButtonComponent } from '@nuclia/sistema';
 
 const Components = [
   ResourceListComponent,
@@ -111,7 +116,6 @@ const ROUTES: Routes = [
     STFFormDirectivesModule,
     STFCheckboxModule,
     PaginationModule,
-    STFSimpleSelectModule,
     PipesModule,
     STFSectionNavbarModule,
     LabelModule,
@@ -122,6 +126,8 @@ const ROUTES: Routes = [
     FormsModule,
     BackButtonComponent,
     PaTooltipModule,
+    PaDropdownModule,
+    DropdownButtonComponent,
   ],
   declarations: [...Components],
   exports: [],
