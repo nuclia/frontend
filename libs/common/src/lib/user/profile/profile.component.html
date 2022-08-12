@@ -1,10 +1,9 @@
 <div class="profile">
   <div class="profile-container">
-
-    <button class="profile-close"
-            (click)="goBack()">
-      <svg-icon src="assets/icons/close.svg"></svg-icon>
-    </button>
+    <pa-button class="close-button"
+               icon="cross"
+               aspect="basic"
+               (click)="goBack()">{{'generic.close' | translate}}</pa-button>
 
     <form [formGroup]="profileForm">
       <h1>{{ 'generic.user_preferences' | translate }}</h1>
