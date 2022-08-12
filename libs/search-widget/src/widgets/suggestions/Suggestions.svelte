@@ -1,11 +1,11 @@
 <script lang="ts">
-  import type { Search } from '@nuclia/core';
+  import type { Search, Classification } from '@nuclia/core';
   import { nucliaState, setDisplayedResource } from '../../core/store';
   import { getCDN } from '../../core/utils';
   import { _ } from '../../core/i18n';
 
   export let paragraphs: Search.Paragraph[] = [];
-  export let intents: string[] = [];
+  export let intents: Classification[] = [];
   const hasSearchError = nucliaState().hasSearchError;
   let showMore = false;
 </script>
@@ -19,7 +19,7 @@
     <ul class="intents">
       {#each intents as intent}
         <li>
-          {intent}
+          {intent.label}
         </li>
       {/each}
     </ul>

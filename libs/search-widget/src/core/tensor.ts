@@ -2,7 +2,7 @@ import { from, map, of, Subject, switchMap } from 'rxjs';
 
 let encoder: any;
 let model: any;
-let labels: { [key: string]: string } = {};
+let labels: { [labelsetKey: string]: { [key: string]: string } }  = {};
 
 export const loadModel = (modelPath: string, labelsPath: string, headers: { [key: string]: string }) => {
   fetch(labelsPath, { headers }).then((res) => {
@@ -36,10 +36,15 @@ export const predict = (text: string) => {
     switchMap((predictions: any) => from(predictions.array())),
     map((predictions: any) =>
       (predictions as number[][])[0]
-        .map((score, i) => ({ score, label: labels[`${i}`] || 'Unknown' }))
+        .map((score, i) => {
+          const match = Object.entries(labels)
+            .filter(([labelset, labels]) => !!labels[`${i}`])
+            .map(([labelset, labels]) => ({ score, labelset, label: labels[`${i}`] }));
+          return match[0] || { score, labelset: 'Uknown', label: 'Uknown' }
+        })
         .filter((result) => result.score > 0.5)
         .sort((a, b) => b.score - a.score)
-        .map((result) => result.label),
+        .map((result) => ({labelset: result.labelset ,label: result.label})),
     ),
   );
 };
