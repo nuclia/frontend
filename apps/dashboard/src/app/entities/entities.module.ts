@@ -18,7 +18,6 @@ import {
   STFTextFieldModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
-import { ButtonActionModule } from '../components/button-action/button-action.module';
 
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
@@ -49,7 +48,6 @@ const Components = [
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,
-    ButtonActionModule,
     ScrollingModule,
     OverlayModule,
     A11yModule,

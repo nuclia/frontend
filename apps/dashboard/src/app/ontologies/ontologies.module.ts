@@ -9,7 +9,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
 import { STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
 import { STFButtonsModule, STFInputModule, STFTextFieldModule, STFTooltipModule } from '@flaps/pastanaga';
-import { ButtonActionModule } from '../components/button-action/button-action.module';
 
 import { OntologiesComponent } from './ontologies.component';
 import { OntologyListComponent } from './ontology-list/ontology-list.component';
@@ -48,7 +47,6 @@ const Components = [
     STFInputModule,
     STFTextFieldModule,
     STFTooltipModule,
-    ButtonActionModule,
     PaTextFieldModule,
     PaTogglesModule,
     PaButtonModule,

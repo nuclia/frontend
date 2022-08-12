@@ -22,7 +22,6 @@ import {
 } from '@flaps/pastanaga';
 import { FiltersBarModule, PaginationModule, STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
 import { STFSimpleSelectModule } from '@flaps/components';
-import { ButtonActionModule } from '../components/button-action/button-action.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { ResourceListComponent } from './resource-list.component';
@@ -114,7 +113,6 @@ const ROUTES: Routes = [
     FiltersBarModule,
     PaginationModule,
     STFSimpleSelectModule,
-    ButtonActionModule,
     PipesModule,
     STFSectionNavbarModule,
     LabelModule,
