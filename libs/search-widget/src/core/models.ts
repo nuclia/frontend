@@ -1,4 +1,4 @@
-import type { Paragraph, CloudLink, Search } from '@nuclia/core';
+import type { Paragraph, CloudLink, Search, Classification } from '@nuclia/core';
 
 export const NO_RESULTS: Search.Results = {
   resources: {},
@@ -90,5 +90,5 @@ export interface LinkPreviewParams {
 }
 
 export interface Intents {
-  labels?: string[];
+  labels?: Classification[];
 }

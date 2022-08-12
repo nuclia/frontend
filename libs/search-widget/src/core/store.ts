@@ -11,7 +11,7 @@ import {
   Subject,
   tap,
 } from 'rxjs';
-import type { IResource, Search, SearchOptions, Widget } from '@nuclia/core';
+import type { IResource, Search, SearchOptions, Widget, Classification } from '@nuclia/core';
 
 let widgetActions: WidgetAction[] = [];
 export const setWidgetActions = (actions: WidgetAction[]) => {
@@ -36,7 +36,7 @@ let _state: {
   query: Observable<string>;
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
-  labelIntents: Observable<string[]>;
+  labelIntents: Observable<Classification[]>;
   paragraphs: Observable<Search.Paragraph[]>;
   hasSearchError: Observable<boolean>;
   pendingSuggestions: Observable<boolean>;
