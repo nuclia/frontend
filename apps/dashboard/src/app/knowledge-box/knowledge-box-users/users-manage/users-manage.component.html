@@ -10,13 +10,12 @@
 <ng-container *ngIf="kb && isAccountManager | async">
   <div class="add-user" *ngIf="canAddUsers | async">
     <form (ngSubmit)="addUser()" [formGroup]="addForm" fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start center">
-      <input
-        type="email"
-        formControlName="email"
-        stfFilterInput
-        [inputHeight]="32"
-        [inputColor]="modal ? 'gray' : 'white'"
-        placeholder="{{ 'accounts.add_user_input' | translate }}"
+      <input type="email"
+             formControlName="email"
+             stfFilterInput
+             [inputHeight]="32"
+             [inputColor]="modal ? 'gray' : 'white'"
+             placeholder="{{ 'accounts.add_user_input' | translate }}"
       />
       <select stfSelect selectSize="small" [selectColor]="modal ? 'gray' : 'white'" formControlName="role">
         <option value="" *ngIf="addForm.value.role === ''">
@@ -39,7 +38,7 @@
       {{ 'generic.user' | translate }}
     </th>
     <td cdk-cell *cdkCellDef="let user">
-      {{ user.name }}
+      {{ user.name }} – {{ user.email }}
     </td>
   </ng-container>
 
@@ -48,12 +47,11 @@
       {{ 'stash.users.role' | translate }}
     </th>
     <td cdk-cell *cdkCellDef="let user">
-      <select
-        stfSelect
-        selectSize="small"
-        (ngModelChange)="changeRole(user.id, $event)"
-        [ngModel]="user.role"
-        [disabled]="!(isAccountManager | async)"
+      <select stfSelect
+              selectSize="small"
+              (ngModelChange)="changeRole(user.id, $event)"
+              [ngModel]="user.role"
+              [disabled]="(isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
       >
         <ng-container *ngFor="let role of roles">
           <option [value]="role">
@@ -67,10 +65,11 @@
   <ng-container cdkColumnDef="actions">
     <th cdk-header-cell *cdkHeaderCellDef></th>
     <td cdk-cell *cdkCellDef="let user">
-      <pa-button *ngIf="isAccountManager | async"
+      <pa-button *ngIf="(isAccountManager | async) === true"
                  aspect="basic"
                  icon="trash"
                  size="small"
+                 [disabled]="(usersKb | async)?.length < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
                  (click)="deleteUser(user)">{{'generic.delete' | translate}}</pa-button>
     </td>
   </ng-container>

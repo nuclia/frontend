@@ -1,10 +1,9 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
-import { KbUser } from '@flaps/core';
-import { StateService } from '@flaps/core';
-import { SORTED_KB_ROLES, KB_ROLE_TITLES } from '../../utils';
+import { filter, map, Observable } from 'rxjs';
+import { KbUser, StateService } from '@flaps/core';
+import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
 import { KBRoles } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
@@ -41,6 +40,9 @@ export class UsersManageComponent {
   isAccountManager = this.account.pipe(
     filter((account) => !!account),
     map((account) => account!.can_manage_account),
+  );
+  hasSeveralOwners: Observable<boolean> = this.usersKb.pipe(
+    map((users: KbUser[]) => users.filter((user) => user.role === 'SOWNER')?.length > 1),
   );
   canAddUsers = this.account.pipe(
     map((account) => account!.max_users == null || account!.current_users < account!.max_users),
