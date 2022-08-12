@@ -1,59 +1,64 @@
 <div class="loading-shade" *ngIf="isLoading">
   <mat-spinner></mat-spinner>
 </div>
-<div class="account-kbs" *ngIf="zones && account && knowledgeBoxes">
+<div *ngIf="zones && account && knowledgeBoxes"
+     class="account-kbs">
   <h2>{{ 'account.related_kbs' | translate }}</h2>
 
   <div class="account-kbs-list">
     <div class="account-kb" *ngFor="let kb of knowledgeBoxes" fxLayoutAlign="space-between center">
-      <a
-        class="account-kb-title"
-        [class.disabled]="!kb.role_on_kb && !account.can_manage_account"
-        [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null"
+      <a class="account-kb-title"
+         [class.disabled]="!kb.role_on_kb && !account.can_manage_account"
+         [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null"
       >
         {{ kb.title }}
       </a>
       <div fxLayout="row" fxLayoutAlign="start center">
         <ng-container *ngIf="account.can_manage_account">
-          <pa-button
-            *ngIf="isUsersEnabled | async"
-            class="icon-button"
-            icon="add-user"
-            aspect="basic"
-            paTooltip="account.stash.users"
-            (click)="manageKbUsers(kb)"
-            >{{ 'account.stash.users' | translate }}</pa-button
-          >
+          <pa-button *ngIf="isUsersEnabled | async"
+                     class="icon-button"
+                     icon="add-user"
+                     aspect="basic"
+                     paTooltip="account.stash.users"
+                     (click)="manageKbUsers(kb)">
+            {{ 'account.stash.users' | translate }}
+          </pa-button>
 
-          <pa-button
-            *ngIf="!!kb.role_on_kb && isUsersEnabled | async"
-            class="icon-button"
-            icon="edit"
-            aspect="basic"
-            paTooltip="account.stash.edit"
-            (click)="manageKb(kb.slug!)"
-            >{{ 'account.stash.edit' | translate }}</pa-button
-          >
+          <pa-button *ngIf="!!kb.role_on_kb && isUsersEnabled | async"
+                     class="icon-button"
+                     icon="edit"
+                     aspect="basic"
+                     paTooltip="account.stash.edit"
+                     (click)="manageKb(kb.slug!)">
+            {{ 'account.stash.edit' | translate }}
+          </pa-button>
         </ng-container>
 
         <ng-container *ngIf="kb.role_on_kb === 'SOWNER' || account.can_manage_account">
-          <pa-button
-            *ngIf="kb.state === 'PUBLISHED'"
-            size="small"
-            icon="lock"
-            aspect="basic"
-            iconAndText
-            (click)="retireKb(kb)"
-            >{{ 'account.stash.retire' | translate }}</pa-button
-          >
+          <pa-button *ngIf="kb.state === 'PUBLISHED'"
+                     size="small"
+                     icon="lock"
+                     aspect="basic"
+                     iconAndText
+                     (click)="retireKb(kb)">
+            {{ 'account.stash.retire' | translate }}
+          </pa-button>
 
-          <pa-button *ngIf="kb.state === 'PRIVATE'" size="small" icon="unlock" iconAndText (click)="publishKb(kb)">{{
-            'account.stash.publish' | translate
-          }}</pa-button>
+          <pa-button *ngIf="kb.state === 'PRIVATE'"
+                     size="small"
+                     icon="unlock"
+                     iconAndText
+                     (click)="publishKb(kb)">
+            {{ 'account.stash.publish' | translate }}
+          </pa-button>
 
-          <pa-button size="small" icon="trash" kind="destructive" iconAndText (click)="deleteKb(kb)">{{
-            'generic.delete' | translate
-          }}</pa-button>
+          <pa-button size="small"
+                     icon="trash"
+                     kind="destructive"
+                     iconAndText
+                     (click)="deleteKb(kb)">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
         </ng-container>
       </div>
     </div>
@@ -66,7 +71,7 @@
 
     <pa-button size="small" [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes" (click)="addKb(zones, account)">{{
       'account.stash.add' | translate
-    }}</pa-button>
+      }}</pa-button>
   </div>
 
   <div class="account-kbs-empty" *ngIf="knowledgeBoxes.length === 0 && !(canAddKb | async)">
