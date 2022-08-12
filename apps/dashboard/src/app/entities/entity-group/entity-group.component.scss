@@ -2,14 +2,15 @@
 
 .entity-group {
   display: flex;
-  height: 42px;
-  border-bottom: 2px solid #fff;
+  height: rhythm(6);
+  border-bottom: 2px solid $color-light-stronger;
   cursor: pointer;
+
   &.disabled {
     cursor: auto;
   }
   &:hover:not(.disabled) {
-    background-color: #f3f3f3;
+    background-color: $color-neutral-lighter;
   }
 
   &-cell {
@@ -42,28 +43,22 @@
       position: absolute;
       top: 0;
       bottom: -2px;
-      width: 10px;
+      width: rhythm(1);
       background-color: $entity-fallback-color;
     }
   }
   .cell-name {
-    svg {
-      display: block;
-      margin-top: 2px;
-      width: 11px;
-      height: auto;
-      transition: transform 0.2s;
+    pa-icon {
+      transition: transform $transition-response;
     }
     span {
-      margin-left: 6px;
+      margin-left: rhythm(1);
       font-weight: var(--stf-font-weight-semibold);
     }
   }
   &.expanded {
-    .cell-name {
-      svg {
-        transform: rotate(90deg);
-      }
+    .cell-name pa-icon{
+      transform: rotate(90deg);
     }
   }
 
@@ -72,6 +67,6 @@
   }
   .cell-actions {
     justify-content: flex-end;
-    padding-right: 8px;
+    padding-right: rhythm(1);
   }
 }

@@ -2,40 +2,40 @@
 
 .synonym-add {
   @include reset-button();
-  width: 28px;
-  height: 28px;
-  color: var(--stf-gray-lighter-3);
-  border: 1px solid rgba(var(--stf-gray-lighter-3-rgb), 0.5);
-  border-radius: 2px;
+  border: 1px solid $color-neutral-light;
+  border-radius: rhythm(0.25);
+  color: $color-neutral-regular;
   cursor: pointer;
+  height: rhythm(4);
+  width: rhythm(4);
   &:hover {
     border-color: currentColor;
   }
 }
 
 .entity-autocomplete {
-  width: 200px;
-  padding: 12px;
-  background-color: #fff;
+  background-color: $color-light-stronger;
   box-shadow: var(--stf-shadow-dropdown);
+  padding: rhythm(1.5);
+  width: rhythm(28);
 
   label {
     display: block;
-    font-size: 10px;
+    font-size: font-size(xxs);
     font-weight: var(--stf-font-weight-light);
   }
 
   input {
+    border: 0;
+    border-bottom: 1px solid $color-neutral-regular;
     display: block;
     width: 100%;
-    border: 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.5);
   }
 
   &-list {
-    padding-top: 6px;
-    max-height: 200px;
+    max-height: rhythm(28);
     overflow-y: auto;
+    padding-top: rhythm(1);
     @include scrollbar-black(var(--stf-gray-lighter));
   }
 
@@ -43,9 +43,9 @@
     @include reset-button();
     cursor: pointer;
     display: block;
+    line-height: line-height(m);
+    padding: rhythm(1) rhythm(1.5) rhythm(1) 0;
     text-align: left;
-    line-height: 1.2;
-    padding: 6px 10px 6px 0;
     &:hover {
       text-decoration: underline;
     }

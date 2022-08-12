@@ -28,7 +28,7 @@ import { SynonymListComponent } from './synonym-list/synonym-list.component';
 import { SynonymAddComponent } from './synonym-add/synonym-add.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { GroupSelectComponent } from './entity-dialog/group-select/group-select.component';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   EntitiesComponent,
@@ -63,6 +63,8 @@ const Components = [
     STFTooltipModule,
     PaTextFieldModule,
     PaButtonModule,
+    PaIconModule,
+    PaTooltipModule,
   ],
   declarations: [...Components],
   exports: [],

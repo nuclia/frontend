@@ -1,23 +1,16 @@
-<span class="entity-name-text" [stfEllipsisTooltip]="entity?.value">{{ entity?.value }}</span>
+<span class="entity-name-text" [paTooltip]="entity?.value">{{ entity?.value }}</span>
 <span class="entity-name-actions" *ngIf="editMode">
-  <button
-    class="entity-name-delete"
-    (click)="delete.emit()"
-    [attr.aria-label]="'generic.delete' | translate"
-    stfTooltip
-    stfTooltipText="entity.delete_entity"
-  >
-    <svg-icon src="assets/icons/delete.svg"></svg-icon>
-  </button>
-  <button
-    *ngIf="isSynonym"
-    class="entity-name-unlink"
-    (click)="unlink.emit()"
-    [attr.aria-label]="'generic.unlink' | translate"
-    stfTooltip
-    stfTooltipText="entity.unlink_entity"
-    stfTooltipMaxWidth="110px"
-  >
-    <svg-icon src="assets/icons/unlink.svg"></svg-icon>
-  </button>
+  <pa-button paTooltip="entity.delete_entity"
+             aspect="basic"
+             icon="trash"
+             iconSize="small"
+             size="small"
+             (click)="delete.emit()">{{'entity.delete_entity' | translate}}</pa-button>
+  <pa-button *ngIf="isSynonym"
+             paTooltip="entity.unlink_entity"
+             aspect="basic"
+             icon="unlink"
+             iconSize="small"
+             size="small"
+             (click)="unlink.emit()">{{'entity.unlink_entity' | translate}}</pa-button>
 </span>

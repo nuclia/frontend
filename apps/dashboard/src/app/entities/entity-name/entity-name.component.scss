@@ -2,11 +2,18 @@
 @import '../tokens';
 
 :host {
-  display: inline-flex;
-  max-width: 100%;
-  padding: 3px 10px 2px 10px;
+  align-items: center;
   border: 1px solid $entity-fallback-color;
-  border-radius: 2px;
+  border-radius: rhythm(0.25);
+  display: inline-flex;
+  gap: rhythm(1);
+  height: rhythm(4);
+  max-width: 100%;
+  padding: 0 rhythm(1.5);
+
+  &.edit-mode {
+    padding-right: 0;
+  }
 
   .entity-name-text {
     flex: 1 1 auto;
@@ -15,19 +22,6 @@
 
   .entity-name-actions {
     flex: 0 0 auto;
-
-    button {
-      @include reset-button();
-      cursor: pointer;
-      vertical-align: middle;
-      margin-left: 9px;
-
-      &.entity-name-delete {
-        svg {
-          width: 13px;
-          height: auto;
-        }
-      }
-    }
+    gap: rhythm(1);
   }
 }

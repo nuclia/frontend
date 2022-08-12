@@ -1,34 +1,40 @@
 <ng-container *ngIf="groups && selected">
-  <button
-    class="group-select"
-    (click)="open = true"
-    cdkOverlayOrigin
-    #groupSelect
-    #trigger="cdkOverlayOrigin"
-    [disabled]="disabled"
+  <button class="group-select"
+          cdkOverlayOrigin
+          #groupSelect
+          #trigger="cdkOverlayOrigin"
+          [disabled]="disabled"
+          (click)="open = true"
   >
-    <div class="group-select-color" [style.background-color]="groups[selected].color || colors[selected]"></div>
+    <div class="group-select-color"
+         [style.background-color]="groups[selected].color || colors[selected]"></div>
     <div class="group-select-title">
       {{ groups[selected].title || ('resource.entities.' + selected.toLowerCase() | translate) }}
     </div>
-    <div class="group-select-arrow" *ngIf="!disabled">
-      <svg-icon src="assets/icons/chevron-down.svg"></svg-icon>
+    <div *ngIf="!disabled"
+         class="group-select-arrow">
+      <pa-icon name="chevron-down" size="small"></pa-icon>
     </div>
   </button>
 
-  <ng-template
-    cdkConnectedOverlay
-    [cdkConnectedOverlayOrigin]="trigger"
-    [cdkConnectedOverlayOpen]="open"
-    [cdkConnectedOverlayHasBackdrop]="true"
-    [cdkConnectedOverlayOffsetY]="2"
-    (backdropClick)="open = false"
-    [cdkConnectedOverlayWidth]="groupSelect.clientWidth"
-    cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  <ng-template cdkConnectedOverlay
+               [cdkConnectedOverlayOrigin]="trigger"
+               [cdkConnectedOverlayOpen]="open"
+               [cdkConnectedOverlayHasBackdrop]="true"
+               [cdkConnectedOverlayOffsetY]="2"
+               (backdropClick)="open = false"
+               [cdkConnectedOverlayWidth]="groupSelect.clientWidth"
+               cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
   >
-    <div class="options" cdkTrapFocus cdkTrapFocusAutoCapture role="menu">
-      <button class="option" *ngFor="let group of groups | keyvalue: preserveOrder" (click)="onSelectGroup(group.key)">
-        <div class="option-color" [style.background-color]="group.value.color || colors[group.key]"></div>
+    <div class="options"
+         cdkTrapFocus
+         cdkTrapFocusAutoCapture
+         role="menu">
+      <button *ngFor="let group of groups | keyvalue: preserveOrder"
+              class="option"
+              (click)="onSelectGroup(group.key)">
+        <div class="option-color"
+             [style.background-color]="group.value.color || colors[group.key]"></div>
         <div class="option-title">
           {{ group.value.title || ('resource.entities.' + group.key.toLowerCase() | translate) }}
         </div>

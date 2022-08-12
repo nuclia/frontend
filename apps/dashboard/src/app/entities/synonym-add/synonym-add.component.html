@@ -1,10 +1,9 @@
-<button
-  (click)="toggle()"
-  cdkOverlayOrigin
-  #trigger="cdkOverlayOrigin"
-  fxFlex="0 0 auto"
-  class="synonym-add"
-  [attr.aria-label]="'generic.add' | translate"
+<button (click)="toggle()"
+        cdkOverlayOrigin
+        #trigger="cdkOverlayOrigin"
+        fxFlex="0 0 auto"
+        class="synonym-add"
+        [attr.aria-label]="'generic.add' | translate"
 >
   <span>+</span>
 </button>
@@ -21,7 +20,7 @@
 >
   <div class="entity-autocomplete" cdkTrapFocus cdkTrapFocusAutoCapture>
     <label [for]="id">{{ 'entity.search_synonym' | translate }}</label>
-    <input type="text" [formControl]="filterInput" cdkFocusInitial [id]="id" />
+    <input type="text" [formControl]="filterInput" cdkFocusInitial [id]="id"/>
     <div class="entity-autocomplete-list" *ngIf="items$ | async as items">
       <button (click)="addSynonym(item)" class="entity-autocomplete-item" *ngFor="let item of items">
         {{ item.value }}

@@ -5,7 +5,9 @@
              (click)="close()">{{'generic.close' | translate}}</pa-button>
 
   <div class="mb-44">
-    <app-group-select [(selected)]="group" [groups]="(groups$ | async) || {}" [disabled]="mode !== 'add'">
+    <app-group-select [(selected)]="group"
+                      [groups]="(groups$ | async) || {}"
+                      [disabled]="mode !== 'add'">
     </app-group-select>
   </div>
 
@@ -19,44 +21,30 @@
       asientos, y el moderno museo MALBA, que exhibe arte latinoamericano.
     </div>
     <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px" class="mt-80">
-      <stf-button (click)="close()" minWidth="110px">
-        {{ 'generic.close' | translate }}
-      </stf-button>
-      <stf-button (click)="edit()" color="gray" minWidth="110px">
-        {{ 'generic.edit' | translate }}
-      </stf-button>
+      <pa-button aspect="basic"
+                 (click)="close()">{{ 'generic.close' | translate }}</pa-button>
+
+      <pa-button kind="inverted"
+                 (click)="edit()">{{ 'generic.edit' | translate }}</pa-button>
     </div>
   </ng-container>
 
   <ng-container *ngIf="mode === 'edit' || mode === 'add'">
     <h2 class="mb-16" *ngIf="data.entity">{{ data.entity.value }}</h2>
-    <form [formGroup]="entityForm" (submit)="save()">
+    <form [formGroup]="entityForm"
+          (submit)="save()">
       <div class="mb-8" *ngIf="!data.entity">
-        <stf-input
-          formControlName="name"
-          [validator]="entityForm.controls['name']"
-          [validation_messages]="validationMessages.name"
-        >
+        <pa-input formControlName="name"
+                  [errorMessages]="validationMessages.name">
           {{ 'entity.entity_name' | translate }}
-        </stf-input>
+        </pa-input>
       </div>
-      <!--
-      <div class="mb-8">
-        <stf-input formControlName="shortDescription">
-          {{ 'entity.add_short_description' | translate }}
-        </stf-input>
-      </div>
-      <stf-textarea formControlName="description" label="entity.add_description" initialHeight="186px">
-      </stf-textarea>
-      -->
     </form>
-    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px" class="mt-32">
-      <stf-button (click)="save()" minWidth="110px">
-        {{ 'generic.save' | translate }}
-      </stf-button>
-      <stf-button (click)="close()" color="gray" minWidth="110px">
-        {{ 'generic.cancel' | translate }}
-      </stf-button>
+    <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px" class="mt-32">
+      <pa-button aspect="basic"
+                 (click)="close()">{{ 'generic.cancel' | translate }}</pa-button>
+      <pa-button kind="primary"
+                 (click)="save()">{{ 'generic.save' | translate }}</pa-button>
     </div>
   </ng-container>
 </div>
