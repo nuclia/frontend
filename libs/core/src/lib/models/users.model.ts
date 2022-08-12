@@ -23,7 +23,7 @@ export interface KbUser {
   id: string;
   name: string;
   email: string;
-  role: AccountRoles;
+  role: KBRoles;
 }
 
 export interface SetUserKb {

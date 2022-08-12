@@ -61,7 +61,7 @@
 	"account.type.kb": "Knowledge box",
 	"account.type.manage": "Manage",
 	"account.users": "Account users management",
-	"account.users_amount": "Total amount of users in the account",
+	"account.users_amount": "Total number of users in the account",
 	"account.users_left": "Total sits left",
 	"account.zone_description": "Zone where data will be host",
 	"accounts.add_user_input": "User's email",
