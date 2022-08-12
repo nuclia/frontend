@@ -9,6 +9,7 @@ import { STFExpanderModule } from '@flaps/pastanaga';
 import { SearchFiltersComponent } from './search-filters/search-filters.component';
 import { ButtonClearComponent } from './button-clear/button-clear.component';
 import { FilterOntologyComponent } from './filter-ontology/filter-ontology.component';
+import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
@@ -18,6 +19,7 @@ import { FilterOntologyComponent } from './filter-ontology/filter-ontology.compo
     TranslateModule.forChild(),
     STFCheckboxModule,
     STFExpanderModule,
+    PaIconModule,
   ],
   declarations: [SearchFiltersComponent, ButtonClearComponent, FilterOntologyComponent],
   exports: [],

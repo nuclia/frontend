@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostBinding, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
 import { AppEntitiesGroup, Entity, GROUP_COLORS } from '../model';
 
 @Component({
@@ -10,8 +10,8 @@ import { AppEntitiesGroup, Entity, GROUP_COLORS } from '../model';
 export class EntityNameComponent {
   @Input() entity: Entity | undefined;
   @Input() isSynonym: boolean = false;
-  @Input() editMode: boolean = false;
   @Input() group?: AppEntitiesGroup;
+  @HostBinding('class.edit-mode') @Input() editMode: boolean = false;
 
   @Output() delete = new EventEmitter<void>();
   @Output() unlink = new EventEmitter<void>();

@@ -1,13 +1,12 @@
 <div class="filter-ontology">
   <div *ngFor="let ontology of ontologies | keyvalue">
-    <button
-      class="filter-ontology-button"
-      [class.open]="isOpenOntology(ontology.key)"
-      (click)="toggleOntology(ontology.key)"
-      fxLayout="row"
-      fxLayoutAlign="start center"
+    <button class="filter-ontology-button"
+            [class.open]="isOpenOntology(ontology.key)"
+            (click)="toggleOntology(ontology.key)"
+            fxLayout="row"
+            fxLayoutAlign="start center"
     >
-      <svg-icon src="assets/icons/chevron-right.svg"></svg-icon>
+      <pa-icon name="chevron-right" size="small"></pa-icon>
       <span>{{ ontology.key }}</span>
       <span class="filter-ontology-counter">(2)</span>
     </button>

@@ -1,15 +1,15 @@
 @import '../tokens';
 @import 'variables';
 
-$itemHeight: 50px;
+$itemHeight: rhythm(6);
 
 .entity-list {
-  background-color: #fff;
+  background-color: $color-light-stronger;
 
   &-virtual {
     @include scrollbar-black(var(--stf-gray-lighter));
     .entity-list-item {
-      padding-right: 30px;
+      padding-right: rhythm(4);
     }
   }
 
@@ -34,7 +34,7 @@ $itemHeight: 50px;
     &-cell {
       display: flex;
       align-items: center;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid $color-neutral-regular;
 
       &.cell-color {
         flex: $entity-table-color-flex;
@@ -59,7 +59,7 @@ $itemHeight: 50px;
     .cell-color {
       border-bottom: 0;
       .color-border {
-        width: 10px;
+        width: rhythm(1);
         height: 100%;
         background-color: var(--stf-gray-background);
       }
@@ -67,12 +67,12 @@ $itemHeight: 50px;
 
     .cell-name {
       min-width: 0;
-      padding: 0 15px 0 2px;
+      padding: 0 rhythm(2) 0 rhythm(0.25);
       .drag {
         max-width: 100%;
         &.active {
           cursor: move;
-          background-color: #fff;
+          background-color: $color-light-stronger;
         }
       }
     }

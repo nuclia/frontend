@@ -1,19 +1,20 @@
 @import 'variables';
 
 .label {
-  display: flex;
   align-items: center;
-  width: 335px;
-  height: 40px;
-  padding: 0 6px 0 20px;
-  background-color: #fff;
+  background-color: $color-light-stronger;
+  display: flex;
+  height: rhythm(5);
+  padding: 0 rhythm(1) 0 rhythm(3);
+  width: rhythm(40);
+
   &.add-new {
     cursor: pointer;
   }
 
   &-content {
     flex: 1 1 0;
-    padding-right: 10px;
+    padding-right: rhythm(1.5);
     min-width: 0; // Allow truncated titles
   }
 
@@ -22,16 +23,17 @@
   }
 
   input {
-    padding: 2px 2px;
+    background-color: $color-light-stronger;
     border: 0;
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid $color-dark-stronger;
     font-family: inherit;
-    background-color: #fff;
+    padding: rhythm(0.25) rhythm(0.25);
   }
 
   &-actions {
+    align-items: center;
     flex: 0 0 auto;
     display: flex;
-    align-items: center;
+    gap: rhythm(1);
   }
 }

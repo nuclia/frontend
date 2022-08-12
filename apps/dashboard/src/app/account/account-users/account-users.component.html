@@ -59,15 +59,12 @@
     <ng-container matColumnDef="actions">
       <th class="user-actions" mat-header-cell *matHeaderCellDef></th>
       <td class="user-actions" mat-cell *matCellDef="let user">
-        <app-button-action
-          *ngIf="!isItMe(user.id)"
-          (click)="deleteUserConfirm(user)"
-          action="delete"
-          ariaLabel="generic.delete"
-          stfTooltip
-          stfTooltipText="generic.delete"
-        >
-        </app-button-action>
+        <pa-button *ngIf="!isItMe(user.id)"
+                   aspect="basic"
+                   icon="trash"
+                   size="small"
+                   paTooltip="generic.delete"
+                   (click)="deleteUserConfirm(user)">{{'generic.delete' | translate}}</pa-button>
       </td>
     </ng-container>
 

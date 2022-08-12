@@ -1,6 +1,5 @@
 .upload-bar-container {
   position: sticky;
   top: var(--app-topbar-height);
-  margin-left: 68px;
-  padding: 0 44px 0 var(--app-sidebar-width);
+  padding: 0 rhythm(6) 0 var(--app-sidebar-width);
 }

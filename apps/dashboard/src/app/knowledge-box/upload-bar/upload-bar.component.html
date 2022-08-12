@@ -9,11 +9,14 @@
     <strong>{{ progress | async }}%</strong> {{ 'upload.completed' | translate }}
   </div>
 
-  <button class="check-files" (click)="checkFiles()">
-    {{ 'upload.check_files' | translate }}
-  </button>
+  <pa-button kind="inverted"
+             size="small"
+             (click)="checkFiles()">{{ 'upload.check_files' | translate }}</pa-button>
 
-  <button class="close" (click)="close()">
-    <svg-icon src="assets/icons/close.svg"></svg-icon>
-  </button>
+  <pa-button class="close-button"
+             icon="cross"
+             kind="inverted"
+             aspect="basic"
+             size="small"
+             (click)="close()">{{'generic.close' | translate}}</pa-button>
 </div>

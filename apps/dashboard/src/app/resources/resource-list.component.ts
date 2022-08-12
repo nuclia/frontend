@@ -1,16 +1,14 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Observable, Subject, forkJoin, of, from, mergeMap } from 'rxjs';
-import { debounceTime, takeUntil, map, tap, switchMap, filter, toArray } from 'rxjs/operators';
+import { forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
+import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { STFConfirmComponent } from '@flaps/components';
+import { SimpleSelectOption, STFConfirmComponent } from '@flaps/components';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SimpleSelectOption } from '@flaps/components';
-import { Resource, ResourceList, RESOURCE_STATUS, resourceToAlgoliaFormat } from '@nuclia/core';
-import { SDKService } from '@flaps/core';
-import { STFUtils } from '@flaps/core';
+import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
+import { SDKService, STFUtils } from '@flaps/core';
 
 interface ListFilters {
   type?: string;
@@ -82,7 +80,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     value: type.label ? this.translate.instant(type.label) : type.key,
   }));
 
-  pageSizeOptions = forkJoin(
+  pageSizeOptions: Observable<SimpleSelectOption[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
       of(size.toString()).pipe(
         switchMap((size) =>

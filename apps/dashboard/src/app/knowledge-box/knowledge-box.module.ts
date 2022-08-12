@@ -3,26 +3,25 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
-import { ButtonActionModule } from '../components/button-action/button-action.module';
 import { ChartsModule } from '../components/charts/charts.module';
 import { HelpBoxModule } from '../components/help-box/help-box.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { UserAvatarModule } from '@flaps/components';
-import { STFSectionNavbarModule, STFCheckboxModule, ProgressBarModule } from '@flaps/common';
+import { ProgressBarModule, STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
 import {
   STFButtonsModule,
+  STFExpanderModule,
+  STFFormDirectivesModule,
   STFInputModule,
   STFTextFieldModule,
-  STFFormDirectivesModule,
   STFTooltipModule,
-  STFExpanderModule,
 } from '@flaps/pastanaga';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
@@ -38,11 +37,11 @@ import { UsersManageModule } from './knowledge-box-users/users-manage/users-mana
 import {
   PaButtonModule,
   PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
-  PaPopupModule,
-  PaIconModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 
@@ -79,7 +78,6 @@ const Components = [
     STFFormDirectivesModule,
     STFTooltipModule,
     STFExpanderModule,
-    ButtonActionModule,
     TokenDialogModule,
     ChartsModule,
     HelpBoxModule,

@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { Observable, Subject, map, takeUntil } from 'rxjs';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Entities } from '@nuclia/core';
 import { Entity } from '../model';
 import { EntitiesService } from '../../services/entities.service';
@@ -48,8 +48,6 @@ export class EntityDialogComponent implements OnDestroy {
     this.group = data.group;
     this.entityForm = this.formBuilder.group({
       name: [data.entity?.value || '', [Validators.required]],
-      //shortDescription: [data.entity?.short_description || ''],
-      //description: [data.entity?.description || ''],
       shortDescription: [''],
       description: [''],
     });

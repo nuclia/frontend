@@ -10,7 +10,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
-import { ButtonActionModule } from '../components/button-action/button-action.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { STFConfirmModule, UserAvatarModule } from '@flaps/components';
 import { STFCheckboxModule, STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
@@ -82,7 +81,6 @@ const Components = [
     STFFormDirectivesModule,
     STFTooltipModule,
     STFExpanderModule,
-    ButtonActionModule,
     PipesModule,
     TokenDialogModule,
     ChartsModule,
