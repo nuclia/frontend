@@ -1,14 +1,14 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, takeUntil, switchMap, filter, map, take } from 'rxjs';
+import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
-import { STFConfirmComponent } from '@flaps/components';
 import { AccountNUAService } from './account-nua.service';
 import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-dialog.component';
 import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
 import { Router } from '@angular/router';
 import { StateService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-account-nua',
@@ -29,26 +29,21 @@ export class AccountNUAComponent {
     private stateService: StateService,
     private navigation: NavigationService,
     private tracking: STFTrackingService,
+    private modalService: SisModalService,
   ) {
     this.nua.updateClients();
   }
 
   askConfirmation(client: NUAClient): void {
-    this.dialog
-      .open(STFConfirmComponent, {
-        width: '480px',
-        data: {
-          title: 'generic.alert',
-          message: 'account.token_generation_warning',
-          confirmText: 'account.new_code',
-          minWidthButtons: '110px',
-        },
+    this.modalService
+      .openConfirm({
+        title: 'account.generate_key',
+        description: 'account.token_generation_warning',
       })
-      .afterClosed()
-      .pipe(
-        takeUntil(this.unsubscribeAll),
-        filter((result) => !!result),
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
         switchMap(() => this.nua.renewClient(client.client_id)),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ token }) => {
         this.showToken(token);

@@ -1,17 +1,15 @@
-import { Component, Input, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { filter, map, switchMap, take, takeUntil, tap, shareReplay } from 'rxjs/operators';
-import { Account, KBStates, WritableKnowledgeBox, IKnowledgeBoxItem } from '@nuclia/core';
-import { STFConfirmComponent } from '@flaps/components';
-import { Zone, ZoneService } from '@flaps/core';
-import { STFTrackingService, StateService, SDKService } from '@flaps/core';
+import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
+import { SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-account-kbs',
@@ -43,6 +41,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
     private sdk: SDKService,
+    private modalService: SisModalService,
   ) {}
 
   ngOnInit(): void {
@@ -118,24 +117,23 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   }
 
   private changeState(kb: IKnowledgeBoxItem, actionLabel: string, state: KBStates): void {
-    const dialogRef = this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: {
-        title: 'generic.alert',
-        message$: this.translate.get(`stash.${actionLabel}.warning`, { kb: kb.title }),
-        confirmText: `stash.${actionLabel}.${actionLabel}`,
-      },
-    });
-    dialogRef
-      .afterClosed()
+    this.translate
+      .get(`stash.${actionLabel}.warning`, { kb: kb.title })
       .pipe(
-        takeUntil(this.unsubscribeAll),
-        filter((result) => !!result),
+        switchMap(
+          (message) =>
+            this.modalService.openConfirm({
+              title: `stash.${actionLabel}.${actionLabel}`,
+              description: message,
+            }).onClose,
+        ),
+        filter((confirm) => !!confirm),
         switchMap(() => {
           this.setLoading(true);
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).modify({ state });
         }),
         switchMap(() => this.updateKbs()),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe({
         next: () => this.setLoading(false),
@@ -147,24 +145,24 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   }
 
   deleteKb(kb: IKnowledgeBoxItem) {
-    const dialogRef = this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: {
-        title: 'generic.alert',
-        message$: this.translate.get('stash.delete.warning', { kb: kb.title }),
-        confirmText: 'stash.delete.delete',
-      },
-    });
-    dialogRef
-      .afterClosed()
+    this.translate
+      .get('stash.delete.warning', { kb: kb.title })
       .pipe(
-        takeUntil(this.unsubscribeAll),
-        filter((result) => !!result),
+        switchMap(
+          (message) =>
+            this.modalService.openConfirm({
+              title: 'stash.delete.delete',
+              description: message,
+              isDestructive: true,
+            }).onClose,
+        ),
+        filter((confirm) => !!confirm),
         switchMap(() => {
           this.setLoading(true);
           return new WritableKnowledgeBox(this.sdk.nuclia, this.account!.slug, kb).delete();
         }),
         switchMap(() => this.updateKbs()),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe({
         next: () => this.setLoading(false),

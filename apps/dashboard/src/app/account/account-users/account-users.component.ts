@@ -1,14 +1,11 @@
-import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { UntypedFormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, Observable, of } from 'rxjs';
-import { takeUntil, filter, tap, switchMap, map } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { STFConfirmComponent, ConfirmData } from '@flaps/components';
-import { SDKService, StateService } from '@flaps/core';
+import { Observable, of, Subject } from 'rxjs';
+import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { AccountRoles, AccountUser, SDKService, SetUsersAccount, StateService, UsersService } from '@flaps/core';
 import { Account } from '@nuclia/core';
-import { UsersService, AccountUser, AccountRoles, SetUsersAccount } from '@flaps/core';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-account-users',
@@ -35,12 +32,12 @@ export class AccountUsersComponent implements OnDestroy {
 
   constructor(
     private usersService: UsersService,
-    private dialog: MatDialog,
     private stateService: StateService,
     private translate: TranslateService,
     private sdk: SDKService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
+    private modalService: SisModalService,
   ) {
     this.account$
       .pipe(
@@ -83,50 +80,41 @@ export class AccountUsersComponent implements OnDestroy {
         .pipe(switchMap(() => this.updateUsers()))
         .subscribe();
     } else {
-      const data: ConfirmData = {
-        title: 'generic.alert',
-        message: 'account.admin.warning',
-        confirmText: 'account.admin.make_admin',
-        minWidthButtons: '110px',
-      };
-      const dialogRef = this.dialog.open(STFConfirmComponent, {
-        width: '420px',
-        data: data,
-      });
-      dialogRef
-        .afterClosed()
-        .pipe(
-          takeUntil(this.unsubscribeAll),
+      this.modalService
+        .openConfirm({
+          title: 'account.admin.make_admin',
+          description: 'account.admin.warning',
+        })
+        .onClose.pipe(
+          filter((confirm) => !!confirm),
           switchMap((result) => (!!result ? this._changeRole(user, role) : of(null))),
           switchMap(() => this.updateUsers()),
+          takeUntil(this.unsubscribeAll),
         )
         .subscribe();
     }
   }
 
   deleteUserConfirm(user: AccountUser): void {
-    const data: ConfirmData = {
-      title: 'generic.alert',
-      message: 'account.delete_user_warning',
-      confirmText: 'generic.delete',
-      minWidthButtons: '110px',
-    };
-    const dialogRef = this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: data,
-    });
-    dialogRef
-      .afterClosed()
+    this.translate
+      .get('account.delete_user_warning', { username: `${user.name} (${user.email})` })
       .pipe(
-        filter((result) => !!result),
-        takeUntil(this.unsubscribeAll),
+        switchMap(
+          (message) =>
+            this.modalService.openConfirm({
+              title: 'account.delete_user',
+              description: message,
+              confirmLabel: 'generic.delete',
+              isDestructive: true,
+            }).onClose,
+        ),
+        filter((confirm) => !!confirm),
         switchMap(() => this.deleteUser(user)),
         switchMap(() => this.updateUsers()),
         switchMap(() => this.sdk.nuclia.db.getAccount(this.account!.slug)),
+        takeUntil(this.unsubscribeAll),
       )
-      .subscribe((account) => {
-        this.stateService.setAccount(account);
-      });
+      .subscribe((account) => this.stateService.setAccount(account));
   }
 
   private _changeRole(user: AccountUser, role: AccountRoles): Observable<void> {
