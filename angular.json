@@ -13,6 +13,7 @@
               "mkdir -p dist/libs/chrome-ext/",
               "rimraf dist/libs/chrome-ext/",
               "cp -a libs/chrome-ext/src/lib/ dist/libs/chrome-ext/",
+              "mkdir -p dist/libs/chrome-ext/vendor/",
               "cp dist/sdk-core/umd/index.js dist/libs/chrome-ext/vendor/nuclia-sdk.umd.min.js",
               "cp node_modules/rxjs/dist/bundles/rxjs.umd.min.js dist/libs/chrome-ext/vendor/rxjs.umd.min.js"
             ],
