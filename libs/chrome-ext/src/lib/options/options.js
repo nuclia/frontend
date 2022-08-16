@@ -1,7 +1,7 @@
 function saveOptions() {
   const kb = document.getElementById('kb').value;
   const key = document.getElementById('key').value;
-  chrome.storage.local.set({ kb, key }, () => {
+  chrome.storage.local.set({ 'NUCLIA_KB': kb, 'NUCLIA_KEY': key }, () => {
     const message = document.querySelector('.message');
     message.textContent = 'Options saved';
     setTimeout(() => {
@@ -11,9 +11,9 @@ function saveOptions() {
 }
 
 function restoreOptions() {
-  chrome.storage.local.get({ kb: '', key: '' }, ({kb, key}) => {
-    document.getElementById('NUCLIA_KB').value = kb;
-    document.getElementById('NUCLIA_KEY').value = key;
+  chrome.storage.local.get({ 'NUCLIA_KB': '', 'NUCLIA_KEY': '' }, ({ NUCLIA_KB, NUCLIA_KEY }) => {
+    document.getElementById('kb').value = NUCLIA_KB;
+    document.getElementById('key').value = NUCLIA_KEY;
   });
 }
 
