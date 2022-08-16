@@ -1,6 +1,7 @@
 <pa-button class="kb-switch"
            kind="inverted"
            size="small"
+           sameWidth
            [paPopup]="kbSwitch">
   {{ (kb | async)?.title }}
   <pa-icon *ngIf="(kb | async)?.state === 'PUBLISHED'" size="small" name="unlock"></pa-icon>
