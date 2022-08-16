@@ -18,7 +18,7 @@ import type {
   KeywordSetField,
 } from './resource.models';
 import type { Search } from './search.models';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Resource extends IResource {}
@@ -146,6 +146,11 @@ export class Resource implements IResource {
     if (highlight) {
       params.push(`highlight=true&split=true`);
     }
-    return this.nuclia.rest.get<Search.Results>(`${this.path}/search?${params.join('&')}`);
+    return this.nuclia.rest.get<Search.Results>(`${this.path}/search?${params.join('&')}`).pipe(
+      catchError(() => of({ error: true } as Search.Results)),
+      map((res) =>
+        Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results),
+      ),
+    );
   }
 }
