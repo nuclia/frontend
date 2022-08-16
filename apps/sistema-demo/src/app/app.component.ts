@@ -7,7 +7,6 @@ import {
   CardPageComponent,
   CheckboxPageComponent,
   ChipPageComponent,
-  ConfirmationDialogPageComponent,
   ContainerPageComponent,
   DatePickerPageComponent,
   DateTimePageComponent,
@@ -48,6 +47,7 @@ import { SistemaModalComponent } from './sistema-pages/sistema-modal';
 import { SistemaButtonsComponent } from './sistema-pages/sistema-buttons/sistema-buttons.component';
 import { SistemaToastComponent } from './sistema-pages/sistema-toasts/sistema-toast.component';
 import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
+import { SistemaConfirmationDialogComponent } from './sistema-pages/sistema-confirmation-dialog/sistema-confirmation-dialog.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -75,7 +75,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'card', title: 'Card', type: CardPageComponent },
       { view: 'chip', title: 'Chip', type: ChipPageComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
-      { view: 'confirmation-dialog', title: 'Confirmation dialog', type: ConfirmationDialogPageComponent },
+      { view: 'confirmation-dialog', title: 'Confirmation dialog', type: SistemaConfirmationDialogComponent },
       { view: 'modal', title: 'Modal', type: SistemaModalComponent },
       { view: 'datepicker', title: 'Date Picker', type: DatePickerPageComponent },
       { view: 'datetime', title: 'Date/time', type: DateTimePageComponent },

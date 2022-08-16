@@ -22,6 +22,7 @@ import { RouterModule } from '@angular/router';
 import { DialogExampleComponent, ModalExampleComponent, SistemaModalComponent } from './sistema-modal';
 import { SistemaButtonsComponent } from './sistema-buttons/sistema-buttons.component';
 import { SistemaToastComponent } from './sistema-toasts/sistema-toast.component';
+import { SistemaConfirmationDialogComponent } from './sistema-confirmation-dialog/sistema-confirmation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SistemaToastComponent } from './sistema-toasts/sistema-toast.component'
     SistemaLabelComponent,
     SistemaButtonsComponent,
     SistemaToastComponent,
+    SistemaConfirmationDialogComponent,
   ],
   imports: [
     CommonModule,
