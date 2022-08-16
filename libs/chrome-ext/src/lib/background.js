@@ -1,5 +1,5 @@
 try {
-  importScripts('./sdk/rxjs-7.5.2.umd.min.js', './sdk/nuclia-sdk.umd.min.js');
+  importScripts('./vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
 } catch (e) {
   console.error(e);
 }
