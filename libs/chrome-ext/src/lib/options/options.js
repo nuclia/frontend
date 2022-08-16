@@ -12,8 +12,8 @@ function saveOptions() {
 
 function restoreOptions() {
   chrome.storage.local.get({ kb: '', key: '' }, ({kb, key}) => {
-    document.getElementById('kb').value = kb;
-    document.getElementById('key').value = key;
+    document.getElementById('NUCLIA_KB').value = kb;
+    document.getElementById('NUCLIA_KEY').value = key;
   });
 }
 

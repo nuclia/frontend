@@ -14,7 +14,7 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 chrome.contextMenus.onClicked.addListener((info) => {
-  chrome.storage.local.get(['kb', 'key'], ({ kb, key }) => {
+  chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ kb, key }) => {
     if (kb && key) {
       uploadLink(info.linkUrl, kb, key);
     } else {
