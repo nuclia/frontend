@@ -4,11 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
-import { STFConfirmComponent } from '@flaps/components';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
 import { SDKService, STFUtils } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
 
 interface ListFilters {
   type?: string;
@@ -111,12 +110,12 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   );
 
   constructor(
-    public dialog: MatDialog,
     private sdk: SDKService,
     private router: Router,
     private route: ActivatedRoute,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private modalService: SisModalService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -156,18 +155,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   delete(resources: Resource[]) {
+    const title = resources.length > 1 ? 'resource.delete_resources_confirm' : 'resource.delete_resource_confirm';
     const message = resources.length > 1 ? 'resource.delete_resources_warning' : 'resource.delete_resource_warning';
-    this.dialog
-      .open(STFConfirmComponent, {
-        width: '470px',
-        data: {
-          title: 'generic.alert',
-          message: message,
-          minWidthButtons: '120px',
-        },
+    this.modalService
+      .openConfirm({
+        title,
+        description: message,
+        isDestructive: true,
       })
-      .afterClosed()
-      .pipe(
+      .onClose.pipe(
         filter((yes) => !!yes),
         tap(() => this.setLoading(true)),
         switchMap(() => from(resources.map((resource) => resource.delete()))),

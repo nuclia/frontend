@@ -1,13 +1,12 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { SDKService, StateService } from '@flaps/core';
-import { STFConfirmComponent } from '@flaps/components';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, share, switchMap, take } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { HelpBoxesService } from '../../services/help-boxes.service';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -81,6 +80,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
+    private modalService: SisModalService,
   ) {}
 
   ngOnInit(): void {
@@ -111,19 +111,14 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     this.sdk.currentKb
       .pipe(
         take(1),
-        switchMap((kb) =>
-          this.dialog
-            .open(STFConfirmComponent, {
-              width: '420px',
-              data: {
-                title: 'generic.alert',
-                message: this.translate.transform(`stash.${actionLabel}.warning`, { kb: kb.title }),
-                confirmText: `stash.${actionLabel}.${actionLabel}`,
-              },
-            })
-            .afterClosed(),
+        switchMap(
+          (kb) =>
+            this.modalService.openConfirm({
+              title: `stash.${actionLabel}.${actionLabel}`,
+              description: this.translate.transform(`stash.${actionLabel}.warning`, { kb: kb.title }),
+            }).onClose,
         ),
-        filter((result) => !!result),
+        filter((confirm) => !!confirm),
         switchMap(() => this.sdk.currentKb),
         switchMap((kb) =>
           kb

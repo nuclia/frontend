@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { merge, Observable, Subject } from 'rxjs';
+import { filter, merge, Observable, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
-import { STFConfirmComponent } from '@flaps/components';
 import {
   EntityDialogComponent,
   EntityDialogData,
@@ -13,6 +12,7 @@ import { EntitiesEditService } from '../entities-edit.service';
 import { EntitiesSearchService } from '../entities-search.service';
 import { EntitiesService } from '../../services/entities.service';
 import { SDKService } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-entity-group',
@@ -48,6 +48,7 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
     private dialog: MatDialog,
+    private modalService: SisModalService,
   ) {}
 
   ngOnInit(): void {
@@ -124,22 +125,17 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   }
 
   deleteGroup() {
-    const dialogRef = this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: {
-        title: 'generic.alert',
-        message: 'entity.delete_entities_warning',
-        minWidthButtons: '110px',
-      },
-    });
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((result) => {
-        if (result) {
-          this.entitiesService.deleteGroup(this.group!.key).subscribe();
-        }
-      });
+    this.modalService
+      .openConfirm({
+        title: 'entity.delete_entity',
+        description: 'entity.delete_entities_warning',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.entitiesService.deleteGroup(this.group!.key)),
+      )
+      .subscribe();
   }
 
   saveGroup() {
