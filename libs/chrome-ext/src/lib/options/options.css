@@ -1,0 +1,44 @@
+body {
+  padding: 0 1rem 1rem;
+}
+
+p {
+  margin: 0 0 2rem 0;
+}
+
+.field {
+  margin-bottom: 1rem;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: .25rem;
+}
+
+input {
+  width: 20rem;
+  height: 1.5rem;
+  padding: 0 0.25rem;
+}
+
+.actions {
+  margin-top: 2rem;
+}
+
+button {
+  -webkit-appearance: none;
+  border: none;
+  margin: 0;
+  padding: .5rem 1rem .5rem 1rem;
+  width: auto;
+  background: #ff0066;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.message {
+  padding-left: 1rem;
+  vertical-align: middle;
+}
