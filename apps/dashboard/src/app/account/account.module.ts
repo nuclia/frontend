@@ -40,7 +40,6 @@ import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-ma
 import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
-  PaDropdownModule,
   PaIconModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -93,7 +92,6 @@ const Components = [
     PaButtonModule,
     PaTooltipModule,
     PaTextFieldModule,
-    PaDropdownModule,
     PaTogglesModule,
     PaIconModule,
   ],
