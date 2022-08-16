@@ -31,6 +31,7 @@
   const query = viewerState.query;
   const paragraphs = viewerState.paragraphs;
   const results = viewerState.results;
+  const hasSearchError = viewerState.hasSearchError;
   const showPreview = viewerState.showPreview;
 
   $: {
@@ -91,15 +92,15 @@
     <div class="viewer-left">
       <InputViewer />
 
-      {#if $results}
-        <div class="paragraphs">
+      <div class="paragraphs">
+      {#if $hasSearchError}
+          <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
+      {:else if $results}
           <Paragraphs paragraphs={$results} />
-        </div>
       {:else}
-        <div class="paragraphs">
           <Paragraphs paragraphs={$paragraphs} />
-        </div>
       {/if}
+      </div>
 
       {#if image}
         <h2>Images</h2>

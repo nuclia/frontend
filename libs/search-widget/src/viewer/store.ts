@@ -20,6 +20,7 @@ import {
   filter,
   distinctUntilChanged,
   of,
+  tap,
 } from 'rxjs';
 import type {
   PdfPreviewParams,
@@ -40,6 +41,7 @@ export const viewerStore: {
   query: BehaviorSubject<string>;
   paragraphs: BehaviorSubject<WidgetParagraph[]>;
   results: BehaviorSubject<WidgetParagraph[] | null>;
+  hasSearchError: BehaviorSubject<boolean>;
   showPreview: BehaviorSubject<boolean>;
   selectedParagraph: BehaviorSubject<SelectedParagraph | null>;
   onlySelected: BehaviorSubject<boolean>;
@@ -52,6 +54,7 @@ export const viewerStore: {
   query: new BehaviorSubject(''),
   paragraphs: new BehaviorSubject([]),
   results: new BehaviorSubject(null),
+  hasSearchError: new BehaviorSubject<boolean>(false),
   showPreview: new BehaviorSubject(false),
   selectedParagraph: new BehaviorSubject(null),
   onlySelected: new BehaviorSubject(false),
@@ -63,6 +66,7 @@ export const viewerStore: {
 
 export const viewerState = {
   query: viewerStore.query.pipe(
+    tap(() => viewerStore.hasSearchError.next(false)),
     map((q) => q.trim()),
     distinctUntilChanged(),
   ),
@@ -76,6 +80,7 @@ export const viewerState = {
   results: combineLatest([viewerStore.results, viewerStore.order]).pipe(
     map(([results, order]) => results && sortParagraphs(results, order)),
   ),
+  hasSearchError: viewerStore.hasSearchError.asObservable(),
   pdfPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.PDF])),
@@ -131,6 +136,7 @@ export function initStore() {
   viewerStore.resource.next(null);
   viewerStore.query.next('');
   viewerStore.results.next(null);
+  viewerStore.hasSearchError.next(false);
   viewerStore.showPreview.next(false);
   viewerStore.selectedParagraph.next(null);
   viewerStore.linkPreview.next(null);
@@ -140,6 +146,7 @@ export function initStore() {
 export function clearSearch() {
   viewerStore.query.next('');
   viewerStore.results.next(null);
+  viewerStore.hasSearchError.next(false);
   viewerStore.onlySelected.next(false);
 }
 
@@ -226,6 +233,11 @@ function _selectParagraph(resource: Resource, paragraph: Paragraph, fieldType: s
 
 export function search(resource: Resource, query: string): Observable<WidgetParagraph[]> {
   return resource.search(query, [Search.Features.PARAGRAPH]).pipe(
+    tap((results) => {
+      if (results.error) {
+        viewerStore.hasSearchError.next(true);
+      }
+    }),
     map((results) => results.paragraphs?.results || []),
     map(
       (paragraphs) =>
