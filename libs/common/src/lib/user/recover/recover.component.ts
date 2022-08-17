@@ -4,8 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgForm, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
+import { forkJoin, map } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'stf-recover',
@@ -34,7 +36,7 @@ export class RecoverComponent {
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
     private modalService: SisModalService,
-    private translate: TranslatePipe,
+    private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -59,16 +61,21 @@ export class RecoverComponent {
 
   recover(token: string) {
     const recoverInfo = new RecoverData(this.recoverForm.value.email, this.config.getAppName());
-    const description = `${this.translate.transform('login.email_sent')} <br> ${this.translate.transform(
-      'recover.verify',
-    )}`;
-    this.loginService.recover(recoverInfo, token).subscribe(() => {
-      this.modalService.openConfirm({
-        title: 'login.check_email',
-        description,
-        confirmLabel: 'Ok',
-        onlyConfirm: true,
-      });
-    });
+    this.loginService
+      .recover(recoverInfo, token)
+      .pipe(
+        switchMap(() => forkJoin([this.translate.get('login.email_sent'), this.translate.get('recover.verify')])),
+        map((messages) => messages.join('<br>')),
+        switchMap(
+          (description) =>
+            this.modalService.openConfirm({
+              title: 'login.check_email',
+              description,
+              confirmLabel: 'Ok',
+              onlyConfirm: true,
+            }).onClose,
+        ),
+      )
+      .subscribe();
   }
 }

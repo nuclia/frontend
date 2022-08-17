@@ -1,13 +1,13 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { forkJoin, map, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { STFInputComponent } from '@flaps/pastanaga';
 import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-signup',
@@ -46,7 +46,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
     private modalService: SisModalService,
-    private translate: TranslatePipe,
+    private translate: TranslateService,
   ) {
     const emailControl = this.signupForm.controls['email'];
     emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
@@ -99,17 +99,20 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   showConfirmation() {
-    const description = `${this.translate.transform('login.email_sent')}<br>${this.translate.transform(
-      'login.validate_and_explore',
-    )}`;
-    this.modalService
-      .openConfirm({
-        title: 'login.check_email',
-        description,
-        confirmLabel: 'Ok',
-        onlyConfirm: true,
-      })
-      .onClose.pipe(takeUntil(this.unsubscribeAll))
+    forkJoin([this.translate.get('login.email_sent'), this.translate.get('login.validate_and_explore')])
+      .pipe(
+        map((messages) => messages.join('<br>')),
+        switchMap(
+          (description) =>
+            this.modalService.openConfirm({
+              title: 'login.check_email',
+              description,
+              confirmLabel: 'Ok',
+              onlyConfirm: true,
+            }).onClose,
+        ),
+        takeUntil(this.unsubscribeAll),
+      )
       .subscribe(() => {
         this.router.navigate(['../login'], {
           relativeTo: this.route,
