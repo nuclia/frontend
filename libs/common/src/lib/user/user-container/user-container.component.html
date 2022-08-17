@@ -1,5 +1,5 @@
 <div class="user-background" fxLayout="column">
-  <div class="user-container" [ngStyle.gt-xs]="{'width': widthSm}">
+  <div class="user-container" [ngStyle]="{'width': widthSm}">
     <ng-content></ng-content>
   </div>
   <ng-container *ngIf="showLink">

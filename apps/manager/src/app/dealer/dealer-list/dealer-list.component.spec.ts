@@ -8,33 +8,33 @@ import { of } from 'rxjs';
 import { MatSortModule } from '@angular/material/sort';
 import { STFButtonsModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
+import { MatTableModule } from '@angular/material/table';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('DealerListComponent', () => {
   let component: DealerListComponent;
   let fixture: ComponentFixture<DealerListComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [DealerListComponent],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        imports: [RouterTestingModule, MatSortModule, STFButtonsModule],
-        providers: [
-          {
-            provide: DealerService,
-            useValue: {
-              getDealers: () => of({}),
-              deleteDealer: () => of({}),
-            },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [DealerListComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [RouterTestingModule, MatSortModule, STFButtonsModule, MatTableModule, NoopAnimationsModule],
+      providers: [
+        {
+          provide: DealerService,
+          useValue: {
+            getDealers: () => of({}),
+            deleteDealer: () => of({}),
           },
-          {
-            provide: TranslateService,
-            useValue: { get: () => of('') },
-          },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+        {
+          provide: TranslateService,
+          useValue: { get: () => of('') },
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DealerListComponent);

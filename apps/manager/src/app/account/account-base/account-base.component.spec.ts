@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { AccountBaseComponent } from './account-base.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('AccountBaseComponent', () => {
   let component: AccountBaseComponent;
@@ -8,9 +9,9 @@ describe('AccountBaseComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ AccountBaseComponent ]
-    })
-    .compileComponents();
+      declarations: [AccountBaseComponent],
+      imports: [RouterTestingModule],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

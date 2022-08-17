@@ -9,7 +9,6 @@ import { of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
 import { ConnectorsComponent } from '../connectors/connectors.component';
 import { StepsComponent } from './steps/steps.component';
-import { ConfirmFilesModule } from './confirm-files/confirm-files.module';
 import { SyncService } from '../sync/sync.service';
 import { SelectFilesComponent } from './select-files/select-files.component';
 
@@ -22,6 +21,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
+import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -37,6 +37,7 @@ describe('UploadComponent', () => {
         StepsComponent,
         TranslatePipeMock,
         SelectFilesComponent,
+        ConfirmFilesComponent,
       ],
       imports: [
         NoopAnimationsModule,
@@ -44,7 +45,6 @@ describe('UploadComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         MatDialogModule,
-        ConfirmFilesModule,
         MockModule(PaButtonModule),
         MockModule(PaTextFieldModule),
         MockModule(PaCardModule),

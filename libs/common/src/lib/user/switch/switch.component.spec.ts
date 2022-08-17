@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AuthService, BackendConfigurationService, SDKService, StateService } from '@flaps/core';
-import { TranslatePipeMock } from '@flaps/core';
+import { AuthService, BackendConfigurationService, SDKService, StateService, TranslatePipeMock } from '@flaps/core';
 
 import { SwitchComponent } from './switch.component';
+import { MockModule } from 'ng-mocks';
+import { MatListModule } from '@angular/material/list';
+import { STFButtonsModule } from '@flaps/pastanaga';
 
 describe('SwitchComponent', () => {
   let component: SwitchComponent;
@@ -12,7 +14,7 @@ describe('SwitchComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SwitchComponent, TranslatePipeMock],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, MockModule(MatListModule), MockModule(STFButtonsModule)],
       providers: [
         { provide: AuthService, useValue: { setNextParams: () => {}, setNextUrl: () => {} } },
         { provide: StateService, useValue: { cleanStash: () => {} } },

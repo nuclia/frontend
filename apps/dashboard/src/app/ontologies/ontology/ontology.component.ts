@@ -5,15 +5,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { MatDialog } from '@angular/material/dialog';
 import { LabelsService } from '../../services/labels.service';
 import { Sluggable } from '@flaps/common';
-import { STFConfirmComponent } from '@flaps/components';
 import { STFUtils } from '@flaps/core';
 import { Label, Labels, LabelSetKind } from '@nuclia/core';
 import { EMTPY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { SisModalService } from '@nuclia/sistema';
 
 interface OntologyTitleError extends IErrorMessages {
   required: string;
@@ -60,9 +59,9 @@ export class OntologyComponent implements OnDestroy {
     private route: ActivatedRoute,
     private labelsService: LabelsService,
     private formBuilder: UntypedFormBuilder,
-    private dialog: MatDialog,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private modalService: SisModalService,
   ) {
     this.route.params
       .pipe(
@@ -174,18 +173,14 @@ export class OntologyComponent implements OnDestroy {
   }
 
   deleteOntology(): void {
-    const dialogRef = this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: {
-        title: 'generic.alert',
-        message: 'ontology.delete_warning_extra',
-        minWidthButtons: '110px',
-      },
-    });
-    dialogRef
-      .afterClosed()
-      .pipe(
-        filter((result) => !!result),
+    this.modalService
+      .openConfirm({
+        title: 'ontology.delete_confirm_title',
+        description: 'ontology.delete_warning_extra',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
         switchMap(() => this.labelsService.deleteLabelSet(this.ontologySlug!)),
         switchMap(() => this.labelsService.refreshLabelsSets()),
         takeUntil(this.unsubscribeAll),
@@ -230,15 +225,19 @@ export class OntologyComponent implements OnDestroy {
   }
 
   showDuplicationWarning(title: string) {
-    this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: {
-        title: 'generic.alert',
-        messageHtml$: this.translate.get('ontology.duplicated_label', { title: title }),
-        onlyConfirm: true,
-        minWidthButtons: '110px',
-      },
-    });
+    this.translate
+      .get('ontology.duplicated_label', { title: title })
+      .pipe(
+        switchMap(
+          (message) =>
+            this.modalService.openConfirm({
+              title: message,
+              onlyConfirm: true,
+              confirmLabel: 'OK',
+            }).onClose,
+        ),
+      )
+      .subscribe();
   }
 
   goToOntologyList() {

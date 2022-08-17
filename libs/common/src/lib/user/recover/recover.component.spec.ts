@@ -2,14 +2,15 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, LoginService } from '@flaps/core';
-import { TranslatePipeMock } from '@flaps/core';
-import { STFInputModule } from '@flaps/pastanaga';
+import { BackendConfigurationService, LoginService, TranslatePipeMock } from '@flaps/core';
+import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
 import { RecoverComponent } from './recover.component';
+import { UserContainerComponent } from '../user-container/user-container.component';
+import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 
 describe('RecoverComponent', () => {
   let component: RecoverComponent;
@@ -17,8 +18,8 @@ describe('RecoverComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [RecoverComponent, TranslatePipeMock],
-      imports: [ReactiveFormsModule, RouterTestingModule, MatDialogModule, STFInputModule],
+      declarations: [RecoverComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
+      imports: [ReactiveFormsModule, RouterTestingModule, MatDialogModule, STFInputModule, STFButtonsModule],
       providers: [
         {
           provide: LoginService,

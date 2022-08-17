@@ -1,0 +1,22 @@
+<pa-demo-page>
+  <pa-demo-title>Confirmation dialog</pa-demo-title>
+  <pa-demo-description>
+    <pa-demo-confirmation-dialog-description systemName="Sistema"></pa-demo-confirmation-dialog-description>
+  </pa-demo-description>
+
+  <pa-demo-examples>
+    <pa-button class="open-modal-button" kind="primary" (click)="openConfirm()">Open a confirmation</pa-button>
+    <pa-button class="open-modal-button" kind="destructive" (click)="openDestructiveConfirm()">Open a destructive confirmation</pa-button>
+    <pa-button class="open-modal-button" (click)="openSolidCancelConfirm()">Open a confirmation with solid cancel button</pa-button>
+  </pa-demo-examples>
+
+  <pa-demo-usage>
+    <p>By default, Sistema's <code>openConfirm</code> method display the cancel button with a basic aspect.
+      You can override this default behaviour using the <code>ConfirmationData</code>.</p>
+    <pa-demo-confirmation-dialog-usage></pa-demo-confirmation-dialog-usage>
+  </pa-demo-usage>
+
+  <pa-demo-code>
+    <pre><code>{{openConfirmCode}}</code></pre>
+  </pa-demo-code>
+</pa-demo-page>

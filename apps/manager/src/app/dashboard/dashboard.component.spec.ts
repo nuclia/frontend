@@ -8,6 +8,9 @@ import { of } from 'rxjs';
 import { UsersService } from '../services/users.service';
 
 import { DashboardComponent } from './dashboard.component';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MockModule } from 'ng-mocks';
+import { MatIconModule } from '@angular/material/icon';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -16,7 +19,14 @@ describe('DashboardComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DashboardComponent],
-      imports: [MatDialogModule, RouterTestingModule, MatBottomSheetModule, MatMenuModule],
+      imports: [
+        MatDialogModule,
+        RouterTestingModule,
+        MatBottomSheetModule,
+        MatMenuModule,
+        MockModule(MatToolbarModule),
+        MockModule(MatIconModule),
+      ],
       providers: [
         { provide: UsersService, useValue: { loggedout: () => of() } },
         {

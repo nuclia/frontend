@@ -4,10 +4,9 @@ import { BackendConfigurationService, SDKService, UserService } from '@flaps/cor
 import { NavigationService } from '../../services/navigation.service';
 import { distinctUntilKeyChanged, filter, map, switchMap, take, tap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { STFConfirmComponent } from '@flaps/components';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AppService } from '../../services/app.service';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-topbar',
@@ -48,8 +47,8 @@ export class TopbarComponent implements AfterViewInit {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private appService: AppService,
-    private dialog: MatDialog,
     private translate: TranslatePipe,
+    private modalService: SisModalService,
   ) {}
 
   goToHome(): void {
@@ -101,32 +100,20 @@ export class TopbarComponent implements AfterViewInit {
   }
 
   delete(uid: string) {
-    this.sdk.currentKb
-      .pipe(
+    this.modalService
+      .openConfirm({
+        title: 'generic.alert',
+        description: 'resource.delete_resource_warning',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.sdk.currentKb),
         take(1),
-        filter((kb) => !!kb.admin || !!kb.contrib),
-        switchMap((kb) =>
-          this.dialog
-            .open(STFConfirmComponent, {
-              width: '470px',
-              data: {
-                title: 'generic.alert',
-                message: 'resource.delete_resource_warning',
-                minWidthButtons: '120px',
-              },
-            })
-            .afterClosed()
-            .pipe(
-              filter((yes) => !!yes),
-              map(() => kb),
-            ),
-        ),
-      )
-      .pipe(
         switchMap((kb) => kb.getResource(uid)),
         switchMap((res) => res.delete()),
         tap(() => this.closeViewer()),
-        take(1),
       )
       .subscribe(() => {
         setTimeout(() => {
@@ -148,22 +135,23 @@ export class TopbarComponent implements AfterViewInit {
   }
 
   showUID(uid: string) {
-    this.dialog
-      .open(STFConfirmComponent, {
-        width: '470px',
-        data: {
-          title: 'API',
-          messageHtml$: this.sdk.currentKb.pipe(
-            take(1),
-            map(
-              (kb) =>
-                `<pre><code class="endpoint">${this.sdk.nuclia.rest.getFullUrl(kb.path)}/resource/${uid}</code></pre>`,
-            ),
-          ),
-          onlyConfirm: true,
-        },
-      })
-      .afterClosed()
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        map(
+          (kb) =>
+            `<pre><code class="endpoint">${this.sdk.nuclia.rest.getFullUrl(kb.path)}/resource/${uid}</code></pre>`,
+        ),
+        switchMap(
+          (uidEndpoint) =>
+            this.modalService.openConfirm({
+              title: 'API',
+              description: uidEndpoint,
+              onlyConfirm: true,
+              confirmLabel: 'OK',
+            }).onClose,
+        ),
+      )
       .subscribe();
   }
 

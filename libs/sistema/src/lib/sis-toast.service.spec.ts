@@ -1,5 +1,6 @@
 import { closeButtonConf, SisToastService } from './sis-toast.service';
 import { ToastService } from '@guillotinaweb/pastanaga-angular';
+import { MockService } from 'ng-mocks';
 
 describe('SisToastService', () => {
   let service: SisToastService;
@@ -7,13 +8,13 @@ describe('SisToastService', () => {
   const message = 'Toast message to be displayed';
 
   beforeEach(() => {
-    mockToastService = {
-      openInfo: jest.fn(),
-      openSuccess: jest.fn(),
-      openWarning: jest.fn(),
-      openError: jest.fn(),
-    } as any as ToastService;
+    mockToastService = MockService(ToastService);
     service = new SisToastService(mockToastService);
+
+    jest.spyOn(mockToastService, 'openInfo');
+    jest.spyOn(mockToastService, 'openSuccess');
+    jest.spyOn(mockToastService, 'openWarning');
+    jest.spyOn(mockToastService, 'openError');
   });
 
   it('should open info toast', () => {

@@ -1,11 +1,13 @@
-import { Component, Inject, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, ViewChild } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
-import { UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { NgForm, UntypedFormBuilder, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { MatDialog } from '@angular/material/dialog';
-import { LoginService, BackendConfigurationService, RecoverData } from '@flaps/core';
-import { STFConfirmComponent } from '@flaps/components';
+import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';
+import { TranslateService } from '@ngx-translate/core';
+import { SisModalService } from '@nuclia/sistema';
+import { forkJoin, map } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'stf-recover',
@@ -33,7 +35,8 @@ export class RecoverComponent {
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
-    private dialog: MatDialog,
+    private modalService: SisModalService,
+    private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -58,17 +61,21 @@ export class RecoverComponent {
 
   recover(token: string) {
     const recoverInfo = new RecoverData(this.recoverForm.value.email, this.config.getAppName());
-    this.loginService.recover(recoverInfo, token).subscribe(() => {
-      this.dialog.open(STFConfirmComponent, {
-        width: '420px',
-        data: {
-          title: 'login.check_email',
-          messages: ['login.email_sent', 'recover.verify'],
-          confirmText: 'Ok',
-          onlyConfirm: true,
-          minWidthButtons: '110px',
-        },
-      });
-    });
+    this.loginService
+      .recover(recoverInfo, token)
+      .pipe(
+        switchMap(() => forkJoin([this.translate.get('login.email_sent'), this.translate.get('recover.verify')])),
+        map((messages) => messages.join('<br>')),
+        switchMap(
+          (description) =>
+            this.modalService.openConfirm({
+              title: 'login.check_email',
+              description,
+              confirmLabel: 'Ok',
+              onlyConfirm: true,
+            }).onClose,
+        ),
+      )
+      .subscribe();
   }
 }

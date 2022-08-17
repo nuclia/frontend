@@ -6,8 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { STFSectionNavbarModule } from '@flaps/common';
-import { STFConfirmModule } from '@flaps/components';
-import { PaButtonModule, PaTooltipModule, PaTextFieldModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
 import { PlansComponent } from './plans/plans.component';
 import { PlansSettingsComponent } from './settings/plan-settings.component';
@@ -44,7 +43,6 @@ const routes = [
     RouterModule.forChild(routes),
     MatDialogModule,
     STFSectionNavbarModule,
-    STFConfirmModule,
     PaButtonModule,
     PaTextFieldModule,
     PaTooltipModule,

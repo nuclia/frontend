@@ -51,7 +51,7 @@ jobs:
           yarn missdev
 
       - name: Unit tests
-        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo
+        run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo,sistema
 
       - name: Build affected apps
         run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core

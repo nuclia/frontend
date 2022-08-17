@@ -311,6 +311,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>account.delete_user</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>account.delete_user_warning</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -606,27 +627,6 @@
             </concept_node>
             <concept_node>
                 <name>account.manage_account_users</name>
-                <definition_loaded>false</definition_loaded>
-                <description/>
-                <comment/>
-                <default_text/>
-                <translations>
-                    <translation>
-                        <language>ca-ES</language>
-                        <approved>false</approved>
-                    </translation>
-                    <translation>
-                        <language>en-US</language>
-                        <approved>false</approved>
-                    </translation>
-                    <translation>
-                        <language>es-ES</language>
-                        <approved>false</approved>
-                    </translation>
-                </translations>
-            </concept_node>
-            <concept_node>
-                <name>account.new_code</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -6317,6 +6317,27 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>ontology.delete_confirm_title</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>ontology.delete_warning</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
@@ -6675,6 +6696,48 @@
             </concept_node>
             <concept_node>
                 <name>ontology.type_labels_subtitle</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>pastanaga.cancel</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>pastanaga.confirm</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>
@@ -7682,7 +7745,49 @@
                 </translations>
             </concept_node>
             <concept_node>
+                <name>resource.delete_resource_confirm</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
                 <name>resource.delete_resource_warning</name>
+                <definition_loaded>false</definition_loaded>
+                <description/>
+                <comment/>
+                <default_text/>
+                <translations>
+                    <translation>
+                        <language>ca-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>en-US</language>
+                        <approved>false</approved>
+                    </translation>
+                    <translation>
+                        <language>es-ES</language>
+                        <approved>false</approved>
+                    </translation>
+                </translations>
+            </concept_node>
+            <concept_node>
+                <name>resource.delete_resources_confirm</name>
                 <definition_loaded>false</definition_loaded>
                 <description/>
                 <comment/>

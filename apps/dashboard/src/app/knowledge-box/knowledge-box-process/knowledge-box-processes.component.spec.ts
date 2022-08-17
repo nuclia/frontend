@@ -13,6 +13,8 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { DropdownButtonComponent } from '@nuclia/sistema';
+import { SvgIconRegistryService } from 'angular-svg-icon';
 
 describe('KnowledgeBoxProcessComponent', () => {
   let component: KnowledgeBoxProcessesComponent;
@@ -27,6 +29,7 @@ describe('KnowledgeBoxProcessComponent', () => {
         MockModule(PaTogglesModule),
         MockModule(PaIconModule),
         MockModule(PaPopupModule),
+        DropdownButtonComponent,
       ],
       declarations: [KnowledgeBoxProcessesComponent, TranslatePipeMock],
       providers: [
@@ -42,6 +45,7 @@ describe('KnowledgeBoxProcessComponent', () => {
             isFeatureEnabled: jest.fn(() => of(true)),
           },
         },
+        { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
       ],
     }).compileComponents();
   });

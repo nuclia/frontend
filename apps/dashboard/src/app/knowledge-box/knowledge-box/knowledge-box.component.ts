@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { UploadService } from '../../upload/upload.service';
 import { AppService } from '../../services/app.service';
-import { STFConfirmComponent } from '@flaps/components';
 import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-knowledge-box',
@@ -23,6 +23,7 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private dialog: MatDialog,
     private appService: AppService,
+    private modalService: SisModalService,
   ) {
     this.activatedRoute.queryParams
       .pipe(
@@ -45,23 +46,17 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   }
 
   showKBEmptyAlert() {
-    return this.dialog
-      .open(STFConfirmComponent, {
-        width: '560px',
-        data: {
-          title: 'stash.empty_kb',
-          message: 'stash.upload_to_search',
-          confirmText: 'stash.upload_data',
-          minWidthButtons: '110px',
-        },
+    return this.modalService
+      .openConfirm({
+        title: 'stash.empty_kb',
+        description: 'stash.upload_to_search',
+        confirmLabel: 'stash.upload_data',
       })
-      .afterClosed()
-      .pipe(
+      .onClose.pipe(
         filter((result) => !!result),
         tap(() => {
           this.openUploadDialog();
         }),
-        takeUntil(this.unsubscribeAll),
       );
   }
 

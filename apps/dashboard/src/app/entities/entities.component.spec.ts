@@ -6,7 +6,8 @@ import { EntitiesService } from '../services/entities.service';
 
 import { EntitiesComponent } from './entities.component';
 import { MockModule } from 'ng-mocks';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('EntitiesComponent', () => {
   let component: EntitiesComponent;
@@ -14,7 +15,12 @@ describe('EntitiesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MatDialogModule, MockModule(PaTextFieldModule)],
+      imports: [
+        MockModule(MatDialogModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaButtonModule),
+        MockModule(ReactiveFormsModule),
+      ],
       declarations: [EntitiesComponent, TranslatePipeMock],
       providers: [
         {

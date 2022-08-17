@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, LoginService } from '@flaps/core';
-import { TranslatePipeMock } from '@flaps/core';
-import { STFInputModule } from '@flaps/pastanaga';
+import { BackendConfigurationService, LoginService, TranslatePipeMock } from '@flaps/core';
+import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
 import { ResetComponent } from './reset.component';
+import { UserContainerComponent } from '../user-container/user-container.component';
+import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 
 describe('ResetComponent', () => {
   let component: ResetComponent;
@@ -16,8 +17,8 @@ describe('ResetComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ResetComponent, TranslatePipeMock],
-      imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule],
+      declarations: [ResetComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
+      imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule, STFButtonsModule],
       providers: [
         {
           provide: BackendConfigurationService,

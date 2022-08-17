@@ -1,22 +1,21 @@
-import { Component, AfterViewInit, OnInit, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { STFUtils } from '@flaps/core';
-import { NavigationEnd, Router } from '@angular/router';
 import {
-  UserService,
-  STFTrackingService,
-  STFSplashScreenService,
   BackendConfigurationService,
-  StateService,
   SDKService,
+  StateService,
+  STFSplashScreenService,
+  STFTrackingService,
+  STFUtils,
+  UserService,
 } from '@flaps/core';
-import { catchError, combineLatest, filter, of, Subject, switchMap, tap, take } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { catchError, combineLatest, filter, of, Subject, switchMap, take, tap } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
 import { Title } from '@angular/platform-browser';
-import { STFConfirmComponent } from '@flaps/components';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-root',
@@ -40,8 +39,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private navigation: NavigationService,
     private sdk: SDKService,
     private titleService: Title,
-    private dialog: MatDialog,
     private paTranslate: PaTranslateService,
+    private modalService: SisModalService,
   ) {
     this.unsubscribeAll = new Subject();
 
@@ -136,13 +135,11 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         filter((statusAlert) => !!statusAlert),
       )
       .subscribe((message) => {
-        this.dialog.open(STFConfirmComponent, {
-          data: {
-            title: 'generic.alert',
-            message,
-            minWidthButtons: '420px',
-            onlyConfirm: true,
-          },
+        this.modalService.openConfirm({
+          title: 'generic.alert',
+          description: message,
+          confirmLabel: 'Ok',
+          onlyConfirm: true,
         });
       });
   }

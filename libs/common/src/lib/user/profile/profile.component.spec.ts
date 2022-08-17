@@ -1,12 +1,15 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserService, SDKService, LoginService } from '@flaps/core';
-import { TranslatePipeMock } from '@flaps/core';
+import { LoginService, SDKService, TranslatePipeMock, UserService } from '@flaps/core';
 import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { ProfileComponent } from './profile.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { SvgIconRegistryService } from 'angular-svg-icon';
+import { STFCheckboxModule } from '@flaps/common';
+import { MockModule } from 'ng-mocks';
 
 describe('ProfileComponent', () => {
   let component: ProfileComponent;
@@ -15,11 +18,14 @@ describe('ProfileComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ProfileComponent, TranslatePipeMock],
-      imports: [ReactiveFormsModule, STFInputModule],
+      imports: [ReactiveFormsModule, STFInputModule, PaButtonModule, MockModule(STFCheckboxModule)],
       providers: [
         {
           provide: TranslateService,
-          useValue: { use: () => {} },
+          useValue: {
+            get: () => {},
+            use: () => {},
+          },
         },
         {
           provide: UserService,
@@ -39,6 +45,7 @@ describe('ProfileComponent', () => {
             },
           },
         },
+        { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
       ],
     }).compileComponents();
   }));
