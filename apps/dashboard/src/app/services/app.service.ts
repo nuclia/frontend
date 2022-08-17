@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, take, map, tap } from 'rxjs';
-import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
+import { BehaviorSubject, combineLatest, map, Observable, Subject } from 'rxjs';
+import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 
 const EMPTY_KB_ALERT = 'NUCLIA_EMPTY_KB_ALERT';
@@ -48,21 +48,30 @@ export class AppService {
     return this.config.getLocales().includes(lang) ? lang : 'en-US';
   }
 
-  isKbStillEmptyAfterFirstDay() {
-    return this.sdk.counters.pipe(
-      take(1),
-      map((counters) => {
-        if (counters.resources > 0) return false;
-        const timestamp = localStorage.getItem(EMPTY_KB_ALERT);
-        if (!timestamp) {
-          return false; // Skip the first day
-        } else {
-          const prevDate = new Date(parseInt(timestamp, 10));
-          return prevDate.getDay() !== new Date().getDay();
+  isKbStillEmptyAfterFirstDay(): Observable<boolean> {
+    return combineLatest([this.sdk.currentKb, this.sdk.counters]).pipe(
+      map(([currentKb, counters]) => {
+        let isStillEmptyAfterFirstDay = false;
+        let emptyKbs = JSON.parse(localStorage.getItem(EMPTY_KB_ALERT) || '{}');
+        // if we have a number in the localstorage, it means it's a timestamp like the previous format,
+        // so we reset it as we don't know for which kb it was set
+        if (typeof emptyKbs === 'number') {
+          emptyKbs = {};
         }
-      }),
-      tap(() => {
-        localStorage.setItem(EMPTY_KB_ALERT, Date.now().toString());
+
+        if (counters.resources > 0) {
+          delete emptyKbs[currentKb.id];
+        } else if (!emptyKbs[currentKb.id]) {
+          // Skip the first day
+          emptyKbs[currentKb.id] = Date.now().toString();
+        } else {
+          const timestamp = emptyKbs[currentKb.id];
+          const prevDate = new Date(parseInt(timestamp, 10));
+          isStillEmptyAfterFirstDay = prevDate.getDay() !== new Date().getDay();
+        }
+        localStorage.setItem(EMPTY_KB_ALERT, JSON.stringify(emptyKbs));
+
+        return isStillEmptyAfterFirstDay;
       }),
     );
   }

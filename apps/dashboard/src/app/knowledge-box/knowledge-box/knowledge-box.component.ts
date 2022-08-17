@@ -16,6 +16,7 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   showBar = combineLatest([this.uploadService.progress, this.uploadService.barDisabled]).pipe(
     map(([progress, disabled]) => !progress.completed && !disabled),
   );
+  isEmptyKbAlertOpen = false;
   private unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -39,13 +40,14 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
     this.appService
       .isKbStillEmptyAfterFirstDay()
       .pipe(
-        switchMap((result) => (result ? this.showKBEmptyAlert() : of(undefined))),
+        switchMap((result) => (result && !this.isEmptyKbAlertOpen ? this.showKBEmptyAlert() : of(undefined))),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe();
   }
 
   showKBEmptyAlert() {
+    this.isEmptyKbAlertOpen = true;
     return this.modalService
       .openConfirm({
         title: 'stash.empty_kb',
@@ -53,6 +55,7 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
         confirmLabel: 'stash.upload_data',
       })
       .onClose.pipe(
+        tap(() => (this.isEmptyKbAlertOpen = false)),
         filter((result) => !!result),
         tap(() => {
           this.openUploadDialog();
