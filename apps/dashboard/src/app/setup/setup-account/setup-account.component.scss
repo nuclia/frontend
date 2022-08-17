@@ -10,7 +10,7 @@
 .logo svg {
   width: auto;
   height: 42px;
-  margin-left: rythm(1.5);
+  margin-left: rhythm(2);
 }
 
 .setup-account {
@@ -18,7 +18,7 @@
 }
 
 h1 {
-  margin: 0 0 rythm(2) 0;
+  margin: 0 0 rhythm(3) 0;
   font-weight: var(--stf-font-weight-bold);
   font-size: var(--stf-font-size-xxxlarge);
 }
@@ -29,7 +29,7 @@ main {
 
 .col-left {
   flex: 2 1 0;
-  margin-right: rythm(2);
+  margin-right: rhythm(3);
 }
 
 .col-right {
@@ -39,12 +39,12 @@ main {
 .box {
   background-color: $white;
   border-radius: 4px;
-  padding: rythm(2) rythm(3);
-  margin-bottom: rythm(1);
+  padding: rhythm(3) rythm(3);
+  margin-bottom: rhythm(1.5);
 }
 
 h2 {
-  margin: 0 0 rythm(1) 0;
+  margin: 0 0 rhythm(1.5) 0;
   font-size: var(--stf-font-size-xxlarge);
   font-weight: var(--stf-font-weight-light);
   &.mute {
@@ -55,29 +55,35 @@ h2 {
 
 .field {
   background-color: $white-smoke;
-  padding: rythm(1.5) rythm(2);
-  margin-bottom: rythm(1);
+  padding: rhythm(2) rhythm(3);
+  margin-bottom: rhythm(1.5);
+
+  label {
+    display: block;
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(1.5);
+  }
 }
 
 .description {
   line-height: 1.2;
-  margin-bottom: 10px;
+  margin-bottom: rhythm(2);
   strong {
     font-weight: var(--stf-font-weight-semibold);
   }
 }
 
-stf-input {
-  display: inline-block;
+pa-input {
+  display: block;
   width: 300px;
 }
 
-mat-radio-button {
-  margin-right: rythm(3);
+pa-radio {
+  margin-right: rhythm(3);
 }
 
-stf-button {
-  margin-top: rythm(1);
+pa-button {
+  margin: rhythm(2) 0;
 }
 
 .doc-link {
@@ -86,7 +92,7 @@ stf-button {
 }
 
 .docs {
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.12);
 }
 .demo-link {
   color: currentColor;
