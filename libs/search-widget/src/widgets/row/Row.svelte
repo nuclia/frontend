@@ -82,7 +82,7 @@
     </div>
     <div class="block-4">
       {#if thumbnail}
-        <div class="thumbnail">
+        <div class="thumbnail" class:semantic>
           <img src={thumbnail} alt="Thumbnail" />
         </div>
       {/if}
@@ -163,7 +163,11 @@
     position: relative;
     width: 100%;
     height: 0;
-    padding-top: 50%;
+    padding-top: 80%;
+    background-color: var(--color-dark-light);
+  }
+  .thumbnail.semantic {
+    background-color: #f0f0f0;
   }
   .thumbnail img {
     position: absolute;
@@ -171,8 +175,10 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: top;
+    object-fit: contain;
+    object-position: center;
+    padding: 0.75em;
+    box-sizing: border-box;
   }
   .paragraph-list {
     padding: 0 0 0 1em;
