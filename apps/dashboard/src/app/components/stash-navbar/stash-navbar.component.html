@@ -68,7 +68,7 @@
       </div>
 
       <div class="nav-group">
-        <div class="group-items" tourAnchor="step7">
+        <div class="group-items">
           <a [routerLink]="kbUrl + '/manage'"
              routerLinkActive="active"
              class="nav-link"
@@ -76,6 +76,16 @@
           >
             <pa-icon name="settings"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
+          </a>
+        </div>
+        <div *ngIf="isTrainingEnabled | async" class="group-items" tourAnchor="step7">
+          <a [routerLink]="kbUrl + '/processes'"
+             routerLinkActive="active"
+             class="nav-link"
+             [class.disabled]="!(isAdminOrContrib | async)"
+          >
+            <pa-icon name="submenu"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
           </a>
         </div>
         <ng-container *ngIf="isAccountManager | async">

@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import { RouteInfo } from '@flaps/common';
-import { PostHogService } from '@flaps/core';
-import { map } from 'rxjs';
 
 const ROUTES: RouteInfo[] = [
   {
@@ -15,19 +13,7 @@ const ROUTES: RouteInfo[] = [
   templateUrl: './knowledge-box-manage.component.html',
 })
 export class KnowledgeBoxManageComponent {
-  routes = this.posthog.isFeatureEnabled('training').pipe(
-    map((yes) =>
-      yes
-        ? [
-            ...ROUTES,
-            {
-              title: 'stash.settings.processes',
-              relativeRoute: 'processes',
-            },
-          ]
-        : ROUTES,
-    ),
-  );
+  routes = ROUTES;
 
-  constructor(private posthog: PostHogService) {}
+  constructor() {}
 }
