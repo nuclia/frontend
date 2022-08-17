@@ -4,6 +4,8 @@ import { BackendConfigurationService, OAuthService } from '@flaps/core';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { ConsentComponent } from './consent.component';
+import { UserErrorComponent } from '../user-error/user-error.component';
+import { MockComponent } from 'ng-mocks';
 
 describe('ConsentComponent', () => {
   let component: ConsentComponent;
@@ -11,7 +13,12 @@ describe('ConsentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ConsentComponent, UserContainerComponent, UserContainerLogoComponent],
+      declarations: [
+        ConsentComponent,
+        UserContainerComponent,
+        UserContainerLogoComponent,
+        MockComponent(UserErrorComponent),
+      ],
       imports: [RouterTestingModule],
       providers: [
         { provide: OAuthService, useValue: { getConsentData: () => {} } },
