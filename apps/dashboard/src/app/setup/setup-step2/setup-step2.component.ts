@@ -1,14 +1,13 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Subject, take } from 'rxjs';
 import { concatMap, takeUntil } from 'rxjs/operators';
 import { SDKService, STFTrackingService, STFUtils, Zone, ZoneService } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
-import { STFConfirmComponent } from '@flaps/components';
 import { NavigationService } from '../../services/navigation.service';
 import { SetupStep } from '../setup-header/setup-header.component';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-setup-step2',
@@ -45,7 +44,7 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
     private zoneService: ZoneService,
     private navigation: NavigationService,
     private tracking: STFTrackingService,
-    private dialog: MatDialog,
+    private modalService: SisModalService,
   ) {
     this.tracking
       .isFeatureEnabled('onboarding-v2')
@@ -132,26 +131,22 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
     this.sdk.nuclia.db
       .createAccount(accountData)
       .pipe(concatMap(() => this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbData)))
-      .subscribe(
-        () => {
+      .subscribe({
+        next: () => {
           this.nextStep(accountSlug, kbSlug);
         },
-        () => {
+        error: () => {
           this.showGenericError();
         },
-      );
+      });
   }
 
   showGenericError() {
-    this.dialog.open(STFConfirmComponent, {
-      width: '520px',
-      data: {
-        title: 'login.error.oops',
-        message: 'generic.try_again',
-        confirmText: 'Ok',
-        onlyConfirm: true,
-        minWidthButtons: '110px',
-      },
+    this.modalService.openConfirm({
+      title: 'login.error.oops',
+      description: 'generic.try_again',
+      confirmLabel: 'Ok',
+      onlyConfirm: true,
     });
   }
 

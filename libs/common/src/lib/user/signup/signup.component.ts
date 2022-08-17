@@ -1,13 +1,13 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatDialog } from '@angular/material/dialog';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { STFConfirmComponent } from '@flaps/components';
 import { STFInputComponent } from '@flaps/pastanaga';
-import { LoginService, SignupData, BackendConfigurationService } from '@flaps/core';
+import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'stf-signup',
@@ -45,7 +45,8 @@ export class SignupComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
-    private dialog: MatDialog,
+    private modalService: SisModalService,
+    private translate: TranslatePipe,
   ) {
     const emailControl = this.signupForm.controls['email'];
     emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
@@ -98,26 +99,22 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   showConfirmation() {
-    const dialogRef = this.dialog.open(STFConfirmComponent, {
-      width: '420px',
-      data: {
+    const description = `${this.translate.transform('login.email_sent')}<br>${this.translate.transform(
+      'login.validate_and_explore',
+    )}`;
+    this.modalService
+      .openConfirm({
         title: 'login.check_email',
-        messages: ['login.email_sent', 'login.validate_and_explore'],
-        confirmText: 'Ok',
+        description,
+        confirmLabel: 'Ok',
         onlyConfirm: true,
-        minWidthButtons: '110px',
-      },
-    });
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((result) => {
-        if (result) {
-          this.router.navigate(['../login'], {
-            relativeTo: this.route,
-            queryParamsHandling: 'merge', // Preserve login_challenge
-          });
-        }
+      })
+      .onClose.pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(() => {
+        this.router.navigate(['../login'], {
+          relativeTo: this.route,
+          queryParamsHandling: 'merge', // Preserve login_challenge
+        });
       });
   }
 
