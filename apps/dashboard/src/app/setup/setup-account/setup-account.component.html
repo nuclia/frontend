@@ -4,60 +4,55 @@
 
 <div class="setup-account">
   <header *ngIf="user | async as user">
-    <h1>{{ 'setup.create_account' | translate: { user } }}</h1>
+    <h1>{{ 'setup.create_account' | translate: {user} }}</h1>
   </header>
   <main>
     <div class="col-left">
       <div class="box">
         <h2 [class.mute]="!!createdKb">{{ 'setup.account_preferences' | translate }}</h2>
-        <form *ngIf="!createdKb" [formGroup]="accountForm" (ngSubmit)="save()">
+        <form *ngIf="!createdKb"
+              [formGroup]="accountForm"
+              (ngSubmit)="save()">
           <div class="field">
-            <div class="description">
-              <strong>{{ 'setup.name_account' | translate }}</strong>
-            </div>
-            <stf-input
-              type="text"
-              name="account"
-              formControlName="account"
-              theme="border"
-              [validator]="accountForm.controls['account']"
-              [validation_messages]="validationMessages.account"
-            >
-              {{ 'account.title' | translate }}
-            </stf-input>
+            <div class="description"><strong>{{ 'setup.name_account' | translate }}</strong></div>
+            <pa-input id="account"
+                      name="account"
+                      formControlName="account"
+                      hasFocus
+                      [errorMessages]="validationMessages.account">
+              {{'account.title' | translate}}
+            </pa-input>
           </div>
           <div class="field">
             <div class="description" [innerHtml]="'setup.kb_created' | translate"></div>
-            <stf-input
-              type="text"
-              name="kb"
-              formControlName="kb"
-              theme="border"
-              [validator]="accountForm.controls['kb']"
-              [validation_messages]="validationMessages.kb"
-            >
-              {{ 'stash.name' | translate }}
-            </stf-input>
+            <pa-input name="kb"
+                      formControlName="kb"
+                      [errorMessages]="validationMessages.kb">
+              {{'stash.name' | translate}}
+            </pa-input>
           </div>
           <div class="field">
             <div class="description">
               <strong>{{ 'setup.data_storage' | translate }}</strong>
             </div>
-            <mat-radio-group formControlName="zone">
-              <mat-radio-button *ngFor="let zone of zones" [value]="zone.id">{{ zone.title }}</mat-radio-button>
-            </mat-radio-group>
+            <pa-radio-group formControlName="zone">
+              <pa-radio *ngFor="let zone of zones"
+                        [value]="zone.id">{{ zone.title }}</pa-radio>
+            </pa-radio-group>
           </div>
-          <stf-button type="submit" padding="pd-xl" [disabled]="loading">
+          <pa-button type="submit"
+                     kind="primary"
+                     [disabled]="loading">
             {{ 'generic.create' | translate }}
-          </stf-button>
+          </pa-button>
         </form>
       </div>
       <div class="box">
         <h2 [class.mute]="!createdKb">{{ 'setup.push_data' | translate }}</h2>
         <div *ngIf="!!createdKb">
-          <stf-button (click)="uploadFile()" padding="pd-l" color="secondary">
+          <pa-button (click)="uploadFile()">
             {{ 'setup.upload_file' | translate }}
-          </stf-button>
+          </pa-button>
           <a
             href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
             target="_blank"
@@ -68,9 +63,9 @@
           </a>
           <p>
             …or just visit a
-            <a class="demo-link" [routerLink]="'/at/' + createdAccount + '/__demo'"
-              ><strong>demo knowledge box</strong></a
-            >
+            <a class="demo-link" [routerLink]="'/at/' + createdAccount + '/__demo'" target="_blank">
+              <strong>demo knowledge box</strong>
+            </a>
             with existing contents.
           </p>
         </div>

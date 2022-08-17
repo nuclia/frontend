@@ -22,7 +22,7 @@ import { SetupStep2Component } from './setup-step2/setup-step2.component';
 import { SetupLoaderComponent } from './setup-loader/setup-loader.component';
 import { SetupInviteComponent } from './setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup-account/setup-account.component';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   SetupContainerComponent,
@@ -51,6 +51,8 @@ const Components = [
     MatRadioModule,
     PaIconModule,
     PaButtonModule,
+    PaTextFieldModule,
+    PaTogglesModule,
   ],
   declarations: [...Components],
   exports: [],

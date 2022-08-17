@@ -1,14 +1,14 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntypedFormBuilder, Validators, AbstractControl } from '@angular/forms';
-import { of, concatMap, map, filter, catchError } from 'rxjs';
-import { ZoneService, Zone, STFUtils } from '@flaps/core';
+import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
+import { catchError, concatMap, filter, map, of } from 'rxjs';
+import { SDKService, STFTrackingService, STFUtils, UserService, Zone, ZoneService } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { NavigationService } from '../../services/navigation.service';
-import { SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 import { SisToastService } from '@nuclia/sistema';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 const DEFAULT_KB_NAME = 'Basic';
 
@@ -36,14 +36,14 @@ export class SetupAccountComponent {
     zone: ['', [Validators.required]],
   });
 
-  validationMessages = {
+  validationMessages: { [key: string]: IErrorMessages } = {
     account: {
       sluggable: 'account.account_name_invalid',
       available: 'setup.account_name_not_available',
-    },
+    } as IErrorMessages,
     kb: {
       sluggable: 'stash.kb_name_invalid',
-    },
+    } as IErrorMessages,
   };
 
   zones: Zone[] = [];
