@@ -11,6 +11,8 @@ import { UsersService } from '../../services/users.service';
 import { ZoneService } from '../../services/zone.service';
 
 import { AccountDetailComponent } from './account-detail.component';
+import { MockModule } from 'ng-mocks';
+import { STFButtonsModule } from '@flaps/pastanaga';
 
 describe('AccountDetailComponent', () => {
   let component: AccountDetailComponent;
@@ -19,7 +21,14 @@ describe('AccountDetailComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [AccountDetailComponent],
-      imports: [RouterTestingModule, ReactiveFormsModule, MatInputModule, MatSelectModule, NoopAnimationsModule],
+      imports: [
+        RouterTestingModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatSelectModule,
+        NoopAnimationsModule,
+        MockModule(STFButtonsModule),
+      ],
       providers: [
         {
           provide: AccountService,
