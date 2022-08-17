@@ -40,19 +40,17 @@
         {{ 'generic.role' | translate }}
       </th>
       <td class="user-role" mat-cell *matCellDef="let user">
-        <select
-          stfSelect
-          selectSize="small"
-          (ngModelChange)="changeRole(user, $event)"
-          [ngModel]="user.role"
-          [disabled]="isItMe(user.id)"
-        >
-          <ng-container *ngFor="let role of roles">
-            <option [value]="role[0]">
-              {{ role[1] | translate }}
-            </option>
-          </ng-container>
-        </select>
+        <nsi-dropdown-button size="small"
+                             aspect="basic"
+                             [popupRef]="roleDropdown"
+                             [disabled]="isItMe(user.id)">{{roleTranslations[user.role] | translate}}</nsi-dropdown-button>
+        <pa-dropdown #roleDropdown>
+            <pa-option *ngFor="let role of roleTranslations | keyvalue"
+                       [value]="role.key"
+                       (selectOption)="changeRole(user, $event)">
+              {{ role.value | translate }}
+            </pa-option>
+        </pa-dropdown>
       </td>
     </ng-container>
 

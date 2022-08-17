@@ -18,10 +18,11 @@ export class AccountUsersComponent implements OnDestroy, OnInit {
   users?: AccountUser[];
   columns = ['user', 'role', 'actions'];
   email = new UntypedFormControl([''], [Validators.required, Validators.email]);
-  roles: [AccountRoles, string][] = [
-    ['AOWNER', 'generic.owner'],
-    ['AMEMBER', 'generic.member'],
-  ];
+
+  roleTranslations: { [role: string]: string } = {
+    AOWNER: 'generic.owner',
+    AMEMBER: 'generic.member',
+  };
 
   account$ = this.stateService.account.pipe(filter((account) => !!account));
   canAddUsers = this.account$.pipe(

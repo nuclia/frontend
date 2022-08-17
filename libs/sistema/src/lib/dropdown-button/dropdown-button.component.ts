@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
+  Aspect,
   DropdownComponent,
   Kind,
   PaButtonModule,
@@ -42,6 +43,16 @@ export class DropdownButtonComponent {
   }
 
   @Input()
+  set aspect(value: Aspect | undefined) {
+    if (value) {
+      this._aspect = value;
+    }
+  }
+  get aspect(): Aspect {
+    return this._aspect;
+  }
+
+  @Input()
   set open(value: any) {
     this._open = coerceBooleanProperty(value);
   }
@@ -49,7 +60,17 @@ export class DropdownButtonComponent {
     return this._open;
   }
 
+  @Input()
+  set disabled(value: any) {
+    this._disabled = coerceBooleanProperty(value);
+  }
+  get disabled() {
+    return this._disabled;
+  }
+
+  private _aspect: Aspect = 'solid';
   private _kind: Kind = 'secondary';
   private _size: Size = 'medium';
   private _open = false;
+  private _disabled = false;
 }

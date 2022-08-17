@@ -40,11 +40,13 @@ import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-ma
 import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
+  PaDropdownModule,
   PaIconModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 const Components = [
   AccountComponent,
@@ -93,6 +95,8 @@ const Components = [
     PaTextFieldModule,
     PaTogglesModule,
     PaIconModule,
+    DropdownButtonComponent,
+    PaDropdownModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
