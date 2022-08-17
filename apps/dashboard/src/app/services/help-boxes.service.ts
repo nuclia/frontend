@@ -98,12 +98,12 @@ const TOUR_STEPS: IStepOption[] = [
     content: 'tour.step6.content',
     stepId: '84px,-64px,right-top',
   },
-  // {
-  //   anchorId: 'step7',
-  //   title: 'tour.step7.title',
-  //   content: 'tour.step7.content',
-  //   stepId: '84px,-43px,right-top',
-  // },
+  {
+    anchorId: 'step7',
+    title: 'tour.step7.title',
+    content: 'tour.step7.content',
+    stepId: '84px,-43px,right-top',
+  },
   {
     anchorId: 'step8',
     title: 'tour.step8.title',
@@ -136,6 +136,7 @@ const TOUR_STEPS: IStepOption[] = [
 const STEPS_FEATURES_DEPENDENCIES: { [step: string]: string[] } = {
   step5: ['upload-link', 'upload-files', 'upload-folder'],
   step6: ['view-resources', 'manage-ontologies', 'manage-entities'],
+  step7: ['training'],
   step8: ['manage-widgets'],
   step10: ['manage-api-keys'],
 };

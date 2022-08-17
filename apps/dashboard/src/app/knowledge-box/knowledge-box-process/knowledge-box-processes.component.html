@@ -1,64 +1,68 @@
-<div class="knowledge-box-processes">
-  <div *ngIf="cannotTrain | async" class="warning">
-    {{ 'stash.settings.processes.training.not-allowed' | translate }}
-  </div>
-  <section *ngFor="let type of [trainingTypes.classifier, trainingTypes.labeller]">
-    <h2>{{ 'stash.settings.processes.' + type | translate }}</h2>
-    <p class="last-run">
-      <small>{{ 'stash.settings.processes.training.last_run' | translate: { runDate: lastRun[type] ? (lastRun[type] | date:'YYYY-MM-dd HH:mm') : '–' } }}</small>
-    </p>
-
-    <div [class.running]="running[type]">
-      <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
-
-      <div class="labelset-selection">
-        <nsi-dropdown-button [popupRef]="dropdown"
-                             [open]="open[type]">
-          {{ 'stash.settings.processes.training.select-labelsets' | translate }}
-        </nsi-dropdown-button>
-
-        <div class="selection">{{ selectedLabelsets[type].join(', ') }}</div>
+<stf-section-navbar title="stash.side.trainings" [sections]="[]">
+  <stf-section-navbar-body>
+    <div class="knowledge-box-processes">
+      <div *ngIf="cannotTrain | async" class="warning">
+        {{ 'stash.settings.processes.training.not-allowed' | translate }}
       </div>
-
-      <pa-dropdown #dropdown
-                   (onOpen)="open[type] = true"
-                   (onClose)="open[type] = false">
-        <pa-option *ngIf="labelsets | async as labelsets"
-                   dontCloseOnSelect>
-          <pa-checkbox [value]="selectedLabelsets[type].length === labelsets.length"
-                       (change)="toggleAll(type)">
-            {{ 'stash.settings.processes.training.all_labelsets' | translate }}
-          </pa-checkbox>
-        </pa-option>
-        <pa-separator></pa-separator>
-        <pa-option *ngFor="let labelset of labelsets | async"
-                   dontCloseOnSelect>
-          <pa-checkbox [value]="selectedLabelsets[type].includes(labelset.value)"
-                       (change)="toggleLabelset(type, labelset.value)">{{labelset.title}}</pa-checkbox>
-        </pa-option>
-      </pa-dropdown>
-
-      <ng-container *ngIf="isBillingEnabled | async">
-        <p [class.warning]="!agreement">
-          {{ 'stash.settings.processes.training.time_requirement' | translate: { hours: hoursRequired } }}
+      <section *ngFor="let type of [trainingTypes.classifier, trainingTypes.labeller]">
+        <h2>{{ 'stash.settings.processes.' + type | translate }}</h2>
+        <p class="last-run">
+          <small>{{ 'stash.settings.processes.training.last_run' | translate: { runDate: lastRun[type] ? (lastRun[type] | date:'YYYY-MM-dd HH:mm') : '–' } }}</small>
         </p>
 
-        <div class="agreement-container">
-          <pa-checkbox [disabled]="cannotTrain | async"
-                       [(value)]="agreement[type]">{{'stash.settings.processes.training.agreement' | translate}}</pa-checkbox>
-        </div>
-      </ng-container>
-    </div>
+        <div [class.running]="running[type]">
+          <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
 
-    <div *ngIf="running[type]" class="active-training warning">
-      {{ 'stash.settings.processes.training.active' | translate }}
+          <div class="labelset-selection">
+            <nsi-dropdown-button [popupRef]="dropdown"
+                                 [open]="open[type]">
+              {{ 'stash.settings.processes.training.select-labelsets' | translate }}
+            </nsi-dropdown-button>
+
+            <div class="selection">{{ selectedLabelsets[type].join(', ') }}</div>
+          </div>
+
+          <pa-dropdown #dropdown
+                       (onOpen)="open[type] = true"
+                       (onClose)="open[type] = false">
+            <pa-option *ngIf="labelsets | async as labelsets"
+                       dontCloseOnSelect>
+              <pa-checkbox [value]="selectedLabelsets[type].length === labelsets.length"
+                           (change)="toggleAll(type)">
+                {{ 'stash.settings.processes.training.all_labelsets' | translate }}
+              </pa-checkbox>
+            </pa-option>
+            <pa-separator></pa-separator>
+            <pa-option *ngFor="let labelset of labelsets | async"
+                       dontCloseOnSelect>
+              <pa-checkbox [value]="selectedLabelsets[type].includes(labelset.value)"
+                           (change)="toggleLabelset(type, labelset.value)">{{labelset.title}}</pa-checkbox>
+            </pa-option>
+          </pa-dropdown>
+
+          <ng-container *ngIf="isBillingEnabled | async">
+            <p [class.warning]="!agreement">
+              {{ 'stash.settings.processes.training.time_requirement' | translate: { hours: hoursRequired } }}
+            </p>
+
+            <div class="agreement-container">
+              <pa-checkbox [disabled]="cannotTrain | async"
+                           [(value)]="agreement[type]">{{'stash.settings.processes.training.agreement' | translate}}</pa-checkbox>
+            </div>
+          </ng-container>
+        </div>
+
+        <div *ngIf="running[type]" class="active-training warning">
+          {{ 'stash.settings.processes.training.active' | translate }}
+        </div>
+        <div class="cta-container">
+          <pa-button [kind]="running[type] ? 'secondary' : 'primary'"
+                     [disabled]="(!running[type] && !agreement[type]) || (cannotTrain | async)"
+                     (click)="startOrStopTraining(type)">
+            {{ 'stash.settings.processes.training.' + (running[type] ? 'stop' : 'start') | translate }}
+          </pa-button>
+        </div>
+      </section>
     </div>
-    <div class="cta-container">
-      <pa-button [kind]="running[type] ? 'secondary' : 'primary'"
-                 [disabled]="(!running[type] && !agreement[type]) || (cannotTrain | async)"
-                 (click)="startOrStopTraining(type)">
-        {{ 'stash.settings.processes.training.' + (running[type] ? 'stop' : 'start') | translate }}
-      </pa-button>
-    </div>
-  </section>
-</div>
+  </stf-section-navbar-body>
+</stf-section-navbar>

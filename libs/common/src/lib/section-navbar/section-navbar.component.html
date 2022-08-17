@@ -28,7 +28,8 @@
         </div>
       </div>
 
-      <div [fxHide]="true"
+      <div *ngIf="navItems.length > 0"
+           [fxHide]="true"
            [fxShow.lt-lg]="true"
            fxFlex="0 0 auto"
            class="section-navbar-select">

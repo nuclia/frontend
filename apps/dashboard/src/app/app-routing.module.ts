@@ -168,11 +168,11 @@ const routes: Routes = [
                     path: 'profile',
                     component: KnowledgeBoxProfileComponent,
                   },
-                  {
-                    path: 'processes',
-                    component: KnowledgeBoxProcessesComponent,
-                  },
                 ],
+              },
+              {
+                path: 'processes',
+                component: KnowledgeBoxProcessesComponent,
               },
               {
                 path: 'users',
