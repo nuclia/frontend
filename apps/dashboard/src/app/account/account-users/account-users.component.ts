@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
@@ -13,15 +13,16 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
   styleUrls: ['./account-users.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountUsersComponent implements OnDestroy {
+export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;
   users?: AccountUser[];
   columns = ['user', 'role', 'actions'];
   email = new UntypedFormControl([''], [Validators.required, Validators.email]);
-  roles: [AccountRoles, string][] = [
-    ['AOWNER', 'generic.owner'],
-    ['AMEMBER', 'generic.member'],
-  ];
+
+  roleTranslations: { [role: string]: string } = {
+    AOWNER: 'generic.owner',
+    AMEMBER: 'generic.member',
+  };
 
   account$ = this.stateService.account.pipe(filter((account) => !!account));
   canAddUsers = this.account$.pipe(
@@ -38,18 +39,18 @@ export class AccountUsersComponent implements OnDestroy {
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.account$
       .pipe(
-        takeUntil(this.unsubscribeAll),
         tap((account) => {
           this.account = account!;
         }),
         switchMap(() => this.updateUsers()),
+        takeUntil(this.unsubscribeAll),
       )
-      .subscribe(() => {
-        this.cdr?.markForCheck();
-      });
+      .subscribe(() => this.cdr?.markForCheck());
   }
 
   isItMe(userId: string) {
@@ -86,7 +87,6 @@ export class AccountUsersComponent implements OnDestroy {
           description: 'account.admin.warning',
         })
         .onClose.pipe(
-          filter((confirm) => !!confirm),
           switchMap((result) => (!!result ? this._changeRole(user, role) : of(null))),
           switchMap(() => this.updateUsers()),
           takeUntil(this.unsubscribeAll),
