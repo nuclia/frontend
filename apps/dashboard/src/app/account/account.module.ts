@@ -11,7 +11,7 @@ import { MatTableModule } from '@angular/material/table';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
-import { STFConfirmModule, UserAvatarModule } from '@flaps/components';
+import { UserAvatarModule } from '@flaps/components';
 import { STFCheckboxModule, STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
 import {
   STFButtonsModule,
@@ -72,7 +72,6 @@ const Components = [
     MatTableModule,
     STFSectionNavbarModule,
     STFCheckboxModule,
-    STFConfirmModule,
     UserAvatarModule,
     STFButtonsModule,
     STFInputModule,
