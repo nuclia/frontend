@@ -2,7 +2,7 @@ import { closeButtonConf, SisToastService } from './sis-toast.service';
 import { ToastService } from '@guillotinaweb/pastanaga-angular';
 import { MockService } from 'ng-mocks';
 
-describe('SisToastService', () => {
+describe.skip('SisToastService', () => {
   let service: SisToastService;
   let mockToastService: ToastService;
   const message = 'Toast message to be displayed';
