@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -11,7 +11,7 @@ import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
 
-import { STFPipesModule, STFConfigModule } from '@flaps/core';
+import { BackendConfigurationService, STFConfigModule, STFPipesModule } from '@flaps/core';
 import { STFButtonsModule } from '@flaps/pastanaga';
 import { AuthInterceptor } from './guards/auth.interceptor';
 import { environment } from '../environments/environment';
@@ -42,8 +42,8 @@ registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
 
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+export function createTranslateLoader(http: HttpClient, config: BackendConfigurationService) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', `.json?version=${config.getVersion()}`);
 }
 
 const components = [AppComponent, BaseComponent];
@@ -80,7 +80,7 @@ const appModules = [
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient],
+        deps: [HttpClient, BackendConfigurationService],
       },
     }),
     PaToastModule,
