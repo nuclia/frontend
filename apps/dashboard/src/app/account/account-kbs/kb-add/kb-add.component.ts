@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@
 import { UntypedFormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SDKService, STFTrackingService, STFUtils, Zone } from '@flaps/core';
-import { CheckboxGroupItem, Sluggable } from '@flaps/common';
+import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 import { map, share } from 'rxjs';
 import * as Sentry from '@sentry/angular';
@@ -36,12 +36,12 @@ export class KbAddComponent {
     } as IErrorMessages,
   };
 
-  languages: CheckboxGroupItem[] = [
+  languages: { value: string; label: string }[] = [
     { value: 'multilingual', label: 'stash.create.language.multi' },
     { value: 'monolingual', label: 'stash.create.language.mono' },
   ];
   languageList = STFUtils.supportedAudioLanguages();
-  anonymizationOptions: CheckboxGroupItem[] = [
+  anonymizationOptions: { value: string; label: string }[] = [
     { value: 'no', label: 'generic.disabled' },
     { value: 'yes', label: 'generic.enabled' },
   ];

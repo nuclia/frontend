@@ -12,7 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
-import { STFCheckboxModule, STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
+import { STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
 import {
   STFButtonsModule,
   STFExpanderModule,
@@ -73,7 +73,6 @@ const Components = [
     MatDialogModule,
     MatTableModule,
     STFSectionNavbarModule,
-    STFCheckboxModule,
     UserAvatarModule,
     STFButtonsModule,
     STFInputModule,

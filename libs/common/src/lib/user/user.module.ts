@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { STFButtonDirectivesModule, STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
-import { STFCheckboxModule } from '../checkbox/checkbox.module';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
@@ -109,7 +108,6 @@ export const userRoutes: Routes = [
     STFButtonsModule,
     STFButtonDirectivesModule,
     STFPipesModule,
-    STFCheckboxModule,
     UserAvatarModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),

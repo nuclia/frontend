@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginService, SDKService, TranslatePipeMock, UserService } from '@flaps/core';
-import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { ProfileComponent } from './profile.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SvgIconRegistryService } from 'angular-svg-icon';
-import { STFCheckboxModule } from '@flaps/common';
 import { MockModule } from 'ng-mocks';
 
 describe('ProfileComponent', () => {
@@ -18,7 +16,12 @@ describe('ProfileComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ProfileComponent, TranslatePipeMock],
-      imports: [ReactiveFormsModule, STFInputModule, PaButtonModule, MockModule(STFCheckboxModule)],
+      imports: [
+        ReactiveFormsModule,
+        MockModule(PaTextFieldModule),
+        MockModule(PaButtonModule),
+        MockModule(PaTogglesModule),
+      ],
       providers: [
         {
           provide: TranslateService,

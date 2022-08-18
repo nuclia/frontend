@@ -81,7 +81,6 @@ export class ProfileComponent implements OnInit {
         this.profileForm.get('name')?.setValue(prefs?.name);
         this.profileForm.get('email')?.setValue(prefs?.email);
         this.cdr?.markForCheck();
-        console.log(prefs, this.profileForm, this.language);
       });
   }
 

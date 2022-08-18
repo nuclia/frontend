@@ -20,7 +20,7 @@ import {
   STFTextFieldModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
-import { PaginationModule, STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
+import { PaginationModule, STFSectionNavbarModule } from '@flaps/common';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { ResourceListComponent } from './resource-list.component';
@@ -114,7 +114,6 @@ const ROUTES: Routes = [
     STFTooltipModule,
     STFIconsModule,
     STFFormDirectivesModule,
-    STFCheckboxModule,
     PaginationModule,
     PipesModule,
     STFSectionNavbarModule,
