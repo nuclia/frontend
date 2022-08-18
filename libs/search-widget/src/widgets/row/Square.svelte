@@ -1,22 +1,12 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
   import type { IResource } from '@nuclia/core';
   import { formatDate } from '../../core/utils';
-  import { _ } from '../../core/i18n';
   import { setDisplayedResource } from '../../core/store';
-  import { getFile } from '../../core/api';
+  import Thumbnail from './thumbnail.svelte';
 
   export let result: IResource;
-  let thumbnail: string;
-  if (result.thumbnail) {
-    getFile(result.thumbnail).subscribe((url) => (thumbnail = url));
-  }
   let labels: string[];
   $: labels = (result.usermetadata?.classifications || []).map((label) => label.label);
-
-  onDestroy(() => {
-    if (thumbnail) URL.revokeObjectURL(thumbnail);
-  });
 </script>
 
 <div
@@ -29,8 +19,8 @@
   tabindex="0"
 >
   <div class="thumbnail">
-    {#if thumbnail}
-      <img src={thumbnail} alt="Thumbnail" />
+    {#if result.thumbnail}
+      <Thumbnail src={result.thumbnail} ratio={16/9} />
     {/if}
   </div>
   <div class="body">
@@ -59,18 +49,8 @@
     background-color: var(--color-light-stronger);
   }
   .thumbnail {
-    position: relative;
     width: 100%;
-    height: 160px;
-  }
-  .thumbnail img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top;
+    min-height: 160px;
   }
   .body {
     padding: 1.5em 1em;

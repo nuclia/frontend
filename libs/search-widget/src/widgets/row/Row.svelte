@@ -1,26 +1,17 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
   import type { IResource } from '@nuclia/core';
   import { formatDate } from '../../core/utils';
   import { nucliaState, setDisplayedResource } from '../../core/store';
-  import { getFile } from '../../core/api';
   import MimeIcon from '../../components/icons/mime.svelte';
+  import Thumbnail from './thumbnail.svelte';
 
   export let formWidget = false;
   export let result: IResource;
   export let semantic = false;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
   const sentences = nucliaState().getMatchingSentences(result.id);
-  let thumbnail: string;
-  if (result.thumbnail) {
-    getFile(result.thumbnail).subscribe((url) => (thumbnail = url));
-  }
   let labels: string[];
   $: labels = (result.usermetadata?.classifications || []).map((label) => label.label);
-
-  onDestroy(() => {
-    if (thumbnail) URL.revokeObjectURL(thumbnail);
-  });
 </script>
 
 <div
@@ -81,10 +72,8 @@
       </div>
     </div>
     <div class="block-4">
-      {#if thumbnail}
-        <div class="thumbnail" class:semantic>
-          <img src={thumbnail} alt="Thumbnail" />
-        </div>
+      {#if result.thumbnail}
+        <Thumbnail src={result.thumbnail} />
       {/if}
     </div>
   </div>
@@ -158,27 +147,6 @@
     .block-4 {
       display: block;
     }
-  }
-  .thumbnail {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-top: 80%;
-    background-color: var(--color-neutral-lightest);
-  }
-  .thumbnail.semantic {
-    background-color: #f0f0f0;
-  }
-  .thumbnail img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-    padding: 0.75em;
-    box-sizing: border-box;
   }
   .paragraph-list {
     padding: 0 0 0 1em;
