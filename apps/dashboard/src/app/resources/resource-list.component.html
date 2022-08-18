@@ -13,28 +13,20 @@
         fxLayout="row"
         fxLayoutAlign="start center"
       >
-        <stf-checkbox
-          color="dark"
-          [selected]="selection.selected.length > 0"
-          [disabled]="selection.selected.length === 0"
-          (selectedChange)="clearSelected()"
-          stfTooltip
-          stfTooltipText="generic.deselect_all"
-          [stfTooltipDisabled]="selection.selected.length === 0"
-        >
-        </stf-checkbox>
+        <pa-checkbox [value]="selection.selected.length > 0"
+                     [disabled]="selection.selected.length === 0"
+                     [paTooltip]="selection.selected.length === 0 ? null : 'generic.deselect_all'"
+                     (change)="clearSelected()"
+        ></pa-checkbox>
         <div class="resource-counter" [class.disabled]="selection.selected.length === 0">
           {{ 'resource.selected_count' | translate: {num: selection.selected.length || ''} }}
         </div>
-        <stf-button
-          *ngIf="selection.selected.length > 0"
-          color="legacy"
-          size="small"
-          padding="pd-l"
-          (click)="bulkDelete()"
-        >
+        <pa-button *ngIf="selection.selected.length > 0"
+                   kind="destructive"
+                   size="small"
+                   (click)="bulkDelete()">
           {{ 'generic.delete' | translate }}
-        </stf-button>
+        </pa-button>
       </div>
       <div class="resource-number">
         <div>
@@ -61,22 +53,12 @@
       <table *ngIf="currentKb | async" [dataSource]="data" cdk-table>
         <ng-container cdkColumnDef="select">
           <th cdk-header-cell *cdkHeaderCellDef>
-            <stf-checkbox
-              [selected]="selection.hasValue() && isAllSelected()"
-              (selectedChange)="masterToggle()"
-              [ariaLabel]="getCheckboxLabel()"
-              color="dark"
-            >
-            </stf-checkbox>
+            <pa-checkbox [value]="selection.hasValue() && isAllSelected()"
+                         (change)="masterToggle()"></pa-checkbox>
           </th>
           <td cdk-cell *cdkCellDef="let row">
-            <stf-checkbox
-              [selected]="selection.isSelected(row)"
-              (selectedChange)="selection.toggle(row)"
-              [ariaLabel]="getCheckboxLabel(row)"
-              color="dark"
-            >
-            </stf-checkbox>
+            <pa-checkbox [value]="selection.isSelected(row)"
+                         (change)="selection.toggle(row)"></pa-checkbox>
           </td>
         </ng-container>
 
