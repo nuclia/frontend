@@ -179,23 +179,23 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap');
   .nuclia-widget {
-    --color-primary-regular: var(--custom-color-primary-regular, black);
-    --color-primary-muted: var(--custom-color-primary-muted, #707070);
+    --color-primary-regular: var(--custom-color-primary-regular, hsl(336, 100%, 50%));
+    --color-neutral-strong: var(--custom-color-neutral-strong, hsl(0, 0%, 44%));
+    --color-neutral-regular: var(--custom-color-neutral-regular, hsl(0, 0%, 77%));
+    --color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(336, 100%, 96%));
     --color-light-stronger: var(--custom-color-light-stronger, white);
-    --color-dark-light: var(--custom-color-dark-stronger, #f7f7f8);
-    --color-dark-stronger: var(--custom-color-dark-stronger, #8296a6);
-    --color-neutral-strong: var(--custom-color-neutral-strong, #ff0066);
-    --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
-    --color-light-regular: var(--custom-color-light-regular, #c4c4c4);
+    --color-dark-stronger: var(--custom-color-dark-stronger, hsl(0, 0%, 5%));
     --color-secondary-stronger: var(--custom-color-secondary-stronger, hsl(51, 78%, 32%));
     --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
+
+    --color-blue-strong: hsl(207, 17%, 58%);
+    --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
 
     --font-size-base: var(--custom-font-size-base, 16px);
     --font-weight-body: var(--custom-font-weight-body, 300);
     --font-weight-semi-bold: var(--custom-font-weight-semi-bold, 500);
     --font-weight-bold: var(--custom-font-weight-semi-bold, 700);
     --line-height-body: calc(var(--font-size-base) * 1.25);
-    --color-text-accent: var(--color-primary-regular);
     --font-family-body: 'Source Sans Pro', sans-serif;
     --border-radius: var(--custom-border-radius, 2px);
 
@@ -211,15 +211,15 @@
     --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
     --form-widget-border-style: var(--custom-form-widget-border-style, solid);
     --form-widget-border-style-stronger: var(--custom-form-widget-border-style-stronger, solid);
-    --form-widget-border-color: var(--custom-form-widget-border-color, var(--color-dark-stronger));
+    --form-widget-border-color: var(--custom-form-widget-border-color, var(--color-blue-strong));
     --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
-    --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-dark-stronger);
+    --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-blue-strong);
 
     --input-widget-padding: var(--custom-input-widget-padding, 2px 42px 2px 2px);
     --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
     --input-widget-border-style: var(--custom-input-widget-border-style, solid);
     --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
-    --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-primary-regular));
+    --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-dark-stronger));
     --input-widget-border-radius: var(--custom-input-widget-border-radius, 0);
     --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, transparent);
 
@@ -228,7 +228,7 @@
     --resource-modal-height: var(--custom-resource-modal-height, calc(100vh - 120px));
     --resource-modal-height-md: var(--custom-resource-modal-height-md, 85vh);
 
-    color: var(--color-text-accent);
+    color: var(--color-dark-stronger);
     font-family: var(--font-family-body);
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-body);

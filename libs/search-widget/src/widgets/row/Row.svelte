@@ -96,7 +96,7 @@
   }
   .row:focus-visible {
     padding-left: 13px;
-    border-left: 3px solid var(--color-neutral-strong);
+    border-left: 3px solid var(--color-primary-regular);
     outline: 0px;
   }
   .title {
@@ -200,7 +200,6 @@
     top: 4px;
     bottom: 4px;
     left: -30px;
-    border-color: var(--color-dark-stronger);
-    border-left: 3px solid var(--color-neutral-strong);
+    border-left: 3px solid var(--color-primary-regular);
   }
 </style>
