@@ -3,7 +3,7 @@
 .profile {
   padding: 10vh 0;
 
-  &-container {
+  .profile-container {
     position: relative;
     width: 600px;
     margin: 0 auto;
@@ -31,14 +31,19 @@
     margin-bottom: rhythm(3);
     display: flex;
     align-items: center;
-    &-label {
+    .field-label {
       flex: 0 0 150px;
     }
-    &-input {
+    .field-input {
       flex: 1 1 0;
     }
     &:last-of-type {
       margin-bottom: 0;
+    }
+
+    pa-radio-group {
+      display: flex !important;
+      gap: rhythm(4);
     }
   }
 

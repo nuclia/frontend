@@ -1,11 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { UntypedFormBuilder, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, Observable, of, forkJoin, takeUntil, switchMap, filter } from 'rxjs';
-import { SDKService, SetUserPreferences, UserService, LoginService } from '@flaps/core';
-import { STFUtils, MIN_PASSWORD_LENGTH, DEFAULT_LANG } from '@flaps/core';
-import { WelcomeUser, Language } from '@nuclia/core';
+import { filter, forkJoin, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  DEFAULT_LANG,
+  LoginService,
+  MIN_PASSWORD_LENGTH,
+  SDKService,
+  SetUserPreferences,
+  STFUtils,
+  UserService,
+} from '@flaps/core';
+import { Language, WelcomeUser } from '@nuclia/core';
 import { SamePassword } from '../../validators/form.validator';
 
 @Component({
@@ -16,7 +23,6 @@ import { SamePassword } from '../../validators/form.validator';
 })
 export class ProfileComponent implements OnInit {
   userPrefs: WelcomeUser | undefined;
-  language: string[] = [];
   languages = STFUtils.supportedLanguages().map((lang) => ({ label: 'language.' + lang, value: lang }));
 
   canModifyPassword: boolean = false; // TODO
@@ -27,6 +33,7 @@ export class ProfileComponent implements OnInit {
     email: [{ value: '', disabled: !this.canModifyEmail }, [Validators.required, Validators.email]],
     password: ['', this.optionalPassword('passwordConfirm', [Validators.minLength(MIN_PASSWORD_LENGTH)])],
     passwordConfirm: ['', this.optionalPassword('password', [SamePassword('password')])],
+    language: [''],
   });
 
   profile_validation_messages = {
@@ -45,6 +52,10 @@ export class ProfileComponent implements OnInit {
       passwordMismatch: 'validation.password_mismatch',
     },
   };
+
+  get language() {
+    return this.profileForm.get('language')?.value || '';
+  }
 
   private unsubscribeAll = new Subject<void>();
 
@@ -66,10 +77,11 @@ export class ProfileComponent implements OnInit {
       )
       .subscribe((prefs) => {
         this.userPrefs = prefs;
-        this.language = [(prefs!.language || DEFAULT_LANG).toLowerCase()];
+        this.profileForm.get('language')?.setValue((prefs?.language || DEFAULT_LANG).toLowerCase());
         this.profileForm.get('name')?.setValue(prefs?.name);
         this.profileForm.get('email')?.setValue(prefs?.email);
         this.cdr?.markForCheck();
+        console.log(prefs, this.profileForm, this.language);
       });
   }
 
@@ -80,8 +92,8 @@ export class ProfileComponent implements OnInit {
         email: this.profileForm.value.email,
       };
 
-      if (this.language[0]) {
-        payload.language = this.language[0].toUpperCase() as Language;
+      if (this.language) {
+        payload.language = this.language.toUpperCase() as Language;
       }
 
       let setPassword: Observable<boolean | null> = of(null);
@@ -91,8 +103,8 @@ export class ProfileComponent implements OnInit {
       forkJoin([this.loginService.setPreferences(payload), setPassword])
         .pipe(switchMap(() => this.userService.updateWelcome()))
         .subscribe(() => {
-          if (this.language[0]) {
-            this.translate.use(this.language[0]);
+          if (this.language) {
+            this.translate.use(this.language);
           }
           this.goBack();
         });

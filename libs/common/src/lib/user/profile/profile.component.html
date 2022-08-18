@@ -10,33 +10,28 @@
 
       <div class="field">
         <div class="field-label">
-          <label>{{ 'profile.name' | translate }}</label>
+          <label for="name">{{ 'profile.name' | translate }}</label>
         </div>
         <div class="field-input">
-          <stf-input formControlName="name"
-                     [required]="true"
-                     name="name"
-                     type="text"
-                     [isLessen]="true"
-                     [validator]="profileForm.controls['name']"
-                     [validation_messages]="profile_validation_messages.name">
-          </stf-input>
+          <pa-input formControlName="name"
+                    id="name"
+                    required
+                    [errorMessages]="profile_validation_messages.name">
+          </pa-input>
         </div>
       </div>
 
       <div class="field">
         <div class="field-label">
-          <label>{{ 'generic.email' | translate }}</label>
+          <label for="email">{{ 'generic.email' | translate }}</label>
         </div>
         <div class="field-input">
-          <stf-input formControlName="email"
-                     [required]="true"
-                     name="email"
-                     type="email"
-                     [isLessen]="true"
-                     [validator]="profileForm.controls['email']"
-                     [validation_messages]="profile_validation_messages.email">
-          </stf-input>
+          <pa-input formControlName="email"
+                    id="email"
+                    required
+                    type="email"
+                    [errorMessages]="profile_validation_messages.email">
+          </pa-input>
         </div>
       </div>
 
@@ -70,14 +65,13 @@
 
       <div class="field">
         <div class="field-label">
-          <label>{{ 'generic.language' | translate }}</label>
+          <label for="language">{{ 'generic.language' | translate }}</label>
         </div>
         <div class="field-input">
-          <stf-checkbox-group [checkboxes]="languages"
-                              [(selection)]="language"
-                              type="radio"
-                              [inline]="true">
-          </stf-checkbox-group>
+          <pa-radio-group id="language" formControlName="language">
+            <pa-radio *ngFor="let lang of languages"
+                      [value]="lang.value">{{lang.label | translate}}</pa-radio>
+          </pa-radio-group>
         </div>
       </div>
 
