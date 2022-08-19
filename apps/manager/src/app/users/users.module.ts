@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UsersListComponent } from './users-list/users-list.component';
 import { UsersDetailComponent } from './users-detail/users-detail.component';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -17,8 +17,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import { UserResolve } from '../resolvers/user.resolver';
-import { STFInputModule, STFButtonsModule } from '@flaps/pastanaga';
+import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { MatButtonModule } from '@angular/material/button';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 const usersRoutes: Routes = [
   {
@@ -64,6 +65,7 @@ const usersRoutes: Routes = [
     FlexLayoutModule,
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),
+    PaButtonModule,
   ],
   exports: [RouterModule],
 })

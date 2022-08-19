@@ -82,18 +82,10 @@
     {{ message }}
   </div>
   <div fxLayout="row" fxLayoutAlign="center center">
-    <stf-button class="m-8" position="relative" icon="save" *ngIf="edit" (click)="save()"
-      >Save</stf-button
-    >
-    <stf-button class="m-8" position="relative"  icon="delete" *ngIf="edit" (click)="delete()"
-      >Delete</stf-button
-    >
-    <stf-button *ngIf="edit" class="m-8" position="relative" icon="reset" (click)="reset()"
-    >Reset password</stf-button
-    >
-    <stf-button class="m-8" position="relative" icon="plus" *ngIf="!edit" (click)="add()"
-      >Add</stf-button>
-    <stf-button class="m-8" position="relative" color="legacy" (click)="returnToUsers()"
-      >Cancel</stf-button>
+    <pa-button class="m-8" kind="primary" *ngIf="edit" (click)="save()">Save</pa-button>
+    <pa-button class="m-8" kind="destructive" *ngIf="edit" (click)="delete()">Delete</pa-button>
+    <pa-button *ngIf="edit" class="m-8" (click)="reset()">Reset password</pa-button>
+    <pa-button class="m-8" kind="primary" *ngIf="!edit" (click)="add()">Add</pa-button>
+    <pa-button class="m-8" aspect="basic" (click)="returnToUsers()">Cancel</pa-button>
   </div>
 </div>

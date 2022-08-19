@@ -22,16 +22,16 @@
         <form #form method="POST" [action]="oAuthConsentUrl()">
           <input type="hidden" name="consent_challenge" [value]="consentChallenge">
           <input type="hidden" name="grant_scope" [value]="acceptedScopes()">
-          <stf-button type="submit" minWidth="136px">
+          <pa-button kind="primary" type="submit">
             {{ 'generic.allow' | translate }}
-          </stf-button>
+          </pa-button>
         </form>
         <form method="POST" [action]="oAuthConsentUrl()">
           <input type="hidden" name="consent_challenge" [value]="consentChallenge">
           <input type="hidden" name="reject" [value]="true">
-          <stf-button type="submit" color="legacy" minWidth="136px">
+          <pa-button type="submit" aspect="basic">
             {{ 'generic.cancel' | translate }}
-          </stf-button>
+          </pa-button>
         </form>
       </div>
     </ng-container>

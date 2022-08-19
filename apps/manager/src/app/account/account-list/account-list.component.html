@@ -1,10 +1,10 @@
 <div class="list-wrapper">
   <div fxLayout="row" fxLayoutAlign="start center">
-    <stf-input fxFlex="80%" (keyup)="applyFilter($event.target.value)" placeholder="Filter">Filter</stf-input>
+    <pa-input fxFlex="80%" (keyup)="applyFilter($event.target.value)" placeholder="Filter">Filter</pa-input>
     <div fxLayout="row" fxLayoutAlign="center center">
-      <stf-button fxFlex="20%" (click)="addNewAccount()">
+      <pa-button kind="primary" (click)="addNewAccount()">
         Afegir
-      </stf-button>
+      </pa-button>
     </div>
   </div>
 

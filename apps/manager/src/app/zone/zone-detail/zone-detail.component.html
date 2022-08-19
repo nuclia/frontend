@@ -4,42 +4,42 @@
       <h2>Zone</h2>
       <p *ngIf="edit">
         <mat-form-field>
-          <input matInput formControlName="id" placeholder="Id" />
+          <input matInput formControlName="id" placeholder="Id"/>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field>
-          <input matInput required formControlName="slug" placeholder="Slug" />
+          <input matInput required formControlName="slug" placeholder="Slug"/>
         </mat-form-field>
       </p>
       <p>
         <mat-form-field>
-          <input matInput required formControlName="title" placeholder="Title" />
+          <input matInput required formControlName="title" placeholder="Title"/>
         </mat-form-field>
       </p>
       <p *ngIf="edit">
         <mat-form-field>
-          <input matInput formControlName="creator" placeholder="Creator" />
+          <input matInput formControlName="creator" placeholder="Creator"/>
         </mat-form-field>
       </p>
       <p *ngIf="edit">
         <mat-form-field>
-          <input matInput formControlName="account" placeholder="Account" />
+          <input matInput formControlName="account" placeholder="Account"/>
         </mat-form-field>
       </p>
       <p *ngIf="edit">
         <mat-form-field>
-          <input matInput formControlName="created" placeholder="Created" />
+          <input matInput formControlName="created" placeholder="Created"/>
         </mat-form-field>
       </p>
       <p *ngIf="edit">
         <mat-form-field>
-          <input matInput formControlName="modified" placeholder="Modified" />
+          <input matInput formControlName="modified" placeholder="Modified"/>
         </mat-form-field>
       </p>
       <p *ngIf="edit">
         <mat-form-field>
-          <input matInput formControlName="external" placeholder="External" />
+          <input matInput formControlName="external" placeholder="External"/>
         </mat-form-field>
       </p>
       <p></p>
@@ -55,12 +55,8 @@
     {{ message }}
   </div>
   <div fxLayout="row" fxLayoutAlign="center center">
-    <stf-button class="m-8" position="relative" icon="save" *ngIf="edit" (click)="editZone()"
-      >Save</stf-button
-    >
-    <stf-button class="m-8" position="relative" icon="plus" *ngIf="!edit" (click)="addZone()"
-      >Add</stf-button>
-    <stf-button class="m-8" position="relative" color="legacy" (click)="returnToZones()"
-      >Cancel</stf-button>
+    <pa-button class="m-8" kind="primary" *ngIf="edit" (click)="editZone()">Save</pa-button>
+    <pa-button class="m-8" kind="primary" *ngIf="!edit" (click)="addZone()">Add</pa-button>
+    <pa-button class="m-8" aspect="basic" (click)="returnToZones()">Cancel</pa-button>
   </div>
 </div>

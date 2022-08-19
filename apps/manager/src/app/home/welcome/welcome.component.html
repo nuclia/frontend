@@ -14,7 +14,7 @@
       <p>Add new zone</p>
     </mat-card-content>
     <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <stf-button>Go</stf-button>
+      <pa-button kind="primary" size="small">Go</pa-button>
     </mat-card-actions>
   </mat-card>
 
@@ -27,22 +27,9 @@
       <p>Add new user</p>
     </mat-card-content>
     <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <stf-button>Go</stf-button>
+      <pa-button kind="primary" size="small">Go</pa-button>
     </mat-card-actions>
   </mat-card>
-
-  <!-- <mat-card [routerLink]="['/dealers']" *ngIf="isRoot">
-    <mat-card-header>
-      <mat-card-title>Dealers</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Flaps dealers</p>
-      <p>Add new dealer</p>
-    </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <stf-button>Go</stf-button>
-    </mat-card-actions>
-  </mat-card> -->
 
   <mat-card [routerLink]="['/accounts']" *ngIf="isDealer || isRoot">
     <mat-card-header>
@@ -55,7 +42,7 @@
       <p>Add new account</p>
     </mat-card-content>
     <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <stf-button>Go</stf-button>
+      <pa-button kind="primary" size="small">Go</pa-button>
     </mat-card-actions>
   </mat-card>
 </div>
