@@ -182,7 +182,7 @@
     --color-primary-regular: var(--custom-color-primary-regular, hsl(336, 100%, 50%));
     --color-neutral-strong: var(--custom-color-neutral-strong, hsl(0, 0%, 44%));
     --color-neutral-regular: var(--custom-color-neutral-regular, hsl(0, 0%, 77%));
-    --color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(336, 100%, 96%));
+    --color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(240, 7%, 97%));
     --color-light-stronger: var(--custom-color-light-stronger, white);
     --color-dark-stronger: var(--custom-color-dark-stronger, hsl(0, 0%, 5%));
     --color-secondary-stronger: var(--custom-color-secondary-stronger, hsl(51, 78%, 32%));

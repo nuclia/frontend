@@ -164,7 +164,7 @@
     width: 100%;
     height: 0;
     padding-top: 80%;
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
   }
   .thumbnail.semantic {
     background-color: #f0f0f0;
