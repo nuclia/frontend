@@ -69,14 +69,17 @@ export const menu: IDemoMenuSection[] = [
     ],
   },
   {
-    title: 'Components',
+    title: 'Nuclia components',
+    pages: [{ view: 'label', title: 'Label', type: SistemaLabelComponent }],
+  },
+  {
+    title: 'Pastanaga components',
     pages: [
       { view: 'avatar', title: 'Avatar', type: AvatarPageComponent },
       { view: 'avatar-pile', title: 'Avatar pile', type: AvatarPilePageComponent },
       { view: 'button', title: 'Button', type: SistemaButtonsComponent },
       { view: 'card', title: 'Card', type: CardPageComponent },
       { view: 'chip', title: 'Chip', type: ChipPageComponent },
-      { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'confirmation-dialog', title: 'Confirmation dialog', type: SistemaConfirmationDialogComponent },
       { view: 'modal', title: 'Modal', type: SistemaModalComponent },
       { view: 'datepicker', title: 'Date Picker', type: DatePickerPageComponent },
@@ -94,7 +97,21 @@ export const menu: IDemoMenuSection[] = [
     ],
   },
   {
-    title: 'Tables',
+    title: 'Pastanaga Form elements',
+    pages: [
+      { view: 'checkbox', title: 'Checkbox', type: CheckboxPageComponent },
+      { view: 'radio', title: 'Radio', type: RadioPageComponent },
+      { view: 'input', title: 'Input', type: InputPageComponent },
+      { view: 'select', title: 'Select', type: SelectPageComponent },
+      { view: 'textarea', title: 'Textarea', type: TextareaPageComponent },
+      { view: 'toggle', title: 'Toggle', type: TogglePageComponent },
+      { view: 'formControl', title: 'Form control', type: FormControlPageComponent },
+      { view: 'formFieldHint', title: 'Form field hint', type: FormFieldHintPageComponent },
+      { view: 'nativeTextField', title: 'Native Text Field', type: NativeTextFieldPageComponent },
+    ],
+  },
+  {
+    title: 'Pastanaga Tables',
     pages: [
       { view: 'table', title: 'Table', type: SistemaTableComponent },
       { view: 'table-row', title: 'Table row', type: TableRowPageComponent },
@@ -110,20 +127,6 @@ export const menu: IDemoMenuSection[] = [
         title: 'Table sortable header cell',
         type: TableSortableHeaderCellPageComponent,
       },
-    ],
-  },
-  {
-    title: 'Form elements',
-    pages: [
-      { view: 'checkbox', title: 'Checkbox', type: CheckboxPageComponent },
-      { view: 'radio', title: 'Radio', type: RadioPageComponent },
-      { view: 'input', title: 'Input', type: InputPageComponent },
-      { view: 'select', title: 'Select', type: SelectPageComponent },
-      { view: 'textarea', title: 'Textarea', type: TextareaPageComponent },
-      { view: 'toggle', title: 'Toggle', type: TogglePageComponent },
-      { view: 'formControl', title: 'Form control', type: FormControlPageComponent },
-      { view: 'formFieldHint', title: 'Form field hint', type: FormFieldHintPageComponent },
-      { view: 'nativeTextField', title: 'Native Text Field', type: NativeTextFieldPageComponent },
     ],
   },
 ];
