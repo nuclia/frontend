@@ -15,39 +15,6 @@ body {
   top: 0;
 }
 
-#pa-toasts-block .stf-toast {
-  &.toast-info {
-    background-color: var(--stf-gray-lighter) !important;
-  }
-  &.toast-error {
-    background-color: var(--stf-red-pale) !important;
-    strong {
-      color: var(--stf-red);
-    }
-    .close-button svg {
-      fill: var(--stf-red);
-    }
-  }
-  &.toast-warning {
-    background-color: var(--stf-orange-pale) !important;
-    strong {
-      color: var(--stf-orange);
-    }
-    .close-button svg {
-      fill: var(--stf-orange);
-    }
-  }
-  &.toast-success {
-    background-color: var(--stf-green-pale) !important;
-    strong {
-      color: var(--stf-green);
-    }
-    .close-button svg {
-      fill: var(--stf-green);
-    }
-  }
-}
-
 code.endpoint {
   overflow-x: auto;
   white-space: pre-wrap;
