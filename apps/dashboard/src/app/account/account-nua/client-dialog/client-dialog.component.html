@@ -66,13 +66,12 @@
       </select>
     </div>
 
-    <div class="mt-40" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
-      <stf-button type="submit" minWidth="110px">
-        {{ 'generic.save' | translate }}
-      </stf-button>
-      <stf-button (click)="close()" type="button" color="gray" minWidth="110px">
+    <footer class="mt-40" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="16px">
+      <pa-button aspect="basic"
+                 (click)="close()">
         {{ 'generic.cancel' | translate }}
-      </stf-button>
-    </div>
+      </pa-button>
+      <pa-button kind="primary" type="submit">{{ 'generic.save' | translate }}</pa-button>
+    </footer>
   </form>
 </div>

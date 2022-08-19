@@ -92,8 +92,19 @@ export class AccountNUAComponent {
   }
 
   deleteClient(id: string) {
-    this.nua.deleteClient(id).subscribe(() => {
-      this.nua.updateClients();
-    });
+    this.modalService
+      .openConfirm({
+        title: 'account.nua_key_delete',
+        description: 'account.nua_key_delete_warning',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.nua.deleteClient(id)),
+      )
+      .subscribe(() => {
+        this.nua.updateClients();
+      });
   }
 }

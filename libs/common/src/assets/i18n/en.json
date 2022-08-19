@@ -34,6 +34,8 @@
 	"account.nua_key_activity": "NU-API key activity log",
 	"account.nua_key_activity_subtitle": "Last 30 days Knowledge box activity",
 	"account.nua_key_activity_title": "{{key}} activity log",
+	"account.nua_key_delete": "Delete Nuclia Understanding API key",
+	"account.nua_key_delete_warning": "By deleting this key all the on-going jobs (if any) will be lost.",
 	"account.nua_keys": "Understanding API keys",
 	"account.nua_webhook": "Webhook URL",
 	"account.nua_webhook.help": "Once your data is processed, the result is posted to this URL",

@@ -21,15 +21,13 @@
           </stf-input>
         </div>
         <div class="recover_button" fxLayout="row" fxLayoutAlign="center center">
-          <stf-button
-            type="submit"
-            minWidth="128px">
+          <pa-button type="submit" kind="primary">
             {{'recover.recover' | translate}}
-          </stf-button>
+          </pa-button>
         </div>
       </form>
     </div>
-    <div fxLayout="row" fxLayoutAlign="center center">
+    <div>
       <span>{{ 'recover.gologin_help' | translate }} </span>
       <a href="javascript:;" class="recover_link" (click)="goLogin()">
         {{ 'recover.gologin' | translate }}

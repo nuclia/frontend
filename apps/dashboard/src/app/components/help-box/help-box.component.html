@@ -2,15 +2,21 @@
   <div class="help-box-step">{{ current() + '/' + total() }}</div>
   <div class="help-box-title" *ngIf="step.title">{{ step.title | translate }}</div>
   <div class="help-box-content" *ngIf="step.content">{{ step.content | translate }}</div>
-  <div class="help-box-buttons" fxLayout="row" fxLayoutGap="8px">
-    <button class="help-box-dismiss" *ngIf="hasNext(); else empty" (click)="dismiss()" fxFlex="1 1 50%">
+  <div class="help-box-buttons pa-dual-buttons">
+    <pa-button *ngIf="hasNext(); else empty"
+               aspect="basic"
+               kind="inverted"
+               size="small"
+               (click)="dismiss()">
       {{ 'generic.dismiss' | translate }}
-    </button>
+    </pa-button>
     <ng-template #empty>
       <div fxFlex="1 1 50%"></div>
     </ng-template>
-    <stf-button (click)="hasNext() ? next() : dismiss()" size="small" fxFlex="1 1 50%" [fullWidth]="true">
+    <pa-button size="small"
+               kind="primary"
+               (click)="hasNext() ? next() : dismiss()">
       {{ (hasNext() ? 'generic.next' : 'generic.done') | translate }}
-    </stf-button>
+    </pa-button>
   </div>
 </div>

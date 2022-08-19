@@ -38,12 +38,11 @@
           {{ 'reset.password_reset' | translate }}
         </div>
         <div class="reset_button" fxLayout="row" fxLayoutAlign="center center" >
-          <stf-button
-            type="submit"
-            minWidth="128px"
-            [disabled]="passwordRecovered">
+          <pa-button type="submit"
+                     kind="primary"
+                     [disabled]="passwordRecovered">
             {{'generic.save' | translate}}
-          </stf-button>
+          </pa-button>
         </div>
       </form>
     </div>

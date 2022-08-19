@@ -5,9 +5,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { STFButtonsModule } from '@flaps/pastanaga';
 
 import { HelpBoxComponent } from './help-box.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
-  imports: [CommonModule, FlexLayoutModule, TranslateModule.forChild(), STFButtonsModule],
+  imports: [CommonModule, FlexLayoutModule, TranslateModule.forChild(), STFButtonsModule, PaButtonModule],
   declarations: [HelpBoxComponent],
   exports: [HelpBoxComponent],
 })

@@ -19,9 +19,11 @@
         [inputHeight]="32"
         placeholder="{{ 'accounts.add_user_input' | translate }}"
       />
-      <stf-button (click)="addUser()" [disabled]="email.invalid" size="small" color="secondary" minWidth="160px">
+      <pa-button size="small"
+                 [disabled]="email.invalid"
+                 (click)="addUser()">
         {{ 'account.add_user' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </div>
 
@@ -45,11 +47,11 @@
                              [popupRef]="roleDropdown"
                              [disabled]="isItMe(user.id)">{{roleTranslations[user.role] | translate}}</nsi-dropdown-button>
         <pa-dropdown #roleDropdown>
-            <pa-option *ngFor="let role of roleTranslations | keyvalue"
-                       [value]="role.key"
-                       (selectOption)="changeRole(user, $event)">
-              {{ role.value | translate }}
-            </pa-option>
+          <pa-option *ngFor="let role of roleTranslations | keyvalue"
+                     [value]="role.key"
+                     (selectOption)="changeRole(user, $event)">
+            {{ role.value | translate }}
+          </pa-option>
         </pa-dropdown>
       </td>
     </ng-container>
