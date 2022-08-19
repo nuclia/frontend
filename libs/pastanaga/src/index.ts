@@ -2,7 +2,6 @@
  * Public API Surface of @flaps/pastanaga
  */
 
-export * from './lib/buttons/buttons-module';
 export * from './lib/inputfield/input-module';
 export * from './lib/textfield/textfield.module';
 export * from './lib/tag/tag.module';
