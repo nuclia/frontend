@@ -38,7 +38,6 @@ import {
   TranslatePageComponent,
   TypographyPageComponent,
 } from '../../../../libs/pastanaga-angular/projects/demo/src';
-import { SistemaLabelComponent } from './sistema-pages/sistema-label/sistema-label.component';
 import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
 import {
   SistemaButtonsComponent,
@@ -50,6 +49,7 @@ import {
   SistemaTableComponent,
   SistemaToastComponent,
 } from './sistema-pages/pastanaga-pages-override';
+import { SistemaBackButtonComponent, SistemaDropdownButtonComponent, SistemaLabelComponent } from './sistema-pages';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -69,8 +69,12 @@ export const menu: IDemoMenuSection[] = [
     ],
   },
   {
-    title: 'Nuclia components',
-    pages: [{ view: 'label', title: 'Label', type: SistemaLabelComponent }],
+    title: 'Nuclia Sistema',
+    pages: [
+      { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
+      { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
+      { view: 'label', title: 'Label', type: SistemaLabelComponent },
+    ],
   },
   {
     title: 'Pastanaga components',

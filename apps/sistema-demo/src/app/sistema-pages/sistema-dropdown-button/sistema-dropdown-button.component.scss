@@ -1,0 +1,17 @@
+@import "variables";
+
+.dropdown-container {
+  display: flex;
+  align-items: center;
+  gap: rhythm(2);
+  flex-wrap: wrap;
+}
+.options {
+  margin-top: rhythm(3);
+}
+
+nsi-dropdown-button {
+  flex: 1 0 auto;
+  margin-top: rhythm(1);
+  min-width: rhythm(16);
+}

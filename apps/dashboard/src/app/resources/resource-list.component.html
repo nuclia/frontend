@@ -43,7 +43,7 @@
           <pa-dropdown #pageSizeMenu>
             <pa-option *ngFor="let option of options"
                        [value]="option.key"
-                       (selectOption)="setPageSize($event)">{{option.value}}</pa-option>
+                       (selectOption)="setPageSize(option)">{{option.value}}</pa-option>
           </pa-dropdown>
         </div>
       </div>

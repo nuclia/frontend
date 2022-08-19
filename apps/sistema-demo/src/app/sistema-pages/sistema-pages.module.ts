@@ -27,6 +27,9 @@ import {
   SistemaTableComponent,
   SistemaToastComponent,
 } from './pastanaga-pages-override';
+import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
+import { BackButtonComponent, DropdownButtonComponent } from '@nuclia/sistema';
+import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,8 @@ import {
     SistemaButtonsComponent,
     SistemaToastComponent,
     SistemaConfirmationDialogComponent,
+    SistemaBackButtonComponent,
+    SistemaDropdownButtonComponent,
   ],
   imports: [
     CommonModule,
@@ -57,6 +62,9 @@ import {
     PaTableModule,
     PaTextFieldModule,
     PaTogglesModule,
+
+    BackButtonComponent,
+    DropdownButtonComponent,
   ],
 })
 export class SistemaPagesModule {}
