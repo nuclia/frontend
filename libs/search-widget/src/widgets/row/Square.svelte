@@ -20,7 +20,7 @@
 >
   <div class="thumbnail">
     {#if result.thumbnail}
-      <Thumbnail src={result.thumbnail} ratio={16/9} />
+      <Thumbnail src={result.thumbnail} aspectRatio="16/9" />
     {/if}
   </div>
   <div class="body">

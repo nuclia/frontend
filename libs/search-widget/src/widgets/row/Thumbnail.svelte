@@ -3,7 +3,7 @@
   import { getFile } from '../../core/api';
 
   export let src: string;
-  export let ratio: number = 5/4;
+  export let aspectRatio: '5/4' | '16/9' = '5/4';
 
   let thumbnail: string;
   if (src) {
@@ -14,24 +14,13 @@
   });
 </script>
 
-<div class="thumbnail" style:padding-top="{`${Math.round(1/ratio*100)}%`}">
-  <img src={thumbnail} alt="Thumbnail" />
-</div>
+<img src={thumbnail} alt="Thumbnail" style:aspect-ratio="{aspectRatio}" />
 
 <style>
-  .thumbnail {
-    position: relative;
-    width: 100%;
-    height: 0;
-    background-color: #efefef;
-  }
   img {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
     object-fit: contain;
     object-position: center;
+    background-color: #efefef;
   }
 </style>
