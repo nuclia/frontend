@@ -71,9 +71,8 @@
   }
   .paragraph:hover,
   .paragraph:focus {
-    border-color: var(--color-dark-stronger);
     padding-left: 29px;
-    border-left: 3px solid var(--color-neutral-strong);
+    border-left: 3px solid var(--color-primary-regular);
     outline: 0px;
   }
   .show-more {
@@ -93,7 +92,7 @@
   p {
     text-align: right;
     font-size: small;
-    color: var(--color-primary-muted);
+    color: var(--color-neutral-strong);
     margin: 0;
   }
   .intents {

@@ -44,13 +44,13 @@
   }
   .solid {
     color: var(--color-light-stronger);
-    background: var(--color-primary-regular);
-    border: var(--color-primary-regular);
+    background: var(--color-dark-stronger);
+    border: var(--color-dark-stronger);
   }
   .basic {
-    color: var(--color-primary-regular);
+    color: var(--color-dark-stronger);
     background: transparent;
-    border: var(--color-primary-regular);
+    border: var(--color-dark-stronger);
   }
   .button-label {
     font-weight: var(--font-weight-semi-bold);

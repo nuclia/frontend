@@ -96,7 +96,7 @@
   }
   .row:focus-visible {
     padding-left: 13px;
-    border-left: 3px solid var(--color-neutral-strong);
+    border-left: 3px solid var(--color-primary-regular);
     outline: 0px;
   }
   .title {
@@ -164,7 +164,7 @@
     width: 100%;
     height: 0;
     padding-top: 80%;
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
   }
   .thumbnail.semantic {
     background-color: #f0f0f0;
@@ -200,7 +200,6 @@
     top: 4px;
     bottom: 4px;
     left: -30px;
-    border-color: var(--color-dark-stronger);
-    border-left: 3px solid var(--color-neutral-strong);
+    border-left: 3px solid var(--color-primary-regular);
   }
 </style>

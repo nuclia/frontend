@@ -50,7 +50,7 @@
     text-align: center;
   }
   button:hover {
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
   }
   ul {
     position: absolute;
@@ -71,11 +71,11 @@
     white-space: nowrap;
   }
   li:hover {
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
   }
   li.destructive {
-    border-top: 1px solid var(--color-dark-light);
-    border-bottom: 1px solid var(--color-dark-light);
+    border-top: 1px solid var(--color-neutral-lightest);
+    border-bottom: 1px solid var(--color-neutral-lightest);
     color: var(--color-secondary-stronger);
   }
   li.destructive:hover {

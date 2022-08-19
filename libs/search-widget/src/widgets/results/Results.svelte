@@ -120,7 +120,7 @@
   .result {
     margin-bottom: 2em;
     padding-bottom: 1em;
-    border-bottom: 1px solid var(--color-light-regular);
+    border-bottom: 1px solid var(--color-neutral-regular);
   }
   .result:last-child {
     margin-bottom: 0;
@@ -129,7 +129,7 @@
   .box {
     margin: 0 -1.25em;
     padding: 2.25em 1.25em;
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
     border-radius: 4px;
   }
   @media (min-width: 1440px) {
@@ -154,7 +154,7 @@
     padding: 0.5em 1em;
     border: 0;
     background: var(--color-light-stronger);
-    color: var(--color-primary-muted);
+    color: var(--color-neutral-strong);
     font: inherit;
     font-weight: var(--font-weight-semi-bold);
     cursor: pointer;

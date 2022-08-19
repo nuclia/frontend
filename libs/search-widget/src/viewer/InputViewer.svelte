@@ -75,7 +75,7 @@
     font-family: inherit;
     outline: none;
     color: inherit;
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
     background-position: 0.75em center;
     background-repeat: no-repeat;
     text-overflow: ellipsis;
@@ -121,6 +121,6 @@
   }
   select:focus-visible {
     outline: 0;
-    color: var(--color-primary-muted);
+    color: var(--color-neutral-strong);
   }
 </style>

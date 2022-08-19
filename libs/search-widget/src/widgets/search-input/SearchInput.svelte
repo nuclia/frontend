@@ -119,13 +119,8 @@
     -webkit-appearance: none;
   }
   input::placeholder {
-    color: var(--color-dark-stronger);
+    color: var(--color-neutral-strong);
     transition: all 0s ease;
-  }
-
-  input:focus,
-  input:active {
-    border-color: var(--color-dark-stronger);
   }
 
   .form-widget {

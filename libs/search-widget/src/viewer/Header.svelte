@@ -46,7 +46,7 @@
     min-height: 76px;
     padding-left: 1em;
     background-color: var(--color-light-stronger);
-    border-bottom: 1px solid var(--color-light-regular);
+    border-bottom: 1px solid var(--color-neutral-regular);
   }
   .icon {
     width: 22px;
@@ -86,7 +86,7 @@
     margin-right: 0.5em;
   }
   button:hover {
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightes);
   }
   @media (min-width: 640px) {
     .header {
