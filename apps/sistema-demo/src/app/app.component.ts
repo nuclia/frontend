@@ -38,16 +38,18 @@ import {
   TranslatePageComponent,
   TypographyPageComponent,
 } from '../../../../libs/pastanaga-angular/projects/demo/src';
-import { SistemaPaletteComponent } from './sistema-pages/sistema-palette/sistema-palette.component';
-import { SistemaIconsComponent } from './sistema-pages/sistema-icons/sistema-icons.component';
-import { SistemaTableComponent } from './sistema-pages/sistema-tables/sistema-table.component';
-import { SistemaScrollbarComponent } from './sistema-pages/sistema-scrollbar/sistema-scrollbar.component';
 import { SistemaLabelComponent } from './sistema-pages/sistema-label/sistema-label.component';
-import { SistemaModalComponent } from './sistema-pages/sistema-modal';
-import { SistemaButtonsComponent } from './sistema-pages/sistema-buttons/sistema-buttons.component';
-import { SistemaToastComponent } from './sistema-pages/sistema-toasts/sistema-toast.component';
 import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
-import { SistemaConfirmationDialogComponent } from './sistema-pages/sistema-confirmation-dialog/sistema-confirmation-dialog.component';
+import {
+  SistemaButtonsComponent,
+  SistemaConfirmationDialogComponent,
+  SistemaIconsComponent,
+  SistemaModalComponent,
+  SistemaPaletteComponent,
+  SistemaScrollbarComponent,
+  SistemaTableComponent,
+  SistemaToastComponent,
+} from './sistema-pages/pastanaga-pages-override';
 
 export const menu: IDemoMenuSection[] = [
   {

@@ -5,7 +5,7 @@ import { Size } from '@guillotinaweb/pastanaga-angular';
   selector: 'nsd-sistema-buttons',
   templateUrl: './sistema-buttons.component.html',
   styleUrls: [
-    '../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/button-page/button-page.component.scss',
+    '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/button-page/button-page.component.scss',
     './sistema-buttons.component.scss',
   ],
 })

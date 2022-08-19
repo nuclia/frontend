@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   templateUrl: './sistema-palette.component.html',
   styleUrls: [
-    '../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/palette-page/palette-page.component.scss',
+    '../../../../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/palette-page/palette-page.component.scss',
     './sistema-palette.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
