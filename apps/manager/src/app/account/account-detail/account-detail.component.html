@@ -8,13 +8,12 @@
       <form [formGroup]="accountTitleForm">
         <mat-form-field>
           <h1>Account: <input matInput
-                   formControlName="id" /></h1>
+                              formControlName="id"/></h1>
         </mat-form-field>
       </form>
       <div class="actions"
            *ngIf="edit">
-        <stf-button color="secondary"
-                    (click)="sendtoac3mt()">Start three months trial</stf-button>
+        <pa-button kind="primary" (click)="sendtoac3mt()">Start three months trial</pa-button>
         <div>
           {{ acmessage }}
         </div>
@@ -31,7 +30,7 @@
                    type="email"
                    required
                    formControlName="email"
-                   placeholder="bob@example.org" />
+                   placeholder="bob@example.org"/>
           </mat-form-field>
           <mat-form-field>
             <mat-label>Type</mat-label>
@@ -40,9 +39,11 @@
                         formControlName="type">
               <mat-option value="stash-basic">Basic</mat-option>
               <mat-option value="stash-team"
-                          *ngIf="isRoot">Teams</mat-option>
+                          *ngIf="isRoot">Teams
+              </mat-option>
               <mat-option value="stash-enterprise"
-                          *ngIf="isRoot">Enterprise</mat-option>
+                          *ngIf="isRoot">Enterprise
+              </mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
@@ -50,14 +51,14 @@
             <input matInput
                    type="number"
                    formControlName="kbs"
-                   placeholder="Knowledge boxes" />
+                   placeholder="Knowledge boxes"/>
           </mat-form-field>
           <mat-form-field>
             <mat-label>Replicas indexer slow</mat-label>
             <input matInput
                    type="number"
                    formControlName="indexer_slow_replicas"
-                   placeholder="Indexer slow replicas" />
+                   placeholder="Indexer slow replicas"/>
           </mat-form-field>
 
           <mat-form-field>
@@ -75,29 +76,33 @@
              *ngIf="edit">
           <h3>State</h3>
           <div>{{ state }}</div>
-          <stf-button *ngIf="account.blocking_state === 0"
-                      (click)="block()">Block</stf-button>
-          <stf-button *ngIf="account.blocking_state !== 0"
-                      (click)="unblock()">Unblock</stf-button>
+          <pa-button *ngIf="account.blocking_state === 0"
+                     size="small"
+                     (click)="block()">Block
+          </pa-button>
+          <pa-button *ngIf="account.blocking_state !== 0"
+                     size="small"
+                     (click)="unblock()">Unblock
+          </pa-button>
 
           <h3>Info</h3>
           <mat-form-field>
             <mat-label>Creator</mat-label>
             <input matInput
                    formControlName="creator"
-                   placeholder="Creator" />
+                   placeholder="Creator"/>
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>Api URL</mat-label>
             <input matInput
                    formControlName="url"
-                   placeholder="Url" />
+                   placeholder="Url"/>
           </mat-form-field>
         </div>
         <div fxLayout="row"
              fxLayoutAlign="end center">
-          <stf-button (click)="save()">Save</stf-button>
+          <pa-button kind="primary" (click)="save()">Save</pa-button>
         </div>
       </form>
     </div>
@@ -185,9 +190,9 @@
                     </ng-container>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
-                <stf-button (click)="goToStash(stash.id)">
+                <pa-button kind="primary" size="small" (click)="goToStash(stash.id)">
                   Edit
-                </stf-button>
+                </pa-button>
               </mat-expansion-panel>
             </mat-accordion>
             <div class="new_stash">
@@ -195,16 +200,18 @@
                 <mat-form-field>
                   <mat-label>Id</mat-label>
                   <input matInput
-                         formControlName="id" />
+                         formControlName="id"/>
                 </mat-form-field>
 
                 <mat-form-field>
                   <mat-label>Title</mat-label>
                   <input matInput
-                         formControlName="title" />
+                         formControlName="title"/>
                 </mat-form-field>
                 {{stashmessage}}
-                <stf-button (click)="newStash()">New</stf-button>
+                <pa-button style="margin-top: 16px"
+                           kind="primary"
+                           (click)="newStash()">New</pa-button>
               </form>
             </div>
           </div>
@@ -224,14 +231,14 @@
                     <input matInput
                            type="number"
                            required
-                           formControlName="upload_limit_max_media_file_size" />
+                           formControlName="upload_limit_max_media_file_size"/>
                   </mat-form-field>
                   <mat-form-field>
                     <mat-label>Non-media file max size (bytes)</mat-label>
                     <input matInput
                            type="number"
                            required
-                           formControlName="upload_limit_max_non_media_file_size" />
+                           formControlName="upload_limit_max_non_media_file_size"/>
                   </mat-form-field>
                 </div>
                 <div formGroupName="processing">
@@ -241,21 +248,21 @@
                     <input matInput
                            type="number"
                            required
-                           formControlName="monthly_limit_chars_processed" />
+                           formControlName="monthly_limit_chars_processed"/>
                   </mat-form-field>
                   <mat-form-field>
                     <mat-label>Media files max processing time monthly (seconds)</mat-label>
                     <input matInput
                            type="number"
                            required
-                           formControlName="monthly_limit_media_seconds_processed" />
+                           formControlName="monthly_limit_media_seconds_processed"/>
                   </mat-form-field>
                   <mat-form-field>
                     <mat-label>Non-media files max processing time monthly (seconds)</mat-label>
                     <input matInput
                            type="number"
                            required
-                           formControlName="monthly_limit_non_media_files_processed" />
+                           formControlName="monthly_limit_non_media_files_processed"/>
                   </mat-form-field>
                 </div>
               </div>

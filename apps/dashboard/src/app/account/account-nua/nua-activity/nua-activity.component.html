@@ -1,6 +1,6 @@
 <div class="nua-activity">
   <header class="nua-activity-title">
-    <h1>{{ 'account.nua_key_activity_title' | translate: { key: (client | async)?.title } }}</h1>
+    <h1>{{ 'account.nua_key_activity_title' | translate: {key: (client | async)?.title} }}</h1>
     <small>{{ 'account.nua_key_activity_subtitle' | translate }}</small>
   </header>
 
@@ -26,9 +26,10 @@
     </table>
 
     <div class="load-more">
-      <stf-button *ngIf="(hasMore | async) === true" (click)="loadMoreActivity()" color="gray" padding="pd-l">{{
-        'activity.load-more' | translate
-      }}</stf-button>
+      <pa-button *ngIf="(hasMore | async) === true"
+                 kind="inverted"
+                 (click)="loadMoreActivity()">
+        {{ 'activity.load-more' | translate }}</pa-button>
     </div>
   </div>
 </div>

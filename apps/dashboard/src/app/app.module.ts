@@ -12,7 +12,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
 
 import { BackendConfigurationService, STFConfigModule, STFPipesModule } from '@flaps/core';
-import { STFButtonsModule } from '@flaps/pastanaga';
 import { AuthInterceptor } from './guards/auth.interceptor';
 import { environment } from '../environments/environment';
 
@@ -74,7 +73,6 @@ const appModules = [
     OverlayModule,
     STFPipesModule,
     TopbarModule,
-    STFButtonsModule,
     ...appModules,
     TranslateModule.forRoot({
       loader: {

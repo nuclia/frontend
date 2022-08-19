@@ -27,18 +27,8 @@
     line-height: 1.25;
   }
 
-  &-dismiss {
-    @include reset-button();
-    cursor: pointer;
-    height: var(--stf-button-small-height);
-    background-color: #303030;
-    color: #fff;
-    font-weight: var(--stf-font-weight-semibold);
-    border-radius: var(--stf-border-radius-button);
-    transition: background-color var(--stf-transition-button);
-    &:active {
-      background-color: lighten(#303030, 15);
-    }
+  .help-box-buttons.pa-dual-buttons {
+    gap: rhythm(1);
   }
 
   &::before {
@@ -53,7 +43,6 @@
   }
   &.arrow-top-left-edge::before {
     top: -14px;
-    left: 0px;
     width: 0;
     left: 0;
     border-left: 13px solid #000;

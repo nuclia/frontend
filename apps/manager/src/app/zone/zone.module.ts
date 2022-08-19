@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { STFInputModule, STFButtonsModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatListModule } from '@angular/material/list';
@@ -21,6 +21,7 @@ import { ZoneResolve } from '../resolvers/zone.resolver';
 import { ZonesResolve } from '../resolvers/zones.resolver';
 import { ZoneListComponent } from './zone-list/zone-list.component';
 import { ZoneDetailComponent } from './zone-detail/zone-detail.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 const usersRoutes: Routes = [
   {
@@ -65,10 +66,10 @@ const usersRoutes: Routes = [
     MatIconModule,
     MatButtonModule,
     STFInputModule,
-    STFButtonsModule,
     FlexLayoutModule,
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),
+    PaButtonModule,
   ],
   exports: [RouterModule],
 })

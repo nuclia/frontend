@@ -9,7 +9,7 @@ import { ZoneDetailComponent } from './zone-detail.component';
 import { MockModule } from 'ng-mocks';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { STFButtonsModule } from '@flaps/pastanaga';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('ZoneDetailComponent', () => {
   let component: ZoneDetailComponent;
@@ -23,7 +23,7 @@ describe('ZoneDetailComponent', () => {
         ReactiveFormsModule,
         MockModule(MatCardModule),
         MockModule(MatFormFieldModule),
-        MockModule(STFButtonsModule),
+        MockModule(PaButtonModule),
       ],
       providers: [
         { provide: ZoneService, useValue: { edit: () => of(), create: () => of() } },

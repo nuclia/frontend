@@ -12,7 +12,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import {
-  STFButtonsModule,
   STFExpanderModule,
   STFFormDirectivesModule,
   STFIconsModule,
@@ -107,7 +106,6 @@ const ROUTES: Routes = [
     MatMenuModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    STFButtonsModule,
     STFInputModule,
     STFTextFieldModule,
     STFExpanderModule,

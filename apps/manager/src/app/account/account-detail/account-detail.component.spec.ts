@@ -12,7 +12,7 @@ import { ZoneService } from '../../services/zone.service';
 
 import { AccountDetailComponent } from './account-detail.component';
 import { MockModule } from 'ng-mocks';
-import { STFButtonsModule } from '@flaps/pastanaga';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('AccountDetailComponent', () => {
   let component: AccountDetailComponent;
@@ -27,7 +27,7 @@ describe('AccountDetailComponent', () => {
         MatInputModule,
         MatSelectModule,
         NoopAnimationsModule,
-        MockModule(STFButtonsModule),
+        MockModule(PaButtonModule),
       ],
       providers: [
         {

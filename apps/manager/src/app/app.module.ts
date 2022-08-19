@@ -11,7 +11,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { ToasterModule } from '@flaps/pastanaga';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { AppInitService, STFConfigModule } from '@flaps/core';
@@ -43,7 +42,6 @@ export function createTranslateLoader(http: HttpClient) {
     ReactiveFormsModule,
     FlexLayoutModule,
     AppRoutingModule,
-    ToasterModule,
     AngularSvgIconModule.forRoot(),
     STFConfigModule.forRoot(environment),
     TranslateModule.forRoot({

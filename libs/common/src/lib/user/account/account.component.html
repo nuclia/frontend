@@ -18,7 +18,7 @@
               </div>
             </mat-expansion-panel-header>
             <div class="stash-list">
-              <a 
+              <a
                 href=""
                 class="stash-list-item"
                 fxLayout="flex"
@@ -34,9 +34,9 @@
       </div>
     </div>
     <div class="mt-36" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center">
-      <stf-button color="basic" weight="semibold" padding="pd-l" (click)="logout()">
+      <pa-button kind="inverted" (click)="logout()">
         {{ 'user.logout' | translate }}
-      </stf-button>
+      </pa-button>
     </div>
   </div>
 </stf-user-container>

@@ -10,30 +10,27 @@
       <div class="date">{{ client.created | formatDate }}</div>
       <div class="email">{{ client.contact }}</div>
       <div class="buttons">
-        <pa-button
-          *ngIf="isNuaActivityEnabled | async"
-          (click)="goToActivity(client)"
-          aspect="basic"
-          icon="activity-log"
-          size="small"
-          paTooltip="account.nua_key_activity"
-        >
+        <pa-button *ngIf="isNuaActivityEnabled | async"
+                   (click)="goToActivity(client)"
+                   aspect="basic"
+                   icon="activity-log"
+                   size="small"
+                   paTooltip="account.nua_key_activity"
+        >{{'account.nua_key_activity' | translate}}
         </pa-button>
-        <pa-button
-          (click)="askConfirmation(client)"
-          aspect="basic"
-          icon="refresh"
-          size="small"
-          paTooltip="account.generate_key"
-        >
+        <pa-button (click)="askConfirmation(client)"
+                   aspect="basic"
+                   icon="refresh"
+                   size="small"
+                   paTooltip="account.generate_key"
+        >{{'account.generate_key' | translate}}
         </pa-button>
-        <pa-button
-          (click)="deleteClient(client.client_id)"
-          aspect="basic"
-          icon="trash"
-          size="small"
-          paTooltip="generic.delete"
-        >
+        <pa-button (click)="deleteClient(client.client_id)"
+                   aspect="basic"
+                   icon="trash"
+                   size="small"
+                   paTooltip="generic.delete"
+        >{{'account.delete' | translate}}
         </pa-button>
       </div>
     </div>

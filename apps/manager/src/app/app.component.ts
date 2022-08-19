@@ -1,9 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Toaster } from '@flaps/pastanaga';
-import { STFUtils } from '@flaps/core';
-import { SDKService, BackendConfigurationService, UserService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFUtils, UserService } from '@flaps/core';
 import { filter, Subject } from 'rxjs';
 
 @Component({
@@ -23,7 +21,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private toaster: Toaster,
     private user: UserService,
     private translate: TranslateService,
     private config: BackendConfigurationService,
@@ -46,11 +43,6 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Configure toasters container.
-    if (this.toastsContainer) {
-      this.toaster.registerContainer(this.toastsContainer);
-    }
-
     if (this.config.getVersion()) {
       this.version = this.config.getVersion();
     }

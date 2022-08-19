@@ -3,7 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, LoginService, TranslatePipeMock } from '@flaps/core';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { RecoverComponent } from './recover.component';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('RecoverComponent', () => {
   let component: RecoverComponent;
@@ -19,7 +20,7 @@ describe('RecoverComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [RecoverComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
-      imports: [ReactiveFormsModule, RouterTestingModule, MatDialogModule, STFInputModule, STFButtonsModule],
+      imports: [ReactiveFormsModule, RouterTestingModule, MatDialogModule, STFInputModule, PaButtonModule],
       providers: [
         {
           provide: LoginService,

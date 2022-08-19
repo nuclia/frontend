@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DealerListComponent } from './dealer-list/dealer-list.component';
 import { DealerDetailComponent } from './dealer-detail/dealer-detail.component';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -21,7 +21,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { DealersResolve } from '../resolvers/dealers.resolver';
 import { DealerResolve } from '../resolvers/dealer.resolver';
-import { STFInputModule, STFButtonsModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 const usersRoutes: Routes = [
   {
@@ -66,10 +67,10 @@ const usersRoutes: Routes = [
     MatSortModule,
     MatIconModule,
     STFInputModule,
-    STFButtonsModule,
     FlexLayoutModule,
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),
+    PaButtonModule,
   ],
   exports: [RouterModule],
 })

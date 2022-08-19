@@ -9,8 +9,8 @@ import { DealerService } from '../../services/dealer.service';
 
 import { DealerDetailComponent } from './dealer-detail.component';
 import { MatCardModule } from '@angular/material/card';
-import { STFButtonsModule } from '@flaps/pastanaga';
 import { MockModule } from 'ng-mocks';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('DealerDetailComponent', () => {
   let component: DealerDetailComponent;
@@ -26,7 +26,7 @@ describe('DealerDetailComponent', () => {
         MatSelectModule,
         NoopAnimationsModule,
         MatCardModule,
-        MockModule(STFButtonsModule),
+        MockModule(PaButtonModule),
       ],
       providers: [
         {
