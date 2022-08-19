@@ -7,65 +7,49 @@
       </div>
       <div class="signup_form_wrapper">
         <div class="signup_form">
-          <form [formGroup]="signupForm"  (ngSubmit)="submit()">
+          <form [formGroup]="signupForm" (ngSubmit)="submit()">
             <div class="signup_field">
-              <stf-input
-                formControlName="username"
-                [noAutocapitalize]="true"
-                (enterPressed)="onEnterPressed('username')"
-                required
-                type="text"
-                theme="border"
-                [validator]="signupForm.controls['username']"
-                [validation_messages]="validationMessages.username">
-                {{ 'login.full_name' | translate }}
-              </stf-input>
+              <pa-input formControlName="username"
+                        required
+                        autocapitalize="off"
+                        [errorMessages]="validationMessages.username"
+                        (enter)="onEnterPressed('username')">{{ 'login.full_name' | translate }}</pa-input>
             </div>
             <div class="signup_field">
-              <stf-input
-                #email
-                formControlName="email"
-                (enterPressed)="onEnterPressed('email')"
-                required
-                type='email'
-                theme="border"
-                [validator]="signupForm.controls['email']"
-                [validation_messages]="validationMessages.email">
-                {{ 'login.email' | translate }}
-              </stf-input>
+              <pa-input #email
+                        formControlName="email"
+                        type='email'
+                        [errorMessages]="validationMessages.email"
+                        (enter)="onEnterPressed('email')">{{ 'login.email' | translate }}</pa-input>
             </div>
             <div class="signup_policy">
-              <div class="mb-4">
-                <stf-checkbox [(selected)]="acceptedConditions" size="small">
-                  <span>{{ 'login.agree' | translate }} </span>
-                  <a href="https://nuclia.com/terms-and-conditions/" target="_blank">{{ 'login.terms_and_conditions' | translate }}</a>
-                </stf-checkbox>
-              </div>
-              <div>
-                <stf-checkbox [(selected)]="acceptedPrivacy" size="small">
-                  <span>{{ 'login.agree' | translate }} </span>
-                  <a href="https://nuclia.com/privacy-policy/" target="_blank">{{ 'login.privacy_policy' | translate }}</a>
-                </stf-checkbox>
-              </div>
+              <pa-checkbox [(value)]="acceptedConditions">
+                <span>{{ 'login.agree' | translate }} </span>
+                <a href="https://nuclia.com/terms-and-conditions/"
+                   target="_blank">{{ 'login.terms_and_conditions' | translate }}</a>
+              </pa-checkbox>
+              <pa-checkbox [(value)]="acceptedPrivacy">
+                <span>{{ 'login.agree' | translate }} </span>
+                <a href="https://nuclia.com/privacy-policy/"
+                   target="_blank">{{ 'login.privacy_policy' | translate }}</a>
+              </pa-checkbox>
             </div>
 
             <div class="signup_error">
               <div *ngIf="emailAlreadyExists">{{ 'login.email_already_exists' | translate }}</div>
             </div>
-            <div fxLayout="column" fxLayoutAlign="start center" >
-              <stf-button
-                [disabled]="signupForm.invalid || !acceptedConditions || !acceptedPrivacy"
-                weight="bold"
-                minWidth="128px"
-                type="submit">
+            <footer class="pa-dual-buttons">
+              <pa-button aspect="basic"
+                         [routerLink]="['/user/login']"
+                         queryParamsHandling="merge">
+                {{ 'generic.cancel' | translate }}
+              </pa-button>
+              <pa-button [disabled]="signupForm.invalid || !acceptedConditions || !acceptedPrivacy"
+                         kind="primary"
+                         type="submit">
                 {{'Sign Up' | translate}}
-              </stf-button>
-              <div class="signup_skip">
-                <a stfButtonSkip [routerLink]="['/user/login']" queryParamsHandling="merge">
-                  {{ 'generic.cancel' | translate }}
-                </a>
-              </div>
-            </div>
+              </pa-button>
+            </footer>
           </form>
         </div>
       </div>

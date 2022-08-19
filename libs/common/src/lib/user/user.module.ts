@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { LoggedinGuard, STFPipesModule } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,7 +13,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { STFButtonDirectivesModule, STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
-import { STFCheckboxModule } from '../checkbox/checkbox.module';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
@@ -31,7 +30,7 @@ import { SignupComponent } from './signup/signup.component';
 import { UserContainerComponent } from './user-container/user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import { UserErrorComponent } from './user-error/user-error.component';
-import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -95,6 +94,7 @@ export const userRoutes: Routes = [
   ],
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     NgxCaptchaModule,
     AngularSvgIconModule,
@@ -108,12 +108,13 @@ export const userRoutes: Routes = [
     STFButtonsModule,
     STFButtonDirectivesModule,
     STFPipesModule,
-    STFCheckboxModule,
     UserAvatarModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
     PaButtonModule,
     PaIconModule,
+    PaTogglesModule,
+    PaTextFieldModule,
   ],
   exports: [RouterModule],
 })

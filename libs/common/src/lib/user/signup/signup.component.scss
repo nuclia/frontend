@@ -1,3 +1,4 @@
+@import "variables";
 
 .signup_description {
   text-align: center;
@@ -9,21 +10,19 @@
 }
 
 .signup_policy {
-  margin: 18px 0 40px var(--stf-input-padding-horizontal);
-  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  margin: rhythm(2) 0 rhythm(5) 0;
+
   a {
     color: inherit;
     font-weight: var(--stf-font-weight-semibold);
-    text-decoration: underline;
   }
 }
 
 .signup_error {
   margin: 20px 0;
   text-align: center;
-  color: #f91919; 
-}
-
-.signup_skip {
-  margin-top: 6px;
+  color: #f91919;
 }

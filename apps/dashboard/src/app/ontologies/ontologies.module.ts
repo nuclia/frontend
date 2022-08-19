@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
-import { STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
+import { STFSectionNavbarModule } from '@flaps/common';
 import { STFButtonsModule, STFInputModule, STFTextFieldModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { OntologiesComponent } from './ontologies.component';
@@ -42,7 +42,6 @@ const Components = [
     DragDropModule,
     A11yModule,
     STFSectionNavbarModule,
-    STFCheckboxModule,
     STFButtonsModule,
     STFInputModule,
     STFTextFieldModule,

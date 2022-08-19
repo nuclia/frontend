@@ -7,7 +7,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { STFButtonsModule, STFFormDirectivesModule, STFInputModule, STFTooltipModule } from '@flaps/pastanaga';
-import { STFCheckboxModule } from '@flaps/common';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
@@ -40,7 +39,6 @@ const Components = [
     STFInputModule,
     STFFormDirectivesModule,
     STFTooltipModule,
-    STFCheckboxModule,
     FileUploadModule,
     STFPipesModule,
     LabelModule,

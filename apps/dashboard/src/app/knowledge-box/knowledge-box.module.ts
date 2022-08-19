@@ -14,7 +14,7 @@ import { HelpBoxModule } from '../components/help-box/help-box.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { UserAvatarModule } from '@flaps/components';
-import { ProgressBarModule, STFCheckboxModule, STFSectionNavbarModule } from '@flaps/common';
+import { ProgressBarModule, STFSectionNavbarModule } from '@flaps/common';
 import {
   STFButtonsModule,
   STFExpanderModule,
@@ -71,7 +71,6 @@ const Components = [
     TourMatMenuModule,
     ProgressBarModule,
     STFSectionNavbarModule,
-    STFCheckboxModule,
     UserAvatarModule,
     STFButtonsModule,
     STFInputModule,

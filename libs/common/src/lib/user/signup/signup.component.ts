@@ -4,10 +4,10 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, map, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { STFInputComponent } from '@flaps/pastanaga';
 import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-signup',
@@ -36,7 +36,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   emailAlreadyExists: boolean = false;
   unsubscribeAll = new Subject<void>();
-  @ViewChild('email', { static: false }) email: STFInputComponent | undefined;
+  @ViewChild('email', { static: false }) email: InputComponent | undefined;
 
   constructor(
     private loginService: LoginService,
@@ -69,7 +69,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   onEnterPressed(formField: string) {
     if (formField === 'username') {
-      this.email!.element?.nativeElement.focus();
+      this.email!.hasFocus = true;
     } else {
       this.submit();
     }

@@ -1,15 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, LoginService, TranslatePipeMock } from '@flaps/core';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 import { SignupComponent } from './signup.component';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
-import { STFCheckboxModule } from '@flaps/common';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { MockModule } from 'ng-mocks';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
@@ -20,11 +20,10 @@ describe('SignupComponent', () => {
       declarations: [SignupComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
       imports: [
         ReactiveFormsModule,
-        FormsModule,
         RouterTestingModule,
-        STFInputModule,
-        STFCheckboxModule,
-        STFButtonsModule,
+        MockModule(PaTextFieldModule),
+        MockModule(PaButtonModule),
+        MockModule(PaTogglesModule),
       ],
       providers: [
         {

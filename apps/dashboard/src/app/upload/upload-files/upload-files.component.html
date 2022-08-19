@@ -76,11 +76,10 @@
         <ng-container *ngFor="let file of filesWithAudio; let i = index">
           <div class="file-item">
             <div class="file-select" *ngIf="filesWithAudio.length > 1">
-              <stf-checkbox [id]="'upload-file-' + i"
-                            [selected]="fileSelection.isSelected(file)"
-                            (selectedChange)="fileSelection.toggle(file)"
-                            color="dark"
-              ></stf-checkbox>
+              <pa-checkbox [id]="'upload-file-' + i"
+                           [value]="fileSelection.isSelected(file)"
+                           (change)="fileSelection.toggle(file)"
+              ></pa-checkbox>
             </div>
             <div class="file-name">
               <label [for]="'upload-file-' + i">{{ file.name }}</label>

@@ -19,40 +19,10 @@ interface ListFilters {
   sortDirection?: 'asc' | 'desc';
 }
 
-const STATUS_LIST: RESOURCE_STATUS[] = [RESOURCE_STATUS.PENDING, RESOURCE_STATUS.PROCESSED, RESOURCE_STATUS.ERROR];
-
 interface KeyValue {
   key: string;
   value: string;
 }
-
-interface TypeOption {
-  key: string;
-  label?: string;
-  mime: string[];
-}
-
-const TYPE_FILTER_OPTIONS: TypeOption[] = [
-  { key: '.pdf', mime: ['application/pdf'] },
-  {
-    key: '.xls',
-    mime: ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-  },
-  { key: '.mp4', mime: ['video/mp4'] },
-  { key: '.jpg', mime: ['image/jpeg'] },
-  {
-    key: '.doc',
-    mime: ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-  },
-  {
-    key: '.ppt',
-    mime: [
-      'application/powerpoint',
-      'application/vnd.ms-powerpoint',
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    ],
-  },
-];
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
 const DEFAULT_PAGE_SIZE = 20;
@@ -72,21 +42,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // FIXME: those options are not used anywhere, can we remove them or is there a reason to keep them here?
-  statusOptions = STATUS_LIST.map((status) => ({
-    key: status,
-    value: status.charAt(0).toUpperCase() + status.slice(1),
-    icon: this.getStatusIcon(status),
-  }));
-
-  typeOptions = TYPE_FILTER_OPTIONS.map((type: TypeOption) => ({
-    key: type.key,
-    value: type.label ? this.translate.instant(type.label) : type.key,
-  }));
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
