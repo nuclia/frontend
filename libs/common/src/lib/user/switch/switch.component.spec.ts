@@ -5,7 +5,7 @@ import { AuthService, BackendConfigurationService, SDKService, StateService, Tra
 import { SwitchComponent } from './switch.component';
 import { MockModule } from 'ng-mocks';
 import { MatListModule } from '@angular/material/list';
-import { STFButtonsModule } from '@flaps/pastanaga';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('SwitchComponent', () => {
   let component: SwitchComponent;
@@ -14,7 +14,7 @@ describe('SwitchComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SwitchComponent, TranslatePipeMock],
-      imports: [RouterTestingModule, MockModule(MatListModule), MockModule(STFButtonsModule)],
+      imports: [RouterTestingModule, MockModule(MatListModule), MockModule(PaButtonModule)],
       providers: [
         { provide: AuthService, useValue: { setNextParams: () => {}, setNextUrl: () => {} } },
         { provide: StateService, useValue: { cleanStash: () => {} } },

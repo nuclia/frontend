@@ -6,10 +6,10 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { DealerService } from '../../services/dealer.service';
 import { of } from 'rxjs';
 import { MatSortModule } from '@angular/material/sort';
-import { STFButtonsModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { MatTableModule } from '@angular/material/table';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('DealerListComponent', () => {
   let component: DealerListComponent;
@@ -19,7 +19,7 @@ describe('DealerListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DealerListComponent],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
-      imports: [RouterTestingModule, MatSortModule, STFButtonsModule, MatTableModule, NoopAnimationsModule],
+      imports: [RouterTestingModule, MatSortModule, PaButtonModule, MatTableModule, NoopAnimationsModule],
       providers: [
         {
           provide: DealerService,

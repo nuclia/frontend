@@ -16,7 +16,6 @@ import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
 import { ProgressBarModule, STFSectionNavbarModule } from '@flaps/common';
 import {
-  STFButtonsModule,
   STFExpanderModule,
   STFFormDirectivesModule,
   STFInputModule,
@@ -72,7 +71,6 @@ const Components = [
     ProgressBarModule,
     STFSectionNavbarModule,
     UserAvatarModule,
-    STFButtonsModule,
     STFInputModule,
     STFTextFieldModule,
     STFFormDirectivesModule,

@@ -8,7 +8,7 @@ import { UsersDetailComponent } from './users-detail.component';
 import { MockModule } from 'ng-mocks';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { STFButtonsModule } from '@flaps/pastanaga';
+import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('UsersDetailComponent', () => {
   let component: UsersDetailComponent;
@@ -22,7 +22,7 @@ describe('UsersDetailComponent', () => {
         ReactiveFormsModule,
         MockModule(MatCardModule),
         MockModule(MatFormFieldModule),
-        MockModule(STFButtonsModule),
+        MockModule(PaButtonModule),
       ],
       providers: [
         { provide: UsersService, useValue: { reset: () => {} } },

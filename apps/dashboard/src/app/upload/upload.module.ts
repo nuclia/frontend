@@ -6,7 +6,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
-import { STFButtonsModule, STFFormDirectivesModule, STFInputModule, STFTooltipModule } from '@flaps/pastanaga';
+import { STFFormDirectivesModule, STFInputModule, STFTooltipModule } from '@flaps/pastanaga';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
@@ -35,7 +35,6 @@ const Components = [
     ReactiveFormsModule,
     RouterModule,
     MatDialogModule,
-    STFButtonsModule,
     STFInputModule,
     STFFormDirectivesModule,
     STFTooltipModule,

@@ -5,7 +5,7 @@ import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatListModule } from '@angular/material/list';
@@ -66,7 +66,6 @@ const usersRoutes: Routes = [
     MatIconModule,
     MatButtonModule,
     STFInputModule,
-    STFButtonsModule,
     FlexLayoutModule,
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),

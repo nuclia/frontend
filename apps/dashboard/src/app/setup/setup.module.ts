@@ -8,7 +8,6 @@ import { RouterModule } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
 import {
   STFButtonDirectivesModule,
-  STFButtonsModule,
   STFExpanderModule,
   STFFormDirectivesModule,
   STFInputModule,
@@ -42,7 +41,6 @@ const Components = [
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,
-    STFButtonsModule,
     STFInputModule,
     STFExpanderModule,
     STFTooltipModule,

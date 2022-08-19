@@ -21,7 +21,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { DealersResolve } from '../resolvers/dealers.resolver';
 import { DealerResolve } from '../resolvers/dealer.resolver';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 const usersRoutes: Routes = [
@@ -67,7 +67,6 @@ const usersRoutes: Routes = [
     MatSortModule,
     MatIconModule,
     STFInputModule,
-    STFButtonsModule,
     FlexLayoutModule,
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),

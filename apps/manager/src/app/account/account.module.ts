@@ -1,4 +1,4 @@
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
@@ -90,7 +90,6 @@ const homeRoutes: Routes = [
     MatButtonModule,
     MatExpansionModule,
     MatTooltipModule,
-    STFButtonsModule,
     MatTabsModule,
     FlexLayoutModule,
     RouterModule.forChild(homeRoutes),

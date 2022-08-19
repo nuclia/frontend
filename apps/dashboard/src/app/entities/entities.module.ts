@@ -10,13 +10,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatDialogModule } from '@angular/material/dialog';
-import {
-  STFButtonsModule,
-  STFExpanderModule,
-  STFInputModule,
-  STFTextFieldModule,
-  STFTooltipModule,
-} from '@flaps/pastanaga';
+import { STFExpanderModule, STFInputModule, STFTextFieldModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
@@ -52,7 +46,6 @@ const Components = [
     A11yModule,
     DragDropModule,
     MatDialogModule,
-    STFButtonsModule,
     STFInputModule,
     STFTextFieldModule,
     STFExpanderModule,

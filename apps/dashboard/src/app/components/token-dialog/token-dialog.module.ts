@@ -4,7 +4,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDialogModule } from '@angular/material/dialog';
-import { STFButtonsModule } from '@flaps/pastanaga';
 
 import { TokenDialogComponent } from './token-dialog.component';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
@@ -16,7 +15,6 @@ import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
     FlexLayoutModule,
     TranslateModule.forChild(),
     MatDialogModule,
-    STFButtonsModule,
     PaButtonModule,
   ],
   declarations: [TokenDialogComponent],

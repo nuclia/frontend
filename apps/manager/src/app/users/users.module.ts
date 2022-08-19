@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import { UserResolve } from '../resolvers/user.resolver';
-import { STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { STFInputModule } from '@flaps/pastanaga';
 import { MatButtonModule } from '@angular/material/button';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -61,7 +61,6 @@ const usersRoutes: Routes = [
     MatIconModule,
     MatButtonModule,
     STFInputModule,
-    STFButtonsModule,
     FlexLayoutModule,
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),

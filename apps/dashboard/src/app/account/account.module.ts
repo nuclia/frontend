@@ -14,7 +14,6 @@ import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
 import { STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
 import {
-  STFButtonsModule,
   STFExpanderModule,
   STFFormDirectivesModule,
   STFInputModule,
@@ -74,7 +73,6 @@ const Components = [
     MatTableModule,
     STFSectionNavbarModule,
     UserAvatarModule,
-    STFButtonsModule,
     STFInputModule,
     STFTextFieldModule,
     STFFormDirectivesModule,

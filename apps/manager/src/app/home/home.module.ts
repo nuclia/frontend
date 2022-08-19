@@ -1,4 +1,3 @@
-import { STFButtonsModule } from '@flaps/pastanaga';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WelcomeComponent } from './welcome/welcome.component';
@@ -26,7 +25,6 @@ const homeRoutes: Routes = [
     ReactiveFormsModule,
     MatCardModule,
     MatListModule,
-    STFButtonsModule,
     FlexLayoutModule,
     RouterModule.forChild(homeRoutes),
     TranslateModule.forChild(),

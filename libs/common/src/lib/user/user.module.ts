@@ -12,7 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { STFButtonDirectivesModule, STFButtonsModule, STFInputModule } from '@flaps/pastanaga';
+import { STFButtonDirectivesModule, STFInputModule } from '@flaps/pastanaga';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
@@ -105,7 +105,6 @@ export const userRoutes: Routes = [
     MatDialogModule,
     FlexLayoutModule,
     STFInputModule,
-    STFButtonsModule,
     STFButtonDirectivesModule,
     STFPipesModule,
     UserAvatarModule,

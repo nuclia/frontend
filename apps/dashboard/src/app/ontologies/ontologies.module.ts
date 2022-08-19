@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
 import { STFSectionNavbarModule } from '@flaps/common';
-import { STFButtonsModule, STFInputModule, STFTextFieldModule, STFTooltipModule } from '@flaps/pastanaga';
+import { STFInputModule, STFTextFieldModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { OntologiesComponent } from './ontologies.component';
 import { OntologyListComponent } from './ontology-list/ontology-list.component';
@@ -42,7 +42,6 @@ const Components = [
     DragDropModule,
     A11yModule,
     STFSectionNavbarModule,
-    STFButtonsModule,
     STFInputModule,
     STFTextFieldModule,
     STFTooltipModule,
