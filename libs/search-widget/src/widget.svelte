@@ -188,7 +188,6 @@
     --color-secondary-stronger: var(--custom-color-secondary-stronger, hsl(51, 78%, 32%));
     --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
 
-    --color-blue-strong: hsl(207, 17%, 58%);
     --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
 
     --font-size-base: var(--custom-font-size-base, 16px);
@@ -211,9 +210,9 @@
     --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
     --form-widget-border-style: var(--custom-form-widget-border-style, solid);
     --form-widget-border-style-stronger: var(--custom-form-widget-border-style-stronger, solid);
-    --form-widget-border-color: var(--custom-form-widget-border-color, var(--color-blue-strong));
+    --form-widget-border-color: var(--custom-form-widget-border-color, var(--color-neutral-strong));
     --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
-    --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-blue-strong);
+    --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-neutral-strong);
 
     --input-widget-padding: var(--custom-input-widget-padding, 2px 42px 2px 2px);
     --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);

@@ -119,7 +119,7 @@
     -webkit-appearance: none;
   }
   input::placeholder {
-    color: var(--color-blue-strong);
+    color: var(--color-neutral-strong);
     transition: all 0s ease;
   }
 
