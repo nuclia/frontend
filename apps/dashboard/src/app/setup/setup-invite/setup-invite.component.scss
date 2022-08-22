@@ -4,26 +4,31 @@
   display: flex;
   flex-direction: column;
   min-height: var(--setup-container-min-height);
-  padding: 60px 100px;
+  padding: rhythm(8) rhythm(12);
 
   .logo {
     text-align: center;
     img {
-      width: 176px;
+      width: rhythm(22);
       height: auto;
     }
   }
 
-  &-title {
-    margin: 36px 0 40px 0;
+  .setup-invite-title {
+    margin: rhythm(4) 0 rhythm(5) 0;
     font-size: var(--stf-font-size-title);
     font-weight: var(--stf-font-weight-bold);
     text-align: center;
   }
 
-  &-actions {
+  pa-input {
+    display: block;
+    margin-bottom: rhythm(2);
+  }
+
+  .setup-invite-actions {
     margin-top: auto;
-    padding-top: 25px;
+    padding-top: rhythm(3);
     text-align: center;
   }
 }

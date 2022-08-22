@@ -10,18 +10,10 @@
         [formGroup]="linkForm"
         (ngSubmit)="add()">
     <div class="new-link">
-        <stf-input formControlName="link"
-                   required
-                   type="text"
-                   [noAutocapitalize]="true"
-                   (valueChange)="message = undefined"
-                   [validator]="linkForm.controls['link']"
-                   [validation_messages]="validationMessages.link"
-        >
+        <pa-input formControlName="link"
+                  [errorMessages]="validationMessages.link">
           {{ 'modal.create_link.input' | translate }}
-        </stf-input>
-        <div class="message" *ngIf="message">{{ message | translate }}</div>
-
+        </pa-input>
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
     </div>
 

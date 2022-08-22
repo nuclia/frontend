@@ -3,7 +3,6 @@
  */
 
 export * from './lib/inputfield/input-module';
-export * from './lib/textfield/textfield.module';
 export * from './lib/tag/tag.module';
 export * from './lib/confirm-dialog/confirm-dialog.module';
 export * from './lib/auto-focus/auto-focus.module';

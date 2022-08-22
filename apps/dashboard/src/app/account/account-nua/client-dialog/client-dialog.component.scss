@@ -15,9 +15,18 @@
     font-weight: var(--stf-font-weight-bold);
   }
 
-  label {
-    margin-top: 12px;
-    font-weight: var(--stf-font-weight-semibold);
+  .field-container {
+    align-items: center;
+    display: flex;
+    margin-bottom: rhythm(1.5);
+
+    & > :first-child {
+      flex: 1 0 auto;
+      width: rhythm(20);
+    }
+    & > :last-child {
+      width: 100%;
+    }
   }
 
   .info {
@@ -32,7 +41,7 @@
       min-width: 305px;
     }
   }
-  .hint {
-    margin-top: rythm(0.5);
+  .webhook-hint {
+    margin-top: rhythm(2);
   }
 }

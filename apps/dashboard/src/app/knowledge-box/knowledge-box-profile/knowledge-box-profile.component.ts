@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, concatMap } from 'rxjs/operators';
 import { StateService, SDKService } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
 import { STFUtils } from '@flaps/core';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-knowledge-box-profile',
@@ -20,14 +21,17 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   kbForm = this.formBuilder.group({
     uid: [''],
     slug: ['', [Sluggable()]],
-    title: [''],
+    title: ['', [Validators.required]],
     description: [''],
   });
 
-  validationMessages = {
+  validationMessages: { [key:string]: IErrorMessages } = {
     slug: {
       sluggable: 'stash.kb_slug_invalid',
-    },
+    } as IErrorMessages,
+    title: {
+      required: 'validation.required',
+    }
   };
 
   unsubscribeAll = new Subject<void>();

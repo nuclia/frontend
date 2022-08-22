@@ -17,6 +17,7 @@ import { AccountModification, SDKService, StateService, STFTrackingService } fro
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { SectionInfo, Sluggable } from '@flaps/common';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 
@@ -49,7 +50,7 @@ export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy 
   validationMessages = {
     title: {
       sluggable: 'account.account_name_invalid',
-    },
+    } as IErrorMessages,
   };
 
   isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));

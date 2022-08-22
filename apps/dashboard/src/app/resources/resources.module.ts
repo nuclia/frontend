@@ -15,8 +15,6 @@ import {
   STFExpanderModule,
   STFFormDirectivesModule,
   STFIconsModule,
-  STFInputModule,
-  STFTextFieldModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
 import { PaginationModule, STFSectionNavbarModule } from '@flaps/common';
@@ -106,8 +104,6 @@ const ROUTES: Routes = [
     MatMenuModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    STFInputModule,
-    STFTextFieldModule,
     STFExpanderModule,
     STFTooltipModule,
     STFIconsModule,

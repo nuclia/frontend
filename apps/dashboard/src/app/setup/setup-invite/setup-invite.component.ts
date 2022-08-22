@@ -5,6 +5,7 @@ import { concatMap } from 'rxjs';
 import { SamePassword } from '@flaps/common';
 import { LoginService, SDKService } from '@flaps/core';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-setup-invite',
@@ -12,7 +13,7 @@ import { MIN_PASSWORD_LENGTH } from '@flaps/core';
   styleUrls: ['./setup-invite.component.scss'],
 })
 export class SetupInviteComponent {
-  validationMessages = {
+  validationMessages: { [key: string]: IErrorMessages } = {
     username: {
       required: 'validation.required',
     },
@@ -23,7 +24,7 @@ export class SetupInviteComponent {
     passwordConfirm: {
       required: 'validation.required',
       passwordMismatch: 'validation.password_mismatch',
-    },
+    } as IErrorMessages,
   };
 
   passwordForm = this.formBuilder.group({

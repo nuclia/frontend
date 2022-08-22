@@ -6,48 +6,48 @@
              (click)="close()">{{'generic.close' | translate}}</pa-button>
 
   <form [formGroup]="clientForm" (ngSubmit)="save()">
-    <div class="mb-12" fxLayout="row">
-      <label for="client-title" fxFlex="24%"> {{ 'account.nua_client' | translate }}* </label>
-      <div fxFlex="auto">
-        <stf-input
-          id="client-title"
-          formControlName="title"
-          [validator]="clientForm.controls['title']"
-          [validation_messages]="validationMessages.title"
-          [isLessen]="true"
-        >
-        </stf-input>
+    <div class="field-container">
+      <label class="title-xxs" for="client-title"> {{ 'account.nua_client' | translate }}* </label>
+      <div>
+        <pa-input id="client-title"
+                  formControlName="title"
+                  [errorMessages]="validationMessages.title">
+        </pa-input>
       </div>
     </div>
 
-    <div class="mb-40" fxLayout="row">
-      <label for="client-email" fxFlex="24%">
+    <div class="field-container">
+      <label class="title-xxs" for="client-email">
         <span>{{ 'generic.email' | translate }}*</span>
-        <pa-icon class="info" name="info" size="small" paTooltip="account.email_info"></pa-icon>
+        <pa-icon class="info"
+                 name="info"
+                 size="small"
+                 paTooltip="account.email_info"></pa-icon>
       </label>
-      <div fxFlex="auto">
-        <stf-input
-          id="client-email"
-          formControlName="email"
-          [validator]="clientForm.controls['email']"
-          [validation_messages]="validationMessages.email"
-          [isLessen]="true"
-        >
-        </stf-input>
+      <div>
+        <pa-input id="client-email"
+                  formControlName="email"
+                  [errorMessages]="validationMessages.email">
+        </pa-input>
       </div>
     </div>
 
-    <div class="mb-40">
-      <div fxLayout="row">
-        <label for="client-webhook" fxFlex="24%">
+    <div>
+      <div class="field-container">
+        <label class="title-xxs" for="client-webhook">
           <span>{{ 'account.nua_webhook' | translate }}</span>
-          <pa-icon class="info" name="info" size="small" paTooltip="account.nua_webhook.help"></pa-icon>
+          <pa-icon class="info"
+                   name="info"
+                   size="small"
+                   paTooltip="account.nua_webhook.help"></pa-icon>
         </label>
-        <div fxFlex="auto">
-          <stf-input id="client-webhook" formControlName="webhook" [isLessen]="true"> </stf-input>
+        <div>
+          <pa-input id="client-webhook"
+                    formControlName="webhook">
+          </pa-input>
         </div>
       </div>
-      <div class="hint">
+      <div class="webhook-hint">
         <ncom-hint label="Learn more about webhooks">
           <p>
             If webhook is defined, anytime a new result is available, Nuclia will make a <code>POST</code> call to this
