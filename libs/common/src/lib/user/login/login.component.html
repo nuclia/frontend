@@ -8,40 +8,35 @@
       <div class="login_form">
         <form #form
               [formGroup]="loginForm"
-              (ngSubmit)="login()"
               [method]="oauth ? 'POST' : null"
-              [action]="oauth ? oAuthLoginUrl() : null">
-          <div class="login_field">
-            <stf-input #email
-                       formControlName="email"
-                       (enterPressed)="onEnterPressed('email')"
-                       [required]="true"
-                       type='text'
-                       theme="border"
-                       [noAutocapitalize]="true"
-                       [validator]="loginForm.controls['email']"
-                       [validation_messages]="loginValidationMessages.email"
-                       [name]="oauth ? 'username' : undefined"
-                       (focusOut)="checkSAML(email.value)">
+              [action]="oauth ? oAuthLoginUrl() : null"
+              (ngSubmit)="login()">
+          <div class="login_field username-field">
+            <pa-input #email
+                      formControlName="email"
+                      required
+                      autocapitalize="off"
+                      name="username"
+                      [errorMessages]="loginValidationMessages.email"
+                      (enter)="onEnterPressed('email')"
+                      (blurring)="checkSAML(form.email.value)">
               {{ 'login.email' | translate }}
-            </stf-input>
+            </pa-input>
           </div>
           <div class="login_field">
-            <stf-password-input #password
-                                controlName="password"
-                                theme="border"
-                                (enterPressed)="onEnterPressed('password')"
-                                [validator]="loginForm.controls['password']"
-                                [validation_messages]="loginValidationMessages.password"
-                                [name]="oauth ? 'password' : undefined">
+            <nsi-password-input #password
+                                formControlName="password"
+                                name="password"
+                                [errorMessages]="loginValidationMessages.password"
+                                (enter)="onEnterPressed('password')">
               {{ 'login.password' | translate }}
-            </stf-password-input>
+            </nsi-password-input>
           </div>
           <input *ngIf="oauth"
                  type="hidden"
                  name="login_challenge"
                  [value]="loginChallenge">
-          <div class="login_policy">
+          <div class="login_policy body-s">
             This site is protected by reCAPTCHA and the Google
             <a href="https://policies.google.com/privacy">Privacy Policy</a> and
             <a href="https://policies.google.com/terms">Terms of Service</a> apply.
@@ -64,7 +59,7 @@
           </div>
         </form>
       </div>
-      <div class="login_recover">
+      <div class="login_recover body-s">
         <span>{{ 'login.recover_help' | translate }} </span>
         <a href="javascript:;"
            (click)="recoverPassword($event)">{{ 'login.recover' | translate }}</a>

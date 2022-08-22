@@ -9,4 +9,4 @@ import { ReactiveFormsModule } from '@angular/forms';
   exports: [PasswordInputComponent],
   imports: [CommonModule, PaFormFieldModule, ReactiveFormsModule, PaTextFieldModule, PaButtonModule],
 })
-export class PasswordInputModule {}
+export class NsiPasswordInputModule {}

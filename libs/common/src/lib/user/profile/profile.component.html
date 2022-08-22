@@ -41,11 +41,9 @@
             <label>{{ 'profile.new_password' | translate }}</label>
           </div>
           <div class="field-input">
-            <stf-password-input controlName="password"
-                                [isLessen]="true"
-                                [validator]="profileForm.controls['password']"
-                                [validation_messages]="profile_validation_messages.password">
-            </stf-password-input>
+            <nsi-password-input formControlName="password"
+                                [errorMessages]="profile_validation_messages.password">
+            </nsi-password-input>
           </div>
         </div>
 
@@ -54,11 +52,9 @@
             <label>{{ 'profile.repeat_password' | translate }}</label>
           </div>
           <div class="field-input">
-            <stf-password-input controlName="passwordConfirm"
-                                [isLessen]="true"
-                                [validator]="profileForm.controls['passwordConfirm']"
-                                [validation_messages]="profile_validation_messages.passwordConfirm">
-            </stf-password-input>
+            <nsi-password-input formControlName="passwordConfirm"
+                                [errorMessages]="profile_validation_messages.passwordConfirm">
+            </nsi-password-input>
           </div>
         </div>
       </ng-container>

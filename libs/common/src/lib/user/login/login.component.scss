@@ -1,40 +1,38 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .login_form {
-  padding: 30px 0 0;
+  padding: rhythm(4) 0 0;
 }
 
 .login_field {
-  margin: 0 0 10px 0;
+  margin: 0 0 rhythm(1.5) 0;
+
+  &.username-field {
+    width: calc(100% - #{rhythm(6)});
+  }
 }
 
 .login_alert {
-  margin-top: 16px;
+  margin-top: rhythm(2);
   font-size: var(--stf-font-size-title);
   font-weight: var(--stf-font-weight-bold);
   color: var(--stf-primary);
   line-height: 1.2;
   text-align: center;
   &.small {
-    font-size: 18px;
+    font-size: font-size(l);
   }
 }
 
 .login_policy {
-  font-size: 10px;
-  line-height: 1.1;
-  color: #9b9b9b;
+  color: $color-neutral-regular;
   a {
     color: inherit;
-    font-weight: var(--stf-font-weight-semibold);
-    &:hover {
-      text-decoration: underline;
-    }
   }
 }
 
 .login_form_error {
-  margin-top: 10px;
+  margin-top: rhythm(1.5);
   font-size: var(--stf-font-size-ssmall);
   line-height: 1.2;
   color: #f91919;
@@ -56,32 +54,27 @@
 }
 
 .login_submit {
-  margin: 24px 0 0 0;
+  margin: rhythm(3) 0 0 0;
 }
 
 .login_recover {
-  margin-top: 16px;
+  margin-top: rhythm(2);
   text-align: center;
-  font-size: var(--stf-font-size-ssmall);
   a {
-    font-weight: var(--stf-font-weight-bold);
-    color: var(--stf-primary);
     text-decoration: none;
   }
 }
 
 .login_signup {
-  margin-top: 52px;
+  margin-top: rhythm(6);
   text-align: center;
   a {
-    font-weight: var(--stf-font-weight-bold);
-    color: var(--stf-primary);
     text-decoration: none;
   }
 }
 
 .login_social {
-  margin-top: 25px;
+  margin-top: rhythm(3);
   &_button {
     @include reset-button();
     width: 100%;
@@ -113,7 +106,7 @@
   margin-bottom: 30px;
   span {
     font-size: var(--stf-font-size-ssmall);
-    padding: 0 16px;
+    padding: 0 rhythm(2);
   }
   &::before,
   &::after {

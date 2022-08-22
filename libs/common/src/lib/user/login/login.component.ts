@@ -1,21 +1,28 @@
-import { Component, OnInit, ViewChild, Inject, ElementRef } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
-import { OAuthService, SAMLService, BackendConfigurationService, GoogleService } from '@flaps/core';
-import { OAuthErrors, SDKService } from '@flaps/core';
-import { STFPasswordInputComponent, STFInputComponent } from '@flaps/pastanaga';
+import {
+  BackendConfigurationService,
+  GoogleService,
+  OAuthErrors,
+  OAuthService,
+  SAMLService,
+  SDKService,
+} from '@flaps/core';
+import { InputComponent } from '@guillotinaweb/pastanaga-angular';
+import { PasswordInputComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
-  @ViewChild('email', { static: false }) email: STFInputComponent | undefined;
-  @ViewChild('password', { static: false }) password: STFPasswordInputComponent | undefined;
+export class LoginComponent {
+  @ViewChild('email', { static: false }) email: InputComponent | undefined;
+  @ViewChild('password', { static: false }) password: PasswordInputComponent | undefined;
   @ViewChild('form', { static: false }) form: ElementRef | undefined;
 
   oauth: boolean = false;
@@ -65,14 +72,12 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit() {}
-
   onEnterPressed(formField: string) {
     if (formField === 'password') {
-      this.email?.element?.nativeElement.focus(); // Validate password field before login
+      this.email!.hasFocus = true; // Validate password field before login
       this.login();
     } else {
-      this.password?.focus();
+      this.password!.hasFocus = true;
     }
   }
 

@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, GoogleService, OAuthService, SAMLService, TranslatePipeMock } from '@flaps/core';
-import { STFInputModule } from '@flaps/pastanaga';
 import { TranslateService } from '@ngx-translate/core';
 import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ReCaptchaV3Service } from 'ngx-captcha';
@@ -11,7 +10,8 @@ import { of } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { NsiPasswordInputModule } from '@nuclia/sistema';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -20,7 +20,14 @@ describe('LoginComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [LoginComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
-      imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule, PaButtonModule, AngularSvgIconModule],
+      imports: [
+        ReactiveFormsModule,
+        RouterTestingModule,
+        PaButtonModule,
+        AngularSvgIconModule,
+        PaTextFieldModule,
+        NsiPasswordInputModule,
+      ],
       providers: [
         { provide: SAMLService, useValue: { checkDomain: () => of() } },
         { provide: OAuthService, useValue: { loginUrl: () => {} } },
