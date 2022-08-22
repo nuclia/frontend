@@ -1,3 +1,5 @@
+@import "variables";
+
 html,
 body {
   height: 100%;
@@ -23,4 +25,8 @@ code.endpoint {
 
 .pa-toast-container {
   z-index: 1800;
+}
+
+.pa-popup {
+  min-width: rhythm(16);
 }

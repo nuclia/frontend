@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SistemaPaletteComponent } from './sistema-palette/sistema-palette.component';
 import { PaDemoModule } from '../../../../../libs/pastanaga-angular/projects/demo/src';
-import { SistemaIconsComponent } from './sistema-icons/sistema-icons.component';
 import {
   PaButtonModule,
   PaChipsModule,
@@ -15,14 +13,23 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormsModule } from '@angular/forms';
-import { SistemaTableComponent } from './sistema-tables/sistema-table.component';
-import { SistemaScrollbarComponent } from './sistema-scrollbar/sistema-scrollbar.component';
 import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { RouterModule } from '@angular/router';
-import { DialogExampleComponent, ModalExampleComponent, SistemaModalComponent } from './sistema-modal';
-import { SistemaButtonsComponent } from './sistema-buttons/sistema-buttons.component';
-import { SistemaToastComponent } from './sistema-toasts/sistema-toast.component';
-import { SistemaConfirmationDialogComponent } from './sistema-confirmation-dialog/sistema-confirmation-dialog.component';
+import {
+  DialogExampleComponent,
+  ModalExampleComponent,
+  SistemaButtonsComponent,
+  SistemaConfirmationDialogComponent,
+  SistemaIconsComponent,
+  SistemaModalComponent,
+  SistemaPaletteComponent,
+  SistemaScrollbarComponent,
+  SistemaTableComponent,
+  SistemaToastComponent,
+} from './pastanaga-pages-override';
+import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
+import { BackButtonComponent, DropdownButtonComponent } from '@nuclia/sistema';
+import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +44,8 @@ import { SistemaConfirmationDialogComponent } from './sistema-confirmation-dialo
     SistemaButtonsComponent,
     SistemaToastComponent,
     SistemaConfirmationDialogComponent,
+    SistemaBackButtonComponent,
+    SistemaDropdownButtonComponent,
   ],
   imports: [
     CommonModule,
@@ -53,6 +62,9 @@ import { SistemaConfirmationDialogComponent } from './sistema-confirmation-dialo
     PaTableModule,
     PaTextFieldModule,
     PaTogglesModule,
+
+    BackButtonComponent,
+    DropdownButtonComponent,
   ],
 })
 export class SistemaPagesModule {}

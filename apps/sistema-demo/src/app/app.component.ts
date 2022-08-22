@@ -38,16 +38,18 @@ import {
   TranslatePageComponent,
   TypographyPageComponent,
 } from '../../../../libs/pastanaga-angular/projects/demo/src';
-import { SistemaPaletteComponent } from './sistema-pages/sistema-palette/sistema-palette.component';
-import { SistemaIconsComponent } from './sistema-pages/sistema-icons/sistema-icons.component';
-import { SistemaTableComponent } from './sistema-pages/sistema-tables/sistema-table.component';
-import { SistemaScrollbarComponent } from './sistema-pages/sistema-scrollbar/sistema-scrollbar.component';
-import { SistemaLabelComponent } from './sistema-pages/sistema-label/sistema-label.component';
-import { SistemaModalComponent } from './sistema-pages/sistema-modal';
-import { SistemaButtonsComponent } from './sistema-pages/sistema-buttons/sistema-buttons.component';
-import { SistemaToastComponent } from './sistema-pages/sistema-toasts/sistema-toast.component';
 import { RadioPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/radio-page/radio-page.component';
-import { SistemaConfirmationDialogComponent } from './sistema-pages/sistema-confirmation-dialog/sistema-confirmation-dialog.component';
+import {
+  SistemaButtonsComponent,
+  SistemaConfirmationDialogComponent,
+  SistemaIconsComponent,
+  SistemaModalComponent,
+  SistemaPaletteComponent,
+  SistemaScrollbarComponent,
+  SistemaTableComponent,
+  SistemaToastComponent,
+} from './sistema-pages/pastanaga-pages-override';
+import { SistemaBackButtonComponent, SistemaDropdownButtonComponent, SistemaLabelComponent } from './sistema-pages';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -67,14 +69,21 @@ export const menu: IDemoMenuSection[] = [
     ],
   },
   {
-    title: 'Components',
+    title: 'Nuclia Sistema',
+    pages: [
+      { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
+      { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
+      { view: 'label', title: 'Label', type: SistemaLabelComponent },
+    ],
+  },
+  {
+    title: 'Pastanaga components',
     pages: [
       { view: 'avatar', title: 'Avatar', type: AvatarPageComponent },
       { view: 'avatar-pile', title: 'Avatar pile', type: AvatarPilePageComponent },
       { view: 'button', title: 'Button', type: SistemaButtonsComponent },
       { view: 'card', title: 'Card', type: CardPageComponent },
       { view: 'chip', title: 'Chip', type: ChipPageComponent },
-      { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'confirmation-dialog', title: 'Confirmation dialog', type: SistemaConfirmationDialogComponent },
       { view: 'modal', title: 'Modal', type: SistemaModalComponent },
       { view: 'datepicker', title: 'Date Picker', type: DatePickerPageComponent },
@@ -92,7 +101,21 @@ export const menu: IDemoMenuSection[] = [
     ],
   },
   {
-    title: 'Tables',
+    title: 'Pastanaga Form elements',
+    pages: [
+      { view: 'checkbox', title: 'Checkbox', type: CheckboxPageComponent },
+      { view: 'radio', title: 'Radio', type: RadioPageComponent },
+      { view: 'input', title: 'Input', type: InputPageComponent },
+      { view: 'select', title: 'Select', type: SelectPageComponent },
+      { view: 'textarea', title: 'Textarea', type: TextareaPageComponent },
+      { view: 'toggle', title: 'Toggle', type: TogglePageComponent },
+      { view: 'formControl', title: 'Form control', type: FormControlPageComponent },
+      { view: 'formFieldHint', title: 'Form field hint', type: FormFieldHintPageComponent },
+      { view: 'nativeTextField', title: 'Native Text Field', type: NativeTextFieldPageComponent },
+    ],
+  },
+  {
+    title: 'Pastanaga Tables',
     pages: [
       { view: 'table', title: 'Table', type: SistemaTableComponent },
       { view: 'table-row', title: 'Table row', type: TableRowPageComponent },
@@ -108,20 +131,6 @@ export const menu: IDemoMenuSection[] = [
         title: 'Table sortable header cell',
         type: TableSortableHeaderCellPageComponent,
       },
-    ],
-  },
-  {
-    title: 'Form elements',
-    pages: [
-      { view: 'checkbox', title: 'Checkbox', type: CheckboxPageComponent },
-      { view: 'radio', title: 'Radio', type: RadioPageComponent },
-      { view: 'input', title: 'Input', type: InputPageComponent },
-      { view: 'select', title: 'Select', type: SelectPageComponent },
-      { view: 'textarea', title: 'Textarea', type: TextareaPageComponent },
-      { view: 'toggle', title: 'Toggle', type: TogglePageComponent },
-      { view: 'formControl', title: 'Form control', type: FormControlPageComponent },
-      { view: 'formFieldHint', title: 'Form field hint', type: FormFieldHintPageComponent },
-      { view: 'nativeTextField', title: 'Native Text Field', type: NativeTextFieldPageComponent },
     ],
   },
 ];

@@ -17,7 +17,7 @@ import { SistemaPagesModule } from './sistema-pages/sistema-pages.module';
     PaDemoModule,
     PaButtonModule,
     PaSideNavModule,
-    PaTranslateModule.addTranslations([{ en_US: I18N_EN }, { latin: DEMO_LA }]),
+    PaTranslateModule.addTranslations([{ en_US: I18N_EN }, { latin: DEMO_LA }, { en_US: { 'generic.back': 'Back' } }]),
     SistemaPagesModule,
   ],
   providers: [{ provide: PA_LANG, useValue: 'en_US' }],

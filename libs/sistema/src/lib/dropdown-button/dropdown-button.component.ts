@@ -9,13 +9,12 @@ import {
   PaPopupModule,
   Size,
 } from '@guillotinaweb/pastanaga-angular';
-import { TranslateModule } from '@ngx-translate/core';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'nsi-dropdown-button',
   standalone: true,
-  imports: [CommonModule, PaButtonModule, PaIconModule, PaPopupModule, TranslateModule],
+  imports: [CommonModule, PaButtonModule, PaIconModule, PaPopupModule],
   templateUrl: './dropdown-button.component.html',
   styleUrls: ['./dropdown-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
