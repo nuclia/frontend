@@ -73,10 +73,7 @@ export class LoginComponent {
   }
 
   onEnterPressed(formField: string) {
-    if (formField === 'password') {
-      this.email!.hasFocus = true; // Validate password field before login
-      this.login();
-    } else {
+    if (formField === 'email') {
       this.password!.hasFocus = true;
     }
   }

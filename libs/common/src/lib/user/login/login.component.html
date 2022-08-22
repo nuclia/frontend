@@ -2,8 +2,7 @@
                     *ngIf="!error; else errorMessage">
   <stf-user-container-logo>
     <div class="login_content">
-      <div class="login_alert"
-           [class.small]="message.length > 24"
+      <div class="login_alert title-xxs"
            *ngIf="message">{{ message | translate }}</div>
       <div class="login_form">
         <form #form
@@ -27,8 +26,7 @@
             <nsi-password-input #password
                                 formControlName="password"
                                 name="password"
-                                [errorMessages]="loginValidationMessages.password"
-                                (enter)="onEnterPressed('password')">
+                                [errorMessages]="loginValidationMessages.password">
               {{ 'login.password' | translate }}
             </nsi-password-input>
           </div>
@@ -36,16 +34,15 @@
                  type="hidden"
                  name="login_challenge"
                  [value]="loginChallenge">
-          <div class="login_policy body-s">
+          <div class="login_policy body-xs">
             This site is protected by reCAPTCHA and the Google
             <a href="https://policies.google.com/privacy">Privacy Policy</a> and
             <a href="https://policies.google.com/terms">Terms of Service</a> apply.
           </div>
-          <div class="login_form_error"
+          <div class="login_form_error body-xs"
                *ngIf="formError"
                fxLayout="row">
-            <span class="login_form_error_icon"
-                  fxFlex="0 0 auto">!</span>
+            <pa-icon name="warning" size="small"></pa-icon>
             <div>
               <strong>{{ 'login.error.auth_error' | translate }} </strong>
               <span>{{ 'login.try_again' | translate }}</span>
@@ -66,7 +63,7 @@
       </div>
       <div class="login_social"
            *ngIf="config.getSocialLogin()">
-        <div class="login_separator">
+        <div class="login_separator body-s">
           <span>{{ 'generic.or' | translate }}</span>
         </div>
         <div class="mb-16">
