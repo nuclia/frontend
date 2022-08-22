@@ -6,6 +6,7 @@ import { SDKService } from '@flaps/core';
 import { LabelValue } from '@nuclia/core';
 import { switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-create-link',
@@ -18,14 +19,13 @@ export class CreateLinkComponent {
     link: ['', [Validators.pattern(/^http(s?):\/\//)]],
   });
 
-  validationMessages = {
+  validationMessages: { [key: string]: IErrorMessages } = {
     link: {
       pattern: 'validation.url_required',
-    },
+    } as IErrorMessages,
   };
 
   selectedLabels: LabelValue[] = [];
-  message: string | undefined;
 
   constructor(
     public dialogRef: MatDialogRef<CreateLinkComponent>,

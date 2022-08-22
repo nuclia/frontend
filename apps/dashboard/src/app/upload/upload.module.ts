@@ -16,7 +16,13 @@ import { UploadProgressComponent } from './upload-progress/upload-progress.compo
 import { UploadProgressDialogComponent } from './upload-progress/upload-progress-dialog.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
-import { PaButtonModule, PaIconModule, PaTogglesModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaTogglesModule,
+  PaTooltipModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
   CreateLinkComponent,
@@ -46,6 +52,7 @@ const Components = [
     PaIconModule,
     PaTogglesModule,
     PaTooltipModule,
+    PaTextFieldModule,
   ],
   declarations: [...Components],
   exports: [],

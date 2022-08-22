@@ -8,7 +8,9 @@
           {{ 'generic.uid' | translate }}
         </label>
         <div fxFlex="70%">
-          <stf-input formControlName="uid" theme="white" [readonly]="true" [isLessen]="true"> </stf-input>
+          <pa-input formControlName="uid"
+                    [readonly]="true">
+          </pa-input>
         </div>
       </div>
 
@@ -17,14 +19,9 @@
           {{ 'generic.slug' | translate }}
         </label>
         <div fxFlex="70%">
-          <stf-input
-            formControlName="slug"
-            [validator]="kbForm.controls['slug']"
-            [validation_messages]="validationMessages.slug"
-            theme="white"
-            [isLessen]="true"
-          >
-          </stf-input>
+          <pa-input formControlName="slug"
+                    [errorMessages]="validationMessages.slug">
+          </pa-input>
         </div>
       </div>
 
@@ -33,7 +30,9 @@
           {{ 'generic.name' | translate }}
         </label>
         <div fxFlex="70%">
-          <stf-input formControlName="title" theme="white" [isLessen]="true"> </stf-input>
+          <pa-input formControlName="title"
+                    [errorMessages]="validationMessages.title">
+          </pa-input>
         </div>
       </div>
 
@@ -42,7 +41,8 @@
           {{ 'generic.description' | translate }}
         </label>
         <div fxFlex="70%">
-          <stf-textarea formControlName="description" color="white" initialHeight="130px"> </stf-textarea>
+          <pa-textarea formControlName="description"
+                       rows="4"></pa-textarea>
         </div>
       </div>
 

@@ -5,6 +5,7 @@ import { SamePassword } from '@flaps/common';
 import { AuthService, SDKService } from '@flaps/core';
 import { SetupStep } from '../setup-header/setup-header.component';
 import { MIN_PASSWORD_LENGTH } from '@flaps/core';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-setup-step1',
@@ -15,7 +16,7 @@ export class SetupStep1Component implements OnInit {
   step = SetupStep.Password;
   isSignup: boolean = false;
 
-  validationMessages = {
+  validationMessages: { [key: string]: IErrorMessages } = {
     password: {
       required: 'validation.required',
       minlength: 'validation.password_minlength',
@@ -23,7 +24,7 @@ export class SetupStep1Component implements OnInit {
     passwordConfirm: {
       required: 'validation.required',
       passwordMismatch: 'validation.password_mismatch',
-    },
+    } as IErrorMessages,
   };
 
   passwordForm = this.formBuilder.group({

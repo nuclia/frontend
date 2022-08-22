@@ -8,15 +8,10 @@
             {{ 'account.title' | translate }}
           </label>
           <div fxFlex="70%">
-            <stf-input
-              id="account-title"
-              formControlName="title"
-              [validator]="accountForm.controls['title']"
-              [validation_messages]="validationMessages.title"
-              theme="white"
-              [isLessen]="true"
-            >
-            </stf-input>
+            <pa-input id="account-title"
+                      formControlName="title"
+                      [errorMessages]="validationMessages.title">
+            </pa-input>
           </div>
         </div>
 
@@ -25,8 +20,9 @@
             {{ 'generic.description' | translate }}
           </label>
           <div fxFlex="70%">
-            <stf-textarea id="account-description" formControlName="description" color="white" initialHeight="150px">
-            </stf-textarea>
+            <pa-textarea id="account-description"
+                         formControlName="description"
+                         rows="4"></pa-textarea>
           </div>
         </div>
 
