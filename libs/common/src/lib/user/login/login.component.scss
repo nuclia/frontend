@@ -6,10 +6,6 @@
 
 .login_field {
   margin-bottom: rhythm(2);
-
-  &.username-field {
-    width: calc(100% - #{rhythm(6)});
-  }
 }
 
 .login_alert,

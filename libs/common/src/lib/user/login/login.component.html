@@ -10,7 +10,7 @@
               [method]="oauth ? 'POST' : null"
               [action]="oauth ? oAuthLoginUrl() : null"
               (ngSubmit)="login()">
-          <div class="login_field username-field">
+          <div class="login_field">
             <pa-input #email
                       formControlName="email"
                       required
