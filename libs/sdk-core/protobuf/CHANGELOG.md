@@ -1,3 +1,7 @@
+# 1.1.1 (2022-08-22)
+
+- Fix dirname resolution using `es-dirname`
+
 # 1.1.0 (2022-07-06)
 
 - Add `extractParagraphTexts` function

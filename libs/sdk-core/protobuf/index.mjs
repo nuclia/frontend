@@ -1,6 +1,6 @@
 import protobufjs from 'protobufjs';
-import { fileURLToPath } from 'url';
 import path from 'path';
+import dirname from 'es-dirname';
 
 let _Message;
 
@@ -10,10 +10,8 @@ export const NucliaProtobufConverter = (buffer) =>
       resolve(_Message.decode(buffer));
     } else {
       const root = new protobufjs.Root();
-      root.resolvePath = function (origin, target) {
-        const __filename = fileURLToPath(import.meta.url);
-        const __dirname = path.dirname(__filename);
-        return path.join(__dirname, target);
+      root.resolvePath = function (_origin, target) {
+        return path.join(dirname(), target);
       };
       root.load('nucliadb_protos/writer.proto', function (err) {
         if (err) {
