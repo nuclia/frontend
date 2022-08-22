@@ -12,7 +12,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SistemaLabelComponent } from './sistema-label/sistema-label.component';
 import { RouterModule } from '@angular/router';
 import {
@@ -28,8 +28,9 @@ import {
   SistemaToastComponent,
 } from './pastanaga-pages-override';
 import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
-import { BackButtonComponent, DropdownButtonComponent } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, PasswordInputModule } from '@nuclia/sistema';
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
+import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistem
     SistemaConfirmationDialogComponent,
     SistemaBackButtonComponent,
     SistemaDropdownButtonComponent,
+    SistemaPasswordInputComponent,
   ],
   imports: [
     CommonModule,
@@ -65,6 +67,8 @@ import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistem
 
     BackButtonComponent,
     DropdownButtonComponent,
+    PasswordInputModule,
+    ReactiveFormsModule,
   ],
 })
 export class SistemaPagesModule {}

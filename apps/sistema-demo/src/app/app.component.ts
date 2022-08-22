@@ -49,7 +49,12 @@ import {
   SistemaTableComponent,
   SistemaToastComponent,
 } from './sistema-pages/pastanaga-pages-override';
-import { SistemaBackButtonComponent, SistemaDropdownButtonComponent, SistemaLabelComponent } from './sistema-pages';
+import {
+  SistemaBackButtonComponent,
+  SistemaDropdownButtonComponent,
+  SistemaLabelComponent,
+  SistemaPasswordInputComponent,
+} from './sistema-pages';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -74,6 +79,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'back-button', title: 'Back button', type: SistemaBackButtonComponent },
       { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
+      { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
     ],
   },
   {
