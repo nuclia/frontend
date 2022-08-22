@@ -8406,6 +8406,11 @@ es-abstract@^1.18.5, es-abstract@^1.19.5:
     string.prototype.trimstart "^1.0.4"
     unbox-primitive "^1.0.1"
 
+es-dirname@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/es-dirname/-/es-dirname-0.1.0.tgz#cfc5cd40ac9cca61c9f4c83d13123e1114762b00"
+  integrity sha512-tcTj4pVFXe5EdiHCybjynDTlvkwuNN6JCg9+5BVB+n9qQoMyWOtxpREoL7rGO3sCIAX55Y6CYZi4s1c30uxvPg==
+
 es-module-lexer@^0.9.0:
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/es-module-lexer/-/es-module-lexer-0.9.3.tgz#6f13db00cc38417137daf74366f535c8eb438f19"
