@@ -16,7 +16,6 @@ import { STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
 import {
   STFExpanderModule,
   STFFormDirectivesModule,
-  STFInputModule,
   STFTextFieldModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
@@ -73,7 +72,6 @@ const Components = [
     MatTableModule,
     STFSectionNavbarModule,
     UserAvatarModule,
-    STFInputModule,
     STFTextFieldModule,
     STFFormDirectivesModule,
     STFTooltipModule,

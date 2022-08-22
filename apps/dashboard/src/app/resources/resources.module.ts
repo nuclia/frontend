@@ -15,7 +15,6 @@ import {
   STFExpanderModule,
   STFFormDirectivesModule,
   STFIconsModule,
-  STFInputModule,
   STFTextFieldModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
@@ -106,7 +105,6 @@ const ROUTES: Routes = [
     MatMenuModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    STFInputModule,
     STFTextFieldModule,
     STFExpanderModule,
     STFTooltipModule,

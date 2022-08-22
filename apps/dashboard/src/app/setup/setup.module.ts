@@ -10,7 +10,6 @@ import {
   STFButtonDirectivesModule,
   STFExpanderModule,
   STFFormDirectivesModule,
-  STFInputModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
 
@@ -41,7 +40,6 @@ const Components = [
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,
-    STFInputModule,
     STFExpanderModule,
     STFTooltipModule,
     STFFormDirectivesModule,

@@ -18,7 +18,6 @@ import { ProgressBarModule, STFSectionNavbarModule } from '@flaps/common';
 import {
   STFExpanderModule,
   STFFormDirectivesModule,
-  STFInputModule,
   STFTextFieldModule,
   STFTooltipModule,
 } from '@flaps/pastanaga';
@@ -71,7 +70,6 @@ const Components = [
     ProgressBarModule,
     STFSectionNavbarModule,
     UserAvatarModule,
-    STFInputModule,
     STFTextFieldModule,
     STFFormDirectivesModule,
     STFTooltipModule,
