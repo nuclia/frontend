@@ -38,19 +38,25 @@
   };
 
   const loadVideo = () => {
-    player = new (window as any).YT.Player(playerElement, {
-      width: 'auto',
-      height: 'auto',
-      videoId: getYoutubeId(uri),
-      playerVars: {
-        playsinline: 1,
-        modestbranding: 1,
-        rel: 0,
-      },
-      events: {
-        onReady: onPlayerReady,
-      },
-    });
+    const waitForPlayer = window.setInterval(() => {
+      const youtube = (window as any).YT;
+      if (youtube) {
+        player = new youtube.Player(playerElement, {
+          width: 'auto',
+          height: 'auto',
+          videoId: getYoutubeId(uri),
+          playerVars: {
+            playsinline: 1,
+            modestbranding: 1,
+            rel: 0,
+          },
+          events: {
+            onReady: onPlayerReady,
+          },
+        });
+        clearInterval(waitForPlayer);
+      }
+    }, 300);
   };
 </script>
 
