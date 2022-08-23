@@ -2,55 +2,47 @@
                     *ngIf="!error; else errorMessage">
   <stf-user-container-logo>
     <div class="login_content">
-      <div class="login_alert"
-           [class.small]="message.length > 24"
+      <div class="login_alert title-xxs"
            *ngIf="message">{{ message | translate }}</div>
       <div class="login_form">
         <form #form
               [formGroup]="loginForm"
-              (ngSubmit)="login()"
               [method]="oauth ? 'POST' : null"
-              [action]="oauth ? oAuthLoginUrl() : null">
+              [action]="oauth ? oAuthLoginUrl() : null"
+              (ngSubmit)="login()">
           <div class="login_field">
-            <stf-input #email
-                       formControlName="email"
-                       (enterPressed)="onEnterPressed('email')"
-                       [required]="true"
-                       type='text'
-                       theme="border"
-                       [noAutocapitalize]="true"
-                       [validator]="loginForm.controls['email']"
-                       [validation_messages]="loginValidationMessages.email"
-                       [name]="oauth ? 'username' : undefined"
-                       (focusOut)="checkSAML(email.value)">
+            <pa-input #email
+                      formControlName="email"
+                      required
+                      autocapitalize="off"
+                      name="username"
+                      [errorMessages]="loginValidationMessages.email"
+                      (enter)="onEnterPressed('email')"
+                      (blurring)="checkSAML(form.email.value)">
               {{ 'login.email' | translate }}
-            </stf-input>
+            </pa-input>
           </div>
           <div class="login_field">
-            <stf-password-input #password
-                                controlName="password"
-                                theme="border"
-                                (enterPressed)="onEnterPressed('password')"
-                                [validator]="loginForm.controls['password']"
-                                [validation_messages]="loginValidationMessages.password"
-                                [name]="oauth ? 'password' : undefined">
+            <nsi-password-input #password
+                                formControlName="password"
+                                name="password"
+                                [errorMessages]="loginValidationMessages.password">
               {{ 'login.password' | translate }}
-            </stf-password-input>
+            </nsi-password-input>
           </div>
           <input *ngIf="oauth"
                  type="hidden"
                  name="login_challenge"
                  [value]="loginChallenge">
-          <div class="login_policy">
+          <div class="login_policy body-xs">
             This site is protected by reCAPTCHA and the Google
             <a href="https://policies.google.com/privacy">Privacy Policy</a> and
             <a href="https://policies.google.com/terms">Terms of Service</a> apply.
           </div>
-          <div class="login_form_error"
+          <div class="login_form_error body-xs"
                *ngIf="formError"
                fxLayout="row">
-            <span class="login_form_error_icon"
-                  fxFlex="0 0 auto">!</span>
+            <pa-icon name="warning" size="small"></pa-icon>
             <div>
               <strong>{{ 'login.error.auth_error' | translate }} </strong>
               <span>{{ 'login.try_again' | translate }}</span>
@@ -64,14 +56,14 @@
           </div>
         </form>
       </div>
-      <div class="login_recover">
+      <div class="login_recover body-s">
         <span>{{ 'login.recover_help' | translate }} </span>
         <a href="javascript:;"
            (click)="recoverPassword($event)">{{ 'login.recover' | translate }}</a>
       </div>
       <div class="login_social"
            *ngIf="config.getSocialLogin()">
-        <div class="login_separator">
+        <div class="login_separator body-s">
           <span>{{ 'generic.or' | translate }}</span>
         </div>
         <div class="mb-16">

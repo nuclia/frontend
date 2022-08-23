@@ -14,6 +14,7 @@ import {
 } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
 import { SamePassword } from '../../validators/form.validator';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-profile',
@@ -50,7 +51,7 @@ export class ProfileComponent implements OnInit {
     },
     passwordConfirm: {
       passwordMismatch: 'validation.password_mismatch',
-    },
+    } as IErrorMessages,
   };
 
   get language() {
