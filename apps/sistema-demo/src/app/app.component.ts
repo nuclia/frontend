@@ -54,6 +54,7 @@ import {
   SistemaDropdownButtonComponent,
   SistemaLabelComponent,
   SistemaPasswordInputComponent,
+  SistemaSpinnerComponent,
 } from './sistema-pages';
 
 export const menu: IDemoMenuSection[] = [
@@ -80,6 +81,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'dropdown-button', title: 'Dropdown button', type: SistemaDropdownButtonComponent },
       { view: 'label', title: 'Label', type: SistemaLabelComponent },
       { view: 'password-input', title: 'Password input', type: SistemaPasswordInputComponent },
+      { view: 'spinner', title: 'Spinner', type: SistemaSpinnerComponent },
     ],
   },
   {

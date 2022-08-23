@@ -13,11 +13,7 @@ import { TokenDialogModule } from '../components/token-dialog/token-dialog.modul
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
 import { STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
-import {
-  STFExpanderModule,
-  STFFormDirectivesModule,
-  STFTooltipModule,
-} from '@flaps/pastanaga';
+import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { AccountComponent } from './account.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
@@ -43,7 +39,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { DropdownButtonComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 
 const Components = [
   AccountComponent,
@@ -90,6 +86,7 @@ const Components = [
     PaIconModule,
     DropdownButtonComponent,
     PaDropdownModule,
+    SisProgressModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],

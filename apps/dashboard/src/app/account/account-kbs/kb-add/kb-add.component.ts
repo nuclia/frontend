@@ -54,7 +54,8 @@ export class KbAddComponent {
       return last;
     }),
   );
-  loading = false;
+  saving = false;
+  creationInProgress = false;
   failures = 0;
   error = '';
 
@@ -87,14 +88,20 @@ export class KbAddComponent {
         this.kbForm.value.languageMode === 'multilingual' ? 'multilingual' : this.kbForm.value.selectedLanguage,
       anonymization: this.kbForm.value.useAnonymization === 'yes' ? 'multilingual' : '',
     };
-    this.loading = true;
+    this.saving = true;
+    const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.error = '';
     this.cdr?.markForCheck();
     this.sdk.nuclia.db.createKnowledgeBox(this.data.account.slug, payload).subscribe({
-      next: () => this.dialogRef.close({ success: true }),
+      next: () => {
+        clearTimeout(inProgressTimeout);
+        this.dialogRef.close({ success: true });
+      },
       error: () => {
+        clearTimeout(inProgressTimeout);
         this.failures += 1;
-        this.loading = false;
+        this.saving = false;
+        this.creationInProgress = false;
         if (this.failures < 4) {
           this.error = 'stash.create.error';
         } else {

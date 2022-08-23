@@ -403,6 +403,7 @@
 	"stash.create": "Crea una caixa de coneixement",
 	"stash.create.error": "Perdó, alguna cosa ha anat malament quan creavem la caixa de coneixement. Torneu-ho a intenta, sius plau",
 	"stash.create.failure": "Ho sento, alguna cosa definitivament no funciona en aquest moment. Si us plau, poseu-vos en contacte amb el vostre administrador.",
+	"stash.create.in_progress": "Creació de la caixa de coneixement en curs...",
 	"stash.create.zone_description": "Escull la zona i el proveïdor de processament que vols fer servir per aquesta caixa de coneixament. De forma predeterminada apareix la zona escollida a l’Account",
 	"stash.create_service_access": "Crea un nou Service Access",
 	"stash.delete.delete": "Eliminar caixa de coneixement?",

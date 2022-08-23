@@ -4,6 +4,7 @@
     <pa-button class="close-button"
                icon="cross"
                aspect="basic"
+               [disabled]="saving"
                (click)="close()">{{'generic.close' | translate}}</pa-button>
   </header>
 
@@ -66,13 +67,22 @@
 
     <div *ngIf="step === 2 && (hasAnonymization | async)"
          class="modal-body">
-      <h2>{{ 'stash.create.anonymization' | translate }}</h2>
-      <p>{{ 'stash.create.anonymization-help' | translate }}</p>
-      <pa-radio-group name="radio-group-anonymization"
-                      formControlName="useAnonymization">
-        <pa-radio *ngFor="let radio of anonymizationOptions"
-                  [value]="radio.value">{{radio.label | translate}}</pa-radio>
-      </pa-radio-group>
+      <ng-container *ngIf="!creationInProgress">
+        <h2>{{ 'stash.create.anonymization' | translate }}</h2>
+        <p>{{ 'stash.create.anonymization-help' | translate }}</p>
+        <pa-radio-group name="radio-group-anonymization"
+                        formControlName="useAnonymization">
+          <pa-radio *ngFor="let radio of anonymizationOptions"
+                    [value]="radio.value"
+                    [disabled]="saving"
+          >{{radio.label | translate}}</pa-radio>
+        </pa-radio-group>
+      </ng-container>
+      <div *ngIf="creationInProgress"
+           class="saving-spinner">
+        <nsi-spinner size="large"></nsi-spinner>
+        <p>{{'stash.create.in_progress' | translate}}</p>
+      </div>
     </div>
 
     <footer>
@@ -82,6 +92,7 @@
       <div class="footer-buttons">
         <pa-button *ngIf="step > 0"
                    aspect="basic"
+                   [disabled]="saving"
                    (click)="back()">
           {{ 'generic.back' | translate }}
         </pa-button>
@@ -89,7 +100,7 @@
         <pa-button *ngIf="step === (lastStep | async)"
                    type="submit"
                    kind="primary"
-                   [disabled]="loading">
+                   [disabled]="saving">
           {{ 'generic.save' | translate }}
         </pa-button>
 

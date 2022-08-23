@@ -69,4 +69,12 @@
     gap: rhythm(2);
     margin-top: rhythm(3);
   }
+
+  .saving-spinner {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: rhythm(2);
+  }
 }

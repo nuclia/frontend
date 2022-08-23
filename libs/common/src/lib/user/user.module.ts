@@ -31,7 +31,7 @@ import { UserContainerComponent } from './user-container/user-container.componen
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import { UserErrorComponent } from './user-error/user-error.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
-import { NsiPasswordInputModule } from '@nuclia/sistema';
+import { SisPasswordInputModule } from '@nuclia/sistema';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -116,7 +116,7 @@ export const userRoutes: Routes = [
     PaTogglesModule,
     PaTextFieldModule,
 
-    NsiPasswordInputModule,
+    SisPasswordInputModule,
   ],
   exports: [RouterModule],
 })

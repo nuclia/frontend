@@ -474,6 +474,7 @@
 	"stash.create.anonymization-warning": "Anonymization will only affect the new data that is entered.",
 	"stash.create.error": "Sorry, something went wrong when creating the knowledge box. Please try again.",
 	"stash.create.failure": "So sorry, something is definitely wrong at the moment. Please, contact your administrator.",
+	"stash.create.in_progress": "Knowledge box creation in progress…",
 	"stash.create.language.mono": "One language",
 	"stash.create.language.mono-help": "Choose the language of the documentation in this knowlegde box",
 	"stash.create.language.multi": "Multilingual",

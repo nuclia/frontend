@@ -11,7 +11,7 @@ import { LoginComponent } from './login.component';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { NsiPasswordInputModule } from '@nuclia/sistema';
+import { SisPasswordInputModule } from '@nuclia/sistema';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -26,7 +26,7 @@ describe('LoginComponent', () => {
         PaButtonModule,
         AngularSvgIconModule,
         PaTextFieldModule,
-        NsiPasswordInputModule,
+        SisPasswordInputModule,
       ],
       providers: [
         { provide: SAMLService, useValue: { checkDomain: () => of() } },
