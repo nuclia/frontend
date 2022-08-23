@@ -6,7 +6,7 @@
 </script>
 
 <script lang="ts">
-  import Paragraph from './Paragraph.svelte';
+  import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import { getCDN } from '../../core/utils';
   import type { Classification }  from '@nuclia/core'
   
@@ -25,7 +25,7 @@
   };
 </script>
 
-<Paragraph labels={labels}>
+<ParagraphWithMenu labels={labels} on:labelsChange>
   <div slot="icon" class="icon" class:active={active || hover} on:mouseenter={enter} on:mouseleave={leave} on:click>
     {#if active || hover}
       <img src={`${getCDN()}icons/${icon}.svg`} alt="Expand" />
@@ -35,7 +35,7 @@
   <span class="text" slot="content" class:active={active || hover} on:mouseenter={enter} on:mouseleave={leave} on:click>
     {text}
   </span>
-</Paragraph>
+</ParagraphWithMenu>
 
 <style>
   .icon {

@@ -8,6 +8,7 @@ import type {
   CloudLink,
   ResourceData,
   Sentence,
+  Classification,
 } from '@nuclia/core';
 import {
   Observable,
@@ -21,6 +22,8 @@ import {
   distinctUntilChanged,
   of,
   tap,
+  take,
+  shareReplay,
 } from 'rxjs';
 import type {
   PdfPreviewParams,
@@ -39,7 +42,6 @@ const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 export const viewerStore: {
   resource: BehaviorSubject<Resource | null>;
   query: BehaviorSubject<string>;
-  paragraphs: BehaviorSubject<WidgetParagraph[]>;
   results: BehaviorSubject<WidgetParagraph[] | null>;
   hasSearchError: BehaviorSubject<boolean>;
   showPreview: BehaviorSubject<boolean>;
@@ -48,11 +50,12 @@ export const viewerStore: {
   setPage: Subject<number>;
   linkPreview: BehaviorSubject<LinkPreviewParams | null>;
   order: Subject<SearchOrder>;
+  savingLabels: BehaviorSubject<boolean>;
+  updatedLabels: Subject<{ [key: string]: Classification[] }>;
   init: () => void;
 } = {
   resource: new BehaviorSubject(null),
   query: new BehaviorSubject(''),
-  paragraphs: new BehaviorSubject([]),
   results: new BehaviorSubject(null),
   hasSearchError: new BehaviorSubject<boolean>(false),
   showPreview: new BehaviorSubject(false),
@@ -61,6 +64,8 @@ export const viewerStore: {
   setPage: new Subject(),
   linkPreview: new BehaviorSubject(null),
   order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
+  savingLabels: new BehaviorSubject<boolean>(false),
+  updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
   init: initStore,
 };
 
@@ -70,10 +75,11 @@ export const viewerState = {
     map((q) => q.trim()),
     distinctUntilChanged(),
   ),
-  paragraphs: viewerStore.paragraphs.asObservable(),
+  paragraphs: viewerStore.resource.pipe(map((resource) => (resource ? getResourceParagraphs(resource) : []))),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
+  savingLabels: viewerStore.savingLabels.asObservable(),
   searchReady: viewerStore.resource.pipe(
     filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0),
   ),
@@ -100,18 +106,37 @@ export const viewerState = {
 
 export const selectedParagraphIndex = combineLatest([
   viewerStore.resource,
-  merge(viewerState.results, viewerStore.paragraphs),
+  merge(viewerState.results, viewerState.paragraphs),
   viewerStore.selectedParagraph,
 ]).pipe(
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
     return (paragraphs || []).findIndex((result) => {
-      const field = getField(resource!, selected?.fieldType, selected!.fieldId);
+      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
       const text = field && getParagraphText(field, selected!.paragraph);
       return result.text === text;
     });
   }),
 );
+
+const _paragraphLabels = viewerState.paragraphs.pipe(
+  switchMap((paragraphs) =>
+    viewerStore.resource.pipe(
+      take(1),
+      map((resource) => ({ resource, paragraphs })),
+    ),
+  ),
+  map(({ resource, paragraphs }) =>
+    paragraphs
+      .filter((paragraph) => (paragraph.paragraph.classifications || []).length > 0)
+      .reduce((acc, paragraph) => {
+        acc[getParagraphId(resource!.id, paragraph)] = paragraph.paragraph.classifications || [];
+        return acc;
+      }, {} as { [key: string]: Classification[] }),
+  ),
+);
+
+export const paragraphLabels = merge(_paragraphLabels, viewerStore.updatedLabels).pipe(shareReplay(1));
 
 export const pdfUrl = combineLatest([
   viewerStore.resource,
@@ -424,6 +449,12 @@ export function findFileByType(resource: Resource, type: string): string | undef
   return url ? url : undefined;
 }
 
+export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
+  const type = paragraph.fieldType.slice(0, -1);
+  const typeABBR = type === 'link' ? 'u' : type[0];
+  return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
+};
+
 function isFileType(fileField: FileFieldData, type: string): boolean {
   const contentType = fileField.extracted?.file?.icon || '';
   return contentType === type || contentType.slice(0, type.length) === type;
@@ -469,6 +500,5 @@ function findParagraphFromSearchSentence(
 }
 
 function normalizeSearchParagraphText(text: string) {
-  return text.replace(/<mark>/g,'').replace(/<\/mark>/g, '');
+  return text.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
 }
-

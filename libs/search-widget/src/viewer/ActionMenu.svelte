@@ -2,6 +2,7 @@
   import type { WidgetAction } from '../core/models';
   import { getWidgetActions } from '../core/store';
   import { getCDN } from '../core/utils';
+  import {clickOutside } from '../components/actions/actions';
 
   export let uid: string;
 
@@ -10,6 +11,9 @@
   const toggleMenu = () => {
     displayMenu = !displayMenu;
   };
+  const closeMenu = () => {
+    displayMenu = false;
+  };
   const clickMenu = (item: WidgetAction) => {
     displayMenu = false;
     item.action(uid);
@@ -17,7 +21,7 @@
 </script>
 
 {#if actions.length > 0}
-  <div>
+  <div use:clickOutside on:outclick={closeMenu}>
     <button on:click|preventDefault={toggleMenu}>
       <img src={`${getCDN()}icons/more-vertical.svg`} alt="more" >
     </button>

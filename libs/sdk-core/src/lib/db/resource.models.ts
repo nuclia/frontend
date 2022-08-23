@@ -31,6 +31,7 @@ export interface ICreateResource {
   icon?: string;
   metadata?: Metadata;
   usermetadata?: UserMetadata;
+  fieldmetadata?: UserFieldMetadata[];
   origin?: Origin;
   files?: { [key: string]: FileField };
   links?: { [key: string]: LinkField };
@@ -222,6 +223,16 @@ export interface FieldMetadata {
   thumbnail?: CloudLink;
   language?: string;
   summary?: string;
+}
+
+export interface UserFieldMetadata {
+  field: { field: string, field_type: string }
+  paragraphs?: ParagraphAnnotation[]
+}
+
+export interface ParagraphAnnotation {
+  classifications: Classification[];
+  key: string;
 }
 
 export class KeywordSetFieldData implements IFieldData {

@@ -6,7 +6,6 @@
   import {
     findFileByType,
     search,
-    getResourceParagraphs,
     selectParagraph,
     viewerStore,
     viewerState,
@@ -50,9 +49,6 @@
   const subscriptions = [
     nucliaState().displayedResource.subscribe(() => {
       viewerStore.init();
-    }),
-    viewerState.searchReady.subscribe(() => {
-      viewerStore.paragraphs.next(getResourceParagraphs(resource));
     }),
     viewerState.searchReady
       .pipe(
