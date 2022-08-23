@@ -28,7 +28,7 @@ import {
   SistemaToastComponent,
 } from './pastanaga-pages-override';
 import { SistemaBackButtonComponent } from './sistema-back-button/sistema-back-button.component';
-import { BackButtonComponent, DropdownButtonComponent, NsiPasswordInputModule } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, SisPasswordInputModule } from '@nuclia/sistema';
 import { SistemaDropdownButtonComponent } from './sistema-dropdown-button/sistema-dropdown-button.component';
 import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-password-input.component';
 
@@ -67,7 +67,7 @@ import { SistemaPasswordInputComponent } from './sistema-password-input/sistema-
 
     BackButtonComponent,
     DropdownButtonComponent,
-    NsiPasswordInputModule,
+    SisPasswordInputModule,
     ReactiveFormsModule,
   ],
 })
