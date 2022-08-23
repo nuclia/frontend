@@ -1,7 +1,6 @@
 <svelte:options tag="nuclia-search" />
 
 <script lang="ts">
-  import ButtonWidget from './widgets/ButtonWidget.svelte';
   import InputWidget from './widgets/InputWidget.svelte';
   import FormWidget from './widgets/FormWidget.svelte';
   import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
@@ -9,7 +8,7 @@
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
-  import { loadModel, predict } from './core/tensor';
+  import { predict } from './core/tensor';
   import { setCDN, formatQueryKey, updateQueryParams, coerceBooleanProperty } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -21,7 +20,7 @@
   export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
-  export let type = 'button'; // button, input, form
+  export let type = 'input'; // input, form
   export let placeholder = '';
   export let lang = '';
   export let cdn;
@@ -151,9 +150,7 @@
 
 <div class="nuclia-widget" style={$style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    {#if type === 'button'}
-      <ButtonWidget />
-    {:else if type === 'input'}
+    {#if type === 'input'}
       <InputWidget placeholder="{placeholder}" />
     {:else if type === 'form'}
       <FormWidget placeholder="{placeholder}" />

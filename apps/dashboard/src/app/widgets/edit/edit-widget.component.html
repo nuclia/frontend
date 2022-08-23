@@ -25,14 +25,12 @@
             </div>
             <div *ngIf="currentTab === 'pref'" class="tab-content">
               <pa-select [label]="'stash.widgets.mode' | translate" formControlName="mode">
-                <pa-option value="button">{{ 'stash.widgets.mode.button' | translate }}</pa-option>
                 <pa-option value="input">{{ 'stash.widgets.mode.input' | translate }}</pa-option>
                 <pa-option value="form">{{ 'stash.widgets.mode.form' | translate }}</pa-option>
               </pa-select>
               <div formGroupName="features">
-                <pa-toggle *ngIf="isTrainingEnabled | async" formControlName="suggestLabels">{{
-                  'stash.widgets.suggestLabels' | translate
-                }}</pa-toggle>
+                <pa-toggle *ngIf="isTrainingEnabled | async" formControlName="suggestLabels">
+                  {{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
                 <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
               </div>
               <div *ngIf="mainForm.controls.mode.value === 'form'">

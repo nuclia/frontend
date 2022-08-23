@@ -14,7 +14,7 @@
     font-weight: var(--stf-font-weight-bold);
     span {
       font-weight: var(--stf-font-weight-light);
-      padding-left: 20px;
+      padding-left: rhythm(3);
     }
   }
 
@@ -25,9 +25,6 @@
     & > div {
       margin-bottom: rhythm(3);
       display: flex;
-      & > div {
-        width: 333px;
-      }
     }
   }
   .label {
@@ -80,6 +77,16 @@ pre {
     font-size: size(l);
     width: 50%;
     display: inline-block;
+  }
+
+  > * {
+    display: block;
+    margin-bottom: rhythm(2);
+  }
+
+  pa-toggle {
+    display: block;
+    margin-bottom: rhythm(1);
   }
 }
 .buttons {

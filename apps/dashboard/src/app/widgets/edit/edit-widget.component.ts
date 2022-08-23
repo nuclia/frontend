@@ -33,7 +33,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   });
   styleFormFields = Object.keys(this.styleForm.controls);
   mainForm = this.fb.group({
-    mode: ['button'],
+    mode: ['input'],
     features: this.fb.group({
       suggestLabels: [false],
       editLabels: [false],

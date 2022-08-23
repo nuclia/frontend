@@ -30,38 +30,29 @@
   });
 </script>
 
-{#if selected === 'input'}
-  <nav>
-    <NucliaWidget
-      bind:this={widget}
-      zone="europe-1"
-      knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-      cdn="/"
-      widgetid="test1"
-      type="input"
-      permalink
-      placeholder="Test"
-    />
-  </nav>
-{/if}
-
 <main>
   <h1>Welcome to Nuclia</h1>
   <select bind:value={selected}>
     <option value="input">Input</option>
-    <option value="button">Button</option>
     <option value="form">Form</option>
   </select>
   <button on:click={() => setLang('en')}>English</button>
   <button on:click={() => setLang('es')}>Español</button>
-  {#if selected === 'button'}
-    <h2>Button widget</h2>
-    <NucliaWidget
-      zone="europe-1"
-      knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-      cdn="/"
-      widgetid="test1"
-    />
+  {#if selected === 'input'}
+    <h2>Input widget</h2>
+    <div class="input-container">
+      <NucliaWidget
+        bind:this={widget}
+        zone="europe-1"
+        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+        backend="https://stashify.cloud/api"
+        cdn="/"
+        widgetid="test1"
+        type="input"
+        permalink
+        placeholder="Test"
+      />
+    </div>
   {/if}
   {#if selected === 'form'}
     <h2>Form widget</h2>
@@ -89,10 +80,7 @@
   } */
 
   @media (min-width: 640px) {
-    nav {
-      position: fixed;
-      top: 0;
-      right: 250px;
+    .input-container {
       width: 300px;
     }
     main {

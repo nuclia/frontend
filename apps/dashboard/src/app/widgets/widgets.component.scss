@@ -1,3 +1,5 @@
+@import "variables";
+
 .widgets-sections {
   display: block;
   width: 770px;
@@ -6,16 +8,17 @@
 }
 
 .warning {
-  margin-top: 50px;
-  color: var(--stf-orange);
+  background: $color-secondary-regular;
+  display: flex;
+  gap: rhythm(1);
+  margin-top: rhythm(6);
+  padding: rhythm(1);
+
   @media (max-width: 1279px) {
     display: none;
   }
   a {
     color: inherit;
     text-decoration: underline;
-  }
-  ::ng-deep strong {
-    font-weight: var(--stf-font-weight-semibold);
   }
 }
