@@ -36,8 +36,8 @@
   <section class="configuration">
     <label for="widget-select">Select the widget to demo:</label>
     <select id="widget-select" bind:value={selected}>
-      <option value="input">Input</option>
-      <option value="form">Embedded</option>
+      <option value="input">Popup search</option>
+      <option value="form">Embedded search</option>
       <option value="two-widgets">Search bar and result widgets</option>
     </select>
     <button on:click={() => setLang('en')}>English</button>
@@ -51,7 +51,6 @@
       <NucliaWidget bind:this={widget}
                     zone="europe-1"
                     knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-                    backend="https://stashify.cloud/api"
                     cdn="/"
                     widgetid="demo-input"
                     type="input"
@@ -64,7 +63,6 @@
     <h2>Embedded widget <small>(formerly known as form widget)</small></h2>
     <NucliaWidget zone="europe-1"
                   knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-                  backend="https://stashify.cloud/api"
                   cdn="/"
                   widgetid="demo-form"
                   type="form"
@@ -76,8 +74,7 @@
     <h2>Two widgets: search bar and search results</h2>
     <div class="two-widgets-container">
       <NucliaSearchBar zone="europe-1"
-                       knowledgebox="f694f1a4-d3f2-42f7-8642-b027bb9e54fe"
-                       backend="https://stashify.cloud/api"
+                       knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
                        cdn="/"
                        widgetid="demo-search-bar"
                        placeholder="Search"/>
@@ -113,10 +110,6 @@
 
     main {
       max-width: none;
-    }
-
-    .two-widgets-container {
-      flex-direction: row;
     }
   }
 </style>

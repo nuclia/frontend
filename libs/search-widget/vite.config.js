@@ -16,9 +16,9 @@ export default defineConfig({
     svelte({
       include: ['libs/search-widget/src/**/*.svelte'],
       exclude: [
-        'libs/search-widget/src/widget.svelte',
-        'libs/search-widget/src/search-bar.svelte',
-        'libs/search-widget/src/search-results.svelte',
+        'libs/search-widget/src/Widget.svelte',
+        'libs/search-widget/src/SearchBar.svelte',
+        'libs/search-widget/src/SearchResults.svelte',
       ],
       preprocess: sveltePreprocess(),
       compilerOptions: {
@@ -27,9 +27,9 @@ export default defineConfig({
     }),
     svelte({
       include: [
-        'libs/search-widget/src/widget.svelte',
-        'libs/search-widget/src/search-bar.svelte',
-        'libs/search-widget/src/search-results.svelte',
+        'libs/search-widget/src/Widget.svelte',
+        'libs/search-widget/src/SearchBar.svelte',
+        'libs/search-widget/src/SearchResults.svelte',
       ],
       preprocess: sveltePreprocess(),
       compilerOptions: {

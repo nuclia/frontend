@@ -1,1 +1,1 @@
-export * from './widget.svelte';
+export * from './Widget.svelte';

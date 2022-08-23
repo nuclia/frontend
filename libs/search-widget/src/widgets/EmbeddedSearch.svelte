@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { merge, mapTo, map } from 'rxjs';
+  import { merge, map } from 'rxjs';
   import Toggle from '../components/toggle/toggle.svelte';
   import { nucliaState, nucliaStore } from '../core/store';
   import Results from './results/Results.svelte';
@@ -12,7 +12,7 @@
 
   const results = nucliaState().results;
   const showResults = merge(
-    nucliaStore().triggerSearch.pipe(mapTo(true)),
+    nucliaStore().triggerSearch.pipe(map(() => true)),
     nucliaState().results.pipe(map((results) => results.length > 0)),
   );
   const onChange = (checked: boolean) =>

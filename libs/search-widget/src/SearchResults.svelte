@@ -2,18 +2,23 @@
 
 <script lang="ts">
   import type { Resource } from '@nuclia/core';
-  import { nucliaState } from './core/store';
-  import { Observable } from 'rxjs';
+  import { nucliaState, nucliaStore } from './core/store';
+  import { map, merge, Observable } from 'rxjs';
   import Results from './widgets/results/Results.svelte';
 
 
   let resource: Observable<Resource>;
   const results = nucliaState().results;
+  const showResults = merge(
+    nucliaStore().triggerSearch.pipe(map(() => true)),
+  );
 
 </script>
 
 <div class="nuclia-widget nuclia-search-results" data-version="__NUCLIA_DEV_VERSION__">
-  <Results results={$results} searchResultsWidget={true}/>
+  {#if $showResults}
+    <Results results={$results} searchResultsWidget={true}/>
+  {/if}
 </div>
 
 <style>

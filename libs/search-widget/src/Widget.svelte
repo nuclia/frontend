@@ -1,8 +1,8 @@
 <svelte:options tag="nuclia-search" />
 
 <script lang="ts">
-  import InputWidget from './widgets/InputWidget.svelte';
-  import FormWidget from './widgets/FormWidget.svelte';
+  import PopupSearch from './widgets/PopupSearch.svelte';
+  import EmbeddedSearch from './widgets/EmbeddedSearch.svelte';
   import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
   import { getResource, initNuclia, resetNuclia, search, suggest } from './core/api';
   import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
@@ -151,9 +151,9 @@
 <div class="nuclia-widget" style={$style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
-      <InputWidget placeholder="{placeholder}" />
+      <PopupSearch placeholder="{placeholder}" />
     {:else if type === 'form'}
-      <FormWidget placeholder="{placeholder}" />
+      <EmbeddedSearch placeholder="{placeholder}" />
     {:else}
       {type} widget is not implemented yet
     {/if}
