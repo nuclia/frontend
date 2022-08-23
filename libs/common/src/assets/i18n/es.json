@@ -403,6 +403,7 @@
 	"stash.create": "Crea una caja de conocimiento",
 	"stash.create.error": "Perdon, alguna cosa pasó mal cuando creabamos la caja de conocimiento. Por favor vuelve a intentarlo.",
 	"stash.create.failure": "Lo siento, definitivamente algo anda mal en este momento. Por favor, póngase en contacto con su administrador.",
+	"stash.create.in_progress": "Creación de cuadro de conocimiento en curso...",
 	"stash.create.zone_description": "Elige la zona y el proveedor de procesamiento que quieres utilizar para esta caja de conocimiento. De forma predeterminada aparece la zona escogida en el Account",
 	"stash.create_service_access": "Crea un nuevo Service Access",
 	"stash.delete.delete": "¿Eliminar caja de conocimiento?",

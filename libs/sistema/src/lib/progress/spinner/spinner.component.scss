@@ -1,0 +1,212 @@
+@import "variables";
+
+$inner-size-small: rhythm(4);
+$inner-size-medium: rhythm(6);
+$inner-size-large: rhythm(12);
+
+@function size-container($inner-size) {
+  @return $inner-size * 2;
+}
+
+:host {
+  display: block;
+}
+
+.spinner-wrapper {
+  display: block;
+  position: relative;
+  width: 100%;
+  min-height: size-container($inner-size-medium);
+  height: size-container($inner-size-medium);
+
+  .spinner {
+    position: absolute;
+    overflow: hidden;
+    left: 50%;
+    margin-left: - $inner-size-medium;
+    animation: outer-rotate 2.91667s linear infinite;
+
+    .inner {
+      width: size-container($inner-size-medium);
+      height: size-container($inner-size-medium);
+      position: relative;
+      animation: sporadic-rotate 5.25s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+
+      .gap {
+        position: absolute;
+        left: $inner-size-medium;
+        right: $inner-size-medium;
+        top: 0;
+        bottom: 0;
+        border-top: rhythm(1.5) solid;
+        box-sizing: border-box;
+      }
+
+      .left,
+      .right {
+        position: absolute;
+        top: 0;
+        height: size-container($inner-size-medium);
+        width: $inner-size-medium;
+        overflow: hidden;
+
+        .half-circle {
+          position: absolute;
+          top: 0;
+          width: size-container($inner-size-medium);
+          height: size-container($inner-size-medium);
+          box-sizing: border-box;
+          border: rhythm(1.5) solid $color-primary-regular;
+          border-bottom-color: transparent;
+          border-radius: 50%;
+        }
+      }
+
+      .left {
+        left: 0;
+
+        .half-circle {
+          left: 0;
+          border-right-color: transparent;
+          animation: left-wobble 1.3125s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+          -webkit-animation: left-wobble 1.3125s cubic-bezier(0.35, 0, 0.25, 1)
+          infinite;
+        }
+      }
+
+      .right {
+        right: 0;
+
+        .half-circle {
+          right: 0;
+          border-left-color: transparent;
+          animation: right-wobble 1.3125s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+          -webkit-animation: right-wobble 1.3125s cubic-bezier(0.35, 0, 0.25, 1)
+          infinite;
+        }
+      }
+    }
+  }
+}
+
+.spinner-wrapper.small {
+  min-height: size-container($inner-size-small);
+  height: size-container($inner-size-small);
+
+  .spinner {
+    margin-left: - $inner-size-small;
+
+    .inner {
+      width: size-container($inner-size-small);
+      height: size-container($inner-size-small);
+
+      .gap {
+        left: $inner-size-small;
+        right: $inner-size-small;
+        border-top: rhythm(1) solid;
+      }
+
+      .left,
+      .right {
+        height: size-container($inner-size-small);
+        width: $inner-size-small;
+
+        .half-circle {
+          width: size-container($inner-size-small);
+          height: size-container($inner-size-small);
+          border-width: rhythm(1);
+        }
+      }
+    }
+  }
+}
+
+.spinner-wrapper.large {
+  min-height: size-container($inner-size-large);
+  height: size-container($inner-size-large);
+
+  .spinner {
+    margin-left: - $inner-size-large;
+
+    .inner {
+      width: size-container($inner-size-large);
+      height: size-container($inner-size-large);
+
+      .gap {
+        left: $inner-size-large;
+        right: $inner-size-large;
+        border-top: rhythm(2) solid;
+      }
+
+      .left,
+      .right {
+        height: size-container($inner-size-large);
+        width: $inner-size-large;
+
+        .half-circle {
+          width: size-container($inner-size-large);
+          height: size-container($inner-size-large);
+          border-width: rhythm(2);
+        }
+      }
+    }
+  }
+}
+
+
+
+@keyframes outer-rotate {
+  0% {
+    transform: rotate(0deg) scale(0.5);
+  }
+  100% {
+    transform: rotate(360deg) scale(0.5);
+  }
+}
+
+@keyframes left-wobble {
+  0%,
+  100% {
+    transform: rotate(130deg);
+  }
+  50% {
+    transform: rotate(-5deg);
+  }
+}
+
+@keyframes right-wobble {
+  0%,
+  100% {
+    transform: rotate(-130deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes sporadic-rotate {
+  12.5% {
+    transform: rotate(135deg);
+  }
+  25% {
+    transform: rotate(270deg);
+  }
+  37.5% {
+    transform: rotate(405deg);
+  }
+  50% {
+    transform: rotate(540deg);
+  }
+  62.5% {
+    transform: rotate(675deg);
+  }
+  75% {
+    transform: rotate(810deg);
+  }
+  87.5% {
+    transform: rotate(945deg);
+  }
+  100% {
+    transform: rotate(1080deg);
+  }
+}
