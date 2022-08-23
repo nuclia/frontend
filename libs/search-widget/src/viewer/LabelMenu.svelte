@@ -16,9 +16,9 @@
   const savingLabels = viewerStore.savingLabels;
   let selected: { [key: string]: boolean } = {};
   $: selected = labels.reduce((acc, current) => {
-        acc[`${current.labelset}-${current.label}`] = true;
-        return acc;
-      }, {} as { [key: string]: boolean });
+    acc[`${current.labelset}-${current.label}`] = true;
+    return acc;
+  }, {} as { [key: string]: boolean });
 
   const labelsSets = nucliaState().labels.pipe(
     map((labels) =>
