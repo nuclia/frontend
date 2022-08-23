@@ -175,72 +175,9 @@
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap');
+  @import "css-variables.css";
+
   .nuclia-widget {
-    --color-dark-stronger: var(--custom-color-dark-stronger, hsl(0, 0%, 5%));
-    --color-light-stronger: var(--custom-color-light-stronger, #fff);
-
-    --color-neutral-strong: var(--custom-color-neutral-strong, hsl(0, 0%, 44%));
-    --color-neutral-regular: var(--custom-color-neutral-regular, hsl(0, 0%, 77%));
-    --color-neutral-light: var(--custom-color-neutral-light, hsl(0, 0%, 90%));
-    --color-neutral-lighter: var(--custom-color-neutral-lighter, hsl(0, 0%, 94%));
-    --color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(240, 7%, 97%));
-
-    --color-primary-stronger: var(--custom-color-primary-stronger, hsl(336, 100%, 24%));
-    --color-primary-strong: var(--custom-color-primary-strong, hsl(336, 100%, 36%));
-    --color-primary-regular: var(--custom-color-primary-regular, hsl(336, 100%, 50%));
-    --color-primary-light: var(--custom-color-primary-light, hsl(336, 100%, 73%));
-    --color-primary-lighter: var(--custom-color-primary-lighter, hsl(336, 100%, 90%));
-    --color-primary-lightest: var(--custom-color-primary-lightest, hsl(336, 100%, 96%));
-
-    --color-secondary-stronger: var(--custom-color-secondary-stronger, hsl(51, 78%, 32%));
-    --color-secondary-strong: var(--custom-color-secondary-strong, hsl(51, 100%, 41%));
-    --color-secondary-regular: var(--custom-color-secondary-regular, hsl(51, 100%, 55%));
-    --color-secondary-light: var(--custom-color-secondary-light, hsl(51, 100%, 75%));
-    --color-secondary-lighter: var(--custom-color-secondary-lighter, hsl(51, 100%, 86%));
-    --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
-    --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
-
-    --font-size-base: var(--custom-font-size-base, 16px);
-    --font-weight-body: var(--custom-font-weight-body, 300);
-    --font-weight-semi-bold: var(--custom-font-weight-semi-bold, 500);
-    --font-weight-bold: var(--custom-font-weight-semi-bold, 700);
-    --line-height-body: calc(var(--font-size-base) * 1.25);
-    --font-family-body: 'Source Sans Pro', sans-serif;
-    --border-radius: var(--custom-border-radius, 2px);
-
-    --z-index-modal: var(--custom-z-index-modal, 10010);
-    --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
-
-    --shadow-modal: 2px 2px 20px rgba(var(--color-dark-stronger), 0.2);
-
-    --color-scrollbar-track: var(--custom-color-scrollbar-track, var(--color-light-stronger));
-    --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, var(--color-dark-stronger));
-
-    --focus-shadow: var(--custom-focus-shadow, 0 0 0 2px var(--color-primary-lighter));
-
-    --default-search-input-padding: 4px 40px 4px 4px;
-
-    --form-widget-padding: var(--custom-form-widget-padding, var(--default-search-input-padding));
-    --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
-    --form-widget-border-style: var(--custom-form-widget-border-style, solid);
-    --form-widget-border-style-stronger: var(--custom-form-widget-border-style-stronger, solid);
-    --form-widget-border-color: var(--custom-form-widget-border-color, var(--color-neutral-strong));
-    --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
-    --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-neutral-strong);
-
-    --input-widget-padding: var(--custom-input-widget-padding, var(--default-search-input-padding));
-    --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
-    --input-widget-border-style: var(--custom-input-widget-border-style, solid);
-    --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
-    --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-dark-stronger));
-    --input-widget-border-radius: var(--custom-input-widget-border-radius, 0);
-    --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, transparent);
-
-    --resource-modal-width: var(--custom-resource-modal-width, calc(100vw - 10px));
-    --resource-modal-width-md: var(--custom-resource-modal-width-md, 80vw);
-    --resource-modal-height: var(--custom-resource-modal-height, calc(100vh - 120px));
-    --resource-modal-height-md: var(--custom-resource-modal-height-md, 85vh);
-
     color: var(--color-dark-stronger);
     font-family: var(--font-family-body);
     font-size: var(--font-size-base);

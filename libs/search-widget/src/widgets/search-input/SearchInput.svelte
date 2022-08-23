@@ -6,11 +6,13 @@
   import SearchIcon from '../../components/icons/search.svelte';
   import { nucliaState, nucliaStore } from '../../core/store';
   import Spinner from '../../components/spinner/Spinner.svelte';
+
   export let inputWidget = false;
   export let formWidget = false;
+  export let searchBarWidget = false;
   export let placeholder = '';
 
-  const defaultPlaceholder = 'input.placeholder'
+  const defaultPlaceholder = 'input.placeholder';
 
   let value = '';
   let previous = '';
@@ -57,36 +59,38 @@
   };
 </script>
 
-<form role="search" autocomplete="off" class="search-input" class:form-widget-container={formWidget}>
-  <input
-    bind:this={element}
-    class="search-field"
-    class:input-widget={inputWidget}
-    class:form-widget={formWidget}
-    name="nuclia-search-field"
-    placeholder={$_(placeholder || defaultPlaceholder)}
-    tabindex="0"
-    autocomplete="off"
-    autocorrect="off"
-    autofill="off"
-    autocapitalize="off"
-    spellcheck="false"
-    aria-label="Search input"
-    bind:value
-    on:input
-    on:keyup
-    on:change
-    on:keypress={onEnter}
-    on:keydown
+<form role="search"
+      autocomplete="off"
+      class="search-input"
+      class:form-widget-container={formWidget || searchBarWidget}>
+  <input bind:this={element}
+         class="search-field"
+         class:input-widget={inputWidget}
+         class:form-widget={formWidget}
+         class:search-bar-widget={searchBarWidget}
+         name="nuclia-search-field"
+         placeholder={$_(placeholder || defaultPlaceholder)}
+         tabindex="0"
+         autocomplete="off"
+         autocorrect="off"
+         autofill="off"
+         autocapitalize="off"
+         spellcheck="false"
+         aria-label="Search input"
+         bind:value
+         on:input
+         on:keyup
+         on:change
+         on:keypress={onEnter}
+         on:keydown
   />
-  {#if inputWidget || formWidget}
+  {#if inputWidget || formWidget || searchBarWidget}
     <div class="search-icon">
       {#if $isPending}
-        <Spinner small />
+        <Spinner small/>
       {:else}
-        <SearchIcon
-          on:click={search}
-          on:keyup={(e) => {
+        <SearchIcon on:click={search}
+                    on:keyup={(e) => {
             if (e.key === 'Enter') {
               search();
             }
@@ -101,9 +105,7 @@
   form {
     position: relative;
   }
-  form.form-widget-container {
-    width: 448px;
-  }
+
   input {
     font-size: calc(var(--font-size-base) * 1.5);
     font-weight: var(--font-weight-body);
@@ -118,9 +120,22 @@
 
     -webkit-appearance: none;
   }
+
   input::placeholder {
     color: var(--color-neutral-strong);
     transition: all 0s ease;
+  }
+
+  .search-bar-widget {
+    border: var(--search-bar-border);
+    border-radius: var(--search-bar-border-radius);
+    font-size: var(--font-size-base);
+    max-width: var(--search-bar-max-width);
+    padding: var(--search-bar-padding);
+  }
+
+  .search-bar-widget:focus {
+    border: var(--search-bar-border-focus);
   }
 
   .form-widget {
@@ -142,17 +157,27 @@
     border-color: var(--input-widget-border-color);
     border-radius: var(--input-widget-border-radius);
   }
+
   .input-widget:focus,
   .input-widget:active {
     border-style: var(--input-widget-border-style-stronger);
   }
+
   .input-widget::placeholder {
     color: var(--input-widget-placeholder-color);
   }
+
   .search-icon {
     position: absolute;
     top: 50%;
     right: 8px;
     transform: translateY(-50%);
+  }
+
+
+  @media (min-width: 640px) {
+    form.form-widget-container {
+      width: 448px;
+    }
   }
 </style>

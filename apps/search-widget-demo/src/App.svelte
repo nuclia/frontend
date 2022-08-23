@@ -1,7 +1,7 @@
 <script lang="ts">
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
-  import { NucliaWidget } from '../../../libs/search-widget/src';
+  import { NucliaWidget, NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src';
 
   let selected = 'input';
   let widget: NucliaWidget;
@@ -71,18 +71,39 @@
                   placeholder="Here's the placeholder"
     />
   {/if}
+
+  {#if selected === 'two-widgets'}
+    <h2>Two widgets: search bar and search results</h2>
+    <div class="two-widgets-container">
+      <NucliaSearchBar zone="europe-1"
+                       knowledgebox="f694f1a4-d3f2-42f7-8642-b027bb9e54fe"
+                       backend="https://stashify.cloud/api"
+                       cdn="/"
+                       widgetid="demo-search-bar"
+                       placeholder="Search"/>
+
+      <NucliaSearchResults />
+    </div>
+
+  {/if}
 </main>
 
 <style>
   main {
     font-family: sans-serif;
     padding: 1em;
-    max-width: 240px;
+    max-width: 100%;
     margin: 0 auto;
   }
 
   .configuration {
     margin-bottom: 48px;
+  }
+
+  .two-widgets-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   @media (min-width: 640px) {
@@ -92,6 +113,10 @@
 
     main {
       max-width: none;
+    }
+
+    .two-widgets-container {
+      flex-direction: row;
     }
   }
 </style>
