@@ -23,6 +23,7 @@ import {
   of,
   tap,
   take,
+  shareReplay,
 } from 'rxjs';
 import type {
   PdfPreviewParams,
@@ -122,10 +123,10 @@ const _paragraphLabels = viewerState.paragraphs.pipe(
   switchMap((paragraphs) =>
     viewerStore.resource.pipe(
       take(1),
-      map((resource) => ({resource, paragraphs})),
+      map((resource) => ({ resource, paragraphs })),
     ),
   ),
-  map(({resource, paragraphs}) =>
+  map(({ resource, paragraphs }) =>
     paragraphs
       .filter((paragraph) => (paragraph.paragraph.classifications || []).length > 0)
       .reduce((acc, paragraph) => {
@@ -135,7 +136,7 @@ const _paragraphLabels = viewerState.paragraphs.pipe(
   ),
 );
 
-export const paragraphLabels = merge(_paragraphLabels, viewerStore.updatedLabels);
+export const paragraphLabels = merge(_paragraphLabels, viewerStore.updatedLabels).pipe(shareReplay(1));
 
 export const pdfUrl = combineLatest([
   viewerStore.resource,

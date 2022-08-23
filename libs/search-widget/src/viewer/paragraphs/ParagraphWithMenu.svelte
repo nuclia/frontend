@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Classification }  from '@nuclia/core';
+  import { hasAuthData } from '../../core/api';
   import { nucliaState } from '../../core/store';
   import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
@@ -30,7 +31,11 @@
   };
 </script>
 
-<div class="paragraph-with-menu" on:contextmenu={MENU_ENABLED && $editLabels && handleClick || null} bind:this={element}>
+<div
+  class="paragraph-with-menu"
+  on:contextmenu={MENU_ENABLED && $editLabels && hasAuthData() && handleClick || null}
+  bind:this={element}
+>
   <Paragraph {labels}>
     <slot name="icon" slot="icon" />
     <slot name="content" slot="content" />

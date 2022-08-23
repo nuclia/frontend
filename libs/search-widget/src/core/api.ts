@@ -133,6 +133,13 @@ export const isPrivateKnowledgeBox = (): boolean => {
   return STATE === 'PRIVATE';
 };
 
+export const hasAuthData = (): boolean => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return !!nucliaApi.options?.apiKey ||  !!nucliaApi.auth.getToken();
+}
+
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
   if (paths.length === 0 || !isPrivateKnowledgeBox()) {
     return of(paths.map((path) => `${getRegionalBackend()}${path}`));

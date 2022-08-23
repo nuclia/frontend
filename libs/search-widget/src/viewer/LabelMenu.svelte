@@ -117,7 +117,7 @@
     -webkit-appearance: none;
   }
   button:hover {
-    background-color: var(--color-dark-light);
+    background-color: var(--color-neutral-lightest);
   }
   button .name {
     flex: 0 1 auto;
@@ -160,7 +160,7 @@
   .label input {
     flex: 0 0 auto;
     margin-right: 0.75em;
-    accent-color: var(--color-primary-regular);
+    accent-color: var(--color-dark-stronger);
   }
   .label label {
     flex: 0 1 auto;
@@ -170,7 +170,7 @@
   }
   .current-labels {
     padding: 0.5em;
-    border-bottom: 1px solid var(--color-dark-light);
+    border-bottom: 1px solid var(--color-neutral-lightest);
   }
   .current-label {
     margin: 0 0 0.25em 0;
