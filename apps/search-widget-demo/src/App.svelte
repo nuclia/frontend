@@ -3,11 +3,11 @@
   import { onMount } from 'svelte';
   import { NucliaWidget, NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src';
 
-  let selected = 'input';
+  let selected = 'two-widgets';
   let widget: NucliaWidget;
 
   onMount(() => {
-    widget.setActions([
+    widget?.setActions([
       {
         label: 'Delete',
         action: (uid: string) => {

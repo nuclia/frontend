@@ -5,6 +5,7 @@
   import MimeIcon from '../../components/icons/mime.svelte';
   import Thumbnail from './Thumbnail.svelte';
 
+  export let displayThumbnail = true;
   export let formWidget = false;
   export let result: IResource;
   export let semantic = false;
@@ -14,19 +15,16 @@
   $: labels = (result.usermetadata?.classifications || []).map((label) => label.label);
 </script>
 
-<div
-  class="row"
-  on:click|preventDefault={() => setDisplayedResource({ uid: result.id })}
-  on:keyup={(e) => {
-    if (e.key === 'Enter') setDisplayedResource({ uid: result.id });
-  }}
-  on:focus
-  tabindex="0"
+<div class="row"
+     on:click|preventDefault={() => setDisplayedResource({ uid: result.id })}
+     on:keyup={(e) => { if (e.key === 'Enter') setDisplayedResource({ uid: result.id }); }}
+     on:focus
+     tabindex="0"
 >
-  <div class="blocks">
+  <div class="blocks" class:no-thumbnail={!displayThumbnail}>
     <div class="block-1">
       {#if result.icon}
-        <MimeIcon type={result.icon} small />
+        <MimeIcon type={result.icon} small/>
       {/if}
     </div>
     <div class="block-2">
@@ -34,9 +32,8 @@
       {#if semantic && $sentences.length > 0}
         <ul class="paragraph-list">
           {#each $sentences as sentence}
-            <li
-              class="paragraph"
-              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
+            <li class="paragraph"
+                on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
             >
               {@html sentence.text}
             </li>
@@ -56,26 +53,31 @@
         </ul>
       {/if}
     </div>
-    <div class="block-3">
-      <div class="byline">
-        {#if result.created && !formWidget}
-          {formatDate(result.created)}
+    {#if displayThumbnail}
+      <div class="block-3">
+        <div class="byline">
+          {#if result.created && !formWidget}
+            {formatDate(result.created)}
+          {/if}
+        </div>
+        <div class="labels">
+          {#each labels.slice(0, 4) as label}
+            <div class="label">{label}</div>
+          {/each}
+          {#if labels.length > 4}
+            <div class="label">+</div>
+          {/if}
+        </div>
+      </div>
+    {/if}
+
+    {#if displayThumbnail}
+      <div class="block-4">
+        {#if result.thumbnail}
+          <Thumbnail src={result.thumbnail}/>
         {/if}
       </div>
-      <div class="labels">
-        {#each labels.slice(0, 4) as label}
-          <div class="label">{label}</div>
-        {/each}
-        {#if labels.length > 4}
-          <div class="label">+</div>
-        {/if}
-      </div>
-    </div>
-    <div class="block-4">
-      {#if result.thumbnail}
-        <Thumbnail src={result.thumbnail} />
-      {/if}
-    </div>
+    {/if}
   </div>
 </div>
 
@@ -83,22 +85,27 @@
   .row {
     cursor: pointer;
   }
+
   .row:focus-visible {
-    padding-left: 13px;
-    border-left: 3px solid var(--color-primary-regular);
-    outline: 0px;
+    padding-left: 12px;
+    border-left: 2px solid var(--color-primary-regular);
+    outline: 0;
   }
+
   .title {
     margin: 0 0 0.75em 0;
     font-size: 1.125em;
     font-weight: var(--font-weight-bold);
   }
+
   .byline {
     font-size: 0.75em;
   }
+
   .labels {
     margin-top: 0.5em;
   }
+
   .label {
     display: inline-block;
     margin-right: 4px;
@@ -108,66 +115,81 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: #454ade;
-    background-color: #e6e6f9;
+    color: var(--color-tertiary-regular);
+    background-color: var(--color-tertiary-lightest);
     border-radius: 2px;
   }
 
   .blocks {
     display: grid;
-    grid-template-columns: 46px auto;
+    grid-template-columns: 48px auto;
     grid-template-rows: min-content;
   }
+
   .block-3 {
     grid-row: 2/2;
     grid-column: 2/2;
   }
+
   .block-4 {
     display: none;
   }
+
   @media (min-width: 640px) {
     .blocks {
-      grid-template-columns: 46px auto 200px;
+      grid-template-columns: 48px auto 200px;
       grid-template-rows: min-content;
     }
-    .block-2 {
-      padding-right: 30px;
+    .blocks.no-thumbnail {
+      grid-template-columns: 32px auto;
     }
+
+    .block-2 {
+      padding-right: 32px;
+    }
+
     .block-3 {
       grid-row: auto;
       grid-column: auto;
       padding-top: 0.25em;
-      padding-right: 30px;
+      padding-right: 32px;
     }
   }
+
   @media (min-width: 1024px) {
     .blocks {
       grid-template-columns: 60px auto min(22%, 290px) 220px;
     }
+
     .block-4 {
       display: block;
     }
   }
+
   .paragraph-list {
     padding: 0 0 0 1em;
   }
+
   .paragraph {
     position: relative;
     margin: 0 0 0.5em 0;
   }
+
   .paragraph:last-child {
     border-bottom: 0;
   }
+
   .paragraph:focus {
-    outline: 0px;
+    outline: 0;
   }
+
   .paragraph:hover::before,
   .paragraph:focus::before {
     content: '';
     position: absolute;
     top: 4px;
     bottom: 4px;
-    left: -30px;
-    border-left: 3px solid var(--color-primary-regular);
+    left: -32px;
+    border-left: 2px solid var(--color-primary-regular);
   }
 </style>

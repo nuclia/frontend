@@ -23,6 +23,13 @@
   --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
   --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
 
+  --color-tertiary-stronger: var(--custom-color-tertiary-stronger, hsl(249, 100%, 24%));
+  --color-tertiary-strong: var(--custom-color-tertiary-strong, hsl(249, 100%, 40%));
+  --color-tertiary-regular: var(--custom-color-tertiary-regular, hsl(249, 100%, 50%));
+  --color-tertiary-light: var(--custom-color-tertiary-light, hsl(249, 100%, 65%));
+  --color-tertiary-lighter: var(--custom-color-tertiary-lighter, hsl(249, 100%, 92%));
+  --color-tertiary-lightest: var(--custom-color-tertiary-lightest, hsl(249, 100%, 96%));
+
   --font-size-base: var(--custom-font-size-base, 16px);
   --font-weight-body: var(--custom-font-weight-body, 300);
   --font-weight-semi-bold: var(--custom-font-weight-semi-bold, 500);
