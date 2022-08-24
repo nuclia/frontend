@@ -40,7 +40,7 @@ svg {
   fill: currentColor;
 }
 
-.small {
+.button.small {
   font-size: calc(var(--font-size-base) * 0.75);
   line-height: calc(var(--line-height-body) * 0.75);
   padding: 4px;
