@@ -57,7 +57,7 @@
 
   .results-container {
     display: flex;
-    gap: 16px;
+    gap: var(--rhythm-2);
   }
   .results.preview-visible {
     flex: 0 1 auto;
@@ -71,7 +71,7 @@
   .close-button {
     position: absolute;
     right: 0;
-    top: 16px;
+    top: var(--rhythm-2);
     z-index: 1;
   }
 </style>

@@ -1,0 +1,32 @@
+.nuclia-widget {
+  --color-dark-stronger: var(--custom-color-dark-stronger, hsl(0, 0%, 5%));
+  --color-light-stronger: var(--custom-color-light-stronger, #fff);
+
+  --color-neutral-strong: var(--custom-color-neutral-strong, hsl(0, 0%, 44%));
+  --color-neutral-regular: var(--custom-color-neutral-regular, hsl(0, 0%, 77%));
+  --color-neutral-light: var(--custom-color-neutral-light, hsl(0, 0%, 90%));
+  --color-neutral-lighter: var(--custom-color-neutral-lighter, hsl(0, 0%, 94%));
+  --color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(240, 7%, 97%));
+
+  --color-primary-stronger: var(--custom-color-primary-stronger, hsl(336, 100%, 24%));
+  --color-primary-strong: var(--custom-color-primary-strong, hsl(336, 100%, 36%));
+  --color-primary-regular: var(--custom-color-primary-regular, hsl(336, 100%, 50%));
+  --color-primary-light: var(--custom-color-primary-light, hsl(336, 100%, 73%));
+  --color-primary-lighter: var(--custom-color-primary-lighter, hsl(336, 100%, 90%));
+  --color-primary-lightest: var(--custom-color-primary-lightest, hsl(336, 100%, 96%));
+
+  --color-secondary-stronger: var(--custom-color-secondary-stronger, hsl(51, 78%, 32%));
+  --color-secondary-strong: var(--custom-color-secondary-strong, hsl(51, 100%, 41%));
+  --color-secondary-regular: var(--custom-color-secondary-regular, hsl(51, 100%, 55%));
+  --color-secondary-light: var(--custom-color-secondary-light, hsl(51, 100%, 75%));
+  --color-secondary-lighter: var(--custom-color-secondary-lighter, hsl(51, 100%, 86%));
+  --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
+  --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
+
+  --color-tertiary-stronger: var(--custom-color-tertiary-stronger, hsl(249, 100%, 24%));
+  --color-tertiary-strong: var(--custom-color-tertiary-strong, hsl(249, 100%, 40%));
+  --color-tertiary-regular: var(--custom-color-tertiary-regular, hsl(249, 100%, 50%));
+  --color-tertiary-light: var(--custom-color-tertiary-light, hsl(249, 100%, 65%));
+  --color-tertiary-lighter: var(--custom-color-tertiary-lighter, hsl(249, 100%, 92%));
+  --color-tertiary-lightest: var(--custom-color-tertiary-lightest, hsl(249, 100%, 96%));
+}
