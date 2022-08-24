@@ -1,7 +1,8 @@
 import { Component, Inject } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Sluggable } from '@flaps/common';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-add-widget',
@@ -14,7 +15,7 @@ export class AddWidgetDialogComponent {
   });
   validationMessages = {
     sluggable: 'stash.widgets.invalid-id',
-  };
+  } as IErrorMessages;
 
   constructor(
     private dialogRef: MatDialogRef<AddWidgetDialogComponent>,

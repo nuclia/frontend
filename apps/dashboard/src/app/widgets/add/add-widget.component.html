@@ -6,13 +6,11 @@
              (click)="close()">{{'generic.close' | translate}}</pa-button>
 
   <form [formGroup]="mainForm" (ngSubmit)="save()">
-    <pa-input
-      formControlName="id"
-      [help]="'stash.widgets.add-help' | translate"
-      [showAllErrors]="false"
-      [errorMessages]="validationMessages"
-      >Id</pa-input
-    >
+    <pa-input formControlName="id"
+              [help]="'stash.widgets.add-help' | translate"
+              [showAllErrors]="false"
+              [errorMessages]="validationMessages"
+    >Id</pa-input>
 
     <div class="buttons">
       <pa-button aspect="basic"

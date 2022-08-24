@@ -9,15 +9,22 @@
 </div>
 
 <style>
+  .spinner {
+    align-content: center;
+    display: flex;
+    gap: var(--rhythm-1);
+    justify-content: center;
+  }
+
   /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
   .spinner:not(.small) {
-    margin: 100px auto 0;
+    margin: var(--rhythm-12) auto 0;
     text-align: center;
   }
 
   .spinner > div {
-    width: 18px;
-    height: 18px;
+    width: var(--rhythm-2);
+    height: var(--rhythm-2);
     background-color: var(--color-primary-regular);
 
     border-radius: 100%;
@@ -26,9 +33,12 @@
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;
   }
 
+  .spinner.small {
+    gap: var(--rhythm-0_5);
+  }
   .spinner.small > div {
-    width: 8px;
-    height: 8px;
+    width: calc(var(--rhythm-0_5) + var(--rhythm-0_25));
+    height: calc(var(--rhythm-0_5) + var(--rhythm-0_25));
   }
 
   .spinner .bounce1 {

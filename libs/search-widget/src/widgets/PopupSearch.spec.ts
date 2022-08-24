@@ -1,12 +1,12 @@
-import InputWidget from './InputWidget.svelte';
+import PopupSearch from './PopupSearch.svelte';
 import { fireEvent, render } from '@testing-library/svelte';
 import { nucliaStore } from '../core/store';
 import { firstValueFrom } from 'rxjs';
 import type { IResource, Search } from '@nuclia/core';
 
-describe('Input widget', () => {
+describe('Popup search', () => {
   it('should trigger suggestion search', async () => {
-    const { container } = render(InputWidget);
+    const { container } = render(PopupSearch);
     const input = container.querySelector('input');
     expect(input).toBeTruthy();
     if (input) {
@@ -21,7 +21,7 @@ describe('Input widget', () => {
       resources: {},
       paragraphs: { results: [{ text: 'Knowledge is power, France is bacon' } as Search.Paragraph], facets: {} },
     });
-    const { container } = render(InputWidget);
+    const { container } = render(PopupSearch);
     const input = container.querySelector('input');
     expect(input).toBeTruthy();
     if (input) {
@@ -36,7 +36,7 @@ describe('Input widget', () => {
         res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
       },
     });
-    const { container } = render(InputWidget);
+    const { container } = render(PopupSearch);
     const input = container.querySelector('input');
     expect(input).toBeTruthy();
     if (input) {

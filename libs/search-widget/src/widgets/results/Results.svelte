@@ -7,10 +7,12 @@
   import Spinner from '../../components/spinner/Spinner.svelte';
   import { map, switchMap, take, forkJoin } from 'rxjs';
 
+  export let displayThumbnail = true;
   export let formWidget = false;
+  export let searchResultsWidget = false;
   export let results: IResource[] = [];
 
-    const enhancedResults = nucliaState().results.pipe(
+  const enhancedResults = nucliaState().results.pipe(
     switchMap((results) =>
       forkJoin(
         results.map((result) =>
@@ -30,13 +32,13 @@
   );
 
   const paragraphResults = enhancedResults.pipe(
-    map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource))
+    map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
   );
   const semanticResults = enhancedResults.pipe(
-    map((results) => results.filter((result) => result.hasSentences).map((result) => result.resource))
+    map((results) => results.filter((result) => result.hasSentences).map((result) => result.resource)),
   );
   const otherResults = enhancedResults.pipe(
-    map((results) => results.filter((result) => !result.hasParagraphs && !result.hasSentences).map((result) => result.resource))
+    map((results) => results.filter((result) => !result.hasParagraphs && !result.hasSentences).map((result) => result.resource)),
   );
 
   const hasSearchError = nucliaState().hasSearchError;
@@ -45,19 +47,22 @@
 </script>
 
 {#if $hasSearchError}
-  <div class="error"><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
+  <div class="error" class:external-layout={searchResultsWidget}><strong>{$_('error.search')}</strong>
+    <span>{$_('error.search-beta')}</span></div>
 {:else if $pendingResults}
-  <h3 class="empty"><Spinner /></h3>
+  <h3 class="empty" class:external-layout={searchResultsWidget}>
+    <Spinner/>
+  </h3>
 {:else if results.length === 0}
-  <h3 class="empty">{$_('results.empty')}</h3>
+  <h3 class="empty" class:external-layout={searchResultsWidget}>{$_('results.empty')}</h3>
 {:else}
-  <div class="results">
+  <div class="results" class:external-layout={searchResultsWidget}>
     {#if $paragraphResults.length > 0}
       <div class="subtitle">{$_('results.paragraphs')}</div>
       <div>
-        {#each $paragraphResults.slice(0,3) as result}
+        {#each $paragraphResults.slice(0, 3) as result}
           <div class="result">
-            <Row {result} {formWidget}/>
+            <Row {displayThumbnail} {result} {formWidget}/>
           </div>
         {/each}
       </div>
@@ -68,7 +73,7 @@
         <div>
           {#each $semanticResults.slice(0, showAll ? undefined : 2) as result}
             <div class="result">
-              <Row {result} semantic={true} />
+              <Row {displayThumbnail} {result} semantic={true}/>
             </div>
           {/each}
           {#if !showAll && $semanticResults.length > 2}
@@ -80,7 +85,7 @@
     <div>
       {#each $paragraphResults.slice(3) as result}
         <div class="result">
-          <Row {result} />
+          <Row {displayThumbnail} {result}/>
         </div>
       {/each}
     </div>
@@ -89,7 +94,7 @@
         <div class="squares">
           {#each $otherResults as result}
             <div class="square-result">
-              <Square {result} />
+              <Square {result}/>
             </div>
           {/each}
         </div>
@@ -99,55 +104,65 @@
 {/if}
 
 <style>
-  .error,
-  h3.empty {
+  .error:not(.external-layout),
+  h3.empty:not(.external-layout) {
     margin: 0;
     padding: 1em;
   }
-  .results {
+
+  .results:not(.external-layout) {
     padding: 2.5em;
   }
+
   @media (min-width: 1440px) {
-    .results {
+    .results:not(.external-layout) {
       padding: 2.5em 5em;
     }
   }
+
   .subtitle {
     margin-bottom: 1.5em;
     font-weight: var(--font-weight-bold);
     text-transform: uppercase;
   }
+
   .result {
     margin-bottom: 2em;
     padding-bottom: 1em;
     border-bottom: 1px solid var(--color-neutral-regular);
   }
+
   .result:last-child {
     margin-bottom: 0;
     border-bottom: 0;
   }
+
   .box {
     margin: 0 -1.25em;
     padding: 2.25em 1.25em;
     background-color: var(--color-neutral-lightest);
     border-radius: 4px;
   }
+
   @media (min-width: 1440px) {
     .results {
-      padding: 0 -2.5em;
       padding: 2.25em 2.5em;
     }
   }
+
   .semantic {
     margin-bottom: 2em;
   }
+
   .squares {
     display: flex;
     flex-wrap: wrap;
   }
+
   .square-result {
     margin: 0 1.5em 1.5em 0;
   }
+
   button {
     position: relative;
     height: 2.5em;
