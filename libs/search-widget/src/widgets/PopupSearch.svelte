@@ -28,39 +28,43 @@
 </script>
 
 <div bind:this={inputElement}>
-  <SearchInput on:typeahead={openSuggestions} on:search={openResults} inputWidget={true} placeholder="{placeholder}" />
+  <SearchInput on:typeahead={openSuggestions}
+               on:search={openResults}
+               popupSearch={true}
+               placeholder="{placeholder}"/>
 </div>
-<Modal
-  show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
-  on:close={() => (showSuggestions = false)}
-  popup={true}
-  parentPosition={position}
-  {alignTo}
+<Modal show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
+       on:close={() => (showSuggestions = false)}
+       popup={true}
+       parentPosition={position}
+       {alignTo}
 >
   <div class="suggestions">
-    <Suggestions paragraphs={$paragraphs} intents={$intents} />
+    <Suggestions paragraphs={$paragraphs} intents={$intents}/>
   </div>
 </Modal>
 
 <Modal show={showModal} on:close={() => (showModal = false)} closeButton={true}>
   <div class="results">
-    <Results results={$results} />
+    <Results results={$results}/>
   </div>
 </Modal>
 
 <style>
   .suggestions {
-    padding: 16px;
+    padding: var(--rhythm-2);
   }
+
   .results {
     max-width: 100vw;
-    width: calc(100vw - 10px);
-    height: calc(100vh - 60px);
+    width: var(--default-modal-width);
+    height: calc(100vh - var(--rhythm-8));
   }
+
   @media (min-width: 640px) {
     .results {
-      width: calc(100vw - 100px);
-      height: calc(90vh - 139px);
+      width: calc(100vw - var(--rhythm-14));
+      height: calc(90vh - var(--rhythm-16));
     }
   }
 </style>

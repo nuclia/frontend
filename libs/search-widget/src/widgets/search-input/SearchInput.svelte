@@ -6,9 +6,10 @@
   import SearchIcon from '../../components/icons/search.svelte';
   import { nucliaState, nucliaStore } from '../../core/store';
   import Spinner from '../../components/spinner/Spinner.svelte';
+  import { getCDN } from "../../core/utils";
 
-  export let inputWidget = false;
-  export let formWidget = false;
+  export let popupSearch = false;
+  export let embeddedSearch = false;
   export let searchBarWidget = false;
   export let placeholder = '';
 
@@ -62,11 +63,11 @@
 <form role="search"
       autocomplete="off"
       class="search-input"
-      class:form-widget-container={formWidget || searchBarWidget}>
+      class:search-bar-container="{embeddedSearch || searchBarWidget}">
   <input bind:this={element}
          class="search-field"
-         class:input-widget={inputWidget}
-         class:form-widget={formWidget}
+         class:input-widget={popupSearch}
+         class:embedded-search="{embeddedSearch}"
          class:search-bar-widget={searchBarWidget}
          name="nuclia-search-field"
          placeholder={$_(placeholder || defaultPlaceholder)}
@@ -84,8 +85,8 @@
          on:keypress={onEnter}
          on:keydown
   />
-  {#if inputWidget || formWidget || searchBarWidget}
-    <div class="search-icon">
+  {#if popupSearch || embeddedSearch || searchBarWidget}
+    <div class="search-icon" class:left-icon={embeddedSearch || searchBarWidget}>
       {#if $isPending}
         <Spinner small/>
       {:else}
@@ -97,6 +98,12 @@
           }}
         />
       {/if}
+    </div>
+  {/if}
+  {#if embeddedSearch || searchBarWidget}
+    <div class="powered-by">
+      <small>Powered by</small>
+      <img src={`${getCDN()}logos/nuclia-grey.svg`} alt="Nuclia">
     </div>
   {/if}
 </form>
@@ -113,7 +120,7 @@
     border: 0;
     font-family: inherit;
     outline: none;
-    width: calc(100% - 2px);
+    width: calc(100% - var(--rhythm-0_25));
     color: inherit;
     text-overflow: ellipsis;
     box-sizing: border-box;
@@ -138,7 +145,7 @@
     border: var(--search-bar-border-focus);
   }
 
-  .form-widget {
+  .embedded-search {
     font-size: var(--font-size-base);
     line-height: var(--line-height-body);
     padding: var(--form-widget-padding);
@@ -170,14 +177,34 @@
   .search-icon {
     position: absolute;
     top: 50%;
-    right: 8px;
     transform: translateY(-50%);
   }
 
+  .search-icon.left-icon {
+    left: var(--rhythm-1);
+  }
+  .search-icon:not(.left-icon) {
+    right: var(--rhythm-1);
+  }
+
+  .powered-by {
+    align-items: center;
+    color: var(--color-neutral-regular);
+    display: flex;
+    gap: var(--rhythm-0_5);
+    position: absolute;
+    top: 50%;
+    right: var(--rhythm-1_5);
+    transform: translateY(-50%);
+  }
+  .powered-by > small {
+    font-size: calc(var(--font-size-base) * 0.6);
+    font-weight: var(--font-weight-body);
+  }
 
   @media (min-width: 640px) {
-    form.form-widget-container {
-      width: 448px;
+    form.search-bar-container {
+      width: var(--rhythm-56);
     }
   }
 </style>

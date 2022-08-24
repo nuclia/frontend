@@ -28,23 +28,22 @@
   let position: DOMRect | undefined;
   let showSuggestions = false;
 
-  const openSuggestions =  () => {
+  const openSuggestions = () => {
     showSuggestions = true;
     position = inputElement?.getBoundingClientRect();
-  }
-  const closeSuggestions =  () => {
+  };
+  const closeSuggestions = () => {
     showSuggestions = false;
-  }
+  };
 </script>
 
 <div>
   <div class="search-input-container">
     <div bind:this={inputElement}>
-      <SearchInput
-        formWidget={true}
-        placeholder="{placeholder}"
-        on:typeahead={openSuggestions}
-        on:search={closeSuggestions}
+      <SearchInput embeddedSearch={true}
+                   placeholder="{placeholder}"
+                   on:typeahead={openSuggestions}
+                   on:search={closeSuggestions}
       />
     </div>
   </div>
@@ -55,11 +54,11 @@
     parentPosition={position}
   >
     <div class="suggestions">
-      <Suggestions paragraphs={$paragraphs} intents={$intents} />
+      <Suggestions paragraphs={$paragraphs} intents={$intents}/>
     </div>
   </Modal>
   <div class="options">
-    <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)} />
+    <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)}/>
   </div>
   {#if $showResults}
     <div class="results" class:empty={$results.length === 0}>
@@ -73,11 +72,13 @@
     display: flex;
     justify-content: center;
   }
+
   .options {
-    padding: 0.5rem 0;
+    padding: var(--rhythm-1) 0;
     display: none;
   }
+
   .suggestions {
-    padding: 16px;
+    padding: var(--rhythm-2);
   }
 </style>

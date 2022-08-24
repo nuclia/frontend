@@ -20,9 +20,11 @@
 
   --focus-shadow: var(--custom-focus-shadow, 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter));
 
-  --default-search-input-padding: var(--rhythm-0_5) var(--rhythm-5) var(--rhythm-0_5) var(--rhythm-0_5);
+  --size-powered-by: calc(var(--rhythm-16) + var(--rhythm-1_5));
+  --default-search-field-padding: var(--rhythm-1) var(--size-powered-by) var(--rhythm-1) var(--rhythm-5);
+  --search-input-padding: var(--rhythm-0_5) var(--rhythm-5) var(--rhythm-0_5) var(--rhythm-0_5);
 
-  --form-widget-padding: var(--custom-form-widget-padding, var(--default-search-input-padding));
+  --form-widget-padding: var(--custom-form-widget-padding, var(--default-search-field-padding));
   --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
   --form-widget-border-style: var(--custom-form-widget-border-style, solid);
   --form-widget-border-style-stronger: var(--custom-form-widget-border-style-stronger, solid);
@@ -30,7 +32,7 @@
   --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
   --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-neutral-strong);
 
-  --input-widget-padding: var(--custom-input-widget-padding, var(--default-search-input-padding));
+  --input-widget-padding: var(--custom-input-widget-padding, var(--search-input-padding));
   --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
   --input-widget-border-style: var(--custom-input-widget-border-style, solid);
   --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
@@ -38,7 +40,9 @@
   --input-widget-border-radius: var(--custom-input-widget-border-radius, 0);
   --input-widget-placeholder-color: var(--custom-input-widget-placeholder-color, transparent);
 
-  --resource-modal-width: var(--custom-resource-modal-width, calc(100vw - var(--rhythm-1_5)));
+  --default-modal-width: calc(100vw - var(--rhythm-1_5));
+
+  --resource-modal-width: var(--custom-resource-modal-width, var(--default-modal-width));
   --resource-modal-width-md: var(--custom-resource-modal-width-md, 80vw);
   --resource-modal-height: var(--custom-resource-modal-height, calc(100vh - var(--rhythm-16)));
   --resource-modal-height-md: var(--custom-resource-modal-height-md, 85vh);
@@ -46,6 +50,6 @@
   --search-bar-border: var(--custom-search-bar-border, 1px solid var(--color-neutral-strong));
   --search-bar-border-focus: var(--custom-search-bar-border-focus, 1px solid var(--color-primary-regular));
   --search-bar-border-radius: var(--custom-search-bar-border-radius, 0);
-  --search-bar-padding: var(--custom-search-bar-padding, var(--default-search-input-padding));
+  --search-bar-padding: var(--custom-search-bar-padding, var(--default-search-field-padding));
   --search-bar-max-width: var(--custom-search-bar-max-width, var(--rhythm-56));
 }

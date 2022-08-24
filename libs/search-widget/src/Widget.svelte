@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-search" />
+<svelte:options tag="nuclia-search"/>
 
 <script lang="ts">
   import PopupSearch from './widgets/PopupSearch.svelte';
@@ -35,7 +35,7 @@
 
   export const displayResource = (uid: string) => {
     if (uid) {
-      setDisplayedResource({ uid });
+      setDisplayedResource({uid});
     } else {
       closeModal();
     }
@@ -113,13 +113,13 @@
       .subscribe();
     nucliaStore()
       .triggerSearch.pipe(
-        tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
-        switchMap(() => nucliaState().query.pipe(take(1))),
-        map((query) => query.trim()),
-        filter((query) => !!query),
-        switchMap((query) => nucliaStore().searchOptions.pipe(map((options) => ({ query, options })))),
-        switchMap(({ query, options }) => search(query, options)),
-      )
+      tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
+      switchMap(() => nucliaState().query.pipe(take(1))),
+      map((query) => query.trim()),
+      filter((query) => !!query),
+      switchMap((query) => nucliaStore().searchOptions.pipe(map((options) => ({query, options})))),
+      switchMap(({query, options}) => search(query, options)),
+    )
       .subscribe((results) => nucliaStore().searchResults.next(results));
     ready = true;
 
@@ -131,7 +131,7 @@
 
   const closeModal = () => {
     showModal = false;
-    setDisplayedResource({ uid: '' });
+    setDisplayedResource({uid: ''});
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get(previewQueryKey)) {
       urlParams.delete(previewQueryKey);
@@ -151,23 +151,22 @@
 <div class="nuclia-widget" style={$style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
-      <PopupSearch placeholder="{placeholder}" />
+      <PopupSearch placeholder="{placeholder}"/>
     {:else if type === 'form'}
-      <EmbeddedSearch placeholder="{placeholder}" />
+      <EmbeddedSearch placeholder="{placeholder}"/>
     {:else}
       {type} widget is not implemented yet
     {/if}
-    <Modal
-      show={showModal}
-      on:close={closeModal}
-      closeButton={true}
-      --modal-width="var(--resource-modal-width)"
-      --modal-width-md="var(--resource-modal-width-md)"
-      --modal-height="var(--resource-modal-height)"
-      --modal-height-md="var(--resource-modal-height-md)"
+    <Modal show={showModal}
+           on:close={closeModal}
+           closeButton={true}
+           --modal-width="var(--resource-modal-width)"
+           --modal-width-md="var(--resource-modal-width-md)"
+           --modal-height="var(--resource-modal-height)"
+           --modal-height-md="var(--resource-modal-height-md)"
     >
       {#if $resource}
-        <Viewer resource={$resource} />
+        <Viewer resource={$resource}/>
       {/if}
     </Modal>
   {/if}
