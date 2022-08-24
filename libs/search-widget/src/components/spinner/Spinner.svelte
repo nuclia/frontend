@@ -13,6 +13,7 @@
     align-content: center;
     display: flex;
     gap: var(--rhythm-1);
+    justify-content: center;
   }
 
   /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
