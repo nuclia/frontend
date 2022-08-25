@@ -55,6 +55,7 @@
                     widgetid="demo-input"
                     type="input"
                     permalink
+                    lang="en"
                     placeholder="Input placeholder is invisible"
       />
     </div>
@@ -66,6 +67,7 @@
                   cdn="/"
                   widgetid="demo-form"
                   type="form"
+                  lang="en"
                   placeholder="Here's the placeholder"
     />
   {/if}
@@ -76,6 +78,7 @@
       <NucliaSearchBar zone="europe-1"
                        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
                        cdn="/"
+                       lang="en"
                        widgetid="demo-search-bar"
                        placeholder="Search"/>
 
