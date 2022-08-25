@@ -9,22 +9,22 @@ export const formatDate = (date: string) => {
 
 export const formatTime = (secons: number) => {
   secons = Math.floor(secons);
-  const minutes = Math.floor(secons/60);
+  const minutes = Math.floor(secons / 60);
   const seconds = secons % 60;
   const minutesLabel = minutes < 10 ? '0' + minutes : minutes.toString();
   const secondsLabel = seconds < 10 ? '0' + seconds : seconds.toString();
-  return `${minutesLabel}.${secondsLabel}`
-}
+  return `${minutesLabel}.${secondsLabel}`;
+};
 
 export const formatQueryKey = (key: string): string => {
   return `__nuclia_${key}__`;
-}
+};
 
 export const updateQueryParams = (urlParams: URLSearchParams) => {
   const params = urlParams.toString();
   const url = params ? `${location.pathname}?${params}` : location.pathname;
   history.pushState(null, '', url);
-}
+};
 
 /**
  * Coerces a value (usually a string coming from a prop) to a boolean.
@@ -33,7 +33,7 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
  */
 export const coerceBooleanProperty = (value: any): boolean => {
   return value != null && `${value}` !== 'false';
-}
+};
 
 export const getYoutubeId = (url: string) => {
   // From https://stackoverflow.com/a/9102270
@@ -48,4 +48,13 @@ export const getYoutubeId = (url: string) => {
 
 export const isYoutubeUrl = (url: string) => {
   return !!getYoutubeId(url);
+};
+
+export const formatTitle = (title?: string): string => {
+  title = title || '–';
+  try {
+    return decodeURIComponent(title);
+  } catch (e) {
+    return title;
+  }
 };

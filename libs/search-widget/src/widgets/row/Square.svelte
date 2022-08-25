@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IResource } from '@nuclia/core';
-  import { formatDate } from '../../core/utils';
+  import { formatDate, formatTitle } from '../../core/utils';
   import { setDisplayedResource } from '../../core/store';
   import Thumbnail from './Thumbnail.svelte';
 
@@ -25,14 +25,14 @@
   </div>
   <div class="body">
     <div class="labels">
-      {#each labels.slice(0,2) as label}
-        <div class="label">{ label }</div>
+      {#each labels.slice(0, 2) as label}
+        <div class="label">{label}</div>
       {/each}
       {#if labels.length > 2}
         <div class="label">+</div>
       {/if}
     </div>
-    <h2 class="title">{decodeURIComponent(result.title || '–')}</h2>
+    <h2 class="title">{formatTitle(result.title)}</h2>
     <div class="byline">
       {#if result.created}
         {formatDate(result.created)}

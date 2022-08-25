@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { IResource } from '@nuclia/core';
-  import { formatDate } from '../../core/utils';
+  import { formatDate, formatTitle } from '../../core/utils';
   import { nucliaState, setDisplayedResource } from '../../core/store';
   import MimeIcon from '../../components/icons/mime.svelte';
   import Thumbnail from './Thumbnail.svelte';
@@ -15,25 +15,29 @@
   $: labels = (result.usermetadata?.classifications || []).map((label) => label.label);
 </script>
 
-<div class="row"
-     on:click|preventDefault={() => setDisplayedResource({ uid: result.id })}
-     on:keyup={(e) => { if (e.key === 'Enter') setDisplayedResource({ uid: result.id }); }}
-     on:focus
-     tabindex="0"
+<div
+  class="row"
+  on:click|preventDefault={() => setDisplayedResource({ uid: result.id })}
+  on:keyup={(e) => {
+    if (e.key === 'Enter') setDisplayedResource({ uid: result.id });
+  }}
+  on:focus
+  tabindex="0"
 >
   <div class="blocks" class:no-thumbnail={!displayThumbnail}>
     <div class="block-1">
       {#if result.icon}
-        <MimeIcon type={result.icon} small/>
+        <MimeIcon type={result.icon} small />
       {/if}
     </div>
     <div class="block-2">
-      <h2 class="title">{decodeURIComponent(result.title || '–')}</h2>
+      <h2 class="title">{formatTitle(result.title)}</h2>
       {#if semantic && $sentences.length > 0}
         <ul class="paragraph-list">
           {#each $sentences as sentence}
-            <li class="paragraph"
-                on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
+            <li
+              class="paragraph"
+              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
             >
               {@html sentence.text}
             </li>
@@ -74,7 +78,7 @@
     {#if displayThumbnail}
       <div class="block-4">
         {#if result.thumbnail}
-          <Thumbnail src={result.thumbnail}/>
+          <Thumbnail src={result.thumbnail} />
         {/if}
       </div>
     {/if}
