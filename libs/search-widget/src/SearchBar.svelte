@@ -173,10 +173,12 @@
     --font-family-body: 'Source Sans Pro', sans-serif;
     --border-radius: var(--custom-border-radius, var(--rhythm-0_25));
 
+    --color-backdrop: var(--custom-color-backdrop, rgba(13, 13, 13, 0.5));
     --z-index-modal: var(--custom-z-index-modal, 10010);
     --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
-    --shadow-modal: var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger), 0.2);
+    /* We can't use var(--color-dark-stronger) in rgba because rgba needs the RGB triplet as input while --color-dark-stronger is the actual HSL color. */
+    --shadow-modal: var(--custom-shadow-modal, var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(13, 13, 13, 0.2));
 
     --color-scrollbar-track: var(--custom-color-scrollbar-track, var(--color-light-stronger));
     --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, var(--color-dark-stronger));

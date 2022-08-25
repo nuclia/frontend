@@ -47,11 +47,11 @@
       />
     </div>
   </div>
-  <Modal
-    show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
-    on:close={closeSuggestions}
-    popup={true}
-    parentPosition={position}
+  <Modal show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
+         on:close={closeSuggestions}
+         popup={true}
+         parentPosition={position}
+         --modal-width-md="var(--search-bar-max-width)"
   >
     <div class="suggestions">
       <Suggestions paragraphs={$paragraphs} intents={$intents}/>

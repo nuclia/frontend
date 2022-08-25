@@ -204,7 +204,7 @@
 
   @media (min-width: 640px) {
     form.search-bar-container {
-      width: var(--rhythm-56);
+      width: var(--search-bar-max-width);
     }
   }
 </style>

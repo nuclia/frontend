@@ -198,7 +198,6 @@
     --color-secondary-light: var(--custom-color-secondary-light, hsl(51, 100%, 75%));
     --color-secondary-lighter: var(--custom-color-secondary-lighter, hsl(51, 100%, 86%));
     --color-secondary-lightest: var(--custom-color-secondary-lightest, hsl(51, 100%, 95%));
-    --color-backdrop: var(--custom-color-backdrop, rgba(0, 0, 0, 0.5));
 
     --color-tertiary-stronger: var(--custom-color-tertiary-stronger, hsl(249, 100%, 24%));
     --color-tertiary-strong: var(--custom-color-tertiary-strong, hsl(249, 100%, 40%));
@@ -243,10 +242,12 @@
     --font-family-body: 'Source Sans Pro', sans-serif;
     --border-radius: var(--custom-border-radius, var(--rhythm-0_25));
 
+    --color-backdrop: var(--custom-color-backdrop, rgba(13, 13, 13, 0.5));
     --z-index-modal: var(--custom-z-index-modal, 10010);
     --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
-    --shadow-modal: var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger), 0.2);
+    /* We can't use var(--color-dark-stronger) in rgba because rgba needs the RGB triplet as input while --color-dark-stronger is the actual HSL color. */
+    --shadow-modal: var(--custom-shadow-modal, var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(13, 13, 13, 0.2));
 
     --color-scrollbar-track: var(--custom-color-scrollbar-track, var(--color-light-stronger));
     --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, var(--color-dark-stronger));
