@@ -40,7 +40,7 @@ When calling [Nuclia Understanding API `/pull` endpoint](https://docs.nuclia.dev
 import { NucliaProtobufConverter } from '@nuclia/protobuf';
 import fetch from 'node-fetch';
 
-fetch('https://europe-1.stashify.cloud/api/v1/processing/pull', {
+fetch('https://europe-1.nuclia.cloud/api/v1/processing/pull', {
   headers: {
     'x-stf-nuakey': `Bearer ${NUA_KEY}`,
     'content-type': 'application/json',
