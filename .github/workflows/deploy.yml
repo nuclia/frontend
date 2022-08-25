@@ -92,8 +92,7 @@ jobs:
         run: |-
           sed -i.bak "s#__NUCLIA_DEV_VERSION__#$GITHUB_SHA#g" dist/libs/search-widget/nuclia-widget.umd.js
           gsutil copy dist/libs/search-widget/nuclia-widget.umd.js gs://$CDN_STORAGE
-          gsutil copy -r libs/search-widget/public/i18n gs://$CDN_STORAGE
-          gsutil copy -r libs/search-widget/public/icons gs://$CDN_STORAGE
+          gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'
