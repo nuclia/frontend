@@ -869,26 +869,15 @@
             "production": {}
           }
         },
-        "build-original": {
-          "builder": "@nxext/svelte:build",
-          "outputs": ["{options.outputPath}"],
+        "build-video": {
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "outputPath": "dist/libs/search-widget",
-            "entryFile": "libs/search-widget/src/index.ts",
-            "tsConfig": "libs/search-widget/tsconfig.lib.json",
-            "svelteConfig": "libs/search-widget/svelte.config.cjs",
-            "assets": [
-              {
-                "glob": "/*",
-                "input": "./public/**",
-                "output": "./"
-              }
+            "commands": [
+              "yarn vite build -c=libs/search-widget/vite_video.config.js && cp -r libs/search-widget/public/i18n dist/libs/search-video-widget"
             ]
           },
           "configurations": {
-            "production": {
-              "dev": false
-            }
+            "production": {}
           }
         },
         "test": {

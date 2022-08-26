@@ -2,14 +2,12 @@
 
 <script lang="ts">
   import type { Resource } from '@nuclia/core';
-  import { nucliaState, nucliaStore, setDisplayedResource } from './core/store';
+  import { nucliaState, nucliaStore, setDisplayedResource } from '../core/store';
   import { map, merge, Observable, of, switchMap } from 'rxjs';
   import { onMount } from 'svelte';
-  import { getResource } from './core/api';
-  import Results from './widgets/results/Results.svelte';
-  import Viewer from './viewer/Viewer.svelte';
-  import CloseButton from './components/button/CloseButton.svelte';
-  import { loadCssAsText } from './core/utils';
+  import { getResource } from '../core/api';
+  import CloseButton from '../components/button/CloseButton.svelte';
+  import { loadCssAsText, loadFonts } from '../core/utils';
 
   const results = nucliaState().results;
   const showResults = merge(
@@ -19,6 +17,7 @@
   let cssVariables;
 
   onMount(() => {
+    loadFonts();
     // Load CSS variables (must be done after the CDN was set) and custom styles
     loadCssAsText().subscribe((css) => cssVariables = css);
 
@@ -40,15 +39,13 @@
     {#if $showResults}
       <div class="results"
            class:preview-visible={$resource}>
-        <Results results={$results}
-                 searchResultsWidget={true}
-                 displayThumbnail="{!$resource}"/>
+        <p>TODO: show video results</p>
       </div>
     {/if}
 
     {#if $resource}
       <div class="viewer-container">
-        <Viewer resource={$resource} />
+        <p>TODO: show preview from {resource}</p>
         <div class="close-button">
           <CloseButton aspect="basic" on:click={closePreview} />
         </div>

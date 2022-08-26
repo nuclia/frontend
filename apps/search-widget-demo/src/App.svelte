@@ -1,9 +1,10 @@
 <script lang="ts">
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
-  import { NucliaWidget, NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src';
+  import { NucliaWidget } from '../../../libs/search-widget/src';
+  import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'form';
+  let selected = 'two-widgets';
   let widget: NucliaWidget;
 
   onMount(() => {
@@ -73,7 +74,7 @@
   {/if}
 
   {#if selected === 'two-widgets'}
-    <h2>Two widgets: search bar and search results</h2>
+    <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
       <NucliaSearchBar zone="europe-1"
                        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
@@ -81,7 +82,6 @@
                        lang="en"
                        widgetid="demo-search-bar"
                        placeholder="Search"/>
-
       <NucliaSearchResults />
     </div>
 
