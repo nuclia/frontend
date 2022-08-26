@@ -287,10 +287,10 @@ export const getFileMetadata = (metadata: FileMetadata | undefined): { [key: str
     headers['x-filename'] = btoa(encodeURIComponent(metadata.filename));
   }
   if (metadata?.md5) {
-    headers['x-md5'] = btoa(encodeURIComponent(metadata.md5));
+    headers['x-md5'] = metadata.md5;
   }
   if (metadata?.lang) {
-    headers['x-language'] = btoa(encodeURIComponent(metadata.lang));
+    headers['x-language'] = metadata.lang;
   }
   return headers;
 };
