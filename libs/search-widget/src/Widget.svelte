@@ -3,24 +3,22 @@
 <script lang="ts">
   import PopupSearch from './widgets/PopupSearch.svelte';
   import EmbeddedSearch from './widgets/EmbeddedSearch.svelte';
-  import { nucliaStore, nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
-  import { getResource, initNuclia, resetNuclia, search, suggest } from './core/api';
-  import { concatMap, debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
+  import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
+  import { getResource, initNuclia, resetNuclia } from './core/api';
+  import { concatMap, filter, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
-  import { NO_RESULTS, PENDING_RESULTS } from './core/models';
-  import { predict } from './core/tensor';
   import {
     setCDN,
     formatQueryKey,
     updateQueryParams,
-    coerceBooleanProperty,
-    loadCssAsText,
+    coerceBooleanProperty, loadCssAsText,
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
-  import { forkJoin, merge, Observable } from 'rxjs';
+  import { Observable } from 'rxjs';
+  import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -94,41 +92,10 @@
         }
       }),
     );
-    merge(
-      nucliaStore().query.pipe(filter((query) => query.slice(-1) === ' ')),
-      nucliaStore().query.pipe(debounceTime(500)),
-    )
-      .pipe(
-        tap(() => {
-          nucliaStore().suggestions.next(NO_RESULTS);
-          nucliaStore().intents.next({});
-        }),
-        filter((query) => !!query && query.length > 2),
-        tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
-        switchMap((query) =>
-          forkJoin([
-            suggest(query).pipe(tap((results) => nucliaStore().suggestions.next(results))),
-            predict(query).pipe(
-              tap((predictions) =>
-                nucliaStore().intents.next({
-                  labels: predictions,
-                }),
-              ),
-            ),
-          ]),
-        ),
-      )
-      .subscribe();
-    nucliaStore()
-      .triggerSearch.pipe(
-      tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
-      switchMap(() => nucliaState().query.pipe(take(1))),
-      map((query) => query.trim()),
-      filter((query) => !!query),
-      switchMap((query) => nucliaStore().searchOptions.pipe(map((options) => ({query, options})))),
-      switchMap(({query, options}) => search(query, options)),
-    )
-      .subscribe((results) => nucliaStore().searchResults.next(results));
+
+    setupSuggestionsAndPredictions();
+    setupTriggerSearch();
+
     ready = true;
 
     return () => {

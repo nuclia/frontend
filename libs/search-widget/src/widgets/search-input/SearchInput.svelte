@@ -41,10 +41,11 @@
     if (value.trim() !== previous.trim()) {
       dispatch('typeahead', value);
     }
-    previous = value;
-    if (value !== undefined) {
+
+    if (typeof value !== 'undefined') {
       nucliaStore().query.next(value);
     }
+    previous = value;
   }
 
   const search = () => {
@@ -141,13 +142,13 @@
     padding: var(--search-bar-padding);
   }
 
-  .search-bar-widget:focus {
+  .search-bar-widget:focus,
+  .embedded-search:focus {
     border: var(--search-bar-border-focus);
   }
 
   .embedded-search {
     font-size: var(--font-size-base);
-    line-height: var(--line-height-body);
     padding: var(--form-widget-padding);
     border-width: var(--form-widget-border-width);
     border-style: var(--form-widget-border-style);
