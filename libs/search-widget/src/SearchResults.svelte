@@ -8,16 +8,20 @@
   import { getResource } from './core/api';
   import Results from './widgets/results/Results.svelte';
   import Viewer from './viewer/Viewer.svelte';
-  import CloseButton from "./components/button/CloseButton.svelte";
-
+  import CloseButton from './components/button/CloseButton.svelte';
+  import { loadCssAsText } from './core/utils';
 
   const results = nucliaState().results;
   const showResults = merge(
     nucliaStore().triggerSearch.pipe(map(() => true)),
   );
   let resource: Observable<Resource>;
+  let cssVariables;
 
   onMount(() => {
+    // Load CSS variables (must be done after the CDN was set) and custom styles
+    loadCssAsText().subscribe((css) => cssVariables = css);
+
     resource = nucliaState().displayedResource.pipe(
       switchMap((resource) => !!resource?.uid ? getResource(resource.uid) : of(null)),
     );
@@ -29,7 +33,9 @@
 
 </script>
 
-<div class="nuclia-widget nuclia-search-results" data-version="__NUCLIA_DEV_VERSION__">
+<div class="nuclia-widget nuclia-search-results"
+     style="{cssVariables}"
+     data-version="__NUCLIA_DEV_VERSION__">
   <div class="results-container">
     {#if $showResults}
       <div class="results"
