@@ -4,34 +4,107 @@ try {
   console.error(e);
 }
 
+const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET_`;
+
+const baseMenuOptions = {
+  targetUrlPatterns: ['https://*/*'],
+  contexts: ['link'],
+};
+
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: 'NucliaContextMenu',
-    title: 'Upload to Nuclia',
-    targetUrlPatterns: ['https://*/*'],
-    contexts: ['link'],
-  });
+  createMenu();
 });
+
+chrome.runtime.onMessage.addListener((request) => {
+  if (request.action === 'UPDATE_MENU') {
+    chrome.contextMenus.removeAll(() => createMenu());
+  }
+});
+
+function createMenu() {
+  chrome.contextMenus.create({
+    id: `NUCLIA_UPLOAD`,
+    title: 'Upload link to Nuclia',
+    ...baseMenuOptions,
+  });
+  chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ NUCLIA_KB, NUCLIA_KEY }) => {
+    if (NUCLIA_KB && NUCLIA_KEY) {
+      getLabels(NUCLIA_KB, NUCLIA_KEY).subscribe((labelsets) => {
+        if (labelsets.length > 0) {
+          createSubmenus(labelsets);
+        }
+      });
+    }
+  });
+}
+
+function createSubmenus(labelsets) {
+  chrome.contextMenus.create({
+    id: `NUCLIA_UPLOAD_WITH_LABEL`,
+    title: 'Upload link to Nuclia with label…',
+    ...baseMenuOptions,
+  });
+  labelsets.forEach(([key, labelset]) => {
+    const labelsetMenuId = `${MENU_LABELSET_PREFIX}${key}`;
+    chrome.contextMenus.create({
+      id: labelsetMenuId,
+      title: labelset.title,
+      parentId: 'NUCLIA_UPLOAD_WITH_LABEL',
+      ...baseMenuOptions,
+    });
+    labelset.labels.forEach((label) => {
+      chrome.contextMenus.create({
+        id: `${labelsetMenuId}_${label.title}`,
+        title: label.title,
+        parentId: labelsetMenuId,
+        ...baseMenuOptions,
+      });
+    });
+  });
+}
 
 chrome.contextMenus.onClicked.addListener((info) => {
   chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ NUCLIA_KB, NUCLIA_KEY }) => {
     if (NUCLIA_KB && NUCLIA_KEY) {
-      uploadLink(info.linkUrl, NUCLIA_KB, NUCLIA_KEY);
+      let labels = [];
+      if (info.parentMenuItemId && info.parentMenuItemId.startsWith(MENU_LABELSET_PREFIX)) {
+        labels.push({
+          labelset: info.parentMenuItemId.split(MENU_LABELSET_PREFIX)[1],
+          label: info.menuItemId.split(info.parentMenuItemId + '_')[1],
+        });
+      }
+      uploadLink(NUCLIA_KB, NUCLIA_KEY, info.linkUrl, labels);
     } else {
       chrome.runtime.openOptionsPage();
     }
   });
 });
 
-function uploadLink(url, kb, key) {
-  const nuclia = new NucliaSDK.Nuclia({
-    backend: 'https://stashify.cloud/api',
+function getLabels(kb, key) {
+  return getSDK(kb, key)
+    .knowledgeBox.getLabels()
+    .pipe(
+      rxjs.map((labels) =>
+        Object.entries(labels)
+          .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+          .filter(([key, labelset]) => labelset.kind.length === 0 || labelset.kind.includes('RESOURCES'))
+          .filter(([key, labelset]) => labelset.labels.length > 0),
+      ),
+    );
+}
+
+function uploadLink(kb, key, url, labels) {
+  getSDK(kb, key)
+    .db.getKnowledgeBox()
+    .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })))
+    .subscribe();
+}
+
+function getSDK(kb, key) {
+  return new NucliaSDK.Nuclia({
+    backend: 'https://nuclia.cloud/api',
     knowledgeBox: kb,
     zone: 'europe-1',
     apiKey: key,
   });
-  nuclia.db
-    .getKnowledgeBox()
-    .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url })))
-    .subscribe();
 }
