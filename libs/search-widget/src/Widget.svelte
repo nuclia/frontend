@@ -11,7 +11,7 @@
     setCDN,
     formatQueryKey,
     updateQueryParams,
-    coerceBooleanProperty, loadCssAsText,
+    coerceBooleanProperty, loadCssAsText, loadFonts,
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -73,6 +73,7 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
+    loadFonts();
     // Load CSS variables (must be done after the CDN was set) and custom styles
     loadCssAsText().subscribe((css) => style = css);
 
@@ -148,8 +149,6 @@
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap');
-
   .nuclia-widget {
     color: var(--color-dark-stronger);
     font-family: var(--font-family-body);

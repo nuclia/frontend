@@ -7,6 +7,19 @@ let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
 
+export const loadFonts = () => {
+  const fontLinkId = 'NucliaFontsLink';
+  if (!document.getElementById(fontLinkId)) {
+    const font = document.createElement('link');
+    font.id = fontLinkId;
+    font.href = 'https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap';
+    font.rel = 'stylesheet';
+
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.appendChild(font);
+  }
+};
+
 export const getCssVariablesAsText = (): Observable<string> => {
   return fromFetch(`${getCDN()}styles/css-variables.css`).pipe(
     switchMap((res) => res.text()),
