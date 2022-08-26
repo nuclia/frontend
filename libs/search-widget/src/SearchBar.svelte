@@ -8,7 +8,7 @@
   import { onMount } from 'svelte';
   import { NO_RESULTS, PENDING_RESULTS } from './core/models';
   import { predict } from './core/tensor';
-  import { setCDN, coerceBooleanProperty, getCssVariablesAsText } from './core/utils';
+  import { setCDN, coerceBooleanProperty, loadCssAsText } from './core/utils';
   import { setLang } from './core/i18n';
   import { forkJoin, merge } from 'rxjs';
   import SearchInput from './widgets/search-input/SearchInput.svelte';
@@ -52,11 +52,7 @@
     }
 
     // Load CSS variables (must be done after the CDN was set) and custom styles
-    getCssVariablesAsText().pipe(
-      switchMap((cssVariables) => nucliaState().customStyle.pipe(
-        map(customStyles => `${cssVariables} ${customStyles}`)
-      ))
-    ).subscribe((css) => cssVariables = css);
+    loadCssAsText().subscribe((css) => cssVariables = css);
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);

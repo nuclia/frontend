@@ -14,7 +14,7 @@
     formatQueryKey,
     updateQueryParams,
     coerceBooleanProperty,
-    getCssVariablesAsText,
+    loadCssAsText,
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -76,11 +76,7 @@
     setLang(lang);
 
     // Load CSS variables (must be done after the CDN was set) and custom styles
-    getCssVariablesAsText().pipe(
-      switchMap((cssVariables) => nucliaState().customStyle.pipe(
-        map(customStyles => `${cssVariables} ${customStyles}`)
-      ))
-    ).subscribe((css) => style = css);
+    loadCssAsText().subscribe((css) => style = css);
 
     checkUrlParams();
 

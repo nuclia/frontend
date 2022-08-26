@@ -9,7 +9,7 @@
   import Results from './widgets/results/Results.svelte';
   import Viewer from './viewer/Viewer.svelte';
   import CloseButton from './components/button/CloseButton.svelte';
-  import { getCssVariablesAsText } from './core/utils';
+  import { loadCssAsText } from './core/utils';
 
   const results = nucliaState().results;
   const showResults = merge(
@@ -20,11 +20,7 @@
 
   onMount(() => {
     // Load CSS variables (must be done after the CDN was set) and custom styles
-    getCssVariablesAsText().pipe(
-      switchMap((cssVariables) => nucliaState().customStyle.pipe(
-        map(customStyles => `${cssVariables} ${customStyles}`)
-      ))
-    ).subscribe((css) => cssVariables = css);
+    loadCssAsText().subscribe((css) => cssVariables = css);
 
     resource = nucliaState().displayedResource.pipe(
       switchMap((resource) => !!resource?.uid ? getResource(resource.uid) : of(null)),
