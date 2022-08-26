@@ -5,7 +5,7 @@
   import { resetStore } from './core/store';
   import { initNuclia, resetNuclia } from './core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty} from './core/utils';
+  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts } from './core/utils';
   import { setLang } from './core/i18n';
   import SearchInput from './widgets/search-input/SearchInput.svelte';
   import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
@@ -48,6 +48,7 @@
       setCDN(cdn);
     }
 
+    loadFonts();
     // Load CSS variables (must be done after the CDN was set) and custom styles
     loadCssAsText().subscribe((css) => cssVariables = css);
 
@@ -76,5 +77,4 @@
 </div>
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap');
 </style>
