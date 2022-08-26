@@ -1,6 +1,17 @@
+import type { Observable } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
+import { map, switchMap } from 'rxjs/operators';
+
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
+
+export const getCssVariablesAsText = (): Observable<string> => {
+  return fromFetch(`${getCDN()}styles/css-variables.css`).pipe(
+    switchMap((res) => res.text()),
+    map((css: string) => css.replace('.variables{', '').replace('}', '')),
+  );
+};
 
 export const formatDate = (date: string) => {
   const d = new Date(date);
