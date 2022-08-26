@@ -94,31 +94,31 @@
         }
       }),
     );
+
     merge(
       nucliaStore().query.pipe(filter((query) => query.slice(-1) === ' ')),
       nucliaStore().query.pipe(debounceTime(500)),
-    )
-      .pipe(
-        tap(() => {
-          nucliaStore().suggestions.next(NO_RESULTS);
-          nucliaStore().intents.next({});
-        }),
-        filter((query) => !!query && query.length > 2),
-        tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
-        switchMap((query) =>
-          forkJoin([
-            suggest(query).pipe(tap((results) => nucliaStore().suggestions.next(results))),
-            predict(query).pipe(
-              tap((predictions) =>
-                nucliaStore().intents.next({
-                  labels: predictions,
-                }),
-              ),
+    ).pipe(
+      tap(() => {
+        nucliaStore().suggestions.next(NO_RESULTS);
+        nucliaStore().intents.next({});
+      }),
+      filter((query) => !!query && query.length > 2),
+      tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
+      switchMap((query) =>
+        forkJoin([
+          suggest(query).pipe(tap((results) => nucliaStore().suggestions.next(results))),
+          predict(query).pipe(
+            tap((predictions) =>
+              nucliaStore().intents.next({
+                labels: predictions,
+              }),
             ),
-          ]),
-        ),
-      )
-      .subscribe();
+          ),
+        ]),
+      ),
+    ).subscribe();
+
     nucliaStore()
       .triggerSearch.pipe(
       tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
