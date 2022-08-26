@@ -44,8 +44,7 @@
 
 </script>
 
-<div class="nuclia-widget nuclia-search-results"
-     style="{cssVariables}"
+<div style="{cssVariables}"
      data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}

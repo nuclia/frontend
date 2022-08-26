@@ -68,8 +68,7 @@
 
 </script>
 
-<div class="nuclia-widget nuclia-search-bar"
-     style="{cssVariables}"
+<div style="{cssVariables}"
      data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     <SearchInput placeholder="{placeholder}" searchBarWidget="{true}"/>

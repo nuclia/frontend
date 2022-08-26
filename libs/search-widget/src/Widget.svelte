@@ -149,14 +149,4 @@
 </div>
 
 <style>
-  .nuclia-widget {
-    color: var(--color-dark-stronger);
-    font-family: var(--font-family-body);
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-body);
-    line-height: var(--line-height-body);
-    text-align: left;
-
-    box-sizing: border-box;
-  }
 </style>
