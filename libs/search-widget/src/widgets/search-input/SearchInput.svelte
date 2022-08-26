@@ -38,13 +38,15 @@
   });
 
   $: {
-    if (value.trim() !== previous.trim()) {
+    const decodedValue = decodeURIComponent(value);
+    if (decodedValue.trim() !== previous.trim()) {
       dispatch('typeahead', value);
+
+      if (typeof value !== 'undefined') {
+        nucliaStore().query.next(value);
+      }
     }
-    previous = value;
-    if (value !== undefined) {
-      nucliaStore().query.next(value);
-    }
+    previous = decodedValue;
   }
 
   const search = () => {
