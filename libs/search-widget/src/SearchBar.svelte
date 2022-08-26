@@ -2,16 +2,13 @@
 
 <script lang="ts">
   import type { KBStates } from '@nuclia/core';
-  import { nucliaStore, nucliaState, resetStore } from './core/store';
-  import { initNuclia, resetNuclia, search, suggest } from './core/api';
-  import { debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
+  import { resetStore } from './core/store';
+  import { initNuclia, resetNuclia } from './core/api';
   import { onMount } from 'svelte';
-  import { NO_RESULTS, PENDING_RESULTS } from './core/models';
-  import { predict } from './core/tensor';
-  import { setCDN, coerceBooleanProperty, loadCssAsText } from './core/utils';
+  import { setCDN, coerceBooleanProperty} from './core/utils';
   import { setLang } from './core/i18n';
-  import { forkJoin, merge } from 'rxjs';
   import SearchInput from './widgets/search-input/SearchInput.svelte';
+  import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -57,41 +54,9 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
-    merge(
-      nucliaStore().query.pipe(filter((query) => query.slice(-1) === ' ')),
-      nucliaStore().query.pipe(debounceTime(500)),
-    )
-      .pipe(
-        tap(() => {
-          nucliaStore().suggestions.next(NO_RESULTS);
-          nucliaStore().intents.next({});
-        }),
-        filter((query) => !!query && query.length > 2),
-        tap(() => nucliaStore().suggestions.next(PENDING_RESULTS)),
-        switchMap((query) =>
-          forkJoin([
-            suggest(query).pipe(tap((results) => nucliaStore().suggestions.next(results))),
-            predict(query).pipe(
-              tap((predictions) =>
-                nucliaStore().intents.next({
-                  labels: predictions,
-                }),
-              ),
-            ),
-          ]),
-        ),
-      )
-      .subscribe();
-    nucliaStore()
-      .triggerSearch.pipe(
-      tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
-      switchMap(() => nucliaState().query.pipe(take(1))),
-      map((query) => query.trim()),
-      filter((query) => !!query),
-      switchMap((query) => nucliaStore().searchOptions.pipe(map((options) => ({query, options})))),
-      switchMap(({query, options}) => search(query, options)),
-    )
-      .subscribe((results) => nucliaStore().searchResults.next(results));
+    setupSuggestionsAndPredictions();
+    setupTriggerSearch();
+
     ready = true;
 
     return () => {
