@@ -17,24 +17,26 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.runtime.onMessage.addListener((request) => {
   if (request.action === 'UPDATE_MENU') {
-    chrome.contextMenus.removeAll(() => createMenu());
+    createMenu();
   }
 });
 
 function createMenu() {
-  chrome.contextMenus.create({
-    id: `NUCLIA_UPLOAD`,
-    title: 'Upload link to Nuclia',
-    ...baseMenuOptions,
-  });
-  chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ NUCLIA_KB, NUCLIA_KEY }) => {
-    if (NUCLIA_KB && NUCLIA_KEY) {
-      getLabels(NUCLIA_KB, NUCLIA_KEY).subscribe((labelsets) => {
-        if (labelsets.length > 0) {
-          createSubmenus(labelsets);
-        }
-      });
-    }
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: `NUCLIA_UPLOAD`,
+      title: 'Upload link to Nuclia',
+      ...baseMenuOptions,
+    });
+    chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ NUCLIA_KB, NUCLIA_KEY }) => {
+      if (NUCLIA_KB && NUCLIA_KEY) {
+        getLabels(NUCLIA_KB, NUCLIA_KEY).subscribe((labelsets) => {
+          if (labelsets.length > 0) {
+            createSubmenus(labelsets);
+          }
+        });
+      }
+    });
   });
 }
 
@@ -74,6 +76,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
         });
       }
       uploadLink(NUCLIA_KB, NUCLIA_KEY, info.linkUrl, labels);
+      createMenu(); // Keep menu in sync with actual labelsets
     } else {
       chrome.runtime.openOptionsPage();
     }
