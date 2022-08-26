@@ -15,14 +15,21 @@ export default defineConfig({
   plugins: [
     svelte({
       include: ['libs/search-widget/src/**/*.svelte'],
-      exclude: ['libs/search-widget/src/Widget.svelte', 'libs/search-widget/src/_video-widget/*.svelte'],
+      exclude: [
+        'libs/search-widget/src/Widget.svelte',
+        'libs/search-widget/src/_video-widget/SearchBar.svelte',
+        'libs/search-widget/src/_video-widget/SearchResults.svelte',
+      ],
       preprocess: sveltePreprocess(),
       compilerOptions: {
         css: true,
       },
     }),
     svelte({
-      include: ['libs/search-widget/src/_video-widget/*.svelte'],
+      include: [
+        'libs/search-widget/src/_video-widget/SearchBar.svelte',
+        'libs/search-widget/src/_video-widget/SearchResults.svelte',
+      ],
       preprocess: sveltePreprocess(),
       compilerOptions: {
         css: true,

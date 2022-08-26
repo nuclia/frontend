@@ -1,77 +1,84 @@
 <svelte:options tag="nuclia-search-results"/>
 
 <script lang="ts">
-  import type { Resource } from '@nuclia/core';
-  import { nucliaState, nucliaStore, setDisplayedResource } from '../core/store';
-  import { map, merge, Observable, of, switchMap } from 'rxjs';
   import { onMount } from 'svelte';
-  import { getResource } from '../core/api';
-  import CloseButton from '../components/button/CloseButton.svelte';
+  import { forkJoin, map, switchMap, take } from 'rxjs';
+  import { nucliaState, nucliaStore } from '../core/store';
   import { loadCssAsText, loadFonts } from '../core/utils';
+  import { _ } from '../core/i18n';
+  import Spinner from '../components/spinner/Spinner.svelte';
+  import VideoTile from './VideoTile.svelte';
 
+  const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;
-  const showResults = merge(
-    nucliaStore().triggerSearch.pipe(map(() => true)),
-  );
-  let resource: Observable<Resource>;
+  const hasSearchError = nucliaState().hasSearchError;
+  const pendingResults = nucliaState().pendingResults;
   let cssVariables;
 
+  const enhancedResults = results.pipe(
+    switchMap((results) =>
+      forkJoin(
+        results.map((result) =>
+          forkJoin([
+            nucliaState().getMatchingParagraphs(result.id).pipe(take(1)),
+            nucliaState().getMatchingSentences(result.id).pipe(take(1)),
+          ]).pipe(
+            map(([paragraphs, sentences]) => ({
+              resource: result,
+              hasParagraphs: paragraphs.length > 0,
+              hasSentences: sentences.length > 0,
+            })),
+          ),
+        ),
+      ),
+    ),
+  );
+  const paragraphResults = enhancedResults.pipe(
+    map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
+  );
   onMount(() => {
     loadFonts();
     // Load CSS variables (must be done after the CDN was set) and custom styles
     loadCssAsText().subscribe((css) => cssVariables = css);
-
-    resource = nucliaState().displayedResource.pipe(
-      switchMap((resource) => !!resource?.uid ? getResource(resource.uid) : of(null)),
-    );
   });
-
-  const closePreview = () => {
-    setDisplayedResource({ uid: '' });
-  }
 
 </script>
 
 <div class="nuclia-widget nuclia-search-results"
      style="{cssVariables}"
      data-version="__NUCLIA_DEV_VERSION__">
-  <div class="results-container">
-    {#if $showResults}
-      <div class="results"
-           class:preview-visible={$resource}>
-        <p>TODO: show video results</p>
+  {#if $showResults}
+    {#if $hasSearchError}
+      <div class="error">
+        <strong>{$_('error.search')}</strong>
+        <span>{$_('error.search-beta')}</span>
+      </div>
+    {:else if $pendingResults}
+      <Spinner/>
+    {:else if results.length === 0}
+      <strong>{$_('results.empty')}</strong>
+    {:else}
+      <div class="results">
+        {#each $paragraphResults as result}
+          <VideoTile {result}/>
+        {/each}
       </div>
     {/if}
-
-    {#if $resource}
-      <div class="viewer-container">
-        <p>TODO: show preview from {resource}</p>
-        <div class="close-button">
-          <CloseButton aspect="basic" on:click={closePreview} />
-        </div>
-      </div>
-    {/if}
-  </div>
+  {/if}
 </div>
 
 <style>
-  .results-container {
+  .error {
+    align-items: center;
     display: flex;
+    flex-direction: column;
     gap: var(--rhythm-2);
+    width: var(--search-bar-max-width);
   }
-  .results.preview-visible {
-    flex: 0 1 auto;
-  }
-  .viewer-container {
-    box-shadow: -1px 0 0 0 var(--color-neutral-regular);
-    flex: 1 0 auto;
-    max-width: 75%;
-    position: relative;
-  }
-  .close-button {
-    position: absolute;
-    right: 0;
-    top: var(--rhythm-2);
-    z-index: 1;
+
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-2);
   }
 </style>

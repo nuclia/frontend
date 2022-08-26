@@ -103,7 +103,7 @@
   .two-widgets-container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 48px;
   }
 
   @media (min-width: 640px) {
