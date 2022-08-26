@@ -3,7 +3,7 @@
   import { onMount } from 'svelte';
   import { NucliaWidget, NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src';
 
-  let selected = 'two-widgets';
+  let selected = 'form';
   let widget: NucliaWidget;
 
   onMount(() => {
