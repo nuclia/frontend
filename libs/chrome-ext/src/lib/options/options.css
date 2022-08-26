@@ -13,7 +13,7 @@ p {
 label {
   display: block;
   font-weight: bold;
-  margin-bottom: .25rem;
+  margin-bottom: 0.25rem;
 }
 
 input {
@@ -30,7 +30,7 @@ button {
   -webkit-appearance: none;
   border: none;
   margin: 0;
-  padding: .5rem 1rem .5rem 1rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
   width: auto;
   background: #ff0066;
   color: #fff;
@@ -38,7 +38,14 @@ button {
   cursor: pointer;
 }
 
+.help {
+  margin-top: 0.25rem;
+  font-size: 0.625rem;
+  color: #999;
+}
+
 .message {
   padding-left: 1rem;
   vertical-align: middle;
+  font-weight: bold;
 }
