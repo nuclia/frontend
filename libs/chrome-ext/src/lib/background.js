@@ -5,6 +5,7 @@ try {
 }
 
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET_`;
+const KB_SETTINGS = ['NUCLIA_KB', 'NUCLIA_ZONE', 'NUCLIA_KEY'];
 
 const baseMenuOptions = {
   targetUrlPatterns: ['https://*/*'],
@@ -28,9 +29,9 @@ function createMenu() {
       title: 'Upload link to Nuclia',
       ...baseMenuOptions,
     });
-    chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ NUCLIA_KB, NUCLIA_KEY }) => {
-      if (NUCLIA_KB && NUCLIA_KEY) {
-        getLabels(NUCLIA_KB, NUCLIA_KEY).subscribe((labelsets) => {
+    chrome.storage.local.get(KB_SETTINGS, (settings) => {
+      if (settings.NUCLIA_KB && settings.NUCLIA_ZONE && settings.NUCLIA_KEY) {
+        getLabels(settings).subscribe((labelsets) => {
           if (labelsets.length > 0) {
             createSubmenus(labelsets);
           }
@@ -66,8 +67,8 @@ function createSubmenus(labelsets) {
 }
 
 chrome.contextMenus.onClicked.addListener((info) => {
-  chrome.storage.local.get(['NUCLIA_KB', 'NUCLIA_KEY'], ({ NUCLIA_KB, NUCLIA_KEY }) => {
-    if (NUCLIA_KB && NUCLIA_KEY) {
+  chrome.storage.local.get(KB_SETTINGS, (settings) => {
+    if (settings.NUCLIA_KB && settings.NUCLIA_ZONE && settings.NUCLIA_KEY) {
       let labels = [];
       if (info.parentMenuItemId && info.parentMenuItemId.startsWith(MENU_LABELSET_PREFIX)) {
         labels.push({
@@ -75,7 +76,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
           label: info.menuItemId.split(info.parentMenuItemId + '_')[1],
         });
       }
-      uploadLink(NUCLIA_KB, NUCLIA_KEY, info.linkUrl, labels);
+      uploadLink(settings, info.linkUrl, labels);
       createMenu(); // Keep menu in sync with actual labelsets
     } else {
       chrome.runtime.openOptionsPage();
@@ -83,8 +84,8 @@ chrome.contextMenus.onClicked.addListener((info) => {
   });
 });
 
-function getLabels(kb, key) {
-  return getSDK(kb, key)
+function getLabels(settings) {
+  return getSDK(settings)
     .knowledgeBox.getLabels()
     .pipe(
       rxjs.map((labels) =>
@@ -96,18 +97,18 @@ function getLabels(kb, key) {
     );
 }
 
-function uploadLink(kb, key, url, labels) {
-  getSDK(kb, key)
+function uploadLink(settings, url, labels) {
+  getSDK(settings)
     .db.getKnowledgeBox()
     .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })))
     .subscribe();
 }
 
-function getSDK(kb, key) {
+function getSDK(settings) {
   return new NucliaSDK.Nuclia({
     backend: 'https://nuclia.cloud/api',
-    knowledgeBox: kb,
-    zone: 'europe-1',
-    apiKey: key,
+    knowledgeBox: settings.NUCLIA_KB,
+    zone: settings.NUCLIA_ZONE,
+    apiKey: settings.NUCLIA_KEY,
   });
 }
