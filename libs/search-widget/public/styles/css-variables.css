@@ -1,6 +1,7 @@
 .variables{
   /* PALETTE */
   --color-dark-stronger: var(--custom-color-dark-stronger, hsl(0, 0%, 5%));
+  --color-dark-stronger-rgb: 13, 13, 13;
   --color-light-stronger: var(--custom-color-light-stronger, #fff);
 
   --color-neutral-strong: var(--custom-color-neutral-strong, hsl(0, 0%, 44%));
@@ -31,54 +32,60 @@
   --color-tertiary-lightest: var(--custom-color-tertiary-lightest, hsl(249, 100%, 96%));
 
   /* SPACING */
-  --spacer: 0.5em; /* 1unit - 8px - 0.5em */
+  --spacer: 8px; /* 1unit - 8px */
 
-  --rhythm-0_25: calc(var(--spacer) * .25);  /*   .25 unit -   2px -   .125 em  */
-  --rhythm-0_5: calc(var(--spacer) * .5);    /*   .5  unit -   4px -   .25  em  */
-  --rhythm-1: var(--spacer);                 /*  1    unit -   8px -   .5   em  */
-  --rhythm-1_5: calc(var(--spacer) * 1.5);   /*  1.5  unit -  12px -   .75  em  */
-  --rhythm-2: calc(var(--spacer) * 2);       /*  2    unit -  16px -  1     em  */
-  --rhythm-3: calc(var(--spacer) * 3);       /*  3    unit -  24px -  1.5   em  */
-  --rhythm-4: calc(var(--spacer) * 4);       /*  4    unit -  32px -  2     em  */
-  --rhythm-5: calc(var(--spacer) * 5);       /*  5    unit -  40px -  2.5   em  */
-  --rhythm-6: calc(var(--spacer) * 6);       /*  6    unit -  48px -  3     em  */
-  --rhythm-7: calc(var(--spacer) * 7);       /*  7    unit -  56px -  3.5   em  */
-  --rhythm-8: calc(var(--spacer) * 8);       /*  8    unit -  64px -  4     em  */
-  --rhythm-9: calc(var(--spacer) * 9);       /*  9    unit -  72px -  4.5   em  */
-  --rhythm-10: calc(var(--spacer) * 10);     /*  10   unit -  80px -  5     em  */
-  --rhythm-12: calc(var(--spacer) * 12);     /*  12   unit -  96px -  6     em  */
-  --rhythm-14: calc(var(--spacer) * 14);     /*  14   unit - 112px -  7     em  */
-  --rhythm-16: calc(var(--spacer) * 16);     /*  16   unit - 128px -  8     em  */
-  --rhythm-20: calc(var(--spacer) * 20);     /*  20   unit - 160px - 10     em  */
-  --rhythm-22: calc(var(--spacer) * 22);     /*  22   unit - 176px - 11     em  */
-  --rhythm-24: calc(var(--spacer) * 24);     /*  24   unit - 192px - 12     em  */
-  --rhythm-28: calc(var(--spacer) * 28);     /*  28   unit - 224px - 14     em  */
-  --rhythm-32: calc(var(--spacer) * 32);     /*  32   unit - 256px - 16     em  */
-  --rhythm-40: calc(var(--spacer) * 40);     /*  40   unit - 320px - 20     em  */
-  --rhythm-48: calc(var(--spacer) * 48);     /*  48   unit - 384px - 24     em  */
-  --rhythm-56: calc(var(--spacer) * 56);     /*  56   unit - 448px - 28     em  */
-  --rhythm-64: calc(var(--spacer) * 64);     /*  64   unit - 512px - 32     em  */
+  --rhythm-0_25: calc(var(--spacer) * .25);  /*   .25 unit -   2px */
+  --rhythm-0_5: calc(var(--spacer) * .5);    /*   .5  unit -   4px */
+  --rhythm-1: var(--spacer);                 /*  1    unit -   8px */
+  --rhythm-1_5: calc(var(--spacer) * 1.5);   /*  1.5  unit -  12px */
+  --rhythm-2: calc(var(--spacer) * 2);       /*  2    unit -  16px */
+  --rhythm-3: calc(var(--spacer) * 3);       /*  3    unit -  24px */
+  --rhythm-4: calc(var(--spacer) * 4);       /*  4    unit -  32px */
+  --rhythm-5: calc(var(--spacer) * 5);       /*  5    unit -  40px */
+  --rhythm-6: calc(var(--spacer) * 6);       /*  6    unit -  48px */
+  --rhythm-7: calc(var(--spacer) * 7);       /*  7    unit -  56px */
+  --rhythm-8: calc(var(--spacer) * 8);       /*  8    unit -  64px */
+  --rhythm-9: calc(var(--spacer) * 9);       /*  9    unit -  72px */
+  --rhythm-10: calc(var(--spacer) * 10);     /*  10   unit -  80px */
+  --rhythm-12: calc(var(--spacer) * 12);     /*  12   unit -  96px */
+  --rhythm-14: calc(var(--spacer) * 14);     /*  14   unit - 112px */
+  --rhythm-16: calc(var(--spacer) * 16);     /*  16   unit - 128px */
+  --rhythm-20: calc(var(--spacer) * 20);     /*  20   unit - 160px */
+  --rhythm-22: calc(var(--spacer) * 22);     /*  22   unit - 176px */
+  --rhythm-24: calc(var(--spacer) * 24);     /*  24   unit - 192px */
+  --rhythm-28: calc(var(--spacer) * 28);     /*  28   unit - 224px */
+  --rhythm-32: calc(var(--spacer) * 32);     /*  32   unit - 256px */
+  --rhythm-40: calc(var(--spacer) * 40);     /*  40   unit - 320px */
+  --rhythm-48: calc(var(--spacer) * 48);     /*  48   unit - 384px */
+  --rhythm-56: calc(var(--spacer) * 56);     /*  56   unit - 448px */
+  --rhythm-64: calc(var(--spacer) * 64);     /*  64   unit - 512px */
 
-  /* TOKEN */
+  /* TYPOGRAPHY */
   --font-size-base: var(--custom-font-size-base, 16px);
   --font-weight-body: var(--custom-font-weight-body, 300);
   --font-weight-semi-bold: var(--custom-font-weight-semi-bold, 500);
   --font-weight-bold: var(--custom-font-weight-semi-bold, 700);
   --line-height-body: calc(var(--font-size-base) * 1.25);
   --font-family-body: 'Source Sans Pro', sans-serif;
+  --font-size-title-m: calc(var(--font-size-base) * 1.25);
+  --font-weight-title-m: var(--font-weight-semi-bold);
+  --line-height-title-m: calc(var(--font-size-base) * 1.75);
+
+
+  /* TOKEN */
   --border-radius: var(--custom-border-radius, var(--rhythm-0_25));
 
-  --color-backdrop: var(--custom-color-backdrop, rgba(13, 13, 13, 0.5));
+  --color-backdrop: var(--custom-color-backdrop, rgba(var(--color-dark-stronger-rgb), 0.5));
   --z-index-modal: var(--custom-z-index-modal, 10010);
   --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
-  /* We can't use var(--color-dark-stronger) in rgba because rgba needs the RGB triplet as input while --color-dark-stronger is the actual HSL color. */
-  --shadow-modal: var(--custom-shadow-modal, var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(13, 13, 13, 0.2));
+  --shadow-modal: var(--custom-shadow-modal, var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.2));
 
   --color-scrollbar-track: var(--custom-color-scrollbar-track, var(--color-light-stronger));
   --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, var(--color-dark-stronger));
 
   --focus-shadow: var(--custom-focus-shadow, 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter));
+  --shadow-small: 1px 1px 2px rgba(var(--color-dark-stronger-rgb), 0.3);
 
   --size-powered-by: calc(var(--rhythm-16) + var(--rhythm-1_5));
   --default-search-field-padding: var(--rhythm-1) var(--size-powered-by) var(--rhythm-1) var(--rhythm-5);

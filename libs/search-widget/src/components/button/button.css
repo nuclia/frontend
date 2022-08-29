@@ -9,7 +9,7 @@
   line-height: var(--line-height-body);
   margin: 0;
   outline: 0;
-  padding: 0.4em 0.5em;
+  padding: var(--rhythm-1) var(--rhythm-2);
   transition: background-color 0.16s ease-in-out, box-shadow 0.16s ease-in;
   white-space: nowrap;
 }
@@ -22,7 +22,7 @@ svg:focus {
 }
 .button.icon {
   border-radius: 50%;
-  padding: 12px;
+  padding: var(--rhythm-1_5);
 }
 
 .button:not(:disabled) {
@@ -43,7 +43,7 @@ svg {
 .button.small {
   font-size: calc(var(--font-size-base) * 0.75);
   line-height: calc(var(--line-height-body) * 0.75);
-  padding: 4px;
+  padding: var(--rhythm-0_5);
 }
 
 .solid {
@@ -52,8 +52,10 @@ svg {
   border: var(--color-dark-stronger);
 }
 .solid:not(:disabled):hover {
-  background: var(--color-neutral-light);
+  background: var(--color-dark-stronger);
+  box-shadow: var(--shadow-small);
 }
+
 .solid:not(:disabled):active {
   background: var(--color-neutral-regular);
 }
