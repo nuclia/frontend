@@ -1,7 +1,13 @@
-<div class="pagination" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px">
-  <button [disabled]="_page === 1" (click)="prev.emit()">&lt;</button>
-  <div translate [translateParams]="{current: _page, total: _total < 10 ? '0' + _total : _total }">
+<div class="pagination"
+     fxLayout="row"
+     fxLayoutAlign="center center"
+     fxLayoutGap="15px">
+  <button [disabled]="_page === 1"
+          (click)="prev.emit()">&lt;</button>
+  <div translate
+       [translateParams]="{current: _page, total: _total }">
     generic.pagination
   </div>
-  <button [disabled]="_page >= _total" (click)="next.emit()">&gt;</button>
+  <button [disabled]="_page >= _total"
+          (click)="next.emit()">&gt;</button>
 </div>
