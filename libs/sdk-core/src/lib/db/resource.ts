@@ -37,7 +37,7 @@ export class Resource implements IResource {
     this.nuclia = nuclia;
     this.kb = kb;
     this.uuid = uuid;
-    Object.assign(this, { ...data, title: data.title ? decodeURIComponent(data.title) : '–' });
+    Object.assign(this, { ...data, title: this.formatTitle(data.title) });
   }
 
   modify(data: Partial<ICreateResource>): Observable<void> {
@@ -153,5 +153,14 @@ export class Resource implements IResource {
         Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results),
       ),
     );
+  }
+
+  private formatTitle(title?: string): string {
+    title = title || '–';
+    try {
+      return decodeURIComponent(title);
+    } catch (e) {
+      return title;
+    }
   }
 }
