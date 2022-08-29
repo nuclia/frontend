@@ -71,6 +71,10 @@
   --font-weight-title-m: var(--font-weight-semi-bold);
   --line-height-title-m: calc(var(--font-size-base) * 1.75);
 
+  /* TRANSITIONS */
+  --transition-superfast: 0.16s ease-in-out;
+  --transition-fast: 0.24s ease;
+
 
   /* TOKEN */
   --border-radius: var(--custom-border-radius, var(--rhythm-0_25));

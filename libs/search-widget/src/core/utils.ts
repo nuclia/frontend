@@ -40,10 +40,10 @@ export const formatDate = (date: string) => {
   return d.toLocaleDateString();
 };
 
-export const formatTime = (secons: number) => {
-  secons = Math.floor(secons);
-  const minutes = Math.floor(secons / 60);
-  const seconds = secons % 60;
+export const formatTime = (sec: number) => {
+  sec = Math.floor(sec);
+  const minutes = Math.floor(sec / 60);
+  const seconds = sec % 60;
   const minutesLabel = minutes < 10 ? '0' + minutes : minutes.toString();
   const secondsLabel = seconds < 10 ? '0' + seconds : seconds.toString();
   return `${minutesLabel}.${secondsLabel}`;

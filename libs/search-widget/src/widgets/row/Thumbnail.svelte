@@ -4,6 +4,7 @@
 
   export let src: string;
   export let aspectRatio: '5/4' | '16/9' = '5/4';
+  export let noBackground = false;
 
   let thumbnail: string;
   if (src) {
@@ -14,13 +15,19 @@
   });
 </script>
 
-<img src={thumbnail} alt="Thumbnail" style:aspect-ratio="{aspectRatio}" />
+<img src={thumbnail} alt="Thumbnail"
+     style:aspect-ratio="{aspectRatio}"
+     class:thumbnail-background={!noBackground}
+/>
 
 <style>
   img {
     width: 100%;
     object-fit: contain;
     object-position: center;
-    background-color: #efefef;
+  }
+
+  img.thumbnail-background {
+    background-color: var(--color-neutral-lighter);
   }
 </style>
