@@ -1,5 +1,4 @@
 {
-	"button.label": "Search by",
 	"entities.date": "Date",
 	"entities.event": "Events",
 	"entities.fac": "Constructions",
@@ -20,7 +19,7 @@
 	"entities.title": "Insights",
 	"entities.work_of_art": "Art",
 	"error.search": "Oops! Something is wrong right now!",
-	"error.search-beta": "Luckily we've warned that we're in beta! 🙃",
+	"error.search-beta": "Fortunately, we told you that it's a beta! 🙃",
 	"form.title-only": "Search in title only",
 	"input.placeholder": "Type your question here",
 	"modal.back": "Back",

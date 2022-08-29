@@ -2,13 +2,13 @@
 
 <script lang="ts">
   import type { KBStates } from '@nuclia/core';
-  import { resetStore } from './core/store';
-  import { initNuclia, resetNuclia } from './core/api';
+  import { resetStore } from '../core/store';
+  import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts } from './core/utils';
-  import { setLang } from './core/i18n';
-  import SearchInput from './widgets/search-input/SearchInput.svelte';
-  import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
+  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts } from '../core/utils';
+  import { setLang } from '../core/i18n';
+  import SearchInput from '../widgets/search-input/SearchInput.svelte';
+  import { setupSuggestionsAndPredictions, setupTriggerSearch } from '../core/search-bar';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -68,8 +68,7 @@
 
 </script>
 
-<div class="nuclia-widget nuclia-search-bar"
-     style="{cssVariables}"
+<div style="{cssVariables}"
      data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     <SearchInput placeholder="{placeholder}" searchBarWidget="{true}"/>
