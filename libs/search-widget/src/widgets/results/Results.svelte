@@ -9,7 +9,6 @@
 
   export let displayThumbnail = true;
   export let formWidget = false;
-  export let searchResultsWidget = false;
   export let results: IResource[] = [];
 
   const enhancedResults = nucliaState().results.pipe(
@@ -47,16 +46,16 @@
 </script>
 
 {#if $hasSearchError}
-  <div class="error" class:external-layout={searchResultsWidget}><strong>{$_('error.search')}</strong>
+  <div class="error"><strong>{$_('error.search')}</strong>
     <span>{$_('error.search-beta')}</span></div>
 {:else if $pendingResults}
-  <h3 class="empty" class:external-layout={searchResultsWidget}>
+  <h3 class="empty" >
     <Spinner/>
   </h3>
 {:else if results.length === 0}
-  <h3 class="empty" class:external-layout={searchResultsWidget}>{$_('results.empty')}</h3>
+  <h3 class="empty">{$_('results.empty')}</h3>
 {:else}
-  <div class="results" class:external-layout={searchResultsWidget}>
+  <div class="results">
     {#if $paragraphResults.length > 0}
       <div class="subtitle">{$_('results.paragraphs')}</div>
       <div>
@@ -104,18 +103,18 @@
 {/if}
 
 <style>
-  .error:not(.external-layout),
-  h3.empty:not(.external-layout) {
+  .error,
+  h3.empty {
     margin: 0;
     padding: 1em;
   }
 
-  .results:not(.external-layout) {
+  .results {
     padding: 2.5em;
   }
 
   @media (min-width: 1440px) {
-    .results:not(.external-layout) {
+    .results {
       padding: 2.5em 5em;
     }
   }
