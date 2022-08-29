@@ -38,7 +38,6 @@ $table-breakpoint: 1400px;
 
   .resource-number {
     display: flex;
-    width: 25%;
     justify-content: space-between;
     align-items: center;
     margin-left: auto;
@@ -46,6 +45,12 @@ $table-breakpoint: 1400px;
     nsi-dropdown-button {
       display: inline-block;
       margin-left: rhythm(1);
+    }
+    span {
+      white-space: nowrap;
+    }
+    & > div:first-child {
+      margin-right: rhythm(2);
     }
   }
 }

@@ -251,20 +251,11 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       switchMap(() => this.sdk.currentKb),
       switchMap((kb) => kb.listResources(this.page - 1, this.pageSize)),
       tap((results) => {
-        this.data = results.resources.map((res) => Object.assign(res, { title: this.formatTitle(res.title) }));
+        this.data = results.resources;
         this.clearSelected();
         this.setLoading(false);
       }),
     );
-  }
-
-  private formatTitle(title?: string): string {
-    title = title || '–';
-    try {
-      return decodeURIComponent(title);
-    } catch (e) {
-      return title;
-    }
   }
 
   ngOnDestroy() {

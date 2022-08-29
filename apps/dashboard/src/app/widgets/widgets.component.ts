@@ -55,7 +55,7 @@ export class WidgetsComponent implements OnDestroy {
           return this.widgetService
             .saveWidget(id, {
               id,
-              mode: 'button',
+              mode: 'input',
             })
             .pipe(map(() => result.id));
         }),
