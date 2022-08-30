@@ -1,6 +1,7 @@
 <script>
   import Thumbnail from '../widgets/row/Thumbnail.svelte';
   import {createEventDispatcher} from 'svelte';
+  import Icon from "./Icon.svelte";
 
   export let thumbnail = '';
   const dispatch = createEventDispatcher();
@@ -19,9 +20,7 @@
     <div class="play-icon"
          tabindex="0"
          on:keyup={(e) => { if (e.key === 'Enter') play(); }}>
-      <svg tabindex="-1" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" d="M6 19.14V4.86L18.693 12 6 19.14Z" clip-rule="evenodd"/>
-      </svg>
+      <Icon name="play" size="large" />
     </div>
   </div>
 {/if}
@@ -34,11 +33,10 @@
   }
 
   .thumbnail-player .play-icon {
-    --icon-size: var(--rhythm-5);
-
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
     color: var(--color-dark-stronger);
+    display: flex;
     padding: var(--rhythm-1);
     left: 50%;
     position: absolute;
@@ -59,13 +57,4 @@
     background: var(--color-light-stronger);
   }
 
-  .thumbnail-player .play-icon svg {
-    fill: currentColor;
-    height: var(--icon-size);
-    width: var(--icon-size);
-  }
-
-  .thumbnail-player .play-icon svg:focus {
-    outline: 0;
-  }
 </style>

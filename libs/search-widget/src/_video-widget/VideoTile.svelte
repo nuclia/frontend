@@ -12,6 +12,7 @@
   import { of } from 'rxjs';
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
+  import Icon from "./Icon.svelte";
 
   export let result: IResource = {id: ''};
 
@@ -93,6 +94,9 @@
         </div>
 
         <div class="side-panel">
+          <div class="find-bar-container">
+            <Icon name="search"/>
+          </div>
           <div class="transcript-container">
             <ul class="paragraphs-container">
               {#each $matchingParagraphs as paragraph}
@@ -111,11 +115,9 @@
             <div tabindex="-1" class="transcript-expander-header-title">
               <strong>Full transcript</strong>
             </div>
-            <svg tabindex="-1" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-              <path fill-rule="evenodd"
-                    d="m9.707 18.707-1.414-1.414L13.586 12 8.293 6.707l1.414-1.414L16.414 12l-6.707 6.707Z"
-                    clip-rule="evenodd"/>
-            </svg>
+            <div tabindex="-1" class="transcript-expander-header-chevron">
+              <Icon name="chevron-right"/>
+            </div>
           </div>
           {#if showTranscripts}
             <div class="transcript-container">
@@ -225,6 +227,15 @@
     width: var(--rhythm-56);
   }
 
+  .find-bar-container {
+    align-items: center;
+    background: var(--color-light-stronger);
+    display: flex;
+    height: var(--rhythm-5);
+    margin-bottom: var(--rhythm-1);
+    padding-left: var(--rhythm-1);
+  }
+
   .transcript-expander-header,
   .transcript-container {
     background: var(--color-light-stronger);
@@ -242,10 +253,10 @@
     box-shadow: var(--focus-shadow);
     outline: 0;
   }
-  .transcript-expander-header svg {
+  .transcript-expander-header .transcript-expander-header-chevron {
     transition: transform var(--transition-superfast);
   }
-  .transcript-expander-header.expanded svg {
+  .transcript-expander-header.expanded .transcript-expander-header-chevron {
     transform: rotate(90deg);
   }
 

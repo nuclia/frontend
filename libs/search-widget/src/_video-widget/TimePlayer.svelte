@@ -1,6 +1,7 @@
 <script>
   import {formatTime} from '../core/utils';
   import {createEventDispatcher} from "svelte";
+  import Icon from "./Icon.svelte";
 
   export let time = 0;
   export let selected = false;
@@ -17,14 +18,13 @@
      on:click={play}
      on:keyup={(e) => { if (e.key === 'Enter') play(); }}
      tabindex="0">
-  <svg xmlns="http://www.w3.org/2000/svg" tabindex="-1" width="24" height="24" viewBox="0 0 24 24">
-    <path fill-rule="evenodd" d="M6 19.14V4.86L18.693 12 6 19.14Z" clip-rule="evenodd"/>
-  </svg>
+  <Icon name="play" size="small"/>
   <div tabindex="-1">{formatTime(time)}</div>
 </div>
 
 <style>
   .time-player {
+    align-items: center;
     background: var(--color-neutral-lightest);
     border-radius: var(--rhythm-4);
     cursor: pointer;
@@ -55,9 +55,5 @@
   .time-player.selected:active {
     background: var(--color-primary-light);
     color: var(--color-light-stronger);
-  }
-
-  .time-player svg {
-    width: var(--rhythm-2);
   }
 </style>

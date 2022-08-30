@@ -17,7 +17,7 @@
   box-shadow: var(--focus-shadow);
   outline: 0;
 }
-svg:focus {
+.button svg:focus {
   outline: 0;
 }
 .button.icon {
@@ -35,39 +35,34 @@ svg:focus {
   align-items: center;
 }
 
-svg {
-  display: block;
-  fill: currentColor;
-}
-
 .button.small {
   font-size: calc(var(--font-size-base) * 0.75);
   line-height: calc(var(--line-height-body) * 0.75);
   padding: var(--rhythm-0_5);
 }
 
-.solid {
+.button.solid {
   color: var(--color-light-stronger);
   background: var(--color-dark-stronger);
   border: var(--color-dark-stronger);
 }
-.solid:not(:disabled):hover {
+.button.solid:not(:disabled):hover {
   background: var(--color-dark-stronger);
   box-shadow: var(--shadow-small);
 }
 
-.solid:not(:disabled):active {
+.button.solid:not(:disabled):active {
   background: var(--color-neutral-regular);
 }
 
-.basic {
+.button.basic {
   color: var(--color-dark-stronger);
   background: transparent;
   border: var(--color-dark-stronger);
 }
-.basic:not(:disabled):hover {
+.button.basic:not(:disabled):hover {
   background: var(--color-neutral-lighter);
 }
-.basic:not(:disabled):active {
+.button.basic:not(:disabled):active {
   background: var(--color-neutral-light);
 }
