@@ -12,7 +12,7 @@
   import { of } from 'rxjs';
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
-  import Icon from "./Icon.svelte";
+  import Icon from './Icon.svelte';
 
   export let result: IResource = {id: ''};
 
@@ -22,10 +22,28 @@
   let videoTime = 0;
   let youtubeUri: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
+  let findInTranscript = '';
   let transcripts: MediaWidgetParagraph[] = [];
-  let showTranscripts = false;
+  let showSidePanel = false;
+  let showFullTranscripts = false;
+  let tileElement: HTMLElement;
+  let expandedHeight;
 
   const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id);
+
+  const filterParagraphs = (paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {
+    return paragraphs
+      .filter(paragraph => paragraph.text.includes(findInTranscript))
+      .map(paragraph => ({
+        ...paragraph,
+        text: paragraph.text.replaceAll(findInTranscript, `<strong>${findInTranscript}</strong>`),
+      }));
+  }
+
+  $: filteredMatchingParagraphs = !findInTranscript ? matchingParagraphs : matchingParagraphs.pipe(
+    map(paragraphs => filterParagraphs(paragraphs as MediaWidgetParagraph[])),
+  );
+  $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(transcripts);
 
   const playFromStart = () => {
     playFrom(0);
@@ -35,7 +53,7 @@
     // FIXME once Ramon will have the timestamp in the search results
     // playFrom(paragraph.time, paragraph);
     paragraphInPlay = paragraph;
-    playFrom(450, paragraph);
+    playFrom(200, paragraph);
   };
 
   const playTranscript = (paragraph) => {
@@ -62,29 +80,41 @@
     }
   };
 
+  const initExpandedStyle = () => {
+      const expandedRect = tileElement.getBoundingClientRect();
+      expandedHeight = `${expandedRect.height}px`;
+      showSidePanel = true;
+  }
+
   const closePreview = () => {
     expanded = false;
   };
 
   const toggleTranscriptPanel = () => {
-    showTranscripts = !showTranscripts;
-  }
+    showFullTranscripts = !showFullTranscripts;
+  };
 </script>
 
 
 <div class="video-tile"
-     class:expanded>
+     class:expanded
+     bind:this={tileElement}
+     style:max-height="{expandedHeight}"
+>
   {#if expanded}
     <header>
       <h3 class="ellipsis">{result?.title}</h3>
       <CloseButton aspect="basic"
                    on:click={closePreview}/>
     </header>
-    <div class="expanded-tile-content">
+    <div class="expanded-tile-content"
+         class:full-transcript-expanded={showFullTranscripts}>
       {#if $resource}
         <div class="video-and-summary-container">
           {#if youtubeUri}
-            <Youtube time={videoTime} uri={youtubeUri}/>
+            <Youtube time={videoTime}
+                     uri={youtubeUri}
+                     on:videoReady={initExpandedStyle}/>
           {/if}
           <div class="summary-container">
             {#each summaries as summary}
@@ -96,20 +126,31 @@
         <div class="side-panel">
           <div class="find-bar-container">
             <Icon name="search"/>
+            <input class="find-input"
+                   type="text"
+                   autocomplete="off"
+                   aria-label="Find in the transcript"
+                   placeholder="Find in the transcript"
+                   bind:value={findInTranscript}>
           </div>
-          <div class="transcript-container">
-            <ul class="paragraphs-container">
-              {#each $matchingParagraphs as paragraph}
-                <ParagraphPlayer {paragraph}
-                                 selected="{paragraph === paragraphInPlay}"
-                                 stack
-                                 on:play={(event) => playTranscript(event.detail.paragraph)}/>
-              {/each}
-            </ul>
-          </div>
+          {#if showSidePanel}
+            <div class="transcript-container">
+              {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
+                <strong>{findInTranscript}</strong> not found in your search results…
+              {/if}
+              <ul class="paragraphs-container">
+                {#each $filteredMatchingParagraphs as paragraph}
+                  <ParagraphPlayer {paragraph}
+                                   selected="{paragraph === paragraphInPlay}"
+                                   stack
+                                   on:play={(event) => playTranscript(event.detail.paragraph)}/>
+                {/each}
+              </ul>
+            </div>
+          {/if}
           <div tabindex="0"
                class="transcript-expander-header"
-               class:expanded={showTranscripts}
+               class:expanded={showFullTranscripts}
                on:click={toggleTranscriptPanel}
                on:keyup={(e) => { if (e.key === 'Enter') toggleTranscriptPanel(); }}>
             <div tabindex="-1" class="transcript-expander-header-title">
@@ -119,10 +160,10 @@
               <Icon name="chevron-right"/>
             </div>
           </div>
-          {#if showTranscripts}
+          {#if showFullTranscripts}
             <div class="transcript-container">
               <ul class="paragraphs-container">
-                {#each transcripts as paragraph}
+                {#each filteredTranscripts as paragraph}
                   <ParagraphPlayer {paragraph}
                                    selected="{paragraph === paragraphInPlay}"
                                    stack
@@ -132,7 +173,6 @@
             </div>
           {/if}
         </div>
-
       {/if}
     </div>
   {:else}
@@ -176,6 +216,7 @@
     background: var(--color-neutral-lightest);
     border-radius: var(--border-radius);
     flex-direction: column;
+    overflow: hidden;
     padding: var(--rhythm-2);
   }
 
@@ -232,8 +273,24 @@
     background: var(--color-light-stronger);
     display: flex;
     height: var(--rhythm-5);
+    gap: var(--rhythm-1);
     margin-bottom: var(--rhythm-1);
     padding-left: var(--rhythm-1);
+  }
+
+  .find-bar-container .find-input {
+    border: none;
+    box-sizing: border-box;
+    color: inherit;
+    flex: 1 0 auto;
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-body);
+    line-height: var(--rhythm-4);
+  }
+
+  .find-bar-container .find-input:focus {
+    outline: 0;
   }
 
   .transcript-expander-header,
@@ -249,13 +306,16 @@
     justify-content: space-between;
     margin-top: var(--rhythm-1);
   }
+
   .transcript-expander-header:focus {
     box-shadow: var(--focus-shadow);
     outline: 0;
   }
+
   .transcript-expander-header .transcript-expander-header-chevron {
     transition: transform var(--transition-superfast);
   }
+
   .transcript-expander-header.expanded .transcript-expander-header-chevron {
     transform: rotate(90deg);
   }
@@ -265,11 +325,15 @@
   }
 
   .expanded-tile-content .transcript-container {
+    max-height: 500px;
     overflow: auto;
+  }
+  .expanded-tile-content.full-transcript-expanded .transcript-container {
+    max-height: 320px;
   }
 
   .expanded-tile-content .summary-container {
-    margin: var(--rhythm-3) 0;
+    margin-top: var(--rhythm-3);
   }
 
   @media (max-width: 1400px) {

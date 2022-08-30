@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
   import { getYoutubeId } from '../../core/utils';
 
   export let uri: string;
@@ -8,6 +8,7 @@
   let player: any;
   let apiReady = false;
   let videoReady = false;
+  const dispatch = createEventDispatcher();
 
   $: if (videoReady && typeof time === 'number') {
     player?.seekTo(time);
@@ -35,6 +36,7 @@
 
   const onPlayerReady = () => {
     videoReady = true;
+    dispatch('videoReady');
   };
 
   const loadVideo = () => {

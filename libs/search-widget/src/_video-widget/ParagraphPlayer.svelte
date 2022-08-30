@@ -15,7 +15,7 @@
 
 <li class="paragraph" class:stack>
   <div>
-    <TimePlayer time="{paragraph.time}"
+    <TimePlayer time="{paragraph.time || 0}"
                 {selected}
                 on:play={play}/>
   </div>
