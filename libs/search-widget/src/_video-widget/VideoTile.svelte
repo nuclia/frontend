@@ -30,8 +30,27 @@
   let tileElement: HTMLElement;
   let expandedHeight;
 
+  /*
+  map((results) => {
+        console.log(results);
+        return {
+          ...results,
+          paragraphs: {
+            ...results.paragraphs,
+            results: (results.paragraphs?.results || []).map((p) => ({
+              ...p,
+              pid: `${p.field_type}${p.start_seconds?.[0] || 0}`,
+            })),
+          },
+        };
+      }),
+   */
   const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id).pipe(
-    map(results => results.map(paragraph => ({...paragraph, time: (paragraph as Paragraph).start_seconds?.[0] || 0})))
+    map(results => results.map(paragraph => ({
+      ...paragraph,
+      pid: `${paragraph.field_type}${(paragraph as Paragraph).start_seconds?.[0] || 0}${(paragraph as Paragraph).end_seconds?.[0] || 0}`,
+      time: (paragraph as Paragraph).start_seconds?.[0] || 0,
+    })))
   );
 
   const filterParagraphs = (paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {
@@ -148,7 +167,7 @@
               <ul class="paragraphs-container">
                 {#each $filteredMatchingParagraphs as paragraph}
                   <ParagraphPlayer {paragraph}
-                                   selected="{paragraph === paragraphInPlay}"
+                                   selected="{paragraph.pid === paragraphInPlay.pid}"
                                    stack
                                    on:play={(event) => playTranscript(event.detail.paragraph)}/>
                 {/each}
