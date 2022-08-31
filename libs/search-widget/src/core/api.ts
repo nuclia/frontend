@@ -1,6 +1,6 @@
-import { Nuclia, ResourceProperties, Search, Resource } from '../../../sdk-core/src';
-import type { NucliaOptions, KBStates, SearchOptions, Labels, Classification } from '@nuclia/core';
-import { Observable, map, merge, of, filter } from 'rxjs';
+import { Nuclia, Resource, ResourceProperties, Search } from '../../../sdk-core/src';
+import type { Classification, KBStates, Labels, NucliaOptions, SearchOptions } from '@nuclia/core';
+import { filter, map, merge, Observable, of } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
 
@@ -13,6 +13,7 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
   }
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
+    nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: options.highlight });
     nucliaStore().widget.next(widget);
     if (widget.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
@@ -137,8 +138,8 @@ export const hasAuthData = (): boolean => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return !!nucliaApi.options?.apiKey ||  !!nucliaApi.auth.getToken();
-}
+  return !!nucliaApi.options?.apiKey || !!nucliaApi.auth.getToken();
+};
 
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
   if (paths.length === 0 || !isPrivateKnowledgeBox()) {

@@ -41,6 +41,7 @@
         kbSlug: kbslug,
         account,
         permalink: permalinkEnabled,
+        highlight: false
       },
       state,
     );
@@ -55,7 +56,6 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
-    setupSuggestionsAndPredictions();
     setupTriggerSearch();
 
     ready = true;

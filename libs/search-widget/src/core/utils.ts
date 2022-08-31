@@ -40,13 +40,16 @@ export const formatDate = (date: string) => {
   return d.toLocaleDateString();
 };
 
-export const formatTime = (secons: number) => {
-  secons = Math.floor(secons);
-  const minutes = Math.floor(secons / 60);
-  const seconds = secons % 60;
-  const minutesLabel = minutes < 10 ? '0' + minutes : minutes.toString();
-  const secondsLabel = seconds < 10 ? '0' + seconds : seconds.toString();
-  return `${minutesLabel}.${secondsLabel}`;
+export const formatTime = (sec: number) => {
+  const d = new Date(0);
+  d.setSeconds(sec);
+  let startIndex = 11;
+  if (sec < 60) {
+    startIndex = 15;
+  } else if (sec < 3600) {
+    startIndex = 14;
+  }
+  return d.toISOString().substring(startIndex, 19);
 };
 
 export const formatQueryKey = (key: string): string => {

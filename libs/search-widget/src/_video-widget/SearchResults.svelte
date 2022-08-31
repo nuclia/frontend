@@ -78,6 +78,17 @@
   .results {
     display: flex;
     flex-direction: column;
-    gap: var(--rhythm-2);
+    gap: var(--rhythm-3);
+  }
+
+  :global(mark) {
+    background-color: inherit;
+    font-weight: var(--font-weight-semi-bold);
+  }
+
+  :global(.ellipsis) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

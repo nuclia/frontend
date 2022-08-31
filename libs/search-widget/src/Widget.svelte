@@ -64,6 +64,7 @@
         kbSlug: kbslug,
         account,
         permalink: permalinkEnabled,
+        highlight: true
       },
       state,
     );
@@ -149,4 +150,8 @@
 </div>
 
 <style>
+  :global(mark) {
+    background-color: inherit;
+    font-weight: var(--font-weight-semi-bold);
+  }
 </style>

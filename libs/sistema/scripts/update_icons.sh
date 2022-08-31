@@ -3,6 +3,9 @@
 echo "Generate sprite from glyphs folder"
 python3 ./libs/sistema/scripts/generate-sprite.py > ./libs/sistema/assets/glyphs-sprite.svg
 
+echo "Copy glyphs-sprite.svg in search-widget"
+cp ./libs/sistema/assets/glyphs-sprite.svg ./libs/search-widget/public/icons
+
 echo "Generate json list of glyphs"
 python3 -c "import json; import xml.dom.minidom; print(json.dumps([el.getAttribute('id') for el in xml.dom.minidom.parseString(open('./libs/sistema/assets/glyphs-sprite.svg').read()).getElementsByTagName('symbol')]))" > apps/sistema-demo/src/assets/glyphs.json
 
