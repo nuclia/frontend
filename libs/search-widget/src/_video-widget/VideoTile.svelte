@@ -30,7 +30,9 @@
   let tileElement: HTMLElement;
   let expandedHeight;
 
-  const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id);
+  const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id).pipe(
+    map(results => results.map(paragraph => ({...paragraph, time: paragraph.start_seconds?.[0] || 0})))
+  );
 
   const filterParagraphs = (paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {
     return paragraphs
