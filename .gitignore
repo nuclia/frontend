@@ -52,3 +52,4 @@ Thumbs.db
 
 .angular
 /libs/pastanaga-angular/
+/libs/chrome-ext/src/lib/vendor

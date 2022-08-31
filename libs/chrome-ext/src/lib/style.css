@@ -6,6 +6,10 @@ p {
   margin: 0 0 2rem 0;
 }
 
+fieldset {
+  border-style: dashed;
+}
+
 .field {
   margin-bottom: 1rem;
 }
@@ -16,7 +20,7 @@ label {
   margin-bottom: 0.25rem;
 }
 
-input {
+input[type='text'] {
   width: 20rem;
   height: 1.5rem;
   padding: 0 0.25rem;
@@ -37,7 +41,11 @@ button {
   border-radius: 4px;
   cursor: pointer;
 }
-
+button.secondary {
+  border: 1px solid #ff0066;
+  color: #ff0066;
+  background-color: #fff;
+}
 .help {
   margin-top: 0.25rem;
   font-size: 0.625rem;
@@ -48,4 +56,21 @@ button {
   padding-left: 1rem;
   vertical-align: middle;
   font-weight: bold;
+}
+
+header {
+  background-color: #0d0d0d;
+}
+header img {
+  height: 50px;
+  padding: 1em;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  margin: 1em;
 }
