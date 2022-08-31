@@ -163,7 +163,7 @@ function selectVideos(videos, labels) {
 }
 
 function uploadLinksList(list, labels) {
-  if (!(list && list.length && list.length > 0)) {
+  if (!list || !list.length || !list.length > 0)) {
     return;
   }
   chrome.storage.local.get(SETTINGS, (settings) => list.forEach((url) => uploadLink(settings, url, labels)));

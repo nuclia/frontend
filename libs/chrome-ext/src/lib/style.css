@@ -6,8 +6,14 @@ p {
   margin: 0 0 2rem 0;
 }
 
+legend {
+  font-weight: bold;
+}
 fieldset {
-  border-style: dashed;
+  border: 1px solid #f0f0f0;
+}
+fieldset p {
+  color: #999;
 }
 
 .field {
