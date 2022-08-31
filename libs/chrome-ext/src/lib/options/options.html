@@ -1,34 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Nuclia options</title>
-  <link rel="stylesheet" href="options.css">
+  <link rel="stylesheet"
+        href="../style.css">
 </head>
 
 <body>
-  <p>Set the Knowledge Box where you want to upload web content:</p>
+  <main>
 
-  <div class="field">
-    <label for="kb">Knowledge box ID:</label>
-    <input id="kb" type="text" autocomplete="off">
-  </div>
+    <fieldset>
+      <legend>Knowledge Box</legend>
+      <p>Set the Knowledge Box where you want to upload web content</p>
 
-  <div class="field">
-    <label for="zone">Zone ID:</label>
-    <input id="zone" type="text" autocomplete="off">
-  </div>
+      <div class="field">
+        <label for="kb">Knowledge box ID:</label>
+        <input id="kb"
+               type="text"
+               autocomplete="off">
+      </div>
 
-  <div class="field">
-    <label for="key">API Key:</label>
-    <input id="key" type="text" autocomplete="off">
-    <div class="help">Enter an API key with <strong>Contributor</strong> role</div>
-  </div>
+      <div class="field">
+        <label for="zone">Zone ID:</label>
+        <input id="zone"
+               type="text"
+               autocomplete="off">
+      </div>
 
-  <div class="actions">
-    <button id="save">Save</button>
-    <span class="message"></span>
-  </div>
+      <div class="field">
+        <label for="key">API Key:</label>
+        <input id="key"
+               type="text"
+               autocomplete="off">
+        <div class="help">Enter an API key with <strong>Contributor</strong> role</div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>YouTube</legend>
+      <p>
+        Optional. When a <a href="https://developers.google.com/youtube/v3/getting-started">YouTube API key</a> is
+        defined, you can index all videos from a YouTube channel or YouTube playlist.
+      </p>
+      <div class="field">
+        <label for="youTubeKey">YouTube API key:</label>
+        <input id="youTubeKey"
+               type="text"
+               autocomplete="off">
+        <div class="help">Enter a YouTube Data API.</div>
+      </div>
+    </fieldset>
+
+
+    <div class="actions">
+      <button id="save">Save</button>
+      <span class="message"></span>
+    </div>
+  </main>
 
   <script src="options.js"></script>
 </body>
+
 </html>
