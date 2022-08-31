@@ -81,4 +81,8 @@
     gap: var(--rhythm-3);
   }
 
+  :global(mark) {
+    background-color: inherit;
+    font-weight: var(--font-weight-semi-bold);
+  }
 </style>
