@@ -14,7 +14,7 @@
 </script>
 
 <li class="paragraph" class:stack>
-  <div>
+  <div style="display: flex">
     <TimePlayer time="{paragraph.time || 0}"
                 {selected}
                 on:play={play}/>

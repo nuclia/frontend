@@ -31,8 +31,7 @@
     display: flex;
     gap: var(--rhythm-0_25);
     line-height: var(--rhythm-3);
-    max-width: var(--rhythm-9);
-    padding: 0 var(--rhythm-1);
+    padding: 0 var(--rhythm-1_5) 0 var(--rhythm-1);
   }
   .time-player:hover {
     background: var(--color-neutral-light);
