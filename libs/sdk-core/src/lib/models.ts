@@ -11,13 +11,14 @@ import type {
   KnowledgeBoxCreation,
   NUAClient,
   NUAClientPayload,
+  ProcessingPullResponse,
+  ProcessingPushResponse,
   ProcessingStat,
   StatsPeriod,
   StatsType,
   Welcome,
   WritableKnowledgeBox,
 } from './db';
-import type { ProcessingPullResponse, ProcessingPushResponse } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -98,6 +99,7 @@ export interface NucliaOptions {
   kbSlug?: string;
   client?: string;
   permalink?: boolean;
+  highlight?: boolean;
 }
 
 export type PromiseMapper<T> = {

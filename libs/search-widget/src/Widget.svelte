@@ -64,6 +64,7 @@
         kbSlug: kbslug,
         account,
         permalink: permalinkEnabled,
+        highlight: true
       },
       state,
     );
