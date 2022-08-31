@@ -24,6 +24,7 @@
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
   let transcripts: MediaWidgetParagraph[] = [];
+  let showAllResults = false;
   let showSidePanel = false;
   let showFullTranscripts = false;
   let tileElement: HTMLElement;
@@ -44,6 +45,8 @@
     map(paragraphs => filterParagraphs(paragraphs as MediaWidgetParagraph[])),
   );
   $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(transcripts);
+
+  $: displayedResultCount = showAllResults ? -1 : 4;
 
   const playFromStart = () => {
     playFrom(0);
@@ -98,6 +101,7 @@
 
 <div class="video-tile"
      class:expanded
+     class:showAllResults
      bind:this={tileElement}
      style:max-height="{expandedHeight}"
 >
@@ -182,19 +186,28 @@
     <div class="result-details">
       <h3 class="ellipsis">{result?.title}</h3>
       <ul class="paragraphs-container">
-        <!-- TODO: show all matches -->
-        {#each $matchingParagraphs.slice(0, 4) as paragraph}
+        {#each $matchingParagraphs.slice(0, displayedResultCount) as paragraph}
           <ParagraphPlayer {paragraph}
                            ellipsis
                            on:play={(event) => playParagraph(event.detail.paragraph)}/>
         {/each}
       </ul>
+      {#if $matchingParagraphs.length > 4}
+        <div class="all-result-toggle"
+             class:expanded={showAllResults}
+             on:click={() => showAllResults = !showAllResults}>
+          Display {showAllResults ? 'less' : 'all'} results
+
+          <div class="icon">
+            <Icon name="chevron-right" size="small"/>
+          </div>
+        </div>
+      {/if}
     </div>
   {/if}
 </div>
 
 <style>
-
   .video-tile {
     --width-thumbnail: var(--rhythm-28);
     --flex-gap: var(--rhythm-2);
@@ -204,14 +217,41 @@
     gap: var(--flex-gap);
     transition: background var(--transition-superfast);
   }
+  .video-tile.showAllResults {
+    align-items: flex-start;
+  }
 
   .video-tile h3 {
     font-size: var(--font-size-title-m);
     font-weight: var(--font-weight-title-m);
     line-height: var(--line-height-title-m);
-    margin: 0 0 var(--rhythm-2);
+    margin: 0 0 var(--rhythm-1);
   }
 
+  .video-tile .all-result-toggle {
+    align-items: center;
+    color: var(--color-neutral-regular);
+    cursor: pointer;
+    display: flex;
+    font-weight: var(--font-weight-semi-bold);
+    gap: var(--rhythm-1);
+    line-height: var(--rhythm-3);
+    margin-top: var(--rhythm-2);
+  }
+  .video-tile .all-result-toggle:hover {
+    color: var(--color-neutral-strong);
+  }
+  .video-tile .all-result-toggle .icon {
+    display: flex;
+    transition: transform var(--transition-superfast);
+  }
+  .video-tile .all-result-toggle.expanded .icon {
+    transform: rotate(-90deg);
+  }
+
+  .video-tile:not(.expanded) {
+    width: 1024px;
+  }
   .video-tile.expanded {
     background: var(--color-neutral-lightest);
     border-radius: var(--border-radius);

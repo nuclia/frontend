@@ -78,6 +78,7 @@
   .results {
     display: flex;
     flex-direction: column;
-    gap: var(--rhythm-2);
+    gap: var(--rhythm-3);
   }
+
 </style>
