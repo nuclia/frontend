@@ -31,7 +31,7 @@
     display: flex;
     gap: var(--rhythm-0_25);
     line-height: var(--rhythm-3);
-    max-width: var(--rhythm-8);
+    max-width: var(--rhythm-9);
     padding: 0 var(--rhythm-1);
   }
   .time-player:hover {
