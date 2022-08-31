@@ -85,4 +85,10 @@
     background-color: inherit;
     font-weight: var(--font-weight-semi-bold);
   }
+
+  :global(.ellipsis) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 </style>

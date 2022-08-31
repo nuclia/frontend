@@ -29,7 +29,6 @@
     cursor: pointer;
     flex: 0 0 auto;
     position: relative;
-    width: var(--width-thumbnail);
   }
 
   .thumbnail-player .play-icon {
@@ -57,4 +56,9 @@
     background: var(--color-light-stronger);
   }
 
+  @media (min-width: 600px) {
+    .thumbnail-player {
+      width: var(--width-thumbnail);
+    }
+  }
 </style>

@@ -6,6 +6,7 @@
   export let stack = false;
   export let ellipsis = false;
   export let selected = false;
+  export let minimized = false;
 
   const dispatch = createEventDispatcher();
   const play = () => {
@@ -17,9 +18,10 @@
   <div style="display: flex">
     <TimePlayer time="{paragraph.time || 0}"
                 {selected}
+                {minimized}
                 on:play={play}/>
   </div>
-  <div class:ellipsis>
+  <div class="paragraph-text" class:ellipsis>
     {@html paragraph.text}
   </div>
 </li>
@@ -35,6 +37,9 @@
   .paragraph.stack {
     flex-direction: column;
     gap: var(--rhythm-0_5);
+  }
+  .paragraph .paragraph-text {
+    overflow-wrap: break-word;
   }
 
   .ellipsis {

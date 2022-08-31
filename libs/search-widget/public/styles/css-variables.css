@@ -67,8 +67,10 @@
   --font-weight-bold: var(--custom-font-weight-semi-bold, 700);
   --line-height-body: calc(var(--font-size-base) * 1.25);
   --font-family-body: 'Source Sans Pro', sans-serif;
+  --font-size-title-m-mobile: calc(var(--font-size-base) * 1.125);
   --font-size-title-m: calc(var(--font-size-base) * 1.25);
   --font-weight-title-m: var(--font-weight-semi-bold);
+  --line-height-title-m-mobile: calc(var(--font-size-base) * 1.625);
   --line-height-title-m: calc(var(--font-size-base) * 1.75);
 
   /* TRANSITIONS */

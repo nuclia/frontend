@@ -16,6 +16,10 @@
 
   export let result: IResource = {id: ''};
 
+  let innerWidth = window.innerWidth;
+
+  let tileElement: HTMLElement;
+  let sidePanelElement: HTMLElement;
   let resource: Observable<Resource>;
   let expanded = false;
   let summaries = [];
@@ -27,30 +31,15 @@
   let showAllResults = false;
   let showSidePanel = false;
   let showFullTranscripts = false;
-  let tileElement: HTMLElement;
   let expandedHeight;
+  let sidePanelHeight;
 
-  /*
-  map((results) => {
-        console.log(results);
-        return {
-          ...results,
-          paragraphs: {
-            ...results.paragraphs,
-            results: (results.paragraphs?.results || []).map((p) => ({
-              ...p,
-              pid: `${p.field_type}${p.start_seconds?.[0] || 0}`,
-            })),
-          },
-        };
-      }),
-   */
   const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id).pipe(
     map(results => results.map(paragraph => ({
       ...paragraph,
       pid: `${paragraph.field_type}${(paragraph as Paragraph).start_seconds?.[0] || 0}${(paragraph as Paragraph).end_seconds?.[0] || 0}`,
       time: (paragraph as Paragraph).start_seconds?.[0] || 0,
-    })))
+    }))),
   );
 
   const filterParagraphs = (paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {
@@ -61,16 +50,17 @@
         return {
           ...paragraph,
           text: paragraph.text.replace(regexp, `<mark>$&</mark>`),
-        }
+        };
       });
-  }
+  };
 
+  $: isMobile = innerWidth < 600;
   $: filteredMatchingParagraphs = !findInTranscript ? matchingParagraphs : matchingParagraphs.pipe(
     map(paragraphs => filterParagraphs(paragraphs as MediaWidgetParagraph[])),
   );
   $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(transcripts);
-
   $: displayedResultCount = showAllResults ? -1 : 4;
+
 
   const playFromStart = () => {
     playFrom(0);
@@ -106,10 +96,14 @@
   };
 
   const initExpandedStyle = () => {
-      const expandedRect = tileElement.getBoundingClientRect();
-      expandedHeight = `${expandedRect.height}px`;
-      showSidePanel = true;
-  }
+    const expandedRect = tileElement.getBoundingClientRect();
+    expandedHeight = `${expandedRect.height}px`;
+    showSidePanel = true;
+    setTimeout(() => {
+      const padding = isMobile ? 32 : 16;
+      sidePanelHeight = `calc(100vh - ${sidePanelElement?.getBoundingClientRect().top + padding}px)`;
+    }, 100);
+  };
 
   const closePreview = () => {
     expanded = false;
@@ -120,7 +114,7 @@
   };
 </script>
 
-
+<svelte:window bind:innerWidth/>
 <div class="video-tile"
      class:expanded
      class:showAllResults
@@ -129,7 +123,7 @@
 >
   {#if expanded}
     <header>
-      <h3 class="ellipsis">{result?.title}</h3>
+      <h3>{result?.title}</h3>
       <CloseButton aspect="basic"
                    on:click={closePreview}/>
     </header>
@@ -149,7 +143,9 @@
           </div>
         </div>
 
-        <div class="side-panel">
+        <div class="side-panel"
+             style:height="{sidePanelHeight}"
+             bind:this={sidePanelElement}>
           <div class="find-bar-container">
             <Icon name="search"/>
             <input class="find-input"
@@ -211,6 +207,7 @@
         {#each $matchingParagraphs.slice(0, displayedResultCount) as paragraph}
           <ParagraphPlayer {paragraph}
                            ellipsis
+                           minimized="{isMobile}"
                            on:play={(event) => playParagraph(event.detail.paragraph)}/>
         {/each}
       </ul>
@@ -231,22 +228,16 @@
 
 <style>
   .video-tile {
-    --width-thumbnail: var(--rhythm-28);
-    --flex-gap: var(--rhythm-2);
-
-    align-items: center;
     display: flex;
-    gap: var(--flex-gap);
+    flex-direction: column;
+    gap: var(--rhythm-1);
     transition: background var(--transition-superfast);
-  }
-  .video-tile.showAllResults {
-    align-items: flex-start;
   }
 
   .video-tile h3 {
-    font-size: var(--font-size-title-m);
+    font-size: var(--font-size-title-m-mobile);
     font-weight: var(--font-weight-title-m);
-    line-height: var(--line-height-title-m);
+    line-height: var(--line-height-title-m-mobile);
     margin: 0 0 var(--rhythm-1);
   }
 
@@ -260,42 +251,18 @@
     line-height: var(--rhythm-3);
     margin-top: var(--rhythm-2);
   }
+
   .video-tile .all-result-toggle:hover {
     color: var(--color-neutral-strong);
   }
+
   .video-tile .all-result-toggle .icon {
     display: flex;
     transition: transform var(--transition-superfast);
   }
+
   .video-tile .all-result-toggle.expanded .icon {
     transform: rotate(-90deg);
-  }
-
-  .video-tile:not(.expanded) {
-    width: 1024px;
-  }
-  .video-tile.expanded {
-    background: var(--color-neutral-lightest);
-    border-radius: var(--border-radius);
-    flex-direction: column;
-    overflow: hidden;
-    padding: var(--rhythm-2);
-  }
-
-  .video-tile.expanded header {
-    align-items: center;
-    display: flex;
-    gap: var(--rhythm-2);
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .video-tile.expanded header h3 {
-    margin: 0;
-  }
-
-  .result-details {
-    width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
   }
 
   .video-tile .paragraphs-container {
@@ -308,104 +275,153 @@
     padding: 0;
   }
 
-  .ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .video-tile.expanded {
+    background: var(--color-neutral-lightest);
+    flex-direction: column;
   }
 
-  .expanded-tile-content {
+  .video-tile.expanded header {
+    align-items: center;
+    align-self: stretch;
     display: flex;
-    gap: var(--rhythm-2);
+    gap: var(--rhythm-0_5);
+    justify-content: space-between;
+    padding: var(--rhythm-2);
   }
 
-  .video-tile .transcript-container .paragraphs-container {
+  .video-tile.expanded header h3 {
+    margin: 0;
+  }
+
+  .video-tile.expanded .summary-container,
+  .video-tile.expanded .find-bar-container {
+    display: none;
+  }
+
+  .video-tile.expanded .paragraphs-container {
     gap: var(--rhythm-3);
   }
 
-  .side-panel {
-    display: flex;
-    flex: 1 0 auto;
-    flex-direction: column;
-    width: var(--rhythm-56);
+  .video-tile.expanded .side-panel {
+    overflow: auto;
+    padding: var(--rhythm-2);
   }
 
-  .find-bar-container {
-    align-items: center;
-    background: var(--color-light-stronger);
-    display: flex;
-    height: var(--rhythm-5);
-    gap: var(--rhythm-1);
-    margin-bottom: var(--rhythm-1);
-    padding-left: var(--rhythm-1);
-  }
-
-  .find-bar-container .find-input {
-    border: none;
-    box-sizing: border-box;
-    color: inherit;
-    flex: 1 0 auto;
-    font-family: inherit;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-body);
-    line-height: var(--rhythm-4);
-  }
-
-  .find-bar-container .find-input:focus {
-    outline: 0;
-  }
-
-  .transcript-expander-header,
-  .transcript-container {
+  .video-tile.expanded .transcript-container {
     background: var(--color-light-stronger);
     padding: var(--rhythm-1_5);
   }
 
-  .transcript-expander-header {
+  .video-tile.expanded .transcript-expander-header {
     align-items: center;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
-    margin-top: var(--rhythm-1);
+    margin: var(--rhythm-1) 0;
+    padding: var(--rhythm-1_5);
   }
 
-  .transcript-expander-header:focus {
+  .video-tile.expanded .transcript-expander-header .transcript-expander-header-chevron {
+    transition: transform var(--transition-superfast);
+  }
+
+  .video-tile.expanded .transcript-expander-header.expanded .transcript-expander-header-chevron {
+    transform: rotate(90deg);
+  }
+
+  .video-tile.expanded .transcript-expander-header:focus {
     box-shadow: var(--focus-shadow);
     outline: 0;
   }
 
-  .transcript-expander-header .transcript-expander-header-chevron {
-    transition: transform var(--transition-superfast);
-  }
-
-  .transcript-expander-header.expanded .transcript-expander-header-chevron {
-    transform: rotate(90deg);
-  }
-
-  .transcript-expander-header-title {
-    flex: 1 0 auto;
-  }
-
-  .expanded-tile-content .transcript-container {
-    max-height: 500px;
-    overflow: auto;
-  }
-  .expanded-tile-content.full-transcript-expanded .transcript-container {
-    max-height: 320px;
-  }
-
-  .expanded-tile-content .summary-container {
-    margin-top: var(--rhythm-3);
-  }
-
-  @media (max-width: 1400px) {
-    .expanded-tile-content {
-      flex-direction: column;
+  @media (max-width: 1023px){
+    .video-tile.expanded {
+      height: 100vh;
+      left: 0;
+      overflow: hidden;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 1000;
     }
   }
 
-  mark {
-    background-color: transparent;
-    font-weight: var(--font-weight-semi-bold);
+  @media (min-width: 600px) {
+    .video-tile {
+      --width-thumbnail: var(--rhythm-28);
+      --flex-gap: var(--rhythm-2);
+
+      align-items: center;
+      flex-direction: row;
+      gap: var(--flex-gap);
+    }
+
+    .video-tile.showAllResults {
+      align-items: flex-start;
+    }
+
+    .video-tile h3 {
+      font-size: var(--font-size-title-m);
+      line-height: var(--line-height-title-m);
+    }
+
+    .video-tile .result-details {
+      width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
+    }
+
+    .video-tile.expanded header {
+      gap: var(--rhythm-2);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .video-tile.expanded {
+      border-radius: var(--border-radius);
+      gap: 0;
+      padding: 0 var(--rhythm-2) var(--rhythm-2) var(--rhythm-2);
+    }
+
+    .video-tile.expanded .expanded-tile-content {
+      display: flex;
+      gap: var(--rhythm-2);
+    }
+
+    .video-tile.expanded .summary-container {
+      display: block;
+      margin-top: var(--rhythm-3);
+    }
+
+    .video-tile.expanded .side-panel {
+      display: flex;
+      flex: 1 0 auto;
+      flex-direction: column;
+      padding: 0 0 var(--rhythm-2);
+      width: var(--rhythm-56);
+    }
+
+    .video-tile.expanded .find-bar-container {
+      align-items: center;
+      background: var(--color-light-stronger);
+      display: flex;
+      height: var(--rhythm-5);
+      gap: var(--rhythm-1);
+      margin-bottom: var(--rhythm-1);
+      padding-left: var(--rhythm-1);
+    }
+
+    .video-tile.expanded .find-bar-container .find-input {
+      border: none;
+      box-sizing: border-box;
+      color: inherit;
+      flex: 1 0 auto;
+      font-family: inherit;
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-body);
+      line-height: var(--rhythm-4);
+    }
+
+    .video-tile.expanded .find-bar-container .find-input:focus {
+      outline: 0;
+    }
   }
 </style>

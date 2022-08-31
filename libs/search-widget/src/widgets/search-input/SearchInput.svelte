@@ -203,7 +203,7 @@
     font-weight: var(--font-weight-body);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 448px) {
     form.search-bar-container {
       width: var(--search-bar-max-width);
     }
