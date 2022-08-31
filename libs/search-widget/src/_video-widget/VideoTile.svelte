@@ -1,7 +1,7 @@
 <script lang="ts">
 
   import type { Observable } from 'rxjs';
-  import type { IResource, Resource, Search } from '@nuclia/core';
+  import type { IResource, Paragraph, Resource, Search } from '@nuclia/core';
   import { map, switchMap, tap } from 'rxjs/operators';
   import { nucliaState } from '../core/store';
   import { getResource } from '../core/api';
@@ -31,16 +31,19 @@
   let expandedHeight;
 
   const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id).pipe(
-    map(results => results.map(paragraph => ({...paragraph, time: paragraph.start_seconds?.[0] || 0})))
+    map(results => results.map(paragraph => ({...paragraph, time: (paragraph as Paragraph).start_seconds?.[0] || 0})))
   );
 
   const filterParagraphs = (paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {
     return paragraphs
-      .filter(paragraph => paragraph.text.includes(findInTranscript))
-      .map(paragraph => ({
-        ...paragraph,
-        text: paragraph.text.replaceAll(findInTranscript, `<strong>${findInTranscript}</strong>`),
-      }));
+      .filter(paragraph => paragraph.text.toLocaleLowerCase().includes(findInTranscript.toLocaleLowerCase()))
+      .map(paragraph => {
+        const regexp = new RegExp(findInTranscript, 'ig');
+        return {
+          ...paragraph,
+          text: paragraph.text.replace(regexp, `<mark>$&</mark>`),
+        }
+      });
   }
 
   $: filteredMatchingParagraphs = !findInTranscript ? matchingParagraphs : matchingParagraphs.pipe(
@@ -55,10 +58,8 @@
   };
 
   const playParagraph = (paragraph) => {
-    // FIXME once Ramon will have the timestamp in the search results
-    // playFrom(paragraph.time, paragraph);
+    playFrom(paragraph.time, paragraph);
     paragraphInPlay = paragraph;
-    playFrom(200, paragraph);
   };
 
   const playTranscript = (paragraph) => {
@@ -382,5 +383,10 @@
     .expanded-tile-content {
       flex-direction: column;
     }
+  }
+
+  mark {
+    background-color: transparent;
+    font-weight: var(--font-weight-semi-bold);
   }
 </style>
