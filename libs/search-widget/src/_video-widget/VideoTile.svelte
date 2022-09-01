@@ -334,18 +334,6 @@
     outline: 0;
   }
 
-  @media (max-width: 1023px){
-    .video-tile.expanded {
-      height: 100vh;
-      left: 0;
-      overflow: hidden;
-      position: fixed;
-      right: 0;
-      top: 0;
-      z-index: 1000;
-    }
-  }
-
   @media (min-width: 600px) {
     .video-tile {
       --width-thumbnail: var(--rhythm-28);
@@ -371,6 +359,18 @@
 
     .video-tile.expanded header {
       gap: var(--rhythm-2);
+    }
+  }
+
+  @media (max-width: 1023px){
+    .video-tile.expanded {
+      height: 100vh;
+      left: 0;
+      overflow: hidden;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 1000;
     }
   }
 
