@@ -91,7 +91,10 @@ jobs:
         if: steps.check-deploy.outputs.deploy-widget == 'yes'
         run: |-
           sed -i.bak "s#__NUCLIA_DEV_VERSION__#$GITHUB_SHA#g" dist/libs/search-widget/nuclia-widget.umd.js
+          sed -i.bak "s#__NUCLIA_DEV_VERSION__#$GITHUB_SHA#g" dist/libs/search-widget/nuclia-video-widget.umd.js
           gsutil copy dist/libs/search-widget/nuclia-widget.umd.js gs://$CDN_STORAGE
+          gsutil copy dist/libs/search-widget/nuclia-video-widget.umd.js gs://$CDN_STORAGE
+          gsutil copy dist/libs/search-widget/nuclia-video-widget.css gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
       - name: Build dashboard image
