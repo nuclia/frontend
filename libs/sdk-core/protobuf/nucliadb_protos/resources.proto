@@ -180,6 +180,7 @@ message Paragraph {
         INCEPTION = 2;
         DESCRIPTION = 3;
         TRANSCRIPT = 4;
+        TITLE = 5;
     }
     TypeParagraph kind = 5;
 
@@ -291,9 +292,16 @@ message TokenSplit {
     string klass = 2;
 }
 
+
+message ParagraphAnnotation {
+    string key = 1;
+    repeated Classification classifications = 2;
+}
+
+
 message UserFieldMetadata {
     repeated TokenSplit token = 1;
-    repeated Paragraph paragraphs = 2;
+    repeated ParagraphAnnotation paragraphs = 2;
     FieldID field = 3;
 }
 
@@ -323,6 +331,9 @@ message FieldFile {
     CloudFile file = 2;
     string language = 3;
     string password = 4;
+    string url = 5;
+    map<string, string> headers = 6;
+    map<string, string> cookies = 7;
 }
 
 

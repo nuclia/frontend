@@ -1,3 +1,7 @@
+# 1.2.0 (2022-00-01)
+
+- Embed proto models directly in the JS implementation
+
 # 1.1.1 (2022-08-22)
 
 - Fix dirname resolution using `es-dirname`

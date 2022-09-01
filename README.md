@@ -3,13 +3,13 @@
 # Nuclia frontend apps and libraries
 
 ## Table of content
+
 - [Installation](#installation)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
 - [SDK](#sdk)
 - [Desktop app](#desktop-app)
 - [Sistema](#sistema)
-
 
 ## Installation
 
@@ -92,8 +92,33 @@ Sistema is Nuclia's design system. It is based on [Pastanaga](https://github.com
 The demo is available at [https://nuclia.github.io/frontend](https://nuclia.github.io/frontend).
 
 To update the glyphs sprite:
+
 - add/remove/edit glyphs in `libs/sistema/glyphs` folder
 - run `update_icons` script:
+
 ```shell
 ./libs/sistema/scripts/update_icons.sh
+```
+
+## Protobuf library
+
+Get lastest proto files from nucliadb (assuming nucliadb and frontend are in 2 siblings folders):
+
+```sh
+cd libs/sdk-core/protobuf
+./update.sh
+```
+
+Build the library:
+
+```sh
+cd libs/sdk-core/protobuf
+./build.sh
+```
+
+Publish the library:
+
+```sh
+cd libs/sdk-core/protobuf/build/protobuf
+npm publish
 ```
