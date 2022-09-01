@@ -19,6 +19,7 @@
   let innerWidth = window.innerWidth;
 
   let tileElement: HTMLElement;
+  let expandedHeaderElement: HTMLElement;
   let sidePanelElement: HTMLElement;
   let resource: Observable<Resource>;
   let expanded = false;
@@ -55,6 +56,7 @@
   };
 
   $: isMobile = innerWidth < 600;
+  $: isExpandedFullScreen = innerWidth < 1024;
   $: filteredMatchingParagraphs = !findInTranscript ? matchingParagraphs : matchingParagraphs.pipe(
     map(paragraphs => filterParagraphs(paragraphs as MediaWidgetParagraph[])),
   );
@@ -68,12 +70,10 @@
 
   const playParagraph = (paragraph) => {
     playFrom(paragraph.time, paragraph);
-    paragraphInPlay = paragraph;
   };
 
   const playTranscript = (paragraph) => {
     videoTime = paragraph.time;
-    paragraphInPlay = paragraph;
   };
 
   const playFrom = (time: number, selectedParagraph?: Search.Paragraph) => {
@@ -82,6 +82,7 @@
     const paragraph$ = selectedParagraph ? of(selectedParagraph) : matchingParagraphs.pipe(map(paragraphList => paragraphList[0]));
     if (!resource) {
       resource = paragraph$.pipe(
+        tap(paragraph => paragraphInPlay = paragraph as MediaWidgetParagraph),
         switchMap(paragraph => getResource(result.id).pipe(tap(res => {
           const field = getLinkField(res, paragraph.field);
           youtubeUri = field?.value?.uri;
@@ -100,8 +101,12 @@
     expandedHeight = `${expandedRect.height}px`;
     showSidePanel = true;
     setTimeout(() => {
-      const padding = isMobile ? 32 : 16;
-      sidePanelHeight = `calc(100vh - ${sidePanelElement?.getBoundingClientRect().top + padding}px)`;
+      if (isExpandedFullScreen) {
+        const padding = isMobile ? 32 : 16;
+        sidePanelHeight = `calc(100vh - ${sidePanelElement?.getBoundingClientRect().top + padding}px)`;
+      } else {
+        sidePanelHeight = `calc(${expandedHeight} - ${expandedHeaderElement?.getBoundingClientRect().height}px)`;
+      }
     }, 100);
   };
 
@@ -122,7 +127,7 @@
      style:max-height="{expandedHeight}"
 >
   {#if expanded}
-    <header>
+    <header bind:this={expandedHeaderElement}>
       <h3>{result?.title}</h3>
       <CloseButton aspect="basic"
                    on:click={closePreview}/>

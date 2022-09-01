@@ -77,8 +77,7 @@
     <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
       <NucliaSearchBar zone="europe-1"
-                       knowledgebox="90c120b0-a580-488c-9582-6ffdc2197a39"
-                       backend="https://stashify.cloud/api"
+                       knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
                        cdn="/"
                        lang="en"
                        widgetid="demo-search-bar"
