@@ -8,7 +8,7 @@ export const setCDN = (cdn: string) => (CDN = cdn);
 export const getCDN = () => CDN;
 
 export const loadFonts = () => {
-  const fontLinkId = 'NucliaFontsLink';
+  const fontLinkId = 'nuclia-fonts-link';
   if (!document.getElementById(fontLinkId)) {
     const font = document.createElement('link');
     font.id = fontLinkId;
@@ -18,6 +18,10 @@ export const loadFonts = () => {
     const head = document.head || document.getElementsByTagName('head')[0];
     head.appendChild(font);
   }
+};
+
+export const loadSvgSprite = () => {
+  return fromFetch(`${getCDN()}icons/glyphs-sprite.svg`).pipe(switchMap((res) => res.text()));
 };
 
 export const getCssVariablesAsText = (): Observable<string> => {
@@ -73,7 +77,7 @@ export const coerceBooleanProperty = (value: any): boolean => {
 
 export const getYoutubeId = (url: string) => {
   // From https://stackoverflow.com/a/9102270
-  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   if (match && match[2].length === 11) {
     return match[2];
