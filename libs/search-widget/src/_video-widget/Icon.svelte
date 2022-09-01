@@ -1,6 +1,4 @@
 <script>
-  import {getCDN} from '../core/utils';
-
   export let name;
   export let size; // 'small' | 'large' (medium by default)
 </script>
@@ -8,7 +6,8 @@
 {#if name}
   <svg class="svg-icon {size}"
        tabindex="-1">
-    <use xlink:href="{`${getCDN()}icons/glyphs-sprite.svg#${name}`}"></use>
+    <use xmlns:xlink="http://www.w3.org/1999/xlink"
+         xlink:href="#{name}"></use>
   </svg>
 {/if}
 

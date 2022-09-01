@@ -4,7 +4,7 @@
   import { onMount } from 'svelte';
   import { forkJoin, map, switchMap, take } from 'rxjs';
   import { nucliaState, nucliaStore } from '../core/store';
-  import { loadCssAsText, loadFonts } from '../core/utils';
+  import { loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
   import Spinner from '../components/spinner/Spinner.svelte';
   import VideoTile from './VideoTile.svelte';
@@ -14,6 +14,7 @@
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
   let cssVariables;
+  let svgSprite;
 
   const enhancedResults = results.pipe(
     switchMap((results) =>
@@ -38,6 +39,7 @@
   );
   onMount(() => {
     loadFonts();
+    loadSvgSprite().subscribe(sprite => svgSprite = sprite);
     // Load CSS variables (must be done after the CDN was set) and custom styles
     loadCssAsText().subscribe((css) => cssVariables = css);
   });
@@ -64,6 +66,7 @@
       </div>
     {/if}
   {/if}
+  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
 <style>

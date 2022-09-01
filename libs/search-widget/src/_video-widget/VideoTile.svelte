@@ -380,6 +380,9 @@
       gap: 0;
       padding: 0 var(--rhythm-2) var(--rhythm-2) var(--rhythm-2);
     }
+    .video-tile.expanded header {
+      padding: var(--rhythm-2) 0;
+    }
 
     .video-tile.expanded .expanded-tile-content {
       display: flex;
