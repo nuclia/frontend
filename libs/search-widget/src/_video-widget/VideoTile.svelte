@@ -156,8 +156,8 @@
             <input class="find-input"
                    type="text"
                    autocomplete="off"
-                   aria-label="Find in the transcript"
-                   placeholder="Find in the transcript"
+                   aria-label="Find a transcript"
+                   placeholder="Find a transcript"
                    bind:value={findInTranscript}>
           </div>
           {#if showSidePanel}
