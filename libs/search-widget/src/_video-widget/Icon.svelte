@@ -1,6 +1,6 @@
 <script>
   export let name;
-  export let size; // 'small' | 'large' (medium by default)
+  export let size = ''; // 'small' | 'large' (medium by default)
 </script>
 
 {#if name}
