@@ -34,6 +34,7 @@ message KnowledgeBoxConfig {
     repeated string enabled_filters = 3;
     repeated string enabled_insights = 4;
     string slug = 5;
+    bool disable_vectors = 6;
 }
 
 // NEW
@@ -141,6 +142,8 @@ message Widget {
         bool suggestEntities = 2;
         bool suggestSentences = 3;
         bool suggestParagraphs = 4;
+        bool suggestLabels = 5;
+        bool editLabels = 6;
     }
     WidgetFeatures features = 4;
 

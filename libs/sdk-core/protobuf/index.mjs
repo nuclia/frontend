@@ -1,7 +1,6 @@
 import protobufjs from 'protobufjs';
-import path from 'path';
-import dirname from 'es-dirname';
 
+const MODEL = `__MODEL__`;
 let _Message;
 
 export const NucliaProtobufConverter = (buffer) =>
@@ -9,17 +8,9 @@ export const NucliaProtobufConverter = (buffer) =>
     if (_Message) {
       resolve(_Message.decode(buffer));
     } else {
-      const root = new protobufjs.Root();
-      root.resolvePath = function (_origin, target) {
-        return path.join(dirname(), target);
-      };
-      root.load('nucliadb_protos/writer.proto', function (err) {
-        if (err) {
-          reject(err);
-        }
-        _Message = root.lookupType('fdbwriter.BrokerMessage');
-        resolve(_Message.decode(buffer));
-      });
+      const root = protobufjs.Root.fromJSON(JSON.parse(MODEL));
+      _Message = root.lookupType('fdbwriter.BrokerMessage');
+      resolve(_Message.decode(buffer));
     }
   });
 
