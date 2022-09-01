@@ -45,6 +45,7 @@
         highlight: false
       },
       state,
+      true
     );
     if (cdn) {
       setCDN(cdn);

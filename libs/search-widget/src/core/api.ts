@@ -6,10 +6,14 @@ import { loadModel } from './tensor';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
+let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
 
-export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates) => {
+export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates, fuzzyOnly = false) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
+  }
+  if (fuzzyOnly) {
+    SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
@@ -37,16 +41,14 @@ export const search = (query: string, options: SearchOptions) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox
-    .search(query, [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT], options)
-    .pipe(
-      filter((res) => {
-        if (res.error) {
-          nucliaStore().hasSearchError.next(true);
-        }
-        return !res.error;
-      }),
-    );
+  return nucliaApi.knowledgeBox.search(query, SEARCH_MODE, options).pipe(
+    filter((res) => {
+      if (res.error) {
+        nucliaStore().hasSearchError.next(true);
+      }
+      return !res.error;
+    }),
+  );
 };
 
 export const suggest = (query: string) => {
