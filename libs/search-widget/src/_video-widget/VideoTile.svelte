@@ -13,6 +13,7 @@
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';
+  import { fade } from 'svelte/transition';
 
   export let result: IResource = {id: ''};
 
@@ -126,12 +127,14 @@
      style:max-height="{expandedHeight}"
 >
   {#if expanded}
-    <header bind:this={expandedHeaderElement}>
+    <header transition:fade
+            bind:this={expandedHeaderElement}>
       <h3>{result?.title}</h3>
       <CloseButton aspect="basic"
                    on:click={closePreview}/>
     </header>
-    <div class="expanded-tile-content"
+    <div transition:fade
+         class="expanded-tile-content"
          class:full-transcript-expanded={showFullTranscripts}>
       {#if $resource}
         <div class="video-and-summary-container">
@@ -248,10 +251,6 @@
     font-weight: var(--font-weight-title-m);
     line-height: var(--line-height-title-m-mobile);
     margin: 0 0 var(--rhythm-1);
-  }
-
-  .video-tile .thumbnail-container {
-    align-self: flex-start;
   }
 
   .video-tile .all-result-toggle {
@@ -374,7 +373,9 @@
       font-size: var(--font-size-title-m);
       line-height: var(--line-height-title-m);
     }
-
+    .video-tile .thumbnail-container {
+      align-self: flex-start;
+    }
     .video-tile .result-details {
       width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
     }
