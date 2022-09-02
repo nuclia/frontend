@@ -32,7 +32,6 @@
   let transcripts: MediaWidgetParagraph[] = [];
   let showAllResults = false;
   let youtubeLoading = true;
-  let showSidePanel = false;
   let showFullTranscripts = false;
   let expandedHeight;
   let sidePanelHeight;
@@ -100,8 +99,11 @@
   const initExpandedStyle = () => {
     const expandedRect = tileElement.getBoundingClientRect();
     expandedHeight = `${expandedRect.height}px`;
-    showSidePanel = true;
     youtubeLoading = false;
+
+    if (!isExpandedFullScreen) {
+      tileElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
     setTimeout(() => {
       if (isExpandedFullScreen) {
         const padding = isMobile ? 32 : 16;
@@ -141,7 +143,7 @@
         <div class="youtube-container"
              class:loading={youtubeLoading}>
           {#if youtubeLoading}
-            <Spinner />
+            <Spinner/>
           {/if}
           {#if youtubeUri}
             <Youtube time={videoTime}
@@ -159,6 +161,7 @@
       {#if $resource}
         <div class="side-panel"
              style:height="{sidePanelHeight}"
+             style:max-height="{youtubeLoading ? '365px' : sidePanelHeight}"
              bind:this={sidePanelElement}>
           <div class="find-bar-container">
             <Icon name="search"/>
@@ -169,21 +172,19 @@
                    placeholder="Find a transcript"
                    bind:value={findInTranscript}>
           </div>
-          {#if isExpandedFullScreen || showSidePanel}
-            <div class="transcript-container">
-              {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
-                <strong>{findInTranscript}</strong> not found in your search results…
-              {/if}
-              <ul class="paragraphs-container">
-                {#each $filteredMatchingParagraphs as paragraph}
-                  <ParagraphPlayer {paragraph}
-                                   selected="{paragraph.pid === paragraphInPlay.pid}"
-                                   stack
-                                   on:play={(event) => playTranscript(event.detail.paragraph)}/>
-                {/each}
-              </ul>
-            </div>
-          {/if}
+          <div class="transcript-container">
+            {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
+              <strong>{findInTranscript}</strong> not found in your search results…
+            {/if}
+            <ul class="paragraphs-container">
+              {#each $filteredMatchingParagraphs as paragraph}
+                <ParagraphPlayer {paragraph}
+                                 selected="{paragraph.pid === paragraphInPlay.pid}"
+                                 stack
+                                 on:play={(event) => playTranscript(event.detail.paragraph)}/>
+              {/each}
+            </ul>
+          </div>
           <div tabindex="0"
                class="transcript-expander-header"
                class:expanded={showFullTranscripts}
