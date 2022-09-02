@@ -242,8 +242,10 @@
   .video-tile {
     display: flex;
     flex-direction: column;
-    gap: var(--rhythm-1);
     transition: background var(--transition-superfast);
+  }
+  .video-tile:not(.expanded) {
+    gap: var(--rhythm-1);
   }
 
   .video-tile h3 {
@@ -366,6 +368,8 @@
 
       align-items: center;
       flex-direction: row;
+    }
+    .video-tile:not(.expanded) {
       gap: var(--flex-gap);
     }
 
