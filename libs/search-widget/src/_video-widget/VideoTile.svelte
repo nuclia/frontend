@@ -13,7 +13,7 @@
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';
-  import { fade } from 'svelte/transition';
+  import Spinner from '../components/spinner/Spinner.svelte';
 
   export let result: IResource = {id: ''};
 
@@ -31,7 +31,7 @@
   let findInTranscript = '';
   let transcripts: MediaWidgetParagraph[] = [];
   let showAllResults = false;
-  let showSidePanel = false;
+  let youtubeLoading = true;
   let showFullTranscripts = false;
   let expandedHeight;
   let sidePanelHeight;
@@ -99,7 +99,11 @@
   const initExpandedStyle = () => {
     const expandedRect = tileElement.getBoundingClientRect();
     expandedHeight = `${expandedRect.height}px`;
-    showSidePanel = true;
+    youtubeLoading = false;
+
+    if (!isExpandedFullScreen) {
+      tileElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }
     setTimeout(() => {
       if (isExpandedFullScreen) {
         const padding = isMobile ? 32 : 16;
@@ -112,6 +116,7 @@
 
   const closePreview = () => {
     expanded = false;
+    youtubeLoading = true;
   };
 
   const toggleTranscriptPanel = () => {
@@ -127,31 +132,36 @@
      style:max-height="{expandedHeight}"
 >
   {#if expanded}
-    <header transition:fade
-            bind:this={expandedHeaderElement}>
+    <header bind:this={expandedHeaderElement}>
       <h3>{result?.title}</h3>
       <CloseButton aspect="basic"
                    on:click={closePreview}/>
     </header>
-    <div transition:fade
-         class="expanded-tile-content"
+    <div class="expanded-tile-content"
          class:full-transcript-expanded={showFullTranscripts}>
-      {#if $resource}
-        <div class="video-and-summary-container">
+      <div class="video-and-summary-container">
+        <div class="youtube-container"
+             class:loading={youtubeLoading}>
+          {#if youtubeLoading}
+            <Spinner/>
+          {/if}
           {#if youtubeUri}
             <Youtube time={videoTime}
                      uri={youtubeUri}
                      on:videoReady={initExpandedStyle}/>
           {/if}
-          <div class="summary-container">
-            {#each summaries as summary}
-              <div class="summary">{summary}</div>
-            {/each}
-          </div>
         </div>
+        <div class="summary-container">
+          {#each summaries as summary}
+            <div class="summary">{summary}</div>
+          {/each}
+        </div>
+      </div>
 
+      {#if $resource}
         <div class="side-panel"
              style:height="{sidePanelHeight}"
+             style:max-height="{youtubeLoading ? '365px' : sidePanelHeight}"
              bind:this={sidePanelElement}>
           <div class="find-bar-container">
             <Icon name="search"/>
@@ -162,21 +172,19 @@
                    placeholder="Find a transcript"
                    bind:value={findInTranscript}>
           </div>
-          {#if showSidePanel}
-            <div class="transcript-container">
-              {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
-                <strong>{findInTranscript}</strong> not found in your search results…
-              {/if}
-              <ul class="paragraphs-container">
-                {#each $filteredMatchingParagraphs as paragraph}
-                  <ParagraphPlayer {paragraph}
-                                   selected="{paragraph.pid === paragraphInPlay.pid}"
-                                   stack
-                                   on:play={(event) => playTranscript(event.detail.paragraph)}/>
-                {/each}
-              </ul>
-            </div>
-          {/if}
+          <div class="transcript-container">
+            {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
+              <strong>{findInTranscript}</strong> not found in your search results…
+            {/if}
+            <ul class="paragraphs-container">
+              {#each $filteredMatchingParagraphs as paragraph}
+                <ParagraphPlayer {paragraph}
+                                 selected="{paragraph.pid === paragraphInPlay.pid}"
+                                 stack
+                                 on:play={(event) => playTranscript(event.detail.paragraph)}/>
+              {/each}
+            </ul>
+          </div>
           <div tabindex="0"
                class="transcript-expander-header"
                class:expanded={showFullTranscripts}
@@ -242,8 +250,11 @@
   .video-tile {
     display: flex;
     flex-direction: column;
-    gap: var(--rhythm-1);
     transition: background var(--transition-superfast);
+  }
+
+  .video-tile:not(.expanded) {
+    gap: var(--rhythm-1);
   }
 
   .video-tile h3 {
@@ -295,6 +306,7 @@
     height: calc(var(--paragraph-height) * var(--paragraph-count) + var(--paragraph-gap) * (var(--paragraph-count) - 1));
     transition: height var(--transition-fast);
   }
+
   .video-tile .result-details .paragraphs-container:not(.expanded) {
     height: calc(var(--paragraph-height) * 4 + var(--paragraph-gap) * 3);
     overflow: hidden;
@@ -316,6 +328,17 @@
 
   .video-tile.expanded header h3 {
     margin: 0;
+  }
+
+  .video-tile.expanded .youtube-container {
+    background-color: var(--color-neutral-light);
+    width: 100%;
+  }
+
+  .video-tile.expanded .youtube-container.loading {
+    align-items: center;
+    display: flex;
+    justify-content: center;
   }
 
   .video-tile.expanded .summary-container,
@@ -366,6 +389,9 @@
 
       align-items: center;
       flex-direction: row;
+    }
+
+    .video-tile:not(.expanded) {
       gap: var(--flex-gap);
     }
 
@@ -373,12 +399,15 @@
       font-size: var(--font-size-title-m);
       line-height: var(--line-height-title-m);
     }
+
     .video-tile .thumbnail-container {
       align-self: flex-start;
     }
+
     .video-tile .result-details {
       width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
     }
+
     .video-tile .paragraphs-container {
       --paragraph-height: var(--rhythm-3);
     }
@@ -388,7 +417,7 @@
     }
   }
 
-  @media (max-width: 1023px){
+  @media (max-width: 1023px) {
     .video-tile.expanded {
       height: 100vh;
       left: 0;
@@ -398,6 +427,10 @@
       top: 0;
       z-index: 1000;
     }
+
+    .video-tile.expanded .youtube-container {
+      height: calc(100vw * 9 / 16);
+    }
   }
 
   @media (min-width: 1024px) {
@@ -406,6 +439,7 @@
       gap: 0;
       padding: 0 var(--rhythm-2) var(--rhythm-2) var(--rhythm-2);
     }
+
     .video-tile.expanded header {
       padding: var(--rhythm-2) 0;
     }
