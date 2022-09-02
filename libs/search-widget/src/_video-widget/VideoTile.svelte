@@ -280,7 +280,7 @@
   }
 
   .video-tile .paragraphs-container {
-    --paragraph-height: var(--rhythm-3);
+    --paragraph-height: var(--rhythm-4);
     --paragraph-gap: var(--rhythm-0_5);
 
     display: flex;
@@ -377,6 +377,9 @@
 
     .video-tile .result-details {
       width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
+    }
+    .video-tile .paragraphs-container {
+      --paragraph-height: var(--rhythm-3);
     }
 
     .video-tile.expanded header {
