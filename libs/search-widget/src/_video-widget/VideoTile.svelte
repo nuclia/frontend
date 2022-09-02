@@ -13,7 +13,6 @@
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';
-  import { fade } from 'svelte/transition';
 
   export let result: IResource = {id: ''};
 
@@ -127,14 +126,12 @@
      style:max-height="{expandedHeight}"
 >
   {#if expanded}
-    <header transition:fade
-            bind:this={expandedHeaderElement}>
+    <header bind:this={expandedHeaderElement}>
       <h3>{result?.title}</h3>
       <CloseButton aspect="basic"
                    on:click={closePreview}/>
     </header>
-    <div transition:fade
-         class="expanded-tile-content"
+    <div class="expanded-tile-content"
          class:full-transcript-expanded={showFullTranscripts}>
       {#if $resource}
         <div class="video-and-summary-container">
