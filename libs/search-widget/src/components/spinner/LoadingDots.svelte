@@ -2,14 +2,14 @@
   export let small = false;
 </script>
 
-<div class="spinner" class:small>
+<div class="loading-dots" class:small>
   <div class="bounce1" />
   <div class="bounce2" />
   <div class="bounce3" />
 </div>
 
 <style>
-  .spinner {
+  .loading-dots {
     align-content: center;
     display: flex;
     gap: var(--rhythm-1);
@@ -17,12 +17,12 @@
   }
 
   /*Huge thanks to @tobiasahlin at http://tobiasahlin.com/spinkit/ */
-  .spinner:not(.small) {
+  .loading-dots:not(.small) {
     margin: var(--rhythm-12) auto 0;
     text-align: center;
   }
 
-  .spinner > div {
+  .loading-dots > div {
     width: var(--rhythm-2);
     height: var(--rhythm-2);
     background-color: var(--color-primary-regular);
@@ -33,20 +33,20 @@
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;
   }
 
-  .spinner.small {
+  .loading-dots.small {
     gap: var(--rhythm-0_5);
   }
-  .spinner.small > div {
+  .loading-dots.small > div {
     width: calc(var(--rhythm-0_5) + var(--rhythm-0_25));
     height: calc(var(--rhythm-0_5) + var(--rhythm-0_25));
   }
 
-  .spinner .bounce1 {
+  .loading-dots .bounce1 {
     -webkit-animation-delay: -0.32s;
     animation-delay: -0.32s;
   }
 
-  .spinner .bounce2 {
+  .loading-dots .bounce2 {
     -webkit-animation-delay: -0.16s;
     animation-delay: -0.16s;
   }

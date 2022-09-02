@@ -6,7 +6,7 @@
   import { nucliaState, nucliaStore } from '../core/store';
   import { loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
-  import Spinner from '../components/spinner/Spinner.svelte';
+  import LoadingDots from '../components/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
@@ -55,7 +55,7 @@
         <span>{$_('error.search-beta')}</span>
       </div>
     {:else if $pendingResults}
-      <Spinner/>
+      <LoadingDots/>
     {:else if results.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}

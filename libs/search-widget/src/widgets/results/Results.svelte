@@ -4,7 +4,7 @@
   import Square from '../row/Square.svelte';
   import type { IResource } from '@nuclia/core';
   import { _ } from '../../core/i18n';
-  import Spinner from '../../components/spinner/Spinner.svelte';
+  import LoadingDots from '../../components/spinner/LoadingDots.svelte';
   import { map, switchMap, take, forkJoin } from 'rxjs';
 
   export let displayThumbnail = true;
@@ -50,7 +50,7 @@
     <span>{$_('error.search-beta')}</span></div>
 {:else if $pendingResults}
   <h3 class="empty" >
-    <Spinner/>
+    <LoadingDots/>
   </h3>
 {:else if results.length === 0}
   <h3 class="empty">{$_('results.empty')}</h3>

@@ -5,7 +5,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import SearchIcon from '../../components/icons/search.svelte';
   import { nucliaState, nucliaStore } from '../../core/store';
-  import Spinner from '../../components/spinner/Spinner.svelte';
+  import LoadingDots from '../../components/spinner/LoadingDots.svelte';
   import { getCDN } from "../../core/utils";
 
   export let popupSearch = false;
@@ -89,7 +89,7 @@
   {#if popupSearch || embeddedSearch || searchBarWidget}
     <div class="search-icon" class:left-icon={embeddedSearch || searchBarWidget}>
       {#if $isPending}
-        <Spinner small/>
+        <LoadingDots small/>
       {:else}
         <SearchIcon on:click={search}
                     on:keyup={(e) => {
