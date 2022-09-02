@@ -61,7 +61,6 @@
     map(paragraphs => filterParagraphs(paragraphs as MediaWidgetParagraph[])),
   );
   $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(transcripts);
-  $: displayedResultCount = showAllResults ? -1 : 4;
 
 
   const playFromStart = () => {
@@ -203,13 +202,18 @@
       {/if}
     </div>
   {:else}
-    <ThumbnailPlayer thumbnail="{result.thumbnail}"
-                     on:play={playFromStart}/>
+    <div class="thumbnail-container">
+      <ThumbnailPlayer thumbnail="{result.thumbnail}"
+                       on:play={playFromStart}/>
+    </div>
 
     <div class="result-details">
       <h3 class="ellipsis">{result?.title}</h3>
-      <ul class="paragraphs-container">
-        {#each $matchingParagraphs.slice(0, displayedResultCount) as paragraph}
+      <ul class="paragraphs-container"
+          class:expanded={showAllResults}
+          style="--paragraph-count: {$matchingParagraphs.length}"
+      >
+        {#each $matchingParagraphs as paragraph}
           <ParagraphPlayer {paragraph}
                            ellipsis
                            minimized="{isMobile}"
@@ -246,6 +250,10 @@
     margin: 0 0 var(--rhythm-1);
   }
 
+  .video-tile .thumbnail-container {
+    align-self: flex-start;
+  }
+
   .video-tile .all-result-toggle {
     align-items: center;
     color: var(--color-neutral-regular);
@@ -255,6 +263,7 @@
     gap: var(--rhythm-1);
     line-height: var(--rhythm-3);
     margin-top: var(--rhythm-2);
+    transition: color var(--transition-superfast);
   }
 
   .video-tile .all-result-toggle:hover {
@@ -271,13 +280,25 @@
   }
 
   .video-tile .paragraphs-container {
+    --paragraph-height: var(--rhythm-3);
+    --paragraph-gap: var(--rhythm-0_5);
+
     display: flex;
     flex: 0 0 auto;
     flex-direction: column;
-    gap: var(--rhythm-0_5);
+    gap: var(--paragraph-gap);
     list-style: none;
     margin: 0;
     padding: 0;
+  }
+
+  .video-tile .result-details .paragraphs-container {
+    height: calc(var(--paragraph-height) * var(--paragraph-count) + var(--paragraph-gap) * (var(--paragraph-count) - 1));
+    transition: height var(--transition-fast);
+  }
+  .video-tile .result-details .paragraphs-container:not(.expanded) {
+    height: calc(var(--paragraph-height) * 4 + var(--paragraph-gap) * 3);
+    overflow: hidden;
   }
 
   .video-tile.expanded {
@@ -347,10 +368,6 @@
       align-items: center;
       flex-direction: row;
       gap: var(--flex-gap);
-    }
-
-    .video-tile.showAllResults {
-      align-items: flex-start;
     }
 
     .video-tile h3 {
