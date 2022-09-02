@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { setLang } from 'libs/search-widget/src/core/i18n';
+  import { setLang } from '../../../libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
   import { NucliaWidget } from '../../../libs/search-widget/src';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'two-widgets';
+  let selected = 'form';
   let widget: NucliaWidget;
+  console.log(NucliaWidget);
 
   onMount(() => {
     widget?.setActions([
@@ -45,46 +46,56 @@
     <button on:click={() => setLang('es')}>Español</button>
   </section>
 
-
   {#if selected === 'input'}
     <h2>Input widget</h2>
     <div class="input-container">
-      <NucliaWidget bind:this={widget}
-                    zone="europe-1"
-                    knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-                    cdn="/"
-                    widgetid="demo-input"
-                    type="input"
-                    permalink
-                    lang="en"
-                    placeholder="Input placeholder is invisible"
-      />
+      <!-- <NucliaWidget
+        bind:this={widget}
+        zone="europe-1"
+        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+        cdn="/"
+        widgetid="demo-input"
+        type="input"
+        permalink
+        lang="en"
+        placeholder="Input placeholder is invisible"
+      /> -->
     </div>
   {/if}
   {#if selected === 'form'}
     <h2>Embedded widget <small>(formerly known as form widget)</small></h2>
-    <NucliaWidget zone="europe-1"
+    <nuclia-search
+      data-zone="europe-1"
+      data-knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+      data-cdn="/"
+      data-widgetid="demo-form"
+      data-type="form"
+      data-lang="en"
+      data-placeholder="Here's the placeholder"
+    />
+    <!-- <NucliaWidget zone="europe-1"
                   knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
                   cdn="/"
                   widgetid="demo-form"
                   type="form"
                   lang="en"
                   placeholder="Here's the placeholder"
-    />
+    /> -->
   {/if}
 
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
-      <NucliaSearchBar zone="europe-1"
-                       knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
-                       cdn="/"
-                       lang="en"
-                       widgetid="demo-search-bar"
-                       placeholder="Search"/>
+      <NucliaSearchBar
+        zone="europe-1"
+        knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
+        cdn="/"
+        lang="en"
+        widgetid="demo-search-bar"
+        placeholder="Search"
+      />
       <NucliaSearchResults />
     </div>
-
   {/if}
 </main>
 
