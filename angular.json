@@ -861,9 +861,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": [
-              "yarn run build:search-widgets"
-            ]
+            "commands": ["yarn run build:search-widgets"]
           },
           "configurations": {
             "production": {}
