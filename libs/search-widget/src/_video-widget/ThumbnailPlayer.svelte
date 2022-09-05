@@ -21,7 +21,7 @@
        on:click={play}>
     <Thumbnail src={thumbnail}
                noBackground
-               on:loaded={loaded = true}/>
+               on:loaded={() => loaded = true}/>
 
     {#if loaded}
       <div class="play-icon"
