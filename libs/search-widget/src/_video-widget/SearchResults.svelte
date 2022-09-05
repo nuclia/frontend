@@ -37,6 +37,7 @@
   const paragraphResults = enhancedResults.pipe(
     map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
   );
+
   onMount(() => {
     loadFonts();
     loadSvgSprite().subscribe(sprite => svgSprite = sprite);
@@ -56,7 +57,7 @@
       </div>
     {:else if $pendingResults}
       <LoadingDots/>
-    {:else if results.length === 0}
+    {:else if $results.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
       <div class="results">
