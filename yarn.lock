@@ -13818,12 +13818,12 @@ ngx-build-plus@11.0.0:
     webpack-dev-server "^3.1.14"
     webpack-merge "^4.2.1"
 
-ngx-captcha@^9.0.1:
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/ngx-captcha/-/ngx-captcha-9.0.1.tgz#d4b487a440840923439d06db32608fc0b446fd4d"
-  integrity sha512-Fq83lO/TlTktaNxaOGygDTTsCc0DTZYDqYPRXZdiA+nSH2y4LE8yWSfSWwSxf2Vl/AldUWU7igWtFoVidVOXmw==
+ngx-captcha@^12.0.2:
+  version "12.0.2"
+  resolved "https://registry.yarnpkg.com/ngx-captcha/-/ngx-captcha-12.0.2.tgz#e896bc79d2c456d26131fc4e4ad59539974a4ef4"
+  integrity sha512-gCRTM61LHJPEE+YHlC4kPCXboVPw8na9MbZ9vpA3d0Gtn1mbQTviXUjoynuKACBJyINFfHHGNmkeJdk5bU2vEg==
   dependencies:
-    tslib "^2.0.0"
+    tslib "^2.3.0"
 
 ngx-ui-tour-core@^7.0.2:
   version "7.0.2"
