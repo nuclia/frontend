@@ -96,3 +96,15 @@ export const formatTitle = (title?: string): string => {
     return title;
   }
 };
+
+export const injectStyle = (element: HTMLElement | undefined, css: string) => {
+  // inject css in shadow root manually
+  // (when done using regular <style>, Svelte removes unsed css selectors)
+  const root: ShadowRoot = element?.getRootNode() as ShadowRoot;
+  if (root) {
+    root.querySelectorAll('style').forEach((style: HTMLStyleElement) => root.removeChild(style));
+    const style = document.createElement('style');
+    style.appendChild(document.createTextNode(css));
+    root.appendChild(style);
+  }
+};

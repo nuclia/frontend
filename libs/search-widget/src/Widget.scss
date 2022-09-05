@@ -1,0 +1,6 @@
+@import './widgets/search-input/SearchInput.scss';
+
+:global(mark) {
+  background-color: inherit;
+  font-weight: var(--font-weight-semi-bold);
+}
