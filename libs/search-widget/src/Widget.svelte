@@ -23,7 +23,6 @@
   import type { KBStates, Resource } from '@nuclia/core';
   import { Observable } from 'rxjs';
   import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
-  import { element } from 'svelte/internal';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';

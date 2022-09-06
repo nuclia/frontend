@@ -3,14 +3,7 @@
   import { getFile } from '../core/api';
   import { nucliaState } from '../core/store';
   import { _ } from '../core/i18n';
-  import {
-    findFileByType,
-    search,
-    selectParagraph,
-    viewerStore,
-    viewerState,
-    selectSentence,
-  } from './store';
+  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from './store';
   import { onDestroy } from 'svelte';
   import { combineLatest, filter, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';
@@ -80,7 +73,7 @@
   });
 </script>
 
-<div class="viewer" style="--header-height: {headerHeight}">
+<div class="sw-viewer" style="--header-height: {headerHeight}">
   <div class="viewer-header" bind:this={header}>
     <Header {resource} />
   </div>
@@ -89,13 +82,13 @@
       <InputViewer />
 
       <div class="paragraphs">
-      {#if $hasSearchError}
+        {#if $hasSearchError}
           <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
-      {:else if $results}
+        {:else if $results}
           <Paragraphs paragraphs={$results} />
-      {:else}
+        {:else}
           <Paragraphs paragraphs={$paragraphs} />
-      {/if}
+        {/if}
       </div>
 
       {#if image}
@@ -128,64 +121,3 @@
     </div>
   </div>
 </div>
-
-<style>
-  .viewer {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-  }
-  .viewer-header {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-  .viewer-body {
-    flex: 1 1 0;
-    display: grid;
-    grid-template-columns: 100%;
-    background-color: #fff;
-  }
-  .viewer-left {
-    padding: 1em;
-    grid-row: start 2;
-  }
-  .viewer-right {
-    padding: 2em 1em;
-    background-color: #efefef;
-    grid-row: start 1;
-  }
-  .paragraphs {
-    margin-top: 2em;
-  }
-  pre {
-    font-family: var(--font-family-body);
-    white-space: pre-wrap;
-  }
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  @media (min-width: 1024px) {
-    .viewer {
-      max-width: 1920px;
-    }
-    .viewer-body {
-      grid-template-columns: 60% 40%;
-      grid-template-rows: 100%;
-    }
-    .viewer-body.preview {
-      grid-template-columns: 33% 66%;
-    }
-    .viewer-left {
-      padding: 1.75em 3em 0 2em;
-      grid-row: auto;
-    }
-    .viewer-right {
-      padding: 2em 3em;
-      grid-row: auto;
-    }
-  }
-</style>

@@ -1,0 +1,11 @@
+.sw-search-icon {
+  border-radius: 50%;
+  cursor: pointer;
+  display: block;
+  padding: 2px;
+
+  &:focus {
+    box-shadow: var(--focus-shadow);
+    outline: 0;
+  }
+}

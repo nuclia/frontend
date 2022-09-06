@@ -1,7 +1,5 @@
 .sw-search-input {
-  form {
-    position: relative;
-  }
+  position: relative;
 
   input {
     font-size: calc(var(--font-size-base) * 1.5);
@@ -91,10 +89,9 @@
     font-size: calc(var(--font-size-base) * 0.6);
     font-weight: var(--font-weight-body);
   }
-
-  @media (min-width: 448px) {
-    form.search-bar-container {
-      width: var(--search-bar-max-width);
-    }
+}
+@media (min-width: 448px) {
+  .sw-search-input.search-bar-container {
+    width: var(--search-bar-max-width);
   }
 }

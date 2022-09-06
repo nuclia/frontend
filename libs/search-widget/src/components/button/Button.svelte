@@ -7,7 +7,7 @@
 </script>
 
 <button
-  class="button {aspect}"
+  class="sw-button {aspect}"
   class:small={size === 'small'}
   {type}
   aria-label={label ? label.textContent : ''}
@@ -17,75 +17,3 @@
 >
   <span tabindex="-1" class="button-label" bind:this={label}><slot /></span>
 </button>
-
-<style>
-  .button {
-    background: transparent;
-    border: none;
-    border-radius: var(--border-radius);
-    display: inline-flex;
-    font-family: inherit;
-    font-size: var(--font-size-base);
-    justify-content: center;
-    line-height: var(--line-height-body);
-    margin: 0;
-    outline: 0;
-    padding: var(--rhythm-1) var(--rhythm-2);
-    transition: background-color 0.16s ease-in-out, box-shadow 0.16s ease-in;
-    white-space: nowrap;
-  }
-  .button:focus {
-    box-shadow: var(--focus-shadow);
-    outline: 0;
-  }
-  .button svg:focus {
-    outline: 0;
-  }
-  .button.icon {
-    border-radius: 50%;
-    padding: var(--rhythm-1_5);
-  }
-
-  .button:not(:disabled) {
-    cursor: pointer;
-  }
-
-  .button-label {
-    font-weight: var(--font-weight-semi-bold);
-    display: flex;
-    align-items: center;
-  }
-
-  .button.small {
-    font-size: calc(var(--font-size-base) * 0.75);
-    line-height: calc(var(--line-height-body) * 0.75);
-    padding: var(--rhythm-0_5);
-  }
-
-  .button.solid {
-    color: var(--color-light-stronger);
-    background: var(--color-dark-stronger);
-    border: var(--color-dark-stronger);
-  }
-  .button.solid:not(:disabled):hover {
-    background: var(--color-dark-stronger);
-    box-shadow: var(--shadow-small);
-  }
-
-  .button.solid:not(:disabled):active {
-    background: var(--color-neutral-regular);
-  }
-
-  .button.basic {
-    color: var(--color-dark-stronger);
-    background: transparent;
-    border: var(--color-dark-stronger);
-  }
-  .button.basic:not(:disabled):hover {
-    background: var(--color-neutral-lighter);
-  }
-  .button.basic:not(:disabled):active {
-    background: var(--color-neutral-light);
-  }
-
-</style>

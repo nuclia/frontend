@@ -1,4 +1,6 @@
-@import './widgets/search-input/SearchInput.scss';
+@import './components';
+@import './viewer';
+@import './widgets';
 
 :global(mark) {
   background-color: inherit;

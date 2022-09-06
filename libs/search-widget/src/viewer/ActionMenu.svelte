@@ -2,7 +2,7 @@
   import type { WidgetAction } from '../core/models';
   import { getWidgetActions } from '../core/store';
   import { getCDN } from '../core/utils';
-  import {clickOutside } from '../components/actions/actions';
+  import { clickOutside } from '../components/actions/actions';
 
   export let uid: string;
 
@@ -21,9 +21,9 @@
 </script>
 
 {#if actions.length > 0}
-  <div use:clickOutside on:outclick={closeMenu}>
+  <div class="sw-action-menu" use:clickOutside on:outclick={closeMenu}>
     <button on:click|preventDefault={toggleMenu}>
-      <img src={`${getCDN()}icons/more-vertical.svg`} alt="more" >
+      <img src={`${getCDN()}icons/more-vertical.svg`} alt="more" />
     </button>
     {#if displayMenu}
       <ul class="menu">
@@ -36,53 +36,3 @@
     {/if}
   </div>
 {/if}
-
-<style>
-  div {
-    position: relative;
-    display: inline-block;
-  }
-  button {
-    border: none;
-    border-radius: 50%;
-    height: 32px;
-    width: 32px;
-    padding: 0;
-    cursor: pointer;
-    background: none;
-    transition: background-color 0.2s;
-    text-align: center;
-  }
-  button:hover {
-    background-color: var(--color-neutral-lightest);
-  }
-  ul {
-    position: absolute;
-    top: 4px;
-    right: 24px;
-    padding: 0;
-    background-color: var(--color-light-stronger);
-    box-shadow: var(--shadow-modal);
-    border-bottom: 0;
-    font-size: var(--font-size-base);
-    font-weight: var(--font-weight-body);
-  }
-  li {
-    display: block;
-    cursor: pointer;
-    padding: 0.5em 1.25em;
-    font-weight: var(--font-weight-semi-bold);
-    white-space: nowrap;
-  }
-  li:hover {
-    background-color: var(--color-neutral-lightest);
-  }
-  li.destructive {
-    border-top: 1px solid var(--color-neutral-lightest);
-    border-bottom: 1px solid var(--color-neutral-lightest);
-    color: var(--color-secondary-stronger);
-  }
-  li.destructive:hover {
-    background-color: var(--color-secondary-lightest);
-  }
-</style>

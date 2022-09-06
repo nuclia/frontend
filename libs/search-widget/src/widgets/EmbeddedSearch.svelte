@@ -37,48 +37,29 @@
   };
 </script>
 
-<div>
+<div class="sw-embedded-search">
   <div class="search-input-container">
     <div bind:this={inputElement}>
-      <SearchInput embeddedSearch={true}
-                   placeholder="{placeholder}"
-                   on:typeahead={openSuggestions}
-                   on:search={closeSuggestions}
-      />
+      <SearchInput embeddedSearch={true} {placeholder} on:typeahead={openSuggestions} on:search={closeSuggestions} />
     </div>
   </div>
-  <Modal show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
-         on:close={closeSuggestions}
-         popup={true}
-         parentPosition={position}
-         --modal-width-md="var(--search-bar-max-width)"
+  <Modal
+    show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
+    on:close={closeSuggestions}
+    popup={true}
+    parentPosition={position}
+    --modal-width-md="var(--search-bar-max-width)"
   >
     <div class="suggestions">
-      <Suggestions paragraphs={$paragraphs} intents={$intents}/>
+      <Suggestions paragraphs={$paragraphs} intents={$intents} />
     </div>
   </Modal>
   <div class="options">
-    <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)}/>
+    <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)} />
   </div>
   {#if $showResults}
     <div class="results" class:empty={$results.length === 0}>
-      <Results results={$results} formWidget={true}/>
+      <Results results={$results} formWidget={true} />
     </div>
   {/if}
 </div>
-
-<style>
-  .search-input-container {
-    display: flex;
-    justify-content: center;
-  }
-
-  .options {
-    padding: var(--rhythm-1) 0;
-    display: none;
-  }
-
-  .suggestions {
-    padding: var(--rhythm-2);
-  }
-</style>

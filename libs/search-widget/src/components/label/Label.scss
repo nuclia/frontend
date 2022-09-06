@@ -1,0 +1,24 @@
+.sw-label {
+  display: inline-flex;
+  padding: 0 0.5em;
+  font-size: 0.75em;
+  line-height: 1.25;
+  white-space: nowrap;
+  border-radius: 1px;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  span {
+    flex: 1 1 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    filter: saturate(100) brightness(80%);
+  }
+  img {
+    flex: 0 0 auto;
+    margin-left: 0.5em;
+    width: 14px;
+    cursor: pointer;
+  }
+}
