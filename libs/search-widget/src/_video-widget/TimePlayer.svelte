@@ -1,9 +1,10 @@
 <script>
   import {formatTime} from '../core/utils';
-  import {createEventDispatcher} from "svelte";
-  import Icon from "./Icon.svelte";
+  import {createEventDispatcher} from 'svelte';
+  import Icon from './Icon.svelte';
 
-  export let time = 0;
+  export let start = 0;
+  export let end = 0;
   export let selected = false;
   export let minimized = false;
 
@@ -19,9 +20,10 @@
      class:minimized
      on:click={play}
      on:keyup={(e) => { if (e.key === 'Enter') play(); }}
+     title="From {formatTime(start)} {end > 0 ? 'to ' + formatTime(end) : ''}"
      tabindex="0">
   <Icon name="play" size="small"/>
-  <div tabindex="-1" class="time-label">{formatTime(time)}</div>
+  <div tabindex="-1" class="time-label">{formatTime(start)}</div>
 </div>
 
 <style>
@@ -29,12 +31,13 @@
     align-items: center;
     background: var(--color-neutral-lightest);
     border-radius: var(--rhythm-4);
-    gap: var(--rhythm-0_25);
-    max-width: var(--rhythm-9);
     cursor: pointer;
     display: flex;
+    gap: var(--rhythm-0_25);
     line-height: var(--rhythm-3);
+    max-width: var(--rhythm-9);
     padding: 0 var(--rhythm-1_5) 0 var(--rhythm-1);
+    position: relative;
   }
 
   .time-player.minimized {
@@ -67,4 +70,5 @@
     background: var(--color-primary-light);
     color: var(--color-light-stronger);
   }
+
 </style>

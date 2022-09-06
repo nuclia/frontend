@@ -62,6 +62,7 @@
 
   /* TYPOGRAPHY */
   --font-size-base: var(--custom-font-size-base, 16px);
+  --font-size-small: var(--custom-font-size-base, 13px);
   --font-weight-body: var(--custom-font-weight-body, 300);
   --font-weight-semi-bold: var(--custom-font-weight-semi-bold, 500);
   --font-weight-bold: var(--custom-font-weight-semi-bold, 700);
