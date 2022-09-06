@@ -8,17 +8,25 @@
   export let selected = false;
   export let minimized = false;
 
+  let hovering = false;
+
   const dispatch = createEventDispatcher();
   const play = () => {
     dispatch('play', { paragraph });
   }
 </script>
 
-<li class="paragraph" class:stack>
+<li class="paragraph"
+    class:stack
+    on:mouseenter={() => hovering = true}
+    on:mouseleave={() => hovering = false}
+    on:click={play}
+>
   <div style="display: flex">
     <TimePlayer start="{paragraph.start || 0}"
                 end="{paragraph.end}"
                 {selected}
+                hover={hovering}
                 {minimized}
                 on:play={play}/>
   </div>
@@ -29,6 +37,7 @@
 
 <style>
   .paragraph {
+    cursor: pointer;
     display: flex;
     gap: var(--rhythm-1);
   }
@@ -41,6 +50,14 @@
   }
   .paragraph .paragraph-text {
     overflow-wrap: break-word;
+  }
+  .paragraph:hover {
+    background-color: var(--color-neutral-lightest);
+    border-top-left-radius: var(--rhythm-1_5);
+  }
+
+  .paragraph:not(.stack):hover {
+    border-bottom-left-radius: var(--rhythm-1_5);
   }
 
   .ellipsis {

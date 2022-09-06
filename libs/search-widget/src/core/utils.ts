@@ -48,9 +48,7 @@ export const formatTime = (sec: number) => {
   const d = new Date(0);
   d.setSeconds(sec);
   let startIndex = 11;
-  if (sec < 60) {
-    startIndex = 15;
-  } else if (sec < 3600) {
+  if (sec < 3600) {
     startIndex = 14;
   }
   return d.toISOString().substring(startIndex, 19);
