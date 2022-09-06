@@ -4,28 +4,7 @@
 </script>
 
 {#if name}
-  <svg class="svg-icon {size}"
-       tabindex="-1">
-    <use xmlns:xlink="http://www.w3.org/1999/xlink"
-         xlink:href="#{name}"></use>
+  <svg class="sw-svg-icon {size}" tabindex="-1">
+    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#{name}" />
   </svg>
 {/if}
-
-<style>
-  .svg-icon {
-    fill: currentColor;
-    height: var(--rhythm-3);
-    width: var(--rhythm-3);
-  }
-  .svg-icon.small {
-    height: var(--rhythm-2);
-    width: var(--rhythm-2);
-  }
-  .svg-icon.large {
-    height: var(--rhythm-5);
-    width: var(--rhythm-5);
-  }
-  .svg-icon:focus {
-    outline: 0;
-  }
-</style>

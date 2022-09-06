@@ -1,0 +1,30 @@
+.sw-paragraph-player {
+  cursor: pointer;
+  display: flex;
+  gap: var(--rhythm-1);
+
+  &:not(.stack) {
+    align-items: center;
+  }
+  &.stack {
+    flex-direction: column;
+    gap: var(--rhythm-0_5);
+  }
+  .paragraph-text {
+    overflow-wrap: break-word;
+  }
+  &:hover {
+    background-color: var(--color-neutral-lightest);
+    border-top-left-radius: var(--rhythm-1_5);
+  }
+
+  &:not(.stack):hover {
+    border-bottom-left-radius: var(--rhythm-1_5);
+  }
+
+  .ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,34 @@
+.sw-thumbnail-player {
+  cursor: pointer;
+  flex: 0 0 auto;
+  position: relative;
+  .play-icon {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    color: var(--color-dark-stronger);
+    display: flex;
+    padding: var(--rhythm-1);
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .play-icon:focus {
+    box-shadow: var(--focus-shadow);
+    outline: 0;
+  }
+
+  &:hover .play-icon {
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  &:active .play-icon {
+    background: var(--color-light-stronger);
+  }
+}
+@media (min-width: 600px) {
+  .sw-thumbnail-player {
+    width: var(--width-thumbnail);
+  }
+}

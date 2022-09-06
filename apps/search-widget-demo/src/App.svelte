@@ -5,7 +5,7 @@
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
   let selected = 'input';
-  console.log(NucliaWidget);
+  console.log(NucliaWidget, NucliaSearchBar, NucliaSearchResults);
 
   onMount(() => init());
 
@@ -91,15 +91,15 @@
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
-      <NucliaSearchBar
-        zone="europe-1"
-        knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
-        cdn="/"
-        lang="en"
-        widgetid="demo-search-bar"
-        placeholder="Search"
+      <nuclia-search-bar
+        data-zone="europe-1"
+        data-knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
+        data-cdn="/"
+        data-lang="en"
+        data-widgetid="demo-search-bar"
+        data-placeholder="Search"
       />
-      <NucliaSearchResults />
+      <nuclia-search-results />
     </div>
   {/if}
 </main>
