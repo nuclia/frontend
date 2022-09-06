@@ -1,37 +1,37 @@
 import { Search } from '../../../sdk-core/src';
 import type {
-  Resource,
-  IFieldData,
-  Paragraph,
-  FileFieldData,
-  LinkFieldData,
+  Classification,
   CloudLink,
+  FileFieldData,
+  IFieldData,
+  LinkFieldData,
+  Paragraph,
+  Resource,
   ResourceData,
   Sentence,
-  Classification,
 } from '@nuclia/core';
 import {
-  Observable,
-  Subject,
   BehaviorSubject,
-  merge,
   combineLatest,
-  switchMap,
-  map,
-  filter,
   distinctUntilChanged,
+  filter,
+  map,
+  merge,
+  Observable,
   of,
-  tap,
-  take,
   shareReplay,
+  Subject,
+  switchMap,
+  take,
+  tap,
 } from 'rxjs';
 import type {
-  PdfPreviewParams,
-  MediaPreviewParams,
   LinkPreviewParams,
-  YoutubePreviewParams,
-  WidgetParagraph,
+  MediaPreviewParams,
+  PdfPreviewParams,
   SelectedParagraph,
+  WidgetParagraph,
+  YoutubePreviewParams,
 } from '../core/models';
 import { PreviewKind, SearchOrder } from '../core/models';
 import { getFileUrls } from '../core/api';
@@ -54,15 +54,15 @@ export const viewerStore: {
   updatedLabels: Subject<{ [key: string]: Classification[] }>;
   init: () => void;
 } = {
-  resource: new BehaviorSubject(null),
+  resource: new BehaviorSubject<Resource | null>(null),
   query: new BehaviorSubject(''),
-  results: new BehaviorSubject(null),
+  results: new BehaviorSubject<WidgetParagraph[] | null>(null),
   hasSearchError: new BehaviorSubject<boolean>(false),
   showPreview: new BehaviorSubject(false),
-  selectedParagraph: new BehaviorSubject(null),
+  selectedParagraph: new BehaviorSubject<SelectedParagraph | null>(null),
   onlySelected: new BehaviorSubject(false),
   setPage: new Subject(),
-  linkPreview: new BehaviorSubject(null),
+  linkPreview: new BehaviorSubject<LinkPreviewParams | null>(null),
   order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
@@ -189,6 +189,8 @@ export function getPdfPreviewParams(
       query: text,
       total: getPages(field).length,
     };
+  } else {
+    return;
   }
 }
 
@@ -351,7 +353,8 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     return {
       ...baseParagraph,
       preview: kind,
-      time: paragraph.start_seconds?.[0] || 0,
+      start: paragraph.start_seconds?.[0] || 0,
+      end: paragraph.end_seconds?.[0] || 0,
     };
   } else {
     return {
@@ -481,7 +484,7 @@ function findParagraphFromSearchParagraph(
   const field = resource.data[getFieldType(searchParagraph.field_type)]?.[searchParagraph.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   const text = normalizeSearchParagraphText(searchParagraph.text);
-  return paragraphs?.find((paragraph) => text === getParagraphText(field, paragraph));
+  return paragraphs?.find((paragraph) => text === getParagraphText(field as IFieldData, paragraph));
 }
 
 function findParagraphFromSearchSentence(

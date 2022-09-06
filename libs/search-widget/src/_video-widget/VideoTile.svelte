@@ -40,7 +40,8 @@
     map(results => results.map(paragraph => ({
       ...paragraph,
       pid: `${paragraph.field_type}${(paragraph as Paragraph).start_seconds?.[0] || 0}${(paragraph as Paragraph).end_seconds?.[0] || 0}`,
-      time: (paragraph as Paragraph).start_seconds?.[0] || 0,
+      start: (paragraph as Paragraph).start_seconds?.[0] || 0,
+      end: (paragraph as Paragraph).end_seconds?.[0] || 0,
     }))),
   );
 
@@ -69,11 +70,11 @@
   };
 
   const playParagraph = (paragraph) => {
-    playFrom(paragraph.time, paragraph);
+    playFrom(paragraph.start, paragraph);
   };
 
   const playTranscript = (paragraph) => {
-    videoTime = paragraph.time;
+    videoTime = paragraph.start;
   };
 
   const playFrom = (time: number, selectedParagraph?: Search.Paragraph) => {
@@ -227,7 +228,7 @@
         {#each $matchingParagraphs as paragraph}
           <ParagraphPlayer {paragraph}
                            ellipsis
-                           minimized="{isMobile}"
+                           minimized="{true}"
                            on:play={(event) => playParagraph(event.detail.paragraph)}/>
         {/each}
       </ul>

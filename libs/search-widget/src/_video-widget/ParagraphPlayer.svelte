@@ -16,7 +16,8 @@
 
 <li class="paragraph" class:stack>
   <div style="display: flex">
-    <TimePlayer time="{paragraph.time || 0}"
+    <TimePlayer start="{paragraph.start || 0}"
+                end="{paragraph.end}"
                 {selected}
                 {minimized}
                 on:play={play}/>
