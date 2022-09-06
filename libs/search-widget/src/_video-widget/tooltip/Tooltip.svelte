@@ -6,8 +6,8 @@
 </script>
 
 <div class="sw-tooltip"
-     style:left="{x + 16}px"
-     style:top="{y + 16}px"
+     style:left="{x}px"
+     style:top="{y}px"
      style:opacity="{visible ? 1 : 0}"
 >{title}</div>
 

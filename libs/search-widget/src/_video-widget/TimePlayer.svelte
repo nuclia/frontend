@@ -22,7 +22,7 @@
      class:minimized
      on:click={play}
      on:keyup={(e) => { if (e.key === 'Enter') play(); }}
-     use:tooltip={title}
+     use:tooltip={{title}}
      tabindex="0">
   <Icon name="play" size="small"/>
   <div tabindex="-1" class="time-label">{formatTime(start)}</div>

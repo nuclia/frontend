@@ -1,14 +1,30 @@
 import Tooltip from './Tooltip.svelte';
 
-export function tooltip(node: HTMLElement, title: string) {
+export function tooltip(node: HTMLElement, params: { title: string; type?: 'action' | 'system' }) {
   let tooltipComponent: Tooltip;
+  const type: 'action' | 'system' = params.type || 'action';
 
-  const mouseenter = (event: MouseEvent) => {
+  const getActionPosition = (): { x: number; y: number } => {
+    return {
+      x: node.offsetLeft,
+      y: node.offsetTop + node.offsetHeight + 4,
+    };
+  };
+
+  const getSystemPosition = (event: MouseEvent): { x: number; y: number } => {
+    return {
+      x: event.pageX + 16,
+      y: event.pageY + 16,
+    };
+  };
+
+  const mouseEnter = (event: MouseEvent) => {
+    const position = type === 'action' ? getActionPosition() : getSystemPosition(event);
     tooltipComponent = new Tooltip({
       props: {
-        title,
-        x: event.pageX,
-        y: event.pageY,
+        ...position,
+        title: params.title,
+        visible: false,
       },
       target: document.body,
     });
@@ -19,24 +35,30 @@ export function tooltip(node: HTMLElement, title: string) {
   };
 
   const mouseMove = (event: MouseEvent) => {
+    const position = getSystemPosition(event);
     tooltipComponent.$set({
-      x: event.pageX,
-      y: event.pageY,
+      ...position,
     });
   };
 
   const mouseLeave = () => {
-    tooltipComponent.$destroy();
+    tooltipComponent.$set({ visible: false });
+    setTimeout(() => tooltipComponent.$destroy(), 240);
   };
 
-  node.addEventListener('mouseenter', mouseenter);
-  node.addEventListener('mousemove', mouseMove);
+  node.addEventListener('mouseenter', mouseEnter);
   node.addEventListener('mouseleave', mouseLeave);
+
+  if (type === 'system') {
+    node.addEventListener('mousemove', mouseMove);
+  }
   return {
     destroy() {
-      node.removeEventListener('mouseenter', mouseenter);
-      node.removeEventListener('mousemove', mouseMove);
+      node.removeEventListener('mouseenter', mouseEnter);
       node.removeEventListener('mouseleave', mouseLeave);
+      if (type === 'system') {
+        node.removeEventListener('mousemove', mouseMove);
+      }
     },
   };
 }
