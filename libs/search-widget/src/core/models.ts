@@ -1,4 +1,4 @@
-import type { Paragraph, CloudLink, Search, Classification } from '@nuclia/core';
+import type { Classification, CloudLink, Paragraph, Search } from '@nuclia/core';
 
 export const NO_RESULTS: Search.Results = {
   resources: {},
@@ -59,7 +59,8 @@ export interface PdfWidgetParagraph extends BaseWidgetParagraph {
 }
 
 export interface MediaWidgetParagraph extends BaseWidgetParagraph {
-  time: number;
+  start: number;
+  end: number;
   preview: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE;
 }
 
