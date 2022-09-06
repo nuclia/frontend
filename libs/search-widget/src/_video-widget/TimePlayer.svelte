@@ -2,7 +2,6 @@
   import {formatTime} from '../core/utils';
   import {createEventDispatcher} from 'svelte';
   import Icon from './Icon.svelte';
-  import { tooltip } from './tooltip';
 
   export let start = 0;
   export let end = 0;
@@ -22,7 +21,6 @@
      class:minimized
      on:click={play}
      on:keyup={(e) => { if (e.key === 'Enter') play(); }}
-     use:tooltip={{title}}
      tabindex="0">
   <Icon name="play" size="small"/>
   <div tabindex="-1" class="time-label">{formatTime(start)}</div>

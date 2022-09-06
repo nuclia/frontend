@@ -228,7 +228,7 @@
         {#each $matchingParagraphs as paragraph}
           <ParagraphPlayer {paragraph}
                            ellipsis
-                           minimized="{true}"
+                           minimized="{isMobile}"
                            on:play={(event) => playParagraph(event.detail.paragraph)}/>
         {/each}
       </ul>
