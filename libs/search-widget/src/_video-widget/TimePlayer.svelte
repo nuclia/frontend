@@ -2,12 +2,14 @@
   import {formatTime} from '../core/utils';
   import {createEventDispatcher} from 'svelte';
   import Icon from './Icon.svelte';
+  import { tooltip } from './tooltip';
 
   export let start = 0;
   export let end = 0;
   export let selected = false;
   export let minimized = false;
 
+  $: title = `From ${formatTime(start)}${end > 0 ? ' to ' + formatTime(end) : ''}`;
   const dispatch = createEventDispatcher();
 
   const play = () => {
@@ -20,7 +22,7 @@
      class:minimized
      on:click={play}
      on:keyup={(e) => { if (e.key === 'Enter') play(); }}
-     title="From {formatTime(start)} {end > 0 ? 'to ' + formatTime(end) : ''}"
+     use:tooltip={{title}}
      tabindex="0">
   <Icon name="play" size="small"/>
   <div tabindex="-1" class="time-label">{formatTime(start)}</div>
