@@ -63,3 +63,5 @@
     </div>
   {/if}
 </div>
+
+<style lang="scss" src="./EmbeddedSearch.scss"></style>

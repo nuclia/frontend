@@ -57,3 +57,5 @@
     {/if}
   {/if}
 </div>
+
+<style lang="scss" src="./Suggestions.scss"></style>

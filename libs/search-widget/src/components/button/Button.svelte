@@ -17,3 +17,5 @@
 >
   <span tabindex="-1" class="button-label" bind:this={label}><slot /></span>
 </button>
+
+<style lang="scss" src="./Button.scss"></style>

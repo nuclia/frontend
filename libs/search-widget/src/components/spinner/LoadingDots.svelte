@@ -7,3 +7,5 @@
   <div class="bounce2" />
   <div class="bounce3" />
 </div>
+
+<style lang="scss" src="./LoadingDots.scss"></style>

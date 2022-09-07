@@ -37,3 +37,5 @@
     {@html paragraph.text}
   </div>
 </li>
+
+<style lang="scss" src="./ParagraphPlayer.scss"></style>

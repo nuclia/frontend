@@ -45,3 +45,5 @@
     </div>
   </div>
 </div>
+
+<style lang="scss" src="./InputViewer.scss"></style>

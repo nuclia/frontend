@@ -84,3 +84,5 @@
     {/if}
   </div>
 </div>
+
+<style lang="scss" src="./Row.scss"></style>

@@ -36,3 +36,5 @@
     {/if}
   </div>
 {/if}
+
+<style lang="scss" src="./ActionMenu.scss"></style>

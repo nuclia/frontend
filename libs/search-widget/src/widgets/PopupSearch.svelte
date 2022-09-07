@@ -49,3 +49,5 @@
     </div>
   </Modal>
 </div>
+
+<style lang="scss" src="./PopupSearch.scss"></style>

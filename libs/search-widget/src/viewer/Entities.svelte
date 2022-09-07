@@ -74,3 +74,5 @@
     </Collapse>
   {/each}
 </div>
+
+<style lang="scss" src="./Entities.scss"></style>

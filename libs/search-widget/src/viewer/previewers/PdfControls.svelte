@@ -49,3 +49,5 @@
     <span class="zoom">{Math.round(zoom * 100)}%</span>
   </div>
 </div>
+
+<style lang="scss" src="./PdfControls.scss"></style>

@@ -163,3 +163,5 @@
     </div>
   </div>
 </div>
+
+<style lang="scss" src="./Pdf.scss"></style>

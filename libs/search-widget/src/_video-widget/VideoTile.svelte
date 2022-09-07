@@ -270,3 +270,5 @@
     </div>
   {/if}
 </div>
+
+<style lang="scss" src="./VideoTile.scss"></style>

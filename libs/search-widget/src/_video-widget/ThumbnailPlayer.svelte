@@ -32,3 +32,5 @@
     {/if}
   </div>
 {/if}
+
+<style lang="scss" src="./ThumbnailPlayer.scss"></style>

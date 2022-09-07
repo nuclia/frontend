@@ -121,3 +121,5 @@
     </div>
   </div>
 </div>
+
+<style lang="scss" src="./Viewer.scss"></style>

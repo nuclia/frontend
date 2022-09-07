@@ -69,3 +69,5 @@
 <div class="sw-youtube">
   <div class="player" bind:this={playerElement} />
 </div>
+
+<style lang="scss" src="./Youtube.scss"></style>

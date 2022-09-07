@@ -37,3 +37,5 @@
     </div>
   {/if}
 </div>
+
+<style lang="scss" src="./Header.scss"></style>

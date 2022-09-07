@@ -25,3 +25,5 @@
     </button>
   {/if}
 </div>
+
+<style lang="scss" src="./ModalHeader.scss"></style>
