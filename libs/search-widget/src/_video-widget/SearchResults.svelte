@@ -4,7 +4,7 @@
   import { onMount } from 'svelte';
   import { forkJoin, map, switchMap, take } from 'rxjs';
   import { nucliaState, nucliaStore } from '../core/store';
-  import { loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
+  import { loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
   import LoadingDots from '../components/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
@@ -13,7 +13,6 @@
   const results = nucliaState().results;
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
-  let cssVariables;
   let svgSprite;
 
   const enhancedResults = results.pipe(
@@ -41,12 +40,10 @@
   onMount(() => {
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    // Load CSS variables (must be done after the CDN was set) and custom styles
-    loadCssAsText().subscribe((css) => (cssVariables = css));
   });
 </script>
 
-<div class="sw-video-results" style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
+<div class="nuclia-widget sw-video-results" data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}
       <div class="error">
