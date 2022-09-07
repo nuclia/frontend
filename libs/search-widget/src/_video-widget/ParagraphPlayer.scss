@@ -13,18 +13,15 @@
   .paragraph-text {
     overflow-wrap: break-word;
   }
-  &:hover {
+}
+
+@media (hover: hover) {
+  .sw-paragraph-player:hover {
     background-color: var(--color-neutral-lightest);
     border-top-left-radius: var(--rhythm-1_5);
   }
 
-  &:not(.stack):hover {
+  .sw-paragraph-player:not(.stack):hover {
     border-bottom-left-radius: var(--rhythm-1_5);
-  }
-
-  .ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 }

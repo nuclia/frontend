@@ -2,6 +2,7 @@
   cursor: pointer;
   flex: 0 0 auto;
   position: relative;
+
   .play-icon {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
@@ -19,10 +20,6 @@
     outline: 0;
   }
 
-  &:hover .play-icon {
-    background: rgba(255, 255, 255, 0.95);
-  }
-
   &:active .play-icon {
     background: var(--color-light-stronger);
   }
@@ -30,5 +27,10 @@
 @media (min-width: 600px) {
   .sw-thumbnail-player {
     width: var(--width-thumbnail);
+  }
+}
+@media (hover: hover) {
+  .sw-thumbnail-player:hover .play-icon {
+    background: rgba(255, 255, 255, 0.95);
   }
 }
