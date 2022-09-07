@@ -112,3 +112,5 @@
     </div>
   {/if}
 </form>
+
+<style lang="scss" src="./SearchInput.scss"></style>

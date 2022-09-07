@@ -29,3 +29,5 @@
     </div>
   </div>
 </div>
+
+<style lang="scss" src="./Spinner.scss"></style>

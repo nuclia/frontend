@@ -9,11 +9,11 @@
   let contentHeight: string = '0px';
   let timer;
 
-  $: if(expanded) {
+  $: if (expanded) {
     expand();
   } else {
     collapse();
-  };
+  }
 
   onMount(() => {});
 
@@ -21,28 +21,29 @@
     showContent = true;
     await tick();
     contentHeight = parseInt(content.getBoundingClientRect().height) + 'px';
-  }
-  
+  };
+
   const collapse = () => {
     contentHeight = '0px';
     timer && timer.clearTimeout();
     setTimeout(() => {
       showContent = false;
-    }, duration)
-  }
-
+    }, duration);
+  };
 </script>
 
 <div class="sw-expander">
-  <slot name="header"></slot>
-  <div 
+  <slot name="header" />
+  <div
     class="expander-content"
     style:height={contentHeight}
     style:display={showContent ? 'block' : 'none'}
     style:transition={`height ${duration}ms`}
   >
     <div bind:this={content}>
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </div>
+
+<style lang="scss" src="./expander.scss"></style>

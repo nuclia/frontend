@@ -54,3 +54,5 @@
     </dialog>
   </div>
 {/if}
+
+<style lang="scss" src="./Modal.scss"></style>

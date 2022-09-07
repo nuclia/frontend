@@ -107,3 +107,5 @@
     </audio>
   {/if}
 </div>
+
+<style lang="scss" src="./Player.scss"></style>

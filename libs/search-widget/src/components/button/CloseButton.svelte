@@ -17,3 +17,5 @@
 >
   <Icon name="cross" />
 </button>
+
+<style lang="scss" src="./Button.scss"></style>

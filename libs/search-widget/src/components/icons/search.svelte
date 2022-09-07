@@ -18,3 +18,5 @@
     fill="var({darkBackground ? '--color-light-stronger' : '--color-dark-stronger'}"
   />
 </svg>
+
+<style lang="scss" src="./search.scss"></style>

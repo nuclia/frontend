@@ -89,3 +89,5 @@
     {/each}
   </div>
 </div>
+
+<style lang="scss" src="./LabelMenu.scss"></style>

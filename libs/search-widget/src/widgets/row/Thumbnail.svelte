@@ -38,3 +38,5 @@
     <div in:fade={{ duration: 160 }} class:thumbnail-background={!noBackground} class="thumbnail-placeholder" />
   {/if}
 </div>
+
+<style lang="scss" src="./Thumbnail.scss"></style>

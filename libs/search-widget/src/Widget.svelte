@@ -1,7 +1,6 @@
 <svelte:options tag="nuclia-search" />
 
 <script lang="ts">
-  import css from './Widget.scss';
   import PopupSearch from './widgets/PopupSearch.svelte';
   import EmbeddedSearch from './widgets/EmbeddedSearch.svelte';
   import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
@@ -15,7 +14,6 @@
     coerceBooleanProperty,
     loadCssAsText,
     loadFonts,
-    injectStyle,
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -54,11 +52,9 @@
   let showModal = false;
   let resource: Observable<Resource>;
   let ready = false;
-  let elem: HTMLElement;
   const previewQueryKey = formatQueryKey('preview');
 
   onMount(() => {
-    injectStyle(elem, css);
     initNuclia(
       widgetid,
       {
@@ -131,7 +127,7 @@
   };
 </script>
 
-<div bind:this={elem} class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
+<div class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
       <PopupSearch {placeholder} />
@@ -155,3 +151,5 @@
     </Modal>
   {/if}
 </div>
+
+<style lang="scss" src="./Widget.scss"></style>

@@ -31,3 +31,5 @@
   <Icon name="play" size="small" />
   <div tabindex="-1" class="time-label">{formatTime(start)}</div>
 </div>
+
+<style lang="scss" src="./TimePlayer.scss"></style>

@@ -1,18 +1,13 @@
 <script lang="ts">
-  import { setLang } from '../../../libs/search-widget/src/core/i18n';
+  import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
   import { NucliaWidget } from '../../../libs/search-widget/src';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'input';
-  console.log(NucliaWidget, NucliaSearchBar, NucliaSearchResults);
+  let selected = 'form';
+  let widget: NucliaWidget;
 
-  onMount(() => init());
-
-  const getWidget = () => document.querySelector('nuclia-search') as NucliaWidget | null;
-
-  const init = () => {
-    const widget = getWidget();
+  onMount(() => {
     widget?.setActions([
       {
         label: 'Delete',
@@ -29,19 +24,11 @@
       {
         label: 'Close',
         action: () => {
-          widget?.displayResource('');
+          widget.displayResource('');
         },
       },
     ]);
-  };
-
-  const selectWidget = (event: any) => {
-    const widgetType = event?.target?.value;
-    selected = widgetType;
-    setTimeout(() => {
-      init();
-    }, 0);
-  };
+  });
 </script>
 
 <main>
@@ -49,8 +36,8 @@
 
   <section class="configuration">
     <label for="widget-select">Select the widget to demo:</label>
-    <select id="widget-select" on:change={selectWidget}>
-      <option value="input" selected>Popup search</option>
+    <select id="widget-select" bind:value={selected}>
+      <option value="input">Popup search</option>
       <option value="form">Embedded search</option>
       <option value="two-widgets">Search bar and result widgets</option>
     </select>
@@ -61,45 +48,44 @@
   {#if selected === 'input'}
     <h2>Input widget</h2>
     <div class="input-container">
-      <nuclia-search
-        data-zone="europe-1"
-        data-knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-        data-cdn="/"
-        data-widgetid="demo-input"
-        data-type="input"
-        data-permalink
-        data-lang="en"
-        data-placeholder="Input placeholder is invisible"
+      <NucliaWidget
+        bind:this={widget}
+        zone="europe-1"
+        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+        cdn="/"
+        widgetid="demo-input"
+        type="input"
+        permalink
+        lang="en"
+        placeholder="Input placeholder is invisible"
       />
     </div>
   {/if}
   {#if selected === 'form'}
     <h2>Embedded widget <small>(formerly known as form widget)</small></h2>
-    <div>
-      <nuclia-search
-        data-zone="europe-1"
-        data-knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
-        data-cdn="/"
-        data-widgetid="demo-form"
-        data-type="form"
-        data-lang="en"
-        data-placeholder="Here's the placeholder"
-      />
-    </div>
+    <NucliaWidget
+      zone="europe-1"
+      knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+      cdn="/"
+      widgetid="demo-form"
+      type="form"
+      lang="en"
+      placeholder="Here's the placeholder"
+    />
   {/if}
 
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
-      <nuclia-search-bar
-        data-zone="europe-1"
-        data-knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
-        data-cdn="/"
-        data-lang="en"
-        data-widgetid="demo-search-bar"
-        data-placeholder="Search"
+      <NucliaSearchBar
+        zone="europe-1"
+        knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
+        cdn="/"
+        lang="en"
+        widgetid="demo-search-bar"
+        placeholder="Search"
       />
-      <nuclia-search-results />
+      <NucliaSearchResults />
     </div>
   {/if}
 </main>

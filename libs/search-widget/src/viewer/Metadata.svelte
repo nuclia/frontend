@@ -104,3 +104,5 @@
     </a>
   {/each}
 </div>
+
+<style lang="scss" src="./Metadata.scss"></style>

@@ -36,3 +36,5 @@
     {text}
   </span>
 </ParagraphWithMenu>
+
+<style lang="scss" src="./ParagraphWithIcon.scss"></style>

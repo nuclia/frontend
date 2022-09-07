@@ -76,3 +76,5 @@
     {/if}
   {/each}
 </div>
+
+<style lang="scss" src="./Paragraphs.scss"></style>

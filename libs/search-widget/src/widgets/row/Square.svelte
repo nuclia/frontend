@@ -40,3 +40,5 @@
     </div>
   </div>
 </div>
+
+<style lang="scss" src="./Square.scss"></style>

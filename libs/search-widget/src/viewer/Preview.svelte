@@ -41,3 +41,5 @@
     <Pdf src={$linkPreview.file.uri} />
   {/if}
 </div>
+
+<style lang="scss" src="./Preview.scss"></style>

@@ -1,12 +1,11 @@
 <svelte:options tag="nuclia-search-bar" />
 
 <script lang="ts">
-  import css from './SearchBar.scss';
   import type { KBStates } from '@nuclia/core';
   import { resetStore } from '../core/store';
   import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts, loadSvgSprite, injectStyle } from '../core/utils';
+  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
   import { setLang } from '../core/i18n';
   import SearchInput from '../widgets/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../core/search-bar';
@@ -30,10 +29,8 @@
   let cssVariables;
   let svgSprite;
   let ready = false;
-  let elem: HTMLElement;
 
   onMount(() => {
-    injectStyle(elem, css);
     initNuclia(
       widgetid,
       {
@@ -73,7 +70,7 @@
   });
 </script>
 
-<div bind:this={elem} style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
+<div style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     <SearchInput {placeholder} searchBarWidget={true} />
   {/if}

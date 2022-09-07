@@ -1,11 +1,10 @@
 <svelte:options tag="nuclia-search-results" />
 
 <script lang="ts">
-  import css from './SearchResults.scss';
   import { onMount } from 'svelte';
   import { forkJoin, map, switchMap, take } from 'rxjs';
   import { nucliaState, nucliaStore } from '../core/store';
-  import { injectStyle, loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
+  import { loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
   import LoadingDots from '../components/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
@@ -16,7 +15,6 @@
   const pendingResults = nucliaState().pendingResults;
   let cssVariables;
   let svgSprite;
-  let elem: HTMLElement;
 
   const enhancedResults = results.pipe(
     switchMap((results) =>
@@ -41,7 +39,6 @@
   );
 
   onMount(() => {
-    injectStyle(elem, css);
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     // Load CSS variables (must be done after the CDN was set) and custom styles
@@ -49,7 +46,7 @@
   });
 </script>
 
-<div bind:this={elem} class="sw-video-results" style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
+<div class="sw-video-results" style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}
       <div class="error">
@@ -70,3 +67,5 @@
   {/if}
   <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
+
+<style lang="scss" src="./Searchresults.scss"></style>

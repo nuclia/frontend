@@ -17,3 +17,5 @@
     <span class="slider" />
   </div>
 </label>
+
+<style lang="scss" src="./toggle.scss"></style>

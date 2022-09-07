@@ -107,3 +107,5 @@
     </div>
   {/if}
 </div>
+
+<style lang="scss" src="./Results.scss"></style>

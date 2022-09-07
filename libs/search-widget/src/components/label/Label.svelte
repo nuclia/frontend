@@ -26,3 +26,5 @@
     <img on:click={remove} src={`${getCDN()}icons/circle-cross.svg`} alt="delete" />
   {/if}
 </div>
+
+<style lang="scss" src="./Label.scss"></style>

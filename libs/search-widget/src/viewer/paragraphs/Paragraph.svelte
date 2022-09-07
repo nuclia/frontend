@@ -21,3 +21,5 @@
     {/if}
   </div>
 </div>
+
+<style lang="scss" src="./Paragraph.scss"></style>

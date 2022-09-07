@@ -51,3 +51,5 @@
     />
   {/if}
 </div>
+
+<style lang="scss" src="./ParagraphWithMenu.scss"></style>
