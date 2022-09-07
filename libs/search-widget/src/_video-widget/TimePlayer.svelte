@@ -20,8 +20,8 @@
 <div
   class="sw-time-player"
   class:selected
-  class:hover
   class:minimized
+  class:hovering={hover}
   on:click={play}
   on:keyup={(e) => {
     if (e.key === 'Enter') play();

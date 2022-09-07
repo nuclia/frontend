@@ -26,10 +26,6 @@
     transition: color var(--transition-superfast);
   }
 
-  .all-result-toggle:hover {
-    color: var(--color-neutral-strong);
-  }
-
   .all-result-toggle .icon {
     display: flex;
     transition: transform var(--transition-superfast);
@@ -241,5 +237,11 @@
     &.expanded .find-bar-container .find-input:focus {
       outline: 0;
     }
+  }
+}
+
+@media (hover: hover) {
+  .sw-video-tile .all-result-toggle:hover {
+    color: var(--color-neutral-strong);
   }
 }
