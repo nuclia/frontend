@@ -76,7 +76,7 @@
     setLang(lang);
 
     loadFonts();
-    // Load CSS variables (must be done after the CDN was set) and custom styles
+    // Load custom styles
     nucliaState().customStyle.subscribe((css) => (style = css));
 
     checkUrlParams();
