@@ -5,6 +5,7 @@
   import { fade } from 'svelte/transition';
 
   export let thumbnail = '';
+  export let aspectRatio;
   let loaded = false;
 
   const dispatch = createEventDispatcher();
@@ -16,17 +17,18 @@
 
 {#if thumbnail}
   <div class="sw-thumbnail-player" tabindex="-1" on:click={play}>
-    <Thumbnail src={thumbnail} noBackground on:loaded={() => (loaded = true)} />
+    <Thumbnail src={thumbnail}
+               noBackground
+               {aspectRatio}
+               on:loaded={() => (loaded = true)} />
 
     {#if loaded}
-      <div
-        class="play-icon"
-        tabindex="0"
-        in:fade={{ delay: 240 }}
-        on:keyup={(e) => {
-          if (e.key === 'Enter') play();
-        }}
-      >
+      <div class="play-icon"
+           tabindex="0"
+           in:fade={{ delay: 240 }}
+           on:keyup={(e) => {
+             if (e.key === 'Enter') play();
+           }}>
         <Icon name="play" size="large" />
       </div>
     {/if}

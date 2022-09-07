@@ -24,11 +24,7 @@
     background: var(--color-light-stronger);
   }
 }
-@media (min-width: 600px) {
-  .sw-thumbnail-player {
-    width: var(--width-thumbnail);
-  }
-}
+
 @media (hover: hover) {
   .sw-thumbnail-player:hover .play-icon {
     background: rgba(255, 255, 255, 0.95);
