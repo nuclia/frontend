@@ -12,7 +12,6 @@
     formatQueryKey,
     updateQueryParams,
     coerceBooleanProperty,
-    loadCssAsText,
     loadFonts,
   } from './core/utils';
   import { setLang } from './core/i18n';
@@ -78,7 +77,7 @@
 
     loadFonts();
     // Load CSS variables (must be done after the CDN was set) and custom styles
-    loadCssAsText().subscribe((css) => (style = css));
+    nucliaState().customStyle.subscribe((css) => (style = css));
 
     checkUrlParams();
 

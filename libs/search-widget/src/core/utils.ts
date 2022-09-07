@@ -1,7 +1,5 @@
-import type { Observable } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
-import { map, switchMap } from 'rxjs/operators';
-import { nucliaState } from './store';
+import { switchMap } from 'rxjs/operators';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -22,21 +20,6 @@ export const loadFonts = () => {
 
 export const loadSvgSprite = () => {
   return fromFetch(`${getCDN()}icons/glyphs-sprite.svg`).pipe(switchMap((res) => res.text()));
-};
-
-export const getCssVariablesAsText = (): Observable<string> => {
-  return fromFetch(`${getCDN()}styles/css-variables.css`).pipe(
-    switchMap((res) => res.text()),
-    map((css: string) => css.replace('.variables{', '').replace('}', '')),
-  );
-};
-
-export const loadCssAsText = (): Observable<string> => {
-  return getCssVariablesAsText().pipe(
-    switchMap((cssVariables) =>
-      nucliaState().customStyle.pipe(map((customStyles) => `${cssVariables} ${customStyles}`)),
-    ),
-  );
 };
 
 export const formatDate = (date: string) => {

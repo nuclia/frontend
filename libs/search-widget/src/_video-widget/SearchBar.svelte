@@ -5,7 +5,7 @@
   import { resetStore } from '../core/store';
   import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
+  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../core/utils';
   import { setLang } from '../core/i18n';
   import SearchInput from '../widgets/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../core/search-bar';
@@ -26,7 +26,6 @@
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
 
-  let cssVariables;
   let svgSprite;
   let ready = false;
 
@@ -53,8 +52,7 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    // Load CSS variables (must be done after the CDN was set) and custom styles
-    loadCssAsText().subscribe((css) => (cssVariables = css));
+
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
@@ -70,9 +68,11 @@
   });
 </script>
 
-<div style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
+<div class="nuclia-widget" data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     <SearchInput {placeholder} searchBarWidget={true} />
   {/if}
   <div id="nuclia-glyphs-sprite" hidden>{svgSprite}</div>
 </div>
+
+<style lang="scss" src="../common-style.scss"></style>
