@@ -1,0 +1,17 @@
+.sw-svg-icon {
+  fill: currentColor;
+  height: var(--rhythm-3);
+  width: var(--rhythm-3);
+
+  &.small {
+    height: var(--rhythm-2);
+    width: var(--rhythm-2);
+  }
+  &.large {
+    height: var(--rhythm-5);
+    width: var(--rhythm-5);
+  }
+  &:focus {
+    outline: 0;
+  }
+}

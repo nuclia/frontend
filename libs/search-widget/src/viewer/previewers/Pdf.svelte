@@ -141,43 +141,25 @@
   {/if}
 </svelte:head>
 
-{#if isInitialized}
-  <div class="controls">
-    <PdfControls
-      {currentPage}
-      {totalPages}
-      {zoom}
-      on:zoomIn={zoomIn}
-      on:zoomOut={zoomOut}
-      on:pageChange={(e) => {
-        viewerStore.setPage.next(e.detail);
-      }}
-    />
-  </div>
-{/if}
-<div class="pdf">
-  <link rel="stylesheet" href="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.css" />
-  <div id="viewerContainer" bind:this={pdfContainer}>
-    <div id="viewer" class="pdfViewer" />
+<div class="sw-pdf-viewer">
+  {#if isInitialized}
+    <div class="controls">
+      <PdfControls
+        {currentPage}
+        {totalPages}
+        {zoom}
+        on:zoomIn={zoomIn}
+        on:zoomOut={zoomOut}
+        on:pageChange={(e) => {
+          viewerStore.setPage.next(e.detail);
+        }}
+      />
+    </div>
+  {/if}
+  <div class="pdf">
+    <link rel="stylesheet" href="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.css" />
+    <div id="viewerContainer" bind:this={pdfContainer}>
+      <div id="viewer" class="pdfViewer" />
+    </div>
   </div>
 </div>
-
-<style>
-  .pdf {
-    position: relative;
-    width: 100%;
-    padding-top: 60%;
-    background-color: #fff;
-  }
-  #viewerContainer {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    overflow: auto;
-  }
-  .controls {
-    margin: -2.75em 0 0.75em 0;
-  }
-</style>

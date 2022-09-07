@@ -8,11 +8,5 @@
   };
 </script>
 
-<img src={`${getCDN()}icons/${type}.svg`} alt={type} on:error={handleError} class:small />
+<img src={`${getCDN()}icons/${type}.svg`} alt={type} on:error={handleError} class="sw-mime" class:small />
 
-<style>
-  img.small {
-    width: 24px;
-    height: auto;
-  }
-</style>

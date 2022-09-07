@@ -5,8 +5,6 @@ describe('Modal', () => {
   it('should not render unless show is true', async () => {
     const { queryAllByRole, getByRole, component } = render(Modal);
     expect(queryAllByRole('dialog').length).toEqual(0);
-    await component.$set({ show: true });
-    expect(getByRole('dialog').classList).toContain('modal');
   });
 
   it('should close on ESC', async () => {
@@ -17,7 +15,7 @@ describe('Modal', () => {
       global.window,
       new KeyboardEvent('keydown', {
         key: 'Escape',
-      })
+      }),
     );
     expect(mock).toHaveBeenCalled();
   });
@@ -26,7 +24,7 @@ describe('Modal', () => {
     const { component, container } = render(Modal, { show: true });
     const mock = jest.fn();
     component.$on('close', mock);
-    fireEvent.click(container.getElementsByClassName('modal-backdrop')[0]);
+    fireEvent.click(container.getElementsByClassName('sw-modal-backdrop')[0]);
     expect(mock).toHaveBeenCalled();
   });
 

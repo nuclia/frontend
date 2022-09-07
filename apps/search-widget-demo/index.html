@@ -1,13 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Svelte + TS + Vite App</title>
-  </head>
-  <body style="margin: 0">
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon"
+        href="/favicon.ico" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0" />
+  <title>Search widget demo</title>
+  <script src="/public/patch.js"></script>
+  <script>
+    // `customElements` here is the patched version due to the patch.js script
+    // (it supports multiple calls to `define` for the same element name)
+    const _define = customElements.define;
+    customElements.define = function (name, CustomElement, options) {
+      // we create a wrapper to prefix/unprefix attributes with `data-`
+      // this is needed because Svelte removes all regular attributes when rendering a custom element
+      class CustomElementWrapper extends CustomElement {
+        static get observedAttributes() {
+          return (super.observedAttributes || []).map((attr) => `data-${attr}`);
+        }
+
+        attributeChangedCallback(attrName, oldValue, newValue) {
+          super.attributeChangedCallback(
+            attrName.replace('data-', ''),
+            oldValue,
+            newValue === '' ? true : newValue,
+          );
+        }
+      }
+      // call the original define function passing the wrapper
+      const nativeDef = _define.bind(customElements);
+      nativeDef(name, CustomElementWrapper, options);
+
+      // re-render the impacted elements
+      setTimeout(() => {
+        [...document.querySelectorAll(name)].forEach(el => {
+          const container = document.createElement('div');
+          container.innerHTML = el.outerHTML;
+          const newNode = container.firstElementChild;
+          el.parentNode.replaceChild(newNode, el);
+        });
+      }, 0);
+    };
+  </script>
+</head>
+
+<body style="margin: 0">
+  <div id="app"></div>
+  <script type="module"
+          src="/src/main.ts"></script>
+</body>
+
 </html>

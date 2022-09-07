@@ -1,0 +1,19 @@
+.sw-pdf-viewer {
+  .pdf {
+    position: relative;
+    width: 100%;
+    padding-top: 60%;
+    background-color: #fff;
+  }
+  #viewerContainer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    overflow: auto;
+  }
+  .controls {
+    margin: -2.75em 0 0.75em 0;
+  }
+}

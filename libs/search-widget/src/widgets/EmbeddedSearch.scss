@@ -1,0 +1,15 @@
+.sw-embedded-search {
+  .search-input-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .options {
+    padding: var(--rhythm-1) 0;
+    display: none;
+  }
+
+  .suggestions {
+    padding: var(--rhythm-2);
+  }
+}

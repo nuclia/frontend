@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Classification }  from '@nuclia/core';
+  import type { Classification } from '@nuclia/core';
   import { hasAuthData } from '../../core/api';
   import { nucliaState } from '../../core/store';
   import { filter, map } from 'rxjs';
@@ -11,12 +11,12 @@
   export let labels: Classification[] = [];
   let isOpenMenu = false;
   let element: HTMLElement;
-  let position: { top: number, left: number } | undefined = undefined;
+  let position: { top: number; left: number } | undefined = undefined;
 
   const editLabels = nucliaState().widget.pipe(
     filter((widget) => !!widget),
-    map((widget) => widget.features.editLabels)
-  )
+    map((widget) => widget.features.editLabels),
+  );
 
   const handleClick = (event: MouseEvent) => {
     if (event.button === 2) {
@@ -25,7 +25,7 @@
       position = {
         top: event.clientY - Math.round(top),
         left: event.clientX - Math.round(left),
-      }
+      };
       isOpenMenu = true;
     }
   };
@@ -33,7 +33,7 @@
 
 <div
   class="paragraph-with-menu"
-  on:contextmenu={MENU_ENABLED && $editLabels && hasAuthData() && handleClick || null}
+  on:contextmenu={(MENU_ENABLED && $editLabels && hasAuthData() && handleClick) || null}
   bind:this={element}
 >
   <Paragraph {labels}>
@@ -41,12 +41,13 @@
     <slot name="content" slot="content" />
   </Paragraph>
   {#if isOpenMenu}
-    <LabelMenu labels={labels} position={position} on:close={() => { isOpenMenu = false }} on:labelsChange></LabelMenu>
+    <LabelMenu
+      {labels}
+      {position}
+      on:close={() => {
+        isOpenMenu = false;
+      }}
+      on:labelsChange
+    />
   {/if}
 </div>
-
-<style>
-  .paragraph-with-menu {
-    position: relative;
-  }
-</style>

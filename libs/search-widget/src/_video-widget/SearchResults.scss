@@ -1,0 +1,33 @@
+@import '../components';
+@import './tooltip/Tooltip.scss';
+@import './Icon.scss';
+@import './ParagraphPlayer.scss';
+@import './ThumbnailPlayer.scss';
+@import './TimePlayer.scss';
+@import './VideoTile.scss';
+@import '../widgets/row/Thumbnail.scss';
+
+.error {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-2);
+  width: var(--search-bar-max-width);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-3);
+}
+
+:global(mark) {
+  background-color: inherit;
+  font-weight: var(--font-weight-semi-bold);
+}
+
+:global(.ellipsis) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

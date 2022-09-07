@@ -73,7 +73,7 @@
   {/if}
 </svelte:head>
 
-<div class="player">
+<div class="sw-player">
   {#if isVideo}
     <div class="video-container">
       <video
@@ -107,22 +107,3 @@
     </audio>
   {/if}
 </div>
-
-<style>
-  .video-container {
-    position: relative;
-    width: 100%;
-    padding-top: 56.25%;
-    background-color: #000;
-  }
-  video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  audio {
-    width: 100%;
-  }
-</style>

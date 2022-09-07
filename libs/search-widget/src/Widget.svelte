@@ -1,6 +1,7 @@
-<svelte:options tag="nuclia-search"/>
+<svelte:options tag="nuclia-search" />
 
 <script lang="ts">
+  import css from './Widget.scss';
   import PopupSearch from './widgets/PopupSearch.svelte';
   import EmbeddedSearch from './widgets/EmbeddedSearch.svelte';
   import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
@@ -11,7 +12,10 @@
     setCDN,
     formatQueryKey,
     updateQueryParams,
-    coerceBooleanProperty, loadCssAsText, loadFonts,
+    coerceBooleanProperty,
+    loadCssAsText,
+    loadFonts,
+    injectStyle,
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -39,7 +43,7 @@
 
   export const displayResource = (uid: string) => {
     if (uid) {
-      setDisplayedResource({uid});
+      setDisplayedResource({ uid });
     } else {
       closeModal();
     }
@@ -50,9 +54,11 @@
   let showModal = false;
   let resource: Observable<Resource>;
   let ready = false;
+  let elem: HTMLElement;
   const previewQueryKey = formatQueryKey('preview');
 
   onMount(() => {
+    injectStyle(elem, css);
     initNuclia(
       widgetid,
       {
@@ -64,7 +70,7 @@
         kbSlug: kbslug,
         account,
         permalink: permalinkEnabled,
-        highlight: true
+        highlight: true,
       },
       state,
     );
@@ -76,7 +82,7 @@
 
     loadFonts();
     // Load CSS variables (must be done after the CDN was set) and custom styles
-    loadCssAsText().subscribe((css) => style = css);
+    loadCssAsText().subscribe((css) => (style = css));
 
     checkUrlParams();
 
@@ -108,7 +114,7 @@
 
   const closeModal = () => {
     showModal = false;
-    setDisplayedResource({uid: ''});
+    setDisplayedResource({ uid: '' });
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get(previewQueryKey)) {
       urlParams.delete(previewQueryKey);
@@ -125,33 +131,27 @@
   };
 </script>
 
-<div class="nuclia-widget" style={style} data-version="__NUCLIA_DEV_VERSION__">
+<div bind:this={elem} class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
-      <PopupSearch placeholder="{placeholder}"/>
+      <PopupSearch {placeholder} />
     {:else if type === 'form'}
-      <EmbeddedSearch placeholder="{placeholder}"/>
+      <EmbeddedSearch {placeholder} />
     {:else}
       {type} widget is not implemented yet
     {/if}
-    <Modal show={showModal}
-           on:close={closeModal}
-           closeButton={true}
-           --modal-width="var(--resource-modal-width)"
-           --modal-width-md="var(--resource-modal-width-md)"
-           --modal-height="var(--resource-modal-height)"
-           --modal-height-md="var(--resource-modal-height-md)"
+    <Modal
+      show={showModal}
+      on:close={closeModal}
+      closeButton={true}
+      --modal-width="var(--resource-modal-width)"
+      --modal-width-md="var(--resource-modal-width-md)"
+      --modal-height="var(--resource-modal-height)"
+      --modal-height-md="var(--resource-modal-height-md)"
     >
       {#if $resource}
-        <Viewer resource={$resource}/>
+        <Viewer resource={$resource} />
       {/if}
     </Modal>
   {/if}
 </div>
-
-<style>
-  :global(mark) {
-    background-color: inherit;
-    font-weight: var(--font-weight-semi-bold);
-  }
-</style>

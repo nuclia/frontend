@@ -25,7 +25,7 @@
   };
 </script>
 
-<div class="pdf-controls">
+<div class="sw-pdf-controls">
   {#if showNavigation && currentPage !== undefined && totalPages !== undefined}
     <div class="button-group">
       <button on:click={prevPage} disabled={currentPage === 0}>
@@ -49,52 +49,3 @@
     <span class="zoom">{Math.round(zoom * 100)}%</span>
   </div>
 </div>
-
-<style>
-  .pdf-controls {
-    display: inline-flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 13px;
-    background-color: var(--color-light-stronger);
-    border-radius: 4px;
-    color: rgba(0, 0, 0, 0.7);
-  }
-  .pdf-controls button {
-    padding: 0;
-    border: 0;
-    margin: 0 4px 0 0;
-    background: transparent;
-    -webkit-appearance: none;
-  }
-  .pdf-controls button:not([disabled]) {
-    cursor: pointer;
-  }
-  .pdf-controls button[disabled] {
-    opacity: 0.4;
-  }
-  .pdf-controls button img {
-    display: block;
-    width: 16px;
-    height: 16px;
-  }
-  .button-group {
-    display: inline-flex;
-    align-items: center;
-    margin-right: 32px;
-  }
-  .button-group:last-child {
-    margin-right: 0;
-  }
-  .pagination {
-    font-size: 0.8125em;
-  }
-  .pagination span {
-    text-decoration: underline;
-  }
-  .zoom {
-    padding-left: 0.25em;
-    font-size: 0.8125em;
-    text-decoration: underline;
-  }
-</style>

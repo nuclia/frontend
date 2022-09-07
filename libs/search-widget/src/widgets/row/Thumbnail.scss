@@ -1,0 +1,22 @@
+.sw-thumbnail {
+  img {
+    object-fit: contain;
+    object-position: center;
+    width: 100%;
+  }
+
+  .thumbnail-background {
+    background-color: var(--color-neutral-lighter);
+  }
+
+  .thumbnail-placeholder {
+    height: var(--rhythm-32);
+    width: 100%;
+  }
+
+  @media (min-width: 600px) {
+    .thumbnail-placeholder {
+      height: var(--rhythm-20);
+    }
+  }
+}

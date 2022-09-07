@@ -33,7 +33,7 @@
 
 </script>
 
-<div class="expander">
+<div class="sw-expander">
   <slot name="header"></slot>
   <div 
     class="expander-content"
@@ -46,9 +46,3 @@
     </div>
   </div>
 </div>
-
-<style>
-  .expander-content {
-    overflow: hidden;
-  }
-</style>

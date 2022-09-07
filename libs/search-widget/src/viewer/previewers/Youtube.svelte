@@ -66,21 +66,6 @@
   <script src="https://www.youtube.com/iframe_api"></script>
 </svelte:head>
 
-<div class="container">
+<div class="sw-youtube">
   <div class="player" bind:this={playerElement} />
 </div>
-
-<style>
-  .container {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-  }
-  .container .player {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-</style>

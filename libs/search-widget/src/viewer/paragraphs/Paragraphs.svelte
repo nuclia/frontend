@@ -23,25 +23,25 @@
     });
   };
   const modifyLabels = (event: any, paragraph: WidgetParagraph) => {
-  resource
-    .pipe(
-      take(1),
-      concatMap((resource) => {
-        savingLabels.next(true);
-        const paragraphId = getParagraphId(resource.id, paragraph);
-        return setLabels(resource, paragraph.fieldType.slice(0, -1), paragraph.fieldId, paragraphId, event.detail);
-      }),
-      concatMap(() => combineLatest([resource, paragraphLabels]).pipe(take(1)))
-    )
-    .subscribe(([resource, paragraphLabels]) => {
-      const newLabels = {...paragraphLabels, [getParagraphId(resource.id, paragraph)]: event.detail };
-      viewerStore.updatedLabels.next(newLabels);
-      savingLabels.next(false);
-    });
+    resource
+      .pipe(
+        take(1),
+        concatMap((resource) => {
+          savingLabels.next(true);
+          const paragraphId = getParagraphId(resource.id, paragraph);
+          return setLabels(resource, paragraph.fieldType.slice(0, -1), paragraph.fieldId, paragraphId, event.detail);
+        }),
+        concatMap(() => combineLatest([resource, paragraphLabels]).pipe(take(1))),
+      )
+      .subscribe(([resource, paragraphLabels]) => {
+        const newLabels = { ...paragraphLabels, [getParagraphId(resource.id, paragraph)]: event.detail };
+        viewerStore.updatedLabels.next(newLabels);
+        savingLabels.next(false);
+      });
   };
 </script>
 
-<div class="paragraph-list">
+<div class="sw-paragraph-list">
   {#each paragraphs as paragraph, i}
     {#if !$onlySelected || ($onlySelected && i === $selectedParagraphIndex)}
       <div class="paragraph-item">
@@ -76,9 +76,3 @@
     {/if}
   {/each}
 </div>
-
-<style>
-  .paragraph-item {
-    margin-bottom: 20px;
-  }
-</style>

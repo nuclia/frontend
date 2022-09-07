@@ -1,0 +1,47 @@
+.sw-pdf-controls {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 13px;
+  background-color: var(--color-light-stronger);
+  border-radius: 4px;
+  color: rgba(0, 0, 0, 0.7);
+
+  button {
+    padding: 0;
+    border: 0;
+    margin: 0 4px 0 0;
+    background: transparent;
+    -webkit-appearance: none;
+  }
+  button:not([disabled]) {
+    cursor: pointer;
+  }
+  button[disabled] {
+    opacity: 0.4;
+  }
+  button img {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+  .button-group {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 32px;
+  }
+  .button-group:last-child {
+    margin-right: 0;
+  }
+  .pagination {
+    font-size: 0.8125em;
+  }
+  .pagination span {
+    text-decoration: underline;
+  }
+  .zoom {
+    padding-left: 0.25em;
+    font-size: 0.8125em;
+    text-decoration: underline;
+  }
+}

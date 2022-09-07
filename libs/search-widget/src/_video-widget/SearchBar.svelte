@@ -1,11 +1,12 @@
-<svelte:options tag="nuclia-search-bar"/>
+<svelte:options tag="nuclia-search-bar" />
 
 <script lang="ts">
+  import css from './SearchBar.scss';
   import type { KBStates } from '@nuclia/core';
   import { resetStore } from '../core/store';
   import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts, loadSvgSprite } from '../core/utils';
+  import { setCDN, coerceBooleanProperty, loadCssAsText, loadFonts, loadSvgSprite, injectStyle } from '../core/utils';
   import { setLang } from '../core/i18n';
   import SearchInput from '../widgets/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../core/search-bar';
@@ -29,8 +30,10 @@
   let cssVariables;
   let svgSprite;
   let ready = false;
+  let elem: HTMLElement;
 
   onMount(() => {
+    injectStyle(elem, css);
     initNuclia(
       widgetid,
       {
@@ -42,19 +45,19 @@
         kbSlug: kbslug,
         account,
         permalink: permalinkEnabled,
-        highlight: false
+        highlight: false,
       },
       state,
-      true
+      true,
     );
     if (cdn) {
       setCDN(cdn);
     }
 
     loadFonts();
-    loadSvgSprite().subscribe(sprite => svgSprite = sprite);
+    loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     // Load CSS variables (must be done after the CDN was set) and custom styles
-    loadCssAsText().subscribe((css) => cssVariables = css);
+    loadCssAsText().subscribe((css) => (cssVariables = css));
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
@@ -68,16 +71,11 @@
       resetNuclia();
     };
   });
-
 </script>
 
-<div style="{cssVariables}"
-     data-version="__NUCLIA_DEV_VERSION__">
+<div bind:this={elem} style={cssVariables} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    <SearchInput placeholder="{placeholder}" searchBarWidget="{true}"/>
+    <SearchInput {placeholder} searchBarWidget={true} />
   {/if}
   <div id="nuclia-glyphs-sprite" hidden>{svgSprite}</div>
 </div>
-
-<style>
-</style>

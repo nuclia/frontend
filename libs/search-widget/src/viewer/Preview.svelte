@@ -22,7 +22,7 @@
   };
 </script>
 
-<div class="preview">
+<div class="sw-preview">
   <div class="actions">
     <button on:click={closePreview}>
       <img src={`${getCDN()}icons/close.svg`} alt="icon" />
@@ -41,21 +41,3 @@
     <Pdf src={$linkPreview.file.uri} />
   {/if}
 </div>
-
-<style>
-  .preview {
-    position: sticky;
-    top: calc(var(--header-height) + 1em)
-  }
-  .actions {
-    text-align: right;
-    margin-bottom: 1em;
-  }
-  .actions button {
-    border: 0;
-    padding: 0;
-    background: transparent;
-    cursor: pointer;
-    -webkit-appearance: none;
-  }
-</style>
