@@ -240,11 +240,10 @@
 
     <div class="result-details">
       <h3 class="ellipsis">{result?.title}</h3>
-      <ul
-        class="paragraphs-container"
-        class:expanded={showAllResults}
-        style="--paragraph-count: {$matchingParagraphs.length}"
-      >
+      <ul class="paragraphs-container"
+          class:expanded={showAllResults}
+          class:can-expand={$matchingParagraphs.length > 4}
+          style="--paragraph-count: {$matchingParagraphs.length}">
         {#each $matchingParagraphs as paragraph}
           <ParagraphPlayer
             {paragraph}
