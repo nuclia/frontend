@@ -12,18 +12,17 @@
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';
-  import Spinner from '../components/spinner/Spinner.svelte';
+  import { fade } from 'svelte/transition';
 
   export let result: IResource = { id: '' };
 
   let innerWidth = window.innerWidth;
 
-  let tileElement: HTMLElement;
-  let expandedHeaderElement: HTMLElement;
-  let sidePanelElement: HTMLElement;
+  let videoTileElement: HTMLElement;
+  let videoTileHeight;
   let resource: Observable<Resource>;
   let expanded = false;
-  let summaries = [];
+  let summary;
   let videoTime = 0;
   let youtubeUri: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
@@ -32,8 +31,6 @@
   let showAllResults = false;
   let youtubeLoading = true;
   let showFullTranscripts = false;
-  let expandedHeight;
-  let sidePanelHeight;
 
   const matchingParagraphs = nucliaState()
     .getMatchingParagraphs(result.id)
@@ -62,8 +59,8 @@
       });
   };
 
-  $: isMobile = innerWidth < 600;
-  $: isExpandedFullScreen = innerWidth < 1024;
+  $: isMobile = innerWidth < 448;
+  $: isExpandedFullScreen = innerWidth < 820;
   $: filteredMatchingParagraphs = !findInTranscript
     ? matchingParagraphs
     : matchingParagraphs.pipe(map((paragraphs) => filterParagraphs(paragraphs as MediaWidgetParagraph[])));
@@ -99,37 +96,27 @@
           ),
         ),
         tap((res) => {
-          const _summaries = res.summary
-            ? [res.summary].concat(res.getExtractedSummaries())
-            : res.getExtractedSummaries();
-          summaries = _summaries.filter((s) => !!s);
+          const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
+          summary = summaries.filter((s) => !!s)[0];
           transcripts = getResourceParagraphs(res) as MediaWidgetParagraph[];
+          setupExpandedTile();
         }),
       );
     }
   };
 
-  const initExpandedStyle = () => {
-    const expandedRect = tileElement.getBoundingClientRect();
-    expandedHeight = `${expandedRect.height}px`;
-    youtubeLoading = false;
+  const setupExpandedTile = () => {
+    videoTileHeight = `${videoTileElement.offsetHeight}px`;
+  }
 
-    if (!isExpandedFullScreen) {
-      tileElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    setTimeout(() => {
-      if (isExpandedFullScreen) {
-        const padding = isMobile ? 32 : 16;
-        sidePanelHeight = `calc(100vh - ${sidePanelElement?.getBoundingClientRect().top + padding}px)`;
-      } else {
-        sidePanelHeight = `calc(${expandedHeight} - ${expandedHeaderElement?.getBoundingClientRect().height}px)`;
-      }
-    }, 100);
+  const onVideoReady = () => {
+    youtubeLoading = false;
   };
 
   const closePreview = () => {
     expanded = false;
     youtubeLoading = true;
+    findInTranscript = '';
   };
 
   const toggleTranscriptPanel = () => {
@@ -137,137 +124,124 @@
   };
 </script>
 
-<svelte:window bind:innerWidth />
-<div
-  class="sw-video-tile"
-  class:expanded
-  class:showAllResults
-  bind:this={tileElement}
-  style:max-height={expandedHeight}
->
-  {#if expanded}
-    <header bind:this={expandedHeaderElement}>
-      <h3>{result?.title}</h3>
-      <CloseButton aspect="basic" on:click={closePreview} />
-    </header>
-    <div class="expanded-tile-content" class:full-transcript-expanded={showFullTranscripts}>
-      <div class="video-and-summary-container">
-        <div class="youtube-container" class:loading={youtubeLoading}>
-          {#if youtubeLoading}
-            <Spinner />
-          {/if}
-          {#if youtubeUri}
-            <Youtube time={videoTime} uri={youtubeUri} on:videoReady={initExpandedStyle} />
-          {/if}
+<svelte:window bind:innerWidth/>
+<div class="sw-video-tile"
+     class:expanded
+     class:showAllResults
+     bind:this={videoTileElement}
+     style:--video-tile-height={videoTileHeight ? videoTileHeight : ''}>
+
+  <div class="thumbnail-container">
+    <div hidden={expanded && !youtubeLoading}
+         transition:fade={{duration: 240}}>
+      <ThumbnailPlayer thumbnail={result.thumbnail}
+                       spinner={expanded && youtubeLoading}
+                       aspectRatio={expanded ? '16/9' : '5/4'}
+                       on:play={playFromStart}/>
+    </div>
+
+    {#if expanded}
+      <div class="youtube-container"
+           class:loading={youtubeLoading}>
+        {#if youtubeUri}
+          <Youtube time={videoTime} uri={youtubeUri} on:videoReady={onVideoReady} />
+        {/if}
+      </div>
+    {/if}
+
+    {#if $resource}
+      <div class="summary-container"
+           hidden="{!expanded}"
+           transition:fade={{duration: 160}}>
+        <div class="summary">{summary}</div>
+      </div>
+    {/if}
+  </div>
+
+  <div class="result-details">
+    <header>
+      <h3 class="ellipsis">{result?.title}</h3>
+      {#if expanded}
+        <div in:fade={{duration: 240}}>
+          <CloseButton aspect="basic"
+                       on:click={closePreview}/>
         </div>
-        <div class="summary-container">
-          {#each summaries as summary}
-            <div class="summary">{summary}</div>
+      {/if}
+    </header>
+
+    <div class:side-panel={expanded}>
+      <div class="find-bar-container" hidden="{!expanded}">
+        <Icon name="search" />
+        <input
+          class="find-input"
+          type="text"
+          autocomplete="off"
+          aria-label="Find a transcript"
+          placeholder="Find a transcript"
+          bind:value={findInTranscript}
+        />
+      </div>
+      <div class="search-result-paragraphs"
+           class:transcript-container={expanded}>
+        {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
+          <strong>{findInTranscript}</strong> not found in your search results…
+        {/if}
+        <ul class="paragraphs-container"
+            class:expanded={showAllResults}
+            class:can-expand={$matchingParagraphs.length > 4}
+            style="--paragraph-count: {$matchingParagraphs.length}">
+          {#each $filteredMatchingParagraphs as paragraph}
+            <ParagraphPlayer {paragraph}
+                             ellipsis={!expanded}
+                             minimized={isMobile && !expanded}
+                             stack={expanded}
+                             on:play={(event) => playParagraph(event.detail.paragraph)}/>
           {/each}
+        </ul>
+      </div>
+      <div hidden="{!expanded}"
+           tabindex="0"
+           class="transcript-expander-header"
+           class:expanded={showFullTranscripts}
+           on:click={toggleTranscriptPanel}
+           on:keyup={(e) => {
+             if (e.key === 'Enter') toggleTranscriptPanel();
+           }}>
+        <div tabindex="-1" class="transcript-expander-header-title">
+          <strong>Full transcript</strong>
+        </div>
+        <div tabindex="-1" class="transcript-expander-header-chevron">
+          <Icon name="chevron-right" />
         </div>
       </div>
-
-      {#if $resource}
-        <div
-          class="side-panel"
-          style:height={sidePanelHeight}
-          style:max-height={youtubeLoading ? '365px' : sidePanelHeight}
-          bind:this={sidePanelElement}
-        >
-          <div class="find-bar-container">
-            <Icon name="search" />
-            <input
-              class="find-input"
-              type="text"
-              autocomplete="off"
-              aria-label="Find a transcript"
-              placeholder="Find a transcript"
-              bind:value={findInTranscript}
-            />
-          </div>
-          <div class="transcript-container">
-            {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
-              <strong>{findInTranscript}</strong> not found in your search results…
-            {/if}
-            <ul class="paragraphs-container">
-              {#each $filteredMatchingParagraphs as paragraph}
-                <ParagraphPlayer
-                  {paragraph}
-                  selected={paragraph.pid === paragraphInPlay.pid}
-                  stack
-                  on:play={(event) => playTranscript(event.detail.paragraph)}
-                />
-              {/each}
-            </ul>
-          </div>
-          <div
-            tabindex="0"
-            class="transcript-expander-header"
-            class:expanded={showFullTranscripts}
-            on:click={toggleTranscriptPanel}
-            on:keyup={(e) => {
-              if (e.key === 'Enter') toggleTranscriptPanel();
-            }}
-          >
-            <div tabindex="-1" class="transcript-expander-header-title">
-              <strong>Full transcript</strong>
-            </div>
-            <div tabindex="-1" class="transcript-expander-header-chevron">
-              <Icon name="chevron-right" />
-            </div>
-          </div>
-          {#if showFullTranscripts}
-            <div class="transcript-container">
-              <ul class="paragraphs-container">
-                {#each filteredTranscripts as paragraph}
-                  <ParagraphPlayer
-                    {paragraph}
-                    selected={paragraph === paragraphInPlay}
-                    stack
-                    on:play={(event) => playTranscript(event.detail.paragraph)}
-                  />
-                {/each}
-              </ul>
-            </div>
-          {/if}
+      {#if showFullTranscripts}
+        <div class="transcript-container">
+          <ul class="paragraphs-container">
+            {#each filteredTranscripts as paragraph}
+              <ParagraphPlayer
+                {paragraph}
+                selected={paragraph === paragraphInPlay}
+                stack
+                on:play={(event) => playTranscript(event.detail.paragraph)}
+              />
+            {/each}
+          </ul>
         </div>
       {/if}
     </div>
-  {:else}
-    <div class="thumbnail-container">
-      <ThumbnailPlayer thumbnail={result.thumbnail} on:play={playFromStart} />
-    </div>
 
-    <div class="result-details">
-      <h3 class="ellipsis">{result?.title}</h3>
-      <ul class="paragraphs-container"
-          class:expanded={showAllResults}
-          class:can-expand={$matchingParagraphs.length > 4}
-          style="--paragraph-count: {$matchingParagraphs.length}">
-        {#each $matchingParagraphs as paragraph}
-          <ParagraphPlayer
-            {paragraph}
-            ellipsis
-            minimized={isMobile}
-            on:play={(event) => playParagraph(event.detail.paragraph)}
-          />
-        {/each}
-      </ul>
-      {#if $matchingParagraphs.length > 4}
-        <div
-          class="all-result-toggle"
-          class:expanded={showAllResults}
-          on:click={() => (showAllResults = !showAllResults)}
-        >
-          Display {showAllResults ? 'less' : 'all'} results
+    {#if !expanded && $matchingParagraphs.length > 4}
+      <div class="all-result-toggle"
+           class:expanded={showAllResults}
+           on:click={() => (showAllResults = !showAllResults)}>
+        Display {showAllResults ? 'less' : 'all'} results
 
-          <div class="icon">
-            <Icon name="chevron-right" size="small" />
-          </div>
+        <div class="icon">
+          <Icon name="chevron-right" size="small"/>
         </div>
-      {/if}
-    </div>
-  {/if}
+      </div>
+    {/if}
+  </div>
 </div>
 
 <style lang="scss" src="./VideoTile.scss"></style>

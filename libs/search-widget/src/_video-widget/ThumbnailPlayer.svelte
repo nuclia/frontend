@@ -3,9 +3,11 @@
   import { createEventDispatcher } from 'svelte';
   import Icon from './Icon.svelte';
   import { fade } from 'svelte/transition';
+  import Spinner from '../components/spinner/Spinner.svelte';
 
   export let thumbnail = '';
   export let aspectRatio;
+  export let spinner = false;
   let loaded = false;
 
   const dispatch = createEventDispatcher();
@@ -23,13 +25,18 @@
                on:loaded={() => (loaded = true)} />
 
     {#if loaded}
-      <div class="play-icon"
+      <div class="action-container"
+           class:play-icon={!spinner}
            tabindex="0"
            in:fade={{ delay: 240 }}
            on:keyup={(e) => {
              if (e.key === 'Enter') play();
            }}>
-        <Icon name="play" size="large" />
+        {#if !spinner}
+          <Icon name="play" size="large" />
+        {:else}
+          <Spinner />
+        {/if}
       </div>
     {/if}
   </div>

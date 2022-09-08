@@ -4,7 +4,7 @@
   import { NucliaWidget } from '../../../libs/search-widget/src';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'form';
+  let selected = 'two-widgets';
   let showConfiguration = true;
   let widget: NucliaWidget;
 
@@ -82,7 +82,7 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
-        knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
+        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
         cdn="/"
         lang="en"
         widgetid="demo-search-bar"
