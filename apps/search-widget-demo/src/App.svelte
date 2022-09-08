@@ -4,7 +4,7 @@
   import { NucliaWidget } from '../../../libs/search-widget/src';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'form';
+  let selected = 'input';
   let widget: NucliaWidget;
 
   onMount(() => {
