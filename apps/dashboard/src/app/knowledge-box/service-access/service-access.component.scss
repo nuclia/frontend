@@ -12,15 +12,12 @@
     padding: rhythm(1) rhythm(2) rhythm(2);
     margin-bottom: rhythm(2);
     background-color: $color-light-stronger;
-  }
-
-  input {
-    width: 250px;
-    margin-right: rhythm(2);
-  }
-
-  select {
-    margin-right: rhythm(2);
+    .form-content {
+      display: flex;
+      pa-select {
+        width: rhythm(20);
+      }
+    }
   }
 
   .container {

@@ -1,39 +1,42 @@
 <div class="service-access-container">
   <div>
-    <form [formGroup]="addForm" (ngSubmit)="addServiceAccess()">
+    <form [formGroup]="addForm"
+          (ngSubmit)="addServiceAccess()">
       <h3>{{ 'stash.create_service_access' | translate }}</h3>
-      <div fxLayout="row">
-        <input
-          formControlName="title"
-          type="text"
-          stfFilterInput
-          inputColor="gray"
-          [inputHeight]="32"
-          placeholder="{{ 'generic.name' | translate }}"
-        />
+      <div class="form-content">
+        <pa-input formControlName="title">{{ 'generic.name' | translate }}</pa-input>
 
-        <select formControlName="role" stfSelect selectSize="small">
-          <option value="" *ngIf="addForm.value.role === ''">
-            {{ 'generic.role' | translate }}
-          </option>
-          <option *ngFor="let role of roles" [value]="role">
+        <pa-select formControlName="role"
+                   [label]="'generic.role' | translate">
+          <pa-option *ngFor="let role of roles"
+                     [value]="role">
             {{ roleTitles[role] | translate }}
-          </option>
-        </select>
-        <pa-button type="submit" size="small" [disabled]="addForm.invalid">
+          </pa-option>
+        </pa-select>
+        <pa-button type="submit"
+                   size="large"
+                   [disabled]="addForm.invalid">
           {{ 'generic.add' | translate }}
         </pa-button>
       </div>
     </form>
 
-    <div *ngIf="serviceAccess && serviceAccess.length > 0" class="container">
+    <div *ngIf="serviceAccess && serviceAccess.length > 0"
+         class="container">
       <h3>{{ 'stash.view_edit_service_access' | translate }}</h3>
       <div class="service-access-list">
-        <div class="service-access" *ngFor="let sa of serviceAccess">
-          <div class="service-access-header" fxLayout="row" fxLayoutAlign="space-between center">
-            <div class="service-access-title" fxFlex="1 1 0">
-              <button (click)="toggleSA(sa.id)" [disabled]="!sa.keys || sa.keys.length === 0">
-                <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="4px">
+        <div class="service-access"
+             *ngFor="let sa of serviceAccess">
+          <div class="service-access-header"
+               fxLayout="row"
+               fxLayoutAlign="space-between center">
+            <div class="service-access-title"
+                 fxFlex="1 1 0">
+              <button (click)="toggleSA(sa.id)"
+                      [disabled]="!sa.keys || sa.keys.length === 0">
+                <div fxLayout="row"
+                     fxLayoutAlign="start center"
+                     fxLayoutGap="4px">
                   <pa-icon *ngIf="sa.keys && sa.keys.length > 0"
                            name="chevron-right"
                            size="small"
@@ -43,7 +46,8 @@
                 </div>
               </button>
             </div>
-            <div class="service-access-actions" fxFlex="0 0 auto">
+            <div class="service-access-actions"
+                 fxFlex="0 0 auto">
               <pa-button (click)="createKey(sa)"
                          aspect="basic"
                          icon="plus"
@@ -61,25 +65,30 @@
             </div>
           </div>
 
-          <stf-expander [expanded]="isExpanded(sa.id)" *ngIf="sa.keys && sa.keys.length > 0">
+          <stf-expander [expanded]="isExpanded(sa.id)"
+                        *ngIf="sa.keys && sa.keys.length > 0">
             <stf-expander-content>
               <div class="service-access-keys">
-                <div class="service-access-key" *ngFor="let key of sa.keys" fxLayout="row" fxLayoutAlign="start center">
-                  <div class="service-access-key-id" fxFlex="0 0 60%">
+                <div class="service-access-key"
+                     *ngFor="let key of sa.keys"
+                     fxLayout="row"
+                     fxLayoutAlign="start center">
+                  <div class="service-access-key-id"
+                       fxFlex="0 0 60%">
                     {{ key.id }}
                   </div>
                   <div fxFlex="0 0 100px">
                     {{ key.expires | formatDate }}
                   </div>
-                  <div class="service-access-key-actions" fxFlex="1 1 auto">
+                  <div class="service-access-key-actions"
+                       fxFlex="1 1 auto">
                     <pa-button (click)="deleteKey(sa, key)"
                                class="delete-key"
                                aspect="basic"
                                icon="trash"
                                size="small"
                                iconSize="small"
-                               paTooltip="generic.delete"
-                    >{{'generic.delete' | translate}}</pa-button>
+                               paTooltip="generic.delete">{{'generic.delete' | translate}}</pa-button>
                   </div>
                 </div>
               </div>
@@ -98,6 +107,7 @@
  -X POST \
  -H "X-STF-Serviceaccount: Bearer YOUR-SERVICE-ACCESS-TOKEN" \
  -T /path/to/file</code></pre>
-    <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api" target="_new">Learn more</a>
+    <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
+       target="_new">Learn more</a>
   </ncom-hint>
 </div>
