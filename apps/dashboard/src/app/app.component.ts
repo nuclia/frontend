@@ -13,9 +13,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { catchError, combineLatest, filter, of, Subject, switchMap, take, tap } from 'rxjs';
 import { NavigationService } from './services/navigation.service';
 import { Title } from '@angular/platform-browser';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
+import { MessageModalComponent } from './components/messages/message-modal.component';
 
 @Component({
   selector: 'app-root',
@@ -62,7 +63,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.config.getVersion()) {
       this.version = this.config.getVersion();
     }
-    this.checkStatusAlert();
+    this.checkMessages(true);
+    this.checkMessages(false);
   }
 
   ngOnDestroy(): void {
@@ -127,20 +129,23 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`));
   }
 
-  private checkStatusAlert() {
+  private checkMessages(alert: boolean) {
     this.tracking
-      .getStatusAlert()
+      .getStatusMessage(alert)
       .pipe(
         take(1),
-        filter((statusAlert) => !!statusAlert),
+        filter((message) => !!message),
       )
       .subscribe((message) => {
-        this.modalService.openConfirm({
-          title: 'generic.alert',
-          description: message,
-          confirmLabel: 'Ok',
-          onlyConfirm: true,
-        });
+        this.modalService.openModal(
+          MessageModalComponent,
+          new ModalConfig<{ title: string; message: string }>({
+            data: {
+              title: alert ? 'generic.alert' : 'generic.announce',
+              message,
+            },
+          }),
+        );
       });
   }
 }

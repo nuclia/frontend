@@ -6,6 +6,7 @@ import { filter, Observable } from 'rxjs';
 import { PostHogService } from './post-hog.service';
 
 const STATUS_ALERT = 'NUCLIA_STATUS_ALERT';
+const ANNOUNCE = 'NUCLIA_ANNOUNCE';
 @Injectable({
   providedIn: 'root',
 })
@@ -90,15 +91,17 @@ export class STFTrackingService {
     return this.postHogService.getEnabledFeatures();
   }
 
-  getStatusAlert(): Observable<string> {
+  getStatusMessage(alert: boolean): Observable<string> {
+    const localStorageKey = alert ? STATUS_ALERT : ANNOUNCE;
+    const path = `https://nuclia.github.io/status/${alert ? 'status' : 'announce'}.json`;
     return new Observable<string>((observer) => {
-      const lastAlert = parseInt(localStorage.getItem(STATUS_ALERT) || '0', 10);
-      fetch('https://nuclia.github.io/status/status.json')
+      const lastMessage = parseInt(localStorage.getItem(localStorageKey) || '0', 10);
+      fetch(path)
         .then((res) => res.json())
         .then((data) => {
-          if (data && data.active && data.id > lastAlert) {
-            observer.next(data.message);
-            localStorage.setItem(STATUS_ALERT, data.id.toString());
+          if (data && data.active && data.id > lastMessage) {
+            observer.next(`<div data-is-message="1">${data.message}</div>`);
+            localStorage.setItem(localStorageKey, data.id.toString());
           } else {
             observer.next('');
           }
