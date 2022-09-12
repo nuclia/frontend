@@ -12,7 +12,7 @@
   import { MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';
-  import { fade } from 'svelte/transition';
+  import { fade, slide } from 'svelte/transition';
 
   export let result: IResource = { id: '' };
 
@@ -31,6 +31,8 @@
   let showAllResults = false;
   let youtubeLoading = true;
   let showFullTranscripts = false;
+  let animatingShowFullTranscript = false;
+
 
   const matchingParagraphs = nucliaState()
     .getMatchingParagraphs(result.id)
@@ -60,6 +62,7 @@
   };
 
   $: isMobile = innerWidth < 448;
+  $: defaultTransitionDuration = expanded ? 480 : 0;
   $: isExpandedFullScreen = innerWidth < 820;
   $: filteredMatchingParagraphs = !findInTranscript
     ? matchingParagraphs
@@ -116,6 +119,7 @@
   const closePreview = () => {
     expanded = false;
     youtubeLoading = true;
+    showFullTranscripts = false;
     findInTranscript = '';
   };
 
@@ -128,6 +132,7 @@
 <div class="sw-video-tile"
      class:expanded
      class:showAllResults
+     class:showFullTranscripts
      bind:this={videoTileElement}
      style:--video-tile-height={videoTileHeight ? videoTileHeight : ''}>
 
@@ -169,39 +174,70 @@
       {/if}
     </header>
 
-    <div class:side-panel={expanded}>
-      <div class="find-bar-container" hidden="{!expanded}">
+    <div class:side-panel={expanded}
+         class:on-animation={animatingShowFullTranscript}>
+      <div class="find-bar-container"
+           tabindex="0"
+           hidden="{!expanded}">
         <Icon name="search" />
-        <input
-          class="find-input"
-          type="text"
-          autocomplete="off"
-          aria-label="Find a transcript"
-          placeholder="Find a transcript"
-          bind:value={findInTranscript}
+        <input class="find-input"
+               type="text"
+               autocomplete="off"
+               aria-label="Find a transcript"
+               placeholder="Find a transcript"
+               tabindex="-1"
+               bind:value={findInTranscript}
         />
       </div>
+
       <div class="search-result-paragraphs"
+           tabindex="-1"
+           class:on-animation={animatingShowFullTranscript}
            class:transcript-container={expanded}>
-        {#if findInTranscript && $filteredMatchingParagraphs.length === 0}
+        {#if !showFullTranscripts && findInTranscript && $filteredMatchingParagraphs.length === 0}
           <strong>{findInTranscript}</strong> not found in your search results…
         {/if}
-        <ul class="paragraphs-container"
-            class:expanded={showAllResults}
-            class:can-expand={$matchingParagraphs.length > 4}
-            style="--paragraph-count: {$matchingParagraphs.length}">
-          {#each $filteredMatchingParagraphs as paragraph}
-            <ParagraphPlayer {paragraph}
-                             ellipsis={!expanded}
-                             minimized={isMobile && !expanded}
-                             stack={expanded}
-                             on:play={(event) => playParagraph(event.detail.paragraph)}/>
-          {/each}
-        </ul>
+        {#if showFullTranscripts}
+          <div tabindex="0"
+               class="transcript-expander-header"
+               transition:slide={{duration: defaultTransitionDuration}}
+               on:introstart="{() => animatingShowFullTranscript = true}"
+               on:introend="{() => animatingShowFullTranscript = false}"
+               on:outrostart="{() => animatingShowFullTranscript = true}"
+               on:outroend="{() => animatingShowFullTranscript = false}"
+               on:click={toggleTranscriptPanel}
+               on:keyup={(e) => {
+             if (e.key === 'Enter') toggleTranscriptPanel();
+           }}>
+            <div tabindex="-1" class="transcript-expander-header-title">
+              <strong>{$matchingParagraphs.length} search results</strong>
+            </div>
+            <div tabindex="-1"
+                 class="transcript-expander-header-chevron">
+              <Icon name="chevron-right" />
+            </div>
+          </div>
+        {/if}
+
+        {#if !expanded || !showFullTranscripts}
+          <ul transition:slide={{duration: defaultTransitionDuration}}
+              class="paragraphs-container"
+              class:expanded={showAllResults}
+              class:can-expand={$matchingParagraphs.length > 4}
+              style="--paragraph-count: {$matchingParagraphs.length}">
+            {#each $filteredMatchingParagraphs as paragraph}
+              <ParagraphPlayer {paragraph}
+                               ellipsis={!expanded}
+                               minimized={isMobile && !expanded}
+                               stack={expanded}
+                               on:play={(event) => playParagraph(event.detail.paragraph)}/>
+            {/each}
+          </ul>
+        {/if}
       </div>
       <div hidden="{!expanded}"
            tabindex="0"
-           class="transcript-expander-header"
+           class="transcript-expander-header with-spacing"
            class:expanded={showFullTranscripts}
            on:click={toggleTranscriptPanel}
            on:keyup={(e) => {
@@ -215,7 +251,9 @@
         </div>
       </div>
       {#if showFullTranscripts}
-        <div class="transcript-container">
+        <div class="full-transcript-container transcript-container"
+             in:slide={{duration: defaultTransitionDuration, delay: defaultTransitionDuration}}
+             out:slide={{duration: defaultTransitionDuration}}>
           <ul class="paragraphs-container">
             {#each filteredTranscripts as paragraph}
               <ParagraphPlayer

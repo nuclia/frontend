@@ -1,4 +1,8 @@
 .sw-video-tile {
+  --paragraph-height: var(--rhythm-4);
+  --paragraph-gap: var(--rhythm-0_5);
+  --expanded-background-color: var(--color-neutral-light);
+
   display: flex;
   flex-direction: column;
   position: relative;
@@ -37,11 +41,7 @@
   }
 
   .paragraphs-container {
-    --paragraph-height: var(--rhythm-4);
-    --paragraph-gap: var(--rhythm-0_5);
-
     display: flex;
-    flex: 0 0 auto;
     flex-direction: column;
     gap: var(--paragraph-gap);
     list-style: none;
@@ -64,7 +64,11 @@
   &.expanded {
     --header-height: var(--rhythm-7);
 
-    background: var(--color-neutral-light);
+    &:not(.showFullTranscripts) {
+      --paragraph-gap: var(--rhythm-3);
+    }
+
+    background: var(--expanded-background-color);
     padding-top: var(--header-height);
 
     header {
@@ -94,10 +98,6 @@
     display: none;
   }
 
-  &.expanded .paragraphs-container {
-    --paragraph-gap: var(--rhythm-3);
-  }
-
   &.expanded .side-panel {
     overflow: auto;
     padding: var(--rhythm-2);
@@ -113,16 +113,23 @@
     cursor: pointer;
     display: flex;
     justify-content: space-between;
-    margin: var(--rhythm-1) 0;
-    padding: var(--rhythm-1_5);
 
-    &:focus {
+    &.with-spacing {
+      padding: var(--rhythm-1_5);
+      margin: 0 0 var(--rhythm-1);
+    }
+
+    // remove the focus style when clicking
+    &:focus:not(:focus-visible) {
+      outline: 0;
+    }
+    &:focus-visible {
       box-shadow: var(--focus-shadow);
       outline: 0;
     }
     .transcript-expander-header-chevron {
       display: flex;
-      transition: transform var(--transition-superfast);
+      transition: transform var(--transition-moderate);
     }
     &.expanded .transcript-expander-header-chevron {
       transform: rotate(90deg);
@@ -140,6 +147,7 @@
 @media (min-width: 648px) {
   .sw-video-tile {
     --flex-gap: var(--rhythm-2);
+    --paragraph-height: var(--rhythm-3);
 
     flex-direction: row;
     gap: var(--flex-gap);
@@ -162,10 +170,6 @@
 
     .thumbnail-container {
       align-self: flex-start;
-    }
-
-    .paragraphs-container {
-      --paragraph-height: var(--rhythm-3);
     }
 
     &.expanded {
@@ -240,10 +244,13 @@
     &.expanded .find-bar-container {
       align-items: center;
       background: var(--color-light-stronger);
+      border-bottom: var(--find-input-margin) solid var(--expanded-background-color);
       display: flex;
       gap: var(--rhythm-1);
-      margin-bottom: var(--find-input-margin);
       padding-left: var(--rhythm-1);
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
     &.expanded .find-bar-container .find-input {
@@ -264,8 +271,17 @@
 
     &.expanded .search-result-paragraphs {
       --full-transcript-header: var(--rhythm-8);
+      border-bottom: var(--rhythm-1) solid var(--expanded-background-color);
+      min-height: var(--rhythm-3);
       max-height: calc(100% - var(--find-input-height) - var(--find-input-margin) - var(--full-transcript-header));
       overflow: auto;
+      position: sticky;
+      top: calc(var(--find-input-height) + var(--find-input-margin));
+      z-index: 1;
+    }
+
+    &.expanded .on-animation {
+      overflow: hidden;
     }
   }
 }

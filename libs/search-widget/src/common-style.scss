@@ -79,6 +79,7 @@
   /* TRANSITIONS */
   --transition-superfast: 0.16s ease-in-out;
   --transition-fast: 0.24s ease;
+  --transition-moderate: 0.480s ease;
 
 
   /* TOKEN */
@@ -93,7 +94,7 @@
   --color-scrollbar-track: var(--custom-color-scrollbar-track, var(--color-light-stronger));
   --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, var(--color-dark-stronger));
 
-  --focus-shadow: var(--custom-focus-shadow, 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter));
+  --focus-shadow: var(--custom-focus-shadow, inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter));
   --shadow-small: 1px 1px 2px rgba(var(--color-dark-stronger-rgb), 0.3);
 
   --size-powered-by: calc(var(--rhythm-16) + var(--rhythm-1_5));
