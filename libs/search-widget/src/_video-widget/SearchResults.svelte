@@ -8,6 +8,7 @@
   import { _ } from '../core/i18n';
   import LoadingDots from '../components/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
+  import globalCss from './_global.scss';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;
@@ -43,6 +44,7 @@
   });
 </script>
 
+<svelte:element this="style">{@html globalCss}</svelte:element>
 <div class="nuclia-widget sw-video-results" data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}

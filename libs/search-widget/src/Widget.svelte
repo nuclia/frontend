@@ -20,6 +20,7 @@
   import type { KBStates, Resource } from '@nuclia/core';
   import { Observable } from 'rxjs';
   import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
+  import globalCss from './_video-widget/_global.scss';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -125,6 +126,8 @@
     }
   };
 </script>
+
+<svelte:element this="style">{@html globalCss}</svelte:element>
 
 <div class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
