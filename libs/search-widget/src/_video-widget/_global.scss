@@ -1,0 +1,10 @@
+mark {
+  background-color: inherit;
+  font-weight: var(--font-weight-semi-bold);
+}
+
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
