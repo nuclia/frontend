@@ -32,7 +32,7 @@
 }
 
 .login_policy {
-  color: $color-neutral-strong;
+  color: $color-neutral-regular;
   a {
     color: inherit;
   }
@@ -64,7 +64,7 @@
   .login_social_button {
     -webkit-appearance: none;
 
-    background-color: $color-neutral-lightest;
+    background-color: $color-neutral-background;
     border: none;
     border-radius: $border-radius-default;
     box-shadow: var(--stf-shadow-button) $color-neutral-light;

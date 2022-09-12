@@ -7,7 +7,7 @@
   width: 400px;
   height: rhythm(12);
   border: 2px dashed $color-neutral-regular;
-  color: $color-neutral-strong;
+  color: $color-neutral-regular;
   transition: border-color 0.15s;
   &.active {
     border: 2px dashed $color-primary-regular;

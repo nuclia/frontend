@@ -34,7 +34,7 @@ $column-header: 128px;
 }
 
 .parameter-group {
-  border-bottom: 1px solid $color-neutral-strong;
+  border-bottom: 1px solid $color-neutral-regular;
   &:last-child {
     border-bottom: 0;
   }
@@ -128,7 +128,7 @@ $column-header: 128px;
     right: 0;
     font-size: var(--stf-font-size-ssmall);
     font-weight: var(--stf-font-weight-light);
-    color: $color-neutral-strong;
+    color: $color-neutral-regular;
   }
 }
 

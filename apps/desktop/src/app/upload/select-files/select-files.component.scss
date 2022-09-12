@@ -44,10 +44,10 @@ h3 {
 table {
   width: calc(100% - #{rhythm(2)});
   border-spacing: 0;
-  border-top: 2px solid $color-neutral-strong;
+  border-top: 2px solid $color-neutral-regular;
 }
 
 td {
   height: rhythm(3);
-  border-bottom: 1px solid $color-neutral-strong;
+  border-bottom: 1px solid $color-neutral-regular;
 }
