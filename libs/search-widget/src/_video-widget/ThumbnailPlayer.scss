@@ -3,16 +3,29 @@
   flex: 0 0 auto;
   position: relative;
 
-  .play-icon {
+  .action-container {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 50%;
-    color: var(--color-dark-stronger);
-    display: flex;
-    padding: var(--rhythm-1);
     left: 50%;
     position: absolute;
     top: 50%;
     transform: translate(-50%, -50%);
+    transition: height var(--transition-superfast), width var(--transition-superfast);
+
+    &:not(.play-icon) {
+      height: var(--rhythm-12);
+      width: var(--rhythm-12);
+    }
+  }
+
+  .play-icon {
+    align-items: center;
+    color: var(--color-dark-stronger);
+    display: flex;
+    height: var(--rhythm-5);
+    justify-content: center;
+    padding: var(--rhythm-1);
+    width: var(--rhythm-5);
   }
 
   .play-icon:focus {
@@ -24,11 +37,7 @@
     background: var(--color-light-stronger);
   }
 }
-@media (min-width: 600px) {
-  .sw-thumbnail-player {
-    width: var(--width-thumbnail);
-  }
-}
+
 @media (hover: hover) {
   .sw-thumbnail-player:hover .play-icon {
     background: rgba(255, 255, 255, 0.95);

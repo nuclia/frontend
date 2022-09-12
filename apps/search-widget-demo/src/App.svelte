@@ -4,7 +4,8 @@
   import { NucliaWidget } from '../../../libs/search-widget/src';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'input';
+  let selected = 'two-widgets';
+  let showConfiguration = true;
   let widget: NucliaWidget;
 
   onMount(() => {
@@ -32,18 +33,20 @@
 </script>
 
 <main>
-  <h1>Welcome to Nuclia</h1>
+  <header hidden="{!showConfiguration}">
+    <h1>Welcome to Nuclia</h1>
 
-  <section class="configuration">
-    <label for="widget-select">Select the widget to demo:</label>
-    <select id="widget-select" bind:value={selected}>
-      <option value="input">Popup search</option>
-      <option value="form">Embedded search</option>
-      <option value="two-widgets">Search bar and result widgets</option>
-    </select>
-    <button on:click={() => setLang('en')}>English</button>
-    <button on:click={() => setLang('es')}>Español</button>
-  </section>
+    <section class="configuration">
+      <label for="widget-select">Select the widget to demo:</label>
+      <select id="widget-select" bind:value={selected}>
+        <option value="input">Popup search</option>
+        <option value="form">Embedded search</option>
+        <option value="two-widgets">Search bar and result widgets</option>
+      </select>
+      <button on:click={() => setLang('en')}>English</button>
+      <button on:click={() => setLang('es')}>Español</button>
+    </section>
+  </header>
 
   {#if selected === 'input'}
     <h2>Input widget</h2>
@@ -79,7 +82,7 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
-        knowledgebox="878d31cd-3943-45ea-927a-c7c987edf7da"
+        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
         cdn="/"
         lang="en"
         widgetid="demo-search-bar"
