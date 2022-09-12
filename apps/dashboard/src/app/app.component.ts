@@ -63,8 +63,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.config.getVersion()) {
       this.version = this.config.getVersion();
     }
-    this.checkMessages({ alert: true });
-    this.checkMessages({ alert: false });
+    this.displayAlert();
+    this.displayAnnounce();
   }
 
   ngOnDestroy(): void {
@@ -129,9 +129,17 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe(([account, kb]) => this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`));
   }
 
-  private checkMessages(config: { alert: boolean }) {
+  private displayAlert() {
+    this.checkMessages(true);
+  }
+
+  private displayAnnounce() {
+    this.checkMessages(false);
+  }
+
+  private checkMessages(alert: boolean) {
     this.tracking
-      .getStatusMessage(config.alert)
+      .getStatusMessage(alert)
       .pipe(
         take(1),
         filter((message) => !!message),
@@ -141,7 +149,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           MessageModalComponent,
           new ModalConfig<{ title: string; message: string }>({
             data: {
-              title: config.alert ? 'generic.alert' : 'generic.announce',
+              title: alert ? 'generic.alert' : 'generic.announce',
               message,
             },
           }),
