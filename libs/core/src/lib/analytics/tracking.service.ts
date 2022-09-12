@@ -100,7 +100,7 @@ export class STFTrackingService {
         .then((res) => res.json())
         .then((data) => {
           if (data && data.active && data.id > lastMessage) {
-            observer.next(`<div data-is-message="1">${data.message}</div>`);
+            observer.next(data.message);
             localStorage.setItem(localStorageKey, data.id.toString());
           } else {
             observer.next('');
