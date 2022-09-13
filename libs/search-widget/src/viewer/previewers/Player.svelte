@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { createEventDispatcher, onDestroy } from 'svelte';
   import { getTempToken, isPrivateKnowledgeBox } from '../../core/api';
 
   export let src: string;
@@ -13,6 +13,8 @@
 
   let dashPlayer: any;
   let isDashVideo: boolean;
+
+  const dispatch = createEventDispatcher();
 
   onDestroy(() => {
     if (player && !paused) {
@@ -82,6 +84,7 @@
         controls
         on:canplay={() => {
           if (!firstLoad) firstLoad = true;
+          dispatch('videoReady');
         }}
         bind:this={player}
         bind:currentTime

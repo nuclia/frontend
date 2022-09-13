@@ -1,18 +1,23 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
+  import { of } from 'rxjs';
   import type { IResource, Paragraph, Resource, Search } from '@nuclia/core';
   import { map, switchMap, tap } from 'rxjs/operators';
   import { nucliaState } from '../core/store';
-  import { getResource } from '../core/api';
+  import { getRegionalBackend, getResource } from '../core/api';
   import CloseButton from '../components/button/CloseButton.svelte';
   import ThumbnailPlayer from './ThumbnailPlayer.svelte';
   import Youtube from '../viewer/previewers/Youtube.svelte';
-  import { getLinkField, getResourceParagraphs } from '../viewer/store';
-  import { of } from 'rxjs';
-  import { MediaWidgetParagraph } from '../core/models';
+  import {
+    getFileField,
+    getLinkField,
+    getResourceParagraphs, getVideoStream,
+  } from '../viewer/store';
+  import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';
   import { fade, slide } from 'svelte/transition';
+  import Player from '../viewer/previewers/Player.svelte';
 
   export let result: IResource = { id: '' };
 
@@ -25,11 +30,13 @@
   let summary;
   let videoTime = 0;
   let youtubeUri: string | undefined;
+  let videoUri: string | undefined;
+  let videoContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
   let transcripts: MediaWidgetParagraph[] = [];
   let showAllResults = false;
-  let youtubeLoading = true;
+  let videoLoading = true;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
 
@@ -81,20 +88,33 @@
     videoTime = paragraph.start;
   };
 
+  const isFileOrLink = (fieldType: string): boolean => {
+    return fieldType === FieldType.FILE || fieldType === FieldType.LINK;
+  }
+
   const playFrom = (time: number, selectedParagraph?: Search.Paragraph) => {
     videoTime = time;
     expanded = true;
-    const paragraph$ = selectedParagraph
+    const paragraph$ = selectedParagraph && isFileOrLink(selectedParagraph.field_type)
       ? of(selectedParagraph)
-      : matchingParagraphs.pipe(map((paragraphList) => paragraphList[0]));
+      : matchingParagraphs.pipe(map((paragraphList) => paragraphList.filter(p => isFileOrLink(p.field_type))[0] || paragraphList[0]));
     if (!resource) {
       resource = paragraph$.pipe(
         tap((paragraph) => (paragraphInPlay = paragraph as MediaWidgetParagraph)),
         switchMap((paragraph) =>
           getResource(result.id).pipe(
             tap((res) => {
-              const field = getLinkField(res, paragraph.field);
-              youtubeUri = field?.value?.uri;
+              if (paragraph.field_type === FieldType.LINK) {
+                const linkField = getLinkField(res, paragraph.field);
+                youtubeUri = linkField?.value?.uri;
+              } else if (paragraph.field_type === FieldType.FILE) {
+                const fileField = getFileField(res, res.id);
+                const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
+                if (file) {
+                  videoContentType = file.content_type;
+                  videoUri = `${getRegionalBackend()}${file.uri}`;
+                }
+              }
             }),
           ),
         ),
@@ -113,12 +133,12 @@
   }
 
   const onVideoReady = () => {
-    youtubeLoading = false;
+    videoLoading = false;
   };
 
   const closePreview = () => {
     expanded = false;
-    youtubeLoading = true;
+    videoLoading = true;
     showFullTranscripts = false;
     findInTranscript = '';
   };
@@ -137,19 +157,22 @@
      style:--video-tile-height={videoTileHeight ? videoTileHeight : ''}>
 
   <div class="thumbnail-container">
-    <div hidden={expanded && !youtubeLoading}
+    <div hidden={expanded && !videoLoading}
          transition:fade={{duration: 240}}>
-      <ThumbnailPlayer thumbnail={result.thumbnail}
-                       spinner={expanded && youtubeLoading}
-                       aspectRatio={expanded ? '16/9' : '5/4'}
-                       on:play={playFromStart}/>
+        <ThumbnailPlayer thumbnail={result.thumbnail}
+                         spinner={expanded && videoLoading}
+                         aspectRatio={expanded ? '16/9' : '5/4'}
+                         on:play={playFromStart}/>
     </div>
 
     {#if expanded}
       <div class="youtube-container"
-           class:loading={youtubeLoading}>
+           class:loading={videoLoading}>
         {#if youtubeUri}
           <Youtube time={videoTime} uri={youtubeUri} on:videoReady={onVideoReady} />
+        {/if}
+        {#if videoUri}
+          <Player time={videoTime} src={videoUri} type={videoContentType} on:videoReady={onVideoReady} />
         {/if}
       </div>
     {/if}
