@@ -24,6 +24,13 @@ export interface DisplayedResource {
   sentence?: Search.Paragraph;
 }
 
+export enum FieldType {
+  FILE = 'f',
+  GENERIC = 'a',
+  LINK = 'u',
+  TEXT = 't',
+}
+
 export enum PreviewKind {
   NONE,
   PDF,
