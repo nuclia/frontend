@@ -210,6 +210,10 @@
 
 @media (min-width: 821px) {
   .sw-video-tile {
+    .thumbnail-container {
+      min-width: var(--rhythm-28);
+    }
+
     &.expanded {
       --side-panel-width: var(--rhythm-39);
       --youtube-height: calc((100vw - var(--side-panel-width)) * 9 / 16);

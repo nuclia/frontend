@@ -18,7 +18,10 @@
 </script>
 
 {#if thumbnail}
-  <div class="sw-thumbnail-player" tabindex="-1" on:click={play}>
+  <div class="sw-thumbnail-player"
+       tabindex="-1"
+       in:fade={{ delay: 240 }}
+       on:click={play}>
     <Thumbnail src={thumbnail}
                noBackground
                {aspectRatio}
