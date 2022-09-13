@@ -107,13 +107,21 @@ class GDriveImpl implements ISourceConnector {
       take(1),
       concatMap(() =>
         from(
-          gapi.client.drive.files.list({
-            pageSize,
-            pageToken: nextPageToken,
-            q: query
-              ? `name contains '${query}' and not mimeType = 'application/vnd.google-apps.folder'`
-              : `not mimeType = 'application/vnd.google-apps.folder'`,
-          }),
+          gapi.client.drive.files
+            .list({
+              pageSize,
+              pageToken: nextPageToken,
+              q: query
+                ? `name contains '${query}' and not mimeType = 'application/vnd.google-apps.folder'`
+                : `not mimeType = 'application/vnd.google-apps.folder'`,
+            })
+            .then(
+              (res: any) => res,
+              () => {
+                localStorage.removeItem(TOKEN);
+                throw new Error('Unauthorized');
+              },
+            ),
         ),
       ),
       /* eslint-disable  @typescript-eslint/no-explicit-any */
