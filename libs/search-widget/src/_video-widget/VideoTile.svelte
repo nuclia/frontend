@@ -157,8 +157,7 @@
      style:--video-tile-height={videoTileHeight ? videoTileHeight : ''}>
 
   <div class="thumbnail-container">
-    <div hidden={expanded && !videoLoading}
-         transition:fade={{duration: 240}}>
+    <div hidden={expanded && !videoLoading}>
         <ThumbnailPlayer thumbnail={result.thumbnail}
                          spinner={expanded && videoLoading}
                          aspectRatio={expanded ? '16/9' : '5/4'}
