@@ -656,6 +656,8 @@
 	"upload.takes_time": "Nuclia needs some time to process the files. You can close this dialog box and keep working.",
 	"upload.uploading_files": "<strong>Uploading files.</strong> You can keep working ",
 	"upload.uploading_queue": "Uploading queue",
+	"upload.use_folder_as_labels.help": "First-level folder is the labelset name, subfolders are labels. If subfolders are nested, files will get several labels.",
+	"upload.use_folder_as_labels.label": "Use folder names as labels",
 	"user.logout": "Logout",
 	"validation.email": "Enter a valid email",
 	"validation.language_required": "Select a language",

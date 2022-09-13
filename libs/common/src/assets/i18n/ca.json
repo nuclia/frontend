@@ -501,6 +501,8 @@
 	"upload.select_file": "Arrossegueu els fitxers o feu clic aquí",
 	"upload.takes_time": "Nuclia necessita una estona per a processar els fitxers.",
 	"upload.uploading_queue": "Cua de pujades",
+	"upload.use_folder_as_labels.help": "La carpeta de primer nivell és el nom del conjunt d'etiquetes, les subcarpetes són etiquetes. Si les subcarpetes estan imbricades, els fitxers tindran diverses etiquetes.",
+	"upload.use_folder_as_labels.label": "Utilitzeu noms de carpetes com a etiquetes",
 	"user.logout": "Sortir",
 	"validation.email": "Introdueix un correu electrònic vàlid",
 	"validation.language_required": "Selecciona un idioma",

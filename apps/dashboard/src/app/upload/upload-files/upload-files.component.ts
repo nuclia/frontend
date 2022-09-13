@@ -31,6 +31,7 @@ export class UploadFilesComponent {
   limitsExceeded = false;
   maxFileSize = 0;
   maxMediaFileSize = 0;
+  useFoldersAsLabels = false;
 
   constructor(
     private cdr: ChangeDetectorRef,
