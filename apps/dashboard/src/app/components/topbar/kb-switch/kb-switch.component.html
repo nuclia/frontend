@@ -4,7 +4,7 @@
            sameWidth
            [paPopup]="kbSwitch">
   {{ (kb | async)?.title }}
-  <pa-icon *ngIf="(kb | async)?.state === 'PUBLISHED'" size="small" name="unlock"></pa-icon>
+  <pa-icon *ngIf="(kb | async)?.state !== 'PUBLISHED'" size="small" name="lock"></pa-icon>
 </pa-button>
 
 <pa-dropdown #kbSwitch>
@@ -12,13 +12,11 @@
     <pa-option [disabled]="!kb.role_on_kb"
                iconOnRight
                [paTooltip]="kb.title"
-               [icon]="kb.state === 'PUBLISHED' ? 'unlock' : ''"
+               [icon]="kb.state === 'PUBLISHED' ? '' : 'lock'"
                (selectOption)="goToKb(kb)">{{ kb.title }}</pa-option>
     <pa-separator *ngIf="!last || (last && (showDemo | async))"></pa-separator>
   </ng-container>
   <pa-option *ngIf="showDemo | async"
              class="demo-kb"
-             icon="unlock"
-             iconOnRight
              (selectOption)="goToDemo()">Demo</pa-option>
 </pa-dropdown>
