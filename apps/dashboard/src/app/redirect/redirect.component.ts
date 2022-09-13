@@ -8,17 +8,25 @@ declare var gapi: any;
 declare var google: any;
 
 const AUTHORIZED_REDIRECTS = ['nuclia-desktop://', 'http://localhost:4200'];
+const AUTHORIZED_REDIRECTS_REGEX = [/^chrome\-extension\:\/\/[a-z]+\/options\/options\.html$/];
+
 
 const SCOPES = 'https://www.googleapis.com/auth/drive.metadata.readonly https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 @Component({
-  template: 'Redirecting to Nuclia Desktop…',
+  template:
+    '{{ fromChromeExtension ?  "Redirecting to Nuclia Chrome extension…" : "Redirecting to Nuclia Desktop…" }}',
 })
 export class RedirectComponent {
+  fromChromeExtension = false;
   constructor(private sdk: SDKService, private route: ActivatedRoute) {
     this.route.queryParams.pipe(take(1)).subscribe((params) => {
+      if (params['fromExtension']) {
+        this.fromChromeExtension = true;
+      }
       let redirectUrl: string = params['redirect'] || '';
-      if (!AUTHORIZED_REDIRECTS.includes(redirectUrl)) {
+      const matchRegex = AUTHORIZED_REDIRECTS_REGEX.some(regex => regex.test(redirectUrl));
+      if (!matchRegex && !AUTHORIZED_REDIRECTS.includes(redirectUrl)) {
         console.warn('Redirect URL not authorized');
         return;
       }

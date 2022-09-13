@@ -1,21 +1,36 @@
 body {
-  padding: 0 1rem 1rem;
+  margin: 0;
 }
 
-p {
-  margin: 0 0 2rem 0;
+header {
+  background-color: #0d0d0d;
+}
+header img {
+  height: 48px;
+  padding: 1em 3em;
+}
+
+main {
+  margin: 3em;
+}
+
+h1 {
+  margin-bottom: 2rem;
 }
 
 legend {
+  font-size: 1.125rem;
   font-weight: bold;
 }
 fieldset {
-  border: 1px solid #f0f0f0;
-  margin-bottom: 1em;
+  max-width: 42rem;
+  border: 1px solid #c4c4c4;
+  padding: 1rem;
+  margin-bottom: 2.5rem;
 }
 fieldset p {
-  color: #c4c4c4;
-  margin-bottom: 4px;
+  color: #707070;
+  margin-bottom: 1rem;
 }
 
 .field {
@@ -28,6 +43,7 @@ label {
   margin-bottom: 0.25rem;
 }
 
+select,
 input[type='text'] {
   width: 20rem;
   height: 1.5rem;
@@ -60,25 +76,28 @@ button.secondary {
   color: #c4c4c4;
 }
 
-.message {
+.auth-message {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.submit-message {
   padding-left: 1rem;
   vertical-align: middle;
   font-weight: bold;
 }
 
-header {
-  background-color: #0d0d0d;
-}
-header img {
-  height: 48px;
-  padding: 1em;
-}
-
-body {
-  margin: 0;
-  padding: 0;
+.submit-message:not(:empty)::before {
+  content: "";
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+  background-image: url(data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSIyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWdvbiBmaWxsPSIjNDNkODQzIiAgcG9pbnRzPSI5LjcwNyAxNC4yOTMgMTkgNSAyMC40MTQgNi40MTQgOS43MDcgMTcuMTIxIDQgMTEuNDE0IDUuNDE0IDEwIi8+PC9zdmc+);
+  background-size: cover;
 }
 
-main {
-  margin: 1em;
+.hidden {
+  display: none;
 }

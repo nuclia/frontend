@@ -1,11 +1,10 @@
 try {
-  importScripts('./vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
+  importScripts('./api.js', './vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
 } catch (e) {
   console.error(e);
 }
 
 const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET_`;
-const SETTINGS = ['NUCLIA_KB', 'NUCLIA_ZONE', 'NUCLIA_KEY', 'YOUTUBE_KEY'];
 
 const baseMenuOptions = {
   targetUrlPatterns: ['https://*/*'],
@@ -32,8 +31,8 @@ function createMenu() {
       title: 'Upload to Nuclia',
       ...baseMenuOptions,
     });
-    chrome.storage.local.get(SETTINGS, (settings) => {
-      if (settings.NUCLIA_KB && settings.NUCLIA_ZONE && settings.NUCLIA_KEY) {
+    getSettings().then(() => {
+      if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.NUCLIA_TOKEN) {
         getLabels(settings).subscribe((labelsets) => {
           if (labelsets.length > 0) {
             createSubmenus(labelsets);
@@ -70,8 +69,8 @@ function createSubmenus(labelsets) {
 }
 
 chrome.contextMenus.onClicked.addListener((info) => {
-  chrome.storage.local.get(SETTINGS, (settings) => {
-    if (settings.NUCLIA_KB && settings.NUCLIA_ZONE && settings.NUCLIA_KEY) {
+  getSettings().then((settings) => {
+    if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.NUCLIA_TOKEN) {
       let labels = [];
       if (info.parentMenuItemId && info.parentMenuItemId.startsWith(MENU_LABELSET_PREFIX)) {
         labels.push({
@@ -94,19 +93,20 @@ chrome.contextMenus.onClicked.addListener((info) => {
             getPlaylistVideos(settings, playlistId, labels);
           }
         } else {
-          chrome.runtime.openOptionsPage();
+          openOptionsPage();
         }
       }
     } else {
-      chrome.runtime.openOptionsPage();
+      openOptionsPage();
     }
   });
 });
 
 function getLabels(settings) {
-  return getSDK(settings)
-    .knowledgeBox.getLabels()
+  return getSDK(settings.NUCLIA_TOKEN)
+    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB)
     .pipe(
+      rxjs.switchMap((kb) => kb.getLabels()),
       rxjs.map((labels) =>
         Object.entries(labels)
           .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
@@ -117,9 +117,15 @@ function getLabels(settings) {
 }
 
 function uploadLink(settings, url, labels) {
-  getSDK(settings)
-    .db.getKnowledgeBox()
-    .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })))
+  getSDK(settings.NUCLIA_TOKEN)
+    .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB)
+    .pipe(
+      rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })),
+      rxjs.catchError((e) => {
+        openOptionsPage();
+        throw e;
+      }),
+    )
     .subscribe();
 }
 
@@ -166,16 +172,7 @@ function uploadLinksList(list, labels) {
   if (!list || !list.length || !list.length > 0) {
     return;
   }
-  chrome.storage.local.get(SETTINGS, (settings) => list.forEach((url) => uploadLink(settings, url, labels)));
-}
-
-function getSDK(settings) {
-  return new NucliaSDK.Nuclia({
-    backend: 'https://nuclia.cloud/api',
-    knowledgeBox: settings.NUCLIA_KB,
-    zone: settings.NUCLIA_ZONE,
-    apiKey: settings.NUCLIA_KEY,
-  });
+  getSettings().then((settings) => list.forEach((url) => uploadLink(settings, url, labels)));
 }
 
 function loadPaginated(url, items = [], pageToken = '') {
@@ -200,4 +197,8 @@ function loadPaginated(url, items = [], pageToken = '') {
       })
       .catch(reject),
   );
+}
+
+function openOptionsPage() {
+  chrome.tabs.create({ url: 'options/options.html' });
 }

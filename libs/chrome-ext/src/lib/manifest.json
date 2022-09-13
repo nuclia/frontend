@@ -15,6 +15,12 @@
   },
   "options_ui": {
     "page": "options/options.html",
-    "open_in_tab": false
-  }
+    "open_in_tab": true
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [ "options/options.html" ],
+      "matches": ["http://localhost:4200/*", "https://stashify.cloud/*", "https://nuclia.cloud/*"]
+    }
+  ]
 }
