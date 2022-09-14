@@ -1,4 +1,3 @@
-
 const API_URL = 'https://nuclia.cloud/api';
 const DASHBOARD_URL = 'https://nuclia.cloud';
 
@@ -8,11 +7,14 @@ const SETTINGS = { NUCLIA_ACCOUNT: '', NUCLIA_KB: '', NUCLIA_TOKEN: '', YOUTUBE_
 localStorage = getStorage();
 
 function getSDK(token) {
-  const sdk = new NucliaSDK.Nuclia({ backend: API_URL });
+  const sdk = new NucliaSDK.Nuclia({
+    backend: API_URL,
+    client: 'chrome_extension',
+  });
   sdk.auth.authenticate({
     access_token: token,
     refresh_token: '', // At the moment we don't mind about token refresh
-  })
+  });
   return sdk;
 }
 

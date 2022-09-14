@@ -31,7 +31,7 @@ function createMenu() {
       title: 'Upload to Nuclia',
       ...baseMenuOptions,
     });
-    getSettings().then(() => {
+    getSettings().then((settings) => {
       if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.NUCLIA_TOKEN) {
         getLabels(settings).subscribe((labelsets) => {
           if (labelsets.length > 0) {
