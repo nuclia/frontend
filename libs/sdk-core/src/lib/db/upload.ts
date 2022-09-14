@@ -50,6 +50,7 @@ export interface FileUploadStatus {
 export interface FileWithMetadata extends File {
   lang?: string;
   md5?: string;
+  payload?: ICreateResource;
 }
 
 export interface FileMetadata {
@@ -65,7 +66,6 @@ export const upload = (
   data: File | FileWithMetadata | ArrayBuffer,
   TUS: boolean,
   metadata: FileMetadata = {},
-  creationPayload?: ICreateResource,
 ): Observable<UploadResponse> => {
   if (!metadata.contentType && !(data instanceof ArrayBuffer)) {
     metadata.contentType = data?.type;
@@ -81,7 +81,9 @@ export const upload = (
   }
   return (data instanceof ArrayBuffer ? of(data) : from(data.arrayBuffer())).pipe(
     switchMap((buff) =>
-      TUS ? TUSuploadFile(nuclia, path, buff, metadata, creationPayload) : uploadFile(nuclia, path, buff, metadata),
+      TUS
+        ? TUSuploadFile(nuclia, path, buff, metadata, (data as FileWithMetadata).payload)
+        : uploadFile(nuclia, path, buff, metadata),
     ),
   );
 };
@@ -213,7 +215,6 @@ export const batchUpload = (
   path: string,
   files: FileList | File[] | FileWithMetadata[],
   isResource = false,
-  creationPayload?: ICreateResource,
 ): Observable<UploadStatus> => {
   const fileList = Array.from(files);
   const totalSize = fileList.reduce((acc, file) => acc + (file.size || 0), 0);
@@ -234,10 +235,12 @@ export const batchUpload = (
       fieldIds.push(fieldId);
       uploadPath = `${uploadPath}/file/${fieldId}`;
     }
-    const payload: ICreateResource | undefined = (file as FileWithMetadata).lang
-      ? { ...creationPayload, metadata: { ...creationPayload?.metadata, language: (file as FileWithMetadata).lang } }
-      : creationPayload;
-    return upload(nuclia, uploadPath, file, true, {}, payload).pipe(
+    const lang = (file as FileWithMetadata).lang;
+    if (lang) {
+      const payload = (file as FileWithMetadata).payload || {};
+      (file as FileWithMetadata).payload = { ...payload, metadata: { ...payload?.metadata, language: lang } };
+    }
+    return upload(nuclia, uploadPath, file, true, {}).pipe(
       startWith({ progress: 0, completed: false } as UploadResponse),
       map((status) => ({ status, file: file })),
     );

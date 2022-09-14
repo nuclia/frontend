@@ -110,7 +110,12 @@ export class UploadFilesComponent {
       if (this.selectedLabels.length > 0) {
         payload.usermetadata = { classifications: this.selectedLabels };
       }
-      this.uploadService.uploadFiles(files, payload);
+      this.uploadService.uploadFiles(
+        files.map((f) => {
+          f.payload = payload;
+          return f;
+        }),
+      );
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
       this.close.emit();
