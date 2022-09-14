@@ -20,7 +20,7 @@
   import Player from '../viewer/previewers/Player.svelte';
   import { Duration } from './transition.utils';
 
-  export let result: IResource = { id: '' };
+  export let result: IResource = {id: ''};
 
   let innerWidth = window.innerWidth;
 
@@ -83,15 +83,17 @@
 
   const playParagraph = (paragraph) => {
     playFrom(paragraph.start, paragraph);
+    paragraphInPlay = paragraph;
   };
 
   const playTranscript = (paragraph) => {
-    videoTime = paragraph.start;
+    videoTime = paragraph.start || 0;
+    paragraphInPlay = paragraph;
   };
 
   const isFileOrLink = (fieldType: string): boolean => {
     return fieldType === FieldType.FILE || fieldType === FieldType.LINK;
-  }
+  };
 
   const playFrom = (time: number, selectedParagraph?: Search.Paragraph) => {
     videoTime = time;
@@ -101,7 +103,6 @@
       : matchingParagraphs.pipe(map((paragraphList) => paragraphList.filter(p => isFileOrLink(p.field_type))[0] || paragraphList[0]));
     if (!resource) {
       resource = paragraph$.pipe(
-        tap((paragraph) => (paragraphInPlay = paragraph as MediaWidgetParagraph)),
         switchMap((paragraph) =>
           getResource(result.id).pipe(
             tap((res) => {
@@ -131,7 +132,7 @@
 
   const setupExpandedTile = () => {
     videoTileHeight = `${videoTileElement.offsetHeight}px`;
-  }
+  };
 
   const onVideoReady = () => {
     videoLoading = false;
@@ -141,6 +142,7 @@
     expanded = false;
     videoLoading = true;
     showFullTranscripts = false;
+    paragraphInPlay = undefined;
     findInTranscript = '';
   };
 
@@ -158,20 +160,20 @@
 
   <div class="thumbnail-container">
     <div hidden={expanded && !videoLoading}>
-        <ThumbnailPlayer thumbnail={result.thumbnail}
-                         spinner={expanded && videoLoading}
-                         aspectRatio={expanded ? '16/9' : '5/4'}
-                         on:play={playFromStart}/>
+      <ThumbnailPlayer thumbnail={result.thumbnail}
+                       spinner={expanded && videoLoading}
+                       aspectRatio={expanded ? '16/9' : '5/4'}
+                       on:play={playFromStart}/>
     </div>
 
     {#if expanded}
       <div class="youtube-container"
            class:loading={videoLoading}>
         {#if youtubeUri}
-          <Youtube time={videoTime} uri={youtubeUri} on:videoReady={onVideoReady} />
+          <Youtube time={videoTime} uri={youtubeUri} on:videoReady={onVideoReady}/>
         {/if}
         {#if videoUri}
-          <Player time={videoTime} src={videoUri} type={videoContentType} on:videoReady={onVideoReady} />
+          <Player time={videoTime} src={videoUri} type={videoContentType} on:videoReady={onVideoReady}/>
         {/if}
       </div>
     {/if}
@@ -201,7 +203,7 @@
       <div class="find-bar-container"
            tabindex="0"
            hidden="{!expanded}">
-        <Icon name="search" />
+        <Icon name="search"/>
         <input class="find-input"
                type="text"
                autocomplete="off"
@@ -236,7 +238,7 @@
             </div>
             <div tabindex="-1"
                  class="transcript-expander-header-chevron">
-              <Icon name="chevron-right" />
+              <Icon name="chevron-right"/>
             </div>
           </div>
         {/if}
@@ -252,6 +254,7 @@
                                ellipsis={!expanded}
                                minimized={isMobile && !expanded}
                                stack={expanded}
+                               selected={paragraph === paragraphInPlay}
                                on:play={(event) => playParagraph(event.detail.paragraph)}/>
             {/each}
           </ul>
@@ -269,7 +272,7 @@
           <strong>Full transcript</strong>
         </div>
         <div tabindex="-1" class="transcript-expander-header-chevron">
-          <Icon name="chevron-right" />
+          <Icon name="chevron-right"/>
         </div>
       </div>
       {#if showFullTranscripts}
@@ -278,11 +281,10 @@
              out:slide={{duration: defaultTransitionDuration}}>
           <ul class="paragraphs-container">
             {#each filteredTranscripts as paragraph}
-              <ParagraphPlayer
-                {paragraph}
-                selected={paragraph === paragraphInPlay}
-                stack
-                on:play={(event) => playTranscript(event.detail.paragraph)}
+              <ParagraphPlayer {paragraph}
+                               selected={paragraph === paragraphInPlay}
+                               stack
+                               on:play={(event) => playTranscript(event.detail.paragraph)}
               />
             {/each}
           </ul>
