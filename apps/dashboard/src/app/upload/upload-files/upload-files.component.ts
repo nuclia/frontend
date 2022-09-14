@@ -146,7 +146,7 @@ export class UploadFilesComponent {
         if (path.length < 3) {
           return file;
         }
-        const labelset = path[0];
+        const labelset = STFUtils.generateUniqueSlug(path[0], []);
         const payload: ICreateResource = {
           usermetadata: {
             classifications: path.slice(1, -1).map((label) => ({
