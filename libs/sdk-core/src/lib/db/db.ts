@@ -38,6 +38,10 @@ export class Db implements IDb {
     return this.nuclia.rest.patch<void>(`/account/${account}`, data);
   }
 
+  deleteAccount(account: string): Observable<void> {
+    return this.nuclia.rest.delete(`/account/${account}`);
+  }
+
   getAccountStatus(account: string): Observable<AccountStatus> {
     return this.nuclia.rest.get<AccountStatus>(`/account/${account}/status`);
   }

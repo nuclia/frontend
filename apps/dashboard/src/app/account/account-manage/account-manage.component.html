@@ -57,4 +57,31 @@
       </div>
     </div>
   </div>
+
+  <div class="section">
+    <div class="section-container">
+      <h2>{{ 'account.delete_account' | translate }}</h2>
+
+      <div class="dangerous-zone">
+        <div class="dangerous-zone-title">{{ 'generic.dangerous' | translate }}</div>
+        <div class="dangerous-zone-warning">
+          <div>{{ 'account.delete_account_warning_1' | translate: { account: account?.title || '' } }}</div>
+          <ul>
+            <li>{{ 'account.delete_account_warning_2' | translate }}</li>
+            <li>{{ 'account.delete_account_warning_3' | translate }}</li>
+            <li>{{ 'account.delete_account_warning_4' | translate }}</li>
+          </ul>
+        </div>
+        <pa-button kind="destructive"
+                   icon="trash"
+                   iconAndText
+                   (click)="deleteAccount()">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
+      </div>
+
+    </div>
+  </div>
+
+
 </div>
