@@ -95,8 +95,12 @@
   }
 
   &.expanded .side-panel {
-    overflow: auto;
     padding: var(--rhythm-2);
+
+    .scrollable-area {
+      min-height: var(--rhythm-6);
+      overflow: auto;
+    }
   }
 
   &.expanded .transcript-container {
@@ -109,10 +113,6 @@
     display: flex;
     justify-content: space-between;
     padding: var(--rhythm-1_5);
-
-    &.with-spacing {
-      margin: 0 0 var(--rhythm-1);
-    }
 
     // remove the focus style when clicking
     &:focus:not(:focus-visible) {
@@ -236,13 +236,10 @@
     &.expanded .find-bar-container {
       align-items: center;
       background: var(--color-light-stronger);
-      border-bottom: var(--find-input-margin) solid var(--expanded-background-color);
       display: flex;
       gap: var(--rhythm-1);
+      margin-bottom: var(--find-input-margin);
       padding-left: var(--rhythm-1);
-      position: sticky;
-      top: 0;
-      z-index: 1;
     }
 
     &.expanded .find-bar-container .find-input {
@@ -263,13 +260,9 @@
 
     &.expanded .search-result-paragraphs {
       --full-transcript-header: var(--rhythm-8);
-      border-bottom: var(--rhythm-1) solid var(--expanded-background-color);
       min-height: var(--rhythm-6);
       max-height: calc(100% - var(--find-input-height) - var(--find-input-margin) - var(--full-transcript-header));
       overflow: auto;
-      position: sticky;
-      top: calc(var(--find-input-height) + var(--find-input-margin));
-      z-index: 1;
     }
 
     &.expanded .on-animation {

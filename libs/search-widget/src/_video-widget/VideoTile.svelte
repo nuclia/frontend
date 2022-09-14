@@ -202,8 +202,7 @@
         {/if}
       </header>
 
-      <div class:side-panel={expanded}
-           class:on-animation={animatingShowFullTranscript}>
+      <div class:side-panel={expanded}>
         <div class="find-bar-container"
              tabindex="0"
              hidden="{!expanded}">
@@ -264,36 +263,40 @@
             </ul>
           {/if}
         </div>
-        <div hidden="{!expanded}"
-             tabindex="0"
-             class="transcript-expander-header with-spacing"
-             class:expanded={showFullTranscripts}
-             on:click={toggleTranscriptPanel}
-             on:keyup={(e) => {
+
+        <div class="scrollable-area"
+             class:on-animation={animatingShowFullTranscript}>
+          <div hidden="{!expanded}"
+               tabindex="0"
+               class="transcript-expander-header"
+               class:expanded={showFullTranscripts}
+               on:click={toggleTranscriptPanel}
+               on:keyup={(e) => {
              if (e.key === 'Enter') toggleTranscriptPanel();
            }}>
-          <div tabindex="-1" class="transcript-expander-header-title">
-            <strong>Full transcript</strong>
+            <div tabindex="-1" class="transcript-expander-header-title">
+              <strong>Full transcript</strong>
+            </div>
+            <div tabindex="-1" class="transcript-expander-header-chevron">
+              <Icon name="chevron-right"/>
+            </div>
           </div>
-          <div tabindex="-1" class="transcript-expander-header-chevron">
-            <Icon name="chevron-right"/>
-          </div>
+          {#if showFullTranscripts}
+            <div class="full-transcript-container transcript-container"
+                 in:slide={{duration: defaultTransitionDuration, delay: defaultTransitionDuration}}
+                 out:slide={{duration: defaultTransitionDuration}}>
+              <ul class="paragraphs-container">
+                {#each filteredTranscripts as paragraph}
+                  <ParagraphPlayer {paragraph}
+                                   selected={paragraph === paragraphInPlay}
+                                   stack
+                                   on:play={(event) => playTranscript(event.detail.paragraph)}
+                  />
+                {/each}
+              </ul>
+            </div>
+          {/if}
         </div>
-        {#if showFullTranscripts}
-          <div class="full-transcript-container transcript-container"
-               in:slide={{duration: defaultTransitionDuration, delay: defaultTransitionDuration}}
-               out:slide={{duration: defaultTransitionDuration}}>
-            <ul class="paragraphs-container">
-              {#each filteredTranscripts as paragraph}
-                <ParagraphPlayer {paragraph}
-                                 selected={paragraph === paragraphInPlay}
-                                 stack
-                                 on:play={(event) => playTranscript(event.detail.paragraph)}
-                />
-              {/each}
-            </ul>
-          </div>
-        {/if}
       </div>
 
       {#if !expanded && $matchingParagraphs.length > 4}
