@@ -9,6 +9,7 @@
   max-width: var(--rhythm-9);
   padding: 0 var(--rhythm-1_5) 0 var(--rhythm-1);
   position: relative;
+  transition: background-color var(--transition-superfast);
 
   &.minimized {
     border-radius: 50%;

@@ -43,13 +43,13 @@
   .paragraphs-container {
     display: flex;
     flex-direction: column;
-    gap: var(--paragraph-gap);
     list-style: none;
     margin: 0;
     padding: 0;
   }
 
   &:not(.expanded) .result-details .paragraphs-container {
+    gap: var(--paragraph-gap);
     height: calc(
       var(--paragraph-height) * var(--paragraph-count) + var(--paragraph-gap) * (var(--paragraph-count) - 1)
     );
@@ -63,10 +63,6 @@
 
   &.expanded {
     --header-height: var(--rhythm-7);
-
-    &:not(.showFullTranscripts) {
-      --paragraph-gap: var(--rhythm-3);
-    }
 
     background: var(--expanded-background-color);
     padding-top: var(--header-height);
@@ -105,7 +101,6 @@
 
   &.expanded .transcript-container {
     background: var(--color-light-stronger);
-    padding: var(--rhythm-1_5);
   }
 
   &.expanded .transcript-expander-header {
@@ -113,9 +108,9 @@
     cursor: pointer;
     display: flex;
     justify-content: space-between;
+    padding: var(--rhythm-1_5);
 
     &.with-spacing {
-      padding: var(--rhythm-1_5);
       margin: 0 0 var(--rhythm-1);
     }
 
@@ -269,7 +264,7 @@
     &.expanded .search-result-paragraphs {
       --full-transcript-header: var(--rhythm-8);
       border-bottom: var(--rhythm-1) solid var(--expanded-background-color);
-      min-height: var(--rhythm-3);
+      min-height: var(--rhythm-6);
       max-height: calc(100% - var(--find-input-height) - var(--find-input-margin) - var(--full-transcript-header));
       overflow: auto;
       position: sticky;
