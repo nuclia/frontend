@@ -25,7 +25,7 @@ import {
   mapTo,
   map,
 } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
+import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
 
 @Component({
   selector: 'nde-select-files',
@@ -35,6 +35,7 @@ import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
 })
 export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   @Input() source: ISourceConnector | undefined;
+  @Input() sourceId?: string;
   @Input() selection: SelectionModel<SyncItem>;
   @Output() selectionChange = new EventEmitter<SelectionModel<SyncItem>>();
   @Output() next = new EventEmitter<void>();
@@ -59,9 +60,10 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
       concat(
         (this.source as ISourceConnector).getFiles(this.query).pipe(
           catchError((error) => {
-            if (this.source && error.status === 403) {
+            if (this.source && (error.message = 'Unauthorized' || error.status === 403)) {
+              localStorage.setItem(SOURCE_ID_KEY, this.sourceId || '');
               if (this.source.hasServerSideAuth) {
-                this.source.goToOAuth();
+                this.source.goToOAuth(true);
               }
               return this.source.authenticate().pipe(mapTo({ items: [], nextPage: undefined }));
             } else {

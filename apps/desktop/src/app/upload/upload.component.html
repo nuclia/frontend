@@ -13,6 +13,7 @@
     </ng-container>
     <ng-container *ngIf="step === 1">
       <nde-select-files [source]="source"
+                        [sourceId]="sourceId"
                         (next)="goTo(2)"
                         [(selection)]="selection"
                         (cancel)="cancel()"></nde-select-files>

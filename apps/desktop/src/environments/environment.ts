@@ -12,7 +12,7 @@ export const environment = {
       CLIENT_ID: 'FAKE',
     },
     gdrive: {
-      CLIENT_ID: 'FAKE',
+      endpoint: 'https://stashify.cloud/api/external_auth/gdrive/authorize',
       API_KEY: 'FAKE',
     },
     nucliacloud: {
