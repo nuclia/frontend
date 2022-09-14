@@ -27,7 +27,7 @@
     font-family: inherit;
     outline: none;
     color: inherit;
-    background-color: var(--color-neutral-lightest);
+    background-color: var(--color-neutral-background);
     background-position: 0.75em center;
     background-repeat: no-repeat;
     text-overflow: ellipsis;
@@ -69,6 +69,6 @@
   }
   select:focus-visible {
     outline: 0;
-    color: var(--color-neutral-strong);
+    color: var(--color-neutral-regular);
   }
 }

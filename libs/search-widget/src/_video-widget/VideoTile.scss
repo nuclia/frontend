@@ -1,7 +1,7 @@
 .sw-video-tile {
   --paragraph-height: var(--rhythm-4);
   --paragraph-gap: var(--rhythm-0_5);
-  --expanded-background-color: var(--color-neutral-light);
+  --expanded-background-color: var(--color-neutral-lighter);
 
   display: flex;
   flex-direction: column;
@@ -290,6 +290,6 @@
 }
 @media (hover: hover) {
   .sw-video-tile .all-result-toggle:hover {
-    color: var(--color-neutral-strong);
+    color: var(--color-dark-stronger);
   }
 }

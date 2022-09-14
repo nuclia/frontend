@@ -51,7 +51,7 @@
   }
 
   &.solid:not(:disabled):active {
-    background: var(--color-neutral-regular);
+    background: var(--color-neutral-light);
   }
 
   &.basic {
@@ -60,9 +60,9 @@
     border: var(--color-dark-stronger);
   }
   &.basic:not(:disabled):hover {
-    background: var(--color-neutral-lighter);
+    background: var(--color-neutral-lightest);
   }
   &.basic:not(:disabled):active {
-    background: var(--color-neutral-light);
+    background: var(--color-neutral-lighter);
   }
 }

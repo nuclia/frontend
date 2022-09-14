@@ -17,7 +17,7 @@
   }
 
   input::placeholder {
-    color: var(--color-neutral-strong);
+    color: var(--color-neutral-regular);
     transition: all 0s ease;
   }
 
@@ -77,7 +77,7 @@
 
   .powered-by {
     align-items: center;
-    color: var(--color-neutral-regular);
+    color: var(--color-neutral-light);
     display: flex;
     gap: var(--rhythm-0_5);
     position: absolute;

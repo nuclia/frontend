@@ -1,6 +1,6 @@
 .sw-time-player {
   align-items: center;
-  background: var(--color-neutral-lightest);
+  background: var(--color-neutral-background);
   border-radius: var(--rhythm-4);
   cursor: pointer;
   display: flex;
@@ -19,7 +19,7 @@
   }
 
   &:active {
-    background: var(--color-neutral-regular);
+    background: var(--color-neutral-light);
   }
   &:focus {
     box-shadow: var(--focus-shadow);
@@ -40,6 +40,6 @@
 }
 @media (hover: hover) {
   .sw-time-player:not(.hovering):hover {
-    background: var(--color-neutral-light);
+    background: var(--color-neutral-lighter);
   }
 }
