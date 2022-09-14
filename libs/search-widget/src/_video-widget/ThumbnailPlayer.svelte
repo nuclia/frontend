@@ -16,6 +16,11 @@
   const play = () => {
     dispatch('play');
   };
+
+  const onLoad = () => {
+    loaded = true;
+    dispatch('loaded');
+  }
 </script>
 
 {#if thumbnail}
@@ -26,7 +31,7 @@
     <Thumbnail src={thumbnail}
                noBackground
                {aspectRatio}
-               on:loaded={() => (loaded = true)} />
+               on:loaded={onLoad} />
 
     {#if loaded}
       <div class="action-container"
