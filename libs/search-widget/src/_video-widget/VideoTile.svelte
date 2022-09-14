@@ -152,7 +152,6 @@
 <svelte:window bind:innerWidth/>
 <div class="sw-video-tile"
      class:expanded
-     class:showAllResults
      class:showFullTranscripts
      bind:this={videoTileElement}
      style:--video-tile-height={videoTileHeight ? videoTileHeight : ''}>

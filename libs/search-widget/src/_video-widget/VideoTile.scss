@@ -53,11 +53,11 @@
     height: calc(
       var(--paragraph-height) * var(--paragraph-count) + var(--paragraph-gap) * (var(--paragraph-count) - 1)
     );
+    overflow: hidden;
     transition: height var(--transition-fast);
 
     &.can-expand:not(.expanded) {
       height: calc(var(--paragraph-height) * 4 + var(--paragraph-gap) * 3);
-      overflow: hidden;
     }
   }
 

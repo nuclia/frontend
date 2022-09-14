@@ -80,7 +80,8 @@
   /* TRANSITIONS */
   --transition-superfast: 0.16s ease-in-out;
   --transition-fast: 0.24s ease;
-  --transition-moderate: 0.480s ease;
+  --transition-moderate: 0.48s ease;
+  --transition-slow: 0.8s cubic-bezier(0.6, 0, 0.4, 1);
 
 
   /* TOKEN */
