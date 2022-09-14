@@ -106,16 +106,8 @@ export class UploadFilesComponent {
     const files = this.getAllowedFiles();
     if (files.length > 0) {
       this.upload.emit();
-      const payload: ICreateResource = {};
-      if (this.selectedLabels.length > 0) {
-        payload.usermetadata = { classifications: this.selectedLabels };
-      }
-      this.uploadService.uploadFiles(
-        files.map((f) => {
-          f.payload = payload;
-          return f;
-        }),
-      );
+      const labelledFiles = this.setLabels(files);
+      this.uploadService.uploadFiles(labelledFiles);
       this.tracking.logEvent(this.folderMode ? 'folder_upload' : 'file_upload');
     } else {
       this.close.emit();
@@ -143,5 +135,36 @@ export class UploadFilesComponent {
     });
     this.pendingLangs = this.getPendingLangs();
     this.cdr.markForCheck();
+  }
+
+  private setLabels(files: FileWithMetadata[]): FileWithMetadata[] {
+    if (this.useFoldersAsLabels) {
+      files = files.map((file) => {
+        const path = file.webkitRelativePath.split('/');
+        // we need at least a labelset and a label, like:
+        // labelset/label/filename
+        if (path.length < 3) {
+          return file;
+        }
+        const labelset = path[0];
+        const payload: ICreateResource = {
+          usermetadata: {
+            classifications: path.slice(1, -1).map((label) => ({
+              labelset,
+              label,
+            })),
+          },
+        };
+        file.payload = payload;
+        return file;
+      });
+    } else if (this.selectedLabels.length > 0) {
+      const payload: ICreateResource = { usermetadata: { classifications: this.selectedLabels } };
+      files = files.map((file) => {
+        file.payload = payload;
+        return file;
+      });
+    }
+    return files;
   }
 }
