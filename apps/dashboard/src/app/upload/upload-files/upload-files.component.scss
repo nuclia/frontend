@@ -29,10 +29,10 @@ h1 {
 }
 
 .dropzone {
-  margin-bottom: 30px;
+  margin-bottom: rhythm(4);
   border: 2px dashed #ccc;
   color: rgba(0, 0, 0, 0.5);
-  min-height: 94px;
+  min-height: rhythm(12);
   cursor: pointer;
   transition: border-color 0.15s;
   span {
@@ -47,7 +47,7 @@ h1 {
 }
 
 app-label-field {
-  margin-bottom: 36px;
+  margin-bottom: rhythm(4);
 }
 
 .file-list {
@@ -60,25 +60,25 @@ app-label-field {
 .file-item {
   display: flex;
   align-items: center;
-  height: 37px;
-  margin-right: 10px;
+  height: rhythm(4);
+  margin-right: rhythm(1);
   border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
   &:first-child {
     border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
   }
   .file-select {
-    flex: 0 0 24px;
+    flex: 0 0 rhythm(3);
   }
   .file-name {
     flex: 0 1 290px;
     @include text-truncate();
-    padding-right: 20px;
+    padding-right: rhythm(2);
   }
   .file-size {
-    flex: 0 0 80px;
+    flex: 0 0 rhythm(10);
   }
   .file-lang {
-    flex: 1 0 50px;
+    flex: 1 0 rhythm(6);
     text-align: center;
   }
   .file-actions {
@@ -88,7 +88,7 @@ app-label-field {
 
 .select-language {
   &-warning {
-    margin-bottom: 20px;
+    margin-bottom: rhythm(2);
     font-weight: var(--stf-font-weight-semibold);
     svg {
       display: block;
@@ -97,6 +97,14 @@ app-label-field {
 
   select {
     min-width: 200px;
-    margin-bottom: 4px;
+    margin-bottom: rhythm(0.5);
+  }
+}
+
+pa-toggle {
+  display: block;
+  margin-bottom: rhythm(1);
+  ::ng-deep .pa-field .pa-toggle-label-container {
+    margin-left: 0 !important;
   }
 }

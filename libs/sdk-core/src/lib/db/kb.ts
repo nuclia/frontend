@@ -229,11 +229,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return upload(this.nuclia, `/kb/${this.id}`, data, !!TUS, metadata);
   }
 
-  batchUpload(
-    files: FileList | File[] | FileWithMetadata[],
-    createPayload?: ICreateResource,
-  ): Observable<UploadStatus> {
-    return batchUpload(this.nuclia, `/kb/${this.id}`, files, false, createPayload);
+  batchUpload(files: FileList | File[] | FileWithMetadata[]): Observable<UploadStatus> {
+    return batchUpload(this.nuclia, `/kb/${this.id}`, files, false);
   }
 
   getServiceAccounts(): Observable<ServiceAccount[]> {

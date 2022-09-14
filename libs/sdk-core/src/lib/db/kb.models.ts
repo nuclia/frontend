@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
+import type { IResource, LinkField, UserMetadata } from './resource.models';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from './upload';
 import type { Search } from './search.models';
 import type { Resource } from './resource';
@@ -90,10 +90,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
     TUS?: boolean,
     metadata?: FileMetadata,
   ): Observable<UploadResponse>;
-  batchUpload(
-    files: FileList | File[] | FileWithMetadata[],
-    creationPayload?: ICreateResource,
-  ): Observable<UploadStatus>;
+  batchUpload(files: FileList | File[] | FileWithMetadata[]): Observable<UploadStatus>;
   getServiceAccounts(): Observable<ServiceAccount[]>;
   createServiceAccount(data: ServiceAccountCreation): Observable<void>;
   deleteServiceAccount(saId: string): Observable<void>;
