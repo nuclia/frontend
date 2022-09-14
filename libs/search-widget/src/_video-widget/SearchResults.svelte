@@ -2,18 +2,21 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { forkJoin, map, switchMap, take } from 'rxjs';
+  import { debounceTime, forkJoin, map, switchMap, take } from 'rxjs';
   import { nucliaState, nucliaStore } from '../core/store';
   import { loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
   import LoadingDots from '../components/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
   import globalCss from './_global.scss';
+  import { fade } from 'svelte/transition';
+  import { Duration } from './transition.utils';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
+  const showLoading = pendingResults.pipe(debounceTime(2000));
   let svgSprite;
 
   const enhancedResults = results.pipe(
@@ -53,11 +56,14 @@
         <span>{$_('error.search-beta')}</span>
       </div>
     {:else if $pendingResults}
-      <LoadingDots />
+      {#if $showLoading}
+        <LoadingDots />
+      {/if}
     {:else if $results.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      <div class="results">
+      <div class="results"
+           transition:fade={{duration: Duration.SUPERFAST}}>
         {#each $paragraphResults as result}
           <VideoTile {result} />
         {/each}

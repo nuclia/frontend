@@ -18,6 +18,7 @@
   import Icon from './Icon.svelte';
   import { fade, slide } from 'svelte/transition';
   import Player from '../viewer/previewers/Player.svelte';
+  import { Duration } from './transition.utils';
 
   export let result: IResource = { id: '' };
 
@@ -69,7 +70,7 @@
   };
 
   $: isMobile = innerWidth < 448;
-  $: defaultTransitionDuration = expanded ? 480 : 0;
+  $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: isExpandedFullScreen = innerWidth < 820;
   $: filteredMatchingParagraphs = !findInTranscript
     ? matchingParagraphs
@@ -179,7 +180,7 @@
     {#if $resource}
       <div class="summary-container"
            hidden="{!expanded}"
-           transition:fade={{duration: 160}}>
+           transition:fade={{duration: Duration.SUPERFAST}}>
         <div class="summary">{summary}</div>
       </div>
     {/if}
@@ -189,7 +190,7 @@
     <header>
       <h3 class="ellipsis">{result?.title}</h3>
       {#if expanded}
-        <div in:fade={{duration: 240}}>
+        <div in:fade={{duration: Duration.FAST}}>
           <CloseButton aspect="basic"
                        on:click={closePreview}/>
         </div>

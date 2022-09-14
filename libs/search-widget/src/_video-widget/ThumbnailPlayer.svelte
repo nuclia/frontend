@@ -4,6 +4,7 @@
   import Icon from './Icon.svelte';
   import { fade } from 'svelte/transition';
   import Spinner from '../components/spinner/Spinner.svelte';
+  import { Duration } from './transition.utils';
 
   export let thumbnail = '';
   export let aspectRatio;
@@ -20,7 +21,7 @@
 {#if thumbnail}
   <div class="sw-thumbnail-player"
        tabindex="-1"
-       in:fade={{ delay: 240 }}
+       in:fade={{ delay: Duration.SUPERFAST }}
        on:click={play}>
     <Thumbnail src={thumbnail}
                noBackground
@@ -31,7 +32,7 @@
       <div class="action-container"
            class:play-icon={!spinner}
            tabindex="0"
-           in:fade={{ delay: 240 }}
+           in:fade={{ delay: Duration.SUPERFAST }}
            on:keyup={(e) => {
              if (e.key === 'Enter') play();
            }}>
