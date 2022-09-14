@@ -155,17 +155,10 @@
     &:not(.expanded) {
       --width-thumbnail: var(--rhythm-28);
 
-      align-items: center;
-
       .result-details {
         flex: 1 0 auto;
         width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
       }
-    }
-
-    h3 {
-      font-size: var(--font-size-title-m);
-      line-height: var(--line-height-title-m);
     }
 
     .thumbnail-container {
