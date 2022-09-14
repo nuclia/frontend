@@ -11,5 +11,11 @@
 .results {
   display: flex;
   flex-direction: column;
-  gap: var(--rhythm-3);
+  gap: var(--rhythm-2);
+}
+
+@media (min-width: 648px) {
+  .results {
+    gap: var(--rhythm-1);
+  }
 }
