@@ -95,10 +95,6 @@
     display: none;
   }
 
-  &.expanded .search-result-paragraphs {
-    box-shadow: inset 0 -1px 0 0  var(--expanded-background-color);
-  }
-
   &.expanded .side-panel .scrollable-area {
     min-height: var(--collapsible-header-height);
     overflow: auto;
@@ -195,7 +191,7 @@
         width: 100%;
 
         .scrollable-area {
-          max-height: calc(var(--side-panel-height) - var(--collapsible-header-height));
+          max-height: calc(var(--side-panel-height) - var(--collapsible-header-height)*2);
         }
 
         .search-result-paragraphs {
@@ -230,7 +226,13 @@
     }
 
     &.expanded .result-details {
-      max-height: calc(var(--video-tile-height) - var(--header-height) - var(--rhythm-2));
+      --result-details-height: calc(var(--video-tile-height) - var(--header-height) - var(--rhythm-2));
+      max-height: var(--result-details-height);
+
+      .scrollable-area {
+        max-height: calc(var(--result-details-height) - var(--collapsible-header-height)*3);
+        overflow: auto;
+      }
     }
     &.expanded .side-panel {
       --find-input-height: var(--rhythm-5);
@@ -273,6 +275,10 @@
       min-height: var(--collapsible-header-height);
       max-height: calc(100% - var(--find-input-height) - var(--find-input-margin) - var(--full-transcript-header));
       overflow: auto;
+    }
+
+    &.expanded .full-transcript-container {
+      min-height: var(--collapsible-header-height);
     }
 
     &.expanded .on-animation {

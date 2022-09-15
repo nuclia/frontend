@@ -272,7 +272,7 @@
           {/if}
         </div>
 
-        <div class="scrollable-area"
+        <div class="full-transcript-container"
              class:on-animation={animatingShowFullTranscript}>
           <div hidden="{!expanded}"
                tabindex="0"
@@ -290,7 +290,7 @@
             </div>
           </div>
           {#if showFullTranscripts}
-            <div class="full-transcript-container transcript-container"
+            <div class="transcript-container scrollable-area"
                  in:slide={{duration: defaultTransitionDuration, delay: defaultTransitionDuration}}
                  out:slide={{duration: defaultTransitionDuration}}>
               <ul class="paragraphs-container">
