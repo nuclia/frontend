@@ -118,24 +118,6 @@ export class LoginComponent {
     this.document.location.href = this.googleService.getGoogleLoginUrl();
   }
 
-  checkSAML(email: string) {
-    if (this.config.getSAMLLogin()) {
-      const parts = email.split('@');
-      const domain = parts.length > 1 ? parts.pop() : null;
-      if (domain && domain.length > 0) {
-        this.samlService.checkDomain(domain).subscribe(
-          (result) => {
-            const challenge = this.oauth ? this.loginChallenge : undefined;
-            this.document.location.href = this.samlService.ssoUrl(result.account_id, challenge);
-          },
-          () => {
-            // Continue
-          },
-        );
-      }
-    }
-  }
-
   recoverPassword(event: any) {
     event.preventDefault();
     this.router.navigate(['../recover'], {
