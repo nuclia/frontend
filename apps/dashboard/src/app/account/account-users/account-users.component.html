@@ -49,7 +49,7 @@
         <pa-dropdown #roleDropdown>
           <pa-option *ngFor="let role of roleTranslations | keyvalue"
                      [value]="role.key"
-                     (selectOption)="changeRole(user, $event)">
+                     (selectOption)="changeRole(user, role.key)">
             {{ role.value | translate }}
           </pa-option>
         </pa-dropdown>

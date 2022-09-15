@@ -10,6 +10,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subject, Observable } from 'rxjs';
 import { switchMap, concatMap, takeUntil, tap, filter, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
 import { ZoneService, Zone } from '@flaps/core';
@@ -18,6 +19,9 @@ import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { SectionInfo, Sluggable } from '@flaps/common';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { NavigationService } from '../../services/navigation.service';
+import { TranslateService } from '@ngx-translate/core';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 
@@ -67,6 +71,11 @@ export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy 
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
+    private router: Router,
+    private navigation: NavigationService,
+    private translateService: TranslateService,
+    private modalService: SisModalService,
+    private toaster: SisToastService,
   ) {}
 
   ngOnInit(): void {
@@ -152,11 +161,33 @@ export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy 
 
   saveZone(value: string) {
     //TODO: missing field "zone" in AccountModification
-    /*
-    const data: AccountModification = {
-      zone: value,
-    }
-    this.accountService.modifyAccount(this.account!.slug, data).subscribe(() => {});
-    */
+  }
+
+  deleteAccount() {
+    this.translateService
+      .get('account.delete_account_confirm', { account: this.account?.title })
+      .pipe(
+        switchMap((message) => {
+          return this.modalService.openConfirm({
+            title: 'account.delete_account_confirm_title',
+            description: message,
+            isDestructive: true,
+            confirmLabel: 'generic.delete',
+          }).onClose;
+        }),
+        filter((confirm) => !!confirm),
+        switchMap(() => {
+          return this.sdk.nuclia.db.deleteAccount(this.account!.slug);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.stateService.cleanAccount();
+          this.router.navigate([this.navigation.getAccountSelectUrl()]);
+        },
+        error: () => {
+          this.toaster.error('account.delete.error');
+        },
+      });
   }
 }

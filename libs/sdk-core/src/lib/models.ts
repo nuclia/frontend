@@ -64,6 +64,7 @@ export interface IDb {
   createAccount(account: AccountCreation): Observable<Account>;
   getAccountStatus(account: string): Observable<AccountStatus>;
   modifyAccount(account: string, data: Partial<Account>): Observable<void>;
+  deleteAccount(account: string): Observable<void>;
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;

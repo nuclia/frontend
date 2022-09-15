@@ -1,37 +1,51 @@
+@import 'variables';
+
 .container {
-  padding: 70px var(--app-layout-margin-right) 60px 5%;
+  padding: rhythm(9) var(--app-layout-margin-right) rhythm(8) 5%;
 }
 h2 {
-  margin: 0 0 36px 0;
-  font-weight: var(--stf-font-weight-bold);
-}
-.account-manage-container {
-  display: block;
-  margin: 30px 0 80px 0;
+  margin: 0 0 rhythm(4) 0;
 }
 
 .section {
-  padding: 50px 0 55px 0;
-  border-bottom: 1px solid var(--stf-gray-lighter-2);
+  padding: rhythm(7) 0 rhythm(7) 0;
+  border-bottom: 1px solid $color-neutral-light;
   &:first-child {
     padding-top: 0;
   }
   &:last-child {
     border-bottom: 0;
   }
-  &-container {
-    width: 825px;
-    max-width: 100%;
-  }
+}
+
+.section-container {
+  max-width: 825px;
 }
 
 .account-field {
-  margin-bottom: 30px;
-  &-name {
-    font-weight: var(--stf-font-weight-semibold);
-  }
+  margin-bottom: rhythm(4);
+}
+
+.account-field-name {
+  font-weight: $font-weight-semi-bold;
 }
 
 .zone-select {
-  min-width: 305px;
+  min-width: rhythm(40);
+}
+
+.dangerous-zone {
+  background-color: $color-secondary-lightest;
+  padding: rhythm(3) rhythm(4);
+}
+
+.dangerous-zone-title {
+  color: $color-secondary-stronger;
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: rhythm(0.5);
+}
+
+.dangerous-zone-warning {
+  line-height: line-height(l);
+  margin-bottom: rhythm(3);
 }
