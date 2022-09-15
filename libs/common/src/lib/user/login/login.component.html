@@ -17,8 +17,7 @@
                       autocapitalize="off"
                       name="username"
                       [errorMessages]="loginValidationMessages.email"
-                      (enter)="onEnterPressed('email')"
-                      (blurring)="checkSAML(form.email.value)">
+                      (enter)="onEnterPressed('email')">
               {{ 'login.email' | translate }}
             </pa-input>
           </div>
