@@ -19,9 +19,11 @@
   import { fade, slide } from 'svelte/transition';
   import Player from '../viewer/previewers/Player.svelte';
   import { Duration } from './transition.utils';
+  import { createEventDispatcher } from 'svelte';
 
   export let result: IResource = {id: ''};
 
+  const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
 
   let videoTileElement: HTMLElement;
@@ -99,6 +101,9 @@
   const playFrom = (time: number, selectedParagraph?: Search.Paragraph) => {
     videoTime = time;
     expanded = true;
+    if (isExpandedFullScreen) {
+      dispatch('fullscreenPreview');
+    }
     const paragraph$ = selectedParagraph && isFileOrLink(selectedParagraph.field_type)
       ? of(selectedParagraph)
       : matchingParagraphs.pipe(map((paragraphList) => paragraphList.filter(p => isFileOrLink(p.field_type))[0] || paragraphList[0]));
@@ -145,6 +150,9 @@
     showFullTranscripts = false;
     paragraphInPlay = undefined;
     findInTranscript = '';
+    if (isExpandedFullScreen) {
+      dispatch('closePreview');
+    }
   };
 
   const toggleTranscriptPanel = () => {

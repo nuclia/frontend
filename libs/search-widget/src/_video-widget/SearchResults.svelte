@@ -1,7 +1,7 @@
 <svelte:options tag="nuclia-search-results" />
 
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { debounceTime, forkJoin, map, switchMap, take } from 'rxjs';
   import { nucliaState, nucliaStore } from '../core/store';
   import { loadFonts, loadSvgSprite } from '../core/utils';
@@ -41,14 +41,41 @@
     map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
   );
 
+  const scrollingListener = () => {
+    document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
+  };
+
   onMount(() => {
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+
+    window.addEventListener('scroll', scrollingListener);
   });
+
+  onDestroy(() => {
+    window.removeEventListener('scroll', scrollingListener);
+  });
+
+  // Prevent the page to scroll behind the fullscreen expanded tile
+  const onFullscreenPreview = () => {
+    const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
+    const body = document.body;
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}`;
+  }
+
+  const onFullscreenPreviewClosed = () => {
+    const body = document.body;
+    const scrollY = body.style.top;
+    body.style.position = '';
+    body.style.top = '';
+    setTimeout(() => window.scrollTo(0, parseInt(scrollY || '0') * -1));
+  }
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<div class="nuclia-widget sw-video-results" data-version="__NUCLIA_DEV_VERSION__">
+<div class="nuclia-widget sw-video-results"
+     data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}
       <div class="error">
@@ -65,7 +92,9 @@
       <div class="results"
            transition:fade={{duration: Duration.SUPERFAST}}>
         {#each $paragraphResults as result}
-          <VideoTile {result} />
+          <VideoTile {result}
+                     on:fullscreenPreview={onFullscreenPreview}
+                     on:closePreview={onFullscreenPreviewClosed} />
         {/each}
       </div>
     {/if}
