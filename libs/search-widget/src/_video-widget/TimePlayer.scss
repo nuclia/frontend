@@ -1,6 +1,6 @@
 .sw-time-player {
   align-items: center;
-  background: var(--color-neutral-lightest);
+  background: var(--color-neutral-background);
   border-radius: var(--rhythm-4);
   cursor: pointer;
   display: flex;
@@ -9,6 +9,7 @@
   max-width: var(--rhythm-9);
   padding: 0 var(--rhythm-1_5) 0 var(--rhythm-1);
   position: relative;
+  transition: background-color var(--transition-superfast);
 
   &.minimized {
     border-radius: 50%;
@@ -19,7 +20,7 @@
   }
 
   &:active {
-    background: var(--color-neutral-regular);
+    background: var(--color-neutral-light);
   }
   &:focus {
     box-shadow: var(--focus-shadow);
@@ -40,6 +41,6 @@
 }
 @media (hover: hover) {
   .sw-time-player:not(.hovering):hover {
-    background: var(--color-neutral-light);
+    background: var(--color-neutral-lighter);
   }
 }

@@ -15,7 +15,7 @@
   .paragraph:focus {
     padding-left: 29px;
     border-left: 3px solid var(--color-primary-regular);
-    outline: 0px;
+    outline: 0;
   }
   .show-more {
     display: inline-block;
@@ -34,7 +34,7 @@
   p {
     text-align: right;
     font-size: small;
-    color: var(--color-neutral-strong);
+    color: var(--color-neutral-regular);
     margin: 0;
   }
   .intents {
