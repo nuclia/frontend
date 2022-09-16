@@ -18,7 +18,12 @@
   "mac": {
     "category": "public.app-category.productivity",
     "icon": "apps/desktop/electron/icons/mac/icon.icns",
-    "target": ["dmg", "zip"],
+    "target": [
+      {
+        "target": "default",
+        "arch": ["universal"]
+      }
+    ],
     "type": "distribution",
     "hardenedRuntime": true,
     "gatekeeperAssess": false,
