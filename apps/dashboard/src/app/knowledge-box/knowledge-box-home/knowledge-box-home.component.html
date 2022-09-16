@@ -9,7 +9,8 @@
   </div>
 
   <div class="home-main-layout">
-    <div *ngIf="isAccountManager | async" class="left-column">
+    <div *ngIf="isAccountManager | async"
+         class="left-column">
       <div class="container chart-container">
         <div class="chart-header">
           <div class="title-m">{{ 'stats.total_search' | translate }}</div>
@@ -18,7 +19,8 @@
             {{ totalSearch | async | number: '1.0-0':loc }}
           </div>
         </div>
-        <app-empty-chart *ngIf="!(search | async)" [numLines]="6"></app-empty-chart>
+        <app-empty-chart *ngIf="!(search | async)"
+                         [numLines]="6"></app-empty-chart>
         <app-line-chart [data]="(search | async) || []"></app-line-chart>
       </div>
 
@@ -26,12 +28,14 @@
         <div class="chart-header">
           <div class="title-m">{{ 'stats.processing_time' | translate }}</div>
         </div>
-        <app-empty-chart *ngIf="!(processing | async)" [numLines]="3"></app-empty-chart>
+        <app-empty-chart *ngIf="!(processing | async)"
+                         [numLines]="3"></app-empty-chart>
         <app-bar-chart [data]="(processing | async) || []"></app-bar-chart>
       </div>
     </div>
 
-    <div *ngIf="isKbAdmin | async" class="right-column">
+    <div *ngIf="isKbAdmin | async"
+         class="right-column">
       <div class="container state-container">
         <div class="title-m">
           {{ 'stash.state' | translate }}: <span class="state">{{ stateLabel | async }}</span>
@@ -67,8 +71,10 @@
         </div>
       </div>
 
-      <div class="container go-to-desktop">
-        <img src="assets/nuclia-desktop-white.svg" alt="Nuclia Desktop"/>
+      <div class="container go-to-desktop"
+           *ngIf="isDownloadDesktopEnabled | async">
+        <img src="assets/nuclia-desktop-white.svg"
+             alt="Nuclia Desktop" />
         <p>{{ 'stash.desktop.description' | translate }}</p>
         <div class="desktop-button">
           <pa-button kind="inverted"

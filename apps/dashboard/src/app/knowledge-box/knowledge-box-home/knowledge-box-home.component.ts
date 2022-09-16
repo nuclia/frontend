@@ -1,9 +1,8 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { SDKService, StateService } from '@flaps/core';
+import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { combineLatest, filter, map, Observable, share, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, Observable, share, switchMap, take, shareReplay } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { HelpBoxesService } from '../../services/help-boxes.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -70,6 +69,7 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   );
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
+  isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app').pipe(shareReplay(1));
 
   constructor(
     private app: AppService,
@@ -77,10 +77,10 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     private sdk: SDKService,
     private stateService: StateService,
     private translate: TranslatePipe,
-    private dialog: MatDialog,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit(): void {
