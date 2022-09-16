@@ -1,15 +1,49 @@
-import { Directive, EventEmitter, ElementRef, HostListener, Output } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { getDroppedFiles } from './file-drop.utils';
+
+const extensionRegexp = new RegExp('^.[a-zA-Z0-9]+$');
 
 @Directive({ selector: '[stfFileDrop]' })
 export class FileDropDirective {
   public constructor(element: ElementRef) {
     this.element = element;
   }
-  @Output() public fileOver: EventEmitter<any> = new EventEmitter();
+
+  /**
+   * Based on <input type="file"> accept property.
+   * See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#unique_file_type_specifiers
+   *
+   * @param value: string containing one or more of these unique file type specifier as its value, separated by comma.
+   *  - A valid case-insensitive filename extension, starting with a period (".") character. For example: .jpg, .pdf, or .doc.
+   *  - The string audio/* meaning "any audio file".
+   *  - The string video/* meaning "any video file".
+   *  - The string image/* meaning "any image file".
+   */
+  @Input() set fileDropAccept(value: string | undefined) {
+    if (value) {
+      this._fileTypeSpecifiers = value
+        .split(',')
+        .filter(
+          (specifier) =>
+            specifier === 'audio/*' ||
+            specifier === 'video/*' ||
+            specifier === 'image/*' ||
+            specifier.match(extensionRegexp),
+        )
+        .map((specifier) => {
+          if (specifier.includes('/')) {
+            return specifier.split('/')[0];
+          }
+          return specifier;
+        });
+    }
+  }
+
+  @Output() public fileOver: EventEmitter<boolean> = new EventEmitter();
   @Output() public atFileDrop: EventEmitter<File[]> = new EventEmitter<File[]>();
 
   protected element: ElementRef;
+  private _fileTypeSpecifiers: string[] = [];
 
   @HostListener('drop', ['$event'])
   public onDrop(event: DragEvent): void {
@@ -19,7 +53,30 @@ export class FileDropDirective {
     }
     this._preventAndStop(event);
     this.fileOver.emit(false);
-    getDroppedFiles(transfer.items).subscribe((files: File[]) => this.atFileDrop.emit(files));
+    getDroppedFiles(transfer.items).subscribe((files: File[]) => {
+      let acceptedFiles: File[] = files;
+      let unacceptedFiles: File[] = [];
+      if (this._fileTypeSpecifiers.length > 0) {
+        acceptedFiles = [];
+        files.forEach((file) => {
+          const matchAcceptedType = this._fileTypeSpecifiers.some((specifier) =>
+            specifier.includes('.') ? file.name.endsWith(specifier) : file.type.startsWith(specifier),
+          );
+          if (matchAcceptedType) {
+            acceptedFiles.push(file);
+          } else {
+            unacceptedFiles.push(file);
+          }
+        });
+      }
+      if (unacceptedFiles.length > 0) {
+        console.warn(
+          `The following files didn't match the accepted type "${this._fileTypeSpecifiers.join(',')}":`,
+          unacceptedFiles,
+        );
+      }
+      this.atFileDrop.emit(acceptedFiles);
+    });
   }
 
   @HostListener('dragover', ['$event'])
@@ -36,7 +93,6 @@ export class FileDropDirective {
 
   @HostListener('dragleave', ['$event'])
   public onDragLeave(event: any): any {
-    console.log('dragleave');
     if ((this as any).element) {
       if (event.currentTarget === (this as any).element[0]) {
         return;
