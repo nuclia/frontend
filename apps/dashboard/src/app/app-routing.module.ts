@@ -23,6 +23,7 @@ import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup/setup-account/setup-account.component';
+import { FarewellComponent } from './setup/farewell/farewell.component';
 
 import { RootGuard } from './guards/root.guard';
 import { SelectGuard } from './select/select.guard';
@@ -224,6 +225,10 @@ const routes: Routes = [
     path: 'setup/account-config',
     component: SetupAccountComponent,
     canActivate: [LoggedinGuard],
+  },
+  {
+    path: 'setup/farewell',
+    component: FarewellComponent,
   },
   {
     path: 'user',

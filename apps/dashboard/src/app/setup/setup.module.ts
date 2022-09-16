@@ -20,6 +20,7 @@ import { SetupStep2Component } from './setup-step2/setup-step2.component';
 import { SetupLoaderComponent } from './setup-loader/setup-loader.component';
 import { SetupInviteComponent } from './setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup-account/setup-account.component';
+import { FarewellComponent } from './farewell/farewell.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [
@@ -30,6 +31,7 @@ const Components = [
   SetupStep2Component,
   SetupInviteComponent,
   SetupAccountComponent,
+  FarewellComponent,
 ];
 
 @NgModule({
