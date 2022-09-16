@@ -72,6 +72,7 @@ export interface Welcome {
   preferences: WelcomeUser;
   accounts: string[];
   create: boolean;
+  dependant_accounts: { id: string, slug: string }[];
 }
 
 export interface WelcomeUser {

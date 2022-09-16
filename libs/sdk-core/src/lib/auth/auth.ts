@@ -1,4 +1,4 @@
-import { ReplaySubject, Observable, Subscription, timer, throwError, from } from 'rxjs';
+import { ReplaySubject, Observable, Subscription, timer, throwError, from, tap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
@@ -96,6 +96,12 @@ export class Authentication implements IAuthentication {
   setPassword(password: string): Observable<boolean> {
     return this.fetch<AuthTokens>('/auth/setpassword', { password }, true, {}).pipe(
       map((tokens) => this.authenticate(tokens)),
+    );
+  }
+
+  deleteAuthenticatedUser(): Observable<void> {
+    return this.nuclia.rest.delete('/user').pipe(
+      tap(() => this.storeTokens({ access_token: '', refresh_token: '' }))
     );
   }
 
