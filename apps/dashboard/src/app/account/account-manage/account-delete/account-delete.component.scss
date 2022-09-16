@@ -1,0 +1,23 @@
+@import 'variables';
+
+h1 {
+  margin: 0;
+}
+
+label {
+  display: block;
+  margin-bottom: rhythm(1);
+}
+
+.delete-user {
+  margin: rhythm(4) 0 rhythm(3) 0;
+}
+
+pa-radio {
+  display: inline-block;
+  margin-right: rhythm(5);
+}
+
+pa-modal-footer {
+  gap: rhythm(2);
+}

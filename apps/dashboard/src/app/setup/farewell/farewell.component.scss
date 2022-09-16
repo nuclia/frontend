@@ -1,0 +1,38 @@
+@import 'variables';
+
+.farewell {
+  display: flex;
+  height: 100vh;
+}
+
+.message-container {
+  width: 44%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-light-stronger;
+}
+
+.message {
+  width: rhythm(48);
+}
+
+h1 {
+  font-size: rhythm(4);
+}
+
+.logo {
+  margin-top: rhythm(10);
+}
+
+svg {
+  width: rhythm(14);
+  height: auto;
+}
+
+.background {
+  flex-grow: 1;
+  background-image: url('./../../../assets/images/background.jpg');
+  background-position: left center;
+  background-size: cover;
+}

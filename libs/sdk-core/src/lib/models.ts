@@ -40,6 +40,7 @@ export interface IAuthentication {
   getRefreshToken(): string;
   authenticate(tokens: AuthTokens): boolean;
   setPassword(password: string): Observable<boolean>;
+  deleteAuthenticatedUser(): Observable<void>;
   getJWTUser(): JwtUser | null;
 }
 

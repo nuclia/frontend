@@ -38,8 +38,10 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
+  PaModalModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
 
 const Components = [
   AccountComponent,
@@ -51,6 +53,7 @@ const Components = [
   AccountNUAComponent,
   ClientDialogComponent,
   AccountUsersComponent,
+  AccountDeleteComponent,
 ];
 
 @NgModule({
@@ -81,6 +84,7 @@ const Components = [
     HintModule,
     PaButtonModule,
     PaTooltipModule,
+    PaModalModule,
     PaTextFieldModule,
     PaTogglesModule,
     PaIconModule,
