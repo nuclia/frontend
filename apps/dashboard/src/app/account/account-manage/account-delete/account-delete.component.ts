@@ -16,5 +16,5 @@ export class AccountDeleteComponent {
   account = this.stateService.account.pipe(filter((account): account is Account => !!account));
   showDeleteUser = !!this.modal.config.data?.showDeleteUser;
 
-  constructor(private modal: ModalRef, private stateService: StateService) {}
+  constructor(public modal: ModalRef, private stateService: StateService) {}
 }
