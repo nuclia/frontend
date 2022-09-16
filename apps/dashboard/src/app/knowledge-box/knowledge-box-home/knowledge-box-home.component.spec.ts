@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService, StateService, TranslatePipeMock } from '@flaps/core';
+import { SDKService, StateService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { HelpBoxesService } from '../../services/help-boxes.service';
 import { AppService } from '../../services/app.service';
 
@@ -56,6 +56,12 @@ describe('KnowledgeBoxHomeComponent', () => {
             isTourCompleted: () => {},
             initializeTour: () => {},
             startTour: () => {},
+          },
+        },
+        {
+          provide: STFTrackingService,
+          useValue: {
+            isFeatureEnabled: () => of(true),
           },
         },
         { provide: TranslatePipe, useClass: TranslatePipeMock },
