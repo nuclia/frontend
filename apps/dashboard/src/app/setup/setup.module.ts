@@ -17,7 +17,6 @@ import { SetupStep1Component } from './setup-step1/setup-step1.component';
 import { SetupContainerComponent } from './setup-container/setup-container.component';
 import { SetupHeaderComponent } from './setup-header/setup-header.component';
 import { SetupStep2Component } from './setup-step2/setup-step2.component';
-import { SetupLoaderComponent } from './setup-loader/setup-loader.component';
 import { SetupInviteComponent } from './setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup-account/setup-account.component';
 import { FarewellComponent } from './farewell/farewell.component';
@@ -26,7 +25,6 @@ import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from
 const Components = [
   SetupContainerComponent,
   SetupHeaderComponent,
-  SetupLoaderComponent,
   SetupStep1Component,
   SetupStep2Component,
   SetupInviteComponent,
