@@ -4,18 +4,17 @@
   </pa-modal-title>
   <pa-modal-content>
     <div>
-      <label>{{ 'account.delete_account_confirm' | translate:{ account: (account | async)?.title } }}</label>
-      <pa-checkbox [(value)]="deleteAccount">{{ 'generic.yes' | translate }}</pa-checkbox>
+      <pa-checkbox [(value)]="deleteAccount">
+        {{ 'account.delete_account_confirm' | translate:{ account: (account | async)?.title } }}
+      </pa-checkbox>
     </div>
     <div class="delete-user"
          *ngIf="showDeleteUser">
       <label for="group-delete-user">{{ 'account.delete_user_confirm' | translate }}</label>
       <pa-radio-group [(value)]="deleteUser"
                       id="group-delete-user">
-        <div>
-          <pa-radio value="yes">{{ 'generic.yes' | translate }}</pa-radio>
-          <pa-radio value="no">{{ 'generic.no' | translate }}</pa-radio>
-        </div>
+        <pa-radio value="yes">{{ 'generic.yes' | translate }}</pa-radio>
+        <pa-radio value="no">{{ 'generic.no' | translate }}</pa-radio>
       </pa-radio-group>
     </div>
   </pa-modal-content>

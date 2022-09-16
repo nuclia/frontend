@@ -1,16 +1,9 @@
 <div class="farewell">
   <div class="message-container">
     <div class="message">
-
       <h1>{{ 'farewell.title' | translate }}</h1>
-      <p>{{ 'farewell.message_1' | translate: { username: (userPrefs | async)?.name || '' } }}</p>
-      <p>{{ 'farewell.message_2' | translate }}</p>
-      <p>
-        {{ 'farewell.message_3' | translate }}
-        <a href="mailto:eudald@nuclia.com"> {{ 'farewell.message_4' | translate }}.</a>
-        {{ 'farewell.message_5' | translate }}
-      </p>
-      <p>{{ 'farewell.message_6' | translate }}</p>
+      <div [innerHtml]="'farewell.message' | translate:{ username: (userPrefs | async)?.name || '', email: 'eudald@nuclia.com' }">
+      </div>
       <div class="logo">
         <svg-icon src="assets/logos/logo_text.svg"></svg-icon>
       </div>
