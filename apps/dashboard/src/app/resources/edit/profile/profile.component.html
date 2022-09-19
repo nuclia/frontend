@@ -45,7 +45,7 @@
                  hidden
                  (atFileSelect)="uploadThumbnail($event)" />
         </div>
-        <div *ngFor="let thumb of (thumbnails | async); let index=index; let count=count">
+        <div *ngFor="let thumb of (thumbnails | async); let index=index; let count=count; trackBy: trackByUri">
           <div class="radio-thumbnail-container">
             <img class="resource-thumbnail" [src]="thumb.blob" alt="thumbnail {{index}}">
             <pa-radio *ngIf="count > 1" [value]="thumb.uri" [ariaLabel]="'Thumbnail ' + index"></pa-radio>

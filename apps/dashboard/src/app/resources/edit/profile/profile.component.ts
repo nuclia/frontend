@@ -9,6 +9,8 @@ import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
 import { takeUntil } from 'rxjs/operators';
 
+type Thumbnail = { uri: string; blob: SafeUrl };
+
 @Component({
   selector: 'app-resource-profile',
   templateUrl: 'profile.component.html',
@@ -23,7 +25,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
     summary: [''],
     thumbnail: [''],
   });
-  thumbnails: Observable<{ uri: string; blob: SafeUrl }[]> = this.resource.pipe(
+  thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
     map((res) => res.getThumbnails()),
     tap((thumbnails) => console.log(thumbnails)),
     switchMap((thumbnails) =>
@@ -123,5 +125,9 @@ export class ResourceProfileComponent extends BaseEditComponent {
       this.hasBaseDropZoneOver = overBase;
       this.cdr?.markForCheck();
     }
+  }
+
+  trackByUri(index: number, thumbnail: Thumbnail) {
+    return thumbnail.uri;
   }
 }
