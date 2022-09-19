@@ -31,8 +31,8 @@ export class FileDropDirective {
             specifier.match(extensionRegexp),
         )
         .map((specifier) => {
-          if (specifier.includes('/')) {
-            return specifier.split('/')[0];
+          if (specifier.includes('/*')) {
+            return specifier.split('/*')[0];
           }
           return specifier;
         });

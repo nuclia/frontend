@@ -1,25 +1,25 @@
 import type { Observable } from 'rxjs';
-import { upload, batchUpload, FileWithMetadata, FileMetadata, UploadStatus } from './upload';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import type { UploadResponse } from './upload';
+import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
 import type { INuclia } from '../models';
 import type {
-  IResource,
-  ExtractedText,
-  IFieldData,
-  FileFieldData,
-  LinkFieldData,
   CloudLink,
-  ResourceData,
+  ExtractedText,
   FIELD_TYPE,
+  FileField,
+  FileFieldData,
+  ICreateResource,
+  IFieldData,
+  IResource,
+  KeywordSetField,
+  LinkField,
+  LinkFieldData,
+  ResourceData,
   ResourceField,
   TextField,
-  LinkField,
-  FileField,
-  KeywordSetField,
-  ICreateResource,
 } from './resource.models';
 import type { Search } from './search.models';
-import { catchError, forkJoin, map, of } from 'rxjs';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Resource extends IResource {}
@@ -85,7 +85,14 @@ export class Resource implements IResource {
 
   getThumbnails(): CloudLink[] {
     return this.getFields(['files'])
-      .map((field) => (field as FileFieldData).extracted?.file?.file_thumbnail)
+      .map((field) => {
+        const fileField = field as FileFieldData;
+        let thumbnail: CloudLink | undefined = fileField.extracted?.file?.file_thumbnail;
+        if (!thumbnail && fileField.value?.file?.content_type?.startsWith('image')) {
+          thumbnail = fileField.value?.file;
+        }
+        return thumbnail;
+      })
       .concat(this.getFields(['links']).map((field) => (field as LinkFieldData).extracted?.link?.link_thumbnail))
       .filter((thumb) => !!thumb) as CloudLink[];
   }

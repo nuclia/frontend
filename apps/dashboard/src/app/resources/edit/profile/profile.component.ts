@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { LabelValue, Resource } from '@nuclia/core';
-import { forkJoin, map, Observable, switchMap } from 'rxjs';
+import { filter, forkJoin, map, merge, Observable, switchMap, tap, timer } from 'rxjs';
 import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-resource-profile',
@@ -14,6 +15,8 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceProfileComponent extends BaseEditComponent {
+  @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
+
   form = this.formBuilder.group({
     title: ['', [Validators.required]],
     authors: [''],
@@ -22,12 +25,16 @@ export class ResourceProfileComponent extends BaseEditComponent {
   });
   thumbnails: Observable<{ uri: string; blob: SafeUrl }[]> = this.resource.pipe(
     map((res) => res.getThumbnails()),
+    tap((thumbnails) => console.log(thumbnails)),
     switchMap((thumbnails) =>
       forkJoin(
         thumbnails.map((thumbnail) =>
-          this.sdk.nuclia.rest
-            .getObjectURL(thumbnail.uri!)
-            .pipe(map((url) => ({ uri: thumbnail.uri as string, blob: this.sanitizer.bypassSecurityTrustUrl(url) }))),
+          this.sdk.nuclia.rest.getObjectURL(thumbnail.uri!).pipe(
+            map((url) => ({
+              uri: thumbnail.uri as string,
+              blob: this.sanitizer.bypassSecurityTrustUrl(url),
+            })),
+          ),
         ),
       ),
     ),
@@ -39,6 +46,10 @@ export class ResourceProfileComponent extends BaseEditComponent {
       DATA: JSON.stringify(this.getValue()),
     })),
   );
+  hasBaseDropZoneOver = false;
+
+  stopThumbnailUploadStatus = merge(this.unsubscribeAll, this.refresh);
+  isUploading = false;
 
   constructor(
     protected route: ActivatedRoute,
@@ -81,5 +92,36 @@ export class ResourceProfileComponent extends BaseEditComponent {
           },
         }
       : {};
+  }
+
+  chooseFiles($event: MouseEvent) {
+    if (!this.isUploading) {
+      $event.preventDefault();
+      this.thumbnailFileInput?.nativeElement?.click();
+    }
+  }
+
+  uploadThumbnail(files: File[]) {
+    if (files.length > 0 && !this.isUploading) {
+      this.isUploading = true;
+      this.currentValue
+        ?.batchUpload(files)
+        .pipe(
+          filter((status) => status.completed),
+          switchMap(() => timer(500)),
+          takeUntil(this.stopThumbnailUploadStatus),
+        )
+        .subscribe(() => {
+          this.refresh.next(true);
+          this.isUploading = false;
+        });
+    }
+  }
+
+  fileOverBase(overBase: boolean) {
+    if (!this.isUploading) {
+      this.hasBaseDropZoneOver = overBase;
+      this.cdr?.markForCheck();
+    }
   }
 }

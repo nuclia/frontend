@@ -65,11 +65,13 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     this.displayAlert();
     this.displayAnnounce();
+    this.preventDragAndDropOnWindow();
   }
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.cleanUpEventListener();
   }
 
   ngAfterViewInit() {
@@ -155,5 +157,19 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
           }),
         );
       });
+  }
+
+  private preventDefault(e: DragEvent) {
+    e.preventDefault();
+  }
+
+  private preventDragAndDropOnWindow() {
+    window.addEventListener('dragover', this.preventDefault, false);
+    window.addEventListener('drop', this.preventDefault, false);
+  }
+
+  private cleanUpEventListener() {
+    window.removeEventListener('dragover', this.preventDefault);
+    window.removeEventListener('drop', this.preventDefault);
   }
 }
