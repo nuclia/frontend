@@ -311,7 +311,7 @@ jobs:
           tag_name: latest
           files: |
             dist/executables/*.exe
-            dist/executables/latest-*.yml
+            dist/executables/app-update.yml
       - name: Release Linux installer
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'ubuntu')
