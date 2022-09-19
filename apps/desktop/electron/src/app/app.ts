@@ -114,8 +114,15 @@ export default class App {
         // Protocol handler for osx
         App.application.on('open-url', function (event, url) {
           event.preventDefault();
-          App.mainWindow?.webContents.executeJavaScript(`window.deeplink='${url}';`);
+          App.injectDeeplink(url);
         });
+
+        // Protocol handler for win32
+        if (process.platform == 'win32') {
+          // Keep only command line / deep linked arguments
+          const url = process.argv.slice(1).pop();
+          App.injectDeeplink(url);
+        }
       }
     }
   }
@@ -134,5 +141,34 @@ export default class App {
     App.application.on('activate', App.onActivate); // App is activated
 
     ipcMain.on('close', () => app.quit());
+
+    const gotTheLock = app.requestSingleInstanceLock();
+    if (gotTheLock) {
+      app.on('second-instance', (e, argv) => {
+        // Someone tried to run a second instance, we should focus our window.
+
+        // Protocol handler for win32
+        // argv: An array of the second instance’s (command line / deep linked) arguments
+        if (process.platform == 'win32') {
+          // Keep only command line / deep linked arguments
+          const url = argv.slice(1).pop();
+          App.injectDeeplink(url);
+        }
+
+        if (App.mainWindow) {
+          if (App.mainWindow.isMinimized()) {
+            App.mainWindow.restore();
+          }
+          App.mainWindow.focus();
+        }
+      });
+    } else {
+      app.quit();
+      return;
+    }
+  }
+
+  static injectDeeplink(url?: string) {
+    App.mainWindow?.webContents.executeJavaScript(`window.deeplink='${url || ''}';`);
   }
 }
