@@ -40,12 +40,12 @@ export class Resource implements IResource {
     Object.assign(this, { ...data, title: this.formatTitle(data.title) });
   }
 
-  modify(data: Partial<ICreateResource>): Observable<void> {
-    return this.nuclia.rest.patch<void>(this.path, data);
+  modify(data: Partial<ICreateResource>, synchronous = true): Observable<void> {
+    return this.nuclia.rest.patch<void>(this.path, data, undefined, undefined, synchronous);
   }
 
-  delete(): Observable<void> {
-    return this.nuclia.rest.delete(this.path);
+  delete(synchronous = true): Observable<void> {
+    return this.nuclia.rest.delete(this.path, undefined, synchronous);
   }
 
   reprocess(): Observable<void> {
