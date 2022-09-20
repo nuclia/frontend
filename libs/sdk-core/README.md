@@ -4,7 +4,7 @@ Nuclia SDK is an open-source library wrapping Nuclia API in order to integrate [
 
 The full documentation is available at [https://docs.nuclia.dev/docs/sdk/sdk_api](https://docs.nuclia.dev/docs/sdk/sdk_api).
 
-Basic usage:
+## Basic usage
 
 ```ts
 import { Nuclia } from '@nuclia/core';
@@ -19,4 +19,20 @@ nuclia.knowledgeBox
   .subscribe((searchResult) => {
     console.log('search result', searchResult);
   });
+```
+
+## Usage with NodeJS
+
+This SDK can work in NodeJS by providing some polyfills for `localStorage` and `fetch`:
+
+```js
+const { Nuclia } = require('@nuclia/core');
+require('localstorage-polyfill');
+require('isomorphic-unfetch');
+
+const nuclia = new Nuclia({
+  backend: 'https://nuclia.cloud/api',
+  zone: 'europe-1',
+  knowledgeBox: '<YOUR-KB-ID>',
+});
 ```
