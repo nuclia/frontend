@@ -40,7 +40,7 @@ export class KbAddComponent {
     { value: 'multilingual', label: 'stash.create.language.multi' },
     { value: 'monolingual', label: 'stash.create.language.mono' },
   ];
-  languageList = STFUtils.supportedAudioLanguages();
+  languageList = ['en'];
   anonymizationOptions: { value: string; label: string }[] = [
     { value: 'no', label: 'generic.disabled' },
     { value: 'yes', label: 'generic.enabled' },
