@@ -230,7 +230,7 @@ jobs:
   deploy-desktop:
     name: Deploy desktop
     needs: build
-    if: needs.build.outputs.deploy-desktop == 'yes' and ${{ steps.release.outputs.released == 'true' }}
+    if: needs.build.outputs.deploy-desktop == 'yes' && steps.release.outputs.released == 'true'
     runs-on: ${{ matrix.os }}
 
     strategy:
