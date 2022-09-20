@@ -4,12 +4,24 @@ try {
   console.error(e);
 }
 
-const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET_`;
+const MENU_LABELSET_PREFIX = `NUCLIA_LABELSET`;
 
-const baseMenuOptions = {
-  targetUrlPatterns: ['https://*/*'],
-  contexts: ['link', 'page'],
-};
+const MENU_TYPES = [
+  {
+    name: 'LINK',
+    options: {
+      targetUrlPatterns: ['https://*/*'],
+      contexts: ['link'],
+    }
+  },
+  {
+    name: 'YOUTUBE',
+    options: {
+      documentUrlPatterns: ['https://www.youtube.com/channel/*', 'https://www.youtube.com/playlist?list=*'],
+      contexts: ['page'],
+    }
+  }
+]
 
 chrome.runtime.onInstalled.addListener(() => {
   createMenu();
@@ -26,16 +38,20 @@ chrome.runtime.onMessage.addListener((request) => {
 
 function createMenu() {
   chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({
-      id: `NUCLIA_UPLOAD`,
-      title: 'Upload to Nuclia',
-      ...baseMenuOptions,
+    MENU_TYPES.forEach((type) => {
+      chrome.contextMenus.create({
+        id: `${type.name}_NUCLIA_UPLOAD`,
+        title: 'Upload to Nuclia',
+        ...type.options,
+      });
     });
     getSettings().then((settings) => {
       if (settings.NUCLIA_ACCOUNT && settings.NUCLIA_KB && settings.NUCLIA_TOKEN) {
         getLabels(settings).subscribe((labelsets) => {
           if (labelsets.length > 0) {
-            createSubmenus(labelsets);
+            MENU_TYPES.forEach((type) => {
+              createSubmenus(labelsets, type);
+            });
           }
         });
       }
@@ -43,26 +59,26 @@ function createMenu() {
   });
 }
 
-function createSubmenus(labelsets) {
+function createSubmenus(labelsets, type) {
   chrome.contextMenus.create({
-    id: `NUCLIA_UPLOAD_WITH_LABEL`,
-    title: 'Upload link to Nuclia with label…',
-    ...baseMenuOptions,
+    id: `${type.name}_NUCLIA_UPLOAD_WITH_LABEL`,
+    title: 'Upload to Nuclia with label…',
+    ...type.options,
   });
   labelsets.forEach(([key, labelset]) => {
-    const labelsetMenuId = `${MENU_LABELSET_PREFIX}${key}`;
+    const labelsetMenuId = `${MENU_LABELSET_PREFIX}_${type.name}_${key}`;
     chrome.contextMenus.create({
       id: labelsetMenuId,
       title: labelset.title,
-      parentId: 'NUCLIA_UPLOAD_WITH_LABEL',
-      ...baseMenuOptions,
+      parentId: `${type.name}_NUCLIA_UPLOAD_WITH_LABEL`,
+      ...type.options,
     });
     labelset.labels.forEach((label) => {
       chrome.contextMenus.create({
         id: `${labelsetMenuId}_${label.title}`,
         title: label.title,
         parentId: labelsetMenuId,
-        ...baseMenuOptions,
+        ...type.options,
       });
     });
   });
@@ -74,7 +90,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
       let labels = [];
       if (info.parentMenuItemId && info.parentMenuItemId.startsWith(MENU_LABELSET_PREFIX)) {
         labels.push({
-          labelset: info.parentMenuItemId.split(MENU_LABELSET_PREFIX)[1],
+          labelset: info.parentMenuItemId.split(MENU_LABELSET_PREFIX)[1].split('_')[2],
           label: info.menuItemId.split(info.parentMenuItemId + '_')[1],
         });
       }
