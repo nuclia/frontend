@@ -223,17 +223,14 @@ jobs:
     runs-on: 'ubuntu-latest'
 
     steps:
-      - uses: 'marvinpinto/action-automatic-releases@latest'
-        with:
-          repo_token: '${{ secrets.GITHUB_TOKEN }}'
-          automatic_release_tag: 'latest'
-          prerelease: true
-          title: 'Development Build'
+      - name: Release
+        uses: justincy/github-action-npm-release@v1.2.0
+        id: release
 
   deploy-desktop:
     name: Deploy desktop
     needs: build
-    if: needs.build.outputs.deploy-desktop == 'yes'
+    if: needs.build.outputs.deploy-desktop == 'yes' and ${{ steps.release.outputs.released == 'true' }}
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -259,6 +256,7 @@ jobs:
           npx nx build desktop --configuration production
           npx replace-in-file __DROPBOX_KEY__ ${{ secrets.DROPBOX_KEY }} ./dist/apps/desktop/main.*.js
           npx replace-in-file __GOOGLE_API_KEY__ ${{ secrets.GOOGLE_API_KEY }} ./dist/apps/desktop/main.*.js
+          npx replace-in-file __VERSION__ ${{ github.sha }} ./dist/apps/desktop/assets/deployment/app-config.json
       - name: Build electron app
         run: |-
           npx nx build desktop-electron --configuration production
@@ -298,8 +296,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'macos')
         with:
-          name: latest
-          tag_name: latest
+          tag_name: ${{ steps.release.outputs.release_id }}
           files: |
             dist/executables/*.dmg
             dist/executables/latest-*.yml
@@ -307,8 +304,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'windows')
         with:
-          name: latest
-          tag_name: latest
+          tag_name: ${{ steps.release.outputs.release_id }}
           files: |
             dist/executables/*.exe
             dist/executables/app-update.yml
@@ -316,8 +312,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          name: latest
-          tag_name: latest
+          tag_name: ${{ steps.release.outputs.release_id }}
           files: |
             dist/executables/*.snap
             dist/executables/latest-*.yml

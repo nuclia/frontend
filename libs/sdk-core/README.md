@@ -10,7 +10,7 @@ Basic usage:
 import { Nuclia } from '@nuclia/core';
 
 const nuclia = new Nuclia({
-  backend: 'https://stashify.cloud/api',
+  backend: 'https://nuclia.cloud/api',
   zone: 'europe-1',
   knowledgeBox: '<YOUR-KB-ID>',
 });
