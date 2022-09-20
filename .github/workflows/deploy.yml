@@ -234,7 +234,7 @@ jobs:
 
   deploy-desktop:
     name: Deploy desktop
-    needs: build
+    needs: pre-release
     if: needs.pre-release.outputs.release-desktop == 'true'
     runs-on: ${{ matrix.os }}
 
