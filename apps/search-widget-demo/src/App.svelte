@@ -4,7 +4,7 @@
   import { NucliaWidget } from '../../../libs/search-widget/src';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/_video-widget';
 
-  let selected = 'two-widgets';
+  let selected = 'input';
   let showConfiguration = true;
   let widget: NucliaWidget;
 
@@ -54,8 +54,9 @@
       <NucliaWidget
         bind:this={widget}
         zone="europe-1"
-        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+        knowledgebox="b199ca95-4619-4219-9fa4-8caafc36d40f"
         cdn="/"
+        backend="https://stashify.cloud/api"
         widgetid="demo-input"
         type="input"
         permalink
