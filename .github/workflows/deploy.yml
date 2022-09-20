@@ -226,7 +226,7 @@ jobs:
 
     steps:
       - name: Release
-        uses: justincy/github-action-npm-release@v1.2.0
+        uses: justincy/github-action-npm-release@v2
         id: release
 
   deploy-desktop:
