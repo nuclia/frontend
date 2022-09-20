@@ -15,35 +15,56 @@ export class Rest implements IRest {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  post<T>(path: string, body: any, extraHeaders?: { [key: string]: string }, doNotParse?: boolean): Observable<T> {
-    return this.fetch('POST', path, body, extraHeaders, doNotParse);
+  post<T>(
+    path: string,
+    body: any,
+    extraHeaders?: { [key: string]: string },
+    doNotParse?: boolean,
+    synchronous?: boolean,
+  ): Observable<T> {
+    return this.fetch('POST', path, body, extraHeaders, doNotParse, synchronous);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  put<T>(path: string, body: any, extraHeaders?: { [key: string]: string }, doNotParse?: boolean): Observable<T> {
-    return this.fetch('PUT', path, body, extraHeaders, doNotParse);
+  put<T>(
+    path: string,
+    body: any,
+    extraHeaders?: { [key: string]: string },
+    doNotParse?: boolean,
+    synchronous?: boolean,
+  ): Observable<T> {
+    return this.fetch('PUT', path, body, extraHeaders, doNotParse, synchronous);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  patch<T>(path: string, body: any, extraHeaders?: { [key: string]: string }, doNotParse?: boolean): Observable<T> {
-    return this.fetch('PATCH', path, body, extraHeaders, doNotParse);
+  patch<T>(
+    path: string,
+    body: any,
+    extraHeaders?: { [key: string]: string },
+    doNotParse?: boolean,
+    synchronous?: boolean,
+  ): Observable<T> {
+    return this.fetch('PATCH', path, body, extraHeaders, doNotParse, synchronous);
   }
 
-  delete<T>(path: string, extraHeaders?: { [key: string]: string }): Observable<T> {
-    return this.fetch('DELETE', path, undefined, extraHeaders, true);
+  delete<T>(path: string, extraHeaders?: { [key: string]: string }, synchronous?: boolean): Observable<T> {
+    return this.fetch('DELETE', path, undefined, extraHeaders, true, synchronous);
   }
 
   head(path: string, extraHeaders?: { [key: string]: string }): Observable<Response> {
     return this.fetch('HEAD', path, undefined, extraHeaders, true);
   }
 
-  private getHeaders(extraHeaders?: { [key: string]: string }): { [key: string]: string } {
+  private getHeaders(extraHeaders?: { [key: string]: string }, synchronous = false): { [key: string]: string } {
     const auth = extraHeaders && extraHeaders['x-stf-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders();
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
       ...auth,
     };
+    if (synchronous) {
+      defaultHeaders['x-synchronous'] = `${synchronous}`;
+    }
     return {
       ...defaultHeaders,
       ...extraHeaders,
@@ -57,12 +78,13 @@ export class Rest implements IRest {
     body?: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
+    synchronous = false,
   ): Observable<T> {
     const specialContentType =
       extraHeaders && extraHeaders['content-type'] && extraHeaders['content-type'] !== 'application/json';
     return fromFetch(this.getFullUrl(path), {
       selector: (response) => Promise.resolve(response),
-      headers: this.getHeaders(extraHeaders),
+      headers: this.getHeaders(extraHeaders, synchronous),
       method,
       body: specialContentType ? body : JSON.stringify(body),
     }).pipe(

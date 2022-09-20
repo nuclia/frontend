@@ -1,21 +1,19 @@
 import { Injectable } from '@angular/core';
-import { SDKService, md5 } from '@flaps/core';
+import { md5, SDKService } from '@flaps/core';
 import { FileWithMetadata, LabelSet, LabelSetKind, LabelValue, UploadStatus } from '@nuclia/core';
 import {
+  BehaviorSubject,
+  combineLatest,
+  concatMap,
   forkJoin,
+  map,
+  Observable,
+  of,
   startWith,
   Subject,
-  BehaviorSubject,
   switchMap,
-  tap,
   take,
-  Observable,
-  map,
-  of,
-  switchMapTo,
-  concatMap,
-  concatMapTo,
-  combineLatest,
+  tap,
 } from 'rxjs';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
@@ -37,7 +35,7 @@ export class UploadService {
       .reduce((acc, val) => acc.concat(val), [] as LabelValue[]);
     this.createMissingLabels(labels)
       .pipe(
-        concatMapTo(forkJoin(files.map((file) => md5(file)))),
+        concatMap(() => forkJoin(files.map((file) => md5(file)))),
         switchMap((filelist) =>
           this.sdk.currentKb.pipe(
             take(1),

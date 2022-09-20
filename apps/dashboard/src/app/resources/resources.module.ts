@@ -11,12 +11,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import {
-  STFExpanderModule,
-  STFFormDirectivesModule,
-  STFIconsModule,
-  STFTooltipModule,
-} from '@flaps/pastanaga';
+import { STFExpanderModule, STFFormDirectivesModule, STFIconsModule, STFTooltipModule } from '@flaps/pastanaga';
 import { PaginationModule, STFSectionNavbarModule } from '@flaps/common';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
@@ -37,7 +32,8 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, DropdownButtonComponent } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { FileUploadModule } from '@flaps/core';
 
 const Components = [
   ResourceListComponent,
@@ -121,6 +117,8 @@ const ROUTES: Routes = [
     PaTooltipModule,
     PaDropdownModule,
     DropdownButtonComponent,
+    FileUploadModule,
+    SisProgressModule,
   ],
   declarations: [...Components],
   exports: [],
