@@ -74,7 +74,7 @@ jobs:
           (test -d dist/libs/search-widget && echo "::set-output name=deploy-widget::yes") || echo "Widget unchanged"
           (test -d dist/apps/dashboard && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
-          (test -d dist/apps/desktop && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
+          ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "::set-output name=deploy-sistema::yes") || echo "Sistema demo unchanged"
 
       - uses: google-github-actions/auth@v0
