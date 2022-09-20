@@ -225,8 +225,11 @@ jobs:
       release-desktop: ${{ steps.release.outputs.released }}
 
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Release
-        uses: justincy/github-action-npm-release@v2
+        uses: justincy/github-action-npm-release@2.0.2
         id: release
 
   deploy-desktop:
