@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import type { KBStates } from '@nuclia/core';
-  import { resetStore } from '../core/store';
+  import { resetStore, nucliaStore } from '../core/store';
   import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
   import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../core/utils';
@@ -26,6 +26,11 @@
   export let permalink = false;
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
+
+  export const search = (query: string) => {
+    nucliaStore().query.next(query);
+    nucliaStore().triggerSearch.next();
+  };
 
   let svgSprite;
   let ready = false;
