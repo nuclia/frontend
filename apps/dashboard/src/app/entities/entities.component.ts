@@ -1,12 +1,15 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { Observable, Subject, switchMap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Entities } from '@nuclia/core';
 import { AppEntitiesGroup } from './model';
 import { EntitiesService } from '../services/entities.service';
 import { EntitiesEditService } from './entities-edit.service';
 import { EntitiesSearchService } from './entities-search.service';
+import { PostHogService } from '@flaps/core';
+import { EntityGroupDialogComponent } from './entity-group-dialog/entity-group-dialog.component';
+import { ModalService } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-entities',
@@ -30,7 +33,14 @@ export class EntitiesComponent {
     ),
   );
 
-  constructor(private entitiesService: EntitiesService, private searchService: EntitiesSearchService) {}
+  canAddEntities: Observable<boolean> = this.postHogService.isFeatureEnabled('add-entity-group');
+
+  constructor(
+    private entitiesService: EntitiesService,
+    private searchService: EntitiesSearchService,
+    private postHogService: PostHogService,
+    private modalService: ModalService,
+  ) {}
 
   search() {
     this.searchService.search(this.searchInput.value);
@@ -38,5 +48,12 @@ export class EntitiesComponent {
 
   trackByFn(index: number, item: AppEntitiesGroup): string {
     return item.key;
+  }
+
+  addEntityGroup() {
+    this.modalService
+      .openModal(EntityGroupDialogComponent)
+      .onClose.pipe(switchMap(() => this.entitiesService.refreshEntities()))
+      .subscribe(() => {});
   }
 }

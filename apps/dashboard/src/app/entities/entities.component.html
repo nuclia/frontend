@@ -1,15 +1,24 @@
 <div class="entities">
   <h1>{{ 'entity.name_entities_management' | translate }}</h1>
 
-  <div class="entities-search">
-    <pa-input id="entity-search"
-              [formControl]="searchInput"
-              (keydown.enter)="search()">{{ 'entity.entity_search' | translate }}</pa-input>
+  <div class="entities-actions">
+    <div class="entities-search">
+      <pa-input id="entity-search"
+                [formControl]="searchInput"
+                (keydown.enter)="search()">{{ 'entity.entity_search' | translate }}</pa-input>
 
-    <pa-button icon="search"
-               aspect="basic"
-               (click)="search()">{{'generic.search' | translate}}</pa-button>
+      <pa-button icon="search"
+                 aspect="basic"
+                 (click)="search()">{{'generic.search' | translate}}</pa-button>
+    </div>
+
+    <pa-button *ngIf="(canAddEntities | async) === true"
+               paTooltip="Add entity group"
+               icon="plus"
+               (click)="addEntityGroup()"
+    >{{'entity.add_group' | translate}}</pa-button>
   </div>
+
 
   <ng-container *ngIf="searchTerm | async as term">
     <div *ngIf="noResults | async" class="entities-no-results">
