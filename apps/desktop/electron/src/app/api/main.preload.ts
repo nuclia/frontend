@@ -7,4 +7,5 @@ contextBridge.exposeInMainWorld('electron', {
   openExternal: (url: string) => shell.openExternal(url),
   close: () => ipcRenderer.send('close'),
   getMachineId: () => machineIdSync(true),
+  quitAndReInstall: () => ipcRenderer.send('quitAndReInstall'),
 });

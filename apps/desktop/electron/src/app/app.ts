@@ -139,8 +139,17 @@ export default class App {
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
+    autoUpdater.on('update-available', () => {
+      App.mainWindow?.webContents.executeJavaScript(`alert('A new update is available. Downloading now…')`);
+    });
+    autoUpdater.on('update-downloaded', () => {
+      App.mainWindow?.webContents.executeJavaScript(
+        `if(confirm('The update is downloaded. Do you want to update now?')){window['electron'].quitAndReInstall()}`,
+      );
+    });
 
     ipcMain.on('close', () => app.quit());
+    ipcMain.on('quitAndReInstall', () => autoUpdater.quitAndInstall());
 
     const gotTheLock = app.requestSingleInstanceLock();
     if (gotTheLock) {

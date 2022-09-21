@@ -223,7 +223,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     outputs:
       release-desktop: ${{ steps.release.outputs.released }}
-      release-id: ${{ steps.release.outputs.release_id }}
+      release-tag: ${{ steps.release.outputs.release_tag }}
 
     steps:
       - uses: actions/checkout@v2
@@ -302,23 +302,25 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'macos')
         with:
-          tag_name: ${{ needs.pre-release.outputs.release-id }}
+          tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.dmg
+            dist/executables/*.zip
             dist/executables/latest-*.yml
       - name: Release Windows installer
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'windows')
         with:
-          tag_name: ${{ needs.pre-release.outputs.release-id }}
+          tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.exe
-            dist/executables/app-update.yml
+            dist/executables/*.yml
       - name: Release Linux installer
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          tag_name: ${{ needs.pre-release.outputs.release-id }}
+          tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.snap
+            dist/executables/*.AppImage
             dist/executables/latest-*.yml
