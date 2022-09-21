@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
-import { map, filter, take, switchMap, tap, catchError } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { Entities, EntitiesGroup, IKnowledgeBox } from '@nuclia/core';
 import { MutableEntitiesGroup } from '../entities/model';
@@ -25,6 +25,13 @@ export class EntitiesService {
 
   getEntities(): Observable<Entities | null> {
     return this.entitiesSubject;
+  }
+
+  refreshEntities(): Observable<Entities> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => this._refreshEntities(kb)),
+    );
   }
 
   getGroup(groupKey: string): Observable<EntitiesGroup | null> {

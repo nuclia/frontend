@@ -8,6 +8,12 @@
     margin: 0 0 rhythm(3) 0;
   }
 
+  .entities-actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(3);
+  }
+
   .entities-search {
     align-items: center;
     background-color: $color-light-stronger;

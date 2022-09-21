@@ -15,6 +15,7 @@ export enum ResourceProperties {
   EXTRACTED = 'extracted',
   ERRORS = 'errors',
 }
+
 export enum ExtractedDataTypes {
   TEXT = 'text',
   METADATA = 'metadata',
@@ -49,52 +50,87 @@ export interface IKnowledgeBoxCreation {
   description?: string;
   zone: string;
 }
+
 export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {
   role_on_kb?: KBRoles;
 }
+
 export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   get path(): string;
+
   get fullpath(): string;
+
   getEntities(): Observable<Entities>;
+
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
+
   getLabels(): Observable<Labels>;
+
   getResource(uuid: string): Observable<IResource>;
+
   search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
+
   suggest(query: string): Observable<Search.Suggestions>;
+
   getWidgets(): Observable<Widgets>;
+
   getWidget(widgetId: string): Observable<Widget>;
+
   counters(): Observable<Counters>;
+
   listResources(page?: number, size?: number): Observable<ResourceList>;
+
   getTempToken(): Observable<string>;
+
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
   admin?: boolean;
   contrib?: boolean;
+
   modify(data: Partial<IKnowledgeBox>): Observable<void>;
+
   publish(published: boolean): Observable<void>;
+
   delete(): Observable<void>;
+
   setEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void>;
+
   deleteEntitiesGroup(groupId: string): Observable<void>;
+
   setLabelSet(setId: string, labelSet: LabelSet): Observable<void>;
+
   deleteLabelSet(setId: string): Observable<void>;
+
   createResource(resource: IResource): Observable<{ uuid: string }>;
+
   createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }>;
+
   saveWidget(id: string, widget: Partial<Widget>): Observable<void>;
+
   deleteWidget(widgetId: string): Observable<void>;
+
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
+
   upload(buffer: ArrayBuffer, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
+
   upload(
     data: File | FileWithMetadata | ArrayBuffer,
     TUS?: boolean,
     metadata?: FileMetadata,
   ): Observable<UploadResponse>;
+
   batchUpload(files: FileList | File[] | FileWithMetadata[]): Observable<UploadStatus>;
+
   getServiceAccounts(): Observable<ServiceAccount[]>;
+
   createServiceAccount(data: ServiceAccountCreation): Observable<void>;
+
   deleteServiceAccount(saId: string): Observable<void>;
+
   createKey(saId: string, expires: string): Observable<{ token: string }>;
+
   deleteKey(saId: string, saKeyId: string): Observable<void>;
 }
 
@@ -111,10 +147,17 @@ export interface Entities {
   [key: string]: EntitiesGroup;
 }
 
+export interface Entity {
+  value: string;
+  merged?: boolean;
+  represents?: string[];
+}
+
 export interface EntitiesGroup {
   title?: string;
   color?: string;
-  entities: { [key: string]: { value: string; merged?: boolean; represents?: string[] } };
+  entities: { [key: string]: Entity };
+  custom?: boolean;
 }
 
 export interface Label {
