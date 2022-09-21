@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import type { KBStates } from '@nuclia/core';
-  import { resetStore, nucliaStore } from "../core/store";
+  import { resetStore, nucliaStore } from '../core/store';
   import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
   import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../core/utils';
