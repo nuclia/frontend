@@ -305,6 +305,7 @@ jobs:
           tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.dmg
+            dist/executables/*.zip
             dist/executables/latest-*.yml
       - name: Release Windows installer
         uses: softprops/action-gh-release@v1
@@ -313,7 +314,7 @@ jobs:
           tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.exe
-            dist/executables/app-update.yml
+            dist/executables/*.yml
       - name: Release Linux installer
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'ubuntu')
@@ -321,4 +322,5 @@ jobs:
           tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.snap
+            dist/executables/*.AppImage
             dist/executables/latest-*.yml
