@@ -15,7 +15,9 @@
 
   const defaultPlaceholder = 'input.placeholder';
 
-  let value = '';
+  const query = nucliaStore().query;
+  query['set'] = query.next;
+
   let previous = '';
   let element: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -30,28 +32,20 @@
 
   onMount(() => {
     element.focus();
-    nucliaState()
-      .query.pipe(take(1))
-      .subscribe((query) => {
-        value = query;
-      });
   });
-
-  $: {
-    if (value.trim() !== previous.trim()) {
-      dispatch('typeahead', value);
-    }
-
-    if (typeof value !== 'undefined') {
-      nucliaStore().query.next(value);
-    }
-    previous = value;
-  }
 
   const search = () => {
     nucliaStore().triggerSearch.next();
-    dispatch('search', value);
+    dispatch('search');
   };
+
+  const onChange = (event: InputEvent) => {
+    const query = (event.target as HTMLInputElement).value;
+    if (query.trim() !== previous.trim()) {
+      dispatch('typeahead', query);
+    }
+    previous = query;
+  }
 
   const onEnter = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -82,8 +76,8 @@
     autocapitalize="off"
     spellcheck="false"
     aria-label="Search input"
-    bind:value
-    on:input
+    bind:value={$query}
+    on:input={onChange}
     on:keyup
     on:change
     on:keypress={onEnter}
