@@ -223,6 +223,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     outputs:
       release-desktop: ${{ steps.release.outputs.released }}
+      release-id: ${{ steps.release.outputs.release_id }}
 
     steps:
       - uses: actions/checkout@v2
@@ -301,7 +302,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'macos')
         with:
-          tag_name: ${{ steps.release.outputs.release_id }}
+          tag_name: ${{ needs.pre-release.outputs.release-id }}
           files: |
             dist/executables/*.dmg
             dist/executables/latest-*.yml
@@ -309,7 +310,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'windows')
         with:
-          tag_name: ${{ steps.release.outputs.release_id }}
+          tag_name: ${{ needs.pre-release.outputs.release-id }}
           files: |
             dist/executables/*.exe
             dist/executables/app-update.yml
@@ -317,7 +318,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'ubuntu')
         with:
-          tag_name: ${{ steps.release.outputs.release_id }}
+          tag_name: ${{ needs.pre-release.outputs.release-id }}
           files: |
             dist/executables/*.snap
             dist/executables/latest-*.yml
