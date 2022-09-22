@@ -1,12 +1,12 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { LabelSetKind } from '../../../sdk-core/src';
+  import { LabelSetKind } from '@nuclia/core';
   import { map } from 'rxjs';
-  import { getCDN } from '../core/utils';
-  import { nucliaState } from '../core/store';
-  import { viewerStore } from './store';
-  import { clickOutside } from '../components/actions/actions';
-  import Label from '../components/label/Label.svelte';
+  import { getCDN } from '../../core/utils';
+  import { nucliaState } from '../../core/store';
+  import { viewerStore } from '../viewer.store';
+  import { clickOutside } from '../../components/actions/actions';
+  import Label from '../../components/label/Label.svelte';
   import type { Classification } from '@nuclia/core';
 
   const dispatch = createEventDispatcher();

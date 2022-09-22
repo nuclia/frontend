@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { WidgetAction } from '../core/models';
-  import { getWidgetActions } from '../core/store';
-  import { getCDN } from '../core/utils';
-  import { clickOutside } from '../components/actions/actions';
+  import type { WidgetAction } from '../../core/models';
+  import { getWidgetActions } from '../../core/store';
+  import { getCDN } from '../../core/utils';
+  import { clickOutside } from '../../components/actions/actions';
 
   export let uid: string;
 
