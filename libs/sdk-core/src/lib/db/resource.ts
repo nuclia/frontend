@@ -56,13 +56,13 @@ export class Resource implements IResource {
     return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}`);
   }
 
-  getFields(types: (keyof ResourceData)[] = ['files', 'links', 'texts', 'keywordsets']): IFieldData[] {
+  getFields<T = IFieldData>(types: (keyof ResourceData)[] = ['files', 'links', 'texts', 'keywordsets']): T[] {
     return Object.entries(this.data)
       .filter(([key, value]) => types.includes(key as keyof ResourceData))
       .map(([key, value]) => value)
       .filter((obj) => !!obj)
-      .map((obj) => Object.values(obj!) as IFieldData[])
-      .reduce((acc, val) => acc.concat(val), [] as IFieldData[]);
+      .map((obj) => Object.values(obj!) as T[])
+      .reduce((acc, val) => acc.concat(val), [] as T[]);
   }
 
   getExtractedSummaries(): string[] {
@@ -78,22 +78,15 @@ export class Resource implements IResource {
   }
 
   getFiles(): CloudLink[] {
-    return this.getFields(['files'])
-      .filter((field) => !!field && !!field.value)
-      .map((field) => (field as FileFieldData)!.value!.file!);
+    return this.getFields<FileFieldData>(['files'])
+      .filter((field) => !!field && !!field.value && !!field.value.file)
+      .map((field) => (field.value as FileField).file as CloudLink);
   }
 
   getThumbnails(): CloudLink[] {
-    return this.getFields(['files'])
-      .map((field) => {
-        const fileField = field as FileFieldData;
-        let thumbnail: CloudLink | undefined = fileField.extracted?.file?.file_thumbnail;
-        if (!thumbnail && fileField.value?.file?.content_type?.startsWith('image')) {
-          thumbnail = fileField.value?.file;
-        }
-        return thumbnail;
-      })
-      .concat(this.getFields(['links']).map((field) => (field as LinkFieldData).extracted?.link?.link_thumbnail))
+    return this.getFields<FileFieldData>(['files'])
+      .map((field) => field.extracted?.file?.file_thumbnail)
+      .concat(this.getFields<LinkFieldData>(['links']).map((field) => field.extracted?.link?.link_thumbnail))
       .filter((thumb) => !!thumb) as CloudLink[];
   }
 
