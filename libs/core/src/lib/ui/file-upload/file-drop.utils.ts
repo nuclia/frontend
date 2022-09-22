@@ -1,28 +1,31 @@
 import { from } from 'rxjs';
+import { DroppedFile } from './file-drop.directive';
 
 export const getDroppedFiles = (dataTransferItemList: DataTransferItemList) =>
   from(getAllFileEntries(dataTransferItemList));
 
 // Drop handler function to get all files
 async function getAllFileEntries(dataTransferItemList: DataTransferItemList) {
-  let fileEntries: File[] = [];
+  let fileEntries: DroppedFile[] = [];
   // Use BFS to traverse entire directory/file structure
-  const queue: FileSystemEntry[] = [];
+  const queue: { entry: FileSystemEntry; path: string }[] = [];
   // Unfortunately dataTransferItemList is not iterable i.e. no forEach
   for (let i = 0; i < dataTransferItemList.length; i++) {
     const entry = dataTransferItemList[i].webkitGetAsEntry();
     if (entry) {
-      queue.push(entry);
+      queue.push({ entry, path: '' });
     }
   }
   while (queue.length > 0) {
-    let entry = queue.shift();
+    const { entry, path } = queue.shift()!;
     if (entry) {
       if (entry.isFile) {
         const file = await getFile(entry as FileSystemFileEntry);
-        fileEntries.push(file);
+        (file as DroppedFile).path = path + file.name;
+        fileEntries.push(file as DroppedFile);
       } else if (entry.isDirectory) {
-        queue.push(...(await readAllDirectoryEntries((entry as FileSystemDirectoryEntry).createReader())));
+        const directoryEntries = await readAllDirectoryEntries((entry as FileSystemDirectoryEntry).createReader());
+        queue.push(...directoryEntries.map((item) => ({ entry: item, path: path + entry.name + '/' })));
       }
     }
   }

@@ -1,6 +1,7 @@
 import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { getDroppedFiles } from './file-drop.utils';
 
+export type DroppedFile = File & { path: string };
 const extensionRegexp = new RegExp(`^\.[a-zA-Z0-9]+$`);
 
 @Directive({ selector: '[stfFileDrop]' })
@@ -40,7 +41,7 @@ export class FileDropDirective {
   }
 
   @Output() public fileOver: EventEmitter<boolean> = new EventEmitter();
-  @Output() public atFileDrop: EventEmitter<File[]> = new EventEmitter<File[]>();
+  @Output() public atFileDrop: EventEmitter<DroppedFile[]> = new EventEmitter<DroppedFile[]>();
 
   protected element: ElementRef;
   private _fileTypeSpecifiers: string[] = [];
@@ -53,9 +54,9 @@ export class FileDropDirective {
     }
     this._preventAndStop(event);
     this.fileOver.emit(false);
-    getDroppedFiles(transfer.items).subscribe((files: File[]) => {
-      let acceptedFiles: File[] = files;
-      let unacceptedFiles: File[] = [];
+    getDroppedFiles(transfer.items).subscribe((files) => {
+      let acceptedFiles: DroppedFile[] = files;
+      let unacceptedFiles: DroppedFile[] = [];
       if (this._fileTypeSpecifiers.length > 0) {
         acceptedFiles = [];
         files.forEach((file) => {
