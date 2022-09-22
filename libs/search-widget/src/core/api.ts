@@ -1,8 +1,10 @@
-import { Nuclia, Resource, ResourceProperties, Search } from '../../../sdk-core/src';
-import type { Classification, KBStates, Labels, NucliaOptions, SearchOptions } from '@nuclia/core';
+import type { Classification, Entities, KBStates, Labels, NucliaOptions, SearchOptions } from '@nuclia/core';
+import { Nuclia, Resource, ResourceProperties, Search } from '@nuclia/core';
 import { filter, map, merge, Observable, of } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
+import type { EntityGroup } from './models';
+import { generatedEntitiesColor } from './utils';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -73,6 +75,25 @@ export const getResource = (uid: string): Observable<Resource> => {
   return merge(
     nucliaApi.knowledgeBox.getResource(uid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN]),
     nucliaApi.knowledgeBox.getResource(uid),
+  );
+};
+
+export const loadEntities = (): Observable<EntityGroup[]> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getEntities().pipe(
+    map((entityMap: Entities) =>
+      Object.entries(entityMap)
+        .map(([groupId, group]) => ({
+          id: groupId,
+          title: group.title || `entities.${groupId.toLowerCase()}`,
+          color: group.color || generatedEntitiesColor[groupId],
+          entities: Object.entries(group.entities).map(([entityId, entity]) => entity.value),
+          custom: group.custom,
+        }))
+        .sort((a, b) => a.id.localeCompare(b.id)),
+    ),
   );
 };
 

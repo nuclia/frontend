@@ -1,4 +1,3 @@
-import { Search } from '../../../sdk-core/src';
 import type {
   Classification,
   CloudLink,
@@ -10,6 +9,7 @@ import type {
   ResourceData,
   Sentence,
 } from '@nuclia/core';
+import { Search } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -36,11 +36,14 @@ import type {
 import { PreviewKind, SearchOrder } from '../core/models';
 import { getFileUrls } from '../core/api';
 import { isYoutubeUrl } from '../core/utils';
+import type { AnnotationStore } from './stores/annotation.store';
+import { annotationStore } from './stores/annotation.store';
+import type { ResourceStore } from './stores/resource.store';
+import { resourceStore } from './stores/resource.store';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 
-export const viewerStore: {
-  resource: BehaviorSubject<Resource | null>;
+type ViewerStore = {
   query: BehaviorSubject<string>;
   results: BehaviorSubject<WidgetParagraph[] | null>;
   hasSearchError: BehaviorSubject<boolean>;
@@ -53,8 +56,9 @@ export const viewerStore: {
   savingLabels: BehaviorSubject<boolean>;
   updatedLabels: Subject<{ [key: string]: Classification[] }>;
   init: () => void;
-} = {
-  resource: new BehaviorSubject<Resource | null>(null),
+};
+
+export const viewerStore: ViewerStore & AnnotationStore & ResourceStore = {
   query: new BehaviorSubject(''),
   results: new BehaviorSubject<WidgetParagraph[] | null>(null),
   hasSearchError: new BehaviorSubject<boolean>(false),
@@ -66,6 +70,8 @@ export const viewerStore: {
   order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
+  ...annotationStore,
+  ...resourceStore,
   init: initStore,
 };
 
@@ -158,7 +164,7 @@ export const pdfUrl = combineLatest([
 ) as Observable<CloudLink>;
 
 export function initStore() {
-  viewerStore.resource.next(null);
+  resourceStore.init();
   viewerStore.query.next('');
   viewerStore.results.next(null);
   viewerStore.hasSearchError.next(false);

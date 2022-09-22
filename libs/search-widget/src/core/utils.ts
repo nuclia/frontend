@@ -79,3 +79,23 @@ export const formatTitle = (title?: string): string => {
     return title;
   }
 };
+
+export const generatedEntitiesColor: { [key: string]: string } = {
+  DATE: '#ff8989',
+  EVENT: '#cba2da',
+  FAC: '#81d8ac',
+  GPE: '#454ade',
+  LANGUAGE: '#d1d3ff',
+  LAW: '#1E264F',
+  LOC: '#b7a38d',
+  MAIL: '#e81c66',
+  MONEY: '#ff8c4b',
+  NORP: '#743ccf',
+  ORG: '#6eb0ec',
+  PERCENT: '#1e264f',
+  PERSON: '#ffe186',
+  PRODUCT: '#d74f57',
+  QUANTITY: '#b035c9',
+  TIME: '#21b8a6',
+  WORK_OF_ART: '#ffbccc',
+};

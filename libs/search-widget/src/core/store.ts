@@ -1,5 +1,5 @@
+import type { DisplayedResource, EntityGroup, Intents, WidgetAction } from './models';
 import { NO_RESULTS, PENDING_RESULTS } from './models';
-import type { Intents, WidgetAction, DisplayedResource } from './models';
 import { getLabels } from './api';
 import {
   BehaviorSubject,
@@ -11,10 +11,10 @@ import {
   shareReplay,
   startWith,
   Subject,
-  tap,
   switchMap,
+  tap,
 } from 'rxjs';
-import type { IResource, Search, SearchOptions, Widget, Classification, Labels } from '@nuclia/core';
+import type { Classification, IResource, Labels, Search, SearchOptions, Widget } from '@nuclia/core';
 
 let widgetActions: WidgetAction[] = [];
 export const setWidgetActions = (actions: WidgetAction[]) => {
@@ -33,6 +33,7 @@ type NucliaStore = {
   widget: ReplaySubject<Widget>;
   displayedResource: BehaviorSubject<DisplayedResource>;
   labels: Subject<Labels>;
+  entities: BehaviorSubject<EntityGroup[]>;
 };
 let _store: NucliaStore | undefined;
 
@@ -51,6 +52,7 @@ let _state: {
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
   getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
   labels: Observable<Labels>;
+  entities: Observable<EntityGroup[]>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -66,36 +68,37 @@ export const nucliaStore = (): NucliaStore => {
       widget: new ReplaySubject(1),
       displayedResource: new BehaviorSubject({ uid: '' }),
       labels: new Subject<Labels>(),
+      entities: new BehaviorSubject<EntityGroup[]>([]),
     };
     _state = {
-      query: _store!.query.asObservable().pipe(
+      query: _store.query.asObservable().pipe(
         tap(() => _store!.hasSearchError.next(false)),
         distinctUntilChanged(),
       ),
-      searchOptions: _store!.searchOptions.asObservable(),
-      results: _store!.searchResults.pipe(
+      searchOptions: _store.searchOptions.asObservable(),
+      results: _store.searchResults.pipe(
         filter((res) => !!res.resources),
         map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
       ),
-      paragraphs: _store!.suggestions.pipe(
+      paragraphs: _store.suggestions.pipe(
         filter((res) => !!res.paragraphs?.results),
         map((res) => Object.values(res.paragraphs?.results || [])),
         startWith([] as Search.Paragraph[]),
       ),
-      labelIntents: _store!.intents.pipe(map((intents) => intents.labels || [])),
-      hasSearchError: _store!.hasSearchError.asObservable(),
-      pendingSuggestions: _store!.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
-      pendingResults: _store!.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
-      widget: _store!.widget.asObservable(),
-      customStyle: _store!.widget.pipe(
+      labelIntents: _store.intents.pipe(map((intents) => intents.labels || [])),
+      hasSearchError: _store.hasSearchError.asObservable(),
+      pendingSuggestions: _store.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
+      pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
+      widget: _store.widget.asObservable(),
+      customStyle: _store.widget.pipe(
         map((widget) =>
           Object.entries(widget?.style || {})
             .filter(([k, v]) => !!v)
             .reduce((acc, [k, v]) => `${acc}--custom-${k}: ${v};`, ''),
         ),
       ),
-      displayedResource: _store!.displayedResource.asObservable(),
+      displayedResource: _store.displayedResource.asObservable(),
       getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
         return _store!.searchResults.pipe(
           map((results) => results.paragraphs?.results || []),
@@ -115,6 +118,7 @@ export const nucliaStore = (): NucliaStore => {
         switchMap(() => getLabels()),
         shareReplay(),
       ),
+      entities: _store.entities.asObservable(),
     };
   }
   return _store as NucliaStore;

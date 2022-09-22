@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { ExtractedText, Resource } from '@nuclia/core';
-  import { getFile } from '../core/api';
-  import { nucliaState } from '../core/store';
+  import { getFile, loadEntities } from '../core/api';
+  import { nucliaState, nucliaStore } from '../core/store';
   import { _ } from '../core/i18n';
-  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from './store';
-  import { onDestroy } from 'svelte';
+  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from './viewer.store';
+  import { onDestroy, onMount } from 'svelte';
   import { combineLatest, filter, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';
   import Paragraphs from './paragraphs/Paragraphs.svelte';
@@ -14,11 +14,11 @@
 
   export let resource: Resource;
 
-  let texts: ExtractedText[] = [];
+  let texts: ExtractedText[];
   let imagePath: string | undefined;
   let image: string | undefined;
   let header: HTMLElement;
-  let headerHeight = '0px';
+  let headerHeight;
 
   const query = viewerState.query;
   const paragraphs = viewerState.paragraphs;
@@ -27,7 +27,7 @@
   const showPreview = viewerState.showPreview;
 
   $: {
-    viewerStore.resource.next(resource);
+    viewerStore.setResource(resource);
     texts = resource.getExtractedTexts();
     imagePath = findFileByType(resource, 'image/');
     if (imagePath) {
@@ -37,7 +37,7 @@
     }
   }
 
-  $: headerHeight = header?.clientHeight + 'px' || '0px';
+  $: headerHeight = header?.clientHeight + 'px' || '0';
 
   const subscriptions = [
     nucliaState().displayedResource.subscribe(() => {
@@ -51,7 +51,6 @@
         ),
       )
       .subscribe(([query, displayedResource]) => {
-        //viewerStore.query.next(query);
         if (displayedResource.sentence) {
           selectSentence(resource, displayedResource.sentence);
         } else if (displayedResource.paragraph) {
@@ -66,6 +65,10 @@
         viewerStore.results.next(paragraphs);
       }),
   ];
+
+  onMount(() => {
+    loadEntities().subscribe(entities => nucliaStore().entities.next(entities));
+  });
 
   onDestroy(() => {
     if (image) URL.revokeObjectURL(image);
@@ -84,10 +87,8 @@
       <div class="paragraphs">
         {#if $hasSearchError}
           <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
-        {:else if $results}
-          <Paragraphs paragraphs={$results} />
         {:else}
-          <Paragraphs paragraphs={$paragraphs} />
+          <Paragraphs paragraphs={$results || $paragraphs}/>
         {/if}
       </div>
 
@@ -97,26 +98,13 @@
           <img src={image} alt={resource.title + ' preview'} />
         </div>
       {/if}
-
-      <!--
-      {#if $query.length === 0 && texts.length > 0}
-        <h2>Full text</h2>
-        <div>
-          {#each texts as text}
-            <div>
-              <pre>{text.text}</pre>
-            </div>
-          {/each}
-        </div>
-      {/if}
-      -->
     </div>
 
     <div class="viewer-right">
       {#if $showPreview}
         <Preview />
       {:else}
-        <Metadata {resource} />
+        <Metadata {resource}/>
       {/if}
     </div>
   </div>

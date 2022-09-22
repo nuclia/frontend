@@ -12,7 +12,7 @@
     getFileField,
     getLinkField,
     getResourceParagraphs, getVideoStream,
-  } from '../viewer/store';
+  } from '../viewer/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from './Icon.svelte';

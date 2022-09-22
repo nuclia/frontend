@@ -1,16 +1,39 @@
 <script lang="ts">
   import Collapse from '../components/expander/expander.svelte';
-  import { viewerStore } from './store';
+  import { viewerStore } from './viewer.store';
   import { _ } from '../core/i18n';
+  import { nucliaState } from '../core/store';
+  import { combineLatest, map, Observable } from 'rxjs';
+  import type { EntityGroup } from '../core/models';
+  import { tap } from 'rxjs/operators';
 
-  export let entities: [string, string[]][];
+  const allEntities = nucliaState().entities;
+  const resourceEntities: Observable<EntityGroup[]> = viewerStore.resourceEntities;
+  const annotationMode = viewerStore.annotationMode;
+
   let expanded: string[] = [];
 
+  const toggleAnnotationMode = () => {
+    const annotationModeEnabled = annotationMode.getValue();
+    if (annotationModeEnabled) {
+      expanded = [];
+    }
+  }
+  $: entityList = combineLatest([
+    annotationMode,
+    resourceEntities,
+    allEntities
+  ]).pipe(
+    tap(() => toggleAnnotationMode()),
+    map(([annotationEnabled, entitiesFromResource, allEntitiesFromKb]) => annotationEnabled ? allEntitiesFromKb : entitiesFromResource)
+  );
+
   const toggle = (group: string) => {
+    const annotationModeEnabled = annotationMode.getValue();
     if (isExpanded(group)) {
       expanded = expanded.filter((g) => g !== group);
     } else {
-      expanded = [...expanded, group];
+      expanded = annotationModeEnabled ? [group] : [...expanded, group];
     }
   };
 
@@ -26,46 +49,25 @@
     if (event.key === 'Enter') search(entity);
   };
 
-  const getColor = (group: string) => {
-    const colors: { [key: string]: string } = {
-      DATE: '#ff8989',
-      FAC: '#81d8ac',
-      GPE: '#454ade',
-      LAW: '#1E264F',
-      LOC: '#b7a38d',
-      MAIL: '#e81c66',
-      ORG: '#6eb0ec',
-      PERSON: '#ffe186',
-      QUANTITY: '#b035c9',
-      MONEY: '#ff8c4b',
-      PERCENT: '#1e264f',
-      TIME: '#21b8a6',
-      EVENT: '#cba2da',
-      NORP: '#743ccf',
-      PRODUCT: '#d74f57',
-      WORK_OF_ART: '#ffbccc',
-      LANGUAGE: '#d1d3ff',
-    };
-    return colors[group] || '#eee';
-  };
+
 </script>
 
 <div class="sw-entities">
-  {#each entities as group, i}
-    <Collapse expanded={expanded.includes(group[0])}>
+  {#each $entityList as group, i}
+    <Collapse expanded={expanded.includes(group.id)}>
       <button
         slot="header"
         on:click={() => {
-          toggle(group[0]);
+          toggle(group.id);
         }}
-        class:expanded={expanded.includes(group[0])}
-        class:last={i === entities.length - 1}
+        class:expanded={expanded.includes(group.id)}
+        class:last={i === $entityList.length - 1}
       >
-        <div class="color" style:background={getColor(group[0])} />
-        <div class="group-name">{$_('entities.' + group[0].toLowerCase())} ({group[1].length})</div>
+        <div class="color" style:background={group.color} />
+        <div class="group-name">{$_(group.title)} ({group.entities.length})</div>
       </button>
       <ul>
-        {#each group[1] as entity}
+        {#each group.entities as entity}
           <li tabIndex="0" role="button" on:click={() => search(entity)} on:keyup={(e) => onKeyUp(e, entity)}>
             {entity}
           </li>

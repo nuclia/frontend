@@ -2,6 +2,12 @@ mark {
   background-color: inherit;
   font-weight: var(--font-weight-semi-bold);
 }
+mark[family] {
+  background-color: var(--color-neutral-lighter);
+  cursor: pointer;
+  font-weight: var(--font-weight-body);
+  padding: 0 var(--rhythm-0_5);
+}
 
 .ellipsis {
   overflow: hidden;

@@ -100,3 +100,11 @@ export interface LinkPreviewParams {
 export interface Intents {
   labels?: Classification[];
 }
+
+export interface EntityGroup {
+  id: string;
+  title?: string;
+  color?: string;
+  custom?: boolean;
+  entities: string[];
+}
