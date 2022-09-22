@@ -2,10 +2,12 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
-import { STFTrackingService, StateService } from '@flaps/core';
+import { STFTrackingService, StateService, DroppedFile } from '@flaps/core';
 import { STFUtils } from '@flaps/core';
 import { FileWithMetadata, ICreateResource, LabelValue } from '@nuclia/core';
 import { UploadService, FILES_TO_IGNORE } from '../upload.service';
+
+const GENERAL_LABELSET = 'General';
 
 @Component({
   selector: 'app-upload-files',
@@ -140,20 +142,25 @@ export class UploadFilesComponent {
   private setLabels(files: FileWithMetadata[]): FileWithMetadata[] {
     if (this.useFoldersAsLabels) {
       files = files.map((file) => {
-        const path = file.webkitRelativePath.split('/');
-        // we need at least a labelset and a label, like:
-        // labelset/label/filename
-        if (path.length < 3) {
+        // Dropped files don't have webkitRelativePath property
+        const path = 'path' in file ? (file as DroppedFile).path : file.webkitRelativePath;
+        const parts = path.split('/');
+        let classifications: LabelValue[] = [];
+        if (parts.length <= 1) {
           return file;
+        } else if (parts.length === 2) {
+          classifications = [
+            {
+              labelset: STFUtils.generateSlug(GENERAL_LABELSET),
+              label: parts[1],
+            },
+          ];
+        } else {
+          const labelset = STFUtils.generateUniqueSlug(parts[0], []);
+          classifications = parts.slice(1, -1).map((label) => ({ labelset, label }));
         }
-        const labelset = STFUtils.generateUniqueSlug(path[0], []);
         const payload: ICreateResource = {
-          usermetadata: {
-            classifications: path.slice(1, -1).map((label) => ({
-              labelset,
-              label,
-            })),
-          },
+          usermetadata: { classifications },
         };
         file.payload = payload;
         return file;
