@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { LabelValue, Resource } from '@nuclia/core';
+import { CloudLink, FileFieldData, LabelValue, Resource } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, switchMap, tap, timer } from 'rxjs';
 import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
@@ -26,8 +26,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
     thumbnail: [''],
   });
   thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
-    map((res) => res.getThumbnails()),
-    tap((thumbnails) => console.log(thumbnails)),
+    map((res) => this.getThumbnailsAndImages(res)),
     switchMap((thumbnails) =>
       forkJoin(
         thumbnails.map((thumbnail) =>
@@ -129,5 +128,13 @@ export class ResourceProfileComponent extends BaseEditComponent {
 
   trackByUri(index: number, thumbnail: Thumbnail) {
     return thumbnail.uri;
+  }
+
+  private getThumbnailsAndImages(resource: Resource): CloudLink[] {
+    return resource
+      .getFields<FileFieldData>(['files'])
+      .filter((fileField) => fileField.value?.file?.content_type?.startsWith('image'))
+      .map((fileField) => fileField.value?.file as CloudLink)
+      .concat(resource.getThumbnails());
   }
 }
