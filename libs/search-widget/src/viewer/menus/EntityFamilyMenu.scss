@@ -1,0 +1,34 @@
+.sw-entity-menu {
+  background-color: var(--color-light-stronger);
+  box-shadow: var(--shadow-modal);
+  position: fixed;
+  width: var(--rhythm-20);
+  z-index: 1;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      cursor: pointer;
+      padding: var(--rhythm-1) var(--rhythm-2);
+      position: relative;
+      transition: background-color var(--transition-superfast);
+
+      &:hover {
+        background-color: var(--color-neutral-lightest);
+      }
+
+      &:before {
+        background-color: var(--family-color);
+        bottom: 0;
+        content: '';
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: var(--rhythm-0_5);
+      }
+    }
+  }
+}

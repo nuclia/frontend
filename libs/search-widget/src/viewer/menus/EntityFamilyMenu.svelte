@@ -1,0 +1,34 @@
+<script lang="ts">
+  import { nucliaState } from '../../core/store';
+  import { clickOutside } from '../../components/actions/actions';
+  import { createEventDispatcher } from 'svelte';
+  import { _ } from '../../core/i18n';
+
+  export let position: { top: number; left: number };
+
+  const allEntities = nucliaState().entities;
+  const dispatch = createEventDispatcher();
+  const close = () => {
+    dispatch('close');
+  };
+
+  function selectFamily(family) {
+    dispatch('familySelection', {family});
+  }
+</script>
+
+<div class="sw-entity-menu"
+     use:clickOutside
+     on:outclick={close}
+     style:left={position?.left + 'px'}
+     style:top={position?.top + 'px'}>
+  <ul>
+    {#each $allEntities as family}
+      <li style:--family-color={family.color}
+          on:click={() => selectFamily(family)}>{$_(family.title)}</li>
+    {/each}
+  </ul>
+</div>
+
+
+<style lang="scss" src="./EntityFamilyMenu.scss"></style>
