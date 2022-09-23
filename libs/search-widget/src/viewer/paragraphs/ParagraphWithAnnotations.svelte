@@ -15,40 +15,46 @@
   const customEntities = viewerStore.customEntities;
   const selectedFamily = viewerStore.selectedFamily;
 
-  $: markedText = customEntities.pipe(map(entities => {
-    let textWithMarks = '';
-    let currentIndex = 0;
-    entities.sort((a, b) => {
-      if (a.start < b.start) {
-        return -1;
-      } else if (a.start > b.start) {
-        return 1;
-      } else {
-        return 0;
-      }
-    }).filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
-      const isHighlighted = $selectedFamily === entity.entityFamilyId;
-      let highlightStyle = '';
-      if (isHighlighted) {
-        const family = $entityGroups.find(group => group.id === entity.entityFamilyId);
-        highlightStyle = `style="background-color:${family.color}"`;
-      }
-      textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
+  let isDestroyed = false;
+
+  $: markedText = customEntities.pipe(
+    map(entities => {
+      let textWithMarks = '';
+      let currentIndex = 0;
+      entities.sort((a, b) => {
+        if (a.start < b.start) {
+          return -1;
+        } else if (a.start > b.start) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }).filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
+        const isHighlighted = $selectedFamily === entity.entityFamilyId;
+        let highlightStyle = '';
+        if (isHighlighted) {
+          const family = $entityGroups.find(group => group.id === entity.entityFamilyId);
+          highlightStyle = `style="background-color:${family.color}"`;
+        }
+        textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
   family="${entity.entityFamilyId}"
   start="${entity.start}"
   end="${entity.end}"
   entity="${entity.entity}"
   paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
-      currentIndex = entity.end;
-    });
-    textWithMarks += paragraph.text.slice(currentIndex);
+        currentIndex = entity.end;
+      });
+      textWithMarks += paragraph.text.slice(currentIndex);
 
-    setTimeout(() => {
-      cleanUpMarkListener();
-      setupMarkListener();
-    });
-    return textWithMarks;
-  }));
+      setTimeout(() => {
+        if (!isDestroyed) {
+          cleanUpMarkListener();
+          setupMarkListener();
+        }
+      });
+      return textWithMarks;
+    }),
+  );
   let contentContainer: HTMLElement;
   let isMenuOpen = false;
   let isMenuVisible = false;
@@ -74,6 +80,7 @@
   });
 
   onDestroy(() => {
+    isDestroyed = true;
     cleanUpMarkListener();
     contentContainer.removeEventListener('contextmenu', contextMenu);
   });
@@ -84,10 +91,10 @@
       entity: event.target.getAttribute('entity'),
       paragraphId,
       start: parseInt(event.target.getAttribute('start')),
-      end: parseInt(event.target.getAttribute('end'))
+      end: parseInt(event.target.getAttribute('end')),
     };
     openMenu(event);
-  }
+  };
 
   const openMenu = (event: MouseEvent) => {
     isMenuOpen = true;
@@ -100,7 +107,7 @@
       };
       isMenuVisible = true;
     });
-  }
+  };
 
   const contextMenu = (event: MouseEvent) => {
     const selection = document.getSelection();
@@ -123,7 +130,7 @@
       };
       openMenu(event);
     }
-  }
+  };
 
   const selectFamily = (family: EntityGroup) => {
     if (!selectedEntity) {
@@ -132,15 +139,15 @@
         entity: selectedText.trimmedText,
         paragraphId,
         start: selectedText.start,
-        end: selectedText.end
+        end: selectedText.end,
       });
-    } else if (selectedEntity.entityFamilyId === family.id){
+    } else if (selectedEntity.entityFamilyId === family.id) {
       removeCustomEntity(selectedEntity);
     } else {
       updateCustomEntity(selectedEntity, {...selectedEntity, entityFamilyId: family.id});
     }
     closeMenu();
-  }
+  };
 
   const closeMenu = () => {
     isMenuVisible = false;
@@ -148,7 +155,7 @@
     setTimeout(() => {
       isMenuOpen = false;
     }, 240);
-  }
+  };
 </script>
 
 <Paragraph>

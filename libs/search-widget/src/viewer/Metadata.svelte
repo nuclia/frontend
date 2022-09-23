@@ -9,6 +9,7 @@
   import Button from '../components/button/Button.svelte';
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
+  import { nucliaStore } from '../core/store';
 
   export let resource: Resource;
 
@@ -19,6 +20,8 @@
 
   const annotationMode = viewerStore.annotationMode;
   const hasEntities = viewerStore.hasEntities;
+  let entitiesBackup;
+  let customEntitiesBackup;
 
   $: {
     const _summaries = resource.summary
@@ -37,10 +40,17 @@
 
   const setAnnotationMode = () => {
     annotationMode.next(true);
+    entitiesBackup = nucliaStore().entities.getValue();
+    customEntitiesBackup = viewerStore.customEntities.getValue();
   }
 
   const cancelAnnotationMode = () => {
-    // TODO cancel annotation changes
+    if (entitiesBackup) {
+      nucliaStore().entities.next(entitiesBackup);
+    }
+    if (customEntitiesBackup) {
+      viewerStore.customEntities.next(customEntitiesBackup);
+    }
     closeAnnotationMode();
   }
 
