@@ -1,4 +1,4 @@
-import { UserFieldMetadata, ParagraphAnnotation } from './resource.models';
+import type { UserFieldMetadata, ParagraphAnnotation } from './resource.models';
 
 export const addFieldMetadata: (allEntries: UserFieldMetadata[], newEntry: UserFieldMetadata) => UserFieldMetadata[] = (
   allEntries: UserFieldMetadata[],
