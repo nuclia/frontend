@@ -5,6 +5,7 @@ export interface IResource {
   icon?: string;
   metadata?: Metadata;
   usermetadata?: UserMetadata;
+  fieldmetadata?: UserFieldMetadata[];
   origin?: Origin;
   created?: string;
   modified?: string;
@@ -28,6 +29,7 @@ export type ResourceData = {
 export interface ICreateResource {
   title?: string;
   summary?: string;
+  slug?: string;
   icon?: string;
   metadata?: Metadata;
   usermetadata?: UserMetadata;
@@ -226,8 +228,16 @@ export interface FieldMetadata {
 }
 
 export interface UserFieldMetadata {
-  field: { field: string, field_type: string }
-  paragraphs?: ParagraphAnnotation[]
+  field: { field: string; field_type: string };
+  paragraphs?: ParagraphAnnotation[];
+  token?: TokenAnnotation[];
+}
+
+export interface TokenAnnotation {
+  token: string;
+  klass: string;
+  start: number;
+  end: number;
 }
 
 export interface ParagraphAnnotation {

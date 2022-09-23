@@ -4,6 +4,7 @@ import type { UploadResponse } from './upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
 import type { INuclia } from '../models';
 import type {
+  Classification,
   CloudLink,
   ExtractedText,
   FIELD_TYPE,
@@ -18,6 +19,7 @@ import type {
   ResourceData,
   ResourceField,
   TextField,
+  TokenAnnotation,
 } from './resource.models';
 import type { Search } from './search.models';
 
@@ -152,6 +154,55 @@ export class Resource implements IResource {
       map((res) =>
         Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results),
       ),
+    );
+  }
+
+  setLabels(
+    fieldId: string,
+    fieldType: string,
+    paragraphId: string,
+    labels: Classification[],
+    preserve = true,
+  ): Observable<void> {
+    const fieldmetadata = preserve && this.fieldmetadata ? [...this.fieldmetadata] : [];
+    fieldmetadata.push({
+      field: {
+        field: fieldId,
+        field_type: fieldType,
+      },
+      paragraphs: [
+        {
+          key: paragraphId,
+          classifications: labels,
+        },
+      ],
+    });
+    return this.modify({ fieldmetadata });
+  }
+
+  setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[], preserve = true): Observable<void> {
+    const fieldmetadata = preserve && this.fieldmetadata ? [...this.fieldmetadata] : [];
+    fieldmetadata.push({
+      field: {
+        field: fieldId,
+        field_type: fieldType,
+      },
+      token: entities,
+    });
+    return this.modify({ fieldmetadata });
+  }
+
+  addEntity(fieldId: string, fieldType: string, entity: TokenAnnotation): Observable<void> {
+    const existingEntities = this.fieldmetadata?.find((metadata) => metadata.field.field === fieldId)?.token || [];
+    return this.setEntities(fieldId, fieldType, [...existingEntities, entity]);
+  }
+
+  removeEntity(fieldId: string, fieldType: string, entity: TokenAnnotation): Observable<void> {
+    const existingEntities = this.fieldmetadata?.find((metadata) => metadata.field.field === fieldId)?.token || [];
+    return this.setEntities(
+      fieldId,
+      fieldType,
+      existingEntities.filter((e) => e.klass !== entity.klass || e.token !== entity.token),
     );
   }
 
