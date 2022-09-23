@@ -23,7 +23,9 @@
   }));
   let contentContainer: HTMLElement;
   let isMenuOpen = false;
+  let isMenuVisible = false;
   let menuPosition;
+  let menuHeight;
   let selectedText;
 
   onMount(() => {
@@ -53,18 +55,27 @@
         end: selection.focusOffset,
       };
       event.preventDefault();
-      // FIXME: doesn't work when scrolling the page
-      menuPosition = {
-        left: event.layerX + 32 + (selection.focusOffset - selection.anchorOffset),
-        top: event.layerY + 32,
-      };
       isMenuOpen = true;
+      setTimeout(() => {
+        const delta = window.screen.availHeight - (event.clientY + menuHeight);
+        const top = delta < 80 ? event.clientY - menuHeight : event.clientY - 80;
+        menuPosition = {
+          left: event.clientX - 96,
+          top,
+        };
+        isMenuVisible = true;
+      });
     }
   }
 
   const selectFamily = (family: string) => {
     // TODO
     console.log('selectFamily', family, selectedText);
+  }
+
+  const closeMenu = () => {
+    isMenuVisible = false;
+    isMenuOpen = false;
   }
 
   function getCleanedUpSelectedText(selection: Selection) {
@@ -80,9 +91,13 @@
 </Paragraph>
 
 {#if isMenuOpen}
-  <EntityFamilyMenu position={menuPosition}
-                    on:familySelection={(event) => selectFamily(event.detail.family)}
-                    on:close={() => isMenuOpen = false}></EntityFamilyMenu>
+  <div style:opacity={isMenuVisible ? 1 : 0}>
+    <EntityFamilyMenu position={menuPosition}
+                      on:menuHeight={(event) => menuHeight = event.detail.height}
+                      on:familySelection={(event) => selectFamily(event.detail.family)}
+                      on:close={closeMenu}></EntityFamilyMenu>
+  </div>
+
 {/if}
 
 <style lang="scss" src="./ParagraphWithAnnotations.scss"></style>

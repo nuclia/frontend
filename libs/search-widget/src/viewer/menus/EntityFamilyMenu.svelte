@@ -1,16 +1,22 @@
 <script lang="ts">
   import { nucliaState } from '../../core/store';
   import { clickOutside } from '../../components/actions/actions';
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { _ } from '../../core/i18n';
 
   export let position: { top: number; left: number };
+
+  let menuContainer: HTMLElement;
 
   const allEntities = nucliaState().entities;
   const dispatch = createEventDispatcher();
   const close = () => {
     dispatch('close');
   };
+
+  onMount(() => {
+    dispatch('menuHeight', {height: menuContainer.getBoundingClientRect().height});
+  });
 
   function selectFamily(family) {
     dispatch('familySelection', {family});
@@ -20,6 +26,7 @@
 <div class="sw-entity-menu"
      use:clickOutside
      on:outclick={close}
+     bind:this={menuContainer}
      style:left={position?.left + 'px'}
      style:top={position?.top + 'px'}>
   <ul>
