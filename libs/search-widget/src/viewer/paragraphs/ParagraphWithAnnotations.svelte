@@ -27,6 +27,7 @@
   let menuPosition;
   let menuHeight;
   let selectedText;
+  let currentEntityFamily;
 
   onMount(() => {
     contentContainer.addEventListener('contextmenu', contextMenu);
@@ -43,7 +44,21 @@
   });
 
   const clickOnEntity = (event) => {
-    console.log('Click: TODO select', event);
+    currentEntityFamily = event.target.getAttribute('family');
+    openMenu(event);
+  }
+
+  const openMenu = (event: MouseEvent) => {
+    isMenuOpen = true;
+    setTimeout(() => {
+      const delta = window.screen.availHeight - (event.clientY + menuHeight);
+      const top = delta < 80 ? event.clientY - menuHeight : event.clientY - 80;
+      menuPosition = {
+        left: event.clientX - 96,
+        top,
+      };
+      isMenuVisible = true;
+    });
   }
 
   const contextMenu = (event: MouseEvent) => {
@@ -55,16 +70,7 @@
         end: selection.focusOffset,
       };
       event.preventDefault();
-      isMenuOpen = true;
-      setTimeout(() => {
-        const delta = window.screen.availHeight - (event.clientY + menuHeight);
-        const top = delta < 80 ? event.clientY - menuHeight : event.clientY - 80;
-        menuPosition = {
-          left: event.clientX - 96,
-          top,
-        };
-        isMenuVisible = true;
-      });
+      openMenu(event);
     }
   }
 
@@ -75,7 +81,9 @@
 
   const closeMenu = () => {
     isMenuVisible = false;
-    isMenuOpen = false;
+    setTimeout(() => {
+      isMenuOpen = false;
+    }, 240);
   }
 
   function getCleanedUpSelectedText(selection: Selection) {
@@ -91,8 +99,10 @@
 </Paragraph>
 
 {#if isMenuOpen}
-  <div style:opacity={isMenuVisible ? 1 : 0}>
+  <div class="menu-container"
+       style:opacity={isMenuVisible ? 1 : 0}>
     <EntityFamilyMenu position={menuPosition}
+                      selectedFamily={currentEntityFamily}
                       on:menuHeight={(event) => menuHeight = event.detail.height}
                       on:familySelection={(event) => selectFamily(event.detail.family)}
                       on:close={closeMenu}></EntityFamilyMenu>

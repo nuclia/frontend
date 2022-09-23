@@ -5,6 +5,7 @@
   import { _ } from '../../core/i18n';
 
   export let position: { top: number; left: number };
+  export let selectedFamily;
 
   let menuContainer: HTMLElement;
 
@@ -32,6 +33,7 @@
   <ul>
     {#each $allEntities as family}
       <li style:--family-color={family.color}
+          class:selected={family.id === selectedFamily}
           on:click={() => selectFamily(family)}>{$_(family.title)}</li>
     {/each}
   </ul>
