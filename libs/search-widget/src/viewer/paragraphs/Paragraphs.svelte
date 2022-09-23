@@ -49,8 +49,7 @@
     {#if !$onlySelected || ($onlySelected && i === $selectedParagraphIndex)}
       <div class="paragraph-item">
         {#if $annotationMode}
-          <ParagraphWithAnnotations text={paragraph.text}
-                                    resource={$resource}></ParagraphWithAnnotations>
+          <ParagraphWithAnnotations {paragraph} paragraphId={getParagraphId($resource.id, paragraph)}></ParagraphWithAnnotations>
         {:else if paragraph.preview === PreviewKind.PDF}
           <ParagraphWithIcon
             text={paragraph.text}

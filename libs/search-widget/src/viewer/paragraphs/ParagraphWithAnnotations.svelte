@@ -2,11 +2,25 @@
   import Paragraph from './Paragraph.svelte';
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
+  import { WidgetParagraph } from '../../core/models';
+  import { viewerStore } from '../viewer.store';
+  import { map } from 'rxjs';
 
-  export let text: string;
+  export let paragraph: WidgetParagraph;
+  export let paragraphId: string;
 
-  // TODO: highlight entities in text from positions we got in FieldMetadata
-  $: markedText = text;
+  const customEntities = viewerStore.customEntities;
+
+  $: markedText = customEntities.pipe(map(entities => {
+    let textWithMarks = '';
+    let currentIndex = 0;
+    entities.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
+      textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark family="${entity.entityFamilyId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
+      currentIndex = entity.end;
+    });
+    textWithMarks += paragraph.text.slice(currentIndex);
+    return textWithMarks;
+  }));
   let contentContainer: HTMLElement;
   let isMenuOpen = false;
   let menuPosition;
@@ -33,8 +47,13 @@
   const contextMenu = (event: MouseEvent) => {
     const selection = document.getSelection();
     if (selection.type === 'Range') {
-      selectedText = getCleanedUpSelectedText(selection);
+      selectedText = {
+        cleanedText: getCleanedUpSelectedText(selection),
+        start: selection.anchorOffset,
+        end: selection.focusOffset,
+      };
       event.preventDefault();
+      // FIXME: doesn't work when scrolling the page
       menuPosition = {
         left: event.layerX + 32 + (selection.focusOffset - selection.anchorOffset),
         top: event.layerY + 32,
@@ -49,14 +68,14 @@
   }
 
   function getCleanedUpSelectedText(selection: Selection) {
-    return selection.anchorNode?.textContent.substring(selection.anchorOffset, selection.focusOffset).replaceAll(/\s+/ig, ' ');
+    return selection.anchorNode?.textContent.substring(selection.anchorOffset, selection.focusOffset).replaceAll(/\s+/ig, ' ').trim();
   }
 </script>
 
 <Paragraph>
   <div slot="content"
        bind:this={contentContainer}>
-    {@html markedText}
+    {@html $markedText}
   </div>
 </Paragraph>
 
