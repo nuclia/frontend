@@ -1,26 +1,7 @@
-import { Nuclia } from '../core';
-import { IAuthentication, INuclia } from '../models';
-import { Resource } from './resource';
+import { addFieldMetadata } from './resource.helpers';
 import { FIELD_TYPE, UserFieldMetadata } from './resource.models';
 
-describe('Resource', () => {
-  let resource: Resource;
-
-  beforeEach(() => {
-    const nuclia = new Nuclia({ backend: 'http://here', zone: 'europe-1', account: 'dc', knowledgeBox: 'gotham' });
-    resource = new Resource(
-      {
-        ...nuclia,
-        auth: {
-          getAuthHeaders: () => ({ Authorization: 'Bearer 12345' }),
-        } as unknown as IAuthentication,
-      } as unknown as INuclia,
-      'ABC1234',
-      'abcdef',
-      { id: 'abcdef', title: 'Batman' },
-    );
-  });
-
+describe('Resource helpers', () => {
   it('should update fieldmetadata', () => {
     let all: UserFieldMetadata[] = [];
 
@@ -29,7 +10,7 @@ describe('Resource', () => {
       field: { field: 'f1', field_type: FIELD_TYPE.text },
       paragraphs: [{ key: 'p1', classifications: [{ labelset: 'heroes', label: 'batman' }] }],
     };
-    all = resource['addFieldMetadata'](all, label1);
+    all = addFieldMetadata(all, label1);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -42,7 +23,7 @@ describe('Resource', () => {
       field: { field: 'f1', field_type: FIELD_TYPE.text },
       paragraphs: [{ key: 'p1', classifications: [{ labelset: 'heroes', label: 'catwoman' }] }],
     };
-    all = resource['addFieldMetadata'](all, label2onSameParagraph);
+    all = addFieldMetadata(all, label2onSameParagraph);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -63,7 +44,7 @@ describe('Resource', () => {
       field: { field: 'f1', field_type: FIELD_TYPE.text },
       paragraphs: [{ key: 'p2', classifications: [{ labelset: 'heroes', label: 'catwoman' }] }],
     };
-    all = resource['addFieldMetadata'](all, label3onOtherParagraph);
+    all = addFieldMetadata(all, label3onOtherParagraph);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -88,7 +69,7 @@ describe('Resource', () => {
       field: { field: 'f1', field_type: FIELD_TYPE.text },
       token: [{ token: 'Joker', klass: 'villain', start: 0, end: 4 }],
     };
-    all = resource['addFieldMetadata'](all, entity1);
+    all = addFieldMetadata(all, entity1);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -114,7 +95,7 @@ describe('Resource', () => {
       field: { field: 'f2', field_type: FIELD_TYPE.file },
       token: [{ token: 'Joker', klass: 'villain', start: 10, end: 14 }],
     };
-    all = resource['addFieldMetadata'](all, entity2onOtherField);
+    all = addFieldMetadata(all, entity2onOtherField);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
