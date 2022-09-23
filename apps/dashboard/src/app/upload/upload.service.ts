@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { md5, SDKService } from '@flaps/core';
 import { FileWithMetadata, LabelSet, LabelSetKind, LabelValue, UploadStatus } from '@nuclia/core';
+import { LabelsService } from '../services/labels.service';
 import {
   BehaviorSubject,
   combineLatest,
@@ -26,7 +27,7 @@ export class UploadService {
   private _barDisabled = new BehaviorSubject<boolean>(false);
   barDisabled = this._barDisabled.asObservable();
 
-  constructor(private sdk: SDKService) {}
+  constructor(private sdk: SDKService, private labelsService: LabelsService) {}
 
   uploadFiles(files: FileWithMetadata[]) {
     const labels = files
@@ -67,12 +68,20 @@ export class UploadService {
       take(1),
       switchMap((kb) => kb.getLabels()),
       switchMap((existingLabels) => {
-        const missingLabels = labels.filter(
-          (label) =>
-            !Object.entries(existingLabels).find(
-              ([labelset, data]) => label.labelset === labelset && data.labels.find((l) => l.title === label.label),
-            ),
-        );
+        const missingLabels = labels
+          .filter(
+            (label) =>
+              !Object.entries(existingLabels).find(
+                ([labelset, data]) => label.labelset === labelset && data.labels.find((l) => l.title === label.label),
+              ),
+          )
+          .reduce(
+            (acc, current) =>
+              acc.find(({ labelset, label }) => current.labelset === labelset && current.label === label)
+                ? acc
+                : acc.concat([current]),
+            [] as LabelValue[],
+          );
         if (missingLabels.length === 0) {
           return of(undefined);
         }
@@ -99,6 +108,7 @@ export class UploadService {
           Object.entries(labelSets).map(([id, labelSet]) =>
             this.sdk.currentKb.pipe(
               switchMap((kb) => kb.setLabelSet(id, labelSet)),
+              switchMap(() => this.labelsService.refreshLabelsSets()),
               take(1),
             ),
           ),
