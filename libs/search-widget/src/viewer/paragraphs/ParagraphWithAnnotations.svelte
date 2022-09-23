@@ -15,7 +15,15 @@
   $: markedText = customEntities.pipe(map(entities => {
     let textWithMarks = '';
     let currentIndex = 0;
-    entities.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
+    entities.sort((a, b) => {
+      if (a.start < b.start) {
+        return -1;
+      } else if (a.start > b.start) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }).filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
       textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark family="${entity.entityFamilyId}" start="${entity.start}" end="${entity.end}" entity="${entity.entity}" paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
       currentIndex = entity.end;
     });
