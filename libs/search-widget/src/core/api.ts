@@ -93,22 +93,7 @@ export const setLabels = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return resource.modify({
-    fieldmetadata: [
-      {
-        field: {
-          field: fieldId,
-          field_type: fieldType,
-        },
-        paragraphs: [
-          {
-            key: paragraphId,
-            classifications: labels,
-          },
-        ],
-      },
-    ],
-  });
+  return resource.setLabels(fieldType, fieldId, paragraphId, labels);
 };
 
 export const getFile = (path: string): Observable<string> => {
