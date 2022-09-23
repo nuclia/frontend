@@ -152,7 +152,7 @@ export class UploadFilesComponent {
           classifications = [
             {
               labelset: STFUtils.generateSlug(GENERAL_LABELSET),
-              label: parts[1],
+              label: parts[0],
             },
           ];
         } else {
