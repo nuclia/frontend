@@ -1,5 +1,4 @@
 import { BehaviorSubject } from 'rxjs';
-import type { EntityGroup } from '../../core/models';
 
 export type CustomEntity = {
   paragraphId: string;
@@ -11,13 +10,13 @@ export type CustomEntity = {
 
 export type AnnotationStore = {
   annotationMode: BehaviorSubject<boolean>;
-  selectedGroup: BehaviorSubject<EntityGroup | null>;
+  selectedFamily: BehaviorSubject<string | null>;
   customEntities: BehaviorSubject<CustomEntity[]>;
 };
 
 export const annotationStore: AnnotationStore = {
   annotationMode: new BehaviorSubject(false),
-  selectedGroup: new BehaviorSubject<EntityGroup | null>(null),
+  selectedFamily: new BehaviorSubject<string | null>(null),
   customEntities: new BehaviorSubject<CustomEntity[]>([
     {
       paragraphId: 'fe5cc983ded4330f65ae992f58d85fcf/f/fe5cc983ded4330f65ae992f58d85fcf/0-169',

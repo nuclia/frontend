@@ -52,10 +52,6 @@
   const closeAnnotationMode = () => {
     annotationMode.next(false);
   }
-
-  const highlightFamily = (family) => {
-    // FIXME dispatch('highlight', {family});
-  }
 </script>
 
 <div class="sw-metadata"
@@ -80,7 +76,7 @@
       {/if}
     </h2>
     <div class="entities">
-      <Entities on:selection={(event) => highlightFamily(event.detail.family)}/>
+      <Entities/>
     </div>
   {/if}
 

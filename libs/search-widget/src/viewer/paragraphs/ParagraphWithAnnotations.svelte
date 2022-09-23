@@ -6,11 +6,14 @@
   import { viewerStore } from '../viewer.store';
   import { map } from 'rxjs';
   import { addCustomEntity, CustomEntity, removeCustomEntity, updateCustomEntity } from '../stores/annotation.store';
+  import { nucliaStore } from '../../core/store';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
 
+  const entityGroups = nucliaStore().entities;
   const customEntities = viewerStore.customEntities;
+  const selectedFamily = viewerStore.selectedFamily;
 
   $: markedText = customEntities.pipe(map(entities => {
     let textWithMarks = '';
@@ -24,7 +27,18 @@
         return 0;
       }
     }).filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
-      textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark family="${entity.entityFamilyId}" start="${entity.start}" end="${entity.end}" entity="${entity.entity}" paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
+      const isHighlighted = $selectedFamily === entity.entityFamilyId;
+      let highlightStyle = '';
+      if (isHighlighted) {
+        const family = $entityGroups.find(group => group.id === entity.entityFamilyId);
+        highlightStyle = `style="background-color:${family.color}"`;
+      }
+      textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
+  family="${entity.entityFamilyId}"
+  start="${entity.start}"
+  end="${entity.end}"
+  entity="${entity.entity}"
+  paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
       currentIndex = entity.end;
     });
     textWithMarks += paragraph.text.slice(currentIndex);

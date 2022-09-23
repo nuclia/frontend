@@ -35,6 +35,9 @@
     } else {
       expanded = annotationModeEnabled ? [group] : [...expanded, group];
     }
+    if (annotationModeEnabled) {
+      viewerStore.selectedFamily.next(expanded[0]);
+    }
   };
 
   const isExpanded = (group: string) => {
