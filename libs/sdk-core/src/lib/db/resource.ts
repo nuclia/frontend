@@ -16,10 +16,12 @@ import type {
   KeywordSetField,
   LinkField,
   LinkFieldData,
+  ParagraphAnnotation,
   ResourceData,
   ResourceField,
   TextField,
   TokenAnnotation,
+  UserFieldMetadata,
 } from './resource.models';
 import type { Search } from './search.models';
 
@@ -164,8 +166,7 @@ export class Resource implements IResource {
     labels: Classification[],
     preserve = true,
   ): Observable<void> {
-    const fieldmetadata = preserve && this.fieldmetadata ? [...this.fieldmetadata] : [];
-    fieldmetadata.push({
+    const metadata: UserFieldMetadata = {
       field: {
         field: fieldId,
         field_type: fieldType,
@@ -176,20 +177,23 @@ export class Resource implements IResource {
           classifications: labels,
         },
       ],
+    };
+    return this.modify({
+      fieldmetadata: preserve && this.fieldmetadata ? this.addFieldMetadata(this.fieldmetadata, metadata) : [metadata],
     });
-    return this.modify({ fieldmetadata });
   }
 
   setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[], preserve = true): Observable<void> {
-    const fieldmetadata = preserve && this.fieldmetadata ? [...this.fieldmetadata] : [];
-    fieldmetadata.push({
+    const metadata: UserFieldMetadata = {
       field: {
         field: fieldId,
         field_type: fieldType,
       },
       token: entities,
+    };
+    return this.modify({
+      fieldmetadata: preserve && this.fieldmetadata ? this.addFieldMetadata(this.fieldmetadata, metadata) : [metadata],
     });
-    return this.modify({ fieldmetadata });
   }
 
   addEntity(fieldId: string, fieldType: string, entity: TokenAnnotation): Observable<void> {
@@ -212,6 +216,38 @@ export class Resource implements IResource {
       return decodeURIComponent(title);
     } catch (e) {
       return title;
+    }
+  }
+
+  private addFieldMetadata(allEntries: UserFieldMetadata[], newEntry: UserFieldMetadata): UserFieldMetadata[] {
+    // find entry having same field id and same field type
+    const existingEntry = allEntries.find(
+      (entry) => entry.field.field === newEntry.field.field && entry.field.field_type === newEntry.field.field_type,
+    );
+    if (existingEntry) {
+      if (existingEntry.paragraphs || newEntry.paragraphs) {
+        const paragraphsById = [...(existingEntry.paragraphs || []), ...(newEntry.paragraphs || [])].reduce(
+          (acc, paragraph) => {
+            const existing = acc[paragraph.key];
+            if (!existing) {
+              acc[paragraph.key] = paragraph;
+            } else {
+              // merge classifications and make sure they are unique
+              existing.classifications = [
+                ...new Set([...(existing.classifications || []), ...(paragraph.classifications || [])]),
+              ];
+            }
+            return acc;
+          },
+          {} as { [key: string]: ParagraphAnnotation },
+        );
+        existingEntry.paragraphs = Object.values(paragraphsById);
+      }
+      existingEntry.token =
+        existingEntry.token || newEntry.token ? [...(existingEntry.token || []), ...(newEntry.token || [])] : undefined;
+      return allEntries;
+    } else {
+      return [...allEntries, newEntry];
     }
   }
 }
