@@ -50,6 +50,8 @@ interface BaseWidgetParagraph {
   paragraph: Paragraph;
   text: string;
   preview: PreviewKind;
+  start: number;
+  end: number;
 }
 
 export type WidgetParagraph = RegularWidgetParagraph | PdfWidgetParagraph | MediaWidgetParagraph;

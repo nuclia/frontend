@@ -347,6 +347,8 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     text: getParagraphText(field, paragraph) || '',
     fieldType: fieldType,
     fieldId: fieldId,
+    start: paragraph.start || 0,
+    end: paragraph.end || 0,
   };
   const kind = getPreviewKind(field, paragraph);
   if (kind === PreviewKind.PDF) {
