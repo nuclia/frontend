@@ -5,7 +5,7 @@
   import { EntityGroup, WidgetParagraph } from '../../core/models';
   import { viewerStore } from '../viewer.store';
   import { map } from 'rxjs';
-  import { addCustomEntity, Annotation, removeCustomEntity, updateCustomEntity } from '../stores/annotation.store';
+  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../stores/annotation.store';
   import { nucliaStore } from '../../core/store';
 
   export let paragraph: WidgetParagraph;
@@ -135,7 +135,7 @@
 
   const selectFamily = (family: EntityGroup) => {
     if (!selectedEntity) {
-      addCustomEntity({
+      addAnnotation({
         entityFamilyId: family.id,
         entity: selectedText.trimmedText,
         paragraphId,
@@ -144,9 +144,9 @@
         paragraphStart: paragraph.start
       });
     } else if (selectedEntity.entityFamilyId === family.id) {
-      removeCustomEntity(selectedEntity);
+      removeAnnotation(selectedEntity);
     } else {
-      updateCustomEntity(selectedEntity, {...selectedEntity, entityFamilyId: family.id});
+      updateAnnotation(selectedEntity, {...selectedEntity, entityFamilyId: family.id});
     }
     closeMenu();
   };

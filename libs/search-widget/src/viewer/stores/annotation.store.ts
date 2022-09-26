@@ -62,12 +62,12 @@ export function setAnnotations(
   annotationStore.annotations.next(annotations);
 }
 
-export function addCustomEntity(entity: Annotation) {
+export function addAnnotation(entity: Annotation) {
   const entities = annotationStore.annotations.getValue();
   annotationStore.annotations.next(entities.concat([entity]));
 }
 
-export function removeCustomEntity(entityToRemove: Annotation) {
+export function removeAnnotation(entityToRemove: Annotation) {
   const entities = annotationStore.annotations.getValue();
   const indexToRemove = entities.findIndex((entity) => isEqual(entity, entityToRemove));
   if (indexToRemove > -1) {
@@ -76,7 +76,7 @@ export function removeCustomEntity(entityToRemove: Annotation) {
   }
 }
 
-export function updateCustomEntity(previousEntity: Annotation, newState: Annotation) {
+export function updateAnnotation(previousEntity: Annotation, newState: Annotation) {
   const entities = annotationStore.annotations.getValue();
   const indexToUpdate = entities.findIndex((entity) => isEqual(entity, previousEntity));
   if (indexToUpdate > -1) {
