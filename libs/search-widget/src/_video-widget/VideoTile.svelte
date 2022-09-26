@@ -11,7 +11,8 @@
   import {
     getFileField,
     getLinkField,
-    getResourceParagraphs, getVideoStream,
+    getMainFieldParagraphs,
+    getVideoStream,
   } from '../viewer/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
@@ -129,7 +130,7 @@
         tap((res) => {
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
-          transcripts = getResourceParagraphs(res) as MediaWidgetParagraph[];
+          transcripts = getMainFieldParagraphs(res) as MediaWidgetParagraph[];
           setupExpandedTile();
         }),
       );

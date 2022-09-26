@@ -1,10 +1,19 @@
-import type { Classification, Entities, KBStates, Labels, NucliaOptions, SearchOptions } from '@nuclia/core';
+import type {
+  Classification,
+  Entities,
+  KBStates,
+  Labels,
+  NucliaOptions,
+  SearchOptions,
+  TokenAnnotation,
+} from '@nuclia/core';
 import { Nuclia, Resource, ResourceProperties, Search } from '@nuclia/core';
 import { filter, map, merge, Observable, of } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
 import type { EntityGroup } from './models';
 import { generatedEntitiesColor } from './utils';
+import type { Annotation } from '../viewer/stores/annotation.store';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -115,6 +124,23 @@ export const setLabels = (
     throw new Error('Nuclia API not initialized');
   }
   return resource.setLabels(fieldType, fieldId, paragraphId, labels);
+};
+
+export const saveEntitiesAnnotations = (
+  resource: Resource,
+  field: { field_id: string; field_type: string },
+  annotations: Annotation[],
+) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  const tokens: TokenAnnotation[] = annotations.map((annotation) => ({
+    klass: annotation.entityFamilyId,
+    token: annotation.entity,
+    start: annotation.start + annotation.paragraphStart,
+    end: annotation.end + annotation.paragraphStart,
+  }));
+  return resource.setEntities(field.field_id, field.field_type, tokens);
 };
 
 export const getFile = (path: string): Observable<string> => {

@@ -14,7 +14,7 @@ export const resourceStore = {
   resource: new BehaviorSubject<Resource | null>(null),
   resourceEntities: new BehaviorSubject<EntityGroup[]>([]),
   hasEntities: new BehaviorSubject(false),
-  setResource: setResource,
+  setResource,
   init: initResourceStore,
 };
 

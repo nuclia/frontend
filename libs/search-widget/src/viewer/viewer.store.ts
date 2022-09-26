@@ -55,6 +55,7 @@ type ViewerStore = {
   order: Subject<SearchOrder>;
   savingLabels: BehaviorSubject<boolean>;
   updatedLabels: Subject<{ [key: string]: Classification[] }>;
+  currentField: BehaviorSubject<{ field_type: string; field_id: string } | null>;
   init: () => void;
 };
 
@@ -70,6 +71,7 @@ export const viewerStore: ViewerStore & AnnotationStore & ResourceStore = {
   order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
+  currentField: new BehaviorSubject<{ field_type: string; field_id: string } | null>(null),
   ...annotationStore,
   ...resourceStore,
   init: initStore,
@@ -81,7 +83,7 @@ export const viewerState = {
     map((q) => q.trim()),
     distinctUntilChanged(),
   ),
-  paragraphs: viewerStore.resource.pipe(map((resource) => (resource ? getResourceParagraphs(resource) : []))),
+  paragraphs: viewerStore.resource.pipe(map((resource) => (resource ? getMainFieldParagraphs(resource) : []))),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
@@ -172,6 +174,7 @@ export function initStore() {
   viewerStore.selectedParagraph.next(null);
   viewerStore.linkPreview.next(null);
   viewerStore.order.next(DEFAULT_SEARCH_ORDER);
+  viewerStore.currentField.next(null);
 }
 
 export function clearSearch() {
@@ -289,18 +292,23 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
   );
 }
 
-export function getResourceParagraphs(resource: Resource): WidgetParagraph[] {
-  return getFields(resource)
-    .filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs)
-    .reduce(
-      (acc, current) =>
-        acc.concat(
-          current.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
-            return getParagraph(current.field_type, current.field_id, current.field, paragraph);
-          }),
-        ),
-      [] as WidgetParagraph[],
-    );
+export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
+  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
+  if (fields.length === 0) {
+    return [];
+  }
+  const mainField = fields[0];
+  //possible field types: 'file', 'link', 'datetime', 'keywordset', 'text', 'layout', 'generic', 'conversation'
+  const fieldType = mainField.field_type.endsWith('s')
+    ? mainField.field_type.slice(0, mainField.field_type.length - 1)
+    : mainField.field_type;
+  viewerStore.currentField.next({
+    field_type: fieldType,
+    field_id: mainField.field_id,
+  });
+  return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
+    return getParagraph(mainField.field_type, mainField.field_id, mainField.field, paragraph);
+  });
 }
 
 function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {

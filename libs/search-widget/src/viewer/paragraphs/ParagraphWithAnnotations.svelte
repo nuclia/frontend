@@ -5,14 +5,14 @@
   import { EntityGroup, WidgetParagraph } from '../../core/models';
   import { viewerStore } from '../viewer.store';
   import { map } from 'rxjs';
-  import { addCustomEntity, CustomEntity, removeCustomEntity, updateCustomEntity } from '../stores/annotation.store';
+  import { addCustomEntity, Annotation, removeCustomEntity, updateCustomEntity } from '../stores/annotation.store';
   import { nucliaStore } from '../../core/store';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
 
   const entityGroups = nucliaStore().entities;
-  const customEntities = viewerStore.customEntities;
+  const customEntities = viewerStore.annotations;
   const selectedFamily = viewerStore.selectedFamily;
 
   let isDestroyed = false;
@@ -61,7 +61,7 @@
   let menuPosition;
   let menuHeight;
   let selectedText;
-  let selectedEntity: CustomEntity | undefined;
+  let selectedEntity: Annotation | undefined;
 
   function setupMarkListener() {
     contentContainer.querySelectorAll('mark[family]').forEach(mark => {
@@ -92,6 +92,7 @@
       paragraphId,
       start: parseInt(event.target.getAttribute('start')),
       end: parseInt(event.target.getAttribute('end')),
+      paragraphStart: paragraph.start
     };
     openMenu(event);
   };
@@ -140,6 +141,7 @@
         paragraphId,
         start: selectedText.start,
         end: selectedText.end,
+        paragraphStart: paragraph.start
       });
     } else if (selectedEntity.entityFamilyId === family.id) {
       removeCustomEntity(selectedEntity);

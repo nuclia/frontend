@@ -28,6 +28,7 @@
 
   $: {
     viewerStore.setResource(resource);
+
     texts = resource.getExtractedTexts();
     imagePath = findFileByType(resource, 'image/');
     if (imagePath) {
@@ -64,6 +65,14 @@
         viewerStore.onlySelected.next(false);
         viewerStore.results.next(paragraphs);
       }),
+
+    combineLatest([
+      paragraphs,
+      viewerStore.currentField
+    ])
+    .subscribe(([paragraphs, currentField]) => {
+      viewerStore.setAnnotations(resource, paragraphs, currentField);
+    }),
   ];
 
   onMount(() => {

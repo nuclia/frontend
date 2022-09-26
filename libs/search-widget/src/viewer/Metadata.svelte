@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Resource, CloudLink } from '@nuclia/core';
-  import { getFileUrls } from '../core/api';
+  import { getFileUrls, saveEntitiesAnnotations } from '../core/api';
   import { getCDN, formatDate } from '../core/utils';
-  import { viewerStore, getLinks, getLinksPreviews } from './viewer.store';
+  import { viewerStore, getLinks, getLinksPreviews, currentField } from './viewer.store';
   import { _ } from '../core/i18n';
   import Entities from './Entities.svelte';
   import type { Observable } from 'rxjs';
@@ -10,6 +10,8 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
   import { nucliaStore } from '../core/store';
+  import { take } from 'rxjs';
+  import { switchMap } from 'rxjs/operators';
 
   export let resource: Resource;
 
@@ -35,33 +37,36 @@
 
   const previewLink = (file: CloudLink) => {
     viewerStore.showPreview.next(true);
-    viewerStore.linkPreview.next({ file });
+    viewerStore.linkPreview.next({file});
   };
 
   const setAnnotationMode = () => {
     annotationMode.next(true);
     entitiesBackup = nucliaStore().entities.getValue();
-    customEntitiesBackup = viewerStore.customEntities.getValue();
-  }
+    customEntitiesBackup = viewerStore.annotations.getValue();
+  };
 
   const cancelAnnotationMode = () => {
     if (entitiesBackup) {
       nucliaStore().entities.next(entitiesBackup);
     }
     if (customEntitiesBackup) {
-      viewerStore.customEntities.next(customEntitiesBackup);
+      viewerStore.annotations.next(customEntitiesBackup);
     }
     closeAnnotationMode();
-  }
+  };
 
   const saveAnnotations = () => {
-    // TODO save annotation changes
-    closeAnnotationMode();
-  }
+    const field = viewerStore.currentField.getValue();
+    if (field) {
+      // TODO check if entity exist, and if not create it
+      saveEntitiesAnnotations(resource, field, viewerStore.annotations.getValue()).subscribe(() => closeAnnotationMode());
+    }
+  };
 
   const closeAnnotationMode = () => {
     annotationMode.next(false);
-  }
+  };
 </script>
 
 <div class="sw-metadata"
@@ -73,15 +78,18 @@
       {#if !$annotationMode}
         <Button aspect="solid"
                 kind="inverted"
-                on:click={setAnnotationMode}>Entities</Button>
+                on:click={setAnnotationMode}>Entities
+        </Button>
       {:else}
         <div class="annotation-mode-buttons">
           <Button aspect="solid"
                   kind="inverted"
-                  on:click={cancelAnnotationMode}>Cancel</Button>
+                  on:click={cancelAnnotationMode}>Cancel
+          </Button>
           <Button aspect="solid"
                   kind="primary"
-                  on:click={saveAnnotations}>Save</Button>
+                  on:click={saveAnnotations}>Save
+          </Button>
         </div>
       {/if}
     </h2>
@@ -96,7 +104,7 @@
         <div class="preview-links">
           {#each linksPreviews as file}
             <a class="download" href={file.uri} on:click|preventDefault={() => previewLink(file)}>
-              <img src={`${getCDN()}icons/document.svg`} alt="icon" />
+              <img src={`${getCDN()}icons/document.svg`} alt="icon"/>
               <div>{$_('resource.preview')}</div>
             </a>
           {/each}
@@ -141,14 +149,14 @@
 
       {#each $files as file}
         <a class="download" href={file}>
-          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
+          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
 
       {#each links as link}
         <a class="download" href={link} rel="noopener noreferrer" target="_blank">
-          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
+          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
