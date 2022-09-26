@@ -36,10 +36,10 @@ export function setAnnotations(
   currentField: { field_type: string; field_id: string },
 ) {
   const fieldMetadata = (resource.fieldmetadata || []).filter(
-    (fieldMetadata) =>
-      !!fieldMetadata.token &&
-      fieldMetadata.field.field === currentField.field_id &&
-      fieldMetadata.field.field_type === currentField.field_type,
+    (userFieldMetadata) =>
+      !!userFieldMetadata.token &&
+      userFieldMetadata.field.field === currentField.field_id &&
+      userFieldMetadata.field.field_type === currentField.field_type,
   );
   if (fieldMetadata.length > 1) {
     throw new Error(`Annotations on several fields of resource ${resource.id}`);

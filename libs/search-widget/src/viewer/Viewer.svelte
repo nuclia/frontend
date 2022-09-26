@@ -68,9 +68,10 @@
 
     combineLatest([
       paragraphs,
-      viewerStore.currentField
-    ])
-    .subscribe(([paragraphs, currentField]) => {
+      viewerStore.currentField,
+    ]).pipe(
+      filter(([paragraphs, currentField]) => paragraphs?.length > 0 && !!currentField),
+    ).subscribe(([paragraphs, currentField]) => {
       viewerStore.setAnnotations(resource, paragraphs, currentField);
     }),
   ];
@@ -87,11 +88,11 @@
 
 <div class="sw-viewer" style="--header-height: {headerHeight}">
   <div class="viewer-header" bind:this={header}>
-    <Header {resource} />
+    <Header {resource}/>
   </div>
   <div class="viewer-body" class:preview={$showPreview}>
     <div class="viewer-left">
-      <InputViewer />
+      <InputViewer/>
 
       <div class="paragraphs">
         {#if $hasSearchError}
@@ -104,14 +105,14 @@
       {#if image}
         <h2>Images</h2>
         <div>
-          <img src={image} alt={resource.title + ' preview'} />
+          <img src={image} alt={resource.title + ' preview'}/>
         </div>
       {/if}
     </div>
 
     <div class="viewer-right">
       {#if $showPreview}
-        <Preview />
+        <Preview/>
       {:else}
         <Metadata {resource}/>
       {/if}

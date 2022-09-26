@@ -1,4 +1,8 @@
-import type { UserFieldMetadata, ParagraphAnnotation } from './resource.models';
+import type { ParagraphAnnotation, UserFieldMetadata } from './resource.models';
+
+export const concatAndDeDuplicateLists = (a: any[], b: any[]): any[] => {
+  return [...new Set([...a, ...b].map((item) => JSON.stringify(item)))].map((item) => JSON.parse(item));
+};
 
 export const addFieldMetadata: (allEntries: UserFieldMetadata[], newEntry: UserFieldMetadata) => UserFieldMetadata[] = (
   allEntries: UserFieldMetadata[],
@@ -17,9 +21,10 @@ export const addFieldMetadata: (allEntries: UserFieldMetadata[], newEntry: UserF
             acc[paragraph.key] = paragraph;
           } else {
             // merge classifications and make sure they are unique
-            existing.classifications = [
-              ...new Set([...(existing.classifications || []), ...(paragraph.classifications || [])]),
-            ];
+            existing.classifications = concatAndDeDuplicateLists(
+              existing.classifications || [],
+              paragraph.classifications || [],
+            );
           }
           return acc;
         },
@@ -27,8 +32,10 @@ export const addFieldMetadata: (allEntries: UserFieldMetadata[], newEntry: UserF
       );
       existingEntry.paragraphs = Object.values(paragraphsById);
     }
-    existingEntry.token =
-      existingEntry.token || newEntry.token ? [...(existingEntry.token || []), ...(newEntry.token || [])] : undefined;
+
+    if (existingEntry.token || newEntry.token) {
+      existingEntry.token = concatAndDeDuplicateLists(existingEntry.token || [], newEntry.token || []);
+    }
     return allEntries;
   } else {
     return [...allEntries, newEntry];
