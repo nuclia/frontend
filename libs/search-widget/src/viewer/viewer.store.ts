@@ -8,8 +8,8 @@ import type {
   Resource,
   ResourceData,
   Sentence,
-} from '@nuclia/core';
-import { Search } from '@nuclia/core';
+} from '../../../sdk-core/src';
+import { Search } from '../../../sdk-core/src';
 import {
   BehaviorSubject,
   combineLatest,
