@@ -1,4 +1,4 @@
-import { addFieldMetadata } from './resource.helpers';
+import { setEntities, setLabels } from './resource.helpers';
 import { FIELD_TYPE, UserFieldMetadata } from './resource.models';
 
 describe('Resource helpers', () => {
@@ -6,11 +6,7 @@ describe('Resource helpers', () => {
     let all: UserFieldMetadata[] = [];
 
     // add a new label when none exists
-    const label1: UserFieldMetadata = {
-      field: { field: 'f1', field_type: FIELD_TYPE.text },
-      paragraphs: [{ key: 'p1', classifications: [{ labelset: 'heroes', label: 'batman' }] }],
-    };
-    all = addFieldMetadata(all, label1);
+    all = setLabels('f1', FIELD_TYPE.text, 'p1', [{ labelset: 'heroes', label: 'batman' }], all);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -19,19 +15,16 @@ describe('Resource helpers', () => {
     ]);
 
     // add new label on same paragraph
-    const label2onSameParagraph: UserFieldMetadata = {
-      field: { field: 'f1', field_type: FIELD_TYPE.text },
-      paragraphs: [
-        {
-          key: 'p1',
-          classifications: [
-            { labelset: 'heroes', label: 'batman' },
-            { labelset: 'heroes', label: 'catwoman' },
-          ],
-        },
+    all = setLabels(
+      'f1',
+      FIELD_TYPE.text,
+      'p1',
+      [
+        { labelset: 'heroes', label: 'batman' },
+        { labelset: 'heroes', label: 'catwoman' },
       ],
-    };
-    all = addFieldMetadata(all, label2onSameParagraph);
+      all,
+    );
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -48,11 +41,7 @@ describe('Resource helpers', () => {
     ]);
 
     // add new label on different paragraph
-    const label3onOtherParagraph: UserFieldMetadata = {
-      field: { field: 'f1', field_type: FIELD_TYPE.text },
-      paragraphs: [{ key: 'p2', classifications: [{ labelset: 'heroes', label: 'catwoman' }] }],
-    };
-    all = addFieldMetadata(all, label3onOtherParagraph);
+    all = setLabels('f1', FIELD_TYPE.text, 'p2', [{ labelset: 'heroes', label: 'catwoman' }], all);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -73,11 +62,7 @@ describe('Resource helpers', () => {
     ]);
 
     // add entity
-    const entity1: UserFieldMetadata = {
-      field: { field: 'f1', field_type: FIELD_TYPE.text },
-      token: [{ token: 'Joker', klass: 'villain', start: 0, end: 4 }],
-    };
-    all = addFieldMetadata(all, entity1);
+    all = setEntities('f1', FIELD_TYPE.text, [{ token: 'Joker', klass: 'villain', start: 0, end: 4 }], all);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -98,16 +83,16 @@ describe('Resource helpers', () => {
       },
     ]);
 
-    // add entities including existing one without duplicating them
-    const entity2: UserFieldMetadata = {
-      field: { field: 'f1', field_type: FIELD_TYPE.text },
-      token: [
+    // update entities
+    all = setEntities(
+      'f1',
+      FIELD_TYPE.text,
+      [
         { token: 'Joker', klass: 'villain', start: 0, end: 4 },
         { token: 'Penguin', klass: 'villain', start: 7, end: 14 },
       ],
-    };
-
-    all = addFieldMetadata(all, entity2);
+      all,
+    );
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -132,11 +117,7 @@ describe('Resource helpers', () => {
     ]);
 
     // add entity on other field
-    const entity2onOtherField: UserFieldMetadata = {
-      field: { field: 'f2', field_type: FIELD_TYPE.file },
-      token: [{ token: 'Joker', klass: 'villain', start: 10, end: 14 }],
-    };
-    all = addFieldMetadata(all, entity2onOtherField);
+    all = setEntities('f2', FIELD_TYPE.file, [{ token: 'Joker', klass: 'villain', start: 10, end: 14 }], all);
     expect(all).toEqual([
       {
         field: { field: 'f1', field_type: FIELD_TYPE.text },
@@ -161,6 +142,47 @@ describe('Resource helpers', () => {
       {
         field: { field: 'f2', field_type: FIELD_TYPE.file },
         token: [{ token: 'Joker', klass: 'villain', start: 10, end: 14 }],
+      },
+    ]);
+
+    // remove labels
+    all = setLabels('f1', FIELD_TYPE.text, 'p1', [], all);
+    expect(all).toEqual([
+      {
+        field: { field: 'f2', field_type: FIELD_TYPE.file },
+        token: [{ token: 'Joker', klass: 'villain', start: 10, end: 14 }],
+      },
+      {
+        field: { field: 'f1', field_type: FIELD_TYPE.text },
+        paragraphs: [
+          {
+            key: 'p2',
+            classifications: [{ labelset: 'heroes', label: 'catwoman' }],
+          },
+        ],
+        token: [
+          { token: 'Joker', klass: 'villain', start: 0, end: 4 },
+          { token: 'Penguin', klass: 'villain', start: 7, end: 14 },
+        ],
+      },
+    ]);
+
+    // remove entity
+    all = setEntities('f1', FIELD_TYPE.text, [{ token: 'Penguin', klass: 'villain', start: 7, end: 14 }], all);
+    expect(all).toEqual([
+      {
+        field: { field: 'f2', field_type: FIELD_TYPE.file },
+        token: [{ token: 'Joker', klass: 'villain', start: 10, end: 14 }],
+      },
+      {
+        field: { field: 'f1', field_type: FIELD_TYPE.text },
+        paragraphs: [
+          {
+            key: 'p2',
+            classifications: [{ labelset: 'heroes', label: 'catwoman' }],
+          },
+        ],
+        token: [{ token: 'Penguin', klass: 'villain', start: 7, end: 14 }],
       },
     ]);
   });
