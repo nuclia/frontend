@@ -1,4 +1,5 @@
 {
+	"entities.annotations": "Annotations",
 	"entities.date": "Dates",
 	"entities.event": "Événements",
 	"entities.fac": "Constructions",
@@ -18,6 +19,8 @@
 	"error.search": "Oups! quelque chose ne va pas!",
 	"error.search-beta": "Heureusement qu'on vous a dit que c'est une beta ! 🙃",
 	"form.title-only": "Rechercher uniquement dans le titre",
+	"generic.cancel": "Annuler",
+	"generic.save": "Enregistrer",
 	"input.placeholder": "Posez votre question ici",
 	"modal.back": "Retour",
 	"resource.classification": "Classification",

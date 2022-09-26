@@ -69,9 +69,13 @@
     align-items: center;
     height: 3em;
     padding: 0 2.25em 0 3em;
-    cursor: pointer;
   }
-  li:hover {
-    text-decoration: underline;
+
+  li.clickable {
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }

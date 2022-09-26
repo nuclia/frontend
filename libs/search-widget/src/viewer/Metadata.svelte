@@ -10,8 +10,6 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
   import { nucliaStore } from '../core/store';
-  import { take } from 'rxjs';
-  import { switchMap } from 'rxjs/operators';
 
   export let resource: Resource;
 
@@ -78,17 +76,20 @@
       {#if !$annotationMode}
         <Button aspect="solid"
                 kind="inverted"
-                on:click={setAnnotationMode}>Entities
+                on:click={setAnnotationMode}>
+          {$_('entities.annotations')}
         </Button>
       {:else}
         <div class="annotation-mode-buttons">
           <Button aspect="solid"
                   kind="inverted"
-                  on:click={cancelAnnotationMode}>Cancel
+                  on:click={cancelAnnotationMode}>
+            {$_('generic.cancel')}
           </Button>
           <Button aspect="solid"
                   kind="primary"
-                  on:click={saveAnnotations}>Save
+                  on:click={saveAnnotations}>
+            {$_('generic.save')}
           </Button>
         </div>
       {/if}

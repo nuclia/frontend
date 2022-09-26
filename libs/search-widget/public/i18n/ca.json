@@ -1,4 +1,5 @@
 {
+	"entities.annotations": "Anotacions",
 	"entities.date": "Dates",
 	"entities.event": "Esdeveniments",
 	"entities.fac": "Construccions",
@@ -20,6 +21,8 @@
 	"error.search": "Ups! Alguna cosa ha anat malament!",
 	"error.search-beta": "Sort que t'hem avisat que encara estem en beta! 🙃",
 	"form.title-only": "Cerca només al títol",
+	"generic.cancel": "Cancel·lar",
+	"generic.save": "Guardar",
 	"input.placeholder": "Escriviu la vostra pregunta aquí",
 	"modal.back": "Tornar",
 	"resource.classification": "Classificació",
