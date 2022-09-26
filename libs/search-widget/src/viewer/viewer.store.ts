@@ -359,8 +359,8 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     return {
       ...baseParagraph,
       preview: kind,
-      start: paragraph.start_seconds?.[0] || 0,
-      end: paragraph.end_seconds?.[0] || 0,
+      start_seconds: paragraph.start_seconds?.[0] || 0,
+      end_seconds: paragraph.end_seconds?.[0] || 0,
     };
   } else {
     return {

@@ -85,12 +85,12 @@
   };
 
   const playParagraph = (paragraph) => {
-    playFrom(paragraph.start, paragraph);
+    playFrom(paragraph.start_seconds, paragraph);
     paragraphInPlay = paragraph;
   };
 
   const playTranscript = (paragraph) => {
-    videoTime = paragraph.start || 0;
+    videoTime = paragraph.start_seconds || 0;
     paragraphInPlay = paragraph;
   };
 

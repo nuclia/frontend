@@ -66,8 +66,8 @@ export interface PdfWidgetParagraph extends BaseWidgetParagraph {
 }
 
 export interface MediaWidgetParagraph extends BaseWidgetParagraph {
-  start: number;
-  end: number;
+  start_seconds: number;
+  end_seconds: number;
   preview: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE;
 }
 

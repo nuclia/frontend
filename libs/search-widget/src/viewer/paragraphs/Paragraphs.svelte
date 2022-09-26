@@ -63,7 +63,7 @@
         {:else if paragraph.preview === PreviewKind.VIDEO || paragraph.preview === PreviewKind.AUDIO || paragraph.preview === PreviewKind.YOUTUBE}
           <ParagraphWithIcon
             text={paragraph.text}
-            textIcon={formatTime(paragraph.start)}
+            textIcon={formatTime(paragraph.start_seconds)}
             icon={ParagraphIcon.PLAY}
             on:click={() => previewParagraph(paragraph)}
             labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || []}
