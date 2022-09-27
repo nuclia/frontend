@@ -6,7 +6,7 @@
   import { viewerStore } from '../viewer.store';
   import { map } from 'rxjs';
   import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../stores/annotation.store';
-  import { nucliaStore } from '../../core/store';
+  import { addEntity, nucliaStore } from '../../core/store';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
@@ -135,14 +135,16 @@
 
   const selectFamily = (family: EntityGroup) => {
     if (!selectedEntity) {
+      const entity = selectedText.trimmedText;
       addAnnotation({
         entityFamilyId: family.id,
-        entity: selectedText.trimmedText,
+        entity,
         paragraphId,
         start: selectedText.start,
         end: selectedText.end,
         paragraphStart: paragraph.start
       });
+      addEntity(entity, family);
     } else if (selectedEntity.entityFamilyId === family.id) {
       removeAnnotation(selectedEntity);
     } else {

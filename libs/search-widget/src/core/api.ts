@@ -1,14 +1,15 @@
 import type {
   Classification,
   Entities,
+  Entity,
   KBStates,
   Labels,
   NucliaOptions,
   SearchOptions,
   TokenAnnotation,
 } from '../../../sdk-core/src';
-import { Nuclia, Resource, ResourceProperties, Search } from '../../../sdk-core/src';
-import { filter, map, merge, Observable, of } from 'rxjs';
+import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '../../../sdk-core/src';
+import { filter, forkJoin, map, merge, Observable, of } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
 import type { EntityGroup } from './models';
@@ -141,6 +142,44 @@ export const saveEntitiesAnnotations = (
     end: annotation.end + annotation.paragraphStart,
   }));
   return resource.setEntities(field.field_id, field.field_type, tokens);
+};
+
+function entityListToMap(entityList: string[]): { [key: string]: Entity } {
+  return entityList.reduce((map, currentValue) => {
+    const entityId = currentValue
+      .toLowerCase()
+      // Strip non allowed characters
+      .replace(/[^\w\s-_]+/gi, '')
+      // Replace white spaces
+      .trim()
+      .replace(/\s+/gi, '-');
+    map[entityId] = { value: currentValue };
+    return map;
+  }, {} as { [key: string]: Entity });
+}
+
+export const saveEntities = (backup: EntityGroup[], newGroups: EntityGroup[]) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  const requestList: Observable<void>[] = [];
+  newGroups.forEach((group) => {
+    const writableKb = new WritableKnowledgeBox(nucliaApi!, '', {
+      id: nucliaApi!.options.knowledgeBox!,
+      zone: nucliaApi!.options.zone!,
+    });
+    const backupGroup = backup.find((g) => g.id === group.id);
+    if (!!backupGroup && JSON.stringify(group.entities) !== JSON.stringify(backupGroup.entities)) {
+      requestList.push(
+        writableKb.setEntitiesGroup(group.id, {
+          title: group.title,
+          color: group.color,
+          entities: entityListToMap(group.entities),
+        }),
+      );
+    }
+  });
+  return forkJoin(requestList);
 };
 
 export const getFile = (path: string): Observable<string> => {

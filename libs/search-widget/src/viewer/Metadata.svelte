@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Resource, CloudLink } from '@nuclia/core';
-  import { getFileUrls, saveEntitiesAnnotations } from '../core/api';
+  import { getFileUrls, saveEntities, saveEntitiesAnnotations } from '../core/api';
   import { getCDN, formatDate } from '../core/utils';
-  import { viewerStore, getLinks, getLinksPreviews, currentField } from './viewer.store';
+  import { viewerStore, getLinks, getLinksPreviews } from './viewer.store';
   import { _ } from '../core/i18n';
   import Entities from './Entities.svelte';
   import type { Observable } from 'rxjs';
@@ -10,6 +10,7 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
   import { nucliaStore } from '../core/store';
+  import type { EntityGroup } from '../core/models';
 
   export let resource: Resource;
 
@@ -20,7 +21,7 @@
 
   const annotationMode = viewerStore.annotationMode;
   const hasEntities = viewerStore.hasEntities;
-  let entitiesBackup;
+  let entitiesBackup: string;
   let customEntitiesBackup;
 
   $: {
@@ -40,13 +41,14 @@
 
   const setAnnotationMode = () => {
     annotationMode.next(true);
-    entitiesBackup = nucliaStore().entities.getValue();
+    // stringify entities as backup otherwise the backup will get same modifications as the stored ones
+    entitiesBackup = JSON.stringify(nucliaStore().entities.getValue());
     customEntitiesBackup = viewerStore.annotations.getValue();
   };
 
   const cancelAnnotationMode = () => {
     if (entitiesBackup) {
-      nucliaStore().entities.next(entitiesBackup);
+      nucliaStore().entities.next(JSON.parse(entitiesBackup));
     }
     if (customEntitiesBackup) {
       viewerStore.annotations.next(customEntitiesBackup);
@@ -57,13 +59,17 @@
   const saveAnnotations = () => {
     const field = viewerStore.currentField.getValue();
     if (field) {
-      // TODO check if entity exist, and if not create it
+      const entityGroups = nucliaStore().entities.getValue();
+      if (entitiesBackup !== JSON.stringify(entityGroups)) {
+        saveEntities(JSON.parse(entitiesBackup), entityGroups).subscribe();
+      }
       saveEntitiesAnnotations(resource, field, viewerStore.annotations.getValue()).subscribe(() => closeAnnotationMode());
     }
   };
 
   const closeAnnotationMode = () => {
     annotationMode.next(false);
+    viewerStore.selectedFamily.next(null);
   };
 </script>
 

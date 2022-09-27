@@ -165,3 +165,15 @@ const getSortedResources = (results: Search.Results) => {
     .sort((a, b) => b.score - a.score)
     .map((data) => data.res);
 };
+
+export function addEntity(entity: string, family: EntityGroup) {
+  if (!family.entities.map((entity) => entity.toLocaleLowerCase()).includes(entity.toLocaleLowerCase())) {
+    family.entities.push(entity);
+    const updatedEntityGroups = nucliaStore().entities.getValue();
+    const groupIndex = updatedEntityGroups.findIndex((group) => group.id === family.id);
+    if (groupIndex > -1) {
+      updatedEntityGroups[groupIndex] = family;
+      nucliaStore().entities.next(updatedEntityGroups);
+    }
+  }
+}
