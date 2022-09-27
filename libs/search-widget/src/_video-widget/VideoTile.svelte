@@ -50,14 +50,16 @@
     .getMatchingParagraphs(result.id)
     .pipe(
       map((results) =>
-        results.map((paragraph) => ({
-          ...paragraph,
-          pid: `${paragraph.field_type}${(paragraph as Paragraph).start_seconds?.[0] || 0}${
-            (paragraph as Paragraph).end_seconds?.[0] || 0
-          }`,
-          start: (paragraph as Paragraph).start_seconds?.[0] || 0,
-          end: (paragraph as Paragraph).end_seconds?.[0] || 0,
-        })),
+        results.map((paragraph) => {
+          const start = (paragraph as Paragraph).start_seconds?.[0] || 0;
+          const end = (paragraph as Paragraph).end_seconds?.[0] || 0;
+          return ({
+            ...paragraph,
+            pid: `${paragraph.field_type}${start}${end}`,
+            start_seconds: start,
+            end_seconds: end,
+          });
+        }),
       ),
     );
 

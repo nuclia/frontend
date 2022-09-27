@@ -74,8 +74,12 @@
         {#each group.entities as entity}
           <li tabIndex="0" role="button"
               class:clickable={!$annotationMode}
-              on:click={() => search(entity)}
-              on:keyup={(e) => onKeyUp(e, entity)}>
+              on:click={() => {
+                if (!$annotationMode) search(entity);
+              }}
+              on:keyup={(e) => {
+                if (!$annotationMode) onKeyUp(e, entity)
+              }}>
             {entity}
           </li>
         {/each}
