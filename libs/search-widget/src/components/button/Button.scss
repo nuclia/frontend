@@ -40,7 +40,7 @@
   &.solid:not(:disabled):not(:active):hover {
     box-shadow: var(--shadow-small);
   }
-  &:not(.small) {
+  &:not(.small):not(.icon) {
     min-width: var(--rhythm-12);
   }
 
