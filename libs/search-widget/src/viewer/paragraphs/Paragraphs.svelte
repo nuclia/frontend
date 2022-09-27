@@ -1,21 +1,19 @@
 <script lang="ts">
   import type { Resource } from '@nuclia/core';
-  import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph } from '../../core/models';
+  import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph, ParagraphLabels } from '../../core/models';
   import { PreviewKind } from '../../core/models';
   import { formatTime } from '../../core/utils';
-  import { setLabels } from '../../core/api';
-  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId } from '../viewer.store';
+  import { filter } from 'rxjs';
+  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
-  import { filter, concatMap, take, combineLatest } from 'rxjs';
   import ParagraphWithAnnotations from "./ParagraphWithAnnotations.svelte";
 
   export let paragraphs: WidgetParagraph[] = [];
 
   const annotationMode = viewerStore.annotationMode;
   const onlySelected = viewerState.onlySelected;
-  const savingLabels = viewerStore.savingLabels;
   const resource = viewerStore.resource.pipe(filter((resource): resource is Resource => !!resource));
   const previewParagraph = (paragraph: PdfWidgetParagraph | MediaWidgetParagraph) => {
     viewerStore.showPreview.next(true);
@@ -25,23 +23,7 @@
       paragraph: paragraph.paragraph,
     });
   };
-  const modifyLabels = (event: any, paragraph: WidgetParagraph) => {
-    resource
-      .pipe(
-        take(1),
-        concatMap((resource) => {
-          savingLabels.next(true);
-          const paragraphId = getParagraphId(resource.id, paragraph);
-          return setLabels(resource, paragraph.fieldType.slice(0, -1), paragraph.fieldId, paragraphId, event.detail);
-        }),
-        concatMap(() => combineLatest([resource, paragraphLabels]).pipe(take(1))),
-      )
-      .subscribe(([resource, paragraphLabels]) => {
-        const newLabels = { ...paragraphLabels, [getParagraphId(resource.id, paragraph)]: event.detail };
-        viewerStore.updatedLabels.next(newLabels);
-        savingLabels.next(false);
-      });
-  };
+  const noLabels: ParagraphLabels = { labels: [], annotatedLabels: [] };
 </script>
 
 <div class="sw-paragraph-list">
@@ -57,8 +39,8 @@
             icon={ParagraphIcon.EXPAND}
             active={$selectedParagraphIndex === i}
             on:click={() => previewParagraph(paragraph)}
-            labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || []}
-            on:labelsChange={(event) => modifyLabels(event, paragraph)}
+            labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
+            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}
           />
         {:else if paragraph.preview === PreviewKind.VIDEO || paragraph.preview === PreviewKind.AUDIO || paragraph.preview === PreviewKind.YOUTUBE}
           <ParagraphWithIcon
@@ -66,13 +48,13 @@
             textIcon={formatTime(paragraph.start_seconds)}
             icon={ParagraphIcon.PLAY}
             on:click={() => previewParagraph(paragraph)}
-            labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || []}
-            on:labelsChange={(event) => modifyLabels(event, paragraph)}
+            labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
+            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}
           />
         {:else}
           <ParagraphWithMenu
-            labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || []}
-            on:labelsChange={(event) => modifyLabels(event, paragraph)}
+            labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
+            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}
           >
             <span slot="content">{paragraph.text}</span>
           </ParagraphWithMenu>

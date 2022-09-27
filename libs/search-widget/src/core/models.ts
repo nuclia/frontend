@@ -110,3 +110,8 @@ export interface EntityGroup {
   custom?: boolean;
   entities: string[];
 }
+
+export interface ParagraphLabels {
+  labels: Classification[];
+  annotatedLabels: Classification[];
+}

@@ -6,16 +6,22 @@
   import { viewerStore } from '../viewer.store';
   import { clickOutside } from '../../components/actions/actions';
   import Label from '../../components/label/Label.svelte';
-  import type { Classification } from '../../../../sdk-core/src';
+  import type { ParagraphLabels } from '../core/models';
   import { LabelSetKind } from '../../../../sdk-core/src';
 
   const dispatch = createEventDispatcher();
   export let position: { top: number; left: number } | undefined = undefined;
-  export let labels: Classification[] = [];
+  export let labels: ParagraphLabels = { labels: [], annotatedLabels: [] };
 
   const savingLabels = viewerStore.savingLabels;
   let selected: { [key: string]: boolean } = {};
-  $: selected = labels.reduce((acc, current) => {
+
+  $: selected = [...labels.labels, ...labels.annotatedLabels].reduce((acc, current) => {
+    acc[`${current.labelset}-${current.label}`] = true;
+    return acc;
+  }, {} as { [key: string]: boolean });
+
+  $: readOnly = labels.labels.reduce((acc, current) => {
     acc[`${current.labelset}-${current.label}`] = true;
     return acc;
   }, {} as { [key: string]: boolean });
@@ -35,8 +41,8 @@
 
   const toggleLabel = (labelset: string, label: string) => {
     const newLabels = !!selected[`${labelset}-${label}`]
-      ? labels.filter((item) => !(item.labelset === labelset && item.label === label))
-      : [...labels, { labelset, label }];
+      ? labels.annotatedLabels.filter((item) => !(item.labelset === labelset && item.label === label))
+      : [...labels.annotatedLabels, { labelset, label }];
     dispatch('labelsChange', newLabels);
   };
   const leave = () => {
@@ -55,7 +61,7 @@
   on:outclick={close}
 >
   <div class="current-labels">
-    {#each labels as label (label.labelset + label.label)}
+    {#each labels.annotatedLabels as label (label.labelset + label.label)}
       <span class="current-label">
         <Label {label} removable on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)} />
       </span>
@@ -76,10 +82,8 @@
                 id={`${labelset[0]}-${i}`}
                 type="checkbox"
                 bind:checked={selected[`${labelset[0]}-${label.title}`]}
-                on:change={() => {
-                  toggleLabel(labelset[0], label.title);
-                }}
-                disabled={$savingLabels}
+                on:change={() => toggleLabel(labelset[0], label.title) }
+                disabled={$savingLabels || readOnly[`${labelset[0]}-${label.title}`]}
               />
               <label for={`${labelset[0]}-${i}`}>{label.title}</label>
             </div>
