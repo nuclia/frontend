@@ -1,7 +1,7 @@
 <script>
   import Thumbnail from '../widgets/row/Thumbnail.svelte';
   import { createEventDispatcher } from 'svelte';
-  import Icon from './Icon.svelte';
+  import Icon from '../common/Icon.svelte';
   import { fade } from 'svelte/transition';
   import Spinner from '../components/spinner/Spinner.svelte';
   import { Duration } from './transition.utils';

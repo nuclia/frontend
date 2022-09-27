@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Icon from '../../_video-widget/Icon.svelte';
+  import Icon from '../../common/Icon.svelte';
 
   export let aspect = 'solid'; // solid or basic
   export let size = 'medium'; // medium or small

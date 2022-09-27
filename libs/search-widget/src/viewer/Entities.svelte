@@ -6,7 +6,7 @@
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../core/models';
   import { tap } from 'rxjs/operators';
-  import Icon from '../_video-widget/Icon.svelte';
+  import Icon from '../common/Icon.svelte';
 
   const allEntities = nucliaState().entities;
   const resourceEntities: Observable<EntityGroup[]> = viewerStore.resourceEntities;
