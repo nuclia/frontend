@@ -1,4 +1,5 @@
 {
+	"entities.annotations": "Anotaciones",
 	"entities.date": "Fechas",
 	"entities.event": "Eventos",
 	"entities.fac": "Construcciones",
@@ -20,6 +21,8 @@
 	"error.search": "¡Cáspita, algo ha ido mal!",
 	"error.search-beta": "Suerte que te hemos avisado que aún estamos en beta! 🙃",
 	"form.title-only": "Buscar solo en el título",
+	"generic.cancel": "Cancelar",
+	"generic.save": "Guardar",
 	"input.placeholder": "Escribe tu pregunta aqui",
 	"modal.back": "Volver",
 	"resource.classification": "Classificación",

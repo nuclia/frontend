@@ -1,4 +1,3 @@
-import { Search } from '../../../sdk-core/src';
 import type {
   Classification,
   CloudLink,
@@ -9,7 +8,8 @@ import type {
   Resource,
   ResourceData,
   Sentence,
-} from '@nuclia/core';
+} from '../../../sdk-core/src';
+import { Search } from '../../../sdk-core/src';
 import {
   BehaviorSubject,
   combineLatest,
@@ -36,11 +36,14 @@ import type {
 import { PreviewKind, SearchOrder } from '../core/models';
 import { getFileUrls } from '../core/api';
 import { isYoutubeUrl } from '../core/utils';
+import type { AnnotationStore } from './stores/annotation.store';
+import { annotationStore } from './stores/annotation.store';
+import type { ResourceStore } from './stores/resource.store';
+import { resourceStore } from './stores/resource.store';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 
-export const viewerStore: {
-  resource: BehaviorSubject<Resource | null>;
+type ViewerStore = {
   query: BehaviorSubject<string>;
   results: BehaviorSubject<WidgetParagraph[] | null>;
   hasSearchError: BehaviorSubject<boolean>;
@@ -52,9 +55,11 @@ export const viewerStore: {
   order: Subject<SearchOrder>;
   savingLabels: BehaviorSubject<boolean>;
   updatedLabels: Subject<{ [key: string]: Classification[] }>;
+  currentField: BehaviorSubject<{ field_type: string; field_id: string } | null>;
   init: () => void;
-} = {
-  resource: new BehaviorSubject<Resource | null>(null),
+};
+
+export const viewerStore: ViewerStore & AnnotationStore & ResourceStore = {
   query: new BehaviorSubject(''),
   results: new BehaviorSubject<WidgetParagraph[] | null>(null),
   hasSearchError: new BehaviorSubject<boolean>(false),
@@ -66,6 +71,9 @@ export const viewerStore: {
   order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
+  currentField: new BehaviorSubject<{ field_type: string; field_id: string } | null>(null),
+  ...annotationStore,
+  ...resourceStore,
   init: initStore,
 };
 
@@ -75,7 +83,7 @@ export const viewerState = {
     map((q) => q.trim()),
     distinctUntilChanged(),
   ),
-  paragraphs: viewerStore.resource.pipe(map((resource) => (resource ? getResourceParagraphs(resource) : []))),
+  paragraphs: viewerStore.resource.pipe(map((resource) => (resource ? getMainFieldParagraphs(resource) : []))),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
@@ -158,7 +166,7 @@ export const pdfUrl = combineLatest([
 ) as Observable<CloudLink>;
 
 export function initStore() {
-  viewerStore.resource.next(null);
+  resourceStore.init();
   viewerStore.query.next('');
   viewerStore.results.next(null);
   viewerStore.hasSearchError.next(false);
@@ -166,6 +174,7 @@ export function initStore() {
   viewerStore.selectedParagraph.next(null);
   viewerStore.linkPreview.next(null);
   viewerStore.order.next(DEFAULT_SEARCH_ORDER);
+  viewerStore.currentField.next(null);
 }
 
 export function clearSearch() {
@@ -283,18 +292,23 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
   );
 }
 
-export function getResourceParagraphs(resource: Resource): WidgetParagraph[] {
-  return getFields(resource)
-    .filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs)
-    .reduce(
-      (acc, current) =>
-        acc.concat(
-          current.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
-            return getParagraph(current.field_type, current.field_id, current.field, paragraph);
-          }),
-        ),
-      [] as WidgetParagraph[],
-    );
+export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
+  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
+  if (fields.length === 0) {
+    return [];
+  }
+  const mainField = fields[0];
+  //possible field types: 'file', 'link', 'datetime', 'keywordset', 'text', 'layout', 'generic', 'conversation'
+  const fieldType = mainField.field_type.endsWith('s')
+    ? mainField.field_type.slice(0, mainField.field_type.length - 1)
+    : mainField.field_type;
+  viewerStore.currentField.next({
+    field_type: fieldType,
+    field_id: mainField.field_id,
+  });
+  return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
+    return getParagraph(mainField.field_type, mainField.field_id, mainField.field, paragraph);
+  });
 }
 
 function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
@@ -341,6 +355,8 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     text: getParagraphText(field, paragraph) || '',
     fieldType: fieldType,
     fieldId: fieldId,
+    start: paragraph.start || 0,
+    end: paragraph.end || 0,
   };
   const kind = getPreviewKind(field, paragraph);
   if (kind === PreviewKind.PDF) {
@@ -353,8 +369,8 @@ function getParagraph(fieldType: string, fieldId: string, field: IFieldData, par
     return {
       ...baseParagraph,
       preview: kind,
-      start: paragraph.start_seconds?.[0] || 0,
-      end: paragraph.end_seconds?.[0] || 0,
+      start_seconds: paragraph.start_seconds?.[0] || 0,
+      end_seconds: paragraph.end_seconds?.[0] || 0,
     };
   } else {
     return {

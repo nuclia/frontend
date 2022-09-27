@@ -1,5 +1,6 @@
 <script lang="ts">
   export let aspect = 'solid'; // solid or basic
+  export let kind = 'secondary'; // primary | secondary | inverted
   export let size = 'medium'; // medium or small
   export let disabled = false;
   export let type = 'button';
@@ -7,7 +8,7 @@
 </script>
 
 <button
-  class="sw-button {aspect}"
+  class="sw-button {aspect} {kind}"
   class:small={size === 'small'}
   {type}
   aria-label={label ? label.textContent : ''}

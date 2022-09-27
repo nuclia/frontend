@@ -4,7 +4,7 @@
   import { formatDate, getCDN } from '../core/utils';
   import { _ } from '../core/i18n';
   import MimeIcon from '../components/icons/mime.svelte';
-  import ActionMenu from './ActionMenu.svelte';
+  import ActionMenu from './menus/ActionMenu.svelte';
 
   export let resource: Resource;
   let showMetadata = false;

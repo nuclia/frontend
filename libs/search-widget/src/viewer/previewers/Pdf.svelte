@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from 'svelte';
   import { Subject, switchMap, tap } from 'rxjs';
   import { getFile } from '../../core/api';
-  import { viewerStore } from '../store';
+  import { viewerStore } from '../viewer.store';
   import PdfControls from './PdfControls.svelte';
 
   export let src: string;

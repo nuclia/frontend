@@ -11,11 +11,12 @@
   import {
     getFileField,
     getLinkField,
-    getResourceParagraphs, getVideoStream,
-  } from '../viewer/store';
+    getMainFieldParagraphs,
+    getVideoStream,
+  } from '../viewer/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
-  import Icon from './Icon.svelte';
+  import Icon from '../common/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
   import Player from '../viewer/previewers/Player.svelte';
   import { Duration } from './transition.utils';
@@ -85,12 +86,12 @@
   };
 
   const playParagraph = (paragraph) => {
-    playFrom(paragraph.start, paragraph);
+    playFrom(paragraph.start_seconds, paragraph);
     paragraphInPlay = paragraph;
   };
 
   const playTranscript = (paragraph) => {
-    videoTime = paragraph.start || 0;
+    videoTime = paragraph.start_seconds || 0;
     paragraphInPlay = paragraph;
   };
 
@@ -129,7 +130,7 @@
         tap((res) => {
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
-          transcripts = getResourceParagraphs(res) as MediaWidgetParagraph[];
+          transcripts = getMainFieldParagraphs(res) as MediaWidgetParagraph[];
           setupExpandedTile();
         }),
       );

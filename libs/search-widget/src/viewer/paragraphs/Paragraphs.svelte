@@ -4,13 +4,16 @@
   import { PreviewKind } from '../../core/models';
   import { formatTime } from '../../core/utils';
   import { setLabels } from '../../core/api';
-  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId } from './../store';
+  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId } from '../viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
   import { filter, concatMap, take, combineLatest } from 'rxjs';
+  import ParagraphWithAnnotations from "./ParagraphWithAnnotations.svelte";
 
   export let paragraphs: WidgetParagraph[] = [];
+
+  const annotationMode = viewerStore.annotationMode;
   const onlySelected = viewerState.onlySelected;
   const savingLabels = viewerStore.savingLabels;
   const resource = viewerStore.resource.pipe(filter((resource): resource is Resource => !!resource));
@@ -45,7 +48,9 @@
   {#each paragraphs as paragraph, i}
     {#if !$onlySelected || ($onlySelected && i === $selectedParagraphIndex)}
       <div class="paragraph-item">
-        {#if paragraph.preview === PreviewKind.PDF}
+        {#if $annotationMode}
+          <ParagraphWithAnnotations {paragraph} paragraphId={getParagraphId($resource.id, paragraph)}></ParagraphWithAnnotations>
+        {:else if paragraph.preview === PreviewKind.PDF}
           <ParagraphWithIcon
             text={paragraph.text}
             textIcon={'p. ' + (paragraph.page + 1)}
@@ -58,7 +63,7 @@
         {:else if paragraph.preview === PreviewKind.VIDEO || paragraph.preview === PreviewKind.AUDIO || paragraph.preview === PreviewKind.YOUTUBE}
           <ParagraphWithIcon
             text={paragraph.text}
-            textIcon={formatTime(paragraph.start)}
+            textIcon={formatTime(paragraph.start_seconds)}
             icon={ParagraphIcon.PLAY}
             on:click={() => previewParagraph(paragraph)}
             labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || []}

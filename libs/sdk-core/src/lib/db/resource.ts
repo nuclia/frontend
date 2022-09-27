@@ -16,15 +16,13 @@ import type {
   KeywordSetField,
   LinkField,
   LinkFieldData,
-  ParagraphAnnotation,
   ResourceData,
   ResourceField,
   TextField,
   TokenAnnotation,
-  UserFieldMetadata,
 } from './resource.models';
 import type { Search } from './search.models';
-import { addFieldMetadata } from './resource.helpers';
+import { setEntities, setLabels } from './resource.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Resource extends IResource {}
@@ -160,55 +158,16 @@ export class Resource implements IResource {
     );
   }
 
-  setLabels(
-    fieldId: string,
-    fieldType: string,
-    paragraphId: string,
-    labels: Classification[],
-    preserve = true,
-  ): Observable<void> {
-    const metadata: UserFieldMetadata = {
-      field: {
-        field: fieldId,
-        field_type: fieldType,
-      },
-      paragraphs: [
-        {
-          key: paragraphId,
-          classifications: labels,
-        },
-      ],
-    };
+  setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
     return this.modify({
-      fieldmetadata: preserve && this.fieldmetadata ? addFieldMetadata(this.fieldmetadata, metadata) : [metadata],
+      fieldmetadata: setLabels(fieldId, fieldType, paragraphId, labels, this.fieldmetadata || []),
     });
   }
 
-  setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[], preserve = true): Observable<void> {
-    const metadata: UserFieldMetadata = {
-      field: {
-        field: fieldId,
-        field_type: fieldType,
-      },
-      token: entities,
-    };
+  setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[]): Observable<void> {
     return this.modify({
-      fieldmetadata: preserve && this.fieldmetadata ? addFieldMetadata(this.fieldmetadata, metadata) : [metadata],
+      fieldmetadata: setEntities(fieldId, fieldType, entities, this.fieldmetadata || []),
     });
-  }
-
-  addEntity(fieldId: string, fieldType: string, entity: TokenAnnotation): Observable<void> {
-    const existingEntities = this.fieldmetadata?.find((metadata) => metadata.field.field === fieldId)?.token || [];
-    return this.setEntities(fieldId, fieldType, [...existingEntities, entity]);
-  }
-
-  removeEntity(fieldId: string, fieldType: string, entity: TokenAnnotation): Observable<void> {
-    const existingEntities = this.fieldmetadata?.find((metadata) => metadata.field.field === fieldId)?.token || [];
-    return this.setEntities(
-      fieldId,
-      fieldType,
-      existingEntities.filter((e) => e.klass !== entity.klass || e.token !== entity.token),
-    );
   }
 
   private formatTitle(title?: string): string {

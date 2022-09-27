@@ -50,6 +50,8 @@ interface BaseWidgetParagraph {
   paragraph: Paragraph;
   text: string;
   preview: PreviewKind;
+  start: number;
+  end: number;
 }
 
 export type WidgetParagraph = RegularWidgetParagraph | PdfWidgetParagraph | MediaWidgetParagraph;
@@ -66,8 +68,8 @@ export interface PdfWidgetParagraph extends BaseWidgetParagraph {
 }
 
 export interface MediaWidgetParagraph extends BaseWidgetParagraph {
-  start: number;
-  end: number;
+  start_seconds: number;
+  end_seconds: number;
   preview: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE;
 }
 
@@ -99,4 +101,12 @@ export interface LinkPreviewParams {
 
 export interface Intents {
   labels?: Classification[];
+}
+
+export interface EntityGroup {
+  id: string;
+  title?: string;
+  color?: string;
+  custom?: boolean;
+  entities: string[];
 }

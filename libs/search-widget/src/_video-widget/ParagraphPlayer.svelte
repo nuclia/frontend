@@ -25,8 +25,8 @@
 >
   <div style="display: flex">
     <TimePlayer
-      start={paragraph.start || 0}
-      end={paragraph.end}
+      start={paragraph.start_seconds || 0}
+      end={paragraph.end_seconds}
       {selected}
       hover={hovering}
       {minimized}

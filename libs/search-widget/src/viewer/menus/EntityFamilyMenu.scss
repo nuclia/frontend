@@ -1,0 +1,47 @@
+.sw-entity-menu {
+  background-color: var(--color-light-stronger);
+  box-shadow: var(--shadow-modal);
+  position: fixed;
+  width: var(--rhythm-20);
+  z-index: 1;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      cursor: pointer;
+      padding: var(--rhythm-1) var(--rhythm-2);
+      position: relative;
+      transition: background-color var(--transition-superfast);
+
+      &:hover {
+        background-color: var(--color-neutral-lightest);
+      }
+
+      &:before {
+        background-color: var(--family-color);
+        bottom: 0;
+        content: '';
+        left: 0;
+        position: absolute;
+        top: 0;
+        width: var(--rhythm-0_5);
+      }
+
+      &.selected:after {
+        background-image: url('data:image/svg+xml; utf8, <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill-rule="evenodd" fill="%23FF0066" d="M19.333 5.333 9.041 15.626l-4.294-4.293-1.414 1.414 5.708 5.707L20.747 6.747l-1.414-1.414Z" clip-rule="evenodd"/><path fill-rule="evenodd" fill="%23FF0066" d="M19.333 5.333 9.041 15.626l-4.294-4.293-1.414 1.414 5.708 5.707L20.747 6.747l-1.414-1.414Z" clip-rule="evenodd"/></svg>');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: var(--rhythm-3) var(--rhythm-3);
+        bottom: 0;
+        content: '';
+        right: 0;
+        position: absolute;
+        top: 0;
+        width: var(--rhythm-4);
+      }
+    }
+  }
+}
