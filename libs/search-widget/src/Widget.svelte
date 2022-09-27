@@ -12,7 +12,7 @@
     formatQueryKey,
     updateQueryParams,
     coerceBooleanProperty,
-    loadFonts,
+    loadFonts, loadSvgSprite,
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './components/modal/Modal.svelte';
@@ -38,6 +38,8 @@
   export let permalink = false;
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
+
+  let svgSprite;
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -77,6 +79,7 @@
     setLang(lang);
 
     loadFonts();
+    loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     // Load custom styles
     nucliaState().customStyle.subscribe((css) => (style = css));
 
@@ -152,6 +155,8 @@
       {/if}
     </Modal>
   {/if}
+
+  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
 <style lang="scss" src="./Widget.scss"></style>

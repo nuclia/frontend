@@ -6,6 +6,7 @@
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../core/models';
   import { tap } from 'rxjs/operators';
+  import Icon from '../_video-widget/Icon.svelte';
 
   const allEntities = nucliaState().entities;
   const resourceEntities: Observable<EntityGroup[]> = viewerStore.resourceEntities;
@@ -18,14 +19,14 @@
     if (annotationModeEnabled) {
       expanded = [];
     }
-  }
+  };
   $: entityList = combineLatest([
     annotationMode,
     resourceEntities,
-    allEntities
+    allEntities,
   ]).pipe(
     tap(() => toggleAnnotationMode()),
-    map(([annotationEnabled, entitiesFromResource, allEntitiesFromKb]) => annotationEnabled ? allEntitiesFromKb : entitiesFromResource)
+    map(([annotationEnabled, entitiesFromResource, allEntitiesFromKb]) => annotationEnabled ? allEntitiesFromKb : entitiesFromResource),
   );
 
   const toggle = (group: string) => {
@@ -58,16 +59,16 @@
 <div class="sw-entities">
   {#each $entityList as group, i}
     <Collapse expanded={expanded.includes(group.id)}>
-      <button
-        slot="header"
-        on:click={() => {
-          toggle(group.id);
-        }}
-        class:expanded={expanded.includes(group.id)}
-        class:last={i === $entityList.length - 1}
+      <button slot="header"
+              on:click={() => toggle(group.id)}
+              class:expanded={expanded.includes(group.id)}
+              class:last={i === $entityList.length - 1}
       >
-        <div class="color" style:background={group.color} />
+        <div class="color" style:background={group.color}/>
         <div class="group-name">{$_(group.title)} ({group.entities.length})</div>
+        <div class="icon-container">
+          <Icon name="chevron-left"/>
+        </div>
       </button>
       <ul>
         {#each group.entities as entity}

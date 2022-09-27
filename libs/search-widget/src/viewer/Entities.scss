@@ -1,58 +1,52 @@
 .sw-entities {
-  background: #fff;
+  background: var(--color-light-stronger);
   box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.1);
 
   button {
-    position: relative;
-    width: 100%;
-    height: 2.5em;
-    display: flex;
     align-items: center;
-    padding: 0 2.25em 0 0;
+    background: var(--color-light-stronger);
     border: 0;
-    background: #fff;
     color: inherit;
-    font: inherit;
-    text-align: left;
     cursor: pointer;
+    display: flex;
+    font: inherit;
+    font-weight: 400;
+    height: var(--rhythm-5);
+    padding: 0 var(--rhythm-3) 0 0;
+    position: relative;
+    text-align: left;
+    width: 100%;
     -webkit-appearance: none;
   }
   button:hover {
-    background-color: #f7f7f7;
+    background-color: var(--color-neutral-background);
   }
   button::before {
-    content: '';
-    position: absolute;
-    left: 1.75em;
-    right: 1.25em;
+    background-color: var(--color-neutral-light);
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.2);
+    content: '';
     height: 1px;
+    left: var(--rhythm-5);
+    position: absolute;
+    right: var(--rhythm-3);
   }
   button.last::before {
     display: none;
   }
-  button::after {
-    content: '';
-    width: 0;
-    height: 0;
-    border-top: 5px solid transparent;
-    border-bottom: 5px solid transparent;
-    border-right: 8px solid rgba(0, 0, 0, 0.5);
-    position: absolute;
-    right: 1.25em;
-    top: 16px;
-    transition: transform 0.3s;
+  .icon-container {
+    display: flex;
+    transition: transform var(--transition-fast);
   }
-  button.expanded::after {
+  button.expanded .icon-container {
     transform: rotate(-90deg);
   }
+
   button .color {
+    background-color: var(--color-neutral-lighter);
     flex: 0 0 auto;
     height: 100%;
-    width: 1em;
-    background-color: #eee;
-    margin-right: 1.5em;
+    margin-right: var(--rhythm-3);
+    width: var(--rhythm-2);
   }
   button .group-name {
     flex: 1 1 0;
@@ -60,15 +54,15 @@
   ul {
     list-style: none;
     margin: 0;
-    padding: 0.5em 0;
     max-height: 400px;
     overflow: auto;
+    padding: var(--rhythm-1) 0;
   }
   li {
     display: flex;
     align-items: center;
-    height: 3em;
-    padding: 0 2.25em 0 3em;
+    height: var(--rhythm-6);
+    padding: 0 var(--rhythm-4) 0 var(--rhythm-6);
   }
 
   li.clickable {
