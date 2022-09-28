@@ -78,7 +78,8 @@
 </script>
 
 <div class="sw-metadata"
-     class:annotation-mode={$annotationMode}>
+     class:annotation-mode={$annotationMode}
+>
   {#if $hasEntities}
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}

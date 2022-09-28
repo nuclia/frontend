@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import ModalHeader from './ModalHeader.svelte';
 
   export let show = false;
@@ -11,6 +11,8 @@
 
   const dispatch = createEventDispatcher();
   let overflow = 'initial';
+  let modalContentHeight: string = '100%';
+  let modalContentContainer: HTMLElement;
 
   $: {
     if (show) {
@@ -20,6 +22,17 @@
       document.body.style.overflow = overflow;
     }
   }
+
+  function setModalContentHeight() {
+    if (modalContentContainer) {
+      modalContentHeight = `${modalContentContainer.getBoundingClientRect().height}px`;
+    }
+  }
+
+  onMount(() => {
+    setModalContentHeight();
+  });
+
   const close = () => {
     show = false;
     dispatch('close');
@@ -37,7 +50,8 @@
   };
 </script>
 
-<svelte:window on:keydown={closeOnEsc} />
+<svelte:window on:keydown={closeOnEsc}
+               on:resize={setModalContentHeight}/>
 {#if show}
   <div class="sw-modal-backdrop fade" class:popup class:align-right={alignTo === 'right'} on:click={outsideClick}>
     <dialog
@@ -50,7 +64,9 @@
       {#if backButton || closeButton}
         <ModalHeader {closeButton} {backButton} on:close={close} on:back />
       {/if}
-      <div class="modal-content"><slot /></div>
+      <div class="modal-content"
+           bind:this={modalContentContainer}
+           style:--modal-content-height={modalContentHeight}><slot /></div>
     </dialog>
   </div>
 {/if}
