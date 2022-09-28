@@ -92,7 +92,7 @@
       paragraphId,
       start: parseInt(event.target.getAttribute('start')),
       end: parseInt(event.target.getAttribute('end')),
-      paragraphStart: paragraph.start
+      paragraphStart: paragraph.start,
     };
     openMenu(event);
   };
@@ -110,8 +110,14 @@
     });
   };
 
+  function getTextSelection() {
+    return !!document.querySelector('nuclia-search')?.shadowRoot?.getSelection ?
+      document.querySelector('nuclia-search').shadowRoot.getSelection() :
+      document.getSelection();
+  }
+
   const contextMenu = (event: MouseEvent) => {
-    const selection = document.getSelection();
+    const selection = getTextSelection();
     if (selection.type === 'Range') {
       event.preventDefault();
       const range = selection.getRangeAt(0);
@@ -142,7 +148,7 @@
         paragraphId,
         start: selectedText.start,
         end: selectedText.end,
-        paragraphStart: paragraph.start
+        paragraphStart: paragraph.start,
       });
       addEntity(entity, family);
     } else if (selectedEntity.entityFamilyId === family.id) {
