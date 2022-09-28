@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { TranslatePipeMock } from '@flaps/core';
+import { STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -20,7 +20,7 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { MockModule } from 'ng-mocks';
+import { MockModule, MockProvider } from 'ng-mocks';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 describe('UploadComponent', () => {
@@ -98,6 +98,7 @@ describe('UploadComponent', () => {
           provide: TranslateService,
           useValue: { get: () => of('') },
         },
+        MockProvider(STFTrackingService),
       ],
     }).compileComponents();
   });
