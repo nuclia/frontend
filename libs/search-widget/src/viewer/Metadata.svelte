@@ -10,7 +10,7 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
   import { nucliaStore } from '../core/store';
-  import type { EntityGroup } from '../core/models';
+  import { onDestroy } from 'svelte';
 
   export let resource: Resource;
 
@@ -33,6 +33,10 @@
     linksPreviews = getLinksPreviews(resource);
     links = getLinks(resource);
   }
+
+  onDestroy(() => {
+    closeAnnotationMode();
+  });
 
   const previewLink = (file: CloudLink) => {
     viewerStore.showPreview.next(true);
