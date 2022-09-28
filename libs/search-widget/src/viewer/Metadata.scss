@@ -22,8 +22,6 @@
 
   .entities {
     margin-bottom: 2.5em;
-    max-height: calc(var(--modal-content-height) - var(--header-height) - var(--rhythm-12));
-    overflow: auto;
   }
 
   .preview-links {
