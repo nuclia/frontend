@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { Router } from '@angular/router';
 import { filter, switchMap, take, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { STFTrackingService } from '@flaps/core';
 import { ConnectorDefinition, ConnectorParameters, ISourceConnector, SOURCE_ID_KEY, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
@@ -24,6 +25,7 @@ export class UploadComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private router: Router,
     private dialog: MatDialog,
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit() {
@@ -52,6 +54,7 @@ export class UploadComponent implements OnInit {
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
     this.sourceId = event.connector.id;
+    this.tracking.logEvent('desktop:select_source', { sourceId: this.sourceId });
     this.sync
       .getSource(event.connector.id)
       .pipe(
@@ -72,6 +75,7 @@ export class UploadComponent implements OnInit {
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
+    this.tracking.logEvent('desktop:select_destination', { sourceId: event.connector.id });
     this.goTo(3);
     this.dialog
       .open(ConfirmFilesComponent, {
@@ -80,6 +84,7 @@ export class UploadComponent implements OnInit {
       .afterClosed()
       .pipe(filter((result) => !!result))
       .subscribe(() => {
+        this.tracking.logEvent('desktop:upload_confirm');
         this.sync.addSync({
           date: new Date().toISOString(),
           source: this.sourceId,
