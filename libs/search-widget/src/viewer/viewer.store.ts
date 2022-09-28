@@ -213,11 +213,12 @@ export function clearSearch() {
 
 export function setParagraphLabels(labels: Classification[], paragraph: WidgetParagraph) {
   const resource = viewerStore.resource.getValue();
+  const field = viewerStore.currentField.getValue();
   const saving = viewerStore.savingLabels.getValue();
-  if (!resource || saving) return;
+  if (!resource || !field || saving) return;
   viewerStore.savingLabels.next(true);
   const paragraphId = getParagraphId(resource.id, paragraph);
-  setLabels(resource, paragraph.fieldId, paragraph.fieldType.slice(0, -1), paragraphId, labels)
+  setLabels(resource, field.field_id, field.field_type, paragraphId, labels)
     .pipe(switchMap(() => paragraphLabels.pipe(take(1))))
     .subscribe((paragraphLabels) => {
       const existingLabels = Object.entries(paragraphLabels).reduce((acc, [key, value]) => {
