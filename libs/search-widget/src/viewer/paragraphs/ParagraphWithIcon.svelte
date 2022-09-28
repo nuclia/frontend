@@ -8,13 +8,13 @@
 <script lang="ts">
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import { getCDN } from '../../core/utils';
-  import type { Classification } from '@nuclia/core';
+  import { ParagraphLabels } from '../../core/models';
 
   export let text: string;
   export let textIcon: string;
   export let active: boolean = false;
   export let icon: ParagraphIcon;
-  export let labels: Classification[];
+  export let labels: ParagraphLabels;
   let hover = false;
 
   const enter = () => {

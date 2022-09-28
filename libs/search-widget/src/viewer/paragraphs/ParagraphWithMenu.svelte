@@ -1,14 +1,12 @@
 <script lang="ts">
-  import type { Classification } from '@nuclia/core';
   import { hasAuthData } from '../../core/api';
   import { nucliaState } from '../../core/store';
   import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
   import LabelMenu from '../menus/LabelMenu.svelte';
+  import { ParagraphLabels } from '../../core/models';
 
-  const MENU_ENABLED = false; // TODO: remove when backend is ready
-
-  export let labels: Classification[] = [];
+  export let labels: ParagraphLabels;
   let isOpenMenu = false;
   let element: HTMLElement;
   let position: { top: number; left: number } | undefined = undefined;
@@ -33,7 +31,7 @@
 
 <div
   class="paragraph-with-menu"
-  on:contextmenu={(MENU_ENABLED && $editLabels && hasAuthData() && handleClick) || null}
+  on:contextmenu={($editLabels && hasAuthData() && handleClick) || null}
   bind:this={element}
 >
   <Paragraph {labels}>

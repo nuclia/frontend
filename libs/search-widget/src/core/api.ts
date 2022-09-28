@@ -116,15 +116,15 @@ export const getLabels = (): Observable<Labels> => {
 
 export const setLabels = (
   resource: Resource,
-  fieldType: string,
   fieldId: string,
+  fieldType: string,
   paragraphId: string,
   labels: Classification[],
 ): Observable<void> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return resource.setLabels(fieldType, fieldId, paragraphId, labels);
+  return resource.setLabels(fieldId, fieldType, paragraphId, labels);
 };
 
 export const saveEntitiesAnnotations = (

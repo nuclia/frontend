@@ -28,13 +28,14 @@ import {
 import type {
   LinkPreviewParams,
   MediaPreviewParams,
+  ParagraphLabels,
   PdfPreviewParams,
   SelectedParagraph,
   WidgetParagraph,
   YoutubePreviewParams,
 } from '../core/models';
 import { PreviewKind, SearchOrder } from '../core/models';
-import { getFileUrls } from '../core/api';
+import { getFileUrls, setLabels } from '../core/api';
 import { isYoutubeUrl } from '../core/utils';
 import type { AnnotationStore } from './stores/annotation.store';
 import { annotationStore } from './stores/annotation.store';
@@ -144,7 +145,33 @@ const _paragraphLabels = viewerState.paragraphs.pipe(
   ),
 );
 
-export const paragraphLabels = merge(_paragraphLabels, viewerStore.updatedLabels).pipe(shareReplay(1));
+const _annotatedParagraphLabels = viewerStore.resource.pipe(
+  map((resource) =>
+    (resource?.fieldmetadata || []).reduce((acc, field) => {
+      (field.paragraphs || []).forEach(({ key, classifications }) => {
+        acc[key] = classifications;
+      });
+      return acc;
+    }, {} as { [key: string]: Classification[] }),
+  ),
+);
+
+export const paragraphLabels = combineLatest([
+  _paragraphLabels,
+  merge(_annotatedParagraphLabels, viewerStore.updatedLabels),
+]).pipe(
+  map(([labels, annotatedLabels]) => {
+    const result = Object.entries(labels).reduce((acc, [key, value]) => {
+      acc[key] = { labels: value, annotatedLabels: [] };
+      return acc;
+    }, {} as { [key: string]: ParagraphLabels });
+    Object.entries(annotatedLabels).forEach(([key, value]) => {
+      result[key] ? (result[key].annotatedLabels = value) : (result[key] = { labels: [], annotatedLabels: value });
+    });
+    return result;
+  }),
+  shareReplay(1),
+);
 
 export const pdfUrl = combineLatest([
   viewerStore.resource,
@@ -182,6 +209,26 @@ export function clearSearch() {
   viewerStore.results.next(null);
   viewerStore.hasSearchError.next(false);
   viewerStore.onlySelected.next(false);
+}
+
+export function setParagraphLabels(labels: Classification[], paragraph: WidgetParagraph) {
+  const resource = viewerStore.resource.getValue();
+  const field = viewerStore.currentField.getValue();
+  const saving = viewerStore.savingLabels.getValue();
+  if (!resource || !field || saving) return;
+  viewerStore.savingLabels.next(true);
+  const paragraphId = getParagraphId(resource.id, paragraph);
+  setLabels(resource, field.field_id, field.field_type, paragraphId, labels)
+    .pipe(switchMap(() => paragraphLabels.pipe(take(1))))
+    .subscribe((paragraphLabels) => {
+      const existingLabels = Object.entries(paragraphLabels).reduce((acc, [key, value]) => {
+        acc[key] = value.annotatedLabels;
+        return acc;
+      }, {} as { [key: string]: Classification[] });
+      const newLabels = { ...existingLabels, [paragraphId]: labels };
+      viewerStore.updatedLabels.next(newLabels);
+      viewerStore.savingLabels.next(false);
+    });
 }
 
 export function getPdfPreviewParams(

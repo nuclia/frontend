@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { Classification } from '@nuclia/core';
+  import { ParagraphLabels } from '../../core/models';
   import Label from '../../components/label/Label.svelte';
-  export let labels: Classification[] = [];
+  export let labels: ParagraphLabels = { labels: [], annotatedLabels: [] };
+  $: allLabels = [...labels.labels, ...labels.annotatedLabels];
 </script>
 
 <div class="sw-paragraph">
@@ -10,9 +11,9 @@
   </div>
   <div class="content">
     <slot name="content" />
-    {#if labels.length > 0}
+    {#if allLabels.length > 0}
       <div class="labels">
-        {#each labels as label (label.labelset + label.label)}
+        {#each allLabels as label (label.labelset + label.label)}
           <div class="label">
             <Label {label} />
           </div>
