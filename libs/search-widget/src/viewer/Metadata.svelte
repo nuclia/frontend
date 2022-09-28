@@ -10,7 +10,7 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
   import { nucliaStore } from '../core/store';
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
 
   export let resource: Resource;
 
@@ -23,6 +23,7 @@
   const hasEntities = viewerStore.hasEntities;
   let entitiesBackup: string;
   let customEntitiesBackup;
+  let modalContentHeight;
 
   $: {
     const _summaries = resource.summary
@@ -33,6 +34,14 @@
     linksPreviews = getLinksPreviews(resource);
     links = getLinks(resource);
   }
+
+  function setModalContentHeight() {
+    modalContentHeight = document.querySelector('.modal-content').getBoundingClientRect().height;
+  }
+
+  onMount(() => {
+    setModalContentHeight();
+  });
 
   onDestroy(() => {
     closeAnnotationMode();
@@ -77,8 +86,11 @@
   };
 </script>
 
+<svelte:window on:resize={setModalContentHeight} />
 <div class="sw-metadata"
-     class:annotation-mode={$annotationMode}>
+     class:annotation-mode={$annotationMode}
+     style:--modal-content-height="{modalContentHeight}px"
+>
   {#if $hasEntities}
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
