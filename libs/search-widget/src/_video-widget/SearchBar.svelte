@@ -77,7 +77,7 @@
   {#if ready}
     <SearchInput {placeholder} searchBarWidget={true} />
   {/if}
-  <div id="nuclia-glyphs-sprite" hidden>{svgSprite}</div>
+  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
 <style lang="scss" src="../common-style.scss"></style>
