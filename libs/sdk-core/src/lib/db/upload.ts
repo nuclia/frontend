@@ -11,7 +11,7 @@ import {
   startWith,
   catchError,
   mergeMap,
-  repeatWhen,
+  repeat,
   take,
 } from 'rxjs';
 import type { INuclia } from '../models';
@@ -100,23 +100,25 @@ export const uploadFile = (
   };
   let retries = 1;
   return nuclia.rest.post<Response>(`${path}/upload`, buffer, headers).pipe(
-    repeatWhen((obs) => obs),
+    repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     take(1),
-    map((res) => {
+    switchMap((res) => {
       switch (res.status) {
         case 201: {
-          return {
-            resource: res.headers.get('ndb-resource') || '',
-            field: res.headers.get('ndb-field') || '',
-            completed: true,
-          };
+          return from(res.json()).pipe(
+            map((data) => ({
+              resource: data.uuid || '',
+              field: data.field_id || '',
+              completed: true,
+            })),
+          );
         }
         case 409: {
-          return { conflict: true };
+          return of({ conflict: true });
         }
         default: {
-          return { failed: true };
+          return of({ failed: true });
         }
       }
     }),
@@ -156,7 +158,7 @@ export const TUSuploadFile = (
   }
   let retries = 1;
   return nuclia.rest.post<Response>(`${path}/tusupload`, creationPayload, headers, true).pipe(
-    repeatWhen((obs) => obs),
+    repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     catchError((error) => of(error)),
     take(1),
