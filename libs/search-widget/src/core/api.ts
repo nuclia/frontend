@@ -146,16 +146,22 @@ export const saveEntitiesAnnotations = (
 
 function entityListToMap(entityList: string[]): { [key: string]: Entity } {
   return entityList.reduce((map, currentValue) => {
-    const entityId = currentValue
+    const entityId = slugify(currentValue);
+    map[entityId] = { value: currentValue };
+    return map;
+  }, {} as { [key: string]: Entity });
+}
+
+export function slugify(text: string): string {
+  return (
+    text
       .toLowerCase()
       // Strip non allowed characters
       .replace(/[^\w\s-_]+/gi, '')
       // Replace white spaces
       .trim()
-      .replace(/\s+/gi, '-');
-    map[entityId] = { value: currentValue };
-    return map;
-  }, {} as { [key: string]: Entity });
+      .replace(/\s+/gi, '-')
+  );
 }
 
 export const saveEntities = (backup: EntityGroup[], newGroups: EntityGroup[]) => {
