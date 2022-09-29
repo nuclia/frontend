@@ -3,10 +3,10 @@
   import { debounceTime, filter, merge, share } from 'rxjs';
 
   import { createEventDispatcher, onMount } from 'svelte';
-  import SearchIcon from '../../components/icons/search.svelte';
   import { nucliaState, nucliaStore } from '../../core/store';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import { getCDN } from '../../core/utils';
+  import Icon from "../../common/icons/Icon.svelte";
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -84,18 +84,20 @@
     on:keydown
   />
   {#if popupSearch || embeddedSearch || searchBarWidget}
-    <div class="search-icon" class:left-icon={embeddedSearch || searchBarWidget}>
+    <div class="search-icon-container" class:left-icon={embeddedSearch || searchBarWidget}>
       {#if $isPending}
         <LoadingDots small />
       {:else}
-        <SearchIcon
-          on:click={search}
-          on:keyup={(e) => {
+        <div class="search-icon"
+             tabindex="0"
+             on:click={search}
+             on:keyup={(e) => {
             if (e.key === 'Enter') {
               search();
             }
-          }}
-        />
+          }}>
+          <Icon name="search"/>
+        </div>
       {/if}
     </div>
   {/if}
