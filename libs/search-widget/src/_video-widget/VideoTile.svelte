@@ -16,7 +16,7 @@
   } from '../viewer/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
-  import Icon from '../common/Icon.svelte';
+  import Icon from '../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
   import Player from '../viewer/previewers/Player.svelte';
   import { Duration } from './transition.utils';

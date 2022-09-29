@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
-  import { debounceTime, filter, merge, share, take } from 'rxjs';
+  import { debounceTime, filter, merge, share } from 'rxjs';
 
   import { createEventDispatcher, onMount } from 'svelte';
   import SearchIcon from '../../components/icons/search.svelte';

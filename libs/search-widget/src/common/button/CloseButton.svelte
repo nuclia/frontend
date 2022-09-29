@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Icon from '../Icon.svelte';
+  import Icon from '../icons/Icon.svelte';
 
   export let aspect = 'solid'; // solid or basic
   export let kind = 'secondary'; // primary | secondary | inverted
