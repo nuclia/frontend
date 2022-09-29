@@ -2,7 +2,7 @@
   import type { IResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
   import { setDisplayedResource } from '../../core/stores/main.store';
-  import Thumbnail from './Thumbnail.svelte';
+  import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
 
   export let result: IResource;
   let labels: string[];

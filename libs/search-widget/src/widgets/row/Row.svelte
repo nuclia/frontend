@@ -3,7 +3,7 @@
   import { formatDate, formatTitle } from '../../core/utils';
   import { nucliaState, setDisplayedResource } from '../../core/stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
-  import Thumbnail from './Thumbnail.svelte';
+  import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
 
   export let displayThumbnail = true;
   export let formWidget = false;
