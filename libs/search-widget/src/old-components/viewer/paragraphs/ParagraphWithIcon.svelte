@@ -7,8 +7,8 @@
 
 <script lang="ts">
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
-  import { getCDN } from '../../core/utils';
-  import { ParagraphLabels } from '../../core/models';
+  import { getCDN } from '../../../core/utils';
+  import { ParagraphLabels } from '../../../core/models';
 
   export let text: string;
   export let textIcon: string;

@@ -7,7 +7,7 @@
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../core/utils';
   import { setLang } from '../core/i18n';
-  import SearchInput from '../widgets/search-input/SearchInput.svelte';
+  import SearchInput from '../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../core/search-bar';
   import globalCss from '../common/_global.scss';
 

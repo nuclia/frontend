@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { Resource } from '@nuclia/core';
-  import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph, ParagraphLabels } from '../../core/models';
-  import { PreviewKind } from '../../core/models';
-  import { formatTime } from '../../core/utils';
+  import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph, ParagraphLabels } from '../../../core/models';
+  import { PreviewKind } from '../../../core/models';
+  import { formatTime } from '../../../core/utils';
   import { filter } from 'rxjs';
-  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../../core/stores/viewer.store';
+  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../../../core/stores/viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';

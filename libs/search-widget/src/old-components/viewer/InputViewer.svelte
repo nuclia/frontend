@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { _ } from '../core/i18n';
-  import { getCDN } from '../core/utils';
-  import { SearchOrder } from '../core/models';
-  import { viewerStore, viewerState, clearSearch } from '../core/stores/viewer.store';
+  import { _ } from '../../core/i18n';
+  import { getCDN } from '../../core/utils';
+  import { SearchOrder } from '../../core/models';
+  import { viewerStore, viewerState, clearSearch } from '../../core/stores/viewer.store';
 
   const query = viewerStore.query;
   query['set'] = query.next;

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { nucliaState } from '../../core/stores/main.store';
-  import { clickOutside } from '../../common/actions/actions';
+  import { nucliaState } from '../../../core/stores/main.store';
+  import { clickOutside } from '../../../common/actions/actions';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { _ } from '../../core/i18n';
+  import { _ } from '../../../core/i18n';
 
   export let position: { top: number; left: number };
   export let selectedFamily;

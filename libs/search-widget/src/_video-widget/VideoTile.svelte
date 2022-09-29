@@ -7,7 +7,7 @@
   import { getRegionalBackend, getResource } from '../core/api';
   import CloseButton from '../common/button/CloseButton.svelte';
   import ThumbnailPlayer from './ThumbnailPlayer.svelte';
-  import Youtube from '../viewer/previewers/Youtube.svelte';
+  import Youtube from '../old-components/viewer/previewers/Youtube.svelte';
   import {
     getFileField,
     getLinkField,
@@ -18,7 +18,7 @@
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from '../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
-  import Player from '../viewer/previewers/Player.svelte';
+  import Player from '../old-components/viewer/previewers/Player.svelte';
   import { Duration } from '../common/transition.utils';
   import { createEventDispatcher } from 'svelte';
 

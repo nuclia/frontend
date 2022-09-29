@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { getYoutubeId } from '../../core/utils';
+  import { getYoutubeId } from '../../../core/utils';
 
   export let uri: string;
   export let time: number;

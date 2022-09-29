@@ -2,12 +2,12 @@
   import Paragraph from './Paragraph.svelte';
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
-  import { EntityGroup, WidgetParagraph } from '../../core/models';
-  import { viewerStore } from '../../core/stores/viewer.store';
+  import { EntityGroup, WidgetParagraph } from '../../../core/models';
+  import { viewerStore } from '../../../core/stores/viewer.store';
   import { map } from 'rxjs';
-  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../../core/stores/annotation.store';
-  import { addEntity, nucliaStore } from '../../core/stores/main.store';
-  import { Duration } from '../../common/transition.utils';
+  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../../../core/stores/annotation.store';
+  import { addEntity, nucliaStore } from '../../../core/stores/main.store';
+  import { Duration } from '../../../common/transition.utils';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;

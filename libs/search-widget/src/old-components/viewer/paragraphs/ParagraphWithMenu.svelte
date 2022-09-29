@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { hasAuthData } from '../../core/api';
-  import { nucliaState } from '../../core/stores/main.store';
+  import { hasAuthData } from '../../../core/api';
+  import { nucliaState } from '../../../core/stores/main.store';
   import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
   import LabelMenu from '../menus/LabelMenu.svelte';
-  import { ParagraphLabels } from '../../core/models';
+  import { ParagraphLabels } from '../../../core/models';
 
   export let labels: ParagraphLabels;
   let isOpenMenu = false;

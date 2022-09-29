@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getCDN } from '../../core/utils';
+  import { getCDN } from '../../../core/utils';
   import { createEventDispatcher } from 'svelte';
 
   const dispatch = createEventDispatcher();

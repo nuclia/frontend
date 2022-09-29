@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { ParagraphLabels } from '../../core/models';
-  import Label from '../../common/label/Label.svelte';
+  import { ParagraphLabels } from '../../../core/models';
+  import Label from '../../../common/label/Label.svelte';
   export let labels: ParagraphLabels = { labels: [], annotatedLabels: [] };
   $: allLabels = [...labels.labels, ...labels.annotatedLabels];
 </script>

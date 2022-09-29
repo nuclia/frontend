@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { getCDN } from '../core/utils';
-  import { viewerState, viewerStore, pdfUrl, clearSearch } from '../core/stores/viewer.store';
+  import { getCDN } from '../../core/utils';
+  import { viewerState, viewerStore, pdfUrl, clearSearch } from '../../core/stores/viewer.store';
   import Pdf from './previewers/Pdf.svelte';
   import Player from './previewers/Player.svelte';
   import Youtube from './previewers/Youtube.svelte';

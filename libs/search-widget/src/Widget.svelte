@@ -16,7 +16,7 @@
   } from './core/utils';
   import { setLang } from './core/i18n';
   import Modal from './common/modal/Modal.svelte';
-  import Viewer from './viewer/Viewer.svelte';
+  import Viewer from './old-components/viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
   import { Observable } from 'rxjs';
   import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
