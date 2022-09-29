@@ -1,11 +1,11 @@
 <script lang="ts">
   import { merge, map } from 'rxjs';
-  import Toggle from '../components/toggle/toggle.svelte';
+  import Toggle from '../common/toggle/Toggle.svelte';
   import { nucliaState, nucliaStore } from '../core/store';
   import Results from './results/Results.svelte';
   import SearchInput from './search-input/SearchInput.svelte';
   import { _ } from '../core/i18n';
-  import Modal from '../components/modal/Modal.svelte';
+  import Modal from '../common/modal/Modal.svelte';
   import Suggestions from './suggestions/Suggestions.svelte';
 
   export let placeholder = '';

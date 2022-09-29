@@ -1,10 +1,10 @@
 <script>
   import Thumbnail from '../widgets/row/Thumbnail.svelte';
   import { createEventDispatcher } from 'svelte';
-  import Icon from '../common/Icon.svelte';
+  import Icon from '../common/icons/Icon.svelte';
   import { fade } from 'svelte/transition';
-  import Spinner from '../components/spinner/Spinner.svelte';
-  import { Duration } from './transition.utils';
+  import Spinner from '../common/spinner/Spinner.svelte';
+  import { Duration } from '../common/transition.utils';
 
   export let thumbnail = '';
   export let aspectRatio;

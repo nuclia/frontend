@@ -5,7 +5,7 @@
   import { map, switchMap, tap } from 'rxjs/operators';
   import { nucliaState } from '../core/store';
   import { getRegionalBackend, getResource } from '../core/api';
-  import CloseButton from '../components/button/CloseButton.svelte';
+  import CloseButton from '../common/button/CloseButton.svelte';
   import ThumbnailPlayer from './ThumbnailPlayer.svelte';
   import Youtube from '../viewer/previewers/Youtube.svelte';
   import {
@@ -16,10 +16,10 @@
   } from '../viewer/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
-  import Icon from '../common/Icon.svelte';
+  import Icon from '../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
   import Player from '../viewer/previewers/Player.svelte';
-  import { Duration } from './transition.utils';
+  import { Duration } from '../common/transition.utils';
   import { createEventDispatcher } from 'svelte';
 
   export let result: IResource = {id: ''};

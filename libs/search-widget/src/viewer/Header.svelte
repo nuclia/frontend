@@ -2,8 +2,7 @@
   import type { Resource } from '@nuclia/core';
   import { getWidgetActions } from '../core/store';
   import { formatDate, getCDN } from '../core/utils';
-  import { _ } from '../core/i18n';
-  import MimeIcon from '../components/icons/mime.svelte';
+  import MimeIcon from '../common/icons/MimeIcon.svelte';
   import ActionMenu from './menus/ActionMenu.svelte';
 
   export let resource: Resource;

@@ -46,4 +46,4 @@
   </div>
 </div>
 
-<style lang="scss" src="./expander.scss"></style>
+<style lang="scss" src="./Expander.scss"></style>

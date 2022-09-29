@@ -15,12 +15,12 @@
     loadFonts, loadSvgSprite,
   } from './core/utils';
   import { setLang } from './core/i18n';
-  import Modal from './components/modal/Modal.svelte';
+  import Modal from './common/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
   import { Observable } from 'rxjs';
   import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
-  import globalCss from './_video-widget/_global.scss';
+  import globalCss from './common/_global.scss';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';

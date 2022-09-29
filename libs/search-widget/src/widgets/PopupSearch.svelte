@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from '../components/modal/Modal.svelte';
+  import Modal from '../common/modal/Modal.svelte';
   import { nucliaState } from '../core/store';
   import Results from './results/Results.svelte';
   import SearchInput from './search-input/SearchInput.svelte';

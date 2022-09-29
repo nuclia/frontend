@@ -10,4 +10,4 @@
 
 <img src={`${getCDN()}icons/${type}.svg`} alt={type} on:error={handleError} class="sw-mime" class:small />
 
-<style lang="scss" src="./mime.scss"></style>
+<style lang="scss" src="./MimeIcon.scss"></style>

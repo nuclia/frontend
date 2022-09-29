@@ -4,9 +4,9 @@
   import { getCDN } from '../../core/utils';
   import { nucliaState } from '../../core/store';
   import { viewerStore } from '../viewer.store';
-  import { clickOutside } from '../../components/actions/actions';
-  import Label from '../../components/label/Label.svelte';
-  import type { ParagraphLabels } from '../core/models';
+  import { clickOutside } from '../../common/actions/actions';
+  import Label from '../../common/label/Label.svelte';
+  import type { ParagraphLabels } from '../../core/models';
   import { LabelSetKind } from '../../../../sdk-core/src';
 
   const dispatch = createEventDispatcher();

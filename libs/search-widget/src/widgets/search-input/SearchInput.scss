@@ -62,17 +62,33 @@
     color: var(--input-widget-placeholder-color);
   }
 
-  .search-icon {
+  .search-icon-container {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
   }
 
-  .search-icon.left-icon {
+  .search-icon-container.left-icon {
     left: var(--rhythm-1);
   }
-  .search-icon:not(.left-icon) {
-    right: var(--rhythm-1);
+  .search-icon-container:not(.left-icon) {
+    right: var(--rhythm-0_5);
+  }
+
+  .search-icon {
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    padding: var(--rhythm-0_5);
+
+    // remove the focus style when clicking
+    &:focus:not(:focus-visible) {
+      outline: 0;
+    }
+    &:focus-visible {
+      box-shadow: var(--focus-shadow);
+      outline: 0;
+    }
   }
 
   .powered-by {

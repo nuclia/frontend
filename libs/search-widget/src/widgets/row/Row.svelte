@@ -2,7 +2,7 @@
   import type { IResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
   import { nucliaState, setDisplayedResource } from '../../core/store';
-  import MimeIcon from '../../components/icons/mime.svelte';
+  import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import Thumbnail from './Thumbnail.svelte';
 
   export let displayThumbnail = true;

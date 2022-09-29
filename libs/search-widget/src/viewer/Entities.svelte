@@ -1,12 +1,12 @@
 <script lang="ts">
-  import Collapse from '../components/expander/expander.svelte';
+  import Expander from '../common/expander/Expander.svelte';
   import { viewerStore } from './viewer.store';
   import { _ } from '../core/i18n';
   import { nucliaState } from '../core/store';
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../core/models';
   import { tap } from 'rxjs/operators';
-  import Icon from '../common/Icon.svelte';
+  import Icon from '../common/icons/Icon.svelte';
 
   const allEntities = nucliaState().entities;
   const resourceEntities: Observable<EntityGroup[]> = viewerStore.resourceEntities;
@@ -58,7 +58,7 @@
 
 <div class="sw-entities">
   {#each $entityList as group, i}
-    <Collapse expanded={expanded.includes(group.id)}>
+    <Expander expanded={expanded.includes(group.id)}>
       <button slot="header"
               on:click={() => toggle(group.id)}
               class:expanded={expanded.includes(group.id)}
@@ -84,7 +84,7 @@
           </li>
         {/each}
       </ul>
-    </Collapse>
+    </Expander>
   {/each}
 </div>
 

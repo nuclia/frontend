@@ -9,7 +9,7 @@
   import { setLang } from '../core/i18n';
   import SearchInput from '../widgets/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../core/search-bar';
-  import globalCss from './_global.scss';
+  import globalCss from '../common/_global.scss';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -77,7 +77,7 @@
   {#if ready}
     <SearchInput {placeholder} searchBarWidget={true} />
   {/if}
-  <div id="nuclia-glyphs-sprite" hidden>{svgSprite}</div>
+  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
 <style lang="scss" src="../common-style.scss"></style>
