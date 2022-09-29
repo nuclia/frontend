@@ -2,7 +2,7 @@
   import { createEventDispatcher, onDestroy } from 'svelte';
   import { getFile } from '../../core/api';
   import { fade } from 'svelte/transition';
-  import { Duration } from '../../_video-widget/transition.utils';
+  import { Duration } from '../../common/transition.utils';
 
   export let src: string;
   export let aspectRatio: '5/4' | '16/9' = '5/4';

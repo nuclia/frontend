@@ -4,7 +4,7 @@
   import Icon from '../common/icons/Icon.svelte';
   import { fade } from 'svelte/transition';
   import Spinner from '../common/spinner/Spinner.svelte';
-  import { Duration } from './transition.utils';
+  import { Duration } from '../common/transition.utils';
 
   export let thumbnail = '';
   export let aspectRatio;

@@ -7,6 +7,7 @@
   import { map } from 'rxjs';
   import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../stores/annotation.store';
   import { addEntity, nucliaStore } from '../../core/store';
+  import { Duration } from '../../common/transition.utils';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
@@ -164,7 +165,7 @@
     selectedEntity = undefined;
     setTimeout(() => {
       isMenuOpen = false;
-    }, 240);
+    }, Duration.FAST);
   };
 </script>
 

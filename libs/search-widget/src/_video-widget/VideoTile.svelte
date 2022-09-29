@@ -19,7 +19,7 @@
   import Icon from '../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
   import Player from '../viewer/previewers/Player.svelte';
-  import { Duration } from './transition.utils';
+  import { Duration } from '../common/transition.utils';
   import { createEventDispatcher } from 'svelte';
 
   export let result: IResource = {id: ''};

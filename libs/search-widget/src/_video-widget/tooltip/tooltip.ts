@@ -1,4 +1,5 @@
 import Tooltip from './Tooltip.svelte';
+import { Duration } from '../../common/transition.utils';
 
 export function tooltip(node: HTMLElement, params: { title: string; type?: 'action' | 'system' }) {
   let tooltipComponent: Tooltip;
@@ -31,7 +32,7 @@ export function tooltip(node: HTMLElement, params: { title: string; type?: 'acti
     // set visibility asynchronously for a nice transition
     setTimeout(() => {
       tooltipComponent.$set({ visible: true });
-    }, 240);
+    }, Duration.FAST);
   };
 
   const mouseMove = (event: MouseEvent) => {
@@ -43,7 +44,7 @@ export function tooltip(node: HTMLElement, params: { title: string; type?: 'acti
 
   const mouseLeave = () => {
     tooltipComponent.$set({ visible: false });
-    setTimeout(() => tooltipComponent.$destroy(), 240);
+    setTimeout(() => tooltipComponent.$destroy(), Duration.FAST);
   };
 
   node.addEventListener('mouseenter', mouseEnter);

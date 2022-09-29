@@ -8,7 +8,7 @@
   import type { Observable } from 'rxjs';
   import Button from '../common/button/Button.svelte';
   import { fade } from 'svelte/transition';
-  import { Duration } from '../_video-widget/transition.utils';
+  import { Duration } from '../common/transition.utils';
   import { nucliaStore } from '../core/store';
   import { onDestroy } from 'svelte';
 

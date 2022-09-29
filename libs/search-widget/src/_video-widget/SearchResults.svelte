@@ -8,9 +8,9 @@
   import { _ } from '../core/i18n';
   import LoadingDots from '../common/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
-  import globalCss from './_global.scss';
+  import globalCss from '../common/_global.scss';
   import { fade } from 'svelte/transition';
-  import { Duration } from './transition.utils';
+  import { Duration } from '../common/transition.utils';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;
