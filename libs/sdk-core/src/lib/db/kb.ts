@@ -199,17 +199,26 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(`${this.path}/labelset/${setId}`);
   }
 
-  createResource(resource: ICreateResource): Observable<{ uuid: string }> {
-    return this.nuclia.rest.post<{ uuid: string }>(`${this.path}/resources`, resource);
+  createResource(resource: ICreateResource, synchronous = true): Observable<{ uuid: string }> {
+    return this.nuclia.rest.post<{ uuid: string }>(
+      `${this.path}/resources`,
+      resource,
+      undefined,
+      undefined,
+      synchronous,
+    );
   }
 
-  createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }> {
-    return this.createResource({
-      links: { link },
-      usermetadata: metadata,
-      title: link.uri,
-      icon: 'application/stf-link',
-    });
+  createLinkResource(link: LinkField, metadata?: UserMetadata, synchronous = true): Observable<{ uuid: string }> {
+    return this.createResource(
+      {
+        links: { link },
+        usermetadata: metadata,
+        title: link.uri,
+        icon: 'application/stf-link',
+      },
+      synchronous,
+    );
   }
 
   saveWidget(id: string, widget: Partial<Widget>): Observable<void> {
