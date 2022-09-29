@@ -1,12 +1,12 @@
 <script lang="ts">
   import { merge, map } from 'rxjs';
-  import Toggle from '../common/toggle/Toggle.svelte';
-  import { nucliaState, nucliaStore } from '../core/stores/main.store';
-  import Results from '../old-components/results/Results.svelte';
-  import SearchInput from '../old-components/search-input/SearchInput.svelte';
-  import { _ } from '../core/i18n';
-  import Modal from '../common/modal/Modal.svelte';
-  import Suggestions from '../old-components/suggestions/Suggestions.svelte';
+  import Toggle from '../../common/toggle/Toggle.svelte';
+  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import Results from '../results/Results.svelte';
+  import SearchInput from '../search-input/SearchInput.svelte';
+  import { _ } from '../../core/i18n';
+  import Modal from '../../common/modal/Modal.svelte';
+  import Suggestions from '../suggestions/Suggestions.svelte';
 
   export let placeholder = '';
 

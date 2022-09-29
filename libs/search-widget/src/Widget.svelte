@@ -1,8 +1,8 @@
 <svelte:options tag="nuclia-search" />
 
 <script lang="ts">
-  import PopupSearch from './widgets/PopupSearch.svelte';
-  import EmbeddedSearch from './widgets/EmbeddedSearch.svelte';
+  import PopupSearch from './old-components/popup-search/PopupSearch.svelte';
+  import EmbeddedSearch from './old-components/embedded-search/EmbeddedSearch.svelte';
   import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/stores/main.store';
   import { getResource, initNuclia, resetNuclia } from './core/api';
   import { concatMap, filter, tap } from 'rxjs/operators';

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Modal from '../common/modal/Modal.svelte';
-  import { nucliaState } from '../core/stores/main.store';
-  import Results from '../old-components/results/Results.svelte';
-  import SearchInput from '../old-components/search-input/SearchInput.svelte';
-  import Suggestions from '../old-components/suggestions/Suggestions.svelte';
+  import Modal from '../../common/modal/Modal.svelte';
+  import { nucliaState } from '../../core/stores/main.store';
+  import Results from '../results/Results.svelte';
+  import SearchInput from '../search-input/SearchInput.svelte';
+  import Suggestions from '../suggestions/Suggestions.svelte';
 
   export let placeholder = '';
 
