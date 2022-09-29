@@ -9,11 +9,12 @@ import type {
   TokenAnnotation,
 } from '@nuclia/core';
 import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, of } from 'rxjs';
+import { filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
 import { nucliaStore } from './stores/main.store';
 import { loadModel } from './tensor';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
+import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
 
 let nucliaApi: Nuclia | null;
@@ -92,17 +93,19 @@ export const loadEntities = (): Observable<EntityGroup[]> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.getEntities().pipe(
-    map((entityMap: Entities) =>
+  return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
+    map(([entityMap, translate]) =>
       Object.entries(entityMap)
         .map(([groupId, group]) => ({
           id: groupId,
           title: group.title || `entities.${groupId.toLowerCase()}`,
           color: group.color || generatedEntitiesColor[groupId],
-          entities: Object.entries(group.entities).map(([entityId, entity]) => entity.value),
+          entities: Object.entries(group.entities)
+            .map(([entityId, entity]) => entity.value)
+            .sort((a, b) => a.localeCompare(b)),
           custom: group.custom,
         }))
-        .sort((a, b) => a.id.localeCompare(b.id)),
+        .sort((a, b) => translate(a.title).localeCompare(translate(b.title))),
     ),
   );
 };
