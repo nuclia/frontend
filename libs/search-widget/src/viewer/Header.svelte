@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Resource } from '@nuclia/core';
-  import { getWidgetActions } from '../core/store';
+  import { getWidgetActions } from '../core/stores/main.store';
   import { formatDate, getCDN } from '../core/utils';
   import MimeIcon from '../common/icons/MimeIcon.svelte';
   import ActionMenu from './menus/ActionMenu.svelte';

@@ -1,8 +1,8 @@
 <script lang="ts">
   import Expander from '../common/expander/Expander.svelte';
-  import { viewerStore } from './viewer.store';
+  import { viewerStore } from '../core/stores/viewer.store';
   import { _ } from '../core/i18n';
-  import { nucliaState } from '../core/store';
+  import { nucliaState } from '../core/stores/main.store';
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../core/models';
   import { tap } from 'rxjs/operators';

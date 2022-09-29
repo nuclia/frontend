@@ -2,8 +2,8 @@
   import { createEventDispatcher } from 'svelte';
   import { map } from 'rxjs';
   import { getCDN } from '../../core/utils';
-  import { nucliaState } from '../../core/store';
-  import { viewerStore } from '../viewer.store';
+  import { nucliaState } from '../../core/stores/main.store';
+  import { viewerStore } from '../../core/stores/viewer.store';
   import { clickOutside } from '../../common/actions/actions';
   import Label from '../../common/label/Label.svelte';
   import type { ParagraphLabels } from '../../core/models';

@@ -3,7 +3,7 @@
   import { of } from 'rxjs';
   import type { IResource, Paragraph, Resource, Search } from '@nuclia/core';
   import { map, switchMap, tap } from 'rxjs/operators';
-  import { nucliaState } from '../core/store';
+  import { nucliaState } from '../core/stores/main.store';
   import { getRegionalBackend, getResource } from '../core/api';
   import CloseButton from '../common/button/CloseButton.svelte';
   import ThumbnailPlayer from './ThumbnailPlayer.svelte';
@@ -13,7 +13,7 @@
     getLinkField,
     getMainFieldParagraphs,
     getVideoStream,
-  } from '../viewer/viewer.store';
+  } from '../core/stores/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from '../common/icons/Icon.svelte';

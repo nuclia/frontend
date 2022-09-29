@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { IResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
-  import { nucliaState, setDisplayedResource } from '../../core/store';
+  import { nucliaState, setDisplayedResource } from '../../core/stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import Thumbnail from './Thumbnail.svelte';
 

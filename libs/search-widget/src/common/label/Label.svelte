@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { getCDN } from '../../core/utils';
-  import { nucliaState } from '../../core/store';
+  import { nucliaState } from '../../core/stores/main.store';
   import type { Classification } from '@nuclia/core';
   import { map } from 'rxjs';
 

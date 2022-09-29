@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { nucliaState } from '../../core/store';
+  import { nucliaState } from '../../core/stores/main.store';
   import Row from '../row/Row.svelte';
   import Square from '../row/Square.svelte';
   import type { IResource } from '@nuclia/core';

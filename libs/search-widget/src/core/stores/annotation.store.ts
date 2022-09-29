@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import type { Resource, TokenAnnotation } from '@nuclia/core';
-import type { WidgetParagraph } from '../../core/models';
-import { getParagraphId } from '../viewer.store';
+import type { WidgetParagraph } from '../models';
+import { getParagraphId } from './viewer.store';
 
 export type Annotation = {
   paragraphId: string;

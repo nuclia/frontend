@@ -3,7 +3,7 @@
 <script lang="ts">
   import PopupSearch from './widgets/PopupSearch.svelte';
   import EmbeddedSearch from './widgets/EmbeddedSearch.svelte';
-  import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/store';
+  import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/stores/main.store';
   import { getResource, initNuclia, resetNuclia } from './core/api';
   import { concatMap, filter, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';

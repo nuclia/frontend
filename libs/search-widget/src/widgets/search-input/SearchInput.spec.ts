@@ -1,6 +1,6 @@
 import SearchInput from './SearchInput.svelte';
 import { fireEvent, render } from '@testing-library/svelte';
-import { nucliaStore } from '../../core/store';
+import { nucliaStore } from '../../core/stores/main.store';
 import { firstValueFrom } from 'rxjs';
 
 describe('Search input', () => {

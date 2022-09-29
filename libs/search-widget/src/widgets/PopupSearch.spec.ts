@@ -1,6 +1,6 @@
 import PopupSearch from './PopupSearch.svelte';
 import { fireEvent, render } from '@testing-library/svelte';
-import { nucliaStore } from '../core/store';
+import { nucliaStore } from '../core/stores/main.store';
 import { firstValueFrom } from 'rxjs';
 import type { IResource, Search } from '@nuclia/core';
 

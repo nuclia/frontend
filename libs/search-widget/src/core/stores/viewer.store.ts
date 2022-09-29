@@ -8,8 +8,8 @@ import type {
   Resource,
   ResourceData,
   Sentence,
-} from '../../../sdk-core/src';
-import { Search } from '../../../sdk-core/src';
+} from '@nuclia/core';
+import { Search } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -33,14 +33,14 @@ import type {
   SelectedParagraph,
   WidgetParagraph,
   YoutubePreviewParams,
-} from '../core/models';
-import { PreviewKind, SearchOrder } from '../core/models';
-import { getFileUrls, setLabels } from '../core/api';
-import { isYoutubeUrl } from '../core/utils';
-import type { AnnotationStore } from './stores/annotation.store';
-import { annotationStore } from './stores/annotation.store';
-import type { ResourceStore } from './stores/resource.store';
-import { resourceStore } from './stores/resource.store';
+} from '../models';
+import { PreviewKind, SearchOrder } from '../models';
+import { getFileUrls, setLabels } from '../api';
+import { isYoutubeUrl } from '../utils';
+import type { AnnotationStore } from './annotation.store';
+import { annotationStore } from './annotation.store';
+import type { ResourceStore } from './resource.store';
+import { resourceStore } from './resource.store';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 

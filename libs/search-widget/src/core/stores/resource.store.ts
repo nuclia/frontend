@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import type { Resource } from '@nuclia/core';
-import type { EntityGroup } from '../../core/models';
-import { generatedEntitiesColor } from '../../core/utils';
+import type { EntityGroup } from '../models';
+import { generatedEntitiesColor } from '../utils';
 
 export type ResourceStore = {
   resource: BehaviorSubject<Resource | null>;

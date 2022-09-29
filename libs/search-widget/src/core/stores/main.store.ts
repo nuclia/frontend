@@ -1,6 +1,6 @@
-import type { DisplayedResource, EntityGroup, Intents, WidgetAction } from './models';
-import { NO_RESULTS, PENDING_RESULTS } from './models';
-import { getLabels } from './api';
+import type { DisplayedResource, EntityGroup, Intents, WidgetAction } from '../models';
+import { NO_RESULTS, PENDING_RESULTS } from '../models';
+import { getLabels } from '../api';
 import {
   BehaviorSubject,
   distinctUntilChanged,
