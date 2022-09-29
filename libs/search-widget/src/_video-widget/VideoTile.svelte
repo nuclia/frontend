@@ -5,7 +5,7 @@
   import { map, switchMap, tap } from 'rxjs/operators';
   import { nucliaState } from '../core/store';
   import { getRegionalBackend, getResource } from '../core/api';
-  import CloseButton from '../components/button/CloseButton.svelte';
+  import CloseButton from '../common/button/CloseButton.svelte';
   import ThumbnailPlayer from './ThumbnailPlayer.svelte';
   import Youtube from '../viewer/previewers/Youtube.svelte';
   import {

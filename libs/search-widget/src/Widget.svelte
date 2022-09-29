@@ -15,7 +15,7 @@
     loadFonts, loadSvgSprite,
   } from './core/utils';
   import { setLang } from './core/i18n';
-  import Modal from './components/modal/Modal.svelte';
+  import Modal from './common/modal/Modal.svelte';
   import Viewer from './viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
   import { Observable } from 'rxjs';

@@ -6,7 +6,7 @@
   import { _ } from '../core/i18n';
   import Entities from './Entities.svelte';
   import type { Observable } from 'rxjs';
-  import Button from '../components/button/Button.svelte';
+  import Button from '../common/button/Button.svelte';
   import { fade } from 'svelte/transition';
   import { Duration } from '../_video-widget/transition.utils';
   import { nucliaStore } from '../core/store';

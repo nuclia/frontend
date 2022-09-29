@@ -4,7 +4,7 @@
   import Square from '../row/Square.svelte';
   import type { IResource } from '@nuclia/core';
   import { _ } from '../../core/i18n';
-  import LoadingDots from '../../components/spinner/LoadingDots.svelte';
+  import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import { map, switchMap, take, forkJoin } from 'rxjs';
 
   export let displayThumbnail = true;

@@ -5,7 +5,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import SearchIcon from '../../components/icons/search.svelte';
   import { nucliaState, nucliaStore } from '../../core/store';
-  import LoadingDots from '../../components/spinner/LoadingDots.svelte';
+  import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import { getCDN } from '../../core/utils';
 
   export let popupSearch = false;

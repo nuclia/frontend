@@ -5,7 +5,7 @@
   import Results from './results/Results.svelte';
   import SearchInput from './search-input/SearchInput.svelte';
   import { _ } from '../core/i18n';
-  import Modal from '../components/modal/Modal.svelte';
+  import Modal from '../common/modal/Modal.svelte';
   import Suggestions from './suggestions/Suggestions.svelte';
 
   export let placeholder = '';

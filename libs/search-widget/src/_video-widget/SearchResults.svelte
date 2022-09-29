@@ -6,7 +6,7 @@
   import { nucliaState, nucliaStore } from '../core/store';
   import { loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
-  import LoadingDots from '../components/spinner/LoadingDots.svelte';
+  import LoadingDots from '../common/spinner/LoadingDots.svelte';
   import VideoTile from './VideoTile.svelte';
   import globalCss from './_global.scss';
   import { fade } from 'svelte/transition';

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { nucliaState } from '../../core/store';
-  import { clickOutside } from '../../components/actions/actions';
+  import { clickOutside } from '../../common/actions/actions';
   import { createEventDispatcher, onMount } from 'svelte';
   import { _ } from '../../core/i18n';
 

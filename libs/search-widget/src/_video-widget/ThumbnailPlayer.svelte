@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
   import Icon from '../common/Icon.svelte';
   import { fade } from 'svelte/transition';
-  import Spinner from '../components/spinner/Spinner.svelte';
+  import Spinner from '../common/spinner/Spinner.svelte';
   import { Duration } from './transition.utils';
 
   export let thumbnail = '';
