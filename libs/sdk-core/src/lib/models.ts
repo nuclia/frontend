@@ -118,8 +118,6 @@ export interface NucliaOptions {
   knowledgeBox?: string;
   kbSlug?: string;
   client?: string;
-  permalink?: boolean;
-  highlight?: boolean;
 }
 
 export type PromiseMapper<T> = {

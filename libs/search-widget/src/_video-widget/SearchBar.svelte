@@ -5,7 +5,7 @@
   import { resetStore, nucliaStore } from '../core/store';
   import { initNuclia, resetNuclia } from '../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite } from '../core/utils';
   import { setLang } from '../core/i18n';
   import SearchInput from '../widgets/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../core/search-bar';
@@ -23,9 +23,6 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let permalink = false;
-
-  $: permalinkEnabled = coerceBooleanProperty(permalink);
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -46,11 +43,12 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
-        permalink: permalinkEnabled,
-        highlight: false,
       },
       state,
-      true,
+      {
+        fuzzyOnly: true,
+        highlight: false,
+      },
     );
     if (cdn) {
       setCDN(cdn);

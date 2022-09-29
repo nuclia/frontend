@@ -67,10 +67,11 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
-        permalink: permalinkEnabled,
-        highlight: true,
       },
       state,
+      {
+        highlight: true,
+      },
     );
     if (cdn) {
       setCDN(cdn);

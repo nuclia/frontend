@@ -12,6 +12,11 @@ export const PENDING_RESULTS = {
   pending: true,
 };
 
+export interface WidgetOptions {
+  fuzzyOnly?: boolean;
+  highlight?: boolean;
+}
+
 export interface WidgetAction {
   label: string;
   destructive?: boolean;

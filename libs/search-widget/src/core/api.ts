@@ -12,7 +12,7 @@ import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } fr
 import { filter, forkJoin, map, merge, Observable, of } from 'rxjs';
 import { nucliaStore } from './store';
 import { loadModel } from './tensor';
-import type { EntityGroup } from './models';
+import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
 import type { Annotation } from '../viewer/stores/annotation.store';
 
@@ -20,16 +20,16 @@ let nucliaApi: Nuclia | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
 
-export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates, fuzzyOnly = false) => {
+export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
-  if (fuzzyOnly) {
+  if (widgetOptions.fuzzyOnly) {
     SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
-    nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: options.highlight });
+    nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
     nucliaStore().widget.next(widget);
     if (widget.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
