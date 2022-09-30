@@ -7,14 +7,14 @@ import type {
   NucliaOptions,
   SearchOptions,
   TokenAnnotation,
-} from '../../../sdk-core/src';
-import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '../../../sdk-core/src';
+} from '@nuclia/core';
+import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of } from 'rxjs';
-import { nucliaStore } from './store';
+import { nucliaStore } from './stores/main.store';
 import { loadModel } from './tensor';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
-import type { Annotation } from '../viewer/stores/annotation.store';
+import type { Annotation } from './stores/annotation.store';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;

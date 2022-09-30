@@ -1,0 +1,15 @@
+@import "../../common/common-style";
+
+.error {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-2);
+  width: var(--search-bar-max-width);
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-2);
+}
