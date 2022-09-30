@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { slugify } from '../../core/api';
+  import { slugify } from '../../core/utils';
   export let label = '';
   export let checked = false;
 
@@ -15,7 +15,7 @@
 <label for={id} class="sw-toggle">
   {label}
   <div class="switch">
-    <input id={id} type="checkbox" bind:checked on:change={onChange} />
+    <input {id} type="checkbox" bind:checked on:change={onChange} />
     <span class="slider" />
   </div>
 </label>

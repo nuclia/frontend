@@ -34,7 +34,7 @@ export class EntityGroupDialogComponent {
         title: formValue.title,
         color: formValue.color || '',
         entities: (formValue.entities || '').split(',').reduce((map, currentValue) => {
-          const entityId = STFUtils.generateSlug(currentValue);
+          const entityId = currentValue;
           map[entityId] = { value: currentValue };
           return map;
         }, {} as { [key: string]: Entity }),
