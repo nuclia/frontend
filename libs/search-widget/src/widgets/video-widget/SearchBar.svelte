@@ -80,4 +80,4 @@
   <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
-<style lang="scss" src="../common-style.scss"></style>
+<style lang="scss" src="../../common/common-style.scss"></style>
