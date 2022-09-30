@@ -99,3 +99,15 @@ export const generatedEntitiesColor: { [key: string]: string } = {
   TIME: '#21b8a6',
   WORK_OF_ART: '#ffbccc',
 };
+
+export function slugify(text: string): string {
+  return (
+    text
+      .toLowerCase()
+      // Strip non allowed characters
+      .replace(/[^\w\s-_]+/gi, '')
+      // Replace white spaces
+      .trim()
+      .replace(/\s+/gi, '-')
+  );
+}
