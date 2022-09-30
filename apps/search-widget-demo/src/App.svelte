@@ -1,8 +1,8 @@
 <script lang="ts">
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
-  import { NucliaWidget } from '../../../libs/search-widget/src/widgets/widget';
-  import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/video-widget';
+  import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
+  import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
   let selected = 'input';
   let showConfiguration = true;

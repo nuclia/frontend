@@ -20,8 +20,8 @@
     "postsdk-build:default": "yarn sdk-build-node",
     "sdk-build-node": "rimraf ./dist/sdk-core-node && cd ./libs/sdk-core/node && rollup -c && cd -",
     "postinstall": "ngcc --properties es2020 browser module main",
-    "build:search-main-widget": "vite build -c=libs/search-widget/vite.config.js -- widget && cp -r libs/search-widget/public/i18n dist/libs/search-widget",
-    "build:search-video-widget": "vite build -c=libs/search-widget/vite.config.js -- video-widget && mv dist/libs/search-video-widget/style.css dist/libs/search-video-widget/nuclia-video-widget.css",
+    "build:search-main-widget": "vite build -c=libs/search-widget/vite.config.js -- search-widget nuclia-widget && cp -r libs/search-widget/public/i18n dist/libs/search-widget",
+    "build:search-video-widget": "vite build -c=libs/search-widget/vite.config.js -- search-video-widget nuclia-video-widget && mv dist/libs/search-video-widget/style.css dist/libs/search-video-widget/nuclia-video-widget.css",
     "build:search-widgets": "yarn run build:search-main-widget && yarn run build:search-video-widget && cp dist/libs/search-video-widget/* dist/libs/search-widget",
     "postbuild:search-widgets": "rm -rf dist/libs/search-video-widget"
   },

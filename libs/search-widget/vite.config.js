@@ -3,7 +3,8 @@ import { svelte } from '@sveltejs/vite-plugin-svelte';
 import * as path from 'path';
 const sveltePreprocess = require('svelte-preprocess');
 
-const widgetFolder = process.argv[5] || 'widget';
+const widgetFolder = process.argv[5] || 'search-widget';
+const fileName = process.argv[6] || 'nuclia-widget';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -11,11 +12,11 @@ export default defineConfig({
     alias: [{ find: '@nuclia/core', replacement: path.resolve(__dirname, '../sdk-core/src/index.ts') }],
   },
   build: {
-    outDir: `dist/libs/search-${widgetFolder}`,
+    outDir: `dist/libs/${widgetFolder}`,
     lib: {
       entry: `libs/search-widget/src/widgets/${widgetFolder}/lib.ts`,
       name: 'NucliaWidgetLibrary',
-      fileName: `nuclia-${widgetFolder}`,
+      fileName,
     },
   },
   plugins: [
