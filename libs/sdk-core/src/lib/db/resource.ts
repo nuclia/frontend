@@ -25,38 +25,12 @@ import type { Search } from './search.models';
 import { setEntities, setLabels } from './resource.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Resource extends IResource {}
-export class Resource implements IResource {
-  kb: string;
-  uuid: string;
-  private nuclia: INuclia;
+export interface ReadableResource extends IResource {}
+export class ReadableResource implements IResource {
   data: ResourceData = {};
 
-  get path(): string {
-    return `/kb/${this.kb}/resource/${this.uuid}`;
-  }
-
-  constructor(nuclia: INuclia, kb: string, uuid: string, data: IResource) {
-    this.nuclia = nuclia;
-    this.kb = kb;
-    this.uuid = uuid;
+  constructor(data: IResource) {
     Object.assign(this, { ...data, title: this.formatTitle(data.title) });
-  }
-
-  modify(data: Partial<ICreateResource>, synchronous = true): Observable<void> {
-    return this.nuclia.rest.patch<void>(this.path, data, undefined, undefined, synchronous);
-  }
-
-  delete(synchronous = true): Observable<void> {
-    return this.nuclia.rest.delete(this.path, undefined, synchronous);
-  }
-
-  reprocess(): Observable<void> {
-    return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {});
-  }
-
-  getField(type: FIELD_TYPE, field: string): Observable<ResourceField> {
-    return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}`);
   }
 
   getFields<T = IFieldData>(types: (keyof ResourceData)[] = ['files', 'links', 'texts', 'keywordsets']): T[] {
@@ -93,14 +67,6 @@ export class Resource implements IResource {
       .filter((thumb) => !!thumb) as CloudLink[];
   }
 
-  getThumbnailsUrl(): Observable<string[]> {
-    return forkJoin(
-      this.getThumbnails()
-        .filter((cloudLink) => cloudLink.uri)
-        .map((cloudLink) => this.nuclia.rest.getObjectURL(cloudLink.uri as string)),
-    );
-  }
-
   getNamedEntities(): { [key: string]: string[] } {
     return this.getFields()
       .filter((field) => field.extracted?.metadata?.metadata?.ner)
@@ -116,6 +82,56 @@ export class Resource implements IResource {
         });
         return acc;
       }, {});
+  }
+
+  private formatTitle(title?: string): string {
+    title = title || '–';
+    try {
+      return decodeURIComponent(title);
+    } catch (e) {
+      return title;
+    }
+  }
+}
+
+export class Resource extends ReadableResource implements IResource {
+  kb: string;
+  uuid: string;
+  private nuclia: INuclia;
+
+  get path(): string {
+    return `/kb/${this.kb}/resource/${this.uuid}`;
+  }
+
+  constructor(nuclia: INuclia, kb: string, uuid: string, data: IResource) {
+    super(data);
+    this.nuclia = nuclia;
+    this.kb = kb;
+    this.uuid = uuid;
+  }
+
+  modify(data: Partial<ICreateResource>, synchronous = true): Observable<void> {
+    return this.nuclia.rest.patch<void>(this.path, data, undefined, undefined, synchronous);
+  }
+
+  delete(synchronous = true): Observable<void> {
+    return this.nuclia.rest.delete(this.path, undefined, synchronous);
+  }
+
+  reprocess(): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {});
+  }
+
+  getField(type: FIELD_TYPE, field: string): Observable<ResourceField> {
+    return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}`);
+  }
+
+  getThumbnailsUrl(): Observable<string[]> {
+    return forkJoin(
+      this.getThumbnails()
+        .filter((cloudLink) => cloudLink.uri)
+        .map((cloudLink) => this.nuclia.rest.getObjectURL(cloudLink.uri as string)),
+    );
   }
 
   deleteField(type: FIELD_TYPE, field: string): Observable<void> {
@@ -168,14 +184,5 @@ export class Resource implements IResource {
     return this.modify({
       fieldmetadata: setEntities(fieldId, fieldType, entities, this.fieldmetadata || []),
     });
-  }
-
-  private formatTitle(title?: string): string {
-    title = title || '–';
-    try {
-      return decodeURIComponent(title);
-    } catch (e) {
-      return title;
-    }
   }
 }
