@@ -7,8 +7,8 @@ import type {
   NucliaOptions,
   SearchOptions,
   TokenAnnotation,
-} from '../../../sdk-core/src';
-import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '../../../sdk-core/src';
+} from '@nuclia/core';
+import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of } from 'rxjs';
 import { nucliaStore } from './stores/main.store';
 import { loadModel } from './tensor';
