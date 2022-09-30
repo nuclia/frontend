@@ -1,7 +1,7 @@
 <script>
-  import { formatTime } from '../core/utils';
+  import { formatTime } from '../../core/utils';
   import { createEventDispatcher } from 'svelte';
-  import Icon from '../common/icons/Icon.svelte';
+  import Icon from '../../common/icons/Icon.svelte';
 
   export let start = 0;
   export let end = 0;

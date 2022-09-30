@@ -7,7 +7,7 @@
   import { loadFonts, loadSvgSprite } from '../core/utils';
   import { _ } from '../core/i18n';
   import LoadingDots from '../common/spinner/LoadingDots.svelte';
-  import VideoTile from './VideoTile.svelte';
+  import VideoTile from '../tiles/video-tile/VideoTile.svelte';
   import globalCss from '../common/_global.scss';
   import { fade } from 'svelte/transition';
   import { Duration } from '../common/transition.utils';

@@ -1,10 +1,10 @@
 <script>
-  import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
+  import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import { createEventDispatcher } from 'svelte';
-  import Icon from '../common/icons/Icon.svelte';
+  import Icon from '../../common/icons/Icon.svelte';
   import { fade } from 'svelte/transition';
-  import Spinner from '../common/spinner/Spinner.svelte';
-  import { Duration } from '../common/transition.utils';
+  import Spinner from '../../common/spinner/Spinner.svelte';
+  import { Duration } from '../../common/transition.utils';
 
   export let thumbnail = '';
   export let aspectRatio;

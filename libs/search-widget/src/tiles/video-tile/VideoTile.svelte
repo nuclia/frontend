@@ -3,23 +3,23 @@
   import { of } from 'rxjs';
   import type { IResource, Paragraph, Resource, Search } from '@nuclia/core';
   import { map, switchMap, tap } from 'rxjs/operators';
-  import { nucliaState } from '../core/stores/main.store';
-  import { getRegionalBackend, getResource } from '../core/api';
-  import CloseButton from '../common/button/CloseButton.svelte';
+  import { nucliaState } from '../../core/stores/main.store';
+  import { getRegionalBackend, getResource } from '../../core/api';
+  import CloseButton from '../../common/button/CloseButton.svelte';
   import ThumbnailPlayer from './ThumbnailPlayer.svelte';
-  import Youtube from '../old-components/viewer/previewers/Youtube.svelte';
+  import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
   import {
     getFileField,
     getLinkField,
     getMainFieldParagraphs,
     getVideoStream,
-  } from '../core/stores/viewer.store';
-  import { FieldType, MediaWidgetParagraph } from '../core/models';
+  } from '../../core/stores/viewer.store';
+  import { FieldType, MediaWidgetParagraph } from '../../core/models';
   import ParagraphPlayer from './ParagraphPlayer.svelte';
-  import Icon from '../common/icons/Icon.svelte';
+  import Icon from '../../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
-  import Player from '../old-components/viewer/previewers/Player.svelte';
-  import { Duration } from '../common/transition.utils';
+  import Player from '../../old-components/viewer/previewers/Player.svelte';
+  import { Duration } from '../../common/transition.utils';
   import { createEventDispatcher } from 'svelte';
 
   export let result: IResource = {id: ''};
