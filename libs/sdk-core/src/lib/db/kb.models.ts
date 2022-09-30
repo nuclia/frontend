@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { IResource, LinkField, UserMetadata } from './resource.models';
+import type { FIELD_TYPE, IResource, LinkField, UserMetadata } from './resource.models';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from './upload';
 import type { Search } from './search.models';
 import type { Resource } from './resource';
@@ -245,6 +245,23 @@ export interface ServiceAccountCreation {
 }
 
 export interface SearchOptions {
-  highlight?: boolean;
+  // non API-official options
   inTitleOnly?: boolean;
+
+  // API options
+  highlight?: boolean;
+  faceted?: string[];
+  filters?: string[];
+  sort?: 'created' | 'modified';
+  page_number?: number;
+  page_size?: number;
+  max_score?: number;
+  range_creation_start?: string;
+  range_creation_end?: string;
+  range_modification_start?: string;
+  range_modification_end?: string;
+  show?: ResourceProperties[];
+  extracted?: ExtractedDataTypes[];
+  field_type?: FIELD_TYPE[];
+  shards?: string[];
 }

@@ -87,14 +87,17 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
-    const params = [`query=${encodeURIComponent(query)}`, ...features.map((f) => `features=${f}`)];
-    if (options?.highlight) {
-      params.push(`highlight=true&split=true`);
+    const params = new URLSearchParams();
+    params.append('query', query);
+    features.forEach((f) => params.append('features', f));
+    const { inTitleOnly, ...others } = options || {};
+    if (inTitleOnly) {
+      params.append('fields', 'a/title');
     }
-    if (options?.inTitleOnly) {
-      params.push(`fields=a/title`);
-    }
-    return this.nuclia.rest.get<Search.Results | { detail: string }>(`${this.path}/search?${params.join('&')}`).pipe(
+    Object.entries(others || {}).forEach(([k, v]) =>
+      Array.isArray(v) ? v.forEach((v) => params.append(k, `${v}`)) : params.append(k, `${v}`),
+    );
+    return this.nuclia.rest.get<Search.Results | { detail: string }>(`${this.path}/search?${params.toString()}`).pipe(
       catchError(() => of({ error: true } as Search.Results)),
       map((res) =>
         Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results),
