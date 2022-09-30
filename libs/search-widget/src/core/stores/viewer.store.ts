@@ -315,7 +315,7 @@ function _selectParagraph(resource: Resource, paragraph: Paragraph, fieldType: s
 }
 
 export function search(resource: Resource, query: string): Observable<WidgetParagraph[]> {
-  return resource.search(query, [Search.Features.PARAGRAPH]).pipe(
+  return resource.search(query, [Search.ResourceFeatures.PARAGRAPH]).pipe(
     tap((results) => {
       if (results.error) {
         viewerStore.hasSearchError.next(true);
