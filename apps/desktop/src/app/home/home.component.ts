@@ -3,6 +3,7 @@ import { map, Observable, take } from 'rxjs';
 import { FileStatus } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { Router } from '@angular/router';
+import { STFTrackingService } from '@flaps/core';
 
 type SectionType = 'pending' | 'active' | 'completed';
 
@@ -53,7 +54,12 @@ export class HomeComponent {
 
   selected: SectionType | null = null;
 
-  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private router: Router) {
+  constructor(
+    private sync: SyncService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private tracking: STFTrackingService,
+  ) {
     this.active.pipe(take(1)).subscribe((syncs) => {
       this.selected = syncs.length > 0 ? 'active' : null;
       this.cdr?.markForCheck();
@@ -66,6 +72,7 @@ export class HomeComponent {
   }
 
   addUpload() {
+    this.tracking.logEvent('desktop:new_upload');
     this.router.navigateByUrl('/add-upload');
   }
 

@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
-import { STFUtils } from '@flaps/core';
+import { STFUtils, STFTrackingService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SOURCE_ID_KEY } from './sync/models';
 
@@ -20,12 +20,16 @@ export class AppComponent implements OnInit {
     private sdk: SDKService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private tracking: STFTrackingService,
   ) {
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
       this.initTranslate(prefs?.language?.toLowerCase());
     });
     this.authenticate();
+    this.sdk.nuclia.auth.hasLoggedOut().subscribe(() => {
+      this.tracking.logout();
+    });
   }
 
   ngOnInit(): void {
