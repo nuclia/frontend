@@ -11,7 +11,7 @@ export default defineConfig({
   build: {
     outDir: 'dist/libs/search-video-widget',
     lib: {
-      entry: 'libs/search-widget/src/_video-widget/lib.ts',
+      entry: 'libs/search-widget/src/widgets/video-widget/lib.ts',
       name: 'NucliaWidgetLibrary',
       fileName: 'nuclia-video-widget',
     },
@@ -20,9 +20,9 @@ export default defineConfig({
     svelte({
       include: ['libs/search-widget/src/**/*.svelte'],
       exclude: [
-        'libs/search-widget/src/Widget.svelte',
-        'libs/search-widget/src/_video-widget/SearchBar.svelte',
-        'libs/search-widget/src/_video-widget/SearchResults.svelte',
+        'libs/search-widget/src/widgets/widget/Widget.svelte',
+        'libs/search-widget/src/widgets/widget/video-widget/SearchBar.svelte',
+        'libs/search-widget/src/widgets/widget/video-widget/SearchResults.svelte',
       ],
       preprocess: sveltePreprocess(),
       compilerOptions: {
@@ -31,8 +31,8 @@ export default defineConfig({
     }),
     svelte({
       include: [
-        'libs/search-widget/src/_video-widget/SearchBar.svelte',
-        'libs/search-widget/src/_video-widget/SearchResults.svelte',
+        'libs/search-widget/src/widgets/widget/video-widget/SearchBar.svelte',
+        'libs/search-widget/src/widgets/widget/video-widget/SearchResults.svelte',
       ],
       preprocess: sveltePreprocess(),
       compilerOptions: {

@@ -2,14 +2,14 @@
 
 <script lang="ts">
   import type { KBStates } from '@nuclia/core';
-  import { resetStore, nucliaStore } from '../core/stores/main.store';
-  import { initNuclia, resetNuclia } from '../core/api';
+  import { resetStore, nucliaStore } from '../../core/stores/main.store';
+  import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, loadFonts, loadSvgSprite } from '../core/utils';
-  import { setLang } from '../core/i18n';
-  import SearchInput from '../old-components/search-input/SearchInput.svelte';
-  import { setupTriggerSearch } from '../core/search-bar';
-  import globalCss from '../common/_global.scss';
+  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
+  import { setLang } from '../../core/i18n';
+  import SearchInput from '../../old-components/search-input/SearchInput.svelte';
+  import { setupTriggerSearch } from '../../core/search-bar';
+  import globalCss from '../../common/_global.scss';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';

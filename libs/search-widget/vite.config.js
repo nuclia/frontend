@@ -11,7 +11,7 @@ export default defineConfig({
   build: {
     outDir: 'dist/libs/search-widget',
     lib: {
-      entry: 'libs/search-widget/src/lib.ts',
+      entry: 'libs/search-widget/src/widgets/widget/lib.ts',
       name: 'NucliaWidgetLibrary',
       fileName: 'nuclia-widget',
     },
@@ -19,14 +19,17 @@ export default defineConfig({
   plugins: [
     svelte({
       include: ['libs/search-widget/src/**/*.svelte'],
-      exclude: ['libs/search-widget/src/Widget.svelte', 'libs/search-widget/src/_video-widget/**/*.svelte'],
+      exclude: [
+        'libs/search-widget/src/widgets/widget/Widget.svelte',
+        'libs/search-widget/src/_video-widget/**/*.svelte',
+      ],
       preprocess: sveltePreprocess(),
       compilerOptions: {
         css: true,
       },
     }),
     svelte({
-      include: ['libs/search-widget/src/Widget.svelte'],
+      include: ['libs/search-widget/src/widgets/widget/Widget.svelte'],
       preprocess: sveltePreprocess(),
       compilerOptions: {
         css: true,

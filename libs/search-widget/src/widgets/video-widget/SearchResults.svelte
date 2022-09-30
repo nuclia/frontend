@@ -3,14 +3,14 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
   import { debounceTime, forkJoin, map, switchMap, take } from 'rxjs';
-  import { nucliaState, nucliaStore } from '../core/stores/main.store';
-  import { loadFonts, loadSvgSprite } from '../core/utils';
-  import { _ } from '../core/i18n';
-  import LoadingDots from '../common/spinner/LoadingDots.svelte';
-  import VideoTile from '../tiles/video-tile/VideoTile.svelte';
-  import globalCss from '../common/_global.scss';
+  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import { loadFonts, loadSvgSprite } from '../../core/utils';
+  import { _ } from '../../core/i18n';
+  import LoadingDots from '../../common/spinner/LoadingDots.svelte';
+  import VideoTile from '../../tiles/video-tile/VideoTile.svelte';
+  import globalCss from '../../common/_global.scss';
   import { fade } from 'svelte/transition';
-  import { Duration } from '../common/transition.utils';
+  import { Duration } from '../../common/transition.utils';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;

@@ -1,10 +1,10 @@
 <svelte:options tag="nuclia-search" />
 
 <script lang="ts">
-  import PopupSearch from './old-components/popup-search/PopupSearch.svelte';
-  import EmbeddedSearch from './old-components/embedded-search/EmbeddedSearch.svelte';
-  import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from './core/stores/main.store';
-  import { getResource, initNuclia, resetNuclia } from './core/api';
+  import PopupSearch from '../../old-components/popup-search/PopupSearch.svelte';
+  import EmbeddedSearch from '../../old-components/embedded-search/EmbeddedSearch.svelte';
+  import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from '../../core/stores/main.store';
+  import { getResource, initNuclia, resetNuclia } from '../../core/api';
   import { concatMap, filter, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
   import {
@@ -13,14 +13,14 @@
     updateQueryParams,
     coerceBooleanProperty,
     loadFonts, loadSvgSprite,
-  } from './core/utils';
-  import { setLang } from './core/i18n';
-  import Modal from './common/modal/Modal.svelte';
-  import Viewer from './old-components/viewer/Viewer.svelte';
+  } from '../../core/utils';
+  import { setLang } from '../../core/i18n';
+  import Modal from '../../common/modal/Modal.svelte';
+  import Viewer from '../../old-components/viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
   import { Observable } from 'rxjs';
-  import { setupSuggestionsAndPredictions, setupTriggerSearch } from './core/search-bar';
-  import globalCss from './common/_global.scss';
+  import { setupSuggestionsAndPredictions, setupTriggerSearch } from '../../core/search-bar';
+  import globalCss from '../../common/_global.scss';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
