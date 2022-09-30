@@ -159,7 +159,7 @@
         </div>
       {/if}
 
-      {#each $files as file}
+      {#each ($files || []) as file}
         <a class="download" href={file}>
           <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
           <div>{$_('resource.source')}</div>
