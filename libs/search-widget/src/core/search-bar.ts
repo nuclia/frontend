@@ -1,6 +1,6 @@
 import { distinctUntilChanged, forkJoin, merge } from 'rxjs';
 import { debounceTime, filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { nucliaState, nucliaStore } from './stores/main.store';
+import { nucliaState, nucliaStore } from './old-stores/main.store';
 import { NO_RESULTS, PENDING_RESULTS } from './models';
 import { search, suggest } from './api';
 import { predict } from './tensor';

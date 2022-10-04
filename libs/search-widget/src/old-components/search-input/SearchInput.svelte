@@ -3,7 +3,7 @@
   import { debounceTime, filter, merge, share } from 'rxjs';
 
   import { createEventDispatcher, onMount } from 'svelte';
-  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import { getCDN } from '../../core/utils';
   import Icon from "../../common/icons/Icon.svelte";

@@ -2,14 +2,14 @@
   import type { Resource, CloudLink } from '@nuclia/core';
   import { getFileUrls, saveEntities, saveEntitiesAnnotations } from '../../core/api';
   import { getCDN, formatDate } from '../../core/utils';
-  import { viewerStore, getLinks, getLinksPreviews } from '../../core/stores/viewer.store';
+  import { viewerStore, getLinks, getLinksPreviews } from '../../core/old-stores/viewer.store';
   import { _ } from '../../core/i18n';
   import Entities from './Entities.svelte';
   import type { Observable } from 'rxjs';
   import Button from '../../common/button/Button.svelte';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
-  import { nucliaStore } from '../../core/stores/main.store';
+  import { nucliaStore } from '../../core/old-stores/main.store';
   import { onDestroy } from 'svelte';
 
   export let resource: Resource;

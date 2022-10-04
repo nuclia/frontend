@@ -3,10 +3,10 @@
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
   import { EntityGroup, WidgetParagraph } from '../../../core/models';
-  import { viewerStore } from '../../../core/stores/viewer.store';
+  import { viewerStore } from '../../../core/old-stores/viewer.store';
   import { map } from 'rxjs';
-  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../../../core/stores/annotation.store';
-  import { addEntity, nucliaStore } from '../../../core/stores/main.store';
+  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../../../core/old-stores/annotation.store';
+  import { addEntity, nucliaStore } from '../../../core/old-stores/main.store';
   import { Duration } from '../../../common/transition.utils';
 
   export let paragraph: WidgetParagraph;

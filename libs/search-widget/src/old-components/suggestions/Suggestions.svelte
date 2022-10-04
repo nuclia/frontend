@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Search, Classification } from '@nuclia/core';
-  import { nucliaState, setDisplayedResource } from '../../core/stores/main.store';
+  import { nucliaState, setDisplayedResource } from '../../core/old-stores/main.store';
   import { getCDN } from '../../core/utils';
   import { _ } from '../../core/i18n';
 

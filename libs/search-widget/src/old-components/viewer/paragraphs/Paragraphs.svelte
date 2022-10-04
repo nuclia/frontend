@@ -4,7 +4,7 @@
   import { PreviewKind } from '../../../core/models';
   import { formatTime } from '../../../core/utils';
   import { filter } from 'rxjs';
-  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../../../core/stores/viewer.store';
+  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../../../core/old-stores/viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';

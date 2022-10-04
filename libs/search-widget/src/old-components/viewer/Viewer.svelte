@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { ExtractedText, Resource } from '@nuclia/core';
   import { getFile, loadEntities } from '../../core/api';
-  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
-  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from '../../core/stores/viewer.store';
+  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from '../../core/old-stores/viewer.store';
   import { onDestroy, onMount } from 'svelte';
   import { combineLatest, filter, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';

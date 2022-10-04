@@ -1,6 +1,6 @@
 <script lang="ts">
   import { hasAuthData } from '../../../core/api';
-  import { nucliaState } from '../../../core/stores/main.store';
+  import { nucliaState } from '../../../core/old-stores/main.store';
   import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
   import LabelMenu from '../menus/LabelMenu.svelte';

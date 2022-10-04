@@ -10,13 +10,13 @@ import type {
 } from '@nuclia/core';
 import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
-import { nucliaStore } from './stores/main.store';
+import { nucliaStore } from './old-stores/main.store';
 import { loadModel } from './tensor';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
 import { _ } from './i18n';
-import type { Annotation } from './stores/annotation.store';
-import { refreshAnnotatedEntities } from './stores/resource.store';
+import type { Annotation } from './old-stores/annotation.store';
+import { refreshAnnotatedEntities } from './old-stores/resource.store';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
