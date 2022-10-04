@@ -21,14 +21,14 @@ import type {
   Labels,
   EventList,
   EventType,
-  SearchOptions,
 } from './kb.models';
 import { Resource } from './resource';
 import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
 import { upload, batchUpload, FileWithMetadata, FileMetadata, UploadStatus } from './upload';
 import type { UploadResponse } from './upload';
-import type { Search } from './search.models';
+import type { Search, SearchOptions } from './search.models';
 import { Training } from './training';
+import { search } from './search';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
@@ -87,22 +87,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
-    const params = new URLSearchParams();
-    params.append('query', query);
-    features.forEach((f) => params.append('features', f));
-    const { inTitleOnly, ...others } = options || {};
-    if (inTitleOnly) {
-      params.append('fields', 'a/title');
-    }
-    Object.entries(others || {}).forEach(([k, v]) =>
-      Array.isArray(v) ? v.forEach((v) => params.append(k, `${v}`)) : params.append(k, `${v}`),
-    );
-    return this.nuclia.rest.get<Search.Results | { detail: string }>(`${this.path}/search?${params.toString()}`).pipe(
-      catchError(() => of({ error: true } as Search.Results)),
-      map((res) =>
-        Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results),
-      ),
-    );
+    return search(this.nuclia, this.path, query, features, options);
   }
 
   suggest(query: string): Observable<Search.Suggestions> {

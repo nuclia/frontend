@@ -1,4 +1,27 @@
-import type { IResource } from './resource.models';
+import type { ExtractedDataTypes, ResourceProperties } from './kb.models';
+import type { FIELD_TYPE, IResource } from './resource.models';
+
+export interface SearchOptions {
+  // non API-official options
+  inTitleOnly?: boolean;
+
+  // API options
+  highlight?: boolean;
+  faceted?: string[];
+  filters?: string[];
+  sort?: 'created' | 'modified';
+  page_number?: number;
+  page_size?: number;
+  max_score?: number;
+  range_creation_start?: string;
+  range_creation_end?: string;
+  range_modification_start?: string;
+  range_modification_end?: string;
+  show?: ResourceProperties[];
+  extracted?: ExtractedDataTypes[];
+  field_type?: FIELD_TYPE[];
+  shards?: string[];
+}
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Search {
@@ -20,8 +43,8 @@ export namespace Search {
     resources?: { [id: string]: IResource };
     sentences?: Sentences;
     paragraphs?: Paragraphs;
-    // fulltext: Optional[Resources] = None
-    // relations: Optional[Relations] = None
+    shards?: string[];
+    fulltext?: IResource[];
   }
 
   export interface Suggestions {
