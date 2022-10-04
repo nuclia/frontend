@@ -1,7 +1,7 @@
 {
   "name": "Nuclia tools",
   "description": "Upload web content to Nuclia search engine",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "manifest_version": 3,
   "icons": {
     "16": "icons/icon16.png",
@@ -9,7 +9,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
-  "permissions": ["storage", "contextMenus", "tabs"],
+  "permissions": ["storage", "contextMenus", "tabs", "notifications"],
   "background": {
     "service_worker": "background.js"
   },

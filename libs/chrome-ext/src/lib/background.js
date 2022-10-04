@@ -1,5 +1,5 @@
 try {
-  importScripts('./api.js', './vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
+  importScripts('./utils.js', './api.js','./vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
 } catch (e) {
   console.error(e);
 }
@@ -95,18 +95,37 @@ chrome.contextMenus.onClicked.addListener((info) => {
         });
       }
       if (info.linkUrl) {
-        uploadLink(settings, info.linkUrl, labels);
-        createMenu(); // Keep menu in sync with actual labelsets
+        const url = info.linkUrl;
+        if (isYoutubeUrl(url)) {
+          if (isYoutubeVideoUrl(url)) {
+            uploadLink(settings, url, labels);
+          }
+          else if (isYoutubeChannelUrl(url)) {
+            settings.YOUTUBE_KEY
+              ? getChannelVideos(settings, getChannelId(url), labels)
+              : openOptionsPage();
+          }
+          else if (isYoutubePlaylistUrl(url)) {
+            settings.YOUTUBE_KEY
+              ? getPlaylistVideos(settings, getPlaylistId(url), labels)
+              : openOptionsPage();
+          }
+          else {
+            showNotification('URL cannot be uploaded', 'The selected YouTube URL is not supported by Nuclia');
+          }
+        }
+        else {
+          uploadLink(settings, url, labels);
+        }
+        createMenu(); // Keep menu in sync with actual labelsets each time a link is uploaded
       } else if (info.pageUrl) {
         const url = info.pageUrl;
-        if (url.includes('youtube.com/') && settings.YOUTUBE_KEY) {
-          if (url.includes('youtube.com/channel/')) {
-            const channelId = url.split('/channel/')[1].split('/')[0];
-            getChannelVideos(settings, channelId, labels);
+        if (isYoutubeUrl(url) && settings.YOUTUBE_KEY) {
+          if (isYoutubeChannelUrl(url)) {
+            getChannelVideos(settings, getChannelId(url), labels);
           }
-          if (url.includes('youtube.com/playlist?list=')) {
-            const playlistId = url.split('/playlist?list=')[1].split('&')[0];
-            getPlaylistVideos(settings, playlistId, labels);
+          else if (isYoutubePlaylistUrl(url)) {
+            getPlaylistVideos(settings, getPlaylistId(url), labels);
           }
         } else {
           openOptionsPage();
@@ -217,4 +236,14 @@ function loadPaginated(url, items = [], pageToken = '') {
 
 function openOptionsPage() {
   chrome.tabs.create({ url: 'options/options.html' });
+}
+
+function showNotification(title, message) {
+  chrome.notifications.create({
+    type: 'basic',
+    title: title,
+    message: message,
+    iconUrl: 'icons/icon128.png',
+    priority: 2,
+  });
 }
