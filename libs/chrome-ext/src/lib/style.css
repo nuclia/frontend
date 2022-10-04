@@ -98,6 +98,15 @@ button.secondary {
   background-size: cover;
 }
 
+.error {
+  display: inline-block;
+  background-color: #ffec80;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
 .hidden {
   display: none;
 }
