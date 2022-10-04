@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import { catchError, forkJoin, map, of } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import type { UploadResponse } from './upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
 import type { INuclia } from '../models';
@@ -21,8 +21,9 @@ import type {
   TextField,
   TokenAnnotation,
 } from './resource.models';
-import type { Search } from './search.models';
+import type { Search, SearchOptions } from './search.models';
 import { setEntities, setLabels } from './resource.helpers';
+import { search } from './search';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
@@ -161,17 +162,8 @@ export class Resource extends ReadableResource implements IResource {
     return batchUpload(this.nuclia, this.path, files, true);
   }
 
-  search(query: string, features: Search.ResourceFeatures[] = [], highlight = false): Observable<Search.Results> {
-    const params = [`query=${encodeURIComponent(query)}`, ...features.map((f) => `features=${f}`)];
-    if (highlight) {
-      params.push(`highlight=true&split=true`);
-    }
-    return this.nuclia.rest.get<Search.Results>(`${this.path}/search?${params.join('&')}`).pipe(
-      catchError(() => of({ error: true } as Search.Results)),
-      map((res) =>
-        Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results),
-      ),
-    );
+  search(query: string, features: Search.ResourceFeatures[] = [], options?: SearchOptions): Observable<Search.Results> {
+    return search(this.nuclia, this.path, query, features, options);
   }
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
