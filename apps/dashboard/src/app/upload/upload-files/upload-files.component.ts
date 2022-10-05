@@ -143,8 +143,8 @@ export class UploadFilesComponent {
     if (this.useFoldersAsLabels) {
       files = files.map((file) => {
         // Dropped files don't have webkitRelativePath property
-        const path = 'path' in file ? (file as DroppedFile).path : file.webkitRelativePath;
-        const parts = path.split('/');
+        const relativePath = 'relativePath' in file ? (file as DroppedFile).relativePath : file.webkitRelativePath;
+        const parts = relativePath.split('/');
         let classifications: LabelValue[] = [];
         if (parts.length <= 1) {
           return file;

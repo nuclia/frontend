@@ -1,7 +1,7 @@
 import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { getDroppedFiles } from './file-drop.utils';
 
-export type DroppedFile = File & { path: string };
+export type DroppedFile = File & { relativePath: string };
 const extensionRegexp = new RegExp(`^\.[a-zA-Z0-9]+$`);
 
 @Directive({ selector: '[stfFileDrop]' })

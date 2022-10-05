@@ -21,7 +21,7 @@ async function getAllFileEntries(dataTransferItemList: DataTransferItemList) {
     if (entry) {
       if (entry.isFile) {
         const file = await getFile(entry as FileSystemFileEntry);
-        (file as DroppedFile).path = path + file.name;
+        (file as DroppedFile).relativePath = path + file.name;
         fileEntries.push(file as DroppedFile);
       } else if (entry.isDirectory) {
         const directoryEntries = await readAllDirectoryEntries((entry as FileSystemDirectoryEntry).createReader());
