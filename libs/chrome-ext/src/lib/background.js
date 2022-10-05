@@ -1,5 +1,5 @@
 try {
-  importScripts('./utils.js', './api.js','./vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
+  importScripts('./utils.js', './api.js', './vendor/rxjs.umd.min.js', './vendor/nuclia-sdk.umd.min.js');
 } catch (e) {
   console.error(e);
 }
@@ -12,16 +12,16 @@ const MENU_TYPES = [
     options: {
       targetUrlPatterns: ['https://*/*'],
       contexts: ['link'],
-    }
+    },
   },
   {
     name: 'YOUTUBE',
     options: {
       documentUrlPatterns: ['https://www.youtube.com/channel/*', 'https://www.youtube.com/playlist?list=*'],
       contexts: ['page'],
-    }
-  }
-]
+    },
+  },
+];
 
 chrome.runtime.onInstalled.addListener(() => {
   createMenu();
@@ -98,24 +98,16 @@ chrome.contextMenus.onClicked.addListener((info) => {
         const url = info.linkUrl;
         if (isYoutubeUrl(url)) {
           if (isYoutubeVideoUrl(url)) {
-            uploadLink(settings, url, labels);
+            uploadSingleLink(settings, url, labels);
+          } else if (isYoutubeChannelUrl(url)) {
+            settings.YOUTUBE_KEY ? getChannelVideos(settings, getChannelId(url), labels) : openOptionsPage();
+          } else if (isYoutubePlaylistUrl(url)) {
+            settings.YOUTUBE_KEY ? getPlaylistVideos(settings, getPlaylistId(url), labels) : openOptionsPage();
+          } else {
+            showNotification('Link cannot be uploaded', 'The selected YouTube URL is not supported by Nuclia', true);
           }
-          else if (isYoutubeChannelUrl(url)) {
-            settings.YOUTUBE_KEY
-              ? getChannelVideos(settings, getChannelId(url), labels)
-              : openOptionsPage();
-          }
-          else if (isYoutubePlaylistUrl(url)) {
-            settings.YOUTUBE_KEY
-              ? getPlaylistVideos(settings, getPlaylistId(url), labels)
-              : openOptionsPage();
-          }
-          else {
-            showNotification('URL cannot be uploaded', 'The selected YouTube URL is not supported by Nuclia');
-          }
-        }
-        else {
-          uploadLink(settings, url, labels);
+        } else {
+          uploadSingleLink(settings, url, labels);
         }
         createMenu(); // Keep menu in sync with actual labelsets each time a link is uploaded
       } else if (info.pageUrl) {
@@ -123,8 +115,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
         if (isYoutubeUrl(url) && settings.YOUTUBE_KEY) {
           if (isYoutubeChannelUrl(url)) {
             getChannelVideos(settings, getChannelId(url), labels);
-          }
-          else if (isYoutubePlaylistUrl(url)) {
+          } else if (isYoutubePlaylistUrl(url)) {
             getPlaylistVideos(settings, getPlaylistId(url), labels);
           }
         } else {
@@ -151,17 +142,20 @@ function getLabels(settings) {
     );
 }
 
+function uploadSingleLink(settings, url, labels) {
+  uploadLink(settings, url, labels).subscribe({
+    complete: () => {
+      url = url.length > 40 ? `${url.slice(0, 40)}…` : url;
+      showNotification('Link uploaded to Nuclia', `${url} has been uploaded`);
+    },
+    error: () => openOptionsPage(),
+  });
+}
+
 function uploadLink(settings, url, labels) {
-  getSDK(settings.NUCLIA_TOKEN)
+  return getSDK(settings.NUCLIA_TOKEN)
     .db.getKnowledgeBox(settings.NUCLIA_ACCOUNT, settings.NUCLIA_KB)
-    .pipe(
-      rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })),
-      rxjs.catchError((e) => {
-        openOptionsPage();
-        throw e;
-      }),
-    )
-    .subscribe();
+    .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })));
 }
 
 function getChannelVideos(settings, channelId, labels) {
@@ -178,7 +172,8 @@ function getChannelVideos(settings, channelId, labels) {
         }))
         .sort((a, b) => b.date.localeCompare(a.date)),
     )
-    .then((videos) => selectVideos(videos, labels));
+    .then((videos) => selectVideos(videos, labels))
+    .catch(() => openOptionsPage());
 }
 
 function getPlaylistVideos(settings, playlistId, labels) {
@@ -195,7 +190,8 @@ function getPlaylistVideos(settings, playlistId, labels) {
         }))
         .sort((a, b) => b.date.localeCompare(a.date)),
     )
-    .then((videos) => selectVideos(videos, labels));
+    .then((videos) => selectVideos(videos, labels))
+    .catch(() => openOptionsPage());
 }
 
 function selectVideos(videos, labels) {
@@ -207,7 +203,7 @@ function uploadLinksList(list, labels) {
   if (!list || !list.length || !list.length > 0) {
     return;
   }
-  getSettings().then((settings) => list.forEach((url) => uploadLink(settings, url, labels)));
+  getSettings().then((settings) => list.forEach((url) => uploadLink(settings, url, labels).subscribe()));
 }
 
 function loadPaginated(url, items = [], pageToken = '') {
@@ -235,15 +231,15 @@ function loadPaginated(url, items = [], pageToken = '') {
 }
 
 function openOptionsPage() {
-  chrome.tabs.create({ url: 'options/options.html' });
+  chrome.tabs.create({ url: 'options/options.html?error=true' });
 }
 
-function showNotification(title, message) {
+function showNotification(title, message, error = false) {
   chrome.notifications.create({
     type: 'basic',
     title: title,
     message: message,
-    iconUrl: 'icons/icon128.png',
+    iconUrl: error ? 'icons/error.png' :  'icons/icon128.png',
     priority: 2,
   });
 }

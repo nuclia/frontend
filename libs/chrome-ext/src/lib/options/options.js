@@ -42,11 +42,13 @@ function fetchData() {
       rxjs.switchMap(() => nuclia.db.getAccounts()),
       rxjs.switchMap((accountsData) => {
         data.accounts = accountsData;
-        return rxjs.forkJoin(
-          accountsData.map((account) =>
-            nuclia.db.getKnowledgeBoxes(account.slug).pipe(rxjs.map((kbs) => [account.slug, kbs])),
-          ),
-        );
+        return accountsData.length === 0
+          ? rxjs.of([])
+          : rxjs.forkJoin(
+            accountsData.map((account) =>
+              nuclia.db.getKnowledgeBoxes(account.slug).pipe(rxjs.map((kbs) => [account.slug, kbs])),
+            ),
+          );
       }),
       rxjs.switchMap((kbsData) => {
         kbsData.forEach(([account, kbs]) => {
@@ -66,6 +68,10 @@ function fetchData() {
 }
 
 function initUI() {
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('error')) {
+    document.getElementById('error').classList.remove('hidden');
+  }
   if (data.showWelcome && data.validKb) {
     document.getElementById('welcome').classList.remove('hidden');
   } else if (data.logged) {
