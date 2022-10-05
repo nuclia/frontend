@@ -11,7 +11,7 @@
     "sentry_url": "https://76bfd6392db6450a8f3174877b9bac9d@o393980.ingest.sentry.io/5425081",
     "sentry_backend": "nuclia.cloud",
     "posthog_host": "https://track.nuclia.cloud",
-    "posthog_key": "phc_rmNH5tm5llUb8hEplHl12i0E32scH2L16Ani846xYlA",
+    "posthog_key": "phc_cdrUDTLT62r0EXEZzZvhkSCkksGttBiWkBWoPpxbomA",
     "saml_login": true
   },
   "stashify": {
