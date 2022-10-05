@@ -40,7 +40,7 @@
 
   const previewLink = (file: CloudLink) => {
     viewerStore.showPreview.next(true);
-    viewerStore.linkPreview.next({file});
+    viewerStore.linkPreview.next({ file });
   };
 
   const setAnnotationMode = () => {
@@ -67,7 +67,9 @@
       if (entitiesBackup !== JSON.stringify(entityGroups)) {
         saveEntities(JSON.parse(entitiesBackup), entityGroups).subscribe();
       }
-      saveEntitiesAnnotations(resource, field, viewerStore.annotations.getValue()).subscribe(() => closeAnnotationMode());
+      saveEntitiesAnnotations(resource, field, viewerStore.annotations.getValue()).subscribe(() =>
+        closeAnnotationMode(),
+      );
     }
   };
 
@@ -77,46 +79,44 @@
   };
 </script>
 
-<div class="sw-metadata"
-     class:annotation-mode={$annotationMode}
->
+<div class="sw-metadata" class:annotation-mode={$annotationMode}>
   {#if $hasEntities}
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
 
       {#if !$annotationMode}
-        <Button aspect="solid"
-                kind="inverted"
-                on:click={setAnnotationMode}>
+        <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
           {$_('entities.annotations')}
         </Button>
       {:else}
         <div class="annotation-mode-buttons">
-          <Button aspect="solid"
-                  kind="inverted"
-                  on:click={cancelAnnotationMode}>
+          <Button aspect="solid" kind="inverted" on:click={cancelAnnotationMode}>
             {$_('generic.cancel')}
           </Button>
-          <Button aspect="solid"
-                  kind="primary"
-                  on:click={saveAnnotations}>
+          <Button aspect="solid" kind="primary" on:click={saveAnnotations}>
             {$_('generic.save')}
           </Button>
         </div>
       {/if}
     </h2>
     <div class="entities">
-      <Entities/>
+      <Entities />
     </div>
+    {#if !$annotationMode}
+      <div class="entities">
+        <h3>{$_('entities.annotated')}</h3>
+        <Entities showAnnotated={true} />
+      </div>
+    {/if}
   {/if}
 
   {#if !$annotationMode}
-    <div transition:fade={{duration: Duration.SUPERFAST}}>
+    <div transition:fade={{ duration: Duration.SUPERFAST }}>
       {#if linksPreviews.length > 0}
         <div class="preview-links">
           {#each linksPreviews as file}
             <a class="download" href={file.uri} on:click|preventDefault={() => previewLink(file)}>
-              <img src={`${getCDN()}icons/document.svg`} alt="icon"/>
+              <img src={`${getCDN()}icons/document.svg`} alt="icon" />
               <div>{$_('resource.preview')}</div>
             </a>
           {/each}
@@ -159,16 +159,16 @@
         </div>
       {/if}
 
-      {#each ($files || []) as file}
+      {#each $files || [] as file}
         <a class="download" href={file}>
-          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
+          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
 
       {#each links as link}
         <a class="download" href={link} rel="noopener noreferrer" target="_blank">
-          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
+          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
           <div>{$_('resource.source')}</div>
         </a>
       {/each}

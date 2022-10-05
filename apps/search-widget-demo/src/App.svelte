@@ -33,7 +33,7 @@
 </script>
 
 <main>
-  <header hidden="{!showConfiguration}">
+  <header hidden={!showConfiguration}>
     <h1>Welcome to Nuclia</h1>
 
     <section class="configuration">
@@ -54,11 +54,11 @@
       <NucliaWidget
         bind:this={widget}
         zone="europe-1"
-        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
-        apikey="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InNhIn0.eyJpc3MiOiJodHRwczovL3N0YXNoaWZ5LmNsb3VkLyIsImV4cCI6MTY5NTczMjM0NiwiaWF0IjoxNjY0MTk2MzQ2LCJzdWIiOiI1MTM5ZGY1YS1lYjIxLTQ2MGItOTgzZi1hOWM4YTJiN2UwNmYiLCJqdGkiOiI5ZDU0NmQ5Ni0wZmFiLTRhYjYtYmMxMy04NmFkZDMxMmQ5MzciLCJrZXkiOiI4OGYyYzJlOC0xYWM4LTQzM2QtOTc0OC03MTZmYTAzYmFlYzAiLCJraWQiOiI5MjhlOWJlNC03NDBiLTQ1ODgtYjBjMC04NTQxNzM5YWJiMmYifQ.W0EaIr3xppDsOX4ZCrH5-6ZNd5zn57RIuKvsK4iwtDhwUjixq5U1KKyio4bnK0RfaDD1QVWtk3e36kkOueKmVeCmeRAY_tg7KpA_y-GIORlfqq_6kQPm28zFBEpIVjHrJzWdQajllKLltnl7pZWTxPd3ClmZVMjX7ktCeI--6AZv0ci-bMzQv6jtnavp0DBIr9rpLeb4Z8kz1j347iMG_t6WC4yYcSlLJOnlOg20ZMEBTK-ly-SQgUVG3ySdBjAKcpl9nBG09FjA23wrubekzyFt3VQEJ-I_IyUZdiIOBo77qDA80T1y58V-Zn8AIgN93UQTrOgwUUMDj_Hnb5Eg1XSkPr8lUXSrczwfvrkFFijOaHdH-kglolVMQQIQQ64hPHgRqAvwhkTpIm36mHUUs43OouHrqtb9aWVhIysFOaBWtijuWLaJJGhKzrKfBv7cR40NFqbFON-9aJE7qVD9kinKrOxDwUAH7x2Hc_y3JeRmZwQgg604xVuu8-o4bgpHfu_bO4TabmNDDuNpILNfG69nYRXgp1wPmCiaL-jyiZXZ0XSnmQPkG9R9Jfwtz2GyKRlH8-Cx4eY43fO9JOF_rrlnNFjQ0m6jDhh_FVYw_rv7j0LJqp63CtB5koC6SC3dG_AdNusMMgoa8CP2GMHhrMhwpSnCWuBSYB4qoYHOT78"
+        knowledgebox="7bc716b2-9ee0-4bc8-bff2-585a16171694"
+        apikey="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InNhIn0.eyJpc3MiOiJodHRwczovL3N0YXNoaWZ5LmNsb3VkLyIsImV4cCI6MTY5NjQ5NzA0MSwiaWF0IjoxNjY0OTYxMDQxLCJzdWIiOiI3ZTBjMTg0OS1kYmJjLTRlYWYtYjY1YS01NmI0OWJjZWMzMGYiLCJqdGkiOiIwY2I3MDhkZi1iNDNjLTRhNDEtOTJlNS0xNDE5NGE1OGMxZTgiLCJrZXkiOiIyYWM5NDYzMC02YWI5LTQwYzMtYmFiNS1mNDM4Y2FjMWI5YzUiLCJraWQiOiIxZWQ5NWMwNy0yZWQ2LTRmZTktYWFlMC1iM2E3ZWI3NTk5YzMifQ.aHCF-AmOcal_JzpUX1i-Koj2QaTNKset0mkxriJHTwGDvVaNSR7doB8hx38NdMWVPlufoDTi2ZN8l4L8yKl2DIVnqCOU6UjGwf_tGN87ZcLth5wV-MwFsK4uFvM1ltzbt9THE_cY2F7tdfIvX803QS_Qf5WjBEVBguwSsXYQTvBo7AEv-VZgdCR1dyaFeQBDiXgp7Cd9xErGibYlxwBfE9NEnwFW_PSM45lZOduH363PN2dpnA4vdjKsPM6D1HtnXIzQdzwdhP3kCOWR7_HyKImjwEUR9JcMRinazBL_lNTIRxorUSnsB1MCs7AjS8Hl3-jjcBmKY9QQ6lYjcWyaNTnLmcUSz9UGmEZDcHgfDgoLGiZsVr42xocqTNL2lihr_z6mKTsSEyeVuHdfcLw5ed_T4a39FosLo0QI0GTmQNNjAC4uLnGqR_QzPBsJ6WPcQIvPw1jRGSUQWR4RscLSHEe2uHU9syNnc2A95dgiqvDjDvNA77EZ6RxhkDv8FXfu1fGI5WhXLRCtWnqA5_6sc9zC5yFaWE9YaKtIlLp8mQ9fSLRO5OW3C6V2pKsFJGKCCmeD-9HxAiKHn5rcXLlLcjnnbm87V6-3YJGANrMDDSyGwdZ9OfC9JkhMrHfSftYfPvnK6rCZzkX2SFLkTRQ0wx9n9MGP0XZ1U9bzZBNGHw8"
         cdn="/"
         backend="https://stashify.cloud/api"
-        widgetid="demo-input"
+        widgetid="dashboard"
         type="input"
         permalink
         lang="en"

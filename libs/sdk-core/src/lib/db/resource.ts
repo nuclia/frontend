@@ -68,6 +68,21 @@ export class ReadableResource implements IResource {
       .filter((thumb) => !!thumb) as CloudLink[];
   }
 
+  getAnnotatedEntities(): { [key: string]: string[] } {
+    const entities = (this.fieldmetadata || [])
+      .filter((entry) => entry.token && entry.token.length > 0)
+      .map((entry) => entry.token as TokenAnnotation[]);
+    return entities.reduce((acc, val) => {
+      val.forEach((token) => {
+        if (!acc[token.klass]) {
+          acc[token.klass] = [];
+        }
+        acc[token.klass].push(token.token);
+      });
+      return acc;
+    }, {} as { [key: string]: string[] });
+  }
+
   getNamedEntities(): { [key: string]: string[] } {
     return this.getFields()
       .filter((field) => field.extracted?.metadata?.metadata?.ner)

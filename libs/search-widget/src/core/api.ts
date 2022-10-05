@@ -9,13 +9,14 @@ import type {
   TokenAnnotation,
 } from '@nuclia/core';
 import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
+import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
 import { nucliaStore } from './stores/main.store';
 import { loadModel } from './tensor';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
+import { refreshAnnotatedEntities } from './stores/resource.store';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -144,7 +145,9 @@ export const saveEntitiesAnnotations = (
     start: annotation.start + annotation.paragraphStart,
     end: annotation.end + annotation.paragraphStart,
   }));
-  return resource.setEntities(field.field_id, field.field_type, tokens);
+  return resource
+    .setEntities(field.field_id, field.field_type, tokens)
+    .pipe(tap(() => refreshAnnotatedEntities(resource)));
 };
 
 function entityListToMap(entityList: string[]): { [key: string]: Entity } {

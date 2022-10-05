@@ -8,8 +8,12 @@
   import { tap } from 'rxjs/operators';
   import Icon from '../../common/icons/Icon.svelte';
 
+  export let showAnnotated = false;
+
   const allEntities = nucliaState().entities;
-  const resourceEntities: Observable<EntityGroup[]> = viewerStore.resourceEntities;
+  const resourceEntities: Observable<EntityGroup[]> = showAnnotated
+    ? viewerStore.resourceAnnotatedEntities
+    : viewerStore.resourceEntities;
   const annotationMode = viewerStore.annotationMode;
 
   let expanded: string[] = [];
@@ -20,13 +24,11 @@
       expanded = [];
     }
   };
-  $: entityList = combineLatest([
-    annotationMode,
-    resourceEntities,
-    allEntities,
-  ]).pipe(
+  $: entityList = combineLatest([annotationMode, resourceEntities, allEntities]).pipe(
     tap(() => toggleAnnotationMode()),
-    map(([annotationEnabled, entitiesFromResource, allEntitiesFromKb]) => annotationEnabled ? allEntitiesFromKb : entitiesFromResource),
+    map(([annotationEnabled, entitiesFromResource, allEntitiesFromKb]) =>
+      !showAnnotated && annotationEnabled ? allEntitiesFromKb : entitiesFromResource,
+    ),
   );
 
   const toggle = (group: string) => {
@@ -52,34 +54,36 @@
   const onKeyUp = (event: KeyboardEvent, entity: string) => {
     if (event.key === 'Enter') search(entity);
   };
-
-
 </script>
 
 <div class="sw-entities">
   {#each $entityList as group, i}
     <Expander expanded={expanded.includes(group.id)}>
-      <button slot="header"
-              on:click={() => toggle(group.id)}
-              class:expanded={expanded.includes(group.id)}
-              class:last={i === $entityList.length - 1}
+      <button
+        slot="header"
+        on:click={() => toggle(group.id)}
+        class:expanded={expanded.includes(group.id)}
+        class:last={i === $entityList.length - 1}
       >
-        <div class="color" style:background={group.color}/>
+        <div class="color" style:background={group.color} />
         <div class="group-name">{$_(group.title)} ({group.entities.length})</div>
         <div class="icon-container">
-          <Icon name="chevron-left"/>
+          <Icon name="chevron-left" />
         </div>
       </button>
       <ul>
         {#each group.entities as entity}
-          <li tabIndex="0" role="button"
-              class:clickable={!$annotationMode}
-              on:click={() => {
-                if (!$annotationMode) search(entity);
-              }}
-              on:keyup={(e) => {
-                if (!$annotationMode) onKeyUp(e, entity)
-              }}>
+          <li
+            tabIndex="0"
+            role="button"
+            class:clickable={showAnnotated || !$annotationMode}
+            on:click={() => {
+              if (showAnnotated || !$annotationMode) search(entity);
+            }}
+            on:keyup={(e) => {
+              if (showAnnotated || !$annotationMode) onKeyUp(e, entity);
+            }}
+          >
             {entity}
           </li>
         {/each}
