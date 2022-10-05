@@ -6,6 +6,7 @@ const SHARD_KEY = 'SHARD_KEY';
 
 export const search = (
   nuclia: INuclia,
+  kbId: string,
   path: string,
   query: string,
   features: Search.Features[] | Search.ResourceFeatures[] = [],
@@ -21,14 +22,16 @@ export const search = (
   Object.entries(others || {}).forEach(([k, v]) =>
     Array.isArray(v) ? v.forEach((v) => params.append(k, `${v}`)) : params.append(k, `${v}`),
   );
-  const shards: string[] = JSON.parse(localStorage.getItem(SHARD_KEY) || '[]');
+  const allShards = JSON.parse(localStorage.getItem(SHARD_KEY) || '{}');
+  const shards: string[] = allShards[kbId] || [];
   shards.forEach((shard) => params.append('shards', shard));
   return nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${params.toString()}`).pipe(
     catchError(() => of({ error: true } as Search.Results)),
     map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
     tap((res) => {
       if (res.shards) {
-        localStorage.setItem(SHARD_KEY, JSON.stringify(res.shards));
+        allShards[kbId] = res.shards;
+        localStorage.setItem(SHARD_KEY, JSON.stringify(allShards));
       }
     }),
   );
