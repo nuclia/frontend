@@ -127,7 +127,6 @@ export const setLabels = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  console.log(paragraphId, labels);
   return resource.setLabels(fieldId, fieldType, paragraphId, labels);
 };
 
