@@ -203,7 +203,7 @@ function uploadLinksList(list, labels) {
   if (!list || !list.length || !list.length > 0) {
     return;
   }
-  getSettings().then((settings) => list.forEach((url) => uploadLink(settings, url, labels).subsceribe()));
+  getSettings().then((settings) => list.forEach((url) => uploadLink(settings, url, labels).subscribe()));
 }
 
 function loadPaginated(url, items = [], pageToken = '') {
