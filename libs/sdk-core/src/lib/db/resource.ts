@@ -1,4 +1,4 @@
-import type { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { forkJoin } from 'rxjs';
 import type { UploadResponse } from './upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
@@ -163,18 +163,16 @@ export class Resource extends ReadableResource implements IResource {
   }
 
   search(query: string, features: Search.ResourceFeatures[] = [], options?: SearchOptions): Observable<Search.Results> {
-    return search(this.nuclia, this.path, query, features, options);
+    return search(this.nuclia, this.kb, this.path, query, features, options);
   }
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {
-    return this.modify({
-      fieldmetadata: setLabels(fieldId, fieldType, paragraphId, labels, this.fieldmetadata || []),
-    });
+    const fieldmetadata = setLabels(fieldId, fieldType, paragraphId, labels, this.fieldmetadata || []);
+    return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
   }
 
   setEntities(fieldId: string, fieldType: string, entities: TokenAnnotation[]): Observable<void> {
-    return this.modify({
-      fieldmetadata: setEntities(fieldId, fieldType, entities, this.fieldmetadata || []),
-    });
+    const fieldmetadata = setEntities(fieldId, fieldType, entities, this.fieldmetadata || []);
+    return this.modify({ fieldmetadata }).pipe(tap(() => (this.fieldmetadata = fieldmetadata)));
   }
 }
