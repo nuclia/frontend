@@ -80,6 +80,25 @@ export const formatTitle = (title?: string): string => {
   }
 };
 
+export const generatedEntitiesId = [
+  'DATE',
+  'EVENT',
+  'FAC',
+  'GPE',
+  'LANGUAGE',
+  'LAW',
+  'LOC',
+  'MAIL',
+  'MONEY',
+  'NORP',
+  'ORG',
+  'PERCENT',
+  'PERSON',
+  'PRODUCT',
+  'QUANTITY',
+  'TIME',
+  'WORK_OF_ART',
+];
 export const generatedEntitiesColor: { [key: string]: string } = {
   DATE: '#ff8989',
   EVENT: '#cba2da',

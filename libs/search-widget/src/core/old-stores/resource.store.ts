@@ -1,7 +1,7 @@
 import { BehaviorSubject, take } from 'rxjs';
 import type { Resource } from '@nuclia/core';
 import type { EntityGroup } from '../models';
-import { generatedEntitiesColor } from '../utils';
+import { generatedEntitiesColor, generatedEntitiesId } from '../utils';
 import { _ } from '../../core/i18n';
 
 export type ResourceStore = {
@@ -50,7 +50,7 @@ function mapEntities(
   return Object.entries(entities)
     .map(([groupId, entities]) => ({
       id: groupId,
-      title: `entities.${groupId.toLowerCase()}`,
+      title: generatedEntitiesId.includes(groupId) ? `entities.${groupId.toLowerCase()}` : groupId,
       color: generatedEntitiesColor[groupId],
       entities: entities.filter((value) => !!value).sort((a, b) => a.localeCompare(b)),
     }))
