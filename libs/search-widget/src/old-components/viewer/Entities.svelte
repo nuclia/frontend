@@ -7,6 +7,7 @@
   import type { EntityGroup } from '../../core/models';
   import { tap } from 'rxjs/operators';
   import Icon from '../../common/icons/Icon.svelte';
+  import { annotationMode, selectedFamily } from '../../core/stores';
 
   export let showAnnotated = false;
 
@@ -14,32 +15,29 @@
   const resourceEntities: Observable<EntityGroup[]> = showAnnotated
     ? viewerStore.resourceAnnotatedEntities
     : viewerStore.resourceEntities;
-  const annotationMode = viewerStore.annotationMode;
 
   let expanded: string[] = [];
 
   const toggleAnnotationMode = () => {
-    const annotationModeEnabled = annotationMode.getValue();
-    if (annotationModeEnabled) {
+    if ($annotationMode) {
       expanded = [];
     }
   };
-  $: entityList = combineLatest([annotationMode, resourceEntities, allEntities]).pipe(
+  $: entityList = combineLatest([resourceEntities, allEntities]).pipe(
     tap(() => toggleAnnotationMode()),
-    map(([annotationEnabled, entitiesFromResource, allEntitiesFromKb]) =>
-      !showAnnotated && annotationEnabled ? allEntitiesFromKb : entitiesFromResource,
+    map(([entitiesFromResource, allEntitiesFromKb]) =>
+      !showAnnotated && $annotationMode ? allEntitiesFromKb : entitiesFromResource,
     ),
   );
 
   const toggle = (group: string) => {
-    const annotationModeEnabled = annotationMode.getValue();
     if (isExpanded(group)) {
       expanded = expanded.filter((g) => g !== group);
     } else {
-      expanded = annotationModeEnabled ? [group] : [...expanded, group];
+      expanded = $annotationMode ? [group] : [...expanded, group];
     }
-    if (annotationModeEnabled) {
-      viewerStore.selectedFamily.next(expanded[0]);
+    if ($annotationMode) {
+      selectedFamily.set(expanded[0]);
     }
   };
 

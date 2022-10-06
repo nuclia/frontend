@@ -3,59 +3,53 @@
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
   import { EntityGroup, WidgetParagraph } from '../../../core/models';
-  import { viewerStore } from '../../../core/old-stores/viewer.store';
-  import { map } from 'rxjs';
-  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../../../core/old-stores/annotation.store';
   import { addEntity, nucliaStore } from '../../../core/old-stores/main.store';
   import { Duration } from '../../../common/transition.utils';
+  import {
+    addAnnotation,
+    Annotation,
+    removeAnnotation,
+    selectedFamily,
+    sortedAnnotations,
+    updateAnnotation,
+  } from '../../../core/stores';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
 
   const entityGroups = nucliaStore().entities;
-  const customEntities = viewerStore.annotations;
-  const selectedFamily = viewerStore.selectedFamily;
 
   let isDestroyed = false;
+  let markedText;
 
-  $: markedText = customEntities.pipe(
-    map(entities => {
-      let textWithMarks = '';
-      let currentIndex = 0;
-      entities.sort((a, b) => {
-        if (a.start < b.start) {
-          return -1;
-        } else if (a.start > b.start) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }).filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
-        const isHighlighted = $selectedFamily === entity.entityFamilyId;
-        let highlightStyle = '';
-        if (isHighlighted) {
-          const family = $entityGroups.find(group => group.id === entity.entityFamilyId);
-          highlightStyle = `style="background-color:${family.color}"`;
-        }
-        textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
+  $: {
+    markedText = '';
+    let currentIndex = 0;
+    $sortedAnnotations.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
+      const isHighlighted = $selectedFamily === entity.entityFamilyId;
+      let highlightStyle = '';
+      if (isHighlighted) {
+        const family = entityGroups.getValue().find(group => group.id === entity.entityFamilyId);
+        highlightStyle = `style="background-color:${family.color}"`;
+      }
+      markedText += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
   family="${entity.entityFamilyId}"
   start="${entity.start}"
   end="${entity.end}"
   entity="${entity.entity}"
   paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
-        currentIndex = entity.end;
-      });
-      textWithMarks += paragraph.text.slice(currentIndex);
+      currentIndex = entity.end;
+    });
+    markedText += paragraph.text.slice(currentIndex);
 
-      setTimeout(() => {
-        if (!isDestroyed) {
-          cleanUpMarkListener();
-          setupMarkListener();
-        }
-      });
-      return textWithMarks;
-    }),
-  );
+    setTimeout(() => {
+      if (!isDestroyed) {
+        cleanUpMarkListener();
+        setupMarkListener();
+      }
+    });
+  }
+
   let contentContainer: HTMLElement;
   let isMenuOpen = false;
   let isMenuVisible = false;
@@ -172,7 +166,7 @@
 <Paragraph>
   <div slot="content"
        bind:this={contentContainer}>
-    {@html $markedText}
+    {@html markedText}
   </div>
 </Paragraph>
 

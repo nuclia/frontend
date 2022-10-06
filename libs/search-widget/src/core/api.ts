@@ -1,6 +1,5 @@
 import type {
   Classification,
-  Entities,
   Entity,
   KBStates,
   Labels,
@@ -15,7 +14,7 @@ import { loadModel } from './tensor';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
 import { _ } from './i18n';
-import type { Annotation } from './old-stores/annotation.store';
+import type { Annotation } from './stores';
 import { refreshAnnotatedEntities } from './old-stores/resource.store';
 
 let nucliaApi: Nuclia | null;

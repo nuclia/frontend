@@ -11,6 +11,7 @@
   import InputViewer from './InputViewer.svelte';
   import Metadata from './Metadata.svelte';
   import Preview from './Preview.svelte';
+  import { setAnnotations } from '../../core/stores';
 
   export let resource: Resource;
 
@@ -72,7 +73,7 @@
     ]).pipe(
       filter(([paragraphs, currentField]) => paragraphs?.length > 0 && !!currentField),
     ).subscribe(([paragraphs, currentField]) => {
-      viewerStore.setAnnotations(resource, paragraphs, currentField);
+      setAnnotations(resource, paragraphs, currentField);
     }),
   ];
 
