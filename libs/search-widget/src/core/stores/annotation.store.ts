@@ -1,7 +1,9 @@
-import { derived, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import type { Resource, TokenAnnotation } from '@nuclia/core';
 import type { WidgetParagraph } from '../models';
 import { getParagraphId } from '../old-stores/viewer.store';
+import { SvelteWritableSubject } from './svelte-writable-subject';
+import { map } from 'rxjs';
 
 export type Annotation = {
   paragraphId: string;
@@ -14,17 +16,19 @@ export type Annotation = {
 
 export const annotationMode = writable(false);
 export const selectedFamily = writable('');
-export const annotations = writable<Annotation[]>([]);
-export const sortedAnnotations = derived(annotations, ($annotations) =>
-  $annotations.sort((a, b) => {
-    if (a.start < b.start) {
-      return -1;
-    } else if (a.start > b.start) {
-      return 1;
-    } else {
-      return 0;
-    }
-  }),
+export const annotations = new SvelteWritableSubject<Annotation[]>([]);
+export const sortedAnnotations = annotations.pipe(
+  map(($annotations) =>
+    $annotations.sort((a, b) => {
+      if (a.start < b.start) {
+        return -1;
+      } else if (a.start > b.start) {
+        return 1;
+      } else {
+        return 0;
+      }
+    }),
+  ),
 );
 
 export function setAnnotations(

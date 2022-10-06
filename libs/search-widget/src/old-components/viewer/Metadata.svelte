@@ -46,7 +46,7 @@
   const setAnnotationMode = () => {
     annotationMode.set(true);
     // stringify entities as backup otherwise the backup will get same modifications as the stored ones
-    entitiesBackup = JSON.stringify(nucliaStore().entities.getValue());
+    entitiesBackup = JSON.stringify(nucliaStore().entities.value);
     customEntitiesBackup = JSON.stringify($annotations);
   };
 
@@ -61,15 +61,13 @@
   };
 
   const saveAnnotations = () => {
-    const field = viewerStore.currentField.getValue();
+    const field = viewerStore.currentField.value;
     if (field) {
-      const entityGroups = nucliaStore().entities.getValue();
+      const entityGroups = nucliaStore().entities.value;
       if (entitiesBackup !== JSON.stringify(entityGroups)) {
         saveEntities(JSON.parse(entitiesBackup), entityGroups).subscribe();
       }
-      saveEntitiesAnnotations(resource, field, $annotations).subscribe(() =>
-        closeAnnotationMode(),
-      );
+      saveEntitiesAnnotations(resource, field, annotations.value).subscribe(() => closeAnnotationMode());
     }
   };
 

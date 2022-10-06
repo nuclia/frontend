@@ -13,6 +13,7 @@
     sortedAnnotations,
     updateAnnotation,
   } from '../../../core/stores';
+  import { map } from 'rxjs';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
@@ -20,35 +21,37 @@
   const entityGroups = nucliaStore().entities;
 
   let isDestroyed = false;
-  let markedText;
 
-  $: {
-    markedText = '';
-    let currentIndex = 0;
-    $sortedAnnotations.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
-      const isHighlighted = $selectedFamily === entity.entityFamilyId;
-      let highlightStyle = '';
-      if (isHighlighted) {
-        const family = entityGroups.getValue().find(group => group.id === entity.entityFamilyId);
-        highlightStyle = `style="background-color:${family.color}"`;
-      }
-      markedText += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
+  $: markedText = sortedAnnotations.pipe(
+    map(entities => {
+      let textWithMarks = '';
+      let currentIndex = 0;
+      entities.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
+        const isHighlighted = $selectedFamily === entity.entityFamilyId;
+        let highlightStyle = '';
+        if (isHighlighted) {
+          const family = entityGroups.value.find(group => group.id === entity.entityFamilyId);
+          highlightStyle = `style="background-color:${family.color}"`;
+        }
+        textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
   family="${entity.entityFamilyId}"
   start="${entity.start}"
   end="${entity.end}"
   entity="${entity.entity}"
   paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
-      currentIndex = entity.end;
-    });
-    markedText += paragraph.text.slice(currentIndex);
+        currentIndex = entity.end;
+      });
+      textWithMarks += paragraph.text.slice(currentIndex);
 
-    setTimeout(() => {
-      if (!isDestroyed) {
-        cleanUpMarkListener();
-        setupMarkListener();
-      }
-    });
-  }
+      setTimeout(() => {
+        if (!isDestroyed) {
+          cleanUpMarkListener();
+          setupMarkListener();
+        }
+      });
+      return textWithMarks;
+    }),
+  );
 
   let contentContainer: HTMLElement;
   let isMenuOpen = false;
@@ -166,7 +169,7 @@
 <Paragraph>
   <div slot="content"
        bind:this={contentContainer}>
-    {@html markedText}
+    {@html $markedText}
   </div>
 </Paragraph>
 
