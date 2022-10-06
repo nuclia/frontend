@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { ExtractedText, Resource } from '@nuclia/core';
   import { getFile, loadEntities } from '../../core/api';
   import { nucliaState } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
@@ -11,11 +10,10 @@
   import InputViewer from './InputViewer.svelte';
   import Metadata from './Metadata.svelte';
   import Preview from './Preview.svelte';
-  import { entityGroups, setAnnotations } from '../../core/stores';
+  import { setAnnotations } from '../../core/stores/annotation.store';
+  import { resource } from '../../core/stores/resource.store';
+  import { entityGroups } from '../../core/stores/entities.store';
 
-  export let resource: Resource;
-
-  let texts: ExtractedText[];
   let imagePath: string | undefined;
   let image: string | undefined;
   let header: HTMLElement;
@@ -28,14 +26,9 @@
   const showPreview = viewerState.showPreview;
 
   $: {
-    viewerStore.setResource(resource);
-
-    texts = resource.getExtractedTexts();
-    imagePath = findFileByType(resource, 'image/');
+    imagePath = findFileByType(resource.value, 'image/');
     if (imagePath) {
-      getFile(imagePath).subscribe((url) => {
-        image = url;
-      });
+      getFile(imagePath).subscribe((url) => image = url);
     }
   }
 
@@ -54,14 +47,14 @@
       )
       .subscribe(([query, displayedResource]) => {
         if (displayedResource.sentence) {
-          selectSentence(resource, displayedResource.sentence);
+          selectSentence(resource.value!, displayedResource.sentence);
         } else if (displayedResource.paragraph) {
-          selectParagraph(resource, displayedResource.paragraph);
+          selectParagraph(resource.value!, displayedResource.paragraph);
         }
       }),
 
     query
-      .pipe(switchMap((query) => (query.length > 0 ? search(resource, query) : of(null))))
+      .pipe(switchMap((query) => (query.length > 0 ? search(resource.value!, query) : of(null))))
       .subscribe((paragraphs) => {
         viewerStore.onlySelected.next(false);
         viewerStore.results.next(paragraphs);
@@ -73,7 +66,7 @@
     ]).pipe(
       filter(([paragraphs, currentField]) => paragraphs?.length > 0 && !!currentField),
     ).subscribe(([paragraphs, currentField]) => {
-      setAnnotations(resource, paragraphs, currentField);
+      setAnnotations(resource.value!, paragraphs, currentField);
     }),
   ];
 
@@ -89,7 +82,7 @@
 
 <div class="sw-viewer" style="--header-height: {headerHeight}">
   <div class="viewer-header" bind:this={header}>
-    <Header {resource}/>
+    <Header />
   </div>
   <div class="viewer-body" class:preview={$showPreview}>
     <div class="viewer-left">
@@ -106,7 +99,7 @@
       {#if image}
         <h2>Images</h2>
         <div>
-          <img src={image} alt={resource.title + ' preview'}/>
+          <img src={image} alt={$resource?.title + ' preview'}/>
         </div>
       {/if}
     </div>
@@ -115,7 +108,7 @@
       {#if $showPreview}
         <Preview/>
       {:else}
-        <Metadata {resource}/>
+        <Metadata/>
       {/if}
     </div>
   </div>

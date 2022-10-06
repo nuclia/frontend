@@ -6,14 +6,13 @@
   import { Duration } from '../../../common/transition.utils';
   import {
     addAnnotation,
-    addEntity,
     Annotation,
-    entityGroups,
     removeAnnotation,
     selectedFamily,
     sortedAnnotations,
     updateAnnotation,
-  } from '../../../core/stores';
+  } from '../../../core/stores/annotation.store';
+  import { addEntity, entityGroups } from '../../../core/stores/entities.store';
   import { map } from 'rxjs';
 
   export let paragraph: WidgetParagraph;
