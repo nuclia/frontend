@@ -3,17 +3,29 @@ import type { EntityGroup } from '../models';
 import { resource } from './resource.store';
 import type { Observable } from 'rxjs';
 import { combineLatest, map, take } from 'rxjs';
-import { generatedEntitiesColor, generatedEntitiesId } from '../utils';
+import { generatedEntitiesColor } from '../utils';
 import { _ } from '../i18n';
 
 export const entityGroups = writableSubject<EntityGroup[]>([]);
 
-export const resourceEntities: Observable<EntityGroup[]> = combineLatest([resource, _.pipe(take(1))]).pipe(
-  map(([resource, translate]) => (!resource ? [] : mapEntities(resource.getNamedEntities(), translate))),
+export const resourceEntities: Observable<EntityGroup[]> = combineLatest([
+  resource,
+  entityGroups,
+  _.pipe(take(1)),
+]).pipe(
+  map(([resource, groups, translate]) =>
+    !resource ? [] : mapEntities(resource.getNamedEntities(), groups, translate),
+  ),
 );
 
-export const resourceAnnotatedEntities: Observable<EntityGroup[]> = combineLatest([resource, _.pipe(take(1))]).pipe(
-  map(([resource, translate]) => (!resource ? [] : mapEntities(resource.getAnnotatedEntities(), translate))),
+export const resourceAnnotatedEntities: Observable<EntityGroup[]> = combineLatest([
+  resource,
+  entityGroups,
+  _.pipe(take(1)),
+]).pipe(
+  map(([resource, groups, translate]) =>
+    !resource ? [] : mapEntities(resource.getAnnotatedEntities(), groups, translate),
+  ),
 );
 
 export function addEntity(entity: string, family: EntityGroup) {
@@ -31,14 +43,20 @@ export function addEntity(entity: string, family: EntityGroup) {
 
 function mapEntities(
   entities: { [key: string]: string[] },
+  allGroups: EntityGroup[],
   translate: (key: string) => string = (key: string) => key,
 ): EntityGroup[] {
   return Object.entries(entities)
-    .map(([groupId, entities]) => ({
-      id: groupId,
-      title: generatedEntitiesId.includes(groupId) ? `entities.${groupId.toLowerCase()}` : groupId,
-      color: generatedEntitiesColor[groupId],
-      entities: entities.filter((value) => !!value).sort((a, b) => a.localeCompare(b)),
-    }))
+    .map(([groupId, entities]) => {
+      const group = allGroups.find((group) => group.id === groupId);
+      const generatedColor = generatedEntitiesColor[groupId];
+      const title = group?.title || (generatedColor ? `entities.${groupId.toLowerCase()}` : groupId);
+      return {
+        id: groupId,
+        title,
+        color: group?.color || generatedColor,
+        entities: entities.filter((value) => !!value).sort((a, b) => a.localeCompare(b)),
+      };
+    })
     .sort((a, b) => translate(a.title).localeCompare(translate(b.title)));
 }
