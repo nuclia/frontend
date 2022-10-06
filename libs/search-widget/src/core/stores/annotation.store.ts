@@ -1,8 +1,7 @@
-import { writable } from 'svelte/store';
 import type { Resource, TokenAnnotation } from '@nuclia/core';
 import type { WidgetParagraph } from '../models';
 import { getParagraphId } from '../old-stores/viewer.store';
-import { SvelteWritableSubject } from './svelte-writable-subject';
+import { writableSubject } from './svelte-writable-subject';
 import { map } from 'rxjs';
 
 export type Annotation = {
@@ -14,9 +13,9 @@ export type Annotation = {
   paragraphStart: number;
 };
 
-export const annotationMode = writable(false);
-export const selectedFamily = writable('');
-export const annotations = new SvelteWritableSubject<Annotation[]>([]);
+export const annotationMode = writableSubject(false);
+export const selectedFamily = writableSubject('');
+export const annotations = writableSubject<Annotation[]>([]);
 export const sortedAnnotations = annotations.pipe(
   map(($annotations) =>
     $annotations.sort((a, b) => {

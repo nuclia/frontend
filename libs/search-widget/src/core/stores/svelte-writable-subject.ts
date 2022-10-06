@@ -12,3 +12,7 @@ export class SvelteWritableSubject<T> extends BehaviorSubject<T> {
     super.next(callback(super.value));
   }
 }
+
+export function writableSubject<T>(value: T): SvelteWritableSubject<T> {
+  return new SvelteWritableSubject<T>(value);
+}
