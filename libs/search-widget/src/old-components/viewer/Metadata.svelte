@@ -9,9 +9,8 @@
   import Button from '../../common/button/Button.svelte';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
-  import { nucliaStore } from '../../core/old-stores/main.store';
   import { onDestroy } from 'svelte';
-  import { annotationMode, annotations, selectedFamily } from '../../core/stores';
+  import { annotationMode, annotations, entityGroups, selectedFamily } from '../../core/stores';
 
   export let resource: Resource;
 
@@ -46,13 +45,13 @@
   const setAnnotationMode = () => {
     annotationMode.set(true);
     // stringify entities as backup otherwise the backup will get same modifications as the stored ones
-    entitiesBackup = JSON.stringify(nucliaStore().entities.value);
+    entitiesBackup = JSON.stringify(entityGroups.value);
     customEntitiesBackup = JSON.stringify($annotations);
   };
 
   const cancelAnnotationMode = () => {
     if (entitiesBackup) {
-      nucliaStore().entities.next(JSON.parse(entitiesBackup));
+      entityGroups.set(JSON.parse(entitiesBackup));
     }
     if (customEntitiesBackup) {
       annotations.set(JSON.parse(customEntitiesBackup));
@@ -63,9 +62,8 @@
   const saveAnnotations = () => {
     const field = viewerStore.currentField.value;
     if (field) {
-      const entityGroups = nucliaStore().entities.value;
-      if (entitiesBackup !== JSON.stringify(entityGroups)) {
-        saveEntities(JSON.parse(entitiesBackup), entityGroups).subscribe();
+      if (entitiesBackup !== JSON.stringify(entityGroups.value)) {
+        saveEntities(JSON.parse(entitiesBackup), entityGroups.value).subscribe();
       }
       saveEntitiesAnnotations(resource, field, annotations.value).subscribe(() => closeAnnotationMode());
     }

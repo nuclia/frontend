@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ExtractedText, Resource } from '@nuclia/core';
   import { getFile, loadEntities } from '../../core/api';
-  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
+  import { nucliaState } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
   import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from '../../core/old-stores/viewer.store';
   import { onDestroy, onMount } from 'svelte';
@@ -11,7 +11,7 @@
   import InputViewer from './InputViewer.svelte';
   import Metadata from './Metadata.svelte';
   import Preview from './Preview.svelte';
-  import { setAnnotations } from '../../core/stores';
+  import { entityGroups, setAnnotations } from '../../core/stores';
 
   export let resource: Resource;
 
@@ -78,7 +78,7 @@
   ];
 
   onMount(() => {
-    loadEntities().subscribe(entities => nucliaStore().entities.next(entities));
+    loadEntities().subscribe(entities => entityGroups.set(entities));
   });
 
   onDestroy(() => {
