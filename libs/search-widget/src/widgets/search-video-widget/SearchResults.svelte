@@ -3,7 +3,7 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte';
   import { debounceTime, forkJoin, map, switchMap, take } from 'rxjs';
-  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';

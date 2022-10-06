@@ -37,8 +37,6 @@ import type {
 import { PreviewKind, SearchOrder } from '../models';
 import { getFileUrls, setLabels } from '../api';
 import { isYoutubeUrl } from '../utils';
-import type { AnnotationStore } from './annotation.store';
-import { annotationStore } from './annotation.store';
 import type { ResourceStore } from './resource.store';
 import { resourceStore } from './resource.store';
 
@@ -60,7 +58,7 @@ type ViewerStore = {
   init: () => void;
 };
 
-export const viewerStore: ViewerStore & AnnotationStore & ResourceStore = {
+export const viewerStore: ViewerStore & ResourceStore = {
   query: new BehaviorSubject(''),
   results: new BehaviorSubject<WidgetParagraph[] | null>(null),
   hasSearchError: new BehaviorSubject<boolean>(false),
@@ -73,7 +71,6 @@ export const viewerStore: ViewerStore & AnnotationStore & ResourceStore = {
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
   currentField: new BehaviorSubject<{ field_type: string; field_id: string } | null>(null),
-  ...annotationStore,
   ...resourceStore,
   init: initStore,
 };

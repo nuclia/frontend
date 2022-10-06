@@ -2,15 +2,16 @@
   import type { Resource, CloudLink } from '@nuclia/core';
   import { getFileUrls, saveEntities, saveEntitiesAnnotations } from '../../core/api';
   import { getCDN, formatDate } from '../../core/utils';
-  import { viewerStore, getLinks, getLinksPreviews } from '../../core/stores/viewer.store';
+  import { viewerStore, getLinks, getLinksPreviews } from '../../core/old-stores/viewer.store';
   import { _ } from '../../core/i18n';
   import Entities from './Entities.svelte';
   import type { Observable } from 'rxjs';
   import Button from '../../common/button/Button.svelte';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
-  import { nucliaStore } from '../../core/stores/main.store';
+  import { nucliaStore } from '../../core/old-stores/main.store';
   import { onDestroy } from 'svelte';
+  import { annotationMode, annotations, selectedFamily } from '../../core/stores';
 
   export let resource: Resource;
 
@@ -19,7 +20,6 @@
   let links: string[];
   let linksPreviews: CloudLink[];
 
-  const annotationMode = viewerStore.annotationMode;
   const hasEntities = viewerStore.hasEntities;
   let entitiesBackup: string;
   let customEntitiesBackup;
@@ -44,10 +44,10 @@
   };
 
   const setAnnotationMode = () => {
-    annotationMode.next(true);
+    annotationMode.set(true);
     // stringify entities as backup otherwise the backup will get same modifications as the stored ones
-    entitiesBackup = JSON.stringify(nucliaStore().entities.getValue());
-    customEntitiesBackup = viewerStore.annotations.getValue();
+    entitiesBackup = JSON.stringify(nucliaStore().entities.value);
+    customEntitiesBackup = JSON.stringify($annotations);
   };
 
   const cancelAnnotationMode = () => {
@@ -55,27 +55,25 @@
       nucliaStore().entities.next(JSON.parse(entitiesBackup));
     }
     if (customEntitiesBackup) {
-      viewerStore.annotations.next(customEntitiesBackup);
+      annotations.set(JSON.parse(customEntitiesBackup));
     }
     closeAnnotationMode();
   };
 
   const saveAnnotations = () => {
-    const field = viewerStore.currentField.getValue();
+    const field = viewerStore.currentField.value;
     if (field) {
-      const entityGroups = nucliaStore().entities.getValue();
+      const entityGroups = nucliaStore().entities.value;
       if (entitiesBackup !== JSON.stringify(entityGroups)) {
         saveEntities(JSON.parse(entitiesBackup), entityGroups).subscribe();
       }
-      saveEntitiesAnnotations(resource, field, viewerStore.annotations.getValue()).subscribe(() =>
-        closeAnnotationMode(),
-      );
+      saveEntitiesAnnotations(resource, field, annotations.value).subscribe(() => closeAnnotationMode());
     }
   };
 
   const closeAnnotationMode = () => {
-    annotationMode.next(false);
-    viewerStore.selectedFamily.next(null);
+    annotationMode.set(false);
+    selectedFamily.set('');
   };
 </script>
 

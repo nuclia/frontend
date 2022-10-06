@@ -1,7 +1,7 @@
 <script lang="ts">
   import { merge, map } from 'rxjs';
   import Toggle from '../../common/toggle/Toggle.svelte';
-  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import Results from '../results/Results.svelte';
   import SearchInput from '../search-input/SearchInput.svelte';
   import { _ } from '../../core/i18n';

@@ -3,38 +3,34 @@
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
   import { EntityGroup, WidgetParagraph } from '../../../core/models';
-  import { viewerStore } from '../../../core/stores/viewer.store';
-  import { map } from 'rxjs';
-  import { addAnnotation, Annotation, removeAnnotation, updateAnnotation } from '../../../core/stores/annotation.store';
-  import { addEntity, nucliaStore } from '../../../core/stores/main.store';
+  import { addEntity, nucliaStore } from '../../../core/old-stores/main.store';
   import { Duration } from '../../../common/transition.utils';
+  import {
+    addAnnotation,
+    Annotation,
+    removeAnnotation,
+    selectedFamily,
+    sortedAnnotations,
+    updateAnnotation,
+  } from '../../../core/stores';
+  import { map } from 'rxjs';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
 
   const entityGroups = nucliaStore().entities;
-  const customEntities = viewerStore.annotations;
-  const selectedFamily = viewerStore.selectedFamily;
 
   let isDestroyed = false;
 
-  $: markedText = customEntities.pipe(
+  $: markedText = sortedAnnotations.pipe(
     map(entities => {
       let textWithMarks = '';
       let currentIndex = 0;
-      entities.sort((a, b) => {
-        if (a.start < b.start) {
-          return -1;
-        } else if (a.start > b.start) {
-          return 1;
-        } else {
-          return 0;
-        }
-      }).filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
+      entities.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
         const isHighlighted = $selectedFamily === entity.entityFamilyId;
         let highlightStyle = '';
         if (isHighlighted) {
-          const family = $entityGroups.find(group => group.id === entity.entityFamilyId);
+          const family = entityGroups.value.find(group => group.id === entity.entityFamilyId);
           highlightStyle = `style="background-color:${family.color}"`;
         }
         textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
@@ -56,6 +52,7 @@
       return textWithMarks;
     }),
   );
+
   let contentContainer: HTMLElement;
   let isMenuOpen = false;
   let isMenuVisible = false;

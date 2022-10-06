@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { ExtractedText, Resource } from '@nuclia/core';
   import { getFile, loadEntities } from '../../core/api';
-  import { nucliaState, nucliaStore } from '../../core/stores/main.store';
+  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
-  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from '../../core/stores/viewer.store';
+  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from '../../core/old-stores/viewer.store';
   import { onDestroy, onMount } from 'svelte';
   import { combineLatest, filter, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';
@@ -11,6 +11,7 @@
   import InputViewer from './InputViewer.svelte';
   import Metadata from './Metadata.svelte';
   import Preview from './Preview.svelte';
+  import { setAnnotations } from '../../core/stores';
 
   export let resource: Resource;
 
@@ -72,7 +73,7 @@
     ]).pipe(
       filter(([paragraphs, currentField]) => paragraphs?.length > 0 && !!currentField),
     ).subscribe(([paragraphs, currentField]) => {
-      viewerStore.setAnnotations(resource, paragraphs, currentField);
+      setAnnotations(resource, paragraphs, currentField);
     }),
   ];
 
