@@ -16,6 +16,7 @@ import { generatedEntitiesColor } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
 import { searchWidget } from './stores/widget.store';
+import { suggestionsHasError } from './stores/suggestions.store';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -72,7 +73,7 @@ export const suggest = (query: string) => {
   return nucliaApi.knowledgeBox.suggest(query).pipe(
     filter((res) => {
       if (res.error) {
-        nucliaStore().hasSearchError.next(true);
+        suggestionsHasError.set(true);
       }
       return !res.error;
     }),

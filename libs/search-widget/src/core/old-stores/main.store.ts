@@ -20,7 +20,6 @@ type NucliaStore = {
   query: BehaviorSubject<string>;
   searchOptions: BehaviorSubject<SearchOptions>;
   intents: BehaviorSubject<Intents>;
-  suggestions: BehaviorSubject<Search.Results>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
   triggerSearch: Subject<void>;
   hasSearchError: ReplaySubject<boolean>;
@@ -34,9 +33,7 @@ let _state: {
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
   labelIntents: Observable<Classification[]>;
-  paragraphs: Observable<Search.Paragraph[]>;
   hasSearchError: Observable<boolean>;
-  pendingSuggestions: Observable<boolean>;
   pendingResults: Observable<boolean>;
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
@@ -50,7 +47,6 @@ export const nucliaStore = (): NucliaStore => {
       query: new BehaviorSubject(''),
       searchOptions: new BehaviorSubject({ inTitleOnly: false, highlight: true } as SearchOptions),
       intents: new BehaviorSubject({}),
-      suggestions: new BehaviorSubject(NO_RESULTS),
       searchResults: new BehaviorSubject(NO_RESULTS),
       triggerSearch: new Subject(),
       hasSearchError: new ReplaySubject(1),
@@ -68,14 +64,8 @@ export const nucliaStore = (): NucliaStore => {
         map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
       ),
-      paragraphs: _store.suggestions.pipe(
-        filter((res) => !!res.paragraphs?.results),
-        map((res) => Object.values(res.paragraphs?.results || [])),
-        startWith([] as Search.Paragraph[]),
-      ),
       labelIntents: _store.intents.pipe(map((intents) => intents.labels || [])),
       hasSearchError: _store.hasSearchError.asObservable(),
-      pendingSuggestions: _store.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       displayedResource: _store.displayedResource.asObservable(),
       getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
@@ -114,7 +104,6 @@ export const resetStore = () => {
 
 export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
-  nucliaStore().suggestions.next(NO_RESULTS);
   nucliaStore().intents.next({});
 };
 

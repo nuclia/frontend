@@ -1,17 +1,17 @@
 <script lang="ts">
   import type { Search, Classification } from '@nuclia/core';
-  import { nucliaState, setDisplayedResource } from '../../core/old-stores/main.store';
+  import { setDisplayedResource } from '../../core/old-stores/main.store';
   import { getCDN } from '../../core/utils';
   import { _ } from '../../core/i18n';
+  import { suggestionsHasError } from '../../core/stores/suggestions.store';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let intents: Classification[] = [];
-  const hasSearchError = nucliaState().hasSearchError;
   let showMore = false;
 </script>
 
 <div class="sw-suggestions">
-  {#if $hasSearchError}
+  {#if $suggestionsHasError}
     <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
   {:else}
     <p>{$_('suggest.enter')}</p>

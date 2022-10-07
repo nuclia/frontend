@@ -18,10 +18,11 @@
   import Modal from '../../common/modal/Modal.svelte';
   import Viewer from '../../old-components/viewer/Viewer.svelte';
   import type { KBStates, Resource } from '@nuclia/core';
-  import { setupSuggestionsAndPredictions, setupTriggerSearch } from '../../core/search-bar';
+  import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { resource } from '../../core/stores/resource.store';
   import { customStyle, setWidgetActions } from '../../core/stores/widget.store';
+  import { enableSuggestion } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -103,7 +104,7 @@
       }
     });
 
-    setupSuggestionsAndPredictions();
+    enableSuggestion();
     setupTriggerSearch();
 
     ready = true;
