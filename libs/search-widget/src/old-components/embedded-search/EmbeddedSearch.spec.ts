@@ -11,6 +11,7 @@ describe('Embedded search', () => {
     expect(input).toBeTruthy();
     if (input) {
       await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+      await fireEvent.keyPress(input, { key: 'Enter' });
       const query = await firstValueFrom(nucliaStore().query);
       expect(query).toEqual('Who is Batman?');
     }

@@ -11,10 +11,11 @@ describe('Search input', () => {
 
   it('should emit query', async () => {
     const { container } = render(SearchInput);
-    const input = container.querySelector('input');
-    expect(input).toBeTruthy();
-    if (input) {
-      await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
+    const searchInput = container.querySelector('input');
+    expect(searchInput).toBeTruthy();
+    if (searchInput) {
+      await fireEvent.input(searchInput, { target: { value: 'Who is Batman?' } });
+      await fireEvent.keyPress(searchInput, { key: 'Enter' });
       const query = await firstValueFrom(nucliaStore().query);
       expect(query).toEqual('Who is Batman?');
     }
