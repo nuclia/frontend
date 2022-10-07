@@ -4,15 +4,15 @@ import { firstValueFrom, of } from 'rxjs';
 import type { IResource, Search } from '@nuclia/core';
 import { suggestionEnabled } from '../../core/stores/suggestions.store';
 import { nucliaStore } from '../../core/old-stores/main.store';
+import { shouldEmitQuery } from '../search-input/SearchInput.spec';
 
 jest.mock('../../core/api', () => {
   return {
-    suggest: jest.fn((query) => {
-      console.log(`mock suggest for query`, query);
-      return of({
+    suggest: jest.fn(() =>
+      of({
         paragraphs: { results: [{ text: 'Knowledge is power, France is bacon' } as Search.Paragraph], facets: {} },
-      });
-    }),
+      }),
+    ),
   };
 });
 
@@ -33,12 +33,7 @@ describe('Popup search', () => {
     const { container } = render(PopupSearch);
     suggestionEnabled.set(true);
     const input = container.querySelector('input');
-    expect(input).toBeTruthy();
-    if (input) {
-      await fireEvent.input(input, { target: { value: 'Who ' } });
-      await fireEvent.keyPress(input, { key: 'Space' });
-      expect(container.querySelector('.popup .modal')).toBeTruthy();
-    }
+    await shouldEmitQuery(input);
   });
 
   it('should open modal on enter', async () => {
