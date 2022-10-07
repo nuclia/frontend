@@ -1,4 +1,4 @@
-import type { DisplayedResource, Intents } from '../models';
+import type { DisplayedResource } from '../models';
 import { NO_RESULTS, PENDING_RESULTS } from '../models';
 import { getLabels } from '../api';
 import {
@@ -14,12 +14,11 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import type { Classification, IResource, Labels, Search, SearchOptions } from '@nuclia/core';
+import type { IResource, Labels, Search, SearchOptions } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
   searchOptions: BehaviorSubject<SearchOptions>;
-  intents: BehaviorSubject<Intents>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
   triggerSearch: Subject<void>;
   hasSearchError: ReplaySubject<boolean>;
@@ -32,7 +31,6 @@ let _state: {
   query: Observable<string>;
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
-  labelIntents: Observable<Classification[]>;
   hasSearchError: Observable<boolean>;
   pendingResults: Observable<boolean>;
   displayedResource: Observable<DisplayedResource>;
@@ -46,7 +44,6 @@ export const nucliaStore = (): NucliaStore => {
     _store = {
       query: new BehaviorSubject(''),
       searchOptions: new BehaviorSubject({ inTitleOnly: false, highlight: true } as SearchOptions),
-      intents: new BehaviorSubject({}),
       searchResults: new BehaviorSubject(NO_RESULTS),
       triggerSearch: new Subject(),
       hasSearchError: new ReplaySubject(1),
@@ -64,7 +61,6 @@ export const nucliaStore = (): NucliaStore => {
         map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
       ),
-      labelIntents: _store.intents.pipe(map((intents) => intents.labels || [])),
       hasSearchError: _store.hasSearchError.asObservable(),
       pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       displayedResource: _store.displayedResource.asObservable(),
@@ -104,7 +100,6 @@ export const resetStore = () => {
 
 export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
-  nucliaStore().intents.next({});
 };
 
 const getSortedResources = (results: Search.Results) => {
