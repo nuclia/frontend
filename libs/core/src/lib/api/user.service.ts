@@ -1,20 +1,19 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, filter, map, Observable, of, switchMap } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { Welcome } from '@nuclia/core';
 import { SDKService } from './sdk.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  isBrowser = false;
   private userInfoSubject = new BehaviorSubject<Welcome | undefined>(undefined);
   readonly userInfo = this.userInfoSubject.asObservable();
   readonly userPrefs = this.userInfoSubject.pipe(map((user) => user?.preferences));
 
-  constructor(private sdk: SDKService, @Inject(PLATFORM_ID) platformId: any) {
-    this.isBrowser = isPlatformBrowser(platformId);
+  constructor(private sdk: SDKService, private authService: AuthService, private route: ActivatedRoute) {
 
     this.sdk.nuclia.auth
       .isAuthenticated()
@@ -29,6 +28,8 @@ export class UserService {
     return this.sdk.nuclia.db.getWelcome().pipe(
       catchError((error) => {
         if (error.status === 403 || error.status === 400) {
+          this.authService.setNextParams(this.route.snapshot.queryParams);
+          this.authService.setNextUrl(new URL(window.location.href).pathname);
           this.sdk.nuclia.auth.logout();
         }
         return of(error);
