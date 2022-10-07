@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-search" />
+<svelte:options tag="nuclia-search"/>
 
 <script lang="ts">
   import PopupSearch from '../../old-components/popup-search/PopupSearch.svelte';
@@ -12,8 +12,7 @@
     formatQueryKey,
     updateQueryParams,
     coerceBooleanProperty,
-    loadFonts,
-    loadSvgSprite,
+    loadFonts, loadSvgSprite,
   } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import Modal from '../../common/modal/Modal.svelte';
@@ -45,7 +44,7 @@
 
   export const displayResource = (uid: string) => {
     if (uid) {
-      setDisplayedResource({ uid });
+      setDisplayedResource({uid});
     } else {
       closeModal();
     }
@@ -88,22 +87,20 @@
 
     checkUrlParams();
 
-    const displayedResource$ = nucliaState()
-      .displayedResource.pipe(
-        filter((displayedResource) => !!displayedResource?.uid),
-        concatMap((displayedResource) => getResource(displayedResource.uid)),
-        tap((res: Resource) => resource.set(res)),
-      )
-      .subscribe((res) => {
-        showModal = true;
-        if (permalinkEnabled) {
-          const urlParams = new URLSearchParams(window.location.search);
-          if (urlParams.get(previewQueryKey) !== res.uuid) {
-            urlParams.set(previewQueryKey, res.uuid);
-            updateQueryParams(urlParams);
-          }
+    const displayedResource$ = nucliaState().displayedResource.pipe(
+      filter((displayedResource) => !!displayedResource?.uid),
+      concatMap((displayedResource) => getResource(displayedResource.uid)),
+      tap((res: Resource) => resource.set(res)),
+    ).subscribe((res) => {
+      showModal = true;
+      if (permalinkEnabled) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get(previewQueryKey) !== res.uuid) {
+          urlParams.set(previewQueryKey, res.uuid);
+          updateQueryParams(urlParams);
         }
-      });
+      }
+    });
 
     setupSuggestionsAndPredictions();
     setupTriggerSearch();
@@ -119,7 +116,7 @@
 
   const closeModal = () => {
     showModal = false;
-    setDisplayedResource({ uid: '' });
+    setDisplayedResource({uid: ''});
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get(previewQueryKey)) {
       urlParams.delete(previewQueryKey);
@@ -141,22 +138,21 @@
 <div class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
-      <PopupSearch {placeholder} />
+      <PopupSearch {placeholder}/>
     {:else if type === 'form'}
-      <EmbeddedSearch {placeholder} />
+      <EmbeddedSearch {placeholder}/>
     {:else}
       {type} widget is not implemented yet
     {/if}
-    <Modal
-      show={showModal}
-      on:close={closeModal}
-      closeButton={true}
-      --modal-width="var(--resource-modal-width)"
-      --modal-width-md="var(--resource-modal-width-md)"
-      --modal-height="var(--resource-modal-height)"
-      --modal-height-md="var(--resource-modal-height-md)"
+    <Modal show={showModal}
+           on:close={closeModal}
+           closeButton={true}
+           --modal-width="var(--resource-modal-width)"
+           --modal-width-md="var(--resource-modal-width-md)"
+           --modal-height="var(--resource-modal-height)"
+           --modal-height-md="var(--resource-modal-height-md)"
     >
-      <Viewer />
+      <Viewer/>
     </Modal>
   {/if}
 
