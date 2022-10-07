@@ -1,12 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 import { SDKService } from './sdk.service';
+import { AuthService } from '../auth/auth.service';
 
 import { UserService } from './user.service';
 
 describe('UserService', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
       providers: [
         {
           provide: SDKService,
@@ -18,6 +21,13 @@ describe('UserService', () => {
               },
               db: { getWelcome: () => of() },
             },
+          },
+        },
+        {
+          provide: AuthService,
+          useValue: {
+            setNextParams: () => {},
+            setNextUrl: () => {},
           },
         },
       ],
