@@ -1,17 +1,17 @@
 <script lang="ts">
   import { hasAuthData } from '../../../core/api';
-  import { nucliaState } from '../../../core/old-stores/main.store';
   import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
   import LabelMenu from '../menus/LabelMenu.svelte';
   import { ParagraphLabels } from '../../../core/models';
+  import { searchWidget } from '../../../core/stores/widget.store';
 
   export let labels: ParagraphLabels;
   let isOpenMenu = false;
   let element: HTMLElement;
   let position: { top: number; left: number } | undefined = undefined;
 
-  const editLabels = nucliaState().widget.pipe(
+  const editLabels = searchWidget.pipe(
     filter((widget) => !!widget),
     map((widget) => widget.features.editLabels),
   );

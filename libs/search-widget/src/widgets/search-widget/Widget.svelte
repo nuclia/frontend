@@ -3,7 +3,7 @@
 <script lang="ts">
   import PopupSearch from '../../old-components/popup-search/PopupSearch.svelte';
   import EmbeddedSearch from '../../old-components/embedded-search/EmbeddedSearch.svelte';
-  import { nucliaState, setWidgetActions, resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
+  import { nucliaState, resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
   import { getResource, initNuclia, resetNuclia } from '../../core/api';
   import { concatMap, filter, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
@@ -21,6 +21,7 @@
   import { setupSuggestionsAndPredictions, setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { resource } from '../../core/stores/resource.store';
+  import { customStyle, setWidgetActions } from '../../core/stores/widget.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -83,7 +84,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     // Load custom styles
-    nucliaState().customStyle.subscribe((css) => (style = css));
+    customStyle.subscribe((css) => (style = css));
 
     checkUrlParams();
 
