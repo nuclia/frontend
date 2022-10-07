@@ -6,7 +6,9 @@
   import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import { getCDN } from '../../core/utils';
-  import Icon from "../../common/icons/Icon.svelte";
+  import Icon from '../../common/icons/Icon.svelte';
+  import Modal from '../../common/modal/Modal.svelte';
+  import Suggestions from "../suggestions/Suggestions.svelte";
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -30,6 +32,21 @@
     ),
   );
 
+  let inputContainerElement: HTMLElement | undefined;
+  let position: DOMRect | undefined;
+  let showSuggestions = false;
+  const paragraphs = nucliaState().paragraphs;
+  const intents = nucliaState().labelIntents;
+  const hasSearchError = nucliaState().hasSearchError;
+
+  const openSuggestions = () => {
+    showSuggestions = true;
+    position = inputContainerElement?.getBoundingClientRect();
+  };
+  const closeSuggestions = () => {
+    showSuggestions = false;
+  };
+
   onMount(() => {
     element.focus();
   });
@@ -42,7 +59,7 @@
   const onChange = (event: InputEvent) => {
     const query = (event.target as HTMLInputElement).value;
     if (query.trim() !== previous.trim()) {
-      dispatch('typeahead', query);
+      openSuggestions();
     }
     previous = query;
   }
@@ -55,38 +72,32 @@
   };
 </script>
 
-<form
-  role="search"
-  autocomplete="off"
-  class="sw-search-input"
-  class:search-bar-container={embeddedSearch || searchBarWidget}
+<form role="search"
+      autocomplete="off"
+      class="sw-search-input"
+      class:search-bar-container={embeddedSearch || searchBarWidget}
+      bind:this={inputContainerElement}
 >
-  <input
-    bind:this={element}
-    class="search-field"
-    class:input-widget={popupSearch}
-    class:embedded-search={embeddedSearch}
-    class:search-bar-widget={searchBarWidget}
-    name="nuclia-search-field"
-    placeholder={$_(placeholder || defaultPlaceholder)}
-    tabindex="0"
-    autocomplete="off"
-    autocorrect="off"
-    autofill="off"
-    autocapitalize="off"
-    spellcheck="false"
-    aria-label="Search input"
-    bind:value={$query}
-    on:input={onChange}
-    on:keyup
-    on:change
-    on:keypress={onEnter}
-    on:keydown
+  <input bind:this={element}
+         class="search-field"
+         class:input-widget={popupSearch}
+         class:embedded-search={embeddedSearch}
+         class:search-bar-widget={searchBarWidget}
+         name="nuclia-search-field"
+         placeholder={$_(placeholder || defaultPlaceholder)}
+         tabindex="0"
+         autocomplete="off"
+         autocapitalize="off"
+         spellcheck="false"
+         aria-label="Search input"
+         bind:value={$query}
+         on:input={onChange}
+         on:keypress={onEnter}
   />
   {#if popupSearch || embeddedSearch || searchBarWidget}
     <div class="search-icon-container" class:left-icon={embeddedSearch || searchBarWidget}>
       {#if $isPending}
-        <LoadingDots small />
+        <LoadingDots small/>
       {:else}
         <div class="search-icon"
              tabindex="0"
@@ -104,9 +115,19 @@
   {#if embeddedSearch || searchBarWidget}
     <div class="powered-by">
       <small>Powered by</small>
-      <img src={`${getCDN()}logos/nuclia-grey.svg`} alt="Nuclia" />
+      <img src={`${getCDN()}logos/nuclia-grey.svg`} alt="Nuclia"/>
     </div>
   {/if}
 </form>
+<Modal show={showSuggestions && ($paragraphs.length > 0 || $hasSearchError)}
+       popup={true}
+       parentPosition={position}
+       on:close={closeSuggestions}
+>
+  <div class="sw-suggestions">
+    <Suggestions paragraphs={$paragraphs} intents={$intents}/>
+  </div>
+</Modal>
+
 
 <style lang="scss" src="./SearchInput.scss"></style>
