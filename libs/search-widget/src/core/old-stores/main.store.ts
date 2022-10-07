@@ -1,4 +1,4 @@
-import type { DisplayedResource, Intents, WidgetAction } from '../models';
+import type { DisplayedResource, Intents } from '../models';
 import { NO_RESULTS, PENDING_RESULTS } from '../models';
 import { getLabels } from '../api';
 import {
@@ -14,23 +14,15 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import type { Classification, IResource, Labels, Search, SearchOptions, Widget } from '@nuclia/core';
-
-let widgetActions: WidgetAction[] = [];
-export const setWidgetActions = (actions: WidgetAction[]) => {
-  widgetActions = actions;
-};
-export const getWidgetActions = () => widgetActions;
+import type { Classification, IResource, Labels, Search, SearchOptions } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
   searchOptions: BehaviorSubject<SearchOptions>;
   intents: BehaviorSubject<Intents>;
-  suggestions: BehaviorSubject<Search.Results>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
   triggerSearch: Subject<void>;
   hasSearchError: ReplaySubject<boolean>;
-  widget: ReplaySubject<Widget>;
   displayedResource: BehaviorSubject<DisplayedResource>;
   labels: Subject<Labels>;
 };
@@ -41,12 +33,8 @@ let _state: {
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
   labelIntents: Observable<Classification[]>;
-  paragraphs: Observable<Search.Paragraph[]>;
   hasSearchError: Observable<boolean>;
-  pendingSuggestions: Observable<boolean>;
   pendingResults: Observable<boolean>;
-  widget: Observable<Widget>;
-  customStyle: Observable<string>;
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
   getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
@@ -59,11 +47,9 @@ export const nucliaStore = (): NucliaStore => {
       query: new BehaviorSubject(''),
       searchOptions: new BehaviorSubject({ inTitleOnly: false, highlight: true } as SearchOptions),
       intents: new BehaviorSubject({}),
-      suggestions: new BehaviorSubject(NO_RESULTS),
       searchResults: new BehaviorSubject(NO_RESULTS),
       triggerSearch: new Subject(),
       hasSearchError: new ReplaySubject(1),
-      widget: new ReplaySubject(1),
       displayedResource: new BehaviorSubject({ uid: '' }),
       labels: new Subject<Labels>(),
     };
@@ -78,23 +64,9 @@ export const nucliaStore = (): NucliaStore => {
         map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
       ),
-      paragraphs: _store.suggestions.pipe(
-        filter((res) => !!res.paragraphs?.results),
-        map((res) => Object.values(res.paragraphs?.results || [])),
-        startWith([] as Search.Paragraph[]),
-      ),
       labelIntents: _store.intents.pipe(map((intents) => intents.labels || [])),
       hasSearchError: _store.hasSearchError.asObservable(),
-      pendingSuggestions: _store.suggestions.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
-      widget: _store.widget.asObservable(),
-      customStyle: _store.widget.pipe(
-        map((widget) =>
-          Object.entries(widget?.style || {})
-            .filter(([k, v]) => !!v)
-            .reduce((acc, [k, v]) => `${acc}--custom-${k}: ${v};`, ''),
-        ),
-      ),
       displayedResource: _store.displayedResource.asObservable(),
       getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
         return _store!.searchResults.pipe(
@@ -132,7 +104,6 @@ export const resetStore = () => {
 
 export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
-  nucliaStore().suggestions.next(NO_RESULTS);
   nucliaStore().intents.next({});
 };
 

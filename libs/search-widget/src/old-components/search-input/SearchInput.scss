@@ -106,6 +106,10 @@
     font-weight: var(--font-weight-body);
   }
 }
+
+.sw-suggestions {
+  padding: var(--rhythm-2);
+}
 @media (min-width: 448px) {
   .sw-search-input.search-bar-container {
     width: var(--search-bar-max-width);

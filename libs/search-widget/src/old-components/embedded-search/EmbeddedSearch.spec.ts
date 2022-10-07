@@ -1,19 +1,14 @@
 import EmbeddedSearch from './EmbeddedSearch.svelte';
-import { fireEvent, render } from '@testing-library/svelte';
+import { render } from '@testing-library/svelte';
 import { nucliaStore } from '../../core/old-stores/main.store';
-import { firstValueFrom } from 'rxjs';
 import type { IResource } from '@nuclia/core';
+import { shouldEmitQuery } from '../search-input/SearchInput.spec';
 
 describe('Embedded search', () => {
   it('should trigger search', async () => {
     const { container } = render(EmbeddedSearch);
     const input = container.querySelector('input');
-    expect(input).toBeTruthy();
-    if (input) {
-      await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
-      const query = await firstValueFrom(nucliaStore().query);
-      expect(query).toEqual('Who is Batman?');
-    }
+    await shouldEmitQuery(input);
   });
 
   it('should display results', async () => {

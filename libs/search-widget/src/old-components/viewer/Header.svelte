@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { getWidgetActions } from '../../core/old-stores/main.store';
   import { formatDate, getCDN } from '../../core/utils';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import ActionMenu from './menus/ActionMenu.svelte';
   import { resource } from '../../core/stores/resource.store';
+  import { getWidgetActions } from '../../core/stores/widget.store';
 
   let showMetadata = false;
 </script>

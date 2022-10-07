@@ -4,7 +4,7 @@ export const NO_RESULTS: Search.Results = {
   resources: {},
   paragraphs: { results: [], facets: {} },
   sentences: { results: [], facets: {} },
-} as Search.Results;
+};
 export const PENDING_RESULTS = {
   resources: {},
   paragraphs: { results: [], facets: {} },

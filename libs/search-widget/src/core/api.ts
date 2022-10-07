@@ -15,6 +15,8 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
+import { searchWidget } from './stores/widget.store';
+import { suggestionsHasError } from './stores/suggestions.store';
 
 let nucliaApi: Nuclia | null;
 let STATE: KBStates;
@@ -30,7 +32,7 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
     nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
-    nucliaStore().widget.next(widget);
+    searchWidget.set(widget);
     if (widget.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
       if (kbPath) {
@@ -71,7 +73,7 @@ export const suggest = (query: string) => {
   return nucliaApi.knowledgeBox.suggest(query).pipe(
     filter((res) => {
       if (res.error) {
-        nucliaStore().hasSearchError.next(true);
+        suggestionsHasError.set(true);
       }
       return !res.error;
     }),
