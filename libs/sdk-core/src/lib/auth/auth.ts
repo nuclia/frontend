@@ -26,7 +26,9 @@ export class Authentication implements IAuthentication {
   }
 
   getAuthHeaders(): { [key: string]: string } {
-    return this.nuclia.options.apiKey
+    return this.nuclia.options.standalone
+      ? { 'X-NUCLIADB-ROLES': 'READER' }
+      : this.nuclia.options.apiKey
       ? { 'X-STF-Serviceaccount': `Bearer ${this.nuclia.options.apiKey}` }
       : this.getToken()
       ? { Authorization: `Bearer ${this.getToken()}` }
@@ -100,9 +102,7 @@ export class Authentication implements IAuthentication {
   }
 
   deleteAuthenticatedUser(): Observable<void> {
-    return this.nuclia.rest.delete('/user').pipe(
-      tap(() => this.storeTokens({ access_token: '', refresh_token: '' }))
-    );
+    return this.nuclia.rest.delete('/user').pipe(tap(() => this.storeTokens({ access_token: '', refresh_token: '' })));
   }
 
   getJWTUser(): JwtUser | null {
