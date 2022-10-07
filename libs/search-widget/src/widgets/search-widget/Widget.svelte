@@ -36,6 +36,7 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let permalink = false;
+  export let standalone = false;
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
 
@@ -66,6 +67,7 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
+        standalone,
       },
       state,
       {
