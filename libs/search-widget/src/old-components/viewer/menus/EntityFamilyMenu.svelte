@@ -1,15 +1,14 @@
 <script lang="ts">
-  import { nucliaState } from '../../../core/old-stores/main.store';
   import { clickOutside } from '../../../common/actions/actions';
   import { createEventDispatcher, onMount } from 'svelte';
   import { _ } from '../../../core/i18n';
+  import { entityGroups } from '../../../core/stores/entities.store';
 
   export let position: { top: number; left: number };
   export let selectedFamily;
 
   let menuContainer: HTMLElement;
 
-  const allEntities = nucliaState().entities;
   const dispatch = createEventDispatcher();
   const close = () => {
     dispatch('close');
@@ -31,7 +30,7 @@
      style:left={position?.left + 'px'}
      style:top={position?.top + 'px'}>
   <ul>
-    {#each $allEntities as family}
+    {#each $entityGroups as family}
       <li style:--family-color={family.color}
           class:selected={family.id === selectedFamily}
           on:click={() => selectFamily(family)}>{$_(family.title)}</li>

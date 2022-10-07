@@ -1,4 +1,4 @@
-import type { DisplayedResource, EntityGroup, Intents, WidgetAction } from '../models';
+import type { DisplayedResource, Intents, WidgetAction } from '../models';
 import { NO_RESULTS, PENDING_RESULTS } from '../models';
 import { getLabels } from '../api';
 import {
@@ -33,7 +33,6 @@ type NucliaStore = {
   widget: ReplaySubject<Widget>;
   displayedResource: BehaviorSubject<DisplayedResource>;
   labels: Subject<Labels>;
-  entities: BehaviorSubject<EntityGroup[]>;
 };
 let _store: NucliaStore | undefined;
 
@@ -52,7 +51,6 @@ let _state: {
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
   getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
   labels: Observable<Labels>;
-  entities: Observable<EntityGroup[]>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -68,7 +66,6 @@ export const nucliaStore = (): NucliaStore => {
       widget: new ReplaySubject(1),
       displayedResource: new BehaviorSubject({ uid: '' }),
       labels: new Subject<Labels>(),
-      entities: new BehaviorSubject<EntityGroup[]>([]),
     };
     _state = {
       query: _store.query.asObservable().pipe(
@@ -118,7 +115,6 @@ export const nucliaStore = (): NucliaStore => {
         switchMap(() => getLabels()),
         shareReplay(),
       ),
-      entities: _store.entities.asObservable(),
     };
   }
   return _store as NucliaStore;
@@ -165,15 +161,3 @@ const getSortedResources = (results: Search.Results) => {
     .sort((a, b) => b.score - a.score)
     .map((data) => data.res);
 };
-
-export function addEntity(entity: string, family: EntityGroup) {
-  if (!family.entities.map((entity) => entity.toLocaleLowerCase()).includes(entity.toLocaleLowerCase())) {
-    family.entities.push(entity);
-    const updatedEntityGroups = nucliaStore().entities.getValue();
-    const groupIndex = updatedEntityGroups.findIndex((group) => group.id === family.id);
-    if (groupIndex > -1) {
-      updatedEntityGroups[groupIndex] = family;
-      nucliaStore().entities.next(updatedEntityGroups);
-    }
-  }
-}

@@ -1,20 +1,18 @@
 <script lang="ts">
-  import type { Resource } from '@nuclia/core';
   import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph, ParagraphLabels } from '../../../core/models';
   import { PreviewKind } from '../../../core/models';
   import { formatTime } from '../../../core/utils';
-  import { filter } from 'rxjs';
   import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../../../core/old-stores/viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
   import ParagraphWithAnnotations from './ParagraphWithAnnotations.svelte';
-  import { annotationMode } from '../../../core/stores';
+  import { annotationMode } from '../../../core/stores/annotation.store';
+  import { resource } from "../../../core/stores/resource.store";
 
   export let paragraphs: WidgetParagraph[] = [];
 
   const onlySelected = viewerState.onlySelected;
-  const resource = viewerStore.resource.pipe(filter((resource): resource is Resource => !!resource));
   const previewParagraph = (paragraph: PdfWidgetParagraph | MediaWidgetParagraph) => {
     viewerStore.showPreview.next(true);
     viewerStore.selectedParagraph.next({

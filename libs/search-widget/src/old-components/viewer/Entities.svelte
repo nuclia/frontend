@@ -2,19 +2,16 @@
   import Expander from '../../common/expander/Expander.svelte';
   import { viewerStore } from '../../core/old-stores/viewer.store';
   import { _ } from '../../core/i18n';
-  import { nucliaState } from '../../core/old-stores/main.store';
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../../core/models';
   import { tap } from 'rxjs/operators';
   import Icon from '../../common/icons/Icon.svelte';
-  import { annotationMode, selectedFamily } from '../../core/stores';
+  import { annotationMode, selectedFamily } from '../../core/stores/annotation.store';
+  import { entityGroups, resourceAnnotatedEntities, resourceEntities } from '../../core/stores/entities.store';
 
   export let showAnnotated = false;
 
-  const allEntities = nucliaState().entities;
-  const resourceEntities: Observable<EntityGroup[]> = showAnnotated
-    ? viewerStore.resourceAnnotatedEntities
-    : viewerStore.resourceEntities;
+  const resourceEntityGroups: Observable<EntityGroup[]> = showAnnotated ? resourceAnnotatedEntities : resourceEntities;
 
   let expanded: string[] = [];
 
@@ -23,7 +20,7 @@
       expanded = [];
     }
   };
-  $: entityList = combineLatest([resourceEntities, allEntities]).pipe(
+  $: entityList = combineLatest([resourceEntityGroups, entityGroups]).pipe(
     tap(() => toggleAnnotationMode()),
     map(([entitiesFromResource, allEntitiesFromKb]) =>
       !showAnnotated && $annotationMode ? allEntitiesFromKb : entitiesFromResource,
@@ -63,10 +60,10 @@
         class:expanded={expanded.includes(group.id)}
         class:last={i === $entityList.length - 1}
       >
-        <div class="color" style:background={group.color} />
+        <div class="color" style:background={group.color}/>
         <div class="group-name">{$_(group.title)} ({group.entities.length})</div>
         <div class="icon-container">
-          <Icon name="chevron-left" />
+          <Icon name="chevron-left"/>
         </div>
       </button>
       <ul>

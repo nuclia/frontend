@@ -3,7 +3,6 @@
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
   import { EntityGroup, WidgetParagraph } from '../../../core/models';
-  import { addEntity, nucliaStore } from '../../../core/old-stores/main.store';
   import { Duration } from '../../../common/transition.utils';
   import {
     addAnnotation,
@@ -12,13 +11,12 @@
     selectedFamily,
     sortedAnnotations,
     updateAnnotation,
-  } from '../../../core/stores';
+  } from '../../../core/stores/annotation.store';
+  import { addEntity, entityGroups } from '../../../core/stores/entities.store';
   import { map } from 'rxjs';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
-
-  const entityGroups = nucliaStore().entities;
 
   let isDestroyed = false;
 

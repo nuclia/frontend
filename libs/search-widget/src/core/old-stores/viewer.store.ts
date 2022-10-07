@@ -36,9 +36,7 @@ import type {
 } from '../models';
 import { PreviewKind, SearchOrder } from '../models';
 import { getFileUrls, setLabels } from '../api';
-import { isYoutubeUrl } from '../utils';
-import type { ResourceStore } from './resource.store';
-import { resourceStore } from './resource.store';
+import { resource } from '../stores/resource.store';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 
@@ -58,7 +56,7 @@ type ViewerStore = {
   init: () => void;
 };
 
-export const viewerStore: ViewerStore & ResourceStore = {
+export const viewerStore: ViewerStore = {
   query: new BehaviorSubject(''),
   results: new BehaviorSubject<WidgetParagraph[] | null>(null),
   hasSearchError: new BehaviorSubject<boolean>(false),
@@ -71,7 +69,6 @@ export const viewerStore: ViewerStore & ResourceStore = {
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
   currentField: new BehaviorSubject<{ field_type: string; field_id: string } | null>(null),
-  ...resourceStore,
   init: initStore,
 };
 
@@ -81,29 +78,27 @@ export const viewerState = {
     map((q) => q.trim()),
     distinctUntilChanged(),
   ),
-  paragraphs: viewerStore.resource.pipe(map((resource) => (resource ? getMainFieldParagraphs(resource) : []))),
+  paragraphs: resource.pipe(map((resource) => (resource ? getMainFieldParagraphs(resource) : []))),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
   savingLabels: viewerStore.savingLabels.asObservable(),
-  searchReady: viewerStore.resource.pipe(
-    filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0),
-  ),
+  searchReady: resource.pipe(filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0)),
   results: combineLatest([viewerStore.results, viewerStore.order]).pipe(
     map(([results, order]) => results && sortParagraphs(results, order)),
   ),
   hasSearchError: viewerStore.hasSearchError.asObservable(),
-  pdfPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
+  pdfPreview: combineLatest([resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.PDF])),
     map(([resource, selected]) => getPdfPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   ),
-  mediaPreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
+  mediaPreview: combineLatest([resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.VIDEO, PreviewKind.AUDIO])),
     switchMap(([resource, selected]) => getMediaPreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   ),
-  youtubePreview: combineLatest([viewerStore.resource, viewerStore.selectedParagraph]).pipe(
+  youtubePreview: combineLatest([resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.YOUTUBE])),
     map(([resource, selected]) => getYoutubePreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
@@ -111,7 +106,7 @@ export const viewerState = {
 };
 
 export const selectedParagraphIndex = combineLatest([
-  viewerStore.resource,
+  resource,
   merge(viewerState.results, viewerState.paragraphs),
   viewerStore.selectedParagraph,
 ]).pipe(
@@ -127,7 +122,7 @@ export const selectedParagraphIndex = combineLatest([
 
 const _paragraphLabels = viewerState.paragraphs.pipe(
   switchMap((paragraphs) =>
-    viewerStore.resource.pipe(
+    resource.pipe(
       take(1),
       map((resource) => ({ resource, paragraphs })),
     ),
@@ -142,7 +137,7 @@ const _paragraphLabels = viewerState.paragraphs.pipe(
   ),
 );
 
-const _annotatedParagraphLabels = viewerStore.resource.pipe(
+const _annotatedParagraphLabels = resource.pipe(
   map((resource) =>
     (resource?.fieldmetadata || []).reduce((acc, field) => {
       (field.paragraphs || []).forEach(({ key, classifications }) => {
@@ -171,7 +166,7 @@ export const paragraphLabels = combineLatest([
 );
 
 export const pdfUrl = combineLatest([
-  viewerStore.resource,
+  resource,
   viewerStore.selectedParagraph,
   merge(
     viewerStore.setPage,
@@ -190,7 +185,6 @@ export const pdfUrl = combineLatest([
 ) as Observable<CloudLink>;
 
 export function initStore() {
-  resourceStore.init();
   viewerStore.query.next('');
   viewerStore.results.next(null);
   viewerStore.hasSearchError.next(false);
@@ -209,13 +203,13 @@ export function clearSearch() {
 }
 
 export function setParagraphLabels(labels: Classification[], paragraph: WidgetParagraph) {
-  const resource = viewerStore.resource.getValue();
+  const currentResource = resource.value;
   const field = viewerStore.currentField.getValue();
   const saving = viewerStore.savingLabels.getValue();
-  if (!resource || !field || saving) return;
+  if (!currentResource || !field || saving) return;
   viewerStore.savingLabels.next(true);
-  const paragraphId = getParagraphId(resource.id, paragraph);
-  setLabels(resource, field.field_id, field.field_type, paragraphId, labels)
+  const paragraphId = getParagraphId(currentResource.id, paragraph);
+  setLabels(currentResource, field.field_id, field.field_type, paragraphId, labels)
     .pipe(switchMap(() => paragraphLabels.pipe(take(1))))
     .subscribe((paragraphLabels) => {
       const existingLabels = Object.entries(paragraphLabels).reduce((acc, [key, value]) => {
@@ -487,24 +481,12 @@ export function getVideoStream(fileField: FileFieldData): CloudLink | undefined 
   return fileField.extracted?.file?.file_generated?.['video.mpd'];
 }
 
-// Temprary functions
+// Temporary functions
 
-export function getLinks(resource: Resource): string[] {
-  return resource
-    .getFields(['links'])
-    .map((field) => (field as LinkFieldData).value?.uri)
-    .filter((uri) => !!uri) as string[];
-}
-
-export function getLinksPreviews(resource: Resource): CloudLink[] {
-  return resource
-    .getFields(['links'])
-    .filter((field) => !isYoutubeField(field as LinkFieldData))
-    .map((field) => (field as LinkFieldData).extracted?.link?.link_preview)
-    .filter((preview) => !!preview) as CloudLink[];
-}
-
-export function findFileByType(resource: Resource, type: string): string | undefined {
+export function findFileByType(resource: Resource | null, type: string): string | undefined {
+  if (!resource) {
+    return;
+  }
   const file = Object.values(resource.data?.files || {}).find((fileField) => {
     return isFileType(fileField, type);
   });
@@ -531,10 +513,6 @@ function getFieldType(fieldType: string): keyof ResourceData {
   } else {
     return 'texts';
   }
-}
-
-function isYoutubeField(field: LinkFieldData): boolean {
-  return field.value?.uri ? isYoutubeUrl(field.value.uri) : false;
 }
 
 function findParagraphFromSearchParagraph(

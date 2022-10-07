@@ -1,38 +1,31 @@
 <script lang="ts">
-  import type { Resource, CloudLink } from '@nuclia/core';
-  import { getFileUrls, saveEntities, saveEntitiesAnnotations } from '../../core/api';
+  import type { CloudLink } from '@nuclia/core';
+  import { saveEntities, saveEntitiesAnnotations } from '../../core/api';
   import { getCDN, formatDate } from '../../core/utils';
-  import { viewerStore, getLinks, getLinksPreviews } from '../../core/old-stores/viewer.store';
+  import { viewerStore } from '../../core/old-stores/viewer.store';
   import { _ } from '../../core/i18n';
   import Entities from './Entities.svelte';
-  import type { Observable } from 'rxjs';
   import Button from '../../common/button/Button.svelte';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
-  import { nucliaStore } from '../../core/old-stores/main.store';
   import { onDestroy } from 'svelte';
-  import { annotationMode, annotations, selectedFamily } from '../../core/stores';
+  import {
+    annotationMode,
+    annotations,
+    selectedFamily,
+  } from '../../core/stores/annotation.store';
+  import {
+    files,
+    links,
+    previewLinks,
+    resource,
+    resourceHasEntities,
+    summaries,
+  } from '../../core/stores/resource.store';
+  import { entityGroups } from '../../core/stores/entities.store';
 
-  export let resource: Resource;
-
-  let summaries: string[];
-  let files: Observable<string[]>;
-  let links: string[];
-  let linksPreviews: CloudLink[];
-
-  const hasEntities = viewerStore.hasEntities;
   let entitiesBackup: string;
   let customEntitiesBackup;
-
-  $: {
-    const _summaries = resource.summary
-      ? [resource.summary].concat(resource.getExtractedSummaries())
-      : resource.getExtractedSummaries();
-    summaries = _summaries.filter((s) => !!s);
-    files = getFileUrls(resource.getFiles().reduce((acc, f) => (f.uri ? acc.concat(f.uri) : acc), []));
-    linksPreviews = getLinksPreviews(resource);
-    links = getLinks(resource);
-  }
 
   onDestroy(() => {
     closeAnnotationMode();
@@ -40,19 +33,19 @@
 
   const previewLink = (file: CloudLink) => {
     viewerStore.showPreview.next(true);
-    viewerStore.linkPreview.next({ file });
+    viewerStore.linkPreview.next({file});
   };
 
   const setAnnotationMode = () => {
     annotationMode.set(true);
     // stringify entities as backup otherwise the backup will get same modifications as the stored ones
-    entitiesBackup = JSON.stringify(nucliaStore().entities.value);
+    entitiesBackup = JSON.stringify(entityGroups.value);
     customEntitiesBackup = JSON.stringify($annotations);
   };
 
   const cancelAnnotationMode = () => {
     if (entitiesBackup) {
-      nucliaStore().entities.next(JSON.parse(entitiesBackup));
+      entityGroups.set(JSON.parse(entitiesBackup));
     }
     if (customEntitiesBackup) {
       annotations.set(JSON.parse(customEntitiesBackup));
@@ -63,11 +56,10 @@
   const saveAnnotations = () => {
     const field = viewerStore.currentField.value;
     if (field) {
-      const entityGroups = nucliaStore().entities.value;
-      if (entitiesBackup !== JSON.stringify(entityGroups)) {
-        saveEntities(JSON.parse(entitiesBackup), entityGroups).subscribe();
+      if (entitiesBackup !== JSON.stringify(entityGroups.value)) {
+        saveEntities(JSON.parse(entitiesBackup), entityGroups.value).subscribe();
       }
-      saveEntitiesAnnotations(resource, field, annotations.value).subscribe(() => closeAnnotationMode());
+      saveEntitiesAnnotations(resource.value!, field, annotations.value).subscribe(() => closeAnnotationMode());
     }
   };
 
@@ -78,7 +70,7 @@
 </script>
 
 <div class="sw-metadata" class:annotation-mode={$annotationMode}>
-  {#if $hasEntities}
+  {#if $resourceHasEntities}
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
 
@@ -98,23 +90,23 @@
       {/if}
     </h2>
     <div class="entities">
-      <Entities />
+      <Entities/>
     </div>
     {#if !$annotationMode}
       <div class="entities">
         <h3>{$_('entities.annotated')}</h3>
-        <Entities showAnnotated={true} />
+        <Entities showAnnotated={true}/>
       </div>
     {/if}
   {/if}
 
   {#if !$annotationMode}
     <div transition:fade={{ duration: Duration.SUPERFAST }}>
-      {#if linksPreviews.length > 0}
+      {#if $previewLinks.length > 0}
         <div class="preview-links">
-          {#each linksPreviews as file}
+          {#each $previewLinks as file}
             <a class="download" href={file.uri} on:click|preventDefault={() => previewLink(file)}>
-              <img src={`${getCDN()}icons/document.svg`} alt="icon" />
+              <img src={`${getCDN()}icons/document.svg`} alt="icon"/>
               <div>{$_('resource.preview')}</div>
             </a>
           {/each}
@@ -123,50 +115,50 @@
 
       <h2>{$_('resource.other')}</h2>
 
-      {#if resource.summary}
+      {#if $summaries.length > 0}
         <div class="metadata-value">
           <h3>{$_('resource.summary')}</h3>
-          {#each summaries as summary}
+          {#each $summaries as summary}
             <div class="summary">{summary}</div>
           {/each}
         </div>
       {/if}
 
-      {#if resource.created}
+      {#if $resource.created}
         <div class="metadata-value">
           <h3>{$_('resource.creation')}</h3>
-          <div>{formatDate(resource.created)}</div>
+          <div>{formatDate($resource.created)}</div>
         </div>
       {/if}
 
-      {#if (resource.usermetadata?.classifications || []).length > 0}
+      {#if ($resource.usermetadata?.classifications || []).length > 0}
         <div class="metadata-value">
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
-            {#each resource.usermetadata?.classifications || [] as label}
+            {#each $resource.usermetadata?.classifications || [] as label}
               <div class="label">{label.label}</div>
             {/each}
           </div>
         </div>
       {/if}
 
-      {#if resource.metadata?.language}
+      {#if $resource.metadata?.language}
         <div class="metadata-value">
           <h3>{$_('resource.language')}</h3>
-          <div>{resource.metadata.language}</div>
+          <div>{$resource.metadata.language}</div>
         </div>
       {/if}
 
       {#each $files || [] as file}
         <a class="download" href={file}>
-          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
+          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
 
-      {#each links as link}
+      {#each $links as link}
         <a class="download" href={link} rel="noopener noreferrer" target="_blank">
-          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
+          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
