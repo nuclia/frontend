@@ -3,7 +3,7 @@ import type { Classification, Search } from '@nuclia/core';
 import type { Intents } from '../models';
 import { NO_RESULTS } from '../models';
 import { combineLatest, distinctUntilChanged, filter, forkJoin, map, merge, Observable, of } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { suggest } from '../api';
 import { predict } from '../tensor';
 
@@ -28,6 +28,8 @@ export const suggestions: Observable<Suggestions> = suggestionEnabled.pipe(
   ),
   // Don't trigger suggestion after inactivity if only spaces were added at the end of the query
   distinctUntilChanged((previous, current) => previous.trim() === current.trim()),
+  // Reset suggestion errors if any on new query
+  tap(() => suggestionsHasError.set(false)),
   switchMap((query) => {
     if (!query || !query.trim() || query.trim().length <= 2) {
       return of({
