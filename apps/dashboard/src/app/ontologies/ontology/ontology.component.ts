@@ -8,7 +8,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { LabelsService } from '../../services/labels.service';
 import { Sluggable } from '@flaps/common';
 import { STFUtils } from '@flaps/core';
-import { Label, Labels, LabelSetKind } from '@nuclia/core';
+import { Label, LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMTPY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -49,7 +49,7 @@ export class OntologyComponent implements OnDestroy {
   ontologySlug?: string;
   addNew: boolean = false;
   labelOrder: string[] = [];
-  initialLabels?: Labels;
+  initialLabels?: LabelSets;
   hasChanges: boolean = false;
   showMultiple = false; // TODO: delete when multiple field works
   unsubscribeAll = new Subject<void>();
@@ -90,7 +90,7 @@ export class OntologyComponent implements OnDestroy {
     });
   }
 
-  initState(labels: Labels) {
+  initState(labels: LabelSets) {
     if (this.ontologySlug) {
       this.ontology = new MutableLabelSet(labels![this.ontologySlug]);
     } else {

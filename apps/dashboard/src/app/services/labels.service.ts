@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, switchMap, filter, tap, take, map, catchError, EMPTY } from 'rxjs';
+import { BehaviorSubject, catchError, EMPTY, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SDKService } from '@flaps/core';
-import { Labels, LabelSet, LabelSetKind } from '@nuclia/core';
+import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LabelsService {
-  private _labelsSubject = new BehaviorSubject<Labels | null>(null);
+  private _labelsSubject = new BehaviorSubject<LabelSets | null>(null);
   labels = this._labelsSubject.asObservable();
 
   constructor(private sdk: SDKService) {
@@ -22,13 +22,13 @@ export class LabelsService {
       .subscribe();
   }
 
-  getLabelsByKind(kind: LabelSetKind): Observable<Labels | null> {
+  getLabelsByKind(kind: LabelSetKind): Observable<LabelSets | null> {
     return this.labels.pipe(
       map((labels) => {
         if (!labels) {
           return labels;
         } else {
-          const filtered: Labels = {};
+          const filtered: LabelSets = {};
           Object.entries(labels).forEach(([key, labelSet]) => {
             if (labelSet.kind.length === 0 || labelSet.kind.includes(kind)) {
               filtered[key] = labelSet;
@@ -40,7 +40,7 @@ export class LabelsService {
     );
   }
 
-  refreshLabelsSets(): Observable<Labels> {
+  refreshLabelsSets(): Observable<LabelSets> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.getLabels()),

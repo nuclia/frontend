@@ -38,7 +38,7 @@
   }
 
   const search = () => {
-    nucliaStore().query.next(typeAhead.value);
+    nucliaStore().query.next(typeAhead.getValue());
     nucliaStore().triggerSearch.next();
     dispatch('search');
   };

@@ -21,8 +21,9 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { resource } from '../../core/stores/resource.store';
-  import { customStyle, setWidgetActions } from '../../core/stores/widget.store';
-  import { enableSuggestion } from '../../core/stores/suggestions.store';
+  import { canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
+  import { activateEditLabelsFeature, activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
+  import { Subscription } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -89,22 +90,29 @@
 
     checkUrlParams();
 
-    const displayedResource$ = nucliaState().displayedResource.pipe(
-      filter((displayedResource) => !!displayedResource?.uid),
-      concatMap((displayedResource) => getResource(displayedResource.uid)),
-      tap((res: Resource) => resource.set(res)),
-    ).subscribe((res) => {
-      showModal = true;
-      if (permalinkEnabled) {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get(previewQueryKey) !== res.uuid) {
-          urlParams.set(previewQueryKey, res.uuid);
-          updateQueryParams(urlParams);
+    const subscriptions: Subscription[] = [
+      nucliaState().displayedResource.pipe(
+        filter((displayedResource) => !!displayedResource?.uid),
+        concatMap((displayedResource) => getResource(displayedResource.uid)),
+        tap((res: Resource) => resource.set(res)),
+      ).subscribe((res) => {
+        showModal = true;
+        if (permalinkEnabled) {
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.get(previewQueryKey) !== res.uuid) {
+            urlParams.set(previewQueryKey, res.uuid);
+            updateQueryParams(urlParams);
+          }
         }
-      }
-    });
+      }),
+      canEditLabels.subscribe(canEditLabels => {
+        if (canEditLabels) {
+          activateEditLabelsFeature();
+        }
+      }),
+    ];
+    activateTypeAheadSuggestions();
 
-    enableSuggestion();
     setupTriggerSearch();
 
     ready = true;
@@ -112,7 +120,8 @@
     return () => {
       resetStore();
       resetNuclia();
-      displayedResource$.unsubscribe();
+      unsubscribeAllEffects();
+      subscriptions.forEach(subscription => subscription.unsubscribe());
     };
   });
 

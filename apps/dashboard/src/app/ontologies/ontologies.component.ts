@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { RouteInfo } from '@flaps/common';
 import { filter, map, switchMapTo } from 'rxjs/operators';
 import { LabelsService } from '../services/labels.service';
-import { Labels } from '@nuclia/core';
+import { LabelSets } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 
 @Component({
@@ -27,7 +27,7 @@ export class OntologiesComponent {
     private sdk: SDKService,
   ) {}
 
-  createRoutes(labels: Labels): RouteInfo[] {
+  createRoutes(labels: LabelSets): RouteInfo[] {
     return Object.keys(labels)
       .sort((a: string, b: string) => labels[a].title.localeCompare(labels[b].title))
       .map((key) => ({
