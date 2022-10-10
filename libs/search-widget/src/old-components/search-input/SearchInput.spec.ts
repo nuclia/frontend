@@ -14,11 +14,6 @@ export async function shouldEmitQuery(searchInput: HTMLInputElement | null) {
 }
 
 describe('Search input', () => {
-  it('should have focus', async () => {
-    const { container } = render(SearchInput);
-    expect(container.querySelector('input:focus')).toBeTruthy();
-  });
-
   it('should emit query', async () => {
     const { container } = render(SearchInput);
     const searchInput = container.querySelector('input');
