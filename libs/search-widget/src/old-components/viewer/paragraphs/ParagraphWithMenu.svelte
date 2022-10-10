@@ -1,20 +1,15 @@
 <script lang="ts">
   import { hasAuthData } from '../../../core/api';
-  import { filter, map } from 'rxjs';
   import Paragraph from './Paragraph.svelte';
   import LabelMenu from '../menus/LabelMenu.svelte';
   import { ParagraphLabels } from '../../../core/models';
-  import { searchWidget } from '../../../core/stores/widget.store';
+  import { canEditLabels } from '../../../core/stores/widget.store';
 
   export let labels: ParagraphLabels;
   let isOpenMenu = false;
   let element: HTMLElement;
   let position: { top: number; left: number } | undefined = undefined;
 
-  const editLabels = searchWidget.pipe(
-    filter((widget) => !!widget),
-    map((widget) => widget.features.editLabels),
-  );
 
   const handleClick = (event: MouseEvent) => {
     if (event.button === 2) {
@@ -31,7 +26,7 @@
 
 <div
   class="paragraph-with-menu"
-  on:contextmenu={($editLabels && hasAuthData() && handleClick) || null}
+  on:contextmenu={($canEditLabels && hasAuthData() && handleClick) || null}
   bind:this={element}
 >
   <Paragraph {labels}>

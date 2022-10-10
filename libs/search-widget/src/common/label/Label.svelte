@@ -1,17 +1,15 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { getCDN } from '../../core/utils';
-  import { nucliaState } from '../../core/old-stores/main.store';
   import type { Classification } from '@nuclia/core';
   import { map } from 'rxjs';
+  import { labelSets } from '../../core/stores/labels.store';
 
   export let label: Classification;
   export let removable = false;
 
-  const color = nucliaState().labels.pipe(
-    map((labels) => {
-      return Object.entries(labels).find(([key]) => key === label.labelset)?.[1].color;
-    }),
+  const color = labelSets.pipe(
+    map((labelSet) => labelSet[label.labelset]?.color),
   );
 
   const dispatch = createEventDispatcher();

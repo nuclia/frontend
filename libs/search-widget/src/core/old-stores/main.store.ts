@@ -1,6 +1,5 @@
 import type { DisplayedResource } from '../models';
 import { NO_RESULTS, PENDING_RESULTS } from '../models';
-import { getLabels } from '../api';
 import {
   BehaviorSubject,
   distinctUntilChanged,
@@ -8,13 +7,11 @@ import {
   map,
   Observable,
   ReplaySubject,
-  shareReplay,
   startWith,
   Subject,
-  switchMap,
   tap,
 } from 'rxjs';
-import type { IResource, LabelSets, Search, SearchOptions } from '@nuclia/core';
+import type { IResource, Search, SearchOptions } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
@@ -23,7 +20,6 @@ type NucliaStore = {
   triggerSearch: Subject<void>;
   hasSearchError: ReplaySubject<boolean>;
   displayedResource: BehaviorSubject<DisplayedResource>;
-  labels: Subject<LabelSets>;
 };
 let _store: NucliaStore | undefined;
 
@@ -36,7 +32,6 @@ let _state: {
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
   getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
-  labels: Observable<LabelSets>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -48,7 +43,6 @@ export const nucliaStore = (): NucliaStore => {
       triggerSearch: new Subject(),
       hasSearchError: new ReplaySubject(1),
       displayedResource: new BehaviorSubject({ uid: '' }),
-      labels: new Subject<LabelSets>(),
     };
     _state = {
       query: _store.query.asObservable().pipe(
@@ -78,11 +72,6 @@ export const nucliaStore = (): NucliaStore => {
           map((sentences) => sentences.slice().sort((a, b) => b.score - a.score)),
         );
       },
-      labels: _store.labels.pipe(
-        startWith({}),
-        switchMap(() => getLabels()),
-        shareReplay(),
-      ),
     };
   }
   return _store as NucliaStore;

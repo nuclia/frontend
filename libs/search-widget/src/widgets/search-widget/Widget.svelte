@@ -21,8 +21,9 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { resource } from '../../core/stores/resource.store';
-  import { customStyle, setWidgetActions } from '../../core/stores/widget.store';
+  import { canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
   import { enableSuggestion } from '../../core/stores/suggestions.store';
+  import { activateEditLabelsFeature } from '../../core/stores/effects';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -106,6 +107,10 @@
 
     enableSuggestion();
     setupTriggerSearch();
+
+    if ($canEditLabels) {
+      activateEditLabelsFeature();
+    }
 
     ready = true;
 

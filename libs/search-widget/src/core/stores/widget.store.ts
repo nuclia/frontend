@@ -1,5 +1,5 @@
 import { writableSubject } from '../state-lib';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import type { WidgetAction } from '../models';
 import type { Widget } from '@nuclia/core';
 
@@ -16,4 +16,9 @@ export const customStyle: Observable<string> = searchWidget.pipe(
       .filter(([k, v]) => !!v)
       .reduce((acc, [k, v]) => `${acc}--custom-${k}: ${v};`, ''),
   ),
+);
+
+export const canEditLabels = searchWidget.pipe(
+  filter((widget) => !!widget),
+  map((widget) => (widget as Widget).features.editLabels),
 );

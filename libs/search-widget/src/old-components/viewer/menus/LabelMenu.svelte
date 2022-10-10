@@ -2,12 +2,12 @@
   import { createEventDispatcher } from 'svelte';
   import { map } from 'rxjs';
   import { getCDN } from '../../../core/utils';
-  import { nucliaState } from '../../../core/old-stores/main.store';
   import { viewerStore } from '../../../core/old-stores/viewer.store';
   import { clickOutside } from '../../../common/actions/actions';
   import Label from '../../../common/label/Label.svelte';
   import type { ParagraphLabels } from '../../../core/models';
   import { LabelSetKind } from '@nuclia/core';
+  import { labelSets } from '../../../core/stores/labels.store';
 
   const dispatch = createEventDispatcher();
   export let position: { top: number; left: number } | undefined = undefined;
@@ -26,11 +26,11 @@
     return acc;
   }, {} as { [key: string]: boolean });
 
-  const labelsSets = nucliaState().labels.pipe(
-    map((labels) =>
-      Object.entries(labels)
-        .filter((labelSet) => labelSet[1].kind.length === 0 || labelSet[1].kind.includes(LabelSetKind.PARAGRAPHS))
-        .sort(([keyA], [keyB]) => keyA.localeCompare(keyB)),
+  const labelSetList = labelSets.pipe(
+    map((set) =>
+      Object.entries(set)
+        .filter(([id, labelSet]) => labelSet.kind.length === 0 || labelSet.kind.includes(LabelSetKind.PARAGRAPHS))
+        .sort(([keyA, labelSetA], [keyB, labelSetB]) => labelSetA.title.localeCompare(labelSetB.title)),
     ),
   );
 
@@ -42,7 +42,7 @@
   const toggleLabel = (labelset: string, label: string) => {
     const newLabels = !!selected[`${labelset}-${label}`]
       ? labels.annotatedLabels.filter((item) => !(item.labelset === labelset && item.label === label))
-      : [...labels.annotatedLabels, { labelset, label }];
+      : [...labels.annotatedLabels, {labelset, label}];
     dispatch('labelsChange', newLabels);
   };
   const leave = () => {
@@ -63,29 +63,29 @@
   <div class="current-labels">
     {#each labels.annotatedLabels as label (label.labelset + label.label)}
       <span class="current-label">
-        <Label {label} removable on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)} />
+        <Label {label} removable on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)}/>
       </span>
     {/each}
   </div>
   <div class="labelsets">
-    {#each $labelsSets || [] as labelset}
-      <div class="labelset" on:mouseenter={() => enter(labelset[0])} on:mouseleave={leave}>
-        <button on:click={() => enter(labelset[0])}>
-          <span class="color" style:background-color={labelset[1].color} />
-          <span class="name">{labelset[1].title}</span>
-          <img src={`${getCDN()}icons/chevron-right.svg`} alt="close" />
+    {#each $labelSetList || [] as [labelSetId, labelSet]}
+      <div class="labelset" on:mouseenter={() => enter(labelSetId)} on:mouseleave={leave}>
+        <button on:click={() => enter(labelSetId)}>
+          <span class="color" style:background-color={labelSet.color}/>
+          <span class="name">{labelSet.title}</span>
+          <img src={`${getCDN()}icons/chevron-right.svg`} alt="close"/>
         </button>
-        <div class="labels" class:open={openLabelset === labelset[0]}>
-          {#each labelset[1].labels as label, i}
+        <div class="labels" class:open={openLabelset === labelSetId}>
+          {#each labelSet.labels as label, i}
             <div class="label">
               <input
-                id={`${labelset[0]}-${i}`}
+                id={`${labelSetId}-${i}`}
                 type="checkbox"
-                bind:checked={selected[`${labelset[0]}-${label.title}`]}
-                on:change={() => toggleLabel(labelset[0], label.title) }
-                disabled={$savingLabels || readOnly[`${labelset[0]}-${label.title}`]}
+                bind:checked={selected[`${labelSetId}-${label.title}`]}
+                on:change={() => toggleLabel(labelSetId, label.title) }
+                disabled={$savingLabels || readOnly[`${labelSetId}-${label.title}`]}
               />
-              <label for={`${labelset[0]}-${i}`}>{label.title}</label>
+              <label for={`${labelSetId}-${i}`}>{label.title}</label>
             </div>
           {/each}
         </div>
