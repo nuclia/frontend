@@ -6,19 +6,25 @@ import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
 import { predict } from '../tensor';
 
+const subscriptions: Subscription[] = [];
+
+export function unsubscribeAllEffects() {
+  subscriptions.forEach((subscription) => subscription.unsubscribe());
+}
+
 /**
  * Initialise label sets in the store
  */
 export function activateEditLabelsFeature() {
+  // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
   getLabelSets().subscribe((labelSetMap) => labelSets.set(labelSetMap));
 }
 
 /**
  * Subscribe to type ahead, call suggest and predict with the query and set suggestions in the state accordingly.
- * Returns a Subscription: don't forget to unsubscribe from it on destroy.
  */
-export function activateTypeAheadSuggestions(): Subscription {
-  return merge(
+export function activateTypeAheadSuggestions() {
+  const subscription = merge(
     // Trigger suggestion when hitting space between words
     typeAhead.pipe(filter((query) => query.slice(-1) === ' ' && query.slice(-2, -1) !== ' ')),
     // Trigger suggestion after 350ms of inactivity
@@ -43,4 +49,6 @@ export function activateTypeAheadSuggestions(): Subscription {
       }),
     )
     .subscribe((suggestionList) => suggestions.set(suggestionList));
+
+  subscriptions.push(subscription);
 }
