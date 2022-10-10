@@ -23,6 +23,7 @@
   import { resource } from '../../core/stores/resource.store';
   import { canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
   import { activateEditLabelsFeature, activateTypeAheadSuggestions } from '../../core/stores/effects';
+  import { Subscription } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -89,34 +90,37 @@
 
     checkUrlParams();
 
-    const displayedResource$ = nucliaState().displayedResource.pipe(
-      filter((displayedResource) => !!displayedResource?.uid),
-      concatMap((displayedResource) => getResource(displayedResource.uid)),
-      tap((res: Resource) => resource.set(res)),
-    ).subscribe((res) => {
-      showModal = true;
-      if (permalinkEnabled) {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get(previewQueryKey) !== res.uuid) {
-          urlParams.set(previewQueryKey, res.uuid);
-          updateQueryParams(urlParams);
+    const subscriptions: Subscription[] = [
+      nucliaState().displayedResource.pipe(
+        filter((displayedResource) => !!displayedResource?.uid),
+        concatMap((displayedResource) => getResource(displayedResource.uid)),
+        tap((res: Resource) => resource.set(res)),
+      ).subscribe((res) => {
+        showModal = true;
+        if (permalinkEnabled) {
+          const urlParams = new URLSearchParams(window.location.search);
+          if (urlParams.get(previewQueryKey) !== res.uuid) {
+            urlParams.set(previewQueryKey, res.uuid);
+            updateQueryParams(urlParams);
+          }
         }
-      }
-    });
+      }),
+      canEditLabels.subscribe(canEditLabels => {
+        if (canEditLabels) {
+          activateEditLabelsFeature();
+        }
+      }),
+      activateTypeAheadSuggestions(),
+    ];
 
     setupTriggerSearch();
-    if ($canEditLabels) {
-      activateEditLabelsFeature();
-    }
-    const typeAheadSubscription = activateTypeAheadSuggestions();
 
     ready = true;
 
     return () => {
       resetStore();
       resetNuclia();
-      displayedResource$.unsubscribe();
-      typeAheadSubscription.unsubscribe();
+      subscriptions.forEach(subscription => subscription.unsubscribe());
     };
   });
 
