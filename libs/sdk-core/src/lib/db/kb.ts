@@ -1,4 +1,15 @@
 import { catchError, map, Observable, of } from 'rxjs';
+import type {
+  Entities,
+  EntitiesGroup,
+  EventList,
+  EventType,
+  IKnowledgeBox,
+  LabelSet,
+  LabelSets,
+  Widget,
+  Widgets,
+} from './kb.models';
 import {
   Counters,
   ExtractedDataTypes,
@@ -11,21 +22,10 @@ import {
   ServiceAccountCreation,
 } from './kb.models';
 import type { INuclia } from '../models';
-import type {
-  IKnowledgeBox,
-  Widget,
-  Widgets,
-  Entities,
-  EntitiesGroup,
-  LabelSet,
-  Labels,
-  EventList,
-  EventType,
-} from './kb.models';
 import { Resource } from './resource';
 import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
-import { upload, batchUpload, FileWithMetadata, FileMetadata, UploadStatus } from './upload';
 import type { UploadResponse } from './upload';
+import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
 import type { Search, SearchOptions } from './search.models';
 import { Training } from './training';
 import { search } from './search';
@@ -58,9 +58,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<EntitiesGroup>(`${this.path}/entitiesgroup/${groupId}`);
   }
 
-  getLabels(): Observable<Labels> {
+  getLabels(): Observable<LabelSets> {
     return this.nuclia.rest
-      .get<{ labelsets?: { labelset: Labels } }>(`${this.path}/labelsets`)
+      .get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`)
       .pipe(map((res) => res?.labelsets || {}));
   }
   getResource(

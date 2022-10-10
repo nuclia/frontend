@@ -3,15 +3,15 @@ import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { environment } from '../environments/environment';
 import {
-  IKnowledgeBox,
   Entities,
-  Labels,
-  Widgets,
+  ExtractedDataTypes,
+  FIELD_TYPE,
+  IKnowledgeBox,
+  LabelSets,
   Resource,
   ResourceProperties,
-  ExtractedDataTypes,
+  Widgets,
   WritableKnowledgeBox,
-  FIELD_TYPE,
 } from '@nuclia/core';
 import { MyService } from './service';
 import { forkJoin, Observable } from 'rxjs';
@@ -40,7 +40,7 @@ export class WithCredentialsComponent {
   currentKb?: WritableKnowledgeBox;
   widgets: Widgets | {} = {};
   entities: Entities | {} = {};
-  labels: Labels | {} = {};
+  labels: LabelSets | {} = {};
   newTitle = '';
   newLink = '';
   newBody = '';

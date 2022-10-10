@@ -14,7 +14,7 @@ import {
   switchMap,
   tap,
 } from 'rxjs';
-import type { IResource, Labels, Search, SearchOptions } from '@nuclia/core';
+import type { IResource, LabelSets, Search, SearchOptions } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
@@ -23,7 +23,7 @@ type NucliaStore = {
   triggerSearch: Subject<void>;
   hasSearchError: ReplaySubject<boolean>;
   displayedResource: BehaviorSubject<DisplayedResource>;
-  labels: Subject<Labels>;
+  labels: Subject<LabelSets>;
 };
 let _store: NucliaStore | undefined;
 
@@ -36,7 +36,7 @@ let _state: {
   displayedResource: Observable<DisplayedResource>;
   getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
   getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
-  labels: Observable<Labels>;
+  labels: Observable<LabelSets>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -48,7 +48,7 @@ export const nucliaStore = (): NucliaStore => {
       triggerSearch: new Subject(),
       hasSearchError: new ReplaySubject(1),
       displayedResource: new BehaviorSubject({ uid: '' }),
-      labels: new Subject<Labels>(),
+      labels: new Subject<LabelSets>(),
     };
     _state = {
       query: _store.query.asObservable().pipe(

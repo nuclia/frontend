@@ -64,7 +64,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
 
-  getLabels(): Observable<Labels>;
+  getLabels(): Observable<LabelSets>;
 
   getResource(uuid: string): Observable<IResource>;
 
@@ -175,7 +175,7 @@ export interface LabelSet {
   labels: Label[];
 }
 
-export interface Labels {
+export interface LabelSets {
   [id: string]: LabelSet;
 }
 

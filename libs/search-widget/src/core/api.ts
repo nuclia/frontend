@@ -2,7 +2,7 @@ import type {
   Classification,
   Entity,
   KBStates,
-  Labels,
+  LabelSets,
   NucliaOptions,
   SearchOptions,
   TokenAnnotation,
@@ -111,7 +111,7 @@ export const loadEntities = (): Observable<EntityGroup[]> => {
   );
 };
 
-export const getLabels = (): Observable<Labels> => {
+export const getLabels = (): Observable<LabelSets> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }

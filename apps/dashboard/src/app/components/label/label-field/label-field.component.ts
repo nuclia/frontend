@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { Labels, LabelSet, LabelSetKind, LabelValue } from '@nuclia/core';
+import { LabelSet, LabelSetKind, LabelSets, LabelValue } from '@nuclia/core';
 import { map, tap } from 'rxjs';
 import { LabelsService } from '../../../services/labels.service';
 import { PopupComponent } from '@guillotinaweb/pastanaga-angular';
@@ -32,7 +32,7 @@ export class LabelFieldComponent {
   hasLabels = this.labelSets$.pipe(map((labels) => labels && Object.keys(labels).length > 0));
   open: boolean = false;
 
-  private _labelSets: Labels | null = {};
+  private _labelSets: LabelSets | null = {};
   labelSetExpanded = '';
   labelValues: LabelValue[] = [];
 

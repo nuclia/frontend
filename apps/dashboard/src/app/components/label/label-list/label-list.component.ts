@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { Labels, LabelValue } from '@nuclia/core';
+import { LabelSets, LabelValue } from '@nuclia/core';
 
 @Component({
   selector: 'app-label-list',
@@ -8,7 +8,7 @@ import { Labels, LabelValue } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelListComponent {
-  @Input() labelSets: Labels = {};
+  @Input() labelSets: LabelSets = {};
   @Input() labelSelection: LabelValue[] = [];
 
   @Output() labelSelectionChange: EventEmitter<LabelValue[]> = new EventEmitter<LabelValue[]>();

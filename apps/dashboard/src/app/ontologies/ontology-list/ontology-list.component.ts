@@ -1,10 +1,10 @@
-import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { KeyValue } from '@angular/common';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { LabelsService } from '../../services/labels.service';
-import { isLabelMainColor, getLabelColors } from '../utils';
-import { Labels, LabelSet } from '@nuclia/core';
+import { getLabelColors, isLabelMainColor } from '../utils';
+import { LabelSet, LabelSets } from '@nuclia/core';
 
 @Component({
   selector: 'app-ontology-list',
@@ -14,7 +14,7 @@ import { Labels, LabelSet } from '@nuclia/core';
 })
 export class OntologyListComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
-  labelSets?: Labels;
+  labelSets?: LabelSets;
 
   constructor(private labelsService: LabelsService, private cdr: ChangeDetectorRef) {
     this.labelsService.labels
