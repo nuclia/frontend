@@ -17,7 +17,12 @@ const MENU_TYPES = [
   {
     name: 'YOUTUBE',
     options: {
-      documentUrlPatterns: ['https://www.youtube.com/channel/*', 'https://www.youtube.com/playlist?list=*'],
+      documentUrlPatterns: [
+        'https://www.youtube.com/channel/*',
+        'https://www.youtube.com/c/*',
+        'https://www.youtube.com/user/*',
+        'https://www.youtube.com/playlist?list=*',
+      ],
       contexts: ['page'],
     },
   },
@@ -100,7 +105,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
           if (isYoutubeVideoUrl(url)) {
             uploadSingleLink(settings, url, labels);
           } else if (isYoutubeChannelUrl(url)) {
-            settings.YOUTUBE_KEY ? getChannelVideos(settings, getChannelId(url), labels) : openOptionsPage();
+            settings.YOUTUBE_KEY ? getChannelVideos(settings, url, labels) : openOptionsPage();
           } else if (isYoutubePlaylistUrl(url)) {
             settings.YOUTUBE_KEY ? getPlaylistVideos(settings, getPlaylistId(url), labels) : openOptionsPage();
           } else {
@@ -114,7 +119,7 @@ chrome.contextMenus.onClicked.addListener((info) => {
         const url = info.pageUrl;
         if (isYoutubeUrl(url) && settings.YOUTUBE_KEY) {
           if (isYoutubeChannelUrl(url)) {
-            getChannelVideos(settings, getChannelId(url), labels);
+            getChannelVideos(settings, url, labels);
           } else if (isYoutubePlaylistUrl(url)) {
             getPlaylistVideos(settings, getPlaylistId(url), labels);
           }
@@ -158,10 +163,13 @@ function uploadLink(settings, url, labels) {
     .pipe(rxjs.switchMap((kb) => kb.createLinkResource({ uri: url }, { classifications: labels })));
 }
 
-function getChannelVideos(settings, channelId, labels) {
-  loadPaginated(
-    `https://www.googleapis.com/youtube/v3/search?key=${settings.YOUTUBE_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=50`,
-  )
+function getChannelVideos(settings, channelUrl, labels) {
+  getYoutubeChannelId(settings.YOUTUBE_KEY, channelUrl)
+    .then((channelId) =>
+      loadPaginated(
+        `https://www.googleapis.com/youtube/v3/search?key=${settings.YOUTUBE_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=50`,
+      ),
+    )
     .then((items) =>
       items
         .filter((video) => video.id.kind === 'youtube#video')
@@ -239,7 +247,7 @@ function showNotification(title, message, error = false) {
     type: 'basic',
     title: title,
     message: message,
-    iconUrl: error ? 'icons/error.png' :  'icons/icon128.png',
+    iconUrl: error ? 'icons/error.png' : 'icons/icon128.png',
     priority: 2,
   });
 }
