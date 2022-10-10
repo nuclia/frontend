@@ -30,7 +30,6 @@
 
 
   onMount(() => {
-    element.focus();
     setInputPosition();
   });
 
