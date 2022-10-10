@@ -1,4 +1,4 @@
-import { writableSubject } from './svelte-writable-subject';
+import { writableSubject } from '../state-lib';
 import { map, Observable } from 'rxjs';
 import type { WidgetAction } from '../models';
 import type { Widget } from '@nuclia/core';

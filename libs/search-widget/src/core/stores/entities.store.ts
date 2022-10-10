@@ -1,4 +1,4 @@
-import { writableSubject } from './svelte-writable-subject';
+import { writableSubject } from '../state-lib';
 import type { EntityGroup } from '../models';
 import { resource } from './resource.store';
 import type { Observable } from 'rxjs';

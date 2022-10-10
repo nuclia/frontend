@@ -1,7 +1,7 @@
 import type { Resource, TokenAnnotation } from '@nuclia/core';
 import type { WidgetParagraph } from '../models';
 import { getParagraphId } from '../old-stores/viewer.store';
-import { writableSubject } from './svelte-writable-subject';
+import { writableSubject } from '../state-lib';
 import { map } from 'rxjs';
 
 export type Annotation = {

@@ -1,4 +1,4 @@
-import { writableSubject } from './svelte-writable-subject';
+import { writableSubject } from '../state-lib';
 import type { CloudLink, LinkFieldData, Resource } from '@nuclia/core';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { getFileUrls } from '../api';

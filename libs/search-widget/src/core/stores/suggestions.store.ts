@@ -1,4 +1,4 @@
-import { writableSubject } from './svelte-writable-subject';
+import { writableSubject } from '../state-lib';
 import type { Classification, Search } from '@nuclia/core';
 import type { Intents } from '../models';
 import { NO_RESULTS } from '../models';
