@@ -22,8 +22,7 @@
   import globalCss from '../../common/_global.scss';
   import { resource } from '../../core/stores/resource.store';
   import { canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
-  import { enableSuggestion } from '../../core/stores/suggestions.store';
-  import { activateEditLabelsFeature } from '../../core/stores/effects';
+  import { activateEditLabelsFeature, activateTypeAheadSuggestions } from '../../core/stores/effects';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -105,12 +104,11 @@
       }
     });
 
-    enableSuggestion();
     setupTriggerSearch();
-
     if ($canEditLabels) {
       activateEditLabelsFeature();
     }
+    const typeAheadSubscription = activateTypeAheadSuggestions();
 
     ready = true;
 
@@ -118,6 +116,7 @@
       resetStore();
       resetNuclia();
       displayedResource$.unsubscribe();
+      typeAheadSubscription.unsubscribe();
     };
   });
 

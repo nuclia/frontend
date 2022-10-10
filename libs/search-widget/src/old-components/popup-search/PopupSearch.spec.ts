@@ -2,7 +2,6 @@ import PopupSearch from './PopupSearch.svelte';
 import { fireEvent, render } from '@testing-library/svelte';
 import { firstValueFrom, of } from 'rxjs';
 import type { IResource, Search } from '@nuclia/core';
-import { suggestionEnabled } from '../../core/stores/suggestions.store';
 import { nucliaStore } from '../../core/old-stores/main.store';
 import { shouldEmitQuery } from '../search-input/SearchInput.spec';
 
@@ -31,7 +30,6 @@ describe('Popup search', () => {
 
   it('should display suggestions', async () => {
     const { container } = render(PopupSearch);
-    suggestionEnabled.set(true);
     const input = container.querySelector('input');
     await shouldEmitQuery(input);
   });

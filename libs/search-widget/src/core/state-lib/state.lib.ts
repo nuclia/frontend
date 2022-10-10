@@ -1,6 +1,10 @@
 import { BehaviorSubject, map, Observable } from 'rxjs';
 
-export interface SvelteWritableObservable<U, V = U> extends Observable<U> {
+export interface ReadableObservable<U> extends Observable<U> {
+  getValue(): U;
+}
+
+export interface SvelteWritableObservable<U, V = U> extends ReadableObservable<U> {
   set(value: V): void;
 }
 
@@ -11,8 +15,10 @@ export class SvelteState<STATE> {
     this.store = new BehaviorSubject(value);
   }
 
-  reader<U>(selectFn: (state: STATE) => U): Observable<U> {
-    return this.store.asObservable().pipe(map(selectFn));
+  reader<U>(selectFn: (state: STATE) => U): ReadableObservable<U> {
+    const obs = this.store.asObservable().pipe(map(selectFn)) as ReadableObservable<U>;
+    obs.getValue = () => selectFn(this.store.getValue());
+    return obs;
   }
 
   writer<U, V = U>(
