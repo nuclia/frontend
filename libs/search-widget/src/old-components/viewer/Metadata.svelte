@@ -23,7 +23,8 @@
     summaries,
   } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
-  import Label from "../../common/label/Label.svelte";
+  import Label from '../../common/label/Label.svelte';
+  import { searchBy } from '../../common/label/label.utils';
 
   let entitiesBackup: string;
   let customEntitiesBackup;
@@ -68,6 +69,7 @@
     annotationMode.set(false);
     selectedFamily.set('');
   };
+
 </script>
 
 <div class="sw-metadata" class:annotation-mode={$annotationMode}>
@@ -137,7 +139,7 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <Label {label}/>
+              <Label {label} clickable on:selected={() => searchBy(label)}/>
             {/each}
           </div>
         </div>

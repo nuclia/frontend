@@ -24,6 +24,7 @@
   import { canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
   import { activateEditLabelsFeature, activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { Subscription } from 'rxjs';
+  import { isViewerOpen } from '../../core/stores/modal.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -55,7 +56,6 @@
   export const setActions = setWidgetActions;
 
   let style: string;
-  let showModal = false;
   let ready = false;
   const previewQueryKey = formatQueryKey('preview');
 
@@ -96,7 +96,7 @@
         concatMap((displayedResource) => getResource(displayedResource.uid)),
         tap((res: Resource) => resource.set(res)),
       ).subscribe((res) => {
-        showModal = true;
+        isViewerOpen.set(true);
         if (permalinkEnabled) {
           const urlParams = new URLSearchParams(window.location.search);
           if (urlParams.get(previewQueryKey) !== res.uuid) {
@@ -126,7 +126,7 @@
   });
 
   const closeModal = () => {
-    showModal = false;
+    isViewerOpen.set(false);
     setDisplayedResource({uid: ''});
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get(previewQueryKey)) {
@@ -155,7 +155,7 @@
     {:else}
       {type} widget is not implemented yet
     {/if}
-    <Modal show={showModal}
+    <Modal show={$isViewerOpen}
            on:close={closeModal}
            closeButton={true}
            --modal-width="var(--resource-modal-width)"

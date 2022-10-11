@@ -4,7 +4,8 @@
   import { nucliaState, setDisplayedResource } from '../../core/old-stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
-  import Label from "../../common/label/Label.svelte";
+  import Label from '../../common/label/Label.svelte';
+  import { searchBy } from '../../common/label/label.utils';
 
   export let displayThumbnail = true;
   export let formWidget = false;
@@ -66,7 +67,7 @@
         </div>
         <div class="labels">
           {#each labels.slice(0, 4) as label}
-            <Label {label}/>
+            <Label {label} clickable on:selected={() => searchBy(label)}/>
           {/each}
           {#if labels.length > 4}
             <div class="label">+</div>

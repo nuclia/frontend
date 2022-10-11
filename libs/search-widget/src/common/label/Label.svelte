@@ -26,11 +26,19 @@
   const remove = () => {
     dispatch('remove');
   };
+  const onClick = (event: MouseEvent | KeyboardEvent) => {
+    if (clickable) {
+      event.preventDefault();
+      event.stopPropagation();
+      dispatch('selected');
+    }
+  }
 </script>
 
 <div class="sw-label" style:background-color={$color}>
   <span style:color={setColor ? $color : ''}
-        class:clickable>{label.label}</span>
+        class:clickable
+        on:click={onClick}>{label.label}</span>
   {#if removable}
     <div class="close-icon"
          aria-label="Delete"

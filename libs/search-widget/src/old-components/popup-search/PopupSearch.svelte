@@ -3,24 +3,25 @@
   import { nucliaState } from '../../core/old-stores/main.store';
   import Results from '../results/Results.svelte';
   import SearchInput from '../search-input/SearchInput.svelte';
+  import { isPopupSearchOpen } from '../../core/stores/modal.store';
 
   export let placeholder = '';
 
-  let showModal = false;
   let inputElement;
 
-  const openResults = () => {
-    showModal = true;
-  };
   const results = nucliaState().results;
 </script>
 
 <div class="sw-popup-search">
   <div bind:this={inputElement}>
-    <SearchInput on:search={openResults} popupSearch={true} {placeholder} />
+    <SearchInput popupSearch={true}
+                 {placeholder}
+                 on:search={() => isPopupSearchOpen.set(true)}/>
   </div>
 
-  <Modal show={showModal} on:close={() => (showModal = false)} closeButton={true}>
+  <Modal show={$isPopupSearchOpen}
+         closeButton={true}
+         on:close={() => (isPopupSearchOpen.set(false))}>
     <div class="results">
       <Results results={$results} />
     </div>
