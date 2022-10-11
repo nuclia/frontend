@@ -23,6 +23,7 @@
     summaries,
   } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
+  import Label from "../../common/label/Label.svelte";
 
   let entitiesBackup: string;
   let customEntitiesBackup;
@@ -136,7 +137,7 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <div class="label">{label.label}</div>
+              <Label {label}/>
             {/each}
           </div>
         </div>

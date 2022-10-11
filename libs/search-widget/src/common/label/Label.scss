@@ -1,24 +1,30 @@
 .sw-label {
-  display: inline-flex;
-  padding: 0 0.5em;
-  font-size: 0.75em;
-  line-height: 1.25;
-  white-space: nowrap;
+  align-items: center;
   border-radius: 1px;
-  max-width: 100%;
   box-sizing: border-box;
+  display: inline-flex;
+  font-size: 0.75em;
+  gap: var(--rhythm-1);
+  line-height: 1.25;
+  max-width: 100%;
+  padding: var(--rhythm-0_25) var(--rhythm-0_5);
+  white-space: nowrap;
 
   span {
     flex: 1 1 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     filter: saturate(100) brightness(80%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &.clickable {
+      cursor: pointer;
+    }
   }
-  img {
-    flex: 0 0 auto;
-    margin-left: 0.5em;
-    width: 14px;
+  .close-icon {
+    align-items: center;
     cursor: pointer;
+    display: flex;
+    flex: 0 0 auto;
   }
 }

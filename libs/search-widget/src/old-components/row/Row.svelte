@@ -4,6 +4,7 @@
   import { nucliaState, setDisplayedResource } from '../../core/old-stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
+  import Label from "../../common/label/Label.svelte";
 
   export let displayThumbnail = true;
   export let formWidget = false;
@@ -11,8 +12,7 @@
   export let semantic = false;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
   const sentences = nucliaState().getMatchingSentences(result.id);
-  let labels: string[];
-  $: labels = (result.usermetadata?.classifications || []).map((label) => label.label);
+  $: labels = (result.usermetadata?.classifications || []);
 </script>
 
 <div
@@ -66,7 +66,7 @@
         </div>
         <div class="labels">
           {#each labels.slice(0, 4) as label}
-            <div class="label">{label}</div>
+            <Label {label}/>
           {/each}
           {#if labels.length > 4}
             <div class="label">+</div>
