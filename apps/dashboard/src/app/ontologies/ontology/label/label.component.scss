@@ -28,6 +28,10 @@
     border-bottom: 1px solid $color-dark-stronger;
     font-family: inherit;
     padding: rhythm(0.25) rhythm(0.25);
+
+    &:invalid {
+      border: $color-secondary-regular solid 1px;
+    }
   }
 
   &-actions {

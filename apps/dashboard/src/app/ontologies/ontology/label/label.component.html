@@ -26,13 +26,15 @@
 
 <div class="label" *ngIf="editMode" cdkTrapFocus [cdkTrapFocusAutoCapture]="true">
   <div class="label-content">
-    <input
-      type="text"
-      [formControl]="title"
-      cdkFocusInitial
-      (keydown.enter)="title.valid ? save() : null"
-      (mousedown)="preventDragAndDrop($event)"
+    <input type="text"
+           pattern="[^/\{\}]+"
+           [formControl]="title"
+           cdkFocusInitial
+           [title]="'ontology.label_naming_constraint' | translate"
+           (keydown.enter)="title.valid ? save() : null"
+           (mousedown)="preventDragAndDrop($event)"
     />
+    <span class="validity"></span>
   </div>
   <div class="label-actions">
     <pa-button aspect="basic"

@@ -110,6 +110,11 @@
           activateEditLabelsFeature();
         }
       }),
+      isViewerOpen.subscribe(isOpen => {
+        if (!isOpen) {
+          closeModal();
+        }
+      })
     ];
     activateTypeAheadSuggestions();
 
@@ -126,7 +131,6 @@
   });
 
   const closeModal = () => {
-    isViewerOpen.set(false);
     setDisplayedResource({uid: ''});
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get(previewQueryKey)) {
@@ -156,7 +160,7 @@
       {type} widget is not implemented yet
     {/if}
     <Modal show={$isViewerOpen}
-           on:close={closeModal}
+           on:close={() => isViewerOpen.set(false)}
            closeButton={true}
            --modal-width="var(--resource-modal-width)"
            --modal-width-md="var(--resource-modal-width-md)"
