@@ -278,7 +278,7 @@
 	"ontology.duplicated_label": "Ja existeix una etiqueta amb el nom \"{{title}}\"",
 	"ontology.excluding_labels": "TODO",
 	"ontology.invalid_name": "El nom de l'etiqueta no és vàlid",
-	"ontology.label_naming_constraint": "No s'accepten claudàtors",
+	"ontology.label_naming_constraint": "No s'accepten claus",
 	"ontology.manage_labels": "Creeu i ordeneu les etiquetes que formen part d'aquest conjunt d'etiquetes.",
 	"ontology.ontology_name": "Nom de la família d'etiquetes",
 	"ontology.paragraphs": "Paràgrafs",
