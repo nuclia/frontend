@@ -139,7 +139,7 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <Label {label} clickable on:selected={() => searchBy(label)}/>
+              <Label {label} clickable on:click={() => searchBy(label)}/>
             {/each}
           </div>
         </div>

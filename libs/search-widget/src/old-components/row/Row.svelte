@@ -67,7 +67,7 @@
         </div>
         <div class="labels">
           {#each labels.slice(0, 4) as label}
-            <Label {label} clickable on:selected={() => searchBy(label)}/>
+            <Label {label} clickable on:click={() => searchBy(label)}/>
           {/each}
           {#if labels.length > 4}
             <div class="label">+</div>

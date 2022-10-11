@@ -16,7 +16,7 @@
       <div class="labels">
         {#each allLabels as label (label.labelset + label.label)}
           <div class="label">
-            <Label {label} clickable on:selected={() => searchBy(label)}/>
+            <Label {label} clickable on:click={() => searchBy(label)}/>
           </div>
         {/each}
       </div>

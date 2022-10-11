@@ -31,7 +31,7 @@
     if (clickable) {
       event.preventDefault();
       event.stopPropagation();
-      dispatch('selected');
+      dispatch('click');
     }
   }
 </script>
