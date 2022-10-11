@@ -14,6 +14,7 @@
   const color = labelSets.pipe(
     map((labelSet) => labelSet[label.labelset]?.color),
     tap((color: string) => {
+      // When label color is #CCCED6, the CSS filter applied renders the text as bluish instead of black, so we keep the default dark color instead.
       if (color === '#CCCED6') {
         setColor = false;
       }
