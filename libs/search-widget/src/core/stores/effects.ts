@@ -5,6 +5,7 @@ import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, of, S
 import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
 import { predict } from '../tensor';
+import { typingLabelRegexp } from '../../common/label/label.utils';
 
 const subscriptions: Subscription[] = [];
 
@@ -31,10 +32,12 @@ export function activateTypeAheadSuggestions() {
     typeAhead.pipe(debounceTime(350)),
   )
     .pipe(
+      // trim and remove LABEL filter if any
+      map((query) => query.replace(typingLabelRegexp, '').trim()),
       // Don't trigger suggestion after inactivity if only spaces were added at the end of the query
-      distinctUntilChanged((previous, current) => previous.trim() === current.trim()),
+      distinctUntilChanged((previous, current) => previous === current),
       switchMap((query) => {
-        if (!query || !query.trim() || query.trim().length <= 2) {
+        if (!query || query.length <= 2) {
           return of({
             results: NO_RESULTS,
             intents: {},
