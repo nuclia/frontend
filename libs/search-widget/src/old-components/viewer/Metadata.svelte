@@ -11,7 +11,7 @@
   import { onDestroy } from 'svelte';
   import {
     annotationMode,
-    annotations, entityAnnotationFeatureEnabled,
+    annotations,
     selectedFamily,
   } from '../../core/stores/annotation.store';
   import {
@@ -23,12 +23,13 @@
     summaries,
   } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
-  import ConfirmDialog from "../../common/modal/ConfirmDialog.svelte";
+  import { canAnnotateEntities } from '../../core/stores/widget.store';
+  import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
 
   let entitiesBackup: string;
   let customEntitiesBackup;
 
-  const isSafari = navigator.userAgent.includes('Safari');
+  const isSafari = navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
   let showSafariModal = false;
 
   onDestroy(() => {
@@ -82,7 +83,7 @@
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
 
-      {#if $entityAnnotationFeatureEnabled}
+      {#if $canAnnotateEntities}
         {#if !$annotationMode}
           <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
             {$_('entities.annotations')}

@@ -13,7 +13,6 @@ export type Annotation = {
   paragraphStart: number;
 };
 
-export const entityAnnotationFeatureEnabled = writableSubject(false);
 export const annotationMode = writableSubject(false);
 export const selectedFamily = writableSubject('');
 export const annotations = writableSubject<Annotation[]>([]);
