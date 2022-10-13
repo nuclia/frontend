@@ -22,3 +22,8 @@ export const canEditLabels = searchWidget.pipe(
   filter((widget) => !!widget),
   map((widget) => (widget as Widget).features.editLabels),
 );
+
+export const canAnnotateEntities = searchWidget.pipe(
+  filter((widget) => !!widget),
+  map((widget) => (widget as Widget).features.entityAnnotation),
+);

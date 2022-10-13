@@ -195,6 +195,7 @@ export interface Widget {
     suggestParagraphs: boolean;
     suggestLabels: boolean;
     editLabels: boolean;
+    entityAnnotation: boolean;
   };
   filters?: string[];
   topEntities?: string[];

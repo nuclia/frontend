@@ -37,6 +37,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     features: this.fb.group({
       suggestLabels: [false],
       editLabels: [false],
+      entityAnnotation: [false],
     }),
     style: this.styleForm,
   });
