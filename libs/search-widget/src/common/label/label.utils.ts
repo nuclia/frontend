@@ -3,8 +3,8 @@ import { isViewerOpen } from '../../core/stores/modal.store';
 import { nucliaStore } from '../../core/old-stores/main.store';
 import { typeAhead } from '../../core/stores/suggestions.store';
 
-export const labelRegexp = new RegExp(/LABEL=\{([^/]+\/[^}]+)}/);
-export const typingLabelRegexp = new RegExp(/LABEL=?\{?[^}]*}?/);
+export const labelRegexp = new RegExp(/LABEL=\{([^/]+\/[^}]+)}/, 'g');
+export const typingLabelRegexp = new RegExp(/LABEL=?\{?[^}]*}?/, 'g');
 
 export function searchBy(label: Classification) {
   isViewerOpen.set(false);

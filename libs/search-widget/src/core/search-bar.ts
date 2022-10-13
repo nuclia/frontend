@@ -14,13 +14,17 @@ export const setupTriggerSearch = (): void => {
       switchMap((query) =>
         nucliaStore().searchOptions.pipe(
           map((options) => {
-            let decodedQuery = query;
-            const match = labelRegexp.exec(query);
-            if (match && match[1]) {
-              options.filters = [`/l/${match[1]}`];
-              decodedQuery = query.replace(labelRegexp, '');
+            let match;
+            const currentOptions = { ...options };
+            while ((match = labelRegexp.exec(query))) {
+              if (!currentOptions.filters) {
+                currentOptions.filters = [`/l/${match[1]}`];
+              } else {
+                currentOptions.filters.push(`/l/${match[1]}`);
+              }
             }
-            return { query: decodedQuery, options };
+            const cleanQuery = query.replace(labelRegexp, '').trim();
+            return { query: cleanQuery, options: currentOptions };
           }),
         ),
       ),
