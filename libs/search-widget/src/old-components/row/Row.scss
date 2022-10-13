@@ -18,6 +18,8 @@
   }
 
   .labels {
+    display: flex;
+    gap: var(--rhythm-1);
     margin-top: 0.5em;
   }
 

@@ -23,6 +23,8 @@
     summaries,
   } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
+  import Label from '../../common/label/Label.svelte';
+  import { searchBy } from '../../common/label/label.utils';
   import { canAnnotateEntities } from '../../core/stores/widget.store';
   import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
 
@@ -76,6 +78,7 @@
     annotationMode.set(false);
     selectedFamily.set('');
   };
+
 </script>
 
 <div class="sw-metadata" class:annotation-mode={$annotationMode}>
@@ -147,7 +150,7 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <div class="label">{label.label}</div>
+              <Label {label} clickable on:click={() => searchBy(label)}/>
             {/each}
           </div>
         </div>

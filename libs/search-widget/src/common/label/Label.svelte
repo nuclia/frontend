@@ -1,27 +1,51 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { getCDN } from '../../core/utils';
   import type { Classification } from '@nuclia/core';
   import { map } from 'rxjs';
   import { labelSets } from '../../core/stores/labels.store';
+  import Icon from '../icons/Icon.svelte';
+  import { tap } from 'rxjs/operators';
 
   export let label: Classification;
+  export let clickable = false;
   export let removable = false;
 
+  let setColor = true;
   const color = labelSets.pipe(
     map((labelSet) => labelSet[label.labelset]?.color),
+    tap((color: string) => {
+      // When label color is #CCCED6, the CSS filter applied renders the text as bluish instead of black, so we keep the default dark color instead.
+      if (color === '#CCCED6') {
+        setColor = false;
+      }
+      return color;
+    })
   );
+
 
   const dispatch = createEventDispatcher();
   const remove = () => {
     dispatch('remove');
   };
+  const onClick = (event: MouseEvent | KeyboardEvent) => {
+    if (clickable) {
+      event.preventDefault();
+      event.stopPropagation();
+      dispatch('click');
+    }
+  }
 </script>
 
-<div class="sw-label" style:background-color={$color} style:color={$color}>
-  <span>{label.label}</span>
+<div class="sw-label" style:background-color={$color}>
+  <span style:color={setColor ? $color : ''}
+        class:clickable
+        on:click={onClick}>{label.label}</span>
   {#if removable}
-    <img on:click={remove} src={`${getCDN()}icons/circle-cross.svg`} alt="delete" />
+    <div class="close-icon"
+         aria-label="Delete"
+         on:click={remove}>
+      <Icon name="circle-cross" size="small"/>
+    </div>
   {/if}
 </div>
 
