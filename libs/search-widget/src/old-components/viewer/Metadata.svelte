@@ -23,10 +23,13 @@
     summaries,
   } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
-  import Modal from '../../common/modal/Modal.svelte';
+  import ConfirmDialog from "../../common/modal/ConfirmDialog.svelte";
 
   let entitiesBackup: string;
   let customEntitiesBackup;
+
+  const isSafari = navigator.userAgent.includes('Safari');
+  let showSafariModal = false;
 
   onDestroy(() => {
     closeAnnotationMode();
@@ -38,10 +41,14 @@
   };
 
   const setAnnotationMode = () => {
-    annotationMode.set(true);
-    // stringify entities as backup otherwise the backup will get same modifications as the stored ones
-    entitiesBackup = JSON.stringify(entityGroups.value);
-    customEntitiesBackup = JSON.stringify($annotations);
+    if (isSafari) {
+      showSafariModal = true;
+    } else {
+      annotationMode.set(true);
+      // stringify entities as backup otherwise the backup will get same modifications as the stored ones
+      entitiesBackup = JSON.stringify(entityGroups.value);
+      customEntitiesBackup = JSON.stringify($annotations);
+    }
   };
 
   const cancelAnnotationMode = () => {
@@ -167,6 +174,15 @@
       {/each}
     </div>
   {/if}
+
+  <ConfirmDialog show={showSafariModal}
+                 buttons={[{label: 'Ok', action: 'confirm'}]}
+                 closeable
+                 on:cancel={() => showSafariModal = false}
+                 on:confirm={() => showSafariModal = false}>
+    Entity annotation feature doesn't work on Safari yet. Please use Firefox or Chrome to use this feature.
+  </ConfirmDialog>
 </div>
+
 
 <style lang="scss" src="./Metadata.scss"></style>

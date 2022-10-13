@@ -53,7 +53,10 @@
 <svelte:window on:keydown={closeOnEsc}
                on:resize={setModalContentHeight}/>
 {#if show}
-  <div class="sw-modal-backdrop fade" class:popup class:align-right={alignTo === 'right'} on:click={outsideClick}>
+  <div class="sw-modal-backdrop fade"
+       class:visible={!popup}
+       class:popup
+       class:align-right={alignTo === 'right'} on:click={outsideClick}>
     <dialog
       class="modal"
       on:click={insideClick}

@@ -58,7 +58,7 @@
         apikey="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InNhIn0.eyJpc3MiOiJodHRwczovL3N0YXNoaWZ5LmNsb3VkLyIsImV4cCI6MTY5NjU4MTY4MiwiaWF0IjoxNjY1MDQ1NjgyLCJzdWIiOiI1MTM5ZGY1YS1lYjIxLTQ2MGItOTgzZi1hOWM4YTJiN2UwNmYiLCJqdGkiOiJhNDY0MTU3Yi05MTQyLTQxMmEtYjc2Yy1hY2EwNDhjMWY3NWIiLCJrZXkiOiI1NWE4NDNmMy03ZTU2LTRjMjYtYWU3Yi1mNGI2YjM2OTdkMGEiLCJraWQiOiIwNDA4MzFjNC04ODlmLTQ0M2EtOTI1Zi03MDI2Y2NjNGRiZTcifQ.qUDdb-a4Lv2t6ruO48x9YQqLFgUa8JeUXz5AxDmhz09ut6BGfY-rx7C5QnUcXJx6LWRFhQ5g3tTkJCRg7wrMsq4zehTyJZo4o6JdYnnVUcHgsmsh3h563ojQ8tEyn6xedzdvy5j84hXnhuFhb_k_BWwUzXUGZWEw5koBbROsrUEdudStWhdN8d1NdXGpTJ2uq-dmkofA3iVnSZNZerCQRCim3JGraUDzidvTQW1wyzBm7b1-CnJEJy9F0kjc6nNm1FA5r0958HF-Jv9PpIT0z7YcOVOayVHUc58iSEQjbubXoRXo0vycuYzSUXqs8sJLxgZYTVCRs8Y3FoLReHoYo7nnlupaKujrcZujO4vROOsZL6hGCmZdXibQ3Qc2O3RJaEEtzy7iL-uf9gexw47DymHk7erqCxB_5HQDuh9nAJBgZWK4mr3nfOxmTkAyG5c0sooUogunSYfR5xwq9KD_aSmKGqGzaNWUTJb7uFhbFRpnYczGr5lhoToQKp9T3W7_Psc_TiUeRiLMYVDNFSjM77N7AxcJ0wDx9We1F_qmex8_7Z7-9FJmRrOKi4TQrITEo-JZq59OBE314GEDGGmAoN92yjm9appmRo4w2PLTGmWc2ZxKHdWgvU-Vj4YKPl9Nl6a7CnO4mrM__tsQbLK0ZwToZF60Hq6-sPC6e5Jjq-c"
         cdn="/"
         backend="https://stashify.cloud/api"
-        widgetid="dashboard"
+        widgetid="label-annotation"
         type="input"
         permalink
         lang="en"
