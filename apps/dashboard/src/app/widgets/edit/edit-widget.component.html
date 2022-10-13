@@ -32,6 +32,7 @@
                 <pa-toggle *ngIf="isTrainingEnabled | async" formControlName="suggestLabels">
                   {{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
                 <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
+                <pa-toggle formControlName="entityAnnotation">{{ 'stash.widgets.entityAnnotation' | translate }}</pa-toggle>
               </div>
               <div *ngIf="mainForm.controls.mode.value === 'form'">
                 <pa-input [(value)]="placeholder" (valueChange)="onPlaceholderChange($event)">{{'stash.widgets.placeholder' | translate}}</pa-input>

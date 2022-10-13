@@ -504,6 +504,8 @@
 	"stash.valid_emails_label": "Correos electrónicos",
 	"stash.view_edit_service_access": "Visualiza / Edita los Service Access existentes",
 	"stash.widgets": "Widgets",
+	"stash.widgets.editLabels": "Editar etiquetas",
+	"stash.widgets.entityAnnotation": "Anotación de entidad",
 	"stats.get_started": "Empezar",
 	"stats.total.title": "Número total de recursos",
 	"tasks.credits.title": "Ciclos disponibles",

@@ -25,9 +25,14 @@
   import { entityGroups } from '../../core/stores/entities.store';
   import Label from '../../common/label/Label.svelte';
   import { searchBy } from '../../common/label/label.utils';
+  import { canAnnotateEntities } from '../../core/stores/widget.store';
+  import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
 
   let entitiesBackup: string;
   let customEntitiesBackup;
+
+  const isSafari = navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
+  let showSafariModal = false;
 
   onDestroy(() => {
     closeAnnotationMode();
@@ -39,10 +44,14 @@
   };
 
   const setAnnotationMode = () => {
-    annotationMode.set(true);
-    // stringify entities as backup otherwise the backup will get same modifications as the stored ones
-    entitiesBackup = JSON.stringify(entityGroups.value);
-    customEntitiesBackup = JSON.stringify($annotations);
+    if (isSafari) {
+      showSafariModal = true;
+    } else {
+      annotationMode.set(true);
+      // stringify entities as backup otherwise the backup will get same modifications as the stored ones
+      entitiesBackup = JSON.stringify(entityGroups.value);
+      customEntitiesBackup = JSON.stringify($annotations);
+    }
   };
 
   const cancelAnnotationMode = () => {
@@ -77,19 +86,21 @@
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
 
-      {#if !$annotationMode}
-        <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
-          {$_('entities.annotations')}
-        </Button>
-      {:else}
-        <div class="annotation-mode-buttons">
-          <Button aspect="solid" kind="inverted" on:click={cancelAnnotationMode}>
-            {$_('generic.cancel')}
+      {#if $canAnnotateEntities}
+        {#if !$annotationMode}
+          <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
+            {$_('entities.annotations')}
           </Button>
-          <Button aspect="solid" kind="primary" on:click={saveAnnotations}>
-            {$_('generic.save')}
-          </Button>
-        </div>
+        {:else}
+          <div class="annotation-mode-buttons">
+            <Button aspect="solid" kind="inverted" on:click={cancelAnnotationMode}>
+              {$_('generic.cancel')}
+            </Button>
+            <Button aspect="solid" kind="primary" on:click={saveAnnotations}>
+              {$_('generic.save')}
+            </Button>
+          </div>
+        {/if}
       {/if}
     </h2>
     <div class="entities">
@@ -167,6 +178,15 @@
       {/each}
     </div>
   {/if}
+
+  <ConfirmDialog show={showSafariModal}
+                 buttons={[{label: 'Ok', action: 'confirm'}]}
+                 closeable
+                 on:cancel={() => showSafariModal = false}
+                 on:confirm={() => showSafariModal = false}>
+    Entity annotation feature doesn't work on Safari yet. Please use Firefox or Chrome to use this feature.
+  </ConfirmDialog>
 </div>
+
 
 <style lang="scss" src="./Metadata.scss"></style>

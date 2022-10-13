@@ -57,7 +57,7 @@
         knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
         cdn="/"
         backend="https://stashify.cloud/api"
-        widgetid="dashboard"
+        widgetid="label-annotation"
         type="input"
         permalink
         lang="en"
