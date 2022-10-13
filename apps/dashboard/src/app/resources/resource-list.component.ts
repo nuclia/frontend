@@ -157,7 +157,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   get page(): number {
     const page = this.route.snapshot.queryParams.page;
-    return page ? parseInt(page, 10) : 1;
+    return page ? parseInt(page, 10) : this.resultsLength > 0 ? 1 : 0;
   }
 
   get totalPages(): number {
@@ -244,12 +244,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   getResources(): Observable<ResourceList> {
+    const page = this.page >= 1 ? this.page - 1 : 0;
     return of(1).pipe(
       tap(() => {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) => kb.listResources(this.page - 1, this.pageSize)),
+      switchMap((kb) => kb.listResources(page, this.pageSize)),
       tap((results) => {
         this.data = results.resources;
         this.clearSelected();
