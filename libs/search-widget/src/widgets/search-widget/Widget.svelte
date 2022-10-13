@@ -21,9 +21,10 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { resource } from '../../core/stores/resource.store';
-  import { canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
+  import { canAnnotateEntities, canEditLabels, customStyle, setWidgetActions } from '../../core/stores/widget.store';
   import { activateEditLabelsFeature, activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { Subscription } from 'rxjs';
+  import { entityAnnotationFeatureEnabled } from '../../core/stores/annotation.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -110,6 +111,7 @@
           activateEditLabelsFeature();
         }
       }),
+      canAnnotateEntities.subscribe(canAnnotate => entityAnnotationFeatureEnabled.set(canAnnotate))
     ];
     activateTypeAheadSuggestions();
 

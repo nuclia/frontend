@@ -11,7 +11,7 @@
   import { onDestroy } from 'svelte';
   import {
     annotationMode,
-    annotations,
+    annotations, entityAnnotationFeatureEnabled,
     selectedFamily,
   } from '../../core/stores/annotation.store';
   import {
@@ -23,6 +23,7 @@
     summaries,
   } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
+  import Modal from '../../common/modal/Modal.svelte';
 
   let entitiesBackup: string;
   let customEntitiesBackup;
@@ -74,19 +75,21 @@
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
 
-      {#if !$annotationMode}
-        <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
-          {$_('entities.annotations')}
-        </Button>
-      {:else}
-        <div class="annotation-mode-buttons">
-          <Button aspect="solid" kind="inverted" on:click={cancelAnnotationMode}>
-            {$_('generic.cancel')}
+      {#if $entityAnnotationFeatureEnabled}
+        {#if !$annotationMode}
+          <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
+            {$_('entities.annotations')}
           </Button>
-          <Button aspect="solid" kind="primary" on:click={saveAnnotations}>
-            {$_('generic.save')}
-          </Button>
-        </div>
+        {:else}
+          <div class="annotation-mode-buttons">
+            <Button aspect="solid" kind="inverted" on:click={cancelAnnotationMode}>
+              {$_('generic.cancel')}
+            </Button>
+            <Button aspect="solid" kind="primary" on:click={saveAnnotations}>
+              {$_('generic.save')}
+            </Button>
+          </div>
+        {/if}
       {/if}
     </h2>
     <div class="entities">

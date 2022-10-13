@@ -503,6 +503,8 @@
 	"stash.valid_emails_label": "Correus electrònics",
 	"stash.view_edit_service_access": "Visualitza / Edita els Service Access existents",
 	"stash.widgets": "Widgets",
+	"stash.widgets.editLabels": "Edita les etiquetes",
+	"stash.widgets.entityAnnotation": "Anotació de l'entitat",
 	"stats.get_started": "Començar",
 	"stats.total.title": "Nombre total de recursos",
 	"tasks.credits.title": "Cicles disponibles",
