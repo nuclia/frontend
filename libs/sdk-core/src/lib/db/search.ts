@@ -1,4 +1,4 @@
-import { catchError, of, map, tap } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 import type { INuclia } from '../models';
 import type { Search, SearchOptions } from './search.models';
 
@@ -12,8 +12,13 @@ export const search = (
   features: Search.Features[] | Search.ResourceFeatures[] = [],
   options?: SearchOptions,
 ) => {
+  if (!query && !hasFiltersOrFacets(options)) {
+    throw new Error('Search requires a query or some filters or some facets.');
+  }
   const params = new URLSearchParams();
-  params.append('query', query);
+  if (query) {
+    params.append('query', query);
+  }
   features.forEach((f) => params.append('features', f));
   const { inTitleOnly, ...others } = options || {};
   if (inTitleOnly) {
@@ -35,4 +40,8 @@ export const search = (
       }
     }),
   );
+};
+
+const hasFiltersOrFacets = (options?: SearchOptions): boolean => {
+  return (options?.filters || []).length > 0 || (options?.faceted || []).length > 0;
 };
