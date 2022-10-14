@@ -113,5 +113,5 @@ export interface ProcessingPullResponse {
 }
 
 export interface ProcessingStatusResponse {
-  last_delivered_seqid: number;
+  last_delivered_seqid: number | null;
 }

@@ -283,9 +283,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       this.statusTooltips[resource.id] = resource.metadata?.status ? resource.metadata.status.toLocaleLowerCase() : '';
     } else {
       this.sdk.nuclia.db.getProcessingStatus(this.stateService.getAccount()?.id).subscribe((status) => {
-        const count = resource.last_seqid - status.last_delivered_seqid;
-        const statusKey = count > 0 ? 'resource.status_pending' : 'resource.status_processing';
-        this.statusTooltips[resource.id] = this.translate.instant(statusKey, { count });
+        if (status.last_delivered_seqid) {
+          const count = resource.last_seqid - status.last_delivered_seqid;
+          const statusKey = count > 0 ? 'resource.status_pending' : 'resource.status_processing';
+          this.statusTooltips[resource.id] = this.translate.instant(statusKey, { count });
+        } else {
+          this.statusTooltips[resource.id] = this.translate.instant('resource.status_unknown');
+        }
         this.cdr.markForCheck();
       });
     }

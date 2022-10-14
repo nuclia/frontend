@@ -451,6 +451,7 @@
 	"resource.status": "Status",
 	"resource.status_pending": "{count} resources pending to be processed",
 	"resource.status_processing": "Processing in progress",
+	"resource.status_unknown": "No status available for this account processing queue yet",
 	"resource.summary": "Abstract",
 	"resource.summary.help": "Displayed as preview",
 	"resource.text": "Text",

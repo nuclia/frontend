@@ -384,6 +384,7 @@
 	"resource.status": "Estat",
 	"resource.status_pending": "{count} recursos pendents de processar",
 	"resource.status_processing": "Processament en curs",
+	"resource.status_unknown": "Encara no hi ha cap estat disponible per a aquesta cua de processament del compte",
 	"resource.summary": "Resum",
 	"resource.text": "Text",
 	"resource.textplaceholder": "Escriu aquí ",
