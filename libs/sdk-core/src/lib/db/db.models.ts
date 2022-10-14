@@ -72,7 +72,7 @@ export interface Welcome {
   preferences: WelcomeUser;
   accounts: string[];
   create: boolean;
-  dependant_accounts: { id: string, slug: string }[];
+  dependant_accounts: { id: string; slug: string }[];
 }
 
 export interface WelcomeUser {
@@ -110,4 +110,8 @@ export interface ProcessingPullResponse {
   status: string;
   payload?: string; // protobuf base64 encoded
   msgid?: string;
+}
+
+export interface ProcessingStatusResponse {
+  last_delivered_seqid: number;
 }

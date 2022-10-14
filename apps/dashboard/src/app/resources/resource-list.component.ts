@@ -6,7 +6,7 @@ import { forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
-import { SDKService, STFUtils } from '@flaps/core';
+import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 
 interface ListFilters {
@@ -42,6 +42,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
+  statusTooltips: { [resourceId: string]: string } = {};
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
@@ -71,6 +72,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
+    private stateService: StateService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -274,5 +276,18 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       const formatted = resourceToAlgoliaFormat(fullResource, this.sdk.nuclia.regionalBackend);
       STFUtils.downloadJson(formatted, `algolia_record.json`);
     });
+  }
+
+  getProcessingStatus(resource: Resource) {
+    if (resource.metadata?.status !== RESOURCE_STATUS.PENDING) {
+      this.statusTooltips[resource.id] = resource.metadata?.status ? resource.metadata.status.toLocaleLowerCase() : '';
+    } else {
+      this.sdk.nuclia.db.getProcessingStatus(this.stateService.getAccount()?.id).subscribe((status) => {
+        const count = resource.last_seqid - status.last_delivered_seqid;
+        const statusKey = count > 0 ? 'resource.status_pending' : 'resource.status_processing';
+        this.statusTooltips[resource.id] = this.translate.instant(statusKey, { count });
+        this.cdr.markForCheck();
+      });
+    }
   }
 }
