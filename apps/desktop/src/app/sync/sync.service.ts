@@ -34,6 +34,7 @@ import { Algolia } from './destinations/algolia';
 import { md5, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
 import { FolderConnector } from './sources/folder';
+import { S3Connector } from './sources/s3';
 import { ProcessingPullResponse } from '@nuclia/core';
 import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
 
@@ -66,6 +67,7 @@ export class SyncService {
     gdrive: { definition: GDrive, settings: environment.connectors.gdrive },
     dropbox: { definition: DropboxConnector, settings: environment.connectors.dropbox },
     folder: { definition: FolderConnector, settings: {} },
+    s3: { definition: S3Connector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
