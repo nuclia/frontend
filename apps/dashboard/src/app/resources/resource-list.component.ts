@@ -187,17 +187,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.cdr?.markForCheck();
   }
 
-  getCheckboxLabel(row?: Resource): string {
-    if (!row) {
-      return `${this.isAllSelected() ? 'select' : 'deselect'} all`;
-    }
-    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
-  }
-
-  getStatusIcon(status: RESOURCE_STATUS) {
-    return `assets/icons/status-${status.toLowerCase()}.svg`;
-  }
-
   setStatus(status: KeyValue) {
     this.applyFilter({
       status: status ? status.key : undefined,
@@ -255,6 +244,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       switchMap((kb) => kb.listResources(page, this.pageSize)),
       tap((results) => {
         this.data = results.resources;
+        this.statusTooltips = results.resources.reduce((status, resource) => {
+          const key =
+            resource.metadata?.status && resource.metadata.status !== RESOURCE_STATUS.PENDING
+              ? resource.metadata.status.toLocaleLowerCase()
+              : 'loading';
+          status[resource.id] = this.translate.instant(`resource.status_${key}`);
+          return status;
+        }, {} as { [resourceId: string]: string });
         this.clearSelected();
         this.setLoading(false);
       }),
@@ -279,9 +276,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   getProcessingStatus(resource: Resource) {
-    if (resource.metadata?.status !== RESOURCE_STATUS.PENDING) {
-      this.statusTooltips[resource.id] = resource.metadata?.status ? resource.metadata.status.toLocaleLowerCase() : '';
-    } else {
+    if (resource.metadata?.status === RESOURCE_STATUS.PENDING) {
       this.sdk.nuclia.db.getProcessingStatus(this.stateService.getAccount()?.id).subscribe((status) => {
         if (status.last_delivered_seqid) {
           const count = resource.last_seqid - status.last_delivered_seqid;
@@ -290,7 +285,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         } else {
           this.statusTooltips[resource.id] = this.translate.instant('resource.status_unknown');
         }
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       });
     }
   }

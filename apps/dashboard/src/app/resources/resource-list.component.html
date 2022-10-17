@@ -101,6 +101,7 @@
               *cdkCellDef="let resource"
               (mouseenter)="getProcessingStatus(resource)"
               [paTooltip]="statusTooltips[resource.id]"
+              paTooltipType="system"
               [paTooltipOffset]="-16">
             <nsi-status [status]="resource.metadata.status"></nsi-status>
           </td>
