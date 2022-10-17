@@ -19,4 +19,8 @@ module.exports = {
     'jest-preset-angular/build/serializers/ng-snapshot',
     'jest-preset-angular/build/serializers/html-comment',
   ],
+  moduleNameMapper: {
+    // Temporary fix because AWS SDK uses a problematic version of uuid (https://github.com/uuidjs/uuid/issues/451)
+    "uuid": require.resolve('uuid'),
+  },
 };
