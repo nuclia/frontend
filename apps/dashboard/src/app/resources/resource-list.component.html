@@ -67,8 +67,8 @@
                          (change)="masterToggle()"></pa-checkbox>
           </th>
           <td cdk-cell *cdkCellDef="let row">
-            <pa-checkbox [value]="selection.isSelected(row)"
-                         (change)="selection.toggle(row)"></pa-checkbox>
+            <pa-checkbox [value]="selection.isSelected(row.resource)"
+                         (change)="selection.toggle(row.resource)"></pa-checkbox>
           </td>
         </ng-container>
 
@@ -76,10 +76,10 @@
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'resource.title' | translate }}
           </th>
-          <td cdk-cell class="clickable" *cdkCellDef="let resource" (click)="viewResource(resource.id)">
+          <td cdk-cell class="clickable" *cdkCellDef="let row" (click)="viewResource(row.resource.id)">
             <div class="title-icon">
-              <pa-icon *ngIf="resource.icon | mimeIcon as icon" [path]="'assets/icons/' + icon"></pa-icon>
-              {{ resource.title }}
+              <pa-icon *ngIf="row.resource.icon | mimeIcon as icon" [path]="'assets/icons/' + icon"></pa-icon>
+              {{ row.resource.title }}
             </div>
           </td>
         </ng-container>
@@ -89,13 +89,13 @@
             {{ 'resource.classification' | translate }}
           </th>
           <td cdk-cell class="clickable"
-              *cdkCellDef="let resource"
-              (click)="viewResource(resource.id)">
-            <div style="display: flex; gap: 4px">
-              <nsi-label *ngFor="let label of resource.usermetadata?.classifications">
+              *cdkCellDef="let row"
+              (click)="viewResource(row.resource.id)">
+            <div class="label-container">
+              <nsi-label *ngFor="let label of row.labels"
+                         [color]="label.color">
                 {{label.label}}
               </nsi-label>
-
             </div>
           </td>
         </ng-container>
@@ -104,8 +104,8 @@
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'generic.date' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let resource">
-            {{ resource.created | formatDate: {default: true} }}
+          <td cdk-cell *cdkCellDef="let row">
+            {{ row.resource.created | formatDate: {default: true} }}
           </td>
         </ng-container>
 
@@ -114,12 +114,12 @@
             {{ 'resource.status' | translate }}
           </th>
           <td cdk-cell
-              *cdkCellDef="let resource"
-              (mouseenter)="getProcessingStatus(resource)"
-              [paTooltip]="statusTooltips[resource.id]"
+              *cdkCellDef="let row"
+              (mouseenter)="getProcessingStatus(row.resource)"
+              [paTooltip]="statusTooltips[row.resource.id]"
               paTooltipType="system"
               [paTooltipOffset]="-16">
-            <nsi-status [status]="resource.metadata.status"></nsi-status>
+            <nsi-status [status]="row.resource.metadata.status"></nsi-status>
           </td>
         </ng-container>
 
@@ -127,8 +127,8 @@
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'generic.language' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let resource">
-            {{ resource.metadata.language || '–' }}
+          <td cdk-cell *cdkCellDef="let row">
+            {{ row.resource.metadata.language || '–' }}
           </td>
         </ng-container>
 
@@ -136,23 +136,23 @@
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'generic.actions' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let resource">
+          <td cdk-cell *cdkCellDef="let row">
             <pa-button icon="more-vertical"
                        aspect="basic"
                        size="small"
                        paTooltip="generic.actions"
                        [matMenuTriggerFor]="menu">{{'generic.actions' | translate}}</pa-button>
             <mat-menu #menu="matMenu" class="resource-actions">
-              <button mat-menu-item (click)="edit(resource.id)" [disabled]="!(isAdminOrContrib | async)">
+              <button mat-menu-item (click)="edit(row.resource.id)" [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.edit' | translate }}
               </button>
-              <button mat-menu-item (click)="delete([resource])" [disabled]="!(isAdminOrContrib | async)">
+              <button mat-menu-item (click)="delete([row.resource])" [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.delete' | translate }}
               </button>
-              <button mat-menu-item (click)="reindex(resource)" [disabled]="!(isAdminOrContrib | async)">
+              <button mat-menu-item (click)="reindex(row.resource)" [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.reindex' | translate }}
               </button>
-              <button mat-menu-item (click)="downloadAlgoliaJson(resource)">
+              <button mat-menu-item (click)="downloadAlgoliaJson(row.resource)">
                 {{ 'generic.download_algolia_json' | translate }}
               </button>
             </mat-menu>

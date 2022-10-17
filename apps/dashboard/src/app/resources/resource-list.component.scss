@@ -68,13 +68,13 @@ table {
   }
 
   .cdk-cell {
-    height: 50px;
+    height: rhythm(6);
     border-bottom: 1px solid $color-neutral-regular;
   }
 
   .cdk-column-select {
-    width: rhythm(5);
     padding-left: rhythm(0.5);
+    width: rhythm(5);
   }
 
   .title-icon {
@@ -83,6 +83,10 @@ table {
     gap: rhythm(1);
   }
 
+  .label-container {
+    display: flex;
+    gap: rhythm(0.5);
+  }
   .cdk-column-title {
     a {
       color: inherit;

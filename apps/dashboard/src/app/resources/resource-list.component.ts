@@ -5,7 +5,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { BehaviorSubject, combineLatest, forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
+import { LabelValue, Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 
@@ -24,6 +24,15 @@ interface KeyValue {
   value: string;
 }
 
+interface ColoredLabel extends LabelValue {
+  color: string;
+}
+
+interface ResourceWithLabels {
+  resource: Resource;
+  labels: ColoredLabel[];
+}
+
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -34,8 +43,7 @@ const DEFAULT_PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements OnInit, OnDestroy {
-  // prettier-ignore
-  data: Resource[] | undefined;
+  data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
   isLoading = true;
   selection = new SelectionModel<Resource>(true, []);
@@ -190,7 +198,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ? this.selection.clear() : this.data?.forEach((row) => this.selection.select(row));
+    this.isAllSelected() ? this.selection.clear() : this.data?.forEach((row) => this.selection.select(row.resource));
     this.cdr?.markForCheck();
   }
 
@@ -253,9 +261,26 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) => kb.listResources(page, this.pageSize)),
+      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), kb.getLabels()])),
+      map(([results, labelSets]) => {
+        this.data = results.resources.map((resource: Resource) => {
+          const resourceWithLabels: ResourceWithLabels = {
+            resource,
+            labels: [],
+          };
+          if (resource.usermetadata?.classifications) {
+            resourceWithLabels.labels = resource.usermetadata.classifications.map((label) => ({
+              ...label,
+              color: labelSets[label.labelset].color,
+            }));
+          }
+          return resourceWithLabels;
+        });
+        this.clearSelected();
+        this.setLoading(false);
+        return results;
+      }),
       tap((results) => {
-        this.data = results.resources;
         this.statusTooltips = results.resources.reduce((status, resource) => {
           const key =
             resource.metadata?.status && resource.metadata.status !== RESOURCE_STATUS.PENDING
@@ -264,8 +289,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           status[resource.id] = this.translate.instant(`resource.status_${key}`);
           return status;
         }, {} as { [resourceId: string]: string });
-        this.clearSelected();
-        this.setLoading(false);
       }),
     );
   }

@@ -1,5 +1,4 @@
-import { Observable, tap } from 'rxjs';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable, tap } from 'rxjs';
 import type { UploadResponse } from './upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
 import type { INuclia } from '../models';
