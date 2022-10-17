@@ -1,11 +1,9 @@
-<pa-button class="kb-switch"
-           kind="inverted"
-           size="small"
-           sameWidth
-           [paPopup]="kbSwitch">
+<nsi-dropdown-button size="small"
+                     aspect="basic"
+                     [icon]="(kb | async)?.state !== 'PUBLISHED' ? 'lock' : undefined"
+                     [popupRef]="kbSwitch">
   {{ (kb | async)?.title }}
-  <pa-icon *ngIf="(kb | async)?.state !== 'PUBLISHED'" size="small" name="lock"></pa-icon>
-</pa-button>
+</nsi-dropdown-button>
 
 <pa-dropdown #kbSwitch>
   <ng-container *ngFor="let kb of knowledgeBoxes | async; let last=last">
@@ -18,5 +16,6 @@
   </ng-container>
   <pa-option *ngIf="showDemo | async"
              class="demo-kb"
-             (selectOption)="goToDemo()">Demo</pa-option>
+             (selectOption)="goToDemo()">Demo
+  </pa-option>
 </pa-dropdown>

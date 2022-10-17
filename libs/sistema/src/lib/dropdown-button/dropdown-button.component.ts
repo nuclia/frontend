@@ -67,9 +67,18 @@ export class DropdownButtonComponent {
     return this._disabled;
   }
 
+  @Input()
+  set icon(value: string) {
+    this._icon = value;
+  }
+  get icon() {
+    return this._icon;
+  }
+
   private _aspect: Aspect = 'solid';
   private _kind: Kind = 'secondary';
   private _size: Size = 'medium';
   private _open = false;
   private _disabled = false;
+  private _icon = '';
 }
