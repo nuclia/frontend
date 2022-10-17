@@ -57,7 +57,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       of(size.toString()).pipe(
         switchMap((size) =>
           this.translate
-            .get('resource.resource_number', { num: size })
+            .get('resource.resource_page_number', { num: size })
             .pipe(map((text) => ({ key: size, value: text }))),
         ),
       ),

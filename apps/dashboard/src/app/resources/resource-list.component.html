@@ -1,7 +1,7 @@
 <router-outlet></router-outlet>
 <div class="resource-list">
   <div class="loading-shade" *ngIf="isLoading">
-    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <nsi-spinner *ngIf="isLoading"></nsi-spinner>
   </div>
 
   <div class="resource-list-content">
@@ -48,7 +48,7 @@
           <nsi-dropdown-button size="small"
                                kind="inverted"
                                [popupRef]="pageSizeMenu">
-            {{ 'resource.resource_number' | translate:{num: filters.size} }}
+            {{ 'resource.resource_page_number' | translate:{num: filters.size} }}
           </nsi-dropdown-button>
           <pa-dropdown #pageSizeMenu>
             <pa-option *ngFor="let option of options"
