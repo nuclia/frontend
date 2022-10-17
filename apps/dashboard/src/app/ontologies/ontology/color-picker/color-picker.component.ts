@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { isColorInList, isHexColor, getLabelColors, isSameHexColor } from '../../utils';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { isColorInList } from '../../utils';
+import { getLabelColor, isHexColor, isSameHexColor } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-color-picker',
@@ -30,7 +31,7 @@ export class ColorPickerComponent {
   }
 
   getTextColor(color: string): string | undefined {
-    return getLabelColors(color)?.textColor;
+    return getLabelColor(color)?.textColor;
   }
 
   isSameHexColor(color1: string, color2: string) {

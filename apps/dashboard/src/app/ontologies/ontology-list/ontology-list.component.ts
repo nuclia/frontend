@@ -3,8 +3,9 @@ import { KeyValue } from '@angular/common';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { LabelsService } from '../../services/labels.service';
-import { getLabelColors, isLabelMainColor } from '../utils';
+import { isLabelMainColor } from '../utils';
 import { LabelSet, LabelSets } from '@nuclia/core';
+import { getLabelColor } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-ontology-list',
@@ -29,7 +30,7 @@ export class OntologyListComponent implements OnDestroy {
   }
 
   getTextColor(color: string): string | undefined {
-    return isLabelMainColor(color) ? getLabelColors(color)?.textColor : undefined;
+    return isLabelMainColor(color) ? getLabelColor(color)?.textColor : undefined;
   }
 
   getBackgroundColor(color: string): string | undefined {

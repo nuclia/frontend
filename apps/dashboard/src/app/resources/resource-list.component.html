@@ -84,6 +84,22 @@
           </td>
         </ng-container>
 
+        <ng-container cdkColumnDef="classification">
+          <th cdk-header-cell *cdkHeaderCellDef>
+            {{ 'resource.classification' | translate }}
+          </th>
+          <td cdk-cell class="clickable"
+              *cdkCellDef="let resource"
+              (click)="viewResource(resource.id)">
+            <div style="display: flex; gap: 4px">
+              <nsi-label *ngFor="let label of resource.usermetadata?.classifications">
+                {{label.label}}
+              </nsi-label>
+
+            </div>
+          </td>
+        </ng-container>
+
         <ng-container cdkColumnDef="modification">
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'generic.date' | translate }}

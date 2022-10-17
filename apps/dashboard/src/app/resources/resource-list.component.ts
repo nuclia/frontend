@@ -60,7 +60,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   displayedColumns = this.isAdminOrContrib.pipe(
     map((canEdit) => {
-      const columns = ['icon', 'title', 'modification', 'status', 'language'];
+      const columns = ['icon', 'title', 'classification', 'modification', 'status', 'language'];
       return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );
