@@ -470,6 +470,7 @@
 	"resource.transcript.to": "to",
 	"resource.type": "Type",
 	"resource.updated": "Updated",
+	"resource.visible_columns_dropdown": "Columns displayed",
 	"search.more_results": "show more results",
 	"search.sort_by": "Sort by",
 	"search.title.answer_results": "Did that answer your question?",

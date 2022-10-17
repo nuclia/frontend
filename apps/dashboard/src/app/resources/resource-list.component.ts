@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
@@ -56,11 +56,23 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     ),
   );
 
+  columns = [
+    { value: 'title', label: 'resource.title', visible: true },
+    { value: 'classification', label: 'resource.classification', visible: false, optional: true },
+    { value: 'modification', label: 'generic.date', visible: true, optional: true },
+    { value: 'status', label: 'resource.status', visible: true },
+    { value: 'language', label: 'generic.language', visible: true, optional: true },
+  ];
+  columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  optionalColumns = this.columns.filter((column) => column.optional);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  displayedColumns = this.isAdminOrContrib.pipe(
+  displayedColumns = combineLatest([this.isAdminOrContrib, this.columnVisibilityUpdate]).pipe(
     map((canEdit) => {
-      const columns = ['icon', 'title', 'classification', 'modification', 'status', 'language'];
+      const columns = this.columns
+        .map((column) => (!column.optional || column.visible ? column.value : ''))
+        .filter((column) => !!column);
+
       return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );

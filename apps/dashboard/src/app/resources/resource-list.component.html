@@ -28,13 +28,23 @@
           {{ 'generic.delete' | translate }}
         </pa-button>
       </div>
-      <div class="resource-number">
+      <div class="table-options">
         <div>
-          <span>{{ 'resource.total' | translate }}: {{ refreshing ? '…' : resultsLength }}</span>
+          <nsi-dropdown-button size="small"
+                               kind="inverted"
+                               [popupRef]="visibleColumns">
+            {{ 'resource.visible_columns_dropdown' | translate }}
+          </nsi-dropdown-button>
+          <pa-dropdown #visibleColumns>
+            <pa-option *ngFor="let column of optionalColumns"
+                       [value]="column.value"
+                       dontCloseOnSelect>
+              <pa-checkbox [(value)]="column.visible"
+                           (valueChange)="columnVisibilityUpdate.next($event)">{{column.label | translate}}</pa-checkbox>
+            </pa-option>
+          </pa-dropdown>
         </div>
         <div *ngIf="(pageSizeOptions | async) as options">
-          <span>{{ 'generic.showing' | translate }}</span>
-
           <nsi-dropdown-button size="small"
                                kind="inverted"
                                [popupRef]="pageSizeMenu">
@@ -62,25 +72,15 @@
           </td>
         </ng-container>
 
-        <ng-container cdkColumnDef="icon">
-          <th cdk-header-cell *cdkHeaderCellDef>
-            {{ 'resource.type' | translate }}
-          </th>
-          <td cdk-cell class="clickable" *cdkCellDef="let resource" (click)="viewResource(resource.id)">
-            <div fxLayout="row">
-              <div *ngIf="resource.icon | mimeIcon as icon">
-                <svg-icon src="assets/icons/{{ icon }}"></svg-icon>
-              </div>
-            </div>
-          </td>
-        </ng-container>
-
         <ng-container cdkColumnDef="title">
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'resource.title' | translate }}
           </th>
           <td cdk-cell class="clickable" *cdkCellDef="let resource" (click)="viewResource(resource.id)">
-            {{ resource.title }}
+            <div class="title-icon">
+              <pa-icon *ngIf="resource.icon | mimeIcon as icon" [path]="'assets/icons/' + icon"></pa-icon>
+              {{ resource.title }}
+            </div>
           </td>
         </ng-container>
 

@@ -400,6 +400,7 @@
 	"resource.transcript.to": "a",
 	"resource.type": "Tipus",
 	"resource.updated": "Data actualització",
+	"resource.visible_columns_dropdown": "Es mostren les columnes",
 	"search.more_results": "mostrar més resultats",
 	"search.sort_by": "Ordenar per",
 	"search.title.answer_results": "És aquí la teva resposta?",
