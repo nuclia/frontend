@@ -16,6 +16,7 @@ import {
   PaPopupModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 @NgModule({
   imports: [
@@ -31,6 +32,7 @@ import {
     PaDropdownModule,
     PaPopupModule,
     PaTooltipModule,
+    DropdownButtonComponent,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],

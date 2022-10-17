@@ -1,26 +1,26 @@
 @import 'variables';
 
 .topbar {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  height: var(--app-topbar-height);
+  left: 0;
+  padding: 0 var(--app-layout-margin-right) 0 rhythm(2);
   position: fixed;
   top: 0;
-  left: 0;
-  z-index: var(--app-zindex-topbar);
   width: 100%;
-  height: var(--app-topbar-height);
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid #dfdfdf;
-  padding: 0 var(--app-layout-margin-right) 0 22px;
-  background-color: #fff;
+  z-index: var(--app-zindex-topbar);
 
   .is-stage {
     position: absolute;
-    height: 30px;
-    width: 30px;
-    left: 125px;
-    top: 12px;
+    height: rhythm(4);
+    width: rhythm(4);
+    left: rhythm(16);
+    top: rhythm(1.5);
   }
-  &-logo {
+  .topbar-logo {
     @include reset-button();
     cursor: pointer;
 
@@ -43,55 +43,33 @@
   }
 
   .search-widget {
-    display: flex;
     align-items: center;
-    margin-left: 80px;
+    display: flex;
+    margin-left: rhythm(10);
     margin-right: auto;
 
     // widget customisation
     --custom-input-widget-padding: 2px;
     --custom-input-widget-border-width: 0 0 1px 0;
     --custom-input-widget-border-style: solid;
-    --custom-input-widget-border-color: #000;
+    --custom-input-widget-border-color: $color-dark-stronger;
     --custom-input-widget-border-radius: 0;
     --custom-input-widget-placeholder-color: transparent;
-    span {
-      margin-right: 10px;
-      font-weight: var(--stf-font-weight-light);
-    }
+
     div {
       width: 300px;
     }
   }
 
-  &-user {
-    @include reset-button();
-    cursor: pointer;
-  }
-
-  &-report {
-    display: flex;
-    align-items: center;
-    height: 32px;
-    padding: 0 18px;
-    border-radius: var(--stf-border-radius-button);
-    font-weight: var(--stf-font-weight-semibold);
-    color: $gray-contrast;
-    background-color: #f3f3f3;
-    &:hover {
-      text-decoration: none;
-    }
-    svg {
-      display: block;
-      margin-right: rhythm(1.5);
-    }
-  }
-
-  &-separator {
+  .topbar-separator {
+    background-color: $color-neutral-lighter;
     height: 100%;
+    margin: 0 rhythm(3);
     width: 1px;
-    margin: 0 rhythm(4) 0 rhythm(3);
-    background-color: $color-neutral-light;
+  }
+
+  .topbar-account {
+    margin-right: rhythm(2);
   }
 
   .topbar-kb {

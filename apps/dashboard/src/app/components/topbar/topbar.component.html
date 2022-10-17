@@ -7,17 +7,27 @@
 
   <div class="search-widget">
     <ng-container *ngIf="searchEnabled | async">
-      <span tourAnchor="step2">{{ 'searchbar.help' | translate }}</span>
+      <span tourAnchor="step2"></span>
       <div tourAnchor="step3" [innerHtml]="searchWidget | async"></div>
     </ng-container>
   </div>
 
-  <a class="topbar-report" href="https://github.com/nuclia/support" rel="noopener noreferrer" target="_blank">
-    <svg-icon src="assets/icons/bug.svg"></svg-icon>
-    <span>{{ 'generic.report_bug' | translate }}</span>
-  </a>
+  <pa-button size="small"
+             aspect="basic"
+             kind="destructive"
+             icon="warning"
+             iconAndText
+             (click)="goToSupport()">
+    <a href="https://github.com/nuclia/support" rel="noopener noreferrer" target="_blank">
+      {{ 'generic.report_bug' | translate }}
+    </a>
+  </pa-button>
 
   <div class="topbar-separator"></div>
+
+  <div class="topbar-account">
+    <strong>{{(kb | async)?.account}}</strong>
+  </div>
 
   <app-kb-switch class="topbar-kb"></app-kb-switch>
 
