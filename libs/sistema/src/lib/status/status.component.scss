@@ -1,0 +1,11 @@
+@import "../../../styles/variables";
+
+.processed {
+  color: $color-primary-regular;
+}
+.error {
+  color: $color-secondary-stronger;
+}
+.pending {
+  color: $color-neutral-regular;
+}

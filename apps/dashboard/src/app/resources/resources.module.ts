@@ -28,11 +28,12 @@ import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
   PaDropdownModule,
+  PaIconModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { BackButtonComponent, DropdownButtonComponent, SisProgressModule, SisStatusComponent } from '@nuclia/sistema';
 import { FileUploadModule } from '@flaps/core';
 
 const Components = [
@@ -119,6 +120,8 @@ const ROUTES: Routes = [
     DropdownButtonComponent,
     FileUploadModule,
     SisProgressModule,
+    PaIconModule,
+    SisStatusComponent,
   ],
   declarations: [...Components],
   exports: [],

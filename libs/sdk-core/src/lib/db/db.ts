@@ -1,21 +1,22 @@
 import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
-import type { INuclia, IDb } from '../models';
+import type { IDb, INuclia } from '../models';
 import {
   Account,
   AccountCreation,
   AccountStatus,
-  NUAClient,
-  NUAClientPayload,
   NUA_CLIENT,
   NUA_KEY,
+  NUAClient,
+  NUAClientPayload,
+  ProcessingPullResponse,
+  ProcessingPushResponse,
   ProcessingStat,
+  ProcessingStatusResponse,
   StatsPeriod,
   StatsType,
   Welcome,
-  ProcessingPullResponse,
-  ProcessingPushResponse,
 } from './db.models';
-import type { EventList, IKnowledgeBox, KnowledgeBoxCreation, IKnowledgeBoxItem } from './kb.models';
+import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb.models';
 import { WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
@@ -138,9 +139,7 @@ export class Db implements IDb {
           {
             filefield: { file: token },
           },
-          {
-            'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-          },
+          this.getNUAHeader(),
         ),
       ),
     );
@@ -148,11 +147,20 @@ export class Db implements IDb {
 
   pull(): Observable<ProcessingPullResponse> {
     if (!this.hasNUAClient()) {
-      throw new Error('NUA key is needed to be able to call /process');
+      throw new Error('NUA key is needed to be able to call /processing');
     }
-    return this.nuclia.rest.get<ProcessingPullResponse>('/processing/pull', {
-      'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
-    });
+    return this.nuclia.rest.get<ProcessingPullResponse>('/processing/pull', this.getNUAHeader());
+  }
+
+  getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse> {
+    const hasNUAKey = this.hasNUAClient();
+    if (!accountId && !hasNUAKey) {
+      throw new Error('NUA key or account id is needed to be able to call /process/status');
+    }
+    const endpoint = hasNUAKey ? '/processing/status' : `/processing/status?account_id=${accountId}`;
+    const headers = hasNUAKey ? this.getNUAHeader() : undefined;
+
+    return this.nuclia.rest.get(endpoint, headers);
   }
 
   getNUAActivity(accountSlug: string, client_id: string, pageIndex = 0): Observable<EventList> {
@@ -173,6 +181,12 @@ export class Db implements IDb {
 
   hasNUAClient(): boolean {
     return !!localStorage.getItem(NUA_CLIENT) && !!localStorage.getItem(NUA_KEY);
+  }
+
+  getNUAHeader(): { 'x-stf-nuakey': string } {
+    return {
+      'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+    };
   }
 
   createNUAClient(account: string, data: NUAClientPayload): Observable<{ client_id: string; token: string }> {

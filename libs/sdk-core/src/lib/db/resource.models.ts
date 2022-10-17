@@ -10,6 +10,7 @@ export interface IResource {
   created?: string;
   modified?: string;
   thumbnail?: string;
+  last_seqid: number;
 
   data?: ResourceData;
 

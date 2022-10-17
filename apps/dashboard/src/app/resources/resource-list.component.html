@@ -97,8 +97,12 @@
           <th cdk-header-cell *cdkHeaderCellDef>
             {{ 'resource.status' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let resource" [title]="resource.metadata.status">
-            <svg-icon [src]="getStatusIcon(resource.metadata.status)"></svg-icon>
+          <td cdk-cell
+              *cdkCellDef="let resource"
+              (mouseenter)="getProcessingStatus(resource)"
+              [paTooltip]="statusTooltips[resource.id]"
+              [paTooltipOffset]="-16">
+            <nsi-status [status]="resource.metadata.status"></nsi-status>
           </td>
         </ng-container>
 
