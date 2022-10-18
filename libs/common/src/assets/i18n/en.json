@@ -383,6 +383,7 @@
 	"reset.password_reset": "Your password has been reset",
 	"reset.title": "Create password",
 	"resource.access_source_file": "Access document in its origin",
+	"resource.add_labels": "Add labels",
 	"resource.authorship": "Authorship",
 	"resource.back_to_results": "Back to results",
 	"resource.classification": "Classification",

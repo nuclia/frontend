@@ -16,24 +16,20 @@ $table-breakpoint: 1400px;
 }
 
 .resource-list-header {
-  position: sticky;
-  top: var(--app-topbar-height);
-  height: rhythm(8);
-  border-bottom: 1px solid $color-neutral-lighter;
-  z-index: 10;
-  display: flex;
   align-items: center;
   background-color: $color-light-stronger;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  height: rhythm(8);
+  position: sticky;
+  top: var(--app-topbar-height);
+  z-index: 10;
 
   .resource-bulk-actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
     padding-left: rhythm(0.5);
-    &.disabled .resource-counter {
-      opacity: 0.2;
-    }
-  }
-
-  .resource-counter {
-    margin-right: rhythm(2);
   }
 
   .table-options {

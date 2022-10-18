@@ -6,21 +6,13 @@
 
   <div class="resource-list-content">
     <div class="resource-list-header">
-      <div
-        class="resource-bulk-actions"
-        *ngIf="isAdminOrContrib | async"
-        [class.disabled]="selection.selected.length === 0"
-        fxLayout="row"
-        fxLayoutAlign="start center"
-      >
-        <pa-checkbox [value]="selection.selected.length > 0"
-                     [disabled]="selection.selected.length === 0"
-                     [paTooltip]="selection.selected.length === 0 ? null : 'generic.deselect_all'"
-                     (change)="clearSelected()"
-        ></pa-checkbox>
-        <div class="resource-counter" [class.disabled]="selection.selected.length === 0">
-          {{ 'resource.selected_count' | translate: {num: selection.selected.length || ''} }}
-        </div>
+      <div class="resource-bulk-actions"
+           *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
+        {{ 'resource.selected_count' | translate: {num: selection.selected.length || ''} }}
+
+        <app-label-dropdown [labelSets]="labelSets$ | async"
+                            size="small">{{'resource.add_labels' | translate}}</app-label-dropdown>
+
         <pa-button *ngIf="selection.selected.length > 0"
                    kind="destructive"
                    size="small"
@@ -64,6 +56,7 @@
         <ng-container cdkColumnDef="select">
           <th cdk-header-cell *cdkHeaderCellDef>
             <pa-checkbox [value]="selection.hasValue() && isAllSelected()"
+                         [paTooltip]="(isAllSelected() ? 'generic.deselect_all' : 'generic.select_all') | translate"
                          (change)="masterToggle()"></pa-checkbox>
           </th>
           <td cdk-cell *cdkCellDef="let row">

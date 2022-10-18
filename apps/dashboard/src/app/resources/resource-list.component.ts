@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { BehaviorSubject, combineLatest, forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { LabelValue, Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
@@ -84,6 +84,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );
+  labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
 
   constructor(
     private sdk: SDKService,
@@ -261,7 +262,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), kb.getLabels()])),
+      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), this.labelSets$.pipe(take(1))])),
       map(([results, labelSets]) => {
         this.data = results.resources.map((resource: Resource) => {
           const resourceWithLabels: ResourceWithLabels = {
