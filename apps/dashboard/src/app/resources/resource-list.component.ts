@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
+import { LabelValue, Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 
@@ -24,6 +24,15 @@ interface KeyValue {
   value: string;
 }
 
+interface ColoredLabel extends LabelValue {
+  color: string;
+}
+
+interface ResourceWithLabels {
+  resource: Resource;
+  labels: ColoredLabel[];
+}
+
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -34,8 +43,7 @@ const DEFAULT_PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements OnInit, OnDestroy {
-  // prettier-ignore
-  data: Resource[] | undefined;
+  data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
   isLoading = true;
   selection = new SelectionModel<Resource>(true, []);
@@ -49,18 +57,30 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       of(size.toString()).pipe(
         switchMap((size) =>
           this.translate
-            .get('resource.resource_number', { num: size })
+            .get('resource.resource_page_number', { num: size })
             .pipe(map((text) => ({ key: size, value: text }))),
         ),
       ),
     ),
   );
 
+  columns = [
+    { value: 'title', label: 'resource.title', visible: true },
+    { value: 'classification', label: 'resource.classification', visible: false, optional: true },
+    { value: 'modification', label: 'generic.date', visible: true, optional: true },
+    { value: 'status', label: 'resource.status', visible: true },
+    { value: 'language', label: 'generic.language', visible: true, optional: true },
+  ];
+  columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+  optionalColumns = this.columns.filter((column) => column.optional);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  displayedColumns = this.isAdminOrContrib.pipe(
+  displayedColumns = combineLatest([this.isAdminOrContrib, this.columnVisibilityUpdate]).pipe(
     map((canEdit) => {
-      const columns = ['icon', 'title', 'modification', 'status', 'language'];
+      const columns = this.columns
+        .map((column) => (!column.optional || column.visible ? column.value : ''))
+        .filter((column) => !!column);
+
       return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );
@@ -178,7 +198,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ? this.selection.clear() : this.data?.forEach((row) => this.selection.select(row));
+    this.isAllSelected() ? this.selection.clear() : this.data?.forEach((row) => this.selection.select(row.resource));
     this.cdr?.markForCheck();
   }
 
@@ -241,9 +261,26 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) => kb.listResources(page, this.pageSize)),
+      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), kb.getLabels()])),
+      map(([results, labelSets]) => {
+        this.data = results.resources.map((resource: Resource) => {
+          const resourceWithLabels: ResourceWithLabels = {
+            resource,
+            labels: [],
+          };
+          if (resource.usermetadata?.classifications) {
+            resourceWithLabels.labels = resource.usermetadata.classifications.map((label) => ({
+              ...label,
+              color: labelSets[label.labelset].color,
+            }));
+          }
+          return resourceWithLabels;
+        });
+        this.clearSelected();
+        this.setLoading(false);
+        return results;
+      }),
       tap((results) => {
-        this.data = results.resources;
         this.statusTooltips = results.resources.reduce((status, resource) => {
           const key =
             resource.metadata?.status && resource.metadata.status !== RESOURCE_STATUS.PENDING
@@ -252,8 +289,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           status[resource.id] = this.translate.instant(`resource.status_${key}`);
           return status;
         }, {} as { [resourceId: string]: string });
-        this.clearSelected();
-        this.setLoading(false);
       }),
     );
   }

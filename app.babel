@@ -4820,6 +4820,26 @@
                         </translations>
                     </concept_node>
                     <concept_node>
+                        <name>generic.select_all</name>
+                        <description/>
+                        <comment/>
+                        <default_text/>
+                        <translations>
+                            <translation>
+                                <language>ca-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>en-US</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>es-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                        </translations>
+                    </concept_node>
+                    <concept_node>
                         <name>generic.select_language</name>
                         <description/>
                         <comment/>
@@ -8760,7 +8780,7 @@
                         </translations>
                     </concept_node>
                     <concept_node>
-                        <name>resource.resource_number</name>
+                        <name>resource.resource_page_number</name>
                         <description/>
                         <comment/>
                         <default_text/>
@@ -9421,6 +9441,26 @@
                     </concept_node>
                     <concept_node>
                         <name>resource.updated</name>
+                        <description/>
+                        <comment/>
+                        <default_text/>
+                        <translations>
+                            <translation>
+                                <language>ca-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>en-US</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>es-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                        </translations>
+                    </concept_node>
+                    <concept_node>
+                        <name>resource.visible_columns_dropdown</name>
                         <description/>
                         <comment/>
                         <default_text/>
