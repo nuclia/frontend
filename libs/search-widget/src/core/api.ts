@@ -212,11 +212,16 @@ export const hasAuthData = (): boolean => {
 };
 
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
-  if (paths.length === 0 || !isPrivateKnowledgeBox()) {
-    return of(paths.map((path) => `${getRegionalBackend()}${path}`));
-  } else {
-    return getTempToken().pipe(
-      map((token) => paths.map((path) => `${getRegionalBackend()}${path}?eph-token=${token}`)),
-    );
-  }
+  return (paths.length === 0 || !isPrivateKnowledgeBox() ? of('') : getTempToken()).pipe(
+    map((token) =>
+      paths.map((path) => {
+        if (path.startsWith('/')) {
+          const fullpath = `${getRegionalBackend()}/files/${path}`;
+          return token ? `${fullpath}?token=${token}` : fullpath;
+        } else {
+          return path;
+        }
+      }),
+    ),
+  );
 };
