@@ -9,11 +9,7 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
   import { onDestroy } from 'svelte';
-  import {
-    annotationMode,
-    annotations,
-    selectedFamily,
-  } from '../../core/stores/annotation.store';
+  import { annotationMode, annotations, selectedFamily } from '../../core/stores/annotation.store';
   import {
     files,
     links,
@@ -40,7 +36,7 @@
 
   const previewLink = (file: CloudLink) => {
     viewerStore.showPreview.next(true);
-    viewerStore.linkPreview.next({file});
+    viewerStore.linkPreview.next({ file });
   };
 
   const setAnnotationMode = () => {
@@ -78,7 +74,6 @@
     annotationMode.set(false);
     selectedFamily.set('');
   };
-
 </script>
 
 <div class="sw-metadata" class:annotation-mode={$annotationMode}>
@@ -104,12 +99,12 @@
       {/if}
     </h2>
     <div class="entities">
-      <Entities/>
+      <Entities />
     </div>
     {#if !$annotationMode}
       <div class="entities">
         <h3>{$_('entities.annotated')}</h3>
-        <Entities showAnnotated={true}/>
+        <Entities showAnnotated={true} />
       </div>
     {/if}
   {/if}
@@ -120,7 +115,7 @@
         <div class="preview-links">
           {#each $previewLinks as file}
             <a class="download" href={file.uri} on:click|preventDefault={() => previewLink(file)}>
-              <img src={`${getCDN()}icons/document.svg`} alt="icon"/>
+              <img src={`${getCDN()}icons/document.svg`} alt="icon" />
               <div>{$_('resource.preview')}</div>
             </a>
           {/each}
@@ -150,7 +145,7 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <Label {label} clickable on:click={() => searchBy(label)}/>
+              <Label {label} clickable on:click={() => searchBy(label)} />
             {/each}
           </div>
         </div>
@@ -164,29 +159,30 @@
       {/if}
 
       {#each $files || [] as file}
-        <a class="download" href={file}>
-          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
+        <a class="download" href={file} target="_blank">
+          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
 
       {#each $links as link}
         <a class="download" href={link} rel="noopener noreferrer" target="_blank">
-          <img src={`${getCDN()}icons/source.svg`} alt="icon"/>
+          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
     </div>
   {/if}
 
-  <ConfirmDialog show={showSafariModal}
-                 buttons={[{label: 'Ok', action: 'confirm'}]}
-                 closeable
-                 on:cancel={() => showSafariModal = false}
-                 on:confirm={() => showSafariModal = false}>
+  <ConfirmDialog
+    show={showSafariModal}
+    buttons={[{ label: 'Ok', action: 'confirm' }]}
+    closeable
+    on:cancel={() => (showSafariModal = false)}
+    on:confirm={() => (showSafariModal = false)}
+  >
     Entity annotation feature doesn't work on Safari yet. Please use Firefox or Chrome to use this feature.
   </ConfirmDialog>
 </div>
-
 
 <style lang="scss" src="./Metadata.scss"></style>
