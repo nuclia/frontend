@@ -61,11 +61,14 @@ export class UploadComponent implements OnInit {
         take(1),
         switchMap((source) => {
           this.source = source;
+          if (source.handleParameters && event.params) {
+            source.handleParameters(event.params);
+          }
           if (source.hasServerSideAuth) {
             localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
             source.goToOAuth();
           }
-          return this.source.authenticate(event.params);
+          return this.source.authenticate();
         }),
         filter((yes) => yes),
       )

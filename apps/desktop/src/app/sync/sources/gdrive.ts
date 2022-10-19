@@ -30,6 +30,7 @@ export const GDrive: SourceConnectorDefinition = {
 
 class GDriveImpl implements ISourceConnector {
   hasServerSideAuth = true;
+  isExternal = false;
   resumable = true;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   API_KEY: string;

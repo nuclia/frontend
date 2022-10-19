@@ -22,6 +22,7 @@ export const FolderConnector: SourceConnectorDefinition = {
 
 class FolderImpl implements ISourceConnector {
   hasServerSideAuth = false;
+  isExternal = false;
   resumable = false;
   files: ElectronFile[] = [];
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
@@ -41,10 +42,13 @@ class FolderImpl implements ISourceConnector {
     // eslint-disable-next-line no-empty-function
   }
 
-  authenticate(params?: ConnectorParameters): Observable<boolean> {
-    if (params && params['folder']) {
+  handleParameters(params: ConnectorParameters) {
+    if (params['folder']) {
       this.files = params['folder'].filter((file: ElectronFile) => !FILES_TO_IGNORE.includes(file.name));
     }
+  }
+
+  authenticate(): Observable<boolean> {
     this.isAuthenticated.next(true);
     return this.isAuthenticated.asObservable();
   }

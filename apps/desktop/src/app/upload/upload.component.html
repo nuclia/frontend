@@ -21,6 +21,7 @@
     <ng-container *ngIf="step === 2">
       <h2>Push to</h2>
       <nde-connectors type="destinations"
+                      [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
                       (selectConnector)="selectDestination($event)"
                       (cancel)="cancel()"></nde-connectors>
     </ng-container>

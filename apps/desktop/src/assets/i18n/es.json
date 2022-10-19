@@ -17,6 +17,8 @@
 	"upload.folder.selected": "La carpeta contiene {{num}} archivos",
 	"upload.refresh": "Refrescar {{field}}",
 	"upload.review": "Has seleccionado {{num}} ficheros. Revisa los ficheros seleccionados y empieza el proceso.",
+	"upload.s3.region": "Región",
+	"upload.s3.region_help": "Por ejemplo: eu-west-3",
 	"upload.select.all": "Seleccionar todo",
 	"upload.select.search": "Busca",
 	"upload.select.title": "Selecciona los archivos",

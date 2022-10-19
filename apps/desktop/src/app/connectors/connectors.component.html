@@ -13,7 +13,8 @@
   <div *ngFor="let field of fields"
        class="field">
     <pa-input *ngIf="field.type === 'text'"
-              [formControlName]="field.id">{{ field.label }}</pa-input>
+              [help]="field.help | translate"
+              [formControlName]="field.id">{{ field.label | translate }}</pa-input>
 
     <div *ngIf="field.type === 'select'" class="select-field-container">
       <pa-select [formControlName]="field.id"

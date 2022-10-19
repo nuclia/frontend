@@ -1,6 +1,6 @@
 {
   "name": "nuclia",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "license": "MIT",
   "author": "Nuclia.cloud",
   "description": "Nuclia frontend apps and libs",
@@ -40,6 +40,8 @@
     "@angular/platform-browser-dynamic": "14.2.0",
     "@angular/router": "14.2.0",
     "@angular/service-worker": "14.2.0",
+    "@aws-sdk/client-s3": "^3.190.0",
+    "@aws-sdk/s3-request-presigner": "^3.190.0",
     "@ng-web-apis/common": "^2.0.0",
     "@ngx-translate/core": "^14.0.0",
     "@ngx-translate/http-loader": "^7.0.0",
