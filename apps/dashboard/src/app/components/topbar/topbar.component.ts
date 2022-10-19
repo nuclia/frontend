@@ -35,7 +35,8 @@ export class TopbarComponent implements AfterViewInit {
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
         type="input"
-        permalink></nuclia-search>`),
+        permalink
+        notPublic></nuclia-search>`),
     ),
   );
 

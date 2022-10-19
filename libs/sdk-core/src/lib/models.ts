@@ -26,6 +26,7 @@ export interface INuclia {
   auth: IAuthentication;
   rest: IRest;
   db: IDb;
+  currentShards?: string[];
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;
@@ -121,6 +122,7 @@ export interface NucliaOptions {
   kbSlug?: string;
   client?: string;
   standalone?: boolean;
+  public?: boolean;
 }
 
 export type PromiseMapper<T> = {
