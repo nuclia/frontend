@@ -1,4 +1,8 @@
-# 1.2.0 (2022-00-01)
+# 1.2.1 (2022-10-19)
+
+- Update protobuf models
+
+# 1.2.0 (2022-09-01)
 
 - Embed proto models directly in the JS implementation
 

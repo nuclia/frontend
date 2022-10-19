@@ -124,6 +124,7 @@ message EntitiesGroup {
     map<string, Entity> entities = 1;
     string title = 2;
     string color = 3;
+    bool custom = 4;
 }
 
 
@@ -144,6 +145,7 @@ message Widget {
         bool suggestParagraphs = 4;
         bool suggestLabels = 5;
         bool editLabels = 6;
+        bool entityAnnotation = 7;
     }
     WidgetFeatures features = 4;
 
