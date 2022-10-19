@@ -54,7 +54,7 @@ jobs:
         run: npx nx affected --target=test --parallel=3 --exclude=sdk-demo,search-widget-demo,core,sistema-demo
 
       - name: Build affected apps
-        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo,sdk-core
+        run: npx nx affected --target=build --parallel=3 --configuration production --exclude=sdk-demo,search-widget-demo
 
       - name: Get package version
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
@@ -76,6 +76,7 @@ jobs:
           (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
           ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "::set-output name=deploy-sistema::yes") || echo "Sistema demo unchanged"
+          (test -d dist/libs/sdk-core && echo "::set-output name=deploy-sdk::yes") || echo "SDK unchanged"
 
       - uses: google-github-actions/auth@v0
         with:
@@ -94,6 +95,13 @@ jobs:
           gsutil copy dist/libs/search-widget/*.umd.js gs://$CDN_STORAGE
           gsutil copy dist/libs/search-widget/nuclia-video-widget.css gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
+
+      - name: Publish SDK
+        if: steps.check-deploy.outputs.deploy-sdk == 'yes'
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./libs/sdk-core/package.json
 
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'
