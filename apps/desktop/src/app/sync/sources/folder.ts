@@ -22,6 +22,7 @@ export const FolderConnector: SourceConnectorDefinition = {
 
 class FolderImpl implements ISourceConnector {
   hasServerSideAuth = false;
+  isExternal = false;
   resumable = false;
   files: ElectronFile[] = [];
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);

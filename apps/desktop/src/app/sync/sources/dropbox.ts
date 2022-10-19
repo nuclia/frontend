@@ -24,6 +24,7 @@ const DROPBOX_TOKEN_KEY = 'DROPBOX_TOKEN';
 const DROPBOX_REFRESH_TOKEN_KEY = 'DROPBOX_REFRESH_TOKEN';
 class DropboxImpl implements ISourceConnector {
   hasServerSideAuth = true;
+  isExternal = false;
   resumable = true;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   CLIENT_ID: string;

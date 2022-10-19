@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { FileField } from '@nuclia/core';
 
 export const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
 export interface ConnectorDefinition {
@@ -17,6 +18,7 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
 
 export interface ISourceConnector {
   hasServerSideAuth: boolean;
+  isExternal: boolean;
   resumable: boolean;
   getParameters(): Observable<Field[]>;
   handleParameters?(params: ConnectorParameters): void;
@@ -24,6 +26,7 @@ export interface ISourceConnector {
   authenticate(): Observable<boolean>;
   getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
   download(resource: SyncItem): Observable<Blob>;
+  getLink?(resource: SyncItem): Observable<{ uri: string, extra_headers: {[key: string]: string} }>;
 }
 
 export enum FileStatus {
@@ -58,6 +61,11 @@ export interface IDestinationConnector {
   getParameters(): Observable<Field[]>;
   authenticate(): Observable<boolean>;
   upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void>;
+  uploadLink?(
+    filename: string,
+    params: ConnectorParameters,
+    data: { uri: string; extra_headers: { [key: string]: string } },
+  ): Observable<void>;
 }
 
 export interface Field {

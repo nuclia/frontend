@@ -1,5 +1,5 @@
-import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { FIELD_TYPE, INuclia, Nuclia, NucliaOptions, ResourceProperties, WritableKnowledgeBox } from '@nuclia/core';
+import { map, Observable, of, switchMap, delay } from 'rxjs';
 import {
   ConnectorParameters,
   ConnectorSettings,
@@ -53,6 +53,26 @@ class NucliaCloudKBImpl implements IDestinationConnector {
         ? of(this.kb)
         : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
       return kb$.pipe(switchMap((kb) => kb.upload(new File([blob], filename)).pipe(map(() => undefined))));
+    } else {
+      return of(undefined);
+    }
+  }
+
+  uploadLink(
+    filename: string,
+    params: ConnectorParameters,
+    data: { uri: string; extra_headers: { [key: string]: string } },
+  ): Observable<void> {
+    if (params && params['kb']) {
+      const kb$ = this.kb
+        ? of(this.kb)
+        : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
+      return kb$.pipe(
+        switchMap((kb) =>
+          kb.createResource({ title: filename, files: { [filename]: { file: data } } }),
+        ),
+        map(() => undefined),
+      );
     } else {
       return of(undefined);
     }

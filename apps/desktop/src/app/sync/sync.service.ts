@@ -137,40 +137,58 @@ export class SyncService {
               return forkJoin(
                 sync.files
                   .filter((f) => f.status === FileStatus.PENDING)
-                  .map((f) =>
-                    sourceInstance.download(f).pipe(
-                      catchError((error) => {
-                        if (error.status === 403) {
-                          if (sourceInstance.hasServerSideAuth) {
-                            sourceInstance.goToOAuth(true);
+                  .map((f) => {
+                    if (sourceInstance.isExternal) {
+                      return (
+                        sourceInstance.getLink &&
+                        sourceInstance.getLink(f).pipe(
+                          catchError((error) => {
+                            this.handle403(sourceInstance, error);
+                            throw error;
+                          }),
+                          concatMap((link) =>
+                            destinationInstance.uploadLink!(f.title, sync.destination.params, link).pipe(
+                              tap(() => {
+                                f.status = FileStatus.UPLOADED;
+                                sync.completed = true;
+                                this.onQueueUpdate();
+                              }),
+                            ),
+                          ),
+                          take(1),
+                        )
+                      );
+                    } else {
+                      return sourceInstance.download(f).pipe(
+                        catchError((error) => {
+                          this.handle403(sourceInstance, error);
+                          throw error;
+                        }),
+                        concatMap((blob) => {
+                          if (sync.destination.id === 'nucliacloud') {
+                            return destinationInstance.upload(f.title, sync.destination.params, { blob }).pipe(
+                              tap(() => {
+                                f.status = FileStatus.UPLOADED;
+                                sync.completed = true;
+                                this.onQueueUpdate();
+                              }),
+                            );
+                          } else {
+                            return md5(new File([blob], f.title)).pipe(
+                              concatMap((file) => this.sdk.nuclia.db.upload(file)),
+                              tap((response) => {
+                                f.status = FileStatus.PROCESSING;
+                                f.uuid = response.uuid;
+                                sync.fileUUIDs.push(response.uuid);
+                                this.onQueueUpdate();
+                              }),
+                            );
                           }
-                        }
-                        throw error;
-                      }),
-                      concatMap((blob) => {
-                        if (sync.destination.id === 'nucliacloud') {
-                          return destinationInstance.upload(f.title, sync.destination.params, { blob }).pipe(
-                            tap(() => {
-                              f.status = FileStatus.UPLOADED;
-                              sync.completed = true;
-                              this.onQueueUpdate();
-                            }),
-                          );
-                        } else {
-                          return md5(new File([blob], f.title)).pipe(
-                            concatMap((file) => this.sdk.nuclia.db.upload(file)),
-                            tap((response) => {
-                              f.status = FileStatus.PROCESSING;
-                              f.uuid = response.uuid;
-                              sync.fileUUIDs.push(response.uuid);
-                              this.onQueueUpdate();
-                            }),
-                          );
-                        }
-                      }),
-                      take(1),
-                    ),
-                  ),
+                        }),
+                        take(1),
+                      );
+                    }
+                  }),
               );
             }),
             tap(() => {
@@ -223,6 +241,14 @@ export class SyncService {
         }),
       )
       .subscribe();
+  }
+
+  private handle403(source: ISourceConnector, error: any) {
+    if (error.status === 403) {
+      if (source.hasServerSideAuth) {
+        source.goToOAuth(true);
+      }
+    }
   }
 
   onQueueUpdate() {

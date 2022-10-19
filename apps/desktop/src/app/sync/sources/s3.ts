@@ -9,6 +9,7 @@ import {
   Field,
 } from '../models';
 import { _Object, S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Observable, of, from, map, switchMap } from 'rxjs';
 
 const MAX_PAGE_SIZE = 1000;
@@ -23,6 +24,7 @@ export const S3Connector: SourceConnectorDefinition = {
 
 class S3Impl implements ISourceConnector {
   hasServerSideAuth = false;
+  isExternal = true;
   resumable = false;
   client?: S3Client;
   bucket?: string;
@@ -128,13 +130,17 @@ class S3Impl implements ISourceConnector {
     return true;
   }
 
-  download(resource: SyncItem): Observable<Blob> {
+  getLink(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }> {
     const command = new GetObjectCommand({
       Key: resource.originalId,
       Bucket: this.bucket || '',
     });
-    return from(this.client!.send(command)).pipe(
-      switchMap((item) => from(new Response(item.Body as ReadableStream).blob())),
+    return from(getSignedUrl(this.client!, command, { expiresIn: 3600 * 24 * 7 })).pipe(
+      map((uri) => ({ uri, extra_headers: {} })),
     );
+  }
+
+  download(resource: SyncItem): Observable<Blob> {
+    throw 'Error';
   }
 }
