@@ -13,15 +13,24 @@ import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 })
 export class ConnectorsComponent {
   private _type: 'sources' | 'destinations' = 'sources';
+  private _connectorIds?: string[];
 
   @Input()
   set type(value: 'sources' | 'destinations') {
     this._type = value;
-    this.connectors = this.sync.getConnectors(value);
-    markForCheck(this.cdr);
+    this.getConnectors();
   }
   get type() {
     return this._type;
+  }
+
+  @Input()
+  set connectorIds(value: string[] | undefined) {
+    this._connectorIds = value;
+    this.getConnectors();
+  }
+  get connectorIds() {
+    return this._connectorIds;
   }
 
   @Output() cancel = new EventEmitter<void>();
@@ -33,6 +42,14 @@ export class ConnectorsComponent {
   selectedConnector?: ConnectorDefinition;
 
   constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {}
+
+  getConnectors() {
+    this.connectors = this.sync.getConnectors(this.type);
+    if (this.connectorIds) {
+      this.connectors = this.connectors.filter((connector) => (this.connectorIds || []).includes(connector.id))
+    }
+    markForCheck(this.cdr);
+  }
 
   onSelectConnector(connectorId: string) {
     this.selectedConnector = this.sync[this._type][connectorId].definition;
