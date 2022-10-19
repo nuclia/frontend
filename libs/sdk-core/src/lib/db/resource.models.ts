@@ -120,6 +120,7 @@ export interface FileField {
   file?: CloudLink;
   language?: string;
   password?: string;
+  external?: boolean;
 }
 
 export interface FileFieldExtractedData extends ExtractedData {
@@ -283,6 +284,7 @@ export interface CloudLink {
   uri?: string;
   size?: number;
   content_type?: string;
+  extra_headers?: { [key: string]: string };
 }
 
 export class LinkFieldData implements IFieldData {
