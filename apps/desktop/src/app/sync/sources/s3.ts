@@ -37,9 +37,9 @@ class S3Impl implements ISourceConnector {
     return of([
       {
         id: 'region',
-        label: 'Region',
+        label: 'upload.s3.region',
         type: 'text',
-        help: 'e.g. us-east-1',
+        help: 'upload.s3.region_help',
         required: true,
       },
       {

@@ -17,6 +17,8 @@
 	"upload.folder.selected": "La carpeta conté {{num}} arxius",
 	"upload.refresh": "Actualització {{field}}",
 	"upload.review": "Has seleccionat {{num}} fitxers. Revisa els fitxers seleccionats i comença el procés.",
+	"upload.s3.region": "Regió",
+	"upload.s3.region_help": "Per exemple: eu-west-3",
 	"upload.select.all": "Seleccionar tot",
 	"upload.select.search": "Cerca",
 	"upload.select.title": "Selecciona els fitxers",
