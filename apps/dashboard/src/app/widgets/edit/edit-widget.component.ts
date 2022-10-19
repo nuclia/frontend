@@ -161,7 +161,7 @@ ${styles.join('\n')}
       this.snippet.replace(
         'zone=',
         `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
-      state="${this.kbState}" zone=`,
+      state="${this.kbState}" notPublic zone=`,
       ) + styleStr,
     );
     markForCheck(this.cdr);
