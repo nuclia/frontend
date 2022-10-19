@@ -135,7 +135,7 @@ class S3Impl implements ISourceConnector {
       Key: resource.originalId,
       Bucket: this.bucket || '',
     });
-    return from(getSignedUrl(this.client!, command, { expiresIn: 3600 * 24 * 7 })).pipe(
+    return from(getSignedUrl(this.client!, command, { expiresIn: 3600 * 24 * 2 })).pipe(
       map((uri) => ({ uri, extra_headers: {} })),
     );
   }
