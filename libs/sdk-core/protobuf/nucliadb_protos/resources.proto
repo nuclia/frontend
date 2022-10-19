@@ -15,6 +15,8 @@ message CloudFile {
         GCS = 1;
         S3 = 2;
         LOCAL = 3;
+        EXTERNAL = 4;
+        EMPTY = 5;
     }
     Source source = 5;
     string filename = 6;
@@ -51,6 +53,9 @@ message Basic {
     string uuid = 12;
 
     repeated string labels = 13;
+
+    // last processing seqid of the resource
+    int64 last_seqid = 14;
 }
 
 
@@ -190,6 +195,16 @@ message Paragraph {
     string text = 9;  // Optional, as a computed value
 }
 
+message Position {
+    int64 start = 1;
+    int64 end = 2;
+}
+
+message Positions {
+    repeated Position position = 1;
+    string entity = 2;
+}
+
 message FieldMetadata {
     repeated string links = 1;
     repeated Paragraph paragraphs = 2;
@@ -202,6 +217,7 @@ message FieldMetadata {
     CloudFile thumbnail = 9;
     string language = 10;
     string summary = 11;
+    map<string, Positions> positions = 12;  // Document
 
 }
 
@@ -242,6 +258,7 @@ message FieldText {
     }
     string body = 1;
     Format format = 2;
+    string md5 = 3;
 }
 
 message Block {
@@ -290,6 +307,8 @@ message UserMetadata {
 message TokenSplit {
     string token = 1;
     string klass = 2;
+    uint32 start = 3;
+    uint32 end = 4;
 }
 
 
