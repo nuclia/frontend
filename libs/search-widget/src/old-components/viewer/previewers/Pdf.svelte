@@ -4,6 +4,7 @@
   import { getFile } from '../../../core/api';
   import { viewerStore } from '../../../core/old-stores/viewer.store';
   import PdfControls from './PdfControls.svelte';
+  import LoadingDots from '../../../common/spinner/LoadingDots.svelte';
 
   export let src: string;
   export let query: string = '';
@@ -23,6 +24,7 @@
   let pdfContainer: HTMLElement;
 
   let zoom: number = 1;
+  let loading = true;
 
   $: if (isInitialized && src) pdfChanged.next(src);
   $: if (isInitialized && query) find(query);
@@ -69,6 +71,7 @@
     (async function () {
       const pdfDocument = await loadingTask.promise;
       pdfViewer.setDocument(pdfDocument);
+      loading = false;
       pdfLinkService.setDocument(pdfDocument, null);
     })();
   };
@@ -156,7 +159,12 @@
       />
     </div>
   {/if}
-  <div class="pdf">
+  <div class="pdf" role={loading ? 'alert' : null} aria-live={loading ? 'assertive' : null}>
+    {#if loading}
+      <div class="loading-dots">
+        <LoadingDots />
+      </div>
+    {/if}
     <link rel="stylesheet" href="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.css" />
     <div id="viewerContainer" bind:this={pdfContainer}>
       <div id="viewer" class="pdfViewer" />
