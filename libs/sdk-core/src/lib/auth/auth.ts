@@ -92,7 +92,7 @@ export class Authentication implements IAuthentication {
   }
 
   getToken(): string {
-    return localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
+    return this.nuclia.options.public ? '' : localStorage.getItem(LOCALSTORAGE_AUTH_KEY) || '';
   }
 
   setPassword(password: string): Observable<boolean> {

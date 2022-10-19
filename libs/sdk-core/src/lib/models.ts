@@ -122,6 +122,7 @@ export interface NucliaOptions {
   kbSlug?: string;
   client?: string;
   standalone?: boolean;
+  public?: boolean;
 }
 
 export type PromiseMapper<T> = {
