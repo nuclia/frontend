@@ -16,10 +16,16 @@ import {
 } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LabelValue, Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
+import {
+  deDuplicateList,
+  LabelValue,
+  Resource,
+  RESOURCE_STATUS,
+  ResourceList,
+  resourceToAlgoliaFormat,
+} from '@nuclia/core';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { deDuplicateList } from '../../../../../libs/sdk-core/src/lib/db/resource.helpers';
 
 interface ListFilters {
   type?: string;

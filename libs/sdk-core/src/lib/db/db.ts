@@ -16,7 +16,7 @@ import {
   StatsType,
   Welcome,
 } from './db.models';
-import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb.models';
+import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
 import { WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
 

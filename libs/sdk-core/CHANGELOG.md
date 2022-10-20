@@ -1,3 +1,8 @@
+# 1.0.3 (2022-10-20)
+
+- Add sub-folders in `db`
+- Add missing exports in index.ts
+
 # 1.0.2 (2022-10-19)
 
 - Support external file uploading

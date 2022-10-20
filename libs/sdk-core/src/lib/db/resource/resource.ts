@@ -1,7 +1,7 @@
 import { forkJoin, Observable, tap } from 'rxjs';
-import type { UploadResponse } from './upload';
-import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
-import type { INuclia } from '../models';
+import type { UploadResponse } from '../upload';
+import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
+import type { INuclia } from '../../models';
 import type {
   Classification,
   CloudLink,
@@ -20,9 +20,9 @@ import type {
   TextField,
   TokenAnnotation,
 } from './resource.models';
-import type { Search, SearchOptions } from './search.models';
+import type { Search, SearchOptions } from '../search';
+import { search } from '../search';
 import { setEntities, setLabels } from './resource.helpers';
-import { search } from './search';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}

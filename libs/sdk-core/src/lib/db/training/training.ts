@@ -1,6 +1,6 @@
 import type { Observable } from 'rxjs';
-import type { INuclia } from '../models';
-import type { WritableKnowledgeBox } from './kb';
+import type { INuclia } from '../../models';
+import type { WritableKnowledgeBox } from '../kb';
 import type { TrainingTask, TrainingType } from './training.models';
 
 export class Training {
