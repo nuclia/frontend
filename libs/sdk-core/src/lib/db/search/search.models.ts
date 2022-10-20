@@ -1,5 +1,5 @@
-import type { ExtractedDataTypes, ResourceProperties } from './kb.models';
-import type { FIELD_TYPE, IResource } from './resource.models';
+import type { ExtractedDataTypes, ResourceProperties } from '../kb';
+import type { FIELD_TYPE, IResource } from '../resource';
 
 export interface SearchOptions {
   // non API-official options

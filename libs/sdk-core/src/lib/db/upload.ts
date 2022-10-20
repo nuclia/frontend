@@ -1,22 +1,22 @@
 import {
-  map,
-  Observable,
-  switchMap,
-  range,
-  filter,
-  concatMap,
-  from,
-  of,
-  merge,
-  startWith,
   catchError,
+  concatMap,
+  filter,
+  from,
+  map,
+  merge,
   mergeMap,
+  Observable,
+  of,
+  range,
   repeat,
+  startWith,
+  switchMap,
   take,
 } from 'rxjs';
 import type { INuclia } from '../models';
 import { NUA_KEY } from './db.models';
-import type { ICreateResource } from './resource.models';
+import type { ICreateResource } from './resource';
 
 const CHUNK_SIZE = 512 * 1024; // minimum size accepted by GCS
 const SLUGIFY = new RegExp(/[^a-z0-9_-]/g);

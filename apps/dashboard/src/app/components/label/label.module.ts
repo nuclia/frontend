@@ -14,6 +14,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
+import { LabelDropdownComponent } from './label-dropdown/label-dropdown.component';
 
 const components = [LabelListComponent, LabelFieldComponent];
 
@@ -30,7 +31,7 @@ const components = [LabelListComponent, LabelFieldComponent];
     PaTogglesModule,
     DropdownButtonComponent,
   ],
-  declarations: [...components],
-  exports: [...components],
+  declarations: [...components, LabelDropdownComponent],
+  exports: [...components, LabelDropdownComponent],
 })
 export class LabelModule {}

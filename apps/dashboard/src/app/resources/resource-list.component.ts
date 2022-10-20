@@ -2,12 +2,30 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { BehaviorSubject, combineLatest, forkJoin, from, mergeMap, Observable, of, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  forkJoin,
+  from,
+  mergeMap,
+  Observable,
+  of,
+  Subject,
+  take,
+} from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { LabelValue, Resource, RESOURCE_STATUS, ResourceList, resourceToAlgoliaFormat } from '@nuclia/core';
+import {
+  deDuplicateList,
+  LabelValue,
+  Resource,
+  RESOURCE_STATUS,
+  ResourceList,
+  resourceToAlgoliaFormat,
+} from '@nuclia/core';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
-import { SisModalService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 interface ListFilters {
   type?: string;
@@ -84,6 +102,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );
+  labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
+  currentLabelList: LabelValue[] = [];
 
   constructor(
     private sdk: SDKService,
@@ -93,6 +113,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
     private stateService: StateService,
+    private toaster: SisToastService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -261,7 +282,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), kb.getLabels()])),
+      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), this.labelSets$.pipe(take(1))])),
       map(([results, labelSets]) => {
         this.data = results.resources.map((resource: Resource) => {
           const resourceWithLabels: ResourceWithLabels = {
@@ -323,5 +344,51 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       });
     }
+  }
+
+  updateLabelList($event: LabelValue[]) {
+    this.currentLabelList = $event;
+  }
+
+  addLabelsToSelection() {
+    if (this.currentLabelList.length > 0) {
+      const requests = this.selection.selected.map((resource) => {
+        const updatedResource = {
+          usermetadata: {
+            ...resource.usermetadata,
+            classifications: this.mergeExistingAndSelectedLabels(resource.usermetadata?.classifications),
+          },
+        };
+        return resource.modify(updatedResource).pipe(
+          map(() => ({ isError: false })),
+          catchError((error) => of({ isError: true, error })),
+        );
+      });
+
+      forkJoin(requests)
+        .pipe(
+          tap((results) => {
+            const errorCount = results.filter((res) => res.isError).length;
+            const successCount = results.length - errorCount;
+            if (successCount > 0) {
+              this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
+            }
+            if (errorCount > 0) {
+              this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
+            }
+          }),
+          switchMap(() => this.getResources()),
+        )
+        .subscribe(() => {
+          this.currentLabelList = [];
+        });
+    }
+  }
+
+  private mergeExistingAndSelectedLabels(classifications: LabelValue[] | undefined): LabelValue[] {
+    if (!classifications) {
+      return this.currentLabelList;
+    }
+    return deDuplicateList(classifications.concat(this.currentLabelList));
   }
 }

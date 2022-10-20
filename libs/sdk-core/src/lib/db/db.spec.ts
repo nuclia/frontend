@@ -1,4 +1,3 @@
-import { concatMap, filter, switchMap, tap } from 'rxjs/operators';
 import { Nuclia } from '../core';
 import { IAuthentication, INuclia } from '../models';
 import { mockFetch } from '../test.utils.spec';
@@ -24,7 +23,7 @@ describe('Db', () => {
         'http://here/v1/accounts',
         expect.objectContaining({
           method: 'GET',
-        })
+        }),
       );
       expect(res[0].slug).toEqual('gotham');
       done();
@@ -47,7 +46,7 @@ describe('Db', () => {
         'http://here/v1/account/my-account/kbs',
         expect.objectContaining({
           method: 'GET',
-        })
+        }),
       );
       expect(res[0].slug).toEqual('geb');
       done();
@@ -68,7 +67,7 @@ describe('Db', () => {
         'http://here/v1/account/dc/kb/gotham',
         expect.objectContaining({
           method: 'GET',
-        })
+        }),
       );
       expect(res.slug).toEqual('geb');
       done();

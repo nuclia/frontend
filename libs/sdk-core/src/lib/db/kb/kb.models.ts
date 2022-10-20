@@ -1,8 +1,7 @@
 import type { Observable } from 'rxjs';
-import type { IResource, LinkField, UserMetadata } from './resource.models';
-import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from './upload';
-import type { Search, SearchOptions } from './search.models';
-import type { Resource } from './resource';
+import type { IResource, LinkField, Resource, UserMetadata } from '../resource';
+import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
+import type { Search, SearchOptions } from '../search';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';

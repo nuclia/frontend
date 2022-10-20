@@ -21,14 +21,14 @@ import {
   ServiceAccount,
   ServiceAccountCreation,
 } from './kb.models';
-import type { INuclia } from '../models';
-import { Resource } from './resource';
-import type { ICreateResource, IResource, LinkField, UserMetadata } from './resource.models';
-import type { UploadResponse } from './upload';
-import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from './upload';
-import type { Search, SearchOptions } from './search.models';
-import { Training } from './training';
-import { search } from './search';
+import type { INuclia } from '../../models';
+import type { ICreateResource, IResource, LinkField, UserMetadata } from '../resource';
+import { Resource } from '../resource';
+import type { UploadResponse } from '../upload';
+import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
+import type { Search, SearchOptions } from '../search';
+import { search } from '../search';
+import { Training } from '../training';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}

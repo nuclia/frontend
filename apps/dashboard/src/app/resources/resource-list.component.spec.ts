@@ -10,6 +10,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MockModule } from 'ng-mocks';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { CdkTableModule } from '@angular/cdk/table';
+import { LabelModule } from '../components/label/label.module';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -17,7 +18,13 @@ describe('ResourceListComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [CdkTableModule, MatDialogModule, MockModule(PaButtonModule), MockModule(PaTextFieldModule)],
+      imports: [
+        CdkTableModule,
+        MatDialogModule,
+        MockModule(PaButtonModule),
+        MockModule(PaTextFieldModule),
+        MockModule(LabelModule),
+      ],
       declarations: [ResourceListComponent, TranslatePipeMock],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [

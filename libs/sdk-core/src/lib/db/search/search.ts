@@ -1,5 +1,5 @@
 import { catchError, map, of, tap } from 'rxjs';
-import type { INuclia } from '../models';
+import type { INuclia } from '../../models';
 import type { Search, SearchOptions } from './search.models';
 
 export const search = (
