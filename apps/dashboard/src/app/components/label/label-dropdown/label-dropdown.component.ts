@@ -11,7 +11,7 @@ import { PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 export class LabelDropdownComponent {
   @Input()
   set selection(value: LabelValue[]) {
-    this._selection = value || [];
+    this._selection = [...value] || [];
     this.checkboxSelection = this._selection.map((labelValue) => `${labelValue.labelset}${labelValue.label}`);
   }
   get selection() {
@@ -37,6 +37,7 @@ export class LabelDropdownComponent {
   @Input() size: Size | undefined;
 
   @Output() selectionChange = new EventEmitter<LabelValue[]>();
+  @Output() close = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
   @ViewChild('level2') level2Popup?: PopupComponent;
@@ -59,6 +60,7 @@ export class LabelDropdownComponent {
     this.open = false;
     this.level2Popup?.close();
     this.labelSetExpanded = '';
+    this.close.emit();
   }
 
   toggleLabel(labelValue: LabelValue) {
@@ -75,6 +77,7 @@ export class LabelDropdownComponent {
         (item) => !(item.label === labelValue.label && item.labelset === labelValue.labelset),
       );
     }
+    this.selection = newSelectedLabels;
     this.selectionChange.emit(newSelectedLabels);
   }
 }

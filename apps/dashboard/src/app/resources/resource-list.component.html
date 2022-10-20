@@ -11,6 +11,8 @@
         {{ 'resource.selected_count' | translate: {num: selection.selected.length || ''} }}
 
         <app-label-dropdown [labelSets]="labelSets$ | async"
+                            (selectionChange)="updateLabelList($event)"
+                            (close)="addLabelsToSelection()"
                             size="small">{{'resource.add_labels' | translate}}</app-label-dropdown>
 
         <pa-button *ngIf="selection.selected.length > 0"
