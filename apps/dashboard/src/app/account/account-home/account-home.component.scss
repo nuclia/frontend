@@ -1,94 +1,73 @@
 @import 'variables';
 
 .account-home {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
   padding: 4.5vw var(--app-layout-margin-right);
 
-  .container {
-    padding: 25px 30px;
-    background-color: #fff;
-    border-radius: 4px;
-    margin-bottom: 30px;
-    h2 {
-      margin: 0;
-      font-size: var(--stf-font-size-xxlarge);
-      font-weight: var(--stf-font-weight-light);
-    }
-  }
-  .left-column {
-    width: 371px;
-  }
-  .processing-stats {
-    h2 {
-      margin: 0 0 25px 0;
-    }
-  }
-  .totals {
-    font-size: var(--stf-font-size-xxlarge);
-    font-weight: var(--stf-font-weight-light);
-    ::ng-deep strong {
-      margin-left: 10px;
-    }
-  }
-  .total-queries {
-    font-size: rythm(3.5);
-    font-weight: var(--stf-font-weight-bold);
-  }
-  .chart-header {
+  .container-row,
+  .right-column {
     display: flex;
-    align-items: baseline;
-    h2 {
-      margin-bottom: 60px;
-    }
-    span {
-      font-weight: var(--stf-font-weight-light);
-      flex-grow: 1;
-      text-align: right;
+    gap: rhythm(3);
+  }
+
+  .container {
+    background-color: $color-light-stronger;
+    border-radius: rhythm(0.5);
+    padding: rhythm(2);
+  }
+
+  .processing-stats {
+    flex: 1 0 auto;
+  }
+
+  .chart-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(3);
+
+    .renewal-message {
+      color: $color-neutral-regular;
+      font-size: font-size(xs);
       font-style: italic;
     }
   }
+  .chart-type {
+    align-items: center;
+    color: $color-neutral-regular;
+    display: flex;
+    gap: rhythm(1);
 
-  .activity {
-    h2 {
-      margin-bottom: rythm(1.5);
+    .selected {
+      color: $color-dark-stronger;
+      font-weight: $font-weight-semi-bold;
+    }
+    .separator {
+      height: rhythm(2);
+      width: 1px;
     }
   }
 
-  .activity-header {
-    display: flex;
-    align-items: center;
-    font-size: var(--stf-font-size-ssmall);
-    font-weight: var(--stf-font-weight-light);
-    padding-bottom: rythm(0.5);
-    border-bottom: 1px solid #000;
-    margin-bottom: rythm(1);
+  .right-column {
+    flex-direction: column;
+    width: rhythm(35);
+
+    .kb-state {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .total-queries {
+      font-size: rhythm(5);
+      font-weight: $font-weight-bold;
+    }
   }
 
-  .activity-items {
-    max-height: 310px;
-    overflow-y: auto;
-    @include scrollbar-black();
-  }
-
-  .activity-item {
-    display: flex;
-    align-items: center;
-    height: rythm(3);
-    border-bottom: 1px solid #000;
-  }
-
-  .title {
-    flex: 1 1 0;
-    padding-right: rythm(3);
-    @include text-truncate();
-  }
-
-  .user,
-  .date {
-    flex: 0 0 250px;
-    max-width: 20%;
-  }
-
-  .user {
-    @include text-truncate();
+  .separator {
+    background-color: $color-neutral-light;
+    height: 100%;
+    width: 0.5px;
   }
 }

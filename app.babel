@@ -160,7 +160,47 @@
                         </translations>
                     </concept_node>
                     <concept_node>
-                        <name>account.characters</name>
+                        <name>account.chart_ML_characters</name>
+                        <description/>
+                        <comment/>
+                        <default_text/>
+                        <translations>
+                            <translation>
+                                <language>ca-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>en-US</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>es-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                        </translations>
+                    </concept_node>
+                    <concept_node>
+                        <name>account.chart_documents</name>
+                        <description/>
+                        <comment/>
+                        <default_text/>
+                        <translations>
+                            <translation>
+                                <language>ca-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>en-US</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>es-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                        </translations>
+                    </concept_node>
+                    <concept_node>
+                        <name>account.chart_media_hours</name>
                         <description/>
                         <comment/>
                         <default_text/>
@@ -1000,6 +1040,26 @@
                         </translations>
                     </concept_node>
                     <concept_node>
+                        <name>account.public</name>
+                        <description/>
+                        <comment/>
+                        <default_text/>
+                        <translations>
+                            <translation>
+                                <language>ca-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>en-US</language>
+                                <approved>false</approved>
+                            </translation>
+                            <translation>
+                                <language>es-ES</language>
+                                <approved>false</approved>
+                            </translation>
+                        </translations>
+                    </concept_node>
+                    <concept_node>
                         <name>account.related_kbs</name>
                         <description/>
                         <comment/>
@@ -1341,26 +1401,6 @@
                     </concept_node>
                     <concept_node>
                         <name>account.token_generation_warning</name>
-                        <description/>
-                        <comment/>
-                        <default_text/>
-                        <translations>
-                            <translation>
-                                <language>ca-ES</language>
-                                <approved>false</approved>
-                            </translation>
-                            <translation>
-                                <language>en-US</language>
-                                <approved>false</approved>
-                            </translation>
-                            <translation>
-                                <language>es-ES</language>
-                                <approved>false</approved>
-                            </translation>
-                        </translations>
-                    </concept_node>
-                    <concept_node>
-                        <name>account.total</name>
                         <description/>
                         <comment/>
                         <default_text/>

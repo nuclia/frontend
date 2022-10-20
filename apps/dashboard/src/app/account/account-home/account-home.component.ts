@@ -40,7 +40,6 @@ export class AccountHomeComponent {
   );
   locale = this.appService.currentLocale;
 
-  showActivity = false;
   activity = [{ resource: of('resource'), date: '', username: of('username') }];
 
   constructor(private sdk: SDKService, private stateService: StateService, private appService: AppService) {}
