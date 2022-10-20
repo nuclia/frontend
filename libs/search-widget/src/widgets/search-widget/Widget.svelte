@@ -61,10 +61,17 @@
     }
   };
   export const setActions = setWidgetActions;
+  export const reset = () => {
+    resetStore();
+    resetNuclia();
+    unsubscribeAllEffects();
+    subscriptions.forEach((subscription) => subscription.unsubscribe());
+  };
 
   let style: string;
   let ready = false;
   const previewQueryKey = formatQueryKey('preview');
+  let subscriptions: Subscription[] = [];
 
   onMount(() => {
     initNuclia(
@@ -98,7 +105,7 @@
 
     checkUrlParams();
 
-    const subscriptions: Subscription[] = [
+    subscriptions = [
       nucliaState()
         .displayedResource.pipe(
           filter((displayedResource) => !!displayedResource?.uid),
@@ -132,12 +139,7 @@
 
     ready = true;
 
-    return () => {
-      resetStore();
-      resetNuclia();
-      unsubscribeAllEffects();
-      subscriptions.forEach((subscription) => subscription.unsubscribe());
-    };
+    return () => reset();
   });
 
   const closeModal = () => {
