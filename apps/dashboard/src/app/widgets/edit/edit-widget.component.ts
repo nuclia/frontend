@@ -163,7 +163,7 @@ ${styles.join('\n')}
         'zone=',
         `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
       lang="${this.translation.currentLang}"
-      state="${this.kbState}" notPublic zone=`,
+      state="${this.kbState}" notpublic zone=`,
       ) + styleStr,
     );
     markForCheck(this.cdr);
