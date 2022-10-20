@@ -351,34 +351,38 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   addLabelsToSelection() {
-    const requests = this.selection.selected.map((resource) => {
-      const updatedResource = {
-        usermetadata: {
-          ...resource.usermetadata,
-          classifications: this.mergeExistingAndSelectedLabels(resource.usermetadata?.classifications),
-        },
-      };
-      return resource.modify(updatedResource).pipe(
-        map(() => ({ isError: false })),
-        catchError((error) => of({ isError: true, error })),
-      );
-    });
+    if (this.currentLabelList.length > 0) {
+      const requests = this.selection.selected.map((resource) => {
+        const updatedResource = {
+          usermetadata: {
+            ...resource.usermetadata,
+            classifications: this.mergeExistingAndSelectedLabels(resource.usermetadata?.classifications),
+          },
+        };
+        return resource.modify(updatedResource).pipe(
+          map(() => ({ isError: false })),
+          catchError((error) => of({ isError: true, error })),
+        );
+      });
 
-    forkJoin(requests)
-      .pipe(
-        tap((results) => {
-          const errorCount = results.filter((res) => res.isError).length;
-          const successCount = results.length - errorCount;
-          if (successCount > 0) {
-            this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
-          }
-          if (errorCount > 0) {
-            this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
-          }
-        }),
-        switchMap(() => this.getResources()),
-      )
-      .subscribe();
+      forkJoin(requests)
+        .pipe(
+          tap((results) => {
+            const errorCount = results.filter((res) => res.isError).length;
+            const successCount = results.length - errorCount;
+            if (successCount > 0) {
+              this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
+            }
+            if (errorCount > 0) {
+              this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
+            }
+          }),
+          switchMap(() => this.getResources()),
+        )
+        .subscribe(() => {
+          this.currentLabelList = [];
+        });
+    }
   }
 
   private mergeExistingAndSelectedLabels(classifications: LabelValue[] | undefined): LabelValue[] {
