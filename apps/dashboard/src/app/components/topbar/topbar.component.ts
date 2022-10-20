@@ -4,7 +4,7 @@ import { BackendConfigurationService, SDKService, UserService } from '@flaps/cor
 import { NavigationService } from '../../services/navigation.service';
 import { distinctUntilKeyChanged, filter, map, switchMap, take, tap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppService } from '../../services/app.service';
 import { SisModalService } from '@nuclia/sistema';
 
@@ -34,6 +34,7 @@ export class TopbarComponent implements AfterViewInit {
         state="${kb.state || ''}"
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
+        lang="${this.translation.currentLang}"
         type="input"
         permalink
         notPublic></nuclia-search>`),
@@ -50,6 +51,7 @@ export class TopbarComponent implements AfterViewInit {
     private appService: AppService,
     private translate: TranslatePipe,
     private modalService: SisModalService,
+    private translation: TranslateService,
   ) {}
 
   goToHome(): void {
