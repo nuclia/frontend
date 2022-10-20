@@ -37,7 +37,7 @@ export class TopbarComponent implements AfterViewInit {
         lang="${this.translation.currentLang}"
         type="input"
         permalink
-        notPublic></nuclia-search>`),
+        notpublic></nuclia-search>`),
     ),
   );
 

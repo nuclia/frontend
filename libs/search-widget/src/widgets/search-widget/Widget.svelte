@@ -46,8 +46,8 @@
   export let state: KBStates = 'PUBLISHED';
   export let permalink = false;
   export let standalone = false;
-  export let notPublic = false;
-  let _notPublic = coerceBooleanProperty(notPublic);
+  export let notpublic = false;
+  let _notpublic = coerceBooleanProperty(notpublic);
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
 
@@ -85,7 +85,7 @@
         kbSlug: kbslug,
         account,
         standalone,
-        public: !_notPublic && !apikey,
+        public: !_notpublic && !apikey,
       },
       state,
       {
