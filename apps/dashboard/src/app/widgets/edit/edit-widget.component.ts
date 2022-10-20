@@ -8,7 +8,7 @@ import { Widget } from '@nuclia/core';
 import { filter, map, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddWidgetDialogComponent } from '../add/add-widget.component';
 import { WidgetService } from '../widget.service';
-import { markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
@@ -73,6 +73,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     private backendConfig: BackendConfigurationService,
     private tracking: STFTrackingService,
     private posthog: PostHogService,
+    private translation: TranslateService,
   ) {}
 
   ngOnInit() {
@@ -161,6 +162,7 @@ ${styles.join('\n')}
       this.snippet.replace(
         'zone=',
         `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
+      lang="${this.translation.currentLang}"
       state="${this.kbState}" notPublic zone=`,
       ) + styleStr,
     );
