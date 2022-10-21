@@ -24,6 +24,7 @@
   const results = viewerState.results;
   const hasSearchError = viewerState.hasSearchError;
   const showPreview = viewerState.showPreview;
+  const notProcessed = viewerState.isNotProcessed
 
   $: {
     imagePath = findFileByType(resource.value, 'image/');
@@ -87,6 +88,9 @@
   <div class="viewer-body" class:preview={$showPreview}>
     <div class="viewer-left">
       <InputViewer/>
+      {#if $notProcessed}
+        {$_('error.processing')}
+      {/if}
 
       <div class="paragraphs">
         {#if $hasSearchError}

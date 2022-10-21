@@ -9,7 +9,7 @@ import type {
   ResourceData,
   Sentence,
 } from '@nuclia/core';
-import { Search } from '@nuclia/core';
+import { Search, RESOURCE_STATUS } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -103,6 +103,7 @@ export const viewerState = {
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.YOUTUBE])),
     map(([resource, selected]) => getYoutubePreviewParams(resource!, selected!.fieldId, selected!.paragraph)),
   ),
+  isNotProcessed: resource.pipe(map((res) => res?.metadata?.status !== RESOURCE_STATUS.PROCESSED)),
 };
 
 export const selectedParagraphIndex = combineLatest([
