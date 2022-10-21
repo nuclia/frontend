@@ -3,9 +3,10 @@
     <div class="processing-stats">
       <pa-tabs noSlider notFullWidth>
         <pa-tab [active]="selectedTab === 'completed'"
-                (click)="selectedTab = 'completed'">Processed resources</pa-tab>
-        <pa-tab [active]="selectedTab === 'pending'"
-                (click)="selectedTab = 'pending'">Resources pending to be processed</pa-tab>
+                (click)="selectedTab = 'completed'">{{'account.chart_title_processed' | translate}}</pa-tab>
+        <pa-tab *ngIf="(isFreeAccount | async) === false"
+                [active]="selectedTab === 'pending'"
+                (click)="selectedTab = 'pending'">{{'account.chart_title_pending_resources' | translate}}</pa-tab>
       </pa-tabs>
 
       <section *ngIf="selectedTab === 'completed'"
@@ -40,7 +41,7 @@
       </section>
       <section *ngIf="selectedTab === 'pending'"
                class="container">
-        TODO
+        Will be there really soon 😃
       </section>
     </div>
 

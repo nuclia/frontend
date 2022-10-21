@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService } from '@flaps/core';
 import { Account, StatsPeriod, StatsType } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, of, share, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, filter, map, Observable, share, switchMap } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
 
@@ -15,9 +15,11 @@ type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.D
 })
 export class AccountHomeComponent {
   statsType = StatsType;
-
   selectedTab: 'completed' | 'pending' = 'completed';
+
   account = this.stateService.account.pipe(filter((account) => !!account));
+  isFreeAccount = this.account.pipe(map((account) => account && account.type === 'stash-basic'));
+
   processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
   processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(
     filter(([account]) => !!account),
@@ -75,8 +77,6 @@ export class AccountHomeComponent {
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
   );
   locale = this.appService.currentLocale;
-
-  activity = [{ resource: of('resource'), date: '', username: of('username') }];
 
   constructor(private sdk: SDKService, private stateService: StateService, private appService: AppService) {}
 }

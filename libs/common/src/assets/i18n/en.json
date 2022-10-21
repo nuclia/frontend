@@ -9,6 +9,8 @@
 	"account.chart_ML_characters": "ML characters",
 	"account.chart_documents": "Non media documents",
 	"account.chart_media_hours": "Media hours",
+	"account.chart_title_pending_resources": "Resources pending to be processed",
+	"account.chart_title_processed": "Processed resources",
 	"account.code_saved": "Code entered",
 	"account.config": "Account settings",
 	"account.consuming": "Consuming",
