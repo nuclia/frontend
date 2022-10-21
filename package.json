@@ -55,7 +55,7 @@
     "core-js": "^3.6.4",
     "crypto": "^1.0.1",
     "d3": "^5.15.0",
-    "date-fns": "^2.28.0",
+    "date-fns": "^2.29.3",
     "electron-updater": "^5.0.1",
     "fuse.js": "^3.6.1",
     "latinize": "^0.5.0",

@@ -1,18 +1,19 @@
 import {
-  Component,
   AfterViewInit,
-  OnDestroy,
-  ViewChild,
-  ElementRef,
-  ViewEncapsulation,
-  Input,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  ViewChild,
+  ViewEncapsulation,
 } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
 import { createYAxis } from '../chart-utils';
+import { getDate } from 'date-fns';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 3;
@@ -75,9 +76,9 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
 
     // Set the dimensions and margins
     const availableWidth = this.container?.nativeElement.offsetWidth;
-    const margin = { top: 0, right: 50, bottom: 30, left: 0 },
-      width = availableWidth - margin.left - margin.right,
-      height = this.height - margin.top - margin.bottom;
+    const margin = { top: 0, right: 50, bottom: 30, left: 0 };
+    const width = availableWidth - margin.left - margin.right;
+    const height = this.height - margin.top - margin.bottom;
 
     // Append the svg object to the page
     d3.select(`#${this.id} svg`).remove();
@@ -138,10 +139,21 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
 
     svg
       .append('g')
-      .attr('transform', `translate(0, ${height})`)
+      .attr('transform', `translate(0, ${height - 4})`)
       .attr('class', 'x-axis')
       .call(d3.axisBottom(x))
-      .call((g) => g.selectAll('.tick text').attr('transform', 'rotate(-45 10 10)'))
+      .call((g) =>
+        g
+          .selectAll('.tick text')
+          .filter((value) => {
+            if (typeof value !== 'string') {
+              return false;
+            }
+            const day = parseInt(value, 10);
+            return day > getDate(Date.now());
+          })
+          .style('color', '#c4c4c4'),
+      )
       .call((g) => g.select('.domain').remove())
       .call((g) => g.selectAll('.tick line').remove());
 

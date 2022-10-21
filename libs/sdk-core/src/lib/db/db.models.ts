@@ -65,7 +65,11 @@ export enum StatsType {
   CHARS = 'chars',
   MEDIA_SECONDS = 'media_seconds',
   BYTES = 'bytes',
-  FILES = 'files',
+  RESOURCES = 'resources',
+  PAGES = 'pages',
+  TRAIN_SECONDS = 'train_seconds',
+  SUGGESTIONS = 'suggestions',
+  DOCS_NO_MEDIA = 'docs_no_media',
 }
 
 export interface Welcome {

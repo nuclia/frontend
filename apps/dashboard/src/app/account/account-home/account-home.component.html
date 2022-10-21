@@ -1,62 +1,61 @@
 <div class="account-home">
-  <div fxLayout="row" fxLayoutGap="30px" fxLayoutAlign="start start">
-    <div fxFlex="1 1 0">
-      <div class="container processing-stats">
+  <div class="container-row">
+    <div class="processing-stats">
+      <pa-tabs noSlider notFullWidth>
+        <pa-tab [active]="selectedTab === 'completed'"
+                (click)="selectedTab = 'completed'">{{'account.chart_title_processed' | translate}}</pa-tab>
+        <pa-tab *ngIf="(isFreeAccount | async) === false"
+                [active]="selectedTab === 'pending'"
+                (click)="selectedTab = 'pending'">{{'account.chart_title_pending_resources' | translate}}</pa-tab>
+      </pa-tabs>
+
+      <section *ngIf="selectedTab === 'completed'"
+               class="container">
         <div class="chart-header">
-          <h2>{{ 'account.characters' | translate }}</h2>
-          <span>{{ 'account.renewal' | translate }}</span>
+          <div class="chart-type-container">
+            <span class="chart-type"
+                  [class.selected]="(processedView | async) === statsType.CHARS"
+                  (click)="processedView.next(statsType.CHARS)"
+            >{{ 'account.chart_ML_characters' | translate }}</span>
+            <div class="separator"></div>
+            <span class="chart-type"
+                  [class.selected]="(processedView | async) === statsType.MEDIA_SECONDS"
+                  (click)="processedView.next(statsType.MEDIA_SECONDS)"
+            >{{ 'account.chart_media_hours' | translate }}</span>
+            <div class="separator"></div>
+            <span class="chart-type"
+                  [class.selected]="(processedView | async) === statsType.DOCS_NO_MEDIA"
+                  (click)="processedView.next(statsType.DOCS_NO_MEDIA)"
+            >{{ 'account.chart_documents' | translate }}</span>
+          </div>
+          <span class="renewal-message">{{ 'account.renewal' | translate }}</span>
         </div>
-        <app-empty-chart *ngIf="!(processing | async)" [numLines]="3"></app-empty-chart>
-        <app-bar-chart
-          [data]="(processing | async) || []"
-          [threshold]="300000000"
-          [axisYMultiplier]="1"
-          [height]="320"
-          [locale]="locale | async"
-          [tooltipsEnabled]="true"
+        <app-empty-chart *ngIf="(processing | async) === null" [numLines]="3"></app-empty-chart>
+        <app-bar-chart [data]="(processing | async) || []"
+                       [threshold]="(processedThreshold | async)"
+                       [axisYMultiplier]="1"
+                       [height]="320"
+                       [locale]="locale | async"
+                       [tooltipsEnabled]="true"
         ></app-bar-chart>
-      </div>
+      </section>
+      <section *ngIf="selectedTab === 'pending'"
+               class="container">
+        Will be there really soon 😃
+      </section>
     </div>
 
-    <div fxFlex="0 0 auto" class="left-column">
-      <div class="container">
-        <span
-          class="totals"
-          [innerHtml]="
-            'account.total' | translate: { total: (kbsTotal | async) || 0, public: (kbsPublic | async) || 0 }
-          "
-        ></span>
+    <div class="right-column">
+      <div class="container kb-state">
+        <strong>{{'stash.state' | translate}}:</strong>
+        <span><strong>{{(kbsTotal | async) || 0}}</strong> {{'account.knowledgeboxes' | translate}}</span>
+        <div class="separator"></div>
+        <span><strong>{{(kbsPublic | async) || 0}}</strong> {{'account.public' | translate}}</span>
       </div>
       <div class="container">
-        <h2>{{ 'account.total_queries' | translate }}</h2>
+        <strong>{{ 'account.total_queries' | translate }}</strong>
         <div class="total-queries" *ngIf="locale | async as locale">
           {{ totalQueries | async | number: '1.0-0':locale }}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container activity" *ngIf="showActivity">
-    <h2>{{ 'account.consuming' | translate }}</h2>
-    <div>
-      <div class class="activity-header">
-        <div class="title">{{ 'activity.resource' | translate }}</div>
-        <div class="date">{{ 'activity.timestamp' | translate }}</div>
-        <div class="user">{{ 'activity.actor' | translate }}</div>
-      </div>
-      <div class="activity-items">
-        <div class="activity-item" *ngFor="let item of items">
-          <div class="title">
-            {{ item.resource | async }}
-          </div>
-          <div class="date">
-            <ng-container *ngIf="item.date">
-              {{ item.date | formatDate: { default: true } }} {{ item.date | formatTime }}
-            </ng-container>
-          </div>
-          <div class="user">
-            {{ item.username | async }}
-          </div>
         </div>
       </div>
     </div>
