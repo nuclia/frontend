@@ -20,6 +20,10 @@
 
   .processing-stats {
     flex: 1 0 auto;
+
+    .container {
+      padding: rhythm(3);
+    }
   }
 
   .chart-header {
@@ -34,12 +38,15 @@
       font-style: italic;
     }
   }
-  .chart-type {
+  .chart-type-container {
     align-items: center;
     color: $color-neutral-regular;
     display: flex;
     gap: rhythm(1);
 
+    .chart-type {
+      cursor: pointer;
+    }
     .selected {
       color: $color-dark-stronger;
       font-weight: $font-weight-semi-bold;
@@ -52,6 +59,7 @@
 
   .right-column {
     flex-direction: column;
+    margin-top: rhythm(6);
     width: rhythm(35);
 
     .kb-state {

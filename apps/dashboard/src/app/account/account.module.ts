@@ -35,10 +35,11 @@ import {
   PaButtonModule,
   PaDropdownModule,
   PaIconModule,
+  PaModalModule,
+  PaTabsModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
-  PaModalModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
@@ -91,6 +92,7 @@ const Components = [
     DropdownButtonComponent,
     PaDropdownModule,
     SisProgressModule,
+    PaTabsModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],

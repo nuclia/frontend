@@ -11,6 +11,7 @@ import { AppService } from '../../services/app.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountHomeComponent {
+  selectedTab: 'completed' | 'pending' = 'completed';
   account = this.stateService.account.pipe(filter((account) => !!account));
   kb = this.sdk.currentKb;
   kbs = this.account.pipe(
