@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService } from '@flaps/core';
-import { StatsPeriod, StatsType } from '@nuclia/core';
-import { filter, map, of, share, switchMap } from 'rxjs';
+import { Account, StatsPeriod, StatsType } from '@nuclia/core';
+import { BehaviorSubject, combineLatest, filter, map, Observable, of, share, switchMap } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
+
+type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.DOCS_NO_MEDIA;
 
 @Component({
   selector: 'app-account-home',
@@ -12,8 +14,26 @@ import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountHomeComponent {
+  statsType = StatsType;
+
   selectedTab: 'completed' | 'pending' = 'completed';
   account = this.stateService.account.pipe(filter((account) => !!account));
+  processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
+  processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(
+    filter(([account]) => !!account),
+    map(([account, statsType]) => {
+      const limits = (account as Account).limits.processing;
+      switch (statsType) {
+        case StatsType.CHARS:
+          return limits.monthly_limit_chars_processed;
+        case StatsType.MEDIA_SECONDS:
+          return limits.monthly_limit_media_seconds_processed;
+        case StatsType.DOCS_NO_MEDIA:
+          return limits.monthly_limit_non_media_files_processed;
+      }
+    }),
+  );
+
   kb = this.sdk.currentKb;
   kbs = this.account.pipe(
     switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account?.slug!)),
@@ -21,8 +41,10 @@ export class AccountHomeComponent {
   );
   kbsTotal = this.kbs.pipe(map((kbs) => kbs.length));
   kbsPublic = this.kbs.pipe(map((kbs) => kbs.filter((kb) => kb.state === 'PUBLISHED').length));
-  private _processing = this.account.pipe(
-    switchMap((account) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.CHARS, undefined, StatsPeriod.MONTH)),
+  private _processing = combineLatest([this.account, this.processedView]).pipe(
+    switchMap(([account, statsType]) =>
+      this.sdk.nuclia.db.getStats(account!.slug, statsType, undefined, StatsPeriod.MONTH),
+    ),
     share(),
   );
 

@@ -1,3 +1,7 @@
+# 1.0.4 (2022-10-21)
+
+- Update `StatsType` enumeration to be aligned with what's supported by the API
+
 # 1.0.3 (2022-10-20)
 
 - Add sub-folders in `db`
