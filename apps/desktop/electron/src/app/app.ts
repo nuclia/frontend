@@ -115,6 +115,10 @@ export default class App {
         App.application.on('open-url', function (event, url) {
           event.preventDefault();
           App.injectDeeplink(url);
+          // Fullscreen window doesn't get focus automatically
+          if (App.mainWindow?.isFullScreen()) {
+            App.mainWindow?.focus();
+          }
         });
 
         // Protocol handler for win32
