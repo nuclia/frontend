@@ -13,7 +13,6 @@
   import { setAnnotations } from '../../core/stores/annotation.store';
   import { resource } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
-  import LoadingDots from '../../common/spinner/LoadingDots.svelte';
 
   let imagePath: string | undefined;
   let image: string | undefined;
@@ -91,7 +90,6 @@
       <InputViewer/>
       {#if $notProcessed}
         {$_('error.processing')}
-        <LoadingDots small />
       {/if}
 
       <div class="paragraphs">
