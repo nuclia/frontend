@@ -29,3 +29,11 @@
     word-break: break-all;
   }
 }
+
+// Override tab example style
+.tab-example-container {
+  --tab-parent-background: #F7F7F8 !important;
+  --tab-parent-padding: 24px !important;
+  --tab-content-background: #fff !important;
+  --tab-content-padding: 16px !important;
+}
