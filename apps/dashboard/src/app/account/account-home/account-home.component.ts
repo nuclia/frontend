@@ -3,6 +3,7 @@ import { SDKService, StateService } from '@flaps/core';
 import { StatsPeriod, StatsType } from '@nuclia/core';
 import { filter, map, of, share, switchMap } from 'rxjs';
 import { AppService } from '../../services/app.service';
+import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
 
 @Component({
   selector: 'app-account-home',
@@ -24,15 +25,27 @@ export class AccountHomeComponent {
     switchMap((account) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.CHARS, undefined, StatsPeriod.MONTH)),
     share(),
   );
+
   processing = this._processing.pipe(
     map((stats) =>
       stats
         .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
-        .map(
-          (stat) =>
-            [stat[0].toLocaleDateString(undefined, { day: 'numeric', month: 'numeric' }), stat[1]] as [string, number],
-        )
-        .reverse(),
+        .reverse()
+        // Keep only points in current month
+        .reduce((currentMonthStats, point, currentIndex, source) => {
+          if (isThisMonth(point[0])) {
+            currentMonthStats.push(point);
+          }
+          // Fill the rest of the month with 0
+          const now = Date.now();
+          if (currentIndex === source.length - 1 && currentMonthStats.length !== getDaysInMonth(now)) {
+            const lastDay = lastDayOfMonth(now);
+            const interval = eachDayOfInterval({ start: point[0], end: lastDay });
+            currentMonthStats = currentMonthStats.concat(interval.map((date) => [date, 0]));
+          }
+          return currentMonthStats;
+        }, [] as [Date, number][])
+        .map((stat) => [format(stat[0], 'd'), stat[1]] as [string, number]),
     ),
   );
   totalQueries = this.account.pipe(
