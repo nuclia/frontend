@@ -19,6 +19,7 @@
 	"entities.time": "Temps",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Obres",
+	"error.processing": "Aquest recurs encara no s'ha processat completament",
 	"error.search": "Ups! Alguna cosa ha anat malament!",
 	"error.search-beta": "Sort que t'hem avisat que encara estem en beta! 🙃",
 	"form.title-only": "Cerca només al títol",
