@@ -108,7 +108,7 @@
 	"entity.add_group": "Agregar grupo de entidades",
 	"entity.add_short_description": "Añade un título o línea de texto descriptiva",
 	"entity.create_group": "Crear grupo de entidades",
-	"entity.delete_entities_warning": "Si elimina esta información, desaparecerá de todos los recursos y sugerencias de búsqueda.",
+	"entity.delete_entities_warning": "Si elimina esta información, desaparecerá de todos los recursos y sugerencias de búsqueda",
 	"entity.delete_entity": "Eliminar la entidad",
 	"entity.entities": "Entidades",
 	"entity.entity": "Entidad",
