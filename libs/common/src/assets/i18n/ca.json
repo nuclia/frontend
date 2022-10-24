@@ -7,7 +7,7 @@
 	"account.admin.warning": "Si converteixes aquest usuari en administrador podrà accedir i editar a totes les opcions.",
 	"account.billing": "Facturació",
 	"account.chart_ML_characters": "Caràcters ML",
-	"account.chart_documents": "Documents no mediàtics",
+	"account.chart_documents": "Documents no multimèdia",
 	"account.chart_error_chars": "No s'han pogut obtenir les dades dels \"caràcters ML\".",
 	"account.chart_error_docs_no_media": "No s'han pogut obtenir les dades del \"document no multimèdia\".",
 	"account.chart_error_media_seconds": "No s'han pogut obtenir les dades de l'\"Horari dels mitjans\".",
