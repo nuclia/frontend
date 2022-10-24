@@ -1,6 +1,6 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
 import { distinctUntilKeyChanged, filter, map, switchMap, take, tap } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -52,6 +52,7 @@ export class TopbarComponent implements AfterViewInit {
     private translate: TranslatePipe,
     private modalService: SisModalService,
     private translation: TranslateService,
+    private trackingService: STFTrackingService,
   ) {}
 
   goToHome(): void {
@@ -87,6 +88,7 @@ export class TopbarComponent implements AfterViewInit {
             );
           }
           widget.setActions(actions);
+          widget.addEventListener('search', () => this.trackingService.logEvent('search'))
           clearInterval(waitForWidget);
         }
       }, 500);
