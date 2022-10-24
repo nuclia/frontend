@@ -1,4 +1,4 @@
-.sw-paragraph-player {
+.sw-paragraph-result {
   cursor: pointer;
   display: flex;
   gap: var(--rhythm-1);
@@ -15,18 +15,23 @@
   .paragraph-text {
     overflow-wrap: break-word;
   }
+
+  .indicator-container {
+    display: flex;
+    flex: 0 0 auto;
+  }
 }
 
 @media (hover: hover) {
-  .sw-paragraph-player:not(.stack) .paragraph-text {
+  .sw-paragraph-result:not(.stack) .paragraph-text {
     padding-right: var(--rhythm-1_5);
   }
 
-  .sw-paragraph-player:hover {
+  .sw-paragraph-result:hover {
     background-color: var(--color-neutral-background);
   }
 
-  .sw-paragraph-player:not(.stack) {
+  .sw-paragraph-result:not(.stack) {
     border-radius: var(--rhythm-1_5);
   }
 }

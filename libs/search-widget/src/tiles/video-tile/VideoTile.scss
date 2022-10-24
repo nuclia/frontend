@@ -1,89 +1,9 @@
+@import "../tile";
+
 .sw-video-tile {
-  --paragraph-height: var(--rhythm-4);
-  --paragraph-gap: var(--rhythm-0_5);
-  --expanded-background-color: var(--color-neutral-lighter);
-
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  transition: background var(--transition-superfast);
-
-  h3 {
-    font-size: var(--font-size-title-m-mobile);
-    font-weight: var(--font-weight-title-m);
-    line-height: var(--line-height-title-m-mobile);
-    margin: 0 0 var(--rhythm-1);
-  }
-
-  .all-result-toggle {
-    align-items: center;
-    color: var(--color-neutral-regular);
-    cursor: pointer;
-    display: flex;
-    font-weight: var(--font-weight-semi-bold);
-    gap: var(--rhythm-1);
-    line-height: var(--rhythm-3);
-    margin-top: var(--rhythm-1);
-    transition: color var(--transition-superfast);
-
-    .icon {
-      display: flex;
-      transition: transform var(--transition-superfast);
-    }
-    &.expanded .icon {
-      transform: rotate(-90deg);
-    }
-  }
-
-
-  .thumbnail-container {
-    position: relative;
-  }
-
-  .paragraphs-container {
-    display: flex;
-    flex-direction: column;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  &:not(.expanded) .result-details .paragraphs-container {
-    gap: var(--paragraph-gap);
-    height: calc(
-      var(--paragraph-height) * var(--paragraph-count) + var(--paragraph-gap) * (var(--paragraph-count) - 1)
-    );
-    overflow: hidden;
-    transition: height var(--transition-fast);
-
-    &.can-expand:not(.expanded) {
-      height: calc(var(--paragraph-height) * 4 + var(--paragraph-gap) * 3);
-    }
-  }
-
   &.expanded {
     --header-height: var(--rhythm-7);
     --collapsible-header-height: var(--rhythm-6);
-
-    background: var(--expanded-background-color);
-    padding-top: var(--header-height);
-
-    header {
-      align-items: center;
-      align-self: stretch;
-      display: flex;
-      gap: var(--rhythm-0_5);
-      justify-content: space-between;
-      left: 0;
-      padding: var(--rhythm-0_5) var(--rhythm-0_5) var(--rhythm-0_5) var(--rhythm-2);
-      position: absolute;
-      right: 0;
-      top: 0;
-
-      h3 {
-        margin: 0;
-      }
-    }
   }
 
   &.expanded .youtube-container.loading {
@@ -129,54 +49,12 @@
   }
 }
 
-@media (max-width: 647px) {
-  .sw-video-tile {
-    &.expanded header h3 {
-      font-size: var(--font-size-base);
-    }
-  }
-}
-@media (min-width: 648px) {
-  .sw-video-tile {
-    --flex-gap: var(--rhythm-2);
-    --paragraph-height: var(--rhythm-3);
-
-    flex-direction: row;
-    gap: var(--flex-gap);
-
-    &:not(.expanded) {
-      --width-thumbnail: var(--rhythm-28);
-
-      .result-details {
-        flex: 1 0 auto;
-        width: calc(100% - var(--width-thumbnail) - var(--flex-gap));
-      }
-    }
-
-    .thumbnail-container {
-      align-self: flex-start;
-    }
-
-    &.expanded {
-      header {
-        gap: var(--rhythm-2);
-      }
-    }
-  }
-}
 @media (max-width: 820px) {
   .sw-video-tile {
     &.expanded {
       --youtube-height: calc(100vw * 9 / 16);
 
       flex-direction: column;
-      height: 100vh;
-      left: 0;
-      overflow: hidden;
-      position: fixed;
-      right: 0;
-      top: 0;
-      z-index: 1000;
 
       .thumbnail-container {
         width: 100%;
@@ -214,10 +92,6 @@
       --youtube-height: calc((100vw - var(--side-panel-width)) * 9 / 16);
       // initialize --video-tile-height with youtube height the time for setupExpandedTile method to be called
       --video-tile-height: var(--youtube-height);
-
-      border-radius: var(--border-radius);
-      max-height: calc(100vh - var(--header-height) - var(--rhythm-4));
-      padding: var(--header-height) var(--rhythm-2) var(--rhythm-2) var(--rhythm-2);
     }
 
     &.expanded .summary-container {
@@ -245,31 +119,6 @@
       width: var(--side-panel-width);
     }
 
-    &.expanded .find-bar-container {
-      align-items: center;
-      background: var(--color-light-stronger);
-      display: flex;
-      gap: var(--rhythm-1);
-      margin-bottom: var(--find-input-margin);
-      padding-left: var(--rhythm-1);
-    }
-
-    &.expanded .find-bar-container .find-input {
-      border: none;
-      box-sizing: border-box;
-      color: inherit;
-      flex: 1 0 auto;
-      font-family: inherit;
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-body);
-      line-height: var(--find-input-height);
-      padding: 0;
-    }
-
-    &.expanded .find-bar-container .find-input:focus {
-      outline: 0;
-    }
-
     &.expanded .search-result-paragraphs {
       --full-transcript-header: var(--rhythm-8);
       min-height: var(--collapsible-header-height);
@@ -290,10 +139,5 @@
 @media (min-width: 1024px) {
   .sw-video-tile.expanded {
     --side-panel-width: var(--rhythm-53);
-  }
-}
-@media (hover: hover) {
-  .sw-video-tile .all-result-toggle:hover {
-    color: var(--color-dark-stronger);
   }
 }

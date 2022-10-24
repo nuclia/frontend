@@ -1,0 +1,23 @@
+<script lang="ts">
+  import { createEventDispatcher } from 'svelte';
+  import Icon from '../icons/Icon.svelte';
+
+  export let showAllResults = false;
+
+  const dispatch = createEventDispatcher();
+  const toggle = () => {
+    dispatch('toggle');
+  }
+</script>
+
+<div class="all-result-toggle"
+     class:expanded={showAllResults}
+     on:click={toggle}>
+  Display {showAllResults ? 'less' : 'all'} results
+
+  <div class="icon">
+    <Icon name="chevron-right" size="small"/>
+  </div>
+</div>
+
+<style lang="scss" src="./AllResultsToggle.scss"></style>

@@ -1,9 +1,10 @@
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { getCDN } from './utils';
 
 interface Translations {
   [lang: string]: TranslationEntries;
 }
+
 interface TranslationEntries {
   [key: string]: string;
 }
@@ -29,17 +30,37 @@ export const setLang = (lang: string) => {
       if (lang !== 'en') {
         setLang('en');
       }
-    }
+    },
   );
 };
 
-const translate = (lang: string, translations: Translations, key: string) =>
-  translations[lang]?.[key] || translations['en']?.[key] || key;
+const HTML_TAG_DELIMITERS = new RegExp(/[<>]/gim);
+const translate = (
+  lang: string,
+  translations: Translations,
+  key: string,
+  args?: { [key: string]: string | number },
+) => {
+  let value = translations[lang]?.[key] || translations['en']?.[key];
+  if (value && args) {
+    Object.keys(args).forEach((param) => {
+      let paramValue = args[param];
+      if (typeof paramValue === 'string') {
+        paramValue = paramValue.replace(HTML_TAG_DELIMITERS, (c) => '&#' + c.charCodeAt(0) + ';');
+      }
+      value = value.replace(new RegExp(`{{${param}}}`, 'g'), paramValue as string);
+    });
+  }
+  return value || key;
+};
 
-export const _ = combineLatest([currentLanguage, locales]).pipe(
+export const _: Observable<(key: string, args?: { [key: string]: string | number }) => string> = combineLatest([
+  currentLanguage,
+  locales,
+]).pipe(
   map(
     ([lang, translations]) =>
-      (key: string) =>
-        translate(lang, translations, key)
-  )
+      (key: string, args?: { [key: string]: string | number }) =>
+        translate(lang, translations, key, args),
+  ),
 );

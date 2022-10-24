@@ -38,6 +38,7 @@
 	"resource.show-all": "Muestra todos los párrafos",
 	"resource.source": "Documento de origen",
 	"resource.summary": "Resumen",
+	"results.count": "Resultado {{index}} de {{total}}",
 	"results.empty": "No resultado",
 	"results.paragraphs": "Párrafos relevantes",
 	"results.semantic": "Resultados semánticos",

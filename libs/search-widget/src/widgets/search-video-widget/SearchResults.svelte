@@ -11,6 +11,7 @@
   import globalCss from '../../common/_global.scss';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
+  import PdfTile from "../../tiles/pdf-tile/PdfTile.svelte";
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;
@@ -92,9 +93,15 @@
       <div class="results"
            transition:fade={{duration: Duration.SUPERFAST}}>
         {#each $paragraphResults as result}
-          <VideoTile {result}
+          {#if result.icon === 'application/pdf'}
+            <PdfTile {result}
                      on:fullscreenPreview={onFullscreenPreview}
-                     on:closePreview={onFullscreenPreviewClosed} />
+                     on:closePreview={onFullscreenPreviewClosed} ></PdfTile>
+          {:else}
+            <VideoTile {result}
+                       on:fullscreenPreview={onFullscreenPreview}
+                       on:closePreview={onFullscreenPreviewClosed} />
+          {/if}
         {/each}
       </div>
     {/if}

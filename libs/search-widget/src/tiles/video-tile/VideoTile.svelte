@@ -5,8 +5,8 @@
   import { map, switchMap, tap } from 'rxjs/operators';
   import { nucliaState } from '../../core/old-stores/main.store';
   import { getRegionalBackend, getResource } from '../../core/api';
-  import CloseButton from '../../common/button/CloseButton.svelte';
-  import ThumbnailPlayer from './ThumbnailPlayer.svelte';
+  import IconButton from '../../common/button/IconButton.svelte';
+  import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
   import {
     getFileField,
@@ -15,14 +15,16 @@
     getVideoStream,
   } from '../../core/old-stores/viewer.store';
   import { FieldType, MediaWidgetParagraph } from '../../core/models';
-  import ParagraphPlayer from './ParagraphPlayer.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
   import Player from '../../old-components/viewer/previewers/Player.svelte';
   import { Duration } from '../../common/transition.utils';
   import { createEventDispatcher } from 'svelte';
+  import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
+  import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
+  import { _ } from '../../core/i18n';
 
-  export let result: IResource = {id: ''};
+  export let result: IResource = {id: ''} as IResource;
 
   const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
@@ -164,7 +166,7 @@
 </script>
 
 <svelte:window bind:innerWidth/>
-<div class="sw-video-tile"
+<div class="sw-tile sw-video-tile"
      class:expanded
      class:showFullTranscripts
      bind:this={videoTileElement}
@@ -176,7 +178,7 @@
                        spinner={expanded && videoLoading}
                        aspectRatio={expanded ? '16/9' : '5/4'}
                        on:loaded={() => thumbnailLoaded = true}
-                       on:play={playFromStart}/>
+                       on:open={playFromStart}/>
     </div>
 
     {#if expanded}
@@ -207,8 +209,10 @@
         <h3 class="ellipsis">{result?.title}</h3>
         {#if expanded}
           <div in:fade={{duration: Duration.FAST}}>
-            <CloseButton aspect="basic"
-                         on:click={closePreview}/>
+            <IconButton icon="cross"
+                        ariaLabel="{$_('generic.close')}"
+                        aspect="basic"
+                        on:click={closePreview}/>
           </div>
         {/if}
       </header>
@@ -264,12 +268,12 @@
                 class:can-expand={$matchingParagraphs.length > 4}
                 style="--paragraph-count: {$matchingParagraphs.length}">
               {#each $filteredMatchingParagraphs as paragraph}
-                <ParagraphPlayer {paragraph}
+                <ParagraphResult {paragraph}
                                  ellipsis={!expanded}
                                  minimized={isMobile && !expanded}
                                  stack={expanded}
                                  selected={paragraph === paragraphInPlay}
-                                 on:play={(event) => playParagraph(event.detail.paragraph)}/>
+                                 on:open={(event) => playParagraph(event.detail.paragraph)}/>
               {/each}
             </ul>
           {/if}
@@ -298,7 +302,7 @@
                  out:slide={{duration: defaultTransitionDuration}}>
               <ul class="paragraphs-container">
                 {#each filteredTranscripts as paragraph}
-                  <ParagraphPlayer {paragraph}
+                  <ParagraphResult {paragraph}
                                    selected={paragraph === paragraphInPlay}
                                    stack
                                    on:play={(event) => playTranscript(event.detail.paragraph)}
@@ -311,15 +315,8 @@
       </div>
 
       {#if !expanded && $matchingParagraphs.length > 4}
-        <div class="all-result-toggle"
-             class:expanded={showAllResults}
-             on:click={() => (showAllResults = !showAllResults)}>
-          Display {showAllResults ? 'less' : 'all'} results
-
-          <div class="icon">
-            <Icon name="chevron-right" size="small"/>
-          </div>
-        </div>
+        <AllResultsToggle {showAllResults}
+                          on:toggle={() => (showAllResults = !showAllResults)}/>
       {/if}
     </div>
   {/if}

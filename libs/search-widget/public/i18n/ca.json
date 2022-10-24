@@ -38,6 +38,7 @@
 	"resource.show-all": "Mostra tots els paràgrafs",
 	"resource.source": "Document d'origen",
 	"resource.summary": "Resum",
+	"results.count": "Resultat {{index}} de {{total}}",
 	"results.empty": "Cap resultat",
 	"results.paragraphs": "Paràgrafs rellevants",
 	"results.semantic": "Resultats semàntics",

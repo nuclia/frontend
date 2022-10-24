@@ -5,7 +5,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'input';
+  let selected = 'two-widgets';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
@@ -88,10 +88,11 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
-        knowledgebox="4088b21c-5aa0-4d5a-85a6-03448e52b031"
+        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
+        backend="https://stashify.cloud/api"
         cdn="/"
         lang="en"
-        widgetid="demo-search-bar"
+        widgetid="dashboard"
         placeholder="Search"
       />
       <NucliaSearchResults />

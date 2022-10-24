@@ -1,0 +1,36 @@
+@import "../tile";
+
+.sw-pdf-tile {
+
+  .thumbnail-container {
+    position: relative;
+  }
+
+  &:not(.expanded) .doc-type-container {
+    left: var(--rhythm-1);
+    position: absolute;
+    top: var(--rhythm-1);
+  }
+
+  .header-title,
+  .header-actions {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1_5);
+  }
+
+  .search-result-navigator {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-0_25);
+
+    .result-count {
+      margin-right: var(--rhythm-3);
+    }
+  }
+
+  &.expanded .pdf-container {
+    height: calc(100vh - var(--header-height));
+    overflow: auto;
+  }
+}

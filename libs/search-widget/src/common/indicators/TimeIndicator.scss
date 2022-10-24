@@ -1,0 +1,12 @@
+@import "indicator";
+.sw-time-indicator {
+  padding: 0 var(--rhythm-1_5) 0 var(--rhythm-1);
+
+  &.minimized {
+    border-radius: 50%;
+    padding: var(--rhythm-1);
+  }
+  &.minimized .time-label {
+    display: none;
+  }
+}
