@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService } from '@flaps/core';
 import { Account, StatsPeriod, StatsType } from '@nuclia/core';
-import { BehaviorSubject, combineLatest, filter, map, Observable, share, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, share, switchMap } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
+import { ToastService } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.DOCS_NO_MEDIA;
 
@@ -45,7 +47,12 @@ export class AccountHomeComponent {
   kbsPublic = this.kbs.pipe(map((kbs) => kbs.filter((kb) => kb.state === 'PUBLISHED').length));
   private _processing = combineLatest([this.account, this.processedView]).pipe(
     switchMap(([account, statsType]) =>
-      this.sdk.nuclia.db.getStats(account!.slug, statsType, undefined, StatsPeriod.MONTH),
+      this.sdk.nuclia.db.getStats(account!.slug, statsType, undefined, StatsPeriod.MONTH).pipe(
+        catchError(() => {
+          this.toastService.openError(this.translate.instant(`account.chart_error_${statsType}`));
+          return of([]);
+        }),
+      ),
     ),
     share(),
   );
@@ -78,5 +85,11 @@ export class AccountHomeComponent {
   );
   locale = this.appService.currentLocale;
 
-  constructor(private sdk: SDKService, private stateService: StateService, private appService: AppService) {}
+  constructor(
+    private sdk: SDKService,
+    private stateService: StateService,
+    private appService: AppService,
+    private toastService: ToastService,
+    private translate: TranslateService,
+  ) {}
 }
