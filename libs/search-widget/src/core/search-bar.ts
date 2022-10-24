@@ -4,13 +4,14 @@ import { PENDING_RESULTS } from './models';
 import { search } from './api';
 import { labelRegexp } from '../common/label/label.utils';
 
-export const setupTriggerSearch = (): void => {
+export const setupTriggerSearch = (dispatch: (event: string, search: string) => void | undefined): void => {
   nucliaStore()
     .triggerSearch.pipe(
       tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
       switchMap(() => nucliaState().query.pipe(take(1))),
       map((query) => query.trim()),
       filter((query) => !!query),
+      tap(query => dispatch ? dispatch('search', query ) : undefined),
       switchMap((query) =>
         nucliaStore().searchOptions.pipe(
           map((options) => {

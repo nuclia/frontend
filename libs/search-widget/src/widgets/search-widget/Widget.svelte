@@ -7,6 +7,7 @@
   import { getResource, initNuclia, resetNuclia } from '../../core/api';
   import { concatMap, filter, tap } from 'rxjs/operators';
   import { onMount } from 'svelte';
+  import { get_current_component } from "svelte/internal";
   import {
     setCDN,
     formatQueryKey,
@@ -52,6 +53,14 @@
   $: permalinkEnabled = coerceBooleanProperty(permalink);
 
   let svgSprite;
+
+  const thisComponent = get_current_component();
+  const dispatchCustomEvent = (name: string, detail: string) => {
+    thisComponent.dispatchEvent(new CustomEvent(name, {
+      detail,
+      composed: true,
+    }));
+  };
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -135,7 +144,7 @@
     ];
     activateTypeAheadSuggestions();
 
-    setupTriggerSearch();
+    setupTriggerSearch(dispatchCustomEvent);
 
     ready = true;
 
