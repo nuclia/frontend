@@ -13,6 +13,7 @@ import {
 import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take } from 'rxjs';
 import { injectScript } from '@flaps/core';
 import { environment } from '../../../environments/environment';
+import { GoogleBaseImpl } from './google.base';
 
 declare var gapi: any;
 
@@ -28,74 +29,16 @@ export const GDrive: SourceConnectorDefinition = {
   factory: (data?: ConnectorSettings) => of(new GDriveImpl(data)),
 };
 
-class GDriveImpl implements ISourceConnector {
-  hasServerSideAuth = true;
+class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
   isExternal = false;
   resumable = true;
-  private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  API_KEY: string;
 
   constructor(data?: ConnectorSettings) {
-    this.API_KEY = data?.API_KEY || '';
+    super(data);
   }
 
   getParameters() {
     return of([]);
-  }
-
-  goToOAuth(reset?: boolean) {
-    if (reset) {
-      localStorage.removeItem(TOKEN);
-    }
-    const token = localStorage.getItem(TOKEN);
-    if (token) {
-      injectScript('https://apis.google.com/js/api.js').subscribe(() =>
-        gapi.load('client', () => {
-          gapi.client.init({
-            apiKey: this.API_KEY,
-            discoveryDocs: DISCOVERY_DOCS,
-          });
-          gapi.client.setToken({ access_token: token });
-          this.isAuthenticated.next(true);
-        }),
-      );
-    } else {
-      if ((window as any)['electron']) {
-        (window as any)['electron'].openExternal(
-          `${environment.connectors.gdrive.endpoint}?redirect=nuclia-desktop://`,
-        );
-      } else {
-        location.href = `${environment.connectors.gdrive.endpoint}?redirect=http://localhost:4200`;
-      }
-    }
-  }
-
-  authenticate(): Observable<boolean> {
-    if (!this.isAuthenticated.getValue()) {
-      injectScript('https://apis.google.com/js/api.js').subscribe(() => {
-        gapi.load('client', () => {
-          gapi.client.init({
-            apiKey: this.API_KEY,
-            discoveryDocs: DISCOVERY_DOCS,
-          });
-          const interval = setInterval(() => {
-            const deeplink = (window as any)['deeplink'] || location.search;
-            if (deeplink && deeplink.includes('?')) {
-              const params = new URLSearchParams(deeplink.split('?')[1]);
-              const isGoogle = params.get('google');
-              if (isGoogle) {
-                const token = params.get('token') || '';
-                localStorage.setItem(TOKEN, token);
-                gapi.client.setToken({ access_token: token });
-                clearInterval(interval);
-                this.isAuthenticated.next(true);
-              }
-            }
-          }, 500);
-        });
-      });
-    }
-    return this.isAuthenticated.asObservable();
   }
 
   getFiles(query?: string, pageSize?: number) {

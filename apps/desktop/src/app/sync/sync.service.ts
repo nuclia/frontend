@@ -37,6 +37,7 @@ import { FolderConnector } from './sources/folder';
 import { S3Connector } from './sources/s3';
 import { ProcessingPullResponse } from '@nuclia/core';
 import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
+import { GCSConnector } from './sources/gcs';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
@@ -64,10 +65,11 @@ export class SyncService {
       instance?: ReplaySubject<ISourceConnector>;
     };
   } = {
-    gdrive: { definition: GDrive, settings: environment.connectors.gdrive },
+    gdrive: { definition: GDrive, settings: environment.connectors.google },
     dropbox: { definition: DropboxConnector, settings: environment.connectors.dropbox },
     folder: { definition: FolderConnector, settings: {} },
     s3: { definition: S3Connector, settings: {} },
+    gcs: { definition: GCSConnector, settings: environment.connectors.google },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
