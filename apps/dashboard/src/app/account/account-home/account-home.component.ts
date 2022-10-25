@@ -6,6 +6,7 @@ import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
 import { ToastService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
+import { TickOptions } from '../../components/charts/chart-utils';
 
 type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.DOCS_NO_MEDIA;
 
@@ -83,6 +84,20 @@ export class AccountHomeComponent {
   );
 
   pendingRange: BehaviorSubject<StatsRange> = new BehaviorSubject<StatsRange>(StatsRange.anHour);
+  pendingTickOptions: Observable<TickOptions> = this.pendingRange.pipe(
+    map((range) => {
+      switch (range) {
+        case StatsRange.sixHours:
+        case StatsRange.twelveHours:
+        case StatsRange.twentyFourHours:
+          return { modulo: 6 };
+        case StatsRange.fortyHeightHours:
+          return { modulo: 10, displayTick: true };
+        default:
+          return { modulo: 10 };
+      }
+    }),
+  );
   pending = combineLatest([this.selectedTab, this.account, this.pendingRange]).pipe(
     filter(([tab]) => tab === 'pending'),
     switchMap(([tab, account, pendingRange]) =>
@@ -90,7 +105,6 @@ export class AccountHomeComponent {
         map((stats) => {
           let xFormat: string;
           switch (pendingRange) {
-            case StatsRange.twentyFourHours:
             case StatsRange.fortyHeightHours:
               xFormat = 'd/MM H:mm';
               break;
@@ -98,7 +112,10 @@ export class AccountHomeComponent {
               xFormat = 'H:mm';
               break;
           }
-          return stats.map((stat) => [format(new Date(stat.time_period), xFormat), stat.stats] as [string, number]);
+          return stats.map(
+            (stat, index) =>
+              [format(new Date(stat.time_period), index === 0 ? 'H:mm' : xFormat), stat.stats] as [string, number],
+          );
         }),
         catchError(() => {
           this.toastService.openError(this.translate.instant(`account.chart_error_processing_status`));

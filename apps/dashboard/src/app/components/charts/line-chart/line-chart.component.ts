@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, View
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
-import { createYAxis } from '../chart-utils';
+import { createYAxis, TickOptions } from '../chart-utils';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 7;
@@ -19,6 +19,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
 
   @ViewChild('container') private container: ElementRef | undefined;
+
+  @Input() xAxisTickOptions?: TickOptions;
 
   @Input()
   set data(values: [string, number][]) {
@@ -94,14 +96,26 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
       .scalePoint()
       .domain(this._data.map((item) => item[0]))
       .range([0, width]);
-    const xAxis = d3.axisBottom(scale);
+    const xAxis = d3
+      .axisBottom(scale)
+      .tickValues(
+        scale
+          .domain()
+          .filter((value, index) =>
+            this.xAxisTickOptions?.modulo ? index % this.xAxisTickOptions.modulo === 0 : true,
+          ),
+      );
     svg
       .append('g')
       .attr('transform', `translate(0, ${height})`)
       .attr('class', 'x-axis')
       .call(xAxis)
-      .call((g) => g.select('.domain').remove())
-      .call((g) => g.selectAll('.tick line').remove());
+      .call((g) => g.selectAll('.tick text'))
+      .call((g) => g.select('.domain').remove());
+
+    if (!this.xAxisTickOptions?.displayTick) {
+      svg.call((g) => g.selectAll('.tick line').remove());
+    }
 
     return scale;
   }

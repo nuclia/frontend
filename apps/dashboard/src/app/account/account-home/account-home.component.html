@@ -74,7 +74,8 @@
           </div>
           <span class="chart-message">{{ 'account.chart_number_resources' | translate }}</span>
         </div>
-        <app-line-chart [data]="(pending | async) || []"></app-line-chart>
+        <app-line-chart [data]="(pending | async) || []"
+                        [xAxisTickOptions]="pendingTickOptions | async"></app-line-chart>
       </section>
     </div>
 

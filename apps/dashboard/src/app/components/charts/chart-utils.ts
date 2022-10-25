@@ -1,5 +1,10 @@
 import * as d3 from 'd3';
 
+export interface TickOptions {
+  modulo?: number;
+  displayTick?: boolean;
+}
+
 export function createYAxis(
   element: d3.Selection<SVGGElement, any, HTMLElement, any>,
   domain: [number, number],
