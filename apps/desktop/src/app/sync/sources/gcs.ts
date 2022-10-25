@@ -11,16 +11,10 @@ import {
   Field,
   FileStatus,
 } from '../models';
-import { Observable, of, BehaviorSubject, from, switchMap, map } from 'rxjs';
-import { injectScript } from '@flaps/core';
-import { environment } from '../../../environments/environment';
+import { Observable, of, from, switchMap, map } from 'rxjs';
 import { GoogleBaseImpl } from './google.base';
 
-declare var gapi: any;
-
-const TOKEN = 'GCS_TOKEN';
 const BUCKET_KEY = 'GCS_BUCKET';
-const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/storage/v1/rest'];
 
 const MAX_PAGE_SIZE = 1000;
 
@@ -33,7 +27,8 @@ export const GCSConnector: SourceConnectorDefinition = {
 };
 
 class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
-  isExternal = true;
+  override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/storage/v1/rest'];
+  isExternal = false;
   resumable = false;
 
   constructor(data?: ConnectorSettings) {
@@ -74,7 +69,7 @@ class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
         fetch(
           `https://storage.googleapis.com/storage/v1/b/${bucket}/o?maxResults=${pageSize}&pageToken=${nextPage || ''}`,
           {
-            headers: { Authorization: 'Bearer ' + localStorage.getItem(TOKEN) },
+            headers: { Authorization: 'Bearer ' + localStorage.getItem(this.TOKEN) },
           },
         ),
       ).pipe(
@@ -100,14 +95,9 @@ class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
     };
   }
 
-  getLink(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }> {
-    return of({
-      uri: resource.metadata['mediaLink'],
-      extra_headers: { Authorization: 'Bearer ' + localStorage.getItem(TOKEN) },
-    });
-  }
-
   download(resource: SyncItem): Observable<Blob> {
-    throw 'Error';
+    return from(
+      fetch(resource.metadata.mediaLink, { headers: { Authorization: 'Bearer ' + localStorage.getItem(this.TOKEN) } }),
+    ).pipe(switchMap((res) => res.blob()));
   }
 }

@@ -10,16 +10,11 @@ import {
   SyncItem,
   SearchResults,
 } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, of, concatMap, take } from 'rxjs';
+import { filter, from, map, Observable, of, concatMap, take } from 'rxjs';
 import { injectScript } from '@flaps/core';
-import { environment } from '../../../environments/environment';
 import { GoogleBaseImpl } from './google.base';
 
 declare var gapi: any;
-
-const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
-
-const TOKEN = 'GDRIVE_TOKEN';
 
 export const GDrive: SourceConnectorDefinition = {
   id: 'gdrive',
@@ -30,6 +25,7 @@ export const GDrive: SourceConnectorDefinition = {
 };
 
 class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
+  override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
   isExternal = false;
   resumable = true;
 
@@ -62,7 +58,7 @@ class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
             .then(
               (res: any) => res,
               () => {
-                localStorage.removeItem(TOKEN);
+                localStorage.removeItem(this.TOKEN);
                 throw new Error('Unauthorized');
               },
             ),
@@ -98,7 +94,7 @@ class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
           gapi.client
             .init({
               apiKey: this.API_KEY,
-              discoveryDocs: DISCOVERY_DOCS,
+              discoveryDocs: this.DISCOVERY_DOCS,
             })
             .then(() =>
               fetch(request, {
