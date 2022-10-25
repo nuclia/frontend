@@ -212,12 +212,13 @@ export const hasAuthData = (): boolean => {
 };
 
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
-  return (paths.length === 0 || !isPrivateKnowledgeBox() ? of('') : getTempToken()).pipe(
+  const doesNotNeedToken = paths.length === 0 || !isPrivateKnowledgeBox()
+  return (doesNotNeedToken ? of('') : getTempToken()).pipe(
     map((token) =>
       paths.map((path) => {
         if (path.startsWith('/')) {
-          const fullpath = `${getRegionalBackend()}/files/${path}`;
-          return token ? `${fullpath}?token=${token}` : fullpath;
+          const fullpath = `${getRegionalBackend()}${path}`;
+          return token ? `${fullpath}?eph-token=${token}` : fullpath;
         } else {
           return path;
         }
