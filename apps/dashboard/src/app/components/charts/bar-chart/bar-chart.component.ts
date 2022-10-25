@@ -149,8 +149,8 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
             if (typeof value !== 'string') {
               return false;
             }
-            const day = parseInt(value, 10);
-            return day > getDate(Date.now());
+            // display future dates of the month in light gray
+            return parseInt(value, 10) > getDate(Date.now());
           })
           .style('color', '#c4c4c4'),
       )

@@ -54,6 +54,16 @@ export enum StatsPeriod {
   YEAR = 'year',
 }
 
+export enum StatsRange {
+  anHour = '1h',
+  twoHours = '2h',
+  threeHours = '3h',
+  sixHours = '6h',
+  twelveHours = '12h',
+  twentyFourHours = '24h',
+  fortyHeightHours = '48h',
+}
+
 export interface ProcessingStat {
   time_period: string;
   stats: number;

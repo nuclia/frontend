@@ -1,11 +1,10 @@
-# 1.0.4 (2022-10-21)
-
-- Update `StatsType` enumeration to be aligned with what's supported by the API
-
-# 1.0.3 (2022-10-20)
+# 1.0.3 (unreleased)
 
 - Add sub-folders in `db`
 - Add missing exports in index.ts
+- Add method `getProcessingStats` allowing to get stats for resources pending to be processed
+- Add enum `StatsRange` to be used with `/processing/stats` endpoint
+- Update `StatsType` enumeration to be aligned with what's supported by the API
 
 # 1.0.2 (2022-10-19)
 

@@ -16,6 +16,7 @@ import type {
   ProcessingStat,
   ProcessingStatusResponse,
   StatsPeriod,
+  StatsRange,
   StatsType,
   Welcome,
   WritableKnowledgeBox,
@@ -102,6 +103,7 @@ export interface IDb {
   ): Observable<ProcessingStat[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
   getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse>;
+  getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]>;
   pull(): Observable<ProcessingPullResponse>;
   getNUAClients(account: string): Observable<NUAClient[]>;
   getNUAClient(account: string, client_id: string): Observable<NUAClient>;

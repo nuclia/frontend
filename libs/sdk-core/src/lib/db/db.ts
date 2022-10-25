@@ -13,6 +13,7 @@ import {
   ProcessingStat,
   ProcessingStatusResponse,
   StatsPeriod,
+  StatsRange,
   StatsType,
   Welcome,
 } from './db.models';
@@ -155,12 +156,24 @@ export class Db implements IDb {
   getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse> {
     const hasNUAKey = this.hasNUAClient();
     if (!accountId && !hasNUAKey) {
-      throw new Error('NUA key or account id is needed to be able to call /process/status');
+      throw new Error('NUA key or account id is needed to be able to call /processing/status');
     }
     const endpoint = hasNUAKey ? '/processing/status' : `/processing/status?account_id=${accountId}`;
     const headers = hasNUAKey ? this.getNUAHeader() : undefined;
 
     return this.nuclia.rest.get(endpoint, headers);
+  }
+
+  getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]> {
+    const hasNUAKey = this.hasNUAClient();
+    if (!accountId && !hasNUAKey) {
+      throw new Error('NUA key or account id is needed to be able to call /processing/stats');
+    }
+    const endpoint = hasNUAKey
+      ? `/processing/stats${range ? '?period=' + range : ''}`
+      : `/processing/stats?account_id=${accountId}${range ? '&period=' + range : ''}`;
+    const headers = hasNUAKey ? this.getNUAHeader() : undefined;
+    return this.nuclia.rest.get<{ data: ProcessingStat[] }>(endpoint, headers).pipe(map((res) => res.data));
   }
 
   getNUAActivity(accountSlug: string, client_id: string, pageIndex = 0): Observable<EventList> {
