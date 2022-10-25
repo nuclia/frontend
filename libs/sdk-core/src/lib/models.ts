@@ -16,11 +16,11 @@ import type {
   ProcessingStat,
   ProcessingStatusResponse,
   StatsPeriod,
+  StatsRange,
   StatsType,
   Welcome,
   WritableKnowledgeBox,
 } from './db';
-import { StatsRange } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
