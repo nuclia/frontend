@@ -32,11 +32,13 @@
     justify-content: space-between;
     margin-bottom: rhythm(3);
 
-    .renewal-message {
+    .chart-message {
       color: $color-neutral-regular;
       font-size: font-size(xs);
       font-style: italic;
     }
+  }
+  .range-container {
   }
   .chart-type-container {
     align-items: center;

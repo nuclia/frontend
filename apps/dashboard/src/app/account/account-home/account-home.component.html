@@ -2,33 +2,33 @@
   <div class="container-row">
     <div class="processing-stats">
       <pa-tabs noSlider notFullWidth>
-        <pa-tab [active]="selectedTab === 'completed'"
-                (click)="selectedTab = 'completed'">{{'account.chart_title_processed' | translate}}</pa-tab>
+        <pa-tab [active]="selectedTab.value === 'completed'"
+                (click)="selectedTab.next('completed')">{{'account.chart_title_processed' | translate}}</pa-tab>
         <pa-tab *ngIf="(isFreeAccount | async) === false"
-                [active]="selectedTab === 'pending'"
-                (click)="selectedTab = 'pending'">{{'account.chart_title_pending_resources' | translate}}</pa-tab>
+                [active]="selectedTab.value === 'pending'"
+                (click)="selectedTab.next('pending')">{{'account.chart_title_pending_resources' | translate}}</pa-tab>
       </pa-tabs>
 
-      <section *ngIf="selectedTab === 'completed'"
+      <section *ngIf="selectedTab.value === 'completed'"
                class="container">
         <div class="chart-header">
           <div class="chart-type-container">
             <span class="chart-type"
-                  [class.selected]="(processedView | async) === statsType.CHARS"
+                  [class.selected]="processedView.value === statsType.CHARS"
                   (click)="processedView.next(statsType.CHARS)"
             >{{ 'account.chart_ML_characters' | translate }}</span>
             <div class="separator"></div>
             <span class="chart-type"
-                  [class.selected]="(processedView | async) === statsType.MEDIA_SECONDS"
+                  [class.selected]="processedView.value === statsType.MEDIA_SECONDS"
                   (click)="processedView.next(statsType.MEDIA_SECONDS)"
             >{{ 'account.chart_media_hours' | translate }}</span>
             <div class="separator"></div>
             <span class="chart-type"
-                  [class.selected]="(processedView | async) === statsType.DOCS_NO_MEDIA"
+                  [class.selected]="processedView.value === statsType.DOCS_NO_MEDIA"
                   (click)="processedView.next(statsType.DOCS_NO_MEDIA)"
             >{{ 'account.chart_documents' | translate }}</span>
           </div>
-          <span class="renewal-message">{{ 'account.renewal' | translate }}</span>
+          <span class="chart-message">{{ 'account.renewal' | translate }}</span>
         </div>
         <app-empty-chart *ngIf="(processing | async) === null" [numLines]="3"></app-empty-chart>
         <app-bar-chart [data]="(processing | async) || []"
@@ -39,9 +39,42 @@
                        [tooltipsEnabled]="true"
         ></app-bar-chart>
       </section>
-      <section *ngIf="selectedTab === 'pending'"
+      <section *ngIf="selectedTab.value === 'pending'"
                class="container">
-        Will be there really soon 😃
+        <div class="chart-header">
+          <div class="range-container">
+            <nsi-dropdown-button size="small"
+                                 kind="inverted"
+                                 [popupRef]="range">
+              {{ 'account.chart_range_label' | translate:{hours: pendingRange.value} }}
+            </nsi-dropdown-button>
+            <pa-dropdown #range>
+              <pa-option value="1h"
+                         [selected]="pendingRange.value === statsRange.anHour"
+                         (selectOption)="pendingRange.next(statsRange.anHour)">{{statsRange.anHour}}</pa-option>
+              <pa-option value="2h"
+                         [selected]="pendingRange.value === statsRange.twoHours"
+                         (selectOption)="pendingRange.next(statsRange.twoHours)">{{statsRange.twoHours}}</pa-option>
+              <pa-option value="3h"
+                         [selected]="pendingRange.value === statsRange.threeHours"
+                         (selectOption)="pendingRange.next(statsRange.threeHours)">{{statsRange.threeHours}}</pa-option>
+              <pa-option value="6h"
+                         [selected]="pendingRange.value === statsRange.sixHours"
+                         (selectOption)="pendingRange.next(statsRange.sixHours)">{{statsRange.sixHours}}</pa-option>
+              <pa-option value="12h"
+                         [selected]="pendingRange.value === statsRange.twelveHours"
+                         (selectOption)="pendingRange.next(statsRange.twelveHours)">{{statsRange.twelveHours}}</pa-option>
+              <pa-option value="24h"
+                         [selected]="pendingRange.value === statsRange.twentyFourHours"
+                         (selectOption)="pendingRange.next(statsRange.twentyFourHours)">{{statsRange.twentyFourHours}}</pa-option>
+              <pa-option value="48h"
+                         [selected]="pendingRange.value === statsRange.fortyHeightHours"
+                         (selectOption)="pendingRange.next(statsRange.fortyHeightHours)">{{statsRange.fortyHeightHours}}</pa-option>
+            </pa-dropdown>
+          </div>
+          <span class="chart-message">{{ 'account.chart_number_resources' | translate }}</span>
+        </div>
+        <app-line-chart [data]="(pending | async) || []"></app-line-chart>
       </section>
     </div>
 

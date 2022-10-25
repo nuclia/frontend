@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService } from '@flaps/core';
-import { Account, StatsPeriod, StatsType } from '@nuclia/core';
+import { Account, StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
 import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, share, switchMap } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
@@ -17,7 +17,8 @@ type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.D
 })
 export class AccountHomeComponent {
   statsType = StatsType;
-  selectedTab: 'completed' | 'pending' = 'completed';
+  statsRange = StatsRange;
+  selectedTab: BehaviorSubject<'completed' | 'pending'> = new BehaviorSubject<'completed' | 'pending'>('completed');
 
   account = this.stateService.account.pipe(filter((account) => !!account));
   isFreeAccount = this.account.pipe(map((account) => account && account.type === 'stash-basic'));
@@ -45,6 +46,7 @@ export class AccountHomeComponent {
   );
   kbsTotal = this.kbs.pipe(map((kbs) => kbs.length));
   kbsPublic = this.kbs.pipe(map((kbs) => kbs.filter((kb) => kb.state === 'PUBLISHED').length));
+
   private _processing = combineLatest([this.account, this.processedView]).pipe(
     switchMap(([account, statsType]) =>
       this.sdk.nuclia.db.getStats(account!.slug, statsType, undefined, StatsPeriod.MONTH).pipe(
@@ -79,6 +81,33 @@ export class AccountHomeComponent {
         .map((stat) => [format(stat[0], 'd'), stat[1]] as [string, number]),
     ),
   );
+
+  pendingRange: BehaviorSubject<StatsRange> = new BehaviorSubject<StatsRange>(StatsRange.anHour);
+  pending = combineLatest([this.selectedTab, this.account, this.pendingRange]).pipe(
+    filter(([tab]) => tab === 'pending'),
+    switchMap(([tab, account, pendingRange]) =>
+      this.sdk.nuclia.db.getProcessingStats(pendingRange, account!.id).pipe(
+        map((stats) => {
+          let xFormat: string;
+          switch (pendingRange) {
+            case StatsRange.twentyFourHours:
+            case StatsRange.fortyHeightHours:
+              xFormat = 'd/MM H:mm';
+              break;
+            default:
+              xFormat = 'H:mm';
+              break;
+          }
+          return stats.map((stat) => [format(new Date(stat.time_period), xFormat), stat.stats] as [string, number]);
+        }),
+        catchError(() => {
+          this.toastService.openError(this.translate.instant(`account.chart_error_processing_status`));
+          return of([]);
+        }),
+      ),
+    ),
+  );
+
   totalQueries = this.account.pipe(
     switchMap((account) => this.sdk.nuclia.db.getStats(account!.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR)),
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),

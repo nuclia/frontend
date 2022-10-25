@@ -20,6 +20,7 @@ import type {
   Welcome,
   WritableKnowledgeBox,
 } from './db';
+import { StatsRange } from './db';
 
 export interface INuclia {
   options: NucliaOptions;
@@ -102,6 +103,7 @@ export interface IDb {
   ): Observable<ProcessingStat[]>;
   upload(file: File): Observable<ProcessingPushResponse>;
   getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse>;
+  getProcessingStats(range?: StatsRange, accountId?: string): Observable<ProcessingStat[]>;
   pull(): Observable<ProcessingPullResponse>;
   getNUAClients(account: string): Observable<NUAClient[]>;
   getNUAClient(account: string, client_id: string): Observable<NUAClient>;

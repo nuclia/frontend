@@ -1,12 +1,4 @@
-import {
-  Component,
-  AfterViewInit,
-  OnDestroy,
-  ViewChild,
-  ElementRef,
-  ViewEncapsulation,
-  Input,
-} from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
@@ -24,14 +16,16 @@ const CHART_HEIGHT = 332;
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy {
   id = `line-chart-${nextUniqueId++}`;
-  @ViewChild('container') private container: ElementRef | undefined;
   unsubscribeAll = new Subject<void>();
 
-  private _data: [string, number][] = [];
-  @Input() set data(values: [string, number][]) {
+  @ViewChild('container') private container: ElementRef | undefined;
+
+  @Input()
+  set data(values: [string, number][]) {
     this._data = values;
     this.draw();
   }
+  private _data: [string, number][] = [];
 
   ngAfterViewInit(): void {
     setTimeout(() => this.draw(), 0);
@@ -90,27 +84,26 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
       .append('path')
       .datum(this._data)
       .attr('fill', 'none')
-      .attr('stroke-width', 1.5)
+      .attr('stroke-width', 1)
       .attr('class', 'data-line')
       .attr('d', line);
   }
 
   private createXAxis(svg: d3.Selection<any, any, any, any>, width: number, height: number) {
-    const x = d3
+    const scale = d3
       .scalePoint()
       .domain(this._data.map((item) => item[0]))
       .range([0, width]);
-
+    const xAxis = d3.axisBottom(scale);
     svg
       .append('g')
       .attr('transform', `translate(0, ${height})`)
       .attr('class', 'x-axis')
-      .call(d3.axisBottom(x))
-      .call((g) => g.selectAll('.tick text').attr('transform', 'rotate(-45 10 10)'))
+      .call(xAxis)
       .call((g) => g.select('.domain').remove())
       .call((g) => g.selectAll('.tick line').remove());
 
-    return x;
+    return scale;
   }
 
   private removeExistingChartFromParent(): void {
