@@ -11,7 +11,7 @@ export const environment = {
     dropbox: {
       CLIENT_ID: 'FAKE',
     },
-    gdrive: {
+    google: {
       endpoint: 'https://stashify.cloud/api/external_auth/gdrive/authorize',
       API_KEY: 'FAKE',
     },
