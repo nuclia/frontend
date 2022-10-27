@@ -1,36 +1,22 @@
-<svelte:options tag="nuclia-search" />
+<svelte:options tag="nuclia-viewer" />
 
 <script lang="ts">
-  import PopupSearch from '../../old-components/popup-search/PopupSearch.svelte';
-  import EmbeddedSearch from '../../old-components/embedded-search/EmbeddedSearch.svelte';
   import { resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { get_current_component } from "svelte/internal";
-  import {
-    setCDN,
-    coerceBooleanProperty,
-    loadFonts,
-    loadSvgSprite,
-  } from '../../core/utils';
+  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates } from '@nuclia/core';
-  import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { customStyle, setWidgetActions, widgetType } from '../../core/stores/widget.store';
-  import {
-    activateTypeAheadSuggestions,
-    unsubscribeAllEffects,
-  } from '../../core/stores/effects';
+  import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
-  export let type = 'input'; // input, form
-  export let placeholder = '';
   export let lang = '';
   export let cdn = '';
   export let apikey = '';
@@ -44,14 +30,6 @@
   let _notpublic = coerceBooleanProperty(notpublic);
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
-
-  const thisComponent = get_current_component();
-  const dispatchCustomEvent = (name: string, detail: string) => {
-    thisComponent.dispatchEvent && thisComponent.dispatchEvent(new CustomEvent(name, {
-      detail,
-      composed: true,
-    }));
-  };
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -101,11 +79,7 @@
     // Load custom styles
     customStyle.subscribe((css) => (style = css));
 
-    activateTypeAheadSuggestions();
-
-    setupTriggerSearch(dispatchCustomEvent);
-
-    widgetType.set('search');
+    widgetType.set('viewer');
     ready = true;
 
     return () => reset();
@@ -117,17 +91,10 @@
 
 <div class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    {#if type === 'input'}
-      <PopupSearch {placeholder} />
-    {:else if type === 'form'}
-      <EmbeddedSearch {placeholder} />
-    {:else}
-      {type} widget is not implemented yet
-    {/if}
     <ViewerModal {permalinkEnabled} />
   {/if}
 
   <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
-<style lang="scss" src="./Widget.scss"></style>
+<style lang="scss" src="./ViewerWidget.scss"></style>

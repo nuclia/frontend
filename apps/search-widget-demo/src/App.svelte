@@ -2,11 +2,14 @@
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
   import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
+  import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
   let selected = 'input';
   let showConfiguration = true;
   let widget: NucliaWidget;
+  let viewerWidget: NucliaViewerWidget;
+  let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
 
   onMount(() => {
     widget?.setActions([
@@ -42,6 +45,7 @@
         <option value="input">Popup search</option>
         <option value="form">Embedded search</option>
         <option value="two-widgets">Search bar and result widgets</option>
+        <option value="viewer">Viewer widget</option>
       </select>
       <button on:click={() => setLang('en')}>English</button>
       <button on:click={() => setLang('es')}>Español</button>
@@ -91,6 +95,26 @@
         placeholder="Search"
       />
       <NucliaSearchResults />
+    </div>
+  {/if}
+  {#if selected === 'viewer'}
+    <h2>Viewer widget</h2>
+    <label>Resource id:</label>
+    <input bind:value={resource}>
+    <button on:click={() => viewerWidget.displayResource(resource)}>
+      Show resource
+    </button>
+    <div class="viewer-widget">
+      <NucliaViewerWidget
+        bind:this={viewerWidget}
+        zone="europe-1"
+        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
+        cdn="/"
+        backend="https://stashify.cloud/api"
+        widgetid="label-annotation"
+        permalink
+        lang="en"
+      />
     </div>
   {/if}
 </main>
