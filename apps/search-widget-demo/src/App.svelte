@@ -2,13 +2,13 @@
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
   import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
-  import { NucliaResourceWidget } from '../../../libs/search-widget/src/widgets/resource-widget';
+  import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
   let selected = 'input';
   let showConfiguration = true;
   let widget: NucliaWidget;
-  let resourceWidget: NucliaResourceWidget;
+  let viewerWidget: NucliaViewerWidget;
   let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
 
   onMount(() => {
@@ -101,12 +101,12 @@
     <h2>Resource widget</h2>
     <label>Resource id:</label>
     <input bind:value={resource}>
-    <button on:click={() => resourceWidget.displayResource(resource)}>
+    <button on:click={() => viewerWidget.displayResource(resource)}>
       Show resource
     </button>
     <div class="resource-widget">
-      <NucliaResourceWidget
-        bind:this={resourceWidget}
+      <NucliaViewerWidget
+        bind:this={viewerWidget}
         zone="europe-1"
         knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
         cdn="/"

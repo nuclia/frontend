@@ -1,4 +1,4 @@
-<svelte:options tag="nuclia-resource" />
+<svelte:options tag="nuclia-viewer" />
 
 <script lang="ts">
   import { resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
@@ -78,7 +78,7 @@
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
     // Load custom styles
     customStyle.subscribe((css) => (style = css));
-    
+
     widgetType.set('resource');
     ready = true;
 
@@ -97,4 +97,4 @@
   <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
 </div>
 
-<style lang="scss" src="./ResourceWidget.scss"></style>
+<style lang="scss" src="./ViewerWidget.scss"></style>

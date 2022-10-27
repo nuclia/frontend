@@ -23,9 +23,9 @@
     "build:search-main-widget": "vite build -c=libs/search-widget/vite.config.js -- search-widget nuclia-widget && cp -r libs/search-widget/public/i18n dist/libs/search-widget",
     "build:no-shadow-widget": "vite build -c=libs/search-widget/vite.no-shadow.config.js",
     "build:search-video-widget": "vite build -c=libs/search-widget/vite.config.js -- search-video-widget nuclia-video-widget && mv dist/libs/search-video-widget/style.css dist/libs/search-video-widget/nuclia-video-widget.css",
-    "build:resource-widget": "vite build -c=libs/search-widget/vite.config.js -- resource-widget nuclia-resource-widget && mv dist/libs/resource-widget/style.css dist/libs/resource-widget/nuclia-resource-widget.css",
-    "build:search-widgets": "yarn run build:search-main-widget && yarn run build:search-video-widget && cp dist/libs/search-video-widget/* dist/libs/search-widget && yarn run build:no-shadow-widget && cp dist/libs/search-widget-no-shadow/* dist/libs/search-widget && yarn run build:resource-widget && cp dist/libs/resource-widget/* dist/libs/search-widget",
-    "postbuild:search-widgets": "rm -rf dist/libs/search-video-widget && rm -rf dist/libs/resource-widget"
+    "build:viewer-widget": "vite build -c=libs/search-widget/vite.config.js -- viewer-widget nuclia-viewer-widget && mv dist/libs/viewer-widget/style.css dist/libs/search-widget/nuclia-viewer-widget.css",
+    "build:search-widgets": "yarn run build:search-main-widget && yarn run build:search-video-widget && cp dist/libs/search-video-widget/* dist/libs/search-widget && yarn run build:no-shadow-widget && cp dist/libs/search-widget-no-shadow/* dist/libs/search-widget && yarn run build:viewer-widget && cp dist/libs/viewer-widget/* dist/libs/search-widget",
+    "postbuild:search-widgets": "rm -rf dist/libs/search-video-widget && rm -rf dist/libs/viewer-widget"
   },
   "private": true,
   "dependencies": {
