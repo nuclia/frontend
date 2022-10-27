@@ -45,7 +45,7 @@
         <option value="input">Popup search</option>
         <option value="form">Embedded search</option>
         <option value="two-widgets">Search bar and result widgets</option>
-        <option value="resource">Resource widget</option>
+        <option value="viewer">Viewer widget</option>
       </select>
       <button on:click={() => setLang('en')}>English</button>
       <button on:click={() => setLang('es')}>Español</button>
