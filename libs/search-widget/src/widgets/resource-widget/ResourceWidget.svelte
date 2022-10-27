@@ -79,6 +79,7 @@
     // Load custom styles
     customStyle.subscribe((css) => (style = css));
     
+    widgetType.set('resource');
     ready = true;
 
     return () => reset();

@@ -21,7 +21,7 @@
   import { entityGroups } from '../../core/stores/entities.store';
   import Label from '../../common/label/Label.svelte';
   import { searchBy } from '../../common/label/label.utils';
-  import { canAnnotateEntities } from '../../core/stores/widget.store';
+  import { canAnnotateEntities, widgetType } from '../../core/stores/widget.store';
   import ConfirmDialog from '../../common/modal/ConfirmDialog.svelte';
 
   let entitiesBackup: string;
@@ -145,7 +145,7 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <Label {label} clickable on:click={() => searchBy(label)} />
+              <Label {label} clickable={$widgetType === 'search'} on:click={() => searchBy(label)} />
             {/each}
           </div>
         </div>

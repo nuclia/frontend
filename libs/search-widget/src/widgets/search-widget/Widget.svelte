@@ -105,6 +105,7 @@
 
     setupTriggerSearch(dispatchCustomEvent);
 
+    widgetType.set('search');
     ready = true;
 
     return () => reset();

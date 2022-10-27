@@ -9,6 +9,7 @@ export const setWidgetActions = (actions: WidgetAction[]) => {
 };
 export const getWidgetActions = () => widgetActions;
 
+export const widgetType = writableSubject<'search' | 'resource' | null>(null);
 export const searchWidget = writableSubject<Widget | null>(null);
 export const customStyle: Observable<string> = searchWidget.pipe(
   map((widget) =>
