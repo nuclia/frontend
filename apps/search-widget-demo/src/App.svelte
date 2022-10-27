@@ -97,8 +97,8 @@
       <NucliaSearchResults />
     </div>
   {/if}
-  {#if selected === 'resource'}
-    <h2>Resource widget</h2>
+  {#if selected === 'viewer'}
+    <h2>Viewer widget</h2>
     <label>Resource id:</label>
     <input bind:value={resource}>
     <button on:click={() => viewerWidget.displayResource(resource)}>
