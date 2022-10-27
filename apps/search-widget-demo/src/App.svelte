@@ -104,7 +104,7 @@
     <button on:click={() => viewerWidget.displayResource(resource)}>
       Show resource
     </button>
-    <div class="resource-widget">
+    <div class="viewer-widget">
       <NucliaViewerWidget
         bind:this={viewerWidget}
         zone="europe-1"

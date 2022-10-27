@@ -79,7 +79,7 @@
     // Load custom styles
     customStyle.subscribe((css) => (style = css));
 
-    widgetType.set('resource');
+    widgetType.set('viewer');
     ready = true;
 
     return () => reset();
