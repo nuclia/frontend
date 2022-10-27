@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { IResource } from '@nuclia/core';
-  import { createEventDispatcher } from 'svelte';
+  import { IResource, Resource } from '@nuclia/core';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { Duration } from '../../common/transition.utils';
   import { fade, slide } from 'svelte/transition';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
@@ -11,6 +11,11 @@
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { _ } from '../../core/i18n';
+  import PdfViewer from './PdfViewer.svelte';
+  import { loadPdfJs } from '../../core/utils';
+  import { map, Observable } from 'rxjs';
+  import { getRegionalBackend, getResource } from '../../core/api';
+  import { getFileField } from '../../core/old-stores/viewer.store';
 
   export let result: IResource = {id: ''} as IResource;
 
@@ -22,6 +27,9 @@
   let showAllResults = false;
   let selectedParagraph: PdfWidgetParagraph | undefined;
   let resultIndex: number | undefined;
+  let resource: Observable<Resource>;
+  let pdfUrl: Observable<string>;
+  let headerActionsElement: HTMLElement;
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
@@ -29,17 +37,35 @@
 
   const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id);
 
+  onMount(() => {
+    loadPdfJs();
+  });
+
   const openParagraph = (paragraph, index) => {
     resultIndex = index + 1;
     selectedParagraph = paragraph;
     expanded = true;
-  }
+    open();
+  };
   const openPrevious = () => {
     resultIndex -= 1;
-  }
+  };
   const openNext = () => {
     resultIndex += 1;
-  }
+  };
+
+  const open = () => {
+    if (!pdfUrl) {
+      pdfUrl = getResource(result.id).pipe(
+        map(res => {
+          const fileField = getFileField(res, res.id);
+          const file = fileField?.value?.file;
+          return file ? `${getRegionalBackend()}${file.uri}` : '';
+        }),
+      );
+    }
+  };
+
   const closePreview = () => {
     expanded = false;
     if (isExpandedFullScreen) {
@@ -60,8 +86,9 @@
     </div>
 
     {#if expanded}
-      <div class="pdf-container">
-        TODO: PDF content
+      <div class="pdf-viewer-container">
+        <PdfViewer src={$pdfUrl}
+                   paragraph={selectedParagraph}/>
       </div>
     {/if}
   </div>
@@ -69,7 +96,7 @@
   {#if thumbnailLoaded}
     <div class="result-details"
          transition:fade={{duration: Duration.SUPERFAST}}>
-      <header>
+      <header style:--header-actions-width={`${headerActionsElement?.offsetWidth}px`}>
         <div class:header-title={expanded}>
           <div class="doc-type-container">
             <DocTypeIndicator type="pdf"/>
@@ -79,9 +106,13 @@
 
         {#if expanded}
           <div class="header-actions"
+               bind:this={headerActionsElement}
                in:fade={{duration: Duration.FAST}}>
             <div class="search-result-navigator">
-              <span class="result-count">{$_('results.count', {index: resultIndex, total: $matchingParagraphs.length})}</span>
+              <span class="result-count">{$_('results.count', {
+                index: resultIndex,
+                total: $matchingParagraphs.length
+              })}</span>
 
               <IconButton icon="chevron-up"
                           size="small"

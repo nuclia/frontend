@@ -54,13 +54,16 @@
     z-index: 1000;
 
     header {
+      --header-padding-left: var(--rhythm-2);
+      --header-padding-right: var(--rhythm-0_5);
+
       align-items: center;
       align-self: stretch;
       display: flex;
       gap: var(--rhythm-0_5);
       justify-content: space-between;
       left: 0;
-      padding: var(--rhythm-0_5) var(--rhythm-0_5) var(--rhythm-0_5) var(--rhythm-2);
+      padding: var(--rhythm-0_5) var(--header-padding-right) var(--rhythm-0_5) var(--header-padding-left);
       position: absolute;
       right: 0;
       top: 0;

@@ -16,7 +16,15 @@
   .header-actions {
     align-items: center;
     display: flex;
+    flex: 1 0 auto;
     gap: var(--rhythm-1_5);
+  }
+
+  .header-title {
+    max-width: calc(100% - var(--header-actions-width) - var(--header-padding-left) - var(--header-padding-right));
+  }
+  .header-actions {
+    justify-content: flex-end;
   }
 
   .search-result-navigator {
@@ -29,8 +37,11 @@
     }
   }
 
-  &.expanded .pdf-container {
+  &.expanded .thumbnail-container {
+    width: 100%;
+  }
+  &.expanded .pdf-viewer-container {
     height: calc(100vh - var(--header-height));
-    overflow: auto;
+    position: relative;
   }
 }

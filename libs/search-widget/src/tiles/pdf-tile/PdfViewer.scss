@@ -1,0 +1,25 @@
+.pdf-container {
+  bottom: 0;
+  overflow: auto;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  .pdf-controller {
+    align-items: center;
+    background-color: var(--color-neutral-lighter);
+    border-radius: var(--rhythm-0_5);
+    bottom: var(--rhythm-3);
+    display: flex;
+    gap: var(--rhythm-1);
+    left: 50%;
+    padding: var(--rhythm-1);
+    position: fixed;
+    transform: translateX(-50%);
+
+    .pdf-zoom-container {
+      margin-left: var(--rhythm-2);
+    }
+  }
+}

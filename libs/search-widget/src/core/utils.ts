@@ -22,6 +22,38 @@ export const loadSvgSprite = () => {
   return fromFetch(`${getCDN()}icons/glyphs-sprite.svg`).pipe(switchMap((res) => res.text()));
 };
 
+export const getPdfJsBaseUrl = (folder = 'build') => {
+  return `https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/${folder}`;
+};
+
+export const loadPdfJs = () => {
+  const pdfScriptId = 'nuclia-pdfjs';
+  if (!document.getElementById(pdfScriptId)) {
+    const pdfLib = document.createElement('script');
+    pdfLib.id = pdfScriptId;
+    pdfLib.src = `${getPdfJsBaseUrl()}/pdf.min.js`;
+    const pdfViewerScript = document.createElement('script');
+    pdfViewerScript.id = `${pdfScriptId}-viewer`;
+    pdfViewerScript.src = `${getPdfJsBaseUrl('web')}/pdf_viewer.js`;
+    const pdfViewerStyle = document.createElement('link');
+    pdfViewerStyle.rel = 'stylesheet';
+    pdfViewerStyle.href = `${getPdfJsBaseUrl('web')}/pdf_viewer.css`;
+    const pdfViewerStyleOverride = document.createElement('style');
+    pdfViewerStyleOverride.textContent = `.nuclia-widget .textLayer .highlight.selected {
+      background-color: #FF0066;
+      border-radius: 0;
+      margin: -4px;
+      padding: 2px 4px;
+    }`;
+
+    const head = document.head || document.getElementsByTagName('head')[0];
+    head.appendChild(pdfLib);
+    head.appendChild(pdfViewerScript);
+    head.appendChild(pdfViewerStyle);
+    head.appendChild(pdfViewerStyleOverride);
+  }
+};
+
 export const formatDate = (date: string) => {
   const d = new Date(date);
   return d.toLocaleDateString();
