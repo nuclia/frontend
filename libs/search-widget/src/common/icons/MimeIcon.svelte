@@ -4,7 +4,9 @@
   export let small: boolean = false;
 
   const handleError = () => {
-    type = 'application/generic';
+    type = type.split('/')[0] === 'video'
+      ? 'video/video'
+      : 'application/generic';
   };
 </script>
 

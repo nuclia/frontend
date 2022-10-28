@@ -42,13 +42,14 @@ export const mimeIcons: { [mime: string]: string } = {
   'audio/mpeg': 'audio/mpeg.svg',
   'media/video': 'video/video.svg',
   'media/video+srt': 'video/video-cc.svg',
-
-  'stf/layout': 'stf/layout.svg',
-  'file': 'file.svg',
-  'email': 'email.svg',
-  'generic': 'application/generic.svg',
 };
 
+const defaultIcons: { [mime: string]: string } = {
+  'video': 'video/video.svg',
+}
+
+const genericIcon = 'application/generic.svg';
+
 export function getMimeIcon(mime: string): string {
-  return mimeIcons[mime] ? mimeIcons[mime] : mimeIcons['generic'];
+  return mimeIcons[mime] || defaultIcons[mime.split('/')[0]] || genericIcon;
 }
