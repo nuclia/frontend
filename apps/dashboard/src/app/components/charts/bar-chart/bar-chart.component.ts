@@ -98,9 +98,9 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
     }
 
     // Tooltip event handlers
-    const mouseover = (data: [string, number], index: number, group: any) => {
+    const mouseover = (event: any, data: [string, number]) => {
       if (!this.tooltipsEnabled) return;
-      const { bottom, left, height, width } = group[index].getBoundingClientRect();
+      const { bottom, left, height, width } = event.target.getBoundingClientRect();
       this.tooltipBottom = this.container!.nativeElement.getBoundingClientRect().bottom - bottom + height + 8;
       this.tooltipLeft = left - this.container!.nativeElement.getBoundingClientRect().left + width / 2;
       this.showTooltip = true;
