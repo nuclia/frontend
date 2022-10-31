@@ -11,35 +11,14 @@
   import globalCss from '../../common/_global.scss';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
+  import HtmlTile from '../../tiles/html-tile/HtmlTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
-  const results = nucliaState().results;
+  const results = nucliaState().smartResults;
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
   const showLoading = pendingResults.pipe(debounceTime(2000));
   let svgSprite;
-
-  const enhancedResults = results.pipe(
-    switchMap((results) =>
-      forkJoin(
-        results.map((result) =>
-          forkJoin([
-            nucliaState().getMatchingParagraphs(result.id).pipe(take(1)),
-            nucliaState().getMatchingSentences(result.id).pipe(take(1)),
-          ]).pipe(
-            map(([paragraphs, sentences]) => ({
-              resource: result,
-              hasParagraphs: paragraphs.length > 0,
-              hasSentences: sentences.length > 0,
-            })),
-          ),
-        ),
-      ),
-    ),
-  );
-  const paragraphResults = enhancedResults.pipe(
-    map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
-  );
 
   const scrollingListener = () => {
     document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
@@ -62,7 +41,7 @@
     const body = document.body;
     body.style.position = 'fixed';
     body.style.top = `-${scrollY}`;
-  }
+  };
 
   const onFullscreenPreviewClosed = () => {
     const body = document.body;
@@ -70,12 +49,11 @@
     body.style.position = '';
     body.style.top = '';
     setTimeout(() => window.scrollTo(0, parseInt(scrollY || '0') * -1));
-  }
+  };
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<div class="nuclia-widget sw-video-results"
-     data-version="__NUCLIA_DEV_VERSION__">
+<div class="nuclia-widget sw-video-results" data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}
       <div class="error">
@@ -89,12 +67,9 @@
     {:else if $results.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      <div class="results"
-           transition:fade={{duration: Duration.SUPERFAST}}>
-        {#each $paragraphResults as result}
-          <VideoTile {result}
-                     on:fullscreenPreview={onFullscreenPreview}
-                     on:closePreview={onFullscreenPreviewClosed} />
+      <div class="results" transition:fade={{ duration: Duration.SUPERFAST }}>
+        {#each $results as result}
+          <HtmlTile {result} />
         {/each}
       </div>
     {/if}

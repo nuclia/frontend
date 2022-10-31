@@ -1,0 +1,23 @@
+.sw-html-tile {
+  li {
+    display: block;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+
+    padding-left: 24px;
+    margin: 12px 0;
+    &:hover {
+      padding-left: 22px;
+      border-left: 2px solid var(--color-primary-regular);
+    }
+  }
+
+  .semantic {
+    font-style: italic;
+  }
+}

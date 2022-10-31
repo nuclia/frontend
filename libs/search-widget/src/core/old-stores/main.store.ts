@@ -13,6 +13,11 @@ import {
 } from 'rxjs';
 import type { IResource, Search, SearchOptions } from '@nuclia/core';
 
+export interface SmartResult {
+  resource: IResource;
+  textElements?: { isSemanticMatch: boolean; text: string }[];
+}
+
 type NucliaStore = {
   query: BehaviorSubject<string>;
   searchOptions: BehaviorSubject<SearchOptions>;
@@ -27,6 +32,7 @@ let _state: {
   query: Observable<string>;
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
+  smartResults: Observable<SmartResult[]>;
   hasSearchError: Observable<boolean>;
   pendingResults: Observable<boolean>;
   displayedResource: Observable<DisplayedResource>;
@@ -54,6 +60,34 @@ export const nucliaStore = (): NucliaStore => {
         filter((res) => !!res.resources),
         map((results) => getSortedResources(results)),
         startWith([] as IResource[]),
+      ),
+      smartResults: _store.searchResults.pipe(
+        filter((res) => !!res.resources),
+        map((results) => {
+          if (!results.resources || Object.keys(results.resources).length === 0) {
+            return [] as SmartResult[];
+          }
+          let smartResults: SmartResult[] = [];
+          const fullTextResults = results.paragraphs?.results || [];
+          const bestFullText = fullTextResults.shift();
+          const ordered = [
+            bestFullText,
+            results.sentences?.results?.[0],
+            results.sentences?.results?.[1],
+            ...fullTextResults,
+          ];
+          ordered.forEach((element, i) => {
+            if (element) {
+              const resource = results.resources?.[element.rid];
+              if (resource) {
+                smartResults = addElementToSmartResults(smartResults, resource, element, i === 1 || i === 2);
+              }
+            }
+          });
+          console.log(smartResults);
+          return smartResults;
+        }),
+        startWith([] as SmartResult[]),
       ),
       hasSearchError: _store.hasSearchError.asObservable(),
       pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
@@ -116,3 +150,24 @@ const getSortedResources = (results: Search.Results) => {
     .sort((a, b) => b.score - a.score)
     .map((data) => data.res);
 };
+
+function addElementToSmartResults(
+  smartResults: SmartResult[],
+  resource: IResource,
+  element: Search.Sentence | Search.Paragraph,
+  isSemanticMatch: boolean,
+): SmartResult[] {
+  const duplicate = smartResults.find(
+    (r) => r.resource.id === resource.id && r.textElements?.find((el) => el.text === element.text),
+  );
+  if (duplicate) {
+    return smartResults;
+  }
+  const existing = smartResults.find((r) => r.resource.id === resource.id);
+  if (existing) {
+    existing.textElements?.push({ isSemanticMatch, text: element.text });
+  } else {
+    smartResults.push({ resource, textElements: [{ isSemanticMatch, text: element.text }] });
+  }
+  return smartResults;
+}

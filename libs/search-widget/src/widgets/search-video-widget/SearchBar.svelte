@@ -17,12 +17,13 @@
   export let knowledgebox = '';
   export let placeholder = '';
   export let lang = '';
-  export let cdn;
-  export let apikey;
+  export let cdn = '';
+  export let apikey = '';
   export let kbslug = '';
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
+  export let standalone = false;
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -42,12 +43,13 @@
         client,
         apiKey: apikey,
         kbSlug: kbslug,
+        standalone,
         account,
       },
       state,
       {
-        fuzzyOnly: true,
-        highlight: false,
+        fuzzyOnly: false,
+        highlight: true,
       },
     );
     if (cdn) {
@@ -56,7 +58,6 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);

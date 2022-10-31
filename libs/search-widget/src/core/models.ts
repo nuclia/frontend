@@ -1,12 +1,12 @@
-import type { Classification, CloudLink, Paragraph, Search } from '@nuclia/core';
+import type { Classification, CloudLink, IResource, Paragraph, Search } from '@nuclia/core';
 
 export const NO_RESULTS: Search.Results = {
-  resources: {},
+  resources: {} as { [id: string]: IResource },
   paragraphs: { results: [], facets: {} },
   sentences: { results: [], facets: {} },
 };
 export const PENDING_RESULTS = {
-  resources: {},
+  resources: {} as { [id: string]: IResource },
   paragraphs: { results: [], facets: {} },
   sentences: { results: [], facets: {} },
   pending: true,
