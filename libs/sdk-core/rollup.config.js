@@ -33,7 +33,7 @@ export default [
         targets: [
           { src: './README.md', dest: '../../dist/sdk-core' },
           { src: './CHANGELOG.md', dest: '../../dist/sdk-core' },
-          { src: '../LICENSE.md', dest: '../../dist/sdk-core' },
+          { src: '../../LICENSE.md', dest: '../../dist/sdk-core' },
         ],
       }),
     ],
