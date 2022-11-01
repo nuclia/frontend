@@ -101,7 +101,7 @@ jobs:
         uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: ./libs/sdk-core/package.json
+          package: ./dist/sdk-core/package.json
 
       - name: Build dashboard image
         if: steps.check-deploy.outputs.deploy-app == 'yes'

@@ -1,4 +1,4 @@
-# 1.0.3 (unreleased)
+# 1.0.3 (2022-10-31)
 
 - Add sub-folders in `db`
 - Add missing exports in index.ts
