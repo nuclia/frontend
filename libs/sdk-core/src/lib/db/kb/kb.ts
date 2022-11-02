@@ -63,6 +63,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       .get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`)
       .pipe(map((res) => res?.labelsets || {}));
   }
+
   getResource(
     uuid: string,
     show: ResourceProperties[] = [
@@ -80,10 +81,56 @@ export class KnowledgeBox implements IKnowledgeBox {
       ExtractedDataTypes.FILE,
     ],
   ): Observable<Resource> {
+    return this._getResource(uuid, undefined, show, extracted);
+  }
+
+  getResourceBySlug(
+    slug: string,
+    show: ResourceProperties[] = [
+      ResourceProperties.BASIC,
+      ResourceProperties.ORIGIN,
+      ResourceProperties.RELATIONS,
+      ResourceProperties.VALUES,
+      ResourceProperties.EXTRACTED,
+      ResourceProperties.ERRORS,
+    ],
+    extracted: ExtractedDataTypes[] = [
+      ExtractedDataTypes.TEXT,
+      ExtractedDataTypes.METADATA,
+      ExtractedDataTypes.LINK,
+      ExtractedDataTypes.FILE,
+    ],
+  ): Observable<Resource> {
+    return this._getResource(undefined, slug, show, extracted);
+  }
+
+  private _getResource(
+    uuid?: string,
+    slug?: string,
+    show: ResourceProperties[] = [
+      ResourceProperties.BASIC,
+      ResourceProperties.ORIGIN,
+      ResourceProperties.RELATIONS,
+      ResourceProperties.VALUES,
+      ResourceProperties.EXTRACTED,
+      ResourceProperties.ERRORS,
+    ],
+    extracted: ExtractedDataTypes[] = [
+      ExtractedDataTypes.TEXT,
+      ExtractedDataTypes.METADATA,
+      ExtractedDataTypes.LINK,
+      ExtractedDataTypes.FILE,
+    ],
+  ): Observable<Resource> {
     const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
+    const path = !uuid ? `${this.path}/slug/${slug}` : `${this.path}/resource/${uuid}`;
     return this.nuclia.rest
-      .get<IResource>(`${this.path}/resource/${uuid}?${params.join('&')}`)
-      .pipe(map((res) => new Resource(this.nuclia, this.id, uuid, res)));
+      .get<IResource>(`${path}?${params.join('&')}`)
+      .pipe(map((res) => new Resource(this.nuclia, this.id, res)));
+  }
+
+  getResourceFromData(data: IResource): Resource {
+    return new Resource(this.nuclia, this.id, data);
   }
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
@@ -121,7 +168,7 @@ export class KnowledgeBox implements IKnowledgeBox {
       }>(`/kb/${this.id}/resources${params ? '?' + params : ''}`)
       .pipe(
         map((res) => ({
-          resources: res.resources.map((resource) => new Resource(this.nuclia, this.id, resource.id, resource)),
+          resources: res.resources.map((resource) => new Resource(this.nuclia, this.id, resource)),
           pagination: res.pagination,
         })),
       );

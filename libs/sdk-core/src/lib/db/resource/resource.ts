@@ -115,14 +115,17 @@ export class Resource extends ReadableResource implements IResource {
   private nuclia: INuclia;
 
   get path(): string {
-    return `/kb/${this.kb}/resource/${this.uuid}`;
+    if (!this.uuid && !this.slug) {
+      throw new Error('Resource must have either uuid or slug');
+    }
+    return !this.uuid ? `/kb/${this.kb}/slug/${this.slug}` : `/kb/${this.kb}/resource/${this.uuid}`;
   }
 
-  constructor(nuclia: INuclia, kb: string, uuid: string, data: IResource) {
+  constructor(nuclia: INuclia, kb: string, data: IResource) {
     super(data);
     this.nuclia = nuclia;
     this.kb = kb;
-    this.uuid = uuid;
+    this.uuid = data.id;
   }
 
   modify(data: Partial<ICreateResource>, synchronous = true): Observable<void> {

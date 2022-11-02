@@ -334,7 +334,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   getProcessingStatus(resource: Resource) {
     if (resource.metadata?.status === RESOURCE_STATUS.PENDING) {
       this.sdk.nuclia.db.getProcessingStatus(this.stateService.getAccount()?.id).subscribe((status) => {
-        if (status.last_delivered_seqid) {
+        if (status.last_delivered_seqid && resource.last_seqid !== undefined) {
           const count = resource.last_seqid - status.last_delivered_seqid;
           const statusKey = count > 0 ? 'resource.status_pending' : 'resource.status_processing';
           this.statusTooltips[resource.id] = this.translate.instant(statusKey, { count });
