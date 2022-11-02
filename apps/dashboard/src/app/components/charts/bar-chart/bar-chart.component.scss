@@ -10,24 +10,4 @@
       opacity: 1;
     }
   }
-
-  .tooltip {
-    background-color: $color-dark-stronger;
-    color: $color-light-stronger;
-    padding: rythm(0.5);
-    position: absolute;
-    font-size: $chart-font-size;
-    transform: translateX(-50%);
-
-    &::after {
-      border-top: rhythm(0.5) solid $color-dark-stronger;
-      border-left: rhythm(0.5) solid transparent;
-      border-right: rhythm(0.5) solid transparent;
-      bottom: - rhythm(0.5);
-      content: '';
-      height: 0;
-      position: absolute;
-      left: calc(50% - #{rhythm(0.5)});
-    }
-  }
 }

@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  ViewChild,
+  ViewEncapsulation,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
@@ -21,6 +30,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   @ViewChild('container') private container: ElementRef | undefined;
 
   @Input() xAxisTickOptions?: TickOptions;
+  @Input() tooltipsEnabled = false;
 
   @Input()
   set data(values: [string, number][]) {
@@ -28,6 +38,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
     this.draw();
   }
   private _data: [string, number][] = [];
+
+  showTooltip = false;
+  tooltipContent?: [string, number];
+  tooltipLeft = 0;
+  tooltipBottom = 0;
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     setTimeout(() => this.draw(), 0);
@@ -62,6 +79,27 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
       width = availableWidth - margin.left - margin.right,
       height = CHART_HEIGHT - margin.top - margin.bottom;
 
+    // Tooltip event handlers
+    const mousemove = (event: MouseEvent) => {
+      if (!this.tooltipsEnabled) return;
+      const [mouseX] = d3.pointer(event);
+      let index = Math.round((mouseX - margin.left) / x.step());
+      index = Math.max(Math.min(index, this._data.length - 1), 0);
+      const left = x.step() * index + margin.left;
+      const top = y(this._data[index][1]);
+      this.tooltipLeft = left;
+      this.tooltipBottom = this.container?.nativeElement.clientHeight - top + 6;
+      this.tooltipContent = this._data[index];
+      this.showTooltip = true;
+      this.cdr.markForCheck();
+    };
+
+    const mouseleave = () => {
+      if (!this.tooltipsEnabled) return;
+      this.showTooltip = false;
+      this.cdr.markForCheck();
+    };
+
     // Append the svg object to the page
     d3.select(`.${this.id} svg`).remove();
     const svg = d3
@@ -69,6 +107,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
       .append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom)
+      .on('mouseover mousemove', mousemove)
+      .on('mouseleave', mouseleave)
       .append('g')
       .attr('transform', `translate(${margin.left},${margin.top})`);
 
