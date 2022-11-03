@@ -8,6 +8,7 @@
   export let ellipsis = false;
   export let selected = false;
   export let minimized = false;
+  export let hideIndicator = false;
 
   let hovering = false;
 
@@ -18,11 +19,12 @@
 </script>
 
 <li class="sw-paragraph-result"
+    class:no-indicator={hideIndicator}
     class:stack
     on:mouseenter={() => (hovering = true)}
     on:mouseleave={() => (hovering = false)}
     on:click={open}>
-  <div class="indicator-container">
+  <div class="indicator-container" class:hidden={hideIndicator}>
     {#if paragraph.start_seconds !== undefined}
       <TimeIndicator start={paragraph.start_seconds || 0}
                      {selected}

@@ -144,6 +144,7 @@
               style="--paragraph-count: {$matchingParagraphs.length}">
             {#each $matchingParagraphs as paragraph, index}
               <ParagraphResult {paragraph}
+                               hideIndicator
                                ellipsis={!expanded}
                                minimized={isMobile && !expanded}
                                stack={expanded}

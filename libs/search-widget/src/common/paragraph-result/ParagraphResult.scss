@@ -2,6 +2,7 @@
   cursor: pointer;
   display: flex;
   gap: var(--rhythm-1);
+  line-height: var(--rhythm-3);
   transition: background-color var(--transition-superfast);
 
   &:not(.stack) {
@@ -12,6 +13,10 @@
     gap: var(--rhythm-0_5);
     padding: var(--rhythm-2);
   }
+  &.no-indicator {
+    margin-left: calc(var(--rhythm-1) * -1);
+    padding-left: var(--rhythm-1);
+  }
   .paragraph-text {
     overflow-wrap: break-word;
   }
@@ -19,6 +24,9 @@
   .indicator-container {
     display: flex;
     flex: 0 0 auto;
+  }
+  .hidden {
+    display: none;
   }
 }
 
