@@ -20,9 +20,7 @@
      class:minimized
      class:hovering={hover}
      on:click={play}
-     on:keyup={(e) => {
-    if (e.key === 'Enter') play();
-  }}
+     on:keyup={(e) => {if (e.key === 'Enter') play();}}
      tabindex="0"
 >
   <Icon name="play" size="small"/>

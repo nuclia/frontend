@@ -72,6 +72,10 @@
         margin: 0;
       }
     }
+
+    .thumbnail-container {
+      flex: 1 0 auto;
+    }
   }
 }
 @media (max-width: 647px) {

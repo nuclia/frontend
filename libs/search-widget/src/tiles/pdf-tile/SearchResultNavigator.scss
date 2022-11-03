@@ -1,0 +1,22 @@
+.search-result-navigator {
+  align-items: center;
+  display: flex;
+  flex: 1 0 auto;
+  gap: var(--rhythm-0_25);
+
+  .result-count {
+    margin-right: var(--rhythm-3);
+  }
+
+  .navigation-buttons {
+    display: flex;
+  }
+}
+
+@media (max-width: 447px) {
+  .search-result-navigator {
+    background-color: var(--color-neutral-light);
+    justify-content: space-between;
+    padding: var(--rhythm-1) var(--rhythm-0_5) var(--rhythm-1) var(--rhythm-2);
+  }
+}

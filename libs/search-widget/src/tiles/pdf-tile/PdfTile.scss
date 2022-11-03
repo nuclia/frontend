@@ -16,27 +16,22 @@
   .header-actions {
     align-items: center;
     display: flex;
-    flex: 1 0 auto;
     gap: var(--rhythm-1_5);
   }
 
   .header-title {
+    //flex: 1 0 auto;
     max-width: calc(100% - var(--header-actions-width) - var(--header-padding-left) - var(--header-padding-right));
   }
   .header-actions {
+    flex: 0 auto;
     justify-content: flex-end;
   }
 
-  .search-result-navigator {
-    align-items: center;
-    display: flex;
-    gap: var(--rhythm-0_25);
-
-    .result-count {
-      margin-right: var(--rhythm-3);
-    }
+  &.expanded {
+    padding-left: var(--rhythm-2);
+    padding-right: var(--rhythm-2);
   }
-
   &.expanded .thumbnail-container {
     width: 100%;
   }
@@ -45,3 +40,4 @@
     position: relative;
   }
 }
+

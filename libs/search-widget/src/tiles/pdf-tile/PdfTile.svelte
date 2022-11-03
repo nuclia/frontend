@@ -13,15 +13,17 @@
   import { _ } from '../../core/i18n';
   import PdfViewer from './PdfViewer.svelte';
   import { loadPdfJs } from '../../core/utils';
-  import { map, Observable } from 'rxjs';
+  import { debounceTime, map, Observable, Subject } from 'rxjs';
   import { getRegionalBackend, getResource } from '../../core/api';
   import { getFileField } from '../../core/old-stores/viewer.store';
   import { tap } from 'rxjs/operators';
+  import SearchResultNavigator from "./SearchResultNavigator.svelte";
 
   export let result: IResource = {id: ''} as IResource;
 
   const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
+  const closeButtonWidth = 48;
 
   let expanded = false;
   let thumbnailLoaded = false;
@@ -30,17 +32,21 @@
   let resultIndex: number | undefined;
   let resource: Observable<Resource>;
   let pdfUrl: Observable<string>;
-  let headerActionsElement: HTMLElement;
+  let headerActionsWidth = 0;
+  const resizeEvent = new Subject();
+  let resultNavigatorWidth;
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: isExpandedFullScreen = innerWidth < 820;
+
 
   let paragraphList: PdfWidgetParagraph[];
   const matchingParagraphs$ = nucliaState().getMatchingParagraphs(result.id).pipe(tap(paragraphs => paragraphList = paragraphs as PdfWidgetParagraph[]));
 
   onMount(() => {
     loadPdfJs();
+    resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
   });
 
   const openParagraph = (paragraph, index) => {
@@ -63,6 +69,7 @@
   };
 
   const open = () => {
+    setTimeout(() => setHeaderActionWidth());
     if (!pdfUrl) {
       pdfUrl = getResource(result.id).pipe(
         map(res => {
@@ -80,9 +87,16 @@
       dispatch('closePreview');
     }
   };
+
+  const setHeaderActionWidth = () => {
+    if (expanded) {
+      headerActionsWidth = isMobile ? closeButtonWidth : resultNavigatorWidth + closeButtonWidth;
+    }
+  }
 </script>
 
-<svelte:window bind:innerWidth/>
+<svelte:window bind:innerWidth
+               on:resize={(event) => resizeEvent.next(event)}/>
 <div class="sw-tile sw-pdf-tile"
      class:expanded>
 
@@ -94,9 +108,16 @@
     </div>
 
     {#if expanded}
+      {#if isMobile}
+        <SearchResultNavigator {resultIndex}
+                               total={$matchingParagraphs$.length}
+                               on:openPrevious={openPrevious}
+                               on:openNext={openNext} />
+      {/if}
       <div class="pdf-viewer-container">
         <PdfViewer src={$pdfUrl}
-                   paragraph={selectedParagraph}/>
+                   paragraph={selectedParagraph}
+                   showController={!isMobile}/>
       </div>
     {/if}
   </div>
@@ -104,7 +125,7 @@
   {#if thumbnailLoaded}
     <div class="result-details"
          transition:fade={{duration: Duration.SUPERFAST}}>
-      <header style:--header-actions-width={`${headerActionsElement?.offsetWidth}px`}>
+      <header style:--header-actions-width={`${headerActionsWidth}px`}>
         <div class:header-title={expanded}>
           <div class="doc-type-container">
             <DocTypeIndicator type="pdf"/>
@@ -114,28 +135,15 @@
 
         {#if expanded}
           <div class="header-actions"
-               bind:this={headerActionsElement}
                in:fade={{duration: Duration.FAST}}>
-            <div class="search-result-navigator">
-              <span class="result-count">{$_('results.count', {
-                index: resultIndex + 1,
-                total: $matchingParagraphs$.length
-              })}</span>
 
-              <IconButton icon="chevron-up"
-                          size="small"
-                          ariaLabel="{$_('result.previous')}"
-                          aspect="basic"
-                          disabled={resultIndex === 0}
-                          on:click={openPrevious}></IconButton>
-
-              <IconButton icon="chevron-down"
-                          size="small"
-                          ariaLabel="{$_('result.next')}"
-                          aspect="basic"
-                          disabled={resultIndex === $matchingParagraphs$.length - 1}
-                          on:click={openNext}></IconButton>
-            </div>
+            {#if !isMobile}
+              <SearchResultNavigator {resultIndex}
+                                     total={$matchingParagraphs$.length}
+                                     on:offsetWidth={(event) => resultNavigatorWidth = event.detail.offsetWidth}
+                                     on:openPrevious={openPrevious}
+                                     on:openNext={openNext} />
+            {/if}
             <IconButton icon="cross"
                         ariaLabel="{$_('generic.close')}"
                         aspect="basic"
