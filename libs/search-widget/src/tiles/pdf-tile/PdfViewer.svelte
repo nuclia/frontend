@@ -79,10 +79,11 @@
   }
 
   function findSelectedText() {
+    const query = paragraph.text.trim();
     eventBus.dispatch('find', {
       caseSensitive: true,
       phraseSearch: true,
-      query: paragraph.text
+      query
     });
   }
 
