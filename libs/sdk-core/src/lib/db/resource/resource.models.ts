@@ -1,5 +1,6 @@
 export interface IResource {
   id: string;
+  slug?: string;
   title?: string;
   summary?: string;
   icon?: string;
@@ -10,7 +11,7 @@ export interface IResource {
   created?: string;
   modified?: string;
   thumbnail?: string;
-  last_seqid: number;
+  last_seqid?: number;
 
   data?: ResourceData;
 
