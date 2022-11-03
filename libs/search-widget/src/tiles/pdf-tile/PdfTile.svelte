@@ -16,6 +16,7 @@
   import { map, Observable } from 'rxjs';
   import { getRegionalBackend, getResource } from '../../core/api';
   import { getFileField } from '../../core/old-stores/viewer.store';
+  import { tap } from 'rxjs/operators';
 
   export let result: IResource = {id: ''} as IResource;
 
@@ -35,23 +36,30 @@
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: isExpandedFullScreen = innerWidth < 820;
 
-  const matchingParagraphs = nucliaState().getMatchingParagraphs(result.id);
+  let paragraphList: PdfWidgetParagraph[];
+  const matchingParagraphs$ = nucliaState().getMatchingParagraphs(result.id).pipe(tap(paragraphs => paragraphList = paragraphs as PdfWidgetParagraph[]));
 
   onMount(() => {
     loadPdfJs();
   });
 
   const openParagraph = (paragraph, index) => {
-    resultIndex = index + 1;
+    resultIndex = index;
     selectedParagraph = paragraph;
     expanded = true;
     open();
   };
   const openPrevious = () => {
-    resultIndex -= 1;
+    if (resultIndex > 0) {
+      resultIndex -= 1;
+      selectedParagraph = paragraphList[resultIndex];
+    }
   };
   const openNext = () => {
-    resultIndex += 1;
+    if (resultIndex < paragraphList.length - 1) {
+      resultIndex += 1;
+      selectedParagraph = paragraphList[resultIndex];
+    }
   };
 
   const open = () => {
@@ -110,20 +118,22 @@
                in:fade={{duration: Duration.FAST}}>
             <div class="search-result-navigator">
               <span class="result-count">{$_('results.count', {
-                index: resultIndex,
-                total: $matchingParagraphs.length
+                index: resultIndex + 1,
+                total: $matchingParagraphs$.length
               })}</span>
 
               <IconButton icon="chevron-up"
                           size="small"
                           ariaLabel="{$_('result.previous')}"
                           aspect="basic"
+                          disabled={resultIndex === 0}
                           on:click={openPrevious}></IconButton>
 
               <IconButton icon="chevron-down"
                           size="small"
                           ariaLabel="{$_('result.next')}"
                           aspect="basic"
+                          disabled={resultIndex === $matchingParagraphs$.length - 1}
                           on:click={openNext}></IconButton>
             </div>
             <IconButton icon="cross"
@@ -140,9 +150,9 @@
           <ul transition:slide={{duration: defaultTransitionDuration}}
               class="paragraphs-container"
               class:expanded={showAllResults}
-              class:can-expand={$matchingParagraphs.length > 4}
-              style="--paragraph-count: {$matchingParagraphs.length}">
-            {#each $matchingParagraphs as paragraph, index}
+              class:can-expand={$matchingParagraphs$.length > 4}
+              style="--paragraph-count: {$matchingParagraphs$.length}">
+            {#each $matchingParagraphs$ as paragraph, index}
               <ParagraphResult {paragraph}
                                hideIndicator
                                ellipsis={!expanded}
@@ -154,7 +164,7 @@
           </ul>
         </div>
 
-        {#if $matchingParagraphs.length > 4}
+        {#if $matchingParagraphs$.length > 4}
           <AllResultsToggle {showAllResults}
                             on:toggle={() => (showAllResults = !showAllResults)}/>
         {/if}

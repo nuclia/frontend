@@ -83,6 +83,11 @@
     --button-color-active: var(--color-light-stronger);
   }
 
+  &.solid:disabled {
+    --button-background-color: var(--color-neutral-lighter);
+    --button-color: var(--color-light-stronger);
+  }
+
   &.basic.primary {
     --button-background-color: transparent;
     --button-background-color-hover: var(--color-primary-lightest);
@@ -108,5 +113,9 @@
     --button-color: var(--color-light-stronger);
     --button-color-hover: var(--color-light-stronger);
     --button-color-active: var(--color-light-stronger);
+  }
+
+  &.basic:disabled {
+    --button-color: var(--color-neutral-light);
   }
 }

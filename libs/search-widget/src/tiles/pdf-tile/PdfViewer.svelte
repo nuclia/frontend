@@ -23,6 +23,7 @@
   let zoom: number = 1;
 
   $: src && loadPdf();
+  $: paragraph && pdfViewer && paragraph.text && findSelectedText();
 
   onMount(() => {
     loadPdf();
@@ -65,7 +66,7 @@
         pdfViewer.scrollPageIntoView({pageNumber})
       }
       if (paragraph?.text) {
-        findSelectedText()
+        findSelectedText();
       }
     });
 
@@ -75,6 +76,7 @@
   }
 
   function findSelectedText() {
+    console.log(paragraph.text);
     eventBus.dispatch('find', {
       caseSensitive: true,
       phraseSearch: true,
