@@ -109,9 +109,6 @@
       }
     }
     &.expanded .side-panel {
-      --find-input-height: var(--rhythm-5);
-      --find-input-margin: var(--rhythm-1);
-
       display: flex;
       flex: 1 0 auto;
       flex-direction: column;

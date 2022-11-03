@@ -6,6 +6,11 @@
 
   .result-count {
     margin-right: var(--rhythm-3);
+    transition: color var(--transition-superfast);
+
+    &.disabled {
+      color: var(--color-neutral-light);
+    }
   }
 
   .navigation-buttons {

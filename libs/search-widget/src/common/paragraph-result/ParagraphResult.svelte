@@ -21,6 +21,7 @@
 <li class="sw-paragraph-result"
     class:no-indicator={hideIndicator}
     class:stack
+    class:selected
     on:mouseenter={() => (hovering = true)}
     on:mouseleave={() => (hovering = false)}
     on:click={open}>

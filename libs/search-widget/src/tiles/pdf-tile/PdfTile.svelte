@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { IResource, Resource } from '@nuclia/core';
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { IResource, Resource, Search } from '@nuclia/core';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { Duration } from '../../common/transition.utils';
   import { fade, slide } from 'svelte/transition';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import IconButton from '../../common/button/IconButton.svelte';
-  import { nucliaState } from '../../core/old-stores/main.store';
+  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import type { PdfWidgetParagraph } from '../../core/models';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
@@ -13,11 +13,12 @@
   import { _ } from '../../core/i18n';
   import PdfViewer from './PdfViewer.svelte';
   import { loadPdfJs } from '../../core/utils';
-  import { debounceTime, map, Observable, Subject } from 'rxjs';
+  import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
   import { getRegionalBackend, getResource } from '../../core/api';
-  import { getFileField } from '../../core/old-stores/viewer.store';
+  import { getFileField, viewerStore } from '../../core/old-stores/viewer.store';
   import { tap } from 'rxjs/operators';
-  import SearchResultNavigator from "./SearchResultNavigator.svelte";
+  import SearchResultNavigator from './SearchResultNavigator.svelte';
+  import Icon from '../../common/icons/Icon.svelte';
 
   export let result: IResource = {id: ''} as IResource;
 
@@ -29,31 +30,73 @@
   let thumbnailLoaded = false;
   let showAllResults = false;
   let selectedParagraph: PdfWidgetParagraph | undefined;
+  let selectedParagraphBackup: PdfWidgetParagraph | undefined;
   let resultIndex: number | undefined;
-  let resource: Observable<Resource>;
+  let resultIndexBackup: number | undefined;
   let pdfUrl: Observable<string>;
   let headerActionsWidth = 0;
-  const resizeEvent = new Subject();
   let resultNavigatorWidth;
+  let resultNavigatorDisabled = false;
+  let sidePanelExpanded = false;
+  const resizeEvent = new Subject();
+  let findInputElement: HTMLElement;
+
+  const globalQuery = nucliaStore().query;
+  const findInPdfQuery = viewerStore.query;
+  findInPdfQuery['set'] = findInPdfQuery.next;
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: isExpandedFullScreen = innerWidth < 820;
 
-
+  let resource: Resource | undefined;
   let paragraphList: PdfWidgetParagraph[];
-  const matchingParagraphs$ = nucliaState().getMatchingParagraphs(result.id).pipe(tap(paragraphs => paragraphList = paragraphs as PdfWidgetParagraph[]));
+  const isSearchingInPdf = new BehaviorSubject(false);
+  const matchingParagraphs$ = combineLatest([
+    nucliaState().getMatchingParagraphs(result.id).pipe(tap(paragraphs => paragraphList = paragraphs as PdfWidgetParagraph[])),
+    viewerStore.results,
+    isSearchingInPdf,
+  ]).pipe(
+    map(([globalResult, inPdfResults, isInPdf]) => {
+      if (!isInPdf) {
+        resultIndex = resultIndexBackup;
+        selectedParagraph = selectedParagraphBackup;
+      }
+      return isInPdf ? inPdfResults : globalResult;
+    }),
+    map(results => results || []),
+  );
 
   onMount(() => {
+    viewerStore.init();
     loadPdfJs();
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
   });
 
+  onDestroy(() => reset());
+
   const openParagraph = (paragraph, index) => {
     resultIndex = index;
     selectedParagraph = paragraph;
-    expanded = true;
-    open();
+    if (!isSearchingInPdf) {
+      selectedParagraphBackup = selectedParagraph;
+    }
+    if (!expanded) {
+      findInPdfQuery.next(globalQuery.value);
+      expanded = true;
+    }
+    setTimeout(() => setHeaderActionWidth());
+
+    if (!pdfUrl) {
+      pdfUrl = getResource(result.id).pipe(
+        map(res => {
+          resource = res;
+          const fileField = getFileField(res, res.id);
+          const file = fileField?.value?.file;
+          return file ? `${getRegionalBackend()}${file.uri}` : '';
+        }),
+      );
+    }
   };
   const openPrevious = () => {
     if (resultIndex > 0) {
@@ -68,21 +111,8 @@
     }
   };
 
-  const open = () => {
-    setTimeout(() => setHeaderActionWidth());
-    if (!pdfUrl) {
-      pdfUrl = getResource(result.id).pipe(
-        map(res => {
-          const fileField = getFileField(res, res.id);
-          const file = fileField?.value?.file;
-          return file ? `${getRegionalBackend()}${file.uri}` : '';
-        }),
-      );
-    }
-  };
-
   const closePreview = () => {
-    expanded = false;
+    reset();
     if (isExpandedFullScreen) {
       dispatch('closePreview');
     }
@@ -92,13 +122,69 @@
     if (expanded) {
       headerActionsWidth = isMobile ? closeButtonWidth : resultNavigatorWidth + closeButtonWidth;
     }
+  };
+
+  const toggleSidePanel = () => {
+    sidePanelExpanded = !sidePanelExpanded;
+    resultNavigatorDisabled = sidePanelExpanded;
+    if (sidePanelExpanded) {
+      selectedParagraphBackup = selectedParagraph;
+      // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
+      setTimeout(() => findInputElement.focus(), Duration.MODERATE);
+    } else {
+      selectedParagraph = selectedParagraphBackup;
+    }
+  };
+
+  const findInPdf = () => {
+    const query = findInPdfQuery.value.trim();
+    if (resource && query) {
+      isSearchingInPdf.next(true);
+      resource.search(query, [Search.ResourceFeatures.PARAGRAPH])
+        .pipe(
+          tap((results) => {
+            if (results.error) {
+              viewerStore.hasSearchError.next(true);
+            }
+          }),
+          map((results) => results.paragraphs?.results || []))
+        .subscribe(paragraphs => {
+          resultIndexBackup = resultIndex;
+          resultIndex = 0;
+          viewerStore.results.next(paragraphs);
+        });
+    } else {
+      isSearchingInPdf.next(false);
+    }
+  };
+
+  const handleKeydown = (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'f') {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleSidePanel();
+    }
+  };
+
+  function reset() {
+    expanded = false;
+    selectedParagraph = undefined;
+    selectedParagraphBackup = undefined;
+    setTimeout(() => {
+      isSearchingInPdf.next(false);
+      viewerStore.init();
+      sidePanelExpanded = false;
+      resultNavigatorDisabled = false;
+    });
   }
 </script>
 
 <svelte:window bind:innerWidth
+               on:keydown={handleKeydown}
                on:resize={(event) => resizeEvent.next(event)}/>
 <div class="sw-tile sw-pdf-tile"
-     class:expanded>
+     class:expanded
+     class:side-panel-expanded={sidePanelExpanded}>
 
   <div class="thumbnail-container">
     <div hidden={expanded}>
@@ -112,7 +198,7 @@
         <SearchResultNavigator {resultIndex}
                                total={$matchingParagraphs$.length}
                                on:openPrevious={openPrevious}
-                               on:openNext={openNext} />
+                               on:openNext={openNext}/>
       {/if}
       <div class="pdf-viewer-container">
         <PdfViewer src={$pdfUrl}
@@ -138,11 +224,12 @@
                in:fade={{duration: Duration.FAST}}>
 
             {#if !isMobile}
-              <SearchResultNavigator {resultIndex}
+              <SearchResultNavigator resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
                                      total={$matchingParagraphs$.length}
+                                     disabled={resultNavigatorDisabled}
                                      on:offsetWidth={(event) => resultNavigatorWidth = event.detail.offsetWidth}
                                      on:openPrevious={openPrevious}
-                                     on:openNext={openNext} />
+                                     on:openNext={openNext}/>
             {/if}
             <IconButton icon="cross"
                         ariaLabel="{$_('generic.close')}"
@@ -152,30 +239,55 @@
         {/if}
       </header>
 
-      {#if !expanded}
-        <div class="search-result-paragraphs"
-             tabindex="-1">
-          <ul transition:slide={{duration: defaultTransitionDuration}}
-              class="paragraphs-container"
-              class:expanded={showAllResults}
-              class:can-expand={$matchingParagraphs$.length > 4}
-              style="--paragraph-count: {$matchingParagraphs$.length}">
-            {#each $matchingParagraphs$ as paragraph, index}
-              <ParagraphResult {paragraph}
-                               hideIndicator
-                               ellipsis={!expanded}
-                               minimized={isMobile && !expanded}
-                               stack={expanded}
-                               selected={paragraph === selectedParagraph}
-                               on:open={(event) => openParagraph(event.detail.paragraph, index)}/>
-            {/each}
-          </ul>
-        </div>
-
-        {#if $matchingParagraphs$.length > 4}
-          <AllResultsToggle {showAllResults}
-                            on:toggle={() => (showAllResults = !showAllResults)}/>
+      <div class:side-panel={expanded}>
+        {#if expanded}
+          <div class="side-panel-button"
+               on:click={toggleSidePanel}>
+            <Icon name={sidePanelExpanded ? 'chevrons-left' : 'search'}></Icon>
+          </div>
         {/if}
+
+        <div class:side-panel-content={expanded}>
+          <div class="find-bar-container"
+               tabindex="0"
+               hidden="{!expanded}">
+            <Icon name="search"/>
+            <input class="find-input"
+                   type="text"
+                   autocomplete="off"
+                   aria-label="Find in document"
+                   placeholder="Find in document"
+                   tabindex="-1"
+                   bind:this={findInputElement}
+                   bind:value={$findInPdfQuery}
+                   on:change={findInPdf}
+            />
+          </div>
+
+          <div class="search-result-paragraphs"
+               tabindex="-1">
+            <ul transition:slide={{duration: defaultTransitionDuration}}
+                class="paragraphs-container"
+                class:expanded={showAllResults}
+                class:can-expand={$matchingParagraphs$.length > 4}
+                style="--paragraph-count: {$matchingParagraphs$.length}">
+              {#each $matchingParagraphs$ as paragraph, index}
+                <ParagraphResult {paragraph}
+                                 hideIndicator
+                                 ellipsis={!expanded}
+                                 minimized={isMobile && !expanded}
+                                 stack={expanded}
+                                 selected={paragraph === selectedParagraph}
+                                 on:open={(event) => openParagraph(event.detail.paragraph, index)}/>
+              {/each}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {#if !expanded && $matchingParagraphs$.length > 4}
+        <AllResultsToggle {showAllResults}
+                          on:toggle={() => (showAllResults = !showAllResults)}/>
       {/if}
     </div>
   {/if}

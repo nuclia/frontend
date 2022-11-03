@@ -14,6 +14,7 @@
   let innerHeight = window.innerHeight;
   let innerWidth = window.innerWidth;
   let pdfContainerElement: HTMLElement;
+  let containerOffsetWidth;
   let pdfViewer;
   let eventBus;
   let findController;
@@ -25,7 +26,9 @@
   let pdfInitialized = false;
 
   $: src && loadPdf();
-  $: paragraph && pdfViewer && paragraph.text && findSelectedText();
+  $: pdfViewer && paragraph && paragraph.text && findSelectedText();
+  $: pdfViewer && !paragraph && unselectText();
+  $: containerOffsetWidth && resize();
 
   onMount(() => {
     loadPdf();
@@ -87,6 +90,10 @@
     });
   }
 
+  function unselectText() {
+    eventBus.dispatch('find', {query: ''});
+  }
+
   const zoomIn = () => {
     if (pdfViewer) {
       pdfViewer.increaseScale();
@@ -113,7 +120,7 @@
     }
   }
 
-  const resize = () => {
+  function resize() {
     if (!!pdfViewer && pdfInitialized) {
       pdfViewer.currentScaleValue = 'page-fit';
     }
@@ -121,7 +128,10 @@
 </script>
 
 <svelte:window on:resize={resize}/>
-<div class="pdf-container" bind:this={pdfContainerElement}>
+<div class="pdf-container"
+     bind:this={pdfContainerElement}
+     bind:offsetWidth={containerOffsetWidth}
+     style:--container-width="{containerOffsetWidth}px">
   <div class="pdfViewer"></div>
 
   {#if showController}

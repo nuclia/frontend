@@ -48,7 +48,7 @@
     left: 0;
     overflow: hidden;
     padding-top: var(--header-height);
-    position: fixed;
+    position: absolute;
     right: 0;
     top: 0;
     z-index: 1000;
@@ -64,7 +64,7 @@
       justify-content: space-between;
       left: 0;
       padding: var(--rhythm-0_5) var(--header-padding-right) var(--rhythm-0_5) var(--header-padding-left);
-      position: absolute;
+      position: fixed;
       right: 0;
       top: 0;
 
@@ -72,17 +72,11 @@
         margin: 0;
       }
     }
-
-    .thumbnail-container {
-      flex: 1 0 auto;
-    }
   }
 }
 @media (max-width: 647px) {
-  .sw-tile {
-    &.expanded header h3 {
-      font-size: var(--font-size-base);
-    }
+  .sw-tile.expanded header h3 {
+    font-size: var(--font-size-base);
   }
 }
 
@@ -111,6 +105,34 @@
       header {
         gap: var(--rhythm-2);
       }
+      .side-panel {
+        --find-input-height: var(--rhythm-4);
+        --find-input-margin: var(--rhythm-1);
+      }
+      .find-bar-container {
+        align-items: center;
+        background: var(--color-light-stronger);
+        display: flex;
+        gap: var(--rhythm-1);
+        margin-bottom: var(--find-input-margin);
+        padding-left: var(--rhythm-1);
+      }
+
+      .find-bar-container .find-input {
+        border: none;
+        box-sizing: border-box;
+        color: inherit;
+        flex: 1 0 auto;
+        font-family: inherit;
+        font-size: var(--font-size-base);
+        font-weight: var(--font-weight-body);
+        line-height: var(--find-input-height);
+        padding: 0;
+      }
+
+      .find-bar-container .find-input:focus {
+        outline: 0;
+      }
     }
   }
 }
@@ -120,33 +142,13 @@
       min-width: var(--rhythm-28);
     }
     &.expanded {
-      border-radius: var(--border-radius);
       padding: var(--header-height) var(--rhythm-2) var(--rhythm-2) var(--rhythm-2);
     }
+  }
+}
 
-    &.expanded .find-bar-container {
-      align-items: center;
-      background: var(--color-light-stronger);
-      display: flex;
-      gap: var(--rhythm-1);
-      margin-bottom: var(--find-input-margin);
-      padding-left: var(--rhythm-1);
-    }
-
-    &.expanded .find-bar-container .find-input {
-      border: none;
-      box-sizing: border-box;
-      color: inherit;
-      flex: 1 0 auto;
-      font-family: inherit;
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-body);
-      line-height: var(--find-input-height);
-      padding: 0;
-    }
-
-    &.expanded .find-bar-container .find-input:focus {
-      outline: 0;
-    }
+@media (min-width: 1024px) {
+  .sw-tile.expanded .side-panel {
+    --find-input-height: var(--rhythm-5);
   }
 }

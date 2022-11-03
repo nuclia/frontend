@@ -1,7 +1,6 @@
 @import "../tile";
 
 .sw-pdf-tile {
-
   .thumbnail-container {
     position: relative;
   }
@@ -20,7 +19,6 @@
   }
 
   .header-title {
-    //flex: 1 0 auto;
     max-width: calc(100% - var(--header-actions-width) - var(--header-padding-left) - var(--header-padding-right));
   }
   .header-actions {
@@ -31,13 +29,83 @@
   &.expanded {
     padding-left: var(--rhythm-2);
     padding-right: var(--rhythm-2);
-  }
-  &.expanded .thumbnail-container {
-    width: 100%;
-  }
-  &.expanded .pdf-viewer-container {
-    height: calc(100vh - var(--header-height));
-    position: relative;
+    transition: padding-right var(--transition-moderate);
+
+    .pdf-viewer-container {
+      height: calc(100vh - var(--header-height));
+      position: relative;
+    }
+    .thumbnail-container {
+      width: 100%;
+    }
+
+    .thumbnail-container {
+      flex: 1 0 auto;
+    }
   }
 }
 
+@media (min-width: 648px) {
+  .sw-pdf-tile.expanded {
+    --side-panel-button-size: var(--rhythm-4);
+    --side-panel-width: var(--rhythm-36);
+    --side-panel-gap: var(--rhythm-1);
+    --tile-padding-right: var(--rhythm-2);
+
+    padding-right: var(--side-panel-button-size);
+
+    .search-result-paragraphs {
+      --search-results-margin-bottom: var(--rhythm-1_5);
+
+      background-color: var(--color-light-stronger);
+      margin-bottom: var(--search-results-margin-bottom);
+      max-height: calc(100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) - var(--search-results-margin-bottom));
+      overflow: auto;
+    }
+    .side-panel {
+      display: flex;
+      gap: var(--side-panel-gap);
+      position: absolute;
+      right: calc(var(--side-panel-width) * -1 + var(--side-panel-button-size) + var(--tile-padding-right));
+      top: var(--header-height);
+      transition: right var(--transition-moderate);
+
+      .side-panel-button {
+        align-items: center;
+        background-color: var(--color-neutral-light);
+        display: flex;
+        height: var(--side-panel-button-size);
+        justify-content: center;
+        width: var(--side-panel-button-size);
+      }
+
+      .side-panel-content {
+        width: calc(var(--side-panel-width) - var(--side-panel-button-size) - var(--side-panel-gap) - var(--tile-padding-right));
+      }
+      .find-bar-container {
+        line-height: var(--side-panel-button-size);
+      }
+    }
+
+    &.side-panel-expanded {
+      padding-right: var(--side-panel-width);
+
+      .side-panel {
+        right: var(--tile-padding-right);
+      }
+    }
+  }
+}
+
+@media (min-width: 1025px) {
+  .sw-pdf-tile.expanded {
+    --side-panel-button-size: var(--rhythm-5);
+    --side-panel-width: var(--rhythm-46);
+  }
+}
+
+@media (hover: hover) {
+  .sw-pdf-tile.expanded .side-panel-button {
+    cursor: pointer;
+  }
+}
