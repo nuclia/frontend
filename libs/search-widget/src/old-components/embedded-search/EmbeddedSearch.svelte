@@ -13,6 +13,7 @@
     nucliaStore().triggerSearch.pipe(map(() => true)),
     nucliaState().results.pipe(map((results) => results.length > 0)),
   );
+  const hasQuery = nucliaState().query.pipe(map((query) => !!query));
   const onChange = (checked: boolean) =>
     nucliaStore().searchOptions.next({
       inTitleOnly: checked,
@@ -22,13 +23,13 @@
 
 <div class="sw-embedded-search">
   <div class="search-input-container">
-    <SearchInput embeddedSearch={true} {placeholder}/>
+    <SearchInput embeddedSearch={true} {placeholder} />
   </div>
 
   <div class="options">
     <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)} />
   </div>
-  {#if $showResults}
+  {#if $showResults && $hasQuery}
     <div class="results" class:empty={$results.length === 0}>
       <Results results={$results} formWidget={true} />
     </div>
