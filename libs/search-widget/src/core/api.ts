@@ -4,10 +4,11 @@ import type {
   KBStates,
   LabelSets,
   NucliaOptions,
+  ResourceField,
   SearchOptions,
   TokenAnnotation,
 } from '@nuclia/core';
-import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
+import { FIELD_TYPE, Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
 import { nucliaStore } from './old-stores/main.store';
 import { loadModel } from './tensor';
@@ -88,6 +89,14 @@ export const getResource = (uid: string): Observable<Resource> => {
     nucliaApi.knowledgeBox.getResource(uid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN]),
     nucliaApi.knowledgeBox.getResource(uid),
   );
+};
+
+export const getField = (rid: string, type: FIELD_TYPE, field: string): Observable<ResourceField> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  const resource = new Resource(nucliaApi, nucliaApi.knowledgeBox.id, { id: rid });
+  return resource.getField(type, field);
 };
 
 export const loadEntities = (): Observable<EntityGroup[]> => {

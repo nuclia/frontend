@@ -1,11 +1,12 @@
 <script lang="ts">
   import type { IResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
-  import { nucliaState, setDisplayedResource } from '../../core/old-stores/main.store';
+  import { nucliaState } from '../../core/old-stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import Label from '../../common/label/Label.svelte';
   import { searchBy } from '../../common/label/label.utils';
+  import { goToResource } from '../results/results.utils';
 
   export let displayThumbnail = true;
   export let formWidget = false;
@@ -18,9 +19,9 @@
 
 <div
   class="sw-row"
-  on:click|preventDefault={() => setDisplayedResource({ uid: result.id })}
+  on:click|preventDefault={() => goToResource({ uid: result.id })}
   on:keyup={(e) => {
-    if (e.key === 'Enter') setDisplayedResource({ uid: result.id });
+    if (e.key === 'Enter') goToResource({ uid: result.id });
   }}
   on:focus
   tabindex="0"
@@ -38,7 +39,7 @@
           {#each $sentences as sentence}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: sentence.rid, sentence })}
+              on:click|preventDefault|stopPropagation={() => goToResource({ uid: sentence.rid, sentence })}
             >
               {@html sentence.text}
             </li>
@@ -50,7 +51,7 @@
           {#each $paragraphs as paragraph}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => setDisplayedResource({ uid: paragraph.rid, paragraph })}
+              on:click|preventDefault|stopPropagation={() => goToResource({ uid: paragraph.rid, paragraph })}
             >
               {@html paragraph.text}
             </li>

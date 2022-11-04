@@ -111,3 +111,13 @@ export function slugify(text: string): string {
       .replace(/\s+/gi, '-')
   );
 }
+
+export function goToUrl(url: string) {
+  const urlObject = new URL(url);
+  if (urlObject.protocol.startsWith('http')) {
+    window.location.href = url;
+  }
+  else {
+    console.info('Invalid URL')
+  }
+}
