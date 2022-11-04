@@ -131,7 +131,7 @@
     const query = findInPdfQuery.value.trim();
     if (resource && query) {
       isSearchingInPdf.next(true);
-      resource.search(query, [Search.ResourceFeatures.PARAGRAPH])
+      resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {highlight: true})
         .pipe(
           tap((results) => {
             if (results.error) {

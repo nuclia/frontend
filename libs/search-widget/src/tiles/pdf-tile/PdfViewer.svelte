@@ -24,6 +24,7 @@
   let totalPage = 1;
   let zoom: number = 1;
   let pdfInitialized = false;
+  const markRegex = new RegExp(/<\/*mark>/, 'g');
 
   $: src && loadPdf();
   $: pdfViewer && paragraph && paragraph.text && findSelectedText();
@@ -82,7 +83,7 @@
   }
 
   function findSelectedText() {
-    const query = paragraph.text.trim();
+    const query = paragraph.text.replaceAll(markRegex, '').trim();
     eventBus.dispatch('find', {
       caseSensitive: true,
       phraseSearch: true,

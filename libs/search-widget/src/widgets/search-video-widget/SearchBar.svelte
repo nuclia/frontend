@@ -47,7 +47,7 @@
       state,
       {
         fuzzyOnly: true,
-        highlight: false,
+        highlight: true,
       },
     );
     if (cdn) {
