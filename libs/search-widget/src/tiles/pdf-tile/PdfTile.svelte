@@ -30,9 +30,7 @@
   let thumbnailLoaded = false;
   let showAllResults = false;
   let selectedParagraph: PdfWidgetParagraph | undefined;
-  let selectedParagraphBackup: PdfWidgetParagraph | undefined;
   let resultIndex: number | undefined;
-  let resultIndexBackup: number | undefined;
   let pdfUrl: Observable<string>;
   let headerActionsWidth = 0;
   let resultNavigatorWidth;
@@ -57,13 +55,7 @@
     viewerStore.results,
     isSearchingInPdf,
   ]).pipe(
-    map(([globalResult, inPdfResults, isInPdf]) => {
-      if (!isInPdf) {
-        resultIndex = resultIndexBackup;
-        selectedParagraph = selectedParagraphBackup;
-      }
-      return isInPdf ? inPdfResults : globalResult;
-    }),
+    map(([globalResult, inPdfResults, isInPdf]) => isInPdf ? inPdfResults : globalResult),
     map(results => results || []),
   );
 
@@ -78,9 +70,6 @@
   const openParagraph = (paragraph, index) => {
     resultIndex = index;
     selectedParagraph = paragraph;
-    if (!isSearchingInPdf) {
-      selectedParagraphBackup = selectedParagraph;
-    }
     if (!expanded) {
       findInPdfQuery.next(globalQuery.value);
       expanded = true;
@@ -128,11 +117,13 @@
     sidePanelExpanded = !sidePanelExpanded;
     resultNavigatorDisabled = sidePanelExpanded;
     if (sidePanelExpanded) {
-      selectedParagraphBackup = selectedParagraph;
       // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
       setTimeout(() => findInputElement.focus(), Duration.MODERATE);
-    } else {
-      selectedParagraph = selectedParagraphBackup;
+    } else if (isSearchingInPdf.value) {
+      selectedParagraph = undefined;
+      resultIndex = -1;
+      isSearchingInPdf.next(false);
+      findInPdfQuery.next(globalQuery.value);
     }
   };
 
@@ -149,8 +140,7 @@
           }),
           map((results) => results.paragraphs?.results || []))
         .subscribe(paragraphs => {
-          resultIndexBackup = resultIndex;
-          resultIndex = 0;
+          resultIndex = -1;
           viewerStore.results.next(paragraphs);
         });
     } else {
@@ -169,7 +159,6 @@
   function reset() {
     expanded = false;
     selectedParagraph = undefined;
-    selectedParagraphBackup = undefined;
     setTimeout(() => {
       isSearchingInPdf.next(false);
       viewerStore.init();
