@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { IResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
-  import { setDisplayedResource } from '../../core/old-stores/main.store';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
+  import { goToResource } from '../results/results.utils';
 
   export let result: IResource;
   let labels: string[];
@@ -11,9 +11,9 @@
 
 <div
   class="sw-square"
-  on:click|preventDefault={() => setDisplayedResource({ uid: result.id })}
+  on:click|preventDefault={() => goToResource({ uid: result.id })}
   on:keyup={(e) => {
-    if (e.key === 'Enter') setDisplayedResource({ uid: result.id });
+    if (e.key === 'Enter') goToResource({ uid: result.id });
   }}
   on:focus
   tabindex="0"

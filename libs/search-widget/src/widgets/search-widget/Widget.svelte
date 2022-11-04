@@ -18,7 +18,7 @@
   import type { KBStates } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
-  import { customStyle, setWidgetActions, widgetType } from '../../core/stores/widget.store';
+  import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
   import {
     activateTypeAheadSuggestions,
     unsubscribeAllEffects,
@@ -40,7 +40,9 @@
   export let state: KBStates = 'PUBLISHED';
   export let permalink = false;
   export let standalone = false;
+  export let navigatetolink = false;
   export let notpublic = false;
+  let _navigatetolink = coerceBooleanProperty(navigatetolink);
   let _notpublic = coerceBooleanProperty(notpublic);
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
@@ -106,6 +108,7 @@
     setupTriggerSearch(dispatchCustomEvent);
 
     widgetType.set('search');
+    navigateToLink.set(_navigatetolink);
     ready = true;
 
     return () => reset();

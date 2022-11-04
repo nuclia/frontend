@@ -3,6 +3,8 @@ import { nucliaState, nucliaStore } from './old-stores/main.store';
 import { PENDING_RESULTS } from './models';
 import { search } from './api';
 import { labelRegexp } from '../common/label/label.utils';
+import { navigateToLink } from '../core/stores/widget.store';
+import { ResourceProperties } from '@nuclia/core';
 
 export const setupTriggerSearch = (dispatch: (event: string, search: string) => void | undefined): void => {
   nucliaStore()
@@ -16,7 +18,8 @@ export const setupTriggerSearch = (dispatch: (event: string, search: string) => 
         nucliaStore().searchOptions.pipe(
           map((options) => {
             let match;
-            const currentOptions = { ...options };
+            const show = navigateToLink.getValue() ? [ResourceProperties.BASIC, ResourceProperties.VALUES] : [];
+            const currentOptions = { ...options, show };
             while ((match = labelRegexp.exec(query))) {
               if (!currentOptions.filters) {
                 currentOptions.filters = [`/l/${match[1]}`];
