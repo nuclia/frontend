@@ -1,6 +1,8 @@
 <script lang="ts">
   import Icon from '../icons/Icon.svelte';
 
+  export let icon = '';
+  export let ariaLabel = '';
   export let aspect = 'solid'; // solid or basic
   export let kind = 'secondary'; // primary | secondary | inverted
   export let size = 'medium'; // medium or small
@@ -10,12 +12,12 @@
 <button class="sw-button icon {aspect} {kind}"
         class:small={size === 'small'}
         type="button"
-        aria-label="Close"
+        aria-label="{ariaLabel}"
         tabindex="0"
         {disabled}
         on:click
 >
-  <Icon name="cross" />
+  <Icon name="{icon}" />
 </button>
 
 <style lang="scss" src="./Button.scss"></style>

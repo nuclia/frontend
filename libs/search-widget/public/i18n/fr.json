@@ -36,6 +36,7 @@
 	"resource.show-all": "Afficher tous les paragraphes",
 	"resource.source": "Document d'origine",
 	"resource.summary": "Résumé",
+	"results.count": "Résultat {{index}} sur {{total}}",
 	"results.empty": "Aucun résultat trouvé",
 	"results.paragraphs": "Paragraphes pertinents",
 	"results.semantic": "Résultats sémantiques",

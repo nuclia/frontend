@@ -47,7 +47,7 @@
       state,
       {
         fuzzyOnly: true,
-        highlight: false,
+        highlight: true,
       },
     );
     if (cdn) {
@@ -61,7 +61,8 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
-    setupTriggerSearch();
+    const dispatchCustomEvent = () => {};
+    setupTriggerSearch(dispatchCustomEvent);
 
     ready = true;
 
