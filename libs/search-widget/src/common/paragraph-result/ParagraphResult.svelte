@@ -26,15 +26,15 @@
     on:mouseleave={() => (hovering = false)}
     on:click={open}>
   <div class="indicator-container" class:hidden={hideIndicator}>
-    {#if paragraph.start_seconds !== undefined}
+    {#if paragraph.page !== undefined}
+      <PageIndicator page={paragraph.page} {hovering}></PageIndicator>
+    {:else}
       <TimeIndicator start={paragraph.start_seconds || 0}
                      {selected}
                      hover={hovering}
                      {minimized}
                      on:play={open}
       />
-    {:else}
-      <PageIndicator page={paragraph.page} {hovering}></PageIndicator>
     {/if}
   </div>
   <div class="paragraph-text" class:ellipsis>

@@ -305,7 +305,7 @@
                   <ParagraphResult {paragraph}
                                    selected={paragraph === paragraphInPlay}
                                    stack
-                                   on:play={(event) => playTranscript(event.detail.paragraph)}
+                                   on:open={(event) => playTranscript(event.detail.paragraph)}
                   />
                 {/each}
               </ul>

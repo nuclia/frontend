@@ -10,11 +10,6 @@
     position: absolute;
   }
 
-  &.expanded .summary-container,
-  &.expanded .find-bar-container {
-    display: none;
-  }
-
   &.expanded .side-panel .scrollable-area {
     min-height: var(--collapsible-header-height);
     overflow: auto;
@@ -61,6 +56,11 @@
       }
       .youtube-container {
         height: var(--youtube-height);
+      }
+
+      .summary-container,
+      .find-bar-container {
+        display: none;
       }
       .result-details {
         --side-panel-height: calc(100vh - var(--header-height) - var(--youtube-height));
