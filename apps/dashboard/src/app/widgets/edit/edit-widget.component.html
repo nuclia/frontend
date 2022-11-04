@@ -27,8 +27,9 @@
               <pa-select [label]="'stash.widgets.mode' | translate" formControlName="mode">
                 <pa-option value="input">{{ 'stash.widgets.mode.input' | translate }}</pa-option>
                 <pa-option value="form">{{ 'stash.widgets.mode.form' | translate }}</pa-option>
+                <pa-option value="video">{{ 'stash.widgets.mode.video' | translate }}</pa-option>
               </pa-select>
-              <div formGroupName="features">
+              <div formGroupName="features" *ngIf="widgetMode !== 'video'">
                 <pa-toggle *ngIf="isTrainingEnabled | async" formControlName="suggestLabels">
                   {{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
                 <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>

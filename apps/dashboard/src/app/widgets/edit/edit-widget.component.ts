@@ -62,6 +62,10 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
 
   debouncePlaceholder = new Subject<string>();
 
+  get widgetMode() {
+    return this.mainForm.controls.mode.value;
+  }
+
   constructor(
     private fb: UntypedFormBuilder,
     private sanitized: DomSanitizer,
@@ -122,7 +126,11 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
         ...this.widget,
         ...this.mainForm.value,
       };
-      if (this.hasPlaceholder(widget.mode)) {
+      // Backend doesn't support video widget mode
+      if (this.widgetMode === 'video') {
+        widget.mode = 'input';
+      }
+      if (this.hasPlaceholder()) {
         widget.placeholder = this.placeholder;
       }
       this.widgetService.saveWidget(this.widget.id, widget).subscribe();
@@ -135,18 +143,27 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     }
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
-    const mode = this.mainForm.get('mode')?.value || '';
-    const placeholder = this.hasPlaceholder(mode)
+    const mode = this.widgetMode || '';
+    const placeholder = this.hasPlaceholder()
       ? `
   placeholder="${this.placeholder}"`
       : '';
-    this.snippet = `<script src="${cdn}/nuclia-widget.umd.js"></script>
+    this.snippet =
+      mode !== 'video'
+        ? `<script src="${cdn}/nuclia-widget.umd.js"></script>
 <nuclia-search
   knowledgebox="${this.kbId}"
   zone="${this.zone}"
   widgetid="${this.widget.id}"
   type="${mode}" ${placeholder}
-></nuclia-search>`;
+></nuclia-search>`
+        : `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
+<nuclia-search-bar
+  knowledgebox="${this.kbId}"
+  zone="${this.zone}"
+  widgetid="${this.widget.id}" ${placeholder}
+></nuclia-search-bar>
+<nuclia-search-results></nuclia-search-results>`;
     const styles = Object.entries(this.styleForm.value)
       .filter(([key, value]) => !!value)
       .map(([key, value]) => `    --custom-${key}: ${value} !important;`);
@@ -169,8 +186,8 @@ ${styles.join('\n')}
     markForCheck(this.cdr);
   }
 
-  private hasPlaceholder(mode: any) {
-    return mode !== 'button' && !!this.placeholder;
+  private hasPlaceholder() {
+    return !!this.placeholder;
   }
 
   deleteWidget() {
