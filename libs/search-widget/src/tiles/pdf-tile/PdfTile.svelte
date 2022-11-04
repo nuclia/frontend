@@ -12,7 +12,6 @@
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { _ } from '../../core/i18n';
   import PdfViewer from './PdfViewer.svelte';
-  import { loadPdfJs } from '../../core/utils';
   import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
   import { getRegionalBackend, getResource } from '../../core/api';
   import { getFileField, viewerStore } from '../../core/old-stores/viewer.store';
@@ -21,6 +20,8 @@
   import Icon from '../../common/icons/Icon.svelte';
 
   export let result: IResource = {id: ''} as IResource;
+
+  const pdfJsVersion = '2.16.105';
 
   const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
@@ -61,7 +62,6 @@
 
   onMount(() => {
     viewerStore.init();
-    loadPdfJs();
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
   });
 
@@ -171,6 +171,19 @@
 <svelte:window bind:innerWidth
                on:keydown={handleKeydown}
                on:resize={(event) => resizeEvent.next(event)}/>
+<svelte:head>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@{pdfJsVersion}/build/pdf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@{pdfJsVersion}/web/pdf_viewer.js"></script>
+  <link  href="https://cdn.jsdelivr.net/npm/pdfjs-dist@{pdfJsVersion}/web/pdf_viewer.css" rel="stylesheet">
+  <style>
+    .nuclia-widget .textLayer .highlight.selected {
+      background-color: var(--color-primary-regular);
+      border-radius: 0;
+      margin: -4px;
+      padding: 2px 4px;
+    }
+  </style>
+</svelte:head>
 <div class="sw-tile sw-pdf-tile"
      class:expanded
      class:side-panel-expanded={sidePanelExpanded}>
