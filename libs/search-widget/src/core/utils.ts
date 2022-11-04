@@ -118,6 +118,6 @@ export function goToUrl(url: string) {
     window.location.href = url;
   }
   else {
-    console.info('Invalid URL')
+    console.info(`Invalid URL: ${url}`)
   }
 }
