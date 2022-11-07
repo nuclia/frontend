@@ -33,7 +33,7 @@ export function activateTypeAheadSuggestions() {
   )
     .pipe(
       // trim and remove LABEL filter if any
-      map((query) => query.replace(typingLabelRegexp, '').trim()),
+      map((query) => (query || '').replace(typingLabelRegexp, '').trim()),
       // Don't trigger suggestion after inactivity if only spaces were added at the end of the query
       distinctUntilChanged((previous, current) => previous === current),
       switchMap((query) => {
