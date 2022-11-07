@@ -27,7 +27,7 @@ export function activateEditLabelsFeature() {
 export function activateTypeAheadSuggestions() {
   const subscription = merge(
     // Trigger suggestion when hitting space between words
-    typeAhead.pipe(filter((query) => query.slice(-1) === ' ' && query.slice(-2, -1) !== ' ')),
+    typeAhead.pipe(filter((query) => !!query && query.slice(-1) === ' ' && query.slice(-2, -1) !== ' ')),
     // Trigger suggestion after 350ms of inactivity
     typeAhead.pipe(debounceTime(350)),
   )
