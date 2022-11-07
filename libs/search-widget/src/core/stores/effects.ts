@@ -25,7 +25,7 @@ export function activateEditLabelsFeature() {
  * Subscribe to type ahead, call suggest and predict with the query and set suggestions in the state accordingly.
  */
 export function activateTypeAheadSuggestions() {
-  const subscription = merge(
+  const subscrip = merge(
     // Trigger suggestion when hitting space between words
     typeAhead.pipe(filter((query) => !!query && query.slice(-1) === ' ' && query.slice(-2, -1) !== ' ')),
     // Trigger suggestion after 350ms of inactivity
@@ -53,5 +53,5 @@ export function activateTypeAheadSuggestions() {
     )
     .subscribe((suggestionList) => suggestions.set(suggestionList));
 
-  subscriptions.push(subscription);
+  subscriptions.push(subscrip);
 }
