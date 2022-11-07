@@ -1,6 +1,7 @@
 @import "_common-modal.scss";
 
 .sw-modal-backdrop {
+  --modal-width: 100vw;
 
   &.popup .modal .modal-content {
     box-shadow: var(--shadow-modal);
@@ -8,35 +9,26 @@
 
   &.popup .modal {
     position: fixed;
-    top: var(--popup-top);
     left: 0;
     margin-top: var(--rhythm-0_5);
+    top: var(--popup-top);
     transform: none;
-    width: 100vw;
+    width: var(--modal-width);
   }
 
   &:not(.popup) .modal-content {
     width: var(--modal-width, fit-content);
     height: var(--modal-height, fit-content);
   }
-
-  &.popup .modal {
-    position: fixed;
-    top: var(--popup-top);
-    left: 0;
-    margin-top: 5px;
-    width: 100vw;
-  }
 }
 @media (min-width: 599px) {
   .sw-modal-backdrop {
     &.popup .modal {
+      --modal-width: var(--rhythm-64);
       left: var(--popup-left);
-      width: 500px;
     }
     &.popup.align-right .modal {
-      left: max(calc(var(--popup-left) - 500px), 0px);
-      width: 500px;
+      left: max(calc(var(--popup-left) - var(--modal-width)), 0px);
     }
     &:not(.popup) .modal-content {
       width: var(--modal-width-md, fit-content);

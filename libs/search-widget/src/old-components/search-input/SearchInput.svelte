@@ -62,14 +62,13 @@
 <form role="search"
       autocomplete="off"
       class="sw-search-input"
-      class:search-bar-container={embeddedSearch || searchBarWidget}
+      class:popup-widget="{popupSearch}"
+      class:embedded-widget="{embeddedSearch}"
+      class:search-bar-widget={searchBarWidget}
       bind:this={inputContainerElement}
 >
   <input bind:this={element}
          class="search-field"
-         class:input-widget={popupSearch}
-         class:embedded-search={embeddedSearch}
-         class:search-bar-widget={searchBarWidget}
          name="nuclia-search-field"
          placeholder={$_(placeholder || defaultPlaceholder)}
          tabindex="0"
@@ -103,13 +102,13 @@
 <Modal show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
        popup={true}
        parentPosition={position}
+       modalWidth="{inputContainerElement ? inputContainerElement.offsetWidth + 'px' : ''}"
        on:close={closeSuggestions}
 >
-  <div class="sw-suggestions">
+  <div class="sw-suggestions-container">
     <Suggestions paragraphs={$suggestedParagraphs}
                  intents={$suggestedIntents}/>
   </div>
 </Modal>
-
 
 <style lang="scss" src="./SearchInput.scss"></style>
