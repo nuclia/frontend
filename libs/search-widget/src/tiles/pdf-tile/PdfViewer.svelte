@@ -9,7 +9,7 @@
 
   const pdfJsLib = window['pdfjs-dist/build/pdf'];
   const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer']
-  pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/pdf.worker.js`;
+  pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/build/pdf.worker.js`;
 
   let innerHeight = window.innerHeight;
   let innerWidth = window.innerWidth;
