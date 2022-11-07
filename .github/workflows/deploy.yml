@@ -42,8 +42,8 @@ jobs:
         run: |-
           HASH=`git rev-parse --short HEAD`
           BRANCH=${GITHUB_REF##*/}
-          echo "::set-output name=short_sha::$HASH"
-          echo "::set-output name=branch::$BRANCH"
+          echo "name=short_sha::$HASH" >> $GITHUB_OUTPUT
+          echo "name=branch::$BRANCH" >> $GITHUB_OUTPUT
 
       - name: Install project dependencies
         run: |-
@@ -71,12 +71,12 @@ jobs:
       - name: Check apps to deploy
         id: check-deploy
         run: |-
-          (test -d dist/libs/search-widget && echo "::set-output name=deploy-widget::yes") || echo "Widget unchanged"
-          (test -d dist/apps/dashboard && echo "::set-output name=deploy-app::yes") || echo "Dashboard unchanged"
-          (test -d dist/apps/manager && echo "::set-output name=deploy-manager::yes") || echo "Manager unchanged"
-          ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "::set-output name=deploy-desktop::yes") || echo "Desktop unchanged"
-          (test -d dist/apps/sistema-demo && echo "::set-output name=deploy-sistema::yes") || echo "Sistema demo unchanged"
-          (test -d dist/libs/sdk-core && echo "::set-output name=deploy-sdk::yes") || echo "SDK unchanged"
+          (test -d dist/libs/search-widget && echo "name=deploy-widget::yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
+          (test -d dist/apps/dashboard && echo "name=deploy-app::yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
+          (test -d dist/apps/manager && echo "name=deploy-manager::yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
+          ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "name=deploy-desktop::yes" >> $GITHUB_OUTPUT) || echo "Desktop unchanged"
+          (test -d dist/apps/sistema-demo && echo "name=deploy-sistema::yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
+          (test -d dist/libs/sdk-core && echo "name=deploy-sdk::yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
       - uses: google-github-actions/auth@v0
         with:
@@ -144,7 +144,7 @@ jobs:
         id: env-vars
         run: |-
           HASH=`git rev-parse --short HEAD`
-          echo "::set-output name=short_sha::$HASH"
+          echo "name=short_sha::$HASH" >> $GITHUB_OUTPUT
 
       - name: Set helm package image
         id: version_step
@@ -154,7 +154,7 @@ jobs:
           VERSION=`cat apps/dashboard/VERSION`
           VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/app/Chart.yaml
-          echo "::set-output name=version_number::$VERSION_SHA"
+          echo "name=version_number::$VERSION_SHA" >> $GITHUB_OUTPUT
 
       - name: Configure Git
         run: |
@@ -190,7 +190,7 @@ jobs:
         id: env-vars
         run: |-
           HASH=`git rev-parse --short HEAD`
-          echo "::set-output name=short_sha::$HASH"
+          echo "name=short_sha::$HASH" >> $GITHUB_OUTPUT
 
       - name: Set helm package image
         id: version_step
@@ -200,7 +200,7 @@ jobs:
           VERSION=`cat apps/manager/VERSION`
           VERSION_SHA=$VERSION+${{ steps.env-vars.outputs.short_sha }}
           sed -i.bak "s#99999.99999.99999#$VERSION_SHA#" ./charts/manager/Chart.yaml
-          echo "::set-output name=version_number::$VERSION_SHA"
+          echo "name=version_number::$VERSION_SHA" >> $GITHUB_OUTPUT
 
       - name: Configure Git
         run: |
