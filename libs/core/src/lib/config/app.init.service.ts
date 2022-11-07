@@ -102,12 +102,4 @@ function injectWidget(cdnUrl: string) {
   script.src = `${cdnUrl}/nuclia-widget.umd.js`;
   script.onload = () => (JS_INJECTED = true);
   window.document.body.appendChild(script);
-
-  // Inject video widget script as well for widget page
-  const videoScript = window.document.createElement('script');
-  videoScript.type = 'text/javascript';
-  videoScript.async = true;
-  videoScript.defer = true;
-  videoScript.src = `${cdnUrl}/nuclia-video-widget.umd.js`;
-  window.document.body.appendChild(videoScript);
 }

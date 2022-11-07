@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { STFTrackingService, SDKService } from '@flaps/core';
+import { STFTrackingService, SDKService, BackendConfigurationService } from '@flaps/core';
 import { filter, map, switchMap } from 'rxjs';
 import { AddWidgetDialogComponent } from './add/add-widget.component';
 import { WidgetService } from './widget.service';
@@ -39,8 +39,10 @@ export class WidgetsComponent implements OnDestroy {
     private sdk: SDKService,
     private navigation: NavigationService,
     private appService: AppService,
+    private backendConfig: BackendConfigurationService,
   ) {
     this.appService.setSearchEnabled(false);
+    this.loadVideoWidget();
   }
 
   addWidget() {
@@ -64,6 +66,19 @@ export class WidgetsComponent implements OnDestroy {
         this.widgetService.updateWidgets();
         this.router.navigate([id], { relativeTo: this.route });
       });
+  }
+
+  loadVideoWidget() {
+    const id = 'video-widget-script';
+    if (!document.querySelector(`#${id}`)) {
+      const videoScript = window.document.createElement('script');
+      videoScript.id = id;
+      videoScript.type = 'text/javascript';
+      videoScript.async = true;
+      videoScript.defer = true;
+      videoScript.src = `${this.backendConfig.getCDN()}/nuclia-video-widget.umd.js`;
+      window.document.body.appendChild(videoScript);
+    }
   }
 
   ngOnDestroy() {
