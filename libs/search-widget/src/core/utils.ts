@@ -1,5 +1,6 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
+import { from } from 'rxjs';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -22,8 +23,16 @@ export const loadSvgSprite = () => {
   return fromFetch(`${getCDN()}icons/glyphs-sprite.svg`).pipe(switchMap((res) => res.text()));
 };
 
-export const getPdfJsBaseUrl = (folder = 'build') => {
-  return `https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105/${folder}`;
+export const getPdfJsBaseUrl = () => {
+  return `https://cdn.jsdelivr.net/npm/pdfjs-dist@2.16.105`;
+};
+
+export const getPdfJsStyle = () => {
+  return from(
+    fetch(`${getPdfJsBaseUrl()}/web/pdf_viewer.css`).then(function (response) {
+      return response.text();
+    }),
+  );
 };
 
 export const formatDate = (date: string) => {

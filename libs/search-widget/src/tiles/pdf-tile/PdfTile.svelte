@@ -18,10 +18,18 @@
   import { tap } from 'rxjs/operators';
   import SearchResultNavigator from './SearchResultNavigator.svelte';
   import Icon from '../../common/icons/Icon.svelte';
+  import { getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
 
   export let result: IResource = {id: ''} as IResource;
 
-  const pdfJsVersion = '2.16.105';
+  const pdfStyle = getPdfJsStyle();
+  const pdfJsBaseUrl = getPdfJsBaseUrl();
+  const pdfOverrideStyle = `.nuclia-widget .textLayer .highlight.selected {
+    background-color: var(--color-primary-regular);
+    border-radius: 0;
+    margin: -4px;
+    padding: 2px 4px;
+  }`;
 
   const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
@@ -172,18 +180,13 @@
                on:keydown={handleKeydown}
                on:resize={(event) => resizeEvent.next(event)}/>
 <svelte:head>
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@{pdfJsVersion}/build/pdf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@{pdfJsVersion}/web/pdf_viewer.js"></script>
-  <link  href="https://cdn.jsdelivr.net/npm/pdfjs-dist@{pdfJsVersion}/web/pdf_viewer.css" rel="stylesheet">
-  <style>
-    .nuclia-widget .textLayer .highlight.selected {
-      background-color: var(--color-primary-regular);
-      border-radius: 0;
-      margin: -4px;
-      padding: 2px 4px;
-    }
-  </style>
+  <script src="{pdfJsBaseUrl}/build/pdf.min.js"></script>
+  <script src="{pdfJsBaseUrl}/web/pdf_viewer.js"></script>
 </svelte:head>
+{#if $pdfStyle}
+  <svelte:element this="style">{@html $pdfStyle}</svelte:element>
+{/if}
+<svelte:element this="style">{@html pdfOverrideStyle}</svelte:element>
 <div class="sw-tile sw-pdf-tile"
      class:expanded
      class:side-panel-expanded={sidePanelExpanded}>
