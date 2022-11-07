@@ -26,7 +26,7 @@ jobs:
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -232,7 +232,7 @@ jobs:
       release-tag: ${{ steps.release.outputs.release_tag }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Release
@@ -251,7 +251,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v2
