@@ -42,8 +42,6 @@
 	"results.semantic": "Résultats sémantiques",
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
-	"suggest.enter": "Appuyer sur Entrée ⏎ pour voir les résultats",
 	"suggest.intents": "Labels",
-	"suggest.more": "Afficher plus de résultats",
 	"suggest.paragraphs": "Paragraphes suggérés"
 }

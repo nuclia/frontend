@@ -26,6 +26,7 @@
     &.popup .modal {
       --modal-width: var(--rhythm-64);
       left: var(--popup-left);
+      max-height: calc(100vh - var(--popup-top) - var(--rhythm-3));
     }
     &.popup.align-right .modal {
       left: max(calc(var(--popup-left) - var(--modal-width)), 0px);

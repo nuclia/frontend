@@ -5,11 +5,11 @@
   --color-light-stronger: var(--custom-color-light-stronger, #fff);
 
   --color-neutral-regular: var(--custom-color-neutral-strong, hsl(0, 0%, 44%));
-  --color-neutral-light: var(--custom-color-neutral-regular, hsl(0, 0%, 77%));
-  --color-neutral-lighter: var(--custom-color-neutral-light, hsl(0, 0%, 90%));
-  --color-neutral-lightest: var(--custom-color-neutral-lighter, hsl(0, 0%, 94%));
+  --color-neutral-light: var(--custom-color-neutral-light, hsl(0, 0%, 77%));
+  --color-neutral-lighter: var(--custom-color-neutral-lighter, hsl(0, 0%, 90%));
+  --color-neutral-lightest: var(--custom-color-neutral-lightest, hsl(0, 0%, 94%));
 
-  --color-neutral-background: var(--custom-color-neutral-lightest, hsl(240, 7%, 97%));
+  --color-neutral-background: var(--custom-color-neutral-background, hsl(240, 7%, 97%));
 
   --color-primary-stronger: var(--custom-color-primary-stronger, hsl(336, 100%, 24%));
   --color-primary-strong: var(--custom-color-primary-strong, hsl(336, 100%, 36%));
@@ -72,11 +72,12 @@
   --font-weight-body: var(--custom-font-weight-body, 300);
   --font-weight-semi-bold: var(--custom-font-weight-semi-bold, 500);
   --font-weight-bold: var(--custom-font-weight-semi-bold, 700);
-  --line-height-body: calc(var(--font-size-base) * 1.25);
   --font-family-body: 'Source Sans Pro', sans-serif;
   --font-size-title-m-mobile: calc(var(--font-size-base) * 1.125);
   --font-size-title-m: calc(var(--font-size-base) * 1.25);
   --font-weight-title-m: var(--font-weight-semi-bold);
+  --line-height-body-s: calc(var(--font-size-base) * 1.125);
+  --line-height-body: calc(var(--font-size-base) * 1.25);
   --line-height-title-m-mobile: calc(var(--font-size-base) * 1.625);
   --line-height-title-m: calc(var(--font-size-base) * 1.75);
 
