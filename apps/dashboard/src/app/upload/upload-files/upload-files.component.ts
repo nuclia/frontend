@@ -1,11 +1,11 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
-import { STFTrackingService, StateService, DroppedFile } from '@flaps/core';
-import { STFUtils } from '@flaps/core';
+import { DroppedFile, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { FileWithMetadata, ICreateResource, LabelValue } from '@nuclia/core';
-import { UploadService, FILES_TO_IGNORE } from '../upload.service';
+import { FILES_TO_IGNORE, UploadService } from '../upload.service';
+import { TranslateService } from '@ngx-translate/core';
 
 const GENERAL_LABELSET = 'General';
 
@@ -27,7 +27,9 @@ export class UploadFilesComponent {
   hasBaseDropZoneOver: boolean = false;
   langSelect = new UntypedFormControl('');
   langMultiSelect = new UntypedFormControl('');
-  languageList = STFUtils.supportedAudioLanguages();
+  languageList = STFUtils.supportedAudioLanguages()
+    .map((lang) => ({ lang, label: this.translateService.instant(`language.${lang}`) as string }))
+    .sort((langA, langB) => langA.label.localeCompare(langB.label));
   pendingLangs = 0;
   fileSelection = new SelectionModel<FileWithMetadata>(true, []);
   limitsExceeded = false;
@@ -40,6 +42,7 @@ export class UploadFilesComponent {
     private uploadService: UploadService,
     private tracking: STFTrackingService,
     private stateService: StateService,
+    private translateService: TranslateService,
   ) {
     this.stateService.account
       .pipe(
@@ -84,7 +87,7 @@ export class UploadFilesComponent {
 
   getFilesByType(files: File[], withAudio: boolean): File[] {
     return files.filter((file) => {
-      let hasAudio = false;
+      let hasAudio;
       if (file.type) {
         const type = file.type.split('/')[0];
         hasAudio = type === 'audio' || type === 'video';
