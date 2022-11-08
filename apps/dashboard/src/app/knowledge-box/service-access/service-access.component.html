@@ -105,8 +105,10 @@
     </p>
     <pre><code class="highlight">curl $$KB_URL$$/upload \
  -X POST \
+ -H "content-type: video/mp4"
+ -H "x-language: fr"
  -H "X-STF-Serviceaccount: Bearer YOUR-SERVICE-ACCESS-TOKEN" \
- -T /path/to/file</code></pre>
+ -T /path/to/file.mp4</code></pre>
     <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
        target="_new">Learn more</a>
   </ncom-hint>

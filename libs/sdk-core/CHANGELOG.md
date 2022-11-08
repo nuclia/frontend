@@ -1,3 +1,8 @@
+# 1.0.5 (2022-11-08)
+
+- `x-filename` must not be base64 encoded anymore
+- add `createOrModify` and `hasResource` methods
+
 # 1.0.4 (2022-11-03)
 
 - Support "by slug" resource endpoints

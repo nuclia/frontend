@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import type {
   Entities,
   EntitiesGroup,
@@ -253,6 +253,25 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
         icon: 'application/stf-link',
       },
       synchronous,
+    );
+  }
+
+  hasResource(slug: string): Observable<boolean> {
+    // it should be a HEAD request but it's not supported by the backend at the moment
+    return this.nuclia.rest.get(`${this.path}/slug/${slug}`).pipe(
+      map(() => true),
+      catchError(() => of(false)),
+    );
+  }
+
+  createOrUpdateResource(data: ICreateResource, synchronous = true): Observable<{ uuid: string } | void> {
+    const resourceExists = data.slug ? this.hasResource(data.slug) : of(false);
+    return resourceExists.pipe(
+      switchMap((exists) =>
+        exists
+          ? this.getResourceFromData({ id: '', slug: data.slug }).modify(data, synchronous)
+          : this.createResource(data, synchronous),
+      ),
     );
   }
 
