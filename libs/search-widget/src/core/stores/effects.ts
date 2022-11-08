@@ -58,7 +58,7 @@ export function activateTypeAheadSuggestions() {
 }
 
 /**
- * Subscribe to filters, update query anf trigger search
+ * Subscribe to filters, update query and trigger search
  */
 export function activateFilters() {
   const subscription = nucliaStore().filters.subscribe((filters) => {
