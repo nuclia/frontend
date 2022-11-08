@@ -280,6 +280,28 @@ export class STFUtils {
   }
 
   public static supportedAudioLanguages() {
-    return ['ca', 'es', 'en', 'fr', 'de', 'it'];
+    return [
+      'ca',
+      'es',
+      'en',
+      'fr',
+      'de',
+      'it',
+      'pt',
+      'eu',
+      'ru',
+      'fi',
+      'gl',
+      'pl',
+      'cs',
+      'da',
+      'el',
+      'no',
+      'sv',
+      'tr',
+      'ro',
+      'hr',
+      'nl',
+    ];
   }
 }

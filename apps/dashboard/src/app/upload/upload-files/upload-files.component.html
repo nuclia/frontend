@@ -111,8 +111,8 @@
               [formControl]="langMultiSelect"
               (change)="onSelectLanguageMulti($event)">
         <option value="">{{ 'generic.select_language' | translate }}</option>
-        <option [value]="lang"
-                *ngFor="let lang of languageList">{{ 'language.' + lang | translate }}</option>
+        <option [value]="language.lang"
+                *ngFor="let language of languageList">{{ language.label }}</option>
       </select>
     </div>
 
