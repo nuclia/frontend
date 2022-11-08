@@ -289,7 +289,7 @@ export const uploadToProcess = (nuclia: INuclia, file: File, metadata?: FileMeta
 export const getFileMetadata = (metadata: FileMetadata | undefined): { [key: string]: string } => {
   const headers: { [key: string]: string } = {};
   if (metadata?.filename) {
-    headers['x-filename'] = btoa(encodeURIComponent(metadata.filename));
+    headers['x-filename'] = encodeURIComponent(metadata.filename);
   }
   if (metadata?.md5) {
     headers['x-md5'] = metadata.md5;
