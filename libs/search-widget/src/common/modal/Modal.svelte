@@ -10,7 +10,7 @@
   export let parentPosition: DOMRect | undefined = undefined;
   export let alignTo = '';
 
-  $: show && freezeBackground();
+  $: show && !popup && freezeBackground();
 
   const dispatch = createEventDispatcher();
   let modalContentHeight: string = '100%';
@@ -28,7 +28,9 @@
 
   const close = () => {
     show = false;
-    unblockBackground();
+    if (!popup) {
+      unblockBackground();
+    }
     dispatch('close');
   };
   const outsideClick = () => {
