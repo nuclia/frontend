@@ -19,14 +19,13 @@
   import { fade, slide } from 'svelte/transition';
   import Player from '../../old-components/viewer/previewers/Player.svelte';
   import { Duration } from '../../common/transition.utils';
-  import { createEventDispatcher } from 'svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import { _ } from '../../core/i18n';
+  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
 
   export let result: IResource = {id: ''} as IResource;
 
-  const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
 
   let videoTileElement: HTMLElement;
@@ -46,7 +45,6 @@
   let videoLoading = true;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
-
 
   const matchingParagraphs = nucliaState()
     .getMatchingParagraphs(result.id)
@@ -79,7 +77,6 @@
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
-  $: isExpandedFullScreen = innerWidth < 820;
   $: filteredMatchingParagraphs = !findInTranscript
     ? matchingParagraphs
     : matchingParagraphs.pipe(map((paragraphs) => filterParagraphs(paragraphs as MediaWidgetParagraph[])));
@@ -105,10 +102,11 @@
 
   const playFrom = (time: number, selectedParagraph?: Search.Paragraph) => {
     videoTime = time;
-    expanded = true;
-    if (isExpandedFullScreen) {
-      dispatch('fullscreenPreview');
+    if (!expanded) {
+      expanded = true;
+      freezeBackground();
     }
+
     const paragraph$ = selectedParagraph && isFileOrLink(selectedParagraph.field_type)
       ? of(selectedParagraph)
       : matchingParagraphs.pipe(map((paragraphList) => paragraphList.filter(p => isFileOrLink(p.field_type))[0] || paragraphList[0]));
@@ -155,9 +153,7 @@
     showFullTranscripts = false;
     paragraphInPlay = undefined;
     findInTranscript = '';
-    if (isExpandedFullScreen) {
-      dispatch('closePreview');
-    }
+    unblockBackground(true);
   };
 
   const toggleTranscriptPanel = () => {

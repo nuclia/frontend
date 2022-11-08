@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import Button from "../button/Button.svelte";
+  import Button from '../button/Button.svelte';
+  import { freezeBackground, unblockBackground } from './modal.utils';
 
   export let show = false;
   export let closeable = false;
@@ -9,19 +10,12 @@
     {label: 'Confirm', action: 'confirm', kind: 'primary'}
   ];
 
-  let overflow = 'initial';
-  $: {
-    if (show) {
-      overflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = overflow;
-    }
-  }
+  $: show && freezeBackground();
 
   const dispatch = createEventDispatcher();
   const close = (action) => {
     show = false;
+    unblockBackground();
     dispatch(action);
   };
   const outsideClick = () => {

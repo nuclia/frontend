@@ -11,7 +11,7 @@
   import globalCss from '../../common/_global.scss';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
-  import PdfTile from "../../tiles/pdf-tile/PdfTile.svelte";
+  import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const results = nucliaState().results;
@@ -42,36 +42,10 @@
     map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
   );
 
-  const scrollingListener = () => {
-    document.documentElement.style.setProperty('--scroll-y', `${window.scrollY}px`);
-  };
-
   onMount(() => {
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-
-    window.addEventListener('scroll', scrollingListener);
   });
-
-  onDestroy(() => {
-    window.removeEventListener('scroll', scrollingListener);
-  });
-
-  // Prevent the page to scroll behind the fullscreen expanded tile
-  const onFullscreenPreview = () => {
-    const scrollY = document.documentElement.style.getPropertyValue('--scroll-y');
-    const body = document.body;
-    body.style.position = 'fixed';
-    body.style.top = `-${scrollY}`;
-  }
-
-  const onFullscreenPreviewClosed = () => {
-    const body = document.body;
-    const scrollY = body.style.top;
-    body.style.position = '';
-    body.style.top = '';
-    setTimeout(() => window.scrollTo(0, parseInt(scrollY || '0') * -1));
-  }
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
@@ -94,13 +68,9 @@
            transition:fade={{duration: Duration.SUPERFAST}}>
         {#each $paragraphResults as result}
           {#if result.icon === 'application/pdf'}
-            <PdfTile {result}
-                     on:fullscreenPreview={onFullscreenPreview}
-                     on:closePreview={onFullscreenPreviewClosed} ></PdfTile>
+            <PdfTile {result} />
           {:else}
-            <VideoTile {result}
-                       on:fullscreenPreview={onFullscreenPreview}
-                       on:closePreview={onFullscreenPreviewClosed} />
+            <VideoTile {result} />
           {/if}
         {/each}
       </div>
