@@ -1,7 +1,7 @@
-import type { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import type { INuclia } from '../../models';
 import type { WritableKnowledgeBox } from '../kb';
-import type { TrainingTask, TrainingType } from './training.models';
+import { TrainingStatus, TrainingTask, TrainingType } from './training.models';
 
 export class Training {
   kb: WritableKnowledgeBox;
@@ -24,6 +24,8 @@ export class Training {
   }
 
   getStatus(type: TrainingType): Observable<TrainingTask> {
-    return this.nuclia.rest.get<TrainingTask>(`${this.kb.path}/train/${type}/inspect`);
+    return this.nuclia.rest
+      .get<TrainingTask>(`${this.kb.path}/train/${type}/inspect`)
+      .pipe(catchError(() => of({ task: '', status: TrainingStatus.not_running } as TrainingTask)));
   }
 }
