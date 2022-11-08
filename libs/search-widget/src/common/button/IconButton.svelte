@@ -5,19 +5,18 @@
   export let ariaLabel = '';
   export let aspect = 'solid'; // solid or basic
   export let kind = 'secondary'; // primary | secondary | inverted
-  export let size = 'medium'; // medium or small
+  export let size = 'medium'; // medium | small
   export let disabled = false;
 </script>
 
-<button class="sw-button icon {aspect} {kind}"
-        class:small={size === 'small'}
+<button class="sw-button icon {aspect} {kind} {size}"
         type="button"
         aria-label="{ariaLabel}"
         tabindex="0"
         {disabled}
         on:click
 >
-  <Icon name="{icon}" />
+  <Icon name="{icon}" {size} />
 </button>
 
 <style lang="scss" src="./Button.scss"></style>

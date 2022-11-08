@@ -13,14 +13,15 @@ export const setupTriggerSearch = (dispatch: (event: string, search: string) => 
       switchMap(() => nucliaState().query.pipe(take(1))),
       map((query) => query.trim()),
       filter((query) => !!query),
-      tap(query => dispatch ? dispatch('search', query ) : undefined),
+      tap((query) => (dispatch ? dispatch('search', query) : undefined)),
       switchMap((query) =>
         nucliaStore().searchOptions.pipe(
           map((options) => {
-            let match;
             const show = navigateToLink.getValue() ? [ResourceProperties.BASIC, ResourceProperties.VALUES] : [];
             const currentOptions = { ...options, show };
-            while ((match = labelRegexp.exec(query))) {
+
+            const matches = query.matchAll(labelRegexp);
+            for (const match of matches) {
               if (!currentOptions.filters) {
                 currentOptions.filters = [`/l/${match[1]}`];
               } else {

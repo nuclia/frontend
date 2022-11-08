@@ -5,11 +5,12 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'two-widgets';
+  let selected = 'form';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
   let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
+  let kb = '295e9002-a277-4356-96a3-5fe0b08b8d79';
 
   onMount(() => {
     widget?.setActions([
@@ -58,9 +59,9 @@
       <NucliaWidget
         bind:this={widget}
         zone="europe-1"
-        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
-        cdn="/"
+        knowledgebox="{kb}"
         backend="https://stashify.cloud/api"
+        cdn="/"
         widgetid="label-annotation"
         type="input"
         permalink
@@ -73,7 +74,7 @@
     <h2>Embedded widget <small>(formerly known as form widget)</small></h2>
     <NucliaWidget
       zone="europe-1"
-      knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
+      knowledgebox="{kb}"
       backend="https://stashify.cloud/api"
       cdn="/"
       widgetid="dashboard"
@@ -88,7 +89,7 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
-        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
+        knowledgebox="{kb}"
         backend="https://stashify.cloud/api"
         cdn="/"
         lang="en"

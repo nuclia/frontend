@@ -15,6 +15,7 @@ import type { IResource, Search, SearchOptions } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
+  filters: BehaviorSubject<string[]>;
   searchOptions: BehaviorSubject<SearchOptions>;
   searchResults: BehaviorSubject<Search.Results | typeof PENDING_RESULTS>;
   triggerSearch: Subject<void>;
@@ -25,6 +26,7 @@ let _store: NucliaStore | undefined;
 
 let _state: {
   query: Observable<string>;
+  filters: Observable<string[]>;
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
   hasSearchError: Observable<boolean>;
@@ -38,6 +40,7 @@ export const nucliaStore = (): NucliaStore => {
   if (!_store) {
     _store = {
       query: new BehaviorSubject(''),
+      filters: new BehaviorSubject<string[]>([]),
       searchOptions: new BehaviorSubject({ inTitleOnly: false, highlight: true } as SearchOptions),
       searchResults: new BehaviorSubject(NO_RESULTS),
       triggerSearch: new Subject(),
@@ -49,6 +52,7 @@ export const nucliaStore = (): NucliaStore => {
         tap(() => _store!.hasSearchError.next(false)),
         distinctUntilChanged(),
       ),
+      filters: _store.filters.asObservable(),
       searchOptions: _store.searchOptions.asObservable(),
       results: _store.searchResults.pipe(
         filter((res) => !!res.resources),

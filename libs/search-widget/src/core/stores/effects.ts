@@ -6,6 +6,7 @@ import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
 import { predict } from '../tensor';
 import { typingLabelRegexp } from '../../common/label/label.utils';
+import { nucliaStore } from '../old-stores/main.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -52,6 +53,19 @@ export function activateTypeAheadSuggestions() {
       }),
     )
     .subscribe((suggestionList) => suggestions.set(suggestionList));
+
+  subscriptions.push(subscription);
+}
+
+/**
+ * Subscribe to filters, update query and trigger search
+ */
+export function activateFilters() {
+  const subscription = nucliaStore().filters.subscribe((filters) => {
+    const query = filters.join(' ');
+    nucliaStore().query.next(query);
+    nucliaStore().triggerSearch.next();
+  });
 
   subscriptions.push(subscription);
 }

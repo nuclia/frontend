@@ -45,8 +45,6 @@
 	"results.semantic": "Semantic results",
 	"results.sentences": "Relevant sentences",
 	"results.summary": "Summary",
-	"suggest.enter": "Press Enter ⏎ to see results",
 	"suggest.intents": "Labels",
-	"suggest.more": "Show more results",
 	"suggest.paragraphs": "Suggested paragraphs"
 }

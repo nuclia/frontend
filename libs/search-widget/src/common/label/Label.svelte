@@ -3,8 +3,8 @@
   import type { Classification } from '@nuclia/core';
   import { map } from 'rxjs';
   import { labelSets } from '../../core/stores/labels.store';
-  import Icon from '../icons/Icon.svelte';
   import { tap } from 'rxjs/operators';
+  import IconButton from "../button/IconButton.svelte";
 
   export let label: Classification;
   export let clickable = false;
@@ -36,16 +36,18 @@
   }
 </script>
 
-<div class="sw-label" style:background-color={$color}>
+<div class="sw-label"
+     class:closeable={removable}
+     style:background-color={$color}
+     on:click={onClick}>
   <span style:color={setColor ? $color : ''}
-        class:clickable
-        on:click={onClick}>{label.label}</span>
+        class:clickable>{label.label}</span>
   {#if removable}
-    <div class="close-icon"
-         aria-label="Delete"
-         on:click={remove}>
-      <Icon name="circle-cross" size="small"/>
-    </div>
+    <IconButton icon="cross"
+                ariaLabel="Delete"
+                aspect="basic"
+                size="small"
+                on:click={remove}/>
   {/if}
 </div>
 

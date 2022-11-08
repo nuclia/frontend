@@ -9,6 +9,7 @@
   export let backButton = false;
   export let parentPosition: DOMRect | undefined = undefined;
   export let alignTo = '';
+  export let modalWidth = '';
 
   $: show && !popup && freezeBackground();
 
@@ -52,20 +53,22 @@
   <div class="sw-modal-backdrop fade"
        class:visible={!popup}
        class:popup
-       class:align-right={alignTo === 'right'} on:click={outsideClick}>
-    <dialog
-      class="modal"
-      on:click={insideClick}
-      style="--popup-top: {parentPosition?.bottom || 0}px; --popup-left: {alignTo === 'right'
-        ? parentPosition?.right || 0
-        : parentPosition?.left || 0}px"
+       class:align-right={alignTo === 'right'}
+       on:click={outsideClick}>
+    <dialog class="modal"
+            on:click={insideClick}
+            style:--popup-top="{parentPosition?.bottom || 0}px"
+            style:--popup-left="{(alignTo === 'right' ? parentPosition?.right : parentPosition?.left) || 0}px"
+            style:--modal-width={modalWidth ? modalWidth : ''}
     >
       {#if backButton || closeButton}
-        <ModalHeader {closeButton} {backButton} on:close={close} on:back />
+        <ModalHeader {closeButton} {backButton} on:close={close} on:back/>
       {/if}
       <div class="modal-content"
            bind:this={modalContentContainer}
-           style:--modal-content-height={modalContentHeight}><slot /></div>
+           style:--modal-content-height={modalContentHeight}>
+        <slot/>
+      </div>
     </dialog>
   </div>
 {/if}

@@ -60,6 +60,8 @@
   }
 
   .labels {
-    margin-top: 0.5em;
+    display: flex;
+    gap: var(--rhythm-1);
+    margin: var(--rhythm-1) 0;
   }
 }

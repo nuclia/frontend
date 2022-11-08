@@ -9,7 +9,6 @@ export const typingLabelRegexp = new RegExp(/LABEL=?\{?[^}]*}?/, 'g');
 export function searchBy(label: Classification) {
   isViewerOpen.set(false);
   const labelFilter = `LABEL={${label.labelset}/${label.label}}`;
-  typeAhead.set(labelFilter);
-  nucliaStore().query.next(labelFilter);
-  nucliaStore().triggerSearch.next();
+  typeAhead.set('');
+  nucliaStore().filters.next([labelFilter]);
 }
