@@ -1,6 +1,6 @@
 <script lang="ts">
   import { IResource, Resource, Search } from '@nuclia/core';
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { Duration } from '../../common/transition.utils';
   import { fade, slide } from 'svelte/transition';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
@@ -19,6 +19,7 @@
   import SearchResultNavigator from './SearchResultNavigator.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
+  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
 
   export let result: IResource = {id: ''} as IResource;
 
@@ -31,7 +32,6 @@
     padding: 2px 4px;
   }`;
 
-  const dispatch = createEventDispatcher();
   let innerWidth = window.innerWidth;
   const closeButtonWidth = 48;
 
@@ -54,7 +54,6 @@
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
-  $: isExpandedFullScreen = innerWidth < 820;
 
   let resource: Resource | undefined;
   let paragraphList: PdfWidgetParagraph[];
@@ -81,6 +80,7 @@
     if (!expanded) {
       findInPdfQuery.next(globalQuery.value);
       expanded = true;
+      freezeBackground();
     }
     setTimeout(() => setHeaderActionWidth());
 
@@ -110,9 +110,7 @@
 
   const closePreview = () => {
     reset();
-    if (isExpandedFullScreen) {
-      dispatch('closePreview');
-    }
+    unblockBackground(true);
   };
 
   const setHeaderActionWidth = () => {

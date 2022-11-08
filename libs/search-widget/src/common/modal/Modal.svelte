@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
   import ModalHeader from './ModalHeader.svelte';
+  import { freezeBackground, unblockBackground } from './modal.utils';
 
   export let show = false;
   export let popup = false;
@@ -9,19 +10,11 @@
   export let parentPosition: DOMRect | undefined = undefined;
   export let alignTo = '';
 
+  $: show && freezeBackground();
+
   const dispatch = createEventDispatcher();
-  let overflow = 'initial';
   let modalContentHeight: string = '100%';
   let modalContentContainer: HTMLElement;
-
-  $: {
-    if (show) {
-      overflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = overflow;
-    }
-  }
 
   function setModalContentHeight() {
     if (modalContentContainer) {
@@ -35,6 +28,7 @@
 
   const close = () => {
     show = false;
+    unblockBackground();
     dispatch('close');
   };
   const outsideClick = () => {
