@@ -144,7 +144,7 @@ jobs:
         id: env-vars
         run: |-
           HASH=`git rev-parse --short HEAD`
-          name=short_sha=$HASH" >> $GITHUB_OUTPUT
+          echo "short_sha=$HASH" >> $GITHUB_OUTPUT
 
       - name: Set helm package image
         id: version_step
