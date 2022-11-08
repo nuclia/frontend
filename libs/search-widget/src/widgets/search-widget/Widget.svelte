@@ -20,6 +20,7 @@
   import globalCss from '../../common/_global.scss';
   import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
   import {
+    activateFilters,
     activateTypeAheadSuggestions,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
@@ -104,6 +105,7 @@
     customStyle.subscribe((css) => (style = css));
 
     activateTypeAheadSuggestions();
+    activateFilters();
 
     setupTriggerSearch(dispatchCustomEvent);
 

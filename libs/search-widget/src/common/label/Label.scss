@@ -5,10 +5,15 @@
   display: inline-flex;
   font-size: 0.75em;
   gap: var(--rhythm-1);
-  line-height: 1.25;
+  height: var(--rhythm-4);
   max-width: 100%;
-  padding: var(--rhythm-0_25) var(--rhythm-0_5);
+  padding: 0 var(--rhythm-2);
   white-space: nowrap;
+
+  &.closeable {
+    padding-left: var(--rhythm-2);
+    padding-right: var(--rhythm-0_5);
+  }
 
   span {
     flex: 1 1 0;
@@ -21,10 +26,5 @@
       cursor: pointer;
     }
   }
-  .close-icon {
-    align-items: center;
-    cursor: pointer;
-    display: flex;
-    flex: 0 0 auto;
-  }
+
 }
