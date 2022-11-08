@@ -56,12 +56,6 @@
     padding: var(--rhythm-0_5);
   }
 
-  &.xsmall {
-    font-size: calc(var(--font-size-base) * 0.75);
-    line-height: calc(var(--line-height-body) * 0.75);
-    padding: var(--rhythm-0_5);
-  }
-
   &.solid.primary {
     --button-background-color: var(--color-primary-regular);
     --button-background-color-hover: var(--color-primary-regular);
