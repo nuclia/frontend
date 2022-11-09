@@ -27,17 +27,16 @@
 
 <div class="sw-thumbnail">
   {#if loaded}
-    <img in:fade={{ duration: Duration.SUPERFAST }}
-         src={thumbnail}
+    <img src={thumbnail}
          alt="Thumbnail"
          style:aspect-ratio={aspectRatio}
          class:thumbnail-background={!noBackground}
+         class="fade-in"
     />
   {/if}
   {#if !loaded}
-    <div in:fade={{ duration: Duration.SUPERFAST }}
-         class:thumbnail-background={!noBackground}
-         class="thumbnail-placeholder" />
+    <div class:thumbnail-background={!noBackground}
+         class="thumbnail-placeholder fade-in" />
   {/if}
 </div>
 

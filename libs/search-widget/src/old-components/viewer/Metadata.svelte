@@ -110,7 +110,7 @@
   {/if}
 
   {#if !$annotationMode}
-    <div transition:fade={{ duration: Duration.SUPERFAST }}>
+    <div class="fade-in">
       {#if $previewLinks.length > 0}
         <div class="preview-links">
           {#each $previewLinks as file}

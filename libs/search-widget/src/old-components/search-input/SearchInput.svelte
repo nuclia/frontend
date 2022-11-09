@@ -35,7 +35,7 @@
   const filters = nucliaState().filters.pipe(
     tap(filterQuery => {
       if (popupSearch) {
-        typeAhead.set(filterQuery);
+        typeAhead.set(filterQuery.join(''));
       }
     }),
   );
