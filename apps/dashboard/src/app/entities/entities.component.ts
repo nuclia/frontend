@@ -7,7 +7,7 @@ import { AppEntitiesGroup } from './model';
 import { EntitiesService } from '../services/entities.service';
 import { EntitiesEditService } from './entities-edit.service';
 import { EntitiesSearchService } from './entities-search.service';
-import { PostHogService } from '@flaps/core';
+import { STFTrackingService } from '@flaps/core';
 import { EntityGroupDialogComponent } from './entity-group-dialog/entity-group-dialog.component';
 import { ModalService } from '@guillotinaweb/pastanaga-angular';
 
@@ -33,12 +33,12 @@ export class EntitiesComponent {
     ),
   );
 
-  canAddEntities: Observable<boolean> = this.postHogService.isFeatureEnabled('add-entity-group');
+  canAddEntities: Observable<boolean> = this.tracking.isFeatureEnabled('add-entity-group');
 
   constructor(
     private entitiesService: EntitiesService,
     private searchService: EntitiesSearchService,
-    private postHogService: PostHogService,
+    private tracking: STFTrackingService,
     private modalService: ModalService,
   ) {}
 

@@ -25,31 +25,4 @@ export class PostHogService {
     if (!this.config.isBrowser) return;
     posthog.capture(event, properties);
   }
-
-  isFeatureEnabled(feature: string): Observable<boolean> {
-    return new Observable<boolean>((observer) => {
-      posthog.onFeatureFlags(() => {
-        observer.next(posthog.isFeatureEnabled(feature, { send_event: false }));
-        observer.complete();
-      });
-    });
-  }
-
-  getFeatureFlag(feature: string): Observable<string | boolean | undefined> {
-    return new Observable((observer) => {
-      posthog.onFeatureFlags(() => {
-        observer.next(posthog.getFeatureFlag(feature, { send_event: false }));
-        observer.complete();
-      });
-    });
-  }
-
-  getEnabledFeatures(): Observable<string[]> {
-    return new Observable<string[]>((observer) => {
-      posthog.onFeatureFlags((flags) => {
-        observer.next(flags);
-        observer.complete();
-      });
-    });
-  }
 }

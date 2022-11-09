@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PostHogService, SDKService, TranslatePipeMock } from '@flaps/core';
+import { PostHogService, SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
@@ -42,7 +42,7 @@ describe('KnowledgeBoxProcessComponent', () => {
           },
         },
         {
-          provide: PostHogService,
+          provide: STFTrackingService,
           useValue: {
             isFeatureEnabled: jest.fn(() => of(true)),
           },

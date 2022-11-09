@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { PostHogService, SDKService, StateService } from '@flaps/core';
+import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { TrainingStatus, TrainingTask, TrainingType } from '@nuclia/core';
 import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
@@ -27,13 +27,13 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     map((labelsets) => Object.entries(labelsets).map(([id, labelset]) => ({ value: id, title: labelset.title }))),
     shareReplay(),
   );
-  isBillingEnabled = this.postHogService.isFeatureEnabled('billing').pipe(shareReplay(1));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
 
   constructor(
     private sdk: SDKService,
     private stateService: StateService,
     private cdr: ChangeDetectorRef,
-    private postHogService: PostHogService,
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit() {
