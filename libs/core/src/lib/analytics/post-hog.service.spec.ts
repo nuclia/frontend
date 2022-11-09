@@ -58,36 +58,4 @@ describe('PostHogService', () => {
       expect(posthog.capture).toHaveBeenCalledWith('event', { some: 'properties' });
     });
   });
-
-  describe('isFeatureEnabled', () => {
-    it('should return an observable calling posthog.onFeatureFlags and isFeatureEnabled', waitForAsync(() => {
-      service = new PostHogService({ isBrowser: true } as BackendConfigurationService);
-      service.isFeatureEnabled('feature').subscribe((isEnabled) => {
-        expect(isEnabled).toBe(true);
-        expect(posthog.onFeatureFlags).toHaveBeenCalled();
-        expect(posthog.isFeatureEnabled).toHaveBeenCalledWith('feature', { send_event: false });
-      });
-    }));
-  });
-
-  describe('getFeatureFlag', () => {
-    it('should return an observable calling posthog.onFeatureFlags and getFeatureFlag', waitForAsync(() => {
-      service = new PostHogService({ isBrowser: true } as BackendConfigurationService);
-      service.getFeatureFlag('feature').subscribe((data) => {
-        expect(data).toBe('flag-data');
-        expect(posthog.onFeatureFlags).toHaveBeenCalled();
-        expect(posthog.getFeatureFlag).toHaveBeenCalledWith('feature', { send_event: false });
-      });
-    }));
-  });
-
-  describe('getEnabledFeatures', () => {
-    it('should return an observable calling posthog.onFeatureFlags', waitForAsync(() => {
-      service = new PostHogService({ isBrowser: true } as BackendConfigurationService);
-      service.getEnabledFeatures().subscribe((data) => {
-        expect(data).toEqual(['flag1', 'flag2']);
-        expect(posthog.onFeatureFlags).toHaveBeenCalled();
-      });
-    }));
-  });
 });
