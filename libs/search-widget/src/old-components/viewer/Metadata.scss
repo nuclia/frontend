@@ -64,4 +64,17 @@
     gap: var(--rhythm-1);
     margin: var(--rhythm-1) 0;
   }
+
+  // TODO: replace with a svelte transition once "insertRule" error is solved
+  .fade-in {
+    animation: fadeIn 0.16s;
+  }
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
 }
