@@ -292,7 +292,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           if (resource.usermetadata?.classifications) {
             resourceWithLabels.labels = resource.usermetadata.classifications.map((label) => ({
               ...label,
-              color: labelSets[label.labelset].color,
+              color: labelSets[label.labelset]?.color || '#ffffff',
             }));
           }
           return resourceWithLabels;
