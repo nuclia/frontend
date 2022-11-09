@@ -84,7 +84,6 @@ export const nucliaStore = (): NucliaStore => {
               }
             }
           });
-          console.log(smartResults);
           return smartResults;
         }),
         startWith([] as SmartResult[]),

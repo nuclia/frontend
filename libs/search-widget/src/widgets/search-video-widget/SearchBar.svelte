@@ -10,6 +10,7 @@
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
+  import { typeAhead } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -27,6 +28,7 @@
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
+    typeAhead.set(query);
     nucliaStore().triggerSearch.next();
   };
 
