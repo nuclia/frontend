@@ -36,10 +36,7 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
     ),
   );
   kbUrl: string = '';
-  isLinkEnabled = this.tracking.isFeatureEnabled('upload-link').pipe(shareReplay(1));
-  isUploadEnabled = this.tracking.isFeatureEnabled('upload-files').pipe(shareReplay(1));
   isUploadFolderEnabled = this.tracking.isFeatureEnabled('upload-folder').pipe(shareReplay(1));
-  isResourcesEnabled = this.tracking.isFeatureEnabled('view-resources').pipe(shareReplay(1));
   isActivityEnabled = this.tracking.isFeatureEnabled('view-activity').pipe(shareReplay(1));
   isOntologiesEnabled = this.tracking.isFeatureEnabled('manage-ontologies').pipe(shareReplay(1));
   isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities').pipe(shareReplay(1));
@@ -47,7 +44,7 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
   isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets').pipe(shareReplay(1));
   isAPIKeysEnabled = this.tracking.isFeatureEnabled('manage-api-keys').pipe(shareReplay(1));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe((shareReplay(1)));
+  isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
 
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   account = this.stateService.account.pipe(filter((account) => !!account));
