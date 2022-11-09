@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogModule } from '@angular/material/dialog';
-import { PostHogService, TranslatePipeMock } from '@flaps/core';
+import { PostHogService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { of } from 'rxjs';
 import { EntitiesService } from '../services/entities.service';
 
@@ -29,7 +29,12 @@ describe('EntitiesComponent', () => {
             getEntities: () => of({}),
           },
         },
-        MockProvider(PostHogService),
+        {
+          provide: STFTrackingService,
+          useValue: {
+            isFeatureEnabled: () => of(false),
+          },
+        },
         MockProvider(ModalService),
       ],
     }).compileComponents();
