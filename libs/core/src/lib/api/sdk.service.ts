@@ -16,7 +16,7 @@ import {
 } from 'rxjs';
 import { BackendConfigurationService } from '../config';
 import { StateService } from '../state.service';
-import { PostHogService } from '../analytics';
+import { FeatureFlagService } from '../analytics/feature-flag.service';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
@@ -43,7 +43,7 @@ export class SDKService {
   constructor(
     private config: BackendConfigurationService,
     private stateService: StateService,
-    private postHogService: PostHogService,
+    private featureFlagService: FeatureFlagService,
   ) {
     combineLatest([this.stateService.stash, this.stateService.account])
       .pipe(
@@ -95,7 +95,7 @@ export class SDKService {
   }
 
   getDemoKb(): Observable<WritableKnowledgeBox> {
-    return this.postHogService.getFeatureFlag('demo-kb-id').pipe(
+    return this.featureFlagService.getFeatureFlag('demo-kb-id').pipe(
       map(
         (kbId) =>
           new WritableKnowledgeBox(this.nuclia, this.stateService.getAccount()?.slug || '', {

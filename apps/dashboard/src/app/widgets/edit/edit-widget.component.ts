@@ -58,7 +58,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   isDefaultWidget = false;
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
-  isTrainingEnabled = this.posthog.isFeatureEnabled('training');
+  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
 
   debouncePlaceholder = new Subject<string>();
 
@@ -76,7 +76,6 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private backendConfig: BackendConfigurationService,
     private tracking: STFTrackingService,
-    private posthog: PostHogService,
     private translation: TranslateService,
   ) {}
 
