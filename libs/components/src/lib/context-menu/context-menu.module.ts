@@ -6,10 +6,7 @@ import { ContextMenuItemComponent } from './context-menu-item/context-menu-item.
 
 @NgModule({
   declarations: [ContextMenuComponent, ContextMenuItemComponent],
-  imports: [
-    CommonModule,
-    MatMenuModule,
-  ],
+  imports: [CommonModule, MatMenuModule],
   exports: [ContextMenuComponent, ContextMenuItemComponent],
 })
 export class ContextMenuModule {}

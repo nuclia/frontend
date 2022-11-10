@@ -1,14 +1,15 @@
 <ng-container *ngIf="avatar">
-  <img class="avatar mr-0 mr-sm-16"
-       [src]="avatar">
+  <img
+    class="avatar mr-0 mr-sm-16"
+    [src]="avatar" />
 </ng-container>
 <ng-container *ngIf="!avatar">
-  <div class="avatar-text"
-       [class.avatar-text-black-mode]="blackMode"
-       [ngClass]="'avatar-text-' + size"
-       fxLayout="row" fxLayoutAlign="center center">
-    {{getInitials()}}
+  <div
+    class="avatar-text"
+    [class.avatar-text-black-mode]="blackMode"
+    [ngClass]="'avatar-text-' + size"
+    fxLayout="row"
+    fxLayoutAlign="center center">
+    {{ getInitials() }}
   </div>
 </ng-container>
-  
-

@@ -8,14 +8,12 @@ describe('UserComponent', () => {
   let component: UserComponent;
   let fixture: ComponentFixture<UserComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [UserComponent],
-        providers: [{ provide: UsersService, useValue: { getAccountUser: () => of({ name: 'me', avatar: '' }) } }],
-      }).compileComponents();
-    }),
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [UserComponent],
+      providers: [{ provide: UsersService, useValue: { getAccountUser: () => of({ name: 'me', avatar: '' }) } }],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(UserComponent);
