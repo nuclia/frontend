@@ -50,6 +50,14 @@
     }).filter(label => !!label)),
   );
 
+  const suggestionModalMinWidth = 384;
+  let suggestionModalWidth;
+  $: {
+    if (inputContainerElement) {
+      suggestionModalWidth = `${Math.max(inputContainerElement.offsetWidth, suggestionModalMinWidth)}px`;
+    }
+  }
+
   onMount(() => {
     setInputPosition();
   });
@@ -139,7 +147,7 @@
       {#each $labels as label (label.label)}
         <Label {label}
                removable
-               on:remove={removeLabel(label)}/>
+               on:remove={() => removeLabel(label)}/>
       {/each}
     </div>
   {/if}
@@ -147,7 +155,7 @@
 <Modal show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
        popup={true}
        parentPosition={position}
-       modalWidth="{inputContainerElement ? inputContainerElement.offsetWidth + 'px' : ''}"
+       modalWidth={suggestionModalWidth}
        on:close={closeSuggestions}
 >
   <div class="sw-suggestions-container">

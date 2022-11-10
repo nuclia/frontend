@@ -4,7 +4,7 @@
   import { map } from 'rxjs';
   import { labelSets } from '../../core/stores/labels.store';
   import { tap } from 'rxjs/operators';
-  import IconButton from "../button/IconButton.svelte";
+  import IconButton from '../button/IconButton.svelte';
 
   export let label: Classification;
   export let clickable = false;
