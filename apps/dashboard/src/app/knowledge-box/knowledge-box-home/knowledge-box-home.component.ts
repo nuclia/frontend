@@ -134,6 +134,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
   }
 
   downloadDesktop() {
-    window.open('https://github.com/nuclia/frontend/releases');
+    window.open('https://github.com/nuclia/frontend/releases/latest');
   }
 }
