@@ -1,20 +1,31 @@
-<stf-user-container widthSm="530px" *ngIf="accounts.length > 0">
-  <div fxLayout="column" class="account_container">
-    <div class="logo mb-52" fxFlex="0 0 auto">
+<stf-user-container
+  widthSm="530px"
+  *ngIf="accounts.length > 0">
+  <div
+    fxLayout="column"
+    class="account_container">
+    <div
+      class="logo mb-52"
+      fxFlex="0 0 auto">
       <img src="assets/logos/logo_text.svg" />
     </div>
-    <div class="account_content" fxFlex="1 1 0">
+    <div
+      class="account_content"
+      fxFlex="1 1 0">
       <div class="stash-select">
         <mat-accordion [hideToggle]="true">
           <mat-expansion-panel
             (opened)="onOpen(account.slug)"
             (closed)="onClose(account.slug)"
             [expanded]="account.slug === selectedAccount"
-            *ngFor="let account of accounts"
-          >
+            *ngFor="let account of accounts">
             <mat-expansion-panel-header>
               <div (click)="selectAccount(account.slug)">
-                <div class="account-name" fxFlex="1 1 0">{{ account.title }}</div>
+                <div
+                  class="account-name"
+                  fxFlex="1 1 0">
+                  {{ account.title }}
+                </div>
               </div>
             </mat-expansion-panel-header>
             <div class="stash-list">
@@ -24,8 +35,7 @@
                 fxLayout="flex"
                 fxLayoutAlign="start center"
                 *ngFor="let stash of stashes[account.slug]"
-                (click)="$event.preventDefault(); goToStash(account.slug, stash.slug)"
-              >
+                (click)="$event.preventDefault(); goToStash(account.slug, stash.slug)">
                 {{ stash.title }}
               </a>
             </div>
@@ -33,8 +43,14 @@
         </mat-accordion>
       </div>
     </div>
-    <div class="mt-36" fxFlex="0 0 auto" fxLayout="row" fxLayoutAlign="center center">
-      <pa-button kind="inverted" (click)="logout()">
+    <div
+      class="mt-36"
+      fxFlex="0 0 auto"
+      fxLayout="row"
+      fxLayoutAlign="center center">
+      <pa-button
+        kind="inverted"
+        (click)="logout()">
         {{ 'user.logout' | translate }}
       </pa-button>
     </div>

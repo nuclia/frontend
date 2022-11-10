@@ -9,7 +9,8 @@
     background-image: none;
   }
 
-  &:before, &:after {
+  &:before,
+  &:after {
     @include media-breakpoint('gt-xs') {
       content: '';
       display: block;

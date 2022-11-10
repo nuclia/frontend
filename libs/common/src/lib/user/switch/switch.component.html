@@ -8,19 +8,24 @@
         <div class="account_title">
           <h1>{{ 'account.title' | translate }}</h1>
           <div class="description">{{ 'generic.description' | translate }}</div>
-          <div class="description alert"
-               *ngIf="message">{{ message }}</div>
+          <div
+            class="description alert"
+            *ngIf="message">
+            {{ message }}
+          </div>
         </div>
         <mat-list>
-          <mat-list-item *ngFor="let account of accounts"
-                         class="account"
-                         (click)="goToAccount(account.slug)">
+          <mat-list-item
+            *ngFor="let account of accounts"
+            class="account"
+            (click)="goToAccount(account.slug)">
             {{ account.title | titlecase }} - ({{ account.slug }})
           </mat-list-item>
         </mat-list>
       </div>
-      <div fxLayout="row"
-           fxLayoutAlign="center center">
+      <div
+        fxLayout="row"
+        fxLayoutAlign="center center">
         <pa-button (click)="logout()">{{ 'user.logout' | translate }}</pa-button>
       </div>
     </div>

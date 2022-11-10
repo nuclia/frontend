@@ -5,14 +5,17 @@
       <div class="description">{{ 'reset.description' | translate }}</div>
     </div>
     <div class="reset_form">
-      <form [formGroup]="resetForm" #form="ngForm" (ngSubmit)="submit()">
+      <form
+        [formGroup]="resetForm"
+        #form="ngForm"
+        (ngSubmit)="submit()">
         <div class="reset_field">
           <stf-input
             #password
             formControlName="password"
             (enterPressed)="onEnterPressed('password')"
             required
-            type='password'
+            type="password"
             theme="border"
             [noAutocapitalize]="true"
             [validator]="resetForm.controls['password']"
@@ -34,14 +37,20 @@
             {{ 'generic.confirm_password' | translate }}
           </stf-input>
         </div>
-        <div class="reset_success" *ngIf="passwordRecovered">
+        <div
+          class="reset_success"
+          *ngIf="passwordRecovered">
           {{ 'reset.password_reset' | translate }}
         </div>
-        <div class="reset_button" fxLayout="row" fxLayoutAlign="center center" >
-          <pa-button type="submit"
-                     kind="primary"
-                     [disabled]="passwordRecovered">
-            {{'generic.save' | translate}}
+        <div
+          class="reset_button"
+          fxLayout="row"
+          fxLayoutAlign="center center">
+          <pa-button
+            type="submit"
+            kind="primary"
+            [disabled]="passwordRecovered">
+            {{ 'generic.save' | translate }}
           </pa-button>
         </div>
       </form>

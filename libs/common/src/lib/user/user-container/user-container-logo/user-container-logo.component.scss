@@ -2,7 +2,7 @@
 
 .user_container_logo {
   padding: 34px 30px 36px;
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     padding: 55px 50px 55px;
   }
 
@@ -12,10 +12,9 @@
     img {
       width: 180px;
       height: auto;
-      @include media-breakpoint("gt-xs") {
+      @include media-breakpoint('gt-xs') {
         width: 218px;
       }
     }
   }
 }
-

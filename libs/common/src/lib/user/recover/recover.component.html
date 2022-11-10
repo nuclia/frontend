@@ -5,13 +5,16 @@
       <div class="description">{{ 'recover.description' | translate }}</div>
     </div>
     <div class="recover_form">
-      <form [formGroup]="recoverForm" #form="ngForm" (ngSubmit)="submit()">
+      <form
+        [formGroup]="recoverForm"
+        #form="ngForm"
+        (ngSubmit)="submit()">
         <div>
           <stf-input
             #email
             formControlName="email"
             required
-            type='text'
+            type="text"
             theme="border"
             [noAutocapitalize]="true"
             [validator]="recoverForm.controls['email']"
@@ -20,16 +23,24 @@
             {{ 'generic.email' | translate }}
           </stf-input>
         </div>
-        <div class="recover_button" fxLayout="row" fxLayoutAlign="center center">
-          <pa-button type="submit" kind="primary">
-            {{'recover.recover' | translate}}
+        <div
+          class="recover_button"
+          fxLayout="row"
+          fxLayoutAlign="center center">
+          <pa-button
+            type="submit"
+            kind="primary">
+            {{ 'recover.recover' | translate }}
           </pa-button>
         </div>
       </form>
     </div>
     <div>
-      <span>{{ 'recover.gologin_help' | translate }} </span>
-      <a href="javascript:;" class="recover_link" (click)="goLogin()">
+      <span>{{ 'recover.gologin_help' | translate }}</span>
+      <a
+        href="javascript:;"
+        class="recover_link"
+        (click)="goLogin()">
         {{ 'recover.gologin' | translate }}
       </a>
     </div>
