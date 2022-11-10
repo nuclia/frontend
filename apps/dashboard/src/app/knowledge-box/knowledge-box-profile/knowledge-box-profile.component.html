@@ -1,60 +1,90 @@
-<div class="knowledge-box-profile" *ngIf="kb && account">
+<div
+  class="knowledge-box-profile"
+  *ngIf="kb && account">
   <div class="section">
     <h2>{{ 'stash.profile' | translate }}</h2>
 
-    <form [formGroup]="kbForm" (ngSubmit)="saveKb()">
-      <div class="mb-24" fxLayout="row">
-        <label class="kb-field-name mt-12" fxFlex="30%">
+    <form
+      [formGroup]="kbForm"
+      (ngSubmit)="saveKb()">
+      <div
+        class="mb-24"
+        fxLayout="row">
+        <label
+          class="kb-field-name mt-12"
+          fxFlex="30%">
           {{ 'generic.uid' | translate }}
         </label>
         <div fxFlex="70%">
-          <pa-input formControlName="uid"
-                    [readonly]="true">
-          </pa-input>
+          <pa-input
+            formControlName="uid"
+            [readonly]="true"></pa-input>
         </div>
       </div>
 
-      <div class="mb-24" fxLayout="row">
-        <label class="kb-field-name mt-12" fxFlex="30%">
+      <div
+        class="mb-24"
+        fxLayout="row">
+        <label
+          class="kb-field-name mt-12"
+          fxFlex="30%">
           {{ 'generic.slug' | translate }}
         </label>
         <div fxFlex="70%">
-          <pa-input formControlName="slug"
-                    [errorMessages]="validationMessages.slug">
-          </pa-input>
+          <pa-input
+            formControlName="slug"
+            [errorMessages]="validationMessages.slug"></pa-input>
         </div>
       </div>
 
-      <div class="mb-24" fxLayout="row">
-        <label class="kb-field-name mt-12" fxFlex="30%">
+      <div
+        class="mb-24"
+        fxLayout="row">
+        <label
+          class="kb-field-name mt-12"
+          fxFlex="30%">
           {{ 'generic.name' | translate }}
         </label>
         <div fxFlex="70%">
-          <pa-input formControlName="title"
-                    [errorMessages]="validationMessages.title">
-          </pa-input>
+          <pa-input
+            formControlName="title"
+            [errorMessages]="validationMessages.title"></pa-input>
         </div>
       </div>
 
       <div fxLayout="row">
-        <label class="kb-field-name mt-12" fxFlex="30%">
+        <label
+          class="kb-field-name mt-12"
+          fxFlex="30%">
           {{ 'generic.description' | translate }}
         </label>
         <div fxFlex="70%">
-          <pa-textarea formControlName="description"
-                       rows="4"></pa-textarea>
+          <pa-textarea
+            formControlName="description"
+            rows="4"></pa-textarea>
         </div>
       </div>
 
-      <div class="mt-40" fxLayout="row">
+      <div
+        class="mt-40"
+        fxLayout="row">
         <div fxFlex="30%"></div>
-        <div fxFlex="70%" fxLayout="row" fxLayoutGap="10px">
-          <pa-button type="submit" kind="primary" [disabled]="kbForm.invalid || kbForm.pristine">{{
-            'generic.save' | translate
-          }}</pa-button>
-          <pa-button *ngIf="!kbForm.pristine" aspect="basic" (click)="initKbForm()">{{
-            'generic.cancel' | translate
-          }}</pa-button>
+        <div
+          fxFlex="70%"
+          fxLayout="row"
+          fxLayoutGap="10px">
+          <pa-button
+            type="submit"
+            kind="primary"
+            [disabled]="kbForm.invalid || kbForm.pristine">
+            {{ 'generic.save' | translate }}
+          </pa-button>
+          <pa-button
+            *ngIf="!kbForm.pristine"
+            aspect="basic"
+            (click)="initKbForm()">
+            {{ 'generic.cancel' | translate }}
+          </pa-button>
         </div>
       </div>
     </form>

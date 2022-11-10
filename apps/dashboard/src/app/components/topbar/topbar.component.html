@@ -1,24 +1,40 @@
 <div class="topbar">
-  <button class="topbar-logo" (click)="goToHome()" tourAnchor="step1">
-    <svg-icon src="assets/logos/logo-beta.svg" class="topbar-logo-expanded"></svg-icon>
-    <svg-icon *ngIf="isStage" src="assets/icons/experimenting.svg" class="is-stage"></svg-icon>
-    <svg-icon src="assets/logos/symbol.svg" class="topbar-logo-collapsed"></svg-icon>
+  <button
+    class="topbar-logo"
+    (click)="goToHome()"
+    tourAnchor="step1">
+    <svg-icon
+      src="assets/logos/logo-beta.svg"
+      class="topbar-logo-expanded"></svg-icon>
+    <svg-icon
+      *ngIf="isStage"
+      src="assets/icons/experimenting.svg"
+      class="is-stage"></svg-icon>
+    <svg-icon
+      src="assets/logos/symbol.svg"
+      class="topbar-logo-collapsed"></svg-icon>
   </button>
 
   <div class="search-widget">
     <ng-container *ngIf="searchEnabled | async">
       <span tourAnchor="step2"></span>
-      <div tourAnchor="step3" [innerHtml]="searchWidget | async"></div>
+      <div
+        tourAnchor="step3"
+        [innerHtml]="searchWidget | async"></div>
     </ng-container>
   </div>
 
-  <pa-button size="small"
-             aspect="basic"
-             kind="destructive"
-             icon="warning"
-             iconAndText
-             (click)="goToSupport()">
-    <a href="https://github.com/nuclia/support" rel="noopener noreferrer" target="_blank">
+  <pa-button
+    size="small"
+    aspect="basic"
+    kind="destructive"
+    icon="warning"
+    iconAndText
+    (click)="goToSupport()">
+    <a
+      href="https://github.com/nuclia/support"
+      rel="noopener noreferrer"
+      target="_blank">
       {{ 'generic.report_bug' | translate }}
     </a>
   </pa-button>
@@ -26,11 +42,12 @@
   <div class="topbar-separator"></div>
 
   <div class="topbar-account">
-    <strong>{{(kb | async)?.account}}</strong>
+    <strong>{{ (kb | async)?.account }}</strong>
   </div>
 
   <app-kb-switch class="topbar-kb"></app-kb-switch>
 
-  <app-user-menu tourAnchor="step4" [userInfo]="userInfo | async"></app-user-menu>
-
+  <app-user-menu
+    tourAnchor="step4"
+    [userInfo]="userInfo | async"></app-user-menu>
 </div>

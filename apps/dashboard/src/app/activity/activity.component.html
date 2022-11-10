@@ -1,6 +1,8 @@
 <div class="activity">
   <div class="activity-header">
-    <div class="tabs" *ngIf="currentTab | async as currentTab">
+    <div
+      class="tabs"
+      *ngIf="currentTab | async as currentTab">
       <div
         *ngFor="let tab of tabs"
         class="tab"
@@ -9,8 +11,7 @@
         (keydown.enter)="selectTab(tab.type)"
         tabIndex="0"
         role="tab"
-        [attr.aria-expanded]="currentTab === tab.type"
-      >
+        [attr.aria-expanded]="currentTab === tab.type">
         {{ tab.title | translate }}
       </div>
     </div>
@@ -19,10 +20,12 @@
   <div class="tab-content">
     <app-activity-list [items]="(data | async).events"></app-activity-list>
     <div class="more-results">
-      <pa-button *ngIf="(data | async).pagination?.last === false"
-                 kind="inverted"
-                 (click)="loadMoreEvents()"
-      >{{ 'search.more_results' | translate }}</pa-button>
+      <pa-button
+        *ngIf="(data | async).pagination?.last === false"
+        kind="inverted"
+        (click)="loadMoreEvents()">
+        {{ 'search.more_results' | translate }}
+      </pa-button>
     </div>
   </div>
 </div>

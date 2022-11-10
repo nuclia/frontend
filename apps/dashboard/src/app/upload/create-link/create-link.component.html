@@ -1,31 +1,44 @@
 <div class="create-link">
   <h1>{{ 'modal.create_link.title' | translate }}</h1>
-  <pa-button class="close-button"
-             icon="cross"
-             aspect="basic"
-             (click)="close()">{{'generic.close' | translate}}</pa-button>
+  <pa-button
+    class="close-button"
+    icon="cross"
+    aspect="basic"
+    (click)="close()">
+    {{ 'generic.close' | translate }}
+  </pa-button>
 
-  <form class="link-input"
-        id="link-form"
-        [formGroup]="linkForm"
-        (ngSubmit)="add()">
+  <form
+    class="link-input"
+    id="link-form"
+    [formGroup]="linkForm"
+    (ngSubmit)="add()">
     <div class="new-link">
-        <pa-input formControlName="link"
-                  [errorMessages]="validationMessages.link">
-          {{ 'modal.create_link.input' | translate }}
-        </pa-input>
+      <pa-input
+        formControlName="link"
+        [errorMessages]="validationMessages.link">
+        {{ 'modal.create_link.input' | translate }}
+      </pa-input>
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
     </div>
 
-    <div class="link-actions" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="12px">
-      <pa-button aspect="basic"
-                 (click)="close()">
+    <div
+      class="link-actions"
+      fxLayout="row"
+      fxLayoutAlign="center center"
+      fxLayoutGap="12px">
+      <pa-button
+        aspect="basic"
+        (click)="close()">
         {{ 'generic.cancel' | translate }}
       </pa-button>
 
-      <pa-button type="submit"
-                 kind="primary"
-                 [disabled]="!linkForm.valid">{{ 'generic.add' | translate }}</pa-button>
+      <pa-button
+        type="submit"
+        kind="primary"
+        [disabled]="!linkForm.valid">
+        {{ 'generic.add' | translate }}
+      </pa-button>
     </div>
   </form>
 </div>

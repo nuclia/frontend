@@ -7,11 +7,18 @@ export interface UploadFileDialogData {
 
 @Component({
   selector: 'app-upload-files-dialog',
-  template: ` <div>
-    <app-upload-files *ngIf="!showProgress" [folderMode]="data.folderMode" (upload)="onUpload()" (close)="close()">
-    </app-upload-files>
-    <app-upload-progress *ngIf="showProgress" (close)="close()"> </app-upload-progress>
-  </div>`,
+  template: `
+    <div>
+      <app-upload-files
+        *ngIf="!showProgress"
+        [folderMode]="data.folderMode"
+        (upload)="onUpload()"
+        (close)="close()"></app-upload-files>
+      <app-upload-progress
+        *ngIf="showProgress"
+        (close)="close()"></app-upload-progress>
+    </div>
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadFilesDialogComponent {

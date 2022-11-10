@@ -1,16 +1,20 @@
-<div class="ontology" *ngIf="ontology">
+<div
+  class="ontology"
+  *ngIf="ontology">
   <h2>{{ addNew ? ('ontology.add_ontology' | translate) : ontology.title }}</h2>
 
   <form [formGroup]="ontologyForm">
     <div class="form-section-container">
-      <label class="title-xxs" for="title">
+      <label
+        class="title-xxs"
+        for="title">
         {{ 'ontology.ontology_name' | translate }}
       </label>
       <div>
-        <pa-input id="title"
-                  formControlName="title"
-                  [errorMessages]="validationMessages.title"
-        ></pa-input>
+        <pa-input
+          id="title"
+          formControlName="title"
+          [errorMessages]="validationMessages.title"></pa-input>
       </div>
     </div>
   </form>
@@ -20,8 +24,10 @@
       {{ 'generic.color' | translate }}
     </label>
     <div>
-      <app-color-picker [hexColors]="colors" [value]="ontology.color" (valueChange)="setColor($event)">
-      </app-color-picker>
+      <app-color-picker
+        [hexColors]="colors"
+        [value]="ontology.color"
+        (valueChange)="setColor($event)"></app-color-picker>
     </div>
   </div>
 
@@ -34,30 +40,36 @@
     </div>
 
     <div>
-      <div class="important" [class.disabled-color]="!addNew">
+      <div
+        class="important"
+        [class.disabled-color]="!addNew">
         <pa-icon name="warning"></pa-icon>
         {{ 'ontology.type_classification_important' | translate }}
       </div>
       <div>
-        <pa-checkbox *ngFor="let kind of kinds"
-                     [value]="isSelectedKind(kind.id)"
-                     (valueChange)="setKind(kind.id, $event)"
-                     [disabled]="!addNew">
+        <pa-checkbox
+          *ngFor="let kind of kinds"
+          [value]="isSelectedKind(kind.id)"
+          (valueChange)="setKind(kind.id, $event)"
+          [disabled]="!addNew">
           {{ kind.name | translate }}
         </pa-checkbox>
       </div>
     </div>
   </div>
 
-  <div *ngIf="showMultiple" class="form-section-container">
+  <div
+    *ngIf="showMultiple"
+    class="form-section-container">
     <label class="title-xxs">
       {{ 'ontology.type_labels' | translate }}
     </label>
     <div>
       <div>{{ 'ontology.type_labels_subtitle' | translate }}</div>
       <div>
-        <pa-checkbox [value]="!ontology.multiple"
-                     (valueChange)="setMultiple(!$event)">
+        <pa-checkbox
+          [value]="!ontology.multiple"
+          (valueChange)="setMultiple(!$event)">
           {{ 'ontology.excluding_labels' | translate }}
         </pa-checkbox>
       </div>
@@ -71,37 +83,44 @@
     <div>
       <div>{{ 'ontology.customize_classification' | translate }}</div>
       <div>{{ 'ontology.manage_labels' | translate }}</div>
-      <div cdkDropList class="label-list" (cdkDropListDropped)="drop($event)">
-        <app-label *ngFor="let title of labelOrder; let i = index"
-                   (labelDelete)="deleteLabel(title)"
-                   (labelChange)="modifyLabel(title, $event)"
-                   [label]="ontology.getLabel(title)"
-                   cdkDrag
-        >
-        </app-label>
+      <div
+        cdkDropList
+        class="label-list"
+        (cdkDropListDropped)="drop($event)">
+        <app-label
+          *ngFor="let title of labelOrder; let i = index"
+          (labelDelete)="deleteLabel(title)"
+          (labelChange)="modifyLabel(title, $event)"
+          [label]="ontology.getLabel(title)"
+          cdkDrag></app-label>
       </div>
-      <app-label [addNew]="true" (labelAdd)="addLabel($event)"></app-label>
+      <app-label
+        [addNew]="true"
+        (labelAdd)="addLabel($event)"></app-label>
     </div>
   </div>
 
   <div class="form-section-container">
     <div></div>
     <div class="button-container">
-      <pa-button kind="primary"
-                 (click)="saveOntology()"
-                 [disabled]="ontologyForm.invalid || !hasChanges">
+      <pa-button
+        kind="primary"
+        (click)="saveOntology()"
+        [disabled]="ontologyForm.invalid || !hasChanges">
         {{ 'generic.save' | translate }}
       </pa-button>
-      <pa-button *ngIf="!addNew && hasChanges"
-                 aspect="basic"
-                 (click)="cancelChanges()">
+      <pa-button
+        *ngIf="!addNew && hasChanges"
+        aspect="basic"
+        (click)="cancelChanges()">
         {{ 'generic.reset' | translate }}
       </pa-button>
     </div>
   </div>
 
-  <div *ngIf="!addNew"
-       class="form-section-container danger-zone">
+  <div
+    *ngIf="!addNew"
+    class="form-section-container danger-zone">
     <div class="danger-zone-title">
       <pa-icon name="warning"></pa-icon>
       <span>{{ 'generic.dangerous' | translate }}</span>
@@ -110,8 +129,9 @@
       <div class="danger-zone-warning">
         {{ 'ontology.delete_warning' | translate }}
       </div>
-      <pa-button kind="secondary"
-                 (click)="deleteOntology()">
+      <pa-button
+        kind="secondary"
+        (click)="deleteOntology()">
         {{ 'generic.delete' | translate }}
       </pa-button>
     </div>

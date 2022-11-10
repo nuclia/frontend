@@ -35,7 +35,7 @@ $chart-font-size: font-size(xs);
       border-top: rhythm(0.5) solid $color-dark-stronger;
       border-left: rhythm(0.5) solid transparent;
       border-right: rhythm(0.5) solid transparent;
-      bottom: - rhythm(0.5);
+      bottom: calc(#{rhythm(0.5)} * -1);
       content: '';
       height: 0;
       position: absolute;

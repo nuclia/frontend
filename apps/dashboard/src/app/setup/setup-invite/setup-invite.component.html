@@ -5,20 +5,25 @@
     </div>
     <h2 class="setup-invite-title">{{ 'setup.set_password' | translate }}</h2>
 
-    <form [formGroup]="passwordForm" (submit)="submit()">
-      <pa-input formControlName="username"
-                [errorMessages]="validationMessages.username"
-                autocapitalize="off">
+    <form
+      [formGroup]="passwordForm"
+      (submit)="submit()">
+      <pa-input
+        formControlName="username"
+        [errorMessages]="validationMessages.username"
+        autocapitalize="off">
         {{ 'login.full_name' | translate }}
       </pa-input>
-      <pa-input formControlName="password"
-                type="password"
-                [errorMessages]="validationMessages.passowrd">
+      <pa-input
+        formControlName="password"
+        type="password"
+        [errorMessages]="validationMessages.passowrd">
         {{ 'login.password' | translate }}
       </pa-input>
-      <pa-input formControlName="passwordConfirm"
-                type="password"
-                [errorMessages]="validationMessages.passwordConfirm">
+      <pa-input
+        formControlName="passwordConfirm"
+        type="password"
+        [errorMessages]="validationMessages.passwordConfirm">
         {{ 'generic.confirm_password' | translate }}
       </pa-input>
       <div class="setup-invite-actions">

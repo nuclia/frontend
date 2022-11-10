@@ -1,20 +1,27 @@
 <app-setup-container>
   <div class="setup-step1">
-    <app-setup-header [step]="step" [isSignup]="isSignup"></app-setup-header>
+    <app-setup-header
+      [step]="step"
+      [isSignup]="isSignup"></app-setup-header>
 
     <h2 class="setup-step1-title">{{ 'setup.set_password' | translate }}</h2>
 
-    <form [formGroup]="passwordForm" (submit)="submit()" id="password-form">
+    <form
+      [formGroup]="passwordForm"
+      (submit)="submit()"
+      id="password-form">
       <div class="mb-8">
-        <pa-input type="password"
-                  formControlName="password"
-                  [errorMessages]="validationMessages.password">
+        <pa-input
+          type="password"
+          formControlName="password"
+          [errorMessages]="validationMessages.password">
           {{ 'login.password' | translate }}
         </pa-input>
       </div>
-      <pa-input type="password"
-                formControlName="passwordConfirm"
-                [errorMessages]="validationMessages.passwordConfirm">
+      <pa-input
+        type="password"
+        formControlName="passwordConfirm"
+        [errorMessages]="validationMessages.passwordConfirm">
         {{ 'generic.confirm_password' | translate }}
       </pa-input>
       <div class="setup-step1-actions">

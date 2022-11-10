@@ -1,5 +1,6 @@
 import {
-  AfterContentInit, AfterViewInit,
+  AfterContentInit,
+  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -17,7 +18,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   templateUrl: 'hint.component.html',
   styleUrls: ['hint.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges {
   @Input() label?: string;

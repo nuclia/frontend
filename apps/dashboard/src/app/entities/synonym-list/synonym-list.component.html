@@ -1,19 +1,27 @@
-<div class="synonym-list" fxFlex="1 1 auto">
-  <div class="synonym-list-item" #item *ngFor="let entity of synonyms">
+<div
+  class="synonym-list"
+  fxFlex="1 1 auto">
+  <div
+    class="synonym-list-item"
+    #item
+    *ngFor="let entity of synonyms">
     <app-entity-name
       [entity]="entity"
       [editMode]="editMode"
       [isSynonym]="true"
       [group]="group"
       (unlink)="unlink.emit(entity)"
-      (delete)="delete.emit(entity)"
-    >
-    </app-entity-name>
+      (delete)="delete.emit(entity)"></app-entity-name>
   </div>
 </div>
 
-<div class="synonym-counter" #counter>
-  <button cdkOverlayOrigin #overlay="cdkOverlayOrigin" (click)="toggleOverflow()">
+<div
+  class="synonym-counter"
+  #counter>
+  <button
+    cdkOverlayOrigin
+    #overlay="cdkOverlayOrigin"
+    (click)="toggleOverflow()">
     <span>+{{ hiddenItems }}</span>
   </button>
 </div>
@@ -24,22 +32,21 @@
   [cdkConnectedOverlayOpen]="openOverflow"
   [cdkConnectedOverlayHasBackdrop]="true"
   (backdropClick)="toggleOverflow()"
-  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
->
-  <div class="synonym-overflow" cdkTrapFocus cdkTrapFocusAutoCapture>
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+  <div
+    class="synonym-overflow"
+    cdkTrapFocus
+    cdkTrapFocusAutoCapture>
     <div
       class="synonym-overflow-item"
-      *ngFor="let entity of synonyms | slice: synonyms.length - hiddenItems:synonyms.length"
-    >
+      *ngFor="let entity of synonyms | slice: synonyms.length - hiddenItems:synonyms.length">
       <app-entity-name
         [entity]="entity"
         [editMode]="editMode"
         [isSynonym]="true"
         [group]="group"
         (unlink)="unlink.emit(entity)"
-        (delete)="delete.emit(entity)"
-      >
-      </app-entity-name>
+        (delete)="delete.emit(entity)"></app-entity-name>
     </div>
   </div>
 </ng-template>

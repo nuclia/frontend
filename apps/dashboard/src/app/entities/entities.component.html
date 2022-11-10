@@ -3,25 +3,34 @@
 
   <div class="entities-actions">
     <div class="entities-search">
-      <pa-input id="entity-search"
-                [formControl]="searchInput"
-                (keydown.enter)="search()">{{ 'entity.entity_search' | translate }}</pa-input>
+      <pa-input
+        id="entity-search"
+        [formControl]="searchInput"
+        (keydown.enter)="search()">
+        {{ 'entity.entity_search' | translate }}
+      </pa-input>
 
-      <pa-button icon="search"
-                 aspect="basic"
-                 (click)="search()">{{'generic.search' | translate}}</pa-button>
+      <pa-button
+        icon="search"
+        aspect="basic"
+        (click)="search()">
+        {{ 'generic.search' | translate }}
+      </pa-button>
     </div>
 
-    <pa-button *ngIf="(canAddEntities | async) === true"
-               paTooltip="Add entity group"
-               icon="plus"
-               (click)="addEntityGroup()"
-    >{{'entity.add_group' | translate}}</pa-button>
+    <pa-button
+      *ngIf="(canAddEntities | async) === true"
+      paTooltip="Add entity group"
+      icon="plus"
+      (click)="addEntityGroup()">
+      {{ 'entity.add_group' | translate }}
+    </pa-button>
   </div>
 
-
   <ng-container *ngIf="searchTerm | async as term">
-    <div *ngIf="noResults | async" class="entities-no-results">
+    <div
+      *ngIf="noResults | async"
+      class="entities-no-results">
       <span [innerHtml]="'generic.no_results_for' | translate"></span>
       <span>&nbsp;</span>
       <strong>{{ term }}</strong>
@@ -39,7 +48,9 @@
     </div>
 
     <div *ngFor="let group of groups | async; trackBy: trackByFn">
-      <app-entity-group [group]="group" [searchTerm]="searchTerm | async"></app-entity-group>
+      <app-entity-group
+        [group]="group"
+        [searchTerm]="searchTerm | async"></app-entity-group>
     </div>
   </div>
 </div>

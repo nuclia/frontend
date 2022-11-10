@@ -1,11 +1,13 @@
-<div class="color-picker" fxLayout="row" fxLayoutGap="12px">
+<div
+  class="color-picker"
+  fxLayout="row"
+  fxLayoutGap="12px">
   <button
     *ngIf="selectedCustomColor"
     [class.selected]="true"
     [class.custom]="true"
     [attr.aria-pressed]="true"
-    [style.background-color]="'transparent'"
-  >
+    [style.background-color]="'transparent'">
     {{ value }}
   </button>
   <button
@@ -14,8 +16,7 @@
     [class.selected]="isSameHexColor(color, value)"
     [attr.aria-pressed]="isSameHexColor(color, value)"
     [style.background-color]="color"
-    [style.color]="getTextColor(color)"
-  >
+    [style.color]="getTextColor(color)">
     <span>a</span>
   </button>
 </div>

@@ -3,7 +3,9 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-upload-progress-dialog',
-  template: ` <app-upload-progress (close)="close()"></app-upload-progress> `,
+  template: `
+    <app-upload-progress (close)="close()"></app-upload-progress>
+  `,
   styleUrls: ['./upload-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

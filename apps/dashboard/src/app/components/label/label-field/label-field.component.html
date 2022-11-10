@@ -1,13 +1,17 @@
-<div *ngIf="hasLabels | async"
-     class="label-field">
-
-  <app-label-dropdown [labelSets]="labelSets$ | async"
-                      [selection]="selection"
-                      (selectionChange)="updateSelection($event)">{{ 'generic.select_tags' | translate }}</app-label-dropdown>
+<div
+  *ngIf="hasLabels | async"
+  class="label-field">
+  <app-label-dropdown
+    [labelSets]="labelSets$ | async"
+    [selection]="selection"
+    (selectionChange)="updateSelection($event)">
+    {{ 'generic.select_tags' | translate }}
+  </app-label-dropdown>
 
   <div class="label-field-names">
-    <app-label-list [labelSets]="labelSets$ | async"
-                    [labelSelection]="selection"
-                    (labelSelectionChange)="updateSelection($event)"></app-label-list>
+    <app-label-list
+      [labelSets]="labelSets$ | async"
+      [labelSelection]="selection"
+      (labelSelectionChange)="updateSelection($event)"></app-label-list>
   </div>
 </div>

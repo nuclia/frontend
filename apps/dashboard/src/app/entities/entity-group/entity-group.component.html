@@ -1,64 +1,88 @@
-<div class="entity-group"
-     [class.expanded]="expanded"
-     [class.disabled]="editMode"
-     [attr.role]="'button'"
-     [attr.aria-disabled]="editMode ? 'true' : null"
-     [attr.tabindex]="editMode ? '-1' : '0'"
-     [attr.aria-expanded]="expanded"
-     (click)="editMode ? null : toggleExpanded($event)"
->
+<div
+  class="entity-group"
+  [class.expanded]="expanded"
+  [class.disabled]="editMode"
+  [attr.role]="'button'"
+  [attr.aria-disabled]="editMode ? 'true' : null"
+  [attr.tabindex]="editMode ? '-1' : '0'"
+  [attr.aria-expanded]="expanded"
+  (click)="editMode ? null : toggleExpanded($event)">
   <div class="entity-group-cell cell-color">
-    <div class="color-border" [style.background-color]="group?.color || colors[this.group?.key]"></div>
+    <div
+      class="color-border"
+      [style.background-color]="group?.color || colors[this.group?.key]"></div>
   </div>
   <div class="entity-group-cell cell-name">
-    <pa-icon name="chevron-right" size="small"></pa-icon>
+    <pa-icon
+      name="chevron-right"
+      size="small"></pa-icon>
     <span>{{ group?.title || ('resource.entities.' + this.group?.key.toLowerCase() | translate) }}</span>
   </div>
   <div class="entity-group-cell cell-synonyms"></div>
   <div class="entity-group-cell cell-description"></div>
   <div class="entity-group-cell cell-presence"></div>
   <div class="entity-group-cell cell-actions">
-    <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="8px">
+    <div
+      fxLayout="row"
+      fxLayoutAlign="end center"
+      fxLayoutGap="8px">
       <ng-container *ngIf="!editMode && (isAdminOrContrib | async)">
-        <pa-button icon="edit"
-                   aspect="basic"
-                   size="small"
-                   paTooltip="generic.edit"
-                   (click)="toggleEditMode()">{{'generic.edit' | translate}}</pa-button>
-        <pa-button icon="add-file"
-                   aspect="basic"
-                   size="small"
-                   paTooltip="entity.new_entity"
-                   (click)="addEntity()">{{'entity.new_entity' | translate}}</pa-button>
-        <pa-button icon="trash"
-                   aspect="basic"
-                   size="small"
-                   paTooltip="generic.delete"
-                   (click)="deleteGroup()">{{'generic.delete' | translate}}</pa-button>
+        <pa-button
+          icon="edit"
+          aspect="basic"
+          size="small"
+          paTooltip="generic.edit"
+          (click)="toggleEditMode()">
+          {{ 'generic.edit' | translate }}
+        </pa-button>
+        <pa-button
+          icon="add-file"
+          aspect="basic"
+          size="small"
+          paTooltip="entity.new_entity"
+          (click)="addEntity()">
+          {{ 'entity.new_entity' | translate }}
+        </pa-button>
+        <pa-button
+          icon="trash"
+          aspect="basic"
+          size="small"
+          paTooltip="generic.delete"
+          (click)="deleteGroup()">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
       </ng-container>
       <ng-container *ngIf="editMode">
-        <pa-button icon="check"
-                   aspect="basic"
-                   size="small"
-                   paTooltip="entity.save_changes"
-                   (click)="saveGroup()">{{'entity.save_changes' | translate}}</pa-button>
-        <pa-button icon="cross"
-                   aspect="basic"
-                   size="small"
-                   paTooltip="generic.cancel"
-                   (click)="toggleEditMode()">{{'generic.cancel' | translate}}</pa-button>
+        <pa-button
+          icon="check"
+          aspect="basic"
+          size="small"
+          paTooltip="entity.save_changes"
+          (click)="saveGroup()">
+          {{ 'entity.save_changes' | translate }}
+        </pa-button>
+        <pa-button
+          icon="cross"
+          aspect="basic"
+          size="small"
+          paTooltip="generic.cancel"
+          (click)="toggleEditMode()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
       </ng-container>
     </div>
   </div>
 </div>
-<stf-expander [expanded]="expanded" [contentLoaded]="updateExpander">
+<stf-expander
+  [expanded]="expanded"
+  [contentLoaded]="updateExpander">
   <stf-expander-content>
     <div *ngIf="expanded">
-      <app-entity-list [group]="group"
-                       [editMode]="editMode"
-                       [searchTerm]="searchTerm"
-                       [searchResults]="searchResults$ | async"
-      ></app-entity-list>
+      <app-entity-list
+        [group]="group"
+        [editMode]="editMode"
+        [searchTerm]="searchTerm"
+        [searchResults]="searchResults$ | async"></app-entity-list>
     </div>
   </stf-expander-content>
 </stf-expander>

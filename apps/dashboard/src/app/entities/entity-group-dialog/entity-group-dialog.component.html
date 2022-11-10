@@ -1,31 +1,50 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{'entity.create_group' | translate}}</pa-modal-title>
+  <pa-modal-title>{{ 'entity.create_group' | translate }}</pa-modal-title>
   <pa-modal-content>
-    <form [formGroup]="entityForm" class="entity-form">
-      <pa-input formControlName="title"
-                [disabled]="isSaving"
-                (valueChange)="savingError = ''">{{'entity.form.title' | translate}}</pa-input>
-      <pa-input formControlName="color"
-                [placeholder]="'entity.form.color_placeholder' | translate"
-                [disabled]="isSaving"
-                (valueChange)="savingError = ''">{{'entity.form.color' | translate}}</pa-input>
-      <pa-textarea formControlName="entities"
-                   resizable="false"
-                   rows="3"
-                   [help]="'entity.form.entities_help' | translate"
-                   [disabled]="isSaving"
-                   (valueChange)="savingError = ''">{{'entity.entities' | translate}}</pa-textarea>
+    <form
+      [formGroup]="entityForm"
+      class="entity-form">
+      <pa-input
+        formControlName="title"
+        [disabled]="isSaving"
+        (valueChange)="savingError = ''">
+        {{ 'entity.form.title' | translate }}
+      </pa-input>
+      <pa-input
+        formControlName="color"
+        [placeholder]="'entity.form.color_placeholder' | translate"
+        [disabled]="isSaving"
+        (valueChange)="savingError = ''">
+        {{ 'entity.form.color' | translate }}
+      </pa-input>
+      <pa-textarea
+        formControlName="entities"
+        resizable="false"
+        rows="3"
+        [help]="'entity.form.entities_help' | translate"
+        [disabled]="isSaving"
+        (valueChange)="savingError = ''">
+        {{ 'entity.entities' | translate }}
+      </pa-textarea>
     </form>
-    <div class="error" *ngIf="savingError">
-      {{savingError | json}}
+    <div
+      class="error"
+      *ngIf="savingError">
+      {{ savingError | json }}
     </div>
   </pa-modal-content>
   <pa-modal-footer>
-    <pa-button kind="secondary"
-               aspect="basic"
-               (click)="modal.close()">{{'generic.cancel' | translate}}</pa-button>
-    <pa-button kind="primary"
-               [disabled]="!entityForm.valid || entityForm.pristine"
-               (click)="save()">{{'generic.save' | translate}}</pa-button>
+    <pa-button
+      kind="secondary"
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      [disabled]="!entityForm.valid || entityForm.pristine"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
   </pa-modal-footer>
 </pa-modal-dialog>

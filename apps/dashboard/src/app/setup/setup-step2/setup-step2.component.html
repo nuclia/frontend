@@ -1,6 +1,8 @@
 <app-setup-container>
   <div class="setup-step2">
-    <app-setup-header [step]="step" [isSignup]="isSignup"></app-setup-header>
+    <app-setup-header
+      [step]="step"
+      [isSignup]="isSignup"></app-setup-header>
 
     <h2 class="setup-step2-title">{{ 'setup.name_account' | translate }}</h2>
 
@@ -9,60 +11,76 @@
       [formGroup]="accountForm"
       (submit)="checkAccount()"
       fxLayout="row"
-      fxLayoutGap="9px"
-    >
+      fxLayoutGap="9px">
       <input
         #accountInput
         formControlName="accountName"
         type="text"
         [class.empty]="accountName.value.length === 0"
         placeholder="{{ 'setup.name_account_placeholder' | translate }}"
-        fxFlex="1 1 auto"
-      />
-      <pa-button type="submit"
-                 fxFlex="0 0 auto"
-                 [disabled]="accountName.value.length === 0">
+        fxFlex="1 1 auto" />
+      <pa-button
+        type="submit"
+        fxFlex="0 0 auto"
+        [disabled]="accountName.value.length === 0">
         {{ 'generic.verify' | translate }}
       </pa-button>
     </form>
 
     <div
       class="setup-step2-error"
-      *ngIf="accountName.invalid && (accountName.dirty || accountName.touched) && accountName.value.length > 0"
-    >
+      *ngIf="accountName.invalid && (accountName.dirty || accountName.touched) && accountName.value.length > 0">
       {{ 'account.account_name_invalid' | translate }}
     </div>
     <ng-container *ngIf="verified">
-      <div class="setup-step2-success" *ngIf="available" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="6px">
+      <div
+        class="setup-step2-success"
+        *ngIf="available"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        fxLayoutGap="6px">
         <pa-icon name="check"></pa-icon>
         <span>{{ 'setup.account_validated' | translate }}</span>
       </div>
-      <div class="setup-step2-error" *ngIf="!available">
+      <div
+        class="setup-step2-error"
+        *ngIf="!available">
         <span>{{ 'setup.account_name_not_available' | translate }}</span>
       </div>
     </ng-container>
 
-    <form *ngIf="verified && available" [formGroup]="kbForm" class="setup-step2-kb">
+    <form
+      *ngIf="verified && available"
+      [formGroup]="kbForm"
+      class="setup-step2-kb">
       <div class="setup-step2-kb-zone">
-        <div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
+        <div
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          fxLayoutGap="10px">
           <select
             stfSelect
             formControlName="kbZone"
             [attr.aria-label]="'generic.zone_and_provider' | translate"
-            fxFlex="0 1 310px"
-          >
-            <option value="" *ngIf="kbForm.value.kbZone === ''" selected>
+            fxFlex="0 1 310px">
+            <option
+              value=""
+              *ngIf="kbForm.value.kbZone === ''"
+              selected>
               {{ 'generic.zone_and_provider' | translate }}
             </option>
-            <option [value]="zone.id" *ngFor="let zone of zones">{{ zone.title }}</option>
+            <option
+              [value]="zone.id"
+              *ngFor="let zone of zones">
+              {{ zone.title }}
+            </option>
           </select>
           <div
             class="setup-step2-tooltip"
             stfTooltip
             stfTooltipText="setup.soon_more_areas"
             stfTooltipMaxWidth="120px"
-            fxFlex="0 0 auto"
-          >
+            fxFlex="0 0 auto">
             <span>i</span>
           </div>
         </div>
@@ -70,27 +88,37 @@
 
       <div class="setup-step2-kb-info">{{ 'setup.knowledge_box_creation' | translate }}</div>
 
-      <div class="setup-step2-kb-name" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="10px">
-        <input fxFlex="1 1 auto"
-               type="text"
-               formControlName="kbName"
-               [attr.readonly]="editKbName ? null : 'true'"
-               #kbInput
-        />
-        <pa-button *ngIf="!editKbName"
-                   aspect="basic"
-                   icon="edit"
-                   (click)="edit()">{{'generic.edit' | translate}}</pa-button>
+      <div
+        class="setup-step2-kb-name"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        fxLayoutGap="10px">
+        <input
+          fxFlex="1 1 auto"
+          type="text"
+          formControlName="kbName"
+          [attr.readonly]="editKbName ? null : 'true'"
+          #kbInput />
+        <pa-button
+          *ngIf="!editKbName"
+          aspect="basic"
+          icon="edit"
+          (click)="edit()">
+          {{ 'generic.edit' | translate }}
+        </pa-button>
       </div>
 
-      <div class="setup-step2-error" *ngIf="kbName.invalid && (kbName.dirty || kbName.touched)">
+      <div
+        class="setup-step2-error"
+        *ngIf="kbName.invalid && (kbName.dirty || kbName.touched)">
         {{ 'stash.kb_name_invalid' | translate }}
       </div>
     </form>
 
     <div class="setup-step2-actions">
-      <pa-button [disabled]="!(verified && available && kbForm.valid)"
-                 (click)="save()">
+      <pa-button
+        [disabled]="!(verified && available && kbForm.valid)"
+        (click)="save()">
         {{ 'generic.next_step' | translate }}
       </pa-button>
     </div>

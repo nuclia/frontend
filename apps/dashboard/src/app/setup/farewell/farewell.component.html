@@ -2,8 +2,10 @@
   <div class="message-container">
     <div class="message">
       <h1>{{ 'farewell.title' | translate }}</h1>
-      <div [innerHtml]="'farewell.message' | translate:{ username: (userPrefs | async)?.name || '', email: 'eudald@nuclia.com' }">
-      </div>
+      <div
+        [innerHtml]="
+          'farewell.message' | translate: { username: (userPrefs | async)?.name || '', email: 'eudald@nuclia.com' }
+        "></div>
       <div class="logo">
         <svg-icon src="assets/logos/logo_text.svg"></svg-icon>
       </div>

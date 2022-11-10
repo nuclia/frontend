@@ -1,45 +1,74 @@
 <div class="edit-widget">
   <section>
-    <form [formGroup]="mainForm" (change)="generateSnippet()">
+    <form
+      [formGroup]="mainForm"
+      (change)="generateSnippet()">
       <h2>
-        {{ 'stash.widgets.title' | translate }} <span>{{ isDefaultWidget ? 'Dashboard widget' : widget?.id }}</span>
+        {{ 'stash.widgets.title' | translate }}
+        <span>{{ isDefaultWidget ? 'Dashboard widget' : widget?.id }}</span>
       </h2>
       <div class="one-col">
         <div>
           <span class="label">{{ 'stash.widgets.preview' | translate }}</span>
         </div>
         <div>
-          <div id="preview" [innerHtml]="snippetPreview"></div>
+          <div
+            id="preview"
+            [innerHtml]="snippetPreview"></div>
         </div>
       </div>
       <div class="two-cols">
         <div>
           <div class="options">
             <div class="tabs">
-              <div class="label" [class.selected]="currentTab === 'pref'" (click)="currentTab = 'pref'">
+              <div
+                class="label"
+                [class.selected]="currentTab === 'pref'"
+                (click)="currentTab = 'pref'">
                 {{ 'stash.widgets.preferences' | translate }}
               </div>
-              <div class="label" [class.selected]="currentTab === 'style'" (click)="currentTab = 'style'">
+              <div
+                class="label"
+                [class.selected]="currentTab === 'style'"
+                (click)="currentTab = 'style'">
                 {{ 'stash.widgets.style' | translate }}
               </div>
             </div>
-            <div *ngIf="currentTab === 'pref'" class="tab-content">
-              <pa-select [label]="'stash.widgets.mode' | translate" formControlName="mode">
+            <div
+              *ngIf="currentTab === 'pref'"
+              class="tab-content">
+              <pa-select
+                [label]="'stash.widgets.mode' | translate"
+                formControlName="mode">
                 <pa-option value="input">{{ 'stash.widgets.mode.input' | translate }}</pa-option>
                 <pa-option value="form">{{ 'stash.widgets.mode.form' | translate }}</pa-option>
                 <pa-option value="video">{{ 'stash.widgets.mode.video' | translate }}</pa-option>
               </pa-select>
-              <div formGroupName="features" *ngIf="widgetMode !== 'video'">
-                <pa-toggle *ngIf="isTrainingEnabled | async" formControlName="suggestLabels">
-                  {{ 'stash.widgets.suggestLabels' | translate }}</pa-toggle>
+              <div
+                formGroupName="features"
+                *ngIf="widgetMode !== 'video'">
+                <pa-toggle
+                  *ngIf="isTrainingEnabled | async"
+                  formControlName="suggestLabels">
+                  {{ 'stash.widgets.suggestLabels' | translate }}
+                </pa-toggle>
                 <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
-                <pa-toggle formControlName="entityAnnotation">{{ 'stash.widgets.entityAnnotation' | translate }}</pa-toggle>
+                <pa-toggle formControlName="entityAnnotation">
+                  {{ 'stash.widgets.entityAnnotation' | translate }}
+                </pa-toggle>
               </div>
               <div *ngIf="mainForm.controls.mode.value === 'form'">
-                <pa-input [(value)]="placeholder" (valueChange)="onPlaceholderChange($event)">{{'stash.widgets.placeholder' | translate}}</pa-input>
+                <pa-input
+                  [(value)]="placeholder"
+                  (valueChange)="onPlaceholderChange($event)">
+                  {{ 'stash.widgets.placeholder' | translate }}
+                </pa-input>
               </div>
             </div>
-            <div *ngIf="currentTab === 'style'" class="tab-content" formGroupName="style">
+            <div
+              *ngIf="currentTab === 'style'"
+              class="tab-content"
+              formGroupName="style">
               <div *ngFor="let field of styleFormFields">
                 <pa-input [formControlName]="field">{{ field }}</pa-input>
               </div>
@@ -51,32 +80,39 @@
             <span>
               {{ 'stash.widgets.snippet' | translate }}
             </span>
-            <pa-button *ngIf="clipboardSupported"
-                       aspect="basic"
-                       size="small"
-                       [icon]="copyIcon"
-                       (click)="copy()">Copy snippet</pa-button>
+            <pa-button
+              *ngIf="clipboardSupported"
+              aspect="basic"
+              size="small"
+              [icon]="copyIcon"
+              (click)="copy()">
+              Copy snippet
+            </pa-button>
           </div>
           <pre><code class="highlight">{{ snippet }}</code></pre>
         </div>
       </div>
       <div class="buttons">
-        <pa-button kind="primary"
-                   [disabled]="(!mainForm.valid || mainForm.pristine) && (placeholder === widget?.placeholder)"
-                   (click)="save()">
+        <pa-button
+          kind="primary"
+          [disabled]="(!mainForm.valid || mainForm.pristine) && placeholder === widget?.placeholder"
+          (click)="save()">
           {{ 'generic.save' | translate }}
         </pa-button>
-        <pa-button [disabled]="mainForm.pristine"
-                   (click)="cancel()">
+        <pa-button
+          [disabled]="mainForm.pristine"
+          (click)="cancel()">
           {{ 'generic.cancel' | translate }}
         </pa-button>
-        <pa-button [disabled]="isDefaultWidget"
-                   (click)="rename()">
+        <pa-button
+          [disabled]="isDefaultWidget"
+          (click)="rename()">
           {{ 'stash.widgets.rename' | translate }}
         </pa-button>
-        <pa-button kind="destructive"
-                   [disabled]="isDefaultWidget"
-                   (click)="deleteWidget()">
+        <pa-button
+          kind="destructive"
+          [disabled]="isDefaultWidget"
+          (click)="deleteWidget()">
           {{ 'generic.delete' | translate }}
         </pa-button>
       </div>

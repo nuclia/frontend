@@ -25,13 +25,13 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
     description: [''],
   });
 
-  validationMessages: { [key:string]: IErrorMessages } = {
+  validationMessages: { [key: string]: IErrorMessages } = {
     slug: {
       sluggable: 'stash.kb_slug_invalid',
     } as IErrorMessages,
     title: {
       required: 'validation.required',
-    }
+    },
   };
 
   unsubscribeAll = new Subject<void>();

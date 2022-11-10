@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { StateService } from '@flaps/core';
 import { filter } from 'rxjs';
