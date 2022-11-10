@@ -11820,7 +11820,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.labeller</name>
+						<name>stash.settings.processes.labeler</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -11840,7 +11840,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.labeller.info</name>
+						<name>stash.settings.processes.labeler.info</name>
 						<description/>
 						<comment/>
 						<default_text/>
