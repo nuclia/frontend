@@ -18,7 +18,7 @@ describe('Rest', () => {
         expect.objectContaining({
           headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
           method: 'GET',
-        })
+        }),
       );
       expect(res.id).toEqual('abc');
       done();
@@ -39,7 +39,7 @@ describe('Rest', () => {
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
             method: 'POST',
-          })
+          }),
         );
         done();
       });
@@ -59,7 +59,7 @@ describe('Rest', () => {
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
             method: 'PUT',
-          })
+          }),
         );
         done();
       });
@@ -79,7 +79,7 @@ describe('Rest', () => {
             body: '{"id":"abc","title":"Gödel, Escher, Bach: an Eternal Golden Braid"}',
             headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
             method: 'PATCH',
-          })
+          }),
         );
         done();
       });
@@ -93,7 +93,7 @@ describe('Rest', () => {
         expect.objectContaining({
           headers: { Authorization: 'Bearer 12345', 'content-type': 'application/json', 'x-ndb-client': 'web' },
           method: 'DELETE',
-        })
+        }),
       );
       done();
     });
