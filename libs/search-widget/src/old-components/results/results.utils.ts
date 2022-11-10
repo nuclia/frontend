@@ -1,11 +1,11 @@
 import type { IResource } from '@nuclia/core';
 import type { DisplayedResource } from '../../core/models';
 import { navigateToLink } from '../../core/stores/widget.store';
-import { goToUrl } from '../../core/utils';
+import { goToUrl, isYoutubeUrl } from '../../core/utils';
 import { nucliaStore, setDisplayedResource } from '../../core/old-stores/main.store';
 import { combineLatest, take, map } from 'rxjs';
 
-export const goToResource = (params: DisplayedResource) => {
+export const goToResource = (params: DisplayedResource, text?: string) => {
   combineLatest([
     navigateToLink,
     nucliaStore().searchResults.pipe(
@@ -16,7 +16,9 @@ export const goToResource = (params: DisplayedResource) => {
     .subscribe(([navigateToLink, resource]) => {
       const linkField = Object.values(resource?.data?.links || {})[0];
       if (navigateToLink && linkField?.value?.uri) {
-        goToUrl(linkField.value.uri);
+        const uri = linkField.value.uri;
+        const isYoutubeLink = isYoutubeUrl(uri);
+        goToUrl(uri, text && !isYoutubeLink ? text : undefined);
       } else {
         setDisplayedResource(params);
       }

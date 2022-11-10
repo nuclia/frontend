@@ -125,11 +125,49 @@ export function slugify(text: string): string {
   );
 }
 
-export function goToUrl(url: string) {
+export function goToUrl(url: string, paragraphText?: string) {
   const urlObject = new URL(url);
   if (urlObject.protocol.startsWith('http')) {
+    let textFragment = '';
+    const supportsTextFragments = 'fragmentDirective' in document;
+    if (paragraphText && supportsTextFragments && !urlObject.hash) {
+      textFragment = getTextFragment(paragraphText);
+      if (textFragment) {
+        url = url + textFragment;
+      }
+    }
     window.location.href = url;
   } else {
     console.info(`Invalid URL: ${url}`);
   }
+}
+
+function getTextFragment(paragraphText: string) {
+  const encode = (text: string) => encodeURIComponent(text).replace('-', '%2D');
+  const minWords = 4;
+
+  // Remove highlight
+  paragraphText = paragraphText.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
+
+  // Split text into HTML elements and words
+  const elementDelimiter = /\s+\n\s+/;
+  const elements = paragraphText
+    .trim()
+    .split(elementDelimiter)
+    .filter((element) => element.length > 0)
+    .map((element) => element.split(/\s+/));
+
+  if (elements.length === 1) {
+    return `#:~:text=${encode(elements[0].join(' '))}`;
+  } else {
+    // Range syntax allow to select texts that span multiple elements (https://web.dev/text-fragments/#the-full-syntax)
+    const textStart = elements[0];
+    const textEnd = elements[elements.length - 1];
+
+    // A minimum number of words is required, otherwise the wrong range could be selected
+    if (textStart.length >= minWords && textEnd.length >= minWords) {
+      return `#:~:text=${encode(textStart.slice(0, 6).join(' '))},${encode(textEnd.slice(-6).join(' '))}`;
+    }
+  }
+  return '';
 }

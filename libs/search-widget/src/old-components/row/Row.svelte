@@ -42,7 +42,7 @@
           {#each $sentences as sentence}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => goToResource({ uid: sentence.rid, sentence })}>
+              on:click|preventDefault|stopPropagation={() => goToResource({ uid: sentence.rid, sentence }, sentence.text)}>
               {@html sentence.text}
             </li>
           {/each}
@@ -53,7 +53,7 @@
           {#each $paragraphs as paragraph}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => goToResource({ uid: paragraph.rid, paragraph })}>
+              on:click|preventDefault|stopPropagation={() => goToResource({ uid: paragraph.rid, paragraph }, paragraph.text)}>
               {@html paragraph.text}
             </li>
           {/each}

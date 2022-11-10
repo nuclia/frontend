@@ -3,7 +3,7 @@
   import { FIELD_TYPE } from '@nuclia/core';
   import { setDisplayedResource } from '../../core/old-stores/main.store';
   import { getField } from '../../core/api';
-  import { goToUrl } from '../../core/utils';
+  import { goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import { DisplayedResource, FieldType } from '../../core/models';
   import { suggestionsHasError } from '../../core/stores/suggestions.store';
@@ -12,10 +12,12 @@
   export let paragraphs: Search.Paragraph[] = [];
   export let intents: Classification[] = [];
 
-  const goToResource = (params: DisplayedResource) => {
+  const goToResource = (params: DisplayedResource, text?: string) => {
     if (navigateToLink.getValue() && params.paragraph?.field_type === FieldType.LINK) {
       getField(params.paragraph.rid, FIELD_TYPE.link, params.paragraph.field).subscribe((field) => {
-        goToUrl((field.value as LinkField).uri);
+        const uri = (field.value as LinkField).uri;
+        const isYoutubeLink = isYoutubeUrl(uri);
+        goToUrl(uri, text && !isYoutubeLink ? text : undefined);
       });
     } else {
       setDisplayedResource(params);
@@ -49,9 +51,9 @@
           {#each paragraphs.slice(0, 4) as paragraph}
             <div
               class="paragraph"
-              on:click|preventDefault={() => goToResource({ uid: paragraph.rid, paragraph })}
+              on:click|preventDefault={() => goToResource({ uid: paragraph.rid, paragraph }, paragraph.text)}
               on:keyup={(e) => {
-                if (e.key === 'Enter') goToResource({ uid: paragraph.rid, paragraph });
+                if (e.key === 'Enter') goToResource({ uid: paragraph.rid, paragraph }, paragraph.text);
               }}
               tabindex="0">
               {paragraph.text}
