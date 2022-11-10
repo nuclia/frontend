@@ -10,16 +10,17 @@
 
 
   input {
+    background-color: inherit;
+    border: 0;
+    box-sizing: border-box;
+    color: inherit;
+    font-family: inherit;
     font-size: var(--font-size-base);
     font-weight: var(--font-weight-body);
     line-height: calc(var(--line-height-body) * 1.5);
-    border: 0;
-    font-family: inherit;
     outline: none;
-    width: calc(100% - var(--rhythm-0_25));
-    color: inherit;
     text-overflow: ellipsis;
-    box-sizing: border-box;
+    width: calc(100% - var(--rhythm-0_25));
 
     -webkit-appearance: none;
   }
