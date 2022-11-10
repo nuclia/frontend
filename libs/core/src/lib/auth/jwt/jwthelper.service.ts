@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { JWT_OPTIONS } from './jwtoptions.token';
 
 @Injectable()
@@ -69,7 +69,7 @@ export class JwtHelperService {
         .call(this.b64decode(str), (c: any) => {
           return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         })
-        .join('')
+        .join(''),
     );
   }
 
@@ -82,7 +82,7 @@ export class JwtHelperService {
 
     if (parts.length !== 3) {
       throw new Error(
-        "The inspected token doesn't appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more."
+        "The inspected token doesn't appear to be a JWT. Check to make sure it has three parts and see https://jwt.io for more.",
       );
     }
 

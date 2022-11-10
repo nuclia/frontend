@@ -1,7 +1,5 @@
-
-export type UserType = 'ROOT' | 'DEALER' | 'USER'
+export type UserType = 'ROOT' | 'DEALER' | 'USER';
 export type Language = 'CA' | 'ES' | 'EN';
-
 
 export interface SignupData {
   name: string;
@@ -10,7 +8,7 @@ export interface SignupData {
 
 export type SignupResponse = {
   action: 'check-mail' | 'user-exists';
-}
+};
 
 export interface SetPasswordData {
   password: string;
@@ -70,10 +68,10 @@ export interface JwtUser {
 export interface JwtUserV2 {
   client_id: string;
   exp: number;
-  ext: { 
+  ext: {
     first_name: string;
-    type: string
-  }
+    type: string;
+  };
   iat: number;
   iss: string;
   jti: string;
@@ -89,15 +87,29 @@ export class JwtUserAdapter implements JwtUser {
     this.user = user;
   }
 
-  get first_name() { return this.user.ext.first_name }
-  get type() { return this.user.ext.type }
-  get id() { return this.user.sub }
-  get iat() { return this.user.iat }
-  get exp() { return this.user.exp }
+  get first_name() {
+    return this.user.ext.first_name;
+  }
+  get type() {
+    return this.user.ext.type;
+  }
+  get id() {
+    return this.user.sub;
+  }
+  get iat() {
+    return this.user.iat;
+  }
+  get exp() {
+    return this.user.exp;
+  }
 
   // Not implemented ?
-  get identifier() { return '' }
-  get session() { return '' }
+  get identifier() {
+    return '';
+  }
+  get session() {
+    return '';
+  }
 }
 
 export interface AuthTokens {

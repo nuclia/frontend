@@ -14,7 +14,6 @@ export class UserService {
   readonly userPrefs = this.userInfoSubject.pipe(map((user) => user?.preferences));
 
   constructor(private sdk: SDKService, private authService: AuthService, private route: ActivatedRoute) {
-
     this.sdk.nuclia.auth
       .isAuthenticated()
       .pipe(

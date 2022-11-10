@@ -1,4 +1,3 @@
-
 export interface Zone {
   id: string;
   slug: string;
