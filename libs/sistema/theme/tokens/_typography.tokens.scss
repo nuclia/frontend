@@ -4,9 +4,11 @@
 // TYPOGRAPHY
 // =================================================
 // Family
-$font-family-sans-serif:      'Source Sans Pro', Futura, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-$font-family-monospace:       'Source Code Pro', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-$font-family-body:            $font-family-sans-serif;
+$font-family-sans-serif: 'Source Sans Pro', Futura, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+  'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+$font-family-monospace: 'Source Code Pro', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+  monospace;
+$font-family-body: $font-family-sans-serif;
 
 // Weight
 $font-weight-regular: 400;
@@ -25,6 +27,7 @@ $font-weight-display-s: $font-weight-bold;
 
 // Sizes
 $font-size-base: 1rem;
+/* prettier-ignore */
 $font-size: (
   xxs: ($font-size-base * .625),  // 10px - 0.625 rem
   xs: ($font-size-base * .75),    // 12px - 0.75 rem
@@ -42,7 +45,7 @@ $font-size: (
   d3-md:  ($font-size-base * 3),      // 48px - 3 rem
 );
 @function font-size($t-shirt-size) {
-  @return map-get($font-size, $t-shirt-size)
+  @return map-get($font-size, $t-shirt-size);
 }
 
 $font-size-overline: font-size(xxs);
@@ -62,6 +65,7 @@ $font-size-display-s-md: font-size(d1-md);
 $font-size-display-m-md: font-size(d2-md);
 
 // Line height
+/* prettier-ignore */
 $line-height: (
   s:  ($font-size-base * 1),      // 16px - 1 rem
   m:  ($font-size-base * 1.25),   // 20px - 1.25 rem
@@ -77,7 +81,7 @@ $line-height: (
   d3-md:  ($font-size-base * 2.75),   // 44px - 2.75 rem
 );
 @function line-height($t-shirt-size) {
-  @return map-get($line-height, $t-shirt-size)
+  @return map-get($line-height, $t-shirt-size);
 }
 
 $line-height-body: 1.4;

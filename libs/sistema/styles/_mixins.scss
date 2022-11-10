@@ -1,4 +1,4 @@
-@import "../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables";
+@import '../../pastanaga-angular/projects/pastanaga-angular/src/styles/variables';
 
 @mixin dark-mode() {
   background-color: lighten($color-dark-stronger, 13);
