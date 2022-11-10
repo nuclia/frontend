@@ -25,7 +25,7 @@ export class AnonymousComponent {
       .search(this.query)
       .pipe(
         switchMap((results) => this.kb.getResource(Object.values(results.resources)[0].id)),
-        switchMap((res) => res.search(this.query, [Search.ResourceFeatures.PARAGRAPH]))
+        switchMap((res) => res.search(this.query, [Search.ResourceFeatures.PARAGRAPH])),
       )
       .subscribe((res) => {
         this.searchResults = res;
