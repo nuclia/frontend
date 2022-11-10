@@ -143,7 +143,7 @@ export function goToUrl(url: string, paragraphText?: string) {
 }
 
 function getTextFragment(paragraphText: string) {
-  const encode = (text: string) => encodeURIComponent(text).replace('-', '%2D');
+  const encode = (text: string) => encodeURIComponent(text).replace(/-/g, '%2D');
   const minWords = 4;
 
   // Remove highlight
