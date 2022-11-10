@@ -45,10 +45,10 @@ function fetchData() {
         return accountsData.length === 0
           ? rxjs.of([])
           : rxjs.forkJoin(
-            accountsData.map((account) =>
-              nuclia.db.getKnowledgeBoxes(account.slug).pipe(rxjs.map((kbs) => [account.slug, kbs])),
-            ),
-          );
+              accountsData.map((account) =>
+                nuclia.db.getKnowledgeBoxes(account.slug).pipe(rxjs.map((kbs) => [account.slug, kbs])),
+              ),
+            );
       }),
       rxjs.switchMap((kbsData) => {
         kbsData.forEach(([account, kbs]) => {

@@ -1,80 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <title>Nuclia options</title>
+    <link
+      rel="stylesheet"
+      href="../style.css" />
+  </head>
 
-<head>
-  <title>Nuclia options</title>
-  <link rel="stylesheet"
-        href="../style.css">
-</head>
+  <body>
+    <header>
+      <img
+        src="../logo.svg"
+        alt="Nuclia logo" />
+    </header>
 
-<body>
-  <header>
-    <img src="../logo.svg"
-         alt="Nuclia logo">
-  </header>
-
-  <main>
-    <div id="error" class="error hidden">
-      <div><strong>The link cannot be uploaded.</strong> Please check your settings</div>
-    </div>
-
-    <div id="auth" class="hidden">
-      <h1>Authentication</h1>
-      <div class="auth-message">You are not logged-in</div>
-      <button id="login">Login</button>
-    </div>
-
-    <div id="welcome" class="hidden">
-      <h1>Welcome</h1>
-      <div class="auth-message">Now you can upload data to Nuclia</div>
-      <button id="close" class="secondary">Close</button>
-    </div>
-
-    <div id="logged" class="hidden">
-      <h1>Settings</h1>
-      <fieldset>
-        <legend>Knowledge Box</legend>
-        <p>Set the Knowledge Box where you want to upload web content</p>
-
-        <div class="field">
-          <label for="account">Account:</label>
-          <select id="account">
-          </select>
+    <main>
+      <div
+        id="error"
+        class="error hidden">
+        <div>
+          <strong>The link cannot be uploaded.</strong>
+          Please check your settings
         </div>
-
-        <div class="field">
-          <label for="kb">Knowledge box:</label>
-          <select id="kb">
-          </select>
-        </div>
-
-      </fieldset>
-      <fieldset>
-        <legend>YouTube</legend>
-        <p>
-          Optional. When a <a href="https://developers.google.com/youtube/v3/getting-started">YouTube API key</a> is
-          defined, you can index all videos from a YouTube channel or YouTube playlist.
-        </p>
-        <div class="field">
-          <label for="youTubeKey">YouTube API key:</label>
-          <input id="youTubeKey"
-                 type="text"
-                 autocomplete="off">
-          <div class="help">Enter a YouTube Data API.</div>
-        </div>
-      </fieldset>
-
-      <div class="actions">
-        <button id="save">Save</button>
-        <span class="submit-message"></span>
       </div>
-    </div>
-  </main>
 
-  <script src="../api.js"></script>
-  <script src="../vendor/rxjs.umd.min.js"></script>
-  <script src="../vendor/nuclia-sdk.umd.min.js"></script>
-  <script src="options.js"></script>
-</body>
+      <div
+        id="auth"
+        class="hidden">
+        <h1>Authentication</h1>
+        <div class="auth-message">You are not logged-in</div>
+        <button id="login">Login</button>
+      </div>
 
+      <div
+        id="welcome"
+        class="hidden">
+        <h1>Welcome</h1>
+        <div class="auth-message">Now you can upload data to Nuclia</div>
+        <button
+          id="close"
+          class="secondary">
+          Close
+        </button>
+      </div>
+
+      <div
+        id="logged"
+        class="hidden">
+        <h1>Settings</h1>
+        <fieldset>
+          <legend>Knowledge Box</legend>
+          <p>Set the Knowledge Box where you want to upload web content</p>
+
+          <div class="field">
+            <label for="account">Account:</label>
+            <select id="account"></select>
+          </div>
+
+          <div class="field">
+            <label for="kb">Knowledge box:</label>
+            <select id="kb"></select>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>YouTube</legend>
+          <p>
+            Optional. When a
+            <a href="https://developers.google.com/youtube/v3/getting-started">YouTube API key</a>
+            is defined, you can index all videos from a YouTube channel or YouTube playlist.
+          </p>
+          <div class="field">
+            <label for="youTubeKey">YouTube API key:</label>
+            <input
+              id="youTubeKey"
+              type="text"
+              autocomplete="off" />
+            <div class="help">Enter a YouTube Data API.</div>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button id="save">Save</button>
+          <span class="submit-message"></span>
+        </div>
+      </div>
+    </main>
+
+    <script src="../api.js"></script>
+    <script src="../vendor/rxjs.umd.min.js"></script>
+    <script src="../vendor/nuclia-sdk.umd.min.js"></script>
+    <script src="options.js"></script>
+  </body>
 </html>
