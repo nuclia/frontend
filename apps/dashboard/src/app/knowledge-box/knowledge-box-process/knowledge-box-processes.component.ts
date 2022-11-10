@@ -14,11 +14,11 @@ import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
 export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject();
 
-  agreement = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
-  running = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
-  selectedLabelsets = { [TrainingType.classifier]: [] as string[], [TrainingType.labeller]: [] as string[] };
-  open = { [TrainingType.classifier]: false, [TrainingType.labeller]: false };
-  lastRun = { [TrainingType.classifier]: '', [TrainingType.labeller]: '' };
+  agreement = { [TrainingType.classifier]: false, [TrainingType.labeler]: false };
+  running = { [TrainingType.classifier]: false, [TrainingType.labeler]: false };
+  selectedLabelsets = { [TrainingType.classifier]: [] as string[], [TrainingType.labeler]: [] as string[] };
+  open = { [TrainingType.classifier]: false, [TrainingType.labeler]: false };
+  lastRun = { [TrainingType.classifier]: '', [TrainingType.labeler]: '' };
   hoursRequired = 10;
   cannotTrain = this.stateService.account.pipe(map((account) => account && account.type === 'stash-basic'));
   trainingTypes = TrainingType;
@@ -40,18 +40,18 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         switchMap((kb) =>
-          forkJoin([kb.training.getStatus(TrainingType.classifier), kb.training.getStatus(TrainingType.labeller)]),
+          forkJoin([kb.training.getStatus(TrainingType.classifier), kb.training.getStatus(TrainingType.labeler)]),
         ),
-        tap(([classifierStatus, labellerStatus]: TrainingTask[]) => {
+        tap(([classifierStatus, labelerStatus]: TrainingTask[]) => {
           this.lastRun[TrainingType.classifier] = classifierStatus.last_execution?.end || '';
-          this.lastRun[TrainingType.labeller] = labellerStatus.last_execution?.end || '';
+          this.lastRun[TrainingType.labeler] = labelerStatus.last_execution?.end || '';
         }),
         map((statuses) => statuses.map((status) => status.status === TrainingStatus.running)),
       )
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((statuses) => {
         this.running[TrainingType.classifier] = statuses[0];
-        this.running[TrainingType.labeller] = statuses[1];
+        this.running[TrainingType.labeler] = statuses[1];
         markForCheck(this.cdr);
       });
   }
