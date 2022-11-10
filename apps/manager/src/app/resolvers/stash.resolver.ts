@@ -13,8 +13,7 @@ export class StashResolve implements Resolve<ManagerStash | null> {
     const stashId = route.paramMap.get('stash');
     if (accountId && stashId) {
       return this.accountService.getStash(accountId, stashId);
-    }
-    else {
+    } else {
       return of(null);
     }
   }

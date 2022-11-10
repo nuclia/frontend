@@ -7,26 +7,26 @@
 @include main-layout();
 
 .sidebar-toggle {
-    color: var(--stf-white);
-    border: 0;
-    background-color: transparent;
+  color: var(--stf-white);
+  border: 0;
+  background-color: transparent;
 }
 
 .action_button {
-    color: var(--stf-gray-light);
-    border: 0;
-    background-color: transparent;
+  color: var(--stf-gray-light);
+  border: 0;
+  background-color: transparent;
 }
 
 .breadcrumb {
-    color: var(--stf-gray-light);
-    padding-left: 4px;
-    margin-top: 0;
-    margin-bottom: 0;
+  color: var(--stf-gray-light);
+  padding-left: 4px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .breadcrumb-element {
-    color: var(--stf-white);
+  color: var(--stf-white);
 }
 
 .accent {
@@ -34,18 +34,16 @@
   color: var(--stf-white);
 }
 
-
 .alert {
-    background: rgba(255,0,0,0.9);
-    border-radius: 5px;
-    padding: 10px;
-    color: white;
+  background: rgba(255, 0, 0, 0.9);
+  border-radius: 5px;
+  padding: 10px;
+  color: white;
 }
 
 .user-background {
-    background-image: url('./assets/images/background_manager.jpg');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
+  background-image: url('./assets/images/background_manager.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
-

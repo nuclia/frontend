@@ -25,10 +25,8 @@ export class ZoneListComponent implements OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
 
   constructor(private route: ActivatedRoute, private router: Router, private zoneService: ZoneService) {
-    this.route.data
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe(data => {
-        this.zones = new MatTableDataSource(data.zones);
+    this.route.data.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+      this.zones = new MatTableDataSource(data.zones);
     });
   }
 
@@ -40,7 +38,7 @@ export class ZoneListComponent implements OnDestroy {
   }
 
   refresh() {
-    this.zoneService.getZones().subscribe((zones: ZoneSummary[]) => { 
+    this.zoneService.getZones().subscribe((zones: ZoneSummary[]) => {
       this.zones = new MatTableDataSource(zones);
     });
   }
@@ -55,7 +53,9 @@ export class ZoneListComponent implements OnDestroy {
 
   deleteZone(zoneId: string) {
     if (confirm('Are you sure?')) {
-      this.zoneService.delete(zoneId).subscribe(() => { this.refresh() });
+      this.zoneService.delete(zoneId).subscribe(() => {
+        this.refresh();
+      });
     }
   }
 

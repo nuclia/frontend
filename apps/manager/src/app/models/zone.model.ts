@@ -1,4 +1,3 @@
-
 export interface Zone {
   id: string;
   slug: string;
@@ -17,7 +16,7 @@ export interface ZoneSummary {
   title: string;
   created: string;
   modified: string | null;
-  "@id": string;
+  '@id': string;
 }
 
 export interface ZoneAdd {
@@ -31,4 +30,4 @@ export interface ZonePatch {
   title?: string;
   url?: string;
   certificate?: string;
- }
+}

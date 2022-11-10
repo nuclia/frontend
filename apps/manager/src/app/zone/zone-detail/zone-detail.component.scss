@@ -1,10 +1,12 @@
 .entity {
-    margin: 20px;
-    max-width: 400px;
-    min-width: 300px;
-    padding: 20px;
+  margin: 20px;
+  max-width: 400px;
+  min-width: 300px;
+  padding: 20px;
 
-    textarea, input, mat-form-field {
-        min-width: 250px;
-    }
+  textarea,
+  input,
+  mat-form-field {
+    min-width: 250px;
+  }
 }

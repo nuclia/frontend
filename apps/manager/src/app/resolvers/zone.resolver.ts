@@ -12,8 +12,7 @@ export class ZoneResolve implements Resolve<Zone | null> {
     const zoneId = route.paramMap.get('zone');
     if (zoneId) {
       return this.zoneService.getZone(zoneId);
-    }
-    else {
+    } else {
       return of(null);
     }
   }
