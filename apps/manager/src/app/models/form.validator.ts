@@ -5,5 +5,5 @@ export function validSlug(): ValidatorFn {
     const slug = control.value;
     const regex = /[A-Z_&@-\s/\\]/;
     return regex.test(slug) ? { invalidCharacters: true } : null;
-  }
+  };
 }

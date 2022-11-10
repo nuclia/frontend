@@ -24,21 +24,34 @@
 <div class="sw-preview">
   <div class="actions">
     <button on:click={closePreview}>
-      <img src={`${getCDN()}icons/close.svg`} alt="icon" />
+      <img
+        src={`${getCDN()}icons/close.svg`}
+        alt="icon" />
     </button>
   </div>
   {#if $pdfPreview}
-    <Pdf src={$pdfUrl.uri} query={$pdfPreview.query} currentPage={$pdfPreview.page} totalPages={$pdfPreview.total} />
+    <Pdf
+      src={$pdfUrl.uri}
+      query={$pdfPreview.query}
+      currentPage={$pdfPreview.page}
+      totalPages={$pdfPreview.total} />
   {/if}
   {#if $mediaPreview}
-    <Player time={$mediaPreview.time} src={$mediaPreview.file.uri} type={$mediaPreview.file.content_type} />
+    <Player
+      time={$mediaPreview.time}
+      src={$mediaPreview.file.uri}
+      type={$mediaPreview.file.content_type} />
   {/if}
   {#if $youtubePreview}
-    <Youtube time={$youtubePreview.time} uri={$youtubePreview.uri} />
+    <Youtube
+      time={$youtubePreview.time}
+      uri={$youtubePreview.uri} />
   {/if}
   {#if $linkPreview}
     <Pdf src={$linkPreview.file.uri} />
   {/if}
 </div>
 
-<style lang="scss" src="./Preview.scss"></style>
+<style
+  lang="scss"
+  src="./Preview.scss"></style>

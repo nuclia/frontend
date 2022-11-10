@@ -57,7 +57,6 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
-
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
@@ -74,11 +73,21 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<div class="nuclia-widget" data-version="__NUCLIA_DEV_VERSION__">
+<div
+  class="nuclia-widget"
+  data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    <SearchInput {placeholder} searchBarWidget={true} />
+    <SearchInput
+      {placeholder}
+      searchBarWidget={true} />
   {/if}
-  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
+  <div
+    id="nuclia-glyphs-sprite"
+    hidden>
+    {@html svgSprite}
+  </div>
 </div>
 
-<style lang="scss" src="../../common/common-style.scss"></style>
+<style
+  lang="scss"
+  src="../../common/common-style.scss"></style>

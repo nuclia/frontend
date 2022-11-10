@@ -1,12 +1,13 @@
-<pa-button class="nsi-dropdown-button"
-           [size]="size"
-           [aspect]="aspect"
-           [kind]="kind"
-           [disabled]="disabled"
-           [paPopup]="popupRef"
-           [icon]="icon"
-           [iconAndText]="!!icon"
-           sameWidth>
+<pa-button
+  class="nsi-dropdown-button"
+  [size]="size"
+  [aspect]="aspect"
+  [kind]="kind"
+  [disabled]="disabled"
+  [paPopup]="popupRef"
+  [icon]="icon"
+  [iconAndText]="!!icon"
+  sameWidth>
   <ng-content></ng-content>
   <pa-icon [name]="open ? 'chevron-up' : 'chevron-down'"></pa-icon>
 </pa-button>

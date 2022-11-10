@@ -1,13 +1,13 @@
-@import "../../../../../pastanaga/src/lib/styles/stf";
+@import '../../../../../pastanaga/src/lib/styles/stf';
 
 .user-background {
   // H2SoFe LZgQXe TFhTPc
-  @include media-breakpoint("lt-sm") {
+  @include media-breakpoint('lt-sm') {
     background-color: white;
     background-image: none;
   }
 
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     min-height: 100vh;
     flex-direction: column;
     -webkit-flex-direction: column;
@@ -22,12 +22,12 @@
 
 .user-background:before,
 .user-background:after {
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     -webkit-box-flex: 1;
     box-flex: 1;
     -webkit-flex-grow: 1;
     flex-grow: 1;
-    content: "";
+    content: '';
     display: block;
     height: 24px;
   }
@@ -47,7 +47,7 @@
 
 .outter_account_form {
   // RAYh1e LZgQXe qmmlRd
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     width: 650px;
     min-height: 0;
     -webkit-flex-shrink: 0;
@@ -78,7 +78,7 @@
 
 .inner_account_form {
   // xkfVF
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     height: auto;
     min-height: 550px;
     overflow-y: auto;
@@ -103,7 +103,7 @@
   max-height: 400px;
   overflow-x: hidden;
   overflow-y: scroll;
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     padding-left: 40px;
     padding-right: 40px;
     margin: auto -40px;
@@ -123,37 +123,35 @@
   width: 99px;
 }
 
-
-
-
-.account_title { // jXeDnc
+.account_title {
+  // jXeDnc
   text-align: center;
   margin-bottom: 10px;
 
   h1 {
-      padding-bottom: 0;
-      padding-top: 16px;
-      font-size: 24px;
-      font-weight: 400;
-      line-height: 1.3333;
-      margin-bottom: 0;
-      margin-top: 0;
+    padding-bottom: 0;
+    padding-top: 16px;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 1.3333;
+    margin-bottom: 0;
+    margin-top: 0;
   }
 
   .description {
-      font-size: 16px;
-      font-weight: 400;
-      letter-spacing: .1px;
-      line-height: 1.5;
-      padding-bottom: 0;
-      padding-top: 8px;
-      margin-bottom: 0;
-      margin-top: 0;
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.1px;
+    line-height: 1.5;
+    padding-bottom: 0;
+    padding-top: 8px;
+    margin-bottom: 0;
+    margin-top: 0;
   }
 }
 
 .alert {
-  background: rgba(255,0,0,0.9);
+  background: rgba(255, 0, 0, 0.9);
   border-radius: 5px;
   padding: 10px;
   color: white;

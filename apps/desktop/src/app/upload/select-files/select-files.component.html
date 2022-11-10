@@ -1,37 +1,55 @@
 <div class="select-files">
-  <h3>{{ 'upload.select.title' | translate}}</h3>
+  <h3>{{ 'upload.select.title' | translate }}</h3>
   <div class="header">
-    <pa-checkbox [value]="isSelectingAll"
-                 (valueChange)="toggleSelectAll($event)">{{ 'upload.select.all' | translate }}</pa-checkbox>
-    <form *ngIf="!isSelectingAll"
-          class="search-form"
-          #form="ngForm"
-          (ngSubmit)="search(form.value.query)">
-      <pa-input [(ngModel)]="query"
-                name="query"></pa-input>
-      <pa-button size="small"
-                 kind="primary"
-                 type="submit">{{ 'upload.select.search' | translate }}</pa-button>
+    <pa-checkbox
+      [value]="isSelectingAll"
+      (valueChange)="toggleSelectAll($event)">
+      {{ 'upload.select.all' | translate }}
+    </pa-checkbox>
+    <form
+      *ngIf="!isSelectingAll"
+      class="search-form"
+      #form="ngForm"
+      (ngSubmit)="search(form.value.query)">
+      <pa-input
+        [(ngModel)]="query"
+        name="query"></pa-input>
+      <pa-button
+        size="small"
+        kind="primary"
+        type="submit">
+        {{ 'upload.select.search' | translate }}
+      </pa-button>
     </form>
   </div>
-  <div *ngIf="!isSelectingAll"
-       class="body"
-       #scroll>
+  <div
+    *ngIf="!isSelectingAll"
+    class="body"
+    #scroll>
     <table>
       <tr *ngFor="let resource of items">
         <td>
-          <pa-checkbox [value]="selection.isSelected(resource)"
-                       (valueChange)="toggle(resource)">{{ resource.title }}</pa-checkbox>
+          <pa-checkbox
+            [value]="selection.isSelected(resource)"
+            (valueChange)="toggle(resource)">
+            {{ resource.title }}
+          </pa-checkbox>
         </td>
       </tr>
     </table>
   </div>
   <div class="footer">
-    <pa-button qa="cancel"
-               kind="inverted"
-               (click)="cancel.next()">{{ 'generic.cancel' | translate }}</pa-button>
-    <pa-button qa="next"
-               [disabled]="selection.isEmpty()"
-               (click)="next.emit()">{{ 'generic.next' | translate }}</pa-button>
+    <pa-button
+      qa="cancel"
+      kind="inverted"
+      (click)="cancel.next()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      qa="next"
+      [disabled]="selection.isEmpty()"
+      (click)="next.emit()">
+      {{ 'generic.next' | translate }}
+    </pa-button>
   </div>
 </div>

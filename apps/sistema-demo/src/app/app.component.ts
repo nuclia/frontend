@@ -145,7 +145,11 @@ export const menu: IDemoMenuSection[] = [
 
 @Component({
   selector: 'nsd-root',
-  template: ` <pa-demo [menu]="menu" [logo]="logo"></pa-demo>`,
+  template: `
+    <pa-demo
+      [menu]="menu"
+      [logo]="logo"></pa-demo>
+  `,
   styles: [],
 })
 export class AppComponent {

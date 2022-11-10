@@ -1,83 +1,106 @@
 <div class="upload-files">
-  <pa-button class="close-button"
-             icon="cross"
-             aspect="basic"
-             (click)="close.emit()">{{'generic.close' | translate}}</pa-button>
+  <pa-button
+    class="close-button"
+    icon="cross"
+    aspect="basic"
+    (click)="close.emit()">
+    {{ 'generic.close' | translate }}
+  </pa-button>
 
-  <div mat-dialog-title
-       class="mb-28">
+  <div
+    mat-dialog-title
+    class="mb-28">
     <h1>{{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}</h1>
   </div>
   <div mat-dialog-content>
-    <div class="size-warning"
-         *ngIf="limitsExceeded">
+    <div
+      class="size-warning"
+      *ngIf="limitsExceeded">
       <pa-icon name="warning"></pa-icon>
       <span>
-        <strong>{{ 'upload.size_warning_1' | translate: {
-          maxMedia: (maxMediaFileSize | size),
-          max: (maxFileSize | size)
-          } }}</strong>
+        <strong>
+          {{
+            'upload.size_warning_1'
+              | translate
+                : {
+                    maxMedia: (maxMediaFileSize | size),
+                    max: (maxFileSize | size)
+                  }
+          }}
+        </strong>
         <span>{{ 'upload.size_warning_2' | translate }}</span>
       </span>
     </div>
 
-    <div stfFileDrop
-         [class.file-over]="hasBaseDropZoneOver"
-         (fileOver)="fileOverBase($event)"
-         (atFileDrop)="addFiles($event)"
-         (click)="chooseFiles($event)"
-         class="dropzone"
-         fxLayout="row"
-         fxLayoutAlign="center center">
+    <div
+      stfFileDrop
+      [class.file-over]="hasBaseDropZoneOver"
+      (fileOver)="fileOverBase($event)"
+      (atFileDrop)="addFiles($event)"
+      (click)="chooseFiles($event)"
+      class="dropzone"
+      fxLayout="row"
+      fxLayoutAlign="center center">
       <span>{{ (folderMode ? 'modal.upload.drop_folder' : 'modal.upload.drop') | translate }}</span>
     </div>
-    <input *ngIf="!folderMode"
-           type="file"
-           stfFileSelect
-           (atFileSelect)="addFiles($event)"
-           id="upload-file-chooser"
-           multiple
-           hidden />
-    <input *ngIf="folderMode"
-           type="file"
-           (atFileSelect)="addFiles($event)"
-           id="upload-file-chooser"
-           multiple
-           webkitdirectory
-           directory
-           hidden />
-    <pa-toggle *ngIf="folderMode"
-               [(value)]="useFoldersAsLabels"
-               [help]="'upload.use_folder_as_labels.help' | translate">{{ 'upload.use_folder_as_labels.label' |
-      translate }}</pa-toggle>
+    <input
+      *ngIf="!folderMode"
+      type="file"
+      stfFileSelect
+      (atFileSelect)="addFiles($event)"
+      id="upload-file-chooser"
+      multiple
+      hidden />
+    <input
+      *ngIf="folderMode"
+      type="file"
+      (atFileSelect)="addFiles($event)"
+      id="upload-file-chooser"
+      multiple
+      webkitdirectory
+      directory
+      hidden />
+    <pa-toggle
+      *ngIf="folderMode"
+      [(value)]="useFoldersAsLabels"
+      [help]="'upload.use_folder_as_labels.help' | translate">
+      {{ 'upload.use_folder_as_labels.label' | translate }}
+    </pa-toggle>
 
-    <app-label-field *ngIf="!useFoldersAsLabels"
-                     [(selection)]="selectedLabels"></app-label-field>
+    <app-label-field
+      *ngIf="!useFoldersAsLabels"
+      [(selection)]="selectedLabels"></app-label-field>
 
-    <div class="file-list"
-         *ngIf="filesWithoutAudio.length > 0">
-      <div class="file-item"
-           *ngFor="let file of filesWithoutAudio">
+    <div
+      class="file-list"
+      *ngIf="filesWithoutAudio.length > 0">
+      <div
+        class="file-item"
+        *ngFor="let file of filesWithoutAudio">
         <div class="file-name">{{ file.name }}</div>
         <div class="file-size">{{ file.size | size }}</div>
         <div class="file-lang"></div>
         <div class="file-actions">
-          <pa-button icon="trash"
-                     aspect="basic"
-                     size="small"
-                     iconSize="small"
-                     (click)="removeFile(file)">Remove file
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            size="small"
+            iconSize="small"
+            (click)="removeFile(file)">
+            Remove file
           </pa-button>
         </div>
       </div>
     </div>
 
-    <div class="select-language"
-         *ngIf="filesWithAudio.length > 0">
-      <div class="select-language-warning"
-           fxLayout="row"
-           fxLayoutAlign="start center"
-           fxLayoutGap="8px">
+    <div
+      class="select-language"
+      *ngIf="filesWithAudio.length > 0">
+      <div
+        class="select-language-warning"
+        fxLayout="row"
+        fxLayoutAlign="start center"
+        fxLayoutGap="8px">
         <pa-icon name="warning"></pa-icon>
         <div>{{ (filesWithAudio.length === 1 ? 'upload.audio_detected' : 'upload.audios_detected') | translate }}</div>
       </div>
@@ -85,11 +108,13 @@
       <div class="file-list">
         <ng-container *ngFor="let file of filesWithAudio; let i = index">
           <div class="file-item">
-            <div class="file-select"
-                 *ngIf="filesWithAudio.length > 1">
-              <pa-checkbox [id]="'upload-file-' + i"
-                           [value]="fileSelection.isSelected(file)"
-                           (change)="fileSelection.toggle(file)"></pa-checkbox>
+            <div
+              class="file-select"
+              *ngIf="filesWithAudio.length > 1">
+              <pa-checkbox
+                [id]="'upload-file-' + i"
+                [value]="fileSelection.isSelected(file)"
+                (change)="fileSelection.toggle(file)"></pa-checkbox>
             </div>
             <div class="file-name">
               <label [for]="'upload-file-' + i">{{ file.name }}</label>
@@ -97,22 +122,28 @@
             <div class="file-size">{{ file.size | size }}</div>
             <div class="file-lang">{{ file.lang || '–' }}</div>
             <div class="file-actions">
-              <pa-button icon="trash"
-                         aspect="basic"
-                         size="small"
-                         iconSize="small"
-                         (click)="removeFile(file)">Remove file
+              <pa-button
+                icon="trash"
+                aspect="basic"
+                size="small"
+                iconSize="small"
+                (click)="removeFile(file)">
+                Remove file
               </pa-button>
             </div>
           </div>
         </ng-container>
       </div>
-      <select stfSelect
-              [formControl]="langMultiSelect"
-              (change)="onSelectLanguageMulti($event)">
+      <select
+        stfSelect
+        [formControl]="langMultiSelect"
+        (change)="onSelectLanguageMulti($event)">
         <option value="">{{ 'generic.select_language' | translate }}</option>
-        <option [value]="language.lang"
-                *ngFor="let language of languageList">{{ language.label }}</option>
+        <option
+          [value]="language.lang"
+          *ngFor="let language of languageList">
+          {{ language.label }}
+        </option>
       </select>
     </div>
 
@@ -125,23 +156,35 @@
   -T /path/to/your-video.mp4</code></pre>
       <p>
         Note: the authorization token here will expired. If you want a long-term approach, you should use a service
-        access token and put it in the <code>X-STF-Serviceaccount</code> header.
+        access token and put it in the
+        <code>X-STF-Serviceaccount</code>
+        header.
       </p>
-      <a href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
-         target="_new">Learn more</a>
+      <a
+        href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
+        target="_new">
+        Learn more
+      </a>
     </ncom-hint>
   </div>
 
-  <div class="mt-28"
-       fxLayout="row"
-       fxLayoutAlign="center center"
-       fxLayoutGap="16px">
-    <pa-button aspect="basic"
-               (click)="close.emit()">{{ 'generic.cancel' | translate }}</pa-button>
+  <div
+    class="mt-28"
+    fxLayout="row"
+    fxLayoutAlign="center center"
+    fxLayoutGap="16px">
+    <pa-button
+      aspect="basic"
+      (click)="close.emit()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
 
-    <pa-button kind="primary"
-               [paTooltip]="!(files.length > 0 && pendingLangs > 0) ? null : 'upload.audios_detected'"
-               [disabled]="files.length === 0 || (files.length > 0 && pendingLangs > 0)"
-               (click)="startUpload()">{{ 'generic.add' | translate }}</pa-button>
+    <pa-button
+      kind="primary"
+      [paTooltip]="!(files.length > 0 && pendingLangs > 0) ? null : 'upload.audios_detected'"
+      [disabled]="files.length === 0 || (files.length > 0 && pendingLangs > 0)"
+      (click)="startUpload()">
+      {{ 'generic.add' | translate }}
+    </pa-button>
   </div>
 </div>

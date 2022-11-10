@@ -17,13 +17,23 @@
 
 <div class="sw-modal-header">
   {#if backButton}
-    <button class="back" on:click={back}>{$_('modal.back')}</button>
+    <button
+      class="back"
+      on:click={back}>
+      {$_('modal.back')}
+    </button>
   {/if}
   {#if closeButton}
-    <button class="close" on:click={close}>
-      <img src={`${getCDN()}icons/close-light.svg`} alt="icon" />
+    <button
+      class="close"
+      on:click={close}>
+      <img
+        src={`${getCDN()}icons/close-light.svg`}
+        alt="icon" />
     </button>
   {/if}
 </div>
 
-<style lang="scss" src="./ModalHeader.scss"></style>
+<style
+  lang="scss"
+  src="./ModalHeader.scss"></style>

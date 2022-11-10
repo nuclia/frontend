@@ -4,7 +4,9 @@
     <div class="date">{{ 'activity.timestamp' | translate }}</div>
     <div class="user">{{ 'activity.actor' | translate }}</div>
   </div>
-  <div class="activity-item" *ngFor="let item of items">
+  <div
+    class="activity-item"
+    *ngFor="let item of items">
     <div class="filename">
       {{ item.resource | async }}
     </div>

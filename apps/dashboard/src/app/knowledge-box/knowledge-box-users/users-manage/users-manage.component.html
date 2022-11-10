@@ -1,58 +1,96 @@
-<div class="mb-28" *ngIf="account | async as account">
+<div
+  class="mb-28"
+  *ngIf="account | async as account">
   <div class="users-amount">
-    {{ 'account.users_amount' | translate }} <strong>{{ account.current_users }}</strong>
+    {{ 'account.users_amount' | translate }}
+    <strong>{{ account.current_users }}</strong>
   </div>
-  <div class="users-left" *ngIf="account.max_users != null">
-    {{ 'account.users_left' | translate }} <strong>{{ account.max_users - account.current_users }}</strong>
+  <div
+    class="users-left"
+    *ngIf="account.max_users != null">
+    {{ 'account.users_left' | translate }}
+    <strong>{{ account.max_users - account.current_users }}</strong>
   </div>
 </div>
 
 <ng-container *ngIf="kb && isAccountManager | async">
-  <div class="add-user" *ngIf="canAddUsers | async">
-    <form (ngSubmit)="addUser()" [formGroup]="addForm" fxLayout="row" fxLayoutGap="24px" fxLayoutAlign="start center">
-      <input type="email"
-             formControlName="email"
-             stfFilterInput
-             [inputHeight]="32"
-             [inputColor]="modal ? 'gray' : 'white'"
-             placeholder="{{ 'accounts.add_user_input' | translate }}"
-      />
-      <select stfSelect selectSize="small" [selectColor]="modal ? 'gray' : 'white'" formControlName="role">
-        <option value="" *ngIf="addForm.value.role === ''">
+  <div
+    class="add-user"
+    *ngIf="canAddUsers | async">
+    <form
+      (ngSubmit)="addUser()"
+      [formGroup]="addForm"
+      fxLayout="row"
+      fxLayoutGap="24px"
+      fxLayoutAlign="start center">
+      <input
+        type="email"
+        formControlName="email"
+        stfFilterInput
+        [inputHeight]="32"
+        [inputColor]="modal ? 'gray' : 'white'"
+        placeholder="{{ 'accounts.add_user_input' | translate }}" />
+      <select
+        stfSelect
+        selectSize="small"
+        [selectColor]="modal ? 'gray' : 'white'"
+        formControlName="role">
+        <option
+          value=""
+          *ngIf="addForm.value.role === ''">
           {{ 'generic.role' | translate }}
         </option>
-        <option *ngFor="let role of initialRoles" [value]="role">
+        <option
+          *ngFor="let role of initialRoles"
+          [value]="role">
           {{ roleTitles[role] | translate }}
         </option>
       </select>
-      <pa-button type="submit" size="small" kind="secondary" [disabled]="addForm.invalid">
+      <pa-button
+        type="submit"
+        size="small"
+        kind="secondary"
+        [disabled]="addForm.invalid">
         {{ 'account.add_user' | translate }}
       </pa-button>
     </form>
   </div>
 </ng-container>
 
-<table cdk-table [dataSource]="usersKb | async" class="user-table">
+<table
+  cdk-table
+  [dataSource]="usersKb | async"
+  class="user-table">
   <ng-container cdkColumnDef="name">
-    <th cdk-header-cell *cdkHeaderCellDef>
+    <th
+      cdk-header-cell
+      *cdkHeaderCellDef>
       {{ 'generic.user' | translate }}
     </th>
-    <td cdk-cell *cdkCellDef="let user">
+    <td
+      cdk-cell
+      *cdkCellDef="let user">
       {{ user.name }} – {{ user.email }}
     </td>
   </ng-container>
 
   <ng-container cdkColumnDef="role">
-    <th cdk-header-cell *cdkHeaderCellDef>
+    <th
+      cdk-header-cell
+      *cdkHeaderCellDef>
       {{ 'stash.users.role' | translate }}
     </th>
-    <td cdk-cell *cdkCellDef="let user">
-      <select stfSelect
-              selectSize="small"
-              (ngModelChange)="changeRole(user.id, $event)"
-              [ngModel]="user.role"
-              [disabled]="(isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
-      >
+    <td
+      cdk-cell
+      *cdkCellDef="let user">
+      <select
+        stfSelect
+        selectSize="small"
+        (ngModelChange)="changeRole(user.id, $event)"
+        [ngModel]="user.role"
+        [disabled]="
+          (isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
+        ">
         <ng-container *ngFor="let role of roles">
           <option [value]="role">
             {{ roleTitles[role] | translate }}
@@ -63,17 +101,28 @@
   </ng-container>
 
   <ng-container cdkColumnDef="actions">
-    <th cdk-header-cell *cdkHeaderCellDef></th>
-    <td cdk-cell *cdkCellDef="let user">
-      <pa-button *ngIf="(isAccountManager | async) === true"
-                 aspect="basic"
-                 icon="trash"
-                 size="small"
-                 [disabled]="(usersKb | async)?.length < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
-                 (click)="deleteUser(user)">{{'generic.delete' | translate}}</pa-button>
+    <th
+      cdk-header-cell
+      *cdkHeaderCellDef></th>
+    <td
+      cdk-cell
+      *cdkCellDef="let user">
+      <pa-button
+        *ngIf="(isAccountManager | async) === true"
+        aspect="basic"
+        icon="trash"
+        size="small"
+        [disabled]="(usersKb | async)?.length < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
+        (click)="deleteUser(user)">
+        {{ 'generic.delete' | translate }}
+      </pa-button>
     </td>
   </ng-container>
 
-  <tr cdk-header-row *cdkHeaderRowDef="columns"></tr>
-  <tr cdk-row *cdkRowDef="let row; columns: columns"></tr>
+  <tr
+    cdk-header-row
+    *cdkHeaderRowDef="columns"></tr>
+  <tr
+    cdk-row
+    *cdkRowDef="let row; columns: columns"></tr>
 </table>

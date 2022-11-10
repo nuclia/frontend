@@ -17,7 +17,7 @@ export class STFSplashScreenService {
   constructor(
     private _animationBuilder: AnimationBuilder,
     @Inject(DOCUMENT) private _document: any,
-    private _router: Router
+    private _router: Router,
   ) {
     // Initialize
     this._init();
@@ -39,7 +39,7 @@ export class STFSplashScreenService {
       this._router.events
         .pipe(
           filter((event) => event instanceof NavigationEnd),
-          take(1)
+          take(1),
         )
         .subscribe(() => {
           setTimeout(() => {
@@ -92,7 +92,7 @@ export class STFSplashScreenService {
           style({
             opacity: '0',
             zIndex: '-10',
-          })
+          }),
         ),
       ])
       .create(this.splashScreenEl);

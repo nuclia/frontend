@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { UserService } from "@flaps/core";
+import { UserService } from '@flaps/core';
 
 @Component({
   selector: 'app-setup-step1',

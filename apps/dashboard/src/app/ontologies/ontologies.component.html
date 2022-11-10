@@ -1,10 +1,15 @@
-<stf-section-navbar [title]="'generic.ontologies'" [routes]="(routes | async) || []" [hasInnerRoutes]="true">
+<stf-section-navbar
+  [title]="'generic.ontologies'"
+  [routes]="(routes | async) || []"
+  [hasInnerRoutes]="true">
   <stf-section-navbar-body class="ontologies">
     <router-outlet></router-outlet>
   </stf-section-navbar-body>
 
   <stf-section-navbar-footer>
-    <pa-button (click)="addOntology()" [disabled]="!(isAdminOrContrib | async)">
+    <pa-button
+      (click)="addOntology()"
+      [disabled]="!(isAdminOrContrib | async)">
       {{ 'ontology.add_ontology' | translate }}
     </pa-button>
   </stf-section-navbar-footer>

@@ -12,8 +12,7 @@ export class AccountResolve implements Resolve<Account | null> {
     const accountId = route.paramMap.get('account');
     if (accountId) {
       return this.accountService.getAccount(accountId);
-    }
-    else {
+    } else {
       return of(null);
     }
   }

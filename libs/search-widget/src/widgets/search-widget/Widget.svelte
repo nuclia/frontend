@@ -6,24 +6,15 @@
   import { resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { get_current_component } from "svelte/internal";
-  import {
-    setCDN,
-    coerceBooleanProperty,
-    loadFonts,
-    loadSvgSprite,
-  } from '../../core/utils';
+  import { get_current_component } from 'svelte/internal';
+  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
-  import {
-    activateFilters,
-    activateTypeAheadSuggestions,
-    unsubscribeAllEffects,
-  } from '../../core/stores/effects';
+  import { activateFilters, activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
 
   export let backend = 'https://nuclia.cloud/api';
@@ -50,10 +41,13 @@
 
   const thisComponent = get_current_component();
   const dispatchCustomEvent = (name: string, detail: string) => {
-    thisComponent.dispatchEvent && thisComponent.dispatchEvent(new CustomEvent(name, {
-      detail,
-      composed: true,
-    }));
+    thisComponent.dispatchEvent &&
+      thisComponent.dispatchEvent(
+        new CustomEvent(name, {
+          detail,
+          composed: true,
+        }),
+      );
   };
 
   export const displayResource = (uid: string) => {
@@ -115,12 +109,14 @@
 
     return () => reset();
   });
-
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
 
-<div class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
+<div
+  class="nuclia-widget"
+  {style}
+  data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
       <PopupSearch {placeholder} />
@@ -132,7 +128,13 @@
     <ViewerModal {permalinkEnabled} />
   {/if}
 
-  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
+  <div
+    id="nuclia-glyphs-sprite"
+    hidden>
+    {@html svgSprite}
+  </div>
 </div>
 
-<style lang="scss" src="./Widget.scss"></style>
+<style
+  lang="scss"
+  src="./Widget.scss"></style>

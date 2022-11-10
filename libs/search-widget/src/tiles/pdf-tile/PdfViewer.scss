@@ -13,7 +13,7 @@
     bottom: var(--rhythm-3);
     display: flex;
     gap: var(--rhythm-1);
-    left: calc(var(--container-width)/2);
+    left: calc(var(--container-width) / 2);
     padding: var(--rhythm-1);
     position: fixed;
     transform: translateX(-50%);

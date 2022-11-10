@@ -4,7 +4,7 @@
   position: relative;
   display: block;
   &::after {
-    content:"";
+    content: '';
     display: block;
     height: 1px;
     background-color: #fafafa;
@@ -23,6 +23,6 @@ button {
   height: 37px;
   cursor: pointer;
   &:hover {
-    background-color: #F7F7F8;
+    background-color: #f7f7f8;
   }
 }

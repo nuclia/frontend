@@ -1,70 +1,83 @@
-<div class="section-navbar"
-     fxLayout="row"
-     fxLayout.lt-lg="column">
-  <div class="section-navbar-sidebar"
-       fxFlex="0 1 auto"
-       fxFlex.lt-lg="0 0 auto"
-       #navigation>
-    <div class="section-navbar-sidebar-container"
-         fxLayout="column"
-         fxLayout.lt-lg="row"
-         fxLayoutAlign.lt-lg="start center"
-         fxLayoutGap.lt-lg="40px">
-
+<div
+  class="section-navbar"
+  fxLayout="row"
+  fxLayout.lt-lg="column">
+  <div
+    class="section-navbar-sidebar"
+    fxFlex="0 1 auto"
+    fxFlex.lt-lg="0 0 auto"
+    #navigation>
+    <div
+      class="section-navbar-sidebar-container"
+      fxLayout="column"
+      fxLayout.lt-lg="row"
+      fxLayoutAlign.lt-lg="start center"
+      fxLayoutGap.lt-lg="40px">
       <header fxFlex="0 1 auto">
         <h2 *ngIf="title">{{ title | translate }}</h2>
         <ng-content select="stf-section-navbar-header"></ng-content>
       </header>
 
-      <div [fxHide.lt-lg]="true"
-           fxFlex="1 1 0"
-           class="section-navbar-items">
-        <div class="section-navbar-item"
-             *ngFor="let item of navItems; let i = index">
-          <button [class.active]="i === activeIndex"
-                  (click)="onClick(i)">
+      <div
+        [fxHide.lt-lg]="true"
+        fxFlex="1 1 0"
+        class="section-navbar-items">
+        <div
+          class="section-navbar-item"
+          *ngFor="let item of navItems; let i = index">
+          <button
+            [class.active]="i === activeIndex"
+            (click)="onClick(i)">
             {{ item.title | translate }}
           </button>
         </div>
       </div>
 
-      <div *ngIf="navItems.length > 0"
-           [fxHide]="true"
-           [fxShow.lt-lg]="true"
-           fxFlex="0 0 auto"
-           class="section-navbar-select">
-        <button class="current-section"
-                (click)="toggleSelect()"
-                fxLayout="row"
-                fxLayoutAlign="start center"
-                fxLayoutGap="10px"
-                cdkOverlayOrigin
-                #trigger="cdkOverlayOrigin">
-          <span *ngIf="navItems && navItems.length > 0 && activeIndex >= 0"
-                class="current-section-title">
+      <div
+        *ngIf="navItems.length > 0"
+        [fxHide]="true"
+        [fxShow.lt-lg]="true"
+        fxFlex="0 0 auto"
+        class="section-navbar-select">
+        <button
+          class="current-section"
+          (click)="toggleSelect()"
+          fxLayout="row"
+          fxLayoutAlign="start center"
+          fxLayoutGap="10px"
+          cdkOverlayOrigin
+          #trigger="cdkOverlayOrigin">
+          <span
+            *ngIf="navItems && navItems.length > 0 && activeIndex >= 0"
+            class="current-section-title">
             {{ navItems[activeIndex].title | translate }}
           </span>
           <span *ngIf="activeIndex === -1">
             {{ 'generic.select' | translate }}
           </span>
-          <span class="arrow"
-                [class.arrow-up]="sectionsOpen"></span>
+          <span
+            class="arrow"
+            [class.arrow-up]="sectionsOpen"></span>
         </button>
-        <ng-template cdkConnectedOverlay
-                     [cdkConnectedOverlayOrigin]="trigger"
-                     [cdkConnectedOverlayOpen]="sectionsOpen"
-                     [cdkConnectedOverlayHasBackdrop]="true"
-                     [cdkConnectedOverlayOffsetY]="8"
-                     [cdkConnectedOverlayPositions]="position"
-                     (backdropClick)="toggleSelect()"
-                     cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
-          <div [fxHide]="true"
-               [fxShow.lt-lg]="true"
-               class="section-select-options">
-            <div class="section-navbar-item"
-                 *ngFor="let item of navItems; let i = index">
-              <button [class.active]="i === activeIndex"
-                      (click)="toggleSelect(); onClick(i);">
+        <ng-template
+          cdkConnectedOverlay
+          [cdkConnectedOverlayOrigin]="trigger"
+          [cdkConnectedOverlayOpen]="sectionsOpen"
+          [cdkConnectedOverlayHasBackdrop]="true"
+          [cdkConnectedOverlayOffsetY]="8"
+          [cdkConnectedOverlayPositions]="position"
+          (backdropClick)="toggleSelect()"
+          cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+          <div
+            [fxHide]="true"
+            [fxShow.lt-lg]="true"
+            class="section-select-options">
+            <div
+              class="section-navbar-item"
+              *ngFor="let item of navItems; let i = index">
+              <button
+                [class.active]="i === activeIndex"
+                (click)="toggleSelect(); onClick(i)">
                 {{ item.title | translate }}
               </button>
             </div>
@@ -77,8 +90,9 @@
       </footer>
     </div>
   </div>
-  <div fxFlex="1 1 0"
-       class="section-navbar-content">
+  <div
+    fxFlex="1 1 0"
+    class="section-navbar-content">
     <ng-content select="stf-section-navbar-body"></ng-content>
   </div>
 </div>

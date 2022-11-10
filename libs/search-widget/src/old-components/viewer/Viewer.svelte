@@ -2,7 +2,14 @@
   import { getFile, loadEntities } from '../../core/api';
   import { nucliaState } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
-  import { findFileByType, search, selectParagraph, viewerStore, viewerState, selectSentence } from '../../core/old-stores/viewer.store';
+  import {
+    findFileByType,
+    search,
+    selectParagraph,
+    viewerStore,
+    viewerState,
+    selectSentence,
+  } from '../../core/old-stores/viewer.store';
   import { onDestroy, onMount } from 'svelte';
   import { combineLatest, filter, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';
@@ -24,12 +31,12 @@
   const results = viewerState.results;
   const hasSearchError = viewerState.hasSearchError;
   const showPreview = viewerState.showPreview;
-  const notProcessed = viewerState.isNotProcessed
+  const notProcessed = viewerState.isNotProcessed;
 
   $: {
     imagePath = findFileByType(resource.value, 'image/');
     if (imagePath) {
-      getFile(imagePath).subscribe((url) => image = url);
+      getFile(imagePath).subscribe((url) => (image = url));
     }
   }
 
@@ -61,18 +68,15 @@
         viewerStore.results.next(paragraphs);
       }),
 
-    combineLatest([
-      paragraphs,
-      viewerStore.currentField,
-    ]).pipe(
-      filter(([paragraphs, currentField]) => paragraphs?.length > 0 && !!currentField),
-    ).subscribe(([paragraphs, currentField]) => {
-      setAnnotations(resource.value!, paragraphs, currentField);
-    }),
+    combineLatest([paragraphs, viewerStore.currentField])
+      .pipe(filter(([paragraphs, currentField]) => paragraphs?.length > 0 && !!currentField))
+      .subscribe(([paragraphs, currentField]) => {
+        setAnnotations(resource.value!, paragraphs, currentField);
+      }),
   ];
 
   onMount(() => {
-    loadEntities().subscribe(entities => entityGroups.set(entities));
+    loadEntities().subscribe((entities) => entityGroups.set(entities));
   });
 
   onDestroy(() => {
@@ -81,41 +85,54 @@
   });
 </script>
 
-<div class="sw-viewer" style="--header-height: {headerHeight}">
-  <div class="viewer-header" bind:this={header}>
+<div
+  class="sw-viewer"
+  style="--header-height: {headerHeight}">
+  <div
+    class="viewer-header"
+    bind:this={header}>
     <Header />
   </div>
-  <div class="viewer-body" class:preview={$showPreview}>
+  <div
+    class="viewer-body"
+    class:preview={$showPreview}>
     <div class="viewer-left">
-      <InputViewer/>
+      <InputViewer />
       {#if $notProcessed}
         {$_('error.processing')}
       {/if}
 
       <div class="paragraphs">
         {#if $hasSearchError}
-          <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
+          <div>
+            <strong>{$_('error.search')}</strong>
+            <span>{$_('error.search-beta')}</span>
+          </div>
         {:else}
-          <Paragraphs paragraphs={$results || $paragraphs}/>
+          <Paragraphs paragraphs={$results || $paragraphs} />
         {/if}
       </div>
 
       {#if image}
         <h2>Images</h2>
         <div>
-          <img src={image} alt={$resource?.title + ' preview'}/>
+          <img
+            src={image}
+            alt={$resource?.title + ' preview'} />
         </div>
       {/if}
     </div>
 
     <div class="viewer-right">
       {#if $showPreview}
-        <Preview/>
+        <Preview />
       {:else}
-        <Metadata/>
+        <Metadata />
       {/if}
     </div>
   </div>
 </div>
 
-<style lang="scss" src="./Viewer.scss"></style>
+<style
+  lang="scss"
+  src="./Viewer.scss"></style>

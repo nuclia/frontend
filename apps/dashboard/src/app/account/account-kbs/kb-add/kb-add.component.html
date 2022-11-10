@@ -1,112 +1,152 @@
 <div class="kb-add">
   <header>
     <h1>{{ 'stash.create' | translate }}</h1>
-    <pa-button class="close-button"
-               icon="cross"
-               aspect="basic"
-               [disabled]="saving"
-               (click)="close()">{{'generic.close' | translate}}</pa-button>
+    <pa-button
+      class="close-button"
+      icon="cross"
+      aspect="basic"
+      [disabled]="saving"
+      (click)="close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
   </header>
 
-  <form class="form-container"
-        [formGroup]="kbForm"
-        (ngSubmit)="save()">
-    <div *ngIf="step === 0"
-         class="modal-body">
-      <div class="mb-24" fxLayout="row">
-        <label for="kb-title" fxFlex="24%" class="kb-add-field-name">
+  <form
+    class="form-container"
+    [formGroup]="kbForm"
+    (ngSubmit)="save()">
+    <div
+      *ngIf="step === 0"
+      class="modal-body">
+      <div
+        class="mb-24"
+        fxLayout="row">
+        <label
+          for="kb-title"
+          fxFlex="24%"
+          class="kb-add-field-name">
           {{ 'stash.name' | translate }}
         </label>
         <div fxFlex="70%">
-          <pa-input id="kb-title"
-                    formControlName="title"
-                    [errorMessages]="validationMessages.title"
-          ></pa-input>
+          <pa-input
+            id="kb-title"
+            formControlName="title"
+            [errorMessages]="validationMessages.title"></pa-input>
         </div>
       </div>
 
       <div fxLayout="row">
-        <label for="kb-description" fxFlex="24%" class="kb-add-field-name">
+        <label
+          for="kb-description"
+          fxFlex="24%"
+          class="kb-add-field-name">
           {{ 'generic.description' | translate }}
         </label>
         <div fxFlex="70%">
-          <pa-textarea id="kb-description"
-                       formControlName="description"
-                       rows="4"></pa-textarea>
+          <pa-textarea
+            id="kb-description"
+            formControlName="description"
+            rows="4"></pa-textarea>
         </div>
       </div>
 
       <div class="kb-add-separator"></div>
 
-      <div class="kb-add-zone" *ngIf="data.zones">
+      <div
+        class="kb-add-zone"
+        *ngIf="data.zones">
         <h2>{{ 'generic.zone' | translate }}</h2>
         <div class="mb-24">{{ 'stash.create.zone_description' | translate }}</div>
-        <pa-select formControlName="zone" class="kb-add-zone-select">
-          <pa-option *ngFor="let zone of data.zones"
-                     [value]="zone.id">{{ zone.title }}</pa-option>
+        <pa-select
+          formControlName="zone"
+          class="kb-add-zone-select">
+          <pa-option
+            *ngFor="let zone of data.zones"
+            [value]="zone.id">
+            {{ zone.title }}
+          </pa-option>
         </pa-select>
       </div>
     </div>
 
-    <div *ngIf="step === 1"
-         class="modal-body">
+    <div
+      *ngIf="step === 1"
+      class="modal-body">
       <h2>{{ 'stash.create.languages' | translate }}</h2>
       <p>{{ 'stash.create.languages-help' | translate }}</p>
-      <pa-radio-group name="radio-group-language"
-                      formControlName="languageMode">
-        <pa-radio *ngFor="let radio of languages"
-                  [value]="radio.value">{{radio.label | translate}}</pa-radio>
+      <pa-radio-group
+        name="radio-group-language"
+        formControlName="languageMode">
+        <pa-radio
+          *ngFor="let radio of languages"
+          [value]="radio.value">
+          {{ radio.label | translate }}
+        </pa-radio>
       </pa-radio-group>
 
-      <pa-select *ngIf="kbForm.controls.languageMode.value === 'monolingual'"
-                 formControlName="selectedLanguage">
-        <pa-option *ngFor="let lang of languageList"
-                   [value]="lang">{{ 'language.' + lang | translate }}</pa-option>
+      <pa-select
+        *ngIf="kbForm.controls.languageMode.value === 'monolingual'"
+        formControlName="selectedLanguage">
+        <pa-option
+          *ngFor="let lang of languageList"
+          [value]="lang">
+          {{ 'language.' + lang | translate }}
+        </pa-option>
       </pa-select>
     </div>
 
-    <div *ngIf="step === 2 && (hasAnonymization | async)"
-         class="modal-body">
+    <div
+      *ngIf="step === 2 && (hasAnonymization | async)"
+      class="modal-body">
       <ng-container *ngIf="!creationInProgress">
         <h2>{{ 'stash.create.anonymization' | translate }}</h2>
         <p>{{ 'stash.create.anonymization-help' | translate }}</p>
-        <pa-radio-group name="radio-group-anonymization"
-                        formControlName="useAnonymization">
-          <pa-radio *ngFor="let radio of anonymizationOptions"
-                    [value]="radio.value"
-                    [disabled]="saving"
-          >{{radio.label | translate}}</pa-radio>
+        <pa-radio-group
+          name="radio-group-anonymization"
+          formControlName="useAnonymization">
+          <pa-radio
+            *ngFor="let radio of anonymizationOptions"
+            [value]="radio.value"
+            [disabled]="saving">
+            {{ radio.label | translate }}
+          </pa-radio>
         </pa-radio-group>
       </ng-container>
-      <div *ngIf="creationInProgress"
-           class="saving-spinner">
+      <div
+        *ngIf="creationInProgress"
+        class="saving-spinner">
         <nsi-spinner size="large"></nsi-spinner>
-        <p>{{'stash.create.in_progress' | translate}}</p>
+        <p>{{ 'stash.create.in_progress' | translate }}</p>
       </div>
     </div>
 
     <footer>
-      <div *ngIf="error" class="error body-m">
+      <div
+        *ngIf="error"
+        class="error body-m">
         {{ error | translate }}
       </div>
       <div class="footer-buttons">
-        <pa-button *ngIf="step > 0"
-                   aspect="basic"
-                   [disabled]="saving"
-                   (click)="back()">
+        <pa-button
+          *ngIf="step > 0"
+          aspect="basic"
+          [disabled]="saving"
+          (click)="back()">
           {{ 'generic.back' | translate }}
         </pa-button>
 
-        <pa-button *ngIf="step === (lastStep | async)"
-                   type="submit"
-                   kind="primary"
-                   [disabled]="saving">
+        <pa-button
+          *ngIf="step === (lastStep | async)"
+          type="submit"
+          kind="primary"
+          [disabled]="saving">
           {{ 'generic.save' | translate }}
         </pa-button>
 
-        <pa-button *ngIf="step < ((lastStep | async) || 2)"
-                   [disabled]="step === 0 && kbForm.invalid"
-                   (click)="next()">
+        <pa-button
+          *ngIf="step < ((lastStep | async) || 2)"
+          [disabled]="step === 0 && kbForm.invalid"
+          (click)="next()">
           {{ 'generic.next' | translate }}
         </pa-button>
       </div>

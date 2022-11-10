@@ -6,4 +6,6 @@
   {type}
 </div>
 
-<style lang="scss" src="./DocTypeIndicator.scss"></style>
+<style
+  lang="scss"
+  src="./DocTypeIndicator.scss"></style>

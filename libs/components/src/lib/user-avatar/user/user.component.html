@@ -1,11 +1,16 @@
 <ng-container *ngIf="!only_name">
-  <img *ngIf="!!avatar; else textAvatar" [src]="avatar" class="mini_picture_user" />
+  <img
+    *ngIf="!!avatar; else textAvatar"
+    [src]="avatar"
+    class="mini_picture_user" />
 </ng-container>
 
-<span *ngIf="show_name">{{name}}</span>
+<span *ngIf="show_name">{{ name }}</span>
 
 <ng-template #textAvatar>
-  <span *ngIf="avatarText" class="mini_picture_user text">
+  <span
+    *ngIf="avatarText"
+    class="mini_picture_user text">
     {{ avatarText }}
   </span>
 </ng-template>

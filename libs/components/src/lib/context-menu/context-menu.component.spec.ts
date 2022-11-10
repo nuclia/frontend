@@ -9,10 +9,9 @@ describe('ContextMenuComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ MatMenuModule ],
-      declarations: [ ContextMenuComponent ]
-    })
-    .compileComponents();
+      imports: [MatMenuModule],
+      declarations: [ContextMenuComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

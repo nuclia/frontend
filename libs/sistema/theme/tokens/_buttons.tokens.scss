@@ -1,17 +1,17 @@
-@import "./palette.tokens";
-@import "../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens";
+@import './palette.tokens';
+@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
 
 //=====================================
 // BUTTONS
 //=====================================
 // Borders
-$border-radius-button: rhythm(.5);
+$border-radius-button: rhythm(0.5);
 
 // Sizes
-$padding-button-medium: rhythm(.5) rhythm(2);
+$padding-button-medium: rhythm(0.5) rhythm(2);
 $padding-button-large: rhythm(1) rhythm(2);
 
-$padding-button-icon-text-medium: rhythm(.5) rhythm(2) rhythm(.5) rhythm(1.5);
+$padding-button-icon-text-medium: rhythm(0.5) rhythm(2) rhythm(0.5) rhythm(1.5);
 $padding-button-icon-text-large: rhythm(1) rhythm(2) rhythm(1) rhythm(1.5);
 
 $padding-button-icon-small: rhythm(1);
@@ -77,7 +77,6 @@ $color-background-button-inverted-solid: $color-neutral-background;
 $color-background-button-inverted-solid-hover: $color-neutral-background;
 $color-background-button-inverted-solid-active: $color-neutral-regular;
 
-
 //---------------------------------------------------------------
 // DISABLED
 //---------------------------------------------------------------
@@ -85,5 +84,3 @@ $color-text-button-solid-disabled: $color-light-stronger;
 $color-text-button-basic-disabled: $color-neutral-lighter;
 
 $color-background-button-solid-disabled: $color-neutral-lighter;
-
-

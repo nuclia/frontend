@@ -9,14 +9,18 @@
   export let disabled = false;
 </script>
 
-<button class="sw-button icon {aspect} {kind} {size}"
-        type="button"
-        aria-label="{ariaLabel}"
-        tabindex="0"
-        {disabled}
-        on:click
->
-  <Icon name="{icon}" {size} />
+<button
+  class="sw-button icon {aspect} {kind} {size}"
+  type="button"
+  aria-label={ariaLabel}
+  tabindex="0"
+  {disabled}
+  on:click>
+  <Icon
+    name={icon}
+    {size} />
 </button>
 
-<style lang="scss" src="./Button.scss"></style>
+<style
+  lang="scss"
+  src="./Button.scss"></style>

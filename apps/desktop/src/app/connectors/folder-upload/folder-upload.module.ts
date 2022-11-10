@@ -6,11 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FolderUploadComponent } from './folder-upload.component';
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TranslateModule,
-    FileUploadModule,
-  ],
+  imports: [CommonModule, TranslateModule, FileUploadModule],
   exports: [FolderUploadComponent],
   declarations: [FolderUploadComponent],
   providers: [],

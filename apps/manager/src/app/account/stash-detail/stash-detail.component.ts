@@ -32,14 +32,14 @@ export class StashDetailComponent implements OnInit {
     private router: Router,
     private fb: UntypedFormBuilder,
     private accountService: AccountService,
-    private userService: UsersService
+    private userService: UsersService,
   ) {}
 
   saveTitle() {
     if (this.stashTitle.valid && this.account && this.stash) {
       this.accountService
         .editStash(this.account.id, this.stash.id, { title: this.stashTitle.controls.title.value })
-        .subscribe(res => this.refresh());
+        .subscribe((res) => this.refresh());
     }
   }
   goAccount() {
@@ -47,12 +47,12 @@ export class StashDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.parent?.data.subscribe((data: { [account:string]: Account | null }) => {
+    this.route.parent?.data.subscribe((data: { [account: string]: Account | null }) => {
       if (data.account) {
         this.account = data.account;
       }
     });
-    this.route.data.subscribe((data: { [account:string]: ManagerStash | null }) => {
+    this.route.data.subscribe((data: { [account: string]: ManagerStash | null }) => {
       if (data.stash) {
         this.stash = data.stash;
       }
@@ -69,7 +69,7 @@ export class StashDetailComponent implements OnInit {
       const user: StashAddUser = {
         user: userId,
         stash: this.stash.id,
-      }
+      };
       this.accountService.addStashUser(this.account.id, this.stash.id, user).subscribe((res: any) => this.refresh());
     }
   }

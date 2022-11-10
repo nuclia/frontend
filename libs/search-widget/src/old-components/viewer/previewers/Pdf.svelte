@@ -138,9 +138,13 @@
 </script>
 
 <svelte:head>
-  <script src="https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.min.js" on:load={onLoad}></script>
+  <script
+    src="https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.min.js"
+    on:load={onLoad}></script>
   {#if pdfLoaded}
-    <script src="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.js" on:load={onLoadViewer}></script>
+    <script
+      src="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.js"
+      on:load={onLoadViewer}></script>
   {/if}
 </svelte:head>
 
@@ -155,21 +159,31 @@
         on:zoomOut={zoomOut}
         on:pageChange={(e) => {
           viewerStore.setPage.next(e.detail);
-        }}
-      />
+        }} />
     </div>
   {/if}
-  <div class="pdf" role={loading ? 'alert' : null} aria-live={loading ? 'assertive' : null}>
+  <div
+    class="pdf"
+    role={loading ? 'alert' : null}
+    aria-live={loading ? 'assertive' : null}>
     {#if loading}
       <div class="loading-dots">
         <LoadingDots />
       </div>
     {/if}
-    <link rel="stylesheet" href="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.css" />
-    <div id="viewerContainer" bind:this={pdfContainer}>
-      <div id="viewer" class="pdfViewer" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/pdfjs-dist@2.13.216/web/pdf_viewer.css" />
+    <div
+      id="viewerContainer"
+      bind:this={pdfContainer}>
+      <div
+        id="viewer"
+        class="pdfViewer" />
     </div>
   </div>
 </div>
 
-<style lang="scss" src="./Pdf.scss"></style>
+<style
+  lang="scss"
+  src="./Pdf.scss"></style>

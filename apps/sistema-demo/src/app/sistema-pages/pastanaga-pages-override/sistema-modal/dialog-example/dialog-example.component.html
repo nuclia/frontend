@@ -5,15 +5,26 @@
     <div>
       <p>Some simple content, like a simple form.</p>
       <pa-input>Label</pa-input>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
         magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
         consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
         pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-        laborum.</p>
+        laborum.
+      </p>
     </div>
   </pa-modal-content>
   <pa-modal-footer>
-    <pa-button kind="primary" (click)="modal.close('from primary')">Primary CTA</pa-button>
-    <pa-button kind="secondary" aspect="basic" (click)="modal.close('from secondary')">Secondary CTA</pa-button>
+    <pa-button
+      kind="primary"
+      (click)="modal.close('from primary')">
+      Primary CTA
+    </pa-button>
+    <pa-button
+      kind="secondary"
+      aspect="basic"
+      (click)="modal.close('from secondary')">
+      Secondary CTA
+    </pa-button>
   </pa-modal-footer>
 </pa-modal-dialog>

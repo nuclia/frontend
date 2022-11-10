@@ -88,7 +88,7 @@ export class TopbarComponent implements AfterViewInit {
             );
           }
           widget.setActions(actions);
-          widget.addEventListener('search', () => this.trackingService.logEvent('search'))
+          widget.addEventListener('search', () => this.trackingService.logEvent('search'));
           clearInterval(waitForWidget);
         }
       }, 500);

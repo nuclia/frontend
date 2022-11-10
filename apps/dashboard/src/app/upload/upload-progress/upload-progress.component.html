@@ -1,33 +1,47 @@
 <div class="upload-progress">
   <h1 class="mb-20">{{ 'upload.uploading_queue' | translate }}</h1>
-  <pa-button class="close-button"
-             icon="cross"
-             aspect="basic"
-             (click)="close.emit()">{{'generic.close' | translate}}</pa-button>
+  <pa-button
+    class="close-button"
+    icon="cross"
+    aspect="basic"
+    (click)="close.emit()">
+    {{ 'generic.close' | translate }}
+  </pa-button>
 
   <div class="warning">
     <strong>{{ 'upload.takes_time' | translate }}</strong>
-    <span> {{ 'upload.once_uploaded' | translate }}</span>
+    <span>{{ 'upload.once_uploaded' | translate }}</span>
   </div>
-  <div class="upload-list" *ngIf="(files | async)?.length > 0">
-    <div class="upload" *ngFor="let file of files | async">
-      <div class="file" [class.failed]="file.failed">
+  <div
+    class="upload-list"
+    *ngIf="(files | async)?.length > 0">
+    <div
+      class="upload"
+      *ngFor="let file of files | async">
+      <div
+        class="file"
+        [class.failed]="file.failed">
         <span class="file-name">{{ file.file.name }}</span>
-        <span class="file-size"> - {{ file.file.size | size }}</span>
+        <span class="file-size">- {{ file.file.size | size }}</span>
       </div>
       <div class="status">
-        <pa-icon *ngIf="file.uploaded"
-                 name="check"
-                 size="small"></pa-icon>
-        <pa-icon *ngIf="file.conflicts"
-                 paTooltip="upload.duplicated"
-                 name="copy"
-                 size="small"></pa-icon>
-        <pa-icon *ngIf="file.failed && !file.conflicts"
-                 paTooltip="upload.error"
-                 name="cross"
-                 size="small"></pa-icon>
-        <div class="progress-bar" *ngIf="file.progress !== 100">
+        <pa-icon
+          *ngIf="file.uploaded"
+          name="check"
+          size="small"></pa-icon>
+        <pa-icon
+          *ngIf="file.conflicts"
+          paTooltip="upload.duplicated"
+          name="copy"
+          size="small"></pa-icon>
+        <pa-icon
+          *ngIf="file.failed && !file.conflicts"
+          paTooltip="upload.error"
+          name="cross"
+          size="small"></pa-icon>
+        <div
+          class="progress-bar"
+          *ngIf="file.progress !== 100">
           <div [style.width.%]="file.progress"></div>
         </div>
       </div>
@@ -36,8 +50,9 @@
 
   <div class="footer">
     <div>{{ 'modal.upload.queue_length' | translate }}: {{ (files | async)?.length }}</div>
-    <pa-button kind="inverted"
-               (click)="close.emit()">
+    <pa-button
+      kind="inverted"
+      (click)="close.emit()">
       {{ 'generic.close' | translate }}
     </pa-button>
   </div>

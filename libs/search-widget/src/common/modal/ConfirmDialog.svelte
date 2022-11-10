@@ -6,8 +6,8 @@
   export let show = false;
   export let closeable = false;
   export let buttons = [
-    {label: 'Cancel', action: 'cancel'},
-    {label: 'Confirm', action: 'confirm', kind: 'primary'}
+    { label: 'Cancel', action: 'cancel' },
+    { label: 'Confirm', action: 'confirm', kind: 'primary' },
   ];
 
   $: show && freezeBackground();
@@ -26,15 +26,19 @@
 </script>
 
 {#if show}
-  <div class="sw-modal-backdrop fade"
-       on:click={outsideClick}>
+  <div
+    class="sw-modal-backdrop fade"
+    on:click={outsideClick}>
     <dialog class="modal">
       <div class="modal-content">
-        <slot/>
+        <slot />
         <footer class="confirm-footer">
           {#each buttons as button}
-            <Button kind={button.kind || 'secondary'}
-                    on:click={() => close(button.action)}>{button.label}</Button>
+            <Button
+              kind={button.kind || 'secondary'}
+              on:click={() => close(button.action)}>
+              {button.label}
+            </Button>
           {/each}
         </footer>
       </div>
@@ -42,4 +46,6 @@
   </div>
 {/if}
 
-<style lang="scss" src="./ConfirmDialog.scss"></style>
+<style
+  lang="scss"
+  src="./ConfirmDialog.scss"></style>

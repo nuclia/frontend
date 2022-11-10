@@ -4,12 +4,12 @@ import { DialogExampleComponent } from './dialog-example/dialog-example.componen
 import { ModalExampleComponent } from './modal-example/modal-example.component';
 
 @Component({
-    templateUrl: './sistema-modal.component.html',
-    styleUrls: ['./sistema-modal.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './sistema-modal.component.html',
+  styleUrls: ['./sistema-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaModalComponent {
-    dialogTemplate = `<pa-modal-dialog>
+  dialogTemplate = `<pa-modal-dialog>
     <pa-modal-title>Dialog title</pa-modal-title>
     <pa-modal-description>Dialog description</pa-modal-description>
     <pa-modal-content>Some content like a small form</pa-modal-content>
@@ -18,14 +18,14 @@ export class SistemaModalComponent {
         <pa-button kind="secondary" aspect="basic" (click)="modal.close('from secondary')">Secondary CTA</pa-button>
     </pa-modal-footer>
 </pa-modal-dialog>`;
-    dialogComponent = `@Component({
+  dialogComponent = `@Component({
     templateUrl: './dialog-example.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DialogExampleComponent {
     constructor(public modal: ModalRef) {}
 }`;
-    callerComponent = `import { ModalService } from 'pastanaga-angular';
+  callerComponent = `import { ModalService } from 'pastanaga-angular';
 
 export class CallerComponent {
     constructor(
@@ -36,7 +36,7 @@ export class CallerComponent {
         this.modalService.openModal(DialogExampleComponent);
     }
 }`;
-    customModalComponent = `@Component({
+  customModalComponent = `@Component({
     selector: 'my-own-modal',
     templateUrl: './own-modal.component.html',
     styleUrls: ['./own-modal.component.scss'],
@@ -49,7 +49,7 @@ export class OwnModalComponent extends BaseModalComponent implements AfterViewIn
         super.ngAfterViewInit();
     }
 }`;
-    customModalTemplate = `<div class="pa-modal-backdrop"
+  customModalTemplate = `<div class="pa-modal-backdrop"
      tabindex="0"
      #modalContainer
      (click)="outsideClick($event)">
@@ -66,12 +66,12 @@ export class OwnModalComponent extends BaseModalComponent implements AfterViewIn
         <ng-content select="pa-modal-footer"></ng-content>
     </dialog>
 </div>`;
-    openModalConfig = `export class CallerComponent {
+  openModalConfig = `export class CallerComponent {
     open() {
         this.modalService.openModal(DialogExampleComponent, new ModalConfig({dismissable: false}));
     }
 }`;
-    modalCloseButtonSetup = `export class ModalComponent extends BaseModalComponent implements AfterViewInit {
+  modalCloseButtonSetup = `export class ModalComponent extends BaseModalComponent implements AfterViewInit {
     ngAfterViewInit() {
         if (!!this.ref) {
             this.ref.config.dismissable = false;
@@ -80,24 +80,24 @@ export class OwnModalComponent extends BaseModalComponent implements AfterViewIn
     }
 }
 `;
-    collectDataOnClose = `export class CallerComponent {
+  collectDataOnClose = `export class CallerComponent {
     open() {
         this.modalService.openModal(DialogExampleComponent).onClose.subscribe(data => console.log('Modal closed', data));
     }
 }`;
-    closingProgrammatically = `export class SomeDialogComponent {
+  closingProgrammatically = `export class SomeDialogComponent {
     closeDialog() {
         this.modal.close({whatever: true, answer: 42});
     }
 }`;
-    passingDataToModal = `export class CallerComponent {
+  passingDataToModal = `export class CallerComponent {
     open() {
         const modalRef = this.modalService.openModal(SomeDialogComponent, {
             data = { document: myDoc, user: myUser }
         });
     }
 }`;
-    accessingModalData = `export class SomeDialogComponent implements IModal {
+  accessingModalData = `export class SomeDialogComponent implements IModal {
     constructor(private dialog: ModalRef) {}
 
     ngOnInit() {
@@ -105,7 +105,7 @@ export class OwnModalComponent extends BaseModalComponent implements AfterViewIn
         this.user = this.dialog.data?.user;
     }
 }`;
-    onEnterBinding = `export class SomeDialogComponent implements IModal {
+  onEnterBinding = `export class SomeDialogComponent implements IModal {
     ngOnInit() {
         this.modal.onEnter = this.edit.bind(this);
     }
@@ -115,22 +115,22 @@ export class OwnModalComponent extends BaseModalComponent implements AfterViewIn
     }
 }`;
 
-    constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) {}
 
-    openDialog() {
-        this.modalService
-            .openModal(
-                DialogExampleComponent,
-                new ModalConfig({
-                    data: { displayDescription: true },
-                }),
-            )
-            .onClose.subscribe(console.log);
-    }
+  openDialog() {
+    this.modalService
+      .openModal(
+        DialogExampleComponent,
+        new ModalConfig({
+          data: { displayDescription: true },
+        }),
+      )
+      .onClose.subscribe(console.log);
+  }
 
-    openModal(oneButton = false) {
-        this.modalService
-            .openModal(ModalExampleComponent, new ModalConfig({ data: { oneButton } }))
-            .onClose.subscribe(console.log);
-    }
+  openModal(oneButton = false) {
+    this.modalService
+      .openModal(ModalExampleComponent, new ModalConfig({ data: { oneButton } }))
+      .onClose.subscribe(console.log);
+  }
 }

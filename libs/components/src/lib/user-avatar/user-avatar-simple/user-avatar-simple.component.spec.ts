@@ -8,9 +8,8 @@ describe('UserAvatarSimpleComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ UserAvatarSimpleComponent ]
-    })
-    .compileComponents();
+      declarations: [UserAvatarSimpleComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

@@ -1,166 +1,243 @@
 <router-outlet></router-outlet>
 <div class="resource-list">
-  <div class="loading-shade" *ngIf="isLoading">
+  <div
+    class="loading-shade"
+    *ngIf="isLoading">
     <nsi-spinner *ngIf="isLoading"></nsi-spinner>
   </div>
 
   <div class="resource-list-content">
     <div class="resource-list-header">
-      <div class="resource-bulk-actions"
-           *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
-        {{ 'resource.selected_count' | translate: {num: selection.selected.length || ''} }}
+      <div
+        class="resource-bulk-actions"
+        *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
+        {{ 'resource.selected_count' | translate: { num: selection.selected.length || '' } }}
 
-        <app-label-dropdown [labelSets]="labelSets$ | async"
-                            (selectionChange)="updateLabelList($event)"
-                            (close)="addLabelsToSelection()"
-                            size="small">{{'resource.add_labels' | translate}}</app-label-dropdown>
+        <app-label-dropdown
+          [labelSets]="labelSets$ | async"
+          (selectionChange)="updateLabelList($event)"
+          (close)="addLabelsToSelection()"
+          size="small">
+          {{ 'resource.add_labels' | translate }}
+        </app-label-dropdown>
 
-        <pa-button *ngIf="selection.selected.length > 0"
-                   kind="destructive"
-                   size="small"
-                   (click)="bulkDelete()">
+        <pa-button
+          *ngIf="selection.selected.length > 0"
+          kind="destructive"
+          size="small"
+          (click)="bulkDelete()">
           {{ 'generic.delete' | translate }}
         </pa-button>
       </div>
       <div class="table-options">
         <div>
-          <nsi-dropdown-button size="small"
-                               kind="inverted"
-                               [popupRef]="visibleColumns">
+          <nsi-dropdown-button
+            size="small"
+            kind="inverted"
+            [popupRef]="visibleColumns">
             {{ 'resource.visible_columns_dropdown' | translate }}
           </nsi-dropdown-button>
           <pa-dropdown #visibleColumns>
-            <pa-option *ngFor="let column of optionalColumns"
-                       [value]="column.value"
-                       dontCloseOnSelect>
-              <pa-checkbox [(value)]="column.visible"
-                           (valueChange)="columnVisibilityUpdate.next($event)">{{column.label | translate}}</pa-checkbox>
+            <pa-option
+              *ngFor="let column of optionalColumns"
+              [value]="column.value"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="column.visible"
+                (valueChange)="columnVisibilityUpdate.next($event)">
+                {{ column.label | translate }}
+              </pa-checkbox>
             </pa-option>
           </pa-dropdown>
         </div>
-        <div *ngIf="(pageSizeOptions | async) as options">
-          <nsi-dropdown-button size="small"
-                               kind="inverted"
-                               [popupRef]="pageSizeMenu">
-            {{ 'resource.resource_page_number' | translate:{num: filters.size} }}
+        <div *ngIf="pageSizeOptions | async as options">
+          <nsi-dropdown-button
+            size="small"
+            kind="inverted"
+            [popupRef]="pageSizeMenu">
+            {{ 'resource.resource_page_number' | translate: { num: filters.size } }}
           </nsi-dropdown-button>
           <pa-dropdown #pageSizeMenu>
-            <pa-option *ngFor="let option of options"
-                       [value]="option.key"
-                       (selectOption)="setPageSize(option)">{{option.value}}</pa-option>
+            <pa-option
+              *ngFor="let option of options"
+              [value]="option.key"
+              (selectOption)="setPageSize(option)">
+              {{ option.value }}
+            </pa-option>
           </pa-dropdown>
         </div>
       </div>
     </div>
 
     <div class="table-container">
-      <table *ngIf="currentKb | async" [dataSource]="data" cdk-table>
+      <table
+        *ngIf="currentKb | async"
+        [dataSource]="data"
+        cdk-table>
         <ng-container cdkColumnDef="select">
-          <th cdk-header-cell *cdkHeaderCellDef>
-            <pa-checkbox [value]="selection.hasValue() && isAllSelected()"
-                         [paTooltip]="(isAllSelected() ? 'generic.deselect_all' : 'generic.select_all') | translate"
-                         (change)="masterToggle()"></pa-checkbox>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            <pa-checkbox
+              [value]="selection.hasValue() && isAllSelected()"
+              [paTooltip]="(isAllSelected() ? 'generic.deselect_all' : 'generic.select_all') | translate"
+              (change)="masterToggle()"></pa-checkbox>
           </th>
-          <td cdk-cell *cdkCellDef="let row">
-            <pa-checkbox [value]="selection.isSelected(row.resource)"
-                         (change)="selection.toggle(row.resource)"></pa-checkbox>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            <pa-checkbox
+              [value]="selection.isSelected(row.resource)"
+              (change)="selection.toggle(row.resource)"></pa-checkbox>
           </td>
         </ng-container>
 
         <ng-container cdkColumnDef="title">
-          <th cdk-header-cell *cdkHeaderCellDef>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
             {{ 'resource.title' | translate }}
           </th>
-          <td cdk-cell class="clickable" *cdkCellDef="let row" (click)="viewResource(row.resource.id)">
+          <td
+            cdk-cell
+            class="clickable"
+            *cdkCellDef="let row"
+            (click)="viewResource(row.resource.id)">
             <div class="title-icon">
-              <pa-icon *ngIf="row.resource.icon | mimeIcon as icon" [path]="'assets/icons/' + icon"></pa-icon>
+              <pa-icon
+                *ngIf="row.resource.icon | mimeIcon as icon"
+                [path]="'assets/icons/' + icon"></pa-icon>
               {{ row.resource.title }}
             </div>
           </td>
         </ng-container>
 
         <ng-container cdkColumnDef="classification">
-          <th cdk-header-cell *cdkHeaderCellDef>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
             {{ 'resource.classification' | translate }}
           </th>
-          <td cdk-cell class="clickable"
-              *cdkCellDef="let row"
-              (click)="viewResource(row.resource.id)">
+          <td
+            cdk-cell
+            class="clickable"
+            *cdkCellDef="let row"
+            (click)="viewResource(row.resource.id)">
             <div class="label-container">
-              <nsi-label *ngFor="let label of row.labels"
-                         [color]="label.color">
-                {{label.label}}
+              <nsi-label
+                *ngFor="let label of row.labels"
+                [color]="label.color">
+                {{ label.label }}
               </nsi-label>
             </div>
           </td>
         </ng-container>
 
         <ng-container cdkColumnDef="modification">
-          <th cdk-header-cell *cdkHeaderCellDef>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
             {{ 'generic.date' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let row">
-            {{ row.resource.created | formatDate: {default: true} }}
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            {{ row.resource.created | formatDate: { default: true } }}
           </td>
         </ng-container>
 
         <ng-container cdkColumnDef="status">
-          <th cdk-header-cell *cdkHeaderCellDef>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
             {{ 'resource.status' | translate }}
           </th>
-          <td cdk-cell
-              *cdkCellDef="let row"
-              (mouseenter)="getProcessingStatus(row.resource)"
-              [paTooltip]="statusTooltips[row.resource.id]"
-              paTooltipType="system"
-              [paTooltipOffset]="-16">
+          <td
+            cdk-cell
+            *cdkCellDef="let row"
+            (mouseenter)="getProcessingStatus(row.resource)"
+            [paTooltip]="statusTooltips[row.resource.id]"
+            paTooltipType="system"
+            [paTooltipOffset]="-16">
             <nsi-status [status]="row.resource.metadata.status"></nsi-status>
           </td>
         </ng-container>
 
         <ng-container cdkColumnDef="language">
-          <th cdk-header-cell *cdkHeaderCellDef>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
             {{ 'generic.language' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let row">
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
             {{ row.resource.metadata.language || '–' }}
           </td>
         </ng-container>
 
         <ng-container cdkColumnDef="actions">
-          <th cdk-header-cell *cdkHeaderCellDef>
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
             {{ 'generic.actions' | translate }}
           </th>
-          <td cdk-cell *cdkCellDef="let row">
-            <pa-button icon="more-vertical"
-                       aspect="basic"
-                       size="small"
-                       paTooltip="generic.actions"
-                       [matMenuTriggerFor]="menu">{{'generic.actions' | translate}}</pa-button>
-            <mat-menu #menu="matMenu" class="resource-actions">
-              <button mat-menu-item (click)="edit(row.resource.id)" [disabled]="!(isAdminOrContrib | async)">
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            <pa-button
+              icon="more-vertical"
+              aspect="basic"
+              size="small"
+              paTooltip="generic.actions"
+              [matMenuTriggerFor]="menu">
+              {{ 'generic.actions' | translate }}
+            </pa-button>
+            <mat-menu
+              #menu="matMenu"
+              class="resource-actions">
+              <button
+                mat-menu-item
+                (click)="edit(row.resource.id)"
+                [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.edit' | translate }}
               </button>
-              <button mat-menu-item (click)="delete([row.resource])" [disabled]="!(isAdminOrContrib | async)">
+              <button
+                mat-menu-item
+                (click)="delete([row.resource])"
+                [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.delete' | translate }}
               </button>
-              <button mat-menu-item (click)="reindex(row.resource)" [disabled]="!(isAdminOrContrib | async)">
+              <button
+                mat-menu-item
+                (click)="reindex(row.resource)"
+                [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.reindex' | translate }}
               </button>
-              <button mat-menu-item (click)="downloadAlgoliaJson(row.resource)">
+              <button
+                mat-menu-item
+                (click)="downloadAlgoliaJson(row.resource)">
                 {{ 'generic.download_algolia_json' | translate }}
               </button>
             </mat-menu>
           </td>
         </ng-container>
 
-        <tr cdk-header-row *cdkHeaderRowDef="displayedColumns | async"></tr>
-        <tr cdk-row *cdkRowDef="let row; columns: displayedColumns | async"></tr>
+        <tr
+          cdk-header-row
+          *cdkHeaderRowDef="displayedColumns | async"></tr>
+        <tr
+          cdk-row
+          *cdkRowDef="let row; columns: displayedColumns | async"></tr>
       </table>
     </div>
 
     <div class="pagination">
-      <stf-pagination [page]="page" [total]="totalPages" (prev)="prevPage()" (next)="nextPage()"></stf-pagination>
+      <stf-pagination
+        [page]="page"
+        [total]="totalPages"
+        (prev)="prevPage()"
+        (next)="nextPage()"></stf-pagination>
     </div>
   </div>
 </div>

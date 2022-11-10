@@ -4,9 +4,15 @@
 </script>
 
 {#if name}
-  <svg class="sw-svg-icon {size}" tabindex="-1">
-    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#{name}" />
+  <svg
+    class="sw-svg-icon {size}"
+    tabindex="-1">
+    <use
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xlink:href="#{name}" />
   </svg>
 {/if}
 
-<style lang="scss" src="./Icon.scss"></style>
+<style
+  lang="scss"
+  src="./Icon.scss"></style>

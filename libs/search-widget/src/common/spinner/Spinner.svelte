@@ -16,7 +16,9 @@
   }
 </script>
 
-<div class="sw-spinner-wrapper" style:--inner-size={sizeVar}>
+<div
+  class="sw-spinner-wrapper"
+  style:--inner-size={sizeVar}>
   <div class="spinner">
     <div class="inner">
       <div class="gap" />
@@ -30,4 +32,6 @@
   </div>
 </div>
 
-<style lang="scss" src="./Spinner.scss"></style>
+<style
+  lang="scss"
+  src="./Spinner.scss"></style>

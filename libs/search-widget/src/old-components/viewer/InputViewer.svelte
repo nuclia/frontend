@@ -29,11 +29,12 @@
         spellcheck="false"
         aria-label="Search input"
         bind:value={$query}
-        style:background-image={`url(${getCDN()}icons/search.svg)`}
-      />
+        style:background-image={`url(${getCDN()}icons/search.svg)`} />
       {#if $results !== null || $onlySelected}
         <button on:click={showAllParagraphs}>
-          <img src={`${getCDN()}icons/close.svg`} alt={$_('resource.show-all')} />
+          <img
+            src={`${getCDN()}icons/close.svg`}
+            alt={$_('resource.show-all')} />
         </button>
       {/if}
     </div>
@@ -46,4 +47,6 @@
   </div>
 </div>
 
-<style lang="scss" src="./InputViewer.scss"></style>
+<style
+  lang="scss"
+  src="./InputViewer.scss"></style>

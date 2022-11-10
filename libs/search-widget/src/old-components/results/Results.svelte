@@ -66,7 +66,10 @@
         <div>
           {#each $paragraphResults.slice(0, 3) as result}
             <div class="result">
-              <Row {displayThumbnail} {result} {formWidget} />
+              <Row
+                {displayThumbnail}
+                {result}
+                {formWidget} />
             </div>
           {/each}
         </div>
@@ -77,7 +80,10 @@
           <div>
             {#each $semanticResults.slice(0, showAll ? undefined : 2) as result}
               <div class="result">
-                <Row {displayThumbnail} {result} semantic={true} />
+                <Row
+                  {displayThumbnail}
+                  {result}
+                  semantic={true} />
               </div>
             {/each}
             {#if !showAll && $semanticResults.length > 2}
@@ -89,7 +95,9 @@
       <div>
         {#each $paragraphResults.slice(3) as result}
           <div class="result">
-            <Row {displayThumbnail} {result} />
+            <Row
+              {displayThumbnail}
+              {result} />
           </div>
         {/each}
       </div>
@@ -108,4 +116,6 @@
   {/if}
 </div>
 
-<style lang="scss" src="./Results.scss"></style>
+<style
+  lang="scss"
+  src="./Results.scss"></style>

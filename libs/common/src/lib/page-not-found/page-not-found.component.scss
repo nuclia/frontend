@@ -1,14 +1,13 @@
-
-@import "../../../../pastanaga/src/lib/styles/stf";
+@import '../../../../pastanaga/src/lib/styles/stf';
 
 .user-background {
   // H2SoFe LZgQXe TFhTPc
-  @include media-breakpoint("lt-sm") {
+  @include media-breakpoint('lt-sm') {
     background-color: white;
     background-image: none;
   }
 
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     min-height: 100vh;
     flex-direction: column;
     -webkit-flex-direction: column;
@@ -23,12 +22,12 @@
 
 .user-background:before,
 .user-background:after {
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     -webkit-box-flex: 1;
     box-flex: 1;
     -webkit-flex-grow: 1;
     flex-grow: 1;
-    content: "";
+    content: '';
     display: block;
     height: 24px;
   }
@@ -47,57 +46,54 @@
 }
 
 app-page-not-found {
+  #error-404 {
+    width: 100%;
+    height: 100%;
 
-    #error-404 {
+    .content {
+      .error-code {
+        font-size: 112px;
+        text-align: center;
+        line-height: 1;
+        margin-bottom: 16px;
+        font-weight: 600;
+      }
+
+      .message {
+        font-size: 24px;
+        text-align: center;
+      }
+
+      .actions {
+        margin-top: 50px;
+        font-size: 15px;
+        text-align: center;
+      }
+
+      .search {
         width: 100%;
-        height: 100%;
+        height: 56px;
+        line-height: 56px;
+        margin: 48px auto 16px auto;
+        padding: 16px;
+        border: 1px solid;
+        border-radius: 28px;
 
-        .content {
-
-            .error-code {
-                font-size: 112px;
-                text-align: center;
-                line-height: 1;
-                margin-bottom: 16px;
-                font-weight: 600;
-            }
-
-            .message {
-                font-size: 24px;
-                text-align: center;
-            }
-
-            .actions {
-              margin-top: 50px;
-              font-size: 15px;
-              text-align: center;
-            }
-
-            .search {
-                width: 100%;
-                height: 56px;
-                line-height: 56px;
-                margin: 48px auto 16px auto;
-                padding: 16px;
-                border: 1px solid;
-                border-radius: 28px;
-
-                input {
-                    padding: 0 0 0 16px;
-                }
-            }
-
-            .back-link {
-                text-decoration: none;
-            }
+        input {
+          padding: 0 0 0 16px;
         }
-    }
-}
+      }
 
+      .back-link {
+        text-decoration: none;
+      }
+    }
+  }
+}
 
 .outter_notfound_form {
   // RAYh1e LZgQXe qmmlRd
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     width: 650px;
     min-height: 0;
     -webkit-flex-shrink: 0;
@@ -128,7 +124,7 @@ app-page-not-found {
 
 .inner_notfound_form {
   // xkfVF
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     height: auto;
     min-height: 500px;
     overflow-y: auto;
@@ -147,7 +143,7 @@ app-page-not-found {
 .notfound_content {
   // DRS7Fe bxPAYd k6Zj8d
   overflow: hidden;
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     padding-left: 40px;
     padding-right: 40px;
     margin: auto -40px;

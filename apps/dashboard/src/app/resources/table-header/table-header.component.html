@@ -3,7 +3,6 @@
   class="table-header"
   [class.sort-desc]="sortDirection === 'desc'"
   [class.sort-asc]="sortDirection === 'asc'"
-  (click)="onClick($event)"
->
+  (click)="onClick($event)">
   <ng-content></ng-content>
 </a>

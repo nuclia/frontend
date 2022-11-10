@@ -1,48 +1,118 @@
-<div fxLayout="row" fxLayoutAlign="start center">
-  <stf-input fxFlex="80%" (keyup)="applyFilter($event.target.value)" placeholder="Filter">Filter</stf-input>
-  <div fxLayout="row" fxLayoutAlign="center center">
-    <pa-button fxFlex="20%" kind="primary" (click)="addNewZone()">
+<div
+  fxLayout="row"
+  fxLayoutAlign="start center">
+  <stf-input
+    fxFlex="80%"
+    (keyup)="applyFilter($event.target.value)"
+    placeholder="Filter">
+    Filter
+  </stf-input>
+  <div
+    fxLayout="row"
+    fxLayoutAlign="center center">
+    <pa-button
+      fxFlex="20%"
+      kind="primary"
+      (click)="addNewZone()">
       Add
     </pa-button>
   </div>
 </div>
 
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="zones" matSort matSortActive="created" matSortDisableClear matSortDirection="desc">
+  <table
+    mat-table
+    [dataSource]="zones"
+    matSort
+    matSortActive="created"
+    matSortDisableClear
+    matSortDirection="desc">
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-      <td mat-cell *matCellDef="let zone">{{ zone.id }}</td>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
+        ID
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let zone">
+        {{ zone.id }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="title">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Title</th>
-      <td mat-cell *matCellDef="let zone">{{ zone.title }}</td>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
+        Title
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let zone">
+        {{ zone.title }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="created">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Created</th>
-      <td mat-cell *matCellDef="let zone">{{ zone.created | date: 'dd - LL - yyyy' }}</td>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
+        Created
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let zone">
+        {{ zone.created | date: 'dd - LL - yyyy' }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="external">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>External</th>
-      <td mat-cell *matCellDef="let zone">{{ zone.external ? 'Yes' : 'No' }}</td>
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        mat-sort-header>
+        External
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let zone">
+        {{ zone.external ? 'Yes' : 'No' }}
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef>Actions</th>
-      <td mat-cell *matCellDef="let zone">
-        <button mat-icon-button aria-label="Edit" (click)="editZone(zone)">
+      <th
+        mat-header-cell
+        *matHeaderCellDef>
+        Actions
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let zone">
+        <button
+          mat-icon-button
+          aria-label="Edit"
+          (click)="editZone(zone)">
           <mat-icon>edit</mat-icon>
         </button>
-        <button mat-icon-button aria-label="Delete" (click)="deleteZone(zone.id)">
+        <button
+          mat-icon-button
+          aria-label="Delete"
+          (click)="deleteZone(zone.id)">
           <mat-icon>delete</mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
 
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>

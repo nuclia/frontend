@@ -1,24 +1,37 @@
 <div class="top-bar">
-  <div class="logo"
-       (click)="goHome()">
-    <img src="assets/nuclia-desktop-white.svg" alt="Nuclia Desktop">
+  <div
+    class="logo"
+    (click)="goHome()">
+    <img
+      src="assets/nuclia-desktop-white.svg"
+      alt="Nuclia Desktop" />
   </div>
   <div class="accounts">
-    <pa-button *ngIf="(account | async) as account"
-               size="small"
-               kind="inverted"
-               (click)="goSelect()">{{ account.title }}</pa-button>
+    <pa-button
+      *ngIf="account | async as account"
+      size="small"
+      kind="inverted"
+      (click)="goSelect()">
+      {{ account.title }}
+    </pa-button>
   </div>
   <div class="separator"></div>
 
-  <pa-avatar [avatar]="avatar | async"
-             [paPopup]="userMenu"></pa-avatar>
+  <pa-avatar
+    [avatar]="avatar | async"
+    [paPopup]="userMenu"></pa-avatar>
 </div>
 
 <pa-dropdown #userMenu>
-  <pa-option icon="reload" (selectOption)="goSelect()">{{ 'generic.switch_account' | translate }}</pa-option>
+  <pa-option
+    icon="reload"
+    (selectOption)="goSelect()">
+    {{ 'generic.switch_account' | translate }}
+  </pa-option>
   <pa-separator></pa-separator>
-  <pa-option icon="log-out" (selectOption)="logout()">{{ 'generic.logout' | translate }}</pa-option>
+  <pa-option
+    icon="log-out"
+    (selectOption)="logout()">
+    {{ 'generic.logout' | translate }}
+  </pa-option>
 </pa-dropdown>
-
-

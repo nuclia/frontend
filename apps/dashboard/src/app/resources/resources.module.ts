@@ -33,7 +33,13 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { BackButtonComponent, DropdownButtonComponent, SisLabelModule, SisProgressModule, SisStatusComponent } from '@nuclia/sistema';
+import {
+  BackButtonComponent,
+  DropdownButtonComponent,
+  SisLabelModule,
+  SisProgressModule,
+  SisStatusComponent,
+} from '@nuclia/sistema';
 import { FileUploadModule } from '@flaps/core';
 
 const Components = [

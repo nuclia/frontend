@@ -1,4 +1,4 @@
-@import "../tile";
+@import '../tile';
 
 .sw-video-tile {
   &.expanded {
@@ -69,7 +69,7 @@
         width: 100%;
 
         .scrollable-area {
-          max-height: calc(var(--side-panel-height) - var(--collapsible-header-height)*2);
+          max-height: calc(var(--side-panel-height) - var(--collapsible-header-height) * 2);
         }
 
         .search-result-paragraphs {
@@ -104,7 +104,7 @@
       max-height: var(--result-details-height);
 
       .scrollable-area {
-        max-height: calc(var(--result-details-height) - var(--collapsible-header-height)*3);
+        max-height: calc(var(--result-details-height) - var(--collapsible-header-height) * 3);
         overflow: auto;
       }
     }

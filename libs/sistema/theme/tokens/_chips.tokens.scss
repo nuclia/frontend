@@ -1,10 +1,10 @@
-@import "./palette.tokens";
-@import "../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens";
-@import "../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens";
+@import './palette.tokens';
+@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/typography.tokens';
 
 $color-background-chip-default-selected: $color-neutral-lightest;
 $border-chip-selected: 1px solid $color-dark-stronger;
 
-$border-radius-chip: rhythm(.25);
+$border-radius-chip: rhythm(0.25);
 
 $font-size-chip: font-size(xs);

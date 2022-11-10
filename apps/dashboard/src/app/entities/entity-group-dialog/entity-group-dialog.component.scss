@@ -1,11 +1,10 @@
-@import "variables";
+@import 'variables';
 
 .entity-form {
   display: flex;
   flex-direction: column;
   gap: rhythm(3);
   padding: rhythm(2) 0;
-
 }
 
 pa-modal-footer {

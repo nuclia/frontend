@@ -14,18 +14,22 @@
 
 <div class="sw-popup-search">
   <div bind:this={inputElement}>
-    <SearchInput popupSearch={true}
-                 {placeholder}
-                 on:search={() => isPopupSearchOpen.set(true)}/>
+    <SearchInput
+      popupSearch={true}
+      {placeholder}
+      on:search={() => isPopupSearchOpen.set(true)} />
   </div>
 
-  <Modal show={$isPopupSearchOpen}
-         closeButton={true}
-         on:close={() => (isPopupSearchOpen.set(false))}>
+  <Modal
+    show={$isPopupSearchOpen}
+    closeButton={true}
+    on:close={() => isPopupSearchOpen.set(false)}>
     <div class="results">
       <Results results={$results} />
     </div>
   </Modal>
 </div>
 
-<style lang="scss" src="./PopupSearch.scss"></style>
+<style
+  lang="scss"
+  src="./PopupSearch.scss"></style>

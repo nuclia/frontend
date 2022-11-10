@@ -1,9 +1,11 @@
 <section>
   <h1>Knowledge box</h1>
   <form>
-    Search <input type="text"
-           [(ngModel)]="query"
-           name="search">
+    Search
+    <input
+      type="text"
+      [(ngModel)]="query"
+      name="search" />
     <button (click)="search()">Search</button>
     <pre *ngIf="searchResults"><code>{{searchResults | json}}</code></pre>
   </form>

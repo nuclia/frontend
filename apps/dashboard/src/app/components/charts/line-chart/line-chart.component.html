@@ -1,10 +1,12 @@
-<div class="line-chart" #container [ngClass]="id">
+<div
+  class="line-chart"
+  #container
+  [ngClass]="id">
   <div
     class="tooltip"
     [style.opacity]="showTooltip ? '1' : '0'"
     [style.bottom.px]="tooltipBottom"
-    [style.left.px]="tooltipLeft"
-  >
+    [style.left.px]="tooltipLeft">
     <ng-container *ngIf="tooltipContent">
       <strong>{{ tooltipContent[0] }}</strong>
       <div>{{ tooltipContent[1] }}</div>

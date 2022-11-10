@@ -46,7 +46,7 @@ export class ConnectorsComponent {
   getConnectors() {
     this.connectors = this.sync.getConnectors(this.type);
     if (this.connectorIds) {
-      this.connectors = this.connectors.filter((connector) => (this.connectorIds || []).includes(connector.id))
+      this.connectors = this.connectors.filter((connector) => (this.connectorIds || []).includes(connector.id));
     }
     markForCheck(this.cdr);
   }

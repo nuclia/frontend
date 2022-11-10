@@ -6,11 +6,7 @@ import { PaginationComponent } from './pagination.component';
 
 @NgModule({
   declarations: [PaginationComponent],
-  imports: [
-    CommonModule,
-    FlexLayoutModule,
-    TranslateModule.forChild()
-  ],
+  imports: [CommonModule, FlexLayoutModule, TranslateModule.forChild()],
   exports: [PaginationComponent],
 })
 export class PaginationModule {}

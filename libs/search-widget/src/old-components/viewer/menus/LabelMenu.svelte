@@ -42,7 +42,7 @@
   const toggleLabel = (labelset: string, label: string) => {
     const newLabels = !!selected[`${labelset}-${label}`]
       ? labels.annotatedLabels.filter((item) => !(item.labelset === labelset && item.label === label))
-      : [...labels.annotatedLabels, {labelset, label}];
+      : [...labels.annotatedLabels, { labelset, label }];
     dispatch('labelsChange', newLabels);
   };
   const leave = () => {
@@ -58,33 +58,43 @@
   style:left={position?.left + 'px'}
   style:top={position?.top + 'px'}
   use:clickOutside
-  on:outclick={close}
->
+  on:outclick={close}>
   <div class="current-labels">
     {#each labels.annotatedLabels as label (label.labelset + label.label)}
       <span class="current-label">
-        <Label {label} removable on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)}/>
+        <Label
+          {label}
+          removable
+          on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)} />
       </span>
     {/each}
   </div>
   <div class="labelsets">
     {#each $labelSetList || [] as [labelSetId, labelSet]}
-      <div class="labelset" on:mouseenter={() => enter(labelSetId)} on:mouseleave={leave}>
+      <div
+        class="labelset"
+        on:mouseenter={() => enter(labelSetId)}
+        on:mouseleave={leave}>
         <button on:click={() => enter(labelSetId)}>
-          <span class="color" style:background-color={labelSet.color}/>
+          <span
+            class="color"
+            style:background-color={labelSet.color} />
           <span class="name">{labelSet.title}</span>
-          <img src={`${getCDN()}icons/chevron-right.svg`} alt="close"/>
+          <img
+            src={`${getCDN()}icons/chevron-right.svg`}
+            alt="close" />
         </button>
-        <div class="labels" class:open={openLabelset === labelSetId}>
+        <div
+          class="labels"
+          class:open={openLabelset === labelSetId}>
           {#each labelSet.labels as label, i}
             <div class="label">
               <input
                 id={`${labelSetId}-${i}`}
                 type="checkbox"
                 bind:checked={selected[`${labelSetId}-${label.title}`]}
-                on:change={() => toggleLabel(labelSetId, label.title) }
-                disabled={$savingLabels || readOnly[`${labelSetId}-${label.title}`]}
-              />
+                on:change={() => toggleLabel(labelSetId, label.title)}
+                disabled={$savingLabels || readOnly[`${labelSetId}-${label.title}`]} />
               <label for={`${labelSetId}-${i}`}>{label.title}</label>
             </div>
           {/each}
@@ -94,4 +104,6 @@
   </div>
 </div>
 
-<style lang="scss" src="./LabelMenu.scss"></style>
+<style
+  lang="scss"
+  src="./LabelMenu.scss"></style>

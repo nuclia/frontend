@@ -1,24 +1,31 @@
-<h3>
-  Aquesta es la interficie per administrar stashify!
-</h3>
-<div fxLayout="row" fxLayoutAlign="start center">
-
-  <mat-card [routerLink]="['/zones']" *ngIf="isRoot">
+<h3>Aquesta es la interficie per administrar stashify!</h3>
+<div
+  fxLayout="row"
+  fxLayoutAlign="start center">
+  <mat-card
+    [routerLink]="['/zones']"
+    *ngIf="isRoot">
     <mat-card-header>
       <mat-card-title>Zones</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p>
-        Flaps zones
-      </p>
+      <p>Flaps zones</p>
       <p>Add new zone</p>
     </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <pa-button kind="primary" size="small">Go</pa-button>
+    <mat-card-actions
+      fxLayout="row"
+      fxLayoutAlign="center center">
+      <pa-button
+        kind="primary"
+        size="small">
+        Go
+      </pa-button>
     </mat-card-actions>
   </mat-card>
 
-  <mat-card [routerLink]="['/users']" *ngIf="isRoot">
+  <mat-card
+    [routerLink]="['/users']"
+    *ngIf="isRoot">
     <mat-card-header>
       <mat-card-title>Users</mat-card-title>
     </mat-card-header>
@@ -26,23 +33,35 @@
       <p>Flaps users</p>
       <p>Add new user</p>
     </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <pa-button kind="primary" size="small">Go</pa-button>
+    <mat-card-actions
+      fxLayout="row"
+      fxLayoutAlign="center center">
+      <pa-button
+        kind="primary"
+        size="small">
+        Go
+      </pa-button>
     </mat-card-actions>
   </mat-card>
 
-  <mat-card [routerLink]="['/accounts']" *ngIf="isDealer || isRoot">
+  <mat-card
+    [routerLink]="['/accounts']"
+    *ngIf="isDealer || isRoot">
     <mat-card-header>
       <mat-card-title>Accounts</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <p>
-        Flaps accounts
-      </p>
+      <p>Flaps accounts</p>
       <p>Add new account</p>
     </mat-card-content>
-    <mat-card-actions fxLayout="row" fxLayoutAlign="center center">
-      <pa-button kind="primary" size="small">Go</pa-button>
+    <mat-card-actions
+      fxLayout="row"
+      fxLayoutAlign="center center">
+      <pa-button
+        kind="primary"
+        size="small">
+        Go
+      </pa-button>
     </mat-card-actions>
   </mat-card>
 </div>

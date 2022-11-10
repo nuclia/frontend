@@ -1,6 +1,10 @@
-<stf-section-navbar [routes]="routes" [hasInnerRoutes]="true">
+<stf-section-navbar
+  [routes]="routes"
+  [hasInnerRoutes]="true">
   <stf-section-navbar-header>
-    <nsi-back-button class="back-button" link=".."></nsi-back-button>
+    <nsi-back-button
+      class="back-button"
+      link=".."></nsi-back-button>
 
     <h1>{{ 'resource.edit' | translate }}</h1>
     <div class="body-s">{{ resourceTitle | async }}</div>

@@ -21,6 +21,6 @@ module.exports = {
   ],
   moduleNameMapper: {
     // Temporary fix because AWS SDK uses a problematic version of uuid (https://github.com/uuidjs/uuid/issues/451)
-    "uuid": require.resolve('uuid'),
+    uuid: require.resolve('uuid'),
   },
 };

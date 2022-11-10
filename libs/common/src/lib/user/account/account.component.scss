@@ -1,8 +1,7 @@
-@import "../../../../../pastanaga/src/lib/styles/stf";
-
+@import '../../../../../pastanaga/src/lib/styles/stf';
 
 .account_container {
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     max-height: 85vh;
     padding: 68px 50px 48px;
     transition: 0.2s;
@@ -11,7 +10,7 @@
 }
 
 .account_content {
-  @include media-breakpoint("gt-xs") {
+  @include media-breakpoint('gt-xs') {
     overflow-y: auto;
 
     // Move scrollbar to the edge

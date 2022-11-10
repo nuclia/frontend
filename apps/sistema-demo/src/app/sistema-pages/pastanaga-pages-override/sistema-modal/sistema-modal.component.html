@@ -2,10 +2,16 @@
   <pa-demo-title>Modal</pa-demo-title>
   <pa-demo-description>
     <p>Pastanaga provides a full system allowing you to create and manage your modals as you wish.</p>
-    <p>It also provides a method opening a <a routerLink="/confirmation-dialog">confirmation dialog</a> and
-      two predefined kinds of modal component ready to be used:</p>
+    <p>
+      It also provides a method opening a
+      <a routerLink="/confirmation-dialog">confirmation dialog</a>
+      and two predefined kinds of modal component ready to be used:
+    </p>
     <ul>
-      <li><code>ModalDialogComponent</code> contains:</li>
+      <li>
+        <code>ModalDialogComponent</code>
+        contains:
+      </li>
       <li class="nested">
         <ul>
           <li>an optional image</li>
@@ -15,7 +21,10 @@
           <li>a footer</li>
         </ul>
       </li>
-      <li><code>ModalAdvancedComponent</code> is a modal with a closing button containing:</li>
+      <li>
+        <code>ModalAdvancedComponent</code>
+        is a modal with a closing button containing:
+      </li>
       <li class="nested">
         <ul>
           <li>a title</li>
@@ -25,77 +34,140 @@
       </li>
     </ul>
     <p>Both modal dialog and modal advanced are displayed fullscreen on small viewport.</p>
-    <p>By default all dialogs are dismissable, meaning pressing escape key or clicking anywhere on the backdrop will
-      dismiss the dialog and return false. This behavior can be changed by setting <code>dismissable</code>
-      to false in the <code>ModalConfig</code>.</p>
+    <p>
+      By default all dialogs are dismissable, meaning pressing escape key or clicking anywhere on the backdrop will
+      dismiss the dialog and return false. This behavior can be changed by setting
+      <code>dismissable</code>
+      to false in the
+      <code>ModalConfig</code>
+      .
+    </p>
   </pa-demo-description>
 
   <pa-demo-examples>
     <p>Modal dialog</p>
-    <pa-button class="open-modal-button" kind="primary" (click)="openDialog()">Open a modal dialog</pa-button>
+    <pa-button
+      class="open-modal-button"
+      kind="primary"
+      (click)="openDialog()">
+      Open a modal dialog
+    </pa-button>
     <p>Modal advanced</p>
-    <pa-button class="open-modal-button" kind="primary" (click)="openModal()">Open a modal advanced</pa-button>
-    <pa-button class="open-modal-button" kind="primary" (click)="openModal(true)">With one button</pa-button>
+    <pa-button
+      class="open-modal-button"
+      kind="primary"
+      (click)="openModal()">
+      Open a modal advanced
+    </pa-button>
+    <pa-button
+      class="open-modal-button"
+      kind="primary"
+      (click)="openModal(true)">
+      With one button
+    </pa-button>
   </pa-demo-examples>
 
   <pa-demo-usage>
-    <p>Pastanaga is providing two ready to use modal components: <code>ModalDialogComponent</code> and <code>ModalAdvancedComponent</code>.
+    <p>
+      Pastanaga is providing two ready to use modal components:
+      <code>ModalDialogComponent</code>
+      and
+      <code>ModalAdvancedComponent</code>
+      .
     </p>
     <p>You can also create your own modal components.</p>
 
-    <h3>Using <code>ModalDialogComponent</code> or <code>ModalAdvancedComponent</code></h3>
-    <p>First you need to create a component. A <code>ModalRef</code> can be injected to control the modal from within
-      the component.</p>
+    <h3>
+      Using
+      <code>ModalDialogComponent</code>
+      or
+      <code>ModalAdvancedComponent</code>
+    </h3>
+    <p>
+      First you need to create a component. A
+      <code>ModalRef</code>
+      can be injected to control the modal from within the component.
+    </p>
     <pa-demo-code>
       <pre><code>{{dialogComponent}}</code></pre>
     </pa-demo-code>
-    <p>In its template, for common/core functionality, use a <code>pa-modal-dialog</code> or a
-      <code>pa-modal-advanced</code></p>
+    <p>
+      In its template, for common/core functionality, use a
+      <code>pa-modal-dialog</code>
+      or a
+      <code>pa-modal-advanced</code>
+    </p>
     <pa-demo-code>
       <pre><code>{{dialogTemplate}}</code></pre>
     </pa-demo-code>
 
-    <p>This component being setup, you can then display it using Pastanaga's <code>ModalService</code></p>
+    <p>
+      This component being setup, you can then display it using Pastanaga's
+      <code>ModalService</code>
+    </p>
     <pa-demo-code>
       <pre><code>{{callerComponent}}</code></pre>
     </pa-demo-code>
 
     <h3>Creating your own modal component</h3>
-    <p>To create a modal from scratch, you first need to create a component extending <code>BaseModalComponent</code>.
+    <p>
+      To create a modal from scratch, you first need to create a component extending
+      <code>BaseModalComponent</code>
+      .
     </p>
     <pa-demo-code>
       <pre><code>{{customModalComponent}}</code></pre>
     </pa-demo-code>
 
-    <p>In its template, you must identify the modal container with <code>#modalContainer</code>.
-      You can also use pastanaga's classes to take advantage of pastanaga's style and animations.
-      And last but not least, you can use pastanaga's modal directives to setup content location for your modal.
+    <p>
+      In its template, you must identify the modal container with
+      <code>#modalContainer</code>
+      . You can also use pastanaga's classes to take advantage of pastanaga's style and animations. And last but not
+      least, you can use pastanaga's modal directives to setup content location for your modal.
     </p>
     <pa-demo-code>
       <pre><code>{{customModalTemplate}}</code></pre>
     </pa-demo-code>
 
-    <p>From there, you can use your own modal the same way you would do with Pastanaga's
-      <code>ModalDialogComponent</code> and <code>ModalAdvancedComponent</code></p>
+    <p>
+      From there, you can use your own modal the same way you would do with Pastanaga's
+      <code>ModalDialogComponent</code>
+      and
+      <code>ModalAdvancedComponent</code>
+    </p>
 
     <h3>Modal configuration</h3>
-    <p>By default, all modal are dismissable. The configuration object allows to change this default behaviors
-      and to pass some data to the component:</p>
+    <p>
+      By default, all modal are dismissable. The configuration object allows to change this default behaviors and to
+      pass some data to the component:
+    </p>
     <h4>ModalConfig</h4>
     <dl>
       <dt>dismissable</dt>
-      <dd>When <code>false</code>, modal won't close when the user press escape key or clicks outside the modal. <small>(Default:
-        true)</small></dd>
+      <dd>
+        When
+        <code>false</code>
+        , modal won't close when the user press escape key or clicks outside the modal.
+        <small>(Default: true)</small>
+      </dd>
     </dl>
 
-    <p>Modal configuration can be setup when opening the modal: <code>openModal</code>'s second parameter is an optional
-      configuration object (<code>ModalConfig</code>).
+    <p>
+      Modal configuration can be setup when opening the modal:
+      <code>openModal</code>
+      's second parameter is an optional configuration object (
+      <code>ModalConfig</code>
+      ).
     </p>
     <pa-demo-code>
       <pre><code>{{openModalConfig}}</code></pre>
     </pa-demo-code>
 
-    <p>You can also change the modal configuration on the component extending <code>BaseModalComponent</code>:</p>
+    <p>
+      You can also change the modal configuration on the component extending
+      <code>BaseModalComponent</code>
+      :
+    </p>
     <pa-demo-code>
       <pre><code>{{modalCloseButtonSetup}}</code></pre>
     </pa-demo-code>
@@ -103,51 +175,91 @@
     <h3>Closing behavior</h3>
 
     <h4>Collect data returned by the modal</h4>
-    <p><code>openModal</code> method returns a <code>ModalRef</code> object which provides an <code>onClose</code>
-      observable.
-      Subscribing to this observable allows to collect data returned by the modal when closing.</p>
+    <p>
+      <code>openModal</code>
+      method returns a
+      <code>ModalRef</code>
+      object which provides an
+      <code>onClose</code>
+      observable. Subscribing to this observable allows to collect data returned by the modal when closing.
+    </p>
     <pa-demo-code>
       <pre><code>{{collectDataOnClose}}</code></pre>
     </pa-demo-code>
-    <p>Pastanaga's modals returns false when clicking outside, as well as <code>ModalAdvancedComponent</code>'s close
-      button.</p>
+    <p>
+      Pastanaga's modals returns false when clicking outside, as well as
+      <code>ModalAdvancedComponent</code>
+      's close button.
+    </p>
 
     <h4>Closing a modal programmatically</h4>
-    <p>Any modal can be closed programmatically through their <code>modal</code> property:</p>
+    <p>
+      Any modal can be closed programmatically through their
+      <code>modal</code>
+      property:
+    </p>
     <pa-demo-code>
       <pre><code>{{closingProgrammatically}}</code></pre>
     </pa-demo-code>
 
     <h3>Passing data to a modal</h3>
-    <p>Sometimes, a modal's caller needs to pass some data to it. You can easily do so by adding the <code>data</code>
-      property to the <code>ModalConfig</code> when opening the modal:</p>
+    <p>
+      Sometimes, a modal's caller needs to pass some data to it. You can easily do so by adding the
+      <code>data</code>
+      property to the
+      <code>ModalConfig</code>
+      when opening the modal:
+    </p>
     <pa-demo-code>
       <pre><code>{{passingDataToModal}}</code></pre>
     </pa-demo-code>
-    <p>The modal can access the data by using the data <code>InjectionToken</code>, for example in their
-      <code>ngOnInit</code> block</p>
+    <p>
+      The modal can access the data by using the data
+      <code>InjectionToken</code>
+      , for example in their
+      <code>ngOnInit</code>
+      block
+    </p>
     <pa-demo-code>
       <pre><code>{{accessingModalData}}</code></pre>
     </pa-demo-code>
 
     <h3>Key binding</h3>
-    <p>A modal with <code>withCloseButton</code> set in its <code>ModalConfig</code> will close when pressing ESC.</p>
-    <p>If you need to bind the ENTER key to do something, you can use <code>onEnter</code> property of your modal:</p>
+    <p>
+      A modal with
+      <code>withCloseButton</code>
+      set in its
+      <code>ModalConfig</code>
+      will close when pressing ESC.
+    </p>
+    <p>
+      If you need to bind the ENTER key to do something, you can use
+      <code>onEnter</code>
+      property of your modal:
+    </p>
     <pa-demo-code>
       <pre><code>{{onEnterBinding}}</code></pre>
     </pa-demo-code>
 
     <h3>Change detection</h3>
-    <p>Modal components provided by Pastanaga (<code>ModalAdvancedComponent</code> and <code>ModalDialogComponent</code>)
-      use OnPush change detection strategy.
-      If you change some values of these modals from the outside, you will need to trigger a change detection cycle in
-      the modal.
-      <code>BaseModalComponent</code> provides the method <code>refresh</code> which does exactly that.</p>
+    <p>
+      Modal components provided by Pastanaga (
+      <code>ModalAdvancedComponent</code>
+      and
+      <code>ModalDialogComponent</code>
+      ) use OnPush change detection strategy. If you change some values of these modals from the outside, you will need
+      to trigger a change detection cycle in the modal.
+      <code>BaseModalComponent</code>
+      provides the method
+      <code>refresh</code>
+      which does exactly that.
+    </p>
 
     <h3>Styling footer buttons</h3>
-    <p>In case you want to have only two buttons on the footer of a modal you need to provide the css class <code>.pa-dual-buttons</code>
-      to the footer.</p>
+    <p>
+      In case you want to have only two buttons on the footer of a modal you need to provide the css class
+      <code>.pa-dual-buttons</code>
+      to the footer.
+    </p>
   </pa-demo-usage>
-
-
 </pa-demo-page>

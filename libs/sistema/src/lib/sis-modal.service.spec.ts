@@ -4,10 +4,12 @@ import { ModalConfig, ModalRef, ModalService } from '@guillotinaweb/pastanaga-an
 import { Component } from '@angular/core';
 
 @Component({
-  template: `<pa-modal-dialog>
-    <pa-modal-title>Dialog title</pa-modal-title>
-    <pa-modal-description>Dialog description</pa-modal-description>
-  </pa-modal-dialog>`,
+  template: `
+    <pa-modal-dialog>
+      <pa-modal-title>Dialog title</pa-modal-title>
+      <pa-modal-description>Dialog description</pa-modal-description>
+    </pa-modal-dialog>
+  `,
 })
 export class TestDialogComponent {
   constructor(public modal: ModalRef) {}

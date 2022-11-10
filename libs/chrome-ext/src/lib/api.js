@@ -27,10 +27,16 @@ function getStorage() {
   let _storage = {};
   return {
     getItem: (key) => _storage[key],
-    setItem: (key, value) => { _storage[key] = value },
-    removeItem: (key) => { _storage[key] = undefined },
-    clear: () => { _storage = {} },
-  }
+    setItem: (key, value) => {
+      _storage[key] = value;
+    },
+    removeItem: (key) => {
+      _storage[key] = undefined;
+    },
+    clear: () => {
+      _storage = {};
+    },
+  };
 }
 
 function getSettings() {

@@ -1,5 +1,5 @@
-@import "./palette.tokens";
-@import "./typography.tokens";
+@import './palette.tokens';
+@import './typography.tokens';
 
 //=====================================
 // SPACING
@@ -19,7 +19,6 @@ $color-caret-field-control-error: $color-secondary-strong;
 
 $color-background-field-error: $color-secondary-lightest;
 
-
 //=====================================
 // BORDERS
 //=====================================
@@ -28,4 +27,3 @@ $border-field-regular: 1px solid $color-neutral-regular;
 $border-field-error: 1px solid $color-secondary-regular;
 $border-field-error-hover: 1px solid $color-secondary-regular;
 $border-field-error-active: 1px solid $color-secondary-regular;
-

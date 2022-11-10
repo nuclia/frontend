@@ -1,9 +1,12 @@
 <div class="profile">
   <div class="profile-container">
-    <pa-button class="close-button"
-               icon="cross"
-               aspect="basic"
-               (click)="goBack()">{{'generic.close' | translate}}</pa-button>
+    <pa-button
+      class="close-button"
+      icon="cross"
+      aspect="basic"
+      (click)="goBack()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
 
     <form [formGroup]="profileForm">
       <h1>{{ 'generic.user_preferences' | translate }}</h1>
@@ -13,11 +16,11 @@
           <label for="name">{{ 'profile.name' | translate }}</label>
         </div>
         <div class="field-input">
-          <pa-input formControlName="name"
-                    id="name"
-                    required
-                    [errorMessages]="profile_validation_messages.name">
-          </pa-input>
+          <pa-input
+            formControlName="name"
+            id="name"
+            required
+            [errorMessages]="profile_validation_messages.name"></pa-input>
         </div>
       </div>
 
@@ -26,12 +29,12 @@
           <label for="email">{{ 'generic.email' | translate }}</label>
         </div>
         <div class="field-input">
-          <pa-input formControlName="email"
-                    id="email"
-                    required
-                    type="email"
-                    [errorMessages]="profile_validation_messages.email">
-          </pa-input>
+          <pa-input
+            formControlName="email"
+            id="email"
+            required
+            type="email"
+            [errorMessages]="profile_validation_messages.email"></pa-input>
         </div>
       </div>
 
@@ -41,9 +44,9 @@
             <label>{{ 'profile.new_password' | translate }}</label>
           </div>
           <div class="field-input">
-            <nsi-password-input formControlName="password"
-                                [errorMessages]="profile_validation_messages.password">
-            </nsi-password-input>
+            <nsi-password-input
+              formControlName="password"
+              [errorMessages]="profile_validation_messages.password"></nsi-password-input>
           </div>
         </div>
 
@@ -52,9 +55,9 @@
             <label>{{ 'profile.repeat_password' | translate }}</label>
           </div>
           <div class="field-input">
-            <nsi-password-input formControlName="passwordConfirm"
-                                [errorMessages]="profile_validation_messages.passwordConfirm">
-            </nsi-password-input>
+            <nsi-password-input
+              formControlName="passwordConfirm"
+              [errorMessages]="profile_validation_messages.passwordConfirm"></nsi-password-input>
           </div>
         </div>
       </ng-container>
@@ -64,16 +67,22 @@
           <label for="language">{{ 'generic.language' | translate }}</label>
         </div>
         <div class="field-input">
-          <pa-radio-group id="language" formControlName="language">
-            <pa-radio *ngFor="let lang of languages"
-                      [value]="lang.value">{{lang.label | translate}}</pa-radio>
+          <pa-radio-group
+            id="language"
+            formControlName="language">
+            <pa-radio
+              *ngFor="let lang of languages"
+              [value]="lang.value">
+              {{ lang.label | translate }}
+            </pa-radio>
           </pa-radio-group>
         </div>
       </div>
 
       <div class="actions">
-        <pa-button kind="primary"
-                   (click)="save()">
+        <pa-button
+          kind="primary"
+          (click)="save()">
           {{ 'generic.save' | translate }}
         </pa-button>
       </div>

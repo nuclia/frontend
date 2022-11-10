@@ -80,7 +80,6 @@
       color: $color-light-stronger;
     }
   }
-
 }
 
 .login_google {
@@ -100,7 +99,7 @@
   }
   &::before,
   &::after {
-    content: "";
+    content: '';
     flex: 1 1 auto;
     height: 1px;
     background-color: $color-neutral-regular;

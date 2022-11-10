@@ -1,13 +1,24 @@
-<pa-avatar [avatar]="avatar" [paPopup]="userMenu"></pa-avatar>
+<pa-avatar
+  [avatar]="avatar"
+  [paPopup]="userMenu"></pa-avatar>
 
 <pa-dropdown #userMenu>
-  <pa-option icon="user"
-             (click)="goProfile()">{{ 'generic.user_preferences' | translate }}</pa-option>
+  <pa-option
+    icon="user"
+    (click)="goProfile()">
+    {{ 'generic.user_preferences' | translate }}
+  </pa-option>
   <pa-separator></pa-separator>
-  <pa-option *ngIf="accounts.length > 1"
-             icon="reload"
-             (click)="switchAccount()">{{ 'generic.switch_account' | translate }}</pa-option>
+  <pa-option
+    *ngIf="accounts.length > 1"
+    icon="reload"
+    (click)="switchAccount()">
+    {{ 'generic.switch_account' | translate }}
+  </pa-option>
   <pa-separator></pa-separator>
-  <pa-option icon="log-out"
-             (click)="logout()">{{ 'generic.logout' | translate }}</pa-option>
+  <pa-option
+    icon="log-out"
+    (click)="logout()">
+    {{ 'generic.logout' | translate }}
+  </pa-option>
 </pa-dropdown>

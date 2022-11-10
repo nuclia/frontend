@@ -11,24 +11,22 @@ describe('AccountListComponent', () => {
   let component: AccountListComponent;
   let fixture: ComponentFixture<AccountListComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [AccountListComponent],
-        schemas: [CUSTOM_ELEMENTS_SCHEMA],
-        imports: [RouterTestingModule, MatTableModule],
-        providers: [
-          {
-            provide: AccountService,
-            useValue: {
-              getAccounts: () => of([]),
-              deleteAccount: () => of(),
-            },
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      declarations: [AccountListComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA],
+      imports: [RouterTestingModule, MatTableModule],
+      providers: [
+        {
+          provide: AccountService,
+          useValue: {
+            getAccounts: () => of([]),
+            deleteAccount: () => of(),
           },
-        ],
-      }).compileComponents();
-    }),
-  );
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AccountListComponent);

@@ -1,8 +1,16 @@
 <div class="splash">
   <div class="container">
-    <img src="assets/nuclia-desktop.svg" alt="Nuclia desktop">
-    <p>{{'login.headline' | translate}}</p>
-    <p><strong>{{'login.not-connected' | translate}}</strong></p>
-    <pa-button kind="primary" (click)="login()">{{'login.button' | translate}}</pa-button>
+    <img
+      src="assets/nuclia-desktop.svg"
+      alt="Nuclia desktop" />
+    <p>{{ 'login.headline' | translate }}</p>
+    <p>
+      <strong>{{ 'login.not-connected' | translate }}</strong>
+    </p>
+    <pa-button
+      kind="primary"
+      (click)="login()">
+      {{ 'login.button' | translate }}
+    </pa-button>
   </div>
 </div>

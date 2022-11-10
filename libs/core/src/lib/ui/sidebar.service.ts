@@ -12,7 +12,7 @@ export class SidebarService {
   register(key: string, sidebar: any): void {
     if (this._registry[key]) {
       console.error(
-        `The sidebar with the key '${key}' already exists. Either unregister it first or use a unique key.`
+        `The sidebar with the key '${key}' already exists. Either unregister it first or use a unique key.`,
       );
 
       return;

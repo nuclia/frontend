@@ -4,14 +4,26 @@
   <div class="container">
     <div class="title-s">{{ 'billing.budget' | translate }}</div>
     <div class="description">{{ 'billing.budget_description' | translate }}</div>
-    <pa-input type="number" [formControl]="budget"></pa-input><span>€</span>
+    <pa-input
+      type="number"
+      [formControl]="budget"></pa-input>
+    <span>€</span>
   </div>
   <div class="customize">
-    <span>{{ 'billing.customized_plan' | translate }} </span>
+    <span>{{ 'billing.customized_plan' | translate }}</span>
     <a href="mailto:info@nuclia.com">info@nuclia.com</a>
   </div>
   <div class="buttons">
-    <pa-button kind="primary" (click)="save()" [disabled]="budget.invalid">{{ 'generic.save' | translate }}</pa-button>
-    <pa-button aspect="basic" (click)="skip()">{{ 'generic.skip' | translate }}</pa-button>
+    <pa-button
+      kind="primary"
+      (click)="save()"
+      [disabled]="budget.invalid">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      (click)="skip()">
+      {{ 'generic.skip' | translate }}
+    </pa-button>
   </div>
 </div>

@@ -6,9 +6,10 @@
   [foldedWidth]="56"
   [foldedAutoTriggerOnHover]="true"
   zIndex="900"
-  zIndexBackdrop="850"
->
-  <ng-template #sidebarContent let-unfolded="unfolded">
+  zIndexBackdrop="850">
+  <ng-template
+    #sidebarContent
+    let-unfolded="unfolded">
     <app-stash-navbar [isUnfolded]="unfolded"></app-stash-navbar>
   </ng-template>
 </stf-sidebar>

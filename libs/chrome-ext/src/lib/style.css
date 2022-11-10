@@ -88,7 +88,7 @@ button.secondary {
 }
 
 .submit-message:not(:empty)::before {
-  content: "";
+  content: '';
   display: inline-block;
   height: 20px;
   width: 20px;

@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'nsd-sistema-spinner',
   templateUrl: './sistema-spinner.component.html',
-  styleUrls: ['./sistema-spinner.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SistemaSpinnerComponent {
