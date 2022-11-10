@@ -1,7 +1,6 @@
 @import 'variables';
 
 .account-kbs {
-  max-width: 770px;
   padding: 70px var(--app-layout-margin-right) 60px 5%;
   h2 {
     margin: 0 0 36px 0;
@@ -9,6 +8,8 @@
   }
 
   .account-kbs-list {
+    max-width: 1024px;
+
     pa-button:not(:last-child) {
       margin-right: rhythm(2);
 
