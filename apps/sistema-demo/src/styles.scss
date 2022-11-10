@@ -21,7 +21,11 @@
 }
 .component {
   display: flex;
-  pa-input, pa-select, pa-textarea, ul, form {
+  pa-input,
+  pa-select,
+  pa-textarea,
+  ul,
+  form {
     flex: 1;
   }
   li {
@@ -32,7 +36,7 @@
 
 // Override tab example style
 .tab-example-container {
-  --tab-parent-background: #F7F7F8 !important;
+  --tab-parent-background: #f7f7f8 !important;
   --tab-parent-padding: 24px !important;
   --tab-content-background: #fff !important;
   --tab-content-padding: 16px !important;

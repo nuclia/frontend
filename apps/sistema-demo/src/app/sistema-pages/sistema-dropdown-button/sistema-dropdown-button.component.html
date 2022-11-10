@@ -2,9 +2,12 @@
   <pa-demo-title>Dropdown button</pa-demo-title>
   <pa-demo-description>
     <p>
-      Sistema provides a standalone dropdown button component,
-      which is wrapping a regular <code>pa-button</code> holding a <code>paPopup</code> (usually a dropdown) reference.
-      A chevron up or down is displayed on the right of the button depending on the state of the dropdown (open or closed).
+      Sistema provides a standalone dropdown button component, which is wrapping a regular
+      <code>pa-button</code>
+      holding a
+      <code>paPopup</code>
+      (usually a dropdown) reference. A chevron up or down is displayed on the right of the button depending on the
+      state of the dropdown (open or closed).
     </p>
   </pa-demo-description>
 
@@ -12,28 +15,31 @@
     <div class="dropdown-container">
       <div>
         <span>Default:</span>
-        <nsi-dropdown-button [popupRef]="pageSizeMenu1"
-                             [open]="dropdown1Open"
-                             [disabled]="disabled">
-          {{pageSize1.value}}
+        <nsi-dropdown-button
+          [popupRef]="pageSizeMenu1"
+          [open]="dropdown1Open"
+          [disabled]="disabled">
+          {{ pageSize1.value }}
         </nsi-dropdown-button>
       </div>
       <div>
         <span>Inverted:</span>
-        <nsi-dropdown-button [popupRef]="pageSizeMenu2"
-                             [open]="dropdown2Open"
-                             kind="inverted"
-                             [disabled]="disabled">
-          {{pageSize2.value}}
+        <nsi-dropdown-button
+          [popupRef]="pageSizeMenu2"
+          [open]="dropdown2Open"
+          kind="inverted"
+          [disabled]="disabled">
+          {{ pageSize2.value }}
         </nsi-dropdown-button>
       </div>
       <div>
         <span>Small:</span>
-        <nsi-dropdown-button [popupRef]="pageSizeMenu3"
-                             [open]="dropdown3Open"
-                             size="small"
-                             [disabled]="disabled">
-          {{pageSize3.value}}
+        <nsi-dropdown-button
+          [popupRef]="pageSizeMenu3"
+          [open]="dropdown3Open"
+          size="small"
+          [disabled]="disabled">
+          {{ pageSize3.value }}
         </nsi-dropdown-button>
       </div>
     </div>
@@ -41,28 +47,40 @@
       <pa-checkbox [(value)]="disabled">Disable</pa-checkbox>
     </div>
 
-    <pa-dropdown #pageSizeMenu1
-                 (onClose)="dropdown1Open = false"
-                 (onOpen)="dropdown1Open = true">
-      <pa-option *ngFor="let option of options"
-                 [value]="option.key"
-                 (selectOption)="setPageSize(option, 1)">{{option.value}}</pa-option>
+    <pa-dropdown
+      #pageSizeMenu1
+      (onClose)="dropdown1Open = false"
+      (onOpen)="dropdown1Open = true">
+      <pa-option
+        *ngFor="let option of options"
+        [value]="option.key"
+        (selectOption)="setPageSize(option, 1)">
+        {{ option.value }}
+      </pa-option>
     </pa-dropdown>
 
-    <pa-dropdown #pageSizeMenu2
-                 (onClose)="dropdown2Open = false"
-                 (onOpen)="dropdown2Open = true">
-      <pa-option *ngFor="let option of options"
-                 [value]="option.key"
-                 (selectOption)="setPageSize(option, 2)">{{option.value}}</pa-option>
+    <pa-dropdown
+      #pageSizeMenu2
+      (onClose)="dropdown2Open = false"
+      (onOpen)="dropdown2Open = true">
+      <pa-option
+        *ngFor="let option of options"
+        [value]="option.key"
+        (selectOption)="setPageSize(option, 2)">
+        {{ option.value }}
+      </pa-option>
     </pa-dropdown>
 
-    <pa-dropdown #pageSizeMenu3
-                 (onClose)="dropdown3Open = false"
-                 (onOpen)="dropdown3Open = true">
-      <pa-option *ngFor="let option of options"
-                 [value]="option.key"
-                 (selectOption)="setPageSize(option, 3)">{{option.value}}</pa-option>
+    <pa-dropdown
+      #pageSizeMenu3
+      (onClose)="dropdown3Open = false"
+      (onOpen)="dropdown3Open = true">
+      <pa-option
+        *ngFor="let option of options"
+        [value]="option.key"
+        (selectOption)="setPageSize(option, 3)">
+        {{ option.value }}
+      </pa-option>
     </pa-dropdown>
   </pa-demo-examples>
 
@@ -70,25 +88,54 @@
     <h3>Inputs</h3>
     <dl>
       <dt>aspect</dt>
-      <dd>Button aspect: <code>solid</code> | <code>basic</code>. <small>(Default: solid)</small></dd>
+      <dd>
+        Button aspect:
+        <code>solid</code>
+        |
+        <code>basic</code>
+        .
+        <small>(Default: solid)</small>
+      </dd>
 
       <dt>disabled</dt>
       <dd>Set disable state.</dd>
 
       <dt>kind</dt>
-      <dd>Button kind: <code>primary</code> | <code>secondary</code> | <code>inverted</code> | <code>destructive</code>. <small>(Default: secondary)</small></dd>
+      <dd>
+        Button kind:
+        <code>primary</code>
+        |
+        <code>secondary</code>
+        |
+        <code>inverted</code>
+        |
+        <code>destructive</code>
+        .
+        <small>(Default: secondary)</small>
+      </dd>
 
       <dt>open</dt>
-      <dd>Flag corresponding to the state of the dropdown. This input drives the chevron icon displayed. <small>(Default: false)</small></dd>
+      <dd>
+        Flag corresponding to the state of the dropdown. This input drives the chevron icon displayed.
+        <small>(Default: false)</small>
+      </dd>
 
       <dt>popupRef</dt>
       <dd>Dropdown component reference.</dd>
 
       <dt>size</dt>
-      <dd>Button size: <code>small</code> | <code>medium</code> | <code>large</code>. <small>(Default: medium)</small></dd>
+      <dd>
+        Button size:
+        <code>small</code>
+        |
+        <code>medium</code>
+        |
+        <code>large</code>
+        .
+        <small>(Default: medium)</small>
+      </dd>
     </dl>
   </pa-demo-usage>
-
 
   <pa-demo-code>
     <pre><code>{{code}}</code></pre>
