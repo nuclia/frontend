@@ -42,7 +42,9 @@
 
     <section class="configuration">
       <label for="widget-select">Select the widget to demo:</label>
-      <select id="widget-select" bind:value={selected}>
+      <select
+        id="widget-select"
+        bind:value={selected}>
         <option value="input">Popup search</option>
         <option value="form">Embedded search</option>
         <option value="two-widgets">Search bar and result widgets</option>
@@ -59,29 +61,29 @@
       <NucliaWidget
         bind:this={widget}
         zone="europe-1"
-        knowledgebox="{kb}"
+        knowledgebox={kb}
         backend="https://stashify.cloud/api"
         cdn="/"
         widgetid="label-annotation"
         type="input"
         permalink
         lang="en"
-        placeholder="Input placeholder is invisible"
-      />
+        placeholder="Input placeholder is invisible" />
     </div>
   {/if}
   {#if selected === 'form'}
-    <h2>Embedded widget <small>(formerly known as form widget)</small></h2>
+    <h2>
+      Embedded widget <small>(formerly known as form widget)</small>
+    </h2>
     <NucliaWidget
       zone="europe-1"
-      knowledgebox="{kb}"
+      knowledgebox={kb}
       backend="https://stashify.cloud/api"
       cdn="/"
       widgetid="dashboard"
       type="form"
       lang="en"
-      placeholder="Here's the placeholder"
-    />
+      placeholder="Here's the placeholder" />
   {/if}
 
   {#if selected === 'two-widgets'}
@@ -89,23 +91,20 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
-        knowledgebox="{kb}"
+        knowledgebox={kb}
         backend="https://stashify.cloud/api"
         cdn="/"
         lang="en"
         widgetid="dashboard"
-        placeholder="Search"
-      />
+        placeholder="Search" />
       <NucliaSearchResults />
     </div>
   {/if}
   {#if selected === 'viewer'}
     <h2>Viewer widget</h2>
     <label>Resource id:</label>
-    <input bind:value={resource}>
-    <button on:click={() => viewerWidget.displayResource(resource)}>
-      Show resource
-    </button>
+    <input bind:value={resource} />
+    <button on:click={() => viewerWidget.displayResource(resource)}>Show resource</button>
     <div class="viewer-widget">
       <NucliaViewerWidget
         bind:this={viewerWidget}
@@ -115,8 +114,7 @@
         backend="https://stashify.cloud/api"
         widgetid="label-annotation"
         permalink
-        lang="en"
-      />
+        lang="en" />
     </div>
   {/if}
 </main>
