@@ -1,7 +1,10 @@
 <div class="container">
-  <img src="assets/nuclia-desktop.svg">
+  <img src="assets/nuclia-desktop.svg" />
   <ul>
-    <li *ngFor="let account of (accounts | async)"
-        (click)="selectAccount(account.slug)">{{account.title}}</li>
+    <li
+      *ngFor="let account of accounts | async"
+      (click)="selectAccount(account.slug)">
+      {{ account.title }}
+    </li>
   </ul>
 </div>

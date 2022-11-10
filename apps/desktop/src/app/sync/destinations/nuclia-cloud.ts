@@ -68,9 +68,7 @@ class NucliaCloudKBImpl implements IDestinationConnector {
         ? of(this.kb)
         : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
       return kb$.pipe(
-        switchMap((kb) =>
-          kb.createResource({ title: filename, files: { [filename]: { file: data } } }),
-        ),
+        switchMap((kb) => kb.createResource({ title: filename, files: { [filename]: { file: data } } })),
         map(() => undefined),
       );
     } else {

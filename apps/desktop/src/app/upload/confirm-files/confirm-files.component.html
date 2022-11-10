@@ -2,17 +2,25 @@
   <h2>{{ 'upload.files' | translate }}</h2>
   <p>{{ 'upload.review' | translate: { num: data.files.length } }}</p>
   <div class="files">
-    <div class="file"
-         paEllipsisTooltip
-         *ngFor="let file of data.files">
+    <div
+      class="file"
+      paEllipsisTooltip
+      *ngFor="let file of data.files">
       {{ file.title }}
     </div>
   </div>
   <div class="actions">
-    <pa-button qa="confirm"
-               kind="primary"
-               (click)="upload()">{{ 'generic.upload' | translate }}</pa-button>
+    <pa-button
+      qa="confirm"
+      kind="primary"
+      (click)="upload()">
+      {{ 'generic.upload' | translate }}
+    </pa-button>
 
-    <pa-button aspect="basic" (click)="close()">{{ 'generic.cancel' | translate }}</pa-button>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
   </div>
 </div>
