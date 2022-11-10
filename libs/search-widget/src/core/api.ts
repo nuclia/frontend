@@ -221,7 +221,7 @@ export const hasAuthData = (): boolean => {
 };
 
 export const getFileUrls = (paths: string[]): Observable<string[]> => {
-  const doesNotNeedToken = paths.length === 0 || !isPrivateKnowledgeBox()
+  const doesNotNeedToken = paths.length === 0 || !isPrivateKnowledgeBox();
   return (doesNotNeedToken ? of('') : getTempToken()).pipe(
     map((token) =>
       paths.map((path) => {

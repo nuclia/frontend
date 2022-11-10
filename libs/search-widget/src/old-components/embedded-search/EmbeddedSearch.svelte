@@ -23,17 +23,27 @@
 
 <div class="sw-embedded-search">
   <div class="search-input-container">
-    <SearchInput embeddedSearch={true} {placeholder} />
+    <SearchInput
+      embeddedSearch={true}
+      {placeholder} />
   </div>
 
   <div class="options">
-    <Toggle label={$_('form.title-only')} on:change={(e) => onChange(e.detail)} />
+    <Toggle
+      label={$_('form.title-only')}
+      on:change={(e) => onChange(e.detail)} />
   </div>
   {#if $showResults && $hasQuery}
-    <div class="results" class:empty={$results.length === 0}>
-      <Results results={$results} formWidget={true} />
+    <div
+      class="results"
+      class:empty={$results.length === 0}>
+      <Results
+        results={$results}
+        formWidget={true} />
     </div>
   {/if}
 </div>
 
-<style lang="scss" src="./EmbeddedSearch.scss"></style>
+<style
+  lang="scss"
+  src="./EmbeddedSearch.scss"></style>

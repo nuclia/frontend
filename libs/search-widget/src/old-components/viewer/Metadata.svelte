@@ -76,22 +76,33 @@
   };
 </script>
 
-<div class="sw-metadata" class:annotation-mode={$annotationMode}>
+<div
+  class="sw-metadata"
+  class:annotation-mode={$annotationMode}>
   {#if $resourceHasEntities}
     <h2 class="title-and-button">
       {!$annotationMode ? $_('entities.title') : 'All entities'}
 
       {#if $canAnnotateEntities}
         {#if !$annotationMode}
-          <Button aspect="solid" kind="inverted" on:click={setAnnotationMode}>
+          <Button
+            aspect="solid"
+            kind="inverted"
+            on:click={setAnnotationMode}>
             {$_('entities.annotations')}
           </Button>
         {:else}
           <div class="annotation-mode-buttons">
-            <Button aspect="solid" kind="inverted" on:click={cancelAnnotationMode}>
+            <Button
+              aspect="solid"
+              kind="inverted"
+              on:click={cancelAnnotationMode}>
               {$_('generic.cancel')}
             </Button>
-            <Button aspect="solid" kind="primary" on:click={saveAnnotations}>
+            <Button
+              aspect="solid"
+              kind="primary"
+              on:click={saveAnnotations}>
               {$_('generic.save')}
             </Button>
           </div>
@@ -114,8 +125,13 @@
       {#if $previewLinks.length > 0}
         <div class="preview-links">
           {#each $previewLinks as file}
-            <a class="download" href={file.uri} on:click|preventDefault={() => previewLink(file)}>
-              <img src={`${getCDN()}icons/document.svg`} alt="icon" />
+            <a
+              class="download"
+              href={file.uri}
+              on:click|preventDefault={() => previewLink(file)}>
+              <img
+                src={`${getCDN()}icons/document.svg`}
+                alt="icon" />
               <div>{$_('resource.preview')}</div>
             </a>
           {/each}
@@ -145,7 +161,10 @@
           <h3>{$_('resource.classification')}</h3>
           <div class="labels">
             {#each $resource.usermetadata?.classifications || [] as label}
-              <Label {label} clickable={$widgetType === 'search'} on:click={() => searchBy(label)} />
+              <Label
+                {label}
+                clickable={$widgetType === 'search'}
+                on:click={() => searchBy(label)} />
             {/each}
           </div>
         </div>
@@ -159,15 +178,26 @@
       {/if}
 
       {#each $files || [] as file}
-        <a class="download" href={file} target="_blank">
-          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
+        <a
+          class="download"
+          href={file}
+          target="_blank">
+          <img
+            src={`${getCDN()}icons/source.svg`}
+            alt="icon" />
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
 
       {#each $links as link}
-        <a class="download" href={link} rel="noopener noreferrer" target="_blank">
-          <img src={`${getCDN()}icons/source.svg`} alt="icon" />
+        <a
+          class="download"
+          href={link}
+          rel="noopener noreferrer"
+          target="_blank">
+          <img
+            src={`${getCDN()}icons/source.svg`}
+            alt="icon" />
           <div>{$_('resource.source')}</div>
         </a>
       {/each}
@@ -179,10 +209,11 @@
     buttons={[{ label: 'Ok', action: 'confirm' }]}
     closeable
     on:cancel={() => (showSafariModal = false)}
-    on:confirm={() => (showSafariModal = false)}
-  >
+    on:confirm={() => (showSafariModal = false)}>
     Entity annotation feature doesn't work on Safari yet. Please use Firefox or Chrome to use this feature.
   </ConfirmDialog>
 </div>
 
-<style lang="scss" src="./Metadata.scss"></style>
+<style
+  lang="scss"
+  src="./Metadata.scss"></style>

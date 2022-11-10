@@ -58,12 +58,13 @@
         slot="header"
         on:click={() => toggle(group.id)}
         class:expanded={expanded.includes(group.id)}
-        class:last={i === $entityList.length - 1}
-      >
-        <div class="color" style:background={group.color}/>
+        class:last={i === $entityList.length - 1}>
+        <div
+          class="color"
+          style:background={group.color} />
         <div class="group-name">{$_(group.title)} ({group.entities.length})</div>
         <div class="icon-container">
-          <Icon name="chevron-left"/>
+          <Icon name="chevron-left" />
         </div>
       </button>
       <ul>
@@ -77,8 +78,7 @@
             }}
             on:keyup={(e) => {
               if (showAnnotated || !$annotationMode) onKeyUp(e, entity);
-            }}
-          >
+            }}>
             {entity}
           </li>
         {/each}
@@ -87,4 +87,6 @@
   {/each}
 </div>
 
-<style lang="scss" src="./Entities.scss"></style>
+<style
+  lang="scss"
+  src="./Entities.scss"></style>

@@ -21,24 +21,26 @@
   let isDestroyed = false;
 
   $: markedText = sortedAnnotations.pipe(
-    map(entities => {
+    map((entities) => {
       let textWithMarks = '';
       let currentIndex = 0;
-      entities.filter(entity => entity.paragraphId === paragraphId).forEach((entity) => {
-        const isHighlighted = $selectedFamily === entity.entityFamilyId;
-        let highlightStyle = '';
-        if (isHighlighted) {
-          const family = entityGroups.value.find(group => group.id === entity.entityFamilyId);
-          highlightStyle = `style="background-color:${family.color}"`;
-        }
-        textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
+      entities
+        .filter((entity) => entity.paragraphId === paragraphId)
+        .forEach((entity) => {
+          const isHighlighted = $selectedFamily === entity.entityFamilyId;
+          let highlightStyle = '';
+          if (isHighlighted) {
+            const family = entityGroups.value.find((group) => group.id === entity.entityFamilyId);
+            highlightStyle = `style="background-color:${family.color}"`;
+          }
+          textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
   family="${entity.entityFamilyId}"
   start="${entity.start}"
   end="${entity.end}"
   entity="${entity.entity}"
   paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
-        currentIndex = entity.end;
-      });
+          currentIndex = entity.end;
+        });
       textWithMarks += paragraph.text.slice(currentIndex);
 
       setTimeout(() => {
@@ -60,13 +62,13 @@
   let selectedEntity: Annotation | undefined;
 
   function setupMarkListener() {
-    contentContainer.querySelectorAll('mark[family]').forEach(mark => {
+    contentContainer.querySelectorAll('mark[family]').forEach((mark) => {
       mark.addEventListener('click', clickOnEntity);
     });
   }
 
   function cleanUpMarkListener() {
-    contentContainer.querySelectorAll('mark[family]').forEach(mark => {
+    contentContainer.querySelectorAll('mark[family]').forEach((mark) => {
       mark.removeEventListener('click', clickOnEntity);
     });
   }
@@ -107,9 +109,9 @@
   };
 
   function getTextSelection() {
-    return !!document.querySelector('nuclia-search')?.shadowRoot?.getSelection ?
-      document.querySelector('nuclia-search').shadowRoot.getSelection() :
-      document.getSelection();
+    return !!document.querySelector('nuclia-search')?.shadowRoot?.getSelection
+      ? document.querySelector('nuclia-search').shadowRoot.getSelection()
+      : document.getSelection();
   }
 
   const contextMenu = (event: MouseEvent) => {
@@ -127,7 +129,7 @@
         end = start + (range.endOffset - range.startOffset);
       }
       selectedText = {
-        trimmedText: highlightedText.replaceAll(/\s+/ig, ' ').trim(),
+        trimmedText: highlightedText.replaceAll(/\s+/gi, ' ').trim(),
         start,
         end,
       };
@@ -150,7 +152,7 @@
     } else if (selectedEntity.entityFamilyId === family.id) {
       removeAnnotation(selectedEntity);
     } else {
-      updateAnnotation(selectedEntity, {...selectedEntity, entityFamilyId: family.id});
+      updateAnnotation(selectedEntity, { ...selectedEntity, entityFamilyId: family.id });
     }
     closeMenu();
   };
@@ -165,22 +167,26 @@
 </script>
 
 <Paragraph>
-  <div slot="content"
-       bind:this={contentContainer}>
+  <div
+    slot="content"
+    bind:this={contentContainer}>
     {@html $markedText}
   </div>
 </Paragraph>
 
 {#if isMenuOpen}
-  <div class="menu-container"
-       style:opacity={isMenuVisible ? 1 : 0}>
-    <EntityFamilyMenu position={menuPosition}
-                      selectedFamily={selectedEntity?.entityFamilyId}
-                      on:menuHeight={(event) => menuHeight = event.detail.height}
-                      on:familySelection={(event) => selectFamily(event.detail.family)}
-                      on:close={closeMenu}></EntityFamilyMenu>
+  <div
+    class="menu-container"
+    style:opacity={isMenuVisible ? 1 : 0}>
+    <EntityFamilyMenu
+      position={menuPosition}
+      selectedFamily={selectedEntity?.entityFamilyId}
+      on:menuHeight={(event) => (menuHeight = event.detail.height)}
+      on:familySelection={(event) => selectFamily(event.detail.family)}
+      on:close={closeMenu} />
   </div>
-
 {/if}
 
-<style lang="scss" src="./ParagraphWithAnnotations.scss"></style>
+<style
+  lang="scss"
+  src="./ParagraphWithAnnotations.scss"></style>

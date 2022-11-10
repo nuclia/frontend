@@ -84,17 +84,25 @@
 
     return () => reset();
   });
-
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
 
-<div class="nuclia-widget" {style} data-version="__NUCLIA_DEV_VERSION__">
+<div
+  class="nuclia-widget"
+  {style}
+  data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     <ViewerModal {permalinkEnabled} />
   {/if}
 
-  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
+  <div
+    id="nuclia-glyphs-sprite"
+    hidden>
+    {@html svgSprite}
+  </div>
 </div>
 
-<style lang="scss" src="./ViewerWidget.scss"></style>
+<style
+  lang="scss"
+  src="./ViewerWidget.scss"></style>

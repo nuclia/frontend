@@ -20,29 +20,34 @@
   const onLoad = () => {
     loaded = true;
     dispatch('loaded');
-  }
+  };
 </script>
 
 {#if thumbnail}
-  <div class="sw-thumbnail-player"
-       tabindex="-1"
-       in:fade={{ delay: Duration.SUPERFAST }}
-       on:click={play}>
-    <Thumbnail src={thumbnail}
-               noBackground
-               {aspectRatio}
-               on:loaded={onLoad} />
+  <div
+    class="sw-thumbnail-player"
+    tabindex="-1"
+    in:fade={{ delay: Duration.SUPERFAST }}
+    on:click={play}>
+    <Thumbnail
+      src={thumbnail}
+      noBackground
+      {aspectRatio}
+      on:loaded={onLoad} />
 
     {#if loaded}
-      <div class="action-container"
-           class:play-icon={!spinner}
-           tabindex="0"
-           in:fade={{ delay: Duration.SUPERFAST }}
-           on:keyup={(e) => {
-             if (e.key === 'Enter') play();
-           }}>
+      <div
+        class="action-container"
+        class:play-icon={!spinner}
+        tabindex="0"
+        in:fade={{ delay: Duration.SUPERFAST }}
+        on:keyup={(e) => {
+          if (e.key === 'Enter') play();
+        }}>
         {#if !spinner}
-          <Icon name="play" size="large" />
+          <Icon
+            name="play"
+            size="large" />
         {:else}
           <Spinner />
         {/if}
@@ -51,4 +56,6 @@
   </div>
 {/if}
 
-<style lang="scss" src="./ThumbnailPlayer.scss"></style>
+<style
+  lang="scss"
+  src="./ThumbnailPlayer.scss"></style>

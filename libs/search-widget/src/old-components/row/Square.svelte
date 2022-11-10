@@ -16,11 +16,12 @@
     if (e.key === 'Enter') goToResource({ uid: result.id });
   }}
   on:focus
-  tabindex="0"
->
+  tabindex="0">
   <div class="thumbnail">
     {#if result.thumbnail}
-      <Thumbnail src={result.thumbnail} aspectRatio="16/9" />
+      <Thumbnail
+        src={result.thumbnail}
+        aspectRatio="16/9" />
     {/if}
   </div>
   <div class="body">
@@ -41,4 +42,6 @@
   </div>
 </div>
 
-<style lang="scss" src="./Square.scss"></style>
+<style
+  lang="scss"
+  src="./Square.scss"></style>

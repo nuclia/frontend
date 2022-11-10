@@ -47,30 +47,39 @@
   };
 </script>
 
-<svelte:window on:keydown={closeOnEsc}
-               on:resize={setModalContentHeight}/>
+<svelte:window
+  on:keydown={closeOnEsc}
+  on:resize={setModalContentHeight} />
 {#if show}
-  <div class="sw-modal-backdrop fade"
-       class:visible={!popup}
-       class:popup
-       class:align-right={alignTo === 'right'}
-       on:click={outsideClick}>
-    <dialog class="modal"
-            on:click={insideClick}
-            style:--popup-top="{parentPosition?.bottom || 0}px"
-            style:--popup-left="{(alignTo === 'right' ? parentPosition?.right : parentPosition?.left) || 0}px"
-            style:--modal-width={modalWidth ? modalWidth : ''}
-    >
+  <div
+    class="sw-modal-backdrop fade"
+    class:visible={!popup}
+    class:popup
+    class:align-right={alignTo === 'right'}
+    on:click={outsideClick}>
+    <dialog
+      class="modal"
+      on:click={insideClick}
+      style:--popup-top="{parentPosition?.bottom || 0}px"
+      style:--popup-left="{(alignTo === 'right' ? parentPosition?.right : parentPosition?.left) || 0}px"
+      style:--modal-width={modalWidth ? modalWidth : ''}>
       {#if backButton || closeButton}
-        <ModalHeader {closeButton} {backButton} on:close={close} on:back/>
+        <ModalHeader
+          {closeButton}
+          {backButton}
+          on:close={close}
+          on:back />
       {/if}
-      <div class="modal-content"
-           bind:this={modalContentContainer}
-           style:--modal-content-height={modalContentHeight}>
-        <slot/>
+      <div
+        class="modal-content"
+        bind:this={modalContentContainer}
+        style:--modal-content-height={modalContentHeight}>
+        <slot />
       </div>
     </dialog>
   </div>
 {/if}
 
-<style lang="scss" src="./Modal.scss"></style>
+<style
+  lang="scss"
+  src="./Modal.scss"></style>

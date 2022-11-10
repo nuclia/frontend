@@ -14,9 +14,15 @@
   aria-label={label ? label.textContent : ''}
   tabindex="0"
   {disabled}
-  on:click
->
-  <span tabindex="-1" class="button-label" bind:this={label}><slot /></span>
+  on:click>
+  <span
+    tabindex="-1"
+    class="button-label"
+    bind:this={label}>
+    <slot />
+  </span>
 </button>
 
-<style lang="scss" src="./Button.scss"></style>
+<style
+  lang="scss"
+  src="./Button.scss"></style>

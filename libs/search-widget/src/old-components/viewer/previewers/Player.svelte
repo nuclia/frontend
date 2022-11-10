@@ -71,7 +71,9 @@
 
 <svelte:head>
   {#if isDashVideo}
-    <script src="https://cdn.dashjs.org/v4.3.0/dash.all.min.js" on:load={onLoadDash}></script>
+    <script
+      src="https://cdn.dashjs.org/v4.3.0/dash.all.min.js"
+      on:load={onLoadDash}></script>
   {/if}
 </svelte:head>
 
@@ -88,9 +90,10 @@
         }}
         bind:this={player}
         bind:currentTime
-        bind:paused
-      >
-        <source {src} {type} />
+        bind:paused>
+        <source
+          {src}
+          {type} />
         <track kind="captions" />
       </video>
     </div>
@@ -104,11 +107,14 @@
       }}
       bind:this={player}
       bind:currentTime
-      bind:paused
-    >
-      <source {src} {type} />
+      bind:paused>
+      <source
+        {src}
+        {type} />
     </audio>
   {/if}
 </div>
 
-<style lang="scss" src="./Player.scss"></style>
+<style
+  lang="scss"
+  src="./Player.scss"></style>

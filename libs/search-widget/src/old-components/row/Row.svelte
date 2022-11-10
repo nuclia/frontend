@@ -14,7 +14,7 @@
   export let semantic = false;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
   const sentences = nucliaState().getMatchingSentences(result.id);
-  $: labels = (result.usermetadata?.classifications || []);
+  $: labels = result.usermetadata?.classifications || [];
 </script>
 
 <div
@@ -24,12 +24,15 @@
     if (e.key === 'Enter') goToResource({ uid: result.id });
   }}
   on:focus
-  tabindex="0"
->
-  <div class="blocks" class:no-thumbnail={!displayThumbnail}>
+  tabindex="0">
+  <div
+    class="blocks"
+    class:no-thumbnail={!displayThumbnail}>
     <div class="block-1">
       {#if result.icon}
-        <MimeIcon type={result.icon} small />
+        <MimeIcon
+          type={result.icon}
+          small />
       {/if}
     </div>
     <div class="block-2">
@@ -39,8 +42,7 @@
           {#each $sentences as sentence}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => goToResource({ uid: sentence.rid, sentence })}
-            >
+              on:click|preventDefault|stopPropagation={() => goToResource({ uid: sentence.rid, sentence })}>
               {@html sentence.text}
             </li>
           {/each}
@@ -51,8 +53,7 @@
           {#each $paragraphs as paragraph}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => goToResource({ uid: paragraph.rid, paragraph })}
-            >
+              on:click|preventDefault|stopPropagation={() => goToResource({ uid: paragraph.rid, paragraph })}>
               {@html paragraph.text}
             </li>
           {/each}
@@ -68,7 +69,10 @@
         </div>
         <div class="labels">
           {#each labels.slice(0, 4) as label}
-            <Label {label} clickable on:click={() => searchBy(label)}/>
+            <Label
+              {label}
+              clickable
+              on:click={() => searchBy(label)} />
           {/each}
           {#if labels.length > 4}
             <div class="label">+</div>
@@ -87,4 +91,6 @@
   </div>
 </div>
 
-<style lang="scss" src="./Row.scss"></style>
+<style
+  lang="scss"
+  src="./Row.scss"></style>

@@ -26,10 +26,10 @@
     subscriptions = [
       nucliaState()
         .displayedResource.pipe(
-        filter((displayedResource) => !!displayedResource?.uid),
-        concatMap((displayedResource) => getResource(displayedResource.uid)),
-        tap((res: Resource) => resource.set(res)),
-      )
+          filter((displayedResource) => !!displayedResource?.uid),
+          concatMap((displayedResource) => getResource(displayedResource.uid)),
+          tap((res: Resource) => resource.set(res)),
+        )
         .subscribe((res) => {
           isViewerOpen.set(true);
           if (permalinkEnabled) {
@@ -76,8 +76,7 @@
     --modal-width="var(--resource-modal-width)"
     --modal-width-md="var(--resource-modal-width-md)"
     --modal-height="var(--resource-modal-height)"
-    --modal-height-md="var(--resource-modal-height-md)"
-  >
+    --modal-height-md="var(--resource-modal-height-md)">
     <Viewer />
   </Modal>
 </div>

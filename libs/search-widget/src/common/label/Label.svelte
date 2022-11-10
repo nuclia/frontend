@@ -19,9 +19,8 @@
         setColor = false;
       }
       return color;
-    })
+    }),
   );
-
 
   const dispatch = createEventDispatcher();
   const remove = () => {
@@ -33,22 +32,29 @@
       event.stopPropagation();
       dispatch('click');
     }
-  }
+  };
 </script>
 
-<div class="sw-label"
-     class:closeable={removable}
-     style:background-color={$color}
-     on:click={onClick}>
-  <span style:color={setColor ? $color : ''}
-        class:clickable>{label.label}</span>
+<div
+  class="sw-label"
+  class:closeable={removable}
+  style:background-color={$color}
+  on:click={onClick}>
+  <span
+    style:color={setColor ? $color : ''}
+    class:clickable>
+    {label.label}
+  </span>
   {#if removable}
-    <IconButton icon="cross"
-                ariaLabel="Delete"
-                aspect="basic"
-                size="small"
-                on:click={remove}/>
+    <IconButton
+      icon="cross"
+      ariaLabel="Delete"
+      aspect="basic"
+      size="small"
+      on:click={remove} />
   {/if}
 </div>
 
-<style lang="scss" src="./Label.scss"></style>
+<style
+  lang="scss"
+  src="./Label.scss"></style>

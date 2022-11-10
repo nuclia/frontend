@@ -3,8 +3,12 @@
   export let hovering = false;
 </script>
 
-<div class="sw-indicator sw-page-indicator" class:hovering>
+<div
+  class="sw-indicator sw-page-indicator"
+  class:hovering>
   p. {page || 0}
 </div>
 
-<style lang="scss" src="./PageIndicator.scss"></style>
+<style
+  lang="scss"
+  src="./PageIndicator.scss"></style>

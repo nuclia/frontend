@@ -21,14 +21,21 @@
 </script>
 
 {#if actions.length > 0}
-  <div class="sw-action-menu" use:clickOutside on:outclick={closeMenu}>
+  <div
+    class="sw-action-menu"
+    use:clickOutside
+    on:outclick={closeMenu}>
     <button on:click|preventDefault={toggleMenu}>
-      <img src={`${getCDN()}icons/more-vertical.svg`} alt="more" />
+      <img
+        src={`${getCDN()}icons/more-vertical.svg`}
+        alt="more" />
     </button>
     {#if displayMenu}
       <ul class="menu">
         {#each actions as item}
-          <li on:click={() => clickMenu(item)} class:destructive={item.destructive}>
+          <li
+            on:click={() => clickMenu(item)}
+            class:destructive={item.destructive}>
             {item.label}
           </li>
         {/each}
@@ -37,4 +44,6 @@
   </div>
 {/if}
 
-<style lang="scss" src="./ActionMenu.scss"></style>
+<style
+  lang="scss"
+  src="./ActionMenu.scss"></style>

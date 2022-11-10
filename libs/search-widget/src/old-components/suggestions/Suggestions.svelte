@@ -25,7 +25,10 @@
 
 <div class="sw-suggestions">
   {#if $suggestionsHasError}
-    <div><strong>{$_('error.search')}</strong> <span>{$_('error.search-beta')}</span></div>
+    <div>
+      <strong>{$_('error.search')}</strong>
+      <span>{$_('error.search-beta')}</span>
+    </div>
   {:else}
     {#if intents.length > 0}
       <section>
@@ -44,10 +47,13 @@
         <h3>{$_('suggest.paragraphs')}</h3>
         <div>
           {#each paragraphs.slice(0, 4) as paragraph}
-            <div class="paragraph"
-                 on:click|preventDefault={() => goToResource({ uid: paragraph.rid, paragraph })}
-                 on:keyup={(e) => { if (e.key === 'Enter') goToResource({ uid: paragraph.rid, paragraph }); }}
-                 tabindex="0">
+            <div
+              class="paragraph"
+              on:click|preventDefault={() => goToResource({ uid: paragraph.rid, paragraph })}
+              on:keyup={(e) => {
+                if (e.key === 'Enter') goToResource({ uid: paragraph.rid, paragraph });
+              }}
+              tabindex="0">
               {paragraph.text}
             </div>
           {/each}
@@ -57,4 +63,6 @@
   {/if}
 </div>
 
-<style lang="scss" src="./Suggestions.scss"></style>
+<style
+  lang="scss"
+  src="./Suggestions.scss"></style>

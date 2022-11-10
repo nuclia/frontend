@@ -67,6 +67,7 @@
     "node-machine-id": "^1.1.12",
     "perfect-scrollbar": "^1.5.0",
     "posthog-js": "^1.17.9",
+    "prettier-plugin-svelte": "^2.8.0",
     "protobufjs": "^6.11.3",
     "run-script-os": "^1.1.6",
     "rxjs": "~7.5.0",

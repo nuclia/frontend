@@ -1,14 +1,26 @@
 <script lang="ts">
-  import type { WidgetParagraph, PdfWidgetParagraph, MediaWidgetParagraph, ParagraphLabels } from '../../../core/models';
+  import type {
+    WidgetParagraph,
+    PdfWidgetParagraph,
+    MediaWidgetParagraph,
+    ParagraphLabels,
+  } from '../../../core/models';
   import { PreviewKind } from '../../../core/models';
   import { formatTime } from '../../../core/utils';
-  import { viewerState, viewerStore, selectedParagraphIndex, paragraphLabels, getParagraphId, setParagraphLabels } from '../../../core/old-stores/viewer.store';
+  import {
+    viewerState,
+    viewerStore,
+    selectedParagraphIndex,
+    paragraphLabels,
+    getParagraphId,
+    setParagraphLabels,
+  } from '../../../core/old-stores/viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';
   import ParagraphWithAnnotations from './ParagraphWithAnnotations.svelte';
   import { annotationMode } from '../../../core/stores/annotation.store';
-  import { resource } from "../../../core/stores/resource.store";
+  import { resource } from '../../../core/stores/resource.store';
 
   export let paragraphs: WidgetParagraph[] = [];
 
@@ -29,7 +41,9 @@
     {#if !$onlySelected || ($onlySelected && i === $selectedParagraphIndex)}
       <div class="paragraph-item">
         {#if $annotationMode}
-          <ParagraphWithAnnotations {paragraph} paragraphId={getParagraphId($resource.id, paragraph)}></ParagraphWithAnnotations>
+          <ParagraphWithAnnotations
+            {paragraph}
+            paragraphId={getParagraphId($resource.id, paragraph)} />
         {:else if paragraph.preview === PreviewKind.PDF}
           <ParagraphWithIcon
             text={paragraph.text}
@@ -38,8 +52,7 @@
             active={$selectedParagraphIndex === i}
             on:click={() => previewParagraph(paragraph)}
             labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
-            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}
-          />
+            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)} />
         {:else if paragraph.preview === PreviewKind.VIDEO || paragraph.preview === PreviewKind.AUDIO || paragraph.preview === PreviewKind.YOUTUBE}
           <ParagraphWithIcon
             text={paragraph.text}
@@ -47,13 +60,11 @@
             icon={ParagraphIcon.PLAY}
             on:click={() => previewParagraph(paragraph)}
             labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
-            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}
-          />
+            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)} />
         {:else}
           <ParagraphWithMenu
             labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
-            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}
-          >
+            on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}>
             <span slot="content">{paragraph.text}</span>
           </ParagraphWithMenu>
         {/if}
@@ -62,4 +73,6 @@
   {/each}
 </div>
 
-<style lang="scss" src="./Paragraphs.scss"></style>
+<style
+  lang="scss"
+  src="./Paragraphs.scss"></style>

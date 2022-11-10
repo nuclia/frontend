@@ -17,7 +17,10 @@
       <div class="labels">
         {#each allLabels as label (label.labelset + label.label)}
           <div class="label">
-            <Label {label} clickable={$widgetType === 'search'} on:click={() => searchBy(label)}/>
+            <Label
+              {label}
+              clickable={$widgetType === 'search'}
+              on:click={() => searchBy(label)} />
           </div>
         {/each}
       </div>
@@ -25,4 +28,6 @@
   </div>
 </div>
 
-<style lang="scss" src="./Paragraph.scss"></style>
+<style
+  lang="scss"
+  src="./Paragraph.scss"></style>

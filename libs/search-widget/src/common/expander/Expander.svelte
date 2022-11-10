@@ -38,12 +38,13 @@
     class="expander-content"
     style:height={contentHeight}
     style:display={showContent ? 'block' : 'none'}
-    style:transition={`height ${duration}ms`}
-  >
+    style:transition={`height ${duration}ms`}>
     <div bind:this={content}>
       <slot />
     </div>
   </div>
 </div>
 
-<style lang="scss" src="./Expander.scss"></style>
+<style
+  lang="scss"
+  src="./Expander.scss"></style>

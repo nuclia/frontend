@@ -27,17 +27,20 @@
 
 <div class="sw-thumbnail">
   {#if loaded}
-    <img src={thumbnail}
-         alt="Thumbnail"
-         style:aspect-ratio={aspectRatio}
-         class:thumbnail-background={!noBackground}
-         class="fade-in"
-    />
+    <img
+      src={thumbnail}
+      alt="Thumbnail"
+      style:aspect-ratio={aspectRatio}
+      class:thumbnail-background={!noBackground}
+      class="fade-in" />
   {/if}
   {#if !loaded}
-    <div class:thumbnail-background={!noBackground}
-         class="thumbnail-placeholder fade-in" />
+    <div
+      class:thumbnail-background={!noBackground}
+      class="thumbnail-placeholder fade-in" />
   {/if}
 </div>
 
-<style lang="scss" src="./Thumbnail.scss"></style>
+<style
+  lang="scss"
+  src="./Thumbnail.scss"></style>

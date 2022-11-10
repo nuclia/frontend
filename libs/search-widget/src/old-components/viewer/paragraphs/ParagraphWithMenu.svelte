@@ -10,7 +10,6 @@
   let element: HTMLElement;
   let position: { top: number; left: number } | undefined = undefined;
 
-
   const handleClick = (event: MouseEvent) => {
     if (event.button === 2) {
       event.preventDefault();
@@ -27,11 +26,14 @@
 <div
   class="paragraph-with-menu"
   on:contextmenu={($canEditLabels && hasAuthData() && handleClick) || null}
-  bind:this={element}
->
+  bind:this={element}>
   <Paragraph {labels}>
-    <slot name="icon" slot="icon" />
-    <slot name="content" slot="content" />
+    <slot
+      name="icon"
+      slot="icon" />
+    <slot
+      name="content"
+      slot="content" />
   </Paragraph>
   {#if isOpenMenu}
     <LabelMenu
@@ -40,9 +42,10 @@
       on:close={() => {
         isOpenMenu = false;
       }}
-      on:labelsChange
-    />
+      on:labelsChange />
   {/if}
 </div>
 
-<style lang="scss" src="./ParagraphWithMenu.scss"></style>
+<style
+  lang="scss"
+  src="./ParagraphWithMenu.scss"></style>

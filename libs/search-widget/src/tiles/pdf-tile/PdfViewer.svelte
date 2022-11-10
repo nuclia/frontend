@@ -8,7 +8,7 @@
   export let showController = true;
 
   const pdfJsLib = window['pdfjs-dist/build/pdf'];
-  const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer']
+  const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer'];
   pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/build/pdf.worker.js`;
 
   let innerHeight = window.innerHeight;
@@ -41,8 +41,8 @@
     }
     // initialise PDF.js
     eventBus = new pdfJsViewer.EventBus();
-    linkService = new pdfJsViewer.PDFLinkService({eventBus});
-    findController = new pdfJsViewer.PDFFindController({eventBus, linkService});
+    linkService = new pdfJsViewer.PDFLinkService({ eventBus });
+    findController = new pdfJsViewer.PDFFindController({ eventBus, linkService });
     pdfViewer = new pdfJsViewer.PDFViewer({
       container: pdfContainerElement,
       removePageBorders: true,
@@ -54,12 +54,15 @@
 
     // Load the pdf and pass it to PDF.js
     const loadingTask = pdfJsLib.getDocument(src);
-    loadingTask.promise.then((pdf) => {
-      pdfViewer.setDocument(pdf);
-      linkService.setDocument(pdf);
-    }, (reason) => {
-      console.error(`Loading PDF failed`, reason);
-    });
+    loadingTask.promise.then(
+      (pdf) => {
+        pdfViewer.setDocument(pdf);
+        linkService.setDocument(pdf);
+      },
+      (reason) => {
+        console.error(`Loading PDF failed`, reason);
+      },
+    );
 
     // Display the right page and highlight the paragraph
     eventBus.on('pagesinit', () => {
@@ -70,7 +73,7 @@
 
       const pageNumber = paragraph?.page;
       if (pageNumber) {
-        pdfViewer.scrollPageIntoView({pageNumber})
+        pdfViewer.scrollPageIntoView({ pageNumber });
       }
       if (paragraph?.text) {
         findSelectedText();
@@ -87,12 +90,12 @@
     eventBus.dispatch('find', {
       caseSensitive: true,
       phraseSearch: true,
-      query
+      query,
     });
   }
 
   function unselectText() {
-    eventBus.dispatch('find', {query: ''});
+    eventBus.dispatch('find', { query: '' });
   }
 
   const zoomIn = () => {
@@ -100,26 +103,26 @@
       pdfViewer.increaseScale();
       zoom = pdfViewer.currentScale;
     }
-  }
+  };
 
   const zoomOut = () => {
     if (pdfViewer) {
       pdfViewer.decreaseScale();
       zoom = pdfViewer.currentScale;
     }
-  }
+  };
 
   const previousPage = () => {
     if (pdfViewer) {
       pdfViewer.previousPage();
     }
-  }
+  };
 
   const nextPage = () => {
     if (pdfViewer) {
       pdfViewer.nextPage();
     }
-  }
+  };
 
   function resize() {
     if (!!pdfViewer && pdfInitialized) {
@@ -128,41 +131,48 @@
   }
 </script>
 
-<svelte:window on:resize={resize}/>
-<div class="pdf-container"
-     bind:this={pdfContainerElement}
-     bind:offsetWidth={containerOffsetWidth}
-     style:--container-width="{containerOffsetWidth}px">
-  <div class="pdfViewer"></div>
+<svelte:window on:resize={resize} />
+<div
+  class="pdf-container"
+  bind:this={pdfContainerElement}
+  bind:offsetWidth={containerOffsetWidth}
+  style:--container-width="{containerOffsetWidth}px">
+  <div class="pdfViewer" />
 
   {#if showController}
     <div class="pdf-controller">
       <div class="pdf-navigator">
-        <IconButton icon="circle-chevron-left"
-                    aspect="basic"
-                    size="small"
-                    on:click={previousPage}/>
-        <IconButton icon="circle-chevron-right"
-                    aspect="basic"
-                    size="small"
-                    on:click={nextPage}/>
+        <IconButton
+          icon="circle-chevron-left"
+          aspect="basic"
+          size="small"
+          on:click={previousPage} />
+        <IconButton
+          icon="circle-chevron-right"
+          aspect="basic"
+          size="small"
+          on:click={nextPage} />
       </div>
 
       <span>{currentPage} / {totalPage}</span>
 
       <div class="pdf-zoom-container">
-        <IconButton icon="circle-minus"
-                    aspect="basic"
-                    size="small"
-                    on:click={zoomOut} />
-        <IconButton icon="circle-plus"
-                    aspect="basic"
-                    size="small"
-                    on:click={zoomIn} />
+        <IconButton
+          icon="circle-minus"
+          aspect="basic"
+          size="small"
+          on:click={zoomOut} />
+        <IconButton
+          icon="circle-plus"
+          aspect="basic"
+          size="small"
+          on:click={zoomIn} />
       </div>
       <span>{Math.round(zoom * 100)}%</span>
     </div>
   {/if}
 </div>
 
-<style lang="scss" src="./PdfViewer.scss"></style>
+<style
+  lang="scss"
+  src="./PdfViewer.scss"></style>

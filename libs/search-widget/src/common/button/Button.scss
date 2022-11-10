@@ -11,7 +11,8 @@
   margin: 0;
   outline: 0;
   padding: var(--rhythm-1) var(--rhythm-2);
-  transition: background-color var(--transition-superfast), box-shadow var(--transition-superfast),   color var(--transition-superfast);
+  transition: background-color var(--transition-superfast), box-shadow var(--transition-superfast),
+    color var(--transition-superfast);
   white-space: nowrap;
 
   &:focus {

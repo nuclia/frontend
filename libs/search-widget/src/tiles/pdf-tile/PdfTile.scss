@@ -1,4 +1,4 @@
-@import "../tile";
+@import '../tile';
 
 .sw-pdf-tile {
   .thumbnail-container {
@@ -59,7 +59,10 @@
 
       background-color: var(--color-light-stronger);
       margin-bottom: var(--search-results-margin-bottom);
-      max-height: calc(100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) - var(--search-results-margin-bottom));
+      max-height: calc(
+        100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) -
+          var(--search-results-margin-bottom)
+      );
       overflow: auto;
     }
     .side-panel {
@@ -80,7 +83,9 @@
       }
 
       .side-panel-content {
-        width: calc(var(--side-panel-width) - var(--side-panel-button-size) - var(--side-panel-gap) - var(--tile-padding-right));
+        width: calc(
+          var(--side-panel-width) - var(--side-panel-button-size) - var(--side-panel-gap) - var(--tile-padding-right)
+        );
       }
       .find-bar-container {
         line-height: var(--side-panel-button-size);

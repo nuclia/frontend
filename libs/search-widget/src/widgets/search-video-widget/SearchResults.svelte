@@ -49,8 +49,9 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-<div class="nuclia-widget sw-video-results"
-     data-version="__NUCLIA_DEV_VERSION__">
+<div
+  class="nuclia-widget sw-video-results"
+  data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults}
     {#if $hasSearchError}
       <div class="error">
@@ -64,8 +65,9 @@
     {:else if $results.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      <div class="results"
-           transition:fade={{duration: Duration.SUPERFAST}}>
+      <div
+        class="results"
+        transition:fade={{ duration: Duration.SUPERFAST }}>
         {#each $paragraphResults as result}
           {#if result.icon === 'application/pdf'}
             <PdfTile {result} />
@@ -76,7 +78,13 @@
       </div>
     {/if}
   {/if}
-  <div id="nuclia-glyphs-sprite" hidden>{@html svgSprite}</div>
+  <div
+    id="nuclia-glyphs-sprite"
+    hidden>
+    {@html svgSprite}
+  </div>
 </div>
 
-<style lang="scss" src="./SearchResults.scss"></style>
+<style
+  lang="scss"
+  src="./SearchResults.scss"></style>

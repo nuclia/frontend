@@ -12,12 +12,20 @@
   };
 </script>
 
-<label for={id} class="sw-toggle">
+<label
+  for={id}
+  class="sw-toggle">
   {label}
   <div class="switch">
-    <input {id} type="checkbox" bind:checked on:change={onChange} />
+    <input
+      {id}
+      type="checkbox"
+      bind:checked
+      on:change={onChange} />
     <span class="slider" />
   </div>
 </label>
 
-<style lang="scss" src="./Toggle.scss"></style>
+<style
+  lang="scss"
+  src="./Toggle.scss"></style>

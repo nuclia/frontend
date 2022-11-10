@@ -12,7 +12,9 @@
   {#if $resource}
     <div class="icon">
       {#if $resource.icon}
-        <MimeIcon type={$resource.icon} small />
+        <MimeIcon
+          type={$resource.icon}
+          small />
       {/if}
     </div>
     <div class="header-center">
@@ -27,9 +29,13 @@
       <div class="actions">
         <button on:click={() => (showMetadata = !showMetadata)}>
           {#if showMetadata}
-            <img src={`${getCDN()}icons/close.svg`} alt="close" />
+            <img
+              src={`${getCDN()}icons/close.svg`}
+              alt="close" />
           {:else}
-            <img src={`${getCDN()}icons/info.svg`} alt="icon" />
+            <img
+              src={`${getCDN()}icons/info.svg`}
+              alt="icon" />
           {/if}
         </button>
         <ActionMenu uid={$resource.id} />
@@ -38,4 +44,6 @@
   {/if}
 </div>
 
-<style lang="scss" src="./Header.scss"></style>
+<style
+  lang="scss"
+  src="./Header.scss"></style>
