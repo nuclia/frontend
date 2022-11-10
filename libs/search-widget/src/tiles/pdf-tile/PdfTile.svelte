@@ -80,7 +80,7 @@
     if (!expanded) {
       findInPdfQuery.next(globalQuery.value);
       expanded = true;
-      freezeBackground();
+      freezeBackground(true);
     }
     setTimeout(() => setHeaderActionWidth());
 

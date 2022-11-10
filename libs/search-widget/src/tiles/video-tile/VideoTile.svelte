@@ -104,7 +104,7 @@
     videoTime = time;
     if (!expanded) {
       expanded = true;
-      freezeBackground();
+      freezeBackground(true);
     }
 
     const paragraph$ = selectedParagraph && isFileOrLink(selectedParagraph.field_type)

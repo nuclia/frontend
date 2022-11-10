@@ -1,19 +1,24 @@
-export function freezeBackground() {
-  const scrollY = window.scrollY;
-  const body = document.body;
-  body.style.position = 'fixed';
-  body.style.top = `-${scrollY}px`;
+export function freezeBackground(fullscreenModal = false) {
+  if (fullscreenModal) {
+    const scrollY = window.scrollY;
+    const body = document.body;
+    body.style.position = 'fixed';
+    body.style.top = `-${scrollY}px`;
+  } else {
+    document.body.style.overflow = 'hidden';
+  }
 }
 
 export function unblockBackground(fullscreenModal = false) {
-  const body = document.body;
-  const scrollY = body.style.top;
-  body.style.position = '';
-  body.style.top = '';
-
-  // When modal is fullscreen like tiles, we need a timeout.
-  // But when modal is not fullscreen, the timeout makes the background flicker on close.
-  fullscreenModal ? setTimeout(() => scrollBackTo(scrollY)) : scrollBackTo(scrollY);
+  if (fullscreenModal) {
+    const body = document.body;
+    const scrollY = body.style.top;
+    body.style.position = '';
+    body.style.top = '';
+    setTimeout(() => scrollBackTo(scrollY));
+  } else {
+    document.body.style.overflow = 'inherit';
+  }
 }
 
 function scrollBackTo(scrollY: string) {
