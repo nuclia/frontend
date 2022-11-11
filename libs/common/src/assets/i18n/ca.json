@@ -555,6 +555,8 @@
 	"stash.widgets.mode.form": "Giny de cerca incrustat",
 	"stash.widgets.mode.input": "Giny de cerca emergent",
 	"stash.widgets.mode.video": "Barra de cerca i widget de vídeo",
+	"stash.widgets.navigateToLink": "Navega cap als enllaços",
+	"stash.widgets.permalink": "Enllaços permenents",
 	"stats.get_started": "Començar",
 	"stats.total.title": "Nombre total de recursos",
 	"tasks.credits.title": "Cicles disponibles",
