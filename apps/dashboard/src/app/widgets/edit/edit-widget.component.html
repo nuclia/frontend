@@ -57,6 +57,12 @@
                   {{ 'stash.widgets.entityAnnotation' | translate }}
                 </pa-toggle>
               </div>
+              <div
+                formGroupName="attributes"
+                *ngIf="widgetMode !== 'video'">
+                <pa-toggle formControlName="permalink">{{ 'stash.widgets.permalink' | translate }}</pa-toggle>
+                <pa-toggle formControlName="navigateToLink">{{ 'stash.widgets.navigateToLink' | translate }}</pa-toggle>
+              </div>
               <div *ngIf="mainForm.controls.mode.value === 'form'">
                 <pa-input
                   [(value)]="placeholder"

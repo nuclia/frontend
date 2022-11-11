@@ -39,6 +39,10 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
       editLabels: [false],
       entityAnnotation: [false],
     }),
+    attributes: this.fb.group({
+      permalink: [false],
+      navigateToLink: [false],
+    }),
     style: this.styleForm,
   });
   validationMessages = {
@@ -121,9 +125,10 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   save() {
     if (this.widget) {
       this.trackChanges();
+      const { attributes, ...mainForm } = this.mainForm.value;
       const widget = {
         ...this.widget,
-        ...this.mainForm.value,
+        ...mainForm,
       };
       // Backend doesn't support video widget mode
       if (this.widgetMode === 'video') {
@@ -143,6 +148,10 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
     const mode = this.widgetMode || '';
+    let features = Object.entries(this.mainForm.value.attributes)
+      .filter(([, value]) => !!value)
+      .map(([key]) => `\n  ${key}="true"`)
+      .join('');
     const placeholder = this.hasPlaceholder()
       ? `
   placeholder="${this.placeholder}"`
@@ -154,7 +163,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   knowledgebox="${this.kbId}"
   zone="${this.zone}"
   widgetid="${this.widget.id}"
-  type="${mode}" ${placeholder}
+  type="${mode}" ${features} ${placeholder}
 ></nuclia-search>`
         : `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
 <nuclia-search-bar
