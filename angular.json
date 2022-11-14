@@ -724,6 +724,29 @@
       },
       "tags": []
     },
+    "prediction": {
+      "root": "libs/prediction",
+      "sourceRoot": "libs/prediction/src",
+      "projectType": "library",
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/prediction/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/prediction"],
+          "options": {
+            "jestConfig": "libs/prediction/jest.config.ts",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "sdk-core": {
       "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "libs/sdk-core",
