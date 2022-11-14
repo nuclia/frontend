@@ -555,6 +555,8 @@
 	"stash.widgets.mode.form": "Widget de búsqueda integrado",
 	"stash.widgets.mode.input": "Widget de búsqueda emergente",
 	"stash.widgets.mode.video": "Barra de búsqueda y widget de video",
+	"stash.widgets.navigateToLink": "Navega hacia los enlaces",
+	"stash.widgets.permalink": "Enlaces permanentes",
 	"stats.get_started": "Empezar",
 	"stats.total.title": "Número total de recursos",
 	"tasks.credits.title": "Ciclos disponibles",

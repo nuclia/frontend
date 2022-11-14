@@ -648,6 +648,8 @@
 	"stash.widgets.mode.form": "Embedded search widget",
 	"stash.widgets.mode.input": "Popup search widget",
 	"stash.widgets.mode.video": "Search bar and video widget",
+	"stash.widgets.navigateToLink": "Navigate to links",
+	"stash.widgets.permalink": "Permalinks",
 	"stash.widgets.placeholder": "Placeholder",
 	"stash.widgets.preferences": "Preferences",
 	"stash.widgets.preview": "Preview",
