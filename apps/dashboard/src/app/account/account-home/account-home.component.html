@@ -122,7 +122,20 @@
     </div>
 
     <div class="right-column">
-      <div class="container kb-state">
+      <div
+        class="container plan"
+        routerLink="../billing">
+        <div class="plan-name">
+          <strong>{{ 'billing.plan' | translate }}:</strong>
+          <span>{{ 'account.type.' + (accountType | async) | translate }}</span>
+        </div>
+        <pa-icon
+          *ngIf="(accountType | async) === 'stash-team'"
+          name="shield-check"></pa-icon>
+      </div>
+      <div
+        class="container kb-state"
+        routerLink="../kbs">
         <strong>{{ 'stash.state' | translate }}:</strong>
         <span>
           <strong>{{ (kbsTotal | async) || 0 }}</strong>

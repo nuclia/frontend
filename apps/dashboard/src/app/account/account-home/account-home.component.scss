@@ -38,8 +38,7 @@
       font-style: italic;
     }
   }
-  .range-container {
-  }
+
   .chart-type-container {
     align-items: center;
     color: $color-neutral-regular;
@@ -64,7 +63,19 @@
     margin-top: rhythm(6);
     width: rhythm(35);
 
+    .plan-name {
+      display: flex;
+      gap: rhythm(1);
+    }
+    .plan {
+      align-items: center;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+    }
+
     .kb-state {
+      cursor: pointer;
       display: flex;
       justify-content: space-between;
     }
