@@ -22,7 +22,8 @@ export class AccountHomeComponent {
   selectedTab: BehaviorSubject<'completed' | 'pending'> = new BehaviorSubject<'completed' | 'pending'>('completed');
 
   account = this.stateService.account.pipe(filter((account) => !!account));
-  isFreeAccount = this.account.pipe(map((account) => account && account.type === 'stash-basic'));
+  accountType = this.account.pipe(map((account) => account?.type));
+  isFreeAccount = this.accountType.pipe(map((type) => type === 'stash-basic'));
 
   processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
   processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(

@@ -157,6 +157,15 @@
       <div class="nav-group">
         <div class="group-items">
           <a
+            [routerLink]="(accountUrl | async) + '/home'"
+            routerLinkActive="active"
+            class="nav-link">
+            <pa-icon name="home"></pa-icon>
+            <span class="nav-link-title">{{ 'account.home' | translate }}</span>
+          </a>
+        </div>
+        <div class="group-items">
+          <a
             [routerLink]="(accountUrl | async) + '/settings'"
             routerLinkActive="active"
             class="nav-link">
@@ -210,7 +219,7 @@
           <a
             [routerLink]="kbUrl"
             class="nav-link">
-            <pa-icon name="home"></pa-icon>
+            <pa-icon name="chevron-left"></pa-icon>
             <span class="nav-link-title">{{ 'generic.back' | translate }}</span>
           </a>
         </div>
