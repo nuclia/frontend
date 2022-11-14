@@ -1,7 +1,18 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SDKService, StateService } from '@flaps/core';
+import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { Account, StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
-import { BehaviorSubject, catchError, combineLatest, filter, map, Observable, of, share, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  map,
+  Observable,
+  of,
+  share,
+  shareReplay,
+  switchMap,
+} from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
 import { ToastService } from '@guillotinaweb/pastanaga-angular';
@@ -24,6 +35,7 @@ export class AccountHomeComponent {
   account = this.stateService.account.pipe(filter((account) => !!account));
   accountType = this.account.pipe(map((account) => account?.type));
   isFreeAccount = this.accountType.pipe(map((type) => type === 'stash-basic'));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
 
   processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
   processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(
@@ -138,5 +150,6 @@ export class AccountHomeComponent {
     private appService: AppService,
     private toastService: ToastService,
     private translate: TranslateService,
+    private tracking: STFTrackingService,
   ) {}
 }
