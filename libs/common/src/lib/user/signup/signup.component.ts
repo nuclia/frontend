@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, map, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { ReCaptchaV3Service } from 'ngx-captcha';
@@ -8,6 +8,8 @@ import { BackendConfigurationService, LoginService, SignupData } from '@flaps/co
 import { SisModalService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
+
+const personalEmail = new RegExp(`gmail\.com|yahoo\..+|hotmail\..+|outlook\..+`);
 
 @Component({
   selector: 'stf-signup',
@@ -34,6 +36,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     },
   };
 
+  isPersonalEmail = false;
   emailAlreadyExists: boolean = false;
   unsubscribeAll = new Subject<void>();
   @ViewChild('email', { static: false }) email: InputComponent | undefined;
@@ -49,9 +52,15 @@ export class SignupComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
   ) {
     const emailControl = this.signupForm.controls['email'];
-    emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+    emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
       if (this.emailAlreadyExists) {
         this.emailAlreadyExists = false;
+      }
+      this.isPersonalEmail = value.match(personalEmail);
+      if (this.isPersonalEmail) {
+        this.signupForm.addControl('company', new FormControl('', [Validators.required]));
+      } else if (!!this.signupForm.controls['company']) {
+        this.signupForm.removeControl('company');
       }
     });
   }
@@ -67,12 +76,8 @@ export class SignupComponent implements OnInit, OnDestroy {
     }
   }
 
-  onEnterPressed(formField: string) {
-    if (formField === 'username') {
-      this.email!.hasFocus = true;
-    } else {
-      this.submit();
-    }
+  onUsernameEnter() {
+    this.email!.hasFocus = true;
   }
 
   submit() {
@@ -88,6 +93,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     const signupData: SignupData = {
       name: this.signupForm.value.username,
       email: this.signupForm.value.email,
+      company: this.signupForm.value.company,
     };
     this.loginService.signup(signupData, token).subscribe((response) => {
       if (response.action === 'check-mail') {
