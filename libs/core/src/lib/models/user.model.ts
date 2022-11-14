@@ -4,6 +4,7 @@ export type Language = 'CA' | 'ES' | 'EN';
 export interface SignupData {
   name: string;
   email: string;
+  company?: string;
 }
 
 export type SignupResponse = {

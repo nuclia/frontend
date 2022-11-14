@@ -2,11 +2,11 @@
 
 .signup_description {
   text-align: center;
-  margin-bottom: 38px;
+  margin-bottom: rhythm(5);
 }
 
 .signup_field {
-  margin-bottom: 10px;
+  margin-bottom: rhythm(2);
 }
 
 .signup_policy {
@@ -22,7 +22,7 @@
 }
 
 .signup_error {
-  margin: 20px 0;
+  margin: rhythm(3) 0;
   text-align: center;
-  color: #f91919;
+  color: $color-secondary-strong;
 }

@@ -16,7 +16,7 @@
                 required
                 autocapitalize="off"
                 [errorMessages]="validationMessages.username"
-                (enter)="onEnterPressed('username')">
+                (enter)="onUsernameEnter()">
                 {{ 'login.full_name' | translate }}
               </pa-input>
             </div>
@@ -25,9 +25,15 @@
                 #email
                 formControlName="email"
                 type="email"
-                [errorMessages]="validationMessages.email"
-                (enter)="onEnterPressed('email')">
+                [errorMessages]="validationMessages.email">
                 {{ 'login.email' | translate }}
+              </pa-input>
+            </div>
+            <div
+              *ngIf="isPersonalEmail"
+              class="signup_field">
+              <pa-input formControlName="company">
+                {{ 'login.company' | translate }}
               </pa-input>
             </div>
             <div class="signup_policy">

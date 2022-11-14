@@ -302,6 +302,7 @@
 	"login.access_request": "wants to access Nuclia on your behalf and be able to:",
 	"login.agree": "I agree to Nuclia’s",
 	"login.check_email": "Check your email!",
+	"login.company": "Company",
 	"login.continue_with": "Continue with",
 	"login.create_one": "Create",
 	"login.description": "Know what your company knows",
