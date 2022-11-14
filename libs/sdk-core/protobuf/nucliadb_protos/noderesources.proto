@@ -47,6 +47,28 @@ message ShardCreated {
     RelationService relation_service = 5;
 }
 
+message ShardCleaned {
+    enum DocumentService {
+        DOCUMENT_V0 = 0;
+        DOCUMENT_V1 = 1;
+    }
+    DocumentService document_service = 2;
+    enum ParagraphService {
+        PARAGRAPH_V0 = 0;
+        PARAGRAPH_V1 = 1;
+    }
+    ParagraphService paragraph_service = 3;
+    enum VectorService {
+        VECTOR_V0 = 0;
+        VECTOR_V1 = 1;
+    }
+    VectorService vector_service = 4;
+    enum RelationService {
+        RELATION_V0 = 0;
+        RELATION_V1 = 1;
+    }
+    RelationService relation_service = 5;
+}
 
 message ResourceID {
     string shard_id = 1;
@@ -72,6 +94,23 @@ message VectorSentence {
     repeated float vector = 1;
 }
 
+message ParagraphPosition {
+    uint64 index = 1;
+    uint64 start = 2;
+    uint64 end = 3;
+
+    // For pdfs/documents only
+    uint64 page_number = 4;
+
+    // For multimedia only
+    repeated uint32 start_seconds = 5;
+    repeated uint32 end_seconds = 6;
+}
+
+message ParagraphMetadata {
+    ParagraphPosition position = 1;
+}
+
 message IndexParagraph {
     int32 start = 1; // Start end position in field text
     int32 end = 2; // Start end position in field text
@@ -80,6 +119,8 @@ message IndexParagraph {
     string field = 5;
     string split = 6; // split were it belongs
     uint64 index = 7;
+    bool repeated_in_field = 8;
+    ParagraphMetadata metadata = 9;
 }
 
 message IndexParagraphs {

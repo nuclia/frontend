@@ -117,6 +117,7 @@ export interface NUAClient extends NUAClientPayload {
 
 export interface ProcessingPushResponse {
   seqid: number;
+  account_seq: number;
   uuid: string;
 }
 

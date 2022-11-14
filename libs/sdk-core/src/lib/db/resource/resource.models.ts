@@ -12,6 +12,7 @@ export interface IResource {
   modified?: string;
   thumbnail?: string;
   last_seqid?: number;
+  last_account_seq?: number;
 
   data?: ResourceData;
 
