@@ -1,3 +1,7 @@
+# 1.2.2 (2022-11-14)
+
+- Update protobuf models
+
 # 1.2.1 (2022-10-19)
 
 - Update protobuf models
