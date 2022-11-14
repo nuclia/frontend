@@ -1,7 +1,8 @@
-import { prediction } from './prediction';
+import { NucliaPrediction } from './prediction';
 
 describe('prediction', () => {
   it('should work', () => {
-    expect(prediction()).toEqual('prediction');
+    const prediction = new NucliaPrediction();
+    expect(prediction.test).toEqual('prediction');
   });
 });

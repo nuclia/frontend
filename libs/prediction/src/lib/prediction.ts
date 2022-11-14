@@ -1,3 +1,3 @@
-export function prediction(): string {
-  return 'prediction';
+export class NucliaPrediction {
+  test = 'prediction';
 }

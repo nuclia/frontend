@@ -729,6 +729,12 @@
       "sourceRoot": "libs/prediction/src",
       "projectType": "library",
       "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["yarn prediction-build"]
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],

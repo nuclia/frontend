@@ -1,4 +1,4 @@
-# prediction
+# Nuclia prediction SDK
 
 This library was generated with [Nx](https://nx.dev).
 
