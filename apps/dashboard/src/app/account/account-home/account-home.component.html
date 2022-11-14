@@ -124,7 +124,8 @@
     <div class="right-column">
       <div
         class="container plan"
-        routerLink="../billing">
+        [class.billing-enabled]="isBillingEnabled"
+        [routerLink]="isBillingEnabled ? '../billing' : null">
         <div class="plan-name">
           <strong>{{ 'billing.plan' | translate }}:</strong>
           <span>{{ 'account.type.' + (accountType | async) | translate }}</span>

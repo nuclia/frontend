@@ -69,9 +69,12 @@
     }
     .plan {
       align-items: center;
-      cursor: pointer;
       display: flex;
       justify-content: space-between;
+
+      &.billing-enabled {
+        cursor: pointer;
+      }
     }
 
     .kb-state {
