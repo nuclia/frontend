@@ -43,18 +43,11 @@
   }
 
   .search-widget {
-    align-items: center;
-    display: flex;
     margin-left: rhythm(10);
     margin-right: auto;
 
     // widget customisation
     --custom-input-widget-padding: 2px;
-    --custom-input-widget-border-width: 0 0 1px 0;
-    --custom-input-widget-border-style: solid;
-    --custom-input-widget-border-color: $color-dark-stronger;
-    --custom-input-widget-border-radius: 0;
-    --custom-input-widget-placeholder-color: transparent;
 
     div {
       width: 300px;

@@ -1,8 +1,7 @@
 <div class="topbar">
   <button
     class="topbar-logo"
-    (click)="goToHome()"
-    tourAnchor="step1">
+    (click)="goToHome()">
     <svg-icon
       src="assets/logos/logo-beta.svg"
       class="topbar-logo-expanded"></svg-icon>
@@ -17,10 +16,7 @@
 
   <div class="search-widget">
     <ng-container *ngIf="searchEnabled | async">
-      <span tourAnchor="step2"></span>
-      <div
-        tourAnchor="step3"
-        [innerHtml]="searchWidget | async"></div>
+      <div [innerHtml]="searchWidget | async"></div>
     </ng-container>
   </div>
 
@@ -47,7 +43,5 @@
 
   <app-kb-switch class="topbar-kb"></app-kb-switch>
 
-  <app-user-menu
-    tourAnchor="step4"
-    [userInfo]="userInfo | async"></app-user-menu>
+  <app-user-menu [userInfo]="userInfo | async"></app-user-menu>
 </div>
