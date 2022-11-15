@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { NonNullableFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -71,7 +71,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   }
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: NonNullableFormBuilder,
     private sanitized: DomSanitizer,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
@@ -106,7 +106,8 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
         if (emptyFeatures && this.isDefaultWidget) {
           this.widget.features = DEFAULT_FEATURES;
         }
-        this.mainForm.patchValue(widget);
+        this.mainForm.reset();
+        this.mainForm.patchValue(this.widget);
         this.generateSnippet();
       });
 
@@ -129,10 +130,10 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   save() {
     if (this.widget) {
       this.trackChanges();
-      const { attributes, ...mainForm } = this.mainForm.value;
+      const { attributes, ...mainForm } = this.mainForm.getRawValue();
       const widget = {
         ...this.widget,
-        ...mainForm,
+        ...(mainForm as Partial<Widget>),
       };
       // Backend doesn't support video widget mode
       if (this.widgetMode === 'video') {
@@ -152,7 +153,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
     const mode = this.widgetMode || '';
-    let attributes = Object.entries(this.mainForm.value.attributes)
+    let attributes = Object.entries(this.mainForm.value.attributes || {})
       .filter(([, value]) => !!value)
       .map(([key]) => `\n  ${key}="true"`)
       .join('');
@@ -178,7 +179,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
 ></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
     const styles = Object.entries(this.styleForm.value)
-      .filter(([key, value]) => !!value)
+      .filter(([, value]) => !!value)
       .map(([key, value]) => `    --custom-${key}: ${value} !important;`);
     const styleStr =
       styles.length === 0
@@ -252,7 +253,7 @@ ${styles.join('\n')}
     if (this.mainForm.value.mode !== this.widget?.mode) {
       this.tracking.logEvent(`mode_widget_${this.mainForm.value.mode}`);
     }
-    if (Object.entries(this.mainForm.value.style).some(([key, value]) => value !== this.widget?.style?.[key])) {
+    if (Object.entries(this.mainForm.value.style || {}).some(([key, value]) => value !== this.widget?.style?.[key])) {
       this.tracking.logEvent('mode_widget_style');
     }
   }
