@@ -39,6 +39,7 @@ import { getFileUrls, setLabels } from '../api';
 import { resource } from '../stores/resource.store';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
+const NEWLINE_REGEX = /\n/g;
 
 type ViewerStore = {
   query: BehaviorSubject<string>;
@@ -446,7 +447,7 @@ export function getLinkField(resource: Resource, fieldId: string): LinkFieldData
 }
 
 export function getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
-  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end);
+  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end).trim().replace(NEWLINE_REGEX, '<br>');
 }
 
 export function getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
@@ -541,6 +542,8 @@ function findParagraphFromSearchSentence(
   );
 }
 
+const MARK_START = /<mark>/g;
+const MARK_END = /<\/mark>/g;
 function normalizeSearchParagraphText(text: string) {
-  return text.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
+  return text.replace(MARK_START, '').replace(MARK_END, '');
 }
