@@ -3,11 +3,11 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BackendConfigurationService, PostHogService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, STFTrackingService } from '@flaps/core';
 import { Widget } from '@nuclia/core';
 import { filter, map, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddWidgetDialogComponent } from '../add/add-widget.component';
-import { WidgetService } from '../widget.service';
+import { DEFAULT_FEATURES, DEFAULT_FEATURES_LIST, WidgetService } from '../widget.service';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
 
@@ -102,6 +102,10 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
         this.zone = zone;
         this.widget = widget;
         this.isDefaultWidget = widget.id === 'dashboard';
+        const emptyFeatures = Object.keys(widget.features).length === 0;
+        if (emptyFeatures && this.isDefaultWidget) {
+          this.widget.features = DEFAULT_FEATURES;
+        }
         this.mainForm.patchValue(widget);
         this.generateSnippet();
       });
@@ -148,10 +152,11 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
     const mode = this.widgetMode || '';
-    let features = Object.entries(this.mainForm.value.attributes)
+    let attributes = Object.entries(this.mainForm.value.attributes)
       .filter(([, value]) => !!value)
       .map(([key]) => `\n  ${key}="true"`)
       .join('');
+    const defaultFeatures = this.isDefaultWidget ? `\n  defaultfeatures="${DEFAULT_FEATURES_LIST}"` : '';
     const placeholder = this.hasPlaceholder()
       ? `
   placeholder="${this.placeholder}"`
@@ -163,7 +168,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   knowledgebox="${this.kbId}"
   zone="${this.zone}"
   widgetid="${this.widget.id}"
-  type="${mode}" ${features} ${placeholder}
+  type="${mode}" ${attributes} ${placeholder} ${defaultFeatures}
 ></nuclia-search>`
         : `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
 <nuclia-search-bar

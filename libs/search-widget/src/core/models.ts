@@ -1,4 +1,4 @@
-import type { Classification, CloudLink, Paragraph, Search } from '@nuclia/core';
+import type { Classification, CloudLink, Paragraph, Search, WidgetFeatures } from '@nuclia/core';
 
 export const NO_RESULTS: Search.Results = {
   resources: {},
@@ -15,6 +15,7 @@ export const PENDING_RESULTS = {
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
   highlight?: boolean;
+  defaultFeatures?: WidgetFeatures;
 }
 
 export interface WidgetAction {
