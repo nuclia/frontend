@@ -33,8 +33,11 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
   nucliaApi = new Nuclia(options);
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
     nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
-    searchWidget.set(widget);
-    if (widget.features.suggestLabels) {
+    searchWidget.set({
+      ...widget,
+      features: Object.keys(widget.features).length ? widget.features : widgetOptions.defaultFeatures || {},
+    });
+    if (searchWidget.getValue()!.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
       if (kbPath) {
         loadModel(

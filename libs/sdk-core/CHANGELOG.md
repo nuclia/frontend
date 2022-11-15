@@ -1,3 +1,7 @@
+# 1.0.6 (unreleased)
+
+- add `WidgetFeatures` interface
+
 # 1.0.5 (2022-11-08)
 
 - `x-filename` must not be base64 encoded anymore

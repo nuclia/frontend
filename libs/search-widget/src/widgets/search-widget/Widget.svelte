@@ -10,7 +10,7 @@
   import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
-  import type { KBStates } from '@nuclia/core';
+  import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
@@ -34,8 +34,12 @@
   export let standalone = false;
   export let navigatetolink = false;
   export let notpublic = false;
+  export let defaultfeatures = '';
   let _navigatetolink = coerceBooleanProperty(navigatetolink);
   let _notpublic = coerceBooleanProperty(notpublic);
+  let _defaultfeatures: WidgetFeatures = (
+    typeof defaultfeatures === 'string' ? defaultfeatures.split(',').filter((f) => !!f) : []
+  ).reduce((acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }), {});
 
   $: permalinkEnabled = coerceBooleanProperty(permalink);
 
@@ -85,6 +89,7 @@
       state,
       {
         highlight: true,
+        defaultFeatures: _defaultfeatures,
       },
     );
     if (cdn) {

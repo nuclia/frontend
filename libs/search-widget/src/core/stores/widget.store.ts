@@ -22,10 +22,10 @@ export const customStyle: Observable<string> = searchWidget.pipe(
 
 export const canEditLabels = searchWidget.pipe(
   filter((widget) => !!widget),
-  map((widget) => (widget as Widget).features.editLabels),
+  map((widget) => !!(widget as Widget).features.editLabels),
 );
 
 export const canAnnotateEntities = searchWidget.pipe(
   filter((widget) => !!widget),
-  map((widget) => (widget as Widget).features.entityAnnotation),
+  map((widget) => !!(widget as Widget).features.entityAnnotation),
 );

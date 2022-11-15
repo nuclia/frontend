@@ -187,18 +187,20 @@ export interface Widget {
   mode: 'input' | 'form';
   placeholder?: string;
   description?: string;
-  features: {
-    useFilters: boolean;
-    suggestEntities: boolean;
-    suggestSentences: boolean;
-    suggestParagraphs: boolean;
-    suggestLabels: boolean;
-    editLabels: boolean;
-    entityAnnotation: boolean;
-  };
+  features: WidgetFeatures;
   filters?: string[];
   topEntities?: string[];
   style?: { [key: string]: string };
+}
+
+export interface WidgetFeatures {
+  useFilters?: boolean;
+  suggestEntities?: boolean;
+  suggestSentences?: boolean;
+  suggestParagraphs?: boolean;
+  suggestLabels?: boolean;
+  editLabels?: boolean;
+  entityAnnotation?: boolean;
 }
 
 export interface Counters {
