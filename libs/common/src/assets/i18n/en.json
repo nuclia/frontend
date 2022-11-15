@@ -204,8 +204,6 @@
 	"generic.description": "Description",
 	"generic.deselect_all": "clear all",
 	"generic.disabled": "Disabled",
-	"generic.dismiss": "Dismiss",
-	"generic.done": "Done",
 	"generic.download": "Download",
 	"generic.download_algolia_json": "Download JSON for Algolia ",
 	"generic.edit": "Edit",

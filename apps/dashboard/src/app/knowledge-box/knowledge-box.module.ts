@@ -10,7 +10,6 @@ import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { ChartsModule } from '../components/charts/charts.module';
-import { HelpBoxModule } from '../components/help-box/help-box.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { UserAvatarModule } from '@flaps/components';
@@ -70,7 +69,6 @@ const Components = [
     STFExpanderModule,
     TokenDialogModule,
     ChartsModule,
-    HelpBoxModule,
     PipesModule,
     HintModule,
     UsersManageModule,
