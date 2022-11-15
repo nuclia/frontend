@@ -9,9 +9,6 @@ const EMPTY_KB_ALERT = 'NUCLIA_EMPTY_KB_ALERT';
   providedIn: 'root',
 })
 export class AppService {
-  private menuOpenSubject = new Subject<boolean>();
-  readonly menuOpen = this.menuOpenSubject.asObservable();
-
   private currentLocaleSubject = new BehaviorSubject<string>(this.getLocaleFromLang(this.translateService.currentLang));
   readonly currentLocale = this.currentLocaleSubject.asObservable();
 
@@ -24,10 +21,6 @@ export class AppService {
     private sdk: SDKService,
   ) {
     this.listenLanguageChange();
-  }
-
-  setMenuOpen(value: boolean): void {
-    this.menuOpenSubject.next(value);
   }
 
   getCurrentLocale(): string {

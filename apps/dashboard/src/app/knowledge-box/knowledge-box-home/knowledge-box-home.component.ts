@@ -1,10 +1,9 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, share, switchMap, take, shareReplay } from 'rxjs';
 import { AppService } from '../../services/app.service';
-import { HelpBoxesService } from '../../services/help-boxes.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
@@ -13,7 +12,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
   styleUrls: ['./knowledge-box-home.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
+export class KnowledgeBoxHomeComponent {
   locale: Observable<string> = this.app.currentLocale;
   endpoint = this.sdk.currentKb.pipe(map((kb) => kb.fullpath));
   state = this.sdk.currentKb.pipe(map((kb) => kb.state));
@@ -73,7 +72,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
 
   constructor(
     private app: AppService,
-    private helpBoxesService: HelpBoxesService,
     private sdk: SDKService,
     private stateService: StateService,
     private translate: TranslatePipe,
@@ -82,18 +80,6 @@ export class KnowledgeBoxHomeComponent implements OnInit, AfterViewInit {
     private modalService: SisModalService,
     private tracking: STFTrackingService,
   ) {}
-
-  ngOnInit(): void {
-    if (!this.helpBoxesService.isTourCompleted()) {
-      this.helpBoxesService.initializeTour();
-    }
-  }
-
-  ngAfterViewInit() {
-    if (!this.helpBoxesService.isTourCompleted()) {
-      this.helpBoxesService.startTour(1000);
-    }
-  }
 
   refresh() {
     this.sdk.refreshCounter(true);

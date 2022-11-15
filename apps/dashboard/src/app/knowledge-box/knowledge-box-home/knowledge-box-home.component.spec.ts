@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, StateService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
-import { HelpBoxesService } from '../../services/help-boxes.service';
 import { AppService } from '../../services/app.service';
 
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
@@ -49,14 +48,6 @@ describe('KnowledgeBoxHomeComponent', () => {
         {
           provide: StateService,
           useValue: { account: of({ slug: 'some-account' }) },
-        },
-        {
-          provide: HelpBoxesService,
-          useValue: {
-            isTourCompleted: () => {},
-            initializeTour: () => {},
-            startTour: () => {},
-          },
         },
         {
           provide: STFTrackingService,

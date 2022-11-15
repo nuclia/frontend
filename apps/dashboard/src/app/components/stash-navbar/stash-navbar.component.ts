@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { trigger, animate, style, transition } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, map, shareReplay, of, merge } from 'rxjs';
@@ -21,7 +21,7 @@ import { NavigationEnd, Router } from '@angular/router';
     ]),
   ],
 })
-export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
+export class StashNavbarComponent implements OnInit, OnDestroy {
   @Input() isUnfolded: boolean = false;
 
   unsubscribeAll = new Subject<void>();
@@ -67,12 +67,6 @@ export class StashNavbarComponent implements OnInit, OnChanges, OnDestroy {
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       this.kbUrl = this.navigation.getKbUrl(kb.account, kb.slug!);
     });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.isUnfolded) {
-      this.app.setMenuOpen(this.isUnfolded);
-    }
   }
 
   createNewLink() {
