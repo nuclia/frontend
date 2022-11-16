@@ -6,18 +6,9 @@
   import { _ } from '../../core/i18n';
   import Entities from './Entities.svelte';
   import Button from '../../common/button/Button.svelte';
-  import { fade } from 'svelte/transition';
-  import { Duration } from '../../common/transition.utils';
   import { onDestroy } from 'svelte';
   import { annotationMode, annotations, selectedFamily } from '../../core/stores/annotation.store';
-  import {
-    files,
-    links,
-    previewLinks,
-    resource,
-    resourceHasEntities,
-    summaries,
-  } from '../../core/stores/resource.store';
+  import { files, links, previewLinks, resource, summaries } from '../../core/stores/resource.store';
   import { entityGroups } from '../../core/stores/entities.store';
   import Label from '../../common/label/Label.svelte';
   import { searchBy } from '../../common/label/label.utils';
@@ -79,45 +70,42 @@
 <div
   class="sw-metadata"
   class:annotation-mode={$annotationMode}>
-  {#if $resourceHasEntities}
-    <h2 class="title-and-button">
-      {!$annotationMode ? $_('entities.title') : 'All entities'}
-
-      {#if $canAnnotateEntities}
-        {#if !$annotationMode}
+  <h2 class="title-and-button">
+    {!$annotationMode ? $_('entities.title') : 'All entities'}
+    {#if $canAnnotateEntities}
+      {#if !$annotationMode}
+        <Button
+          aspect="solid"
+          kind="inverted"
+          on:click={setAnnotationMode}>
+          {$_('entities.annotations')}
+        </Button>
+      {:else}
+        <div class="annotation-mode-buttons">
           <Button
             aspect="solid"
             kind="inverted"
-            on:click={setAnnotationMode}>
-            {$_('entities.annotations')}
+            on:click={cancelAnnotationMode}>
+            {$_('generic.cancel')}
           </Button>
-        {:else}
-          <div class="annotation-mode-buttons">
-            <Button
-              aspect="solid"
-              kind="inverted"
-              on:click={cancelAnnotationMode}>
-              {$_('generic.cancel')}
-            </Button>
-            <Button
-              aspect="solid"
-              kind="primary"
-              on:click={saveAnnotations}>
-              {$_('generic.save')}
-            </Button>
-          </div>
-        {/if}
+          <Button
+            aspect="solid"
+            kind="primary"
+            on:click={saveAnnotations}>
+            {$_('generic.save')}
+          </Button>
+        </div>
       {/if}
-    </h2>
-    <div class="entities">
-      <Entities />
-    </div>
-    {#if !$annotationMode}
-      <div class="entities">
-        <h3>{$_('entities.annotated')}</h3>
-        <Entities showAnnotated={true} />
-      </div>
     {/if}
+  </h2>
+  <div class="entities">
+    <Entities />
+  </div>
+  {#if !$annotationMode}
+    <div class="entities">
+      <h3>{$_('entities.annotated')}</h3>
+      <Entities showAnnotated={true} />
+    </div>
   {/if}
 
   {#if !$annotationMode}

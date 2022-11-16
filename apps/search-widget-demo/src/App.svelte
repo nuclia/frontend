@@ -5,12 +5,12 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'form';
+  let selected = 'viewer';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
-  let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
-  let kb = '295e9002-a277-4356-96a3-5fe0b08b8d79';
+  let resource = '22452d0f0bb699abad6f73c4c9376c09';
+  let kb = '0b445287-c465-412d-9630-8ae30c1668fc';
 
   onMount(() => {
     widget?.setActions([
@@ -109,10 +109,11 @@
       <NucliaViewerWidget
         bind:this={viewerWidget}
         zone="europe-1"
-        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
+        knowledgebox={kb}
         cdn="/"
+        apikey="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6InNhIn0.eyJpc3MiOiJodHRwczovL3N0YXNoaWZ5LmNsb3VkLyIsImV4cCI6MTcwMDE0NDY2MywiaWF0IjoxNjY4NjA4NjYzLCJzdWIiOiJmN2Q0OGVkZS00ZDI0LTQ2YzYtYTBlOS1hZGY2NGZiMDliMTQiLCJqdGkiOiJiZmI5ZTA0Mi0zOGVhLTRhY2UtOTI5ZC00ZGYyOGRiODU4YWUiLCJrZXkiOiJiMjI2ZDI3MC1kNjRhLTQ0MGEtYmQ4Yi1jMTMyYzRkNThhNWIiLCJraWQiOiJhNmQ2M2Y2ZS02N2EyLTRhZDYtOTkxNi05NDZhOWRiYzM4MDQifQ.CBY_QFyk7oY1npycm-A2zY-axicdeicXzVXHzvS4kx8p8K8R7op6ggzBugQll18jRuSdC6O94GYMWZzZ3XOv7nKd_3me1hW1Lb9uBeO-_PTGex1jjmVW5VE1VDleY8CtXXv7rUQ_I8FY5Sm83BQGl3ZX-vb4nY6HPvEE5WEXNJyMPA3a1-QC8zngkNqIfXSgj9_uFilJlgdLNAxGI9on_ponhXNFpbAV5Kku7fEzK9rnJbNPbrHEdg-QqZxadEXZ94JXfMdxSyOgxi1Lln2qvIsqCnzTKVsuSOeTfFnAXep44AkFp4T5U-HXjaj8KCwJVWw-clCUOQ_nfLVKIUNw9inPYL780EXhHrJtgoaXUItEzDZBA7j0unOYR0IkeP2gcZVvIAGHymIybtkGTp8SuVs4yTh7K7vPQ404vAJj_jv03TNdwuTYh1Z7qdfXzoXpuvWU4kVNS7DB8RXAw5BZWnscYhl9iFYUUUd6_xbkpMyW5XhxL1BQM-2PBK87mQJ__63PKxHGxTXbLvubbpvAjy56k6wtw9UNC3L4dKk9xBSqjKd4EAs0foq68TBBzZZOkpODP62xoR0lfJUDlouI_IV8fzRruhvYOniF0x5ZFWknbyCfQlVbn2g02_3SmeFtPKW2oqYJnHH7Mnl4_CdSBooHeWQoLv0sL_KNdBFOMnU"
         backend="https://stashify.cloud/api"
-        widgetid="label-annotation"
+        widgetid="dashboard"
         permalink
         lang="en" />
     </div>

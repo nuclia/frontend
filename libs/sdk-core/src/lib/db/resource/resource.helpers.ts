@@ -100,3 +100,21 @@ const hasLabelsForField = (entry: UserFieldMetadata, fieldId: string, fieldType:
     entry.paragraphs.length > 0
   );
 };
+
+export const sliceUnicode = (str: string | undefined, start?: number, end?: number) => {
+  if (!str) {
+    return '';
+  }
+  // In JavaScript, '🤖'.length is 2, but all positions in API responses are based on Python
+  // and in Python len('🤖') is 1.
+  // By converting the string to an array, we can get the correct length and slicing becomes consistent with the API
+  // (because the array will split the string into characters, no matter how long they are)
+  return Array.from(str).slice(start, end).join('');
+};
+
+export const lengthUnicode = (str: string | undefined) => {
+  if (!str) {
+    return 0;
+  }
+  return Array.from(str).length;
+};

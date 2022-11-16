@@ -14,6 +14,7 @@
   } from '../../../core/stores/annotation.store';
   import { addEntity, entityGroups } from '../../../core/stores/entities.store';
   import { map } from 'rxjs';
+  import { lengthUnicode, sliceUnicode } from '@nuclia/core';
 
   export let paragraph: WidgetParagraph;
   export let paragraphId: string;
@@ -33,15 +34,15 @@
             const family = entityGroups.value.find((group) => group.id === entity.entityFamilyId);
             highlightStyle = `style="background-color:${family.color}"`;
           }
-          textWithMarks += `${paragraph.text.slice(currentIndex, entity.start)}<mark ${highlightStyle}
+          textWithMarks += `${sliceUnicode(paragraph.text, currentIndex, entity.start)}<mark ${highlightStyle}
   family="${entity.entityFamilyId}"
   start="${entity.start}"
   end="${entity.end}"
   entity="${entity.entity}"
-  paragraphId="${entity.paragraphId}">${paragraph.text.slice(entity.start, entity.end)}</mark>`;
+  paragraphId="${entity.paragraphId}">${sliceUnicode(paragraph.text, entity.start, entity.end)}</mark>`;
           currentIndex = entity.end;
         });
-      textWithMarks += paragraph.text.slice(currentIndex);
+      textWithMarks += sliceUnicode(paragraph.text, currentIndex);
 
       setTimeout(() => {
         if (!isDestroyed) {
@@ -140,12 +141,18 @@
   const selectFamily = (family: EntityGroup) => {
     if (!selectedEntity) {
       const entity = selectedText.trimmedText;
+      const before = paragraph.text.slice(0, selectedText.start);
+      const beforeDelta = before.length - lengthUnicode(before);
+      const selection = paragraph.text.slice(selectedText.start, selectedText.end);
+      const selectionDelta = selection.length - lengthUnicode(selection);
+      const start = selectedText.start - beforeDelta;
+      const end = selectedText.end - beforeDelta - selectionDelta;
       addAnnotation({
         entityFamilyId: family.id,
         entity,
         paragraphId,
-        start: selectedText.start,
-        end: selectedText.end,
+        start,
+        end,
         paragraphStart: paragraph.start,
       });
       addEntity(entity, family);
