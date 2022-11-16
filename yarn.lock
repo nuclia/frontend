@@ -13881,20 +13881,6 @@ ngx-captcha@^12.0.2:
   dependencies:
     tslib "^2.3.0"
 
-ngx-ui-tour-core@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-ui-tour-core/-/ngx-ui-tour-core-7.0.2.tgz#c2ea4155a3d60985f02998745e73f3497aae1463"
-  integrity sha512-DIkp18/2ZoIr+7aKVFL5ttYhNaYfMpthQ+4RIan+vojPLCvxSSbD5mULRM3k/0gEQSvYZGX9nWdBruImPtSVag==
-  dependencies:
-    tslib "^2.0.0"
-
-ngx-ui-tour-md-menu@^7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-ui-tour-md-menu/-/ngx-ui-tour-md-menu-7.0.2.tgz#2b3f64c4fa5bfde8a90219941151c91c34e7e0a1"
-  integrity sha512-AEA09wr67c7ikGcr5aipC4QDqP75Nxjs7nKgI03KqUaqjUMd9KInO6CrCq5fMgF25kfwysc23T3TFQNlpKAI4w==
-  dependencies:
-    tslib "^2.0.0"
-
 nice-napi@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/nice-napi/-/nice-napi-1.0.2.tgz#dc0ab5a1eac20ce548802fc5686eaa6bc654927b"

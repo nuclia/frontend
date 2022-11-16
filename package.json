@@ -62,8 +62,6 @@
     "latinize": "^0.5.0",
     "mrs-developer": "^1.7.1",
     "ngx-captcha": "^12.0.2",
-    "ngx-ui-tour-core": "^7.0.2",
-    "ngx-ui-tour-md-menu": "^7.0.2",
     "node-machine-id": "^1.1.12",
     "perfect-scrollbar": "^1.5.0",
     "posthog-js": "^1.17.9",

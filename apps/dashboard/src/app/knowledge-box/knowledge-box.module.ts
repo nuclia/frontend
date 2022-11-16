@@ -6,7 +6,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { ChartsModule } from '../components/charts/charts.module';
@@ -60,7 +59,6 @@ const Components = [
     FormsModule,
     RouterModule,
     MatDialogModule,
-    TourMatMenuModule,
     ProgressBarModule,
     STFSectionNavbarModule,
     UserAvatarModule,
