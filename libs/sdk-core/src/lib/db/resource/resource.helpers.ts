@@ -101,7 +101,7 @@ const hasLabelsForField = (entry: UserFieldMetadata, fieldId: string, fieldType:
   );
 };
 
-export const sliceUnicode = (str: string | undefined, start: number, end: number) => {
+export const sliceUnicode = (str: string | undefined, start?: number, end?: number) => {
   if (!str) {
     return '';
   }
@@ -110,4 +110,11 @@ export const sliceUnicode = (str: string | undefined, start: number, end: number
   // By converting the string to an array, we can get the correct length and slicing becomes consistent with the API
   // (because the array will split the string into characters, no matter how long they are)
   return Array.from(str).slice(start, end).join('');
+};
+
+export const lengthUnicode = (str: string | undefined) => {
+  if (!str) {
+    return 0;
+  }
+  return Array.from(str).length;
 };

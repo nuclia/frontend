@@ -116,11 +116,11 @@ export class ReadableResource implements IResource {
   }
 
   getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
-    return sliceUnicode(field.extracted?.text?.text, paragraph.start || 0, paragraph.end || 0);
+    return sliceUnicode(field.extracted?.text?.text, paragraph.start, paragraph.end);
   }
 
   getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
-    return sliceUnicode(field.extracted?.text?.text, sentence.start || 0, sentence.end || 0);
+    return sliceUnicode(field.extracted?.text?.text, sentence.start, sentence.end);
   }
 }
 
