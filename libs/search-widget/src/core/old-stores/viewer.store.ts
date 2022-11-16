@@ -7,7 +7,6 @@ import type {
   Paragraph,
   Resource,
   ResourceData,
-  Sentence,
 } from '@nuclia/core';
 import { Search, RESOURCE_STATUS } from '@nuclia/core';
 import {
@@ -115,9 +114,9 @@ export const selectedParagraphIndex = combineLatest([
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
     const field = getField(resource!, selected!.fieldType, selected!.fieldId);
-    const selectedText = field && getParagraphText(field, selected!.paragraph);
+    const selectedText = field && resource?.getParagraphText(field, selected!.paragraph);
     return (paragraphs || []).findIndex((result) => {
-      const resultText = field && getParagraphText(field, result.paragraph);
+      const resultText = field && resource?.getParagraphText(field, result.paragraph);
       return field && resultText === selectedText;
     });
   }),
@@ -231,7 +230,7 @@ export function getPdfPreviewParams(
   paragraph: Paragraph,
 ): PdfPreviewParams | undefined {
   const field = getFileField(resource, fieldId);
-  const text = field && getParagraphText(field, paragraph);
+  const text = field && resource.getParagraphText(field, paragraph);
   const pageIndex = field && getParagraphPageIndexes(field, paragraph)[0];
   if (text && typeof pageIndex === 'number') {
     return {
@@ -323,7 +322,13 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
             const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
             const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
             if (field && paragraph) {
-              return getParagraph(getFieldType(searchParagraph.field_type), searchParagraph.field, field, paragraph);
+              return getParagraph(
+                resource,
+                getFieldType(searchParagraph.field_type),
+                searchParagraph.field,
+                field,
+                paragraph,
+              );
             } else {
               return null;
             }
@@ -348,7 +353,7 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
     field_id: mainField.field_id,
   });
   return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
-    return getParagraph(mainField.field_type, mainField.field_id, mainField.field, paragraph);
+    return getParagraph(resource, mainField.field_type, mainField.field_id, mainField.field, paragraph);
   });
 }
 
@@ -390,10 +395,16 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
   return PreviewKind.NONE;
 }
 
-function getParagraph(fieldType: string, fieldId: string, field: IFieldData, paragraph: Paragraph): WidgetParagraph {
+function getParagraph(
+  resource: Resource,
+  fieldType: string,
+  fieldId: string,
+  field: IFieldData,
+  paragraph: Paragraph,
+): WidgetParagraph {
   const baseParagraph = {
     paragraph: paragraph,
-    text: (getParagraphText(field, paragraph) || '').trim().replace(NEWLINE_REGEX, '<br>'),
+    text: (resource.getParagraphText(field, paragraph) || '').trim().replace(NEWLINE_REGEX, '<br>'),
     fieldType: fieldType,
     fieldId: fieldId,
     start: paragraph.start || 0,
@@ -445,14 +456,6 @@ export function getFileField(resource: Resource, fieldId: string): FileFieldData
 
 export function getLinkField(resource: Resource, fieldId: string): LinkFieldData | undefined {
   return resource.data.links?.[fieldId];
-}
-
-export function getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
-  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end);
-}
-
-export function getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
-  return field.extracted?.text?.text?.slice(sentence.start, sentence.end);
 }
 
 export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
@@ -525,7 +528,7 @@ function findParagraphFromSearchParagraph(
   const field = resource.data[getFieldType(searchParagraph.field_type)]?.[searchParagraph.field];
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   const text = normalizeSearchParagraphText(searchParagraph.text);
-  return paragraphs?.find((paragraph) => text === getParagraphText(field as IFieldData, paragraph));
+  return paragraphs?.find((paragraph) => text === resource.getParagraphText(field as IFieldData, paragraph));
 }
 
 function findParagraphFromSearchSentence(
@@ -538,8 +541,8 @@ function findParagraphFromSearchSentence(
   const text = normalizeSearchParagraphText(searchSenctence.text);
   return paragraphs?.find((paragraph) =>
     strict
-      ? paragraph.sentences?.find((sentence) => text === getSentenceText(field!, sentence))
-      : (getParagraphText(field!, paragraph) || '').includes(text.trim()),
+      ? paragraph.sentences?.find((sentence) => text === resource.getSentenceText(field!, sentence))
+      : (resource.getParagraphText(field!, paragraph) || '').includes(text.trim()),
   );
 }
 

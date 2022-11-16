@@ -15,14 +15,16 @@ import type {
   KeywordSetField,
   LinkField,
   LinkFieldData,
+  Paragraph,
   ResourceData,
   ResourceField,
+  Sentence,
   TextField,
   TokenAnnotation,
 } from './resource.models';
 import type { Search, SearchOptions } from '../search';
 import { search } from '../search';
-import { setEntities, setLabels } from './resource.helpers';
+import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
@@ -40,6 +42,11 @@ export class ReadableResource implements IResource {
       .filter((obj) => !!obj)
       .map((obj) => Object.values(obj!) as T[])
       .reduce((acc, val) => acc.concat(val), [] as T[]);
+  }
+
+  getField<T = IFieldData>(type: keyof ResourceData, fieldId: string): T | undefined {
+    const field = this.data[type]?.[fieldId];
+    return field ? (field as T) : undefined;
   }
 
   getExtractedSummaries(): string[] {
@@ -106,6 +113,14 @@ export class ReadableResource implements IResource {
     } catch (e) {
       return title;
     }
+  }
+
+  getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
+    return sliceUnicode(field.extracted?.text?.text, paragraph.start || 0, paragraph.end || 0);
+  }
+
+  getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
+    return sliceUnicode(field.extracted?.text?.text, sentence.start || 0, sentence.end || 0);
   }
 }
 

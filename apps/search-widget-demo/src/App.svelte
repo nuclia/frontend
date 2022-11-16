@@ -5,12 +5,12 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'form';
+  let selected = 'viewer';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
-  let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
-  let kb = '295e9002-a277-4356-96a3-5fe0b08b8d79';
+  let resource = '22452d0f0bb699abad6f73c4c9376c09';
+  let kb = '0b445287-c465-412d-9630-8ae30c1668fc';
 
   onMount(() => {
     widget?.setActions([
@@ -109,10 +109,10 @@
       <NucliaViewerWidget
         bind:this={viewerWidget}
         zone="europe-1"
-        knowledgebox="f67d94ee-bd5b-4044-8844-a291c2ac244c"
+        knowledgebox={kb}
         cdn="/"
         backend="https://stashify.cloud/api"
-        widgetid="label-annotation"
+        widgetid="dashboard"
         permalink
         lang="en" />
     </div>
