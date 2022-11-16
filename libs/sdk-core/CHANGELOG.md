@@ -1,6 +1,7 @@
 # 1.0.6 (unreleased)
 
 - add `WidgetFeatures` interface
+- provide Unicode-compliant string functions
 
 # 1.0.5 (2022-11-08)
 

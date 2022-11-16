@@ -44,7 +44,7 @@ export class ReadableResource implements IResource {
       .reduce((acc, val) => acc.concat(val), [] as T[]);
   }
 
-  getField<T = IFieldData>(type: keyof ResourceData, fieldId: string): T | undefined {
+  getFieldData<T = IFieldData>(type: keyof ResourceData, fieldId: string): T | undefined {
     const field = this.data[type]?.[fieldId];
     return field ? (field as T) : undefined;
   }
