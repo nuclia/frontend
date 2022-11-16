@@ -114,10 +114,11 @@ export const selectedParagraphIndex = combineLatest([
 ]).pipe(
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
+    const field = getField(resource!, selected!.fieldType, selected!.fieldId);
+    const selectedText = field && getParagraphText(field, selected!.paragraph);
     return (paragraphs || []).findIndex((result) => {
-      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
-      const text = field && getParagraphText(field, selected!.paragraph);
-      return result.text === text;
+      const resultText = field && getParagraphText(field, result.paragraph);
+      return field && resultText === selectedText;
     });
   }),
 );
@@ -392,7 +393,7 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
 function getParagraph(fieldType: string, fieldId: string, field: IFieldData, paragraph: Paragraph): WidgetParagraph {
   const baseParagraph = {
     paragraph: paragraph,
-    text: getParagraphText(field, paragraph) || '',
+    text: (getParagraphText(field, paragraph) || '').trim().replace(NEWLINE_REGEX, '<br>'),
     fieldType: fieldType,
     fieldId: fieldId,
     start: paragraph.start || 0,
@@ -447,7 +448,7 @@ export function getLinkField(resource: Resource, fieldId: string): LinkFieldData
 }
 
 export function getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
-  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end).trim().replace(NEWLINE_REGEX, '<br>');
+  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end);
 }
 
 export function getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
