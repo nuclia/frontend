@@ -39,6 +39,7 @@ import { getFileUrls, setLabels } from '../api';
 import { resource } from '../stores/resource.store';
 
 const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
+const NEWLINE_REGEX = /\n/g;
 
 type ViewerStore = {
   query: BehaviorSubject<string>;
@@ -113,10 +114,11 @@ export const selectedParagraphIndex = combineLatest([
 ]).pipe(
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
+    const field = getField(resource!, selected!.fieldType, selected!.fieldId);
+    const selectedText = field && getParagraphText(field, selected!.paragraph);
     return (paragraphs || []).findIndex((result) => {
-      const field = getField(resource!, selected!.fieldType, selected!.fieldId);
-      const text = field && getParagraphText(field, selected!.paragraph);
-      return result.text === text;
+      const resultText = field && getParagraphText(field, result.paragraph);
+      return field && resultText === selectedText;
     });
   }),
 );
@@ -391,7 +393,7 @@ function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
 function getParagraph(fieldType: string, fieldId: string, field: IFieldData, paragraph: Paragraph): WidgetParagraph {
   const baseParagraph = {
     paragraph: paragraph,
-    text: getParagraphText(field, paragraph) || '',
+    text: (getParagraphText(field, paragraph) || '').trim().replace(NEWLINE_REGEX, '<br>'),
     fieldType: fieldType,
     fieldId: fieldId,
     start: paragraph.start || 0,
@@ -541,6 +543,8 @@ function findParagraphFromSearchSentence(
   );
 }
 
+const MARK_START = /<mark>/g;
+const MARK_END = /<\/mark>/g;
 function normalizeSearchParagraphText(text: string) {
-  return text.replace(/<mark>/g, '').replace(/<\/mark>/g, '');
+  return text.replace(MARK_START, '').replace(MARK_END, '');
 }

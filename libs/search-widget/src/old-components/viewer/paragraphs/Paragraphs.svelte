@@ -65,7 +65,7 @@
           <ParagraphWithMenu
             labels={$paragraphLabels[getParagraphId($resource.id, paragraph)] || noLabels}
             on:labelsChange={(event) => setParagraphLabels(event.detail, paragraph)}>
-            <span slot="content">{paragraph.text}</span>
+            <span slot="content">{@html paragraph.text}</span>
           </ParagraphWithMenu>
         {/if}
       </div>

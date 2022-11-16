@@ -52,7 +52,7 @@
     on:mouseenter={enter}
     on:mouseleave={leave}
     on:click>
-    {text}
+    {@html text}
   </span>
 </ParagraphWithMenu>
 
