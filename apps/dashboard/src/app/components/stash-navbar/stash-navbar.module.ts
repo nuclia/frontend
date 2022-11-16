@@ -5,7 +5,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDialogModule } from '@angular/material/dialog';
-import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 import { StashNavbarComponent } from './stash-navbar.component';
@@ -18,7 +17,6 @@ import { StashNavbarComponent } from './stash-navbar.component';
     FlexLayoutModule,
     TranslateModule.forChild(),
     MatDialogModule,
-    TourMatMenuModule,
     PaIconModule,
   ],
   declarations: [StashNavbarComponent],

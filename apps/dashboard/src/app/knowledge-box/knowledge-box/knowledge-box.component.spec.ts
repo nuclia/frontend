@@ -8,7 +8,6 @@ import { UploadService } from '../../upload/upload.service';
 import { AppService } from '../../services/app.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockModule } from 'ng-mocks';
-import { TourMatMenuModule } from 'ngx-ui-tour-md-menu';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -16,7 +15,7 @@ describe('KnowledgeBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(MatDialogModule), RouterTestingModule, MockModule(TourMatMenuModule)],
+      imports: [MockModule(MatDialogModule), RouterTestingModule],
       declarations: [KnowledgeBoxComponent],
       providers: [
         {

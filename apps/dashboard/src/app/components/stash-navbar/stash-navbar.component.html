@@ -6,9 +6,7 @@
       *ngIf="!(inAccount | async)"
       class="navbar-content">
       <div class="nav-group">
-        <div
-          class="group-items"
-          tourAnchor="step5">
+        <div class="group-items">
           <a
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)"
@@ -34,9 +32,7 @@
         </div>
       </div>
       <div class="nav-group">
-        <div
-          class="group-items"
-          tourAnchor="step6">
+        <div class="group-items">
           <a
             *ngIf="isActivityEnabled | async"
             [routerLink]="kbUrl + '/activity'"
@@ -85,8 +81,7 @@
         </div>
         <div
           *ngIf="isTrainingEnabled | async"
-          class="group-items"
-          tourAnchor="step7">
+          class="group-items">
           <a
             [routerLink]="kbUrl + '/processes'"
             routerLinkActive="active"
@@ -99,8 +94,7 @@
         <ng-container *ngIf="isAccountManager | async">
           <div
             *ngIf="isUsersEnabled | async"
-            class="group-items"
-            tourAnchor="step9">
+            class="group-items">
             <a
               [routerLink]="kbUrl + '/users'"
               routerLinkActive="active"
@@ -112,8 +106,7 @@
         </ng-container>
         <div
           *ngIf="isWidgetsEnabled | async"
-          class="group-items"
-          tourAnchor="step8">
+          class="group-items">
           <a
             [routerLink]="kbUrl + '/widgets'"
             routerLinkActive="active"
@@ -126,8 +119,7 @@
         <ng-container *ngIf="isAccountManager | async">
           <div
             *ngIf="isAPIKeysEnabled | async"
-            class="group-items"
-            tourAnchor="step10">
+            class="group-items">
             <a
               [routerLink]="kbUrl + '/keys'"
               routerLinkActive="active"
