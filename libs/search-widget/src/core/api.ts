@@ -83,7 +83,7 @@ export const suggest = (query: string) => {
   );
 };
 
-export const predict = (query: string) => {
+export const predict = (query: string): Observable<Classification[]> => {
   if (!nucliaPrediction) {
     throw new Error('Nuclia prediction not initialized');
   }
