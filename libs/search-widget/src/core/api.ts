@@ -11,15 +11,16 @@ import type {
 import { FIELD_TYPE, Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
 import { nucliaStore } from './old-stores/main.store';
-import { loadModel } from './tensor';
 import type { EntityGroup, WidgetOptions } from './models';
-import { generatedEntitiesColor } from './utils';
+import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
 import { searchWidget } from './stores/widget.store';
 import { suggestionsHasError } from './stores/suggestions.store';
+import { NucliaPrediction } from '@nuclia/prediction';
 
 let nucliaApi: Nuclia | null;
+let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
 
@@ -40,11 +41,9 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
     if (searchWidget.getValue()!.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
       if (kbPath) {
-        loadModel(
-          `${kbPath}/train/classifier/model/json_models/model.json`,
-          `${kbPath}/train/classifier/model/model_files/pos_to_lab.json`,
-          state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {},
-        );
+        nucliaPrediction = new NucliaPrediction(getCDN());
+        const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
+        nucliaPrediction.loadModels(kbPath, authHeaders);
       }
     }
   });
@@ -82,6 +81,14 @@ export const suggest = (query: string) => {
       return !res.error;
     }),
   );
+};
+
+export const predict = (query: string) => {
+  if (!nucliaPrediction) {
+    throw new Error('Nuclia prediction not initialized');
+  }
+
+  return nucliaPrediction.predict(query);
 };
 
 export const getResource = (uid: string): Observable<Resource> => {

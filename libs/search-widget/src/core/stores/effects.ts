@@ -1,10 +1,9 @@
-import { getLabelSets, suggest } from '../api';
+import { getLabelSets, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, typeAhead } from './suggestions.store';
 import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
-import { predict } from '../tensor';
 import { typingLabelRegexp } from '../../common/label/label.utils';
 import { nucliaStore } from '../old-stores/main.store';
 
