@@ -1,5 +1,7 @@
 # 1.0.6 (unreleased)
 
+- aggregate user-assigned labels and ML-assigned labels
+- use `Classification` instead of `LabelValue`
 - add `WidgetFeatures` interface
 - provide Unicode-compliant string functions
 

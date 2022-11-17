@@ -256,6 +256,7 @@ export interface KeywordSetField {
 export interface Classification {
   labelset: string;
   label: string;
+  immutable?: boolean;
 }
 
 export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TRANSCRIPT';

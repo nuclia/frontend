@@ -106,6 +106,18 @@ export class ReadableResource implements IResource {
       }, {});
   }
 
+  getClassifications(): Classification[] {
+    return this.getFields().reduce((acc, field) => {
+      field.extracted?.metadata?.metadata?.classifications?.forEach((classification) => {
+        const existing = acc.find((c) => c.label === classification.label && c.labelset === classification.labelset);
+        if (!existing) {
+          acc.push({ ...classification, immutable: true });
+        }
+      });
+      return acc;
+    }, this.usermetadata?.classifications || []);
+  }
+
   private formatTitle(title?: string): string {
     title = title || '–';
     try {
