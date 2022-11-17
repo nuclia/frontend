@@ -76,7 +76,7 @@ jobs:
           (test -d dist/apps/manager && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "deploy-desktop=yes" >> $GITHUB_OUTPUT) || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
-          (test -d dist/libs/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
+          (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
 
       - uses: google-github-actions/auth@v0
         with:
