@@ -70,7 +70,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
       authors: (data.origin?.colaborators || []).join(', '),
       thumbnail: data.thumbnail,
     });
-    this.currentLabels = this.currentValue?.usermetadata?.classifications || [];
+    this.currentLabels = this.currentValue?.getClassifications() || [];
     this.cdr?.markForCheck();
   }
 

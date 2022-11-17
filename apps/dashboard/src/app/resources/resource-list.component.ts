@@ -289,8 +289,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             resource,
             labels: [],
           };
-          if (resource.usermetadata?.classifications) {
-            resourceWithLabels.labels = resource.usermetadata.classifications.map((label) => ({
+          const labels = resource.getClassifications();
+          if (labels.length > 0) {
+            resourceWithLabels.labels = labels.map((label) => ({
               ...label,
               color: labelSets[label.labelset]?.color || '#ffffff',
             }));
@@ -356,7 +357,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         const updatedResource = {
           usermetadata: {
             ...resource.usermetadata,
-            classifications: this.mergeExistingAndSelectedLabels(resource.usermetadata?.classifications),
+            classifications: this.mergeExistingAndSelectedLabels(resource.getClassifications()),
           },
         };
         return resource.modify(updatedResource).pipe(
