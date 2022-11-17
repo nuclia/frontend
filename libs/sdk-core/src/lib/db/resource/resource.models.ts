@@ -66,13 +66,8 @@ export interface Metadata {
   status?: RESOURCE_STATUS;
 }
 
-export interface LabelValue {
-  labelset: string;
-  label: string;
-}
-
 export interface UserMetadata {
-  classifications?: LabelValue[];
+  classifications?: Classification[];
   relations?: Relation[];
 }
 
@@ -261,6 +256,7 @@ export interface KeywordSetField {
 export interface Classification {
   labelset: string;
   label: string;
+  immutable?: boolean;
 }
 
 export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TRANSCRIPT';

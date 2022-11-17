@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { STFTrackingService } from '@flaps/core';
 import { SDKService } from '@flaps/core';
-import { LabelValue } from '@nuclia/core';
+import { Classification } from '@nuclia/core';
 import { switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -25,7 +25,7 @@ export class CreateLinkComponent {
     } as IErrorMessages,
   };
 
-  selectedLabels: LabelValue[] = [];
+  selectedLabels: Classification[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CreateLinkComponent>,

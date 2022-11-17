@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
 import { DroppedFile, StateService, STFTrackingService, STFUtils } from '@flaps/core';
-import { FileWithMetadata, ICreateResource, LabelValue } from '@nuclia/core';
+import { FileWithMetadata, ICreateResource, Classification } from '@nuclia/core';
 import { FILES_TO_IGNORE, UploadService } from '../upload.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -23,7 +23,7 @@ export class UploadFilesComponent {
   files: FileWithMetadata[] = [];
   filesWithAudio: FileWithMetadata[] = [];
   filesWithoutAudio: FileWithMetadata[] = [];
-  selectedLabels: LabelValue[] = [];
+  selectedLabels: Classification[] = [];
   hasBaseDropZoneOver: boolean = false;
   langSelect = new UntypedFormControl('');
   langMultiSelect = new UntypedFormControl('');
@@ -148,7 +148,7 @@ export class UploadFilesComponent {
         // Dropped files don't have webkitRelativePath property
         const relativePath = 'relativePath' in file ? (file as DroppedFile).relativePath : file.webkitRelativePath;
         const parts = relativePath.split('/');
-        let classifications: LabelValue[] = [];
+        let classifications: Classification[] = [];
         if (parts.length <= 1) {
           return file;
         } else if (parts.length === 2) {

@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { CloudLink, FileFieldData, LabelValue, Resource } from '@nuclia/core';
+import { CloudLink, FileFieldData, Classification, Resource } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, switchMap, tap, timer } from 'rxjs';
 import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
@@ -40,7 +40,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
       ),
     ),
   );
-  currentLabels: LabelValue[] = [];
+  currentLabels: Classification[] = [];
   hintValues = this.resource.pipe(
     map((res) => ({
       RESOURCE: this.sdk.nuclia.rest.getFullUrl(res.path),
@@ -70,11 +70,11 @@ export class ResourceProfileComponent extends BaseEditComponent {
       authors: (data.origin?.colaborators || []).join(', '),
       thumbnail: data.thumbnail,
     });
-    this.currentLabels = this.currentValue?.usermetadata?.classifications || [];
+    this.currentLabels = this.currentValue?.getClassifications() || [];
     this.cdr?.markForCheck();
   }
 
-  updateLabels(labels: LabelValue[]) {
+  updateLabels(labels: Classification[]) {
     this.currentLabels = labels;
     this.form.markAsDirty();
     this.cdr?.markForCheck();

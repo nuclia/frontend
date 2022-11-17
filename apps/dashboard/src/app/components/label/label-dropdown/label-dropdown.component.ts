@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { LabelSet, LabelSets, LabelValue } from '@nuclia/core';
+import { LabelSet, LabelSets, Classification } from '@nuclia/core';
 import { PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
@@ -10,7 +10,7 @@ import { PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 })
 export class LabelDropdownComponent {
   @Input()
-  set selection(value: LabelValue[]) {
+  set selection(value: Classification[]) {
     this._selection = [...value] || [];
     this.checkboxSelection = this._selection.map((labelValue) => `${labelValue.labelset}${labelValue.label}`);
   }
@@ -36,18 +36,18 @@ export class LabelDropdownComponent {
 
   @Input() size: Size | undefined;
 
-  @Output() selectionChange = new EventEmitter<LabelValue[]>();
+  @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() close = new EventEmitter<void>();
 
   @ViewChild('level2', { read: ElementRef }) level2Element?: ElementRef;
   @ViewChild('level2') level2Popup?: PopupComponent;
 
   labelSetExpanded = '';
-  labelValues: LabelValue[] = [];
+  labelValues: Classification[] = [];
   open: boolean = false;
   checkboxSelection: string[] = [];
 
-  private _selection: LabelValue[] = [];
+  private _selection: Classification[] = [];
   private _labelSets: LabelSets = {};
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
@@ -63,7 +63,7 @@ export class LabelDropdownComponent {
     this.close.emit();
   }
 
-  toggleLabel(labelValue: LabelValue) {
+  toggleLabel(labelValue: Classification) {
     const checkboxValue = `${labelValue.labelset}${labelValue.label}`;
     let newSelectedLabels;
 

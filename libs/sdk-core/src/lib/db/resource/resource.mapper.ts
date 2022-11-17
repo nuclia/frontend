@@ -16,7 +16,7 @@ export const resourceToAlgoliaFormat = (resource: Resource, backend: string): Al
       .map((extracted) => extracted.text as string),
   };
 
-  resource.usermetadata?.classifications?.forEach((classification: Classification) => {
+  resource.getClassifications().forEach((classification: Classification) => {
     if (classification.labelset && classification.label) {
       // Adding labels as properties of the final json
       (record as any)[classification.labelset] = classification.label;

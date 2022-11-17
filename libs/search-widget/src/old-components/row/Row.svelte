@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { IResource } from '@nuclia/core';
+  import { IResource, ReadableResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
   import { nucliaState } from '../../core/old-stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
@@ -14,7 +14,7 @@
   export let semantic = false;
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
   const sentences = nucliaState().getMatchingSentences(result.id);
-  $: labels = result.usermetadata?.classifications || [];
+  $: labels = new ReadableResource(result).getClassifications();
 </script>
 
 <div
@@ -42,7 +42,8 @@
           {#each $sentences as sentence}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => goToResource({ uid: sentence.rid, sentence }, sentence.text)}>
+              on:click|preventDefault|stopPropagation={() =>
+                goToResource({ uid: sentence.rid, sentence }, sentence.text)}>
               {@html sentence.text}
             </li>
           {/each}
@@ -53,7 +54,8 @@
           {#each $paragraphs as paragraph}
             <li
               class="paragraph"
-              on:click|preventDefault|stopPropagation={() => goToResource({ uid: paragraph.rid, paragraph }, paragraph.text)}>
+              on:click|preventDefault|stopPropagation={() =>
+                goToResource({ uid: paragraph.rid, paragraph }, paragraph.text)}>
               {@html paragraph.text}
             </li>
           {/each}

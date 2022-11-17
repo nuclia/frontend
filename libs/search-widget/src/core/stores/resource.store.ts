@@ -7,8 +7,10 @@ import { isYoutubeUrl } from '../utils';
 export const resource = writableSubject<Resource | null>(null);
 
 export const resourceHasEntities = resource.pipe(
-  map((resource) => (!resource ? false : Object.entries(resource.getNamedEntities()).length > 0)),
+  map((resource) => (!resource ? false : Object.entries(resource.getAnnotatedEntities()).length > 0)),
 );
+
+export const resourceLabels = resource.pipe(map((resource) => (!resource ? [] : resource.getClassifications())));
 
 export const summaries: Observable<string[]> = resource.pipe(
   map((resource) => {
