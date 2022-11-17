@@ -1,13 +1,14 @@
 import type { Subscription } from 'rxjs';
 import { nucliaState, setDisplayedResource } from './main.store';
-import { concatMap, filter, tap } from 'rxjs/operators';
-import { getResource } from '../api';
+import { concatMap, filter, tap, switchMap } from 'rxjs/operators';
+import { getResource, loadEntities } from '../api';
 import type { Resource } from '@nuclia/core';
 import { resource } from '../stores/resource.store';
 import { isViewerOpen } from '../stores/modal.store';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { canEditLabels } from '../stores/widget.store';
 import { activateEditLabelsFeature } from '../stores/effects';
+import { entityGroups } from '../../core/stores/entities.store';
 
 const subscriptions: Subscription[] = [];
 const previewQueryKey = formatQueryKey('preview');
@@ -53,6 +54,14 @@ export function initViewerEffects(permalinkEnabled: boolean) {
           }
         }
       }),
+      nucliaState()
+        .displayedResource.pipe(
+          filter((displayedResource) => !!displayedResource?.uid),
+          switchMap(() => loadEntities()),
+        )
+        .subscribe((entities) => {
+          entityGroups.set(entities);
+        }),
     ],
   );
 }

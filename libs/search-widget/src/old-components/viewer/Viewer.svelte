@@ -19,7 +19,6 @@
   import Preview from './Preview.svelte';
   import { setAnnotations } from '../../core/stores/annotation.store';
   import { resource } from '../../core/stores/resource.store';
-  import { entityGroups } from '../../core/stores/entities.store';
 
   let imagePath: string | undefined;
   let image: string | undefined;
@@ -74,10 +73,6 @@
         setAnnotations(resource.value!, paragraphs, currentField);
       }),
   ];
-
-  onMount(() => {
-    loadEntities().subscribe((entities) => entityGroups.set(entities));
-  });
 
   onDestroy(() => {
     if (image) URL.revokeObjectURL(image);
