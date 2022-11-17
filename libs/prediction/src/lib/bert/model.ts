@@ -1,4 +1,3 @@
-// import * as tf from '@tensorflow/tfjs';
 import { loadTokenizer } from './tokenizer';
 import { getCDN } from '../utils';
 
@@ -37,7 +36,6 @@ export default class BertModel {
   }
 
   async loadModelDefinition(headers: { [key: string]: string }) {
-    console.log(`Load model definition…`);
     const modelTypeUrl = `${this.kbPath}/train/classifier/model/json_models/nuclia.json`;
     return fetch(modelTypeUrl, { headers });
   }
@@ -58,9 +56,8 @@ export default class BertModel {
 
     try {
       await Promise.all(setupCalls);
-      console.log(`Setup completed`);
     } catch (e) {
-      console.log(`Setup error:`, e);
+      console.error(`Setup error:`, e);
     }
   }
 
@@ -131,26 +128,20 @@ export default class BertModel {
 
   // Load converted bert model
   private async loadClassifierModel(headers: { [key: string]: string }) {
-    console.log('Loading classifier model…');
     const options = { requestInit: { headers } };
     this.classifierModel = await this.tf.loadLayersModel(
       `${this.kbPath}/train/classifier/model/json_models/model.json`,
       options,
     );
     this.classifierModel.summary();
-    console.log('Classifier loaded');
   }
 
   private async loadBertModel() {
-    console.log('Loading bert model…');
     this.bertModel = await this.tf.loadGraphModel(`${getCDN()}models/classifier/${this.modelType}/model.json`);
-    console.log('Bert loaded');
   }
 
   // Load tokenizer for bert input
   private async loadTokenizer() {
-    console.log('Loading tokenizer…');
     this.tokenizer = await loadTokenizer(this.modelType);
-    console.log('Tokenizer loaded');
   }
 }

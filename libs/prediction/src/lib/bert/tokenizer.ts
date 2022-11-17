@@ -1,4 +1,3 @@
-// import * as tf from '@tensorflow/tfjs';
 import { getCDN } from '../utils';
 
 /**

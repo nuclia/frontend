@@ -39,11 +39,10 @@ export class NucliaPrediction {
           return result.ok ? from(result.json()) : throwError(() => new Error('Unable to load modelType'));
         }),
         tap((data) => {
-          console.log(`model definition loaded:`, data);
-          this.model!.modelType = data.model;
-          this.model!.outputSize = data.output_size;
+          (this.model as BertModel).modelType = data.model;
+          (this.model as BertModel).outputSize = data.output_size;
         }),
-        switchMap(() => from(this.model!.setup(headers))),
+        switchMap(() => from((this.model as BertModel).setup(headers))),
       )
       .subscribe();
   }
@@ -69,10 +68,7 @@ export class NucliaPrediction {
   private async loadLabelSets(kbPath: string, headers: { [key: string]: string }) {
     return fetch(`${kbPath}/train/classifier/model/model_files/pos_to_lab.json`, { headers }).then((res) => {
       if (res.ok) {
-        res.json().then((res) => {
-          this.labels = res.labels;
-          console.log(`Label sets:`, this.labels);
-        });
+        res.json().then((res) => (this.labels = res.labels));
       } else {
         console.info('No trained labels in knowledge box');
       }
