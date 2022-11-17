@@ -12,8 +12,10 @@
   let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
   /**
    * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
+   * Kb with PDF with page indicator returned by search (owned by Mat): d64d2048-8bd2-474a-9ef2-213f85e90025
+   * Kb with PDF without page indicators (owned by Mat): 8f39fe4e-04e0-4767-bc83-69fc4c9c31c6
    */
-  let kb = 'cbb4afd0-26e6-480a-a814-4e08398bdf3e';
+  let kb = '8f39fe4e-04e0-4767-bc83-69fc4c9c31c6';
 
   onMount(() => {
     widget?.setActions([

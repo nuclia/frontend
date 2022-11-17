@@ -1,11 +1,13 @@
 import { getLabelSets, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, typeAhead } from './suggestions.store';
-import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, of, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
 import { typingLabelRegexp } from '../../common/label/label.utils';
 import { nucliaStore } from '../old-stores/main.store';
+import { searchWidget } from './widget.store';
+import type { Classification, Search } from '@nuclia/core';
 
 const subscriptions: Subscription[] = [];
 
@@ -43,7 +45,11 @@ export function activateTypeAheadSuggestions() {
             intents: {},
           });
         }
-        return forkJoin([suggest(query), predict(query)]).pipe(
+        const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = searchWidget.getValue()
+          ?.features.suggestLabels
+          ? [suggest(query), predict(query)]
+          : [suggest(query), of([])];
+        return forkJoin(requests).pipe(
           map(([results, predictions]) => ({
             results,
             intents: { labels: predictions },
