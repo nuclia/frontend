@@ -16,6 +16,7 @@
   import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
   import { activateFilters, activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
+  import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -35,13 +36,13 @@
   export let navigatetolink = false;
   export let notpublic = false;
   export let defaultfeatures = '';
+
+  let _permalink = coerceBooleanProperty(permalink);
   let _navigatetolink = coerceBooleanProperty(navigatetolink);
   let _notpublic = coerceBooleanProperty(notpublic);
   let _defaultfeatures: WidgetFeatures = (
     typeof defaultfeatures === 'string' ? defaultfeatures.split(',').filter((f) => !!f) : []
   ).reduce((acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }), {});
-
-  $: permalinkEnabled = coerceBooleanProperty(permalink);
 
   const thisComponent = get_current_component();
   const dispatchCustomEvent = (name: string, detail: string) => {
@@ -66,6 +67,7 @@
     resetStore();
     resetNuclia();
     unsubscribeAllEffects();
+    unsubscribeViewerEffects();
   };
 
   let svgSprite;
@@ -107,6 +109,7 @@
     activateFilters();
 
     setupTriggerSearch(dispatchCustomEvent);
+    initViewerEffects(_permalink);
 
     widgetType.set('search');
     navigateToLink.set(_navigatetolink);
@@ -130,7 +133,7 @@
     {:else}
       {type} widget is not implemented yet
     {/if}
-    <ViewerModal {permalinkEnabled} />
+    <ViewerModal />
   {/if}
 
   <div

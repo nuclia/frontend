@@ -12,6 +12,7 @@
   import { customStyle, setWidgetActions, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
+  import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -27,9 +28,8 @@
   export let permalink = false;
   export let standalone = false;
   export let notpublic = false;
+  let _permalink = coerceBooleanProperty(permalink);
   let _notpublic = coerceBooleanProperty(notpublic);
-
-  $: permalinkEnabled = coerceBooleanProperty(permalink);
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -43,6 +43,7 @@
     resetStore();
     resetNuclia();
     unsubscribeAllEffects();
+    unsubscribeViewerEffects();
   };
 
   let svgSprite;
@@ -79,6 +80,8 @@
     // Load custom styles
     customStyle.subscribe((css) => (style = css));
 
+    initViewerEffects(_permalink);
+
     widgetType.set('viewer');
     ready = true;
 
@@ -93,7 +96,7 @@
   {style}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    <ViewerModal {permalinkEnabled} />
+    <ViewerModal />
   {/if}
 
   <div
