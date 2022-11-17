@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { md5, SDKService } from '@flaps/core';
-import { FileWithMetadata, LabelSet, LabelSetKind, LabelValue, UploadStatus } from '@nuclia/core';
+import { FileWithMetadata, LabelSet, LabelSetKind, Classification, UploadStatus } from '@nuclia/core';
 import { LabelsService } from '../services/labels.service';
 import {
   BehaviorSubject,
@@ -32,8 +32,8 @@ export class UploadService {
   uploadFiles(files: FileWithMetadata[]) {
     const labels = files
       .filter((file) => !!file.payload && !!file.payload.usermetadata && !!file.payload.usermetadata.classifications)
-      .map((file) => file?.payload?.usermetadata?.classifications as LabelValue[])
-      .reduce((acc, val) => acc.concat(val), [] as LabelValue[]);
+      .map((file) => file?.payload?.usermetadata?.classifications as Classification[])
+      .reduce((acc, val) => acc.concat(val), [] as Classification[]);
     this.createMissingLabels(labels)
       .pipe(
         concatMap(() => forkJoin(files.map((file) => md5(file)))),
@@ -60,7 +60,7 @@ export class UploadService {
     this._barDisabled.next(true);
   }
 
-  private createMissingLabels(labels: LabelValue[]): Observable<void> {
+  private createMissingLabels(labels: Classification[]): Observable<void> {
     if (labels.length === 0) {
       return of(undefined);
     }
@@ -80,7 +80,7 @@ export class UploadService {
               acc.find(({ labelset, label }) => current.labelset === labelset && current.label === label)
                 ? acc
                 : acc.concat([current]),
-            [] as LabelValue[],
+            [] as Classification[],
           );
         if (missingLabels.length === 0) {
           return of(undefined);

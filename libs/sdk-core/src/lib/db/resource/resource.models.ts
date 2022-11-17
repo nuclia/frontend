@@ -66,13 +66,8 @@ export interface Metadata {
   status?: RESOURCE_STATUS;
 }
 
-export interface LabelValue {
-  labelset: string;
-  label: string;
-}
-
 export interface UserMetadata {
-  classifications?: LabelValue[];
+  classifications?: Classification[];
   relations?: Relation[];
 }
 

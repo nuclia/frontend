@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { LabelSets, LabelValue } from '@nuclia/core';
+import { LabelSets, Classification } from '@nuclia/core';
 
 @Component({
   selector: 'app-label-list',
@@ -9,11 +9,11 @@ import { LabelSets, LabelValue } from '@nuclia/core';
 })
 export class LabelListComponent {
   @Input() labelSets: LabelSets = {};
-  @Input() labelSelection: LabelValue[] = [];
+  @Input() labelSelection: Classification[] = [];
 
-  @Output() labelSelectionChange: EventEmitter<LabelValue[]> = new EventEmitter<LabelValue[]>();
+  @Output() labelSelectionChange: EventEmitter<Classification[]> = new EventEmitter<Classification[]>();
 
-  removeLabel(labelValue: LabelValue) {
+  removeLabel(labelValue: Classification) {
     const newSelection = this.labelSelection.filter(
       (item) => !(item.label === labelValue.label && item.labelset === labelValue.labelset),
     );

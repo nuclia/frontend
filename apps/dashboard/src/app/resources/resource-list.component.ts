@@ -18,7 +18,7 @@ import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'r
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   deDuplicateList,
-  LabelValue,
+  Classification,
   Resource,
   RESOURCE_STATUS,
   ResourceList,
@@ -42,7 +42,7 @@ interface KeyValue {
   value: string;
 }
 
-interface ColoredLabel extends LabelValue {
+interface ColoredLabel extends Classification {
   color: string;
 }
 
@@ -103,7 +103,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }),
   );
   labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
-  currentLabelList: LabelValue[] = [];
+  currentLabelList: Classification[] = [];
 
   constructor(
     private sdk: SDKService,
@@ -346,7 +346,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateLabelList($event: LabelValue[]) {
+  updateLabelList($event: Classification[]) {
     this.currentLabelList = $event;
   }
 
@@ -385,7 +385,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }
   }
 
-  private mergeExistingAndSelectedLabels(classifications: LabelValue[] | undefined): LabelValue[] {
+  private mergeExistingAndSelectedLabels(classifications: Classification[] | undefined): Classification[] {
     if (!classifications) {
       return this.currentLabelList;
     }
