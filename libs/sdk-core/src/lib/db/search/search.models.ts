@@ -76,6 +76,7 @@ export namespace Search {
     field: string;
     text: string;
     labels: string[];
+    position: { page_number: number; start: number; end: number; index: number };
   }
 
   export interface Sentence {

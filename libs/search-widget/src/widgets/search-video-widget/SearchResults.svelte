@@ -1,7 +1,7 @@
 <svelte:options tag="nuclia-search-results" />
 
 <script lang="ts">
-  import { onDestroy, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { debounceTime, forkJoin, map, switchMap, take } from 'rxjs';
   import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
