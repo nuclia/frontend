@@ -724,6 +724,35 @@
       },
       "tags": []
     },
+    "prediction": {
+      "root": "libs/prediction",
+      "sourceRoot": "libs/prediction/src",
+      "projectType": "library",
+      "architect": {
+        "build": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": ["yarn prediction-build"]
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/prediction/**/*.ts"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/prediction"],
+          "options": {
+            "jestConfig": "libs/prediction/jest.config.ts",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "tags": []
+    },
     "sdk-core": {
       "$schema": "../../node_modules/nx/schemas/project-schema.json",
       "root": "libs/sdk-core",
@@ -867,7 +896,7 @@
         "build": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "commands": ["yarn run build:search-widgets"]
+            "commands": ["./tools/build-widgets.sh"]
           },
           "configurations": {
             "production": {}

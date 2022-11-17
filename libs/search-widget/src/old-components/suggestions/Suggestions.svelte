@@ -8,6 +8,7 @@
   import { DisplayedResource, FieldType } from '../../core/models';
   import { suggestionsHasError } from '../../core/stores/suggestions.store';
   import { navigateToLink } from '../../core/stores/widget.store';
+  import Label from '../../common/label/Label.svelte';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let intents: Classification[] = [];
@@ -38,7 +39,7 @@
         <ul class="intents">
           {#each intents as intent}
             <li>
-              {intent.label}
+              <Label label={intent} />
             </li>
           {/each}
         </ul>
