@@ -32,20 +32,8 @@
   .intents {
     display: flex;
     gap: var(--rhythm-1);
+    list-style: none;
     margin: var(--rhythm-1) 0;
     padding: 0;
-  }
-  .intents li {
-    display: inline-block;
-    padding: var(--rhythm-0_5) var(--rhythm-2);
-    max-width: 100%;
-    font-size: var(--font-size-xsmall);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    // FIXME: use real label component instead
-    color: #454ade;
-    background-color: #e6e6f9;
-    border-radius: var(--rhythm-0_25);
   }
 }
