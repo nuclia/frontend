@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Classification, LinkField, Search } from '@nuclia/core';
   import { FIELD_TYPE } from '@nuclia/core';
-  import { setDisplayedResource } from '../../core/old-stores/main.store';
+  import { addLabelFilter, setDisplayedResource } from '../../core/old-stores/main.store';
   import { getField } from '../../core/api';
   import { goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
@@ -24,11 +24,6 @@
       setDisplayedResource(params);
     }
   };
-
-  const addFilter = (label: Classification) => {
-    // TODO
-    console.log(label);
-  };
 </script>
 
 <div class="sw-suggestions">
@@ -47,7 +42,7 @@
               <Label
                 {label}
                 clickable
-                on:click={addFilter(label)} />
+                on:click={() => addLabelFilter(label)} />
             </li>
           {/each}
         </ul>

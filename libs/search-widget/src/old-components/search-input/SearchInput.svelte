@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
+  import { nucliaState, nucliaStore, removeLabelFilter } from '../../core/old-stores/main.store';
   import { getCDN } from '../../core/utils';
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
@@ -15,9 +15,9 @@
   } from '../../core/stores/suggestions.store';
   import { tap } from 'rxjs/operators';
   import Label from '../../common/label/Label.svelte';
-  import { map, Observable, take } from 'rxjs';
+  import { map, Observable } from 'rxjs';
   import type { Classification } from '@nuclia/core';
-  import { labelRegexp } from '../../common/label/label.utils';
+  import { getLabelFromFilter } from '../../common/label/label.utils';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -32,26 +32,18 @@
   let inputContainerElement: HTMLElement | undefined;
   let position: DOMRect | undefined;
   let showSuggestions = false;
+  let hasFilters = false;
   const filters = nucliaState().filters.pipe(
-    tap((filterQuery) => {
-      if (popupSearch) {
-        typeAhead.set(filterQuery.join(''));
+    tap((filters) => {
+      // search box size changes when there are filters or not
+      if (hasFilters !== filters.length > 0) {
+        hasFilters = filters.length > 0;
+        setTimeout(() => setInputPosition());
       }
     }),
   );
   const labels: Observable<Classification[]> = filters.pipe(
-    map((filters) =>
-      filters
-        .map((filter) => {
-          const labelMatches = [...filter.matchAll(labelRegexp)];
-          if (labelMatches.length === 1) {
-            const label = labelMatches[0][1].split('/');
-            return { labelset: label[0], label: label[1] };
-          }
-          return null;
-        })
-        .filter((label) => !!label),
-    ),
+    map((filters) => filters.map((filter) => getLabelFromFilter(filter))),
   );
 
   const suggestionModalMinWidth = 384;
@@ -67,7 +59,9 @@
   });
 
   const setInputPosition = () => {
-    position = inputContainerElement?.getBoundingClientRect();
+    if (inputContainerElement) {
+      position = inputContainerElement.getBoundingClientRect();
+    }
   };
 
   const search = () => {
@@ -88,17 +82,6 @@
 
   const closeSuggestions = () => {
     showSuggestions = false;
-  };
-
-  const removeLabel = (label: Classification) => {
-    filters.pipe(take(1)).subscribe((filters) => {
-      const filterIndex = filters.findIndex((filter) => filter === `LABEL={${label.labelset}/${label.label}}`);
-      if (filterIndex > -1) {
-        const newFilters = [...filters];
-        newFilters.splice(filterIndex, 1);
-        nucliaStore().filters.next(newFilters);
-      }
-    });
   };
 </script>
 
@@ -156,7 +139,7 @@
         <Label
           {label}
           removable
-          on:remove={() => removeLabel(label)} />
+          on:remove={() => removeLabelFilter(label)} />
       {/each}
     </div>
   {/if}
