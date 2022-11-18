@@ -74,7 +74,6 @@
   ]).pipe(
     map(([globalResult, inPdfResults, isInPdf]) => (isInPdf ? inPdfResults : globalResult)),
     map((results) => results || []),
-    tap((results) => console.log(results)),
   );
 
   onMount(() => {
@@ -109,14 +108,12 @@
     if (resultIndex > 0) {
       resultIndex -= 1;
       selectedParagraph = paragraphList[resultIndex];
-      console.log(`openPrevious - selectedParagraph`, selectedParagraph);
     }
   };
   const openNext = () => {
     if (resultIndex < paragraphList.length - 1) {
       resultIndex += 1;
       selectedParagraph = paragraphList[resultIndex];
-      console.log(`openNext - selectedParagraph`, selectedParagraph);
     }
   };
 
