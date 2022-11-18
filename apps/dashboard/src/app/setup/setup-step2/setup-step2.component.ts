@@ -1,13 +1,14 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Subject, take } from 'rxjs';
-import { concatMap, takeUntil } from 'rxjs/operators';
+import { of, Subject, take } from 'rxjs';
+import { catchError, concatMap, takeUntil } from 'rxjs/operators';
 import { SDKService, STFTrackingService, STFUtils, Zone, ZoneService } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { NavigationService } from '../../services/navigation.service';
 import { SetupStep } from '../setup-header/setup-header.component';
 import { SisModalService } from '@nuclia/sistema';
+import { Account, KnowledgeBoxCreation } from '@nuclia/core';
 
 @Component({
   selector: 'app-setup-step2',
@@ -32,6 +33,8 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
   available: boolean = false;
   editKbName: boolean = true;
   loading: boolean = false;
+  failures: number = 0;
+  verifyDisabled: boolean = false;
   unsubscribeAll = new Subject<void>();
 
   @ViewChild('accountInput') accountInput: ElementRef | undefined;
@@ -130,25 +133,34 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
     };
 
     this.loading = true;
-    this.sdk.nuclia.db
-      .createAccount(accountData)
-      .pipe(concatMap(() => this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbData)))
-      .subscribe({
-        next: () => {
-          this.nextStep(accountSlug, kbSlug);
-          this.loading = false;
-        },
-        error: () => {
-          this.showGenericError();
-          this.loading = false;
-        },
-      });
+    const createAccount = this.failures > 0 ? of({} as Account) : this.sdk.nuclia.db.createAccount(accountData);
+    createAccount.pipe(concatMap(() => this.createKb(accountSlug, kbData))).subscribe({
+      next: () => {
+        this.nextStep(accountSlug, kbSlug);
+        this.loading = false;
+      },
+      error: () => {
+        this.showGenericError();
+        this.loading = false;
+      },
+    });
+  }
+
+  createKb(accountSlug: string, kbData: KnowledgeBoxCreation) {
+    return this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbData).pipe(
+      catchError((error) => {
+        this.failures += 1;
+        this.accountForm.disable({ emitEvent: false });
+        this.verifyDisabled = true;
+        throw error;
+      }),
+    );
   }
 
   showGenericError() {
     this.modalService.openConfirm({
       title: 'login.error.oops',
-      description: 'generic.try_again',
+      description: 'stash.create.error',
       confirmLabel: 'Ok',
       onlyConfirm: true,
     });

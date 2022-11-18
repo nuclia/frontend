@@ -22,7 +22,7 @@
       <pa-button
         type="submit"
         fxFlex="0 0 auto"
-        [disabled]="accountName.value.length === 0">
+        [disabled]="accountName.value.length === 0 || verifyDisabled">
         {{ 'generic.verify' | translate }}
       </pa-button>
     </form>
