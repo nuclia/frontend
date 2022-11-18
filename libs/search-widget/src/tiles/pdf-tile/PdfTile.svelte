@@ -6,7 +6,6 @@
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
-  import type { PdfWidgetParagraph } from '../../core/models';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
@@ -38,7 +37,7 @@
   let expanded = false;
   let thumbnailLoaded = false;
   let showAllResults = false;
-  let selectedParagraph: PdfWidgetParagraph | undefined;
+  let selectedParagraph: Search.Paragraph | undefined;
   let resultIndex: number | undefined;
   let pdfUrl: Observable<string>;
   let headerActionsWidth = 0;
@@ -56,12 +55,20 @@
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
 
   let resource: Resource | undefined;
-  let paragraphList: PdfWidgetParagraph[];
+  let paragraphList: Search.Paragraph[];
   const isSearchingInPdf = new BehaviorSubject(false);
   const matchingParagraphs$ = combineLatest([
     nucliaState()
       .getMatchingParagraphs(result.id)
-      .pipe(tap((paragraphs) => (paragraphList = paragraphs as PdfWidgetParagraph[]))),
+      .pipe(
+        map((paragraphs) => {
+          paragraphList = paragraphs.map((paragraph) => ({
+            ...paragraph,
+            page: paragraph.position.page_number + 1,
+          }));
+          return paragraphList;
+        }),
+      ),
     viewerStore.results,
     isSearchingInPdf,
   ]).pipe(
@@ -292,7 +299,7 @@
               {#each $matchingParagraphs$ as paragraph, index}
                 <ParagraphResult
                   {paragraph}
-                  hideIndicator
+                  hideIndicator={!paragraph.page}
                   ellipsis={!expanded}
                   minimized={isMobile && !expanded}
                   stack={expanded}

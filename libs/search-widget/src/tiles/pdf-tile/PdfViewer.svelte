@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getPdfJsBaseUrl } from '../../core/utils';
-  import { onMount } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
+  import { debounceTime, filter, Subject, Subscription } from 'rxjs';
 
   export let src: string;
   export let paragraph;
@@ -26,6 +27,12 @@
   let pdfInitialized = false;
   const markRegex = new RegExp(/<\/*mark>/, 'g');
 
+  const updateTextLayerMatch$: Subject<{ paragraphFound: boolean; page: number }> = new Subject<{
+    paragraphFound: boolean;
+    page: number;
+  }>();
+  const subscriptions: Subscription[] = [];
+
   $: src && loadPdf();
   $: pdfViewer && paragraph && paragraph.text && findSelectedText();
   $: pdfViewer && !paragraph && unselectText();
@@ -33,6 +40,27 @@
 
   onMount(() => {
     loadPdf();
+
+    subscriptions.push(
+      updateTextLayerMatch$
+        .pipe(
+          // When pdfjs find a match, updateTextLayerMatch event is sent twice: first with pageIndex -1, then with the right pageIndex
+          // we debounce to ignore the pageIndex -1 sent when paragraph is found
+          debounceTime(50),
+          filter((data) => !data.paragraphFound),
+        )
+        .subscribe(() => {
+          // Paragraph not found in PDF, go to paragraph page
+          const pageNumber = paragraph?.page;
+          if (pageNumber) {
+            pdfViewer.scrollPageIntoView({ pageNumber });
+          }
+        }),
+    );
+  });
+
+  onDestroy(() => {
+    subscriptions.forEach((subscription) => subscription.unsubscribe());
   });
 
   function loadPdf() {
@@ -71,10 +99,6 @@
       zoom = pdfViewer.currentScale;
       pdfInitialized = true;
 
-      const pageNumber = paragraph?.page;
-      if (pageNumber) {
-        pdfViewer.scrollPageIntoView({ pageNumber });
-      }
       if (paragraph?.text) {
         findSelectedText();
       }
@@ -82,6 +106,10 @@
 
     eventBus.on('pagechanging', (event) => {
       currentPage = event.pageNumber;
+    });
+
+    eventBus.on('updatetextlayermatches', (event) => {
+      updateTextLayerMatch$.next({ paragraphFound: event.pageIndex > 0, page: event.pageIndex });
     });
   }
 
