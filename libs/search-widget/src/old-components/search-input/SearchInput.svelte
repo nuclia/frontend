@@ -133,7 +133,7 @@
     {/if}
   </div>
 
-  {#if $filters.length > 0 && (embeddedSearch || searchBarWidget)}
+  {#if $filters.length > 0}
     <div class="filters-container">
       {#each $labels as label (label.label)}
         <Label
