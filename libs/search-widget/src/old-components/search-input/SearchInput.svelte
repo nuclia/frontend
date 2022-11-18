@@ -17,7 +17,7 @@
   import Label from '../../common/label/Label.svelte';
   import { map, Observable } from 'rxjs';
   import type { Classification } from '@nuclia/core';
-  import { getLabelFromFilter } from '../../common/label/label.utils';
+  import { getLabelFromFilter } from '@nuclia/core';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -36,8 +36,9 @@
   const filters = nucliaState().filters.pipe(
     tap((filters) => {
       // search box size changes when there are filters or not
-      if (hasFilters !== filters.length > 0) {
-        hasFilters = filters.length > 0;
+      const hasFiltersNow = filters.length > 0;
+      if (hasFilters !== hasFiltersNow) {
+        hasFilters = hasFiltersNow;
         setTimeout(() => setInputPosition());
       }
     }),

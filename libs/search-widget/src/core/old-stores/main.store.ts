@@ -12,7 +12,7 @@ import {
   tap,
 } from 'rxjs';
 import type { Classification, IResource, Search, SearchOptions } from '@nuclia/core';
-import { getFilterFromLabel } from '../../common/label/label.utils';
+import { getFilterFromLabel } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
@@ -99,18 +99,15 @@ export const setDisplayedResource = (resource: DisplayedResource) => {
 export const addLabelFilter = (label: Classification) => {
   const filter = getFilterFromLabel(label);
   const currentFilters = nucliaStore().filters.value;
-  nucliaStore().filters.next(currentFilters.concat([filter]));
+  if (!currentFilters.includes(filter)) {
+    nucliaStore().filters.next(currentFilters.concat([filter]));
+  }
 };
 
 export const removeLabelFilter = (label: Classification) => {
   const filter = getFilterFromLabel(label);
   const currentFilters = nucliaStore().filters.value;
-  const filterIndex = currentFilters.findIndex((f) => f === filter);
-  if (filterIndex > -1) {
-    const newFilters = [...currentFilters];
-    newFilters.splice(filterIndex, 1);
-    nucliaStore().filters.next(newFilters);
-  }
+  nucliaStore().filters.next(currentFilters.filter((f) => f !== filter));
 };
 
 const getSortedResources = (results: Search.Results) => {
