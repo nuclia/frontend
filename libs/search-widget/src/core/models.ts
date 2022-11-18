@@ -105,10 +105,6 @@ export interface LinkPreviewParams {
   file: CloudLink;
 }
 
-export interface Intents {
-  labels?: Classification[];
-}
-
 export interface EntityGroup {
   id: string;
   title?: string;

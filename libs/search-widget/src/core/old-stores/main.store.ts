@@ -11,7 +11,8 @@ import {
   Subject,
   tap,
 } from 'rxjs';
-import type { IResource, Search, SearchOptions } from '@nuclia/core';
+import type { Classification, IResource, Search, SearchOptions } from '@nuclia/core';
+import { getFilterFromLabel } from '@nuclia/core';
 
 type NucliaStore = {
   query: BehaviorSubject<string>;
@@ -93,6 +94,20 @@ export const resetStore = () => {
 
 export const setDisplayedResource = (resource: DisplayedResource) => {
   nucliaStore().displayedResource.next(resource);
+};
+
+export const addLabelFilter = (label: Classification) => {
+  const filter = getFilterFromLabel(label);
+  const currentFilters = nucliaStore().filters.value;
+  if (!currentFilters.includes(filter)) {
+    nucliaStore().filters.next(currentFilters.concat([filter]));
+  }
+};
+
+export const removeLabelFilter = (label: Classification) => {
+  const filter = getFilterFromLabel(label);
+  const currentFilters = nucliaStore().filters.value;
+  nucliaStore().filters.next(currentFilters.filter((f) => f !== filter));
 };
 
 const getSortedResources = (results: Search.Results) => {

@@ -4,8 +4,6 @@ import { suggestions, typeAhead } from './suggestions.store';
 import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
-import { typingLabelRegexp } from '../../common/label/label.utils';
-import { nucliaStore } from '../old-stores/main.store';
 import { searchWidget } from './widget.store';
 import type { Classification, Search } from '@nuclia/core';
 
@@ -34,15 +32,12 @@ export function activateTypeAheadSuggestions() {
     typeAhead.pipe(debounceTime(350)),
   )
     .pipe(
-      // trim and remove LABEL filter if any
-      map((query) => (query || '').replace(typingLabelRegexp, '').trim()),
       // Don't trigger suggestion after inactivity if only spaces were added at the end of the query
       distinctUntilChanged((previous, current) => previous === current),
       switchMap((query) => {
         if (!query || query.length <= 2) {
           return of({
             results: NO_RESULTS,
-            intents: {},
           });
         }
         const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = searchWidget.getValue()
@@ -52,25 +47,12 @@ export function activateTypeAheadSuggestions() {
         return forkJoin(requests).pipe(
           map(([results, predictions]) => ({
             results,
-            intents: { labels: predictions },
+            labels: predictions,
           })),
         );
       }),
     )
     .subscribe((suggestionList) => suggestions.set(suggestionList));
-
-  subscriptions.push(subscription);
-}
-
-/**
- * Subscribe to filters, update query and trigger search
- */
-export function activateFilters() {
-  const subscription = nucliaStore().filters.subscribe((filters) => {
-    const query = filters.join(' ');
-    nucliaStore().query.next(query);
-    nucliaStore().triggerSearch.next();
-  });
 
   subscriptions.push(subscription);
 }

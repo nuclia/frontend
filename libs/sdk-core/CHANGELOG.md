@@ -1,6 +1,7 @@
 # 1.0.7 (unreleased)
 
 - Fix resource data if null
+- Add `getLabelFromFilter` and `getFilterFromLabel` functions
 
 # 1.0.6 (2022-11-17)
 

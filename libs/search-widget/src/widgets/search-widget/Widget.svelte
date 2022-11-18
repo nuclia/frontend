@@ -14,7 +14,7 @@
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
-  import { activateFilters, activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
+  import { activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
 
@@ -106,7 +106,6 @@
     customStyle.subscribe((css) => (style = css));
 
     activateTypeAheadSuggestions();
-    activateFilters();
 
     setupTriggerSearch(dispatchCustomEvent);
     initViewerEffects(_permalink);

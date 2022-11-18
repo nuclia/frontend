@@ -1,6 +1,7 @@
 .sw-search-input {
   display: flex;
   flex-direction: column;
+  position: relative;
 
   .input-container {
     box-sizing: border-box;
@@ -80,6 +81,13 @@
     .input-container {
       line-height: var(--line-height-body);
       padding: var(--input-widget-padding);
+    }
+
+    .filters-container {
+      position: absolute;
+      left: calc(100% + var(--rhythm-2));
+      top: 50%;
+      transform: translateY(-50%);
     }
   }
 

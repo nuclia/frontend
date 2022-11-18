@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Classification, LinkField, Search } from '@nuclia/core';
   import { FIELD_TYPE } from '@nuclia/core';
-  import { setDisplayedResource } from '../../core/old-stores/main.store';
+  import { addLabelFilter, setDisplayedResource } from '../../core/old-stores/main.store';
   import { getField } from '../../core/api';
   import { goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
@@ -11,7 +11,7 @@
   import Label from '../../common/label/Label.svelte';
 
   export let paragraphs: Search.Paragraph[] = [];
-  export let intents: Classification[] = [];
+  export let labels: Classification[] = [];
 
   const goToResource = (params: DisplayedResource, text?: string) => {
     if (navigateToLink.getValue() && params.paragraph?.field_type === FieldType.LINK) {
@@ -33,13 +33,16 @@
       <span>{$_('error.search-beta')}</span>
     </div>
   {:else}
-    {#if intents.length > 0}
+    {#if labels.length > 0}
       <section>
         <h3>{$_('suggest.intents')}</h3>
         <ul class="intents">
-          {#each intents as intent}
+          {#each labels as label}
             <li>
-              <Label label={intent} />
+              <Label
+                {label}
+                clickable
+                on:click={() => addLabelFilter(label)} />
             </li>
           {/each}
         </ul>
