@@ -22,7 +22,7 @@
       <pa-button
         type="submit"
         fxFlex="0 0 auto"
-        [disabled]="accountName.value.length === 0">
+        [disabled]="accountName.value.length === 0 || verifyDisabled">
         {{ 'generic.verify' | translate }}
       </pa-button>
     </form>
@@ -117,7 +117,7 @@
 
     <div class="setup-step2-actions">
       <pa-button
-        [disabled]="!(verified && available && kbForm.valid)"
+        [disabled]="!(verified && available && kbForm.valid && !loading)"
         (click)="save()">
         {{ 'generic.next_step' | translate }}
       </pa-button>
