@@ -44,7 +44,9 @@
     subscriptions.push(
       updateTextLayerMatch$
         .pipe(
-          debounceTime(100),
+          // When pdfjs find a match, updateTextLayerMatch event is sent twice: first with pageIndex -1, then with the right pageIndex
+          // we debounce to ignore the pageIndex -1 sent when paragraph is found
+          debounceTime(50),
           filter((data) => !data.paragraphFound),
         )
         .subscribe(() => {
