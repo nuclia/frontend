@@ -31,6 +31,7 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
   verified: boolean = false;
   available: boolean = false;
   editKbName: boolean = true;
+  loading: boolean = false;
   unsubscribeAll = new Subject<void>();
 
   @ViewChild('accountInput') accountInput: ElementRef | undefined;
@@ -128,15 +129,18 @@ export class SetupStep2Component implements OnInit, OnDestroy, AfterViewInit {
       title: this.kbName.value,
     };
 
+    this.loading = true;
     this.sdk.nuclia.db
       .createAccount(accountData)
       .pipe(concatMap(() => this.sdk.nuclia.db.createKnowledgeBox(accountSlug, kbData)))
       .subscribe({
         next: () => {
           this.nextStep(accountSlug, kbSlug);
+          this.loading = false;
         },
         error: () => {
           this.showGenericError();
+          this.loading = false;
         },
       });
   }

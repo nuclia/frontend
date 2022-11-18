@@ -117,7 +117,7 @@
 
     <div class="setup-step2-actions">
       <pa-button
-        [disabled]="!(verified && available && kbForm.valid)"
+        [disabled]="!(verified && available && kbForm.valid && !loading)"
         (click)="save()">
         {{ 'generic.next_step' | translate }}
       </pa-button>
