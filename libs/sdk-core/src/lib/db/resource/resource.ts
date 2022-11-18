@@ -32,13 +32,16 @@ export class ReadableResource implements IResource {
   data: ResourceData = {};
 
   constructor(data: IResource) {
+    if (!data.data) {
+      data.data = {};
+    }
     Object.assign(this, { ...data, title: this.formatTitle(data.title) });
   }
 
   getFields<T = IFieldData>(types: (keyof ResourceData)[] = ['files', 'links', 'texts', 'keywordsets']): T[] {
     return Object.entries(this.data)
-      .filter(([key, value]) => types.includes(key as keyof ResourceData))
-      .map(([key, value]) => value)
+      .filter(([key]) => types.includes(key as keyof ResourceData))
+      .map(([, value]) => value)
       .filter((obj) => !!obj)
       .map((obj) => Object.values(obj!) as T[])
       .reduce((acc, val) => acc.concat(val), [] as T[]);

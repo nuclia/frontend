@@ -1,3 +1,7 @@
+# 1.0.7 (unreleased)
+
+- Fix resource data if null
+
 # 1.0.6 (2022-11-17)
 
 - aggregate user-assigned labels and ML-assigned labels
