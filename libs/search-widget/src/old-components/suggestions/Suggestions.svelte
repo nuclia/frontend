@@ -11,7 +11,7 @@
   import Label from '../../common/label/Label.svelte';
 
   export let paragraphs: Search.Paragraph[] = [];
-  export let intents: Classification[] = [];
+  export let labels: Classification[] = [];
 
   const goToResource = (params: DisplayedResource, text?: string) => {
     if (navigateToLink.getValue() && params.paragraph?.field_type === FieldType.LINK) {
@@ -24,6 +24,11 @@
       setDisplayedResource(params);
     }
   };
+
+  const addFilter = (label: Classification) => {
+    // TODO
+    console.log(label);
+  };
 </script>
 
 <div class="sw-suggestions">
@@ -33,13 +38,16 @@
       <span>{$_('error.search-beta')}</span>
     </div>
   {:else}
-    {#if intents.length > 0}
+    {#if labels.length > 0}
       <section>
         <h3>{$_('suggest.intents')}</h3>
         <ul class="intents">
-          {#each intents as intent}
+          {#each labels as label}
             <li>
-              <Label label={intent} />
+              <Label
+                {label}
+                clickable
+                on:click={addFilter(label)} />
             </li>
           {/each}
         </ul>

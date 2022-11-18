@@ -1,12 +1,11 @@
 import { SvelteState } from '../state-lib';
 import type { Classification, Search } from '@nuclia/core';
-import type { Intents } from '../models';
 import { NO_RESULTS } from '../models';
 import { combineLatest, map, Observable } from 'rxjs';
 
 export type Suggestions = {
   results: Search.Results;
-  intents: Intents;
+  labels?: Classification[];
 };
 
 interface SuggestionState {
@@ -19,7 +18,6 @@ export const suggestionState = new SvelteState<SuggestionState>({
   typeAhead: '',
   suggestions: {
     results: NO_RESULTS,
-    intents: {},
   },
   hasError: false,
 });
@@ -53,10 +51,10 @@ export const suggestedParagraphs: Observable<Search.Paragraph[]> = suggestionSta
   (state) => state.suggestions.results.paragraphs?.results || [],
 );
 
-export const suggestedIntents: Observable<Classification[]> = suggestionState.reader<Classification[]>(
-  (state) => state.suggestions.intents.labels || [],
+export const suggestedLabels: Observable<Classification[]> = suggestionState.reader<Classification[]>(
+  (state) => state.suggestions.labels || [],
 );
 
-export const hasSuggestions: Observable<boolean> = combineLatest([suggestedParagraphs, suggestedIntents]).pipe(
-  map(([suggestedParagraphs, suggestedIntents]) => suggestedParagraphs.length > 0 || suggestedIntents.length > 0),
+export const hasSuggestions: Observable<boolean> = combineLatest([suggestedParagraphs, suggestedLabels]).pipe(
+  map(([suggestedParagraphs, suggestedLabels]) => suggestedParagraphs.length > 0 || suggestedLabels.length > 0),
 );

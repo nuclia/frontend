@@ -42,7 +42,6 @@ export function activateTypeAheadSuggestions() {
         if (!query || query.length <= 2) {
           return of({
             results: NO_RESULTS,
-            intents: {},
           });
         }
         const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = searchWidget.getValue()
@@ -52,7 +51,7 @@ export function activateTypeAheadSuggestions() {
         return forkJoin(requests).pipe(
           map(([results, predictions]) => ({
             results,
-            intents: { labels: predictions },
+            labels: predictions,
           })),
         );
       }),

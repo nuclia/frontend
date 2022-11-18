@@ -8,7 +8,7 @@
   import Suggestions from '../suggestions/Suggestions.svelte';
   import {
     hasSuggestions,
-    suggestedIntents,
+    suggestedLabels,
     suggestedParagraphs,
     suggestionsHasError,
     typeAhead,
@@ -170,7 +170,7 @@
   <div class="sw-suggestions-container">
     <Suggestions
       paragraphs={$suggestedParagraphs}
-      intents={$suggestedIntents} />
+      labels={$suggestedLabels} />
   </div>
 </Modal>
 

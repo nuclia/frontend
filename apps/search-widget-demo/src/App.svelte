@@ -5,7 +5,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'two-widgets';
+  let selected = 'form';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
@@ -16,7 +16,7 @@
    * Kb with PDF without page indicators (owned by Mat): 8f39fe4e-04e0-4767-bc83-69fc4c9c31c6
    * Kb with different kind of media (owned by Mat): f67d94ee-bd5b-4044-8844-a291c2ac244c
    */
-  let kb = 'd64d2048-8bd2-474a-9ef2-213f85e90025';
+  let kb = 'cbb4afd0-26e6-480a-a814-4e08398bdf3e';
 
   onMount(() => {
     widget?.setActions([
