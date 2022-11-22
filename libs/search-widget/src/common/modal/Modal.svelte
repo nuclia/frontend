@@ -11,7 +11,15 @@
   export let alignTo = '';
   export let modalWidth = '';
 
-  $: show && !popup && freezeBackground();
+  $: {
+    if (!popup) {
+      if (show) {
+        freezeBackground();
+      } else {
+        unblockBackground();
+      }
+    }
+  }
 
   const dispatch = createEventDispatcher();
   let modalContentHeight: string = '100%';
