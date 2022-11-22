@@ -74,4 +74,8 @@ export class UserMenuComponent implements OnDestroy {
     this.close.emit();
     this.router.navigate(['/user/logout']);
   }
+
+  goToSupport() {
+    window.open('https://github.com/nuclia/support', '_blank', 'noopener,noreferrer');
+  }
 }
