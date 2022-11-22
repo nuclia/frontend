@@ -17,6 +17,12 @@
   </pa-option>
   <pa-separator></pa-separator>
   <pa-option
+    icon="warning"
+    (click)="goToSupport()">
+    {{ 'generic.report_bug' | translate }}
+  </pa-option>
+  <pa-separator></pa-separator>
+  <pa-option
     icon="log-out"
     (click)="logout()">
     {{ 'generic.logout' | translate }}

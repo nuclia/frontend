@@ -1,10 +1,12 @@
-<nsi-dropdown-button
-  size="small"
-  aspect="basic"
-  [icon]="(kb | async)?.state !== 'PUBLISHED' ? 'lock' : undefined"
-  [popupRef]="kbSwitch">
-  {{ (kb | async)?.title }}
-</nsi-dropdown-button>
+<ng-container *ngIf="(knowledgeBoxes | async).length > 1">
+  <nsi-dropdown-button
+    size="small"
+    aspect="basic"
+    [icon]="(kb | async)?.state !== 'PUBLISHED' ? 'lock' : undefined"
+    [popupRef]="kbSwitch">
+    {{ (kb | async)?.title }}
+  </nsi-dropdown-button>
+</ng-container>
 
 <pa-dropdown #kbSwitch>
   <ng-container *ngFor="let kb of knowledgeBoxes | async; let last = last">

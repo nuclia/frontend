@@ -20,24 +20,9 @@
     </ng-container>
   </div>
 
-  <pa-button
-    size="small"
-    aspect="basic"
-    kind="destructive"
-    icon="warning"
-    iconAndText
-    (click)="goToSupport()">
-    <a
-      href="https://github.com/nuclia/support"
-      rel="noopener noreferrer"
-      target="_blank">
-      {{ 'generic.report_bug' | translate }}
-    </a>
-  </pa-button>
-
-  <div class="topbar-separator"></div>
-
-  <div class="topbar-account">
+  <div
+    *ngIf="(userInfo | async)?.accounts.length > 1"
+    class="topbar-account">
     <strong>{{ (kb | async)?.account }}</strong>
   </div>
 

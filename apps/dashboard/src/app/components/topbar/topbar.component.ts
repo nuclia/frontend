@@ -165,8 +165,4 @@ export class TopbarComponent implements AfterViewInit {
   closeViewer() {
     (document.getElementById('search-widget') as unknown as any)?.displayResource('');
   }
-
-  goToSupport() {
-    window.open('https://github.com/nuclia/support', '_blank');
-  }
 }
