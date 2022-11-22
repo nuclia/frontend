@@ -217,8 +217,10 @@ export class Db implements IDb {
         }
       }),
       tap((key) => {
-        localStorage.setItem(NUA_KEY, key.token);
-        localStorage.setItem(NUA_CLIENT, key.client_id);
+        if (this.nuclia.options.client === 'desktop') {
+          localStorage.setItem(NUA_KEY, key.token);
+          localStorage.setItem(NUA_CLIENT, key.client_id);
+        }
       }),
     );
   }
