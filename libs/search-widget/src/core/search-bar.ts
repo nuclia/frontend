@@ -24,7 +24,11 @@ export const setupTriggerSearch = (dispatch: (event: string, details: any) => vo
         ),
       ),
       switchMap(({ query, options }) => search(query, options)),
-      tap((results) => (dispatch ? dispatch('results', results) : undefined)),
+      tap((results) => {
+        if (typeof dispatch === 'function') {
+          dispatch('results', results);
+        }
+      }),
     )
     .subscribe((results) => nucliaStore().searchResults.next(results));
 };
