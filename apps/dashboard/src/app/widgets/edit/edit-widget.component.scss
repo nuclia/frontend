@@ -61,6 +61,11 @@ pre {
   line-height: rhythm(2);
 }
 
+.snippet-buttons {
+  display: flex;
+  gap: rhythm(4);
+}
+
 .tabs {
   display: flex;
   & > div {

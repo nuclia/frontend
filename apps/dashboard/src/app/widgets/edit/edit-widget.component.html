@@ -86,14 +86,24 @@
             <span>
               {{ 'stash.widgets.snippet' | translate }}
             </span>
-            <pa-button
-              *ngIf="clipboardSupported"
-              aspect="basic"
-              size="small"
-              [icon]="copyIcon"
-              (click)="copy()">
-              Copy snippet
-            </pa-button>
+            <div class="snippet-buttons">
+              <pa-button
+                *ngIf="widgetMode !== 'input'"
+                aspect="basic"
+                icon="info"
+                iconAndText
+                (click)="showHints()">
+                {{ 'stash.widgets.recommendations' | translate }}
+              </pa-button>
+              <pa-button
+                *ngIf="clipboardSupported"
+                aspect="basic"
+                size="small"
+                [icon]="copyIcon"
+                (click)="copy()">
+                Copy snippet
+              </pa-button>
+            </div>
           </div>
           <pre><code class="highlight">{{ snippet }}</code></pre>
         </div>
