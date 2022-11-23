@@ -1,4 +1,4 @@
-<ng-container *ngIf="(knowledgeBoxes | async) && (knowledgeBoxes | async).length > 1">
+<ng-container *ngIf="(knowledgeBoxes | async)?.length > 1">
   <nsi-dropdown-button
     size="small"
     aspect="basic"
