@@ -10,6 +10,8 @@ import { AddWidgetDialogComponent } from '../add/add-widget.component';
 import { DEFAULT_FEATURES, DEFAULT_FEATURES_LIST, WidgetService } from '../widget.service';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
+import { SisModalService } from '@nuclia/sistema';
+import { WidgetHintDialogComponent } from '../hint/widget-hint.component';
 
 @Component({
   selector: 'app-edit-widget',
@@ -81,6 +83,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     private backendConfig: BackendConfigurationService,
     private tracking: STFTrackingService,
     private translation: TranslateService,
+    private modalService: SisModalService,
   ) {}
 
   ngOnInit() {
@@ -260,5 +263,9 @@ ${styles.join('\n')}
 
   onPlaceholderChange(value: string) {
     this.debouncePlaceholder.next(value);
+  }
+
+  showHints() {
+    this.modalService.openModal(WidgetHintDialogComponent);
   }
 }
