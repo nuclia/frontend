@@ -96,22 +96,14 @@
   class:search-bar-widget={searchBarWidget}
   class:has-filters={$filters.length > 0}
   bind:this={inputContainerElement}>
+  {#if embeddedSearch || searchBarWidget}
+    <img
+      src={`${getCDN()}logos/nuclia-grey.svg`}
+      class="logo"
+      alt="Nuclia" />
+  {/if}
   <div class="input-container">
-    <input
-      bind:this={element}
-      class="search-field"
-      name="nuclia-search-field"
-      placeholder={$_(placeholder || defaultPlaceholder)}
-      tabindex="0"
-      autocomplete="off"
-      autocapitalize="off"
-      spellcheck="false"
-      aria-label="Search input"
-      bind:value={$typeAhead}
-      on:keypress={onKeyPress} />
-    <div
-      class="search-icon-container"
-      class:left-icon={embeddedSearch || searchBarWidget}>
+    <div class="search-icon-container">
       <div
         class="search-icon"
         tabIndex="0"
@@ -124,14 +116,18 @@
         <Icon name="search" />
       </div>
     </div>
-    {#if embeddedSearch || searchBarWidget}
-      <div class="powered-by">
-        <small>Powered by</small>
-        <img
-          src={`${getCDN()}logos/nuclia-grey.svg`}
-          alt="Nuclia" />
-      </div>
-    {/if}
+    <input
+      bind:this={element}
+      class="search-field"
+      name="nuclia-search-field"
+      placeholder={$_(placeholder || defaultPlaceholder)}
+      tabindex="0"
+      autocomplete="off"
+      autocapitalize="off"
+      spellcheck="false"
+      aria-label="Search input"
+      bind:value={$typeAhead}
+      on:keypress={onKeyPress} />
   </div>
 
   {#if $filters.length > 0}
