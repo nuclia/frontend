@@ -10,6 +10,7 @@
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
+  import { get_current_component } from 'svelte/internal';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -27,6 +28,17 @@
   export const search = (query: string) => {
     nucliaStore().query.next(query);
     nucliaStore().triggerSearch.next();
+  };
+
+  const thisComponent = get_current_component();
+  const dispatchCustomEvent = (name: string, detail: any) => {
+    thisComponent.dispatchEvent &&
+      thisComponent.dispatchEvent(
+        new CustomEvent(name, {
+          detail,
+          composed: true,
+        }),
+      );
   };
 
   let svgSprite;
@@ -60,7 +72,6 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
-    const dispatchCustomEvent = () => {};
     setupTriggerSearch(dispatchCustomEvent);
 
     ready = true;

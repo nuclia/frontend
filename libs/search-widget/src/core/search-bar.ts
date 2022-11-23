@@ -6,7 +6,7 @@ import { navigateToLink } from '../core/stores/widget.store';
 import { ResourceProperties } from '@nuclia/core';
 import { forkJoin } from 'rxjs';
 
-export const setupTriggerSearch = (dispatch: (event: string, search: string) => void | undefined): void => {
+export const setupTriggerSearch = (dispatch: (event: string, details: any) => void | undefined): void => {
   nucliaStore()
     .triggerSearch.pipe(
       tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
@@ -24,6 +24,11 @@ export const setupTriggerSearch = (dispatch: (event: string, search: string) => 
         ),
       ),
       switchMap(({ query, options }) => search(query, options)),
+      tap((results) => {
+        if (typeof dispatch === 'function') {
+          dispatch('results', results);
+        }
+      }),
     )
     .subscribe((results) => nucliaStore().searchResults.next(results));
 };
