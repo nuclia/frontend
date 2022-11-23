@@ -42,6 +42,7 @@ export class NucliaPrediction {
         tap((data) => {
           (this.model as BertModel).modelType = data.model;
           (this.model as BertModel).outputSize = data.output_size;
+          (this.model as BertModel).meanPooling = data.mean_pooling;
         }),
         switchMap(() => from((this.model as BertModel).setup(headers))),
       )

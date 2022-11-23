@@ -13,9 +13,10 @@ export default class BertModel {
   private tf = (window as any)['tf'];
   private _modelType = 'bert_small';
   private _outputSize = 0;
+  private _meanPooling = false;
   private bertModel?: any; //?: tf.GraphModel;
   private tokenizer?: any; //?: BertTokenizer;
-  private classifierModel?: any; //?: tf.LayersModel;
+  private _classifierModel?: any; //?: tf.LayersModel;
   private model?: any; //?: tf.Sequential;
 
   set modelType(type: string) {
@@ -29,6 +30,13 @@ export default class BertModel {
   }
   set outputSize(value: number) {
     this._outputSize = value;
+  }
+  get meanPooling(): boolean {
+    return this._meanPooling;
+  }
+
+  set meanPooling(value: boolean) {
+    this._meanPooling = value;
   }
 
   constructor(inputSize: number, private kbPath: string) {
@@ -46,7 +54,7 @@ export default class BertModel {
     if (!this.model) {
       setupCalls.push(this.loadBertModel());
     }
-    if (!this.classifierModel) {
+    if (!this._classifierModel) {
       setupCalls.push(this.loadClassifierModel(headers));
     }
 
@@ -91,12 +99,14 @@ export default class BertModel {
   }
 
   private async batchPredict(inputs: BertInput[]): Promise<number[][]> {
-    if (!this.classifierModel) {
+    if (!this._classifierModel) {
       throw new Error('classifierModel is undefined');
     }
     const bertOutput = await this.bertLayerInference(inputs);
-    const x = this.tf.tensor2d(bertOutput, [inputs.length, this.inputSize * this.outputSize], 'int32');
-    const predTensor = this.classifierModel.predict(x); // as tf.Tensor2D;
+    const x = this.meanPooling
+      ? this.tf.tensor2d(bertOutput, [inputs.length, this.outputSize], 'int32')
+      : this.tf.tensor2d(bertOutput, [inputs.length, this.inputSize * this.outputSize], 'int32');
+    const predTensor = this._classifierModel.predict(x); // as tf.Tensor2D;
     return await predTensor.array();
   }
 
@@ -129,11 +139,11 @@ export default class BertModel {
   // Load converted bert model
   private async loadClassifierModel(headers: { [key: string]: string }) {
     const options = { requestInit: { headers } };
-    this.classifierModel = await this.tf.loadLayersModel(
+    this._classifierModel = await this.tf.loadLayersModel(
       `${this.kbPath}/train/classifier/model/json_models/model.json`,
       options,
     );
-    this.classifierModel.summary();
+    this._classifierModel.summary();
   }
 
   private async loadBertModel() {
