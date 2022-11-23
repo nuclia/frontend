@@ -45,7 +45,7 @@
   ).reduce((acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }), {});
 
   const thisComponent = get_current_component();
-  const dispatchCustomEvent = (name: string, detail: string) => {
+  const dispatchCustomEvent = (name: string, detail: any) => {
     thisComponent.dispatchEvent &&
       thisComponent.dispatchEvent(
         new CustomEvent(name, {
