@@ -4,6 +4,7 @@
   min-height: 100vh;
 
   &-content {
+    min-width: 0;
     margin-left: 8%;
     margin-right: 7%;
     @media (max-width: 1279px) {
@@ -17,9 +18,11 @@
 
   &-sidebar {
     width: 367px;
+    max-width: 24%;
     background-color: var(--stf-gray-lighter);
     @media (max-width: 1279px) {
       width: auto;
+      max-width: initial;
       position: sticky;
       top: 70px;
       z-index: 10;
