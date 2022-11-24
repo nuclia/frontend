@@ -13,6 +13,7 @@ export interface IResource {
   thumbnail?: string;
   last_seqid?: number;
   last_account_seq?: number;
+  queue?: 'private' | 'shared';
 
   data?: ResourceData;
 

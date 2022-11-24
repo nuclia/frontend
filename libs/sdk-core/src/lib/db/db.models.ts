@@ -128,5 +128,6 @@ export interface ProcessingPullResponse {
 }
 
 export interface ProcessingStatusResponse {
-  last_delivered_seqid: number | null;
+  shared: { last_delivered_seqid: number | null };
+  account?: { last_delivered_seqid: number | null };
 }

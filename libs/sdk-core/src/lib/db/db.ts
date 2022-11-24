@@ -154,12 +154,14 @@ export class Db implements IDb {
   }
 
   getProcessingStatus(accountId?: string): Observable<ProcessingStatusResponse> {
-    const hasNUAKey = this.hasNUAClient();
-    if (!accountId && !hasNUAKey) {
-      throw new Error('NUA key or account id is needed to be able to call /processing/status');
+    if (!accountId) {
+      const hasNUAKey = this.hasNUAClient();
+      if (!hasNUAKey) {
+        throw new Error('NUA key or account id is needed to be able to call /processing/status');
+      }
     }
-    const endpoint = hasNUAKey ? '/processing/status' : `/processing/status?account_id=${accountId}`;
-    const headers = hasNUAKey ? this.getNUAHeader() : undefined;
+    const endpoint = !accountId ? '/processing/status' : `/processing/status?account_id=${accountId}`;
+    const headers = !accountId ? this.getNUAHeader() : undefined;
 
     return this.nuclia.rest.get(endpoint, headers);
   }
