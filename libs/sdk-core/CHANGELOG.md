@@ -3,6 +3,7 @@
 - Fix resource data if null
 - Add `getLabelFromFilter` and `getFilterFromLabel` functions
 - Add NUA key to the local storage only when the key is created from the desktop application
+- Update `/processing/status` endpoint response model
 
 # 1.0.6 (2022-11-17)
 
