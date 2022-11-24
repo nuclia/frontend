@@ -42,6 +42,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
       entityAnnotation: [false],
     }),
     attributes: this.fb.group({
+      filter: [false],
       permalink: [false],
       navigateToLink: [false],
     }),

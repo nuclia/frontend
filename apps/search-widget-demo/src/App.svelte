@@ -73,6 +73,7 @@
         widgetid="label-annotation"
         type="input"
         permalink
+        filter
         lang="en"
         placeholder="Input placeholder is invisible" />
     </div>
@@ -89,6 +90,7 @@
       widgetid="dashboard"
       type="form"
       lang="en"
+      filter
       placeholder="Here's the placeholder" />
   {/if}
 
@@ -102,7 +104,8 @@
         cdn="/"
         lang="en"
         widgetid="dashboard"
-        placeholder="Search" />
+        placeholder="Search"
+        filter />
       <NucliaSearchResults />
     </div>
   {/if}

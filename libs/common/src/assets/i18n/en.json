@@ -646,6 +646,7 @@
 	"stash.widgets.add-help": "Name your widget to save it",
 	"stash.widgets.editLabels": "Edit labels",
 	"stash.widgets.entityAnnotation": "Entity annotation",
+	"stash.widgets.filter": "Filter",
 	"stash.widgets.hint_1": "For the correct reading of the results, the width of the search bar should not be less than 384px.",
 	"stash.widgets.hint_2": "If the background you'll be adding your search isn't neutral, remember to add a background for your search box to make it easier to read.",
 	"stash.widgets.invalid-id": "Invalid widget id",
