@@ -54,6 +54,7 @@
   --rhythm-20: calc(var(--spacer) * 20); /*  20   unit - 160px */
   --rhythm-22: calc(var(--spacer) * 22); /*  22   unit - 176px */
   --rhythm-24: calc(var(--spacer) * 24); /*  24   unit - 192px */
+  --rhythm-27: calc(var(--spacer) * 27); /*  27   unit - 216px */
   --rhythm-28: calc(var(--spacer) * 28); /*  28   unit - 224px */
   --rhythm-32: calc(var(--spacer) * 32); /*  32   unit - 256px */
   --rhythm-36: calc(var(--spacer) * 36); /*  36   unit - 288px */
@@ -94,15 +95,12 @@
   --z-index-modal: var(--custom-z-index-modal, 10010);
   --z-index-modal-backdrop: var(--custom-z-index-modal-backdrop, 10000);
 
-  --shadow-modal: var(
-    --custom-shadow-modal,
-    var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.2)
-  );
+  --shadow-modal: var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.2);
 
   --color-scrollbar-track: var(--custom-color-scrollbar-track, var(--color-light-stronger));
   --color-scrollbar-thumb: var(--custom-color-scrollbar-thumb, var(--color-dark-stronger));
 
-  --focus-shadow: var(--custom-focus-shadow, inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter));
+  --focus-shadow: inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter);
   --shadow-small: 1px 1px 2px rgba(var(--color-dark-stronger-rgb), 0.3);
 
   --form-widget-padding: var(--custom-form-widget-padding, var(--default-search-field-padding));
@@ -113,7 +111,7 @@
   --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
   --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-neutral-regular);
 
-  --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
+  --input-widget-border-width: 0 0 1px 0;
   --input-widget-border-style: var(--custom-input-widget-border-style, solid);
   --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);
   --input-widget-border-color: var(--custom-input-widget-border-color, var(--color-dark-stronger));
@@ -127,8 +125,8 @@
   --resource-modal-height: var(--custom-resource-modal-height, calc(100vh - var(--rhythm-16)));
   --resource-modal-height-md: var(--custom-resource-modal-height-md, 85vh);
 
-  --search-bar-border: var(--custom-search-bar-border, 1px solid var(--color-neutral-regular));
-  --search-bar-border-focus: var(--custom-search-bar-border-focus, 1px solid var(--color-primary-regular));
+  --search-bar-border: 1px solid var(--color-neutral-regular);
+  --search-bar-border-focus: 1px solid var(--color-primary-regular);
   --search-bar-border-radius: var(--custom-search-bar-border-radius, 0);
   --search-bar-padding: var(--custom-search-bar-padding, var(--default-search-field-padding));
   --search-bar-max-width: var(--custom-search-bar-max-width, var(--rhythm-56));

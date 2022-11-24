@@ -25,3 +25,22 @@ mark[family] {
   white-space: nowrap;
   border: 0;
 }
+
+// Suppress the focus outline on elements that cannot be accessed via keyboard.
+// This prevents an unwanted focus outline from appearing around elements that
+// might still respond to pointer events.
+//
+// Credit: https://github.com/suitcss/base
+[tabindex='-1']:focus {
+  outline: 0 !important;
+}
+// remove the focus style when clicking on element
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+ul.dropdown-options {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}

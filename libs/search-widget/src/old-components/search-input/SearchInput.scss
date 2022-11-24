@@ -154,10 +154,6 @@
     display: flex;
     padding: var(--rhythm-0_5);
 
-    // remove the focus style when clicking
-    &:focus:not(:focus-visible) {
-      outline: 0;
-    }
     &:focus-visible {
       box-shadow: var(--focus-shadow);
       outline: 0;
