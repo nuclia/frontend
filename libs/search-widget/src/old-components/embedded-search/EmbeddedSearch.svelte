@@ -24,6 +24,7 @@
 <div class="sw-embedded-search">
   <div class="search-input-container">
     <SearchInput
+      hasFilterButton
       embeddedSearch={true}
       {placeholder} />
   </div>

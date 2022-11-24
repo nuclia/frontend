@@ -50,7 +50,7 @@
       icon="cross"
       ariaLabel="Delete"
       aspect="basic"
-      size="small"
+      size="xsmall"
       on:click={remove} />
   {/if}
 </div>

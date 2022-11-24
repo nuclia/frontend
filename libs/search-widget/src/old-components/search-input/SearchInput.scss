@@ -4,7 +4,9 @@
   position: relative;
 
   .input-container {
+    align-items: center;
     box-sizing: border-box;
+    display: flex;
     flex: 1 0 auto;
     position: relative;
   }
@@ -34,16 +36,12 @@
     border: var(--search-bar-border);
     border-radius: var(--search-bar-border-radius);
     max-width: var(--search-bar-max-width);
-
-    .input-container {
-      padding: var(--search-bar-padding);
-    }
   }
 
   &.search-bar-widget:focus-within,
   &.embedded-widget:focus-within {
     border: var(--search-bar-border-focus);
-    border-top: transparent;
+    border-top: 1px solid transparent;
 
     &:before,
     &:after {
@@ -56,15 +54,17 @@
     border-style: var(--form-widget-border-style);
     border-color: var(--form-widget-border-color);
     border-radius: var(--form-widget-border-radius);
-
-    .input-container {
-      padding: var(--form-widget-padding);
-    }
   }
 
   &.search-bar-widget,
   &.embedded-widget {
-    border-top: transparent;
+    border-top: 1px solid transparent;
+    height: var(--rhythm-6);
+
+    .input-container {
+      padding-left: var(--rhythm-5);
+      padding-right: var(--rhythm-1);
+    }
 
     .logo {
       left: var(--rhythm-1_5);
@@ -110,13 +110,14 @@
   &.popup-widget {
     .input-container {
       line-height: var(--line-height-body);
-      padding: var(--input-widget-padding);
+      padding-left: var(--rhythm-4);
 
       .search-field {
         border-width: var(--input-widget-border-width);
         border-style: var(--input-widget-border-style);
         border-color: var(--input-widget-border-color);
         border-radius: var(--input-widget-border-radius);
+        height: var(--rhythm-4);
 
         &:focus-within {
           border-style: var(--input-widget-border-style-stronger);

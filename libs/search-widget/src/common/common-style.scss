@@ -105,9 +105,6 @@
   --focus-shadow: var(--custom-focus-shadow, inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter));
   --shadow-small: 1px 1px 2px rgba(var(--color-dark-stronger-rgb), 0.3);
 
-  --default-search-field-padding: var(--rhythm-1) var(--rhythm-5);
-  --search-input-padding: 0 0 0 var(--rhythm-4);
-
   --form-widget-padding: var(--custom-form-widget-padding, var(--default-search-field-padding));
   --form-widget-border-width: var(--custom-form-widget-border-width, 1px);
   --form-widget-border-style: var(--custom-form-widget-border-style, solid);
@@ -116,7 +113,6 @@
   --form-widget-border-radius: var(--custom-form-widget-border-radius, 0);
   --form-widget-placeholder-color: var(--custom-form-widget-placeholder-color, --color-neutral-regular);
 
-  --input-widget-padding: var(--custom-input-widget-padding, var(--search-input-padding));
   --input-widget-border-width: var(--custom-input-widget-border-width, 0 0 1px 0);
   --input-widget-border-style: var(--custom-input-widget-border-style, solid);
   --input-widget-border-style-stronger: var(--custom-input-widget-border-style-stronger, solid);

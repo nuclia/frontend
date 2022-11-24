@@ -90,6 +90,7 @@
   {#if ready}
     <SearchInput
       {placeholder}
+      hasFilterButton
       searchBarWidget={true} />
   {/if}
   <div

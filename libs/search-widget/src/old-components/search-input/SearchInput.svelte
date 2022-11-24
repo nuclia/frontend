@@ -18,11 +18,13 @@
   import { map, Observable } from 'rxjs';
   import type { Classification } from '@nuclia/core';
   import { getLabelFromFilter } from '@nuclia/core';
+  import IconButton from '../../common/button/IconButton.svelte';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
   export let searchBarWidget = false;
   export let placeholder = '';
+  export let hasFilterButton = false;
 
   const defaultPlaceholder = 'input.placeholder';
 
@@ -128,6 +130,13 @@
       aria-label="Search input"
       bind:value={$typeAhead}
       on:keypress={onKeyPress} />
+
+    {#if hasFilterButton}
+      <IconButton
+        icon="filter"
+        aspect="basic"
+        size={popupSearch ? 'small' : 'medium'} />
+    {/if}
   </div>
 
   {#if $filters.length > 0}
@@ -141,6 +150,7 @@
     </div>
   {/if}
 </form>
+
 <Modal
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
   popup={true}

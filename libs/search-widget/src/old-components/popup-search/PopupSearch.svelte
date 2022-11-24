@@ -16,6 +16,7 @@
   <div bind:this={inputElement}>
     <SearchInput
       popupSearch={true}
+      hasFilterButton
       {placeholder}
       on:search={() => isPopupSearchOpen.set(true)} />
   </div>
