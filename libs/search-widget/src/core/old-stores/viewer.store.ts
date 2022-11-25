@@ -8,7 +8,7 @@ import type {
   Resource,
   ResourceData,
 } from '@nuclia/core';
-import { Search, RESOURCE_STATUS } from '@nuclia/core';
+import { Search, RESOURCE_STATUS, lengthUnicode } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -315,26 +315,27 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
       }
     }),
     map((results) => results.paragraphs?.results || []),
-    map(
-      (paragraphs) =>
-        paragraphs
-          .map((searchParagraph) => {
-            const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
-            const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
-            if (field && paragraph) {
-              return getParagraph(
-                resource,
-                getFieldType(searchParagraph.field_type),
-                searchParagraph.field,
-                field,
-                paragraph,
-              );
-            } else {
-              return null;
-            }
-          })
-          .filter((p) => !!p) as WidgetParagraph[],
-    ),
+    map((paragraphs) => {
+      const _hasSpecialChars = hasSpecialChars(resource);
+      return paragraphs
+        .map((searchParagraph) => {
+          const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
+          const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
+          if (field && paragraph) {
+            return getParagraph(
+              resource,
+              getFieldType(searchParagraph.field_type),
+              searchParagraph.field,
+              field,
+              paragraph,
+              _hasSpecialChars,
+            );
+          } else {
+            return null;
+          }
+        })
+        .filter((p) => !!p) as WidgetParagraph[];
+    }),
   );
 }
 
@@ -352,8 +353,16 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
     field_type: fieldType,
     field_id: mainField.field_id,
   });
+  const _hasSpecialChars = hasSpecialChars(resource);
   return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
-    return getParagraph(resource, mainField.field_type, mainField.field_id, mainField.field, paragraph);
+    return getParagraph(
+      resource,
+      mainField.field_type,
+      mainField.field_id,
+      mainField.field,
+      paragraph,
+      _hasSpecialChars,
+    );
   });
 }
 
@@ -401,10 +410,14 @@ function getParagraph(
   fieldId: string,
   field: IFieldData,
   paragraph: Paragraph,
+  hasSpecialChars: boolean,
 ): WidgetParagraph {
+  const paragraphText = hasSpecialChars
+    ? resource.getParagraphText(field, paragraph)
+    : getParagraphTextNaively(field, paragraph);
   const baseParagraph = {
     paragraph: paragraph,
-    text: (resource.getParagraphText(field, paragraph) || '').trim().replace(NEWLINE_REGEX, '<br>'),
+    text: (paragraphText || '').trim().replace(NEWLINE_REGEX, '<br>'),
     fieldType: fieldType,
     fieldId: fieldId,
     start: paragraph.start || 0,
@@ -500,6 +513,10 @@ export function findFileByType(resource: Resource | null, type: string): string 
   return url ? url : undefined;
 }
 
+const getParagraphTextNaively = (field: IFieldData, paragraph: Paragraph) => {
+  return field.extracted?.text?.text?.slice(paragraph.start, paragraph.end);
+};
+
 export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   const type = paragraph.fieldType.slice(0, -1);
   const typeABBR = type === 'link' ? 'u' : type[0];
@@ -529,6 +546,12 @@ function findParagraphFromSearchParagraph(
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   const text = normalizeSearchParagraphText(searchParagraph.text);
   return paragraphs?.find((paragraph) => text === resource.getParagraphText(field as IFieldData, paragraph));
+}
+
+function hasSpecialChars(resource: Resource) {
+  return getFields(resource).some(
+    (field) => lengthUnicode(field.field.extracted?.text?.text) !== field.field.extracted?.text?.text?.length,
+  );
 }
 
 function findParagraphFromSearchSentence(
