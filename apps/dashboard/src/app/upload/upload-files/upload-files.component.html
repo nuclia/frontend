@@ -182,7 +182,7 @@
     <pa-button
       kind="primary"
       [paTooltip]="!(files.length > 0 && pendingLangs > 0) ? null : 'upload.audios_detected'"
-      [disabled]="files.length === 0 || (files.length > 0 && pendingLangs > 0)"
+      [disabled]="files.length === 0 || (files.length > 0 && pendingLangs > 0) || limitsExceeded"
       (click)="startUpload()">
       {{ 'generic.add' | translate }}
     </pa-button>
