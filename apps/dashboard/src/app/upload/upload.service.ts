@@ -95,7 +95,7 @@ export class UploadService {
                 }
               : {
                   title: missingLabel.labelset,
-                  color: '#FF0066',
+                  color: '#DAF3E6',
                   multiple: true,
                   kind: [LabelSetKind.RESOURCES],
                   labels: [{ title: missingLabel.label }],
