@@ -1,13 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { map } from 'rxjs';
+  import { map, Observable } from 'rxjs';
   import { getCDN } from '../../../core/utils';
   import { viewerStore } from '../../../core/old-stores/viewer.store';
   import { clickOutside } from '../../../common/actions/actions';
   import Label from '../../../common/label/Label.svelte';
   import type { ParagraphLabels } from '../../../core/models';
   import { LabelSetKind } from '@nuclia/core';
-  import { labelSets } from '../../../core/stores/labels.store';
+  import { LabelSetWithId, orderedLabelSetList } from '../../../core/stores/labels.store';
 
   const dispatch = createEventDispatcher();
   export let position: { top: number; left: number } | undefined = undefined;
@@ -26,11 +26,9 @@
     return acc;
   }, {} as { [key: string]: boolean });
 
-  const labelSetList = labelSets.pipe(
-    map((set) =>
-      Object.entries(set)
-        .filter(([id, labelSet]) => labelSet.kind.length === 0 || labelSet.kind.includes(LabelSetKind.PARAGRAPHS))
-        .sort(([keyA, labelSetA], [keyB, labelSetB]) => labelSetA.title.localeCompare(labelSetB.title)),
+  const labelSetList: Observable<LabelSetWithId[]> = orderedLabelSetList.pipe(
+    map((labelSets) =>
+      labelSets.filter((labelSet) => labelSet.kind.length === 0 || labelSet.kind.includes(LabelSetKind.PARAGRAPHS)),
     ),
   );
 
@@ -70,12 +68,12 @@
     {/each}
   </div>
   <div class="labelsets">
-    {#each $labelSetList || [] as [labelSetId, labelSet]}
+    {#each $labelSetList || [] as labelSet}
       <div
         class="labelset"
-        on:mouseenter={() => enter(labelSetId)}
+        on:mouseenter={() => enter(labelSet.id)}
         on:mouseleave={leave}>
-        <button on:click={() => enter(labelSetId)}>
+        <button on:click={() => enter(labelSet.id)}>
           <span
             class="color"
             style:background-color={labelSet.color} />
@@ -86,16 +84,16 @@
         </button>
         <div
           class="labels"
-          class:open={openLabelset === labelSetId}>
+          class:open={openLabelset === labelSet.id}>
           {#each labelSet.labels as label, i}
             <div class="label">
               <input
-                id={`${labelSetId}-${i}`}
+                id={`${labelSet.id}-${i}`}
                 type="checkbox"
-                bind:checked={selected[`${labelSetId}-${label.title}`]}
-                on:change={() => toggleLabel(labelSetId, label.title)}
-                disabled={$savingLabels || readOnly[`${labelSetId}-${label.title}`]} />
-              <label for={`${labelSetId}-${i}`}>{label.title}</label>
+                bind:checked={selected[`${labelSet.id}-${label.title}`]}
+                on:change={() => toggleLabel(labelSet.id, label.title)}
+                disabled={$savingLabels || readOnly[`${labelSet.id}-${label.title}`]} />
+              <label for={`${labelSet.id}-${i}`}>{label.title}</label>
             </div>
           {/each}
         </div>

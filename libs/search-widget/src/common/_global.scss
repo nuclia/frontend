@@ -39,8 +39,20 @@ mark[family] {
   outline: none;
 }
 
-ul.dropdown-options {
+ul.sw-dropdown-options {
   list-style: none;
-  margin-left: 0;
+  margin: 0;
   padding-left: 0;
+
+  li {
+    cursor: pointer;
+    padding: var(--rhythm-1) var(--rhythm-2);
+
+    &:hover {
+      background-color: var(--color-neutral-lightest);
+    }
+    &.selected {
+      background-color: var(--color-primary-lightest);
+    }
+  }
 }

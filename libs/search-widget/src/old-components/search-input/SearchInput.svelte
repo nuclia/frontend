@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { nucliaState, nucliaStore, removeLabelFilter } from '../../core/old-stores/main.store';
+  import { addLabelFilter, nucliaState, nucliaStore, removeLabelFilter } from '../../core/old-stores/main.store';
   import { getCDN } from '../../core/utils';
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
@@ -19,6 +19,8 @@
   import type { Classification } from '@nuclia/core';
   import { getLabelFromFilter } from '@nuclia/core';
   import IconButton from '../../common/button/IconButton.svelte';
+  import Dropdown from '../../common/dropdown/Dropdown.svelte';
+  import { LabelSetWithId, orderedLabelSetList } from '../../core/stores/labels.store';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -32,8 +34,15 @@
   const dispatch = createEventDispatcher();
 
   let inputContainerElement: HTMLElement | undefined;
+  let filterButtonElement: HTMLElement | undefined;
+  let labelSetDropdownElement: HTMLElement | undefined;
+  let selectedLabelSet: LabelSetWithId | undefined;
   let position: DOMRect | undefined;
+  let filterButtonPosition: DOMRect | undefined;
+  let submenuPosition: { left: number; top: number } | undefined;
   let showSuggestions = false;
+  let showFilterDropdowns = false;
+  let showFilterSubmenu = false;
   let hasFilters = false;
   const filters = nucliaState().filters.pipe(
     tap((filters) => {
@@ -45,9 +54,12 @@
       }
     }),
   );
+  let selectedLabels: string[] = [];
   const labels: Observable<Classification[]> = filters.pipe(
     map((filters) => filters.map((filter) => getLabelFromFilter(filter))),
+    tap((labelFilters) => (selectedLabels = labelFilters.map((label) => label.label))),
   );
+  const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
 
   const suggestionModalMinWidth = 384;
   let suggestionModalWidth;
@@ -86,6 +98,42 @@
   const closeSuggestions = () => {
     showSuggestions = false;
   };
+
+  const toggleFilter = () => {
+    if (filterButtonElement) {
+      filterButtonPosition = filterButtonElement.getBoundingClientRect();
+    }
+    showFilterDropdowns = !showFilterDropdowns;
+  };
+
+  const selectLabel = (label) => {
+    showFilterSubmenu = false;
+    if (selectedLabelSet) {
+      addLabelFilter({ labelset: selectedLabelSet.id, label: label.title });
+      selectedLabelSet = undefined;
+    }
+  };
+
+  function openSubMenu(event, labelSet) {
+    selectedLabelSet = labelSet;
+    if (labelSetDropdownElement) {
+      const dropdownRect = labelSetDropdownElement?.getBoundingClientRect();
+      const top = getParentLiRect(event)?.top || event.clientY;
+      submenuPosition = { left: dropdownRect.right, top };
+      showFilterSubmenu = true;
+    }
+  }
+
+  function getParentLiRect(event): DOMRect | null {
+    let target = event.currentTarget as HTMLElement;
+    if (!!target && target.tagName === 'LI') {
+      return target.getBoundingClientRect();
+    } else if (!!target.parentElement) {
+      return getParentLiRect(target.parentElement);
+    } else {
+      return null;
+    }
+  }
 </script>
 
 <svelte:window on:resize={setInputPosition} />
@@ -132,10 +180,13 @@
       on:keypress={onKeyPress} />
 
     {#if hasFilterButton}
-      <IconButton
-        icon="filter"
-        aspect="basic"
-        size={popupSearch ? 'small' : 'medium'} />
+      <div bind:this={filterButtonElement}>
+        <IconButton
+          icon="filter"
+          aspect="basic"
+          size={popupSearch ? 'small' : 'medium'}
+          on:click={toggleFilter} />
+      </div>
     {/if}
   </div>
 
@@ -150,6 +201,43 @@
     </div>
   {/if}
 </form>
+
+{#if showFilterDropdowns}
+  <Dropdown
+    position={{ top: filterButtonPosition.top - 5, left: filterButtonPosition.right + 16 }}
+    on:close={() => (showFilterDropdowns = false)}>
+    <ul
+      class="sw-dropdown-options"
+      bind:this={labelSetDropdownElement}>
+      {#each $labelSets as labelSet}
+        <li
+          class="label-set-option"
+          on:mouseenter={(event) => openSubMenu(event, labelSet)}>
+          <div
+            class="label-set-color"
+            style:background-color={labelSet.color} />
+          <div class="label-set-title">{labelSet.title}</div>
+          <Icon name="chevron-right" />
+        </li>
+      {/each}
+    </ul>
+  </Dropdown>
+{/if}
+{#if showFilterSubmenu}
+  <Dropdown
+    position={submenuPosition}
+    on:close={() => (showFilterSubmenu = false)}>
+    <ul class="sw-dropdown-options">
+      {#each selectedLabelSet.labels as label}
+        <li
+          class:selected={selectedLabels.includes(label.title)}
+          on:click={() => selectLabel(label)}>
+          {label.title}
+        </li>
+      {/each}
+    </ul>
+  </Dropdown>
+{/if}
 
 <Modal
   show={showSuggestions && ($hasSuggestions || $suggestionsHasError)}
