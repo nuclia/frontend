@@ -170,24 +170,6 @@
     }
   }
 }
-.sw-dropdown-options {
-  .label-set-option {
-    align-items: center;
-    display: flex;
-    flex-direction: row;
-    gap: var(--rhythm-1);
-    justify-content: space-between;
-
-    .label-set-title {
-      flex: 1 0 auto;
-    }
-    .label-set-color {
-      flex: 0 0 auto;
-      height: var(--rhythm-1);
-      width: var(--rhythm-1);
-    }
-  }
-}
 
 @media (min-width: 448px) {
   .sw-search-input.embedded-widget,

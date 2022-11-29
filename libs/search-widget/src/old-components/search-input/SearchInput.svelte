@@ -21,6 +21,7 @@
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import { LabelSetWithId, orderedLabelSetList } from '../../core/stores/labels.store';
+  import { getParentLiRect } from '../../common/label/label.utils';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -121,17 +122,6 @@
       const top = getParentLiRect(event)?.top || event.clientY;
       submenuPosition = { left: dropdownRect.right, top };
       showFilterSubmenu = true;
-    }
-  }
-
-  function getParentLiRect(event): DOMRect | null {
-    let target = event.currentTarget as HTMLElement;
-    if (!!target && target.tagName === 'LI') {
-      return target.getBoundingClientRect();
-    } else if (!!target.parentElement) {
-      return getParentLiRect(target.parentElement);
-    } else {
-      return null;
     }
   }
 </script>

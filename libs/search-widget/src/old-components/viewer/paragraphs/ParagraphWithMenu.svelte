@@ -4,8 +4,18 @@
   import LabelMenu from '../menus/LabelMenu.svelte';
   import { ParagraphLabels } from '../../../core/models';
   import { canEditLabels } from '../../../core/stores/widget.store';
+  import { createEventDispatcher } from 'svelte';
+  import type { Classification } from '@nuclia/core';
 
-  export let labels: ParagraphLabels;
+  export let labels: ParagraphLabels = { labels: [], annotatedLabels: [] };
+
+  const dispatch = createEventDispatcher();
+  let selected: { [key: string]: boolean } = {};
+  $: selected = [...labels.labels, ...labels.annotatedLabels].reduce((acc, current) => {
+    acc[`${current.labelset}-${current.label}`] = true;
+    return acc;
+  }, {} as { [key: string]: boolean });
+
   let isOpenMenu = false;
   let element: HTMLElement;
   let position: { top: number; left: number } | undefined = undefined;
@@ -21,13 +31,22 @@
       isOpenMenu = true;
     }
   };
+
+  const toggleLabel = ({ labelset, label }: Classification) => {
+    const newLabels = !!selected[`${labelset}-${label}`]
+      ? labels.annotatedLabels.filter((item) => !(item.labelset === labelset && item.label === label))
+      : [...labels.annotatedLabels, { labelset, label }];
+    dispatch('labelsChange', newLabels);
+  };
 </script>
 
 <div
   class="paragraph-with-menu"
   on:contextmenu={($canEditLabels && hasAuthData() && handleClick) || null}
   bind:this={element}>
-  <Paragraph {labels}>
+  <Paragraph
+    {labels}
+    on:labelsChange={(event) => toggleLabel(event.detail)}>
     <slot
       name="icon"
       slot="icon" />
@@ -39,10 +58,8 @@
     <LabelMenu
       {labels}
       {position}
-      on:close={() => {
-        isOpenMenu = false;
-      }}
-      on:labelsChange />
+      on:close={() => (isOpenMenu = false)}
+      on:labelsChange={(event) => toggleLabel(event.detail)} />
   {/if}
 </div>
 

@@ -46,13 +46,33 @@ ul.sw-dropdown-options {
 
   li {
     cursor: pointer;
-    padding: var(--rhythm-1) var(--rhythm-2);
+    line-height: var(--rhythm-5);
+    padding: 0 var(--rhythm-2);
 
     &:hover {
       background-color: var(--color-neutral-lightest);
     }
     &.selected {
       background-color: var(--color-primary-lightest);
+    }
+  }
+}
+
+.sw-dropdown-options {
+  .label-set-option {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: var(--rhythm-1);
+    justify-content: space-between;
+
+    .label-set-title {
+      flex: 1 0 auto;
+    }
+    .label-set-color {
+      flex: 0 0 auto;
+      height: var(--rhythm-1);
+      width: var(--rhythm-1);
     }
   }
 }
