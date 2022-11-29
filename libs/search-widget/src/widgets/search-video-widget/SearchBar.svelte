@@ -5,7 +5,7 @@
   import { resetStore, nucliaStore } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite, coerceBooleanProperty } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
@@ -25,6 +25,8 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let filter = false;
+
+  $: _filter = coerceBooleanProperty(filter);
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -91,7 +93,7 @@
   {#if ready}
     <SearchInput
       {placeholder}
-      hasFilterButton={filter}
+      hasFilterButton={_filter}
       searchBarWidget={true} />
   {/if}
   <div

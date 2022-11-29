@@ -38,9 +38,10 @@
   export let notpublic = false;
   export let defaultfeatures = '';
 
-  let _permalink = coerceBooleanProperty(permalink);
-  let _navigatetolink = coerceBooleanProperty(navigatetolink);
-  let _notpublic = coerceBooleanProperty(notpublic);
+  $: _permalink = coerceBooleanProperty(permalink);
+  $: _navigatetolink = coerceBooleanProperty(navigatetolink);
+  $: _notpublic = coerceBooleanProperty(notpublic);
+  $: _filter = coerceBooleanProperty(filter);
   let _defaultfeatures: WidgetFeatures = (
     typeof defaultfeatures === 'string' ? defaultfeatures.split(',').filter((f) => !!f) : []
   ).reduce((acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }), {});
@@ -129,11 +130,11 @@
     {#if type === 'input'}
       <PopupSearch
         {placeholder}
-        {filter} />
+        filter={_filter} />
     {:else if type === 'form'}
       <EmbeddedSearch
         {placeholder}
-        {filter} />
+        filter={_filter} />
     {:else}
       {type} widget is not implemented yet
     {/if}
