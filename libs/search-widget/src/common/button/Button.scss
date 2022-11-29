@@ -34,7 +34,8 @@
     background: var(--button-background-color-hover);
     color: var(--button-color-hover);
   }
-  &:not(:disabled):active {
+  &:not(:disabled):active,
+  &:not(:disabled).active {
     background: var(--button-background-color-active);
     color: var(--button-color-active);
   }
@@ -51,10 +52,14 @@
     align-items: center;
   }
 
-  &.small,
-  &.xsmall {
+  &.small:not(.icon),
+  &.xsmall:not(.icon) {
     font-size: calc(var(--font-size-base) * 0.75);
-    line-height: calc(var(--line-height-body) * 0.75);
+    line-height: var(--rhythm-3);
+    padding: var(--rhythm-0_5) var(--rhythm-2);
+  }
+  &.xsmall.icon,
+  &.small.icon {
     padding: var(--rhythm-0_5);
   }
   &.large {

@@ -22,6 +22,7 @@
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import { LabelSetWithId, orderedLabelSetList } from '../../core/stores/labels.store';
   import { getParentLiRect } from '../../common/label/label.utils';
+  import Button from '../../common/button/Button.svelte';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -37,14 +38,19 @@
   let inputContainerElement: HTMLElement | undefined;
   let filterButtonElement: HTMLElement | undefined;
   let labelSetDropdownElement: HTMLElement | undefined;
+  let moreFilterElement: HTMLElement | undefined;
   let selectedLabelSet: LabelSetWithId | undefined;
   let position: DOMRect | undefined;
   let filterButtonPosition: DOMRect | undefined;
+  let moreFilterPosition: { left: number; top: number } | undefined;
   let submenuPosition: { left: number; top: number } | undefined;
   let showSuggestions = false;
   let showFilterDropdowns = false;
   let showFilterSubmenu = false;
   let hasFilters = false;
+  let displayMoreFilters = false;
+  const filterDisplayLimit = popupSearch ? 1 : 2;
+
   const filters = nucliaState().filters.pipe(
     tap((filters) => {
       // search box size changes when there are filters or not
@@ -105,6 +111,20 @@
       filterButtonPosition = filterButtonElement.getBoundingClientRect();
     }
     showFilterDropdowns = !showFilterDropdowns;
+  };
+
+  const showMoreFilters = () => {
+    if (moreFilterElement && inputContainerElement) {
+      const containerRect = inputContainerElement.getBoundingClientRect();
+      const buttonRect = moreFilterElement.getBoundingClientRect();
+      moreFilterPosition = {
+        left: popupSearch
+          ? buttonRect.left - containerRect.right - 16
+          : buttonRect.left - containerRect.width + buttonRect.width + 16,
+        top: buttonRect.top - containerRect.top + buttonRect.height,
+      };
+    }
+    displayMoreFilters = true;
   };
 
   const selectLabel = (label) => {
@@ -182,12 +202,39 @@
 
   {#if $filters.length > 0}
     <div class="filters-container">
-      {#each $labels as label (label.label)}
+      {#each $labels.slice(0, filterDisplayLimit) as label (label.labelset + label.label)}
         <Label
           {label}
           removable
           on:remove={() => removeLabelFilter(label)} />
       {/each}
+      {#if $labels.length > filterDisplayLimit}
+        <div bind:this={moreFilterElement}>
+          <Button
+            aspect="basic"
+            size="small"
+            active={displayMoreFilters}
+            on:click={showMoreFilters}>
+            {$_('input.more_filters', { count: $labels.length - filterDisplayLimit })}
+          </Button>
+        </div>
+        {#if displayMoreFilters}
+          <Dropdown
+            position={moreFilterPosition}
+            on:close={() => (displayMoreFilters = false)}>
+            <ul class="more-filters-dropdown">
+              {#each $labels.slice(filterDisplayLimit) as label (label.labelset + label.label)}
+                <li>
+                  <Label
+                    {label}
+                    removable
+                    on:remove={() => removeLabelFilter(label)} />
+                </li>
+              {/each}
+            </ul>
+          </Dropdown>
+        {/if}
+      {/if}
     </div>
   {/if}
 </form>

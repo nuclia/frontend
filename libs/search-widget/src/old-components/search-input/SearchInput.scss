@@ -93,15 +93,23 @@
   }
 
   .filters-container {
+    align-items: center;
     display: flex;
     gap: var(--rhythm-1);
+  }
+  .more-filters-dropdown {
+    padding: var(--rhythm-1);
+
+    li:not(:last-child) {
+      margin-bottom: var(--rhythm-1);
+    }
   }
 
   &.has-filters.search-bar-widget .input-container:after,
   &.has-filters.embedded-widget .input-container:after {
     background: var(--color-neutral-light);
     content: '';
-    height: 0.5px;
+    height: 1px;
     left: var(--rhythm-1);
     position: absolute;
     right: var(--rhythm-1);

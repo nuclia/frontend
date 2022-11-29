@@ -20,13 +20,16 @@ export class TopbarComponent implements AfterViewInit {
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
   searchEnabled = this.appService.searchEnabled;
+
   searchWidget = this.kb.pipe(
     distinctUntilKeyChanged('id'),
     tap(() => {
       document.getElementById('search-widget')?.remove();
     }),
-    map((kb) =>
-      this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
+    switchMap((kb) => kb.getLabels().pipe(map((labelSets) => ({ kb, labelSets })))),
+    map(({ kb, labelSets }) => {
+      const hasLabels = Object.keys(labelSets).length > 0;
+      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
         widgetid="dashboard"
         client="dashboard"
@@ -39,8 +42,9 @@ export class TopbarComponent implements AfterViewInit {
         type="input"
         defaultfeatures="${DEFAULT_FEATURES_LIST}"
         permalink
-        notpublic></nuclia-search>`),
-    ),
+        filter="${hasLabels}"
+        notpublic></nuclia-search>`);
+    }),
   );
 
   constructor(
