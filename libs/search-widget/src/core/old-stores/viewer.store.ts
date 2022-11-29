@@ -8,7 +8,7 @@ import type {
   Resource,
   ResourceData,
 } from '@nuclia/core';
-import { Search, RESOURCE_STATUS } from '@nuclia/core';
+import { Search, RESOURCE_STATUS, FIELD_TYPE } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -113,11 +113,11 @@ export const selectedParagraphIndex = combineLatest([
 ]).pipe(
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
   map(([resource, paragraphs, selected]) => {
-    const field = getField(resource!, selected!.fieldType, selected!.fieldId);
-    const selectedText = field && resource?.getParagraphText(field, selected!.paragraph);
+    const fieldType = getFieldType(selected!.fieldType);
+    const selectedText = resource?.getParagraphText(fieldType, selected!.fieldId, selected!.paragraph);
     return (paragraphs || []).findIndex((result) => {
-      const resultText = field && resource?.getParagraphText(field, result.paragraph);
-      return field && resultText === selectedText;
+      const resultText = resource?.getParagraphText(fieldType, selected!.fieldId, result.paragraph);
+      return selectedText !== undefined && resultText !== undefined && resultText === selectedText;
     });
   }),
 );
@@ -230,7 +230,7 @@ export function getPdfPreviewParams(
   paragraph: Paragraph,
 ): PdfPreviewParams | undefined {
   const field = getFileField(resource, fieldId);
-  const text = field && resource.getParagraphText(field, paragraph);
+  const text = field && resource.getParagraphText(FIELD_TYPE.file, fieldId, paragraph);
   const pageIndex = field && getParagraphPageIndexes(field, paragraph)[0];
   if (text && typeof pageIndex === 'number') {
     return {
@@ -295,12 +295,12 @@ export function selectParagraph(resource: Resource, searchParagraph: Search.Para
 }
 
 function _selectParagraph(resource: Resource, paragraph: Paragraph, fieldType: string, fieldId: string) {
-  const field = getField(resource, getFieldType(fieldType), fieldId);
+  const field = getField(resource, getFieldTypeKey(fieldType), fieldId);
   if (field && paragraph && getPreviewKind(field, paragraph) !== PreviewKind.NONE) {
     viewerStore.onlySelected.next(true);
     viewerStore.showPreview.next(true);
     viewerStore.selectedParagraph.next({
-      fieldType: getFieldType(fieldType),
+      fieldType: getFieldTypeKey(fieldType),
       fieldId: fieldId,
       paragraph,
     });
@@ -319,12 +319,12 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
       (paragraphs) =>
         paragraphs
           .map((searchParagraph) => {
-            const field = getField(resource, getFieldType(searchParagraph.field_type), searchParagraph.field);
+            const field = getField(resource, getFieldTypeKey(searchParagraph.field_type), searchParagraph.field);
             const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
             if (field && paragraph) {
               return getParagraph(
                 resource,
-                getFieldType(searchParagraph.field_type),
+                getFieldTypeKey(searchParagraph.field_type),
                 searchParagraph.field,
                 field,
                 paragraph,
@@ -344,10 +344,7 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
     return [];
   }
   const mainField = fields[0];
-  //possible field types: 'file', 'link', 'datetime', 'keywordset', 'text', 'layout', 'generic', 'conversation'
-  const fieldType = mainField.field_type.endsWith('s')
-    ? mainField.field_type.slice(0, mainField.field_type.length - 1)
-    : mainField.field_type;
+  const fieldType = getFieldType(mainField.field_type);
   viewerStore.currentField.next({
     field_type: fieldType,
     field_id: mainField.field_id,
@@ -404,7 +401,9 @@ function getParagraph(
 ): WidgetParagraph {
   const baseParagraph = {
     paragraph: paragraph,
-    text: (resource.getParagraphText(field, paragraph) || '').trim().replace(NEWLINE_REGEX, '<br>'),
+    text: (resource.getParagraphText(getFieldType(fieldType), fieldId, paragraph) || '')
+      .trim()
+      .replace(NEWLINE_REGEX, '<br>'),
     fieldType: fieldType,
     fieldId: fieldId,
     start: paragraph.start || 0,
@@ -511,7 +510,7 @@ function isFileType(fileField: FileFieldData, type: string): boolean {
   return contentType === type || contentType.slice(0, type.length) === type;
 }
 
-function getFieldType(fieldType: string): keyof ResourceData {
+function getFieldTypeKey(fieldType: string): keyof ResourceData {
   if (fieldType === 'f') {
     return 'files';
   } else if (fieldType === 'u') {
@@ -521,14 +520,21 @@ function getFieldType(fieldType: string): keyof ResourceData {
   }
 }
 
+function getFieldType(fieldType: string): FIELD_TYPE {
+  return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
+}
+
 function findParagraphFromSearchParagraph(
   resource: Resource,
   searchParagraph: Search.Paragraph,
 ): Paragraph | undefined {
-  const field = resource.data[getFieldType(searchParagraph.field_type)]?.[searchParagraph.field];
+  const fieldTypeKey = getFieldTypeKey(searchParagraph.field_type);
+  const field = getField(resource, fieldTypeKey, searchParagraph.field);
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   const text = normalizeSearchParagraphText(searchParagraph.text);
-  return paragraphs?.find((paragraph) => text === resource.getParagraphText(field as IFieldData, paragraph));
+  return paragraphs?.find(
+    (paragraph) => text === resource.getParagraphText(getFieldType(fieldTypeKey), searchParagraph.field, paragraph),
+  );
 }
 
 function findParagraphFromSearchSentence(
@@ -536,14 +542,21 @@ function findParagraphFromSearchSentence(
   searchSenctence: Search.Sentence,
   strict: boolean,
 ): Paragraph | undefined {
-  const field = resource.data[getFieldType(searchSenctence.field_type) as keyof ResourceData]?.[searchSenctence.field];
+  const fieldTypeKey = getFieldTypeKey(searchSenctence.field_type);
+  const field = getField(resource, fieldTypeKey, searchSenctence.field);
   const paragraphs = field?.extracted?.metadata?.metadata?.paragraphs;
   const text = normalizeSearchParagraphText(searchSenctence.text);
-  return paragraphs?.find((paragraph) =>
-    strict
-      ? paragraph.sentences?.find((sentence) => text === resource.getSentenceText(field!, sentence))
-      : (resource.getParagraphText(field!, paragraph) || '').includes(text.trim()),
-  );
+  return paragraphs?.find((paragraph) => {
+    if (strict) {
+      return paragraph.sentences?.find(
+        (sentence) => text === resource.getSentenceText(getFieldType(fieldTypeKey), searchSenctence.field, sentence),
+      );
+    } else {
+      return (resource.getParagraphText(getFieldType(fieldTypeKey), searchSenctence.field, paragraph) || '').includes(
+        text.trim(),
+      );
+    }
+  });
 }
 
 const MARK_START = /<mark>/g;

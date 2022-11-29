@@ -30,6 +30,7 @@ import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
 export interface ReadableResource extends IResource {}
 export class ReadableResource implements IResource {
   data: ResourceData = {};
+  private fieldTextsCache: { [key: string]: string[] } = {};
 
   constructor(data: IResource) {
     if (!data.data) {
@@ -130,12 +131,21 @@ export class ReadableResource implements IResource {
     }
   }
 
-  getParagraphText(field: IFieldData, paragraph: Paragraph): string | undefined {
-    return sliceUnicode(field.extracted?.text?.text, paragraph.start, paragraph.end);
+  getParagraphText(fieldType: FIELD_TYPE, fieldId: string, paragraph: Paragraph): string {
+    return sliceUnicode(this.getFieldText(fieldType, fieldId), paragraph.start, paragraph.end);
   }
 
-  getSentenceText(field: IFieldData, sentence: Sentence): string | undefined {
-    return sliceUnicode(field.extracted?.text?.text, sentence.start, sentence.end);
+  getSentenceText(fieldType: FIELD_TYPE, fieldId: string, sentence: Sentence): string {
+    return sliceUnicode(this.getFieldText(fieldType, fieldId), sentence.start, sentence.end);
+  }
+
+  private getFieldText(fieldType: FIELD_TYPE, fieldId: string): string[] {
+    const key = `${fieldType}-${fieldId}`;
+    if (!this.fieldTextsCache[key]) {
+      const field = this.getFieldData(`${fieldType}s` as keyof ResourceData, fieldId);
+      this.fieldTextsCache[key] = Array.from(field?.extracted?.text?.text || '');
+    }
+    return this.fieldTextsCache[key];
   }
 }
 
