@@ -26,10 +26,6 @@
     justify-content: space-between;
     padding: var(--rhythm-1_5);
 
-    // remove the focus style when clicking
-    &:focus:not(:focus-visible) {
-      outline: 0;
-    }
     &:focus-visible {
       box-shadow: var(--focus-shadow);
       outline: 0;

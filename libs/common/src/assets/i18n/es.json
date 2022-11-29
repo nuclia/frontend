@@ -554,6 +554,7 @@
 	"stash.widgets": "Widgets",
 	"stash.widgets.editLabels": "Editar etiquetas",
 	"stash.widgets.entityAnnotation": "Anotación de entidad",
+	"stash.widgets.filter": "Filtrar",
 	"stash.widgets.hint_1": "Para mostrar correctamente los resultados, el ancho de la barra de búsqueda no debería ser inferior a 384px.",
 	"stash.widgets.hint_2": "Si el color de fondo no es neutral, recuerda añadir un color a la caja de búsqueda para que sea más legible.",
 	"stash.widgets.mode": "Modo",

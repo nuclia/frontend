@@ -24,6 +24,7 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
+  export let filter = false;
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -90,6 +91,7 @@
   {#if ready}
     <SearchInput
       {placeholder}
+      hasFilterButton={filter}
       searchBarWidget={true} />
   {/if}
   <div

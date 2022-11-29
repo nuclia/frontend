@@ -11,3 +11,15 @@ export function searchBy(label: Classification) {
   nucliaStore().filters.next([labelFilter]);
   nucliaStore().triggerSearch.next();
 }
+
+let target;
+export function getParentLiRect(event: any): DOMRect | null {
+  target = event.currentTarget as HTMLElement;
+  if (!!target && target.tagName === 'LI') {
+    return target.getBoundingClientRect();
+  } else if (target.parentElement) {
+    return getParentLiRect(target.parentElement);
+  } else {
+    return null;
+  }
+}

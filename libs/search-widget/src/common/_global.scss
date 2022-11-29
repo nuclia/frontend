@@ -25,3 +25,54 @@ mark[family] {
   white-space: nowrap;
   border: 0;
 }
+
+// Suppress the focus outline on elements that cannot be accessed via keyboard.
+// This prevents an unwanted focus outline from appearing around elements that
+// might still respond to pointer events.
+//
+// Credit: https://github.com/suitcss/base
+[tabindex='-1']:focus {
+  outline: 0 !important;
+}
+// remove the focus style when clicking on element
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+ul.sw-dropdown-options {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+
+  li {
+    cursor: pointer;
+    line-height: var(--rhythm-5);
+    padding: 0 var(--rhythm-2);
+
+    &:hover {
+      background-color: var(--color-neutral-lightest);
+    }
+    &.selected {
+      background-color: var(--color-primary-lightest);
+    }
+  }
+}
+
+.sw-dropdown-options {
+  .label-set-option {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: var(--rhythm-1);
+    justify-content: space-between;
+
+    .label-set-title {
+      flex: 1 0 auto;
+    }
+    .label-set-color {
+      flex: 0 0 auto;
+      height: var(--rhythm-1);
+      width: var(--rhythm-1);
+    }
+  }
+}

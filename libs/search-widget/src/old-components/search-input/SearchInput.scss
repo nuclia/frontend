@@ -4,7 +4,9 @@
   position: relative;
 
   .input-container {
+    align-items: center;
     box-sizing: border-box;
+    display: flex;
     flex: 1 0 auto;
     position: relative;
   }
@@ -34,15 +36,17 @@
     border: var(--search-bar-border);
     border-radius: var(--search-bar-border-radius);
     max-width: var(--search-bar-max-width);
-
-    .input-container {
-      padding: var(--search-bar-padding);
-    }
   }
 
   &.search-bar-widget:focus-within,
   &.embedded-widget:focus-within {
     border: var(--search-bar-border-focus);
+    border-top: 1px solid transparent;
+
+    &:before,
+    &:after {
+      background: var(--color-primary-regular);
+    }
   }
 
   &.embedded-widget {
@@ -50,10 +54,47 @@
     border-style: var(--form-widget-border-style);
     border-color: var(--form-widget-border-color);
     border-radius: var(--form-widget-border-radius);
+  }
+
+  &.search-bar-widget,
+  &.embedded-widget {
+    border-top: 1px solid transparent;
+    height: var(--rhythm-6);
 
     .input-container {
-      padding: var(--form-widget-padding);
+      padding-left: var(--rhythm-5);
+      padding-right: var(--rhythm-1);
     }
+
+    .logo {
+      left: var(--rhythm-1_5);
+      position: absolute;
+      top: calc(var(--rhythm-1_5) * -1 + var(--rhythm-0_25));
+      width: var(--rhythm-7);
+    }
+
+    &:before,
+    &:after {
+      background: var(--form-widget-border-color);
+      content: '';
+      height: 1px;
+      position: absolute;
+      top: -1px;
+    }
+
+    &:before {
+      left: -0.5px;
+      width: var(--rhythm-1);
+    }
+    &:after {
+      left: var(--rhythm-9);
+      right: -0.5px;
+    }
+  }
+
+  .filters-container {
+    display: flex;
+    gap: var(--rhythm-1);
   }
 
   &.has-filters.search-bar-widget .input-container:after,
@@ -63,36 +104,43 @@
     height: 0.5px;
     left: var(--rhythm-1);
     position: absolute;
-    right: var(--size-powered-by);
-    top: var(--rhythm-5);
+    right: var(--rhythm-1);
+    top: var(--rhythm-6);
   }
 
   &.has-filters.search-bar-widget .filters-container,
   &.has-filters.embedded-widget .filters-container {
-    padding: var(--rhythm-0_5) var(--rhythm-1) var(--rhythm-1_5);
+    padding: var(--rhythm-0_5) var(--rhythm-1) var(--rhythm-1);
+  }
+  &.has-filters.search-bar-widget,
+  &.has-filters.embedded-widget {
+    height: var(--rhythm-12);
   }
 
   &.popup-widget {
-    border-width: var(--input-widget-border-width);
-    border-style: var(--input-widget-border-style);
-    border-color: var(--input-widget-border-color);
-    border-radius: var(--input-widget-border-radius);
-
     .input-container {
       line-height: var(--line-height-body);
-      padding: var(--input-widget-padding);
+      padding-left: var(--rhythm-4);
+
+      .search-field {
+        border-width: var(--input-widget-border-width);
+        border-style: var(--input-widget-border-style);
+        border-color: var(--input-widget-border-color);
+        border-radius: var(--input-widget-border-radius);
+        height: var(--rhythm-4);
+
+        &:focus-within {
+          border-style: var(--input-widget-border-style-stronger);
+        }
+      }
     }
 
     .filters-container {
-      position: absolute;
       left: calc(100% + var(--rhythm-2));
+      position: absolute;
       top: 50%;
       transform: translateY(-50%);
     }
-  }
-
-  &.popup-widget:focus-within {
-    border-style: var(--input-widget-border-style-stronger);
   }
 
   &.popup-widget input::placeholder {
@@ -100,16 +148,14 @@
   }
 
   .search-icon-container {
+    left: var(--rhythm-1);
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
   }
 
-  .search-icon-container.left-icon {
-    left: var(--rhythm-1);
-  }
-  .search-icon-container:not(.left-icon) {
-    right: var(--rhythm-0_5);
+  &.popup-widget .search-icon-container {
+    left: 0;
   }
 
   .search-icon {
@@ -118,29 +164,10 @@
     display: flex;
     padding: var(--rhythm-0_5);
 
-    // remove the focus style when clicking
-    &:focus:not(:focus-visible) {
-      outline: 0;
-    }
     &:focus-visible {
       box-shadow: var(--focus-shadow);
       outline: 0;
     }
-  }
-
-  .powered-by {
-    align-items: center;
-    color: var(--color-neutral-light);
-    display: flex;
-    gap: var(--rhythm-0_5);
-    position: absolute;
-    top: 50%;
-    right: var(--rhythm-1_5);
-    transform: translateY(-50%);
-  }
-  .powered-by > small {
-    font-size: calc(var(--font-size-base) * 0.6);
-    font-weight: var(--font-weight-body);
   }
 }
 

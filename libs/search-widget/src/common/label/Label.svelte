@@ -23,7 +23,9 @@
   );
 
   const dispatch = createEventDispatcher();
-  const remove = () => {
+  const remove = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     dispatch('remove');
   };
   const onClick = (event: MouseEvent | KeyboardEvent) => {
@@ -50,8 +52,8 @@
       icon="cross"
       ariaLabel="Delete"
       aspect="basic"
-      size="small"
-      on:click={remove} />
+      size="xsmall"
+      on:click={(event) => remove(event)} />
   {/if}
 </div>
 

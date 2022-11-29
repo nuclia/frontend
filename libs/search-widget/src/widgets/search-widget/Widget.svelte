@@ -32,6 +32,7 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let permalink = false;
+  export let filter = false;
   export let standalone = false;
   export let navigatetolink = false;
   export let notpublic = false;
@@ -126,9 +127,13 @@
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
-      <PopupSearch {placeholder} />
+      <PopupSearch
+        {placeholder}
+        {filter} />
     {:else if type === 'form'}
-      <EmbeddedSearch {placeholder} />
+      <EmbeddedSearch
+        {placeholder}
+        {filter} />
     {:else}
       {type} widget is not implemented yet
     {/if}

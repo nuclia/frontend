@@ -1,109 +1,83 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { map } from 'rxjs';
-  import { getCDN } from '../../../core/utils';
-  import { viewerStore } from '../../../core/old-stores/viewer.store';
-  import { clickOutside } from '../../../common/actions/actions';
-  import Label from '../../../common/label/Label.svelte';
+  import { map, Observable } from 'rxjs';
   import type { ParagraphLabels } from '../../../core/models';
   import { LabelSetKind } from '@nuclia/core';
-  import { labelSets } from '../../../core/stores/labels.store';
+  import { LabelSetWithId, orderedLabelSetList } from '../../../core/stores/labels.store';
+  import Dropdown from '../../../common/dropdown/Dropdown.svelte';
+  import Icon from '../../../common/icons/Icon.svelte';
+  import { getParentLiRect } from '../../../common/label/label.utils';
 
   const dispatch = createEventDispatcher();
   export let position: { top: number; left: number } | undefined = undefined;
   export let labels: ParagraphLabels = { labels: [], annotatedLabels: [] };
 
-  const savingLabels = viewerStore.savingLabels;
-  let selected: { [key: string]: boolean } = {};
+  $: selectedLabels = labels.annotatedLabels.map((label) => label.label);
+  let labelSetDropdownElement: HTMLElement | undefined;
+  let submenuPosition: { left: number; top: number } | undefined;
+  let showSubmenu = false;
 
-  $: selected = [...labels.labels, ...labels.annotatedLabels].reduce((acc, current) => {
-    acc[`${current.labelset}-${current.label}`] = true;
-    return acc;
-  }, {} as { [key: string]: boolean });
-
-  $: readOnly = labels.labels.reduce((acc, current) => {
-    acc[`${current.labelset}-${current.label}`] = true;
-    return acc;
-  }, {} as { [key: string]: boolean });
-
-  const labelSetList = labelSets.pipe(
-    map((set) =>
-      Object.entries(set)
-        .filter(([id, labelSet]) => labelSet.kind.length === 0 || labelSet.kind.includes(LabelSetKind.PARAGRAPHS))
-        .sort(([keyA, labelSetA], [keyB, labelSetB]) => labelSetA.title.localeCompare(labelSetB.title)),
+  const labelSetList: Observable<LabelSetWithId[]> = orderedLabelSetList.pipe(
+    map((labelSets) =>
+      labelSets.filter((labelSet) => labelSet.kind.length === 0 || labelSet.kind.includes(LabelSetKind.PARAGRAPHS)),
     ),
   );
 
-  let openLabelset: string | null = null;
-  const enter = (labelSet: string) => {
-    openLabelset = labelSet;
+  let selectedLabelSet: LabelSetWithId | null = null;
+  const enter = (event, labelSet: LabelSetWithId) => {
+    selectedLabelSet = labelSet;
+    showSubmenu = true;
+    if (labelSetDropdownElement && position) {
+      const dropdownRect = labelSetDropdownElement?.getBoundingClientRect();
+      const left = position.left + dropdownRect.width;
+      const top = getParentLiRect(event)?.top || event.clientY;
+      submenuPosition = { left, top: top - position.top - dropdownRect.height + 8 };
+    }
   };
 
   const toggleLabel = (labelset: string, label: string) => {
-    const newLabels = !!selected[`${labelset}-${label}`]
-      ? labels.annotatedLabels.filter((item) => !(item.labelset === labelset && item.label === label))
-      : [...labels.annotatedLabels, { labelset, label }];
-    dispatch('labelsChange', newLabels);
+    dispatch('labelsChange', { labelset, label });
   };
   const leave = () => {
-    openLabelset = null;
+    selectedLabelSet = null;
   };
-  const close = () => {
-    dispatch('close');
+  const waitAndClose = () => {
+    setTimeout(() => dispatch('close'));
   };
 </script>
 
-<div
-  class="sw-label-menu"
-  style:left={position?.left + 'px'}
-  style:top={position?.top + 'px'}
-  use:clickOutside
-  on:outclick={close}>
-  <div class="current-labels">
-    {#each labels.annotatedLabels as label (label.labelset + label.label)}
-      <span class="current-label">
-        <Label
-          {label}
-          removable
-          on:remove={() => !$savingLabels && toggleLabel(label.labelset, label.label)} />
-      </span>
-    {/each}
-  </div>
-  <div class="labelsets">
-    {#each $labelSetList || [] as [labelSetId, labelSet]}
-      <div
-        class="labelset"
-        on:mouseenter={() => enter(labelSetId)}
-        on:mouseleave={leave}>
-        <button on:click={() => enter(labelSetId)}>
-          <span
-            class="color"
-            style:background-color={labelSet.color} />
-          <span class="name">{labelSet.title}</span>
-          <img
-            src={`${getCDN()}icons/chevron-right.svg`}
-            alt="close" />
-        </button>
+<Dropdown
+  {position}
+  on:close={waitAndClose}>
+  <ul
+    class="sw-dropdown-options sw-label-menu"
+    bind:this={labelSetDropdownElement}>
+    {#each $labelSetList as labelSet}
+      <li
+        class="label-set-option"
+        on:mouseenter={(event) => enter(event, labelSet)}>
         <div
-          class="labels"
-          class:open={openLabelset === labelSetId}>
-          {#each labelSet.labels as label, i}
-            <div class="label">
-              <input
-                id={`${labelSetId}-${i}`}
-                type="checkbox"
-                bind:checked={selected[`${labelSetId}-${label.title}`]}
-                on:change={() => toggleLabel(labelSetId, label.title)}
-                disabled={$savingLabels || readOnly[`${labelSetId}-${label.title}`]} />
-              <label for={`${labelSetId}-${i}`}>{label.title}</label>
-            </div>
-          {/each}
-        </div>
-      </div>
+          class="label-set-color"
+          style:background-color={labelSet.color} />
+        <div class="label-set-title">{labelSet.title}</div>
+        <Icon name="chevron-right" />
+      </li>
     {/each}
-  </div>
-</div>
+  </ul>
+</Dropdown>
 
-<style
-  lang="scss"
-  src="./LabelMenu.scss"></style>
+{#if showSubmenu}
+  <Dropdown
+    position={submenuPosition}
+    on:close={() => (showSubmenu = false)}>
+    <ul class="sw-dropdown-options">
+      {#each selectedLabelSet.labels as label}
+        <li
+          class:selected={selectedLabels.includes(label.title)}
+          on:click={() => toggleLabel(selectedLabelSet.id, label.title)}>
+          {label.title}
+        </li>
+      {/each}
+    </ul>
+  </Dropdown>
+{/if}

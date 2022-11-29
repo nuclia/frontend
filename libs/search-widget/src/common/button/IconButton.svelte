@@ -5,8 +5,10 @@
   export let ariaLabel = '';
   export let aspect = 'solid'; // solid or basic
   export let kind = 'secondary'; // primary | secondary | inverted
-  export let size = 'medium'; // medium | small
+  export let size = 'medium'; // medium | small | xsmall
   export let disabled = false;
+
+  $: iconSize = size === 'xsmall' ? 'small' : 'medium';
 </script>
 
 <button
@@ -18,7 +20,7 @@
   on:click>
   <Icon
     name={icon}
-    {size} />
+    size={iconSize} />
 </button>
 
 <style

@@ -16,7 +16,7 @@
    * Kb with PDF without page indicators (owned by Mat): 8f39fe4e-04e0-4767-bc83-69fc4c9c31c6
    * Kb with different kind of media (owned by Mat): f67d94ee-bd5b-4044-8844-a291c2ac244c
    */
-  let kb = 'cbb4afd0-26e6-480a-a814-4e08398bdf3e';
+  let kb = 'f67d94ee-bd5b-4044-8844-a291c2ac244c';
 
   onMount(() => {
     widget?.setActions([
@@ -73,6 +73,7 @@
         widgetid="label-annotation"
         type="input"
         permalink
+        filter
         lang="en"
         placeholder="Input placeholder is invisible" />
     </div>
@@ -89,6 +90,7 @@
       widgetid="dashboard"
       type="form"
       lang="en"
+      filter
       placeholder="Here's the placeholder" />
   {/if}
 
@@ -102,7 +104,8 @@
         cdn="/"
         lang="en"
         widgetid="dashboard"
-        placeholder="Search" />
+        placeholder="Search"
+        filter />
       <NucliaSearchResults />
     </div>
   {/if}
