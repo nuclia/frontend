@@ -149,8 +149,8 @@ export class BertTokenizer {
 
   private async loadVocab(): Promise<[]> {
     return this.tf.util
-      .fetch(`${getCDN()}models/classifier/${this.modelType}/vocab.txt`)
-      .then((d: Response) => d.text());
+      .fetch(`${getCDN()}models/classifier/${this.modelType}/vocab.json`)
+      .then((d: Response) => d.json());
   }
 
   private async loadMultiVocab(): Promise<[]> {
