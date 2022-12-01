@@ -359,7 +359,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         const updatedResource = {
           usermetadata: {
             ...resource.usermetadata,
-            classifications: this.mergeExistingAndSelectedLabels(resource.getClassifications()),
+            classifications: this.mergeExistingAndSelectedLabels(resource.usermetadata?.classifications || []),
           },
         };
         return resource.modify(updatedResource).pipe(
@@ -392,6 +392,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     if (!classifications) {
       return this.currentLabelList;
     }
-    return deDuplicateList(classifications.concat(this.currentLabelList));
+    return deDuplicateList(
+      classifications.concat(this.currentLabelList.map((label) => ({ ...label, cancelled_by_user: false }))),
+    );
   }
 }

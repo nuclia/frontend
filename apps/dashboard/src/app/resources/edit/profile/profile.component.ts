@@ -3,7 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { CloudLink, FileFieldData, Classification, Resource } from '@nuclia/core';
+import { CloudLink, FileFieldData, Classification, Resource, deDuplicateList } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, switchMap, tap, timer } from 'rxjs';
 import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
@@ -86,13 +86,31 @@ export class ResourceProfileComponent extends BaseEditComponent {
           title: this.form.value.title,
           summary: this.form.value.summary,
           thumbnail: this.form.value.thumbnail,
-          usermetadata: { ...this.currentValue.usermetadata, classifications: this.currentLabels },
+          usermetadata: {
+            ...this.currentValue.usermetadata,
+            classifications: this.getClassificationsPayload(this.currentValue, this.currentLabels),
+          },
           origin: {
             ...this.currentValue.origin,
             colaborators: (this.form.value.authors as string).split(',').map((s) => s.trim()),
           },
         }
       : {};
+  }
+
+  getClassificationsPayload(resource: Resource, labels: Classification[]) {
+    const extracted = deDuplicateList(
+      resource.getFields().reduce((acc, field) => {
+        return acc.concat(field.extracted?.metadata?.metadata?.classifications || []);
+      }, [] as Classification[]),
+    );
+    const userClassifications = labels.filter(
+      (label) => !extracted.some((l) => l.labelset === label.labelset && l.label === label.label),
+    );
+    const cancellations = extracted
+      .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label))
+      .map((label) => ({ ...label, cancelled_by_user: true }));
+    return [...userClassifications, ...cancellations];
   }
 
   chooseFiles($event: MouseEvent) {
