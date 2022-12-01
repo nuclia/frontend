@@ -1,19 +1,19 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { trigger, animate, style, transition } from '@angular/animations';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject, map, shareReplay, of, merge } from 'rxjs';
+import { map, merge, of, shareReplay, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { AppService } from '../../services/app.service';
 import { NavigationService } from '../../services/navigation.service';
 import { CreateLinkComponent } from '../../upload/create-link/create-link.component';
 import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
-import { STFTrackingService, SDKService, StateService } from '@flaps/core';
+import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-stash-navbar',
-  templateUrl: './stash-navbar.component.html',
-  styleUrls: ['./stash-navbar.component.scss'],
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss'],
   animations: [
     trigger('fadeInOut', [
       transition(':enter', [style({ opacity: 0 }), animate('150ms', style({ opacity: 1 }))]),
@@ -21,7 +21,7 @@ import { NavigationEnd, Router } from '@angular/router';
     ]),
   ],
 })
-export class StashNavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent implements OnInit, OnDestroy {
   @Input() isUnfolded: boolean = false;
 
   unsubscribeAll = new Subject<void>();

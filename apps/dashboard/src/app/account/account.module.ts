@@ -28,7 +28,7 @@ import { ChartsModule } from '../components/charts/charts.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
-import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
+import { NavbarModule } from '../components/navbar/navbar.module';
 import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';
 import { HintModule } from '../components/hint/hint.module';
 import {
@@ -80,7 +80,7 @@ const Components = [
     MatProgressSpinnerModule,
     CdkTableModule,
     STFSidebarModule,
-    StashNavbarModule,
+    NavbarModule,
     UsersManageModule,
     HintModule,
     PaButtonModule,

@@ -7,7 +7,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatDialogModule } from '@angular/material/dialog';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
-import { StashNavbarComponent } from './stash-navbar.component';
+import { NavbarComponent } from './navbar.component';
 
 @NgModule({
   imports: [
@@ -19,7 +19,7 @@ import { StashNavbarComponent } from './stash-navbar.component';
     MatDialogModule,
     PaIconModule,
   ],
-  declarations: [StashNavbarComponent],
-  exports: [StashNavbarComponent],
+  declarations: [NavbarComponent],
+  exports: [NavbarComponent],
 })
-export class StashNavbarModule {}
+export class NavbarModule {}
