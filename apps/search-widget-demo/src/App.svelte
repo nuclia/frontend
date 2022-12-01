@@ -133,7 +133,7 @@
     <h3>Buttons</h3>
     <h4 class="section-title">Primary</h4>
     <div>
-      <div class="buttons-container">
+      <div class="demo-container">
         <div class="buttons-block">
           <Button
             kind="primary"
@@ -166,7 +166,7 @@
 
     <h4 class="section-title">Secondary</h4>
     <div>
-      <div class="buttons-container">
+      <div class="demo-container">
         <div class="buttons-block">
           <Button
             kind="secondary"
@@ -198,7 +198,7 @@
 
     <h4 class="section-title">Inverted</h4>
     <div class="inverted">
-      <div class="buttons-container">
+      <div class="demo-container">
         <div class="buttons-block">
           <Button
             kind="inverted"
@@ -227,6 +227,41 @@
         </div>
       </div>
     </div>
+
+    <h3>Labels</h3>
+    <p>
+      Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
+    </p>
+    <p><strong>Default: not removable, not clickable</strong></p>
+    <div class="demo-container">
+      <Label label={{ labelset: 'artist', label: 'Queen' }} />
+      <Label label={{ labelset: 'sentiment', label: 'positive' }} />
+      <Label label={{ labelset: 'genre', label: 'Rock' }} />
+    </div>
+    <p><strong>Clickable</strong></p>
+    <div class="demo-container">
+      <Label
+        clickable
+        label={{ labelset: 'artist', label: 'Queen' }} />
+      <Label
+        clickable
+        label={{ labelset: 'sentiment', label: 'positive' }} />
+      <Label
+        clickable
+        label={{ labelset: 'genre', label: 'Rock' }} />
+    </div>
+    <p><strong>Removable</strong></p>
+    <div class="demo-container">
+      <Label
+        removable
+        label={{ labelset: 'artist', label: 'Queen' }} />
+      <Label
+        removable
+        label={{ labelset: 'sentiment', label: 'positive' }} />
+      <Label
+        removable
+        label={{ labelset: 'genre', label: 'Rock' }} />
+    </div>
   </div>
 </main>
 
@@ -250,7 +285,7 @@
     gap: 48px;
   }
 
-  .buttons-container,
+  .demo-container,
   .buttons-block {
     display: flex;
     gap: 16px;
