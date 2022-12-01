@@ -1,43 +1,21 @@
 @import 'variables';
 
 .activity {
-  padding: 50px var(--app-layout-margin-right) 60px 5%;
+  padding: rhythm(6) var(--app-layout-margin-right) rhythm(7) 5%;
   position: relative;
   min-height: 200px;
 }
 
-.tabs {
-  display: flex;
-}
-
-.tab {
-  min-width: 140px;
-  height: 46px;
-  padding: 0 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 2px;
-  background-color: #e7e7e7;
-  cursor: pointer;
-  &.selected {
-    font-weight: bold;
-    background-color: #fff;
-  }
-  @include media-breakpoint('lt-lg') {
-    min-width: 120px;
-  }
-}
-
 .tab-content {
+  background: $color-neutral-lightest;
+  border-radius: 0 rhythm(0.5) rhythm(0.5) rhythm(0.5);
   height: 70vh;
   overflow-y: auto;
-  padding: 20px 50px 32px 32px;
-  background-color: #fff;
+  padding: rhythm(3) rhythm(3) rhythm(4);
   @include scrollbar-black(var(--stf-gray-lighter));
 }
 
 .more-results {
-  padding-top: 40px;
+  padding-top: rhythm(5);
   text-align: center;
 }

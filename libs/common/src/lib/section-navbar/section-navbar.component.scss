@@ -1,25 +1,26 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .section-navbar {
+  background-color: $color-neutral-background;
   min-height: 100vh;
 
-  &-content {
+  .section-navbar-content {
     min-width: 0;
     margin-left: 8%;
     margin-right: 7%;
     @media (max-width: 1279px) {
       width: 930px;
       max-width: 100%;
-      padding: 0 15px;
+      padding: 0 rhythm(2);
       margin-left: auto;
       margin-right: auto;
     }
   }
 
-  &-sidebar {
-    width: 367px;
+  .section-navbar-sidebar {
+    background-color: $color-light-stronger;
     max-width: 24%;
-    background-color: var(--stf-gray-lighter);
+    width: rhythm(40);
     @media (max-width: 1279px) {
       width: auto;
       max-width: initial;
@@ -27,7 +28,7 @@
       top: 70px;
       z-index: 10;
     }
-    &-container {
+    .section-navbar-sidebar-container {
       position: sticky;
       top: 70px;
       padding: 70px 13% 0 13%;
@@ -53,11 +54,11 @@
     }
   }
 
-  &-items {
+  .section-navbar-items {
     margin-bottom: 40px;
   }
 
-  &-item {
+  .section-navbar-item {
     margin-bottom: 20px;
     &:last-child {
       margin-bottom: 0;
@@ -72,7 +73,7 @@
     }
   }
 
-  &-select {
+  .section-navbar-select {
     margin-left: auto;
     width: 250px;
     display: flex;
@@ -82,7 +83,7 @@
       font-size: var(--stf-font-size-xlarge);
       text-align: left;
       cursor: pointer;
-      &-title {
+      .current-section-title {
         @include text-truncate();
       }
     }

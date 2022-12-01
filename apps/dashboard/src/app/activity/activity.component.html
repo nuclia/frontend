@@ -1,20 +1,17 @@
 <div class="activity">
   <div class="activity-header">
-    <div
-      class="tabs"
-      *ngIf="currentTab | async as currentTab">
-      <div
-        *ngFor="let tab of tabs"
-        class="tab"
-        [class.selected]="currentTab === tab.type"
-        (click)="selectTab(tab.type)"
-        (keydown.enter)="selectTab(tab.type)"
-        tabIndex="0"
-        role="tab"
-        [attr.aria-expanded]="currentTab === tab.type">
-        {{ tab.title | translate }}
-      </div>
-    </div>
+    <ng-container *ngIf="currentTab | async as currentTab">
+      <pa-tabs
+        noSlider
+        notFullWidth>
+        <pa-tab
+          *ngFor="let tab of tabs"
+          (click)="selectTab(tab.type)"
+          [active]="currentTab === tab.type">
+          {{ tab.title | translate }}
+        </pa-tab>
+      </pa-tabs>
+    </ng-container>
   </div>
 
   <div class="tab-content">

@@ -12,8 +12,11 @@
     gap: rhythm(3);
   }
 
+  .container.chart-container {
+    border-top-left-radius: 0;
+  }
   .container {
-    background-color: $color-light-stronger;
+    background-color: $color-neutral-lightest;
     border-radius: rhythm(0.5);
     padding: rhythm(2);
   }
