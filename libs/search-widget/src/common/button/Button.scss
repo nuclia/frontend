@@ -15,7 +15,7 @@
     color var(--transition-superfast);
   white-space: nowrap;
 
-  &:focus {
+  &:focus-visible {
     box-shadow: var(--focus-shadow);
     outline: 0;
   }
@@ -38,9 +38,6 @@
   &:not(:disabled).active {
     background: var(--button-background-color-active);
     color: var(--button-color-active);
-  }
-  &.solid:not(:disabled):not(:active):hover {
-    box-shadow: var(--shadow-small);
   }
   &:not(.small):not(.xsmall):not(.icon) {
     min-width: var(--rhythm-12);
@@ -68,8 +65,8 @@
 
   &.solid.primary {
     --button-background-color: var(--color-primary-regular);
-    --button-background-color-hover: var(--color-primary-regular);
-    --button-background-color-active: var(--color-primary-lighter);
+    --button-background-color-hover: var(--color-primary-strong);
+    --button-background-color-active: var(--color-primary-stronger);
     --button-color: var(--color-light-stronger);
     --button-color-hover: var(--color-light-stronger);
     --button-color-active: var(--color-light-stronger);
