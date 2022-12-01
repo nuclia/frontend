@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PostHogService, SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
+import { SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
@@ -15,7 +15,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
-import { STFSectionNavbarModule } from '@flaps/common';
+import { STFSectionNavbarModule } from '../../components/section-navbar';
 
 describe('KnowledgeBoxProcessComponent', () => {
   let component: KnowledgeBoxProcessesComponent;
