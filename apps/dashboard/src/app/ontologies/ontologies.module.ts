@@ -7,7 +7,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
-import { STFSectionNavbarModule } from '@flaps/common';
 import { STFTooltipModule } from '@flaps/pastanaga';
 
 import { OntologiesComponent } from './ontologies.component';
@@ -22,6 +21,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   OntologiesComponent,

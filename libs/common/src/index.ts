@@ -11,7 +11,5 @@ export * from './lib/directives';
 export * from './lib/directives/perfect-scroll/perfect-scrollbar.directive';
 export * from './lib/validators/form.validator';
 export * from './lib/pagination/pagination.module';
-export * from './lib/section-navbar/section-navbar.module';
-export * from './lib/section-navbar/section-navbar.component';
 export * from './lib/progress-bar/progress-bar.module';
 export * from './lib/utils/clonedeep';

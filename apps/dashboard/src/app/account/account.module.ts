@@ -12,7 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
-import { STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
+import { STFSidebarModule } from '@flaps/common';
 import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { AccountComponent } from './account.component';
@@ -43,6 +43,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
+import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   AccountComponent,

@@ -12,7 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { STFExpanderModule, STFFormDirectivesModule, STFIconsModule, STFTooltipModule } from '@flaps/pastanaga';
-import { PaginationModule, STFSectionNavbarModule } from '@flaps/common';
+import { PaginationModule } from '@flaps/common';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { ResourceListComponent } from './resource-list.component';
@@ -41,6 +41,7 @@ import {
   SisStatusComponent,
 } from '@nuclia/sistema';
 import { FileUploadModule } from '@flaps/core';
+import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   ResourceListComponent,
