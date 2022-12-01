@@ -1,5 +1,5 @@
 import { loadTokenizer } from './tokenizer';
-import { getCDN } from '../utils';
+import { getCDN, logger } from '../utils';
 
 export interface BertInput {
   inputIds: number[];
@@ -86,6 +86,7 @@ export default class BertModel {
       throw new Error('Tokenizer is undefined');
     }
     const tokenizedInputs = inputs.map((input) => this.tokenizer!.encodeText(input, this.inputSize));
+    logger('tokenizedInputs', tokenizedInputs);
 
     return tokenizedInputs.map((tokenized, index) => {
       const bertInput: BertInput = {
@@ -152,6 +153,6 @@ export default class BertModel {
 
   // Load tokenizer for bert input
   private async loadTokenizer() {
-    this.tokenizer = await loadTokenizer(this.modelType);
+    this.tokenizer = await loadTokenizer(`${getCDN()}models/classifier/${this.modelType}/vocab.json`);
   }
 }
