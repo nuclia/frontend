@@ -68,7 +68,7 @@ export interface Metadata {
 }
 
 export interface UserMetadata {
-  classifications?: Classification[];
+  classifications?: UserClassification[];
   relations?: Relation[];
 }
 
@@ -258,6 +258,10 @@ export interface Classification {
   labelset: string;
   label: string;
   immutable?: boolean;
+}
+
+export interface UserClassification extends Classification {
+  cancelled_by_user?: boolean;
 }
 
 export type TypeParagraph = 'TEXT' | 'OCR' | 'INCEPTION' | 'DESCRIPTION' | 'TRANSCRIPT';

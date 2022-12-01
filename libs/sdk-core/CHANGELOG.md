@@ -5,6 +5,7 @@
 - Add NUA key to the local storage only when the key is created from the desktop application
 - Update `/processing/status` endpoint response model
 - Update `getParagraphText` and `getSentenceText` methods to improve performance
+- Do not return cancelled classifications in `getClassifications`
 
 # 1.0.6 (2022-11-17)
 

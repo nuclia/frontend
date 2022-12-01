@@ -111,15 +111,20 @@ export class ReadableResource implements IResource {
   }
 
   getClassifications(): Classification[] {
+    const classifications = (this.usermetadata?.classifications || []).filter((c) => !c.cancelled_by_user);
+    const cancellations = (this.usermetadata?.classifications || []).filter((c) => c.cancelled_by_user);
     return this.getFields().reduce((acc, field) => {
       field.extracted?.metadata?.metadata?.classifications?.forEach((classification) => {
         const existing = acc.find((c) => c.label === classification.label && c.labelset === classification.labelset);
-        if (!existing) {
+        const isCancelled = cancellations.find(
+          (c) => c.label === classification.label && c.labelset === classification.labelset,
+        );
+        if (!existing && !isCancelled) {
           acc.push({ ...classification, immutable: true });
         }
       });
       return acc;
-    }, this.usermetadata?.classifications || []);
+    }, classifications);
   }
 
   private formatTitle(title?: string): string {
