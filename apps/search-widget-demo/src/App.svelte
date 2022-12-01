@@ -1,6 +1,7 @@
 <script lang="ts">
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { onMount } from 'svelte';
+  import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
@@ -46,6 +47,7 @@
   <header hidden={!showConfiguration}>
     <h1>Welcome to Nuclia</h1>
 
+    <h2>Widget</h2>
     <section class="configuration">
       <label for="widget-select">Select the widget to demo:</label>
       <select
@@ -62,7 +64,7 @@
   </header>
 
   {#if selected === 'input'}
-    <h2>Input widget</h2>
+    <h3>Input widget</h3>
     <div class="input-container">
       <NucliaWidget
         bind:this={widget}
@@ -93,7 +95,6 @@
       filter
       placeholder="Here's the placeholder" />
   {/if}
-
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
@@ -126,9 +127,147 @@
         lang="en" />
     </div>
   {/if}
+
+  <h2>Sistema in Svelte</h2>
+  <div class="nuclia-widget">
+    <h3>Buttons</h3>
+    <h4 class="section-title">Primary</h4>
+    <div>
+      <div class="demo-container">
+        <div class="buttons-block">
+          <Button
+            kind="primary"
+            aspect="solid">
+            Solid
+          </Button>
+          <IconButton
+            icon="search"
+            kind="primary"
+            aspect="solid">
+            Solid
+          </IconButton>
+        </div>
+
+        <div class="buttons-block">
+          <Button
+            kind="primary"
+            aspect="basic">
+            Basic
+          </Button>
+          <IconButton
+            icon="search"
+            kind="primary"
+            aspect="basic">
+            Basic
+          </IconButton>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="section-title">Secondary</h4>
+    <div>
+      <div class="demo-container">
+        <div class="buttons-block">
+          <Button
+            kind="secondary"
+            aspect="solid">
+            Solid
+          </Button>
+          <IconButton
+            icon="search"
+            kind="secondary"
+            aspect="solid">
+            Solid
+          </IconButton>
+        </div>
+        <div class="buttons-block">
+          <Button
+            kind="secondary"
+            aspect="basic">
+            Basic
+          </Button>
+          <IconButton
+            icon="search"
+            kind="secondary"
+            aspect="basic">
+            Basic
+          </IconButton>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="section-title">Inverted</h4>
+    <div class="inverted">
+      <div class="demo-container">
+        <div class="buttons-block">
+          <Button
+            kind="inverted"
+            aspect="solid">
+            Solid
+          </Button>
+          <IconButton
+            icon="search"
+            kind="inverted"
+            aspect="solid">
+            Solid
+          </IconButton>
+        </div>
+        <div class="buttons-block">
+          <Button
+            kind="inverted"
+            aspect="basic">
+            Basic
+          </Button>
+          <IconButton
+            icon="search"
+            kind="inverted"
+            aspect="basic">
+            Basic
+          </IconButton>
+        </div>
+      </div>
+    </div>
+
+    <h3>Labels</h3>
+    <p>
+      Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
+    </p>
+    <p><strong>Default: not removable, not clickable</strong></p>
+    <div class="demo-container">
+      <Label label={{ labelset: 'artist', label: 'Queen' }} />
+      <Label label={{ labelset: 'sentiment', label: 'positive' }} />
+      <Label label={{ labelset: 'genre', label: 'Rock' }} />
+    </div>
+    <p><strong>Clickable</strong></p>
+    <div class="demo-container">
+      <Label
+        clickable
+        label={{ labelset: 'artist', label: 'Queen' }} />
+      <Label
+        clickable
+        label={{ labelset: 'sentiment', label: 'positive' }} />
+      <Label
+        clickable
+        label={{ labelset: 'genre', label: 'Rock' }} />
+    </div>
+    <p><strong>Removable</strong></p>
+    <div class="demo-container">
+      <Label
+        removable
+        label={{ labelset: 'artist', label: 'Queen' }} />
+      <Label
+        removable
+        label={{ labelset: 'sentiment', label: 'positive' }} />
+      <Label
+        removable
+        label={{ labelset: 'genre', label: 'Rock' }} />
+    </div>
+  </div>
 </main>
 
-<style>
+<style type="text/scss">
+  @import '../../../libs/search-widget/src/common/global.scss';
+  @import '../../../libs/search-widget/src/common/common-style.scss';
   main {
     font-family: sans-serif;
     padding: 1em;
@@ -144,6 +283,16 @@
     display: flex;
     flex-direction: column;
     gap: 48px;
+  }
+
+  .demo-container,
+  .buttons-block {
+    display: flex;
+    gap: 16px;
+  }
+  .inverted {
+    background-color: var(--color-dark-stronger);
+    padding: var(--rhythm-1);
   }
 
   @media (min-width: 640px) {
