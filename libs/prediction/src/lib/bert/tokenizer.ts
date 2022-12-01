@@ -1,4 +1,3 @@
-import * as tf from '@tensorflow/tfjs';
 import { logger } from '../utils';
 
 export async function loadTokenizer(vocabUrl: string): Promise<BertTokenizer> {
