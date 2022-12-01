@@ -19,10 +19,10 @@ $list-breakpoint: 1550px;
   display: flex;
   flex-wrap: wrap;
   max-width: 750px;
-  margin-top: 80px;
+  margin-top: rhythm(10);
 
   .ontology-card {
-    margin-bottom: 60px;
+    margin-bottom: rhythm(7);
     @media (min-width: ($list-breakpoint + 1)) {
       width: 30%;
       margin-right: 5%;
@@ -38,35 +38,34 @@ $list-breakpoint: 1550px;
       }
     }
 
-    &-title,
-    &-label {
-      display: flex;
+    .ontology-card-title,
+    .ontology-card-label {
       align-items: center;
       width: 100%;
-      min-height: 40px;
-      padding: 8px 20px;
+      min-height: rhythm(5);
+      padding: rhythm(1) rhythm(2);
       font-size: var(--stf-font-size-xlarge);
       line-height: 1.2;
     }
 
-    &-title {
-      margin-bottom: 5px;
+    .ontology-card-title {
+      margin-bottom: rhythm(0.5);
       font-weight: var(--stf-font-weight-bold);
 
       // Fallback colors
-      background-color: var(--stf-gray-lighter-3);
-      color: #000;
+      background-color: $color-neutral-light;
+      color: $color-dark-stronger;
     }
 
-    &-labels {
+    .ontology-card-labels {
       max-height: 300px;
       overflow-y: auto;
       @include bordered-scrollbar();
     }
 
-    &-label {
-      margin-bottom: 3px;
-      background-color: #fff;
+    .ontology-card-label {
+      margin-bottom: rhythm(0.25);
+      background-color: $color-light-stronger;
       &:last-child {
         margin-bottom: 0;
       }

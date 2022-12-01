@@ -6,6 +6,7 @@
     *ngFor="let labelSet of labelSets | keyvalue: sortByTitle">
     <div
       class="ontology-card-title"
+      paEllipsisTooltip
       [style.background-color]="getBackgroundColor(labelSet.value.color)"
       [style.color]="getTextColor(labelSet.value.color)">
       {{ labelSet.value.title }}
@@ -13,8 +14,9 @@
     <div class="ontology-card-labels">
       <div
         class="ontology-card-label"
+        paEllipsisTooltip
         *ngFor="let label of labelSet.value.labels || []">
-        <span [stfEllipsisTooltip]="label.title">{{ label.title }}</span>
+        {{ label.title }}
       </div>
     </div>
   </div>
