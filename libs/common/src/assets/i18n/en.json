@@ -557,6 +557,7 @@
 	"stash.enable_stash_email": "Enable email",
 	"stash.entities.custom_entities": "Personalized named entities",
 	"stash.entities.named_entities": "Detected named entities",
+	"stash.home": "Home dashboard",
 	"stash.home.recent_added": "New content",
 	"stash.home.tags.title": "Tag distribution representation",
 	"stash.home.tags.total": "total tags",

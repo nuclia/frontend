@@ -483,6 +483,7 @@
 	"stash.enable_stash_email": "Habilitar correo electrónico",
 	"stash.entities.custom_entities": "Entidades personalizadas",
 	"stash.entities.named_entities": "Entidades detectadas",
+	"stash.home": "Panel de inicio",
 	"stash.home.recent_added": "Nuevos contenidos",
 	"stash.home.tags.title": "Gráfica de distribución de tags",
 	"stash.home.tags.total": "tags en total",

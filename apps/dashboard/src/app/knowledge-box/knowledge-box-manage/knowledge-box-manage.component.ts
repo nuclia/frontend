@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouteInfo } from '@flaps/common';
+import { RouteInfo } from '../../components/section-navbar';
 
 const ROUTES: RouteInfo[] = [
   {

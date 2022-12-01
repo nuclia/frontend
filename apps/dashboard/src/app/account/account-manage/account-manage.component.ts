@@ -1,27 +1,27 @@
 import {
-  Component,
-  OnInit,
-  OnDestroy,
   AfterViewInit,
-  ElementRef,
-  QueryList,
-  ViewChildren,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, Observable, of } from 'rxjs';
-import { switchMap, concatMap, takeUntil, tap, filter, distinctUntilChanged, map, shareReplay } from 'rxjs/operators';
-import { ZoneService, Zone } from '@flaps/core';
-import { AccountModification, SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { Observable, of, Subject } from 'rxjs';
+import { concatMap, distinctUntilChanged, filter, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { AccountModification, SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
-import { SectionInfo, Sluggable } from '@flaps/common';
+import { Sluggable } from '@flaps/common';
 import { IErrorMessages, ModalConfig } from '@guillotinaweb/pastanaga-angular';
 import { NavigationService } from '../../services/navigation.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
+import { SectionInfo } from '../../components/section-navbar';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 

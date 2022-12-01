@@ -5,13 +5,13 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
-import { STFSectionNavbarModule } from '@flaps/common';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
 import { PlansComponent } from './plans/plans.component';
 import { PlansSettingsComponent } from './settings/plan-settings.component';
 import { PaymentComponent } from './payment/payment.component';
 import { CardComponent } from './card/card.component';
+import { STFSectionNavbarModule } from '../../components/section-navbar';
 
 const routes = [
   {

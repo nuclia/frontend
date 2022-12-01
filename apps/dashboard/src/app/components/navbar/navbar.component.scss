@@ -4,7 +4,7 @@
 $height-breakpoint: 730px;
 
 :host,
-.stash-navbar {
+.app-navbar {
   height: 100%;
 }
 
@@ -20,49 +20,46 @@ $height-breakpoint: 730px;
 }
 
 .navbar-scroll-container {
+  background: $color-neutral-lighter;
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: space-between;
   overflow-y: auto;
   overflow-x: hidden;
-  > .navbar-content {
+  .navbar-content {
     flex: 1 1 auto;
     width: 100%;
   }
-  > .navbar-footer {
+  .navbar-footer {
     flex: 0 0 auto;
     width: 100%;
   }
 
   .nav-group {
-    border-bottom: 1px solid $color-neutral-regular;
-    padding: rhythm(1.5) 0;
-    @media (max-height: $height-breakpoint) {
-      padding: rhythm(0.5) 0;
-    }
+    border-bottom: 1px solid $color-light-stronger;
+    padding: 0;
 
-    > .group-items {
-      > .nav-link {
+    .group-items {
+      .nav-link {
         align-items: center;
         color: inherit;
         cursor: pointer;
         display: flex;
         overflow: hidden;
-        padding: rhythm(1) rhythm(2);
+        padding: rhythm(2);
         position: relative;
         text-decoration: none;
         user-select: none;
 
-        &:hover::before,
-        &.active::before {
-          background-color: $color-primary-regular;
-          bottom: 0;
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: rhythm(0.25);
+        pa-icon {
+          display: flex;
+        }
+        &:hover {
+          background-color: $color-neutral-lightest;
+        }
+        &.active {
+          background-color: $color-light-stronger;
         }
 
         &.disabled {
@@ -71,15 +68,19 @@ $height-breakpoint: 730px;
           pointer-events: none;
         }
 
-        > .nav-link-title {
+        .nav-link-title {
           flex: 1 1 auto;
-          padding-left: rhythm(2);
           font-size: var(--stf-font-size-large);
+          padding-left: rhythm(2);
           white-space: nowrap;
         }
+
         @media (max-height: $height-breakpoint) {
-          > .nav-link-title {
+          padding: rhythm(1);
+
+          .nav-link-title {
             font-size: var(--stf-font-size-medium);
+            padding-left: rhythm(1);
           }
         }
       }
@@ -87,7 +88,7 @@ $height-breakpoint: 730px;
   }
 }
 
-.stash-navbar:not(.is-unfolded) {
+.app-navbar:not(.is-unfolded) {
   .navbar-scroll-container {
     .navbar-content {
       padding-top: 0;
@@ -101,4 +102,13 @@ $height-breakpoint: 730px;
 
 .dark {
   @include dark-mode();
+
+  .nav-group .group-items .nav-link {
+    &:hover {
+      background-color: $color-neutral-regular;
+    }
+    &:not(:hover).active {
+      color: $color-dark-stronger;
+    }
+  }
 }

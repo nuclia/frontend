@@ -1,11 +1,21 @@
 <div
-  class="stash-navbar"
+  class="app-navbar"
   [class.is-unfolded]="isUnfolded">
   <div class="navbar-scroll-container">
     <div
       *ngIf="!(inAccount | async)"
       class="navbar-content">
       <div class="nav-group">
+        <div class="group-items">
+          <a
+            [routerLink]="kbUrl"
+            class="nav-link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <pa-icon name="home"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.home' | translate }}</span>
+          </a>
+        </div>
         <div class="group-items">
           <a
             class="nav-link"
@@ -130,7 +140,7 @@
           </div>
         </ng-container>
       </div>
-      <div class="nav-group dark">
+      <div class="nav-group">
         <div class="group-items">
           <a
             [routerLink]="(accountUrl | async) + '/home'"

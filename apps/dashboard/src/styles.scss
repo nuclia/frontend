@@ -6,6 +6,10 @@
 
 @import 'libs/sistema/styles/apps-common';
 
+:root {
+  --app-background-color: $color-light-stronger;
+}
+
 .user-background {
   background-image: url('./assets/images/background.jpg');
   background-position: center;

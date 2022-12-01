@@ -12,7 +12,7 @@ import { ChartsModule } from '../components/charts/charts.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { UserAvatarModule } from '@flaps/components';
-import { ProgressBarModule, STFSectionNavbarModule } from '@flaps/common';
+import { ProgressBarModule } from '@flaps/common';
 import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
@@ -36,6 +36,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 import { DropdownButtonComponent } from '@nuclia/sistema';
+import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   KnowledgeBoxComponent,

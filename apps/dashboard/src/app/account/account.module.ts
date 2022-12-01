@@ -12,7 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
 import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
-import { STFSectionNavbarModule, STFSidebarModule } from '@flaps/common';
+import { STFSidebarModule } from '@flaps/common';
 import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
 
 import { AccountComponent } from './account.component';
@@ -28,7 +28,7 @@ import { ChartsModule } from '../components/charts/charts.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
-import { StashNavbarModule } from '../components/stash-navbar/stash-navbar.module';
+import { NavbarModule } from '../components/navbar/navbar.module';
 import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';
 import { HintModule } from '../components/hint/hint.module';
 import {
@@ -43,6 +43,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
+import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   AccountComponent,
@@ -80,7 +81,7 @@ const Components = [
     MatProgressSpinnerModule,
     CdkTableModule,
     STFSidebarModule,
-    StashNavbarModule,
+    NavbarModule,
     UsersManageModule,
     HintModule,
     PaButtonModule,

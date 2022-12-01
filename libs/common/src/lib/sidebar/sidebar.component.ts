@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  ContentChild,
   ElementRef,
   EventEmitter,
   HostBinding,
@@ -10,9 +11,8 @@ import {
   OnInit,
   Output,
   Renderer2,
-  ViewEncapsulation,
-  ContentChild,
   TemplateRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
 import { Subject } from 'rxjs';
@@ -52,7 +52,14 @@ export class STFSidebarComponent implements OnInit, OnDestroy {
 
   // Folded width
   @Input()
-  foldedWidth: number;
+  set foldedWidth(value: number) {
+    this._foldedWidth = value;
+    this.folded = true;
+  }
+  get foldedWidth() {
+    return this._foldedWidth;
+  }
+  private _foldedWidth = 64;
 
   // Folded auto trigger on hover
   @Input()
@@ -105,7 +112,6 @@ export class STFSidebarComponent implements OnInit, OnDestroy {
   ) {
     // Set the defaults
     this.foldedAutoTriggerOnHover = true;
-    this.foldedWidth = 64;
     this.foldedChanged = new EventEmitter();
     this.openedChanged = new EventEmitter();
     this.opened = true;

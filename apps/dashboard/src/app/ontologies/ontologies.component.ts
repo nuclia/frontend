@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RouteInfo } from '@flaps/common';
 import { filter, map, switchMapTo } from 'rxjs/operators';
 import { LabelsService } from '../services/labels.service';
 import { LabelSets } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
+import { RouteInfo } from '../components/section-navbar';
 
 @Component({
   selector: 'app-ontologies',

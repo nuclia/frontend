@@ -7,7 +7,7 @@ import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { ActivityComponent } from './activity.component';
 import { ActivityListComponent } from './activity-list.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 
 const Components = [ActivityComponent, ActivityListComponent];
 
@@ -26,6 +26,7 @@ const ROUTES = [
     RouterModule.forChild(ROUTES),
     PipesModule,
     PaButtonModule,
+    PaTabsModule,
   ],
   declarations: [...Components],
   exports: [],

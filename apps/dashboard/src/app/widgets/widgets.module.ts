@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { STFSectionNavbarModule } from '@flaps/common';
 import {
   PaButtonModule,
   PaIconModule,
@@ -17,6 +16,7 @@ import { EditWidgetComponent } from './edit/edit-widget.component';
 
 import { WidgetsComponent } from './widgets.component';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
+import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const routes = [
   {
