@@ -483,6 +483,7 @@
 	"stash.enable_stash_email": "Habilitar correu electrònic",
 	"stash.entities.custom_entities": "Entitats personalitzades",
 	"stash.entities.named_entities": "Entitats detectades",
+	"stash.home": "Tauler d'inici",
 	"stash.home.recent_added": "Continguts nous",
 	"stash.home.tags.title": "Gràfica de distribució de tags",
 	"stash.home.tags.total": "tags en total",
