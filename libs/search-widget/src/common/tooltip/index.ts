@@ -1,1 +1,1 @@
-export { tooltip } from './Tooltip.svelte';
+export { default as Tooltip } from './Tooltip.svelte';
