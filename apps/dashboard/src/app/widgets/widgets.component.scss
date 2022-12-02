@@ -12,9 +12,6 @@
   margin-top: rhythm(6);
   padding: rhythm(1);
 
-  @media (max-width: 1279px) {
-    display: none;
-  }
   a {
     color: inherit;
     text-decoration: underline;

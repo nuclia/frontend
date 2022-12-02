@@ -8,38 +8,17 @@
     min-width: 0;
     margin-left: 8%;
     margin-right: 7%;
-    @media (max-width: 1279px) {
-      width: 930px;
-      max-width: 100%;
-      padding: 0 rhythm(2);
-      margin-left: auto;
-      margin-right: auto;
-    }
   }
 
   .section-navbar-sidebar {
     background-color: $color-light-stronger;
     max-width: 24%;
     width: rhythm(40);
-    @media (max-width: 1279px) {
-      width: auto;
-      max-width: initial;
-      position: sticky;
-      top: 70px;
-      z-index: 10;
-    }
+
     .section-navbar-sidebar-container {
       position: sticky;
       top: 70px;
       padding: 70px 13% 0 13%;
-      @media (max-width: 1279px) {
-        position: static;
-        width: 930px;
-        padding: 0 15px;
-        max-width: 100%;
-        height: 110px;
-        margin: 0 auto;
-      }
     }
   }
 
@@ -48,10 +27,6 @@
     font-size: var(--stf-font-size-title);
     font-weight: var(--stf-font-weight-bold);
     line-height: 1.25;
-    @media (max-width: 1279px) {
-      margin: 0;
-      @include limit-lines(2);
-    }
   }
 
   .section-navbar-items {
