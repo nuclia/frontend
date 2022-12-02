@@ -24,14 +24,14 @@
   );
 
   let selectedLabelSet: LabelSetWithId | null = null;
-  const enter = (event, labelSet: LabelSetWithId) => {
+  const enter = (event, labelSet: LabelSetWithId, index: number, total: number) => {
     selectedLabelSet = labelSet;
     showSubmenu = true;
     if (labelSetDropdownElement && position) {
       const dropdownRect = labelSetDropdownElement?.getBoundingClientRect();
       const left = position.left + dropdownRect.width;
-      const top = getParentLiRect(event)?.top || event.clientY;
-      submenuPosition = { left, top: top - position.top - dropdownRect.height + 8 };
+      const top = position.top + Math.round((dropdownRect.height / total) * index);
+      submenuPosition = { left, top };
     }
   };
 
@@ -52,10 +52,10 @@
   <ul
     class="sw-dropdown-options sw-label-menu"
     bind:this={labelSetDropdownElement}>
-    {#each $labelSetList as labelSet}
+    {#each $labelSetList as labelSet, i}
       <li
         class="label-set-option"
-        on:mouseenter={(event) => enter(event, labelSet)}>
+        on:mouseenter={(event) => enter(event, labelSet, i, $labelSetList.length)}>
         <div
           class="label-set-color"
           style:background-color={labelSet.color} />
