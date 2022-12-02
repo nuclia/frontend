@@ -7,7 +7,7 @@
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { get_current_component } from 'svelte/internal';
-  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
@@ -31,20 +31,13 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let permalink = false;
-  export let filter = false;
   export let standalone = false;
-  export let navigatetolink = false;
-  export let notpublic = false;
-  export let defaultfeatures = '';
+  export let features = '';
 
-  $: _permalink = coerceBooleanProperty(permalink);
-  $: _navigatetolink = coerceBooleanProperty(navigatetolink);
-  $: _notpublic = coerceBooleanProperty(notpublic);
-  $: _filter = coerceBooleanProperty(filter);
-  let _defaultfeatures: WidgetFeatures = (
-    typeof defaultfeatures === 'string' ? defaultfeatures.split(',').filter((f) => !!f) : []
-  ).reduce((acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }), {});
+  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+    {},
+  );
 
   const thisComponent = get_current_component();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -88,12 +81,12 @@
         kbSlug: kbslug,
         account,
         standalone,
-        public: !_notpublic && !apikey,
+        public: !_features.notPublic && !apikey,
       },
       state,
       {
         highlight: true,
-        defaultFeatures: _defaultfeatures,
+        features: _features,
       },
     );
     if (cdn) {
@@ -110,10 +103,12 @@
     activateTypeAheadSuggestions();
 
     setupTriggerSearch(dispatchCustomEvent);
-    initViewerEffects(_permalink);
+    initViewerEffects(_features.permalink);
 
     widgetType.set('search');
-    navigateToLink.set(_navigatetolink);
+    if (_features.navigateToLink) {
+      navigateToLink.set(true);
+    }
     ready = true;
 
     return () => reset();
@@ -130,11 +125,11 @@
     {#if type === 'input'}
       <PopupSearch
         {placeholder}
-        filter={_filter} />
+        filter={_features.filter} />
     {:else if type === 'form'}
       <EmbeddedSearch
         {placeholder}
-        filter={_filter} />
+        filter={_features.filter} />
     {:else}
       {type} widget is not implemented yet
     {/if}

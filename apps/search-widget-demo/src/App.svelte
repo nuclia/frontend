@@ -74,8 +74,7 @@
         cdn="/"
         widgetid="label-annotation"
         type="input"
-        permalink
-        filter
+        features="permalink,filter"
         lang="en"
         placeholder="Input placeholder is invisible" />
     </div>
@@ -92,7 +91,7 @@
       widgetid="dashboard"
       type="form"
       lang="en"
-      filter
+      features="filter"
       placeholder="Here's the placeholder" />
   {/if}
   {#if selected === 'two-widgets'}
@@ -106,7 +105,7 @@
         lang="en"
         widgetid="dashboard"
         placeholder="Search"
-        filter />
+        features="filter" />
       <NucliaSearchResults />
     </div>
   {/if}

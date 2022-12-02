@@ -6,6 +6,10 @@ import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
 export const DEFAULT_FEATURES: WidgetFeatures = {
   editLabels: true,
   entityAnnotation: true,
+  filter: true,
+  navigateToLink: true,
+  permalink: true,
+  notPublic: true,
 };
 
 export const DEFAULT_FEATURES_LIST = Object.entries(DEFAULT_FEATURES)

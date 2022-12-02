@@ -7,7 +7,7 @@ import { BackendConfigurationService, STFTrackingService } from '@flaps/core';
 import { Widget } from '@nuclia/core';
 import { filter, map, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { AddWidgetDialogComponent } from '../add/add-widget.component';
-import { DEFAULT_FEATURES, DEFAULT_FEATURES_LIST, WidgetService } from '../widget.service';
+import { DEFAULT_FEATURES, WidgetService } from '../widget.service';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
@@ -37,14 +37,12 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   mainForm = this.fb.group({
     mode: ['input'],
     features: this.fb.group({
-      suggestLabels: [false],
       editLabels: [false],
       entityAnnotation: [false],
-    }),
-    attributes: this.fb.group({
       filter: [false],
-      permalink: [false],
       navigateToLink: [false],
+      permalink: [false],
+      suggestLabels: [false],
     }),
     style: this.styleForm,
   });
@@ -71,6 +69,15 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
 
   get widgetMode() {
     return this.mainForm.controls.mode.value;
+  }
+
+  get features(): string {
+    return Object.entries(this.mainForm.controls.features.value || {}).reduce((features, [feature, enabled]) => {
+      if (enabled) {
+        features = `${features.length > 0 ? features + ',' : ''}${feature}`;
+      }
+      return features;
+    }, '');
   }
 
   constructor(
@@ -134,7 +141,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   save() {
     if (this.widget) {
       this.trackChanges();
-      const { attributes, ...mainForm } = this.mainForm.getRawValue();
+      const { ...mainForm } = this.mainForm.getRawValue();
       const widget = {
         ...this.widget,
         ...(mainForm as Partial<Widget>),
@@ -157,11 +164,7 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
     const mode = this.widgetMode || '';
-    let attributes = Object.entries(this.mainForm.value.attributes || {})
-      .filter(([, value]) => !!value)
-      .map(([key]) => `\n  ${key}="true"`)
-      .join('');
-    const defaultFeatures = this.isDefaultWidget ? `\n  defaultfeatures="${DEFAULT_FEATURES_LIST}"` : '';
+
     const placeholder = this.hasPlaceholder()
       ? `
   placeholder="${this.placeholder}"`
@@ -173,13 +176,15 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   knowledgebox="${this.kbId}"
   zone="${this.zone}"
   widgetid="${this.widget.id}"
-  type="${mode}" ${attributes} ${placeholder} ${defaultFeatures}
+  type="${mode}"
+  features="${this.features}" ${placeholder}
 ></nuclia-search>`
         : `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
 <nuclia-search-bar
   knowledgebox="${this.kbId}"
   zone="${this.zone}"
-  widgetid="${this.widget.id}" ${placeholder}
+  widgetid="${this.widget.id}"
+  features="${this.features}" ${placeholder}
 ></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
     const styles = Object.entries(this.styleForm.value)

@@ -1,6 +1,6 @@
 import type { Subscription } from 'rxjs';
 import { nucliaState, setDisplayedResource } from './main.store';
-import { concatMap, filter, tap, switchMap } from 'rxjs/operators';
+import { concatMap, filter, switchMap, tap } from 'rxjs/operators';
 import { getResource, loadEntities } from '../api';
 import type { Resource } from '@nuclia/core';
 import { resource } from '../stores/resource.store';
@@ -17,7 +17,7 @@ export function unsubscribeViewerEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
 }
 
-export function initViewerEffects(permalinkEnabled: boolean) {
+export function initViewerEffects(permalinkEnabled: boolean | undefined) {
   if (permalinkEnabled) {
     checkUrlParams();
   }

@@ -17,7 +17,7 @@ export const PENDING_RESULTS = {
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
   highlight?: boolean;
-  defaultFeatures?: WidgetFeatures;
+  features?: WidgetFeatures;
 }
 
 export interface WidgetAction {

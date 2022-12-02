@@ -32,11 +32,12 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
     SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   nucliaApi = new Nuclia(options);
+  // FIXME: before removing the widget from the backend, we need to manage custom style on the template as well
   nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
     nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
     searchWidget.set({
       ...widget,
-      features: Object.keys(widget.features).length ? widget.features : widgetOptions.defaultFeatures || {},
+      features: widgetOptions.features || {},
     });
     if (searchWidget.getValue()!.features.suggestLabels) {
       const kbPath = nucliaApi?.knowledgeBox.fullpath;
@@ -121,7 +122,7 @@ export const loadEntities = (): Observable<EntityGroup[]> => {
           title: group.title || `entities.${groupId.toLowerCase()}`,
           color: group.color || generatedEntitiesColor[groupId],
           entities: Object.entries(group.entities)
-            .map(([entityId, entity]) => entity.value)
+            .map(([, entity]) => entity.value)
             .sort((a, b) => a.localeCompare(b)),
           custom: group.custom,
         }))

@@ -194,13 +194,13 @@ export interface Widget {
 }
 
 export interface WidgetFeatures {
-  useFilters?: boolean;
-  suggestEntities?: boolean;
-  suggestSentences?: boolean;
-  suggestParagraphs?: boolean;
-  suggestLabels?: boolean;
   editLabels?: boolean;
   entityAnnotation?: boolean;
+  filter?: boolean;
+  navigateToLink?: boolean;
+  notPublic?: boolean;
+  permalink?: boolean;
+  suggestLabels?: boolean;
 }
 
 export interface Counters {

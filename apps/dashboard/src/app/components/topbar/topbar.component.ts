@@ -29,6 +29,11 @@ export class TopbarComponent implements AfterViewInit {
     switchMap((kb) => kb.getLabels().pipe(map((labelSets) => ({ kb, labelSets })))),
     map(({ kb, labelSets }) => {
       const hasLabels = Object.keys(labelSets).length > 0;
+      const features = !hasLabels
+        ? DEFAULT_FEATURES_LIST.split(',')
+            .filter((feature) => feature !== 'filter')
+            .join(',')
+        : DEFAULT_FEATURES_LIST;
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
         widgetid="dashboard"
@@ -40,10 +45,7 @@ export class TopbarComponent implements AfterViewInit {
         account="${kb.account || ''}"
         lang="${this.translation.currentLang}"
         type="input"
-        defaultfeatures="${DEFAULT_FEATURES_LIST}"
-        permalink
-        filter="${hasLabels}"
-        notpublic></nuclia-search>`);
+        features="${features}"></nuclia-search>`);
     }),
   );
 

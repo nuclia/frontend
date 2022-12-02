@@ -5,12 +5,13 @@
   import { resetStore, nucliaStore } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, loadFonts, loadSvgSprite, coerceBooleanProperty } from '../../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { get_current_component } from 'svelte/internal';
+  import { WidgetFeatures } from '@nuclia/core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -24,9 +25,12 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let filter = false;
+  export let features = '';
 
-  $: _filter = coerceBooleanProperty(filter);
+  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+    {},
+  );
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -62,6 +66,7 @@
       state,
       {
         highlight: true,
+        features: _features,
       },
     );
     if (cdn) {
@@ -92,7 +97,7 @@
   {#if ready}
     <SearchInput
       {placeholder}
-      hasFilterButton={_filter}
+      hasFilterButton={_features.filter}
       searchBarWidget={true} />
   {/if}
   <div
