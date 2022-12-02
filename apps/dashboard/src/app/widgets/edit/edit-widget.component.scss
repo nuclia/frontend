@@ -32,16 +32,18 @@
   }
   .two-cols {
     display: flex;
+    gap: rhythm(3);
     & > div:first-child {
-      width: 333px;
+      width: rhythm(40);
       flex: 0 0 auto;
     }
-    .options {
+
+    .container {
       background-color: $color-light-stronger;
-      margin-right: rhythm(3);
     }
+
     .snippet {
-      background-color: $color-light-stronger;
+      padding: 0 rhythm(2);
       flex: 1 1 auto;
       min-width: 0;
     }
@@ -50,12 +52,14 @@
 pre {
   overflow-x: scroll;
 }
+.options .label {
+  padding: 0 rhythm(3);
+}
 .snippet .label {
   align-items: center;
-  border-bottom: 1px solid var(--stf-gray-lighter-3);
+  border-bottom: 1px solid $color-neutral-light;
   display: flex;
   justify-content: space-between;
-  padding: 0 rhythm(2);
   position: relative;
   height: rhythm(6);
   line-height: rhythm(2);
@@ -65,37 +69,16 @@ pre {
   display: flex;
   gap: rhythm(4);
 }
-
-.tabs {
-  display: flex;
-  & > div {
-    cursor: pointer;
-    width: 50%;
-    text-align: center;
-    background-color: var(--stf-gray-lighter-3);
-    &.selected {
-      background-color: transparent;
-    }
-  }
-}
-.tab-content {
+.options-content {
   padding: rhythm(3);
-  .label {
-    font-size: size(l);
-    width: 50%;
-    display: inline-block;
-  }
-
-  > * {
-    display: block;
-    margin-bottom: rhythm(2);
-  }
-
-  pa-toggle {
-    display: block;
-    margin-bottom: rhythm(1);
-  }
 }
+.features {
+  display: flex;
+  flex-direction: column;
+  margin-top: rhythm(2);
+  gap: rhythm(1);
+}
+
 .buttons {
   padding: rhythm(3) 0;
   display: flex;

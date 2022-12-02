@@ -20,20 +20,6 @@ import { WidgetHintDialogComponent } from '../hint/widget-hint.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditWidgetComponent implements OnInit, OnDestroy {
-  styleForm = this.fb.group({
-    'color-primary-regular': [''],
-    'color-light-stronger': [''],
-    'color-dark-stronger': [''],
-    'color-neutral-strong': [''],
-    'color-backdrop': [''],
-    'font-size-base': [''],
-    'font-weight-body': [''],
-    'font-weight-semi-bold': [''],
-    'border-radius,': [''],
-    'z-index-modal': [''],
-    'z-index-modal-backdrop': [''],
-  });
-  styleFormFields = Object.keys(this.styleForm.controls);
   mainForm = this.fb.group({
     mode: ['input'],
     features: this.fb.group({
@@ -44,7 +30,6 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
       permalink: [false],
       suggestLabels: [false],
     }),
-    style: this.styleForm,
   });
   validationMessages = {
     title: {
@@ -54,7 +39,6 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   placeholder?: string;
   snippet = '';
   snippetPreview: SafeHtml = '';
-  currentTab = 'pref';
   kbId = '';
   kbState = '';
   zone = '';
@@ -187,24 +171,14 @@ export class EditWidgetComponent implements OnInit, OnDestroy {
   features="${this.features}" ${placeholder}
 ></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
-    const styles = Object.entries(this.styleForm.value)
-      .filter(([, value]) => !!value)
-      .map(([key, value]) => `    --custom-${key}: ${value} !important;`);
-    const styleStr =
-      styles.length === 0
-        ? ''
-        : `<style>
-  nuclia-search {
-${styles.join('\n')}
-  }
-</style>`;
+
     this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
       this.snippet.replace(
         'zone=',
         `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
       lang="${this.translation.currentLang}"
       state="${this.kbState}" notpublic zone=`,
-      ) + styleStr,
+      ),
     );
     markForCheck(this.cdr);
   }
@@ -261,9 +235,6 @@ ${styles.join('\n')}
   private trackChanges() {
     if (this.mainForm.value.mode !== this.widget?.mode) {
       this.tracking.logEvent(`mode_widget_${this.mainForm.value.mode}`);
-    }
-    if (Object.entries(this.mainForm.value.style || {}).some(([key, value]) => value !== this.widget?.style?.[key])) {
-      this.tracking.logEvent('mode_widget_style');
     }
   }
 

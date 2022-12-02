@@ -9,7 +9,7 @@
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates } from '@nuclia/core';
   import globalCss from '../../common/_global.scss';
-  import { customStyle, setWidgetActions, widgetType } from '../../core/stores/widget.store';
+  import { setWidgetActions, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
@@ -47,7 +47,6 @@
   };
 
   let svgSprite;
-  let style: string;
   let ready = false;
 
   onMount(() => {
@@ -77,8 +76,6 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    // Load custom styles
-    customStyle.subscribe((css) => (style = css));
 
     initViewerEffects(_permalink);
 
@@ -93,7 +90,6 @@
 
 <div
   class="nuclia-widget"
-  {style}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     <ViewerModal />

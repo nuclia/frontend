@@ -19,24 +19,12 @@
       </div>
       <div class="two-cols">
         <div>
-          <div class="options">
-            <div class="tabs">
-              <div
-                class="label"
-                [class.selected]="currentTab === 'pref'"
-                (click)="currentTab = 'pref'">
-                {{ 'stash.widgets.preferences' | translate }}
-              </div>
-              <div
-                class="label"
-                [class.selected]="currentTab === 'style'"
-                (click)="currentTab = 'style'">
-                {{ 'stash.widgets.style' | translate }}
-              </div>
+          <div class="container options">
+            <div class="label">
+              {{ 'stash.widgets.preferences' | translate }}
             </div>
-            <div
-              *ngIf="currentTab === 'pref'"
-              class="tab-content">
+
+            <div class="options-content">
               <pa-select
                 [label]="'stash.widgets.mode' | translate"
                 formControlName="mode">
@@ -45,6 +33,7 @@
                 <pa-option value="video">{{ 'stash.widgets.mode.video' | translate }}</pa-option>
               </pa-select>
               <div
+                class="features"
                 formGroupName="features"
                 *ngIf="widgetMode !== 'video'">
                 <pa-toggle
@@ -68,17 +57,9 @@
                 </pa-input>
               </div>
             </div>
-            <div
-              *ngIf="currentTab === 'style'"
-              class="tab-content"
-              formGroupName="style">
-              <div *ngFor="let field of styleFormFields">
-                <pa-input [formControlName]="field">{{ field }}</pa-input>
-              </div>
-            </div>
           </div>
         </div>
-        <div class="snippet">
+        <div class="container snippet">
           <div class="label">
             <span>
               {{ 'stash.widgets.snippet' | translate }}

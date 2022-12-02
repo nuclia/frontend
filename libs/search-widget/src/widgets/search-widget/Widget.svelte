@@ -13,7 +13,7 @@
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
-  import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
+  import { setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
   import { activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
@@ -66,7 +66,6 @@
   };
 
   let svgSprite;
-  let style: string;
   let ready = false;
 
   onMount(() => {
@@ -97,8 +96,6 @@
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    // Load custom styles
-    customStyle.subscribe((css) => (style = css));
 
     activateTypeAheadSuggestions();
 
@@ -119,7 +116,6 @@
 
 <div
   class="nuclia-widget"
-  {style}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
     {#if type === 'input'}
