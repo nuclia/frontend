@@ -3,7 +3,7 @@ import { nucliaState, nucliaStore } from './old-stores/main.store';
 import { PENDING_RESULTS } from './models';
 import { search } from './api';
 import { navigateToLink } from '../core/stores/widget.store';
-import { ResourceProperties } from '@nuclia/core';
+import { ExtractedDataTypes, ResourceProperties } from '@nuclia/core';
 import { forkJoin } from 'rxjs';
 
 export const setupTriggerSearch = (dispatch: (event: string, details: any) => void | undefined): void => {
@@ -17,8 +17,10 @@ export const setupTriggerSearch = (dispatch: (event: string, details: any) => vo
       switchMap((query) =>
         forkJoin([nucliaStore().searchOptions.pipe(take(1)), nucliaStore().filters.pipe(take(1))]).pipe(
           map(([options, filters]) => {
-            const show = navigateToLink.getValue() ? [ResourceProperties.BASIC, ResourceProperties.VALUES] : [];
-            const currentOptions = { ...options, show, filters };
+            const show = navigateToLink.getValue()
+              ? [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.EXTRACTED]
+              : [ResourceProperties.BASIC, ResourceProperties.EXTRACTED];
+            const currentOptions = { ...options, show, filters, extracted: [ExtractedDataTypes.METADATA] };
             return { query, options: currentOptions };
           }),
         ),
