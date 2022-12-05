@@ -95,7 +95,11 @@ export const nucliaStore = (): NucliaStore => {
           }
 
           // add the rest of the fulltext results
-          smartResults = [...smartResults, ...fullTextResults];
+          const existingResourceIds = smartResults.map((res) => res.id);
+          const remainingFullTextResults = fullTextResults
+            .slice(1)
+            .filter((res) => !existingResourceIds.includes(res.id));
+          smartResults = [...smartResults, ...remainingFullTextResults];
 
           // put the paragraphs in each resource
           results.paragraphs?.results?.forEach((paragraph) => {
