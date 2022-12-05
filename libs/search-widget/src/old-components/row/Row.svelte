@@ -77,7 +77,7 @@
               on:click={() => searchBy(label)} />
           {/each}
           {#if labels.length > 4}
-            <div class="label">+</div>
+            <Label label={{ labelset: labels[4].labelset, label: '+' }} />
           {/if}
         </div>
       </div>
