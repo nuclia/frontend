@@ -41,6 +41,7 @@
 	"resource.summary": "Resum",
 	"results.count": "Resultat {{index}} de {{total}}",
 	"results.empty": "Cap resultat",
+	"results.more_labels": "{{count}} etiquetes més",
 	"results.paragraphs": "Paràgrafs rellevants",
 	"results.semantic": "Resultats semàntics",
 	"results.sentences": "Frases rellevants",

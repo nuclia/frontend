@@ -17,11 +17,24 @@
     font-size: 0.75em;
   }
 
-  .labels {
+  .labels,
+  .labels-dropdown {
     display: flex;
     flex-wrap: wrap;
     gap: var(--rhythm-1);
-    margin-top: 0.5em;
+
+  }
+
+  .labels {
+    margin-top: var(--rhythm-1);
+  }
+
+  .more-labels {
+    position: relative;
+  }
+
+  .labels-dropdown {
+    padding: var(--rhythm-1_5);
   }
 
   .blocks {

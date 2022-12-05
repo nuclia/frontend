@@ -42,6 +42,7 @@
 	"resource.summary": "Summary",
 	"results.count": "Result {{index}} of {{total}}",
 	"results.empty": "No result found",
+	"results.more_labels": "{{count}} more labels",
 	"results.paragraphs": "Relevant paragraphs",
 	"results.semantic": "Semantic results",
 	"results.sentences": "Relevant sentences",
