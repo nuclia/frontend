@@ -61,7 +61,6 @@
       },
       state,
       {
-        fuzzyOnly: true,
         highlight: true,
       },
     );

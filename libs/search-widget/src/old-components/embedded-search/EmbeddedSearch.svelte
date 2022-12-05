@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { merge, map } from 'rxjs';
+  import { merge, map, pipe, tap } from 'rxjs';
   import Toggle from '../../common/toggle/Toggle.svelte';
   import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import Results from '../results/Results.svelte';
@@ -9,10 +9,10 @@
   export let placeholder = '';
   export let filter = false;
 
-  const results = nucliaState().results;
+  const results = nucliaState().smartResults.pipe(tap((results) => console.log(results)));
   const showResults = merge(
     nucliaStore().triggerSearch.pipe(map(() => true)),
-    nucliaState().results.pipe(map((results) => results.length > 0)),
+    nucliaState().smartResults.pipe(map((results) => results.length > 0)),
   );
   const hasQuery = nucliaState().query.pipe(map((query) => !!query));
   const onChange = (checked: boolean) =>

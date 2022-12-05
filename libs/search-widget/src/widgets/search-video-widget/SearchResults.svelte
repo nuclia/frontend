@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime, forkJoin, map, switchMap, take } from 'rxjs';
+  import { debounceTime, forkJoin, map, pipe, switchMap, take, tap } from 'rxjs';
   import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
@@ -14,33 +14,11 @@
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
-  const results = nucliaState().results;
+  const results = nucliaState().smartResults.pipe(tap((results) => console.log(results)));
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
   const showLoading = pendingResults.pipe(debounceTime(2000));
   let svgSprite;
-
-  const enhancedResults = results.pipe(
-    switchMap((results) =>
-      forkJoin(
-        results.map((result) =>
-          forkJoin([
-            nucliaState().getMatchingParagraphs(result.id).pipe(take(1)),
-            nucliaState().getMatchingSentences(result.id).pipe(take(1)),
-          ]).pipe(
-            map(([paragraphs, sentences]) => ({
-              resource: result,
-              hasParagraphs: paragraphs.length > 0,
-              hasSentences: sentences.length > 0,
-            })),
-          ),
-        ),
-      ),
-    ),
-  );
-  const paragraphResults = enhancedResults.pipe(
-    map((results) => results.filter((result) => result.hasParagraphs).map((result) => result.resource)),
-  );
 
   onMount(() => {
     loadFonts();
@@ -68,7 +46,7 @@
       <div
         class="results"
         transition:fade={{ duration: Duration.SUPERFAST }}>
-        {#each $paragraphResults as result}
+        {#each $results as result}
           {#if result.icon === 'application/pdf'}
             <PdfTile {result} />
           {:else}

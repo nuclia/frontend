@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
   import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
+  import type { MediaWidgetParagraph, PdfWidgetParagraph } from '../../core/models';
 
-  export let paragraph;
+  export let paragraph: MediaWidgetParagraph | PdfWidgetParagraph;
   export let stack = false;
   export let ellipsis = false;
   export let selected = false;
@@ -16,6 +17,13 @@
   const open = () => {
     dispatch('open', { paragraph });
   };
+  const pdfParagraph: PdfWidgetParagraph | undefined = paragraph.hasOwnProperty('page')
+    ? (paragraph as PdfWidgetParagraph)
+    : undefined;
+  const videoParagraph: MediaWidgetParagraph | undefined = paragraph.hasOwnProperty('start_seconds')
+    ? (paragraph as MediaWidgetParagraph)
+    : undefined;
+  const isSemantic = paragraph.paragraph.sentences && paragraph.paragraph.sentences.length > 0;
 </script>
 
 <li
@@ -29,13 +37,13 @@
   <div
     class="indicator-container"
     class:hidden={hideIndicator}>
-    {#if paragraph.page !== undefined}
+    {#if pdfParagraph}
       <PageIndicator
-        page={paragraph.page}
+        page={pdfParagraph.page}
         {hovering} />
-    {:else}
+    {:else if videoParagraph}
       <TimeIndicator
-        start={paragraph.start_seconds || 0}
+        start={videoParagraph.start_seconds || 0}
         {selected}
         hover={hovering}
         {minimized}
@@ -44,6 +52,7 @@
   </div>
   <div
     class="paragraph-text"
+    class:semantic={isSemantic}
     class:ellipsis>
     {@html paragraph.text}
   </div>

@@ -30,6 +30,7 @@ let _state: {
   filters: Observable<string[]>;
   searchOptions: Observable<SearchOptions>;
   results: Observable<IResource[]>;
+  smartResults: Observable<Search.SmartResult[]>;
   hasSearchError: Observable<boolean>;
   pendingResults: Observable<boolean>;
   displayedResource: Observable<DisplayedResource>;
@@ -58,6 +59,71 @@ export const nucliaStore = (): NucliaStore => {
       results: _store.searchResults.pipe(
         filter((res) => !!res.resources),
         map((results) => getSortedResources(results)),
+        startWith([] as IResource[]),
+      ),
+      smartResults: _store.searchResults.pipe(
+        filter((res) => !!res.resources),
+        map((results) => {
+          const allResources = results.resources;
+          if (!allResources || Object.keys(allResources).length === 0) {
+            return [] as Search.SmartResult[];
+          }
+          const fullTextResults =
+            results.fulltext?.results.map((res) => allResources[res.rid]).filter((res) => !!res) || [];
+          const semanticResults = results.sentences?.results || [];
+          let smartResults: Search.SmartResult[] = [];
+
+          // best fulltext match goes first
+          if (fullTextResults.length > 0) {
+            smartResults.push(fullTextResults[0]);
+          }
+
+          // if not a keyword search, add the 2 best semantic sentences
+          const looksLikeKeywordSearch = _store!.query.value.split(' ').length < 3;
+          if (!looksLikeKeywordSearch) {
+            const twoBestSemantic = semanticResults.slice(0, 2);
+            twoBestSemantic.forEach((sentence) => {
+              const resource = allResources[sentence.rid];
+              if (resource) {
+                smartResults = addParagraphToSmartResults(
+                  smartResults,
+                  resource,
+                  generateFakeParagraphForSentence(allResources, sentence),
+                );
+              }
+            });
+          }
+
+          // add the rest of the fulltext results
+          smartResults = [...smartResults, ...fullTextResults];
+
+          // put the paragraphs in each resource
+          results.paragraphs?.results?.forEach((paragraph) => {
+            const resource = allResources[paragraph.rid];
+            if (resource) {
+              smartResults = addParagraphToSmartResults(smartResults, resource, paragraph);
+            }
+          });
+
+          // for resources without paragraphs, create a fake one using summary if it exists (else, remove the resource)
+          smartResults = smartResults
+            .map((resource) => {
+              if (resource.paragraphs && resource.paragraphs.length > 0) {
+                return resource;
+              } else {
+                const summaryParagraph = generateFakeParagraphForSummary(resource);
+                if (summaryParagraph) {
+                  return { ...resource, paragraphs: [summaryParagraph] };
+                } else {
+                  return undefined;
+                }
+              }
+            })
+            .filter((r) => !!r) as Search.SmartResult[];
+
+          console.log('smartResults', smartResults);
+          return smartResults;
+        }),
         startWith([] as IResource[]),
       ),
       hasSearchError: _store.hasSearchError.asObservable(),
@@ -135,3 +201,55 @@ const getSortedResources = (results: Search.Results) => {
     .sort((a, b) => b.score - a.score)
     .map((data) => data.res);
 };
+
+function addParagraphToSmartResults(
+  smartResults: Search.SmartResult[],
+  resource: Search.SmartResult,
+  paragraph: Search.Paragraph | undefined,
+): Search.SmartResult[] {
+  if (!paragraph) {
+    return smartResults;
+  }
+  const existing = smartResults.find((r) => r.id === resource.id);
+  if (existing) {
+    existing.paragraphs = existing.paragraphs || [];
+    existing.paragraphs.push(paragraph);
+  } else {
+    smartResults.push({ ...resource, paragraphs: [paragraph] });
+  }
+  return smartResults;
+}
+
+function generateFakeParagraphForSentence(
+  resources: { [id: string]: IResource },
+  sentence: Search.Sentence | undefined,
+): Search.SmartParagraph | undefined {
+  if (!sentence) {
+    return undefined;
+  }
+  const resource = resources[sentence.rid];
+  return resource
+    ? {
+        score: 0,
+        rid: resource.id,
+        field_type: sentence.field_type,
+        field: sentence.field,
+        text: sentence.text,
+        labels: [],
+        sentences: [sentence],
+      }
+    : undefined;
+}
+
+function generateFakeParagraphForSummary(resource: IResource): Search.SmartParagraph | undefined {
+  return resource.summary
+    ? {
+        score: 0,
+        rid: resource.id,
+        field_type: 'a',
+        field: '',
+        text: resource.summary,
+        labels: [],
+      }
+    : undefined;
+}
