@@ -12,9 +12,7 @@
             class="nav-link"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="home"></pa-icon>
+            <pa-icon name="home"></pa-icon>
             <span class="nav-link-title">{{ 'stash.home' | translate }}</span>
           </a>
         </div>
@@ -23,18 +21,14 @@
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)"
             (click)="createNewLink()">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="link"></pa-icon>
+            <pa-icon name="link"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.link' | translate }}</span>
           </a>
           <a
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)"
             (click)="uploadNewFiles(false)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="file"></pa-icon>
+            <pa-icon name="file"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.file' | translate }}</span>
           </a>
           <a
@@ -42,9 +36,7 @@
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)"
             (click)="uploadNewFiles(true)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="folder"></pa-icon>
+            <pa-icon name="folder"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.folder' | translate }}</span>
           </a>
         </div>
@@ -57,18 +49,14 @@
             routerLinkActive="active"
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="activity-log"></pa-icon>
+            <pa-icon name="activity-log"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
           </a>
           <a
             [routerLink]="kbUrl + '/resources'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="list"></pa-icon>
+            <pa-icon name="list"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
           </a>
           <a
@@ -76,9 +64,7 @@
             [routerLink]="kbUrl + '/ontologies'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="label"></pa-icon>
+            <pa-icon name="label"></pa-icon>
             <span class="nav-link-title">{{ 'resource.classification' | translate }}</span>
           </a>
           <a
@@ -86,9 +72,7 @@
             [routerLink]="[kbUrl + '/entities']"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="search-plus"></pa-icon>
+            <pa-icon name="search-plus"></pa-icon>
             <span class="nav-link-title">{{ 'generic.insights' | translate }}</span>
           </a>
         </div>
@@ -101,9 +85,7 @@
             routerLinkActive="active"
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="settings"></pa-icon>
+            <pa-icon name="settings"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
         </div>
@@ -115,9 +97,7 @@
             routerLinkActive="active"
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="submenu"></pa-icon>
+            <pa-icon name="submenu"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
           </a>
         </div>
@@ -129,9 +109,7 @@
               [routerLink]="kbUrl + '/users'"
               routerLinkActive="active"
               class="nav-link">
-              <pa-icon
-                [size]="smallNavbar ? 'small' : 'medium'"
-                name="users"></pa-icon>
+              <pa-icon name="users"></pa-icon>
               <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
             </a>
           </div>
@@ -144,9 +122,7 @@
             routerLinkActive="active"
             class="nav-link"
             [class.disabled]="!(isAdminOrContrib | async)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="widget"></pa-icon>
+            <pa-icon name="widget"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
         </div>
@@ -158,9 +134,7 @@
               [routerLink]="kbUrl + '/keys'"
               routerLinkActive="active"
               class="nav-link">
-              <pa-icon
-                [size]="smallNavbar ? 'small' : 'medium'"
-                name="lock-off"></pa-icon>
+              <pa-icon name="lock-off"></pa-icon>
               <span class="nav-link-title">{{ 'stash.side.api_keys' | translate }}</span>
             </a>
           </div>
@@ -173,9 +147,7 @@
             class="nav-link"
             routerLinkActive="active"
             [class.disabled]="!(isAccountManager | async)">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="account"></pa-icon>
+            <pa-icon name="account"></pa-icon>
             <span class="nav-link-title">{{ 'account.manage' | translate }}</span>
           </a>
         </div>
@@ -190,9 +162,7 @@
             [routerLink]="(accountUrl | async) + '/home'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="home"></pa-icon>
+            <pa-icon name="home"></pa-icon>
             <span class="nav-link-title">{{ 'account.home' | translate }}</span>
           </a>
         </div>
@@ -201,9 +171,7 @@
             [routerLink]="(accountUrl | async) + '/settings'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="settings"></pa-icon>
+            <pa-icon name="settings"></pa-icon>
             <span class="nav-link-title">{{ 'account.settings' | translate }}</span>
           </a>
         </div>
@@ -212,9 +180,7 @@
             [routerLink]="(accountUrl | async) + '/kbs'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="knowledge-box"></pa-icon>
+            <pa-icon name="knowledge-box"></pa-icon>
             <span class="nav-link-title">{{ 'account.knowledgeboxes' | translate }}</span>
           </a>
         </div>
@@ -223,9 +189,7 @@
             [routerLink]="(accountUrl | async) + '/users'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="users"></pa-icon>
+            <pa-icon name="users"></pa-icon>
             <span class="nav-link-title">{{ 'account.users' | translate }}</span>
           </a>
         </div>
@@ -234,9 +198,7 @@
             [routerLink]="(accountUrl | async) + '/nua'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="key"></pa-icon>
+            <pa-icon name="key"></pa-icon>
             <span class="nav-link-title">{{ 'account.nua_keys' | translate }}</span>
           </a>
         </div>
@@ -247,9 +209,7 @@
             [routerLink]="(accountUrl | async) + '/billing'"
             routerLinkActive="active"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="payment"></pa-icon>
+            <pa-icon name="payment"></pa-icon>
             <span class="nav-link-title">{{ 'account.billing' | translate }}</span>
           </a>
         </div>
@@ -261,9 +221,7 @@
           <a
             [routerLink]="kbUrl"
             class="nav-link">
-            <pa-icon
-              [size]="smallNavbar ? 'small' : 'medium'"
-              name="chevron-left"></pa-icon>
+            <pa-icon name="chevron-left"></pa-icon>
             <span class="nav-link-title">{{ 'generic.back' | translate }}</span>
           </a>
         </div>
