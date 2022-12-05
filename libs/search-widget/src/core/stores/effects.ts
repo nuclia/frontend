@@ -4,7 +4,7 @@ import { suggestions, typeAhead } from './suggestions.store';
 import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { NO_RESULTS } from '../models';
-import { searchWidget } from './widget.store';
+import { widgetFeatures } from './widget.store';
 import type { Classification, Search } from '@nuclia/core';
 
 const subscriptions: Subscription[] = [];
@@ -40,8 +40,8 @@ export function activateTypeAheadSuggestions() {
             results: NO_RESULTS,
           });
         }
-        const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = searchWidget.getValue()
-          ?.features.suggestLabels
+        const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = widgetFeatures.getValue()
+          ?.suggestLabels
           ? [suggest(query), predict(query)]
           : [suggest(query), of([])];
         return forkJoin(requests).pipe(

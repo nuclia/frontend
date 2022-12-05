@@ -13,7 +13,14 @@
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
-  import { setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
+  import {
+    setWidgetActions,
+    widgetType,
+    widgetMode,
+    widgetFeatures,
+    widgetPlaceholder,
+    WidgetMode,
+  } from '../../core/stores/widget.store';
   import { activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
@@ -22,7 +29,7 @@
   export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
-  export let type = 'input'; // input, form
+  export let type = 'embedded'; // 'popup' | 'embedded'
   export let placeholder = '';
   export let lang = '';
   export let cdn = '';
@@ -91,6 +98,15 @@
     if (cdn) {
       setCDN(cdn);
     }
+
+    // Setup widget in the store
+    widgetMode.set(type as WidgetMode);
+    widgetFeatures.set(_features);
+    if (placeholder) {
+      widgetPlaceholder.set(placeholder);
+    }
+    widgetType.set('search');
+
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
@@ -102,10 +118,6 @@
     setupTriggerSearch(dispatchCustomEvent);
     initViewerEffects(_features.permalink);
 
-    widgetType.set('search');
-    if (_features.navigateToLink) {
-      navigateToLink.set(true);
-    }
     ready = true;
 
     return () => reset();
@@ -118,14 +130,10 @@
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    {#if type === 'input'}
-      <PopupSearch
-        {placeholder}
-        filter={_features.filter} />
-    {:else if type === 'form'}
-      <EmbeddedSearch
-        {placeholder}
-        filter={_features.filter} />
+    {#if type === 'popup'}
+      <PopupSearch />
+    {:else if type === 'embedded'}
+      <EmbeddedSearch />
     {:else}
       {type} widget is not implemented yet
     {/if}

@@ -6,9 +6,6 @@
   import SearchInput from '../search-input/SearchInput.svelte';
   import { _ } from '../../core/i18n';
 
-  export let placeholder = '';
-  export let filter = false;
-
   const results = nucliaState().smartResults;
   const showResults = merge(
     nucliaStore().triggerSearch.pipe(map(() => true)),
@@ -24,10 +21,7 @@
 
 <div class="sw-embedded-search">
   <div class="search-input-container">
-    <SearchInput
-      hasFilterButton={filter}
-      embeddedSearch={true}
-      {placeholder} />
+    <SearchInput embeddedSearch={true} />
   </div>
 
   <div class="options">

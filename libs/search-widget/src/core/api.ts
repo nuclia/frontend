@@ -15,7 +15,6 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
-import { searchWidget } from './stores/widget.store';
 import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 
@@ -32,22 +31,15 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
     SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   nucliaApi = new Nuclia(options);
-  // FIXME: before removing the widget from the backend, we need to manage custom style on the template as well
-  nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
-    nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
-    searchWidget.set({
-      ...widget,
-      features: widgetOptions.features || {},
-    });
-    if (searchWidget.getValue()!.features.suggestLabels) {
-      const kbPath = nucliaApi?.knowledgeBox.fullpath;
-      if (kbPath) {
-        nucliaPrediction = new NucliaPrediction(getCDN());
-        const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
-        nucliaPrediction.loadModels(kbPath, authHeaders);
-      }
+  nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
+  if (widgetOptions.features?.suggestLabels) {
+    const kbPath = nucliaApi?.knowledgeBox.fullpath;
+    if (kbPath) {
+      nucliaPrediction = new NucliaPrediction(getCDN());
+      const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
+      nucliaPrediction.loadModels(kbPath, authHeaders);
     }
-  });
+  }
   STATE = state;
 };
 

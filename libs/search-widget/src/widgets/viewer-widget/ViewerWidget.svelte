@@ -9,7 +9,7 @@
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates } from '@nuclia/core';
   import globalCss from '../../common/_global.scss';
-  import { setWidgetActions, widgetType } from '../../core/stores/widget.store';
+  import { setWidgetActions, widgetFeatures, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
@@ -71,6 +71,14 @@
     if (cdn) {
       setCDN(cdn);
     }
+
+    // Setup widget in the store
+    widgetFeatures.set({
+      permalink: _permalink,
+      notPublic: _notpublic,
+    });
+    widgetType.set('viewer');
+
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
@@ -79,7 +87,6 @@
 
     initViewerEffects(_permalink);
 
-    widgetType.set('viewer');
     ready = true;
 
     return () => reset();

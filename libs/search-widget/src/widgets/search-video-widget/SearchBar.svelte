@@ -12,6 +12,7 @@
   import globalCss from '../../common/_global.scss';
   import { get_current_component } from 'svelte/internal';
   import { WidgetFeatures } from '@nuclia/core';
+  import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let widgetid = '';
@@ -73,6 +74,13 @@
       setCDN(cdn);
     }
 
+    // Setup widget in the store
+    widgetMode.set('embedded');
+    widgetFeatures.set(_features);
+    if (placeholder) {
+      widgetPlaceholder.set(placeholder);
+    }
+
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
@@ -95,10 +103,7 @@
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    <SearchInput
-      {placeholder}
-      hasFilterButton={_features.filter}
-      searchBarWidget={true} />
+    <SearchInput searchBarWidget={true} />
   {/if}
   <div
     id="nuclia-glyphs-sprite"

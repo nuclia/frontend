@@ -182,6 +182,7 @@ export interface Widgets {
   [key: string]: Widget;
 }
 
+// TODO: remove
 export interface Widget {
   id: string;
   mode: 'input' | 'form';
@@ -190,7 +191,6 @@ export interface Widget {
   features: WidgetFeatures;
   filters?: string[];
   topEntities?: string[];
-  style?: { [key: string]: string };
 }
 
 export interface WidgetFeatures {

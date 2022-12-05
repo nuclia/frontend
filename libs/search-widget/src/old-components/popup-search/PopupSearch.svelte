@@ -5,9 +5,6 @@
   import SearchInput from '../search-input/SearchInput.svelte';
   import { isPopupSearchOpen } from '../../core/stores/modal.store';
 
-  export let placeholder = '';
-  export let filter = false;
-
   let inputElement;
 
   const results = nucliaState().smartResults;
@@ -17,8 +14,6 @@
   <div bind:this={inputElement}>
     <SearchInput
       popupSearch={true}
-      hasFilterButton={filter}
-      {placeholder}
       on:search={() => isPopupSearchOpen.set(true)} />
   </div>
 

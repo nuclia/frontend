@@ -6,7 +6,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'form';
+  let selected = 'embedded';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
@@ -53,8 +53,8 @@
       <select
         id="widget-select"
         bind:value={selected}>
-        <option value="input">Popup search</option>
-        <option value="form">Embedded search</option>
+        <option value="popup">Popup search</option>
+        <option value="embedded">Embedded search</option>
         <option value="two-widgets">Search bar and result widgets</option>
         <option value="viewer">Viewer widget</option>
       </select>
@@ -63,7 +63,7 @@
     </section>
   </header>
 
-  {#if selected === 'input'}
+  {#if selected === 'popup'}
     <h3>Input widget</h3>
     <div class="input-container">
       <NucliaWidget
@@ -73,13 +73,13 @@
         backend="https://stashify.cloud/api"
         cdn="/"
         widgetid="label-annotation"
-        type="input"
+        type="popup"
         features="permalink,filter"
         lang="en"
         placeholder="Input placeholder is invisible" />
     </div>
   {/if}
-  {#if selected === 'form'}
+  {#if selected === 'embedded'}
     <h2>
       Embedded widget <small>(formerly known as form widget)</small>
     </h2>
@@ -89,10 +89,9 @@
       backend="https://stashify.cloud/api"
       cdn="https://cdn.stashify.cloud/"
       widgetid="dashboard"
-      type="form"
+      type="embedded"
       lang="en"
-      features="filter"
-      placeholder="Here's the placeholder" />
+      features="filter" />
   {/if}
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
