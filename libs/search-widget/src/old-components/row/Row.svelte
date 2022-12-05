@@ -1,10 +1,13 @@
 <script lang="ts">
   import { IResource, ReadableResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
+  import { _ } from '../../core/i18n';
   import { nucliaState } from '../../core/old-stores/main.store';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import Label from '../../common/label/Label.svelte';
+  import Dropdown from '../../common/dropdown/Dropdown.svelte';
+  import Button from '../../common/button/Button.svelte';
   import { searchBy } from '../../common/label/label.utils';
   import { goToResource } from '../results/results.utils';
 
@@ -15,6 +18,19 @@
   const paragraphs = nucliaState().getMatchingParagraphs(result.id);
   const sentences = nucliaState().getMatchingSentences(result.id);
   $: labels = new ReadableResource(result).getClassifications();
+
+  const labelDisplayLimit = 4;
+  let displayMoreLabels = false;
+  let moreLabelsButton: HTMLElement | undefined;
+  let moreLabelsPosition: { left: number; top: number } | undefined;
+
+  const showMoreLabels = (event) => {
+    event.stopPropagation();
+    if (moreLabelsButton) {
+      moreLabelsPosition = { left: 0, top: moreLabelsButton.clientHeight + 6 };
+      displayMoreLabels = true;
+    }
+  };
 </script>
 
 <div
@@ -70,14 +86,38 @@
           {/if}
         </div>
         <div class="labels">
-          {#each labels.slice(0, 4) as label}
+          {#each labels.slice(0, labelDisplayLimit) as label}
             <Label
               {label}
               clickable
               on:click={() => searchBy(label)} />
           {/each}
-          {#if labels.length > 4}
-            <div class="label">+</div>
+          {#if labels.length > labelDisplayLimit}
+            <div
+              class="more-labels"
+              bind:this={moreLabelsButton}>
+              <Button
+                aspect="basic"
+                size="small"
+                active={displayMoreLabels}
+                on:click={showMoreLabels}>
+                {$_('results.more_labels', { count: labels.length - labelDisplayLimit })}
+              </Button>
+              {#if displayMoreLabels}
+                <Dropdown
+                  position={moreLabelsPosition}
+                  on:close={() => (displayMoreLabels = false)}>
+                  <div class="labels-dropdown">
+                    {#each labels.slice(labelDisplayLimit) as label (label.labelset + label.label)}
+                      <Label
+                        {label}
+                        clickable
+                        on:click={() => searchBy(label)} />
+                    {/each}
+                  </div>
+                </Dropdown>
+              {/if}
+            </div>
           {/if}
         </div>
       </div>

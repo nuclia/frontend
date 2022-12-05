@@ -61,6 +61,7 @@
 
   .labels {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--rhythm-1);
     margin: var(--rhythm-1) 0;
   }

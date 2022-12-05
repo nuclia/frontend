@@ -39,6 +39,7 @@
 	"resource.summary": "Résumé",
 	"results.count": "Résultat {{index}} sur {{total}}",
 	"results.empty": "Aucun résultat trouvé",
+	"results.more_labels": "{{count}}  autres labels",
 	"results.paragraphs": "Paragraphes pertinents",
 	"results.semantic": "Résultats sémantiques",
 	"results.sentences": "Phrases pertinentes",

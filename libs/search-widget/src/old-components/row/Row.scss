@@ -17,24 +17,24 @@
     font-size: 0.75em;
   }
 
-  .labels {
+  .labels,
+  .labels-dropdown {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--rhythm-1);
-    margin-top: 0.5em;
+
   }
 
-  .label {
-    display: inline-block;
-    margin-right: 4px;
-    padding: 0.25em 1em;
-    max-width: 100%;
-    font-size: 0.75em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    color: var(--color-tertiary-regular);
-    background-color: var(--color-tertiary-lightest);
-    border-radius: 2px;
+  .labels {
+    margin-top: var(--rhythm-1);
+  }
+
+  .more-labels {
+    position: relative;
+  }
+
+  .labels-dropdown {
+    padding: var(--rhythm-1_5);
   }
 
   .blocks {
