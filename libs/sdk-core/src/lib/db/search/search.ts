@@ -9,7 +9,7 @@ export const search = (
   features: Search.Features[] | Search.ResourceFeatures[] = [],
   options?: SearchOptions,
 ) => {
-  if (!query && !hasFiltersOrFacets(options)) {
+  if (!query && !hasFiltersOrFacets(options) && !options?.inTitleOnly) {
     throw new Error('Search requires a query or some filters or some facets.');
   }
   const params = new URLSearchParams();

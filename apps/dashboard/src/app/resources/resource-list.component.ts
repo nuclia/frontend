@@ -21,8 +21,8 @@ import {
   Classification,
   Resource,
   RESOURCE_STATUS,
-  ResourceList,
   resourceToAlgoliaFormat,
+  Search,
 } from '@nuclia/core';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -275,16 +275,28 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     });
   }
 
-  getResources(): Observable<ResourceList> {
+  getResources(): Observable<Search.Results> {
     const page = this.page >= 1 ? this.page - 1 : 0;
     return of(1).pipe(
       tap(() => {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) => forkJoin([kb.listResources(page, this.pageSize), this.labelSets$.pipe(take(1))])),
-      map(([results, labelSets]) => {
-        this.data = results.resources.map((resource: Resource) => {
+      switchMap((kb) =>
+        forkJoin([
+          of(kb),
+          kb.search('', [Search.Features.DOCUMENT], {
+            inTitleOnly: true,
+            page_number: page,
+            page_size: this.pageSize,
+            sort: 'created',
+          }),
+          this.labelSets$.pipe(take(1)),
+        ]),
+      ),
+      map(([kb, results, labelSets]) => {
+        this.data = Object.values(results.resources || {}).map((resourceData) => {
+          const resource = new Resource(this.sdk.nuclia, kb.id, resourceData);
           const resourceWithLabels: ResourceWithLabels = {
             resource,
             labels: [],
@@ -303,7 +315,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         return results;
       }),
       tap((results) => {
-        this.statusTooltips = results.resources.reduce((status, resource) => {
+        this.statusTooltips = Object.values(results.resources || {}).reduce((status, resource) => {
           const key =
             resource.metadata?.status && resource.metadata.status !== RESOURCE_STATUS.PENDING
               ? resource.metadata.status.toLocaleLowerCase()
