@@ -9,7 +9,7 @@
   export let placeholder = '';
   export let filter = false;
 
-  const results = nucliaState().smartResults.pipe(tap((results) => console.log(results)));
+  const results = nucliaState().smartResults;
   const showResults = merge(
     nucliaStore().triggerSearch.pipe(map(() => true)),
     nucliaState().smartResults.pipe(map((results) => results.length > 0)),

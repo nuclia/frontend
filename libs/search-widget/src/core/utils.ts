@@ -2,7 +2,7 @@ import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import type { Search } from '@nuclia/core';
-import { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
+import type { PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);

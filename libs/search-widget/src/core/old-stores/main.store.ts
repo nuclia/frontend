@@ -121,7 +121,6 @@ export const nucliaStore = (): NucliaStore => {
             })
             .filter((r) => !!r) as Search.SmartResult[];
 
-          console.log('smartResults', smartResults);
           return smartResults;
         }),
         startWith([] as IResource[]),
