@@ -15,7 +15,6 @@
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
 
   export let backend = 'https://nuclia.cloud/api';
-  export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
   export let lang = '';
@@ -51,7 +50,6 @@
 
   onMount(() => {
     initNuclia(
-      widgetid,
       {
         backend,
         zone,

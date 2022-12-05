@@ -23,7 +23,7 @@ let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
 
-export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
+export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }

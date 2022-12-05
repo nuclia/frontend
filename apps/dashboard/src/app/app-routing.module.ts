@@ -1,5 +1,5 @@
-import { NgModule, Component } from '@angular/core';
-import { RouterModule, Routes, ExtraOptions } from '@angular/router';
+import { Component, NgModule } from '@angular/core';
+import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import { PageNotFoundComponent, PageNotFoundModule } from '@flaps/common';
 import { LoggedinGuard } from '@flaps/core';
@@ -186,7 +186,7 @@ const routes: Routes = [
                 canActivate: [AccountOwnerGuard],
               },
               {
-                path: 'widgets',
+                path: 'widget-generator',
                 loadChildren: () => import('./widgets/widgets.module').then((m) => m.WidgetsModule),
               },
             ],

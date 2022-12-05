@@ -71,10 +71,6 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   suggest(query: string): Observable<Search.Suggestions>;
 
-  getWidgets(): Observable<Widgets>;
-
-  getWidget(widgetId: string): Observable<Widget>;
-
   counters(): Observable<Counters>;
 
   listResources(page?: number, size?: number): Observable<ResourceList>;
@@ -105,10 +101,6 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   createResource(resource: IResource): Observable<{ uuid: string }>;
 
   createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }>;
-
-  saveWidget(id: string, widget: Partial<Widget>): Observable<void>;
-
-  deleteWidget(widgetId: string): Observable<void>;
 
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
 
@@ -176,21 +168,6 @@ export interface LabelSet {
 
 export interface LabelSets {
   [id: string]: LabelSet;
-}
-
-export interface Widgets {
-  [key: string]: Widget;
-}
-
-// TODO: remove
-export interface Widget {
-  id: string;
-  mode: 'input' | 'form';
-  placeholder?: string;
-  description?: string;
-  features: WidgetFeatures;
-  filters?: string[];
-  topEntities?: string[];
 }
 
 export interface WidgetFeatures {

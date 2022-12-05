@@ -12940,6 +12940,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>stash.widgets.configuration</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>stash.widgets.editLabels</name>
 						<description/>
 						<comment/>
@@ -13080,7 +13100,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.widgets.mode.form</name>
+						<name>stash.widgets.mode.embedded</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -13100,7 +13120,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.widgets.mode.input</name>
+						<name>stash.widgets.mode.popup</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -13181,26 +13201,6 @@
 					</concept_node>
 					<concept_node>
 						<name>stash.widgets.placeholder</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.widgets.preferences</name>
 						<description/>
 						<comment/>
 						<default_text/>

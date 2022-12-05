@@ -15,7 +15,6 @@
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
 
   export let backend = 'https://nuclia.cloud/api';
-  export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
   export let placeholder = '';
@@ -54,7 +53,6 @@
 
   onMount(() => {
     initNuclia(
-      widgetid,
       {
         backend,
         zone,

@@ -7,7 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppService } from '../../services/app.service';
 import { SisModalService } from '@nuclia/sistema';
-import { DEFAULT_FEATURES_LIST } from '../../widgets/widget.service';
+import { DEFAULT_FEATURES_LIST } from '../../widgets/widget-features';
 
 @Component({
   selector: 'app-topbar',
@@ -44,7 +44,7 @@ export class TopbarComponent implements AfterViewInit {
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
         lang="${this.translation.currentLang}"
-        type="input"
+        type="popup"
         features="${features}"></nuclia-search>`);
     }),
   );

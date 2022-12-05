@@ -1,0 +1,86 @@
+<div class="widget-generator">
+  <h2>
+    {{ 'stash.widgets.title' | translate }}
+  </h2>
+
+  <ng-container *ngIf="showWarning | async">
+    <div class="warning">
+      <pa-icon name="warning"></pa-icon>
+      <div class="warning-content">
+        <span [innerHTML]="'stash.widgets.warning' | translate"></span>
+        <ng-container *ngIf="showLink | async">
+          <span [innerHTML]="'stash.widgets.publish_kb' | translate"></span>
+          <a [routerLink]="homeUrl | async">{{ 'stash.widgets.publish_kb_link' | translate }}</a>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+
+  <div class="widget-preview">
+    <h3>{{ 'stash.widgets.preview' | translate }}</h3>
+    <div
+      id="preview"
+      [innerHtml]="snippetPreview"></div>
+  </div>
+
+  <form
+    [formGroup]="mainForm"
+    (change)="generateSnippet()">
+    <div class="snippet-configuration-container">
+      <section class="snippet-configuration">
+        <h3>{{ 'stash.widgets.configuration' | translate }}</h3>
+        <pa-select
+          [label]="'stash.widgets.mode' | translate"
+          formControlName="mode">
+          <pa-option value="popup">{{ 'stash.widgets.mode.popup' | translate }}</pa-option>
+          <pa-option value="embedded">{{ 'stash.widgets.mode.embedded' | translate }}</pa-option>
+          <pa-option value="video">{{ 'stash.widgets.mode.video' | translate }}</pa-option>
+        </pa-select>
+        <pa-input
+          *ngIf="widgetMode !== 'popup'"
+          [(value)]="placeholder"
+          (valueChange)="onPlaceholderChange($event)">
+          {{ 'stash.widgets.placeholder' | translate }}
+        </pa-input>
+        <div
+          class="widget-features"
+          formGroupName="features">
+          <pa-toggle
+            *ngIf="isTrainingEnabled | async"
+            formControlName="suggestLabels">
+            {{ 'stash.widgets.suggestLabels' | translate }}
+          </pa-toggle>
+          <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
+          <pa-toggle formControlName="entityAnnotation">
+            {{ 'stash.widgets.entityAnnotation' | translate }}
+          </pa-toggle>
+          <pa-toggle formControlName="filter">{{ 'stash.widgets.filter' | translate }}</pa-toggle>
+          <pa-toggle formControlName="permalink">{{ 'stash.widgets.permalink' | translate }}</pa-toggle>
+          <pa-toggle formControlName="navigateToLink">{{ 'stash.widgets.navigateToLink' | translate }}</pa-toggle>
+        </div>
+      </section>
+      <section class="snippet">
+        <h3>
+          {{ 'stash.widgets.snippet' | translate }}
+          <pa-button
+            *ngIf="widgetMode !== 'popup'"
+            aspect="basic"
+            icon="info"
+            iconAndText
+            (click)="showHints()">
+            {{ 'stash.widgets.recommendations' | translate }}
+          </pa-button>
+          <pa-button
+            *ngIf="clipboardSupported"
+            aspect="basic"
+            size="small"
+            [icon]="copyIcon"
+            (click)="copy()">
+            Copy snippet
+          </pa-button>
+        </h3>
+        <pre><code class="highlight">{{ snippet }}</code></pre>
+      </section>
+    </div>
+  </form>
+</div>

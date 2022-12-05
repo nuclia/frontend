@@ -1,15 +1,5 @@
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
-import type {
-  Entities,
-  EntitiesGroup,
-  EventList,
-  EventType,
-  IKnowledgeBox,
-  LabelSet,
-  LabelSets,
-  Widget,
-  Widgets,
-} from './kb.models';
+import type { Entities, EntitiesGroup, EventList, EventType, IKnowledgeBox, LabelSet, LabelSets } from './kb.models';
 import {
   Counters,
   ExtractedDataTypes,
@@ -147,14 +137,6 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
-  getWidgets(): Observable<Widgets> {
-    return this.nuclia.rest.get<{ widgets: Widgets }>(`${this.path}/widgets`).pipe(map((res) => res.widgets));
-  }
-
-  getWidget(widgetId: string): Observable<Widget> {
-    return this.nuclia.rest.get<Widget>(`${this.path}/widget/${widgetId}`);
-  }
-
   counters(): Observable<Counters> {
     return this.nuclia.rest.get<Counters>(`/kb/${this.id}/counters`);
   }
@@ -273,14 +255,6 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
           : this.createResource(data, synchronous),
       ),
     );
-  }
-
-  saveWidget(id: string, widget: Partial<Widget>): Observable<void> {
-    return this.nuclia.rest.post<void>(`${this.path}/widget/${id}`, widget);
-  }
-
-  deleteWidget(widgetId: string): Observable<void> {
-    return this.nuclia.rest.delete(`${this.path}/widget/${widgetId}`);
   }
 
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
