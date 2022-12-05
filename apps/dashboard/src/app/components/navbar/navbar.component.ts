@@ -9,6 +9,7 @@ import { CreateLinkComponent } from '../../upload/create-link/create-link.compon
 import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { SmallNavbarDirective } from './small-navbar.directive';
 
 @Component({
   selector: 'app-navbar',
@@ -21,7 +22,7 @@ import { NavigationEnd, Router } from '@angular/router';
     ]),
   ],
 })
-export class NavbarComponent implements OnInit, OnDestroy {
+export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnDestroy {
   @Input() isUnfolded: boolean = false;
 
   unsubscribeAll = new Subject<void>();
@@ -61,7 +62,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private router: Router,
     private navigationService: NavigationService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
