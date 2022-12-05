@@ -8,6 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 import { NavbarComponent } from './navbar.component';
+import { SmallNavbarDirective } from './small-navbar.directive';
 
 @NgModule({
   imports: [
@@ -19,7 +20,7 @@ import { NavbarComponent } from './navbar.component';
     MatDialogModule,
     PaIconModule,
   ],
-  declarations: [NavbarComponent],
-  exports: [NavbarComponent],
+  declarations: [NavbarComponent, SmallNavbarDirective],
+  exports: [NavbarComponent, SmallNavbarDirective],
 })
 export class NavbarModule {}

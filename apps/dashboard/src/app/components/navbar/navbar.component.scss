@@ -1,7 +1,7 @@
 @import 'variables';
 
 // Height from which the menu get smaller (prevents scrollbar to appear)
-$height-breakpoint: 730px;
+$height-breakpoint: 856px;
 
 :host,
 .app-navbar {
@@ -70,17 +70,18 @@ $height-breakpoint: 730px;
 
         .nav-link-title {
           flex: 1 1 auto;
-          font-size: var(--stf-font-size-large);
+          font-size: font-size(m);
           padding-left: rhythm(2);
           white-space: nowrap;
         }
 
         @media (max-height: $height-breakpoint) {
-          padding: rhythm(1);
+          padding: rhythm(1.5);
 
           .nav-link-title {
-            font-size: var(--stf-font-size-medium);
-            padding-left: rhythm(1);
+            display: flex;
+            font-size: font-size(xs);
+            padding: 0 rhythm(1) 0 rhythm(1.5);
           }
         }
       }
