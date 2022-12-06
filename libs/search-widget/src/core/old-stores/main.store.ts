@@ -79,7 +79,7 @@ export const nucliaStore = (): NucliaStore => {
           }
 
           // if not a keyword search, add the 2 best semantic sentences
-          const looksLikeKeywordSearch = _store!.query.value.split(' ').length < 3;
+          const looksLikeKeywordSearch = _store!.query.value.trim().split(' ').length < 3;
           if (!looksLikeKeywordSearch) {
             const twoBestSemantic = semanticResults.slice(0, 2);
             twoBestSemantic.forEach((sentence) => {
@@ -95,11 +95,13 @@ export const nucliaStore = (): NucliaStore => {
           }
 
           // add the rest of the fulltext results
-          const existingResourceIds = smartResults.map((res) => res.id);
-          const remainingFullTextResults = fullTextResults
-            .slice(1)
-            .filter((res) => !existingResourceIds.includes(res.id));
-          smartResults = [...smartResults, ...remainingFullTextResults];
+          if (fullTextResults.length > 0) {
+            const existingResourceIds = smartResults.map((res) => res.id);
+            const remainingFullTextResults = fullTextResults
+              .slice(1)
+              .filter((res) => !existingResourceIds.includes(res.id));
+            smartResults = [...smartResults, ...remainingFullTextResults];
+          }
 
           // put the paragraphs in each resource
           results.paragraphs?.results?.forEach((paragraph) => {

@@ -14,7 +14,7 @@
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
-  const results = nucliaState().smartResults.pipe(tap((results) => console.log(results)));
+  const results = nucliaState().smartResults;
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
   const showLoading = pendingResults.pipe(debounceTime(2000));
