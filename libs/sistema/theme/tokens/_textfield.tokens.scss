@@ -17,13 +17,12 @@ $font-weight-label: $font-weight-regular;
 $color-text-field-label-error: $color-secondary-stronger;
 $color-caret-field-control-error: $color-secondary-strong;
 
+$color-background-field-regular: $color-light-stronger;
 $color-background-field-error: $color-secondary-lightest;
 
 //=====================================
 // BORDERS
 //=====================================
-$border-field-regular: 1px solid $color-neutral-regular;
-
-$border-field-error: 1px solid $color-secondary-regular;
-$border-field-error-hover: 1px solid $color-secondary-regular;
-$border-field-error-active: 1px solid $color-secondary-regular;
+$border-color-field-regular: $color-neutral-light;
+$border-color-field-regular-hover: $color-neutral-regular;
+$border-color-field-error: $color-secondary-regular;
