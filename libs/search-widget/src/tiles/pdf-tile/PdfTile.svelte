@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { IResource, Resource, Search } from '@nuclia/core';
+  import { Resource, Search } from '@nuclia/core';
   import { onDestroy, onMount } from 'svelte';
   import { Duration } from '../../common/transition.utils';
   import { fade, slide } from 'svelte/transition';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import IconButton from '../../common/button/IconButton.svelte';
-  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
+  import { nucliaStore } from '../../core/old-stores/main.store';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
@@ -17,10 +17,11 @@
   import { tap } from 'rxjs/operators';
   import SearchResultNavigator from './SearchResultNavigator.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import { getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
+  import { getPdfJsBaseUrl, getPdfJsStyle, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+  import { PreviewKind } from '../../core/models';
 
-  export let result: IResource = { id: '' } as IResource;
+  export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   const pdfStyle = getPdfJsStyle();
   const pdfJsBaseUrl = getPdfJsBaseUrl();
@@ -57,22 +58,12 @@
   let resource: Resource | undefined;
   let paragraphList: Search.Paragraph[];
   const isSearchingInPdf = new BehaviorSubject(false);
-  const matchingParagraphs$ = combineLatest([
-    nucliaState()
-      .getMatchingParagraphs(result.id)
-      .pipe(
-        map((paragraphs) => {
-          paragraphList = paragraphs.map((paragraph) => ({
-            ...paragraph,
-            page: paragraph.position.page_number + 1,
-          }));
-          return paragraphList;
-        }),
-      ),
-    viewerStore.results,
-    isSearchingInPdf,
-  ]).pipe(
-    map(([globalResult, inPdfResults, isInPdf]) => (isInPdf ? inPdfResults : globalResult)),
+  const matchingParagraphs$ = combineLatest([viewerStore.results, isSearchingInPdf]).pipe(
+    map(([inPdfResults, isInPdf]) =>
+      isInPdf
+        ? inPdfResults
+        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.PDF)),
+    ),
     map((results) => results || []),
   );
 
@@ -158,7 +149,9 @@
         )
         .subscribe((paragraphs) => {
           resultIndex = -1;
-          viewerStore.results.next(paragraphs);
+          viewerStore.results.next(
+            paragraphs.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.PDF)),
+          );
         });
     } else {
       isSearchingInPdf.next(false);

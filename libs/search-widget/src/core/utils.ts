@@ -1,6 +1,8 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
+import type { Search } from '@nuclia/core';
+import type { PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -170,4 +172,27 @@ function getTextFragment(paragraphText: string) {
     }
   }
   return '';
+}
+
+export function mapSmartParagraph2WidgetParagraph(
+  paragraph: Search.SmartParagraph,
+  kind: PreviewKind,
+): WidgetParagraph {
+  const start_seconds = paragraph.start_seconds?.[0] || 0;
+  const end_seconds = paragraph.end_seconds?.[0] || 0;
+  const start = paragraph.position?.start || 0;
+  const end = paragraph.position?.end || 0;
+  return {
+    paragraph,
+    fieldType: paragraph.field_type,
+    fieldId: paragraph.field,
+    text: paragraph.text,
+    preview: kind,
+    start,
+    end,
+    page: paragraph.position?.page_number || 0,
+    pid: `${paragraph.field_type}${start}${end}`,
+    start_seconds,
+    end_seconds,
+  } as WidgetParagraph;
 }

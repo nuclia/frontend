@@ -1,6 +1,6 @@
-import { setCDN } from './utils';
+import { logger, setCDN } from './utils';
 import BertModel from './bert/model';
-import { BehaviorSubject, filter, from, map, Observable, switchMap, take, tap, throwError } from 'rxjs';
+import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 import type { Classification } from '@nuclia/core';
 
 export class NucliaPrediction {
@@ -51,7 +51,8 @@ export class NucliaPrediction {
 
   predict(query: string): Observable<Classification[]> {
     if (!this.model) {
-      throw Error('Model is undefined. loadModels must be called before predict');
+      logger('Model not loaded yet');
+      return of([]);
     }
     return from(this.model.predict(query)).pipe(
       map((results) =>

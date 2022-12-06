@@ -10,7 +10,7 @@
 
   let inputElement;
 
-  const results = nucliaState().results;
+  const results = nucliaState().smartResults;
 </script>
 
 <div class="sw-popup-search">

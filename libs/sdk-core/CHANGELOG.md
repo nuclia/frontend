@@ -6,6 +6,7 @@
 - Update `/processing/status` endpoint response model
 - Update `getParagraphText` and `getSentenceText` methods to improve performance
 - Do not return cancelled classifications in `getClassifications`
+- Use POST by default for `/search` endpoint and fix search results model
 
 # 1.0.6 (2022-11-17)
 

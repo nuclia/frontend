@@ -225,7 +225,7 @@ export class Resource extends ReadableResource implements IResource {
   }
 
   search(query: string, features: Search.ResourceFeatures[] = [], options?: SearchOptions): Observable<Search.Results> {
-    return search(this.nuclia, this.path, query, features, options);
+    return search(this.nuclia, this.path, query, features, options, true);
   }
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {

@@ -5,7 +5,8 @@
   export let showAllResults = false;
 
   const dispatch = createEventDispatcher();
-  const toggle = () => {
+  const toggle = (event: MouseEvent) => {
+    event.stopPropagation();
     dispatch('toggle');
   };
 </script>

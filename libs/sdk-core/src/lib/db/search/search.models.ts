@@ -44,7 +44,15 @@ export namespace Search {
     sentences?: Sentences;
     paragraphs?: Paragraphs;
     shards?: string[];
-    fulltext?: IResource[];
+    fulltext?: { results: FulltextResource[]; facets: FacetsResult };
+  }
+
+  export interface SmartResult extends IResource {
+    paragraphs?: SmartParagraph[];
+  }
+
+  export interface SmartParagraph extends Paragraph {
+    sentences?: Sentence[];
   }
 
   export interface Suggestions {
@@ -76,7 +84,9 @@ export namespace Search {
     field: string;
     text: string;
     labels: string[];
-    position: { page_number: number; start: number; end: number; index: number };
+    start_seconds?: number[];
+    end_seconds?: number[];
+    position?: { page_number: number; start: number; end: number; index: number };
   }
 
   export interface Sentence {
@@ -85,5 +95,12 @@ export namespace Search {
     field_type: string;
     field: string;
     text: string;
+  }
+
+  export interface FulltextResource {
+    score: number;
+    rid: string;
+    field_type: string;
+    field: string;
   }
 }

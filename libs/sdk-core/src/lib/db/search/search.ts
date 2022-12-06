@@ -8,25 +8,27 @@ export const search = (
   query: string,
   features: Search.Features[] | Search.ResourceFeatures[] = [],
   options?: SearchOptions,
+  useGet?: boolean,
 ) => {
   if (!query && !hasFiltersOrFacets(options) && !options?.inTitleOnly) {
     throw new Error('Search requires a query or some filters or some facets.');
   }
-  const params = new URLSearchParams();
+  const params: { [key: string]: string | string[] } = {};
   if (query) {
-    params.append('query', query);
+    params.query = query;
   }
-  features.forEach((f) => params.append('features', f));
+  params.features = features;
   const { inTitleOnly, ...others } = options || {};
   if (inTitleOnly) {
-    params.append('fields', 'a/title');
+    params.fields = 'a/title';
   }
-  Object.entries(others || {}).forEach(([k, v]) =>
-    Array.isArray(v) ? v.forEach((v) => params.append(k, `${v}`)) : params.append(k, `${v}`),
-  );
+  Object.entries(others || {}).forEach(([k, v]) => (params[k] = Array.isArray(v) ? v.map((el) => `${el}`) : `${v}`));
   const shards = nuclia.currentShards || [];
-  shards.forEach((shard) => params.append('shards', shard));
-  return nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${params.toString()}`).pipe(
+  params.shards = shards;
+  const searchMethod = useGet
+    ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params)}`)
+    : nuclia.rest.post<Search.Results | { detail: string }>(`${path}/search`, params);
+  return searchMethod.pipe(
     catchError(() => of({ error: true } as Search.Results)),
     map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
     tap((res) => {
@@ -35,6 +37,14 @@ export const search = (
       }
     }),
   );
+};
+
+const serialize = (params: { [key: string]: string | string[] }): string => {
+  const queryParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) =>
+    Array.isArray(value) ? value.forEach((item) => queryParams.append(key, item)) : queryParams.append(key, value),
+  );
+  return queryParams.toString();
 };
 
 const hasFiltersOrFacets = (options?: SearchOptions): boolean => {

@@ -1,7 +1,7 @@
 import EmbeddedSearch from './EmbeddedSearch.svelte';
 import { render } from '@testing-library/svelte';
 import { nucliaStore } from '../../core/old-stores/main.store';
-import type { IResource } from '@nuclia/core';
+import type { IResource, Search } from '@nuclia/core';
 import { shouldEmitQuery } from '../search-input/SearchInput.spec';
 
 describe('Embedded search', () => {
@@ -16,6 +16,7 @@ describe('Embedded search', () => {
       resources: {
         res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
       },
+      fulltext: { results: [{ rid: 'res1', score: 1 } as Search.FulltextResource], facets: {} },
     });
     const { container } = render(EmbeddedSearch);
     expect(container.querySelector('.results:not(.empty)')).toBeTruthy();
