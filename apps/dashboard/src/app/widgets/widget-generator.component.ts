@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
-import { map, skip, Subject, take, takeUntil } from 'rxjs';
+import { map, Subject, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
@@ -41,7 +41,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   snippet = '';
   snippetPreview: SafeHtml = '';
   unsubscribeAll = new Subject<void>();
-  isDefaultWidget = false;
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
@@ -82,7 +81,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     // FIXME: timeout to be removed once the widget won't be on the topbar anymore
     setTimeout(() => this.generateSnippet(), 100);
 
-    this.mainForm.valueChanges.pipe(skip(1), takeUntil(this.unsubscribeAll)).subscribe(() => {
+    this.mainForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.generateSnippet();
       this.mainForm.markAsDirty();
     });

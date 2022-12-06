@@ -1,7 +1,10 @@
 @import 'apps/dashboard/src/variables';
 
+$dock-max-width: rhythm(7);
+$padding-side: rhythm(12);
+$width-configuration: rhythm(48);
 .widget-generator {
-  padding: rhythm(6) rhythm(12);
+  padding: rhythm(6) $padding-side;
 
   .warning {
     background: $color-secondary-regular;
@@ -40,7 +43,7 @@
       flex: 0 0 auto;
       flex-direction: column;
       gap: rhythm(2);
-      width: rhythm(48);
+      width: $width-configuration;
 
       .widget-features {
         display: flex;
@@ -51,6 +54,7 @@
 
     section.snippet {
       flex: 1 0 auto;
+      max-width: calc(100vw - #{$width-configuration} - #{$padding-side}* 2 - #{rhythm(2)} - #{$dock-max-width});
 
       h3 {
         align-items: center;
@@ -60,92 +64,8 @@
 
       pre {
         margin: 0;
+        word-break: break-all;
       }
     }
   }
 }
-
-//.edit-widget {
-//  margin: rhythm(4) 0 rhythm(10) 0;
-//
-//  section {
-//    padding: rhythm(6) 0 rhythm(7) 0;
-//  }
-//
-//  h2 {
-//    margin: 0 0 rhythm(4) 0;
-//    font-weight: var(--stf-font-weight-bold);
-//    span {
-//      font-weight: var(--stf-font-weight-light);
-//      padding-left: rhythm(3);
-//    }
-//  }
-//
-//  .one-col {
-//    background-color: $color-light-stronger;
-//    padding: rhythm(3);
-//    margin-bottom: rhythm(3);
-//    & > div {
-//      margin-bottom: rhythm(3);
-//      display: flex;
-//    }
-//  }
-//  .label {
-//    font-size: size(xxl);
-//    font-weight: var(--stf-font-weight-light);
-//    line-height: rhythm(6);
-//  }
-//  .two-cols {
-//    display: flex;
-//    gap: rhythm(3);
-//    & > div:first-child {
-//      width: rhythm(40);
-//      flex: 0 0 auto;
-//    }
-//
-//    .container {
-//      background-color: $color-light-stronger;
-//    }
-//
-//    .snippet {
-//      padding: 0 rhythm(2);
-//      flex: 1 1 auto;
-//      min-width: 0;
-//    }
-//  }
-//}
-//pre {
-//  overflow-x: scroll;
-//}
-//.options .label {
-//  padding: 0 rhythm(3);
-//}
-//.snippet .label {
-//  align-items: center;
-//  border-bottom: 1px solid $color-neutral-light;
-//  display: flex;
-//  justify-content: space-between;
-//  position: relative;
-//  height: rhythm(6);
-//  line-height: rhythm(2);
-//}
-//
-//.snippet-buttons {
-//  display: flex;
-//  gap: rhythm(4);
-//}
-//.options-content {
-//  padding: rhythm(3);
-//}
-//.features {
-//  display: flex;
-//  flex-direction: column;
-//  margin-top: rhythm(2);
-//  gap: rhythm(1);
-//}
-//
-//.buttons {
-//  padding: rhythm(3) 0;
-//  display: flex;
-//  gap: rhythm(3);
-//}
