@@ -14,13 +14,11 @@ export const search = (
     throw new Error('Search requires a query or some filters or some facets.');
   }
   const params: { [key: string]: string | string[] } = {};
-  if (query) {
-    params.query = query;
-  }
+  params.query = query || '';
   params.features = features;
   const { inTitleOnly, ...others } = options || {};
   if (inTitleOnly) {
-    params.fields = 'a/title';
+    params.fields = ['a/title'];
   }
   Object.entries(others || {}).forEach(([k, v]) => (params[k] = Array.isArray(v) ? v.map((el) => `${el}`) : `${v}`));
   const shards = nuclia.currentShards || [];
