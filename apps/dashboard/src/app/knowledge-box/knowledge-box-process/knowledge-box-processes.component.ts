@@ -5,7 +5,7 @@ import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { TrainingStatus, TrainingType } from '@nuclia/core';
 import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
 
-interface trainingState {
+interface TrainingState {
   agreement: boolean;
   running: boolean;
   selectedOptions: string[];
@@ -51,7 +51,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
       lastRun: '',
     };
     return acc;
-  }, {} as { [key in TrainingType]: trainingState });
+  }, {} as { [key in TrainingType]: TrainingState });
   hoursRequired = 10;
   options = {
     [TrainingType.classifier]: this.labelsets,
@@ -59,6 +59,9 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     [TrainingType.ner]: this.entitiesGroups,
   };
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  enabledTrainings = this.tracking
+    .isFeatureEnabled('training_ner')
+    .pipe(map((enabled) => (enabled ? this.trainingList : this.trainingList.filter((t) => t !== TrainingType.ner))));
 
   constructor(
     private sdk: SDKService,
