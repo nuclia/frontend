@@ -8,64 +8,70 @@
         class="warning">
         {{ 'stash.settings.processes.training.not-allowed' | translate }}
       </div>
-      <section *ngFor="let type of [trainingTypes.classifier, trainingTypes.labeler]">
+      <section *ngFor="let type of trainingList">
         <h2>{{ 'stash.settings.processes.' + type | translate }}</h2>
         <p class="last-run">
           <small>
             {{
               'stash.settings.processes.training.last_run'
-                | translate: { runDate: lastRun[type] ? (lastRun[type] | date: 'YYYY-MM-dd HH:mm') : '–' }
+                | translate
+                  : { runDate: trainings[type].lastRun ? (trainings[type].lastRun | date: 'YYYY-MM-dd HH:mm') : '–' }
             }}
           </small>
         </p>
 
-        <div [class.running]="running[type]">
+        <div [class.running]="trainings[type].running">
           <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
 
-          <div class="labelset-selection">
+          <div class="select">
             <nsi-dropdown-button
               [popupRef]="dropdown"
-              [open]="open[type]">
-              {{ 'stash.settings.processes.training.select-labelsets' | translate }}
+              [open]="trainings[type].open">
+              {{
+                (type === trainingTypes.ner
+                  ? 'stash.settings.processes.training.select-entities'
+                  : 'stash.settings.processes.training.select-labelsets'
+                ) | translate
+              }}
             </nsi-dropdown-button>
 
-            <div class="selection">{{ selectedLabelsets[type].join(', ') }}</div>
+            <div class="selection">{{ trainings[type].selectedOptions.join(', ') }}</div>
           </div>
 
           <pa-dropdown
             #dropdown
-            (onOpen)="open[type] = true"
-            (onClose)="open[type] = false">
+            (onOpen)="trainings[type].open = true"
+            (onClose)="trainings[type].open = false">
             <pa-option
-              *ngIf="labelsets | async as labelsets"
+              *ngIf="options[type] | async as options"
               dontCloseOnSelect>
               <pa-checkbox
-                [value]="selectedLabelsets[type].length === labelsets.length"
+                [value]="trainings[type].selectedOptions.length === options.length"
                 (change)="toggleAll(type)">
-                {{ 'stash.settings.processes.training.all_labelsets' | translate }}
+                {{ 'stash.settings.processes.training.select_all' | translate }}
               </pa-checkbox>
             </pa-option>
             <pa-separator></pa-separator>
             <pa-option
-              *ngFor="let labelset of labelsets | async"
+              *ngFor="let option of options[type] | async"
               dontCloseOnSelect>
               <pa-checkbox
-                [value]="selectedLabelsets[type].includes(labelset.value)"
-                (change)="toggleLabelset(type, labelset.value)">
-                {{ labelset.title }}
+                [value]="trainings[type].selectedOptions.includes(option.value)"
+                (change)="toggleOption(type, option.value)">
+                {{ option.title | translate }}
               </pa-checkbox>
             </pa-option>
           </pa-dropdown>
 
           <ng-container *ngIf="isBillingEnabled | async">
-            <p [class.warning]="!agreement">
+            <p [class.warning]="!trainings[type].agreement">
               {{ 'stash.settings.processes.training.time_requirement' | translate: { hours: hoursRequired } }}
             </p>
 
             <div class="agreement-container">
               <pa-checkbox
                 [disabled]="cannotTrain | async"
-                [(value)]="agreement[type]">
+                [(value)]="trainings[type].agreement">
                 {{ 'stash.settings.processes.training.agreement' | translate }}
               </pa-checkbox>
             </div>
@@ -73,16 +79,19 @@
         </div>
 
         <div
-          *ngIf="running[type]"
+          *ngIf="trainings[type].running"
           class="active-training warning">
           {{ 'stash.settings.processes.training.active' | translate }}
         </div>
         <div class="cta-container">
           <pa-button
-            [kind]="running[type] ? 'secondary' : 'primary'"
-            [disabled]="(!running[type] && (isBillingEnabled | async) && !agreement[type]) || (cannotTrain | async)"
+            [kind]="trainings[type].running ? 'secondary' : 'primary'"
+            [disabled]="
+              (!trainings[type].running && (isBillingEnabled | async) && !trainings[type].agreement) ||
+              (cannotTrain | async)
+            "
             (click)="startOrStopTraining(type)">
-            {{ 'stash.settings.processes.training.' + (running[type] ? 'stop' : 'start') | translate }}
+            {{ 'stash.settings.processes.training.' + (trainings[type].running ? 'stop' : 'start') | translate }}
           </pa-button>
         </div>
       </section>

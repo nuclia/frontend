@@ -2,8 +2,16 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { TrainingStatus, TrainingTask, TrainingType } from '@nuclia/core';
+import { TrainingStatus, TrainingType } from '@nuclia/core';
 import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
+
+interface trainingState {
+  agreement: boolean;
+  running: boolean;
+  selectedOptions: string[];
+  open: boolean;
+  lastRun: string;
+}
 
 @Component({
   selector: 'app-knowledge-box-processes',
@@ -14,12 +22,6 @@ import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
 export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject();
 
-  agreement = { [TrainingType.classifier]: false, [TrainingType.labeler]: false };
-  running = { [TrainingType.classifier]: false, [TrainingType.labeler]: false };
-  selectedLabelsets = { [TrainingType.classifier]: [] as string[], [TrainingType.labeler]: [] as string[] };
-  open = { [TrainingType.classifier]: false, [TrainingType.labeler]: false };
-  lastRun = { [TrainingType.classifier]: '', [TrainingType.labeler]: '' };
-  hoursRequired = 10;
   cannotTrain = this.stateService.account.pipe(map((account) => account && account.type === 'stash-basic'));
   trainingTypes = TrainingType;
   labelsets = this.sdk.currentKb.pipe(
@@ -27,6 +29,35 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     map((labelsets) => Object.entries(labelsets).map(([id, labelset]) => ({ value: id, title: labelset.title }))),
     shareReplay(),
   );
+  entitiesGroups = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getEntities()),
+    map((entities) =>
+      Object.entries(entities)
+        .sort((a, b) => a[0].localeCompare(b[0]))
+        .map(([id, entity]) => ({
+          value: id,
+          title: entity.title || 'resource.entities.' + id.toLowerCase(),
+        })),
+    ),
+    shareReplay(),
+  );
+  trainingList = [TrainingType.classifier, TrainingType.labeler, TrainingType.ner];
+  trainings = this.trainingList.reduce((acc, trainingType) => {
+    acc[trainingType] = {
+      agreement: false,
+      running: false,
+      selectedOptions: [],
+      open: false,
+      lastRun: '',
+    };
+    return acc;
+  }, {} as { [key in TrainingType]: trainingState });
+  hoursRequired = 10;
+  options = {
+    [TrainingType.classifier]: this.labelsets,
+    [TrainingType.labeler]: this.labelsets,
+    [TrainingType.ner]: this.entitiesGroups,
+  };
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
 
   constructor(
@@ -39,19 +70,19 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.sdk.currentKb
       .pipe(
-        switchMap((kb) =>
-          forkJoin([kb.training.getStatus(TrainingType.classifier), kb.training.getStatus(TrainingType.labeler)]),
-        ),
-        tap(([classifierStatus, labelerStatus]: TrainingTask[]) => {
-          this.lastRun[TrainingType.classifier] = classifierStatus.last_execution?.end || '';
-          this.lastRun[TrainingType.labeler] = labelerStatus.last_execution?.end || '';
+        switchMap((kb) => forkJoin(this.trainingList.map((trainingType) => kb.training.getStatus(trainingType)))),
+        tap((statuses) => {
+          statuses.forEach((status, i) => {
+            this.trainings[this.trainingList[i]].lastRun = status.last_execution?.end || '';
+          });
         }),
         map((statuses) => statuses.map((status) => status.status === TrainingStatus.running)),
       )
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((statuses) => {
-        this.running[TrainingType.classifier] = statuses[0];
-        this.running[TrainingType.labeler] = statuses[1];
+        statuses.forEach((running, i) => {
+          this.trainings[this.trainingList[i]].running = running;
+        });
         markForCheck(this.cdr);
       });
   }
@@ -61,19 +92,19 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  toggleLabelset(type: TrainingType, labelset: string) {
-    if (this.selectedLabelsets[type].includes(labelset)) {
-      this.selectedLabelsets[type] = this.selectedLabelsets[type].filter((item) => item !== labelset);
+  toggleOption(type: TrainingType, value: string) {
+    if (this.trainings[type].selectedOptions.includes(value)) {
+      this.trainings[type].selectedOptions = this.trainings[type].selectedOptions.filter((item) => item !== value);
     } else {
-      this.selectedLabelsets[type] = [...this.selectedLabelsets[type], labelset];
+      this.trainings[type].selectedOptions = [...this.trainings[type].selectedOptions, value];
     }
     markForCheck(this.cdr);
   }
 
   toggleAll(type: TrainingType) {
-    this.labelsets.pipe(take(1)).subscribe((labelsets) => {
-      const selectAll = this.selectedLabelsets[type].length < labelsets.length;
-      this.selectedLabelsets[type] = selectAll ? labelsets.map((item) => item.value) : [];
+    this.options[type].pipe(take(1)).subscribe((options) => {
+      const selectAll = this.trainings[type].selectedOptions.length < options.length;
+      this.trainings[type].selectedOptions = selectAll ? options.map((item) => item.value) : [];
       markForCheck(this.cdr);
     });
   }
@@ -82,16 +113,19 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     this.sdk.currentKb
       .pipe(
         switchMap((kb) =>
-          this.running[type]
+          this.trainings[type].running
             ? kb.training.stop(type)
             : kb.training.start(
                 type,
-                this.selectedLabelsets[type].length > 0 ? this.selectedLabelsets[type] : undefined,
+                type !== TrainingType.ner && this.trainings[type].selectedOptions.length > 0
+                  ? this.trainings[type].selectedOptions
+                  : undefined,
+                // TODO: send entity groups in NER training
               ),
         ),
       )
       .subscribe(() => {
-        this.running[type] = !this.running[type];
+        this.trainings[type].running = !this.trainings[type].running;
         markForCheck(this.cdr);
       });
   }
