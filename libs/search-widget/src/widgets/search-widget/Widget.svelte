@@ -111,7 +111,9 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
-    activateTypeAheadSuggestions();
+    if (_features.suggestions) {
+      activateTypeAheadSuggestions();
+    }
 
     setupTriggerSearch(dispatchCustomEvent);
     initViewerEffects(_features.permalink);

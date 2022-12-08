@@ -578,6 +578,8 @@
 	"stash.widgets.snippet": "Fragment de codi",
 	"stash.widgets.suggestLabels": "Suggereix etiquetes",
 	"stash.widgets.suggestLabels.help": "Quan s'ha realitzat l'entrenament de la intenció de cerca d'etiquetes, es mostren les etiquetes suggerides en funció de la consulta",
+	"stash.widgets.suggestions": "Suggeriments",
+	"stash.widgets.suggestions.help": "Suggereix resultats mentre escriviu la consulta de cerca",
 	"stash.widgets.title": "Generador de widgets de cerca",
 	"stash.widgets.warning": "Perquè el giny funcioni correctament, el quadre de coneixement <strong>ha de ser públic</strong>.",
 	"stats.get_started": "Començar",

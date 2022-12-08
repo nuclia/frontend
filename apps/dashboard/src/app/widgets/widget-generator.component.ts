@@ -30,6 +30,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       navigateToLink: [false],
       permalink: [false],
       suggestLabels: [false],
+      suggestions: [false],
     }),
   });
   validationMessages = {

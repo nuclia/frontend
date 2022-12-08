@@ -48,6 +48,12 @@
           formGroupName="features">
           <ng-container *ngIf="widgetMode !== 'video'">
             <pa-toggle
+              labelOnRight
+              help="stash.widgets.suggestions.help"
+              formControlName="suggestions">
+              {{ 'stash.widgets.suggestions' | translate }}
+            </pa-toggle>
+            <pa-toggle
               *ngIf="isTrainingEnabled | async"
               labelOnRight
               help="stash.widgets.suggestLabels.help"

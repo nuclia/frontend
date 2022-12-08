@@ -6,6 +6,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   filter: true,
   navigateToLink: true,
   permalink: true,
+  suggestions: true,
   notPublic: true,
 };
 
