@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from '../icons/Icon.svelte';
+  import { createEventDispatcher } from 'svelte';
 
   export let icon = '';
   export let ariaLabel = '';
@@ -9,6 +10,14 @@
   export let disabled = false;
 
   $: iconSize = size === 'xsmall' ? 'small' : 'medium';
+
+  const dispatch = createEventDispatcher();
+
+  function onKeyup(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      dispatch('enter');
+    }
+  }
 </script>
 
 <button
@@ -17,7 +26,8 @@
   aria-label={ariaLabel}
   tabindex="0"
   {disabled}
-  on:click>
+  on:click
+  on:keyup={onKeyup}>
   <Icon
     name={icon}
     size={iconSize} />

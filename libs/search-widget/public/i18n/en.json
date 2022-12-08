@@ -26,6 +26,7 @@
 	"form.title-only": "Search in title only",
 	"generic.cancel": "Cancel",
 	"generic.save": "Save",
+	"input.clear": "Clear search",
 	"input.more_filters": "{{count}} more filters",
 	"input.placeholder": "Type your question here",
 	"modal.back": "Back",

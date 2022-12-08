@@ -23,6 +23,7 @@
 	"form.title-only": "Rechercher uniquement dans le titre",
 	"generic.cancel": "Annuler",
 	"generic.save": "Enregistrer",
+	"input.clear": "Effacer la recherche",
 	"input.more_filters": "{{count}}  autres filtres",
 	"input.placeholder": "Posez votre question ici",
 	"modal.back": "Retour",
