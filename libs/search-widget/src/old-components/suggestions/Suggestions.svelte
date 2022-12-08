@@ -9,20 +9,23 @@
   import { suggestionsHasError } from '../../core/stores/suggestions.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
+  import { take } from 'rxjs/operators';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
 
   const goToResource = (params: DisplayedResource, text?: string) => {
-    if (navigateToLink.getValue() && params.paragraph?.field_type === FieldType.LINK) {
-      getField(params.paragraph.rid, FIELD_TYPE.link, params.paragraph.field).subscribe((field) => {
-        const uri = (field.value as LinkField).uri;
-        const isYoutubeLink = isYoutubeUrl(uri);
-        goToUrl(uri, text && !isYoutubeLink ? text : undefined);
-      });
-    } else {
-      setDisplayedResource(params);
-    }
+    navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
+      if (navigateToLink && params.paragraph?.field_type === FieldType.LINK) {
+        getField(params.paragraph.rid, FIELD_TYPE.link, params.paragraph.field).subscribe((field) => {
+          const uri = (field.value as LinkField).uri;
+          const isYoutubeLink = isYoutubeUrl(uri);
+          goToUrl(uri, text && !isYoutubeLink ? text : undefined);
+        });
+      } else {
+        setDisplayedResource(params);
+      }
+    });
   };
 </script>
 

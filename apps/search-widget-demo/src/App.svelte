@@ -73,7 +73,7 @@
         backend="https://stashify.cloud/api"
         cdn="/"
         type="popup"
-        features="permalink,filter"
+        features="permalink,filter,suggestions"
         lang="en"
         placeholder="Input placeholder is invisible" />
     </div>
@@ -89,7 +89,7 @@
       cdn="https://cdn.stashify.cloud/"
       type="embedded"
       lang="en"
-      features="filter" />
+      features="filter,suggestions" />
   {/if}
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
