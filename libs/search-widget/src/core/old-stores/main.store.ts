@@ -164,32 +164,6 @@ export const removeLabelFilter = (label: Classification) => {
   nucliaStore().filters.next(currentFilters.filter((f) => f !== filter));
 };
 
-const getSortedResources = (results: Search.Results) => {
-  return Object.values(results.resources || {})
-    .map((res) => {
-      let score = 0;
-      // if resource appears in both paragraphs and sentences, it should be displayed first
-      // then we consider the sentences highest score
-      // and if no sentence match, we default to paragraphs highest score
-      if ((results.sentences?.results || []).find((p) => p.rid === res.id)) {
-        score += 100;
-        if ((results.paragraphs?.results || []).find((p) => p.rid === res.id)) {
-          score += 100;
-        }
-        score += Math.max(
-          ...(results.sentences?.results || []).filter((p) => p.rid === res.id).map((res) => res.score),
-        );
-      } else {
-        score += Math.max(
-          ...(results.paragraphs?.results || []).filter((p) => p.rid === res.id).map((res) => res.score),
-        );
-      }
-      return { res: res, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .map((data) => data.res);
-};
-
 const marksRE = /(<mark>|<\/mark>)/g;
 function addParagraphToSmartResults(
   smartResults: Search.SmartResult[],
