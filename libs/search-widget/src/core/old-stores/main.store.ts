@@ -28,7 +28,7 @@ let _store: NucliaStore | undefined;
 
 let _state: {
   query: Observable<string>;
-  isEmptyQuery: Observable<boolean>;
+  isEmptySearchQuery: Observable<boolean>;
   filters: Observable<string[]>;
   searchOptions: Observable<SearchOptions>;
   smartResults: Observable<Search.SmartResult[]>;
@@ -53,7 +53,7 @@ export const nucliaStore = (): NucliaStore => {
         tap(() => _store!.hasSearchError.next(false)),
         distinctUntilChanged(),
       ),
-      isEmptyQuery: combineLatest([_store.query, _store.filters]).pipe(
+      isEmptySearchQuery: combineLatest([_store.query, _store.filters]).pipe(
         map(([query, filters]) => !query && filters.length === 0),
       ),
       filters: _store.filters.asObservable(),
