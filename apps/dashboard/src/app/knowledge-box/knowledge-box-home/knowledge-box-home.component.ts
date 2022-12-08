@@ -2,9 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { combineLatest, filter, map, Observable, share, switchMap, take, shareReplay } from 'rxjs';
+import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -20,7 +21,6 @@ export class KnowledgeBoxHomeComponent {
   isPublished = this.state.pipe(map((state) => state === 'PUBLISHED'));
   account = this.stateService.account.pipe(filter((account) => !!account)) as Observable<Account>;
   counters: Observable<Counters> = this.sdk.counters;
-  refreshing = this.sdk.pendingRefresh;
   private _processing = combineLatest([this.account, this.sdk.currentKb]).pipe(
     switchMap(([account, kb]) =>
       this.sdk.nuclia.db.getStats(account!.slug, StatsType.PROCESSING_TIME, kb.id, StatsPeriod.YEAR),
@@ -69,6 +69,8 @@ export class KnowledgeBoxHomeComponent {
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app').pipe(shareReplay(1));
+  clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
+  copyIcon = 'copy';
 
   constructor(
     private app: AppService,
@@ -80,10 +82,6 @@ export class KnowledgeBoxHomeComponent {
     private modalService: SisModalService,
     private tracking: STFTrackingService,
   ) {}
-
-  refresh() {
-    this.sdk.refreshCounter(true);
-  }
 
   toggleKbState() {
     this.isPublished.pipe(take(1)).subscribe((isPublished) => {
@@ -121,5 +119,17 @@ export class KnowledgeBoxHomeComponent {
 
   downloadDesktop() {
     window.open('https://github.com/nuclia/frontend/releases/latest');
+  }
+
+  copyEndpoint() {
+    this.endpoint.pipe(take(1)).subscribe((endpoint) => {
+      navigator.clipboard.writeText(endpoint);
+      this.copyIcon = 'check';
+      markForCheck(this.cdr);
+      setTimeout(() => {
+        this.copyIcon = 'copy';
+        markForCheck(this.cdr);
+      }, 1000);
+    });
   }
 }

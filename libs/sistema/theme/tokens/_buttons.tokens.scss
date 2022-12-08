@@ -44,9 +44,6 @@ $color-background-button-secondary-solid: $color-dark-stronger;
 $color-background-button-secondary-solid-hover: $color-dark-stronger;
 $color-background-button-secondary-solid-active: $color-neutral-regular;
 
-// basic
-$color-background-button-secondary-basic-hover: $color-neutral-lightest;
-
 //---------------------------------------------------------------
 // DESTRUCTIVE
 //---------------------------------------------------------------
@@ -74,8 +71,8 @@ $color-text-button-inverted-solid: $color-neutral-regular;
 $color-text-button-inverted-solid-hover: $color-dark-stronger;
 $color-text-button-inverted-solid-active: $color-light-stronger;
 
-$color-background-button-inverted-solid: $color-neutral-background;
-$color-background-button-inverted-solid-hover: $color-neutral-background;
+$color-background-button-inverted-solid: $color-neutral-lightest;
+$color-background-button-inverted-solid-hover: $color-neutral-lightest;
 $color-background-button-inverted-solid-active: $color-neutral-regular;
 
 //---------------------------------------------------------------
