@@ -141,6 +141,10 @@
       showFilterSubmenu = true;
     }
   }
+
+  function searchOrReset() {
+    console.log(`TODO: searchOrReset`);
+  }
 </script>
 
 <svelte:window on:resize={setInputPosition} />
@@ -161,17 +165,23 @@
   {/if}
   <div class="input-container">
     <div class="search-icon-container">
-      <div
-        class="search-icon"
-        tabIndex="0"
-        on:click={search}
-        on:keyup={(e) => {
-          if (e.key === 'Enter') {
-            search();
-          }
-        }}>
-        <Icon name="search" />
-      </div>
+      <IconButton
+        aspect="basic"
+        icon={$typeAhead.length > 0 ? 'close' : 'search'}
+        ariaLabel={$typeAhead.length > 0 ? 'Reset search' : 'Search'}
+        on:click={searchOrReset}
+        on:keyup={searchOrReset} />
+      <!--      <div-->
+      <!--        class="search-icon"-->
+      <!--        tabIndex="0"-->
+      <!--        on:click={search}-->
+      <!--        on:keyup={(e) => {-->
+      <!--          if (e.key === 'Enter') {-->
+      <!--            search();-->
+      <!--          }-->
+      <!--        }}>-->
+      <!--        <Icon name="search" />-->
+      <!--      </div>-->
     </div>
     <input
       bind:this={element}

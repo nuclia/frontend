@@ -83,12 +83,12 @@
     }
 
     &:before {
-      left: -0.5px;
+      left: -1px;
       width: var(--rhythm-1);
     }
     &:after {
       left: var(--rhythm-9);
-      right: -0.5px;
+      right: -1px;
     }
   }
 
