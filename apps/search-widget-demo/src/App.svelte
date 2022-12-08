@@ -72,7 +72,6 @@
         knowledgebox={kb}
         backend="https://stashify.cloud/api"
         cdn="/"
-        widgetid="label-annotation"
         type="popup"
         features="permalink,filter"
         lang="en"
@@ -88,7 +87,6 @@
       knowledgebox={kb}
       backend="https://stashify.cloud/api"
       cdn="https://cdn.stashify.cloud/"
-      widgetid="dashboard"
       type="embedded"
       lang="en"
       features="filter" />
@@ -102,7 +100,6 @@
         backend="https://stashify.cloud/api"
         cdn="/"
         lang="en"
-        widgetid="dashboard"
         placeholder="Search"
         features="filter" />
       <NucliaSearchResults />
@@ -120,7 +117,6 @@
         knowledgebox={kb}
         cdn="/"
         backend="https://stashify.cloud/api"
-        widgetid="dashboard"
         permalink
         lang="en" />
     </div>

@@ -36,7 +36,6 @@ export class TopbarComponent implements AfterViewInit {
         : DEFAULT_FEATURES_LIST;
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
-        widgetid="dashboard"
         client="dashboard"
         cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
         backend="${this.backendConfig.getAPIURL()}"
