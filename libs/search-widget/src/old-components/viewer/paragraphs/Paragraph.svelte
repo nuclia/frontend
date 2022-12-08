@@ -29,7 +29,7 @@
               removable
               clickable={$widgetType === 'search'}
               on:remove={() => removeLabel(label)}
-              on:click={() => searchBy(label)} />
+              on:click={() => searchBy(label, true)} />
           </div>
         {/each}
       </div>

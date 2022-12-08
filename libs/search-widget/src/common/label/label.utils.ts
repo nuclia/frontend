@@ -4,11 +4,14 @@ import { isViewerOpen } from '../../core/stores/modal.store';
 import { nucliaStore } from '../../core/old-stores/main.store';
 import { typeAhead } from '../../core/stores/suggestions.store';
 
-export function searchBy(label: Classification) {
+export function searchBy(label: Classification, resetSearch = false) {
   isViewerOpen.set(false);
   const labelFilter = getFilterFromLabel(label);
-  typeAhead.set('');
   nucliaStore().filters.next([labelFilter]);
+  if (resetSearch) {
+    typeAhead.set('');
+    nucliaStore().query.next('');
+  }
   nucliaStore().triggerSearch.next();
 }
 
