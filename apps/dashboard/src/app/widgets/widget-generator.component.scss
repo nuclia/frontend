@@ -23,6 +23,10 @@ $width-configuration: rhythm(56);
     }
   }
 
+  .preview-container {
+    display: flex;
+  }
+
   .snippet-configuration-container {
     display: flex;
     gap: rhythm(3);
