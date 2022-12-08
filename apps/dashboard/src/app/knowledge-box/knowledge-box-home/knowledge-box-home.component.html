@@ -1,9 +1,18 @@
 <div class="knowledge-box-home">
-  <div class="container get-started">
-    <div class="title-m">{{ 'stats.get_started' | translate }}.</div>
-    <div class="title-m subtitle">{{ 'stats.endpoint' | translate }}</div>
-
-    <div class="endpoint">{{ endpoint | async }}</div>
+  <div
+    class="endpoint-container"
+    *ngIf="!!(endpoint | async)">
+    <div class="endpoint-text">
+      <div class="endpoint-label">{{ 'stats.endpoint' | translate }}</div>
+      <div class="endpoint">{{ endpoint | async }}</div>
+    </div>
+    <pa-button
+      *ngIf="clipboardSupported"
+      aspect="basic"
+      [icon]="copyIcon"
+      (click)="copyEndpoint()">
+      {{ 'generic.copy' | translate }}
+    </pa-button>
   </div>
 
   <div class="home-main-layout">
@@ -39,30 +48,12 @@
     <div
       *ngIf="isKbAdmin | async"
       class="right-column">
-      <div class="container state-container">
-        <div class="title-m">
-          {{ 'stash.state' | translate }}:
-          <span class="state">{{ stateLabel | async }}</span>
-        </div>
-        <pa-button (click)="toggleKbState()">
-          {{ ((isPublished | async) ? 'account.stash.retire' : 'account.stash.publish') | translate }}
-        </pa-button>
-      </div>
-
       <div class="container resource-stats">
-        <div class="title-m">
-          {{ 'stats.total.title' | translate }}
-          <pa-button
-            aspect="basic"
-            icon="refresh"
-            size="small"
-            [disabled]="(refreshing | async) === true"
-            (click)="refresh()">
-            {{ 'account.stash.refresh_counters' | translate }}
-          </pa-button>
-        </div>
         <div *ngIf="locale | async as loc">
-          <div class="total-resources">{{ (counters | async)?.resources | number: '1.0-0':loc }}</div>
+          <dl class="total-resources">
+            <dt>{{ 'stats.total.title' | translate }}</dt>
+            <dd>{{ (counters | async)?.resources | number: '1.0-0':loc }}</dd>
+          </dl>
           <dl>
             <dt>{{ 'stats.total.fields' | translate }}</dt>
             <dd>{{ (counters | async)?.fields | number: '1.0-0':loc }}</dd>
@@ -76,23 +67,28 @@
         </div>
       </div>
 
+      <div class="container state-container">
+        <div class="title-s">
+          {{ stateLabel | async }}
+        </div>
+        <pa-button (click)="toggleKbState()">
+          {{ ((isPublished | async) ? 'account.stash.retire' : 'account.stash.publish') | translate }}
+        </pa-button>
+      </div>
+
       <div
         class="container go-to-desktop"
         *ngIf="isDownloadDesktopEnabled | async">
         <img
-          src="assets/nuclia-desktop-white.svg"
+          src="assets/nuclia-desktop.svg"
           alt="Nuclia Desktop" />
         <p>{{ 'stash.desktop.description' | translate }}</p>
         <div class="desktop-button">
-          <pa-button
-            kind="inverted"
-            icon="download-cloud"
-            iconAndText
-            (click)="downloadDesktop()">
+          <pa-button (click)="downloadDesktop()">
             {{ 'stash.desktop.button' | translate }}
           </pa-button>
           <p>
-            <i>{{ 'stash.desktop.text' | translate }}</i>
+            <small>{{ 'stash.desktop.text' | translate }}</small>
           </p>
         </div>
       </div>

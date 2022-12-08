@@ -42,22 +42,13 @@
   }
 
   .resource-stats {
-    min-height: rhythm(48);
-
-    .title-m {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-      margin: 0;
-    }
-
     dl {
       align-items: center;
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      font-size: font-size(xl);
-      row-gap: rhythm(3);
+      font-size: font-size(l);
+      row-gap: rhythm(1);
 
       dt {
         flex: 1 0 75%;
@@ -71,20 +62,31 @@
         text-align: right;
       }
     }
+
+    .total-resources {
+      margin-bottom: rhythm(2);
+
+      dd {
+        font-size: font-size(d1-md);
+      }
+    }
   }
 
-  .get-started {
-    @include dark-mode();
-
+  .endpoint-container {
     align-items: center;
     display: flex;
     flex: 1 1 auto;
-    gap: rhythm(1);
-    padding: rhythm(3);
+    gap: rhythm(2);
+    margin-bottom: rhythm(2);
 
-    .subtitle {
-      font-weight: $font-weight-thin;
-      margin-right: rhythm(6);
+    .endpoint-text {
+      align-items: baseline;
+      display: flex;
+      gap: rhythm(2);
+    }
+
+    .endpoint-label {
+      font-weight: $font-weight-semi-bold;
     }
 
     .endpoint {
@@ -96,34 +98,48 @@
   }
 
   .go-to-desktop {
-    @include dark-mode();
+    background: $color-neutral-lighter;
+    font-weight: $font-weight-regular;
+    padding: rhythm(5);
+    text-align: center;
+
+    img {
+      margin-bottom: rhythm(2);
+    }
   }
 
   .desktop-button {
     margin-top: rhythm(4);
     text-align: center;
 
-    i {
+    p {
+      display: flex;
+      justify-content: center;
+      margin: rhythm(1.5) 0 0;
+    }
+    small {
       font-size: size(xs);
+      font-style: italic;
+      font-weight: $font-weight-semi-bold;
     }
   }
-}
 
-.total-resources {
-  font-size: rhythm(5);
-  margin-bottom: rhythm(4);
-}
-
-.state-container {
-  align-items: center;
-  display: flex;
-
-  .title-m {
-    flex: 1 0 auto;
-    font-weight: $font-weight-thin;
+  .total-resources {
+    font-size: rhythm(5);
+    margin-bottom: rhythm(4);
   }
-}
 
-.state {
-  font-weight: $font-weight-semi-bold;
+  .state-container {
+    align-items: center;
+    display: flex;
+    padding: rhythm(2) rhythm(3);
+
+    .title-s {
+      flex: 1 0 auto;
+    }
+  }
+
+  .state {
+    font-weight: $font-weight-semi-bold;
+  }
 }
