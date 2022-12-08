@@ -2,6 +2,7 @@ import type { DisplayedResource } from '../models';
 import { NO_RESULTS, PENDING_RESULTS } from '../models';
 import {
   BehaviorSubject,
+  combineLatest,
   distinctUntilChanged,
   filter,
   map,
@@ -27,15 +28,13 @@ let _store: NucliaStore | undefined;
 
 let _state: {
   query: Observable<string>;
+  isEmptySearchQuery: Observable<boolean>;
   filters: Observable<string[]>;
   searchOptions: Observable<SearchOptions>;
-  results: Observable<IResource[]>;
   smartResults: Observable<Search.SmartResult[]>;
   hasSearchError: Observable<boolean>;
   pendingResults: Observable<boolean>;
   displayedResource: Observable<DisplayedResource>;
-  getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
-  getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -54,13 +53,11 @@ export const nucliaStore = (): NucliaStore => {
         tap(() => _store!.hasSearchError.next(false)),
         distinctUntilChanged(),
       ),
+      isEmptySearchQuery: combineLatest([_store.query, _store.filters]).pipe(
+        map(([query, filters]) => !query && filters.length === 0),
+      ),
       filters: _store.filters.asObservable(),
       searchOptions: _store.searchOptions.asObservable(),
-      results: _store.searchResults.pipe(
-        filter((res) => !!res.resources),
-        map((results) => getSortedResources(results)),
-        startWith([] as IResource[]),
-      ),
       smartResults: _store.searchResults.pipe(
         filter((res) => !!res.resources),
         map((results) => {
@@ -134,20 +131,6 @@ export const nucliaStore = (): NucliaStore => {
       hasSearchError: _store.hasSearchError.asObservable(),
       pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       displayedResource: _store.displayedResource.asObservable(),
-      getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
-        return _store!.searchResults.pipe(
-          map((results) => results.paragraphs?.results || []),
-          map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
-          map((paragraphs) => paragraphs.slice().sort((a, b) => b.score - a.score)),
-        );
-      },
-      getMatchingSentences: (resId: string): Observable<Search.Sentence[]> => {
-        return _store!.searchResults.pipe(
-          map((results) => results.sentences?.results || []),
-          map((sentences) => sentences.filter((p) => p.rid === resId)),
-          map((sentences) => sentences.slice().sort((a, b) => b.score - a.score)),
-        );
-      },
     };
   }
   return _store as NucliaStore;
@@ -181,32 +164,7 @@ export const removeLabelFilter = (label: Classification) => {
   nucliaStore().filters.next(currentFilters.filter((f) => f !== filter));
 };
 
-const getSortedResources = (results: Search.Results) => {
-  return Object.values(results.resources || {})
-    .map((res) => {
-      let score = 0;
-      // if resource appears in both paragraphs and sentences, it should be displayed first
-      // then we consider the sentences highest score
-      // and if no sentence match, we default to paragraphs highest score
-      if ((results.sentences?.results || []).find((p) => p.rid === res.id)) {
-        score += 100;
-        if ((results.paragraphs?.results || []).find((p) => p.rid === res.id)) {
-          score += 100;
-        }
-        score += Math.max(
-          ...(results.sentences?.results || []).filter((p) => p.rid === res.id).map((res) => res.score),
-        );
-      } else {
-        score += Math.max(
-          ...(results.paragraphs?.results || []).filter((p) => p.rid === res.id).map((res) => res.score),
-        );
-      }
-      return { res: res, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .map((data) => data.res);
-};
-
+const marksRE = /(<mark>|<\/mark>)/g;
 function addParagraphToSmartResults(
   smartResults: Search.SmartResult[],
   resource: Search.SmartResult,
@@ -215,10 +173,15 @@ function addParagraphToSmartResults(
   if (!paragraph) {
     return smartResults;
   }
-  const existing = smartResults.find((r) => r.id === resource.id);
-  if (existing) {
-    existing.paragraphs = existing.paragraphs || [];
-    existing.paragraphs.push(paragraph);
+  const existingResource = smartResults.find((r) => r.id === resource.id);
+  if (existingResource) {
+    const existingParagraph = existingResource.paragraphs?.find(
+      (p) => p.text.replace(marksRE, '') === paragraph.text.replace(marksRE, ''),
+    );
+    if (!existingParagraph) {
+      existingResource.paragraphs = existingResource.paragraphs || [];
+      existingResource.paragraphs.push(paragraph);
+    }
   } else {
     smartResults.push({ ...resource, paragraphs: [paragraph] });
   }

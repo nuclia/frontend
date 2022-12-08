@@ -160,13 +160,13 @@
               <Label
                 {label}
                 clickable={$widgetType === 'search'}
-                on:click={() => searchBy(label)} />
+                on:click={() => searchBy(label, true)} />
             {/each}
           </div>
         </div>
       {/if}
 
-      {#if $resource.metadata?.language}
+      {#if $resource?.metadata?.language}
         <div class="metadata-value">
           <h3>{$_('resource.language')}</h3>
           <div>{$resource.metadata.language}</div>
