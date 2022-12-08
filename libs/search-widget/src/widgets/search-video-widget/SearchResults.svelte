@@ -14,7 +14,7 @@
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
-  const hasQuery = nucliaState().query.pipe(map((query) => !!query));
+  const isEmptyQuery = nucliaState().isEmptyQuery;
   const results = nucliaState().smartResults;
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
@@ -31,7 +31,7 @@
 <div
   class="nuclia-widget sw-video-results"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if $showResults && $hasQuery}
+  {#if $showResults && !$isEmptyQuery}
     {#if $hasSearchError}
       <div class="error">
         <strong>{$_('error.search')}</strong>
