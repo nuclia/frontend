@@ -190,6 +190,7 @@ const getSortedResources = (results: Search.Results) => {
     .map((data) => data.res);
 };
 
+const marksRE = /(<mark>|<\/mark>)/g;
 function addParagraphToSmartResults(
   smartResults: Search.SmartResult[],
   resource: Search.SmartResult,
@@ -198,10 +199,15 @@ function addParagraphToSmartResults(
   if (!paragraph) {
     return smartResults;
   }
-  const existing = smartResults.find((r) => r.id === resource.id);
-  if (existing) {
-    existing.paragraphs = existing.paragraphs || [];
-    existing.paragraphs.push(paragraph);
+  const existingResource = smartResults.find((r) => r.id === resource.id);
+  if (existingResource) {
+    const existingParagraph = existingResource.paragraphs?.find(
+      (p) => p.text.replace(marksRE, '') === paragraph.text.replace(marksRE, ''),
+    );
+    if (!existingParagraph) {
+      existingResource.paragraphs = existingResource.paragraphs || [];
+      existingResource.paragraphs.push(paragraph);
+    }
   } else {
     smartResults.push({ ...resource, paragraphs: [paragraph] });
   }
