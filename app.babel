@@ -12900,46 +12900,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.widgets.add</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.widgets.add-help</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>stash.widgets.configuration</name>
 						<description/>
 						<comment/>
@@ -12980,6 +12940,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>stash.widgets.editLabels.help</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>stash.widgets.entityAnnotation</name>
 						<description/>
 						<comment/>
@@ -13000,7 +12980,47 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>stash.widgets.entityAnnotation.help</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>stash.widgets.filter</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.widgets.filter.help</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -13041,26 +13061,6 @@
 					</concept_node>
 					<concept_node>
 						<name>stash.widgets.hint_2</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.widgets.invalid-id</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -13180,7 +13180,47 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>stash.widgets.navigateToLink.help</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>stash.widgets.permalink</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.widgets.permalink.help</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -13300,46 +13340,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.widgets.rename</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.widgets.rename-title</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>stash.widgets.snippet</name>
 						<description/>
 						<comment/>
@@ -13360,7 +13360,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.widgets.style</name>
+						<name>stash.widgets.suggestLabels</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -13380,7 +13380,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.widgets.suggestLabels</name>
+						<name>stash.widgets.suggestLabels.help</name>
 						<description/>
 						<comment/>
 						<default_text/>

@@ -2,7 +2,7 @@
 
 $dock-max-width: rhythm(7);
 $padding-side: rhythm(12);
-$width-configuration: rhythm(48);
+$width-configuration: rhythm(56);
 .widget-generator {
   padding: rhythm(6) $padding-side;
 
@@ -48,7 +48,7 @@ $width-configuration: rhythm(48);
       .widget-features {
         display: flex;
         flex-direction: column;
-        gap: rhythm(1);
+        gap: rhythm(2);
       }
     }
 

@@ -67,6 +67,7 @@ $font-size-display-m-md: font-size(d2-md);
 // Line height
 /* prettier-ignore */
 $line-height: (
+  xs: ($font-size-base * .875),   // 14px - 0.875 rem
   s:  ($font-size-base * 1),      // 16px - 1 rem
   m:  ($font-size-base * 1.25),   // 20px - 1.25 rem
   l:  ($font-size-base * 1.5),    // 24px - 1.5 rem

@@ -1,7 +1,7 @@
-# 1.1.0 (2022-12-05)
+# 1.1.0 (2022-12-08)
 
 ### Breaking change
-- Remove all widget endpoints
+- Remove widget endpoints: the widget is not stored in the backend anymore
 
 ### Improvements
 - Fix resource data if null

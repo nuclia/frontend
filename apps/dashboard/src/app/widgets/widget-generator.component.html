@@ -47,16 +47,41 @@
           formGroupName="features">
           <pa-toggle
             *ngIf="isTrainingEnabled | async"
+            labelOnRight
+            help="stash.widgets.suggestLabels.help"
             formControlName="suggestLabels">
             {{ 'stash.widgets.suggestLabels' | translate }}
           </pa-toggle>
-          <pa-toggle formControlName="editLabels">{{ 'stash.widgets.editLabels' | translate }}</pa-toggle>
-          <pa-toggle formControlName="entityAnnotation">
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.editLabels.help"
+            formControlName="editLabels">
+            {{ 'stash.widgets.editLabels' | translate }}
+          </pa-toggle>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.entityAnnotation.help"
+            formControlName="entityAnnotation">
             {{ 'stash.widgets.entityAnnotation' | translate }}
           </pa-toggle>
-          <pa-toggle formControlName="filter">{{ 'stash.widgets.filter' | translate }}</pa-toggle>
-          <pa-toggle formControlName="permalink">{{ 'stash.widgets.permalink' | translate }}</pa-toggle>
-          <pa-toggle formControlName="navigateToLink">{{ 'stash.widgets.navigateToLink' | translate }}</pa-toggle>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.filter.help"
+            formControlName="filter">
+            {{ 'stash.widgets.filter' | translate }}
+          </pa-toggle>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.permalink.help"
+            formControlName="permalink">
+            {{ 'stash.widgets.permalink' | translate }}
+          </pa-toggle>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.navigateToLink.help"
+            formControlName="navigateToLink">
+            {{ 'stash.widgets.navigateToLink' | translate }}
+          </pa-toggle>
         </div>
       </section>
       <section class="snippet">
