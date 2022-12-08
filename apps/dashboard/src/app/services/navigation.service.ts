@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService, StateService } from '@flaps/core';
-import { Observable, combineLatest, map } from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 

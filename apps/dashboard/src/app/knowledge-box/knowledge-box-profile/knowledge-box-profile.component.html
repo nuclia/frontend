@@ -18,7 +18,8 @@
         <div fxFlex="70%">
           <pa-input
             formControlName="uid"
-            [readonly]="true"></pa-input>
+            externalLabel
+            readonly></pa-input>
         </div>
       </div>
 
@@ -33,6 +34,7 @@
         <div fxFlex="70%">
           <pa-input
             formControlName="slug"
+            externalLabel
             [errorMessages]="validationMessages.slug"></pa-input>
         </div>
       </div>
@@ -48,6 +50,7 @@
         <div fxFlex="70%">
           <pa-input
             formControlName="title"
+            externalLabel
             [errorMessages]="validationMessages.title"></pa-input>
         </div>
       </div>
@@ -61,6 +64,7 @@
         <div fxFlex="70%">
           <pa-textarea
             formControlName="description"
+            externalLabel
             rows="4"></pa-textarea>
         </div>
       </div>

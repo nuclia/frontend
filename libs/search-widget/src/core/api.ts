@@ -15,7 +15,6 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
-import { searchWidget } from './stores/widget.store';
 import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 
@@ -24,7 +23,7 @@ let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
 
-export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
+export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
@@ -32,21 +31,15 @@ export const initNuclia = (widgetId: string, options: NucliaOptions, state: KBSt
     SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   nucliaApi = new Nuclia(options);
-  nucliaApi.knowledgeBox.getWidget(widgetId).subscribe((widget) => {
-    nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
-    searchWidget.set({
-      ...widget,
-      features: Object.keys(widget.features).length ? widget.features : widgetOptions.defaultFeatures || {},
-    });
-    if (searchWidget.getValue()!.features.suggestLabels) {
-      const kbPath = nucliaApi?.knowledgeBox.fullpath;
-      if (kbPath) {
-        nucliaPrediction = new NucliaPrediction(getCDN());
-        const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
-        nucliaPrediction.loadModels(kbPath, authHeaders);
-      }
+  nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
+  if (widgetOptions.features?.suggestLabels) {
+    const kbPath = nucliaApi?.knowledgeBox.fullpath;
+    if (kbPath) {
+      nucliaPrediction = new NucliaPrediction(getCDN());
+      const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
+      nucliaPrediction.loadModels(kbPath, authHeaders);
     }
-  });
+  }
   STATE = state;
 };
 
@@ -121,7 +114,7 @@ export const loadEntities = (): Observable<EntityGroup[]> => {
           title: group.title || `entities.${groupId.toLowerCase()}`,
           color: group.color || generatedEntitiesColor[groupId],
           entities: Object.entries(group.entities)
-            .map(([entityId, entity]) => entity.value)
+            .map(([, entity]) => entity.value)
             .sort((a, b) => a.localeCompare(b)),
           custom: group.custom,
         }))

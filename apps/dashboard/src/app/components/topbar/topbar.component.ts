@@ -7,7 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AppService } from '../../services/app.service';
 import { SisModalService } from '@nuclia/sistema';
-import { DEFAULT_FEATURES_LIST } from '../../widgets/widget.service';
+import { DEFAULT_FEATURES_LIST } from '../../widgets/widget-features';
 
 @Component({
   selector: 'app-topbar',
@@ -29,9 +29,13 @@ export class TopbarComponent implements AfterViewInit {
     switchMap((kb) => kb.getLabels().pipe(map((labelSets) => ({ kb, labelSets })))),
     map(({ kb, labelSets }) => {
       const hasLabels = Object.keys(labelSets).length > 0;
+      const features = !hasLabels
+        ? DEFAULT_FEATURES_LIST.split(',')
+            .filter((feature) => feature !== 'filter')
+            .join(',')
+        : DEFAULT_FEATURES_LIST;
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
-        widgetid="dashboard"
         client="dashboard"
         cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
         backend="${this.backendConfig.getAPIURL()}"
@@ -39,11 +43,8 @@ export class TopbarComponent implements AfterViewInit {
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
         lang="${this.translation.currentLang}"
-        type="input"
-        defaultfeatures="${DEFAULT_FEATURES_LIST}"
-        permalink
-        filter="${hasLabels}"
-        notpublic></nuclia-search>`);
+        type="popup"
+        features="${features}"></nuclia-search>`);
     }),
   );
 

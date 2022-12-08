@@ -23,14 +23,11 @@
   import { LabelSetWithId, orderedLabelSetList } from '../../core/stores/labels.store';
   import { getParentLiRect } from '../../common/label/label.utils';
   import Button from '../../common/button/Button.svelte';
+  import { hasFilterButton, widgetPlaceholder } from '../../core/stores/widget.store';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
   export let searchBarWidget = false;
-  export let placeholder = '';
-  export let hasFilterButton = false;
-
-  const defaultPlaceholder = 'input.placeholder';
 
   let element: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -180,7 +177,7 @@
       bind:this={element}
       class="search-field"
       name="nuclia-search-field"
-      placeholder={$_(placeholder || defaultPlaceholder)}
+      placeholder={$_($widgetPlaceholder)}
       tabindex="0"
       autocomplete="off"
       autocapitalize="off"
@@ -189,7 +186,7 @@
       bind:value={$typeAhead}
       on:keypress={onKeyPress} />
 
-    {#if hasFilterButton}
+    {#if $hasFilterButton}
       <div bind:this={filterButtonElement}>
         <IconButton
           icon="filter"

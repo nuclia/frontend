@@ -8,12 +8,14 @@
   }
 
   form {
+    background-color: $color-light-stronger;
+    margin-bottom: rhythm(2);
     max-width: 1000px;
     padding: rhythm(1) rhythm(2) rhythm(2);
-    margin-bottom: rhythm(2);
-    background-color: $color-light-stronger;
+
     .form-content {
       display: flex;
+      gap: rhythm(1);
       pa-select {
         width: rhythm(20);
       }
@@ -21,9 +23,9 @@
   }
 
   .container {
+    background-color: $color-light-stronger;
     max-width: 1000px;
     padding: rhythm(2) rhythm(2) rhythm(3);
-    background-color: $color-light-stronger;
   }
 
   .service-access-list {

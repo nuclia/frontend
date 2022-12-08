@@ -5,15 +5,16 @@
   import { resetStore, nucliaStore } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, loadFonts, loadSvgSprite, coerceBooleanProperty } from '../../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
   import { get_current_component } from 'svelte/internal';
+  import { WidgetFeatures } from '@nuclia/core';
+  import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
 
   export let backend = 'https://nuclia.cloud/api';
-  export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
   export let placeholder = '';
@@ -24,9 +25,12 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let filter = false;
+  export let features = '';
 
-  $: _filter = coerceBooleanProperty(filter);
+  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+    {},
+  );
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -49,7 +53,6 @@
 
   onMount(() => {
     initNuclia(
-      widgetid,
       {
         backend,
         zone,
@@ -62,10 +65,18 @@
       state,
       {
         highlight: true,
+        features: _features,
       },
     );
     if (cdn) {
       setCDN(cdn);
+    }
+
+    // Setup widget in the store
+    widgetMode.set('embedded');
+    widgetFeatures.set(_features);
+    if (placeholder) {
+      widgetPlaceholder.set(placeholder);
     }
 
     loadFonts();
@@ -90,10 +101,7 @@
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    <SearchInput
-      {placeholder}
-      hasFilterButton={_filter}
-      searchBarWidget={true} />
+    <SearchInput searchBarWidget={true} />
   {/if}
   <div
     id="nuclia-glyphs-sprite"

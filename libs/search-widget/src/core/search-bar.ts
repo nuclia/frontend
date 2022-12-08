@@ -15,9 +15,13 @@ export const setupTriggerSearch = (dispatch: (event: string, details: any) => vo
       filter((query) => !!query),
       tap((query) => (dispatch ? dispatch('search', query) : undefined)),
       switchMap((query) =>
-        forkJoin([nucliaStore().searchOptions.pipe(take(1)), nucliaStore().filters.pipe(take(1))]).pipe(
-          map(([options, filters]) => {
-            const show = navigateToLink.getValue()
+        forkJoin([
+          nucliaStore().searchOptions.pipe(take(1)),
+          nucliaStore().filters.pipe(take(1)),
+          navigateToLink.pipe(take(1)),
+        ]).pipe(
+          map(([options, filters, navigateToLink]) => {
+            const show = navigateToLink
               ? [ResourceProperties.BASIC, ResourceProperties.VALUES]
               : [ResourceProperties.BASIC];
             const currentOptions = { ...options, show, filters };

@@ -7,22 +7,28 @@
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { get_current_component } from 'svelte/internal';
-  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss';
-  import { customStyle, setWidgetActions, widgetType, navigateToLink } from '../../core/stores/widget.store';
+  import {
+    setWidgetActions,
+    widgetType,
+    widgetMode,
+    widgetFeatures,
+    widgetPlaceholder,
+    WidgetMode,
+  } from '../../core/stores/widget.store';
   import { activateTypeAheadSuggestions, unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
 
   export let backend = 'https://nuclia.cloud/api';
-  export let widgetid = '';
   export let zone = '';
   export let knowledgebox = '';
-  export let type = 'input'; // input, form
+  export let type = 'embedded'; // 'popup' | 'embedded'
   export let placeholder = '';
   export let lang = '';
   export let cdn = '';
@@ -31,20 +37,13 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let permalink = false;
-  export let filter = false;
   export let standalone = false;
-  export let navigatetolink = false;
-  export let notpublic = false;
-  export let defaultfeatures = '';
+  export let features = '';
 
-  $: _permalink = coerceBooleanProperty(permalink);
-  $: _navigatetolink = coerceBooleanProperty(navigatetolink);
-  $: _notpublic = coerceBooleanProperty(notpublic);
-  $: _filter = coerceBooleanProperty(filter);
-  let _defaultfeatures: WidgetFeatures = (
-    typeof defaultfeatures === 'string' ? defaultfeatures.split(',').filter((f) => !!f) : []
-  ).reduce((acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }), {});
+  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+    {},
+  );
 
   const thisComponent = get_current_component();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -73,12 +72,10 @@
   };
 
   let svgSprite;
-  let style: string;
   let ready = false;
 
   onMount(() => {
     initNuclia(
-      widgetid,
       {
         backend,
         zone,
@@ -88,32 +85,39 @@
         kbSlug: kbslug,
         account,
         standalone,
-        public: !_notpublic && !apikey,
+        public: !_features.notPublic && !apikey,
       },
       state,
       {
         highlight: true,
-        defaultFeatures: _defaultfeatures,
+        features: _features,
       },
     );
     if (cdn) {
       setCDN(cdn);
     }
+
+    // Setup widget in the store
+    widgetMode.set(type as WidgetMode);
+    widgetFeatures.set(_features);
+    if (placeholder) {
+      widgetPlaceholder.set(placeholder);
+    }
+    widgetType.set('search');
+
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
-    // Load custom styles
-    customStyle.subscribe((css) => (style = css));
 
-    activateTypeAheadSuggestions();
+    if (_features.suggestions) {
+      activateTypeAheadSuggestions();
+    }
 
     setupTriggerSearch(dispatchCustomEvent);
-    initViewerEffects(_permalink);
+    initViewerEffects(_features.permalink);
 
-    widgetType.set('search');
-    navigateToLink.set(_navigatetolink);
     ready = true;
 
     return () => reset();
@@ -124,17 +128,12 @@
 
 <div
   class="nuclia-widget"
-  {style}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready}
-    {#if type === 'input'}
-      <PopupSearch
-        {placeholder}
-        filter={_filter} />
-    {:else if type === 'form'}
-      <EmbeddedSearch
-        {placeholder}
-        filter={_filter} />
+    {#if type === 'popup'}
+      <PopupSearch />
+    {:else if type === 'embedded'}
+      <EmbeddedSearch />
     {:else}
       {type} widget is not implemented yet
     {/if}

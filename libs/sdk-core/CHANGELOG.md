@@ -1,5 +1,9 @@
-# 1.0.7 (unreleased)
+# 1.1.0 (2022-12-08)
 
+### Breaking change
+- Remove widget endpoints: the widget is not stored in the backend anymore
+
+### Improvements
 - Fix resource data if null
 - Add `getLabelFromFilter` and `getFilterFromLabel` functions
 - Add NUA key to the local storage only when the key is created from the desktop application
