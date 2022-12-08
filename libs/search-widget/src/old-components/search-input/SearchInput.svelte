@@ -141,6 +141,11 @@
       showFilterSubmenu = true;
     }
   }
+
+  function clear() {
+    typeAhead.set('');
+    nucliaStore().query.next('');
+  }
 </script>
 
 <svelte:window on:resize={setInputPosition} />
@@ -161,17 +166,19 @@
   {/if}
   <div class="input-container">
     <div class="search-icon-container">
-      <div
-        class="search-icon"
-        tabIndex="0"
-        on:click={search}
-        on:keyup={(e) => {
-          if (e.key === 'Enter') {
-            search();
-          }
-        }}>
-        <Icon name="search" />
-      </div>
+      {#if $typeAhead.length > 0}
+        <IconButton
+          aspect="basic"
+          icon="cross"
+          ariaLabel={$_('input.clear')}
+          size="small"
+          on:click={clear}
+          on:enter={clear} />
+      {:else}
+        <div class="search-icon">
+          <Icon name="search" />
+        </div>
+      {/if}
     </div>
     <input
       bind:this={element}

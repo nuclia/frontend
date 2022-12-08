@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime, forkJoin, map, pipe, switchMap, take, tap } from 'rxjs';
+  import { debounceTime, map } from 'rxjs';
   import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
@@ -14,6 +14,7 @@
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
+  const hasQuery = nucliaState().query.pipe(map((query) => !!query));
   const results = nucliaState().smartResults;
   const hasSearchError = nucliaState().hasSearchError;
   const pendingResults = nucliaState().pendingResults;
@@ -30,7 +31,7 @@
 <div
   class="nuclia-widget sw-video-results"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if $showResults}
+  {#if $showResults && $hasQuery}
     {#if $hasSearchError}
       <div class="error">
         <strong>{$_('error.search')}</strong>

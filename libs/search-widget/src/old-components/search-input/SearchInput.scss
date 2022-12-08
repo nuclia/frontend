@@ -71,6 +71,7 @@
       position: absolute;
       top: calc(var(--rhythm-1_5) * -1 + var(--rhythm-0_25));
       width: var(--rhythm-7);
+      z-index: 1;
     }
 
     &:before,
@@ -83,12 +84,12 @@
     }
 
     &:before {
-      left: -0.5px;
+      left: -1px;
       width: var(--rhythm-1);
     }
     &:after {
       left: var(--rhythm-9);
-      right: -0.5px;
+      right: -1px;
     }
   }
 
@@ -156,26 +157,19 @@
   }
 
   .search-icon-container {
-    left: var(--rhythm-1);
+    left: var(--rhythm-0_5);
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
+
+    .search-icon {
+      display: flex;
+      padding: var(--rhythm-1_5) var(--rhythm-0_5);
+    }
   }
 
   &.popup-widget .search-icon-container {
     left: 0;
-  }
-
-  .search-icon {
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    padding: var(--rhythm-0_5);
-
-    &:focus-visible {
-      box-shadow: var(--focus-shadow);
-      outline: 0;
-    }
   }
 }
 

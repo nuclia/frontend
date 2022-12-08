@@ -25,6 +25,7 @@
 	"form.title-only": "Cerca només al títol",
 	"generic.cancel": "Cancel·lar",
 	"generic.save": "Guardar",
+	"input.clear": "Esborra la cerca",
 	"input.more_filters": "{{count}} filtres més",
 	"input.placeholder": "Escriviu la vostra pregunta aquí",
 	"modal.back": "Tornar",
