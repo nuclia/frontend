@@ -10,9 +10,10 @@ export const setupTriggerSearch = (dispatch: (event: string, details: any) => vo
   nucliaStore()
     .triggerSearch.pipe(
       tap(() => nucliaStore().searchResults.next(PENDING_RESULTS)),
+      switchMap(() => nucliaState().isEmptyQuery.pipe(take(1))),
+      filter((isEmptyQuery) => !isEmptyQuery),
       switchMap(() => nucliaState().query.pipe(take(1))),
       map((query) => query.trim()),
-      filter((query) => !!query),
       tap((query) => (dispatch ? dispatch('search', query) : undefined)),
       switchMap((query) =>
         forkJoin([

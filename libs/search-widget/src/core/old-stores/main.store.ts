@@ -2,6 +2,7 @@ import type { DisplayedResource } from '../models';
 import { NO_RESULTS, PENDING_RESULTS } from '../models';
 import {
   BehaviorSubject,
+  combineLatest,
   distinctUntilChanged,
   filter,
   map,
@@ -27,6 +28,7 @@ let _store: NucliaStore | undefined;
 
 let _state: {
   query: Observable<string>;
+  isEmptyQuery: Observable<boolean>;
   filters: Observable<string[]>;
   searchOptions: Observable<SearchOptions>;
   smartResults: Observable<Search.SmartResult[]>;
@@ -50,6 +52,9 @@ export const nucliaStore = (): NucliaStore => {
       query: _store.query.asObservable().pipe(
         tap(() => _store!.hasSearchError.next(false)),
         distinctUntilChanged(),
+      ),
+      isEmptyQuery: combineLatest([_store.query, _store.filters]).pipe(
+        map(([query, filters]) => !query && filters.length === 0),
       ),
       filters: _store.filters.asObservable(),
       searchOptions: _store.searchOptions.asObservable(),

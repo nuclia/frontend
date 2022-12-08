@@ -11,7 +11,7 @@
     nucliaStore().triggerSearch.pipe(map(() => true)),
     nucliaState().smartResults.pipe(map((results) => results.length > 0)),
   );
-  const hasQuery = nucliaState().query.pipe(map((query) => !!query));
+  const isEmptyQuery = nucliaState().isEmptyQuery;
   const onChange = (checked: boolean) =>
     nucliaStore().searchOptions.next({
       inTitleOnly: checked,
@@ -29,7 +29,7 @@
       label={$_('form.title-only')}
       on:change={(e) => onChange(e.detail)} />
   </div>
-  {#if $showResults && $hasQuery}
+  {#if $showResults && !$isEmptyQuery}
     <div
       class="results"
       class:empty={$results.length === 0}>
