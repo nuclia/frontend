@@ -29,13 +29,10 @@ let _state: {
   query: Observable<string>;
   filters: Observable<string[]>;
   searchOptions: Observable<SearchOptions>;
-  results: Observable<IResource[]>;
   smartResults: Observable<Search.SmartResult[]>;
   hasSearchError: Observable<boolean>;
   pendingResults: Observable<boolean>;
   displayedResource: Observable<DisplayedResource>;
-  getMatchingParagraphs: (resId: string) => Observable<Search.Paragraph[]>;
-  getMatchingSentences: (resId: string) => Observable<Search.Sentence[]>;
 };
 
 export const nucliaStore = (): NucliaStore => {
@@ -56,11 +53,6 @@ export const nucliaStore = (): NucliaStore => {
       ),
       filters: _store.filters.asObservable(),
       searchOptions: _store.searchOptions.asObservable(),
-      results: _store.searchResults.pipe(
-        filter((res) => !!res.resources),
-        map((results) => getSortedResources(results)),
-        startWith([] as IResource[]),
-      ),
       smartResults: _store.searchResults.pipe(
         filter((res) => !!res.resources),
         map((results) => {
@@ -134,20 +126,6 @@ export const nucliaStore = (): NucliaStore => {
       hasSearchError: _store.hasSearchError.asObservable(),
       pendingResults: _store.searchResults.pipe(map((res) => (res as typeof PENDING_RESULTS).pending)),
       displayedResource: _store.displayedResource.asObservable(),
-      getMatchingParagraphs: (resId: string): Observable<Search.Paragraph[]> => {
-        return _store!.searchResults.pipe(
-          map((results) => results.paragraphs?.results || []),
-          map((paragraphs) => paragraphs.filter((p) => p.rid === resId)),
-          map((paragraphs) => paragraphs.slice().sort((a, b) => b.score - a.score)),
-        );
-      },
-      getMatchingSentences: (resId: string): Observable<Search.Sentence[]> => {
-        return _store!.searchResults.pipe(
-          map((results) => results.sentences?.results || []),
-          map((sentences) => sentences.filter((p) => p.rid === resId)),
-          map((sentences) => sentences.slice().sort((a, b) => b.score - a.score)),
-        );
-      },
     };
   }
   return _store as NucliaStore;
