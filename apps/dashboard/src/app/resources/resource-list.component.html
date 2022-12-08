@@ -17,6 +17,7 @@
           [labelSets]="labelSets$ | async"
           (selectionChange)="updateLabelList($event)"
           (close)="addLabelsToSelection()"
+          aspect="basic"
           size="small">
           {{ 'resource.add_labels' | translate }}
         </app-label-dropdown>
@@ -24,6 +25,7 @@
         <pa-button
           *ngIf="selection.selected.length > 0"
           kind="destructive"
+          aspect="basic"
           size="small"
           (click)="bulkDelete()">
           {{ 'generic.delete' | translate }}
@@ -33,7 +35,7 @@
         <div>
           <nsi-dropdown-button
             size="small"
-            kind="inverted"
+            aspect="basic"
             [popupRef]="visibleColumns">
             {{ 'resource.visible_columns_dropdown' | translate }}
           </nsi-dropdown-button>
@@ -53,7 +55,7 @@
         <div *ngIf="pageSizeOptions | async as options">
           <nsi-dropdown-button
             size="small"
-            kind="inverted"
+            aspect="basic"
             [popupRef]="pageSizeMenu">
             {{ 'resource.resource_page_number' | translate: { num: filters.size } }}
           </nsi-dropdown-button>
