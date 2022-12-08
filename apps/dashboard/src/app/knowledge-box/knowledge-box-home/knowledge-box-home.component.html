@@ -71,9 +71,7 @@
         <div class="title-s">
           {{ stateLabel | async }}
         </div>
-        <pa-button
-          aspect="basic"
-          (click)="toggleKbState()">
+        <pa-button (click)="toggleKbState()">
           {{ ((isPublished | async) ? 'account.stash.retire' : 'account.stash.publish') | translate }}
         </pa-button>
       </div>
