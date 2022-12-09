@@ -59,7 +59,7 @@
         <div
           class="label-set-color"
           style:background-color={labelSet.color} />
-        <div class="label-set-title">{labelSet.title}</div>
+        <div class="label-set-title ellipsis">{labelSet.title}</div>
         <Icon name="chevron-right" />
       </li>
     {/each}
@@ -73,6 +73,7 @@
     <ul class="sw-dropdown-options">
       {#each selectedLabelSet.labels as label}
         <li
+          class="ellipsis"
           class:selected={selectedLabels.includes(label.title)}
           on:click={() => toggleLabel(selectedLabelSet.id, label.title)}>
           {label.title}
