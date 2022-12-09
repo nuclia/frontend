@@ -6,6 +6,7 @@
   border-bottom: 1px solid $color-neutral-lighter;
   display: flex;
   height: var(--app-topbar-height);
+  justify-content: space-between;
   left: 0;
   padding: 0 var(--app-layout-margin-right) 0 rhythm(2);
   position: fixed;
@@ -42,16 +43,10 @@
     }
   }
 
-  .search-widget {
-    margin-left: rhythm(10);
-    margin-right: auto;
-
-    // widget customisation
-    --custom-input-widget-padding: 2px;
-
-    div {
-      width: 300px;
-    }
+  .topbar-actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
   }
 
   .topbar-separator {
@@ -61,11 +56,7 @@
     width: 1px;
   }
 
-  .topbar-account {
-    margin-right: rhythm(2);
-  }
-
   .topbar-kb {
-    margin-right: rhythm(4);
+    margin-right: rhythm(2);
   }
 }

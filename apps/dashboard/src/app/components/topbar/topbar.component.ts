@@ -2,12 +2,10 @@ import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core
 import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
-import { distinctUntilKeyChanged, filter, map, switchMap, take, tap } from 'rxjs';
-import { DomSanitizer } from '@angular/platform-browser';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { filter, map, switchMap, take, tap } from 'rxjs';
+import { TranslatePipe } from '@ngx-translate/core';
 import { AppService } from '../../services/app.service';
 import { SisModalService } from '@nuclia/sistema';
-import { DEFAULT_FEATURES_LIST } from '../../widgets/widget-features';
 
 @Component({
   selector: 'app-topbar',
@@ -19,46 +17,16 @@ export class TopbarComponent implements AfterViewInit {
   userInfo = this.userService.userInfo;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
-  searchEnabled = this.appService.searchEnabled;
-
-  searchWidget = this.kb.pipe(
-    distinctUntilKeyChanged('id'),
-    tap(() => {
-      document.getElementById('search-widget')?.remove();
-    }),
-    switchMap((kb) => kb.getLabels().pipe(map((labelSets) => ({ kb, labelSets })))),
-    map(({ kb, labelSets }) => {
-      const hasLabels = Object.keys(labelSets).length > 0;
-      const features = !hasLabels
-        ? DEFAULT_FEATURES_LIST.split(',')
-            .filter((feature) => feature !== 'filter')
-            .join(',')
-        : DEFAULT_FEATURES_LIST;
-      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
-        zone="${this.sdk.nuclia.options.zone}"
-        client="dashboard"
-        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
-        backend="${this.backendConfig.getAPIURL()}"
-        state="${kb.state || ''}"
-        kbslug="${kb.slug || ''}"
-        account="${kb.account || ''}"
-        lang="${this.translation.currentLang}"
-        type="popup"
-        features="${features}"></nuclia-search>`);
-    }),
-  );
 
   constructor(
     private router: Router,
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private appService: AppService,
     private translate: TranslatePipe,
     private modalService: SisModalService,
-    private translation: TranslateService,
     private trackingService: STFTrackingService,
   ) {}
 
