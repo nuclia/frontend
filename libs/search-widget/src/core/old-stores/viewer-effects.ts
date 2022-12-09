@@ -7,7 +7,7 @@ import { resource } from '../stores/resource.store';
 import { isViewerOpen } from '../stores/modal.store';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { canEditLabels } from '../stores/widget.store';
-import { activateEditLabelsFeature } from '../stores/effects';
+import { initLabelStore } from '../stores/effects';
 import { entityGroups } from '../../core/stores/entities.store';
 
 const subscriptions: Subscription[] = [];
@@ -41,7 +41,7 @@ export function initViewerEffects(permalinkEnabled: boolean | undefined) {
         }),
       canEditLabels.subscribe((canEditLabels) => {
         if (canEditLabels) {
-          activateEditLabelsFeature();
+          initLabelStore();
         }
       }),
       isViewerOpen.subscribe((isOpen) => {
