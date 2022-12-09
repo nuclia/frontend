@@ -132,7 +132,6 @@
 	"entity.unlink_entity": "Desenlazar la entidad. Se creará una nueva entidad no relacionada",
 	"farewell.message": "<p>Nos entristece que te vayas {{username}}!</p>\n<p>Nos aseguraremos de eliminar tu usuario y datos de Nuclia. En nombre del equipo de Nuclia te queremos agradecer el tiempo que has dedicado a nuestra plataforma.</p>\n<p>Si crees que podríamos haber echo alguna cosa mejor, por favor <a href=\"mailto:{{email}}\">háznoslo saber</a>. Nos encantaría saberlo.</p>\n<p>Gracias!</p>",
 	"farewell.title": "Hasta pronto 👋",
-	"filter.filter_by_name_entities": "Filtrar por Name Entities",
 	"filter.filters_applied": "Filtros aplicados",
 	"filter.search_ontology": "Busca la Ontología",
 	"filter.suggested_classification": "Clasificación sugerida",
