@@ -36,6 +36,7 @@ import { AccountNUAComponent } from './account/account-nua/account-nua.component
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 import { AccountUsersComponent } from './account/account-users/account-users.component';
 import { KnowledgeBoxProcessesComponent } from './knowledge-box/knowledge-box-process/knowledge-box-processes.component';
+import { SearchComponent } from './search/search.component';
 
 @Component({
   template: '<ng-container></ng-container>',
@@ -124,6 +125,10 @@ const routes: Routes = [
               {
                 path: 'resources',
                 loadChildren: () => import('./resources/resources.module').then((m) => m.ResourcesModule),
+              },
+              {
+                path: 'search',
+                component: SearchComponent,
               },
               {
                 path: 'activity',

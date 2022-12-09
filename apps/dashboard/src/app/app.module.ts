@@ -35,6 +35,7 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
+import { SearchModule } from './search/search.module';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -56,6 +57,7 @@ const appModules = [
   OntologiesModule,
   UploadModule,
   RedirectModule,
+  SearchModule,
 ];
 
 @NgModule({

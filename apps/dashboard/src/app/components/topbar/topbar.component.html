@@ -14,19 +14,15 @@
       class="topbar-logo-collapsed"></svg-icon>
   </button>
 
-  <div class="search-widget">
-    <ng-container *ngIf="searchEnabled | async">
-      <div [innerHtml]="searchWidget | async"></div>
-    </ng-container>
+  <div class="topbar-actions">
+    <div
+      *ngIf="(userInfo | async)?.accounts.length > 1"
+      class="topbar-account">
+      <strong>{{ (kb | async)?.account }}</strong>
+    </div>
+
+    <app-kb-switch class="topbar-kb"></app-kb-switch>
+
+    <app-user-menu [userInfo]="userInfo | async"></app-user-menu>
   </div>
-
-  <div
-    *ngIf="(userInfo | async)?.accounts.length > 1"
-    class="topbar-account">
-    <strong>{{ (kb | async)?.account }}</strong>
-  </div>
-
-  <app-kb-switch class="topbar-kb"></app-kb-switch>
-
-  <app-user-menu [userInfo]="userInfo | async"></app-user-menu>
 </div>

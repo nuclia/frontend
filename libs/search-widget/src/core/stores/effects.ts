@@ -16,7 +16,7 @@ export function unsubscribeAllEffects() {
 /**
  * Initialise label sets in the store
  */
-export function activateEditLabelsFeature() {
+export function initLabelStore() {
   // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
   getLabelSets().subscribe((labelSetMap) => labelSets.set(labelSetMap));
 }
