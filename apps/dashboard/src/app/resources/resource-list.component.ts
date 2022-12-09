@@ -29,6 +29,7 @@ import { BackendConfigurationService, SDKService, StateService, STFUtils } from 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
+import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 
 interface ListFilters {
   type?: string;
@@ -113,16 +114,23 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     tap(() => {
       document.getElementById('viewer-widget')?.remove();
     }),
-    map((kb) =>
-      this.sanitized.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
+    map((kb) => {
+      const features = DEFAULT_FEATURES_LIST.split(',')
+        .filter((feature) => feature !== 'filter')
+        .join(',');
+      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
         knowledgebox="${kb.id}"
         zone="${this.sdk.nuclia.options.zone}"
+        client="dashboard"
         cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
         backend="${this.backendConfig.getAPIURL()}"
-        permalink
+        state="${kb.state || ''}"
+        kbslug="${kb.slug || ''}"
+        account="${kb.account || ''}"
+        features="${features}"
         lang="${this.translation.currentLang}"
-      ></nuclia-viewer>`),
-    ),
+      ></nuclia-viewer>`);
+    }),
   );
 
   constructor(

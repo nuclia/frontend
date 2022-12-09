@@ -4,7 +4,7 @@
   import { resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, coerceBooleanProperty, loadFonts, loadSvgSprite } from '../../core/utils';
+  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates } from '@nuclia/core';
@@ -13,6 +13,7 @@
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
+  import { WidgetFeatures } from '@nuclia/core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -24,11 +25,13 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let permalink = false;
   export let standalone = false;
-  export let notpublic = false;
-  let _permalink = coerceBooleanProperty(permalink);
-  let _notpublic = coerceBooleanProperty(notpublic);
+  export let features = '';
+
+  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+    {},
+  );
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -59,7 +62,7 @@
         kbSlug: kbslug,
         account,
         standalone,
-        public: !_notpublic && !apikey,
+        public: !_features.notPublic && !apikey,
       },
       state,
       {
@@ -71,10 +74,7 @@
     }
 
     // Setup widget in the store
-    widgetFeatures.set({
-      permalink: _permalink,
-      notPublic: _notpublic,
-    });
+    widgetFeatures.set(_features);
     widgetType.set('viewer');
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
@@ -83,7 +83,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
-    initViewerEffects(_permalink);
+    initViewerEffects(_features.permalink);
 
     ready = true;
 
