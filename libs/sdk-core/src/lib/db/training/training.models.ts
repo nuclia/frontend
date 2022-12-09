@@ -1,6 +1,7 @@
 export enum TrainingType {
   classifier = 'classifier',
   labeler = 'labeler',
+  ner = 'ner',
 }
 
 export enum TrainingStatus {
