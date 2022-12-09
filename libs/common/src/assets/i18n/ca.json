@@ -383,6 +383,8 @@
 	"resource.entities.work_of_art": "Obres",
 	"resource.profile": "Perfil",
 	"resource.resource_page_number": "{{num}} per pàgina",
+	"resource.search.in-resource": "en recurs",
+	"resource.search.in-title": "al títol",
 	"resource.selected_count": "{{num}} arxius seleccionats",
 	"resource.status": "Estat",
 	"resource.status_error": "Error en processar",

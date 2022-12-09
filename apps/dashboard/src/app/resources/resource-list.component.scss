@@ -15,6 +15,16 @@ $table-breakpoint: 1400px;
   justify-content: space-between;
   padding-bottom: rhythm(1);
   margin-bottom: rhythm(4);
+
+  .search-bar-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-select {
+      width: rhythm(16);
+    }
+  }
 }
 
 .resource-filters {

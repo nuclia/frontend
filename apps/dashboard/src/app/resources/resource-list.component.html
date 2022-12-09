@@ -6,8 +6,28 @@
     <nsi-spinner *ngIf="isLoading"></nsi-spinner>
   </div>
 
-  <header class="resource-list-header">
-    <div class="search-bar-container"></div>
+  <div class="resource-list-header">
+    <form
+      class="search-bar-container"
+      [formGroup]="searchForm"
+      (ngSubmit)="search()">
+      <label
+        for="search-resources"
+        class="title-xxs">
+        {{ 'stash.search' | translate }}
+      </label>
+      <pa-select
+        dim
+        formControlName="searchIn">
+        <pa-option value="title">{{ 'resource.search.in-title' | translate }}</pa-option>
+        <pa-option value="resource">{{ 'resource.search.in-resource' | translate }}</pa-option>
+      </pa-select>
+      <pa-input
+        id="search-resources"
+        externalLabel
+        icon="search"
+        formControlName="query"></pa-input>
+    </form>
     <div class="upload-container">
       <pa-button
         icon="circle-plus"
@@ -36,7 +56,7 @@
       </pa-dropdown>
     </div>
     <div class="status-buttons-container"></div>
-  </header>
+  </div>
 
   <div class="resource-list-content">
     <div class="resource-table-header">
@@ -141,7 +161,10 @@
               <pa-icon
                 *ngIf="row.resource.icon | mimeIcon as icon"
                 [path]="'assets/icons/' + icon"></pa-icon>
-              {{ row.resource.title }}
+              <div class="title-and-description">
+                <div>{{ row.resource.title }}</div>
+                <small *ngIf="row.description">{{ row.description }}</small>
+              </div>
             </div>
           </td>
         </ng-container>
