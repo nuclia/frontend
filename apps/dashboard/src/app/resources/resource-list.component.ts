@@ -29,6 +29,9 @@ import { BackendConfigurationService, SDKService, StateService, STFUtils } from 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateLinkComponent } from '../upload/create-link/create-link.component';
+import { UploadFilesDialogComponent } from '../upload/upload-files/upload-files-dialog.component';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 
 interface ListFilters {
@@ -146,6 +149,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private translation: TranslateService,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
+    private dialog: MatDialog, //FIXME replace old upload dialog with sistema modal service
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -182,6 +186,16 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         switchMap(() => this.getResources()),
       )
       .subscribe();
+  }
+
+  uploadLink() {
+    this.dialog.open(CreateLinkComponent);
+  }
+
+  uploadFiles(folderMode = false) {
+    this.dialog.open(UploadFilesDialogComponent, {
+      data: { folderMode: folderMode },
+    });
   }
 
   bulkDelete() {

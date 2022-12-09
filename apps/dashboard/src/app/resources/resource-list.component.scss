@@ -8,6 +8,15 @@ $table-breakpoint: 1400px;
   min-height: rhythm(24);
 }
 
+.resource-list-header {
+  align-items: center;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: rhythm(1);
+  margin-bottom: rhythm(4);
+}
+
 .resource-filters {
   padding: 0 rhythm(3) 0 rhythm(1.5);
   .title-filter {
@@ -15,7 +24,7 @@ $table-breakpoint: 1400px;
   }
 }
 
-.resource-list-header {
+.resource-table-header {
   align-items: center;
   background-color: $color-light-stronger;
   display: flex;
@@ -39,12 +48,6 @@ $table-breakpoint: 1400px;
     justify-content: space-between;
     margin-left: auto;
   }
-}
-
-.resource-list-content {
-  margin-top: 4px;
-  padding: 0 rhythm(6) 0 rhythm(5);
-  background-color: $color-light-stronger;
 }
 
 .table-container {

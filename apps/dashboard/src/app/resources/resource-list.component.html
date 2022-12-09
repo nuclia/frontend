@@ -6,8 +6,40 @@
     <nsi-spinner *ngIf="isLoading"></nsi-spinner>
   </div>
 
+  <header class="resource-list-header">
+    <div class="search-bar-container"></div>
+    <div class="upload-container">
+      <pa-button
+        icon="circle-plus"
+        iconAndText
+        aspect="basic"
+        [paPopup]="uploadMenu"
+        alignPopupOnLeft>
+        {{ 'generic.upload' | translate }}
+      </pa-button>
+      <pa-dropdown #uploadMenu>
+        <pa-option
+          icon="file"
+          (selectOption)="uploadFiles()">
+          {{ 'upload.files' | translate }}
+        </pa-option>
+        <pa-option
+          icon="folder"
+          (selectOption)="uploadFiles(true)">
+          {{ 'upload.folder' | translate }}
+        </pa-option>
+        <pa-option
+          icon="link"
+          (selectOption)="uploadLink()">
+          {{ 'upload.link' | translate }}
+        </pa-option>
+      </pa-dropdown>
+    </div>
+    <div class="status-buttons-container"></div>
+  </header>
+
   <div class="resource-list-content">
-    <div class="resource-list-header">
+    <div class="resource-table-header">
       <div
         class="resource-bulk-actions"
         *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
