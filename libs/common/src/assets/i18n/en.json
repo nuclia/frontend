@@ -629,7 +629,7 @@
 	"stash.side.working": "Processes ",
 	"stash.state": "State",
 	"stash.state.private": "State: private",
-	"stash.state.published": "State: Public",
+	"stash.state.published": "State: public",
 	"stash.stats": "Data",
 	"stash.title": "Title of the box",
 	"stash.upload_data": "Upload data",
