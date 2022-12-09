@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -6,6 +6,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  distinctUntilKeyChanged,
   forkJoin,
   from,
   mergeMap,
@@ -17,15 +18,17 @@ import {
 import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  deDuplicateList,
   Classification,
+  deDuplicateList,
   Resource,
   RESOURCE_STATUS,
   resourceToAlgoliaFormat,
   Search,
 } from '@nuclia/core';
-import { SDKService, StateService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ResourceViewerService } from './resource-viewer.service';
 
 interface ListFilters {
   type?: string;
@@ -60,7 +63,7 @@ const DEFAULT_PAGE_SIZE = 20;
   styleUrls: ['./resource-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceListComponent implements OnInit, OnDestroy {
+export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
   isLoading = true;
@@ -105,6 +108,23 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
   currentLabelList: Classification[] = [];
 
+  viewerWidget = this.sdk.currentKb.pipe(
+    distinctUntilKeyChanged('id'),
+    tap(() => {
+      document.getElementById('viewer-widget')?.remove();
+    }),
+    map((kb) =>
+      this.sanitized.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
+        knowledgebox="${kb.id}"
+        zone="${this.sdk.nuclia.options.zone}"
+        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
+        backend="${this.backendConfig.getAPIURL()}"
+        permalink
+        lang="${this.translation.currentLang}"
+      ></nuclia-viewer>`),
+    ),
+  );
+
   constructor(
     private sdk: SDKService,
     private router: Router,
@@ -114,6 +134,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private stateService: StateService,
     private toaster: SisToastService,
+    private sanitized: DomSanitizer,
+    private translation: TranslateService,
+    private backendConfig: BackendConfigurationService,
+    private resourceViewer: ResourceViewerService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -124,6 +148,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         title: title.length > 0 ? title : undefined,
       });
     });
+  }
+
+  ngAfterViewInit() {
+    this.resourceViewer.init('viewer-widget');
   }
 
   ngOnInit(): void {
@@ -208,7 +236,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   viewResource(resourceId: string) {
-    (document.getElementById('search-widget') as unknown as any)?.displayResource(resourceId);
+    (document.getElementById('viewer-widget') as unknown as any)?.displayResource(resourceId);
   }
 
   isAllSelected() {

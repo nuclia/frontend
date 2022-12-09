@@ -1,9 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { distinctUntilKeyChanged, map, switchMap, tap } from 'rxjs';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { ResourceViewerService } from '../resources/resource-viewer.service';
 
 @Component({
   selector: 'app-search',
@@ -11,7 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements AfterViewInit {
   searchWidget = this.sdk.currentKb.pipe(
     distinctUntilKeyChanged('id'),
     tap(() => {
@@ -40,11 +42,15 @@ export class SearchComponent implements OnInit {
   );
 
   constructor(
+    private router: Router,
     private sdk: SDKService,
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private translation: TranslateService,
+    private resourceViewer: ResourceViewerService,
   ) {}
 
-  ngOnInit(): void {}
+  ngAfterViewInit(): void {
+    this.resourceViewer.init('search-widget');
+  }
 }

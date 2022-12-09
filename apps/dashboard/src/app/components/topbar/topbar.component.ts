@@ -1,11 +1,8 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, SDKService, STFTrackingService, UserService } from '@flaps/core';
+import { SDKService, UserService } from '@flaps/core';
 import { NavigationService } from '../../services/navigation.service';
-import { filter, map, switchMap, take, tap } from 'rxjs';
-import { TranslatePipe } from '@ngx-translate/core';
-import { AppService } from '../../services/app.service';
-import { SisModalService } from '@nuclia/sistema';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-topbar',
@@ -13,7 +10,7 @@ import { SisModalService } from '@nuclia/sistema';
   styleUrls: ['./topbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TopbarComponent implements AfterViewInit {
+export class TopbarComponent {
   userInfo = this.userService.userInfo;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
@@ -23,119 +20,11 @@ export class TopbarComponent implements AfterViewInit {
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
-    private backendConfig: BackendConfigurationService,
-    private appService: AppService,
-    private translate: TranslatePipe,
-    private modalService: SisModalService,
-    private trackingService: STFTrackingService,
   ) {}
 
   goToHome(): void {
     this.navigationService.homeUrl.pipe(take(1)).subscribe((url) => {
       this.router.navigate([url]);
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      const waitForWidget = window.setInterval(() => {
-        const widget = document.getElementById('search-widget') as unknown as any;
-        if (widget) {
-          const actions = [
-            {
-              label: this.translate.transform('widget.show-api'),
-              destructive: false,
-              action: this.showUID.bind(this),
-            },
-          ];
-          if (kb.admin || kb.contrib) {
-            actions.push(
-              {
-                label: this.translate.transform('generic.edit'),
-                destructive: false,
-                action: this.edit.bind(this),
-              },
-              {
-                label: this.translate.transform('generic.delete'),
-                destructive: true,
-                action: this.delete.bind(this),
-              },
-            );
-          }
-          widget.setActions(actions);
-          widget.addEventListener('search', () => this.trackingService.logEvent('search'));
-          clearInterval(waitForWidget);
-        }
-      }, 500);
-    });
-    this.sdk.nuclia.auth
-      .isAuthenticated()
-      .pipe(
-        filter((isAuth) => !isAuth),
-        take(1),
-      )
-      .subscribe(() => {
-        this.closeViewer();
-      });
-  }
-
-  delete(uid: string) {
-    this.modalService
-      .openConfirm({
-        title: 'generic.alert',
-        description: 'resource.delete_resource_warning',
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this.sdk.currentKb),
-        take(1),
-        switchMap((kb) => kb.getResource(uid)),
-        switchMap((res) => res.delete()),
-        tap(() => this.closeViewer()),
-      )
-      .subscribe(() => {
-        setTimeout(() => {
-          this.sdk.refreshCounter(true);
-        }, 1000);
-      });
-  }
-
-  edit(uid: string) {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        filter((kb) => !!kb.admin || !!kb.contrib),
-      )
-      .subscribe((kb) => {
-        this.closeViewer();
-        this.router.navigate([`/at/${kb.account}/${kb.slug}/resources/${uid}/profile`]);
-      });
-  }
-
-  showUID(uid: string) {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        map(
-          (kb) =>
-            `<pre><code class="endpoint">${this.sdk.nuclia.rest.getFullUrl(kb.path)}/resource/${uid}</code></pre>`,
-        ),
-        switchMap(
-          (uidEndpoint) =>
-            this.modalService.openConfirm({
-              title: 'API',
-              description: uidEndpoint,
-              onlyConfirm: true,
-              confirmLabel: 'OK',
-            }).onClose,
-        ),
-      )
-      .subscribe();
-  }
-
-  closeViewer() {
-    (document.getElementById('search-widget') as unknown as any)?.displayResource('');
   }
 }
