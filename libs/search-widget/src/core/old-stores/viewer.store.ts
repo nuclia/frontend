@@ -320,19 +320,12 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
       (paragraphs) =>
         paragraphs
           .map((searchParagraph) => {
-            const fieldType = getFieldType(searchParagraph.field_type);
+            const fieldType = getFieldTypeKey(searchParagraph.field_type);
             const field = getField(resource, fieldType, searchParagraph.field);
             const ners = resource.getPositionedNamedEntities(fieldType, searchParagraph.field);
             const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
             if (field && paragraph) {
-              return getParagraph(
-                resource,
-                getFieldType(searchParagraph.field_type),
-                searchParagraph.field,
-                field,
-                paragraph,
-                ners,
-              );
+              return getParagraph(resource, fieldType, searchParagraph.field, field, paragraph, ners);
             } else {
               return null;
             }

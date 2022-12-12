@@ -17,7 +17,7 @@
    * Kb with PDF without page indicators (owned by Mat): 8f39fe4e-04e0-4767-bc83-69fc4c9c31c6
    * Kb with different kind of media (owned by Mat): f67d94ee-bd5b-4044-8844-a291c2ac244c
    */
-  let kb = '295e9002-a277-4356-96a3-5fe0b08b8d79';
+  let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff';
 
   onMount(() => {
     widget?.setActions([
@@ -89,7 +89,7 @@
       cdn="https://cdn.stashify.cloud/"
       type="embedded"
       lang="en"
-      features="filter,suggestions" />
+      features="permalink,filter,suggestions" />
   {/if}
   {#if selected === 'two-widgets'}
     <h2>Two widgets: search bar and video results</h2>
