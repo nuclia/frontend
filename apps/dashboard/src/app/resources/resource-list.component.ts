@@ -80,6 +80,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   refreshing = true;
   statusTooltips: { [resourceId: string]: string } = {};
 
+  // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
+  pendingCount = 0;
+  failedCount = 0;
+
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
       of(size.toString()).pipe(

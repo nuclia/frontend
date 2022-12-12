@@ -387,6 +387,8 @@
 	"resource.search.in-title": "al títol",
 	"resource.selected_count": "{{num}} arxius seleccionats",
 	"resource.status": "Estat",
+	"resource.status-help.failed": "Els fitxers no es poden processar",
+	"resource.status-help.pending": "Expedients pendents de processar",
 	"resource.status_error": "Error en processar",
 	"resource.status_loading": "S'està carregant l'estat...",
 	"resource.status_pending": "{{count}} recursos pendents de processar",

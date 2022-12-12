@@ -55,7 +55,33 @@
         </pa-option>
       </pa-dropdown>
     </div>
-    <div class="status-buttons-container"></div>
+    <div class="status-buttons-container">
+      <div
+        class="status-button"
+        *ngIf="pendingCount > 0">
+        <pa-button
+          icon="clock-dash"
+          size="small"
+          kind="destructive"
+          aspect="basic">
+          {{ 'resource.status-help.pending' | translate }}
+        </pa-button>
+        <div class="file-count">{{ pendingCount }}</div>
+      </div>
+
+      <div
+        class="status-button"
+        *ngIf="failedCount > 0">
+        <pa-button
+          icon="circle-cross"
+          size="small"
+          kind="destructive"
+          aspect="basic">
+          {{ 'resource.status-help.failed' | translate }}
+        </pa-button>
+        <div class="file-count">{{ failedCount }}</div>
+      </div>
+    </div>
   </div>
 
   <div class="resource-list-content">

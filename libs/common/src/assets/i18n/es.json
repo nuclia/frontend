@@ -387,6 +387,8 @@
 	"resource.search.in-title": "en el titulo",
 	"resource.selected_count": "{{num}} ficheros seleccionados",
 	"resource.status": "Estado",
+	"resource.status-help.failed": "Archivos que no se pueden procesar",
+	"resource.status-help.pending": "Expedientes pendientes de tramitar",
 	"resource.status_error": "Error al procesar",
 	"resource.status_loading": "Cargando estado…",
 	"resource.status_pending": "{{count}} recursos pendientes de procesar",

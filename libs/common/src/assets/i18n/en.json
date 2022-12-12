@@ -435,6 +435,8 @@
 	"resource.search.in-title": "in title",
 	"resource.selected_count": "{{num}} files selected",
 	"resource.status": "Status",
+	"resource.status-help.failed": "Files failing to be processed",
+	"resource.status-help.pending": "Files pending to be processed",
 	"resource.status_error": "Error while processing",
 	"resource.status_loading": "Loading status…",
 	"resource.status_pending": "{{count}} resources pending to be processed",
