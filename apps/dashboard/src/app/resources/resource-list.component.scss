@@ -110,6 +110,13 @@ table {
     gap: rhythm(1);
   }
 
+  .title-and-description small {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .label-container {
     display: flex;
     gap: rhythm(0.5);
@@ -126,6 +133,13 @@ table {
   .cdk-column-status,
   .cdk-column-actions {
     text-align: center;
+  }
+
+  .cdk-column-classification {
+    width: rhythm(22);
+    @media (max-width: $table-breakpoint) {
+      width: rhythm(16);
+    }
   }
 
   .cdk-column-modification {
