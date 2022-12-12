@@ -12,6 +12,7 @@ import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angu
 import { CdkTableModule } from '@angular/cdk/table';
 import { LabelModule } from '../components/label/label.module';
 import { ResourceViewerService } from './resource-viewer.service';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -25,6 +26,7 @@ describe('ResourceListComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTextFieldModule),
         MockModule(LabelModule),
+        MockModule(ReactiveFormsModule),
       ],
       declarations: [ResourceListComponent, TranslatePipeMock],
       schemas: [CUSTOM_ELEMENTS_SCHEMA],
