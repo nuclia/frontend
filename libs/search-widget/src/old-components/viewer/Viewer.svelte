@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getFile, loadEntities } from '../../core/api';
+  import { getFile } from '../../core/api';
   import { nucliaState } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
   import {
@@ -10,15 +10,17 @@
     viewerState,
     selectSentence,
   } from '../../core/old-stores/viewer.store';
-  import { onDestroy, onMount } from 'svelte';
-  import { combineLatest, filter, of, switchMap } from 'rxjs';
+  import { onDestroy } from 'svelte';
+  import { combineLatest, filter, map, of, switchMap } from 'rxjs';
   import Header from './Header.svelte';
   import Paragraphs from './paragraphs/Paragraphs.svelte';
   import InputViewer from './InputViewer.svelte';
   import Metadata from './Metadata.svelte';
   import Preview from './Preview.svelte';
   import { setAnnotations } from '../../core/stores/annotation.store';
+  import { selectedFamilyData } from '../../core/stores/entities.store';
   import { resource } from '../../core/stores/resource.store';
+  import type { EntityGroup } from '../../core/models';
 
   let imagePath: string | undefined;
   let image: string | undefined;
@@ -31,7 +33,17 @@
   const hasSearchError = viewerState.hasSearchError;
   const showPreview = viewerState.showPreview;
   const notProcessed = viewerState.isNotProcessed;
+  const nerStyle = selectedFamilyData.pipe(
+    map((data: EntityGroup | undefined) => (data ? getHighlightedStyle(data.id, data.color) : '')),
+  );
 
+  function getHighlightedStyle(family: string, color: string | undefined): string {
+    const css = `mark.ner[family=${family}] {
+        background-color: ${color} !important;
+      }`;
+    // style tag must be split to avoid compilation error
+    return '<style' + '>' + css + '</style>';
+  }
   $: {
     imagePath = findFileByType(resource.value, 'image/');
     if (imagePath) {
@@ -80,6 +92,9 @@
   });
 </script>
 
+<svelte:head>
+  {@html $nerStyle}
+</svelte:head>
 <div
   class="sw-viewer"
   style="--header-height: {headerHeight}">

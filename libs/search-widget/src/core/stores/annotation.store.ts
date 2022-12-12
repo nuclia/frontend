@@ -14,7 +14,6 @@ export type Annotation = {
 };
 
 export const annotationMode = writableSubject(false);
-export const selectedFamily = writableSubject('');
 export const annotations = writableSubject<Annotation[]>([]);
 export const sortedAnnotations = annotations.pipe(
   map(($annotations) =>

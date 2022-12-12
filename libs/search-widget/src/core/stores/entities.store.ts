@@ -7,6 +7,12 @@ import { generatedEntitiesColor } from '../utils';
 import { _ } from '../i18n';
 
 export const entityGroups = writableSubject<EntityGroup[]>([]);
+export const selectedFamily = writableSubject('');
+
+export const selectedFamilyData: Observable<EntityGroup | undefined> = combineLatest([
+  entityGroups,
+  selectedFamily,
+]).pipe(map(([groups, family]) => groups.find((group) => group.id === family)));
 
 export const resourceEntities: Observable<EntityGroup[]> = combineLatest([
   resource,

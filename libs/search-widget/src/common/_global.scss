@@ -9,7 +9,11 @@ mark[family] {
   font-weight: var(--font-weight-body);
   padding: 0 var(--rhythm-0_5);
 }
-
+mark.ner[family] {
+  cursor: auto;
+  padding: 0;
+  background-color: transparent;
+}
 .ellipsis {
   overflow: hidden;
   text-overflow: ellipsis;

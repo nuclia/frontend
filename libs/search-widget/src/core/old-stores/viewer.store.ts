@@ -5,6 +5,7 @@ import type {
   IFieldData,
   LinkFieldData,
   Paragraph,
+  PositionedNER,
   Resource,
   ResourceData,
 } from '@nuclia/core';
@@ -319,15 +320,18 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
       (paragraphs) =>
         paragraphs
           .map((searchParagraph) => {
-            const field = getField(resource, getFieldTypeKey(searchParagraph.field_type), searchParagraph.field);
+            const fieldType = getFieldType(searchParagraph.field_type);
+            const field = getField(resource, fieldType, searchParagraph.field);
+            const ners = resource.getPositionedNamedEntities(fieldType, searchParagraph.field);
             const paragraph = findParagraphFromSearchParagraph(resource, searchParagraph);
             if (field && paragraph) {
               return getParagraph(
                 resource,
-                getFieldTypeKey(searchParagraph.field_type),
+                getFieldType(searchParagraph.field_type),
                 searchParagraph.field,
                 field,
                 paragraph,
+                ners,
               );
             } else {
               return null;
@@ -349,8 +353,9 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
     field_type: fieldType,
     field_id: mainField.field_id,
   });
+  const ners = resource.getPositionedNamedEntities(mainField.field_type as keyof ResourceData, mainField.field_id);
   return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
-    return getParagraph(resource, mainField.field_type, mainField.field_id, mainField.field, paragraph);
+    return getParagraph(resource, mainField.field_type, mainField.field_id, mainField.field, paragraph, ners);
   });
 }
 
@@ -398,17 +403,41 @@ function getParagraph(
   fieldId: string,
   field: IFieldData,
   paragraph: Paragraph,
+  ners?: PositionedNER[],
 ): WidgetParagraph {
+  let text = resource.getParagraphText(getFieldType(fieldType), fieldId, paragraph) || '';
+  if (ners) {
+    let lastNer = -1;
+    const paragraphNers = ners
+      .filter((ner) => !!ner.entity && ner.start > (paragraph.start || 0) && ner.start < (paragraph.end || 0))
+      .sort((a, b) => a.start - b.start)
+      // overlapping ners should not happen, but at the moment the API returns some
+      .filter((ner) => {
+        const isOverlapping = ner.start < lastNer;
+        lastNer = ner.end;
+        return !isOverlapping;
+      })
+      .map((ner) => ({ ...ner, start: ner.start - (paragraph.start || 0), end: ner.end - (paragraph.start || 0) }));
+    let offset = 0;
+    paragraphNers.forEach((ner) => {
+      text =
+        text.slice(0, ner.start + offset) +
+        `<mark class="ner" family="${ner.family}">${text.slice(ner.start + offset, ner.end + offset)}</mark>` +
+        text.slice(ner.end + offset);
+      offset += 35 + ner.family.length;
+    });
+  }
+  text = text.trim().replace(NEWLINE_REGEX, '<br>');
+
   const baseParagraph = {
     paragraph: paragraph,
-    text: (resource.getParagraphText(getFieldType(fieldType), fieldId, paragraph) || '')
-      .trim()
-      .replace(NEWLINE_REGEX, '<br>'),
+    text,
     fieldType: fieldType,
     fieldId: fieldId,
     start: paragraph.start || 0,
     end: paragraph.end || 0,
   };
+
   const kind = getPreviewKind(field, paragraph);
   if (kind === PreviewKind.PDF) {
     return {

@@ -55,13 +55,8 @@ export function initViewerEffects(permalinkEnabled: boolean | undefined) {
         }
       }),
       nucliaState()
-        .displayedResource.pipe(
-          filter((displayedResource) => !!displayedResource?.uid),
-          switchMap(() => loadEntities()),
-        )
-        .subscribe((entities) => {
-          entityGroups.set(entities);
-        }),
+        .displayedResource.pipe(switchMap(() => loadEntities()))
+        .subscribe((entities) => entityGroups.set(entities)),
     ],
   );
 }

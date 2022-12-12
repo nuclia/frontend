@@ -7,7 +7,7 @@
   import Entities from './Entities.svelte';
   import Button from '../../common/button/Button.svelte';
   import { onDestroy } from 'svelte';
-  import { annotationMode, annotations, selectedFamily } from '../../core/stores/annotation.store';
+  import { annotationMode, annotations } from '../../core/stores/annotation.store';
   import {
     files,
     links,
@@ -17,7 +17,7 @@
     resourceHasEntities,
     resourceLabels,
   } from '../../core/stores/resource.store';
-  import { entityGroups } from '../../core/stores/entities.store';
+  import { entityGroups, selectedFamily } from '../../core/stores/entities.store';
   import Label from '../../common/label/Label.svelte';
   import { searchBy } from '../../common/label/label.utils';
   import { canAnnotateEntities, widgetType } from '../../core/stores/widget.store';

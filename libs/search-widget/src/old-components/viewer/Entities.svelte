@@ -6,8 +6,13 @@
   import type { EntityGroup } from '../../core/models';
   import { tap } from 'rxjs/operators';
   import Icon from '../../common/icons/Icon.svelte';
-  import { annotationMode, selectedFamily } from '../../core/stores/annotation.store';
-  import { entityGroups, resourceAnnotatedEntities, resourceEntities } from '../../core/stores/entities.store';
+  import { annotationMode } from '../../core/stores/annotation.store';
+  import {
+    entityGroups,
+    resourceAnnotatedEntities,
+    resourceEntities,
+    selectedFamily,
+  } from '../../core/stores/entities.store';
 
   export let showAnnotated = false;
 
@@ -33,9 +38,7 @@
     } else {
       expanded = $annotationMode ? [group] : [...expanded, group];
     }
-    if ($annotationMode) {
-      selectedFamily.set(expanded[0]);
-    }
+    selectedFamily.set(expanded[0]);
   };
 
   const isExpanded = (group: string) => {
