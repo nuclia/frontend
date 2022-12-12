@@ -9,7 +9,7 @@ import type {
   TokenAnnotation,
 } from '@nuclia/core';
 import { FIELD_TYPE, Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, of, take } from 'rxjs';
+import { filter, forkJoin, map, merge, Observable, of, ReplaySubject, take, tap } from 'rxjs';
 import { nucliaStore } from './old-stores/main.store';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
@@ -102,25 +102,31 @@ export const getField = (rid: string, type: FIELD_TYPE, field: string): Observab
   return resource.getField(type, field);
 };
 
+let _entities: EntityGroup[] | undefined = undefined;
 export const loadEntities = (): Observable<EntityGroup[]> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
-    map(([entityMap, translate]) =>
-      Object.entries(entityMap)
-        .map(([groupId, group]) => ({
-          id: groupId,
-          title: group.title || `entities.${groupId.toLowerCase()}`,
-          color: group.color || generatedEntitiesColor[groupId],
-          entities: Object.entries(group.entities)
-            .map(([, entity]) => entity.value)
-            .sort((a, b) => a.localeCompare(b)),
-          custom: group.custom,
-        }))
-        .sort((a, b) => translate(a.title).localeCompare(translate(b.title))),
-    ),
-  );
+  if (!_entities) {
+    return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
+      map(([entityMap, translate]) =>
+        Object.entries(entityMap)
+          .map(([groupId, group]) => ({
+            id: groupId,
+            title: group.title || `entities.${groupId.toLowerCase()}`,
+            color: group.color || generatedEntitiesColor[groupId],
+            entities: Object.entries(group.entities)
+              .map(([, entity]) => entity.value)
+              .sort((a, b) => a.localeCompare(b)),
+            custom: group.custom,
+          }))
+          .sort((a, b) => translate(a.title).localeCompare(translate(b.title))),
+      ),
+      tap((entities) => (_entities = entities || [])),
+    );
+  } else {
+    return of(_entities as EntityGroup[]);
+  }
 };
 
 export const getLabelSets = (): Observable<LabelSets> => {

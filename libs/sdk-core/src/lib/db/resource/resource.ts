@@ -16,6 +16,7 @@ import type {
   LinkField,
   LinkFieldData,
   Paragraph,
+  PositionedNER,
   ResourceData,
   ResourceField,
   Sentence,
@@ -125,6 +126,20 @@ export class ReadableResource implements IResource {
       });
       return acc;
     }, classifications);
+  }
+
+  getPositionedNamedEntities(fieldType: keyof ResourceData, fieldId: string): PositionedNER[] {
+    const positions = this.data[fieldType]?.[fieldId]?.extracted?.metadata?.metadata.positions;
+    if (!positions) {
+      return [];
+    }
+    return Object.entries(positions).reduce((acc, [entityId, data]) => {
+      const family = entityId.split('/')[0];
+      data.position.forEach((position) => {
+        acc.push({ entity: data.entity, family, ...position });
+      });
+      return acc;
+    }, [] as PositionedNER[]);
   }
 
   private formatTitle(title?: string): string {

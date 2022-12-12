@@ -225,6 +225,7 @@ export interface FieldMetadata {
   thumbnail?: CloudLink;
   language?: string;
   summary?: string;
+  positions?: { [entityId: string]: { entity: string; position: { start: number; end: number }[] } };
 }
 
 export interface UserFieldMetadata {
@@ -311,4 +312,11 @@ export interface LinkExtractedData {
   description?: string;
   type?: string;
   embed?: string;
+}
+
+export interface PositionedNER {
+  entity: string;
+  family: string;
+  start: number;
+  end: number;
 }

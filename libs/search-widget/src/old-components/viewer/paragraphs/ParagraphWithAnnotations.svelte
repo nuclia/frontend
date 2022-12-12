@@ -2,17 +2,16 @@
   import Paragraph from './Paragraph.svelte';
   import { onDestroy, onMount } from 'svelte';
   import EntityFamilyMenu from '../menus/EntityFamilyMenu.svelte';
-  import { EntityGroup, WidgetParagraph } from '../../../core/models';
+  import type { EntityGroup, WidgetParagraph } from '../../../core/models';
   import { Duration } from '../../../common/transition.utils';
   import {
     addAnnotation,
     Annotation,
     removeAnnotation,
-    selectedFamily,
     sortedAnnotations,
     updateAnnotation,
   } from '../../../core/stores/annotation.store';
-  import { addEntity, entityGroups } from '../../../core/stores/entities.store';
+  import { addEntity, entityGroups, selectedFamily } from '../../../core/stores/entities.store';
   import { map } from 'rxjs';
   import { lengthUnicode, sliceUnicode } from '@nuclia/core';
 
