@@ -513,6 +513,8 @@
 	"stash.settings": "Preferències de la caixa de coneixament",
 	"stash.settings.processes.training.agreement": "Accepto els càrrecs incorreguts en seleccionar aquesta opció",
 	"stash.settings.processes.training.last_run": "Última execució: {{ runDate }}",
+	"stash.settings.processes.training.no-resources": "Els entrenaments no estan disponibles en les caixes de coneixement buides.",
+	"stash.settings.processes.training.not-allowed": "Els entrenaments no estan disponibles en els comptes bàsics.",
 	"stash.settings.processes.training.select-entities": "Triar grups d'entitats",
 	"stash.settings.processes.training.select-labelsets": "Tria les etiquetes",
 	"stash.settings.processes.training.select_all": "Seleccionar tot",
