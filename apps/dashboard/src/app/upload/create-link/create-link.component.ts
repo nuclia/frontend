@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { STFTrackingService } from '@flaps/core';
 import { SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
-import { Observable, of, switchMap } from 'rxjs';
+import { Observable, of, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
@@ -50,6 +50,7 @@ export class CreateLinkComponent {
           .map((link: string) => link.trim())
           .filter((link: string) => !!link);
         obs = this.sdk.currentKb.pipe(
+          take(1),
           switchMap((kb) =>
             links.reduce(
               (acc, curr) =>
@@ -63,6 +64,7 @@ export class CreateLinkComponent {
       } else {
         this.tracking.logEvent('link_upload');
         obs = this.sdk.currentKb.pipe(
+          take(1),
           switchMap((kb) =>
             kb.createLinkResource({ uri: this.linkForm.value.link }, { classifications: this.selectedLabels }),
           ),
@@ -74,7 +76,7 @@ export class CreateLinkComponent {
           this.sdk.refreshCounter();
         },
         error: () => {
-          this.pending = true;
+          this.pending = false;
           this.cdr?.markForCheck();
           this.toaster.error('link.create.error');
         },
