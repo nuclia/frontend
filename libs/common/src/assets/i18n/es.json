@@ -478,6 +478,8 @@
 	"stash.settings": "Preferencias de la caja de conocimiento",
 	"stash.settings.processes.training.agreement": "Acepto los cargos incurridos al seleccionar esta opción",
 	"stash.settings.processes.training.last_run": "Última ejecución: {{ runDate }}",
+	"stash.settings.processes.training.no-resources": "Los entrenamientos no están disponibles en cajas de conocimiento vacías.",
+	"stash.settings.processes.training.not-allowed": "Los entrenamientos no están disponibles en las cuentas básicas.",
 	"stash.settings.processes.training.select-entities": "Escoger grupo de entidades",
 	"stash.settings.processes.training.select-labelsets": "Escoge las etiquetas",
 	"stash.settings.processes.training.select_all": "Seleccionar todo",
