@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
+import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
@@ -20,6 +20,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   Classification,
   deDuplicateList,
+  IResource,
+  LabelSets,
   Resource,
   RESOURCE_STATUS,
   resourceToAlgoliaFormat,
@@ -29,6 +31,9 @@ import { BackendConfigurationService, SDKService, StateService, STFUtils } from 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateLinkComponent } from '../upload/create-link/create-link.component';
+import { UploadFilesDialogComponent } from '../upload/upload-files/upload-files-dialog.component';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 
 interface ListFilters {
@@ -53,6 +58,7 @@ interface ColoredLabel extends Classification {
 interface ResourceWithLabels {
   resource: Resource;
   labels: ColoredLabel[];
+  description?: string;
 }
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
@@ -67,12 +73,17 @@ const DEFAULT_PAGE_SIZE = 20;
 export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
+  totalResources = 0;
   isLoading = true;
   selection = new SelectionModel<Resource>(true, []);
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
   statusTooltips: { [resourceId: string]: string } = {};
+
+  // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
+  pendingCount = 0;
+  failedCount = 0;
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
@@ -132,6 +143,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       ></nuclia-viewer>`);
     }),
   );
+  searchForm = new FormGroup({
+    searchIn: new FormControl<'title' | 'resource'>('title'),
+    query: new FormControl<string>(''),
+  });
 
   constructor(
     private sdk: SDKService,
@@ -146,6 +161,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private translation: TranslateService,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
+    private dialog: MatDialog, //FIXME replace old upload dialog with sistema modal service
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -171,7 +187,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe();
 
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
-      this.resultsLength = counters.resources;
+      this.totalResources = counters.resources;
       this.refreshing = false;
       this.cdr?.markForCheck();
     });
@@ -182,6 +198,28 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         switchMap(() => this.getResources()),
       )
       .subscribe();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
+
+  search() {
+    if (!this.searchForm.value.query) {
+      this.searchForm.controls.searchIn.setValue('title');
+    }
+    this.getResources().pipe(take(1)).subscribe();
+  }
+
+  uploadLink() {
+    this.dialog.open(CreateLinkComponent);
+  }
+
+  uploadFiles(folderMode = false) {
+    this.dialog.open(UploadFilesDialogComponent, {
+      data: { folderMode: folderMode },
+    });
   }
 
   bulkDelete() {
@@ -312,40 +350,41 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   getResources(): Observable<Search.Results> {
+    const query = (this.searchForm.value.query || '').trim();
+    const hasQuery = query.length > 0;
+    const titleOnly = this.searchForm.value.searchIn === 'title';
     const page = this.page >= 1 ? this.page - 1 : 0;
     return of(1).pipe(
       tap(() => {
         this.setLoading(true);
       }),
       switchMap(() => this.sdk.currentKb),
-      switchMap((kb) =>
-        forkJoin([
+      switchMap((kb) => {
+        const searchFeatures =
+          hasQuery && !titleOnly
+            ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
+            : [Search.Features.DOCUMENT];
+        return forkJoin([
           of(kb),
-          kb.search('', [Search.Features.DOCUMENT], {
-            inTitleOnly: true,
+          kb.search(query, searchFeatures, {
+            inTitleOnly: titleOnly,
             page_number: page,
             page_size: this.pageSize,
             sort: 'created',
           }),
           this.labelSets$.pipe(take(1)),
-        ]),
-      ),
+        ]);
+      }),
       map(([kb, results, labelSets]) => {
-        this.data = Object.values(results.resources || {}).map((resourceData) => {
-          const resource = new Resource(this.sdk.nuclia, kb.id, resourceData);
-          const resourceWithLabels: ResourceWithLabels = {
-            resource,
-            labels: [],
-          };
-          const labels = resource.getClassifications();
-          if (labels.length > 0) {
-            resourceWithLabels.labels = labels.map((label) => ({
-              ...label,
-              color: labelSets[label.labelset]?.color || '#ffffff',
-            }));
-          }
-          return resourceWithLabels;
-        });
+        // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
+        if (hasQuery && results.fulltext) {
+          this.resultsLength = results.fulltext.next_page || results.fulltext.page_number > 0 ? this.totalResources : 1;
+        } else {
+          this.resultsLength = this.totalResources;
+        }
+        this.data = titleOnly
+          ? this.getTitleOnlyData(results, kb.id, labelSets)
+          : this.getResourceData(query, results, kb.id, labelSets);
         this.clearSelected();
         this.setLoading(false);
         return results;
@@ -363,14 +402,78 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+  private getResourceWithLabels(kbId: string, resourceData: IResource, labelSets: LabelSets): ResourceWithLabels {
+    const resource = new Resource(this.sdk.nuclia, kbId, resourceData);
+    const resourceWithLabels: ResourceWithLabels = {
+      resource,
+      labels: [],
+    };
+    const labels = resource.getClassifications();
+    if (labels.length > 0) {
+      resourceWithLabels.labels = labels.map((label) => ({
+        ...label,
+        color: labelSets[label.labelset]?.color || '#ffffff',
+      }));
+    }
+    return resourceWithLabels;
   }
 
-  private setLoading(isLoading: boolean) {
-    this.isLoading = isLoading;
-    this.cdr?.markForCheck();
+  private getTitleOnlyData(results: Search.Results, kbId: string, labelSets: LabelSets): ResourceWithLabels[] {
+    return Object.values(results.resources || {}).map((resourceData) =>
+      this.getResourceWithLabels(kbId, resourceData, labelSets),
+    );
+  }
+
+  private getResourceData(
+    trimmedQuery: string,
+    results: Search.Results,
+    kbId: string,
+    labelSets: LabelSets,
+  ): ResourceWithLabels[] {
+    const allResources = results.resources;
+    if (!allResources || Object.keys(allResources).length === 0) {
+      return [];
+    }
+    const fulltextOrderedResources: IResource[] =
+      results.fulltext?.results.reduce((resources, result) => {
+        const iResource: IResource = allResources[result.rid];
+        if (result && iResource && !resources.find((resource) => resource.id === result.rid)) {
+          resources.push(iResource);
+        }
+        return resources;
+      }, [] as IResource[]) || [];
+    const smartResults = fulltextOrderedResources.map((resourceData) =>
+      this.getResourceWithLabels(kbId, resourceData, labelSets),
+    );
+
+    // if not a keyword search, fill results with the 2 best semantic sentences
+    const looksLikeKeywordSearch = trimmedQuery.split(' ').length < 3;
+    if (!looksLikeKeywordSearch) {
+      const semanticResults = results.sentences?.results || [];
+      const twoBestSemantic = semanticResults.slice(0, 2);
+      twoBestSemantic.forEach((sentence) => {
+        const resourceIndex = smartResults.findIndex((result) => result.resource.id === sentence.rid);
+        if (resourceIndex > -1 && !smartResults[resourceIndex].description) {
+          smartResults[resourceIndex].description = sentence.text;
+        }
+      });
+    }
+
+    // Fill the rest of the results with first paragraph
+    const paragraphResults = results.paragraphs?.results || [];
+    smartResults.forEach((result) => {
+      if (!result.description) {
+        const paragraph = paragraphResults.find((paragraph) => paragraph.rid === result.resource.id);
+        if (paragraph) {
+          result.description = paragraph.text;
+        } else {
+          // use summary as description when no paragraph
+          result.description = result.resource.summary;
+        }
+      }
+    });
+
+    return smartResults;
   }
 
   downloadAlgoliaJson(resource: Resource) {
@@ -443,5 +546,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     return deDuplicateList(
       classifications.concat(this.currentLabelList.map((label) => ({ ...label, cancelled_by_user: false }))),
     );
+  }
+
+  private setLoading(isLoading: boolean) {
+    this.isLoading = isLoading;
+    this.cdr?.markForCheck();
   }
 }

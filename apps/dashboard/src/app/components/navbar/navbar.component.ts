@@ -1,12 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { MatDialog } from '@angular/material/dialog';
 import { map, merge, of, shareReplay, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { AppService } from '../../services/app.service';
 import { NavigationService } from '../../services/navigation.service';
-import { CreateLinkComponent } from '../../upload/create-link/create-link.component';
-import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SmallNavbarDirective } from './small-navbar.directive';
@@ -55,7 +52,6 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
 
   constructor(
     private app: AppService,
-    private dialog: MatDialog,
     private navigation: NavigationService,
     private tracking: STFTrackingService,
     private sdk: SDKService,
@@ -69,16 +65,6 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   ngOnInit(): void {
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
       this.kbUrl = this.navigation.getKbUrl(kb.account, kb.slug!);
-    });
-  }
-
-  createNewLink() {
-    this.dialog.open(CreateLinkComponent);
-  }
-
-  uploadNewFiles(folderMode: boolean) {
-    this.dialog.open(UploadFilesDialogComponent, {
-      data: { folderMode: folderMode },
     });
   }
 

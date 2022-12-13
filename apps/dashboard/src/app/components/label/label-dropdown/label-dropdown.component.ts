@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { LabelSet, LabelSets, Classification } from '@nuclia/core';
-import { PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
+import { Classification, LabelSet, LabelSets } from '@nuclia/core';
+import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-label-dropdown',
@@ -9,6 +9,15 @@ import { PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelDropdownComponent {
+  @Input()
+  set aspect(value: Aspect) {
+    this._aspect = value;
+  }
+  get aspect() {
+    return this._aspect;
+  }
+  private _aspect: Aspect = 'solid';
+
   @Input()
   set selection(value: Classification[]) {
     this._selection = [...value] || [];

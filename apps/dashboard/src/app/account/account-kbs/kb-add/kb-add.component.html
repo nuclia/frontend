@@ -59,6 +59,7 @@
         <div class="mb-24">{{ 'stash.create.zone_description' | translate }}</div>
         <pa-select
           formControlName="zone"
+          externalLabel
           class="kb-add-zone-select">
           <pa-option
             *ngFor="let zone of data.zones"
@@ -86,6 +87,7 @@
 
       <pa-select
         *ngIf="kbForm.controls.languageMode.value === 'monolingual'"
+        externalLabel
         formControlName="selectedLanguage">
         <pa-option
           *ngFor="let lang of languageList"

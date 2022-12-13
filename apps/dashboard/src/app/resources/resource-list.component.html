@@ -6,8 +6,86 @@
     <nsi-spinner *ngIf="isLoading"></nsi-spinner>
   </div>
 
+  <div class="resource-list-header">
+    <form
+      class="search-bar-container"
+      [formGroup]="searchForm"
+      (ngSubmit)="search()">
+      <label
+        for="search-resources"
+        class="title-xxs">
+        {{ 'stash.search' | translate }}
+      </label>
+      <pa-select
+        dim
+        formControlName="searchIn">
+        <pa-option value="title">{{ 'resource.search.in-title' | translate }}</pa-option>
+        <pa-option value="resource">{{ 'resource.search.in-resource' | translate }}</pa-option>
+      </pa-select>
+      <pa-input
+        id="search-resources"
+        externalLabel
+        icon="search"
+        formControlName="query"></pa-input>
+    </form>
+    <div class="upload-container">
+      <pa-button
+        icon="circle-plus"
+        iconAndText
+        aspect="basic"
+        [paPopup]="uploadMenu"
+        alignPopupOnLeft>
+        {{ 'generic.upload' | translate }}
+      </pa-button>
+      <pa-dropdown #uploadMenu>
+        <pa-option
+          icon="file"
+          (selectOption)="uploadFiles()">
+          {{ 'upload.files' | translate }}
+        </pa-option>
+        <pa-option
+          icon="folder"
+          (selectOption)="uploadFiles(true)">
+          {{ 'upload.folder' | translate }}
+        </pa-option>
+        <pa-option
+          icon="link"
+          (selectOption)="uploadLink()">
+          {{ 'upload.link' | translate }}
+        </pa-option>
+      </pa-dropdown>
+    </div>
+    <div class="status-buttons-container">
+      <div
+        class="status-button"
+        *ngIf="pendingCount > 0">
+        <pa-button
+          icon="clock-dash"
+          size="small"
+          kind="destructive"
+          aspect="basic">
+          {{ 'resource.status-help.pending' | translate }}
+        </pa-button>
+        <div class="file-count">{{ pendingCount }}</div>
+      </div>
+
+      <div
+        class="status-button"
+        *ngIf="failedCount > 0">
+        <pa-button
+          icon="circle-cross"
+          size="small"
+          kind="destructive"
+          aspect="basic">
+          {{ 'resource.status-help.failed' | translate }}
+        </pa-button>
+        <div class="file-count">{{ failedCount }}</div>
+      </div>
+    </div>
+  </div>
+
   <div class="resource-list-content">
-    <div class="resource-list-header">
+    <div class="resource-table-header">
       <div
         class="resource-bulk-actions"
         *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
@@ -17,6 +95,7 @@
           [labelSets]="labelSets$ | async"
           (selectionChange)="updateLabelList($event)"
           (close)="addLabelsToSelection()"
+          aspect="basic"
           size="small">
           {{ 'resource.add_labels' | translate }}
         </app-label-dropdown>
@@ -24,6 +103,7 @@
         <pa-button
           *ngIf="selection.selected.length > 0"
           kind="destructive"
+          aspect="basic"
           size="small"
           (click)="bulkDelete()">
           {{ 'generic.delete' | translate }}
@@ -33,7 +113,7 @@
         <div>
           <nsi-dropdown-button
             size="small"
-            kind="inverted"
+            aspect="basic"
             [popupRef]="visibleColumns">
             {{ 'resource.visible_columns_dropdown' | translate }}
           </nsi-dropdown-button>
@@ -53,7 +133,7 @@
         <div *ngIf="pageSizeOptions | async as options">
           <nsi-dropdown-button
             size="small"
-            kind="inverted"
+            aspect="basic"
             [popupRef]="pageSizeMenu">
             {{ 'resource.resource_page_number' | translate: { num: filters.size } }}
           </nsi-dropdown-button>
@@ -107,7 +187,10 @@
               <pa-icon
                 *ngIf="row.resource.icon | mimeIcon as icon"
                 [path]="'assets/icons/' + icon"></pa-icon>
-              {{ row.resource.title }}
+              <div class="title-and-description">
+                <div>{{ row.resource.title }}</div>
+                <small *ngIf="row.description">{{ row.description }}</small>
+              </div>
             </div>
           </td>
         </ng-container>

@@ -8,6 +8,48 @@ $table-breakpoint: 1400px;
   min-height: rhythm(24);
 }
 
+.resource-list-header {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: rhythm(4);
+  padding-bottom: rhythm(1);
+  position: sticky;
+  top: var(--app-topbar-height);
+  z-index: 10;
+
+  .search-bar-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-select {
+      width: rhythm(16);
+    }
+  }
+
+  .status-buttons-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    justify-content: flex-end;
+    min-width: rhythm(24);
+
+    .status-button {
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.25);
+    }
+    .file-count {
+      font-size: font-size(l);
+      font-weight: $font-weight-bold;
+      line-height: line-height(m);
+    }
+  }
+}
+
 .resource-filters {
   padding: 0 rhythm(3) 0 rhythm(1.5);
   .title-filter {
@@ -15,19 +57,19 @@ $table-breakpoint: 1400px;
   }
 }
 
-.resource-list-header {
+.resource-table-header {
   align-items: center;
   background-color: $color-light-stronger;
-  border-bottom: 1px solid $color-neutral-lighter;
   display: flex;
   height: rhythm(8);
   position: sticky;
-  top: var(--app-topbar-height);
+  top: calc(var(--app-topbar-height) + #{rhythm(7)} + 1px);
   z-index: 10;
 
   .resource-bulk-actions {
     align-items: center;
     display: flex;
+    font-weight: $font-weight-regular;
     gap: rhythm(2);
     padding-left: rhythm(0.5);
   }
@@ -41,14 +83,7 @@ $table-breakpoint: 1400px;
   }
 }
 
-.resource-list-content {
-  margin-top: 4px;
-  padding: 0 rhythm(6) 0 rhythm(5);
-  background-color: $color-light-stronger;
-}
-
 .table-container {
-  padding-top: rhythm(4);
   position: relative;
   max-height: 100%;
   overflow: auto;
@@ -79,6 +114,13 @@ table {
     gap: rhythm(1);
   }
 
+  .title-and-description small {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .label-container {
     display: flex;
     gap: rhythm(0.5);
@@ -95,6 +137,13 @@ table {
   .cdk-column-status,
   .cdk-column-actions {
     text-align: center;
+  }
+
+  .cdk-column-classification {
+    width: rhythm(22);
+    @media (max-width: $table-breakpoint) {
+      width: rhythm(16);
+    }
   }
 
   .cdk-column-modification {

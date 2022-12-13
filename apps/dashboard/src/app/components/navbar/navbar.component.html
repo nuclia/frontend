@@ -17,33 +17,6 @@
           </a>
         </div>
       </div>
-
-      <div class="nav-group">
-        <div class="group-items">
-          <a
-            class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)"
-            (click)="createNewLink()">
-            <pa-icon name="link"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.link' | translate }}</span>
-          </a>
-          <a
-            class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)"
-            (click)="uploadNewFiles(false)">
-            <pa-icon name="file"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.file' | translate }}</span>
-          </a>
-          <a
-            *ngIf="isUploadFolderEnabled | async"
-            class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)"
-            (click)="uploadNewFiles(true)">
-            <pa-icon name="folder"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.folder' | translate }}</span>
-          </a>
-        </div>
-      </div>
       <div class="nav-group">
         <div class="group-items">
           <a
