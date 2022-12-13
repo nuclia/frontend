@@ -10,11 +10,15 @@ $table-breakpoint: 1400px;
 
 .resource-list-header {
   align-items: center;
+  background-color: $color-light-stronger;
   border-bottom: 1px solid $color-neutral-lighter;
   display: flex;
   justify-content: space-between;
-  padding-bottom: rhythm(1);
   margin-bottom: rhythm(4);
+  padding-bottom: rhythm(1);
+  position: sticky;
+  top: var(--app-topbar-height);
+  z-index: 10;
 
   .search-bar-container {
     align-items: center;
@@ -59,7 +63,7 @@ $table-breakpoint: 1400px;
   display: flex;
   height: rhythm(8);
   position: sticky;
-  top: var(--app-topbar-height);
+  top: calc(var(--app-topbar-height) + #{rhythm(7)} + 1px);
   z-index: 10;
 
   .resource-bulk-actions {
