@@ -114,19 +114,16 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   }
 
   startOrStopTraining(type: TrainingType) {
+    let params = {};
+    if (this.trainings[type].selectedOptions.length > 0) {
+      params = {
+        valid_labelsets: this.options[type] === this.labelsets ? this.trainings[type].selectedOptions : undefined,
+        entity_groups: this.options[type] === this.entitiesGroups ? this.trainings[type].selectedOptions : undefined,
+      };
+    }
     this.sdk.currentKb
       .pipe(
-        switchMap((kb) =>
-          this.trainings[type].running
-            ? kb.training.stop(type)
-            : kb.training.start(
-                type,
-                type !== TrainingType.ner && this.trainings[type].selectedOptions.length > 0
-                  ? this.trainings[type].selectedOptions
-                  : undefined,
-                // TODO: send entity groups in NER training
-              ),
-        ),
+        switchMap((kb) => (this.trainings[type].running ? kb.training.stop(type) : kb.training.start(type, params))),
       )
       .subscribe(() => {
         this.trainings[type].running = !this.trainings[type].running;

@@ -4,6 +4,7 @@
 
 - Add pagination model in search results
 - Add `computedmetadata` to `IResource` model
+- Add support for NER training
 
 # 1.1.0 (2022-12-08)
 
