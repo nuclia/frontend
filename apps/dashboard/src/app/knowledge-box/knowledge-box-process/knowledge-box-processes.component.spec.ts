@@ -39,6 +39,7 @@ describe('KnowledgeBoxProcessComponent', () => {
           provide: SDKService,
           useValue: {
             currentKb: of({ getStatus: () => TrainingStatus.not_running }),
+            counters: of({ resources: 1 }),
           },
         },
         {
