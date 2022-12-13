@@ -23,6 +23,7 @@ import {
   PaTooltipModule,
   PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { SisProgressModule } from '@nuclia/sistema';
 
 const Components = [
   CreateLinkComponent,
@@ -52,6 +53,7 @@ const Components = [
     PaTogglesModule,
     PaTooltipModule,
     PaTextFieldModule,
+    SisProgressModule,
   ],
   declarations: [...Components],
   exports: [],

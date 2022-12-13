@@ -15,13 +15,25 @@
     (ngSubmit)="add()">
     <div class="new-link">
       <pa-input
+        *ngIf="!linkForm.value.multiple"
         formControlName="link"
         [errorMessages]="validationMessages.link">
         {{ 'modal.create_link.input' | translate }}
       </pa-input>
+      <pa-textarea
+        *ngIf="linkForm.value.multiple"
+        formControlName="links"
+        rows="5"
+        [errorMessages]="validationMessages.link">
+        {{ 'modal.create_link.textarea' | translate }}
+      </pa-textarea>
+      <pa-toggle formControlName="multiple">{{ 'modal.create_link.multiple' | translate }}</pa-toggle>
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
     </div>
 
+    <nsi-spinner
+      *ngIf="pending"
+      size="small"></nsi-spinner>
     <div
       class="link-actions"
       fxLayout="row"
@@ -36,7 +48,7 @@
       <pa-button
         type="submit"
         kind="primary"
-        [disabled]="!linkForm.valid">
+        [disabled]="!linkForm.valid || pending">
         {{ 'generic.add' | translate }}
       </pa-button>
     </div>

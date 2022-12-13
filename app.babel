@@ -6680,7 +6680,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>modal.create_link.link_duplicated</name>
+						<name>modal.create_link.multiple</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -6700,7 +6700,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>modal.create_link.tags</name>
+						<name>modal.create_link.textarea</name>
 						<description/>
 						<comment/>
 						<default_text/>
