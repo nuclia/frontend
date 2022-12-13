@@ -1,10 +1,10 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { STFTrackingService } from '@flaps/core';
 import { SDKService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
-import { switchMap } from 'rxjs';
+import { Observable, of, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
@@ -17,6 +17,8 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 export class CreateLinkComponent {
   linkForm = this.formBuilder.group({
     link: ['', [Validators.pattern(/^http(s?):\/\//)]],
+    links: ['', [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)]],
+    multiple: [false],
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -24,7 +26,7 @@ export class CreateLinkComponent {
       pattern: 'validation.url_required',
     } as IErrorMessages,
   };
-
+  pending = false;
   selectedLabels: Classification[] = [];
 
   constructor(
@@ -33,24 +35,52 @@ export class CreateLinkComponent {
     private sdk: SDKService,
     private tracking: STFTrackingService,
     private toaster: SisToastService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   add() {
     if (this.linkForm.valid) {
-      this.tracking.logEvent('link_upload');
-      this.sdk.currentKb
-        .pipe(
+      this.pending = true;
+      this.cdr?.markForCheck();
+      let obs: Observable<{ uuid: string }>;
+      if (this.linkForm.value.multiple) {
+        this.tracking.logEvent('multiple_links_upload');
+        const links: string[] = this.linkForm.value.links
+          .split('\n')
+          .map((link: string) => link.trim())
+          .filter((link: string) => !!link);
+        obs = this.sdk.currentKb.pipe(
+          take(1),
+          switchMap((kb) =>
+            links.reduce(
+              (acc, curr) =>
+                acc.pipe(
+                  switchMap(() => kb.createLinkResource({ uri: curr }, { classifications: this.selectedLabels })),
+                ),
+              of({ uuid: '' }),
+            ),
+          ),
+        );
+      } else {
+        this.tracking.logEvent('link_upload');
+        obs = this.sdk.currentKb.pipe(
+          take(1),
           switchMap((kb) =>
             kb.createLinkResource({ uri: this.linkForm.value.link }, { classifications: this.selectedLabels }),
           ),
-        )
-        .subscribe({
-          next: () => {
-            this.dialogRef.close();
-            this.sdk.refreshCounter();
-          },
-          error: () => this.toaster.error('link.create.error'),
-        });
+        );
+      }
+      obs.subscribe({
+        next: () => {
+          this.dialogRef.close();
+          this.sdk.refreshCounter();
+        },
+        error: () => {
+          this.pending = false;
+          this.cdr?.markForCheck();
+          this.toaster.error('link.create.error');
+        },
+      });
     }
   }
 
