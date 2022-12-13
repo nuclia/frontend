@@ -16,7 +16,7 @@ describe('Embedded search', () => {
       resources: {
         res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
       },
-      fulltext: { results: [{ rid: 'res1', score: 1 } as Search.FulltextResource], facets: {} },
+      fulltext: { results: [{ rid: 'res1', score: 1 } as Search.FulltextResource], facets: {} } as Search.Fulltext,
     });
     const { container } = render(EmbeddedSearch);
     expect(container.querySelector('.results:not(.empty)')).toBeTruthy();

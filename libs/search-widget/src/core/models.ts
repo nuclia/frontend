@@ -2,15 +2,15 @@ import type { Classification, CloudLink, IResource, Paragraph, Search, WidgetFea
 
 export const NO_RESULTS: Search.Results = {
   resources: {} as { [id: string]: IResource },
-  paragraphs: { results: [], facets: {} },
-  sentences: { results: [], facets: {} },
-  fulltext: { results: [], facets: {} },
+  paragraphs: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
+  sentences: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
+  fulltext: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
 };
 export const PENDING_RESULTS = {
   resources: {} as { [id: string]: IResource },
-  paragraphs: { results: [], facets: {} },
-  sentences: { results: [], facets: {} },
-  fulltext: { results: [], facets: {} },
+  paragraphs: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
+  sentences: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
+  fulltext: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
   pending: true,
 };
 
