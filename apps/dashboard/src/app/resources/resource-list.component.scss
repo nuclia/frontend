@@ -64,7 +64,7 @@ $table-breakpoint: 1400px;
   height: rhythm(8);
   position: sticky;
   top: calc(var(--app-topbar-height) + #{rhythm(7)} + 1px);
-  z-index: 10;
+  z-index: 1;
 
   .resource-bulk-actions {
     align-items: center;
