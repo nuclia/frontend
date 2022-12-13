@@ -43,8 +43,15 @@ export namespace Search {
     resources?: { [id: string]: IResource };
     sentences?: Sentences;
     paragraphs?: Paragraphs;
+    fulltext?: Fulltext;
     shards?: string[];
-    fulltext?: { results: FulltextResource[]; facets: FacetsResult };
+  }
+
+  export interface Pagination {
+    total: number;
+    page_number: number;
+    page_size: number;
+    next_page: boolean;
   }
 
   export interface SmartResult extends IResource {
@@ -60,12 +67,17 @@ export namespace Search {
     paragraphs?: Paragraphs;
   }
 
-  export interface Sentences {
+  export interface Sentences extends Pagination {
     results: Sentence[];
     facets: FacetsResult;
   }
 
-  export interface Paragraphs {
+  export interface Fulltext extends Pagination {
+    results: FulltextResource[];
+    facets: FacetsResult;
+  }
+
+  export interface Paragraphs extends Pagination {
     results: Paragraph[];
     facets: FacetsResult;
   }

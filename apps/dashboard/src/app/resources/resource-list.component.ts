@@ -73,6 +73,7 @@ const DEFAULT_PAGE_SIZE = 20;
 export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
+  totalResources = 0;
   isLoading = true;
   selection = new SelectionModel<Resource>(true, []);
   filterTitle: UntypedFormControl;
@@ -186,7 +187,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe();
 
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
-      this.resultsLength = counters.resources;
+      this.totalResources = counters.resources;
       this.refreshing = false;
       this.cdr?.markForCheck();
     });
@@ -375,6 +376,12 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         ]);
       }),
       map(([kb, results, labelSets]) => {
+        // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
+        if (hasQuery && results.fulltext) {
+          this.resultsLength = results.fulltext.next_page || results.fulltext.page_number > 0 ? this.totalResources : 1;
+        } else {
+          this.resultsLength = this.totalResources;
+        }
         this.data = titleOnly
           ? this.getTitleOnlyData(results, kb.id, labelSets)
           : this.getResourceData(query, results, kb.id, labelSets);

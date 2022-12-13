@@ -1,3 +1,8 @@
+# 1.1.1 (unreleased)
+
+### Improvements
+- Add pagination model in search results
+
 # 1.1.0 (2022-12-08)
 
 ### Breaking change

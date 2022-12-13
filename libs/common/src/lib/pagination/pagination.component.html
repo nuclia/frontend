@@ -1,21 +1,23 @@
-<div
-  class="pagination"
-  fxLayout="row"
-  fxLayoutAlign="center center"
-  fxLayoutGap="16px">
-  <button
+<div class="pagination">
+  <pa-button
+    size="small"
+    icon="chevron-left"
+    aspect="basic"
     [disabled]="_page <= 1"
     (click)="prev.emit()">
-    &lt;
-  </button>
+    {{ 'generic.previous' | translate }}
+  </pa-button>
   <div
     translate
     [translateParams]="{ current: _page, total: _total }">
     generic.pagination
   </div>
-  <button
+  <pa-button
+    size="small"
+    icon="chevron-right"
+    aspect="basic"
     [disabled]="_page >= _total"
-    (click)="next.emit()">
-    &gt;
-  </button>
+    (click)="prev.emit()">
+    {{ 'generic.next' | translate }}
+  </pa-button>
 </div>
