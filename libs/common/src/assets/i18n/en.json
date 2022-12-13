@@ -599,6 +599,7 @@
 	"stash.settings.processes.training.active": "There is an active training that you can stop at any time. You will receive an email when it is complete.",
 	"stash.settings.processes.training.agreement": "I accept the charges incurred by selecting this option",
 	"stash.settings.processes.training.last_run": "Last run: {{ runDate }}",
+	"stash.settings.processes.training.no-resources": "The training feature is not available on empty knowledge boxes.",
 	"stash.settings.processes.training.not-allowed": "The training feature is not available on basic accounts.",
 	"stash.settings.processes.training.select-entities": "Choose entity groups",
 	"stash.settings.processes.training.select-labelsets": "Choose the label sets",

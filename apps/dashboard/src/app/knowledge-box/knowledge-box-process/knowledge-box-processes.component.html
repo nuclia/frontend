@@ -8,6 +8,11 @@
         class="warning">
         {{ 'stash.settings.processes.training.not-allowed' | translate }}
       </div>
+      <div
+        *ngIf="!(hasResources | async)"
+        class="warning">
+        {{ 'stash.settings.processes.training.no-resources' | translate }}
+      </div>
       <section *ngFor="let type of enabledTrainings | async">
         <h2>{{ 'stash.settings.processes.' + type | translate }}</h2>
         <p class="last-run">
@@ -70,7 +75,7 @@
 
             <div class="agreement-container">
               <pa-checkbox
-                [disabled]="cannotTrain | async"
+                [disabled]="(cannotTrain | async) || !(hasResources | async)"
                 [(value)]="trainings[type].agreement">
                 {{ 'stash.settings.processes.training.agreement' | translate }}
               </pa-checkbox>
@@ -88,7 +93,8 @@
             [kind]="trainings[type].running ? 'secondary' : 'primary'"
             [disabled]="
               (!trainings[type].running && (isBillingEnabled | async) && !trainings[type].agreement) ||
-              (cannotTrain | async)
+              (cannotTrain | async) ||
+              !(hasResources | async)
             "
             (click)="startOrStopTraining(type)">
             {{ 'stash.settings.processes.training.' + (trainings[type].running ? 'stop' : 'start') | translate }}

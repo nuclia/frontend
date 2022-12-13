@@ -22,7 +22,8 @@ interface TrainingState {
 export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject();
 
-  cannotTrain = this.stateService.account.pipe(map((account) => account && account.type === 'stash-basic'));
+  cannotTrain = this.stateService.account.pipe(map((account) => !!account && account.type === 'stash-basic'));
+  hasResources = this.sdk.counters.pipe(map((counters) => counters.resources > 0));
   trainingTypes = TrainingType;
   labelsets = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getLabels()),
