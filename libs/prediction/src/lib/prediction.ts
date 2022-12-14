@@ -7,6 +7,7 @@ export class NucliaPrediction {
   tfVersion = '3.15.0';
   model?: BertModel;
   labels: string[][] = [];
+  isReady = false;
 
   private scriptsInjected = new BehaviorSubject(false);
 
@@ -46,11 +47,11 @@ export class NucliaPrediction {
         }),
         switchMap(() => from((this.model as BertModel).setup(headers))),
       )
-      .subscribe();
+      .subscribe(() => (this.isReady = true));
   }
 
   predict(query: string): Observable<Classification[]> {
-    if (!this.model) {
+    if (!this.isReady) {
       logger('Model not loaded yet');
       return of([]);
     }
