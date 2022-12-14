@@ -100,8 +100,8 @@ export class ResourceProfileComponent extends BaseEditComponent {
 
   getClassificationsPayload(resource: Resource, labels: Classification[]) {
     const extracted = deDuplicateList(
-      resource.getFields().reduce((acc, field) => {
-        return acc.concat(field.extracted?.metadata?.metadata?.classifications || []);
+      (resource.computedmetadata?.field_classifications || []).reduce((acc, field) => {
+        return acc.concat(field.classifications || []);
       }, [] as Classification[]),
     );
     const userClassifications = labels.filter(
