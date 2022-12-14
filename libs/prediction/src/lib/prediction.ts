@@ -51,7 +51,7 @@ export class NucliaPrediction {
   }
 
   predict(query: string): Observable<Classification[]> {
-    if (!this.isReady) {
+    if (!this.model || !this.isReady) {
       logger('Model not loaded yet');
       return of([]);
     }
