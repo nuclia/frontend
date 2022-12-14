@@ -7,6 +7,7 @@ export interface IResource {
   metadata?: Metadata;
   usermetadata?: UserMetadata;
   fieldmetadata?: UserFieldMetadata[];
+  computedmetadata?: ComputedMetadata;
   origin?: Origin;
   created?: string;
   modified?: string;
@@ -103,10 +104,12 @@ export interface IFieldData {
   extracted?: ExtractedData;
 }
 
-export interface ResourceField extends IFieldData {
+export interface FieldId {
   field_type: FIELD_TYPE;
   field_id: string;
 }
+
+export interface ResourceField extends IFieldData, FieldId {}
 
 export class FileFieldData implements IFieldData {
   value?: FileField;
@@ -319,4 +322,13 @@ export interface PositionedNER {
   family: string;
   start: number;
   end: number;
+}
+
+export interface ComputedMetadata {
+  field_classifications: FieldClassification[];
+}
+
+export interface FieldClassification {
+  field: FieldId;
+  classifications: Classification[];
 }
