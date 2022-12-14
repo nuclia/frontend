@@ -17,7 +17,7 @@
    * Kb with PDF without page indicators (owned by Mat): 8f39fe4e-04e0-4767-bc83-69fc4c9c31c6
    * Kb with different kind of media (owned by Mat): f67d94ee-bd5b-4044-8844-a291c2ac244c
    */
-  let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff';
+  let kb = '003c31f6-4c4c-42fe-9e6a-8b3ea7d97f79';
 
   onMount(() => {
     widget?.setActions([

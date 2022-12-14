@@ -256,7 +256,8 @@
             "local-stage": {
               "browserTarget": "dashboard:build:local-stage"
             }
-          }
+          },
+          "defaultConfiguration": "local-stage"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

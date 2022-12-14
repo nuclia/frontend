@@ -114,8 +114,8 @@ export class ReadableResource implements IResource {
   getClassifications(): Classification[] {
     const classifications = (this.usermetadata?.classifications || []).filter((c) => !c.cancelled_by_user);
     const cancellations = (this.usermetadata?.classifications || []).filter((c) => c.cancelled_by_user);
-    return this.getFields().reduce((acc, field) => {
-      field.extracted?.metadata?.metadata?.classifications?.forEach((classification) => {
+    return (this.computedmetadata?.field_classifications || []).reduce((acc, field) => {
+      field.classifications.forEach((classification) => {
         const existing = acc.find((c) => c.label === classification.label && c.labelset === classification.labelset);
         const isCancelled = cancellations.find(
           (c) => c.label === classification.label && c.labelset === classification.labelset,

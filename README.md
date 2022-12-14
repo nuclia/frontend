@@ -32,7 +32,7 @@ In `apps/dashboard/src/environments_config`, create a file `local-stage/app-conf
 Then you can run the dashboard locally and use the credential created previously to log in:
 
 ```
-nx serve dashboard -c local-stage
+nx serve dashboard
 ```
 
 ## Widget
