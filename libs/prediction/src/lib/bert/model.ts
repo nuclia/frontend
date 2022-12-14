@@ -18,11 +18,13 @@ export default class BertModel {
   private tokenizer?: any; //?: BertTokenizer;
   private _classifierModel?: any; //?: tf.LayersModel;
   private model?: any; //?: tf.Sequential;
-  private isMultilingual: boolean;
-  private isDistilBert: boolean;
+  private isMultilingual = false;
+  private isDistilBert = false;
 
   set modelType(type: string) {
     this._modelType = type;
+    this.isMultilingual = type.includes('multi');
+    this.isDistilBert = type.includes('dbert');
   }
   get modelType() {
     return this._modelType;
@@ -43,8 +45,6 @@ export default class BertModel {
 
   constructor(inputSize: number, private kbPath: string) {
     this.inputSize = inputSize;
-    this.isMultilingual = this.modelType.includes("multi");
-    this.isDistilBert = this.modelType.includes("dbert");
   }
 
   async loadModelDefinition(headers: { [key: string]: string }) {
@@ -157,7 +157,7 @@ export default class BertModel {
       const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'float32');
       return this.bertModel.execute({
         input_ids: tfInputIds,
-        attention_mask: tfInputMask
+        attention_mask: tfInputMask,
       });
     }); // as tf.Tensor2D;
     const bertOutput = await rawResult.array();
@@ -174,7 +174,7 @@ export default class BertModel {
       options,
     );
     this._classifierModel.summary();
-    const result = await this.predict("Model warmup")
+    await this.predict('Model warmup');
   }
 
   private async loadBertModel() {
@@ -183,6 +183,10 @@ export default class BertModel {
 
   // Load tokenizer for bert input
   private async loadTokenizer() {
-    this.tokenizer = await loadTokenizer(`${getCDN()}models/classifier/${this.modelType}/vocab.json`, !this.isDistilBert, this.isMultilingual);
+    this.tokenizer = await loadTokenizer(
+      `${getCDN()}models/classifier/${this.modelType}/vocab.json`,
+      !this.isDistilBert,
+      this.isMultilingual,
+    );
   }
 }
