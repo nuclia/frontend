@@ -153,8 +153,8 @@ export default class BertModel {
       if (!this.bertModel) {
         throw new Error('DistilbertModel is undefined');
       }
-      const tfInputIds = this.tf.tensor2d(inputIds, [batchSize, this.inputSize], 'int32');
-      const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'int32');
+      const tfInputIds = this.tf.tensor2d(inputIds, [batchSize, this.inputSize], 'float32');
+      const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'float32');
       return this.bertModel.execute({
         input_ids: tfInputIds,
         attention_mask: tfInputMask
