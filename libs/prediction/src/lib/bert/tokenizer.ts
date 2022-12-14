@@ -1,7 +1,7 @@
 import { logger } from '../utils';
 
-export async function loadTokenizer(vocabUrl: string): Promise<BertTokenizer> {
-  const tokenizer = new BertTokenizer(vocabUrl);
+export async function loadTokenizer(vocabUrl: string, lowercase: boolean, multilingual: boolean): Promise<BertTokenizer> {
+  const tokenizer = new BertTokenizer(vocabUrl, lowercase, multilingual);
   return tokenizer;
 }
 
@@ -69,14 +69,18 @@ class Trie {
 }
 
 export default class WordPieceTokenizer {
+  private doLowerCase: boolean;
+  private multilingual: boolean;
   separator: string;
   UNK_INDEX: number;
   trie?: Trie;
   vocab: string[] = [];
 
-  constructor() {
+  constructor(doLowerCase: boolean, multilingual: boolean) {
     this.separator = '\u2581';
     this.UNK_INDEX = 100;
+    this.doLowerCase = doLowerCase;
+    this.multilingual = multilingual;
   }
 
   load(vocabUrl: string) {
@@ -85,8 +89,12 @@ export default class WordPieceTokenizer {
     this.trie.insert('[CLS]', 1, 101);
     this.trie.insert('[SEP]', 1, 102);
 
-    // Actual tokens start at 999.
-    for (let i = 999; i < this.vocab.length; i++) {
+    // Tokens start at 999 for monolingual models, and 106 for multilingual
+    const tokenStart = this.multilingual
+      ? 106
+      : 999;
+
+    for (let i = tokenStart; i < this.vocab.length; i++) {
       const word = this.vocab[i];
       this.trie.insert(word, 1, i);
     }
@@ -103,7 +111,10 @@ export default class WordPieceTokenizer {
     const words = text.split(' ');
     return words.map((word) => {
       if (word !== '[CLS]' && word !== '[SEP]') {
-        return this.separator + word.toLowerCase().normalize('NFKC');
+        if (this.doLowerCase) {
+          return this.separator + word.toLowerCase().normalize('NFKC');
+        }
+        return this.separator + word.normalize('NFKC');
       }
       return word;
     });
@@ -243,10 +254,10 @@ export class BertTokenizer {
   sepId: number;
   maxSeqLength: number;
 
-  constructor(pathToVocabulary: string, doLowerCase = true, maxSeqLength = 128) {
-    this.tokenizer = new WordPieceTokenizer();
-    this.tokenizer.load(pathToVocabulary);
+  constructor(pathToVocabulary: string, doLowerCase = false, multilingual = false, maxSeqLength = 128) {
     this.doLowerCase = doLowerCase;
+    this.tokenizer = new WordPieceTokenizer(this.doLowerCase, multilingual);
+    this.tokenizer.load(pathToVocabulary);
     this.maxSeqLength = maxSeqLength;
     this.clsId = this.convertTokensToId('[CLS]')[0];
     this.sepId = this.convertTokensToId('[SEP]')[0];

@@ -18,6 +18,8 @@ export default class BertModel {
   private tokenizer?: any; //?: BertTokenizer;
   private _classifierModel?: any; //?: tf.LayersModel;
   private model?: any; //?: tf.Sequential;
+  private isMultilingual: boolean;
+  private isDistilBert: boolean;
 
   set modelType(type: string) {
     this._modelType = type;
@@ -41,6 +43,8 @@ export default class BertModel {
 
   constructor(inputSize: number, private kbPath: string) {
     this.inputSize = inputSize;
+    this.isMultilingual = this.modelType.includes("multi");
+    this.isDistilBert = this.modelType.includes("dbert");
   }
 
   async loadModelDefinition(headers: { [key: string]: string }) {
@@ -103,7 +107,9 @@ export default class BertModel {
     if (!this._classifierModel) {
       throw new Error('classifierModel is undefined');
     }
-    const bertOutput = await this.bertLayerInference(inputs);
+    const bertOutput = this.isDistilBert
+      ? await this.DistilbertLayerInference(inputs)
+      : await this.bertLayerInference(inputs);
     const x = this.meanPooling
       ? this.tf.tensor2d(bertOutput, [inputs.length, this.outputSize], 'int32')
       : this.tf.tensor2d(bertOutput, [inputs.length, this.inputSize * this.outputSize], 'int32');
@@ -137,6 +143,29 @@ export default class BertModel {
     return bertOutput;
   }
 
+  // Get raw results from Distilbert layer
+  private async DistilbertLayerInference(inputs: BertInput[]) {
+    const batchSize = inputs.length;
+    const inputIds = inputs.map((value) => value.inputIds);
+    const inputMask = inputs.map((value) => value.inputMask);
+
+    const rawResult = this.tf.tidy(() => {
+      if (!this.bertModel) {
+        throw new Error('DistilbertModel is undefined');
+      }
+      const tfInputIds = this.tf.tensor2d(inputIds, [batchSize, this.inputSize], 'int32');
+      const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'int32');
+      return this.bertModel.execute({
+        input_ids: tfInputIds,
+        attention_mask: tfInputMask
+      });
+    }); // as tf.Tensor2D;
+    const bertOutput = await rawResult.array();
+    rawResult.dispose();
+
+    return bertOutput;
+  }
+
   // Load converted bert model
   private async loadClassifierModel(headers: { [key: string]: string }) {
     const options = { requestInit: { headers } };
@@ -153,6 +182,6 @@ export default class BertModel {
 
   // Load tokenizer for bert input
   private async loadTokenizer() {
-    this.tokenizer = await loadTokenizer(`${getCDN()}models/classifier/${this.modelType}/vocab.json`);
+    this.tokenizer = await loadTokenizer(`${getCDN()}models/classifier/${this.modelType}/vocab.json`, !this.isDistilBert, this.isMultilingual);
   }
 }
