@@ -174,6 +174,7 @@ export default class BertModel {
       options,
     );
     this._classifierModel.summary();
+    const result = await this.predict("Model warmup")
   }
 
   private async loadBertModel() {
