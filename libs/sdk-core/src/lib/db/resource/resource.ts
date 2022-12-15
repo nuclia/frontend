@@ -197,7 +197,7 @@ export class Resource extends ReadableResource implements IResource {
   }
 
   reprocess(): Observable<void> {
-    return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {});
+    return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {}, undefined, undefined, true);
   }
 
   getField(type: FIELD_TYPE, field: string): Observable<ResourceField> {

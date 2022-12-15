@@ -10,9 +10,6 @@ export const search = (
   options?: SearchOptions,
   useGet?: boolean,
 ) => {
-  if (!query && !hasFiltersOrFacets(options) && !options?.inTitleOnly) {
-    throw new Error('Search requires a query or some filters or some facets.');
-  }
   const params: { [key: string]: string | string[] } = {};
   params.query = query || '';
   params.features = features;
