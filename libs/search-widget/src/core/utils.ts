@@ -178,10 +178,10 @@ export function mapSmartParagraph2WidgetParagraph(
   paragraph: Search.SmartParagraph,
   kind: PreviewKind,
 ): WidgetParagraph {
-  const start_seconds = paragraph.start_seconds?.[0] || 0;
-  const end_seconds = paragraph.end_seconds?.[0] || 0;
-  const start = paragraph.position?.start || 0;
-  const end = paragraph.position?.end || 0;
+  const start_seconds = paragraph.start_seconds?.[0];
+  const end_seconds = paragraph.end_seconds?.[0];
+  const start = paragraph.position?.start;
+  const end = paragraph.position?.end;
   return {
     paragraph,
     fieldType: paragraph.field_type,
@@ -190,7 +190,7 @@ export function mapSmartParagraph2WidgetParagraph(
     preview: kind,
     start,
     end,
-    page: paragraph.position?.page_number || 0,
+    page: paragraph.position?.page_number,
     pid: `${paragraph.field_type}${start}${end}`,
     start_seconds,
     end_seconds,
