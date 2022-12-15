@@ -1,11 +1,27 @@
 import { getLabelSets, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, typeAhead } from './suggestions.store';
-import { debounceTime, distinctUntilChanged, filter, forkJoin, map, merge, Observable, of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import {
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  forkJoin,
+  map,
+  merge,
+  Observable,
+  of,
+  skip,
+  Subscription,
+  switchMap,
+  take,
+} from 'rxjs';
 import { NO_RESULTS } from '../models';
-import { widgetFeatures } from './widget.store';
+import { widgetFeatures, widgetMode } from './widget.store';
+import { isPopupSearchOpen } from './modal.store';
+import { nucliaState, nucliaStore } from '../old-stores/main.store';
 import type { Classification, Search } from '@nuclia/core';
+import { formatQueryKey, updateQueryParams } from '../utils';
 
 const subscriptions: Subscription[] = [];
 
@@ -55,4 +71,62 @@ export function activateTypeAheadSuggestions() {
     .subscribe((suggestionList) => suggestions.set(suggestionList));
 
   subscriptions.push(subscription);
+}
+
+/**
+ * Initialise permalink feature
+ */
+export function activatePermalinks() {
+  const queryKey = formatQueryKey('query');
+  const filterKey = formatQueryKey('filter');
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const query = urlParams.get(queryKey);
+  const filters = urlParams.getAll(filterKey);
+  if (query || filters.length > 0) {
+    nucliaStore().query.next(query || '');
+    nucliaStore().filters.next(filters);
+    typeAhead.set(query || '');
+    nucliaStore().triggerSearch.next();
+    if (widgetMode.value === 'popup') {
+      isPopupSearchOpen.set(true);
+    }
+  }
+
+  const permalinkSubscription = [
+    // When a search is performed, save the query and filters in the current URL
+    nucliaStore()
+      .triggerSearch.pipe(
+        switchMap(() => nucliaState().isEmptySearchQuery.pipe(take(1))),
+        filter((isEmptySearchQuery) => !isEmptySearchQuery),
+        switchMap(() => combineLatest([nucliaState().query, nucliaState().filters]).pipe(take(1))),
+      )
+      .subscribe(([query, filters]) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set(queryKey, query);
+        urlParams.delete(filterKey);
+        filters.forEach((filter) => urlParams.append(filterKey, filter));
+        updateQueryParams(urlParams);
+      }),
+    // Remove parameters from the URL when search results are reset
+    merge(
+      isPopupSearchOpen.pipe(
+        distinctUntilChanged(),
+        skip(1),
+        filter((isOpen) => !isOpen),
+      ),
+      nucliaState().isEmptySearchQuery.pipe(
+        distinctUntilChanged(),
+        skip(1),
+        filter((isEmpty) => isEmpty),
+      ),
+    ).subscribe(() => {
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.delete(queryKey);
+      urlParams.delete(filterKey);
+      updateQueryParams(urlParams);
+    }),
+  ];
+
+  subscriptions.push(...permalinkSubscription);
 }

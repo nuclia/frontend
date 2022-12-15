@@ -13,7 +13,7 @@
   import { get_current_component } from 'svelte/internal';
   import { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
-  import { initLabelStore } from '../../core/stores/effects';
+  import { activatePermalinks, initLabelStore } from '../../core/stores/effects';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -89,6 +89,9 @@
     setLang(lang);
 
     setupTriggerSearch(dispatchCustomEvent);
+    if (_features.permalink) {
+      activatePermalinks();
+    }
 
     ready = true;
 

@@ -535,7 +535,7 @@
 	"stash.widgets.navigateToLink": "Navega cap als enllaços",
 	"stash.widgets.navigateToLink.help": "Quan feu servir Nuclia per cercar pàgines web, fer clic a un resultat obrirà la pàgina original en lloc de mostrar-la al visor.",
 	"stash.widgets.permalink": "Permalinks",
-	"stash.widgets.permalink.help": "Afegiu un paràmetre addicional a l'URL que permet l'obertura directa d'un recurs",
+	"stash.widgets.permalink.help": "Afegiu paràmetres addicionals a l'URL que permet l'obertura directa d'un recurs o dels resultats d'una cerca",
 	"stash.widgets.placeholder": "Placeholder de la barra de cerca",
 	"stash.widgets.preview": "Vista prèvia",
 	"stash.widgets.publish_kb": "Podeu publicar·lo des de",

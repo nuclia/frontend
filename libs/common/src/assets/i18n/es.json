@@ -535,7 +535,7 @@
 	"stash.widgets.navigateToLink": "Navega hacia los enlaces",
 	"stash.widgets.navigateToLink.help": "Al usar Nuclia para buscar páginas web, hacer clic en un resultado abrirá la página original en lugar de mostrarla en el visor.",
 	"stash.widgets.permalink": "Permalinks",
-	"stash.widgets.permalink.help": "Agregue un parámetro adicional en la URL que permita la apertura directa de un recurso",
+	"stash.widgets.permalink.help": "Agregue parámetros adicionales en la URL que permita la apertura directa de un recurso o de los resultados de una búsqueda",
 	"stash.widgets.placeholder": "Placeholder de la barra de búsqueda",
 	"stash.widgets.preview": "Previsualizar",
 	"stash.widgets.publish_kb": "Puedes publicarlo desde el",
