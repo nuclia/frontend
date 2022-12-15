@@ -75,6 +75,9 @@
   let ready = false;
 
   onMount(() => {
+    if (cdn) {
+      setCDN(cdn);
+    }
     initNuclia(
       {
         backend,
@@ -93,9 +96,6 @@
         features: _features,
       },
     );
-    if (cdn) {
-      setCDN(cdn);
-    }
 
     // Setup widget in the store
     widgetMode.set(type as WidgetMode);
