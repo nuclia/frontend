@@ -1,0 +1,135 @@
+.sw-tile {
+  &.expanded {
+    --header-height: var(--rhythm-7);
+    --collapsible-header-height: var(--rhythm-6);
+  }
+
+  &.expanded .media-container.loading {
+    position: absolute;
+  }
+
+  &.expanded .side-panel .scrollable-area {
+    min-height: var(--collapsible-header-height);
+    overflow: auto;
+  }
+
+  &.expanded .transcript-container {
+    background: var(--color-light-stronger);
+  }
+
+  &.expanded .transcript-expander-header {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    padding: var(--rhythm-1_5);
+
+    &:focus-visible {
+      box-shadow: var(--focus-shadow);
+      outline: 0;
+    }
+    .transcript-expander-header-chevron {
+      display: flex;
+      transition: transform var(--transition-moderate);
+    }
+    &.expanded .transcript-expander-header-chevron {
+      transform: rotate(90deg);
+    }
+  }
+}
+
+@media (max-width: 820px) {
+  .sw-tile {
+    &.expanded {
+      --player-height: calc(100vw * 9 / 16);
+
+      flex-direction: column;
+
+      .thumbnail-container {
+        width: 100%;
+      }
+
+      .media-container {
+        height: var(--player-height);
+      }
+
+      .summary-container,
+      .find-bar-container {
+        display: none;
+      }
+      .result-details {
+        --side-panel-height: calc(100vh - var(--header-height) - var(--player-height));
+        height: var(--side-panel-height);
+        overflow: hidden;
+        width: 100%;
+
+        .scrollable-area {
+          max-height: calc(var(--side-panel-height) - var(--collapsible-header-height) * 2);
+        }
+
+        .search-result-paragraphs {
+          overflow: auto;
+          max-height: calc(var(--side-panel-height) - var(--collapsible-header-height));
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 821px) {
+  .sw-tile {
+    .thumbnail-container {
+      min-width: var(--rhythm-28);
+    }
+
+    &.expanded {
+      --side-panel-width: var(--rhythm-39);
+      --player-height: calc((100vw - var(--side-panel-width)) * 9 / 16);
+      // initialize --video-tile-height with youtube height the time for setupExpandedTile method to be called
+      --media-tile-height: var(--player-height);
+    }
+
+    &.expanded .summary-container {
+      display: block;
+      margin-top: var(--rhythm-3);
+    }
+
+    &.expanded .result-details {
+      --result-details-height: calc(var(--media-tile-height) - var(--header-height) - var(--rhythm-2));
+      max-height: var(--result-details-height);
+
+      .scrollable-area {
+        max-height: calc(var(--result-details-height) - var(--collapsible-header-height) * 3);
+        overflow: auto;
+      }
+    }
+    &.expanded .side-panel {
+      display: flex;
+      flex: 1 0 auto;
+      flex-direction: column;
+      max-height: 100%;
+      width: var(--side-panel-width);
+    }
+
+    &.expanded .search-result-paragraphs {
+      --full-transcript-header: var(--rhythm-8);
+      min-height: var(--collapsible-header-height);
+      max-height: calc(100% - var(--find-input-height) - var(--find-input-margin) - var(--full-transcript-header));
+      overflow: auto;
+    }
+
+    &.expanded .full-transcript-container {
+      min-height: var(--collapsible-header-height);
+    }
+
+    &.expanded .on-animation {
+      overflow: hidden;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .sw-tile.expanded {
+    --side-panel-width: var(--rhythm-53);
+  }
+}

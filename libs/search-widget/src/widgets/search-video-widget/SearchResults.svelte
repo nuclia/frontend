@@ -19,6 +19,7 @@
     smartResults,
     triggerSearch,
   } from '../../core/stores/search.store';
+  import AudioTile from '../../tiles/audio-tile/AudioTile.svelte';
 
   const showResults = triggerSearch.pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(2000));
@@ -55,6 +56,8 @@
             <PdfTile {result} />
           {:else if result.icon.includes('video')}
             <VideoTile {result} />
+          {:else if result.icon.includes('audio')}
+            <AudioTile {result} />
           {:else}
             <TextTile {result} />
           {/if}

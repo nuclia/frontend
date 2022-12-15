@@ -49,5 +49,6 @@
 	"results.sentences": "Relevant sentences",
 	"results.summary": "Summary",
 	"suggest.intents": "Labels",
-	"suggest.paragraphs": "Suggested paragraphs"
+	"suggest.paragraphs": "Suggested paragraphs",
+	"tile.find-transcript": "Find a transcript"
 }

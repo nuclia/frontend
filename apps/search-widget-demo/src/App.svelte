@@ -6,7 +6,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'two-widgets';
+  let selected = 'tiles';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
@@ -54,7 +54,7 @@
         bind:value={selected}>
         <option value="popup">Popup search</option>
         <option value="embedded">Embedded search</option>
-        <option value="two-widgets">Search bar and result widgets</option>
+        <option value="tiles">Search bar and result widgets</option>
         <option value="viewer">Viewer widget</option>
       </select>
       <button on:click={() => setLang('en')}>English</button>
@@ -90,7 +90,7 @@
       lang="en"
       features="permalink,filter,suggestions" />
   {/if}
-  {#if selected === 'two-widgets'}
+  {#if selected === 'tiles'}
     <h2>Two widgets: search bar and video results</h2>
     <div class="two-widgets-container">
       <NucliaSearchBar
@@ -258,7 +258,7 @@
   </div>
 </main>
 
-<style type="text/scss">
+<style lang="scss">
   @import '../../../libs/search-widget/src/common/global.scss';
   @import '../../../libs/search-widget/src/common/common-style.scss';
   main {

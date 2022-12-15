@@ -46,5 +46,6 @@
 	"results.sentences": "Phrases pertinentes",
 	"results.summary": "Résumé",
 	"suggest.intents": "Labels",
-	"suggest.paragraphs": "Paragraphes suggérés"
+	"suggest.paragraphs": "Paragraphes suggérés",
+	"tile.find-transcript": "Trouver une transcription"
 }

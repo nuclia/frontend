@@ -48,5 +48,6 @@
 	"results.sentences": "Frases relevantes",
 	"results.summary": "Resumen",
 	"suggest.intents": "Etiquetas",
-	"suggest.paragraphs": "Párrafo sugerido"
+	"suggest.paragraphs": "Párrafo sugerido",
+	"tile.find-transcript": "Encuentra una transcripción"
 }
