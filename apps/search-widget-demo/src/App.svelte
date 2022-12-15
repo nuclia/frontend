@@ -4,6 +4,7 @@
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
+  import { AudioPlayer } from '../../../libs/search-widget/src/common/player';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
   let selected = 'tiles';
@@ -123,6 +124,9 @@
 
   <h2>Sistema in Svelte</h2>
   <div class="nuclia-widget">
+    <h3>Audio Player</h3>
+    <AudioPlayer src="https://ia800905.us.archive.org/19/items/FREE_background_music_dhalius/backsound.mp3" />
+
     <h3>Buttons</h3>
     <h4 class="section-title">Primary</h4>
     <div>

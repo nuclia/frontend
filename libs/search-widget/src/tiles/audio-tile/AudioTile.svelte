@@ -18,6 +18,7 @@
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
+  import { AudioPlayer } from '../../common/player';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -137,10 +138,9 @@
         class="player-container"
         class:loading={audioLoading}>
         {#if audioUri}
-          <Player
+          <AudioPlayer
             time={audioTime}
-            src={audioUri}
-            type={audioContentType} />
+            src={audioUri} />
         {/if}
       </div>
     {/if}
