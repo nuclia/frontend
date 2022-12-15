@@ -9,7 +9,7 @@ import type {
   TokenAnnotation,
 } from '@nuclia/core';
 import { FIELD_TYPE, Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, of, ReplaySubject, take, tap } from 'rxjs';
+import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
 import { nucliaStore } from './old-stores/main.store';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';

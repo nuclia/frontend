@@ -25,6 +25,8 @@ $width-configuration: rhythm(56);
 
   .preview-container {
     display: flex;
+    flex-direction: column;
+    gap: rhythm(2);
   }
 
   .snippet-configuration-container {

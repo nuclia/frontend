@@ -3,6 +3,7 @@
   import { createEventDispatcher } from 'svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
   import type { MediaWidgetParagraph, PdfWidgetParagraph } from '../../core/models';
+  import { PreviewKind } from '../../core/models';
 
   export let paragraph: MediaWidgetParagraph | PdfWidgetParagraph;
   export let stack = false;
@@ -17,13 +18,10 @@
   const open = () => {
     dispatch('open', { paragraph });
   };
-  const pdfParagraph: PdfWidgetParagraph | undefined = paragraph.hasOwnProperty('page')
-    ? (paragraph as PdfWidgetParagraph)
-    : undefined;
-  const videoParagraph: MediaWidgetParagraph | undefined = paragraph.hasOwnProperty('start_seconds')
-    ? (paragraph as MediaWidgetParagraph)
-    : undefined;
-  const isSemantic = paragraph.paragraph.sentences && paragraph.paragraph.sentences.length > 0;
+  const mediaKinds: PreviewKind[] = [PreviewKind.AUDIO, PreviewKind.VIDEO, PreviewKind.YOUTUBE];
+  $: isMedia = mediaKinds.includes(paragraph.preview);
+  $: isPdf = paragraph.preview === PreviewKind.PDF;
+  $: isSemantic = paragraph.paragraph.sentences && paragraph.paragraph.sentences.length > 0;
 </script>
 
 <li
@@ -37,13 +35,13 @@
   <div
     class="indicator-container"
     class:hidden={hideIndicator}>
-    {#if pdfParagraph}
+    {#if isPdf}
       <PageIndicator
-        page={pdfParagraph.page}
+        page={paragraph.page}
         {hovering} />
-    {:else if videoParagraph}
+    {:else if isMedia}
       <TimeIndicator
-        start={videoParagraph.start_seconds || 0}
+        start={paragraph.start_seconds || 0}
         {selected}
         hover={hovering}
         {minimized}
