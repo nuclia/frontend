@@ -111,8 +111,8 @@ export default class BertModel {
       ? await this.DistilbertLayerInference(inputs)
       : await this.bertLayerInference(inputs);
     const x = this.meanPooling
-      ? this.tf.tensor2d(bertOutput, [inputs.length, this.outputSize], 'int32')
-      : this.tf.tensor2d(bertOutput, [inputs.length, this.inputSize * this.outputSize], 'int32');
+      ? this.tf.tensor2d(bertOutput, [inputs.length, this.outputSize], 'float32')
+      : this.tf.tensor2d(bertOutput, [inputs.length, this.inputSize * this.outputSize], 'float32');
     const predTensor = this._classifierModel.predict(x); // as tf.Tensor2D;
     return await predTensor.array();
   }
@@ -153,8 +153,8 @@ export default class BertModel {
       if (!this.bertModel) {
         throw new Error('DistilbertModel is undefined');
       }
-      const tfInputIds = this.tf.tensor2d(inputIds, [batchSize, this.inputSize], 'float32');
-      const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'float32');
+      const tfInputIds = this.tf.tensor2d(inputIds, [batchSize, this.inputSize], 'int32');
+      const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'int32');
       return this.bertModel.execute({
         input_ids: tfInputIds,
         attention_mask: tfInputMask,
