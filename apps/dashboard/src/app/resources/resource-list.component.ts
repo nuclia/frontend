@@ -15,7 +15,7 @@ import {
   Subject,
   take,
 } from 'rxjs';
-import { debounceTime, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
+import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Classification,
@@ -252,7 +252,13 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   reindex(resource: Resource) {
-    resource.reprocess().subscribe();
+    resource
+      .reprocess()
+      .pipe(
+        delay(500), // wait for the reprocess to be effective
+        switchMap(() => this.getResources()),
+      )
+      .subscribe();
   }
 
   edit(uid: string) {
