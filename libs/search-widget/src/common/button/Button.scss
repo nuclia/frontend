@@ -82,8 +82,8 @@
   }
 
   &.solid.inverted {
-    --button-background-color: var(--color-neutral-background);
-    --button-background-color-hover: var(--color-neutral-background);
+    --button-background-color: var(--color-neutral-lightest);
+    --button-background-color-hover: var(--color-neutral-lightest);
     --button-background-color-active: var(--color-neutral-regular);
     --button-color: var(--color-neutral-regular);
     --button-color-hover: var(--color-dark-stronger);
@@ -106,7 +106,7 @@
 
   &.basic.secondary {
     --button-background-color: transparent;
-    --button-background-color-hover: var(--color-neutral-lightest);
+    --button-background-color-hover: var(--color-neutral-lighter);
     --button-background-color-active: var(--color-neutral-light);
     --button-color: var(--color-dark-stronger);
     --button-color-hover: var(--color-dark-stronger);
