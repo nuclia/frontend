@@ -59,7 +59,7 @@ export const formatQueryKey = (key: string): string => {
 export const updateQueryParams = (urlParams: URLSearchParams) => {
   const params = urlParams.toString();
   const url = params ? `${location.pathname}?${params}` : location.pathname;
-  history.pushState(null, '', url);
+  history.replaceState(null, '', url);
 };
 
 /**

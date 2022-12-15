@@ -21,7 +21,13 @@
     widgetPlaceholder,
     WidgetMode,
   } from '../../core/stores/widget.store';
-  import { activateTypeAheadSuggestions, initLabelStore, unsubscribeAllEffects } from '../../core/stores/effects';
+  import {
+    activatePermalink,
+    activatePermalinks,
+    activateTypeAheadSuggestions,
+    initLabelStore,
+    unsubscribeAllEffects,
+  } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
 
@@ -119,6 +125,9 @@
     }
 
     setupTriggerSearch(dispatchCustomEvent);
+    if (_features.permalink) {
+      activatePermalinks();
+    }
     initViewerEffects(_features.permalink);
 
     ready = true;
