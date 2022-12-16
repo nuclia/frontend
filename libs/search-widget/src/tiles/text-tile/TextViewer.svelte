@@ -32,7 +32,7 @@
       extractedTexts.subscribe(texts => {
         selectedIndex = texts.findIndex(text => text === unmarkSelection);
         if (selectedIndex > -1) {
-          textViewerElement.querySelector(`#paragraph${selectedIndex}`)?.scrollIntoView({behavior: 'smooth'});
+          setTimeout(() => textViewerElement.querySelector(`#paragraph${selectedIndex}`)?.scrollIntoView({behavior: 'smooth'}));
         }
       });
     }

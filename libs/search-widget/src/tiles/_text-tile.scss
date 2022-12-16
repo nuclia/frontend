@@ -31,6 +31,7 @@
 
     .resource-viewer-container {
       height: calc(100vh - var(--header-height));
+      overflow: auto;
       position: relative;
     }
     .thumbnail-container {
