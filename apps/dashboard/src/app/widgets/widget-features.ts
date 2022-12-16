@@ -4,7 +4,6 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   editLabels: true,
   entityAnnotation: true,
   filter: true,
-  navigateToLink: true,
   permalink: true,
   suggestions: true,
   notPublic: true,
