@@ -38,6 +38,8 @@
     {#if isPdf}
       <PageIndicator
         page={paragraph.page}
+        {stack}
+        {selected}
         {hovering} />
     {:else if isMedia}
       <TimeIndicator

@@ -51,7 +51,7 @@
   let resource: Resource | undefined;
   let paragraphList: WidgetParagraph[];
   const isSearchingInResource = new BehaviorSubject(false);
-  const matchingParagraphs$ = combineLatest([viewerStore.results, isSearchingInResource]).pipe(
+  const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([viewerStore.results, isSearchingInResource]).pipe(
     map(([inResourceResults, isInResource]: [WidgetParagraph[], boolean]) => {
       // paragraphList is used for next/previous buttons
       paragraphList = isInResource
