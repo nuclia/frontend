@@ -83,6 +83,16 @@ export default class BertModel {
     const processedInputs = this.batchPreprocess([input]);
     return processedInputs[0];
   }
+  private doMeanPooling(attention_mask: any, model_output: any) {
+    const inputMaskExpanded = this.tf.cast(
+      this.tf.tile(this.tf.expandDims(attention_mask, -1), [1, 1, model_output.shape[2]]),
+      "float32",
+    );
+
+    const numerador = this.tf.sum(this.tf.mul(model_output, inputMaskExpanded), 1);
+    const denominador = this.tf.maximum(this.tf.sum(inputMaskExpanded, 1), 1e-9);
+    return this.tf.div(numerador, denominador); //as tf.Tensor2D;
+  }
 
   // Preprocess dataset
   private batchPreprocess(inputs: string[], inputLabels?: number[][]): BertInput[] {
@@ -107,9 +117,11 @@ export default class BertModel {
     if (!this._classifierModel) {
       throw new Error('classifierModel is undefined');
     }
-    const bertOutput = this.isDistilBert
-      ? await this.DistilbertLayerInference(inputs)
-      : await this.bertLayerInference(inputs);
+    const bertOutput = this.meanPooling
+      ? await this.DistilbertSELayerInference(inputs)
+      : this.isDistilBert
+        ? await this.DistilbertLayerInference(inputs)
+        : await this.bertLayerInference(inputs);
     const x = this.meanPooling
       ? this.tf.tensor2d(bertOutput, [inputs.length, this.outputSize], 'float32')
       : this.tf.tensor2d(bertOutput, [inputs.length, this.inputSize * this.outputSize], 'float32');
@@ -163,6 +175,31 @@ export default class BertModel {
     const bertOutput = await rawResult.array();
     rawResult.dispose();
 
+    return bertOutput;
+  }
+
+  // Get raw results from Distilbert layer for sentence embeddings 
+  private async DistilbertSELayerInference(inputs: BertInput[]) {
+    const batchSize = inputs.length;
+    const inputIds = inputs.map((value) => value.inputIds);
+    const inputMask = inputs.map((value) => value.inputMask);
+    const tfInputIds = this.tf.tensor2d(inputIds, [batchSize, this.inputSize], 'int32');
+    const tfInputMask = this.tf.tensor2d(inputMask, [batchSize, this.inputSize], 'int32');
+
+    const rawResult = this.tf.tidy(() => {
+      return this.bertModel.execute({
+        input_ids: tfInputIds,
+        attention_mask: tfInputMask
+      });
+    }); //as tf.Tensor3D;
+    console.log("BEROUT")
+    console.log(rawResult)
+    const meanPoolingOutput = this.doMeanPooling(tfInputMask, rawResult)
+    console.log("MEAN POOLING")
+    console.log(meanPoolingOutput)
+    const bertOutput = await meanPoolingOutput.array();
+    console.log(bertOutput);
+    meanPoolingOutput.dispose();
     return bertOutput;
   }
 
