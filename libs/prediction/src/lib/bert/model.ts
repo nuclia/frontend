@@ -68,6 +68,7 @@ export default class BertModel {
 
     try {
       await Promise.all(setupCalls);
+      await this.predict('Model warmup');
     } catch (e) {
       console.error(`Setup error:`, e);
     }
@@ -212,7 +213,6 @@ export default class BertModel {
       options,
     );
     this._classifierModel.summary();
-    await this.predict('Model warmup');
   }
 
   private async loadBertModel() {
