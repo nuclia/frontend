@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { createEventDispatcher, onDestroy } from 'svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { getFile } from '../../core/api';
-  import { fade } from 'svelte/transition';
-  import { Duration } from '../transition.utils';
 
   export let src: string;
+  export let fallback = '';
   export let aspectRatio: '5/4' | '16/9' = '5/4';
   export let noBackground = false;
 
@@ -13,25 +12,35 @@
   const dispatch = createEventDispatcher();
 
   let thumbnail: string;
-  if (src) {
-    getFile(src).subscribe((url) => {
-      thumbnail = url;
+
+  onMount(() => {
+    if (src) {
+      getFile(src).subscribe((url) => {
+        thumbnail = url;
+        loaded = true;
+        dispatch('loaded');
+      });
+    } else if (fallback) {
+      thumbnail = fallback;
       loaded = true;
       dispatch('loaded');
-    });
-  }
+    }
+  });
+
   onDestroy(() => {
     if (thumbnail) URL.revokeObjectURL(thumbnail);
   });
 </script>
 
-<div class="sw-thumbnail">
+<div
+  class="sw-thumbnail"
+  class:thumbnail-background={!noBackground}
+  class:thumbnail-fallback={!src && !!fallback}>
   {#if loaded}
     <img
       src={thumbnail}
       alt="Thumbnail"
       style:aspect-ratio={aspectRatio}
-      class:thumbnail-background={!noBackground}
       class="fade-in" />
   {/if}
   {#if !loaded}

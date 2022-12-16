@@ -3,6 +3,7 @@
   import { onDestroy, onMount } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import { debounceTime, filter, Subject, Subscription } from 'rxjs';
+  import { getUnMarked } from '../tile.utils';
 
   export let src: string;
   export let paragraph;
@@ -25,7 +26,6 @@
   let totalPage = 1;
   let zoom: number = 1;
   let pdfInitialized = false;
-  const markRegex = new RegExp(/<\/*mark>/, 'g');
 
   const updateTextLayerMatch$: Subject<{ paragraphFound: boolean; page: number }> = new Subject<{
     paragraphFound: boolean;
@@ -114,7 +114,7 @@
   }
 
   function findSelectedText() {
-    const query = paragraph.text.replaceAll(markRegex, '').trim();
+    const query = getUnMarked(paragraph.text);
     eventBus.dispatch('find', {
       caseSensitive: true,
       phraseSearch: true,

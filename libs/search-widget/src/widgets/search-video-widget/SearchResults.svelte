@@ -12,6 +12,7 @@
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
+  import TextTile from '../../tiles/text-tile/TextTile.svelte';
 
   const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
   const isEmptySearchQuery = nucliaState().isEmptySearchQuery;
@@ -50,8 +51,10 @@
         {#each $results as result}
           {#if result.icon === 'application/pdf'}
             <PdfTile {result} />
-          {:else}
+          {:else if result.icon.includes('video')}
             <VideoTile {result} />
+          {:else}
+            <TextTile {result} />
           {/if}
         {/each}
       </div>

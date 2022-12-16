@@ -10,6 +10,7 @@
   font-weight: var(--font-weight-bold);
   height: var(--rhythm-2);
   justify-content: center;
+  min-width: var(--rhythm-4);
+  padding: 0 var(--rhythm-0_5);
   text-transform: uppercase;
-  width: var(--rhythm-4);
 }

@@ -1,6 +1,4 @@
-@import '../tile';
-
-.sw-pdf-tile {
+.sw-tile {
   .thumbnail-container {
     position: relative;
   }
@@ -31,8 +29,9 @@
     padding-right: var(--rhythm-2);
     transition: padding-right var(--transition-moderate);
 
-    .pdf-viewer-container {
+    .resource-viewer-container {
       height: calc(100vh - var(--header-height));
+      overflow: auto;
       position: relative;
     }
     .thumbnail-container {
@@ -46,7 +45,7 @@
 }
 
 @media (min-width: 648px) {
-  .sw-pdf-tile.expanded {
+  .sw-tile.expanded {
     --side-panel-button-size: var(--rhythm-4);
     --side-panel-width: var(--rhythm-36);
     --side-panel-gap: var(--rhythm-1);
@@ -103,14 +102,14 @@
 }
 
 @media (min-width: 1025px) {
-  .sw-pdf-tile.expanded {
+  .sw-tile.expanded {
     --side-panel-button-size: var(--rhythm-5);
     --side-panel-width: var(--rhythm-46);
   }
 }
 
 @media (hover: hover) {
-  .sw-pdf-tile.expanded .side-panel-button {
+  .sw-tile.expanded .side-panel-button {
     cursor: pointer;
   }
 }

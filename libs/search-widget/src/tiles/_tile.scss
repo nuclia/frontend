@@ -15,6 +15,18 @@
     margin: 0 0 var(--rhythm-1);
   }
 
+  .header-title {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1_5);
+  }
+
+  &:not(.expanded) .doc-type-container {
+    left: var(--rhythm-1);
+    position: absolute;
+    top: var(--rhythm-1);
+  }
+
   .thumbnail-container {
     position: relative;
   }

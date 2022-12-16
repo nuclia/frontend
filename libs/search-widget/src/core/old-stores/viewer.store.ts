@@ -9,7 +9,7 @@ import type {
   Resource,
   ResourceData,
 } from '@nuclia/core';
-import { Search, RESOURCE_STATUS, FIELD_TYPE } from '@nuclia/core';
+import { FIELD_TYPE, RESOURCE_STATUS, Search } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -542,7 +542,7 @@ function getFieldTypeKey(fieldType: string): keyof ResourceData {
   }
 }
 
-function getFieldType(fieldType: string): FIELD_TYPE {
+export function getFieldType(fieldType: string): FIELD_TYPE {
   return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
 
