@@ -20,6 +20,9 @@ describe('SearchComponent', () => {
           currentKb: of({
             id: 'testKb',
             getLabels: jest.fn(() => of({})),
+            training: {
+              hasModel: jest.fn(() => of(true)),
+            },
           } as any as WritableKnowledgeBox),
           nuclia: {
             options: {

@@ -5,6 +5,7 @@
 - Add pagination model in search results
 - Add `computedmetadata` to `IResource` model
 - Add support for NER training
+- Add method to test if a trained model is available
 
 # 1.1.0 (2022-12-08)
 
