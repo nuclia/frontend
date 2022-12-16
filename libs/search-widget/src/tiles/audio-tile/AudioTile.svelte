@@ -23,15 +23,15 @@
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let innerWidth = window.innerWidth;
-  let audioTileElement: HTMLElement;
-  let audioTileHeight;
+  let mediaTileElement: HTMLElement;
+  let mediaTileHeight;
   let resource: Observable<Resource>;
   let expanded = false;
   let summary;
-  let audioLoading = true;
-  let audioTime = 0;
-  let audioUri: string | undefined;
-  let audioContentType: string | undefined;
+  let mediaLoading = true;
+  let mediaTime = 0;
+  let mediaUri: string | undefined;
+  let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
   let transcripts: MediaWidgetParagraph[] = [];
@@ -62,12 +62,12 @@
   };
 
   const playTranscript = (paragraph) => {
-    audioTime = paragraph.start_seconds || 0;
+    mediaTime = paragraph.start_seconds || 0;
     paragraphInPlay = paragraph;
   };
 
   const playFrom = (time: number, selectedParagraph?: MediaWidgetParagraph) => {
-    audioTime = time;
+    mediaTime = time;
     if (!expanded) {
       expanded = true;
       freezeBackground(true);
@@ -82,10 +82,10 @@
         tap((res) => {
           if (paragraph.fieldType === FieldType.FILE) {
             const fileField = getFileField(res, res.id);
-            const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
+            const file = fileField && fileField.value?.file;
             if (file) {
-              audioContentType = file.content_type;
-              audioUri = `${getRegionalBackend()}${file.uri}`;
+              mediaContentType = file.content_type;
+              mediaUri = `${getRegionalBackend()}${file.uri}`;
             }
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
@@ -98,12 +98,12 @@
   };
 
   const setupExpandedTile = () => {
-    audioTileHeight = `${audioTileElement.offsetHeight}px`;
+    mediaTileHeight = `${mediaTileElement.offsetHeight}px`;
   };
 
   const closePreview = () => {
     expanded = false;
-    audioLoading = true;
+    mediaLoading = true;
     showFullTranscripts = false;
     paragraphInPlay = undefined;
     findInTranscript = '';
@@ -120,13 +120,13 @@
   class="sw-tile sw-audio-tile"
   class:expanded
   class:showFullTranscripts
-  bind:this={audioTileElement}>
+  bind:this={mediaTileElement}>
   <div class="thumbnail-container">
-    <div hidden={expanded && !audioLoading}>
+    <div hidden={expanded && !mediaLoading}>
       <ThumbnailPlayer
         thumbnail={result.thumbnail}
         fallback={`${getCDN()}tiles/audio.svg`}
-        spinner={expanded && audioLoading}
+        spinner={expanded && mediaLoading}
         hasBackground={!result.thumbnail}
         aspectRatio={expanded ? '16/9' : '5/4'}
         on:loaded={() => (thumbnailLoaded = true)}
@@ -136,11 +136,11 @@
     {#if expanded}
       <div
         class="player-container"
-        class:loading={audioLoading}>
-        {#if audioUri}
+        class:loading={mediaLoading}>
+        {#if mediaUri}
           <AudioPlayer
-            time={audioTime}
-            src={audioUri} />
+            time={mediaTime}
+            src={mediaUri} />
         {/if}
       </div>
     {/if}

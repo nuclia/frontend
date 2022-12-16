@@ -23,26 +23,26 @@
     mapSmartParagraph2WidgetParagraph,
   } from '../../core/utils';
   import { filterParagraphs, isFileOrLink } from '../tile.utils';
+  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let innerWidth = window.innerWidth;
-
-  let videoTileElement: HTMLElement;
-  let videoTileHeight;
+  let mediaTileElement: HTMLElement;
+  let mediaTileHeight;
   let resource: Observable<Resource>;
   let expanded = false;
   let summary;
-  let videoTime = 0;
+  let mediaLoading = true;
+  let mediaTime = 0;
   let youtubeUri: string | undefined;
-  let videoUri: string | undefined;
-  let videoContentType: string | undefined;
+  let mediaUri: string | undefined;
+  let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
   let transcripts: MediaWidgetParagraph[] = [];
   let showAllResults = false;
   let thumbnailLoaded = false;
-  let videoLoading = true;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
 
@@ -68,12 +68,12 @@
   };
 
   const playTranscript = (paragraph) => {
-    videoTime = paragraph.start_seconds || 0;
+    mediaTime = paragraph.start_seconds || 0;
     paragraphInPlay = paragraph;
   };
 
   const playFrom = (time: number, selectedParagraph?: MediaWidgetParagraph) => {
-    videoTime = time;
+    mediaTime = time;
     if (!expanded) {
       expanded = true;
       freezeBackground(true);
@@ -93,8 +93,8 @@
             const fileField = getFileField(res, res.id);
             const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
             if (file) {
-              videoContentType = file.content_type;
-              videoUri = `${getRegionalBackend()}${file.uri}`;
+              mediaContentType = file.content_type;
+              mediaUri = `${getRegionalBackend()}${file.uri}`;
             }
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
@@ -107,16 +107,16 @@
   };
 
   const setupExpandedTile = () => {
-    videoTileHeight = `${videoTileElement.offsetHeight}px`;
+    mediaTileHeight = `${mediaTileElement.offsetHeight}px`;
   };
 
   const onVideoReady = () => {
-    videoLoading = false;
+    mediaLoading = false;
   };
 
   const closePreview = () => {
     expanded = false;
-    videoLoading = true;
+    mediaLoading = true;
     showFullTranscripts = false;
     paragraphInPlay = undefined;
     findInTranscript = '';
@@ -133,13 +133,14 @@
   class="sw-tile sw-video-tile"
   class:expanded
   class:showFullTranscripts
-  bind:this={videoTileElement}
-  style:--video-tile-height={videoTileHeight ? videoTileHeight : ''}>
+  bind:this={mediaTileElement}
+  style:--video-tile-height={mediaTileHeight ? mediaTileHeight : ''}>
   <div class="thumbnail-container">
-    <div hidden={expanded && !videoLoading}>
+    <div hidden={expanded && !mediaLoading}>
       <ThumbnailPlayer
         thumbnail={result.thumbnail}
-        spinner={expanded && videoLoading}
+        spinner={expanded && mediaLoading}
+        hasBackground={!result.thumbnail}
         aspectRatio={expanded ? '16/9' : '5/4'}
         on:loaded={() => (thumbnailLoaded = true)}
         on:open={playFromStart} />
@@ -148,18 +149,18 @@
     {#if expanded}
       <div
         class="media-container"
-        class:loading={videoLoading}>
+        class:loading={mediaLoading}>
         {#if youtubeUri}
           <Youtube
-            time={videoTime}
+            time={mediaTime}
             uri={youtubeUri}
             on:videoReady={onVideoReady} />
         {/if}
-        {#if videoUri}
+        {#if mediaUri}
           <Player
-            time={videoTime}
-            src={videoUri}
-            type={videoContentType}
+            time={mediaTime}
+            src={mediaUri}
+            type={mediaContentType}
             on:videoReady={onVideoReady} />
         {/if}
       </div>
@@ -180,7 +181,12 @@
       class="result-details"
       transition:fade={{ duration: Duration.SUPERFAST }}>
       <header>
-        <h3 class="ellipsis">{result?.title}</h3>
+        <div class:header-title={expanded}>
+          <div class="doc-type-container">
+            <DocTypeIndicator type="video" />
+          </div>
+          <h3 class="ellipsis">{result?.title}</h3>
+        </div>
         {#if expanded}
           <div in:fade={{ duration: Duration.FAST }}>
             <IconButton
