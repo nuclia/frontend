@@ -15,10 +15,13 @@ export const goToResource = (params: DisplayedResource, text?: string) => {
     .pipe(take(1))
     .subscribe(([navigateToLink, resource]) => {
       const linkField = Object.values(resource?.data?.links || {})[0];
+      const fileField = Object.values(resource?.data?.files || {})[0];
       if (navigateToLink && linkField?.value?.uri) {
         const uri = linkField.value.uri;
         const isYoutubeLink = isYoutubeUrl(uri);
         goToUrl(uri, text && !isYoutubeLink ? text : undefined);
+      } else if (navigateToLink && fileField?.value?.external && fileField?.value?.file?.uri) {
+        goToUrl(fileField.value.file.uri);
       } else {
         setDisplayedResource(params);
       }
