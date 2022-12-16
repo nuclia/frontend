@@ -19,7 +19,7 @@
   import Icon from '../../common/icons/Icon.svelte';
   import { getPdfJsBaseUrl, getPdfJsStyle, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import { PreviewKind } from '../../core/models';
+  import { PreviewKind, WidgetParagraph } from '../../core/models';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -38,7 +38,7 @@
   let expanded = false;
   let thumbnailLoaded = false;
   let showAllResults = false;
-  let selectedParagraph: Search.Paragraph | undefined;
+  let selectedParagraph: WidgetParagraph | undefined;
   let resultIndex: number | undefined;
   let pdfUrl: Observable<string>;
   let headerActionsWidth = 0;
@@ -56,14 +56,16 @@
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
 
   let resource: Resource | undefined;
-  let paragraphList: Search.Paragraph[];
+  let paragraphList: WidgetParagraph[];
   const isSearchingInPdf = new BehaviorSubject(false);
-  const matchingParagraphs$ = combineLatest([viewerStore.results, isSearchingInPdf]).pipe(
-    map(([inPdfResults, isInPdf]) =>
-      isInPdf
+  const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([viewerStore.results, isSearchingInPdf]).pipe(
+    map(([inPdfResults, isInPdf]: [WidgetParagraph[], boolean]) => {
+      // paragraphList is used for next/previous buttons
+      paragraphList = isInPdf
         ? inPdfResults
-        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.PDF)),
-    ),
+        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.PDF)) || [];
+      return paragraphList;
+    }),
     map((results) => results || []),
   );
 
