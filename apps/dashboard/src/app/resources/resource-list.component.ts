@@ -373,7 +373,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         return forkJoin([
           of(kb),
           kb.search(query, searchFeatures, {
-            inTitleOnly: titleOnly && !!query,
+            inTitleOnly: titleOnly,
             page_number: page,
             page_size: this.pageSize,
             sort: 'created',
