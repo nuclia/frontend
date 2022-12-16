@@ -179,13 +179,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.route.queryParams
-      .pipe(
-        takeUntil(this.unsubscribeAll),
-        switchMap(() => this.getResources()),
-      )
-      .subscribe();
-
+    this.getResources().subscribe();
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
       this.totalResources = counters.resources;
       this.refreshing = false;
@@ -209,7 +203,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.searchForm.value.query) {
       this.searchForm.controls.searchIn.setValue('title');
     }
-    this.getResources().pipe(take(1)).subscribe();
+    this.changeQueryParams({ page: undefined });
   }
 
   uploadLink() {
@@ -347,12 +341,16 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   changeQueryParams(params: ListFilters) {
-    this.router.navigate(['.'], {
-      queryParams: params,
-      queryParamsHandling: 'merge',
-      relativeTo: this.route,
-      replaceUrl: true,
-    });
+    from(
+      this.router.navigate(['.'], {
+        queryParams: params,
+        queryParamsHandling: 'merge',
+        relativeTo: this.route,
+        replaceUrl: true,
+      }),
+    )
+      .pipe(switchMap(() => this.getResources()))
+      .subscribe();
   }
 
   getResources(): Observable<Search.Results> {
@@ -364,7 +362,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       tap(() => {
         this.setLoading(true);
       }),
-      switchMap(() => this.sdk.currentKb),
+      switchMap(() => this.sdk.currentKb.pipe(take(1))),
       switchMap((kb) => {
         const searchFeatures =
           hasQuery && !titleOnly
