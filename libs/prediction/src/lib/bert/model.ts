@@ -76,6 +76,8 @@ export default class BertModel {
   async predict(inputText: string): Promise<number[]> {
     const processedInput = this.preprocess(inputText);
     const predictions = await this.batchPredict([processedInput]);
+    logger("Predictions:");
+    logger(predictions[0]);
     return predictions[0];
   }
 
@@ -192,13 +194,12 @@ export default class BertModel {
         attention_mask: tfInputMask
       });
     }); //as tf.Tensor3D;
-    console.log("BEROUT")
-    console.log(rawResult)
+    logger("Raw Output")
+    logger(rawResult)
     const meanPoolingOutput = this.doMeanPooling(tfInputMask, rawResult)
-    console.log("MEAN POOLING")
-    console.log(meanPoolingOutput)
+    logger("Mean Pooling Output")
     const bertOutput = await meanPoolingOutput.array();
-    console.log(bertOutput);
+    logger(bertOutput);
     meanPoolingOutput.dispose();
     return bertOutput;
   }
