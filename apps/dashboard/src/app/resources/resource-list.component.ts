@@ -203,9 +203,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.searchForm.value.query) {
       this.searchForm.controls.searchIn.setValue('title');
     }
-    this.changeQueryParams({ page: undefined })
-      .pipe(switchMap(() => this.getResources()))
-      .subscribe();
+    this.changeQueryParams({ page: undefined });
   }
 
   uploadLink() {
@@ -318,16 +316,12 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   nextPage() {
     const params = { page: (this.page + 1).toString() };
-    this.changeQueryParams(params)
-      .pipe(switchMap(() => this.getResources()))
-      .subscribe();
+    this.changeQueryParams(params);
   }
 
   prevPage() {
     const params = { page: (this.page - 1).toString() };
-    this.changeQueryParams(params)
-      .pipe(switchMap(() => this.getResources()))
-      .subscribe();
+    this.changeQueryParams(params);
   }
 
   sortBy(attribute: string) {
@@ -343,20 +337,20 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   applyFilter(params: ListFilters) {
     params.page = undefined;
-    this.changeQueryParams(params)
-      .pipe(switchMap(() => this.getResources()))
-      .subscribe();
+    this.changeQueryParams(params);
   }
 
   changeQueryParams(params: ListFilters) {
-    return from(
+    from(
       this.router.navigate(['.'], {
         queryParams: params,
         queryParamsHandling: 'merge',
         relativeTo: this.route,
         replaceUrl: true,
       }),
-    );
+    )
+      .pipe(switchMap(() => this.getResources()))
+      .subscribe();
   }
 
   getResources(): Observable<Search.Results> {
