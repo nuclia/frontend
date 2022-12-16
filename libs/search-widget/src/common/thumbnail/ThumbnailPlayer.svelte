@@ -7,8 +7,11 @@
   import { Duration } from '../transition.utils';
 
   export let thumbnail = '';
+  export let fallback = '';
   export let aspectRatio;
   export let spinner = false;
+  export let hasBackground = false;
+
   let loaded = false;
 
   const dispatch = createEventDispatcher();
@@ -23,7 +26,7 @@
   };
 </script>
 
-{#if thumbnail}
+{#if thumbnail || fallback}
   <div
     class="sw-thumbnail-player"
     tabindex="-1"
@@ -31,7 +34,8 @@
     on:click={play}>
     <Thumbnail
       src={thumbnail}
-      noBackground
+      {fallback}
+      noBackground={!hasBackground}
       {aspectRatio}
       on:loaded={onLoad} />
 

@@ -1,36 +1,27 @@
 <script lang="ts">
   import { Resource, Search } from '@nuclia/core';
-  import { onDestroy, onMount } from 'svelte';
-  import { Duration } from '../../common/transition.utils';
-  import { fade, slide } from 'svelte/transition';
-  import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
-  import IconButton from '../../common/button/IconButton.svelte';
-  import { nucliaStore } from '../../core/old-stores/main.store';
-  import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
-  import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
-  import { _ } from '../../core/i18n';
-  import PdfViewer from './PdfViewer.svelte';
   import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
-  import { getRegionalBackend, getResource } from '../../core/api';
-  import { getFileField, viewerStore } from '../../core/old-stores/viewer.store';
-  import { tap } from 'rxjs/operators';
-  import SearchResultNavigator from './SearchResultNavigator.svelte';
-  import Icon from '../../common/icons/Icon.svelte';
-  import { getPdfJsBaseUrl, getPdfJsStyle, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
-  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+  import { nucliaStore } from '../../core/old-stores/main.store';
+  import { viewerStore } from '../../core/old-stores/viewer.store';
+  import { Duration } from '../../common/transition.utils';
+  import { getCDN, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import { PreviewKind } from '../../core/models';
+  import { onDestroy, onMount } from 'svelte';
+  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+  import { getResource } from '../../core/api';
+  import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
+  import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
+  import { fade, slide } from 'svelte/transition';
+  import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
+  import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
+  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
+  import { IconButton } from '../../common';
+  import Icon from '../../common/icons/Icon.svelte';
+  import { _ } from '../../core/i18n';
+  import { tap } from 'rxjs/operators';
+  import TextViewer from './TextViewer.svelte';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
-
-  const pdfStyle = getPdfJsStyle();
-  const pdfJsBaseUrl = getPdfJsBaseUrl();
-  const pdfOverrideStyle = `.nuclia-widget .textLayer .highlight.selected {
-    background-color: var(--color-primary-regular);
-    border-radius: 0;
-    margin: -4px;
-    padding: 2px 4px;
-  }`;
 
   let innerWidth = window.innerWidth;
   const closeButtonWidth = 48;
@@ -40,7 +31,6 @@
   let showAllResults = false;
   let selectedParagraph: Search.Paragraph | undefined;
   let resultIndex: number | undefined;
-  let pdfUrl: Observable<string>;
   let headerActionsWidth = 0;
   let resultNavigatorWidth;
   let resultNavigatorDisabled = false;
@@ -49,20 +39,22 @@
   let findInputElement: HTMLElement;
 
   const globalQuery = nucliaStore().query;
-  const findInPdfQuery = viewerStore.query;
-  findInPdfQuery['set'] = findInPdfQuery.next;
+  const findInResourceQuery = viewerStore.query;
+  findInResourceQuery['set'] = findInResourceQuery.next;
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
 
+  let resource$: Observable<Resource> = getResource(result.id);
   let resource: Resource | undefined;
+
   let paragraphList: Search.Paragraph[];
-  const isSearchingInPdf = new BehaviorSubject(false);
-  const matchingParagraphs$ = combineLatest([viewerStore.results, isSearchingInPdf]).pipe(
-    map(([inPdfResults, isInPdf]) =>
-      isInPdf
-        ? inPdfResults
-        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.PDF)),
+  const isSearchingInResource = new BehaviorSubject(false);
+  const matchingParagraphs$ = combineLatest([viewerStore.results, isSearchingInResource]).pipe(
+    map(([inResourceResults, isInResource]) =>
+      isInResource
+        ? inResourceResults
+        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.NONE)),
     ),
     map((results) => results || []),
   );
@@ -78,23 +70,17 @@
     resultIndex = index;
     selectedParagraph = paragraph;
     if (!expanded) {
-      findInPdfQuery.next(globalQuery.value);
+      findInResourceQuery.next(globalQuery.value);
       expanded = true;
       freezeBackground(true);
     }
     setTimeout(() => setHeaderActionWidth());
 
-    if (!pdfUrl) {
-      pdfUrl = getResource(result.id).pipe(
-        map((res) => {
-          resource = res;
-          const fileField = getFileField(res, res.id);
-          const file = fileField?.value?.file;
-          return file ? `${getRegionalBackend()}${file.uri}` : '';
-        }),
-      );
+    if (!resource) {
+      resource$.subscribe((res) => (resource = res));
     }
   };
+
   const openPrevious = () => {
     if (resultIndex > 0) {
       resultIndex -= 1;
@@ -125,18 +111,18 @@
     if (sidePanelExpanded) {
       // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
       setTimeout(() => findInputElement.focus(), Duration.MODERATE);
-    } else if (isSearchingInPdf.value) {
+    } else if (isSearchingInResource.value) {
       selectedParagraph = undefined;
       resultIndex = -1;
-      isSearchingInPdf.next(false);
-      findInPdfQuery.next(globalQuery.value);
+      isSearchingInResource.next(false);
+      findInResourceQuery.next(globalQuery.value);
     }
   };
 
   const findInPdf = () => {
-    const query = findInPdfQuery.value.trim();
+    const query = findInResourceQuery.value.trim();
     if (resource && query) {
-      isSearchingInPdf.next(true);
+      isSearchingInResource.next(true);
       resource
         .search(query, [Search.ResourceFeatures.PARAGRAPH], { highlight: true })
         .pipe(
@@ -154,7 +140,7 @@
           );
         });
     } else {
-      isSearchingInPdf.next(false);
+      isSearchingInResource.next(false);
     }
   };
 
@@ -170,7 +156,7 @@
     expanded = false;
     selectedParagraph = undefined;
     setTimeout(() => {
-      isSearchingInPdf.next(false);
+      isSearchingInResource.next(false);
       viewerStore.init();
       sidePanelExpanded = false;
       resultNavigatorDisabled = false;
@@ -182,22 +168,16 @@
   bind:innerWidth
   on:keydown={handleKeydown}
   on:resize={(event) => resizeEvent.next(event)} />
-<svelte:head>
-  <script src="{pdfJsBaseUrl}/build/pdf.min.js"></script>
-  <script src="{pdfJsBaseUrl}/web/pdf_viewer.js"></script>
-</svelte:head>
-{#if $pdfStyle}
-  <svelte:element this="style">{@html $pdfStyle}</svelte:element>
-{/if}
-<svelte:element this="style">{@html pdfOverrideStyle}</svelte:element>
+
 <div
-  class="sw-tile sw-pdf-tile"
+  class="sw-tile"
   class:expanded
   class:side-panel-expanded={sidePanelExpanded}>
   <div class="thumbnail-container">
     <div hidden={expanded}>
       <Thumbnail
         src={result.thumbnail}
+        fallback={`${getCDN()}icons/text/plain.svg`}
         aspectRatio="5/4"
         on:loaded={() => (thumbnailLoaded = true)} />
     </div>
@@ -211,10 +191,9 @@
           on:openNext={openNext} />
       {/if}
       <div class="resource-viewer-container">
-        <PdfViewer
-          src={$pdfUrl}
-          paragraph={selectedParagraph}
-          showController={!isMobile} />
+        <TextViewer
+          resource={resource$}
+          {selectedParagraph} />
       </div>
     {/if}
   </div>
@@ -226,7 +205,7 @@
       <header style:--header-actions-width={`${headerActionsWidth}px`}>
         <div class:header-title={expanded}>
           <div class="doc-type-container">
-            <DocTypeIndicator type="pdf" />
+            <DocTypeIndicator type="text" />
           </div>
           <h3 class="ellipsis">{result?.title}</h3>
         </div>
@@ -276,7 +255,7 @@
               placeholder="Find in document"
               tabindex="-1"
               bind:this={findInputElement}
-              bind:value={$findInPdfQuery}
+              bind:value={$findInResourceQuery}
               on:change={findInPdf} />
           </div>
 
@@ -315,4 +294,4 @@
 
 <style
   lang="scss"
-  src="./PdfTile.scss"></style>
+  src="./TextTile.scss"></style>

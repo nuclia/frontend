@@ -1,14 +1,22 @@
 .sw-thumbnail {
   display: flex;
 
+  &.thumbnail-background {
+    background-color: var(--color-neutral-background);
+  }
+
   img {
     object-fit: contain;
     object-position: center;
     width: 100%;
   }
 
-  .thumbnail-background {
-    background-color: var(--color-neutral-background);
+  &.thumbnail-fallback {
+    height: var(--rhythm-22);
+    justify-content: center;
+    img {
+      width: var(--rhythm-12);
+    }
   }
 
   .thumbnail-placeholder {
