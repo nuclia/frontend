@@ -6,6 +6,7 @@ import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, 
 import { AppService } from '../../services/app.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { getDesktopPlatform, getDesktopAppUrl } from '../utils';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -118,7 +119,15 @@ export class KnowledgeBoxHomeComponent {
   }
 
   downloadDesktop() {
-    window.open('https://github.com/nuclia/frontend/releases/latest');
+    const releaseUrl = 'https://github.com/nuclia/frontend/releases/latest';
+    const platform = getDesktopPlatform();
+    if (platform) {
+      getDesktopAppUrl(platform).subscribe((url) => {
+        window.open(url || releaseUrl);
+      });
+    } else {
+      window.open(releaseUrl);
+    }
   }
 
   copyEndpoint() {
