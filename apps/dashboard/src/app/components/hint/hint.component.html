@@ -5,13 +5,15 @@
   [style.max-width]="containerWidth">
   <pa-expander card>
     <pa-expander-header>
-      <div class="hint-title">
+      <div class="hint-title title-xxs">
         <pa-icon name="info"></pa-icon>
         <span>{{ label }}</span>
       </div>
     </pa-expander-header>
     <pa-expander-body>
-      <div #content>
+      <div
+        class="hint-content"
+        #content>
         <ng-content></ng-content>
       </div>
     </pa-expander-body>

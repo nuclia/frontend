@@ -2,8 +2,8 @@
 
 .hint {
   background-color: $color-neutral-lightest;
-  padding: 8px;
-  margin-bottom: 40px;
+  padding: 0 rhythm(1);
+  margin-bottom: rhythm(5);
 
   pre {
     overflow: scroll;
@@ -24,4 +24,8 @@
     display: inline-block;
     margin-right: rythm(0.5);
   }
+}
+
+.hint-content {
+  padding: rhythm(1);
 }
