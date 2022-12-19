@@ -16,7 +16,7 @@
    * Kb with different kind of media (owned by Mat): f67d94ee-bd5b-4044-8844-a291c2ac244c
    * Kb with text contents (owned by Mat): 352695c6-51d2-4c36-88b2-e0b0edacfa09
    */
-  let kb = '352695c6-51d2-4c36-88b2-e0b0edacfa09';
+  let kb = 'f67d94ee-bd5b-4044-8844-a291c2ac244c';
 
   onMount(() => {
     widget?.setActions([
