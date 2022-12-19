@@ -1,0 +1,31 @@
+@import 'variables';
+
+:host {
+  display: flex;
+}
+
+.sso-button {
+  align-items: center;
+  background: $color-neutral-lightest;
+  border: none;
+  display: flex;
+  flex: 1 0 auto;
+  gap: rhythm(1);
+  justify-content: center;
+  height: rhythm(5);
+  margin: 0;
+  padding: 0;
+  transition: background $transition-hint;
+
+  &:not(:disabled) {
+    cursor: pointer;
+
+    &:hover {
+      background: $color-neutral-lighter;
+    }
+
+    &:active {
+      background: $color-neutral-light;
+    }
+  }
+}

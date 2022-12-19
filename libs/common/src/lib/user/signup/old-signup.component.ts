@@ -12,7 +12,7 @@ import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 const personalEmail = new RegExp(`gmail\.com|yahoo\..+|hotmail\..+|outlook\..+`);
 
 @Component({
-  selector: 'stf-signup',
+  selector: 'stf-old-signup',
   templateUrl: './old-signup.component.html',
   styleUrls: ['./old-signup.component.scss'],
 })

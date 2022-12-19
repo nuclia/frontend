@@ -1,0 +1,66 @@
+@import 'variables';
+
+.user-background {
+  height: 100%;
+  position: relative;
+
+  .logo {
+    left: rhythm(3);
+    position: absolute;
+    top: rhythm(2);
+
+    img {
+      width: rhythm(13);
+    }
+  }
+
+  .signup-container {
+    align-items: center;
+    background: $color-light-stronger;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 50%;
+
+    h1 {
+      margin-bottom: 0;
+    }
+
+    .form-container {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(4);
+      width: rhythm(41);
+
+      .form-header p {
+        margin-bottom: 0;
+      }
+
+      .signup-form {
+        display: flex;
+        flex-direction: column;
+        gap: rhythm(2);
+      }
+
+      pa-button {
+        display: flex;
+        margin-top: rhythm(3);
+
+        ::ng-deep .pa-button {
+          flex: 1 0 auto;
+        }
+      }
+    }
+
+    .sso-container {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(1);
+    }
+
+    .existing-account {
+      color: $color-primary-regular;
+      text-align: center;
+    }
+  }
+}

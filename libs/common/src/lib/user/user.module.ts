@@ -32,6 +32,8 @@ import { UserContainerLogoComponent } from './user-container/user-container-logo
 import { UserErrorComponent } from './user-error/user-error.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
+import { SignupComponent } from './signup/signup.component';
+import { SsoButtonComponent } from './sso/sso-button.component';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -71,7 +73,7 @@ export const userRoutes: Routes = [
   { path: 'reset', component: ResetComponent },
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
-  { path: 'signup', component: OldSignupComponent },
+  { path: 'signup', component: SignupComponent },
   { path: 'consent', component: ConsentComponent },
   { path: '**', redirectTo: 'login' },
 ];
@@ -92,6 +94,8 @@ export const userRoutes: Routes = [
     UserContainerComponent,
     UserContainerLogoComponent,
     UserErrorComponent,
+    SignupComponent,
+    SsoButtonComponent,
   ],
   imports: [
     CommonModule,
@@ -118,6 +122,6 @@ export const userRoutes: Routes = [
 
     SisPasswordInputModule,
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, SignupComponent, SsoButtonComponent],
 })
 export class UserModule {}
