@@ -117,6 +117,9 @@
       header {
         gap: var(--rhythm-2);
       }
+      .thumbnail-container {
+        flex: 1;
+      }
       .side-panel {
         --find-input-height: var(--rhythm-4);
         --find-input-margin: var(--rhythm-1);
