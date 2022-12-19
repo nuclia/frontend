@@ -13,10 +13,10 @@ const personalEmail = new RegExp(`gmail\.com|yahoo\..+|hotmail\..+|outlook\..+`)
 
 @Component({
   selector: 'stf-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss'],
+  templateUrl: './old-signup.component.html',
+  styleUrls: ['./old-signup.component.scss'],
 })
-export class SignupComponent implements OnInit, OnDestroy {
+export class OldSignupComponent implements OnInit, OnDestroy {
   // TODO: convert checkboxes into standard form fields
   acceptedConditions: boolean = false;
   acceptedPrivacy: boolean = false;

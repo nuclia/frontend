@@ -7,19 +7,19 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
-import { LoginComponent } from './login.component';
+import { OldLoginComponent } from './old-login.component';
 import { UserContainerComponent } from '../user-container/user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 
 describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
+  let component: OldLoginComponent;
+  let fixture: ComponentFixture<OldLoginComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [LoginComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
+      declarations: [OldLoginComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
       imports: [
         ReactiveFormsModule,
         RouterTestingModule,
@@ -54,7 +54,7 @@ describe('LoginComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LoginComponent);
+    fixture = TestBed.createComponent(OldLoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

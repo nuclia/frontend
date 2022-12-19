@@ -16,7 +16,7 @@ import { STFButtonDirectivesModule, STFInputModule } from '@flaps/pastanaga';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
-import { LoginComponent } from './login/login.component';
+import { OldLoginComponent } from './login/old-login.component';
 import { RecoverComponent } from './recover/recover.component';
 import { MagicComponent } from './magic/magic.component';
 import { LogoutComponent } from './logout/logout.component';
@@ -26,7 +26,7 @@ import { AccountComponent } from './account/account.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SwitchComponent } from './switch/switch.component';
 import { ConsentComponent } from './consent/consent.component';
-import { SignupComponent } from './signup/signup.component';
+import { OldSignupComponent } from './signup/old-signup.component';
 import { UserContainerComponent } from './user-container/user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import { UserErrorComponent } from './user-error/user-error.component';
@@ -65,20 +65,20 @@ export const userRoutes: Routes = [
     canActivate: [LoggedinGuard],
     component: ProfileComponent,
   },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: OldLoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
-  { path: 'signup', component: SignupComponent },
+  { path: 'signup', component: OldSignupComponent },
   { path: 'consent', component: ConsentComponent },
   { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({
   declarations: [
-    LoginComponent,
+    OldLoginComponent,
     RecoverComponent,
     LogoutComponent,
     MagicComponent,
@@ -88,7 +88,7 @@ export const userRoutes: Routes = [
     ProfileComponent,
     SwitchComponent,
     ConsentComponent,
-    SignupComponent,
+    OldSignupComponent,
     UserContainerComponent,
     UserContainerLogoComponent,
     UserErrorComponent,

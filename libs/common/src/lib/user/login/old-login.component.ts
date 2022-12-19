@@ -17,10 +17,10 @@ import { PasswordInputComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  templateUrl: './old-login.component.html',
+  styleUrls: ['./old-login.component.scss'],
 })
-export class LoginComponent {
+export class OldLoginComponent {
   @ViewChild('email', { static: false }) email: InputComponent | undefined;
   @ViewChild('password', { static: false }) password: PasswordInputComponent | undefined;
   @ViewChild('form', { static: false }) form: ElementRef | undefined;
