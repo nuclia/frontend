@@ -113,6 +113,7 @@
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
           transcripts = getMainFieldParagraphs(res) as MediaWidgetParagraph[];
+          console.log(transcripts);
           setupExpandedTile();
         }),
       );

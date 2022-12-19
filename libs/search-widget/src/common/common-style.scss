@@ -68,14 +68,15 @@
 
   /* TYPOGRAPHY */
   --font-size-base: 16px;
-  --font-size-small: 13px;
-  --font-size-xsmall: 12px;
+  --font-size-medium: 14px;
+  --font-size-small: 12px;
+  --font-size-xsmall: 10px;
   --font-weight-body: 300;
-  --font-weight-semi-bold: 500;
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
   --font-weight-bold: 700;
-  --font-family-body: 'Source Sans Pro', sans-serif;
-  --font-size-title-m-mobile: calc(var(--font-size-base) * 1.125);
-  --font-size-title-m: calc(var(--font-size-base) * 1.25);
+  --font-family-body: Inter, sans-serif;
+  --font-size-title-m: var(--font-size-base);
   --font-weight-title-m: var(--font-weight-semi-bold);
   --line-height-body-s: calc(var(--font-size-base) * 1.125);
   --line-height-body: calc(var(--font-size-base) * 1.25);

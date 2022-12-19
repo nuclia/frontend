@@ -9,7 +9,7 @@
   transition: background var(--transition-superfast);
 
   h3 {
-    font-size: var(--font-size-title-m-mobile);
+    font-size: var(--font-size-title-m);
     font-weight: var(--font-weight-title-m);
     line-height: var(--line-height-title-m-mobile);
     margin: 0 0 var(--rhythm-1);
@@ -84,11 +84,6 @@
         margin: 0;
       }
     }
-  }
-}
-@media (max-width: 647px) {
-  .sw-tile.expanded header h3 {
-    font-size: var(--font-size-base);
   }
 }
 

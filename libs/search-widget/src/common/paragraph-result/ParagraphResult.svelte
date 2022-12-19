@@ -21,7 +21,9 @@
   const mediaKinds: PreviewKind[] = [PreviewKind.AUDIO, PreviewKind.VIDEO, PreviewKind.YOUTUBE];
   $: isMedia = mediaKinds.includes(paragraph.preview);
   $: isPdf = paragraph.preview === PreviewKind.PDF;
-  $: isSemantic = paragraph.paragraph.sentences && paragraph.paragraph.sentences.length > 0;
+  // paragraphs coming from transcripts always have sentences even though they are not semantic. They also have a kind, while real semantic paragraph doesn't
+  $: isSemantic =
+    !paragraph.paragraph.kind && paragraph.paragraph.sentences && paragraph.paragraph.sentences.length > 0;
 </script>
 
 <li
