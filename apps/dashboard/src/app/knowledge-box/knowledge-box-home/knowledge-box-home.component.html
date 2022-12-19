@@ -3,7 +3,7 @@
     class="endpoint-container"
     *ngIf="!!(endpoint | async)">
     <div class="endpoint-text">
-      <div class="endpoint-label">{{ 'stats.endpoint' | translate }}</div>
+      <div class="title-s">{{ 'stats.endpoint' | translate }}</div>
       <div class="endpoint">{{ endpoint | async }}</div>
     </div>
     <pa-button
@@ -52,7 +52,7 @@
         <div *ngIf="locale | async as loc">
           <dl class="total-resources">
             <dt>{{ 'stats.total.title' | translate }}</dt>
-            <dd>{{ (counters | async)?.resources | number: '1.0-0':loc }}</dd>
+            <dd class="display-s">{{ (counters | async)?.resources | number: '1.0-0':loc }}</dd>
           </dl>
           <dl>
             <dt>{{ 'stats.total.fields' | translate }}</dt>

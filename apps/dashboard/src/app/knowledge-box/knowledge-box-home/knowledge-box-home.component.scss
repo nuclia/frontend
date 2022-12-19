@@ -47,7 +47,7 @@
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
-      font-size: font-size(l);
+      font-size: font-size(m);
       row-gap: rhythm(1);
 
       dt {
@@ -65,10 +65,6 @@
 
     .total-resources {
       margin-bottom: rhythm(2);
-
-      dd {
-        font-size: font-size(d1-md);
-      }
     }
   }
 
@@ -83,10 +79,6 @@
       align-items: baseline;
       display: flex;
       gap: rhythm(2);
-    }
-
-    .endpoint-label {
-      font-weight: $font-weight-semi-bold;
     }
 
     .endpoint {
@@ -136,6 +128,7 @@
 
     .title-s {
       flex: 1 0 auto;
+      font-weight: $font-weight-bold;
     }
   }
 
