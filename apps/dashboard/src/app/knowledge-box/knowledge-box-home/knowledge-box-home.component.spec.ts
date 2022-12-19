@@ -72,8 +72,6 @@ describe('KnowledgeBoxHomeComponent', () => {
 
   it('should translate properly', () => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('.endpoint-container .endpoint-label').textContent).toContain(
-      'NucliaDB API endpoint',
-    );
+    expect(compiled.querySelector('.endpoint-container .title-s').textContent).toContain('NucliaDB API endpoint');
   });
 });

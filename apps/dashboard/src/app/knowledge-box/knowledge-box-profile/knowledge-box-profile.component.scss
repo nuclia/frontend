@@ -1,3 +1,5 @@
+@import 'variables';
+
 .knowledge-box-profile {
   width: 770px;
   max-width: 100%;
@@ -12,13 +14,21 @@
   }
 
   h2 {
-    margin: 0 0 36px 0;
+    margin: 0 0 rhythm(4) 0;
     font-weight: var(--stf-font-weight-bold);
   }
 
-  .kb-field-name {
-    margin-top: 12px;
-    font-weight: var(--stf-font-weight-semibold);
+  form > div {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(2);
+  }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: rhythm(5);
   }
 
   .grid {

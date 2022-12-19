@@ -70,7 +70,8 @@ $height-breakpoint: 856px;
 
         .nav-link-title {
           flex: 1 1 auto;
-          font-size: font-size(m);
+          font-size: font-size(s);
+          font-weight: $font-weight-semi-bold;
           padding-left: rhythm(2);
           white-space: nowrap;
         }

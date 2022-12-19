@@ -4,24 +4,25 @@
 // TYPOGRAPHY
 // =================================================
 // Family
-$font-family-sans-serif: 'Source Sans Pro', Futura, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-  'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+$font-family-sans-serif: Inter, Futura, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 $font-family-monospace: 'Source Code Pro', SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
   monospace;
 $font-family-body: $font-family-sans-serif;
 
 // Weight
+$font-weight-thin: 300;
 $font-weight-regular: 400;
 $font-weight-semi-bold: 600;
 $font-weight-bold: 700;
 
-$font-weight-body-xs: $font-weight-regular;
+$font-weight-body-xs: $font-weight-semi-bold;
 $font-weight-body-s: $font-weight-regular;
 $font-weight-body-m: $font-weight-regular;
 $font-weight-title-xxs: $font-weight-semi-bold;
-$font-weight-title-xs: $font-weight-bold;
-$font-weight-title-s: $font-weight-bold;
-$font-weight-title-m: $font-weight-regular;
+$font-weight-title-xs: $font-weight-semi-bold;
+$font-weight-title-s: $font-weight-semi-bold;
+$font-weight-title-m: $font-weight-thin;
 $font-weight-title-l: $font-weight-bold;
 $font-weight-display-s: $font-weight-bold;
 
@@ -51,18 +52,19 @@ $font-size: (
 $font-size-overline: font-size(xxs);
 $font-size-body-xs: font-size(xxs);
 $font-size-body-s: font-size(xs);
+$font-size-title-xxs: font-size(xs);
 $font-size-title-xs: font-size(s);
-$font-size-title-s: font-size(m);
-$font-size-title-m: font-size(l);
+$font-size-title-s: font-size(s);
+$font-size-title-m: font-size(m);
 $font-size-title-l: font-size(l);
-$font-size-display-s: font-size(d1);
+$font-size-display-s: font-size(xxl);
 $font-size-display-m: font-size(d2);
 
-$font-size-title-s-md: font-size(l);
-$font-size-title-m-md: font-size(xl);
-$font-size-title-l-md: font-size(xl);
-$font-size-display-s-md: font-size(d1-md);
-$font-size-display-m-md: font-size(d2-md);
+$font-size-title-s-md: font-size(s);
+$font-size-title-m-md: font-size(m);
+$font-size-title-l-md: font-size(l);
+$font-size-display-s-md: font-size(xxl);
+$font-size-display-m-md: font-size(d2);
 
 // Line height
 /* prettier-ignore */
@@ -106,20 +108,20 @@ $line-height-display-s-md: line-height(d2-md);
 $line-height-display-m-md: line-height(d3-md);
 
 // Letter spacing
-$letter-spacing-overline: 0.01rem;
-$letter-spacing-body-xs: 0.01rem;
-$letter-spacing-body-s: 0.01rem;
-$letter-spacing-body-m: 0.01rem;
-$letter-spacing-title-xxs: 0.01rem;
-$letter-spacing-title-xs: 0.01rem;
-$letter-spacing-title-s: 0.01rem;
-$letter-spacing-title-m: 0.01rem;
+$letter-spacing-overline: 0;
+$letter-spacing-body-xs: 0;
+$letter-spacing-body-s: 0;
+$letter-spacing-body-m: 0;
+$letter-spacing-title-xxs: 0;
+$letter-spacing-title-xs: 0;
+$letter-spacing-title-s: 0;
+$letter-spacing-title-m: 0;
 $letter-spacing-title-l: 0;
 $letter-spacing-display-s: 0;
 $letter-spacing-display-m: 0;
 
-$letter-spacing-title-s-md: 0.01rem;
-$letter-spacing-title-m-md: 0.01rem;
+$letter-spacing-title-s-md: 0;
+$letter-spacing-title-m-md: 0;
 $letter-spacing-title-l-md: 0;
 $letter-spacing-display-s-md: 0;
 $letter-spacing-display-m-md: 0;

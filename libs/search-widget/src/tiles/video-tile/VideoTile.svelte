@@ -1,9 +1,7 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
-  import { of } from 'rxjs';
-  import type { IResource, Paragraph, Resource, Search } from '@nuclia/core';
-  import { map, switchMap, tap } from 'rxjs/operators';
-  import { nucliaState } from '../../core/old-stores/main.store';
+  import type { Resource, Search } from '@nuclia/core';
+  import { tap } from 'rxjs/operators';
   import { getRegionalBackend, getResource } from '../../core/api';
   import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
@@ -47,8 +45,9 @@
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
 
-  const matchingParagraphs: MediaWidgetParagraph[] =
-    result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.VIDEO)) || [];
+  const matchingParagraphs: MediaWidgetParagraph[] = (result.paragraphs?.map((paragraph) =>
+    mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.VIDEO),
+  ) || []) as MediaWidgetParagraph[];
 
   const filterParagraphs = (paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {
     return paragraphs

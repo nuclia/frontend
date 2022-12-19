@@ -1,6 +1,7 @@
 .sw-paragraph-result {
   cursor: pointer;
   display: flex;
+  font-size: var(--font-size-medium);
   gap: var(--rhythm-1);
   line-height: var(--rhythm-3);
   transition: background-color var(--transition-superfast), color var(--transition-superfast);
@@ -26,7 +27,7 @@
     overflow-wrap: break-word;
   }
   .paragraph-text.semantic {
-    font-weight: var(--font-weight-semi-bold);
+    font-weight: var(--font-weight-medium);
   }
 
   .indicator-container {
