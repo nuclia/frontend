@@ -27,13 +27,15 @@ import { ProfileComponent } from './profile/profile.component';
 import { SwitchComponent } from './switch/switch.component';
 import { ConsentComponent } from './consent/consent.component';
 import { OldSignupComponent } from './signup/old-signup.component';
-import { UserContainerComponent } from './user-container/user-container.component';
+import { OldUserContainerComponent } from './user-container/old-user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import { UserErrorComponent } from './user-error/user-error.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
+import { CheckMailComponent } from './check-mail/check-mail.component';
+import { UserContainerComponent } from './user-container/user-container.component';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -74,6 +76,7 @@ export const userRoutes: Routes = [
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'check-mail', component: CheckMailComponent },
   { path: 'consent', component: ConsentComponent },
   { path: '**', redirectTo: 'login' },
 ];
@@ -91,11 +94,13 @@ export const userRoutes: Routes = [
     SwitchComponent,
     ConsentComponent,
     OldSignupComponent,
-    UserContainerComponent,
+    OldUserContainerComponent,
     UserContainerLogoComponent,
     UserErrorComponent,
     SignupComponent,
     SsoButtonComponent,
+    CheckMailComponent,
+    UserContainerComponent,
   ],
   imports: [
     CommonModule,
@@ -122,6 +127,6 @@ export const userRoutes: Routes = [
 
     SisPasswordInputModule,
   ],
-  exports: [RouterModule, SignupComponent, SsoButtonComponent],
+  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, UserContainerComponent],
 })
 export class UserModule {}

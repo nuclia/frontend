@@ -1,10 +1,16 @@
 export type UserType = 'ROOT' | 'DEALER' | 'USER';
 export type Language = 'CA' | 'ES' | 'EN';
 
-export interface SignupData {
+export interface OldSignupData {
   name: string;
   email: string;
   company?: string;
+}
+
+export interface SignupData {
+  name: string;
+  email: string;
+  password: string;
 }
 
 export type SignupResponse = {

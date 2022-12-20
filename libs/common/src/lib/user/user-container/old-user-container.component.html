@@ -1,0 +1,19 @@
+<div
+  class="user-background"
+  fxLayout="column">
+  <div
+    class="user-container"
+    [ngStyle]="{ width: widthSm }">
+    <ng-content></ng-content>
+  </div>
+  <ng-container *ngIf="showLink">
+    <a
+      class="go-web"
+      href="https://flaps.io"
+      fxLayout="row"
+      fxLayoutAlign="center center"
+      [ngStyle.gt-xs]="{ width: widthSm }">
+      {{ 'login.gogetflaps' | translate }}
+    </a>
+  </ng-container>
+</div>

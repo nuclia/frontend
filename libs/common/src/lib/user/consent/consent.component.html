@@ -1,4 +1,4 @@
-<stf-user-container
+<stf-old-user-container
   widthSm="480px"
   *ngIf="!error; else errorMessage">
   <stf-user-container-logo>
@@ -81,7 +81,7 @@
       </div>
     </ng-container>
   </stf-user-container-logo>
-</stf-user-container>
+</stf-old-user-container>
 
 <ng-template #errorMessage>
   <stf-user-error [message]="error"></stf-user-error>

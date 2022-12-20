@@ -4,7 +4,7 @@ import { FormControl, UntypedFormBuilder, Validators } from '@angular/forms';
 import { forkJoin, map, Subject } from 'rxjs';
 import { switchMap, takeUntil } from 'rxjs/operators';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
+import { BackendConfigurationService, LoginService, OldSignupData } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
@@ -90,7 +90,7 @@ export class OldSignupComponent implements OnInit, OnDestroy {
   }
 
   signup(token: string) {
-    const signupData: SignupData = {
+    const signupData: OldSignupData = {
       name: this.signupForm.value.username,
       email: this.signupForm.value.email,
       company: this.signupForm.value.company,

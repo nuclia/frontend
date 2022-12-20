@@ -1,37 +1,51 @@
-<div class="user-background">
-  <div class="logo">
-    <img
-      src="assets/logos/logo-beta.svg"
-      alt="Nuclia Beta" />
-  </div>
-  <div class="signup-container">
-    <div class="form-container">
-      <div class="form-header">
-        <h1>Boarding Nuclia</h1>
-        <p>Find everything.</p>
-      </div>
-
-      <form class="signup-form">
-        <pa-input>Full name</pa-input>
-        <pa-input
-          type="email"
-          placeholder="email@company.com">
-          Email
-        </pa-input>
-        <pa-input type="password">Password</pa-input>
-
-        <pa-button kind="primary">Sign up</pa-button>
-      </form>
-
-      <div class="sso-container">
-        <stf-sso-button provider="google"></stf-sso-button>
-        <stf-sso-button provider="github"></stf-sso-button>
-      </div>
-
-      <p class="existing-account">
-        Already have an account?
-        <a routerLink="../login">Log in</a>
-      </p>
+<stf-user-container>
+  <div class="form-container">
+    <div class="form-header">
+      <h1>Boarding Nuclia</h1>
+      <p>Find everything.</p>
     </div>
+
+    <form
+      class="signup-form"
+      [formGroup]="signupForm"
+      (ngSubmit)="submitForm()">
+      <pa-input
+        required
+        autocapitalize="off"
+        formControlName="username"
+        [errorMessages]="validationMessages.username">
+        {{ 'login.full_name' | translate }}
+      </pa-input>
+      <pa-input
+        type="email"
+        placeholder="email@company.com"
+        formControlName="email"
+        [errorMessages]="validationMessages.email">
+        {{ 'login.email' | translate }}
+      </pa-input>
+      <pa-input
+        type="password"
+        formControlName="password"
+        [errorMessages]="validationMessages.password">
+        {{ 'login.password' | translate }}
+      </pa-input>
+
+      <pa-button
+        type="submit"
+        kind="primary"
+        [disabled]="signupForm.invalid">
+        {{ 'login.signup' | translate }}
+      </pa-button>
+    </form>
+
+    <div class="sso-container">
+      <stf-sso-button provider="google"></stf-sso-button>
+      <stf-sso-button provider="github"></stf-sso-button>
+    </div>
+
+    <p class="existing-account">
+      {{ 'login.have_account_already' | translate }}
+      <a routerLink="../login">{{ 'login.login' | translate }}</a>
+    </p>
   </div>
-</div>
+</stf-user-container>

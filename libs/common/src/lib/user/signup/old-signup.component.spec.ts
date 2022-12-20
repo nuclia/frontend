@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 import { OldSignupComponent } from './old-signup.component';
-import { UserContainerComponent } from '../user-container/user-container.component';
+import { OldUserContainerComponent } from '../user-container/old-user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
@@ -17,7 +17,7 @@ describe('SignupComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OldSignupComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
+      declarations: [OldSignupComponent, TranslatePipeMock, OldUserContainerComponent, UserContainerLogoComponent],
       imports: [
         ReactiveFormsModule,
         RouterTestingModule,
