@@ -50,7 +50,7 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     const token = this.route.snapshot.queryParams.token;
     if (token) {
-      // Token is set when coming from confirmation email link
+      // Token is set by the backend (confirmation link and SSO)
       this.router.navigate(['../magic'], {
         relativeTo: this.route,
         queryParamsHandling: 'merge', // Preserve token

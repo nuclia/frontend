@@ -21,6 +21,7 @@ import { SetupInviteComponent } from './setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup-account/setup-account.component';
 import { FarewellComponent } from './farewell/farewell.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { UserContainerModule } from '@flaps/common';
 
 const Components = [
   SetupContainerComponent,
@@ -49,6 +50,7 @@ const Components = [
     PaButtonModule,
     PaTextFieldModule,
     PaTogglesModule,
+    UserContainerModule,
   ],
   declarations: [...Components],
   exports: [],

@@ -35,7 +35,7 @@ import { SisPasswordInputModule } from '@nuclia/sistema';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
-import { UserContainerComponent } from './user-container/user-container.component';
+import { UserContainerModule } from './user-container';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -105,7 +105,6 @@ export const userRoutes: Routes = [
     SignupComponent,
     SsoButtonComponent,
     CheckMailComponent,
-    UserContainerComponent,
   ],
   imports: [
     CommonModule,
@@ -131,7 +130,8 @@ export const userRoutes: Routes = [
     PaTextFieldModule,
 
     SisPasswordInputModule,
+    UserContainerModule,
   ],
-  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, UserContainerComponent],
+  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent],
 })
 export class UserModule {}
