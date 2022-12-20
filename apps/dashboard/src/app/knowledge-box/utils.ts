@@ -10,6 +10,15 @@ export const KB_ROLE_TITLES: { [role in KBRoles]: string } = {
   SMEMBER: 'generic.member',
 };
 
+export const RELEASE_URL = 'https://github.com/nuclia/frontend/releases/latest';
+const RELEASE_API_URL = 'https://api.github.com/repos/nuclia/frontend/releases/latest';
+
+const APP_FILENAMES = {
+  mac: /.*-universal-mac\.zip$/,
+  win: /.*\.exe$/,
+  linux: /.*\.snap$/,
+};
+
 export function getDesktopPlatform(): 'win' | 'mac' | 'linux' | null {
   const platform = window.navigator.platform.toLowerCase();
   if (platform.includes('win')) {
@@ -23,12 +32,7 @@ export function getDesktopPlatform(): 'win' | 'mac' | 'linux' | null {
 }
 
 export function getDesktopAppUrl(platform: 'mac' | 'win' | 'linux'): Observable<string | null> {
-  const filenames = {
-    mac: /.*-universal-mac\.zip$/,
-    win: /.*\.exe$/,
-    linux: /.*\.snap$/,
-  };
-  return fromFetch('https://api.github.com/repos/nuclia/frontend/releases/latest').pipe(
+  return fromFetch(RELEASE_API_URL).pipe(
     switchMap((response) => {
       if (response.ok) {
         return from(response.json());
@@ -37,7 +41,7 @@ export function getDesktopAppUrl(platform: 'mac' | 'win' | 'linux'): Observable<
       }
     }),
     map((data) => {
-      const asset = (data.assets as any[]).find((asset) => filenames[platform].test(asset.name));
+      const asset = (data.assets as any[]).find((asset) => APP_FILENAMES[platform].test(asset.name));
       return asset?.browser_download_url || null;
     }),
   );
