@@ -11,7 +11,7 @@ import {
   Observable,
   of,
   startWith,
-  Subject,
+  ReplaySubject,
   switchMap,
   take,
   tap,
@@ -21,7 +21,7 @@ export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
-  private _progress = new Subject<UploadStatus>();
+  private _progress = new ReplaySubject<UploadStatus>();
   progress = this._progress.asObservable();
 
   private _barDisabled = new BehaviorSubject<boolean>(false);
