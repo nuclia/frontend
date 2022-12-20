@@ -38,7 +38,9 @@
       </pa-button>
     </form>
 
-    <div class="sso-container">
+    <div
+      class="sso-container"
+      *ngIf="config.getSocialLogin()">
       <stf-sso-button provider="google"></stf-sso-button>
       <stf-sso-button provider="github"></stf-sso-button>
     </div>

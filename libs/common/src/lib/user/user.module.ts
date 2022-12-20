@@ -55,6 +55,11 @@ export const userRoutes: Routes = [
     data: { google: true },
   },
   {
+    path: 'callbacks/github',
+    component: CallbackComponent,
+    data: { github: true },
+  },
+  {
     path: 'account',
     canActivate: [LoggedinGuard],
     component: AccountComponent,

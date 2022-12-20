@@ -4,6 +4,7 @@ import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
 import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-signup',
@@ -29,7 +30,7 @@ export class SignupComponent implements OnInit {
       required: 'validation.required',
       email: 'validation.email',
       conflict: 'login.email_already_exists',
-    },
+    } as IErrorMessages,
   };
 
   unsubscribeAll = new Subject<void>();
@@ -42,8 +43,8 @@ export class SignupComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
-    private config: BackendConfigurationService,
     private loginService: LoginService,
+    public config: BackendConfigurationService,
   ) {}
 
   ngOnInit(): void {

@@ -4,14 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
-import {
-  BackendConfigurationService,
-  GoogleService,
-  OAuthErrors,
-  OAuthService,
-  SAMLService,
-  SDKService,
-} from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 
@@ -50,7 +43,7 @@ export class OldLoginComponent {
     private formBuilder: UntypedFormBuilder,
     private samlService: SAMLService,
     private oAuthService: OAuthService,
-    private googleService: GoogleService,
+    private ssoService: SsoService,
     private router: Router,
     @Inject(DOCUMENT) private document: Document,
     private route: ActivatedRoute,
@@ -66,8 +59,7 @@ export class OldLoginComponent {
         this.error = 'login.error.unknown_login_challenge';
       }
       if (params.error) {
-        const error = params.error as OAuthErrors;
-        this.message = 'login.error.' + error;
+        this.message = params.error_description || 'login.error.' + params.error;
       }
     });
   }
@@ -115,7 +107,7 @@ export class OldLoginComponent {
   }
 
   googleLogin(): void {
-    this.document.location.href = this.googleService.getGoogleLoginUrl();
+    this.document.location.href = this.ssoService.getSsoLoginUrl('google');
   }
 
   recoverPassword(event: any) {
