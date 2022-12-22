@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { OnboardingService, OnboardingStatus } from './onboarding.service';
 import { OnboardingPayload } from './onboarding.models';
@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OnboardingComponent implements OnInit {
+export class OnboardingComponent {
   onboardingForm = new FormGroup({
     industry: new FormControl<string>(''),
     searchEngine: new FormControl<string>(''),
@@ -24,8 +24,6 @@ export class OnboardingComponent implements OnInit {
   constructor(private onboardingService: OnboardingService, private zoneService: ZoneService) {
     this.zoneService.getZones().subscribe((zones) => (this.zones = zones));
   }
-
-  ngOnInit(): void {}
 
   submitForm() {
     const data: OnboardingPayload = {

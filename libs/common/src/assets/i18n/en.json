@@ -297,6 +297,8 @@
 	"link.create.error": "Error when uploading the link",
 	"login.access_request": "wants to access Nuclia on your behalf and be able to:",
 	"login.agree": "I agree to Nuclia’s",
+	"login.boarding_subtitle": "Find everything.",
+	"login.boarding_title": "Boarding Nuclia",
 	"login.check_email": "Check your email!",
 	"login.check_email_details": "Click on the link you just received at <strong>{{ email }}</strong> to finalize your account. If nothing in sight… Check your spam folder 🙃!",
 	"login.company": "Company",

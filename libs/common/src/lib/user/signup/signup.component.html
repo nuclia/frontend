@@ -1,8 +1,8 @@
 <stf-user-container>
   <div class="form-container">
     <div class="form-header">
-      <h1>Boarding Nuclia</h1>
-      <p>Find everything.</p>
+      <h1>{{ 'login.boarding_title' | translate }}</h1>
+      <p>{{ 'login.boarding_subtitle' | translate }}</p>
     </div>
 
     <form
@@ -12,8 +12,8 @@
       <pa-input
         required
         autocapitalize="off"
-        formControlName="username"
-        [errorMessages]="validationMessages.username">
+        formControlName="name"
+        [errorMessages]="validationMessages.name">
         {{ 'login.full_name' | translate }}
       </pa-input>
       <pa-input

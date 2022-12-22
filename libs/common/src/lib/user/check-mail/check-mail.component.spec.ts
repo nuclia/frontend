@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CheckMailComponent } from './check-mail.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { MockComponent, MockModule } from 'ng-mocks';
+import { UserContainerComponent } from '@flaps/common';
+import { PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('CheckMailComponent', () => {
   let component: CheckMailComponent;
@@ -8,7 +12,8 @@ describe('CheckMailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CheckMailComponent],
+      imports: [MockModule(PaIconModule), MockModule(PaTranslateModule), RouterTestingModule],
+      declarations: [CheckMailComponent, MockComponent(UserContainerComponent)],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CheckMailComponent);

@@ -255,6 +255,8 @@
 	"language.tr": "Turco",
 	"link.create.error": "Error al subir el enlace",
 	"login.access_request": "quiere acceder a tu cuenta de Nuclia y poder: ",
+	"login.boarding_subtitle": "Encuentra todo.",
+	"login.boarding_title": "Embarque Nuclia",
 	"login.check_email": "!Revisa tu correo!",
 	"login.check_email_details": "Haga clic en el enlace que acaba de recibir en <strong>{{ email }}</strong> para finalizar su cuenta. Si no hay nada a la vista… ¡Revisa tu carpeta de spam 🙃!",
 	"login.company": "Empresa",

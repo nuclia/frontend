@@ -255,6 +255,8 @@
 	"language.tr": "Turc",
 	"link.create.error": "Error en carregar l'enllaç",
 	"login.access_request": "vol accedir al teu compte de Nuclia i poder: ",
+	"login.boarding_subtitle": "Troba-ho tot.",
+	"login.boarding_title": "Embarcament a Nuclia",
 	"login.check_email": "Comprova el teu correu!",
 	"login.check_email_details": "Feu clic a l'enllaç que acabeu de rebre a <strong>{{ email }}</strong> per finalitzar el vostre compte. Si no hi ha res a la vista... Comproveu la vostra carpeta de correu brossa 🙃!",
 	"login.company": "Empresa",

@@ -21,10 +21,10 @@ export class CallbackComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.data.saml) {
-      // Returning from SAML authentification
+      // Returning from SAML authentication
       this.getSAMLToken();
     } else if (this.route.snapshot.data.samlOauth) {
-      // Returning from SAML authentification in a OAuth flow
+      // Returning from SAML authentication in a OAuth flow
       this.redirect();
     } else if (this.route.snapshot.data.google || this.route.snapshot.data.github) {
       this.ssoLogin();
@@ -54,7 +54,7 @@ export class CallbackComponent implements OnInit {
   redirect(): void {
     const redirectTo = this.route.snapshot.queryParamMap.get('redirect_to');
     if (redirectTo) {
-      const allowedHosts = this.config.getAllowdHostsRedirect();
+      const allowedHosts = this.config.getAllowedHostsRedirect();
       try {
         const url = new URL(redirectTo);
         if (allowedHosts.indexOf(url.hostname) >= 0) {

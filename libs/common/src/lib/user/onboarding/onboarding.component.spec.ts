@@ -1,6 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OnboardingComponent } from './onboarding.component';
+import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
+import { OnboardingService } from './onboarding.service';
+import { ZoneService } from '@flaps/core';
+import { of } from 'rxjs';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTranslateModule,
+  TranslatePipe,
+} from '@guillotinaweb/pastanaga-angular';
+import { UserContainerComponent } from '@flaps/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 describe('OnboardingComponent', () => {
   let component: OnboardingComponent;
@@ -8,7 +22,20 @@ describe('OnboardingComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [OnboardingComponent],
+      imports: [
+        MockModule(PaTextFieldModule),
+        MockModule(PaTogglesModule),
+        MockModule(PaButtonModule),
+        MockModule(PaIconModule),
+        MockModule(PaTranslateModule),
+        MockModule(ReactiveFormsModule),
+      ],
+      declarations: [OnboardingComponent, MockComponent(UserContainerComponent)],
+      providers: [
+        MockProvider(OnboardingService),
+        MockProvider(ZoneService, { getZones: jest.fn(() => of([{ id: 'zoneId', slug: 'zone' }])) }),
+        MockPipe(TranslatePipe, (key) => `translate--${key}`),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OnboardingComponent);

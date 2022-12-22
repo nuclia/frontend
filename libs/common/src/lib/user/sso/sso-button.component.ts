@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
 import { SsoService } from '@flaps/core';
-import { DOCUMENT } from '@angular/common';
+import { WINDOW } from '@ng-web-apis/common';
 
 type Provider = 'google' | 'github';
 
@@ -28,9 +28,9 @@ export class SsoButtonComponent {
 
   private _provider: Provider = 'google';
 
-  constructor(private ssoService: SsoService, @Inject(DOCUMENT) private document: Document) {}
+  constructor(private ssoService: SsoService, @Inject(WINDOW) private window: Window) {}
 
   onClick() {
-    this.document.location.href = this.ssoService.getSsoLoginUrl(this.provider);
+    this.window.location.href = this.ssoService.getSsoLoginUrl(this.provider);
   }
 }
