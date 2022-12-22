@@ -11,6 +11,7 @@ export interface SignupData {
   name: string;
   email: string;
   password: string;
+  company: string;
 }
 
 export type SignupResponse = {

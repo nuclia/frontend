@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { StateService, AuthService, MagicAction, SDKService } from '@flaps/core';
+import { AuthService, MagicAction, SDKService, StateService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',
@@ -23,31 +23,35 @@ export class MagicService {
       this.router.navigate(['/']);
     }
 
-    if (action.action === 'edit') {
-      this.router.navigate(['/edit/' + action.path]);
-    }
-
-    if (action.action === 'create') {
-      this.router.navigate(['/edit/' + action.path], {
-        queryParams: { create: true },
-      });
-    }
-
-    if (action.action === 'goaccount' || action.action === 'gostash') {
-      this.router.navigate(['/setup/invite'], {
-        queryParams: { account: action.account, kb: action.stash },
-      });
-    }
-    if (action.action === 'gosetpassword') {
-      this.router.navigate(['/setup/password'], {
-        queryParams: { signup: true },
-      });
-    }
-    if (action.action === 'goselectaccount') {
-      this.router.navigate(['/select']);
-    }
-    if (action.action === 'gosetupaccount') {
-      this.router.navigate(['/setup/account']);
+    switch (action.action) {
+      case 'create':
+        this.router.navigate(['/edit/' + action.path], {
+          queryParams: { create: true },
+        });
+        break;
+      case 'edit':
+        this.router.navigate(['/edit/' + action.path]);
+        break;
+      case 'goaccount':
+      case 'gostash':
+        this.router.navigate(['/setup/invite'], {
+          queryParams: { account: action.account, kb: action.stash },
+        });
+        break;
+      case 'goselectaccount':
+        this.router.navigate(['/select']);
+        break;
+      case 'gosetpassword':
+        this.router.navigate(['/setup/password'], {
+          queryParams: { signup: true },
+        });
+        break;
+      case 'gosetupaccount':
+        this.router.navigate(['/setup/account']);
+        break;
+      case 'startonboarding':
+        this.router.navigate(['/user/onboarding']);
+        break;
     }
   }
 }

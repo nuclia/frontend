@@ -36,6 +36,7 @@ import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
 import { CheckMailComponent } from './check-mail/check-mail.component';
 import { UserContainerModule } from './user-container';
+import { OnboardingComponent } from './onboarding/onboarding.component';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -81,6 +82,7 @@ export const userRoutes: Routes = [
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'onboarding', component: OnboardingComponent },
   { path: 'check-mail', component: CheckMailComponent },
   { path: 'consent', component: ConsentComponent },
   { path: '**', redirectTo: 'login' },
@@ -105,6 +107,7 @@ export const userRoutes: Routes = [
     SignupComponent,
     SsoButtonComponent,
     CheckMailComponent,
+    OnboardingComponent,
   ],
   imports: [
     CommonModule,
@@ -132,6 +135,6 @@ export const userRoutes: Routes = [
     SisPasswordInputModule,
     UserContainerModule,
   ],
-  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent],
+  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })
 export class UserModule {}
