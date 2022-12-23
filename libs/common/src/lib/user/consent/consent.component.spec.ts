@@ -1,11 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, OAuthService } from '@flaps/core';
-import { OldUserContainerComponent } from '../user-container/old-user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { ConsentComponent } from './consent.component';
-import { UserErrorComponent } from '../user-error/user-error.component';
-import { MockComponent } from 'ng-mocks';
 
 describe('ConsentComponent', () => {
   let component: ConsentComponent;
@@ -13,12 +10,7 @@ describe('ConsentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        ConsentComponent,
-        OldUserContainerComponent,
-        UserContainerLogoComponent,
-        MockComponent(UserErrorComponent),
-      ],
+      declarations: [ConsentComponent, UserContainerLogoComponent],
       imports: [RouterTestingModule],
       providers: [
         { provide: OAuthService, useValue: { getConsentData: () => {} } },

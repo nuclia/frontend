@@ -9,7 +9,6 @@ import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
 import { RecoverComponent } from './recover.component';
-import { OldUserContainerComponent } from '../user-container/old-user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -19,7 +18,7 @@ describe('RecoverComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [RecoverComponent, TranslatePipeMock, OldUserContainerComponent, UserContainerLogoComponent],
+      declarations: [RecoverComponent, TranslatePipeMock, UserContainerLogoComponent],
       imports: [ReactiveFormsModule, RouterTestingModule, MatDialogModule, STFInputModule, PaButtonModule],
       providers: [
         {

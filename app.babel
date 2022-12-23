@@ -7280,6 +7280,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>onboarding.setting_up_subtitle</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>onboarding.storage_zone</name>
 						<description/>
 						<comment/>

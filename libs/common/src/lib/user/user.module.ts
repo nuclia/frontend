@@ -22,15 +22,17 @@ import { MagicComponent } from './magic/magic.component';
 import { LogoutComponent } from './logout/logout.component';
 import { ResetComponent } from './reset/reset.component';
 import { CallbackComponent } from './callback/callback.component';
-import { AccountComponent } from './account/account.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SwitchComponent } from './switch/switch.component';
 import { ConsentComponent } from './consent/consent.component';
-import { OldSignupComponent } from './signup/old-signup.component';
-import { OldUserContainerComponent } from './user-container/old-user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
-import { UserErrorComponent } from './user-error/user-error.component';
-import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaAvatarModule,
+  PaButtonModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 import { SignupComponent } from './signup/signup.component';
 import { SsoButtonComponent } from './sso/sso-button.component';
@@ -59,11 +61,6 @@ export const userRoutes: Routes = [
     path: 'callbacks/github',
     component: CallbackComponent,
     data: { github: true },
-  },
-  {
-    path: 'account',
-    canActivate: [LoggedinGuard],
-    component: AccountComponent,
   },
   {
     path: 'switch',
@@ -95,15 +92,11 @@ export const userRoutes: Routes = [
     LogoutComponent,
     MagicComponent,
     CallbackComponent,
-    AccountComponent,
     ResetComponent,
     ProfileComponent,
     SwitchComponent,
     ConsentComponent,
-    OldSignupComponent,
-    OldUserContainerComponent,
     UserContainerLogoComponent,
-    UserErrorComponent,
     SignupComponent,
     SsoButtonComponent,
     CheckMailComponent,
@@ -134,6 +127,7 @@ export const userRoutes: Routes = [
 
     SisPasswordInputModule,
     UserContainerModule,
+    PaAvatarModule,
   ],
   exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })

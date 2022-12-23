@@ -8,7 +8,6 @@ import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
 import { ResetComponent } from './reset.component';
-import { OldUserContainerComponent } from '../user-container/old-user-container.component';
 import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -18,7 +17,7 @@ describe('ResetComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ResetComponent, TranslatePipeMock, OldUserContainerComponent, UserContainerLogoComponent],
+      declarations: [ResetComponent, TranslatePipeMock, UserContainerLogoComponent],
       imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule, PaButtonModule],
       providers: [
         {

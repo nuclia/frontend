@@ -14,7 +14,7 @@ import { IErrorMessages, ToastService } from '@guillotinaweb/pastanaga-angular';
 })
 export class ResetComponent {
   magicToken: string | undefined;
-
+  oauth: boolean = this.config.getOAuthLogin();
   resetForm = new FormGroup({
     password: new FormControl<string>('', {
       nonNullable: true,
@@ -69,7 +69,9 @@ export class ResetComponent {
         complete: () => {
           this.toaster.openSuccess('reset.password_reset');
           this.resetting = false;
-          this.goLogin();
+          if (!this.oauth) {
+            this.goLogin();
+          }
         },
         error: () => {
           this.resetting = false;
