@@ -1,0 +1,42 @@
+@import 'variables';
+
+.upload-text {
+  position: relative;
+  width: 50vw;
+  padding: rhythm(2) rhythm(3);
+}
+
+h1 {
+  margin: 0 0 rhythm(3) 0;
+}
+
+.select-csv {
+  margin-bottom: rhythm(4);
+}
+
+app-label-field {
+  margin-bottom: rhythm(4);
+}
+
+.resource-list {
+  max-height: rhythm(14);
+  overflow-y: auto;
+  margin-bottom: rhythm(4);
+}
+
+.resource {
+  display: flex;
+  align-items: center;
+  height: rhythm(4);
+  border-bottom: 1px solid $color-neutral-lighter;
+  &:first-child {
+    border-top: 1px solid $color-neutral-lighter;
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: rhythm(1);
+  margin-top: rhythm(4);
+}

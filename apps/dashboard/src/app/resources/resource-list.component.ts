@@ -34,6 +34,7 @@ import { ResourceViewerService } from './resource-viewer.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateLinkComponent } from '../upload/create-link/create-link.component';
 import { UploadFilesDialogComponent } from '../upload/upload-files/upload-files-dialog.component';
+import { UploadTextComponent } from '../upload/upload-text/upload-text.component';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 
 interface ListFilters {
@@ -214,6 +215,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dialog.open(UploadFilesDialogComponent, {
       data: { folderMode: folderMode },
     });
+  }
+
+  uploadText() {
+    this.dialog.open(UploadTextComponent);
   }
 
   bulkDelete() {
