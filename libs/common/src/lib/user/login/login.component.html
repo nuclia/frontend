@@ -74,7 +74,7 @@
     </div>
     <div
       class="login_social"
-      *ngIf="config.getSocialLogin()">
+      *ngIf="config.getSocialLogin() || !oauth">
       <div class="login_separator body-s">
         <span>{{ 'generic.or' | translate }}</span>
       </div>

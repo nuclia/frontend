@@ -10,6 +10,13 @@ import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService, SignupResponse } from '@flaps/core';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
+import { SisPasswordInputModule } from '@nuclia/sistema';
+import { Component } from '@angular/core';
+
+@Component({
+  template: '',
+})
+class MockCheckMailComponent {}
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
@@ -17,6 +24,7 @@ describe('SignupComponent', () => {
 
   let captcha: ReCaptchaV3Service;
   let loginService: LoginService;
+  let router: Router;
 
   const signupResponse = new BehaviorSubject<SignupResponse>({ action: 'check-mail' });
 
@@ -27,7 +35,8 @@ describe('SignupComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTranslateModule),
         MockModule(ReactiveFormsModule),
-        RouterTestingModule,
+        MockModule(SisPasswordInputModule),
+        RouterTestingModule.withRoutes([{ path: 'check-mail', component: MockCheckMailComponent }]),
       ],
       declarations: [SignupComponent, MockComponent(UserContainerComponent)],
       providers: [
@@ -57,6 +66,9 @@ describe('SignupComponent', () => {
     beforeEach(() => {
       captcha = TestBed.inject(ReCaptchaV3Service);
       loginService = TestBed.inject(LoginService);
+      router = TestBed.inject(Router);
+
+      router.navigate = jest.fn();
     });
 
     it('should do nothing when form is not valid', () => {
@@ -74,7 +86,6 @@ describe('SignupComponent', () => {
 
     it('should navigate to check-mail page on success', () => {
       const router = TestBed.inject(Router);
-      jest.spyOn(router, 'navigate');
       component.signupForm.setValue(data);
       component.submitForm();
       expect(router.navigate).toHaveBeenCalledWith(

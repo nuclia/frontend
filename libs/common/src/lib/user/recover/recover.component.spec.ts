@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, LoginService, TranslatePipeMock } from '@flaps/core';
-import { STFInputModule } from '@flaps/pastanaga';
+import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
 import { RecoverComponent } from './recover.component';
-import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { MockModule } from 'ng-mocks';
+import { SisPasswordInputModule } from '@nuclia/sistema';
+import { UserContainerModule } from '@flaps/common';
 
 describe('RecoverComponent', () => {
   let component: RecoverComponent;
@@ -18,8 +18,16 @@ describe('RecoverComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [RecoverComponent, TranslatePipeMock, UserContainerLogoComponent],
-      imports: [ReactiveFormsModule, RouterTestingModule, MatDialogModule, STFInputModule, PaButtonModule],
+      declarations: [RecoverComponent],
+      imports: [
+        MockModule(ReactiveFormsModule),
+        MockModule(PaButtonModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaTranslateModule),
+        MockModule(SisPasswordInputModule),
+        MockModule(UserContainerModule),
+        RouterTestingModule,
+      ],
       providers: [
         {
           provide: LoginService,

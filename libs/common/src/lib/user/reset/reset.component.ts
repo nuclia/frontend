@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormControl, FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, LoginService, MIN_PASSWORD_LENGTH, ResetData } from '@flaps/core';
@@ -40,7 +40,6 @@ export class ResetComponent {
   resetting = false;
 
   constructor(
-    private formBuilder: UntypedFormBuilder,
     private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute,

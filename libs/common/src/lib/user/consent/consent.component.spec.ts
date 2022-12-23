@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { BackendConfigurationService, OAuthService } from '@flaps/core';
-import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
 import { ConsentComponent } from './consent.component';
+import { MockModule } from 'ng-mocks';
+import { PaAvatarModule, PaButtonModule, PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('ConsentComponent', () => {
   let component: ConsentComponent;
@@ -10,10 +11,16 @@ describe('ConsentComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ConsentComponent, UserContainerLogoComponent],
-      imports: [RouterTestingModule],
+      declarations: [ConsentComponent],
+      imports: [
+        RouterTestingModule,
+        MockModule(PaAvatarModule),
+        MockModule(PaIconModule),
+        MockModule(PaButtonModule),
+        MockModule(PaTranslateModule),
+      ],
       providers: [
-        { provide: OAuthService, useValue: { getConsentData: () => {} } },
+        { provide: OAuthService, useValue: { getConsentData: () => {}, consentUrl: () => 'url' } },
         {
           provide: BackendConfigurationService,
           useValue: {
