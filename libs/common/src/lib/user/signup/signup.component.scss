@@ -1,33 +1,17 @@
 @import 'variables';
+@import '../user-layout';
 
-.form-container {
-  display: flex;
-  flex-direction: column;
+.main-container {
   gap: rhythm(4);
-  width: rhythm(41);
 
-  h1 {
-    margin-bottom: 0;
+  a {
+    text-decoration: none;
   }
 
   .form-header p {
     margin-bottom: 0;
   }
 
-  .signup-form {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(2);
-  }
-
-  pa-button {
-    display: flex;
-    margin-top: rhythm(3);
-
-    ::ng-deep .pa-button {
-      flex: 1 0 auto;
-    }
-  }
   .sso-container {
     display: flex;
     flex-direction: column;

@@ -20,8 +20,8 @@ export interface OnboardingStatus {
 export class OnboardingService {
   private kbCreationFailureCount = 0;
   private _onboardingState = new BehaviorSubject<OnboardingStatus>({
-    creating: true,
-    accountCreated: true,
+    creating: false,
+    accountCreated: false,
     kbCreated: false,
     creationFailed: false,
   });
@@ -41,7 +41,16 @@ export class OnboardingService {
     this._onboardingState.next({ creating: true, accountCreated: false, kbCreated: false, creationFailed: false });
 
     // onboarding_inquiry is quite slow and not blocking us for creating the account, so running those in parallel
-    this.sdk.nuclia.rest.put(`/user/onboarding_inquiry`, payload).subscribe();
+    this.sdk.nuclia.rest
+      .put(`/user/onboarding_inquiry`, payload)
+      .pipe(
+        catchError((error) => {
+          // onboarding_inquiry should never raise any error, but if so we only catch it and log it
+          console.warn(`Problem while saving onboarding inquiry:`, error);
+          return of(null);
+        }),
+      )
+      .subscribe();
     this.userService.userPrefs
       .pipe(
         filter((userPrefs) => !!userPrefs),

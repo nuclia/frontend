@@ -1,4 +1,5 @@
 @import 'variables';
+@import '../user-layout';
 
 .login_form {
   padding: rhythm(4) 0 0;
@@ -33,15 +34,12 @@
 
 .login_policy {
   color: $color-neutral-regular;
-  a {
+  ::ng-deep a {
     color: inherit;
   }
 }
 
-.login_submit {
-  margin-top: rhythm(3);
-}
-
+.login_submit,
 .login_recover,
 .login_signup {
   text-align: center;
@@ -50,58 +48,28 @@
   }
 }
 
-.login_recover {
-  margin-top: rhythm(2);
+.login_submit,
+.login_recover,
+.login_social {
+  margin-top: rhythm(3);
 }
 
 .login_signup {
   margin-top: rhythm(6);
 }
 
-.login_social {
-  margin-top: rhythm(3);
-
-  .login_social_button {
-    -webkit-appearance: none;
-
-    background-color: $color-neutral-lightest;
-    border: none;
-    border-radius: $border-radius-default;
-    box-shadow: var(--stf-shadow-button) $color-neutral-light;
-    color: $color-dark-stronger;
-    cursor: pointer;
-    height: rhythm(6);
-    margin: 0;
-    padding: 0;
-    transition: background-color $transition-hint, color $transition-hint;
-    width: 100%;
-    &:hover {
-      background-color: $color-dark-stronger;
-      color: $color-light-stronger;
-    }
-  }
-}
-
-.login_google {
-  svg {
-    display: block;
-    width: rhythm(3);
-    height: auto;
-  }
-}
-
 .login_separator {
-  display: flex;
   align-items: center;
+  display: flex;
   margin-bottom: rhythm(4);
   span {
     padding: 0 rhythm(2);
   }
   &::before,
   &::after {
+    background-color: $color-neutral-regular;
     content: '';
     flex: 1 1 auto;
     height: 1px;
-    background-color: $color-neutral-regular;
   }
 }

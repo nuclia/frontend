@@ -2,5 +2,5 @@
   class="sso-button"
   (click)="onClick()">
   <pa-icon [path]="icon"></pa-icon>
-  {{ 'login.sign-up-with' | translate: { provider: capitalizedProvider } }}
+  {{ (signup ? 'login.sign-up-with' : 'login.continue_with') | translate: { provider: capitalizedProvider } }}
 </button>

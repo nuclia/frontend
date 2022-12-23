@@ -1,13 +1,13 @@
-import { ChangeDetectionStrategy, Component, Inject, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgForm, UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService, RecoverData } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SisModalService } from '@nuclia/sistema';
 import { forkJoin, map } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'stf-recover',
@@ -16,41 +16,27 @@ import { switchMap } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecoverComponent {
-  recoverForm = this.formBuilder.group({
-    email: ['', [Validators.required]],
+  recoverForm = new FormGroup({
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
   });
 
   recoverValidationMessages = {
     email: {
       required: 'validation.required',
+      email: 'validation.email',
     },
   };
 
-  @ViewChild('form') form?: NgForm;
-
   constructor(
-    private formBuilder: UntypedFormBuilder,
-    private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute,
+    private loginService: LoginService,
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
     private modalService: SisModalService,
     private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
-
-  goLogin() {
-    this.router.navigate(['../login'], {
-      relativeTo: this.route,
-      queryParamsHandling: 'merge', // Preserve login_challenge
-    });
-  }
-
-  onEnterPressed() {
-    (this.document.activeElement as HTMLElement).blur(); // Update email before submit
-    this.form?.onSubmit({} as Event);
-  }
 
   submit() {
     if (!this.recoverForm.valid) return;
@@ -60,7 +46,7 @@ export class RecoverComponent {
   }
 
   recover(token: string) {
-    const recoverInfo = new RecoverData(this.recoverForm.value.email, this.config.getAppName());
+    const recoverInfo = new RecoverData(this.recoverForm.getRawValue().email, this.config.getAppName());
     this.loginService
       .recover(recoverInfo, token)
       .pipe(
@@ -76,6 +62,10 @@ export class RecoverComponent {
             }).onClose,
         ),
       )
-      .subscribe();
+      .subscribe(() =>
+        this.router.navigate(['../login'], {
+          relativeTo: this.route,
+        }),
+      );
   }
 }

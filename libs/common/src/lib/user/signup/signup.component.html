@@ -1,8 +1,8 @@
 <stf-user-container>
-  <div class="form-container">
+  <div class="main-container with-gap">
     <div class="form-header">
       <h1>{{ 'login.boarding_title' | translate }}</h1>
-      <p>{{ 'login.boarding_subtitle' | translate }}</p>
+      <p>{{ 'login.subtitle' | translate }}</p>
     </div>
 
     <form
@@ -28,14 +28,14 @@
         [errorMessages]="validationMessages.email">
         {{ 'login.email' | translate }}
       </pa-input>
-      <pa-input
-        type="password"
+      <nsi-password-input
         formControlName="password"
         [errorMessages]="validationMessages.password">
         {{ 'login.password' | translate }}
-      </pa-input>
+      </nsi-password-input>
 
       <pa-button
+        class="full-width"
         type="submit"
         kind="primary"
         [disabled]="signupForm.invalid">
@@ -46,8 +46,12 @@
     <div
       class="sso-container"
       *ngIf="config.getSocialLogin()">
-      <stf-sso-button provider="google"></stf-sso-button>
-      <stf-sso-button provider="github"></stf-sso-button>
+      <stf-sso-button
+        provider="google"
+        signup></stf-sso-button>
+      <stf-sso-button
+        provider="github"
+        signup></stf-sso-button>
     </div>
 
     <p class="existing-account">

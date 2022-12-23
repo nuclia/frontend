@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
+import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
@@ -14,10 +14,10 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 })
 export class SignupComponent implements OnInit {
   signupForm = new FormGroup({
-    name: new FormControl<string>('', [Validators.required]),
-    company: new FormControl<string>('', [Validators.required]),
-    email: new FormControl<string>('', [Validators.required, Validators.email]),
-    password: new FormControl<string>('', [Validators.required]),
+    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   validationMessages = {
@@ -71,18 +71,12 @@ export class SignupComponent implements OnInit {
   }
 
   private signupFromForm(token: string) {
-    const email = this.signupForm.value.email as string;
-    const data: SignupData = {
-      name: this.signupForm.value.name as string,
-      email,
-      password: this.signupForm.value.password as string,
-      company: this.signupForm.value.company as string,
-    };
-    this.loginService.signup(data, token).subscribe((response) => {
+    const formValue = this.signupForm.getRawValue();
+    this.loginService.signup(formValue, token).subscribe((response) => {
       if (response.action === 'check-mail') {
         this.router.navigate(['../check-mail'], {
           relativeTo: this.route,
-          queryParams: { email },
+          queryParams: { email: formValue.email },
           queryParamsHandling: 'merge', // Preserve login_challenge
         });
       } else if (response.action === 'user-exists') {

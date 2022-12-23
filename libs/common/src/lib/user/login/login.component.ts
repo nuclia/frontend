@@ -1,7 +1,6 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
 import { BackendConfigurationService, OAuthService, SAMLService, SDKService, SsoService } from '@flaps/core';
@@ -10,10 +9,10 @@ import { PasswordInputComponent } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-login',
-  templateUrl: './old-login.component.html',
-  styleUrls: ['./old-login.component.scss'],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
 })
-export class OldLoginComponent {
+export class LoginComponent {
   @ViewChild('email', { static: false }) email: InputComponent | undefined;
   @ViewChild('password', { static: false }) password: PasswordInputComponent | undefined;
   @ViewChild('form', { static: false }) form: ElementRef | undefined;
@@ -34,18 +33,16 @@ export class OldLoginComponent {
     },
   };
 
-  loginForm = this.formBuilder.group({
-    email: ['', [Validators.required]],
-    password: ['', [Validators.required]],
+  loginForm = new FormGroup({
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   constructor(
-    private formBuilder: UntypedFormBuilder,
     private samlService: SAMLService,
     private oAuthService: OAuthService,
     private ssoService: SsoService,
     private router: Router,
-    @Inject(DOCUMENT) private document: Document,
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
@@ -90,7 +87,8 @@ export class OldLoginComponent {
   }
 
   firstPartyLogin(recaptchaToken: string) {
-    this.sdk.nuclia.auth.login(this.loginForm.value.email, this.loginForm.value.password, recaptchaToken).subscribe({
+    const formValue = this.loginForm.getRawValue();
+    this.sdk.nuclia.auth.login(formValue.email, formValue.password, recaptchaToken).subscribe({
       next: () => this.router.navigate(['/']),
       error: () => (this.formError = true),
     });
@@ -104,17 +102,5 @@ export class OldLoginComponent {
     if (this.loginForm.valid) {
       this.form?.nativeElement.submit();
     }
-  }
-
-  googleLogin(): void {
-    this.document.location.href = this.ssoService.getSsoLoginUrl('google');
-  }
-
-  recoverPassword(event: any) {
-    event.preventDefault();
-    this.router.navigate(['../recover'], {
-      relativeTo: this.route,
-      queryParamsHandling: 'preserve', // Preserve login_challenge
-    });
   }
 }

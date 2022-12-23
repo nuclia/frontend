@@ -16,7 +16,7 @@ import { STFButtonDirectivesModule, STFInputModule } from '@flaps/pastanaga';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
-import { OldLoginComponent } from './login/old-login.component';
+import { LoginComponent } from './login/login.component';
 import { RecoverComponent } from './recover/recover.component';
 import { MagicComponent } from './magic/magic.component';
 import { LogoutComponent } from './logout/logout.component';
@@ -75,7 +75,7 @@ export const userRoutes: Routes = [
     canActivate: [LoggedinGuard],
     component: ProfileComponent,
   },
-  { path: 'login', component: OldLoginComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'recover', component: RecoverComponent },
   { path: 'reset', component: ResetComponent },
@@ -90,7 +90,7 @@ export const userRoutes: Routes = [
 
 @NgModule({
   declarations: [
-    OldLoginComponent,
+    LoginComponent,
     RecoverComponent,
     LogoutComponent,
     MagicComponent,

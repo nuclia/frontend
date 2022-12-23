@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
 import { SsoService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 type Provider = 'google' | 'github';
 
@@ -19,6 +20,14 @@ export class SsoButtonComponent {
     return this._provider;
   }
 
+  @Input()
+  set signup(value: any) {
+    this._signup = coerceBooleanProperty(value);
+  }
+  get signup() {
+    return this._signup;
+  }
+
   get capitalizedProvider() {
     return this.provider.slice(0, 1).toUpperCase() + this.provider.slice(1);
   }
@@ -27,6 +36,7 @@ export class SsoButtonComponent {
   }
 
   private _provider: Provider = 'google';
+  private _signup = false;
 
   constructor(private ssoService: SsoService, @Inject(WINDOW) private window: Window) {}
 
