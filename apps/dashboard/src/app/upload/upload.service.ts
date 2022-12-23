@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { md5, SDKService } from '@flaps/core';
-import { FileWithMetadata, LabelSet, LabelSetKind, Classification, UploadStatus } from '@nuclia/core';
+import {
+  Classification,
+  FileWithMetadata,
+  ICreateResource,
+  LabelSet,
+  LabelSetKind,
+  TextFieldFormat,
+  UploadStatus,
+} from '@nuclia/core';
 import { LabelsService } from '../services/labels.service';
 import {
   BehaviorSubject,
@@ -115,6 +123,24 @@ export class UploadService {
         );
       }),
       map(() => {}),
+    );
+  }
+
+  uploadTextResource(title: string, body: string, format: TextFieldFormat, classifications?: Classification[]) {
+    const resource: ICreateResource = {
+      title: title,
+      texts: {
+        text: { body, format },
+      },
+    };
+    if ((classifications || []).length > 0) {
+      resource['usermetadata'] = {
+        classifications: classifications,
+      };
+    }
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.createResource(resource)),
     );
   }
 }

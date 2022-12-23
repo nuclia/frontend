@@ -197,9 +197,11 @@ export class TextFieldData implements IFieldData {
   extracted?: ExtractedData;
 }
 
+export type TextFieldFormat = 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
+
 export interface TextField {
   body: string;
-  format?: 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
+  format?: TextFieldFormat;
 }
 
 export interface ExtractedData {

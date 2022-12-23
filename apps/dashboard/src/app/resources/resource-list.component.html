@@ -53,6 +53,11 @@
           (selectOption)="uploadLink()">
           {{ 'upload.link' | translate }}
         </pa-option>
+        <pa-option
+          icon="file"
+          (selectOption)="uploadText()">
+          {{ 'upload.upload_from_csv' | translate }}
+        </pa-option>
       </pa-dropdown>
     </div>
     <div class="status-buttons-container">
