@@ -1,74 +1,60 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, UntypedFormBuilder, Validators } from '@angular/forms';
-import { forkJoin, map, Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { BackendConfigurationService, LoginService, SignupData } from '@flaps/core';
-import { SisModalService } from '@nuclia/sistema';
-import { TranslateService } from '@ngx-translate/core';
-import { InputComponent } from '@guillotinaweb/pastanaga-angular';
-
-const personalEmail = new RegExp(`gmail\.com|yahoo\..+|hotmail\..+|outlook\..+`);
+import { BackendConfigurationService, LoginService } from '@flaps/core';
+import { Subject } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SignupComponent implements OnInit, OnDestroy {
-  // TODO: convert checkboxes into standard form fields
-  acceptedConditions: boolean = false;
-  acceptedPrivacy: boolean = false;
-
-  signupForm = this.formBuilder.group({
-    username: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+export class SignupComponent implements OnInit {
+  signupForm = new FormGroup({
+    name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   validationMessages = {
-    username: {
+    name: {
+      required: 'validation.required',
+    },
+    company: {
+      required: 'validation.required',
+    },
+    password: {
       required: 'validation.required',
     },
     email: {
       required: 'validation.required',
       email: 'validation.email',
-    },
+      conflict: 'login.email_already_exists',
+    } as IErrorMessages,
   };
 
-  isPersonalEmail = false;
-  emailAlreadyExists: boolean = false;
   unsubscribeAll = new Subject<void>();
-  @ViewChild('email', { static: false }) email: InputComponent | undefined;
+
+  get emailControl() {
+    return this.signupForm.controls['email'];
+  }
 
   constructor(
-    private loginService: LoginService,
-    private formBuilder: UntypedFormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
-    private config: BackendConfigurationService,
-    private modalService: SisModalService,
-    private translate: TranslateService,
-  ) {
-    const emailControl = this.signupForm.controls['email'];
-    emailControl.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((value) => {
-      if (this.emailAlreadyExists) {
-        this.emailAlreadyExists = false;
-      }
-      this.isPersonalEmail = value.match(personalEmail);
-      if (this.isPersonalEmail) {
-        this.signupForm.addControl('company', new FormControl('', [Validators.required]));
-      } else if (!!this.signupForm.controls['company']) {
-        this.signupForm.removeControl('company');
-      }
-    });
-  }
+    private loginService: LoginService,
+    public config: BackendConfigurationService,
+  ) {}
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParams.token;
     if (token) {
-      // Token is set when coming from confirmation email link
+      // Token is set by the backend (confirmation link and SSO)
       this.router.navigate(['../magic'], {
         relativeTo: this.route,
         queryParamsHandling: 'merge', // Preserve token
@@ -76,61 +62,26 @@ export class SignupComponent implements OnInit, OnDestroy {
     }
   }
 
-  onUsernameEnter() {
-    this.email!.hasFocus = true;
-  }
-
-  submit() {
+  submitForm() {
     if (!this.signupForm.valid) return;
-    if (!this.acceptedConditions || !this.acceptedPrivacy) return;
 
     this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'login', (token) => {
-      this.signup(token);
+      this.signupFromForm(token);
     });
   }
 
-  signup(token: string) {
-    const signupData: SignupData = {
-      name: this.signupForm.value.username,
-      email: this.signupForm.value.email,
-      company: this.signupForm.value.company,
-    };
-    this.loginService.signup(signupData, token).subscribe((response) => {
+  private signupFromForm(token: string) {
+    const formValue = this.signupForm.getRawValue();
+    this.loginService.signup(formValue, token).subscribe((response) => {
       if (response.action === 'check-mail') {
-        this.showConfirmation();
-      } else if (response.action === 'user-exists') {
-        this.emailAlreadyExists = true;
-      }
-    });
-  }
-
-  showConfirmation() {
-    forkJoin([this.translate.get('login.email_sent'), this.translate.get('login.validate_and_explore')])
-      .pipe(
-        map((messages) => messages.join('<br>')),
-        switchMap(
-          (description) =>
-            this.modalService.openConfirm({
-              title: 'login.check_email',
-              description,
-              confirmLabel: 'Ok',
-              onlyConfirm: true,
-            }).onClose,
-        ),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => {
-        this.router.navigate(['../login'], {
+        this.router.navigate(['../check-mail'], {
           relativeTo: this.route,
+          queryParams: { email: formValue.email },
           queryParamsHandling: 'merge', // Preserve login_challenge
         });
-      });
-  }
-
-  ngOnDestroy() {
-    if (this.unsubscribeAll) {
-      this.unsubscribeAll.next();
-      this.unsubscribeAll.complete();
-    }
+      } else if (response.action === 'user-exists') {
+        this.emailControl.setErrors({ conflict: true });
+      }
+    });
   }
 }

@@ -1,0 +1,39 @@
+@import 'variables';
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  width: rhythm(41);
+
+  &.with-gap {
+    gap: rhythm(4);
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(2);
+
+      pa-button {
+        margin-top: rhythm(3);
+      }
+    }
+  }
+
+  h1 {
+    margin-bottom: 0;
+  }
+
+  .sso-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1);
+  }
+
+  pa-button.full-width {
+    display: flex;
+
+    ::ng-deep .pa-button {
+      flex: 1 0 auto;
+    }
+  }
+}

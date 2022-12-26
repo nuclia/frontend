@@ -1,17 +1,9 @@
-import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
-import {
-  BackendConfigurationService,
-  GoogleService,
-  OAuthErrors,
-  OAuthService,
-  SAMLService,
-  SDKService,
-} from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 
@@ -41,18 +33,16 @@ export class LoginComponent {
     },
   };
 
-  loginForm = this.formBuilder.group({
-    email: ['', [Validators.required]],
-    password: ['', [Validators.required]],
+  loginForm = new FormGroup({
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   constructor(
-    private formBuilder: UntypedFormBuilder,
     private samlService: SAMLService,
     private oAuthService: OAuthService,
-    private googleService: GoogleService,
+    private ssoService: SsoService,
     private router: Router,
-    @Inject(DOCUMENT) private document: Document,
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
@@ -66,8 +56,7 @@ export class LoginComponent {
         this.error = 'login.error.unknown_login_challenge';
       }
       if (params.error) {
-        const error = params.error as OAuthErrors;
-        this.message = 'login.error.' + error;
+        this.message = params.error_description || 'login.error.' + params.error;
       }
     });
   }
@@ -98,7 +87,8 @@ export class LoginComponent {
   }
 
   firstPartyLogin(recaptchaToken: string) {
-    this.sdk.nuclia.auth.login(this.loginForm.value.email, this.loginForm.value.password, recaptchaToken).subscribe({
+    const formValue = this.loginForm.getRawValue();
+    this.sdk.nuclia.auth.login(formValue.email, formValue.password, recaptchaToken).subscribe({
       next: () => this.router.navigate(['/']),
       error: () => (this.formError = true),
     });
@@ -112,17 +102,5 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.form?.nativeElement.submit();
     }
-  }
-
-  googleLogin(): void {
-    this.document.location.href = this.googleService.getGoogleLoginUrl();
-  }
-
-  recoverPassword(event: any) {
-    event.preventDefault();
-    this.router.navigate(['../recover'], {
-      relativeTo: this.route,
-      queryParamsHandling: 'preserve', // Preserve login_challenge
-    });
   }
 }

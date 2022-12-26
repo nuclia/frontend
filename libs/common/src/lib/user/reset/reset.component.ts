@@ -1,12 +1,10 @@
-import { Component, Inject, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { UntypedFormBuilder, Validators, NgForm } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
-import { Router, ActivatedRoute } from '@angular/router';
-import { STFInputComponent } from '@flaps/pastanaga';
-import { LoginService, BackendConfigurationService, ResetData } from '@flaps/core';
-import { MIN_PASSWORD_LENGTH } from '@flaps/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BackendConfigurationService, LoginService, MIN_PASSWORD_LENGTH, ResetData } from '@flaps/core';
 import { SamePassword } from '../../validators/form.validator';
+import { IErrorMessages, ToastService } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-reset',
@@ -15,16 +13,17 @@ import { SamePassword } from '../../validators/form.validator';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResetComponent {
-  @ViewChild('form') form?: NgForm;
-  @ViewChild('passwordConfirm') passwordConfirm?: STFInputComponent;
-
   magicToken: string | undefined;
   oauth: boolean = this.config.getOAuthLogin();
-  passwordRecovered: boolean = false;
-
-  resetForm = this.formBuilder.group({
-    password: ['', [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH)]],
-    passwordConfirm: ['', [Validators.required, SamePassword('password')]],
+  resetForm = new FormGroup({
+    password: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(MIN_PASSWORD_LENGTH)],
+    }),
+    passwordConfirm: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, SamePassword('password')],
+    }),
   });
 
   resetValidationMessages = {
@@ -35,35 +34,28 @@ export class ResetComponent {
     passwordConfirm: {
       required: 'validation.required',
       passwordMismatch: 'validation.password_mismatch',
-    },
+    } as IErrorMessages,
   };
 
+  resetting = false;
+
   constructor(
-    private formBuilder: UntypedFormBuilder,
     private loginService: LoginService,
     private router: Router,
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
     private cdr: ChangeDetectorRef,
-    @Inject(DOCUMENT) private document: Document,
+    private toaster: ToastService,
   ) {
     this.route.queryParams.subscribe((params) => {
       this.magicToken = params.token;
     });
   }
 
-  onEnterPressed(formField: string) {
-    if (formField === 'passwordConfirm') {
-      (this.document.activeElement as HTMLElement).blur(); // Update password confirm before submit
-      this.form?.onSubmit({} as Event);
-    } else {
-      this.passwordConfirm?.element?.nativeElement.focus();
-    }
-  }
-
   submit() {
     if (!this.resetForm.valid) return;
+    this.resetting = true;
     this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'reset', (token) => {
       this.reset(token);
     });
@@ -71,14 +63,18 @@ export class ResetComponent {
 
   reset(token: string) {
     if (this.magicToken) {
-      const resetInfo = new ResetData(this.resetForm.value.password, this.magicToken);
-      this.loginService.reset(resetInfo, token).subscribe(() => {
-        if (this.oauth) {
-          this.passwordRecovered = true;
-          this.cdr.markForCheck();
-        } else {
-          this.goLogin();
-        }
+      const resetInfo = new ResetData(this.resetForm.getRawValue().password, this.magicToken);
+      this.loginService.reset(resetInfo, token).subscribe({
+        complete: () => {
+          this.toaster.openSuccess('reset.password_reset');
+          this.resetting = false;
+          if (!this.oauth) {
+            this.goLogin();
+          }
+        },
+        error: () => {
+          this.resetting = false;
+        },
       });
     }
   }

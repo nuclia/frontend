@@ -1,48 +1,34 @@
-<stf-user-container widthSm="520px">
-  <stf-user-container-logo>
-    <div class="recover_title">
-      <h1>{{ 'recover.title' | translate }}</h1>
-      <div class="description">{{ 'recover.description' | translate }}</div>
-    </div>
-    <div class="recover_form">
-      <form
-        [formGroup]="recoverForm"
-        #form="ngForm"
-        (ngSubmit)="submit()">
-        <div>
-          <stf-input
-            #email
-            formControlName="email"
-            required
-            type="text"
-            theme="border"
-            [noAutocapitalize]="true"
-            [validator]="recoverForm.controls['email']"
-            [validation_messages]="recoverValidationMessages.email"
-            (enterPressed)="onEnterPressed()">
-            {{ 'generic.email' | translate }}
-          </stf-input>
-        </div>
-        <div
-          class="recover_button"
-          fxLayout="row"
-          fxLayoutAlign="center center">
-          <pa-button
-            type="submit"
-            kind="primary">
-            {{ 'recover.recover' | translate }}
-          </pa-button>
-        </div>
-      </form>
-    </div>
+<stf-user-container>
+  <div class="main-container with-gap">
+    <h1>{{ 'recover.title' | translate }}</h1>
+    <div class="body-s">{{ 'recover.description' | translate }}</div>
+
+    <form
+      class="recover-form"
+      [formGroup]="recoverForm"
+      (ngSubmit)="submit()">
+      <pa-input
+        formControlName="email"
+        required
+        type="email"
+        autocapitalize="off"
+        [errorMessages]="recoverValidationMessages.email">
+        {{ 'generic.email' | translate }}
+      </pa-input>
+      <pa-button
+        class="full-width"
+        type="submit"
+        kind="primary"
+        [disabled]="recoverForm.invalid">
+        {{ 'recover.recover' | translate }}
+      </pa-button>
+    </form>
+
     <div>
       <span>{{ 'recover.gologin_help' | translate }}</span>
-      <a
-        href="javascript:;"
-        class="recover_link"
-        (click)="goLogin()">
+      <a routerLink="../login">
         {{ 'recover.gologin' | translate }}
       </a>
     </div>
-  </stf-user-container-logo>
+  </div>
 </stf-user-container>

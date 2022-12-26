@@ -1,0 +1,84 @@
+<stf-user-container>
+  <div class="onboarding-container">
+    <ng-container *ngIf="!(onboardingStatus | async)?.creating; else settingUp">
+      <header>
+        <h1>{{ 'onboarding.title' | translate }}</h1>
+        <p>{{ 'onboarding.subtitle' | translate }}</p>
+      </header>
+
+      <form
+        class="onboarding-form"
+        [formGroup]="onboardingForm"
+        (ngSubmit)="submitForm()">
+        <div class="field">
+          <label
+            class="title-s"
+            for="industry">
+            {{ 'onboarding.industry_label' | translate }}
+          </label>
+          <pa-input
+            id="industry"
+            externalLabel
+            formControlName="industry"></pa-input>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
+            for="searchEngine">
+            {{ 'onboarding.search_engine_label' | translate }}
+          </label>
+          <pa-input
+            id="searchEngine"
+            externalLabel
+            formControlName="searchEngine"></pa-input>
+        </div>
+
+        <pa-checkbox formControlName="getUpdates">{{ 'onboarding.updates' | translate }}</pa-checkbox>
+
+        <div class="form-footer">
+          <pa-button
+            type="submit"
+            kind="primary">
+            {{ 'onboarding.get_started' | translate }}
+          </pa-button>
+        </div>
+      </form>
+
+      <div class="consent body-xs">
+        <pa-icon
+          name="info"
+          size="small"></pa-icon>
+        <div>
+          <span [innerHTML]="'onboarding.storage_zone' | translate"></span>
+          <br />
+          <span [innerHTML]="'onboarding.consent' | translate"></span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #settingUp>
+      <div class="setting-up">
+        <header>
+          <h1>{{ 'onboarding.setting_up' | translate }}</h1>
+          <p>{{ 'onboarding.setting_up_subtitle' | translate }}</p>
+        </header>
+        <p class="body-m">
+          {{ 'onboarding.account_creation' | translate }}
+          <pa-icon
+            *ngIf="(onboardingStatus | async)?.accountCreated"
+            name="circle-check"
+            size="small"></pa-icon>
+        </p>
+        <p
+          *ngIf="(onboardingStatus | async)?.accountCreated"
+          class="body-m">
+          {{ 'onboarding.kb_creation' | translate }}
+          <pa-icon
+            *ngIf="(onboardingStatus | async)?.kbCreated"
+            name="circle-check"
+            size="small"></pa-icon>
+        </p>
+      </div>
+    </ng-template>
+  </div>
+</stf-user-container>

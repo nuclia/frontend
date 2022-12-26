@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { BackendConfigurationService, LoginService, TranslatePipeMock } from '@flaps/core';
-import { STFInputModule } from '@flaps/pastanaga';
+import { BackendConfigurationService, LoginService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { of } from 'rxjs';
 
 import { ResetComponent } from './reset.component';
-import { UserContainerComponent } from '../user-container/user-container.component';
-import { UserContainerLogoComponent } from '../user-container/user-container-logo/user-container-logo.component';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { MockModule } from 'ng-mocks';
+import { UserContainerModule } from '@flaps/common';
+import { SisPasswordInputModule } from '@nuclia/sistema';
 
 describe('ResetComponent', () => {
   let component: ResetComponent;
@@ -18,8 +18,16 @@ describe('ResetComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ResetComponent, TranslatePipeMock, UserContainerComponent, UserContainerLogoComponent],
-      imports: [ReactiveFormsModule, RouterTestingModule, STFInputModule, PaButtonModule],
+      declarations: [ResetComponent],
+      imports: [
+        MockModule(ReactiveFormsModule),
+        MockModule(PaButtonModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaTranslateModule),
+        MockModule(SisPasswordInputModule),
+        MockModule(UserContainerModule),
+        RouterTestingModule,
+      ],
       providers: [
         {
           provide: BackendConfigurationService,

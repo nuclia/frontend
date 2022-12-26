@@ -1,51 +1,28 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
+@import 'variables';
 
 .user-background {
-  width: 100%;
-  min-height: 100%;
+  height: 100%;
+  position: relative;
 
-  @include media-breakpoint('lt-sm') {
-    background-color: white;
-    background-image: none;
-  }
+  .logo {
+    left: rhythm(3);
+    position: absolute;
+    top: rhythm(2);
 
-  &:before,
-  &:after {
-    @include media-breakpoint('gt-xs') {
-      content: '';
-      display: block;
-      flex-grow: 1;
+    img {
+      width: rhythm(13);
     }
-  }
-  &:after {
-    min-height: 24px;
-  }
-  &:before {
-    min-height: 30px;
   }
 
   .user-container {
-    background: #fff;
-    @include media-breakpoint('gt-xs') {
-      margin: 0 auto;
-      flex-shrink: 0;
-      border: 1px solid #dadce0;
-      border-radius: 8px;
-    }
-  }
+    align-items: center;
+    background: $color-light-stronger;
+    display: flex;
+    height: 100%;
+    width: 50%;
 
-  .go-web {
-    height: 64px;
-    min-height: 50px;
-    margin: 30px auto 0 auto;
-    padding: 0 24px;
-    font-size: 22px;
-    font-weight: var(--stf-font-weight-bold);
-    background-color: var(--stf-primary);
-    color: white;
-    border-radius: 8px;
-    @include media-breakpoint('lt-sm') {
-      margin-bottom: 30px;
+    &:not(.left-aligned) {
+      justify-content: center;
     }
   }
 }

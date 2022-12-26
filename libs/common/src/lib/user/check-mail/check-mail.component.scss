@@ -1,0 +1,11 @@
+@import 'variables';
+
+.check-email-container {
+  padding: 0 rhythm(24);
+
+  img {
+    // Not using rhythm here because this value is for having the left side of the envelope from the img aligned with the text
+    margin-left: -28px;
+    width: rhythm(24);
+  }
+}

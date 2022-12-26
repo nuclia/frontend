@@ -1,6 +1,6 @@
-import { TokenService, MagicAction, MagicActionError } from '@flaps/core';
+import { MagicAction, MagicActionError, TokenService } from '@flaps/core';
 import { Component, OnDestroy } from '@angular/core';
-import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { MagicService } from './magic.service';
@@ -36,10 +36,8 @@ export class MagicComponent implements OnDestroy {
       (error) => {
         let message: string;
         const cause = error.detail as MagicActionError;
-        if (cause === 'local_user_already_exists') {
-          message = 'login.local_user_already_exists';
-        } else if (cause === 'user_registered_as_external_user') {
-          message = 'login.user_registered_as_external_user';
+        if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
+          message = `login.${cause}`;
         } else {
           message = 'login.token_expired';
         }

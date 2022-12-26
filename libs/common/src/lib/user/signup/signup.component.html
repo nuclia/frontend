@@ -1,80 +1,62 @@
-<stf-user-container widthSm="520px">
-  <stf-user-container-logo>
-    <div class="signup">
-      <div class="signup_description">
-        <strong>{{ 'login.signup' | translate }}</strong>
-        <span>{{ 'login.join_expedition' | translate }}</span>
-      </div>
-      <div class="signup_form_wrapper">
-        <div class="signup_form">
-          <form
-            [formGroup]="signupForm"
-            (ngSubmit)="submit()">
-            <div class="signup_field">
-              <pa-input
-                formControlName="username"
-                required
-                autocapitalize="off"
-                [errorMessages]="validationMessages.username"
-                (enter)="onUsernameEnter()">
-                {{ 'login.full_name' | translate }}
-              </pa-input>
-            </div>
-            <div class="signup_field">
-              <pa-input
-                #email
-                formControlName="email"
-                type="email"
-                [errorMessages]="validationMessages.email">
-                {{ 'login.email' | translate }}
-              </pa-input>
-            </div>
-            <div
-              *ngIf="isPersonalEmail"
-              class="signup_field">
-              <pa-input formControlName="company">
-                {{ 'login.company' | translate }}
-              </pa-input>
-            </div>
-            <div class="signup_policy">
-              <pa-checkbox [(value)]="acceptedConditions">
-                <span>{{ 'login.agree' | translate }}</span>
-                <a
-                  href="https://nuclia.com/terms-and-conditions/"
-                  target="_blank">
-                  {{ 'login.terms_and_conditions' | translate }}
-                </a>
-              </pa-checkbox>
-              <pa-checkbox [(value)]="acceptedPrivacy">
-                <span>{{ 'login.agree' | translate }}</span>
-                <a
-                  href="https://nuclia.com/privacy-policy/"
-                  target="_blank">
-                  {{ 'login.privacy_policy' | translate }}
-                </a>
-              </pa-checkbox>
-            </div>
-
-            <div class="signup_error">
-              <div *ngIf="emailAlreadyExists">{{ 'login.email_already_exists' | translate }}</div>
-            </div>
-            <footer class="pa-dual-buttons">
-              <pa-button
-                aspect="basic"
-                [routerLink]="['/user/login']"
-                queryParamsHandling="merge">
-                {{ 'generic.cancel' | translate }}
-              </pa-button>
-              <pa-button
-                [disabled]="signupForm.invalid || !acceptedConditions || !acceptedPrivacy"
-                kind="primary"
-                type="submit">
-                {{ 'Sign Up' | translate }}
-              </pa-button>
-            </footer>
-          </form>
-        </div>
-      </div>
+<stf-user-container>
+  <div class="main-container with-gap">
+    <div class="form-header">
+      <h1>{{ 'login.boarding_title' | translate }}</h1>
+      <p>{{ 'login.subtitle' | translate }}</p>
     </div>
-  </stf-user-container-logo>
+
+    <form
+      class="signup-form"
+      [formGroup]="signupForm"
+      (ngSubmit)="submitForm()">
+      <pa-input
+        required
+        autocapitalize="off"
+        formControlName="name"
+        [errorMessages]="validationMessages.name">
+        {{ 'login.full_name' | translate }}
+      </pa-input>
+      <pa-input
+        formControlName="company"
+        [errorMessages]="validationMessages.company">
+        {{ 'login.company' | translate }}
+      </pa-input>
+      <pa-input
+        type="email"
+        placeholder="email@company.com"
+        formControlName="email"
+        [errorMessages]="validationMessages.email">
+        {{ 'login.email' | translate }}
+      </pa-input>
+      <nsi-password-input
+        formControlName="password"
+        [errorMessages]="validationMessages.password">
+        {{ 'login.password' | translate }}
+      </nsi-password-input>
+
+      <pa-button
+        class="full-width"
+        type="submit"
+        kind="primary"
+        [disabled]="signupForm.invalid">
+        {{ 'login.signup' | translate }}
+      </pa-button>
+    </form>
+
+    <div
+      class="sso-container"
+      *ngIf="config.getSocialLogin()">
+      <stf-sso-button
+        provider="google"
+        signup></stf-sso-button>
+      <stf-sso-button
+        provider="github"
+        signup></stf-sso-button>
+    </div>
+
+    <p class="existing-account">
+      {{ 'login.have_account_already' | translate }}
+      <a routerLink="../login">{{ 'login.login' | translate }}</a>
+    </p>
+  </div>
 </stf-user-container>

@@ -3,6 +3,7 @@
  */
 
 export * from './lib/user/user.module';
+export * from './lib/user/user-container';
 export * from './lib/useful/useful.module';
 export * from './lib/page-not-found/page-not-found.module';
 export * from './lib/page-not-found/page-not-found.component';

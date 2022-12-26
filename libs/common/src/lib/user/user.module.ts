@@ -22,16 +22,23 @@ import { MagicComponent } from './magic/magic.component';
 import { LogoutComponent } from './logout/logout.component';
 import { ResetComponent } from './reset/reset.component';
 import { CallbackComponent } from './callback/callback.component';
-import { AccountComponent } from './account/account.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SwitchComponent } from './switch/switch.component';
 import { ConsentComponent } from './consent/consent.component';
-import { SignupComponent } from './signup/signup.component';
-import { UserContainerComponent } from './user-container/user-container.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
-import { UserErrorComponent } from './user-error/user-error.component';
-import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaAvatarModule,
+  PaButtonModule,
+  PaIconModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { SisPasswordInputModule } from '@nuclia/sistema';
+import { SignupComponent } from './signup/signup.component';
+import { SsoButtonComponent } from './sso/sso-button.component';
+import { CheckMailComponent } from './check-mail/check-mail.component';
+import { UserContainerModule } from './user-container';
+import { OnboardingComponent } from './onboarding/onboarding.component';
 
 export const userRoutes: Routes = [
   { path: 'callback', component: CallbackComponent }, // Is this route used ?
@@ -51,9 +58,9 @@ export const userRoutes: Routes = [
     data: { google: true },
   },
   {
-    path: 'account',
-    canActivate: [LoggedinGuard],
-    component: AccountComponent,
+    path: 'callbacks/github',
+    component: CallbackComponent,
+    data: { github: true },
   },
   {
     path: 'switch',
@@ -72,6 +79,8 @@ export const userRoutes: Routes = [
   { path: 'magic', component: MagicComponent },
   { path: 'join', component: MagicComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'onboarding', component: OnboardingComponent },
+  { path: 'check-mail', component: CheckMailComponent },
   { path: 'consent', component: ConsentComponent },
   { path: '**', redirectTo: 'login' },
 ];
@@ -83,15 +92,15 @@ export const userRoutes: Routes = [
     LogoutComponent,
     MagicComponent,
     CallbackComponent,
-    AccountComponent,
     ResetComponent,
     ProfileComponent,
     SwitchComponent,
     ConsentComponent,
-    SignupComponent,
-    UserContainerComponent,
     UserContainerLogoComponent,
-    UserErrorComponent,
+    SignupComponent,
+    SsoButtonComponent,
+    CheckMailComponent,
+    OnboardingComponent,
   ],
   imports: [
     CommonModule,
@@ -117,7 +126,9 @@ export const userRoutes: Routes = [
     PaTextFieldModule,
 
     SisPasswordInputModule,
+    UserContainerModule,
+    PaAvatarModule,
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, SignupComponent, SsoButtonComponent, CheckMailComponent, OnboardingComponent],
 })
 export class UserModule {}

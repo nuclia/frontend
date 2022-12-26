@@ -155,5 +155,5 @@ export const menu: IDemoMenuSection[] = [
 export class AppComponent {
   menu: IDemoMenuSection[] = menu;
 
-  logo = './assets/logo.svg';
+  logo = './assets/logos/logo.svg';
 }

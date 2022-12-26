@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UserService } from '@flaps/core';
 
 @Component({
-  selector: 'app-setup-step1',
+  selector: 'app-setup-farewell',
   templateUrl: './farewell.component.html',
   styleUrls: ['./farewell.component.scss'],
 })

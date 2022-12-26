@@ -1,9 +1,8 @@
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 
-import { PlatformLocation } from '@angular/common';
+import { isPlatformBrowser, PlatformLocation } from '@angular/common';
 import { AppInitService, EnvironmentConfiguration, StaticEnvironmentConfiguration } from './app.init.service';
 import posthog from 'posthog-js';
-import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class BackendConfigurationService {
@@ -62,7 +61,7 @@ export class BackendConfigurationService {
     return this.staticConf.base_asset_url;
   }
 
-  getAllowdHostsRedirect(): string[] {
+  getAllowedHostsRedirect(): string[] {
     return this.config.backend.allowed_hosts_redirect || [];
   }
 

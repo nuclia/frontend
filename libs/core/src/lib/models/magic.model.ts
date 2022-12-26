@@ -12,7 +12,8 @@ export type MagicActionType =
   | 'gosetpassword'
   | 'goaccount'
   | 'goselectaccount'
-  | 'gosetupaccount';
+  | 'gosetupaccount'
+  | 'startonboarding';
 
 export interface MagicAction {
   action: MagicActionType;

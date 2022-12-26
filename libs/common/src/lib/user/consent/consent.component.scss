@@ -1,21 +1,55 @@
-.consent {
-  &-subject {
-    margin: 38px 0 8.5vh 0;
-  }
+@import 'variables';
 
-  &-client {
-    margin-bottom: 18px;
-  }
+.user-background {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: relative;
 
-  &-scopes {
-    margin: 0;
-    padding: 0;
-    &-item {
-      margin-bottom: 18px;
+  .consent-container {
+    align-items: center;
+    background: $color-light-stronger;
+    border-radius: rhythm(1);
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(3);
+    padding: rhythm(3);
+
+    .logo {
+      width: rhythm(13);
     }
-  }
 
-  &-buttons {
-    margin-top: 36px;
+    .consent-error {
+      background-color: $color-secondary-regular;
+      padding: rhythm(0.5) rhythm(1);
+      text-align: center;
+      width: 100%;
+    }
+
+    .consent-content {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(2);
+    }
+
+    .consent-subject {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      justify-content: center;
+    }
+
+    .consent-scopes {
+      list-style: none;
+      margin-bottom: 0;
+      padding-left: 0;
+    }
+
+    .consent-buttons {
+      align-items: center;
+      display: flex;
+      gap: rhythm(2);
+    }
   }
 }

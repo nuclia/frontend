@@ -1,0 +1,16 @@
+<stf-user-container alignLeft>
+  <div class="check-email-container">
+    <img
+      src="assets/signup/check-email.png"
+      [alt]="'login.check_email' | translate" />
+
+    <h1 qa="confirmation-title">{{ 'login.check_email' | translate }}</h1>
+    <p
+      class="body-m"
+      [innerHTML]="'login.check_email_details' | translate: { email: email }"></p>
+    <p>
+      {{ 'login.wrong_email' | translate }}
+      <a routerLink="../signup">{{ 'login.resend_email' | translate }}</a>
+    </p>
+  </div>
+</stf-user-container>

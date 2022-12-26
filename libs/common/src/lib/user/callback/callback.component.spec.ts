@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SAMLService, GoogleService, BackendConfigurationService } from '@flaps/core';
+import { BackendConfigurationService, SAMLService, SsoService } from '@flaps/core';
 import { of } from 'rxjs';
 
 import { CallbackComponent } from './callback.component';
@@ -9,16 +9,18 @@ describe('CallbackComponent', () => {
   let component: CallbackComponent;
   let fixture: ComponentFixture<CallbackComponent>;
 
+  const token = 'saml_token';
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CallbackComponent],
       imports: [RouterTestingModule],
       providers: [
-        { provide: SAMLService, useValue: { checgetTokenkDomain: () => of() } },
-        { provide: GoogleService, useValue: { login: () => of() } },
+        { provide: SAMLService, useValue: { getToken: () => of(token) } },
+        { provide: SsoService, useValue: { login: () => of() } },
         {
           provide: BackendConfigurationService,
-          useValue: { getAllowdHostsRedirect: () => [], getAPIURL: () => '', staticConf: { client: 'dashboard' } },
+          useValue: { getAllowedHostsRedirect: () => [], getAPIURL: () => '', staticConf: { client: 'dashboard' } },
         },
       ],
     }).compileComponents();
@@ -27,14 +29,9 @@ describe('CallbackComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CallbackComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  afterEach(() => {
-    fixture.destroy();
   });
 });

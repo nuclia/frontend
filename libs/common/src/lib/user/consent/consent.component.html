@@ -1,88 +1,77 @@
-<stf-user-container
-  widthSm="480px"
-  *ngIf="!error; else errorMessage">
-  <stf-user-container-logo>
-    <ng-container *ngIf="consentData">
-      <div class="consent_content">
-        <div
-          class="consent-subject"
-          fxLayout="row"
-          fxLayoutAlign="center center"
-          fxLayoutGap="10px">
-          <stf-user-avatar-simple
-            [blackMode]="true"
-            size="small"
-            [userPrefs]="{ name: consentData?.user_name }"></stf-user-avatar-simple>
-          <span>{{ consentData?.user_email }}</span>
-        </div>
-        <div class="consent-client">
-          <strong>{{ consentData?.client_name }}</strong>
-          {{ 'login.access_request' | translate }}
-        </div>
-        <ul class="consent-scopes">
-          <li
-            class="consent-scopes-item"
-            *ngFor="let scope of visibleScopes()"
-            fxLayout="row"
-            fxLayoutGap="10px">
-            <pa-icon
-              name="check"
-              fxFlex="0 0 auto"></pa-icon>
-            <span
-              fxFlex="1 1"
-              [ngSwitch]="scope">
-              <span *ngSwitchCase="'flaps.kbs:read'">{{ 'login.scope.kbs_read' | translate }}</span>
-              <span *ngSwitchCase="'flaps.kbs:write'">{{ 'login.scope.kbs_write' | translate }}</span>
-              <span *ngSwitchDefault>{{ scope }}</span>
-            </span>
-          </li>
-        </ul>
-      </div>
-      <div
-        class="consent-buttons"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="10px">
-        <form
-          #form
-          method="POST"
-          [action]="oAuthConsentUrl()">
-          <input
-            type="hidden"
-            name="consent_challenge"
-            [value]="consentChallenge" />
-          <input
-            type="hidden"
-            name="grant_scope"
-            [value]="acceptedScopes()" />
-          <pa-button
-            kind="primary"
-            type="submit">
-            {{ 'generic.allow' | translate }}
-          </pa-button>
-        </form>
-        <form
-          method="POST"
-          [action]="oAuthConsentUrl()">
-          <input
-            type="hidden"
-            name="consent_challenge"
-            [value]="consentChallenge" />
-          <input
-            type="hidden"
-            name="reject"
-            [value]="true" />
-          <pa-button
-            type="submit"
-            aspect="basic">
-            {{ 'generic.cancel' | translate }}
-          </pa-button>
-        </form>
-      </div>
-    </ng-container>
-  </stf-user-container-logo>
-</stf-user-container>
+<div class="user-background">
+  <div class="consent-container">
+    <img
+      class="logo"
+      src="assets/logos/logo-beta.svg"
+      alt="Nuclia Beta" />
 
-<ng-template #errorMessage>
-  <stf-user-error [message]="error"></stf-user-error>
-</ng-template>
+    <div
+      *ngIf="error"
+      class="consent-error title-xxs">
+      {{ error | translate }}
+    </div>
+
+    <div class="consent-content">
+      <div class="consent-subject">
+        <pa-avatar
+          [userName]="consentData?.user_name"
+          [userId]="consentData?.user_email"
+          size="small"></pa-avatar>
+        <span>{{ consentData?.user_email }}</span>
+      </div>
+      <div class="consent-client">
+        <strong>{{ consentData?.client_name }}</strong>
+        {{ 'login.access_request' | translate }}
+      </div>
+      <ul class="consent-scopes">
+        <li
+          class="consent-scopes-item"
+          *ngFor="let scope of visibleScopes()">
+          <pa-icon name="check"></pa-icon>
+          <span [ngSwitch]="scope">
+            <span *ngSwitchCase="'flaps.kbs:read'">{{ 'login.scope.kbs_read' | translate }}</span>
+            <span *ngSwitchCase="'flaps.kbs:write'">{{ 'login.scope.kbs_write' | translate }}</span>
+            <span *ngSwitchDefault>{{ scope }}</span>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div class="consent-buttons">
+      <form
+        method="POST"
+        [action]="oAuthConsentUrl()">
+        <input
+          type="hidden"
+          name="consent_challenge"
+          [value]="consentChallenge" />
+        <input
+          type="hidden"
+          name="reject"
+          [value]="true" />
+        <pa-button
+          type="submit"
+          aspect="basic">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      </form>
+      <form
+        #form
+        method="POST"
+        [action]="oAuthConsentUrl()">
+        <input
+          type="hidden"
+          name="consent_challenge"
+          [value]="consentChallenge" />
+        <input
+          type="hidden"
+          name="grant_scope"
+          [value]="acceptedScopes()" />
+        <pa-button
+          kind="primary"
+          type="submit">
+          {{ 'generic.allow' | translate }}
+        </pa-button>
+      </form>
+    </div>
+  </div>
+</div>

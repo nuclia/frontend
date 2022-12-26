@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
-import { SAMLService, GoogleService, BackendConfigurationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
 
@@ -12,7 +12,7 @@ export class CallbackComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private samlService: SAMLService,
-    private googleService: GoogleService,
+    private ssoService: SsoService,
     private config: BackendConfigurationService,
     @Inject(DOCUMENT) private document: Document,
     private sdk: SDKService,
@@ -21,13 +21,13 @@ export class CallbackComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.data.saml) {
-      // Returning from SAML authentification
+      // Returning from SAML authentication
       this.getSAMLToken();
     } else if (this.route.snapshot.data.samlOauth) {
-      // Returning from SAML authentification in a OAuth flow
+      // Returning from SAML authentication in a OAuth flow
       this.redirect();
-    } else if (this.route.snapshot.data.google) {
-      this.googleLogin();
+    } else if (this.route.snapshot.data.google || this.route.snapshot.data.github) {
+      this.ssoLogin();
     } else {
       this.loadUrlToken();
     }
@@ -54,7 +54,7 @@ export class CallbackComponent implements OnInit {
   redirect(): void {
     const redirectTo = this.route.snapshot.queryParamMap.get('redirect_to');
     if (redirectTo) {
-      const allowedHosts = this.config.getAllowdHostsRedirect();
+      const allowedHosts = this.config.getAllowedHostsRedirect();
       try {
         const url = new URL(redirectTo);
         if (allowedHosts.indexOf(url.hostname) >= 0) {
@@ -64,11 +64,11 @@ export class CallbackComponent implements OnInit {
     }
   }
 
-  googleLogin(): void {
+  ssoLogin(): void {
     const code = this.route.snapshot.queryParamMap.get('code');
     const state = this.route.snapshot.queryParamMap.get('state');
     if (code !== null && state !== null) {
-      this.googleService.login(code, state).subscribe((token) => {
+      this.ssoService.login(code, state).subscribe((token) => {
         this.authenticate(token);
       });
     }

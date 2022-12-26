@@ -90,7 +90,7 @@ export class Rest implements IRest {
     }).pipe(
       switchMap((response) => {
         if (!response.ok) {
-          return throwError(response);
+          return throwError(() => response);
         }
         return doNotParse
           ? of(response as unknown as T)

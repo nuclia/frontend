@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
-  LoginData,
-  RecoverData,
   AuthTokens,
-  SignupData,
-  SignupResponse,
+  LoginData,
+  OldSignupData,
+  RecoverData,
   ResetData,
   ResetResponse,
   SetPasswordData,
-  User,
   SetUserPreferences,
+  SignupResponse,
+  User,
 } from '../models';
 import { DeprecatedApiService } from '../api';
 import { BackendConfigurationService } from '../config';
@@ -94,7 +94,7 @@ export class LoginService {
     }
   }
 
-  signup(user: SignupData, token: string): Observable<SignupResponse> {
+  signup(user: OldSignupData, token: string): Observable<SignupResponse> {
     const headers = [['X-STF-VALIDATION', token]];
     return this.api.post(
       this.config.getAPIURL() + `/${AUTH}/signup`,

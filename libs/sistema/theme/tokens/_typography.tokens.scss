@@ -16,7 +16,7 @@ $font-weight-regular: 400;
 $font-weight-semi-bold: 600;
 $font-weight-bold: 700;
 
-$font-weight-body-xs: $font-weight-semi-bold;
+$font-weight-body-xs: $font-weight-regular;
 $font-weight-body-s: $font-weight-regular;
 $font-weight-body-m: $font-weight-regular;
 $font-weight-title-xxs: $font-weight-semi-bold;
@@ -92,7 +92,7 @@ $line-height-body: 1.4;
 $line-height-overline: line-height(s);
 $line-height-body-xs: line-height(s);
 $line-height-body-s: line-height(m);
-$line-height-body-m: line-height(xl);
+$line-height-body-m: line-height(m);
 $line-height-title-xxs: line-height(l);
 $line-height-title-xs: line-height(xl);
 $line-height-title-s: line-height(xxl);
