@@ -23,8 +23,6 @@
 .user-background:before,
 .user-background:after {
   @include media-breakpoint('gt-xs') {
-    -webkit-box-flex: 1;
-    box-flex: 1;
     -webkit-flex-grow: 1;
     flex-grow: 1;
     content: '';
@@ -94,9 +92,6 @@ app-page-not-found {
 .outter_notfound_form {
   // RAYh1e LZgQXe qmmlRd
   @include media-breakpoint('gt-xs') {
-    width: 650px;
-    min-height: 0;
-    -webkit-flex-shrink: 0;
     flex-shrink: 0;
     border: 1px solid #dadce0;
     -webkit-border-radius: 8px;
@@ -109,12 +104,7 @@ app-page-not-found {
     transition: 0.2s;
   }
 
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-direction: column;
   flex-direction: column;
   background: #fff;
   max-width: 100%;
@@ -132,8 +122,6 @@ app-page-not-found {
     -webkit-transition: 0.2s;
     transition: 0.2s;
   }
-  -webkit-box-flex: 1;
-  box-flex: 1;
   -webkit-flex-grow: 1;
   flex-grow: 1;
   overflow: hidden;
@@ -154,9 +142,13 @@ app-page-not-found {
 }
 
 .logo {
-  height: 99px;
+  height: 96px;
   margin: 0 auto;
   overflow: visible;
   position: relative;
-  width: 99px;
+  text-align: center;
+
+  img {
+    height: 64px;
+  }
 }
