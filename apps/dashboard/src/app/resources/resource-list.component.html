@@ -59,6 +59,14 @@
           {{ 'upload.upload_from_csv' | translate }}
         </pa-option>
       </pa-dropdown>
+
+      <pa-button
+        *ngIf="hasSampleData | async"
+        kind="destructive"
+        aspect="basic"
+        (click)="deleteSampleDataset()">
+        {{ 'onboarding.dataset.delete' | translate }}
+      </pa-button>
     </div>
     <div class="status-buttons-container">
       <div

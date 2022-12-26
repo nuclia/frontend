@@ -43,7 +43,7 @@ import {
 } from '@nuclia/sistema';
 import { FileUploadModule } from '@flaps/core';
 import { STFSectionNavbarModule } from '../components/section-navbar';
-import { DatasetImportComponent } from './dataset-import/dataset-import.component';
+import { DatasetImportComponent } from './sample-dataset/dataset-import.component';
 
 const Components = [
   ResourceListComponent,

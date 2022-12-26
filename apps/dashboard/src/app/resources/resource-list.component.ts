@@ -1,4 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -33,6 +41,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { UploadService } from './upload.service';
+import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 
 interface ListFilters {
   type?: string;
@@ -79,8 +88,11 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   refreshing = true;
   statusTooltips: { [resourceId: string]: string } = {};
 
+  private sampleDatasetService = inject(SampleDatasetService);
+  hasSampleData = this.sampleDatasetService.hasSampleResources();
   // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
   pendingCount = 0;
+
   failedCount = 0;
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
@@ -94,7 +106,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       ),
     ),
   );
-
   columns = [
     { value: 'title', label: 'resource.title', visible: true },
     { value: 'classification', label: 'resource.classification', visible: false, optional: true },
@@ -141,6 +152,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       ></nuclia-viewer>`);
     }),
   );
+
   searchForm = new FormGroup({
     searchIn: new FormControl<'title' | 'resource'>('title'),
     query: new FormControl<string>(''),
@@ -533,6 +545,27 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
           this.currentLabelList = [];
         });
     }
+  }
+
+  deleteSampleDataset() {
+    this.toaster.info('onboarding.dataset.delete_in_progress');
+    this.sampleDatasetService
+      .deleteSampleDataset()
+      .pipe(
+        tap((count) => {
+          if (count.error === 0) {
+            this.toaster.success('onboarding.dataset.delete_successful');
+          } else if (count.success > 0) {
+            this.toaster.warning(
+              this.translate.instant('onboarding.dataset.delete_partially_successful', { error: count.error }),
+            );
+          } else {
+            this.toaster.error('onboarding.dataset.delete_failed');
+          }
+        }),
+        switchMap(() => this.getResources()),
+      )
+      .subscribe();
   }
 
   private mergeExistingAndSelectedLabels(classifications: Classification[] | undefined): Classification[] {

@@ -26,8 +26,13 @@ $table-breakpoint: 1400px;
     gap: rhythm(1);
 
     pa-select {
-      width: rhythm(16);
+      min-width: rhythm(16);
     }
+  }
+
+  .upload-container {
+    display: flex;
+    gap: rhythm(4);
   }
 
   .status-buttons-container {
