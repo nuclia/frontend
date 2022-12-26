@@ -43,6 +43,7 @@ import {
 } from '@nuclia/sistema';
 import { FileUploadModule } from '@flaps/core';
 import { STFSectionNavbarModule } from '../components/section-navbar';
+import { DatasetImportComponent } from './dataset-import/dataset-import.component';
 
 const Components = [
   ResourceListComponent,
@@ -63,6 +64,10 @@ const ROUTES: Routes = [
       {
         path: '',
         component: ResourceListComponent,
+      },
+      {
+        path: 'dataset',
+        component: DatasetImportComponent,
       },
       {
         path: ':id',
@@ -133,7 +138,7 @@ const ROUTES: Routes = [
     SisLabelModule,
     PaPopupModule,
   ],
-  declarations: [...Components],
+  declarations: [...Components, DatasetImportComponent],
   exports: [],
 })
 export class ResourcesModule {}

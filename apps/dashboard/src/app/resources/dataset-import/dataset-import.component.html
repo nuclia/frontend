@@ -1,0 +1,26 @@
+<div class="dataset-import-container">
+  <h1>{{ 'onboarding.dataset.title' | translate }}</h1>
+  <p class="body-m">
+    {{ 'onboarding.dataset.description' | translate }}
+  </p>
+
+  <div class="dataset-picker">
+    <pa-select
+      label="Pick a sample dataset"
+      [options]="sampleDatasets"
+      (valueChange)="selectDataset = $event"></pa-select>
+
+    <pa-button
+      [disabled]="!selectDataset"
+      (click)="importDataset()">
+      {{ 'onboarding.dataset.import' | translate }}
+    </pa-button>
+  </div>
+
+  <div class="upload-data">
+    <p
+      class="body-m"
+      #uploadLinksContainer
+      [innerHTML]="'onboarding.dataset.upload-links' | translate"></p>
+  </div>
+</div>

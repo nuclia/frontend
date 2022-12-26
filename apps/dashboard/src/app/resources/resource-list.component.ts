@@ -31,11 +31,8 @@ import { BackendConfigurationService, SDKService, StateService, STFUtils } from 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateLinkComponent } from '../upload/create-link/create-link.component';
-import { UploadFilesDialogComponent } from '../upload/upload-files/upload-files-dialog.component';
-import { UploadTextComponent } from '../upload/upload-text/upload-text.component';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
+import { UploadService } from './upload.service';
 
 interface ListFilters {
   type?: string;
@@ -162,7 +159,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private translation: TranslateService,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
-    private dialog: MatDialog, //FIXME replace old upload dialog with sistema modal service
+    private uploadService: UploadService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -200,25 +197,15 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  upload(type: 'files' | 'folder' | 'link' | 'csv') {
+    this.uploadService.upload(type);
+  }
+
   search() {
     if (!this.searchForm.value.query) {
       this.searchForm.controls.searchIn.setValue('title');
     }
     this.changeQueryParams({ page: undefined });
-  }
-
-  uploadLink() {
-    this.dialog.open(CreateLinkComponent);
-  }
-
-  uploadFiles(folderMode = false) {
-    this.dialog.open(UploadFilesDialogComponent, {
-      data: { folderMode: folderMode },
-    });
-  }
-
-  uploadText() {
-    this.dialog.open(UploadTextComponent);
   }
 
   bulkDelete() {
