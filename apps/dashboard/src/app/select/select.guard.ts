@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SimpleAccount } from '@flaps/core';
-import { SelectService, AccountsKbs } from './select.service';
+import { SDKService, SimpleAccount } from '@flaps/core';
+import { AccountsKbs, SelectService } from './select.service';
 import { NavigationService } from '../services/navigation.service';
-import { SDKService } from '@flaps/core';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +28,7 @@ export class SelectGuard implements CanActivate {
   private checkAccounts(accounts: SimpleAccount[], kbs: AccountsKbs, route: ActivatedRouteSnapshot): boolean | UrlTree {
     // No accounts
     if (accounts.length === 0) {
-      return this.router.createUrlTree(['/setup/account']);
+      return this.router.createUrlTree(['/user/onboarding']);
     }
 
     if (accounts.length === 1) {
