@@ -47,8 +47,6 @@ export class MagicService {
         });
         break;
       case 'gosetupaccount':
-        this.router.navigate(['/setup/account']);
-        break;
       case 'startonboarding':
         this.router.navigate(['/user/onboarding']);
         break;
