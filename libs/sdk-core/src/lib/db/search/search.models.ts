@@ -1,6 +1,8 @@
 import type { ExtractedDataTypes, ResourceProperties } from '../kb';
 import type { FIELD_TYPE, IResource } from '../resource';
 
+export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
+
 export interface SearchOptions {
   // non API-official options
   inTitleOnly?: boolean;
@@ -21,6 +23,7 @@ export interface SearchOptions {
   extracted?: ExtractedDataTypes[];
   field_type?: FIELD_TYPE[];
   shards?: string[];
+  with_status?: ResourceStatus;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
