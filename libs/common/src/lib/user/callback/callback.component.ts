@@ -3,10 +3,11 @@ import { DOCUMENT } from '@angular/common';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
+import { ToastService } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'stf-user-callback',
-  template: '<div class="user-background"></div>',
+  template: '<div class="user-background" style="height: 100%"></div>',
 })
 export class CallbackComponent implements OnInit {
   constructor(
@@ -17,9 +18,17 @@ export class CallbackComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private sdk: SDKService,
     private router: Router,
+    private toaster: ToastService,
   ) {}
 
   ngOnInit() {
+    if (this.route.snapshot.queryParams.error) {
+      this.toaster.openError(this.route.snapshot.queryParams.error_description || 'login.error.oops');
+      this.router.navigate(['../signup'], {
+        relativeTo: this.route,
+      });
+    }
+
     if (this.route.snapshot.data.saml) {
       // Returning from SAML authentication
       this.getSAMLToken();
