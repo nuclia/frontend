@@ -8,6 +8,7 @@
 
   <div class="resource-list-header">
     <form
+      *ngIf="isMainView; else backButton"
       class="search-bar-container"
       [formGroup]="searchForm"
       (ngSubmit)="search()">
@@ -28,16 +29,29 @@
         icon="search"
         formControlName="query"></pa-input>
     </form>
-    <div class="upload-container">
-      <app-upload-button></app-upload-button>
-
+    <ng-template #backButton>
       <pa-button
-        *ngIf="hasSampleData | async"
-        kind="destructive"
+        iconAndText
+        icon="chevron-left"
         aspect="basic"
-        (click)="deleteSampleDataset()">
-        {{ 'onboarding.dataset.delete' | translate }}
+        size="small"
+        (click)="displayStatus('PROCESSED')">
+        {{ 'resource.processed_resources' | translate }}
       </pa-button>
+    </ng-template>
+
+    <div class="upload-container">
+      <ng-container *ngIf="isMainView">
+        <app-upload-button></app-upload-button>
+
+        <pa-button
+          *ngIf="hasSampleData | async"
+          kind="destructive"
+          aspect="basic"
+          (click)="deleteSampleDataset()">
+          {{ 'onboarding.dataset.delete' | translate }}
+        </pa-button>
+      </ng-container>
     </div>
     <div class="status-buttons-container">
       <div
@@ -47,7 +61,9 @@
           icon="clock-dash"
           size="small"
           kind="destructive"
-          aspect="basic">
+          aspect="basic"
+          [active]="statusDisplayed.value === 'PENDING'"
+          (click)="displayStatus('PENDING')">
           {{ 'resource.status-help.pending' | translate }}
         </pa-button>
         <div class="file-count">{{ pendingCount }}</div>
@@ -60,7 +76,9 @@
           icon="circle-cross"
           size="small"
           kind="destructive"
-          aspect="basic">
+          aspect="basic"
+          [active]="statusDisplayed.value === 'ERROR'"
+          (click)="displayStatus('ERROR')">
           {{ 'resource.status-help.failed' | translate }}
         </pa-button>
         <div class="file-count">{{ failedCount }}</div>
@@ -215,23 +233,6 @@
           </td>
         </ng-container>
 
-        <ng-container cdkColumnDef="status">
-          <th
-            cdk-header-cell
-            *cdkHeaderCellDef>
-            {{ 'resource.status' | translate }}
-          </th>
-          <td
-            cdk-cell
-            *cdkCellDef="let row"
-            (mouseenter)="getProcessingStatus(row.resource)"
-            [paTooltip]="statusTooltips[row.resource.id]"
-            paTooltipType="system"
-            [paTooltipOffset]="-16">
-            <nsi-status [status]="row.resource.metadata.status"></nsi-status>
-          </td>
-        </ng-container>
-
         <ng-container cdkColumnDef="language">
           <th
             cdk-header-cell
@@ -245,7 +246,9 @@
           </td>
         </ng-container>
 
-        <ng-container cdkColumnDef="actions">
+        <ng-container
+          cdkColumnDef="actions"
+          *ngIf="showActions">
           <th
             cdk-header-cell
             *cdkHeaderCellDef>
@@ -267,6 +270,7 @@
               class="resource-actions">
               <button
                 mat-menu-item
+                *ngIf="isMainView"
                 (click)="edit(row.resource.id)"
                 [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.edit' | translate }}
@@ -285,6 +289,7 @@
               </button>
               <button
                 mat-menu-item
+                *ngIf="isMainView"
                 (click)="downloadAlgoliaJson(row.resource)">
                 {{ 'generic.download_algolia_json' | translate }}
               </button>

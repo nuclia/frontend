@@ -32,6 +32,7 @@ import {
   LabelSets,
   Resource,
   RESOURCE_STATUS,
+  ResourceStatus,
   resourceToAlgoliaFormat,
   Search,
 } from '@nuclia/core';
@@ -93,9 +94,17 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   statusTooltips: { [resourceId: string]: string } = {};
 
   // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
-  pendingCount = 0;
+  pendingCount = 1;
+  failedCount = 1;
 
-  failedCount = 0;
+  statusDisplayed: BehaviorSubject<ResourceStatus> = new BehaviorSubject<ResourceStatus>('PROCESSED');
+
+  get isMainView() {
+    return this.statusDisplayed.value === 'PROCESSED';
+  }
+  get showActions() {
+    return this.statusDisplayed.value !== 'PENDING';
+  }
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
@@ -112,20 +121,19 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     { value: 'title', label: 'resource.title', visible: true },
     { value: 'classification', label: 'resource.classification', visible: false, optional: true },
     { value: 'modification', label: 'generic.date', visible: true, optional: true },
-    { value: 'status', label: 'resource.status', visible: true },
     { value: 'language', label: 'generic.language', visible: true, optional: true },
   ];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   optionalColumns = this.columns.filter((column) => column.optional);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  displayedColumns = combineLatest([this.isAdminOrContrib, this.columnVisibilityUpdate]).pipe(
-    map((canEdit) => {
+  displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
+    map(([canEdit]) => {
       const columns = this.columns
         .map((column) => (!column.optional || column.visible ? column.value : ''))
         .filter((column) => !!column);
 
-      return canEdit ? ['select', ...columns, 'actions'] : columns;
+      return canEdit && this.showActions ? ['select', ...columns, 'actions'] : columns;
     }),
   );
   labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
@@ -375,6 +383,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
             page_number: page,
             page_size: this.pageSize,
             sort: 'created',
+            with_status: this.statusDisplayed.value,
           }),
           this.labelSets$.pipe(take(1)),
         ]);
@@ -576,5 +585,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   private setLoading(isLoading: boolean) {
     this.isLoading = isLoading;
     this.cdr?.markForCheck();
+  }
+
+  displayStatus(status: ResourceStatus) {
+    this.statusDisplayed.next(status);
+    this.getResources().subscribe();
   }
 }

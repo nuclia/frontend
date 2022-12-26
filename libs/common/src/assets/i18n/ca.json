@@ -413,6 +413,7 @@
 	"resource.entities.time": "Temps",
 	"resource.entities.title": "Insights del recurs",
 	"resource.entities.work_of_art": "Obres",
+	"resource.processed_resources": "Recursos processats",
 	"resource.profile": "Perfil",
 	"resource.resource_page_number": "{{num}} per pàgina",
 	"resource.search.in-resource": "en recurs",

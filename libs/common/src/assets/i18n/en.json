@@ -461,6 +461,7 @@
 	"resource.entities.work_of_art": "Art",
 	"resource.file": "File",
 	"resource.link": "Link",
+	"resource.processed_resources": "Processed resources",
 	"resource.profile": "Profile",
 	"resource.resource_page_number": "{{num}} per page",
 	"resource.search.in-resource": "in resource",
