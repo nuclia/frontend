@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { BackendConfigurationService, SAMLService, SDKService, SsoService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthTokens } from '@nuclia/core';
-import { ToastService } from '@guillotinaweb/pastanaga-angular';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-user-callback',
@@ -18,12 +18,12 @@ export class CallbackComponent implements OnInit {
     @Inject(DOCUMENT) private document: Document,
     private sdk: SDKService,
     private router: Router,
-    private toaster: ToastService,
+    private toaster: SisToastService,
   ) {}
 
   ngOnInit() {
     if (this.route.snapshot.queryParams.error) {
-      this.toaster.openError(this.route.snapshot.queryParams.error_description || 'login.error.oops');
+      this.toaster.error(this.route.snapshot.queryParams.error_description || 'login.error.oops');
       this.router.navigate(['../signup'], {
         relativeTo: this.route,
       });

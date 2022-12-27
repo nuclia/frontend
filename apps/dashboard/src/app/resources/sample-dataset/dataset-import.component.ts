@@ -4,6 +4,7 @@ import { OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
 import { switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-dataset-import',
@@ -34,6 +35,7 @@ export class DatasetImportComponent implements AfterViewInit {
     private sdk: SDKService,
     private router: Router,
     private route: ActivatedRoute,
+    private toaster: SisToastService,
   ) {}
 
   ngAfterViewInit() {
@@ -68,9 +70,14 @@ export class DatasetImportComponent implements AfterViewInit {
         take(1),
         switchMap((kb) => kb.importDataset(this.selectDataset)),
       )
-      .subscribe((result) => {
-        console.log(result);
-        this.router.navigate(['..'], { relativeTo: this.route });
+      .subscribe({
+        next: (result) => {
+          console.log(result);
+          this.router.navigate(['..'], { relativeTo: this.route });
+        },
+        error: () => {
+          this.toaster.error('onboarding.dataset.import_failed');
+        },
       });
   }
 }

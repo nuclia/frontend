@@ -4,7 +4,8 @@ import { ReCaptchaV3Service } from 'ngx-captcha';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, LoginService, MIN_PASSWORD_LENGTH, ResetData } from '@flaps/core';
 import { SamePassword } from '../../validators/form.validator';
-import { IErrorMessages, ToastService } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-reset',
@@ -46,7 +47,7 @@ export class ResetComponent {
     private reCaptchaV3Service: ReCaptchaV3Service,
     private config: BackendConfigurationService,
     private cdr: ChangeDetectorRef,
-    private toaster: ToastService,
+    private toaster: SisToastService,
   ) {
     this.route.queryParams.subscribe((params) => {
       this.magicToken = params.token;
@@ -66,7 +67,7 @@ export class ResetComponent {
       const resetInfo = new ResetData(this.resetForm.getRawValue().password, this.magicToken);
       this.loginService.reset(resetInfo, token).subscribe({
         complete: () => {
-          this.toaster.openSuccess('reset.password_reset');
+          this.toaster.success('reset.password_reset');
           this.resetting = false;
           if (!this.oauth) {
             this.goLogin();
