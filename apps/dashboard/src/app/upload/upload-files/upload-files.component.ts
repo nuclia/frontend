@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
 import { DroppedFile, StateService, STFTrackingService, STFUtils } from '@flaps/core';
-import { FileWithMetadata, ICreateResource, Classification } from '@nuclia/core';
+import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, UploadService } from '../upload.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -17,7 +17,7 @@ const GENERAL_LABELSET = 'General';
 })
 export class UploadFilesComponent {
   @Input() folderMode: boolean = false;
-  @Output() close = new EventEmitter<void>();
+  @Output() close = new EventEmitter<{ cancel: boolean }>();
   @Output() upload = new EventEmitter<void>();
 
   files: FileWithMetadata[] = [];
@@ -162,10 +162,9 @@ export class UploadFilesComponent {
           const labelset = STFUtils.generateUniqueSlug(parts[0], []);
           classifications = parts.slice(1, -1).map((label) => ({ labelset, label }));
         }
-        const payload: ICreateResource = {
+        file.payload = {
           usermetadata: { classifications },
         };
-        file.payload = payload;
         return file;
       });
     } else if (this.selectedLabels.length > 0) {
@@ -176,5 +175,9 @@ export class UploadFilesComponent {
       });
     }
     return files;
+  }
+
+  cancel() {
+    this.close.emit({ cancel: true });
   }
 }

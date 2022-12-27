@@ -3,7 +3,7 @@
     class="close-button"
     icon="cross"
     aspect="basic"
-    (click)="close.emit()">
+    (click)="cancel()">
     {{ 'generic.close' | translate }}
   </pa-button>
 
@@ -175,7 +175,7 @@
     fxLayoutGap="16px">
     <pa-button
       aspect="basic"
-      (click)="close.emit()">
+      (click)="cancel()">
       {{ 'generic.cancel' | translate }}
     </pa-button>
 

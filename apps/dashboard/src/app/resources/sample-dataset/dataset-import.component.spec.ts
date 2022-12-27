@@ -5,6 +5,8 @@ import { MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import { UploadService } from '../upload.service';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule, TranslatePipe } from '@guillotinaweb/pastanaga-angular';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('DatasetImportComponent', () => {
   let component: DatasetImportComponent;
@@ -23,7 +25,13 @@ describe('DatasetImportComponent', () => {
             : `translate--${key}`;
         }),
       ],
-      providers: [MockProvider(UploadService, { upload: jest.fn() }), MockProvider(SDKService)],
+      providers: [
+        MockProvider(UploadService, {
+          upload: jest.fn(() => ({ afterClosed: () => of(null) } as any)),
+        }),
+        MockProvider(SDKService),
+        MockProvider(ActivatedRoute),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DatasetImportComponent);
@@ -52,4 +60,6 @@ describe('DatasetImportComponent', () => {
     fixture.debugElement.nativeElement.querySelector('a[href="#csv"]').click();
     expect(uploadService.upload).toHaveBeenCalledWith('csv');
   }));
+
+  it('should navigate to resource list after closing upload dialog', () => {});
 });

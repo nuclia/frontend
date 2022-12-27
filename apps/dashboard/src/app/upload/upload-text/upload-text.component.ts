@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat } from '@nuclia/core';
@@ -29,7 +29,7 @@ export class UploadTextComponent {
   ) {}
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ cancel: true });
   }
 
   readCSV(event: Event) {
@@ -62,9 +62,7 @@ export class UploadTextComponent {
           this.selectedLabels,
         ),
       ),
-    ).subscribe(() => {
-      this.close();
-    });
+    ).subscribe(() => this.dialogRef.close());
   }
 
   isValidCSV(data: string[][]) {

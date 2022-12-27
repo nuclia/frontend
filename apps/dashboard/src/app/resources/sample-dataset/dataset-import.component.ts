@@ -49,7 +49,11 @@ export class DatasetImportComponent implements AfterViewInit {
             this.uploadService
               .upload(uploadType as UploadType)
               .afterClosed()
-              .subscribe(() => this.router.navigate(['..'], { relativeTo: this.route }));
+              .subscribe((data) => {
+                if (!data || !data.cancel) {
+                  this.router.navigate(['..'], { relativeTo: this.route });
+                }
+              });
           } else {
             console.error(`Unknown upload type ${uploadType}, check "onboarding.dataset.upload-links" translation`);
           }

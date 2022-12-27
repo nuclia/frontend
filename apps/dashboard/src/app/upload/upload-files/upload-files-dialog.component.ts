@@ -1,5 +1,5 @@
-import { Component, Inject, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface UploadFileDialogData {
   folderMode: boolean;
@@ -13,7 +13,7 @@ export interface UploadFileDialogData {
         *ngIf="!showProgress"
         [folderMode]="data.folderMode"
         (upload)="onUpload()"
-        (close)="close()"></app-upload-files>
+        (close)="close($event)"></app-upload-files>
       <app-upload-progress
         *ngIf="showProgress"
         (close)="close()"></app-upload-progress>
@@ -33,7 +33,7 @@ export class UploadFilesDialogComponent {
     this.showProgress = true;
   }
 
-  close(): void {
-    this.dialogRef.close();
+  close($event?: { cancel: boolean }): void {
+    this.dialogRef.close($event);
   }
 }
