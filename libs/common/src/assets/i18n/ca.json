@@ -413,6 +413,8 @@
 	"resource.entities.time": "Temps",
 	"resource.entities.title": "Insights del recurs",
 	"resource.entities.work_of_art": "Obres",
+	"resource.failed_resources_popover": "El processament dels fitxers ha fallat",
+	"resource.pending_resources_popover": "Expedients pendents de processar",
 	"resource.processed_resources": "Recursos processats",
 	"resource.profile": "Perfil",
 	"resource.resource_page_number": "{{num}} per pàgina",
