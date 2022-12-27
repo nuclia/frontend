@@ -16,7 +16,7 @@ export class OntologiesComponent {
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   routes = this.isAdminOrContrib.pipe(
     filter((yes) => yes),
-    switchMap(() => this.labelsService.labels),
+    switchMap(() => this.labelsService.labelSets),
     filter((labels) => !!labels),
     map((labels) => this.createRoutes(labels!)),
   );

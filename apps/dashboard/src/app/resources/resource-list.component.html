@@ -104,14 +104,16 @@
         *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
         {{ 'resource.selected_count' | translate: { num: selection.selected.length || '' } }}
 
-        <app-label-dropdown
-          [labelSets]="labelSets$ | async"
-          (selectionChange)="updateLabelList($event)"
-          (close)="addLabelsToSelection()"
-          aspect="basic"
-          size="small">
-          {{ 'resource.add_labels' | translate }}
-        </app-label-dropdown>
+        <ng-container *ngIf="hasLabelSets | async">
+          <app-label-dropdown
+            [labelSets]="labelSets$ | async"
+            (selectionChange)="updateLabelList($event)"
+            (close)="addLabelsToSelection()"
+            aspect="basic"
+            size="small">
+            {{ 'resource.add_labels' | translate }}
+          </app-label-dropdown>
+        </ng-container>
 
         <pa-button
           *ngIf="selection.selected.length > 0"

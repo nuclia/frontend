@@ -42,6 +42,7 @@ import { ResourceViewerService } from './resource-viewer.service';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { UploadService } from './upload.service';
 import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
+import { LabelsService } from '../services/labels.service';
 
 interface ListFilters {
   type?: string;
@@ -78,6 +79,10 @@ const DEFAULT_PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
+  private sampleDatasetService = inject(SampleDatasetService);
+  hasSampleData = this.sampleDatasetService.hasSampleResources();
+  hasLabelSets = inject(LabelsService).hasLabelSets();
+
   data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
   totalResources = 0;
@@ -88,8 +93,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   refreshing = true;
   statusTooltips: { [resourceId: string]: string } = {};
 
-  private sampleDatasetService = inject(SampleDatasetService);
-  hasSampleData = this.sampleDatasetService.hasSampleResources();
   // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
   pendingCount = 0;
 
@@ -148,7 +151,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
         features="${features}"
-        lang="${this.translation.currentLang}"
+        lang="${this.translate.currentLang}"
       ></nuclia-viewer>`);
     }),
   );
@@ -168,7 +171,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private stateService: StateService,
     private toaster: SisToastService,
     private sanitized: DomSanitizer,
-    private translation: TranslateService,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
     private uploadService: UploadService,
