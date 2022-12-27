@@ -15,9 +15,9 @@ import {
 } from 'rxjs';
 import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
-import { ToastService } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TickOptions } from '../../components/charts/chart-utils';
+import { SisToastService } from '@nuclia/sistema';
 
 type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.DOCS_NO_MEDIA;
 
@@ -65,7 +65,7 @@ export class AccountHomeComponent {
     switchMap(([account, statsType]) =>
       this.sdk.nuclia.db.getStats(account!.slug, statsType, undefined, StatsPeriod.MONTH).pipe(
         catchError(() => {
-          this.toastService.openError(this.translate.instant(`account.chart_error_${statsType}`));
+          this.toastService.error(this.translate.instant(`account.chart_error_${statsType}`));
           return of([]);
         }),
       ),
@@ -113,7 +113,7 @@ export class AccountHomeComponent {
   );
   pending = combineLatest([this.selectedTab, this.account, this.pendingRange]).pipe(
     filter(([tab]) => tab === 'pending'),
-    switchMap(([tab, account, pendingRange]) =>
+    switchMap(([, account, pendingRange]) =>
       this.sdk.nuclia.db.getProcessingStats(pendingRange, account!.id).pipe(
         map((stats) => {
           let xFormat: string;
@@ -131,7 +131,7 @@ export class AccountHomeComponent {
           );
         }),
         catchError(() => {
-          this.toastService.openError(this.translate.instant(`account.chart_error_processing_status`));
+          this.toastService.error(this.translate.instant(`account.chart_error_processing_status`));
           return of([]);
         }),
       ),
@@ -148,7 +148,7 @@ export class AccountHomeComponent {
     private sdk: SDKService,
     private stateService: StateService,
     private appService: AppService,
-    private toastService: ToastService,
+    private toastService: SisToastService,
     private translate: TranslateService,
     private tracking: STFTrackingService,
   ) {}

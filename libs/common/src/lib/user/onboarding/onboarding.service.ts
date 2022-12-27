@@ -92,7 +92,7 @@ export class OnboardingService {
         }),
       )
       .subscribe(({ accountSlug, kbSlug }) => {
-        this.router.navigate([`/at/${accountSlug}/${kbSlug}/resources`]);
+        this.router.navigate([`/at/${accountSlug}/${kbSlug}/resources/dataset`]);
       });
   }
 

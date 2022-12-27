@@ -1,4 +1,12 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -31,11 +39,10 @@ import { BackendConfigurationService, SDKService, StateService, STFUtils } from 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
-import { MatDialog } from '@angular/material/dialog';
-import { CreateLinkComponent } from '../upload/create-link/create-link.component';
-import { UploadFilesDialogComponent } from '../upload/upload-files/upload-files-dialog.component';
-import { UploadTextComponent } from '../upload/upload-text/upload-text.component';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
+import { UploadService } from './upload.service';
+import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
+import { LabelsService } from '../services/labels.service';
 
 interface ListFilters {
   type?: string;
@@ -72,6 +79,10 @@ const DEFAULT_PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
+  private sampleDatasetService = inject(SampleDatasetService);
+  hasSampleData = this.sampleDatasetService.hasSampleResources();
+  hasLabelSets = inject(LabelsService).hasLabelSets();
+
   data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
   totalResources = 0;
@@ -84,6 +95,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
   pendingCount = 0;
+
   failedCount = 0;
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
@@ -97,7 +109,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       ),
     ),
   );
-
   columns = [
     { value: 'title', label: 'resource.title', visible: true },
     { value: 'classification', label: 'resource.classification', visible: false, optional: true },
@@ -140,10 +151,11 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
         features="${features}"
-        lang="${this.translation.currentLang}"
+        lang="${this.translate.currentLang}"
       ></nuclia-viewer>`);
     }),
   );
+
   searchForm = new FormGroup({
     searchIn: new FormControl<'title' | 'resource'>('title'),
     query: new FormControl<string>(''),
@@ -159,10 +171,9 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private stateService: StateService,
     private toaster: SisToastService,
     private sanitized: DomSanitizer,
-    private translation: TranslateService,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
-    private dialog: MatDialog, //FIXME replace old upload dialog with sistema modal service
+    private uploadService: UploadService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -200,25 +211,15 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  upload(type: 'files' | 'folder' | 'link' | 'csv') {
+    this.uploadService.upload(type);
+  }
+
   search() {
     if (!this.searchForm.value.query) {
       this.searchForm.controls.searchIn.setValue('title');
     }
     this.changeQueryParams({ page: undefined });
-  }
-
-  uploadLink() {
-    this.dialog.open(CreateLinkComponent);
-  }
-
-  uploadFiles(folderMode = false) {
-    this.dialog.open(UploadFilesDialogComponent, {
-      data: { folderMode: folderMode },
-    });
-  }
-
-  uploadText() {
-    this.dialog.open(UploadTextComponent);
   }
 
   bulkDelete() {
@@ -546,6 +547,27 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
           this.currentLabelList = [];
         });
     }
+  }
+
+  deleteSampleDataset() {
+    this.toaster.info('onboarding.dataset.delete_in_progress');
+    this.sampleDatasetService
+      .deleteSampleDataset()
+      .pipe(
+        tap((count) => {
+          if (count.error === 0) {
+            this.toaster.success('onboarding.dataset.delete_successful');
+          } else if (count.success > 0) {
+            this.toaster.warning(
+              this.translate.instant('onboarding.dataset.delete_partially_successful', { error: count.error }),
+            );
+          } else {
+            this.toaster.error('onboarding.dataset.delete_failed');
+          }
+        }),
+        switchMap(() => this.getResources()),
+      )
+      .subscribe();
   }
 
   private mergeExistingAndSelectedLabels(classifications: Classification[] | undefined): Classification[] {

@@ -7,6 +7,7 @@
 - Add support for NER training
 - Add method to test if a trained model is available
 - Add `TextFieldFormat` type
+- Add `importDataset` method to `WritableKnowledgeBox`
 
 # 1.1.0 (2022-12-08)
 

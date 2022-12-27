@@ -40,25 +40,33 @@
       <pa-dropdown #uploadMenu>
         <pa-option
           icon="file"
-          (selectOption)="uploadFiles()">
+          (selectOption)="upload('files')">
           {{ 'upload.files' | translate }}
         </pa-option>
         <pa-option
           icon="folder"
-          (selectOption)="uploadFiles(true)">
+          (selectOption)="upload('folder')">
           {{ 'upload.folder' | translate }}
         </pa-option>
         <pa-option
           icon="link"
-          (selectOption)="uploadLink()">
+          (selectOption)="upload('link')">
           {{ 'upload.link' | translate }}
         </pa-option>
         <pa-option
           icon="file"
-          (selectOption)="uploadText()">
+          (selectOption)="upload('csv')">
           {{ 'upload.upload_from_csv' | translate }}
         </pa-option>
       </pa-dropdown>
+
+      <pa-button
+        *ngIf="hasSampleData | async"
+        kind="destructive"
+        aspect="basic"
+        (click)="deleteSampleDataset()">
+        {{ 'onboarding.dataset.delete' | translate }}
+      </pa-button>
     </div>
     <div class="status-buttons-container">
       <div
@@ -96,14 +104,16 @@
         *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
         {{ 'resource.selected_count' | translate: { num: selection.selected.length || '' } }}
 
-        <app-label-dropdown
-          [labelSets]="labelSets$ | async"
-          (selectionChange)="updateLabelList($event)"
-          (close)="addLabelsToSelection()"
-          aspect="basic"
-          size="small">
-          {{ 'resource.add_labels' | translate }}
-        </app-label-dropdown>
+        <ng-container *ngIf="hasLabelSets | async">
+          <app-label-dropdown
+            [labelSets]="labelSets$ | async"
+            (selectionChange)="updateLabelList($event)"
+            (close)="addLabelsToSelection()"
+            aspect="basic"
+            size="small">
+            {{ 'resource.add_labels' | translate }}
+          </app-label-dropdown>
+        </ng-container>
 
         <pa-button
           *ngIf="selection.selected.length > 0"

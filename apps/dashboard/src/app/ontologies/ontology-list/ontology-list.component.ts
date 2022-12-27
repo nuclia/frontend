@@ -18,13 +18,13 @@ export class OntologyListComponent implements OnDestroy {
   labelSets?: LabelSets;
 
   constructor(private labelsService: LabelsService, private cdr: ChangeDetectorRef) {
-    this.labelsService.labels
+    this.labelsService.labelSets
       .pipe(
         filter((labels) => !!labels),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((labels) => {
-        this.labelSets = labels!;
+      .subscribe((labelSets) => {
+        this.labelSets = labelSets as LabelSets;
         this.cdr?.markForCheck();
       });
   }

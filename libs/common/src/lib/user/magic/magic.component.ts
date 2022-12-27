@@ -1,9 +1,8 @@
 import { MagicAction, MagicActionError, TokenService } from '@flaps/core';
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
 import { MagicService } from './magic.service';
+import { Observable, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'stf-magic',

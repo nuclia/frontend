@@ -1,8 +1,7 @@
-import { Component, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { STFTrackingService } from '@flaps/core';
-import { SDKService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { Observable, of, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
@@ -85,6 +84,6 @@ export class CreateLinkComponent {
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.dialogRef.close({ cancel: true });
   }
 }

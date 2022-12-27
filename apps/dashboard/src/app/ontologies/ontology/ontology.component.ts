@@ -69,7 +69,7 @@ export class OntologyComponent implements OnDestroy {
           this.ontologySlug = params.ontology;
           this.addNew = params.ontology === undefined;
         }),
-        switchMap(() => this.labelsService.labels),
+        switchMap(() => this.labelsService.labelSets),
         filter((labels) => !!labels),
         filter((labels) => !this.ontologySlug || !!(this.ontologySlug && labels![this.ontologySlug])),
         takeUntil(this.unsubscribeAll),

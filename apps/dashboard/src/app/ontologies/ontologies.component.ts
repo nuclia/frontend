@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, switchMapTo } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { LabelsService } from '../services/labels.service';
 import { LabelSets } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { RouteInfo } from '../components/section-navbar';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-ontologies',
@@ -15,7 +16,7 @@ export class OntologiesComponent {
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   routes = this.isAdminOrContrib.pipe(
     filter((yes) => yes),
-    switchMapTo(this.labelsService.labels),
+    switchMap(() => this.labelsService.labelSets),
     filter((labels) => !!labels),
     map((labels) => this.createRoutes(labels!)),
   );
