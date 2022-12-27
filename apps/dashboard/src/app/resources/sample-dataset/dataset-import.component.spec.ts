@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DatasetImportComponent } from './dataset-import.component';
 import { MockModule, MockPipe, MockProvider } from 'ng-mocks';
-import { UploadService } from '../upload.service';
+import { UploadDialogService } from '../upload-dialog.service';
 import { SDKService } from '@flaps/core';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule, TranslatePipe } from '@guillotinaweb/pastanaga-angular';
 import { ActivatedRoute } from '@angular/router';
@@ -12,7 +12,7 @@ describe('DatasetImportComponent', () => {
   let component: DatasetImportComponent;
   let fixture: ComponentFixture<DatasetImportComponent>;
 
-  let uploadService: UploadService;
+  let uploadService: UploadDialogService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -26,7 +26,7 @@ describe('DatasetImportComponent', () => {
         }),
       ],
       providers: [
-        MockProvider(UploadService, {
+        MockProvider(UploadDialogService, {
           upload: jest.fn(() => ({ afterClosed: () => of(null) } as any)),
         }),
         MockProvider(SDKService),
@@ -36,7 +36,7 @@ describe('DatasetImportComponent', () => {
 
     fixture = TestBed.createComponent(DatasetImportComponent);
     component = fixture.componentInstance;
-    uploadService = TestBed.inject(UploadService);
+    uploadService = TestBed.inject(UploadDialogService);
 
     fixture.detectChanges();
   });

@@ -6,6 +6,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,6 +15,7 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  concatMap,
   distinctUntilKeyChanged,
   forkJoin,
   from,
@@ -22,6 +24,8 @@ import {
   of,
   Subject,
   take,
+  takeWhile,
+  timer,
 } from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -41,9 +45,11 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
-import { UploadService } from './upload.service';
+import { UploadDialogService } from './upload-dialog.service';
 import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
+import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
+import { LOCAL_STORAGE } from '@ng-web-apis/common';
 
 interface ListFilters {
   type?: string;
@@ -72,6 +78,7 @@ interface ResourceWithLabels {
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
 const DEFAULT_PAGE_SIZE = 20;
+const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
 @Component({
   selector: 'app-resource-list',
@@ -80,6 +87,10 @@ const DEFAULT_PAGE_SIZE = 20;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
+  @ViewChild('pendingPopoverDirective') pendingPopoverDirective?: PopoverDirective;
+  @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
+
+  private localStorage = inject(LOCAL_STORAGE);
   private sampleDatasetService = inject(SampleDatasetService);
   hasSampleData = this.sampleDatasetService.hasSampleResources();
   hasLabelSets = inject(LabelsService).hasLabelSets();
@@ -94,9 +105,28 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   refreshing = true;
   statusTooltips: { [resourceId: string]: string } = {};
 
-  // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
-  pendingCount = 1;
-  failedCount = 1;
+  private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
+    pending: 0,
+    error: 0,
+  });
+  statusCount = this._statusCount.asObservable().pipe(
+    tap((count) => {
+      if (this.localStorage.getItem(POPOVER_DISPLAYED) !== 'done' && (count.error > 0 || count.pending > 0)) {
+        // we cannot open the two popovers at the same time, so error takes priority
+        setTimeout(() => {
+          const popover = count.error > 0 ? this.failedPopoverDirective : this.pendingPopoverDirective;
+          popover?.toggle();
+          this.localStorage.setItem(POPOVER_DISPLAYED, 'done');
+          // Close after 5s if still visible
+          setTimeout(() => {
+            if (popover?.popupDirective.paPopup?.isDisplayed) {
+              popover.toggle();
+            }
+          }, 5000);
+        });
+      }
+    }),
+  );
 
   statusDisplayed: BehaviorSubject<ResourceStatus> = new BehaviorSubject<ResourceStatus>('PROCESSED');
 
@@ -181,7 +211,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
-    private uploadService: UploadService,
+    private uploadDialogService: UploadDialogService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -200,6 +230,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getResources().subscribe();
+    this.startPollingResourceStatus();
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
       this.totalResources = counters.resources;
       this.refreshing = false;
@@ -220,7 +251,11 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   upload(type: 'files' | 'folder' | 'link' | 'csv') {
-    this.uploadService.upload(type);
+    this.uploadDialogService
+      .upload(type)
+      .afterClosed()
+      .pipe(filter((data) => !data || !data.cancel))
+      .subscribe(() => this.startPollingResourceStatus());
   }
 
   search() {
@@ -263,7 +298,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     resource
       .reprocess()
       .pipe(
-        delay(500), // wait for the reprocess to be effective
+        delay(500), // wait for reprocess to be effective
         switchMap(() => this.getResources()),
       )
       .subscribe();
@@ -502,23 +537,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  getProcessingStatus(resource: Resource) {
-    if (resource.metadata?.status === RESOURCE_STATUS.PENDING) {
-      this.sdk.nuclia.db.getProcessingStatus(this.stateService.getAccount()?.id).subscribe((status) => {
-        const last_delivered_seqid =
-          resource.queue === 'private' ? status.account?.last_delivered_seqid : status.shared?.last_delivered_seqid;
-        if (last_delivered_seqid && resource.last_account_seq !== undefined) {
-          const count = resource.last_account_seq - last_delivered_seqid;
-          const statusKey = count > 0 ? 'resource.status_pending' : 'resource.status_processing';
-          this.statusTooltips[resource.id] = this.translate.instant(statusKey, { count });
-        } else {
-          this.statusTooltips[resource.id] = this.translate.instant('resource.status_unknown');
-        }
-        this.cdr.detectChanges();
-      });
-    }
-  }
-
   updateLabelList($event: Classification[]) {
     this.currentLabelList = $event;
   }
@@ -596,5 +614,31 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   displayStatus(status: ResourceStatus) {
     this.statusDisplayed.next(status);
     this.getResources().subscribe();
+  }
+
+  private getResourceStatusCount(): Observable<{ pending: number; error: number }> {
+    const statusFacet = '/n/s';
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.search('', [Search.Features.DOCUMENT], {
+          faceted: [statusFacet],
+        }),
+      ),
+      map((results) => ({
+        pending: results.fulltext?.facets[statusFacet][`${statusFacet}/PENDING`] || 0,
+        error: results.fulltext?.facets[statusFacet][`${statusFacet}/ERROR`] || 0,
+      })),
+    );
+  }
+
+  private startPollingResourceStatus() {
+    timer(0, 30000)
+      .pipe(
+        concatMap(() => this.getResourceStatusCount().pipe(tap((count) => this._statusCount.next(count)))),
+        takeWhile((count) => count.pending > 0),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe();
   }
 }

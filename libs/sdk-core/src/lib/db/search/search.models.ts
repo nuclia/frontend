@@ -86,10 +86,7 @@ export namespace Search {
   }
 
   export interface FacetsResult {
-    [key: string]: {
-      tag: string;
-      total: number;
-    };
+    [key: string]: any;
   }
 
   export interface Paragraph {

@@ -85,33 +85,41 @@
     <div class="status-buttons-container">
       <div
         class="status-button"
-        *ngIf="pendingCount > 0">
+        *ngIf="(statusCount | async)?.pending > 0">
         <pa-button
           icon="clock-dash"
           size="small"
           kind="destructive"
           aspect="basic"
+          #pendingPopoverDirective="paPopoverRef"
+          [paPopover]="pendingPopover"
+          paPopoverOffset="0px"
           [active]="statusDisplayed.value === 'PENDING'"
           (click)="displayStatus('PENDING')">
           {{ 'resource.status-help.pending' | translate }}
         </pa-button>
-        <div class="file-count">{{ pendingCount }}</div>
+        <div class="file-count">{{ (statusCount | async).pending }}</div>
       </div>
+      <pa-popover #pendingPopover>{{ 'resource.pending_resources_popover' | translate }}</pa-popover>
 
       <div
         class="status-button"
-        *ngIf="failedCount > 0">
+        *ngIf="(statusCount | async)?.error > 0">
         <pa-button
           icon="circle-cross"
           size="small"
           kind="destructive"
           aspect="basic"
+          #failedPopoverDirective="paPopoverRef"
+          [paPopover]="failedPopover"
+          paPopoverOffset="0px"
           [active]="statusDisplayed.value === 'ERROR'"
           (click)="displayStatus('ERROR')">
           {{ 'resource.status-help.failed' | translate }}
         </pa-button>
-        <div class="file-count">{{ failedCount }}</div>
+        <div class="file-count">{{ (statusCount | async).error }}</div>
       </div>
+      <pa-popover #failedPopover>{{ 'resource.failed_resources_popover' | translate }}</pa-popover>
     </div>
   </div>
 

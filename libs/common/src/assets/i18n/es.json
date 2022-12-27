@@ -413,6 +413,8 @@
 	"resource.entities.time": "Tiempo",
 	"resource.entities.title": "Información clave del recurso",
 	"resource.entities.work_of_art": "Obras",
+	"resource.failed_resources_popover": "Procesamiento de archivos fallidos",
+	"resource.pending_resources_popover": "Expedientes pendientes de tramitar",
 	"resource.processed_resources": "Recursos procesados",
 	"resource.profile": "Perfil",
 	"resource.resource_page_number": "{{num}} por página",
