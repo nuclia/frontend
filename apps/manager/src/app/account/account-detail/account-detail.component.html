@@ -64,7 +64,7 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>Available stashes</mat-label>
+            <mat-label>Available Knowledge boxes</mat-label>
             <input
               matInput
               type="number"
@@ -217,13 +217,13 @@
             </ul>
           </div>
         </mat-tab>
-        <mat-tab label="Stashes">
+        <mat-tab label="Knowledge boxes">
           <div
             fxLayout="column"
             fxLayoutAlign="start start"
             class="content_area"
             *ngIf="this.account && this.account.stashes">
-            <h3>Stashs {{ this.account.type }} max:{{ this.account.stashes.max_stashes }}</h3>
+            <h3>Knowledge boxes {{ this.account.type }} max:{{ this.account.stashes.max_stashes }}</h3>
             <mat-accordion>
               <mat-expansion-panel
                 class="stash"
@@ -234,8 +234,10 @@
                   </mat-panel-title>
                   <mat-panel-description>
                     {{ stash.title }}
+                    – {{ stash.id }}
                     <ng-container *ngIf="kbResourceCount[stash.id] !== undefined">
-                      – {{ kbResourceCount[stash.id] }} resources
+                      <br />
+                      {{ kbResourceCount[stash.id] }} resources
                     </ng-container>
                   </mat-panel-description>
                 </mat-expansion-panel-header>
