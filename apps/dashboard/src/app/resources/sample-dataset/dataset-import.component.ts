@@ -1,5 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
-import { UploadService, UploadType } from '../upload.service';
+import { UploadDialogService, UploadType } from '../upload-dialog.service';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -33,7 +33,7 @@ export class DatasetImportComponent implements AfterViewInit {
   importing = false;
 
   constructor(
-    private uploadService: UploadService,
+    private uploadService: UploadDialogService,
     private sdk: SDKService,
     private router: Router,
     private route: ActivatedRoute,
