@@ -100,7 +100,9 @@
         </pa-button>
         <div class="file-count">{{ (statusCount | async).pending }}</div>
       </div>
-      <pa-popover #pendingPopover>{{ 'resource.pending_resources_popover' | translate }}</pa-popover>
+      <pa-popover #pendingPopover>
+        <div class="popover-content">{{ 'resource.pending_resources_popover' | translate }}</div>
+      </pa-popover>
 
       <div
         class="status-button"
@@ -119,7 +121,9 @@
         </pa-button>
         <div class="file-count">{{ (statusCount | async).error }}</div>
       </div>
-      <pa-popover #failedPopover>{{ 'resource.failed_resources_popover' | translate }}</pa-popover>
+      <pa-popover #failedPopover>
+        <div class="popover-content">{{ 'resource.failed_resources_popover' | translate }}</div>
+      </pa-popover>
     </div>
   </div>
 
@@ -151,7 +155,7 @@
         </pa-button>
       </div>
       <div class="table-options">
-        <div>
+        <div *ngIf="isMainView">
           <nsi-dropdown-button
             size="small"
             aspect="basic"
@@ -267,6 +271,19 @@
             cdk-cell
             *cdkCellDef="let row">
             {{ row.resource.created | formatDate: { default: true } }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="status">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            Status
+          </th>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            {{ row.status }}
           </td>
         </ng-container>
 
