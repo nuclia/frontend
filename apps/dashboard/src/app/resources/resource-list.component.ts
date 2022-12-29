@@ -655,8 +655,8 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         }),
       ),
       map((results) => ({
-        pending: results.fulltext?.facets[statusFacet][`${statusFacet}/PENDING`] || 0,
-        error: results.fulltext?.facets[statusFacet][`${statusFacet}/ERROR`] || 0,
+        pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
+        error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
       })),
     );
   }
