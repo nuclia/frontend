@@ -438,14 +438,18 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       }),
       map(([kb, results, labelSets]) => {
         // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
-        if (hasQuery && results.fulltext) {
-          this.resultsLength = results.fulltext.next_page || results.fulltext.page_number > 0 ? this.totalResources : 1;
-        } else {
-          this.resultsLength = this.totalResources;
-        }
         this.data = titleOnly
           ? this.getTitleOnlyData(results, kb.id, labelSets)
           : this.getResourceData(query, results, kb.id, labelSets);
+        if (hasQuery && results.fulltext) {
+          this.resultsLength =
+            results.fulltext.next_page || results.fulltext.page_number > 0
+              ? this.totalResources || this.data.length
+              : 1;
+        } else {
+          // totalResources can be 0 while we have resources (specially when we import dataset) because counters is asynchronous and relies on indexing
+          this.resultsLength = this.totalResources || this.data.length;
+        }
         this.clearSelected();
         this.setLoading(false);
         return results;
