@@ -11,7 +11,7 @@
       (valueChange)="selectDataset = $event"></pa-select>
 
     <pa-button
-      [disabled]="!selectDataset"
+      [disabled]="!selectDataset || importing"
       (click)="importDataset()">
       {{ 'onboarding.dataset.import' | translate }}
     </pa-button>

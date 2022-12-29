@@ -321,6 +321,8 @@
 	"onboarding.dataset.description": "La forma más rápida de comenzar y explorar cómo funciona Nuclia es importar un conjunto de datos de muestra. Podrás eliminarlo fácilmente en cualquier momento.",
 	"onboarding.dataset.import": "Datos de importacion",
 	"onboarding.dataset.import_failed": "La importación del conjunto de datos de muestra falló",
+	"onboarding.dataset.importing_description": "Esto puede tardar unos segundos... ¡Ya casi llegamos! 🙃",
+	"onboarding.dataset.importing_title": "Importando conjunto de datos",
 	"onboarding.dataset.title": "Comience a usar Nuclia con datos de muestra",
 	"onboarding.dataset.upload-links": "También puede cargar sus propios <a href=\"#files\">archivos</a>, <a href=\"#folder\">carpetas</a>, <a href=\"#link\">enlaces</a> o <a href=\"#csv\">agregar recursos desde un CSV</a>. Tenga en cuenta que procesar, categorizar e indexar el contenido puede llevar algún tiempo.",
 	"onboarding.get_started": "Empezar",

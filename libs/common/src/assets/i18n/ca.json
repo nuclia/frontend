@@ -321,6 +321,8 @@
 	"onboarding.dataset.description": "La manera més ràpida de començar i explorar com funciona Nuclia és importar un conjunt de dades de mostra. Podreu suprimir-lo fàcilment en qualsevol moment.",
 	"onboarding.dataset.import": "Importa dades",
 	"onboarding.dataset.import_failed": "La importació del conjunt de dades de mostra ha fallat",
+	"onboarding.dataset.importing_description": "Això pot trigar uns segons... Gairebé allà! 🙃",
+	"onboarding.dataset.importing_title": "Importació del conjunt de dades",
 	"onboarding.dataset.title": "Comenceu a utilitzar Nuclia amb dades de mostra",
 	"onboarding.dataset.upload-links": "També podeu penjar els vostres propis <a href=\"#files\">fitxers</a>, <a href=\"#folder\">carpetes</a>, <a href=\"#link\">enllaços</a> o <a href=\"#csv\">afegir recursos des d'un CSV</a>. Tingueu en compte que processar, categoritzar i indexar el contingut pot trigar una mica.",
 	"onboarding.get_started": "Començar",
