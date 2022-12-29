@@ -363,6 +363,8 @@
 	"onboarding.dataset.description": "The fastest way to get started and explore how Nuclia works is to import a sample dataset. You'll be able to easily delete it at any time.",
 	"onboarding.dataset.import": "Import data",
 	"onboarding.dataset.import_failed": "Sample dataset import failed",
+	"onboarding.dataset.importing_description": "This can take a few seconds… Almost there! 🙃",
+	"onboarding.dataset.importing_title": "Importing dataset",
 	"onboarding.dataset.title": "Start using Nuclia with sample data",
 	"onboarding.dataset.upload-links": "You can also upload your own <a href=\"#files\">files</a>, <a href=\"#folder\">folders</a>, <a href=\"#link\">links</a> or <a href=\"#csv\">add resources from a CSV</a>. Be aware that processing, categorizing and indexing the content can take some time.",
 	"onboarding.get_started": "Get started",

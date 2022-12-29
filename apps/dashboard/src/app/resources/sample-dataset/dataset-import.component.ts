@@ -1,10 +1,11 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { UploadService, UploadType } from '../upload.service';
-import { OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
-import { switchMap, take } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { LoadingModalComponent } from './loading-modal/loading-modal.component';
+import { switchMap, take } from 'rxjs';
 
 @Component({
   selector: 'app-dataset-import',
@@ -29,6 +30,7 @@ export class DatasetImportComponent implements AfterViewInit {
   ];
 
   selectDataset = '';
+  importing = false;
 
   constructor(
     private uploadService: UploadService,
@@ -36,6 +38,7 @@ export class DatasetImportComponent implements AfterViewInit {
     private router: Router,
     private route: ActivatedRoute,
     private toaster: SisToastService,
+    private modal: SisModalService,
   ) {}
 
   ngAfterViewInit() {
@@ -65,18 +68,31 @@ export class DatasetImportComponent implements AfterViewInit {
   }
 
   importDataset() {
+    this.importing = true;
+    const loadingModal = this.modal.openModal(
+      LoadingModalComponent,
+      new ModalConfig({
+        dismissable: false,
+        data: {
+          title: 'onboarding.dataset.importing_title',
+          description: 'onboarding.dataset.importing_description',
+        },
+      }),
+    );
     this.sdk.currentKb
       .pipe(
         take(1),
         switchMap((kb) => kb.importDataset(this.selectDataset)),
       )
       .subscribe({
-        next: (result) => {
-          console.log(result);
+        next: () => {
           this.router.navigate(['..'], { relativeTo: this.route });
+          loadingModal.close();
         },
         error: () => {
           this.toaster.error('onboarding.dataset.import_failed');
+          this.importing = false;
+          loadingModal.close();
         },
       });
   }
