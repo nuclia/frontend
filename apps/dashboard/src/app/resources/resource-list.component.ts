@@ -359,12 +359,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cdr?.markForCheck();
   }
 
-  setStatus(status: KeyValue) {
-    this.applyFilter({
-      status: status ? status.key : undefined,
-    });
-  }
-
   setPageSize(size: KeyValue) {
     this.applyFilter({
       size: size.key,
