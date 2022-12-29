@@ -160,9 +160,9 @@ table {
   }
 
   .cdk-column-status {
-    width: rhythm(20);
+    width: rhythm(32);
     @media (max-width: $table-breakpoint) {
-      width: rhythm(12);
+      width: rhythm(24);
     }
   }
 
@@ -211,4 +211,8 @@ table {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.popover-content {
+  text-align: center;
 }

@@ -34,8 +34,8 @@ import {
   deDuplicateList,
   IResource,
   LabelSets,
+  ProcessingStatusResponse,
   Resource,
-  RESOURCE_STATUS,
   ResourceStatus,
   resourceToAlgoliaFormat,
   Search,
@@ -73,6 +73,7 @@ interface ResourceWithLabels {
   resource: Resource;
   labels: ColoredLabel[];
   description?: string;
+  status?: string;
 }
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
@@ -102,7 +103,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
-  statusTooltips: { [resourceId: string]: string } = {};
 
   private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
     pending: 0,
@@ -128,6 +128,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   );
 
   statusDisplayed: BehaviorSubject<ResourceStatus> = new BehaviorSubject<ResourceStatus>('PROCESSED');
+  private currentProcessingStatus?: ProcessingStatusResponse;
 
   get isMainView() {
     return this.statusDisplayed.value === 'PROCESSED';
@@ -148,19 +149,26 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     ),
   );
   columns = [
-    { value: 'title', label: 'resource.title', visible: true },
+    { value: 'title', label: 'resource.title', visible: true, showInPending: true },
     { value: 'classification', label: 'resource.classification', visible: false, optional: true },
-    { value: 'modification', label: 'generic.date', visible: true, optional: true },
+    { value: 'modification', label: 'generic.date', visible: true, optional: true, showInPending: true },
     { value: 'language', label: 'generic.language', visible: true, optional: true },
+    { value: 'status', label: 'Status', visible: true, optional: true, showInPending: true },
   ];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   optionalColumns = this.columns.filter((column) => column.optional);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
-    map(([canEdit]) => {
+    map(([canEdit, statusDisplayed]) => {
       const columns = this.columns
-        .map((column) => (!column.optional || column.visible ? column.value : ''))
+        .map((column) => {
+          if (statusDisplayed === 'PENDING') {
+            return column.showInPending ? column.value : '';
+          } else {
+            return !column.optional || column.visible ? column.value : '';
+          }
+        })
         .filter((column) => !!column);
 
       return canEdit && this.showActions ? ['select', ...columns, 'actions'] : columns;
@@ -401,6 +409,11 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
     const page = this.page >= 1 ? this.page - 1 : 0;
+
+    this.sdk.nuclia.db
+      .getProcessingStatus(this.stateService.getAccount()?.id)
+      .subscribe((status) => (this.currentProcessingStatus = status));
+
     return of(1).pipe(
       tap(() => {
         this.setLoading(true);
@@ -437,16 +450,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         this.setLoading(false);
         return results;
       }),
-      tap((results) => {
-        this.statusTooltips = Object.values(results.resources || {}).reduce((status, resource) => {
-          const key =
-            resource.metadata?.status && resource.metadata.status !== RESOURCE_STATUS.PENDING
-              ? resource.metadata.status.toLocaleLowerCase()
-              : 'loading';
-          status[resource.id] = this.translate.instant(`resource.status_${key}`);
-          return status;
-        }, {} as { [resourceId: string]: string });
-      }),
     );
   }
 
@@ -463,7 +466,33 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         color: labelSets[label.labelset]?.color || '#ffffff',
       }));
     }
+    if (this.statusDisplayed.value === 'PENDING' && this.currentProcessingStatus) {
+      resourceWithLabels.status = this.getProcessingStatus(resource);
+    }
+
     return resourceWithLabels;
+  }
+
+  private getProcessingStatus(resource: Resource): string {
+    if (!this.currentProcessingStatus) {
+      return '';
+    }
+    const last_delivered_seqid =
+      resource.queue === 'private'
+        ? this.currentProcessingStatus.account?.last_delivered_seqid
+        : this.currentProcessingStatus.shared?.last_delivered_seqid;
+    if (last_delivered_seqid && resource.last_account_seq !== undefined) {
+      const count = resource.last_account_seq - last_delivered_seqid;
+      let statusKey = 'resource.status_processing';
+      if (count === 1) {
+        statusKey = 'resource.status_next';
+      } else if (count > 1) {
+        statusKey = 'resource.status_pending';
+      }
+      return this.translate.instant(statusKey, { count });
+    } else {
+      return this.translate.instant('resource.status_unknown');
+    }
   }
 
   private getTitleOnlyData(results: Search.Results, kbId: string, labelSets: LabelSets): ResourceWithLabels[] {
