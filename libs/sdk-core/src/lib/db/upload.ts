@@ -150,9 +150,8 @@ export const TUSuploadFile = (
   if (metadata?.md5) {
     uploadMetadata.push(`md5 ${btoa(metadata.md5)}`);
   }
-  if (metadata?.contentType) {
-    uploadMetadata.push(`content_type ${btoa(metadata.contentType)}`);
-  }
+  uploadMetadata.push(`content_type ${btoa(metadata?.contentType || 'application/octet-stream')}`);
+
   if (uploadMetadata.length > 0) {
     headers['upload-metadata'] = uploadMetadata.join(',');
   }

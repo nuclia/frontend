@@ -80,8 +80,7 @@ export class Rest implements IRest {
     doNotParse?: boolean,
     synchronous = false,
   ): Observable<T> {
-    const specialContentType =
-      extraHeaders && extraHeaders['content-type'] && extraHeaders['content-type'] !== 'application/json';
+    const specialContentType = extraHeaders && extraHeaders['content-type'];
     return fromFetch(this.getFullUrl(path), {
       selector: (response) => Promise.resolve(response),
       headers: this.getHeaders(extraHeaders, synchronous),
