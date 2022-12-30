@@ -13,7 +13,6 @@ $table-breakpoint: 1400px;
   background-color: $color-light-stronger;
   border-bottom: 1px solid $color-neutral-lighter;
   display: flex;
-  height: rhythm(6);
   justify-content: space-between;
   margin-bottom: rhythm(4);
   padding-bottom: rhythm(1);
@@ -160,9 +159,9 @@ table {
   }
 
   .cdk-column-status {
-    width: rhythm(32);
+    width: rhythm(20);
     @media (max-width: $table-breakpoint) {
-      width: rhythm(24);
+      width: rhythm(12);
     }
   }
 
@@ -211,8 +210,4 @@ table {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.popover-content {
-  text-align: center;
 }

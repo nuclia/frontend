@@ -9,7 +9,7 @@ export type UploadType = 'files' | 'folder' | 'link' | 'csv';
 @Injectable({
   providedIn: 'root',
 })
-export class UploadDialogService {
+export class UploadService {
   constructor(
     private dialog: MatDialog, //FIXME replace old upload dialog with sistema modal service
   ) {}

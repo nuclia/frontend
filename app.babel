@@ -9220,26 +9220,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>resource.failed_resources_popover</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>resource.file</name>
 						<description/>
 						<comment/>
@@ -9261,46 +9241,6 @@
 					</concept_node>
 					<concept_node>
 						<name>resource.link</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>resource.pending_resources_popover</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>resource.processed_resources</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -9501,26 +9441,6 @@
 					</concept_node>
 					<concept_node>
 						<name>resource.status_loading</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>resource.status_next</name>
 						<description/>
 						<comment/>
 						<default_text/>

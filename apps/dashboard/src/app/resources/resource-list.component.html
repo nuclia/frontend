@@ -8,7 +8,6 @@
 
   <div class="resource-list-header">
     <form
-      *ngIf="isMainView; else backButton"
       class="search-bar-container"
       [formGroup]="searchForm"
       (ngSubmit)="search()">
@@ -29,101 +28,72 @@
         icon="search"
         formControlName="query"></pa-input>
     </form>
-    <ng-template #backButton>
-      <pa-button
-        iconAndText
-        icon="chevron-left"
-        aspect="basic"
-        size="small"
-        (click)="displayStatus('PROCESSED')">
-        {{ 'resource.processed_resources' | translate }}
-      </pa-button>
-    </ng-template>
-
     <div class="upload-container">
-      <ng-container *ngIf="isMainView">
-        <pa-button
-          icon="circle-plus"
-          iconAndText
-          aspect="basic"
-          [paPopup]="uploadMenu"
-          alignPopupOnLeft>
-          {{ 'generic.upload' | translate }}
-        </pa-button>
-        <pa-dropdown #uploadMenu>
-          <pa-option
-            icon="file"
-            (selectOption)="upload('files')">
-            {{ 'upload.files' | translate }}
-          </pa-option>
-          <pa-option
-            icon="folder"
-            (selectOption)="upload('folder')">
-            {{ 'upload.folder' | translate }}
-          </pa-option>
-          <pa-option
-            icon="link"
-            (selectOption)="upload('link')">
-            {{ 'upload.link' | translate }}
-          </pa-option>
-          <pa-option
-            icon="file"
-            (selectOption)="upload('csv')">
-            {{ 'upload.upload_from_csv' | translate }}
-          </pa-option>
-        </pa-dropdown>
+      <pa-button
+        icon="circle-plus"
+        iconAndText
+        aspect="basic"
+        [paPopup]="uploadMenu"
+        alignPopupOnLeft>
+        {{ 'generic.upload' | translate }}
+      </pa-button>
+      <pa-dropdown #uploadMenu>
+        <pa-option
+          icon="file"
+          (selectOption)="upload('files')">
+          {{ 'upload.files' | translate }}
+        </pa-option>
+        <pa-option
+          icon="folder"
+          (selectOption)="upload('folder')">
+          {{ 'upload.folder' | translate }}
+        </pa-option>
+        <pa-option
+          icon="link"
+          (selectOption)="upload('link')">
+          {{ 'upload.link' | translate }}
+        </pa-option>
+        <pa-option
+          icon="file"
+          (selectOption)="upload('csv')">
+          {{ 'upload.upload_from_csv' | translate }}
+        </pa-option>
+      </pa-dropdown>
 
-        <pa-button
-          *ngIf="hasSampleData | async"
-          kind="destructive"
-          aspect="basic"
-          (click)="deleteSampleDataset()">
-          {{ 'onboarding.dataset.delete' | translate }}
-        </pa-button>
-      </ng-container>
+      <pa-button
+        *ngIf="hasSampleData | async"
+        kind="destructive"
+        aspect="basic"
+        (click)="deleteSampleDataset()">
+        {{ 'onboarding.dataset.delete' | translate }}
+      </pa-button>
     </div>
     <div class="status-buttons-container">
       <div
         class="status-button"
-        *ngIf="(statusCount | async)?.pending > 0">
+        *ngIf="pendingCount > 0">
         <pa-button
           icon="clock-dash"
           size="small"
           kind="destructive"
-          aspect="basic"
-          #pendingPopoverDirective="paPopoverRef"
-          [paPopover]="pendingPopover"
-          paPopoverOffset="0px"
-          [active]="statusDisplayed.value === 'PENDING'"
-          (click)="displayStatus('PENDING')">
+          aspect="basic">
           {{ 'resource.status-help.pending' | translate }}
         </pa-button>
-        <div class="file-count">{{ (statusCount | async).pending }}</div>
+        <div class="file-count">{{ pendingCount }}</div>
       </div>
-      <pa-popover #pendingPopover>
-        <div class="popover-content">{{ 'resource.pending_resources_popover' | translate }}</div>
-      </pa-popover>
 
       <div
         class="status-button"
-        *ngIf="(statusCount | async)?.error > 0">
+        *ngIf="failedCount > 0">
         <pa-button
           icon="circle-cross"
           size="small"
           kind="destructive"
-          aspect="basic"
-          #failedPopoverDirective="paPopoverRef"
-          [paPopover]="failedPopover"
-          paPopoverOffset="0px"
-          [active]="statusDisplayed.value === 'ERROR'"
-          (click)="displayStatus('ERROR')">
+          aspect="basic">
           {{ 'resource.status-help.failed' | translate }}
         </pa-button>
-        <div class="file-count">{{ (statusCount | async).error }}</div>
+        <div class="file-count">{{ failedCount }}</div>
       </div>
-      <pa-popover #failedPopover>
-        <div class="popover-content">{{ 'resource.failed_resources_popover' | translate }}</div>
-      </pa-popover>
     </div>
   </div>
 
@@ -155,7 +125,7 @@
         </pa-button>
       </div>
       <div class="table-options">
-        <div *ngIf="isMainView">
+        <div>
           <nsi-dropdown-button
             size="small"
             aspect="basic"
@@ -278,12 +248,16 @@
           <th
             cdk-header-cell
             *cdkHeaderCellDef>
-            Status
+            {{ 'resource.status' | translate }}
           </th>
           <td
             cdk-cell
-            *cdkCellDef="let row">
-            {{ row.status }}
+            *cdkCellDef="let row"
+            (mouseenter)="getProcessingStatus(row.resource)"
+            [paTooltip]="statusTooltips[row.resource.id]"
+            paTooltipType="system"
+            [paTooltipOffset]="-16">
+            <nsi-status [status]="row.resource.metadata.status"></nsi-status>
           </td>
         </ng-container>
 
@@ -300,9 +274,7 @@
           </td>
         </ng-container>
 
-        <ng-container
-          cdkColumnDef="actions"
-          *ngIf="showActions">
+        <ng-container cdkColumnDef="actions">
           <th
             cdk-header-cell
             *cdkHeaderCellDef>
@@ -324,7 +296,6 @@
               class="resource-actions">
               <button
                 mat-menu-item
-                *ngIf="isMainView"
                 (click)="edit(row.resource.id)"
                 [disabled]="!(isAdminOrContrib | async)">
                 {{ 'generic.edit' | translate }}
@@ -343,7 +314,6 @@
               </button>
               <button
                 mat-menu-item
-                *ngIf="isMainView"
                 (click)="downloadAlgoliaJson(row.resource)">
                 {{ 'generic.download_algolia_json' | translate }}
               </button>

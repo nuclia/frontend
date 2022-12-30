@@ -71,7 +71,7 @@ export class SampleDatasetService {
       take(1),
       switchMap((kb) =>
         kb
-          .search('', [Search.Features.DOCUMENT], { filters: [`/l/${sampleLabelSet}/${sampleLabel}`], page_size: 20 })
+          .search('', [Search.Features.DOCUMENT], { filters: [`/l/${sampleLabelSet}/${sampleLabel}`], page_size: 100 })
           .pipe(
             map((results: Search.Results) =>
               Object.values(results.resources || {}).map(

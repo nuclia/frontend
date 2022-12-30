@@ -45,14 +45,6 @@ describe('ResourceListComponent', () => {
               options: {
                 zone: 'europe',
               },
-              db: {
-                getProcessingStatus: jest.fn(() =>
-                  of({
-                    shared: { last_delivered_seqid: 1 },
-                    account: { last_delivered_seqid: 2 },
-                  }),
-                ),
-              },
             },
           },
         },
