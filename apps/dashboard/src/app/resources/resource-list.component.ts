@@ -6,7 +6,6 @@ import {
   inject,
   OnDestroy,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +14,6 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  concatMap,
   distinctUntilKeyChanged,
   forkJoin,
   from,
@@ -24,8 +22,6 @@ import {
   of,
   Subject,
   take,
-  takeWhile,
-  timer,
 } from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,9 +30,8 @@ import {
   deDuplicateList,
   IResource,
   LabelSets,
-  ProcessingStatusResponse,
   Resource,
-  ResourceStatus,
+  RESOURCE_STATUS,
   resourceToAlgoliaFormat,
   Search,
 } from '@nuclia/core';
@@ -45,11 +40,9 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
-import { UploadDialogService } from './upload-dialog.service';
+import { UploadService } from './upload.service';
 import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
-import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
-import { LOCAL_STORAGE } from '@ng-web-apis/common';
 
 interface ListFilters {
   type?: string;
@@ -74,12 +67,10 @@ interface ResourceWithLabels {
   resource: Resource;
   labels: ColoredLabel[];
   description?: string;
-  status?: string;
 }
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
 const DEFAULT_PAGE_SIZE = 20;
-const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
 @Component({
   selector: 'app-resource-list',
@@ -88,10 +79,6 @@ const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
-  @ViewChild('pendingPopoverDirective') pendingPopoverDirective?: PopoverDirective;
-  @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
-
-  private localStorage = inject(LOCAL_STORAGE);
   private sampleDatasetService = inject(SampleDatasetService);
   hasSampleData = this.sampleDatasetService.hasSampleResources();
   hasLabelSets = inject(LabelsService).hasLabelSets();
@@ -104,39 +91,12 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
+  statusTooltips: { [resourceId: string]: string } = {};
 
-  private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
-    pending: 0,
-    error: 0,
-  });
-  statusCount = this._statusCount.asObservable().pipe(
-    tap((count) => {
-      if (this.localStorage.getItem(POPOVER_DISPLAYED) !== 'done' && (count.error > 0 || count.pending > 0)) {
-        // we cannot open the two popovers at the same time, so error takes priority
-        setTimeout(() => {
-          const popover = count.error > 0 ? this.failedPopoverDirective : this.pendingPopoverDirective;
-          popover?.toggle();
-          this.localStorage.setItem(POPOVER_DISPLAYED, 'done');
-          // Close after 5s if still visible
-          setTimeout(() => {
-            if (popover?.popupDirective.paPopup?.isDisplayed) {
-              popover.toggle();
-            }
-          }, 5000);
-        });
-      }
-    }),
-  );
+  // TODO when https://app.shortcut.com/flaps/story/3210/add-option-to-search-by-processing-status will be ready
+  pendingCount = 0;
 
-  statusDisplayed: BehaviorSubject<ResourceStatus> = new BehaviorSubject<ResourceStatus>('PROCESSED');
-  private currentProcessingStatus?: ProcessingStatusResponse;
-
-  get isMainView() {
-    return this.statusDisplayed.value === 'PROCESSED';
-  }
-  get showActions() {
-    return this.statusDisplayed.value !== 'PENDING';
-  }
+  failedCount = 0;
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
     PAGE_SIZE_OPTIONS.map((size) =>
@@ -150,29 +110,23 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     ),
   );
   columns = [
-    { value: 'title', label: 'resource.title', visible: true, showInPending: true },
+    { value: 'title', label: 'resource.title', visible: true },
     { value: 'classification', label: 'resource.classification', visible: false, optional: true },
-    { value: 'modification', label: 'generic.date', visible: true, optional: true, showInPending: true },
+    { value: 'modification', label: 'generic.date', visible: true, optional: true },
+    { value: 'status', label: 'resource.status', visible: true },
     { value: 'language', label: 'generic.language', visible: true, optional: true },
-    { value: 'status', label: 'Status', visible: true, optional: true, showInPending: true },
   ];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   optionalColumns = this.columns.filter((column) => column.optional);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
-    map(([canEdit, statusDisplayed]) => {
+  displayedColumns = combineLatest([this.isAdminOrContrib, this.columnVisibilityUpdate]).pipe(
+    map((canEdit) => {
       const columns = this.columns
-        .map((column) => {
-          if (statusDisplayed === 'PENDING') {
-            return column.showInPending ? column.value : '';
-          } else {
-            return !column.optional || column.visible ? column.value : '';
-          }
-        })
+        .map((column) => (!column.optional || column.visible ? column.value : ''))
         .filter((column) => !!column);
 
-      return canEdit && this.showActions ? ['select', ...columns, 'actions'] : columns;
+      return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );
   labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
@@ -219,7 +173,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
-    private uploadDialogService: UploadDialogService,
+    private uploadService: UploadService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -238,7 +192,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getResources().subscribe();
-    this.startPollingResourceStatus();
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
       this.totalResources = counters.resources;
       this.refreshing = false;
@@ -259,11 +212,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   upload(type: 'files' | 'folder' | 'link' | 'csv') {
-    this.uploadDialogService
-      .upload(type)
-      .afterClosed()
-      .pipe(filter((data) => !data || !data.cancel))
-      .subscribe(() => this.startPollingResourceStatus());
+    this.uploadService.upload(type);
   }
 
   search() {
@@ -306,7 +255,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     resource
       .reprocess()
       .pipe(
-        delay(500), // wait for reprocess to be effective
+        delay(500), // wait for the reprocess to be effective
         switchMap(() => this.getResources()),
       )
       .subscribe();
@@ -359,6 +308,12 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cdr?.markForCheck();
   }
 
+  setStatus(status: KeyValue) {
+    this.applyFilter({
+      status: status ? status.key : undefined,
+    });
+  }
+
   setPageSize(size: KeyValue) {
     this.applyFilter({
       size: size.key,
@@ -409,11 +364,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
     const page = this.page >= 1 ? this.page - 1 : 0;
-
-    this.sdk.nuclia.db
-      .getProcessingStatus(this.stateService.getAccount()?.id)
-      .subscribe((status) => (this.currentProcessingStatus = status));
-
     return of(1).pipe(
       tap(() => {
         this.setLoading(true);
@@ -431,28 +381,33 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
             page_number: page,
             page_size: this.pageSize,
             sort: 'created',
-            with_status: this.statusDisplayed.value,
           }),
           this.labelSets$.pipe(take(1)),
         ]);
       }),
       map(([kb, results, labelSets]) => {
         // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
+        if (hasQuery && results.fulltext) {
+          this.resultsLength = results.fulltext.next_page || results.fulltext.page_number > 0 ? this.totalResources : 1;
+        } else {
+          this.resultsLength = this.totalResources;
+        }
         this.data = titleOnly
           ? this.getTitleOnlyData(results, kb.id, labelSets)
           : this.getResourceData(query, results, kb.id, labelSets);
-        if (hasQuery && results.fulltext) {
-          this.resultsLength =
-            results.fulltext.next_page || results.fulltext.page_number > 0
-              ? this.totalResources || this.data.length
-              : 1;
-        } else {
-          // totalResources can be 0 while we have resources (specially when we import dataset) because counters is asynchronous and relies on indexing
-          this.resultsLength = this.totalResources || this.data.length;
-        }
         this.clearSelected();
         this.setLoading(false);
         return results;
+      }),
+      tap((results) => {
+        this.statusTooltips = Object.values(results.resources || {}).reduce((status, resource) => {
+          const key =
+            resource.metadata?.status && resource.metadata.status !== RESOURCE_STATUS.PENDING
+              ? resource.metadata.status.toLocaleLowerCase()
+              : 'loading';
+          status[resource.id] = this.translate.instant(`resource.status_${key}`);
+          return status;
+        }, {} as { [resourceId: string]: string });
       }),
     );
   }
@@ -470,33 +425,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         color: labelSets[label.labelset]?.color || '#ffffff',
       }));
     }
-    if (this.statusDisplayed.value === 'PENDING' && this.currentProcessingStatus) {
-      resourceWithLabels.status = this.getProcessingStatus(resource);
-    }
-
     return resourceWithLabels;
-  }
-
-  private getProcessingStatus(resource: Resource): string {
-    if (!this.currentProcessingStatus) {
-      return '';
-    }
-    const last_delivered_seqid =
-      resource.queue === 'private'
-        ? this.currentProcessingStatus.account?.last_delivered_seqid
-        : this.currentProcessingStatus.shared?.last_delivered_seqid;
-    if (last_delivered_seqid && resource.last_account_seq !== undefined) {
-      const count = resource.last_account_seq - last_delivered_seqid;
-      let statusKey = 'resource.status_processing';
-      if (count === 1) {
-        statusKey = 'resource.status_next';
-      } else if (count > 1) {
-        statusKey = 'resource.status_pending';
-      }
-      return this.translate.instant(statusKey, { count });
-    } else {
-      return this.translate.instant('resource.status_unknown');
-    }
   }
 
   private getTitleOnlyData(results: Search.Results, kbId: string, labelSets: LabelSets): ResourceWithLabels[] {
@@ -562,6 +491,23 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       const formatted = resourceToAlgoliaFormat(fullResource, this.sdk.nuclia.regionalBackend);
       STFUtils.downloadJson(formatted, `algolia_record.json`);
     });
+  }
+
+  getProcessingStatus(resource: Resource) {
+    if (resource.metadata?.status === RESOURCE_STATUS.PENDING) {
+      this.sdk.nuclia.db.getProcessingStatus(this.stateService.getAccount()?.id).subscribe((status) => {
+        const last_delivered_seqid =
+          resource.queue === 'private' ? status.account?.last_delivered_seqid : status.shared?.last_delivered_seqid;
+        if (last_delivered_seqid && resource.last_account_seq !== undefined) {
+          const count = resource.last_account_seq - last_delivered_seqid;
+          const statusKey = count > 0 ? 'resource.status_pending' : 'resource.status_processing';
+          this.statusTooltips[resource.id] = this.translate.instant(statusKey, { count });
+        } else {
+          this.statusTooltips[resource.id] = this.translate.instant('resource.status_unknown');
+        }
+        this.cdr.detectChanges();
+      });
+    }
   }
 
   updateLabelList($event: Classification[]) {
@@ -636,36 +582,5 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   private setLoading(isLoading: boolean) {
     this.isLoading = isLoading;
     this.cdr?.markForCheck();
-  }
-
-  displayStatus(status: ResourceStatus) {
-    this.statusDisplayed.next(status);
-    this.getResources().subscribe();
-  }
-
-  private getResourceStatusCount(): Observable<{ pending: number; error: number }> {
-    const statusFacet = '/n/s';
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        kb.search('', [Search.Features.DOCUMENT], {
-          faceted: [statusFacet],
-        }),
-      ),
-      map((results) => ({
-        pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
-        error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
-      })),
-    );
-  }
-
-  private startPollingResourceStatus() {
-    timer(0, 30000)
-      .pipe(
-        concatMap(() => this.getResourceStatusCount().pipe(tap((count) => this._statusCount.next(count)))),
-        takeWhile((count) => count.pending > 0),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe();
   }
 }
