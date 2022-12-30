@@ -21,7 +21,7 @@
         dontCloseOnSelect
         popupOnRight
         [paPopup]="level2"
-        [popupVerticalOffset]="-44"
+        [popupVerticalOffset]="-40"
         [selected]="labelSetExpanded === labelSet.key"
         (selectOption)="onLevel1Selection(labelSet.key, labelSet.value)">
         <span
@@ -38,6 +38,7 @@
     keepOthersOpen>
     <pa-option
       *ngFor="let labelValue of labelValues"
+      class="level2-option"
       dontCloseOnSelect>
       <pa-checkbox
         [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
