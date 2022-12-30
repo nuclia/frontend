@@ -13,12 +13,20 @@ const sampleLabel = 'Sample dataset';
 export class SampleDatasetService {
   private refresh = new BehaviorSubject<boolean>(false);
 
-  constructor(private sdkService: SDKService, private labelService: LabelsService) {}
+  constructor(private sdk: SDKService, private labelService: LabelsService) {}
 
   hasSampleResources(): Observable<boolean> {
-    return this.refresh.pipe(
-      switchMap(() => this.getSampleResources()),
-      map((resources) => resources.length > 0),
+    return this.refresh.pipe(switchMap(() => this.labelService.hasLabel(sampleLabelSet, sampleLabel)));
+  }
+
+  importDataset(sampleId: string): Observable<void> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.importDataset(sampleId)),
+      switchMap(() => this.labelService.refreshLabelsSets()),
+      map(() => {
+        this.refresh.next(true);
+      }),
     );
   }
 
@@ -50,33 +58,30 @@ export class SampleDatasetService {
       tap((count) => {
         if (count.error === 0) {
           this.cleanupSampleLabelSet();
-          this.refresh.next(true);
         }
       }),
     );
   }
 
   private cleanupSampleLabelSet() {
-    this.sdkService.currentKb
+    this.sdk.currentKb
       .pipe(
         take(1),
         switchMap((kb) => kb.deleteLabelSet(sampleLabelSet)),
         switchMap(() => this.labelService.refreshLabelsSets()),
       )
-      .subscribe();
+      .subscribe(() => this.refresh.next(true));
   }
 
   private getSampleResources(): Observable<Resource[]> {
-    return this.sdkService.currentKb.pipe(
+    return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb
           .search('', [Search.Features.DOCUMENT], { filters: [`/l/${sampleLabelSet}/${sampleLabel}`], page_size: 100 })
           .pipe(
             map((results: Search.Results) =>
-              Object.values(results.resources || {}).map(
-                (resource) => new Resource(this.sdkService.nuclia, kb.id, resource),
-              ),
+              Object.values(results.resources || {}).map((resource) => new Resource(this.sdk.nuclia, kb.id, resource)),
             ),
           ),
       ),

@@ -29,6 +29,18 @@ export class LabelsService {
     );
   }
 
+  hasLabel(setId: string, labelName: string): Observable<boolean> {
+    return this.labelSets.pipe(
+      filter((sets) => !!sets),
+      take(1),
+      map((sets) =>
+        Object.entries(sets as LabelSets).some(
+          ([key, value]) => key === setId && value.labels.some((label) => label.title === labelName),
+        ),
+      ),
+    );
+  }
+
   getLabelsByKind(kind: LabelSetKind): Observable<LabelSets | null> {
     return this.labelSets.pipe(
       map((labels) => {

@@ -102,7 +102,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }>;
 
-  importDataset(datasetId: string): Observable<any>;
+  importDataset(datasetId: string): Observable<void>;
 
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
 

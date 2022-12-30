@@ -5,7 +5,7 @@ import { SDKService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { LoadingModalComponent } from './loading-modal/loading-modal.component';
-import { switchMap, take } from 'rxjs';
+import { SampleDatasetService } from './sample-dataset.service';
 
 @Component({
   selector: 'app-dataset-import',
@@ -39,6 +39,7 @@ export class DatasetImportComponent implements AfterViewInit {
     private route: ActivatedRoute,
     private toaster: SisToastService,
     private modal: SisModalService,
+    private datasetService: SampleDatasetService,
   ) {}
 
   ngAfterViewInit() {
@@ -79,21 +80,17 @@ export class DatasetImportComponent implements AfterViewInit {
         },
       }),
     );
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        switchMap((kb) => kb.importDataset(this.selectDataset)),
-      )
-      .subscribe({
-        next: () => {
-          this.router.navigate(['..'], { relativeTo: this.route });
-          loadingModal.close();
-        },
-        error: () => {
-          this.toaster.error('onboarding.dataset.import_failed');
-          this.importing = false;
-          loadingModal.close();
-        },
-      });
+
+    this.datasetService.importDataset(this.selectDataset).subscribe({
+      next: () => {
+        this.router.navigate(['..'], { relativeTo: this.route });
+        loadingModal.close();
+      },
+      error: () => {
+        this.toaster.error('onboarding.dataset.import_failed');
+        this.importing = false;
+        loadingModal.close();
+      },
+    });
   }
 }
