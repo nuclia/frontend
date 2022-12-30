@@ -27,7 +27,6 @@ blockquote {
     padding-right: 16px;
 
     footer {
-
       &:before {
         content: '';
       }
@@ -37,38 +36,6 @@ blockquote {
       }
     }
   }
-}
-
-// Code
-code {
-  white-space: pre;
-  font-family: 'Monaco', 'Menlo', 'Consolas', 'Ubuntu Mono', monospace;
-
-  &:not(.highlight) {
-    color: #106CC8;
-    padding: 2px 3px;
-    border-radius: 2px;
-    line-height: 1.7;
-  }
-}
-
-// Mark
-mark {
-  padding: 5px;
-  border-radius: 2px;
-  background: #F7F49A;
-}
-
-// Pre
-pre {
-  line-height: 1.6;
-  margin: 8px 16px;
-  white-space: pre-wrap;
-}
-
-// Small
-small {
-  font-size: 80%;
 }
 
 // Table
@@ -134,7 +101,6 @@ table {
 
 // Font weight helpers
 @for $weight from 1 through 9 {
-
   .font-weight-#{$weight * 100} {
     font-weight: #{$weight * 100};
   }
@@ -142,7 +108,6 @@ table {
 
 // Font size helpers
 @for $size from 1 through 60 {
-
   .font-size-#{$size * 2} {
     font-size: #{$size * 2}px;
   }
@@ -150,7 +115,6 @@ table {
 
 // Line height helpers
 @for $lineHeight from 1 through 60 {
-
   .line-height-#{$lineHeight * 2} {
     line-height: #{$lineHeight * 2}px;
   }

@@ -9,9 +9,8 @@
 
   form {
     background-color: $color-light-stronger;
-    margin-bottom: rhythm(2);
+    margin-bottom: rhythm(3);
     max-width: 1000px;
-    padding: rhythm(1) rhythm(2) rhythm(2);
 
     .form-content {
       display: flex;
@@ -25,7 +24,7 @@
   .container {
     background-color: $color-light-stronger;
     max-width: 1000px;
-    padding: rhythm(2) rhythm(2) rhythm(3);
+    margin: rhythm(3) 0;
   }
 
   .service-access-list {

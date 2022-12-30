@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { LabelSetKind, Classification } from '@nuclia/core';
+import { Classification, LabelSetKind } from '@nuclia/core';
 import { map } from 'rxjs';
 import { LabelsService } from '../../../services/labels.service';
+import { Size } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-label-field',
@@ -20,6 +21,7 @@ export class LabelFieldComponent {
   private _selection: Classification[] = [];
 
   @Input() kind: LabelSetKind = LabelSetKind.RESOURCES;
+  @Input() size: Size | undefined;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
 

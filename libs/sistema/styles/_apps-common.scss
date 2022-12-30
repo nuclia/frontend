@@ -17,6 +17,13 @@ body {
   top: 0;
 }
 
+code {
+  font-weight: $font-weight-semi-bold;
+}
+pre > code {
+  font-weight: $font-weight-regular;
+}
+
 code.endpoint {
   overflow-x: auto;
   white-space: pre-wrap;

@@ -589,7 +589,7 @@
 	"upload.check_files": "Comprova l'estat dels fitxers",
 	"upload.completed": "completat",
 	"upload.csv_description": "Creeu diversos recursos seleccionant un fitxer CSV amb 3 columnes: <code>Títol, Cos, Format</code>",
-	"upload.csv_format": "en que la columna <code>Format</code> pot ser un d'aquests valors: <code>PLAIN MARKDOWN HTML RST</code>",
+	"upload.csv_format": "en que la columna <code>Format</code> pot ser un d'aquests valors: <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.duplicated": "Fitxer duplicat",
 	"upload.error": "Error desconegut",
 	"upload.files": "Carregueu fitxers",

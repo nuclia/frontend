@@ -589,7 +589,7 @@
 	"upload.check_files": "Comprueba el estado de los ficheros",
 	"upload.completed": "completado",
 	"upload.csv_description": "Cree múltiples recursos seleccionando un archivo CSV con 3 columnas: <code>Título, Cuerpo, Formato</code>",
-	"upload.csv_format": "en que la columna <code>Formato</code> puede ser uno de estos valores:\n<code>PLAIN MARKDOWN HTML RST</code>",
+	"upload.csv_format": "en que la columna <code>Formato</code> puede ser uno de estos valores:\n<code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.duplicated": "Fichero duplicado",
 	"upload.error": "Error desconocido",
 	"upload.files": "Subir archivos",

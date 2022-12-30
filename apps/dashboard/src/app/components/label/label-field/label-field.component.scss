@@ -5,8 +5,13 @@
 }
 
 .label-field {
-  display: flex;
   align-items: flex-start;
+  display: flex;
+  min-height: rhythm(5);
+
+  &.small-button app-label-dropdown {
+    margin-top: rhythm(0.5);
+  }
 
   pa-option ::ng-deep .label-color {
     background: $color-neutral-light;

@@ -671,7 +671,7 @@
 	"upload.check_files": "Check file status",
 	"upload.completed": "completed",
 	"upload.csv_description": "Create multiple resources by selecting a CSV file with 3 columns: <code>Title, Body, Format</code>",
-	"upload.csv_format": "where <code>Format</code> column must be one of theses values: <code>PLAIN MARKDOWN HTML RST</code>",
+	"upload.csv_format": "where <code>Format</code> column must be one of theses values: <code>PLAIN / MARKDOWN / HTML / RST</code>",
 	"upload.duplicated": "Duplicated file",
 	"upload.error": "Unknown error",
 	"upload.files": "Upload files",

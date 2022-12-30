@@ -4,10 +4,22 @@
   position: relative;
   width: 50vw;
   padding: rhythm(2) rhythm(3);
-}
 
-h1 {
-  margin: 0 0 rhythm(3) 0;
+  h1 {
+    margin: 0 0 rhythm(3) 0;
+  }
+
+  p.body-s {
+    margin-bottom: rhythm(3);
+  }
+
+  ncom-hint ::ng-deep .hint {
+    margin-bottom: rhythm(3);
+  }
+  .csv-format {
+    margin-bottom: 0;
+    padding-left: rhythm(5);
+  }
 }
 
 .select-csv {
@@ -25,10 +37,13 @@ app-label-field {
 }
 
 .resource {
-  display: flex;
   align-items: center;
-  height: rhythm(4);
   border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(4);
+  justify-content: space-between;
+
   &:first-child {
     border-top: 1px solid $color-neutral-lighter;
   }
