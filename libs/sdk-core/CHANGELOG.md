@@ -9,6 +9,10 @@
 - Add `TextFieldFormat` type
 - Add `importDataset` method to `WritableKnowledgeBox`
 
+### Bugfix
+
+- Don't parse the body of a post request when `specialContentType` is set, even if special `content-type` is set to `application/json`
+
 # 1.1.0 (2022-12-08)
 
 ### Breaking change
