@@ -1,21 +1,23 @@
 <div class="dataset-import-container">
   <h1>{{ 'onboarding.dataset.title' | translate }}</h1>
-  <p class="body-m">
-    {{ 'onboarding.dataset.description' | translate }}
-  </p>
+  <!-- TODO: uncomment once nucliaDB stories from https://app.shortcut.com/flaps/epic/3374/exporting-binaries?cf_workflow=500000025&ct_workflow=all are done -->
 
-  <div class="dataset-picker">
-    <pa-select
-      label="Pick a sample dataset"
-      [options]="sampleDatasets"
-      (valueChange)="selectDataset = $event"></pa-select>
+  <!--  <p class="body-m">-->
+  <!--    {{ 'onboarding.dataset.description' | translate }}-->
+  <!--  </p>-->
 
-    <pa-button
-      [disabled]="!selectDataset || importing"
-      (click)="importDataset()">
-      {{ 'onboarding.dataset.import' | translate }}
-    </pa-button>
-  </div>
+  <!--  <div class="dataset-picker">-->
+  <!--    <pa-select-->
+  <!--      label="Pick a sample dataset"-->
+  <!--      [options]="sampleDatasets"-->
+  <!--      (valueChange)="selectDataset = $event"></pa-select>-->
+
+  <!--    <pa-button-->
+  <!--      [disabled]="!selectDataset || importing"-->
+  <!--      (click)="importDataset()">-->
+  <!--      {{ 'onboarding.dataset.import' | translate }}-->
+  <!--    </pa-button>-->
+  <!--  </div>-->
 
   <div class="upload-data">
     <p
