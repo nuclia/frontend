@@ -1,7 +1,9 @@
 <div
   *ngIf="hasLabels | async"
-  class="label-field">
+  class="label-field"
+  [class.small-button]="size === 'small'">
   <app-label-dropdown
+    [size]="size"
     [labelSets]="labelSets$ | async"
     [selection]="selection"
     (selectionChange)="updateSelection($event)">

@@ -1,8 +1,6 @@
 @import 'variables';
 
 .hint {
-  background-color: $color-neutral-lightest;
-  padding: 0 rhythm(1);
   margin-bottom: rhythm(5);
 
   pre {
@@ -13,19 +11,20 @@
   &.inverted {
     background-color: $color-light-stronger;
   }
-}
 
-.hint-title {
-  display: flex;
-  align-items: center;
-  color: $color-neutral-regular;
-
-  pa-icon {
-    display: inline-block;
-    margin-right: rythm(0.5);
+  .hint-title {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
   }
-}
 
-.hint-content {
-  padding: rhythm(1);
+  .hint-content {
+    background-color: $color-neutral-lightest;
+    padding: rhythm(2);
+  }
+
+  pa-expander .pa-expander-header {
+    background-color: $color-neutral-lighter;
+    padding: 0 rhythm(0.5) 0 rhythm(2);
+  }
 }
