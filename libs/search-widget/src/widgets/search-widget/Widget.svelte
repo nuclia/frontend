@@ -106,8 +106,6 @@
 
     // Setup widget in the store
     widgetMode.set(type as WidgetMode);
-    console.log('features', features);
-    console.log('_features', _features);
     widgetFeatures.set(_features);
     if (placeholder) {
       widgetPlaceholder.set(placeholder);
