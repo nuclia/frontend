@@ -22,7 +22,9 @@
   <div class="upload-data">
     <p
       class="body-m"
-      #uploadLinksContainer
-      [innerHTML]="'onboarding.dataset.upload-links' | translate"></p>
+      #uploadLinksContainer>
+      {{ 'onboarding.dataset.upload-links' | translate }}
+    </p>
+    <app-upload-button (uploaded)="onUpload()"></app-upload-button>
   </div>
 </div>

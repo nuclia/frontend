@@ -45,6 +45,7 @@ import { FileUploadModule } from '@flaps/core';
 import { STFSectionNavbarModule } from '../components/section-navbar';
 import { DatasetImportComponent } from './sample-dataset/dataset-import.component';
 import { LoadingModalComponent } from './sample-dataset/loading-modal/loading-modal.component';
+import { UploadButtonComponent } from './upload-button/upload-button.component';
 
 const Components = [
   ResourceListComponent,
@@ -139,7 +140,7 @@ const ROUTES: Routes = [
     SisLabelModule,
     PaPopupModule,
   ],
-  declarations: [...Components, DatasetImportComponent, LoadingModalComponent],
+  declarations: [...Components, DatasetImportComponent, LoadingModalComponent, UploadButtonComponent],
   exports: [],
 })
 export class ResourcesModule {}
