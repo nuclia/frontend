@@ -15,7 +15,6 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  concatMap,
   distinctUntilKeyChanged,
   forkJoin,
   from,
@@ -24,8 +23,6 @@ import {
   of,
   Subject,
   take,
-  takeWhile,
-  timer,
 } from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -236,7 +233,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getResources().subscribe();
-    this.startPollingResourceStatus();
+    this.updateStatusCount();
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
       this.totalResources = counters.resources;
       this.refreshing = false;
@@ -257,7 +254,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onUpload() {
-    this.startPollingResourceStatus();
+    this.updateStatusCount();
   }
 
   search() {
@@ -653,13 +650,9 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     );
   }
 
-  private startPollingResourceStatus() {
-    timer(0, 30000)
-      .pipe(
-        concatMap(() => this.getResourceStatusCount().pipe(tap((count) => this._statusCount.next(count)))),
-        takeWhile((count) => count.pending > 0),
-        takeUntil(this.unsubscribeAll),
-      )
+  private updateStatusCount() {
+    this.getResourceStatusCount()
+      .pipe(tap((count) => this._statusCount.next(count)))
       .subscribe();
   }
 }
