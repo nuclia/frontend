@@ -150,7 +150,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     { value: 'classification', label: 'resource.classification', visible: false, optional: true },
     { value: 'modification', label: 'generic.date', visible: true, optional: true, showInPending: true },
     { value: 'language', label: 'generic.language', visible: true, optional: true },
-    { value: 'status', label: 'Status', visible: true, optional: true, showInPending: true },
+    { value: 'status', label: 'resource.status', visible: false, optional: true, showInPending: true },
   ];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   optionalColumns = this.columns.filter((column) => column.optional);
