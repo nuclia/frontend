@@ -28,10 +28,7 @@
   export let state: KBStates = 'PUBLISHED';
   export let features = '';
 
-  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
-    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
-    {},
-  );
+  let _features: WidgetFeatures = {};
 
   export const search = (query: string) => {
     nucliaStore().query.next(query);
@@ -56,6 +53,10 @@
     if (cdn) {
       setCDN(cdn);
     }
+    _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+      {},
+    );
     initNuclia(
       {
         backend,
