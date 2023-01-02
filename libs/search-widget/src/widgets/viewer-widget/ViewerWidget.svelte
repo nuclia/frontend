@@ -28,10 +28,7 @@
   export let standalone = false;
   export let features = '';
 
-  let _features: WidgetFeatures = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
-    (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
-    {},
-  );
+  let _features: WidgetFeatures = {};
 
   export const displayResource = (uid: string) => {
     if (uid) {
@@ -55,6 +52,10 @@
     if (cdn) {
       setCDN(cdn);
     }
+    _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
+      (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
+      {},
+    );
     initNuclia(
       {
         backend,
