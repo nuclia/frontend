@@ -366,7 +366,7 @@
 	"onboarding.dataset.importing_description": "This can take a few seconds… Almost there! 🙃",
 	"onboarding.dataset.importing_title": "Importing dataset",
 	"onboarding.dataset.title": "Start using Nuclia",
-	"onboarding.dataset.upload-links": "Please upload some <a href=\"#files\">files</a>, <a href=\"#folder\">folders</a>, <a href=\"#link\">links</a> or <a href=\"#csv\">add resources from a CSV</a> so you can use Nuclia. Be aware that processing, categorizing and indexing the content can take some time.",
+	"onboarding.dataset.upload-links": "Please upload some folders, links or add resources from a CSV so you can use Nuclia. Be aware that processing, categorizing and indexing the content can take some time.",
 	"onboarding.get_started": "Get started",
 	"onboarding.industry_label": "What industry are you in? ",
 	"onboarding.industry_placeholder": "Choose an industry",

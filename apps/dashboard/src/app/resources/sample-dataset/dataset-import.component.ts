@@ -1,5 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
-import { UploadService, UploadType } from '../upload.service';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { ModalConfig, OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { SDKService } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +12,7 @@ import { SampleDatasetService } from './sample-dataset.service';
   styleUrls: ['./dataset-import.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetImportComponent implements AfterViewInit {
+export class DatasetImportComponent {
   @ViewChild('uploadLinksContainer') uploadLinksContainer?: ElementRef;
 
   sampleDatasets: OptionModel[] = [
@@ -33,7 +32,6 @@ export class DatasetImportComponent implements AfterViewInit {
   importing = false;
 
   constructor(
-    private uploadService: UploadService,
     private sdk: SDKService,
     private router: Router,
     private route: ActivatedRoute,
@@ -41,32 +39,6 @@ export class DatasetImportComponent implements AfterViewInit {
     private modal: SisModalService,
     private datasetService: SampleDatasetService,
   ) {}
-
-  ngAfterViewInit() {
-    if (this.uploadLinksContainer) {
-      const uploadLinks = this.uploadLinksContainer.nativeElement.querySelectorAll('a');
-      uploadLinks.forEach((link: HTMLLinkElement) => {
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-
-          const uploadType = link.href.split('#')[1];
-          if (['files', 'folder', 'link', 'csv'].includes(uploadType)) {
-            this.uploadService
-              .upload(uploadType as UploadType)
-              .afterClosed()
-              .subscribe((data) => {
-                if (!data || !data.cancel) {
-                  this.router.navigate(['..'], { relativeTo: this.route });
-                }
-              });
-          } else {
-            console.error(`Unknown upload type ${uploadType}, check "onboarding.dataset.upload-links" translation`);
-          }
-        });
-      });
-    }
-  }
 
   importDataset() {
     this.importing = true;
@@ -92,5 +64,9 @@ export class DatasetImportComponent implements AfterViewInit {
         loadingModal.close();
       },
     });
+  }
+
+  onUpload() {
+    this.router.navigate(['..'], { relativeTo: this.route });
   }
 }

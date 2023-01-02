@@ -13,9 +13,12 @@
     margin-top: calc(var(--app-topbar-height) * -1);
     width: rhythm(60);
 
-    h1,
-    p {
+    h1 {
       margin-bottom: 0;
+    }
+
+    .upload-data p {
+      margin-bottom: rhythm(3);
     }
   }
   .dataset-picker {

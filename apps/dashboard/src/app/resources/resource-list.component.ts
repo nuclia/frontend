@@ -40,7 +40,6 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
-import { UploadService } from './upload.service';
 import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
 
@@ -173,7 +172,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
-    private uploadService: UploadService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
@@ -209,10 +207,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  upload(type: 'files' | 'folder' | 'link' | 'csv') {
-    this.uploadService.upload(type);
   }
 
   search() {
