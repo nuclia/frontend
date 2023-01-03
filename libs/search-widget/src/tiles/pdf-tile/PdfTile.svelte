@@ -3,8 +3,7 @@
   import PdfViewer from './PdfViewer.svelte';
   import { map, Observable } from 'rxjs';
   import { getRegionalBackend, getResource } from '../../core/api';
-  import { getFileField, viewerStore } from '../../core/old-stores/viewer.store';
-  import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
+  import { getCDN, getFileField, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import DocumentTile from '../base-tile/DocumentTile.svelte';
 
@@ -23,8 +22,6 @@
 
   let selectedParagraph: WidgetParagraph | undefined;
   let pdfUrl: Observable<string>;
-  const findInResourceQuery = viewerStore.query;
-  findInResourceQuery['set'] = findInResourceQuery.next;
 
   $: isMobile = innerWidth < 448;
 

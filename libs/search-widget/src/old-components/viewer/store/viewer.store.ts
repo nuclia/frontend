@@ -3,7 +3,6 @@ import type {
   CloudLink,
   FileFieldData,
   IFieldData,
-  LinkFieldData,
   Paragraph,
   PositionedNER,
   Resource,
@@ -13,7 +12,6 @@ import { FIELD_TYPE, RESOURCE_STATUS, Search } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
-  distinctUntilChanged,
   filter,
   map,
   merge,
@@ -33,24 +31,27 @@ import type {
   SelectedParagraph,
   WidgetParagraph,
   YoutubePreviewParams,
-} from '../models';
-import { PreviewKind, SearchOrder } from '../models';
-import { getFileUrls, setLabels } from '../api';
-import { resource } from '../stores/resource.store';
-
-const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
-const NEWLINE_REGEX = /\n/g;
+} from '../../../core/models';
+import { PreviewKind } from '../../../core/models';
+import { getFileUrls, setLabels } from '../../../core/api';
+import { resource } from '../../../core/stores/resource.store';
+import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../../core/stores/viewer-search.store';
+import {
+  getFields,
+  getFieldType,
+  getFileField,
+  getLinkField,
+  getParagraphId,
+  getVideoStream,
+  NEWLINE_REGEX,
+} from '../../../core/utils';
 
 type ViewerStore = {
-  query: BehaviorSubject<string>;
-  results: BehaviorSubject<WidgetParagraph[] | null>;
-  hasSearchError: BehaviorSubject<boolean>;
   showPreview: BehaviorSubject<boolean>;
   selectedParagraph: BehaviorSubject<SelectedParagraph | null>;
   onlySelected: BehaviorSubject<boolean>;
   setPage: Subject<number>;
   linkPreview: BehaviorSubject<LinkPreviewParams | null>;
-  order: Subject<SearchOrder>;
   savingLabels: BehaviorSubject<boolean>;
   updatedLabels: Subject<{ [key: string]: Classification[] }>;
   currentField: BehaviorSubject<{ field_type: string; field_id: string } | null>;
@@ -58,15 +59,11 @@ type ViewerStore = {
 };
 
 export const viewerStore: ViewerStore = {
-  query: new BehaviorSubject(''),
-  results: new BehaviorSubject<WidgetParagraph[] | null>(null),
-  hasSearchError: new BehaviorSubject<boolean>(false),
   showPreview: new BehaviorSubject(false),
   selectedParagraph: new BehaviorSubject<SelectedParagraph | null>(null),
   onlySelected: new BehaviorSubject(false),
   setPage: new Subject(),
   linkPreview: new BehaviorSubject<LinkPreviewParams | null>(null),
-  order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
   currentField: new BehaviorSubject<{ field_type: string; field_id: string } | null>(null),
@@ -74,21 +71,12 @@ export const viewerStore: ViewerStore = {
 };
 
 export const viewerState = {
-  query: viewerStore.query.pipe(
-    tap(() => viewerStore.hasSearchError.next(false)),
-    map((q) => q.trim()),
-    distinctUntilChanged(),
-  ),
   paragraphs: resource.pipe(map((resource) => (resource ? getMainFieldParagraphs(resource) : []))),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
   savingLabels: viewerStore.savingLabels.asObservable(),
   searchReady: resource.pipe(filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0)),
-  results: combineLatest([viewerStore.results, viewerStore.order]).pipe(
-    map(([results, order]) => results && sortParagraphs(results, order)),
-  ),
-  hasSearchError: viewerStore.hasSearchError.asObservable(),
   pdfPreview: combineLatest([resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.PDF])),
@@ -109,7 +97,7 @@ export const viewerState = {
 
 export const selectedParagraphIndex = combineLatest([
   resource,
-  merge(viewerState.results, viewerState.paragraphs),
+  merge(viewerSearchResults, viewerState.paragraphs),
   viewerStore.selectedParagraph,
 ]).pipe(
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
@@ -188,20 +176,16 @@ export const pdfUrl = combineLatest([
 ) as Observable<CloudLink>;
 
 export function initStore() {
-  viewerStore.query.next('');
-  viewerStore.results.next(null);
-  viewerStore.hasSearchError.next(false);
   viewerStore.showPreview.next(false);
   viewerStore.selectedParagraph.next(null);
   viewerStore.linkPreview.next(null);
-  viewerStore.order.next(DEFAULT_SEARCH_ORDER);
   viewerStore.currentField.next(null);
 }
 
 export function clearSearch() {
-  viewerStore.query.next('');
-  viewerStore.results.next(null);
-  viewerStore.hasSearchError.next(false);
+  viewerSearchQuery.set('');
+  viewerSearchResults.set(null);
+  hasViewerSearchError.set(false);
   viewerStore.onlySelected.next(false);
 }
 
@@ -312,7 +296,7 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
   return resource.search(query, [Search.ResourceFeatures.PARAGRAPH]).pipe(
     tap((results) => {
       if (results.error) {
-        viewerStore.hasSearchError.next(true);
+        hasViewerSearchError.set(true);
       }
     }),
     map((results) => results.paragraphs?.results || []),
@@ -350,44 +334,6 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
   return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
     return getParagraph(resource, mainField.field_type, mainField.field_id, mainField.field, paragraph, ners);
   });
-}
-
-function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
-  if (order === SearchOrder.SEQUENTIAL) {
-    return paragraphs.slice().sort((a, b) => {
-      const aIsNumber = typeof a.paragraph.start === 'number';
-      const bIsNumber = typeof b.paragraph.start === 'number';
-      if (!aIsNumber && !bIsNumber) {
-        return 0;
-      } else if (aIsNumber && !bIsNumber) {
-        return 1;
-      } else if (!aIsNumber && bIsNumber) {
-        return -1;
-      } else {
-        return a.paragraph.start! - b.paragraph.start!;
-      }
-    });
-  }
-  return paragraphs;
-}
-
-function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
-  if (field.extracted && 'file' in field.extracted) {
-    if (getPages(field as FileFieldData).length && getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
-      return PreviewKind.PDF;
-    } else if (paragraph.kind === 'TRANSCRIPT') {
-      if (isFileType(field as FileFieldData, 'video/')) {
-        return PreviewKind.VIDEO;
-      } else if (isFileType(field as FileFieldData, 'audio/')) {
-        return PreviewKind.AUDIO;
-      }
-    }
-  } else if (field.value && 'uri' in field.value) {
-    if (paragraph.kind === 'INCEPTION' || paragraph.kind === 'TRANSCRIPT') {
-      return PreviewKind.YOUTUBE;
-    }
-  }
-  return PreviewKind.NONE;
 }
 
 function getParagraph(
@@ -453,33 +399,30 @@ function getParagraph(
   }
 }
 
-export function getFields(resource: Resource) {
-  return Object.keys(resource.data)
-    .reduce((acc, fieldType) => {
-      const fieldKeys = Object.keys(resource.data[fieldType as keyof ResourceData] || {});
-      const fields = fieldKeys.map((fieldId) => [fieldType, fieldId]);
-      return acc.concat(fields);
-    }, [] as string[][])
-    .map(([fieldType, fieldId]) => ({
-      field: resource.data[fieldType as keyof ResourceData]![fieldId],
-      field_type: fieldType,
-      field_id: fieldId,
-    }));
+function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
+  if (field.extracted && 'file' in field.extracted) {
+    if (getPages(field as FileFieldData).length && getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
+      return PreviewKind.PDF;
+    } else if (paragraph.kind === 'TRANSCRIPT') {
+      if (isFileType(field as FileFieldData, 'video/')) {
+        return PreviewKind.VIDEO;
+      } else if (isFileType(field as FileFieldData, 'audio/')) {
+        return PreviewKind.AUDIO;
+      }
+    }
+  } else if (field.value && 'uri' in field.value) {
+    if (paragraph.kind === 'INCEPTION' || paragraph.kind === 'TRANSCRIPT') {
+      return PreviewKind.YOUTUBE;
+    }
+  }
+  return PreviewKind.NONE;
 }
 
-export function getField(resource: Resource, fieldType: string, fieldId: string): IFieldData | undefined {
+function getField(resource: Resource, fieldType: string, fieldId: string): IFieldData | undefined {
   return resource.data[fieldType as keyof ResourceData]?.[fieldId];
 }
 
-export function getFileField(resource: Resource, fieldId: string): FileFieldData | undefined {
-  return resource.data.files?.[fieldId];
-}
-
-export function getLinkField(resource: Resource, fieldId: string): LinkFieldData | undefined {
-  return resource.data.links?.[fieldId];
-}
-
-export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
+function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
   return (fileField.extracted?.file?.file_pages_previews?.positions || []).reduce((acc, page, index) => {
     if (
       typeof paragraph.start !== 'number' ||
@@ -496,16 +439,13 @@ export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Par
   }, [] as number[]);
 }
 
-export function getParagraphPages(fileField: FileFieldData, paragraph: Paragraph): CloudLink[] {
-  return getParagraphPageIndexes(fileField, paragraph).map((index) => getPages(fileField)[index]);
-}
-
-export function getPages(fileField: FileFieldData): CloudLink[] {
+function getPages(fileField: FileFieldData): CloudLink[] {
   return fileField.extracted?.file?.file_pages_previews?.pages || [];
 }
 
-export function getVideoStream(fileField: FileFieldData): CloudLink | undefined {
-  return fileField.extracted?.file?.file_generated?.['video.mpd'];
+function isFileType(fileField: FileFieldData, type: string): boolean {
+  const contentType = fileField.extracted?.file?.icon || '';
+  return contentType === type || contentType.slice(0, type.length) === type;
 }
 
 // Temporary functions
@@ -521,17 +461,6 @@ export function findFileByType(resource: Resource | null, type: string): string 
   return url ? url : undefined;
 }
 
-export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
-  const type = paragraph.fieldType.slice(0, -1);
-  const typeABBR = type === 'link' ? 'u' : type[0];
-  return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
-};
-
-function isFileType(fileField: FileFieldData, type: string): boolean {
-  const contentType = fileField.extracted?.file?.icon || '';
-  return contentType === type || contentType.slice(0, type.length) === type;
-}
-
 function getFieldTypeKey(fieldType: string): keyof ResourceData {
   if (fieldType === 'f') {
     return 'files';
@@ -540,10 +469,6 @@ function getFieldTypeKey(fieldType: string): keyof ResourceData {
   } else {
     return 'texts';
   }
-}
-
-export function getFieldType(fieldType: string): FIELD_TYPE {
-  return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
 
 function findParagraphFromSearchParagraph(

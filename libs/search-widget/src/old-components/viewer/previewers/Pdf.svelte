@@ -2,7 +2,7 @@
   import { onMount, onDestroy } from 'svelte';
   import { Subject, switchMap, tap } from 'rxjs';
   import { getFile } from '../../../core/api';
-  import { viewerStore } from '../../../core/old-stores/viewer.store';
+  import { viewerStore } from '../store/viewer.store';
   import PdfControls from './PdfControls.svelte';
   import LoadingDots from '../../../common/spinner/LoadingDots.svelte';
 
@@ -79,7 +79,6 @@
   const initViewer = () => {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.worker.min.js';
 
-    const SANDBOX_BUNDLE_SRC = 'https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.sandbox.js';
     const container = pdfContainer;
     eventBus = new pdfjsViewer.EventBus();
 
@@ -118,7 +117,7 @@
       findPrevious: undefined,
       highlightAll: true,
       phraseSearch: true,
-      query: query,
+      query,
     });
   };
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Expander from '../../common/expander/Expander.svelte';
-  import { viewerStore } from '../../core/old-stores/viewer.store';
+  import { viewerStore } from './store/viewer.store';
   import { _ } from '../../core/i18n';
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../../core/models';
@@ -13,6 +13,7 @@
     resourceEntities,
     selectedFamily,
   } from '../../core/stores/entities.store';
+  import { viewerSearchQuery } from '../../core/stores/viewer-search.store';
 
   export let showAnnotated = false;
 
@@ -46,7 +47,7 @@
   };
 
   const search = (entity: string) => {
-    viewerStore.query.next(entity);
+    viewerSearchQuery.set(entity);
   };
 
   const onKeyUp = (event: KeyboardEvent, entity: string) => {

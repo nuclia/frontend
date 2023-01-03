@@ -2,7 +2,7 @@
   import type { CloudLink } from '@nuclia/core';
   import { saveEntities, saveEntitiesAnnotations } from '../../core/api';
   import { getCDN, formatDate } from '../../core/utils';
-  import { viewerStore } from '../../core/old-stores/viewer.store';
+  import { viewerStore } from './store/viewer.store';
   import { _ } from '../../core/i18n';
   import Entities from './Entities.svelte';
   import Button from '../../common/button/Button.svelte';
