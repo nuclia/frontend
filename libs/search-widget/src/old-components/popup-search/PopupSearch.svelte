@@ -1,13 +1,11 @@
 <script lang="ts">
   import Modal from '../../common/modal/Modal.svelte';
-  import { nucliaState } from '../../core/old-stores/main.store';
   import Results from '../results/Results.svelte';
   import SearchInput from '../search-input/SearchInput.svelte';
   import { isPopupSearchOpen } from '../../core/stores/modal.store';
+  import { smartResults } from '../../core/stores/search.store';
 
   let inputElement;
-
-  const results = nucliaState().smartResults;
 </script>
 
 <div class="sw-popup-search">
@@ -22,7 +20,7 @@
     closeButton={true}
     on:close={() => isPopupSearchOpen.set(false)}>
     <div class="results">
-      <Results results={$results} />
+      <Results results={$smartResults} />
     </div>
   </Modal>
 </div>

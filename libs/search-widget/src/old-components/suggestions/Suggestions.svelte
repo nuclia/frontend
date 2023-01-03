@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Classification, LinkField, Search } from '@nuclia/core';
   import { FIELD_TYPE } from '@nuclia/core';
-  import { addLabelFilter, setDisplayedResource } from '../../core/old-stores/main.store';
   import { getField } from '../../core/api';
   import { goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
@@ -10,6 +9,7 @@
   import { navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
   import { take } from 'rxjs/operators';
+  import { addLabelFilter, displayedResource } from '../../core/stores/search.store';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
@@ -23,7 +23,7 @@
           goToUrl(uri, text && !isYoutubeLink ? text : undefined);
         });
       } else {
-        setDisplayedResource(params);
+        displayedResource.set(params);
       }
     });
   };

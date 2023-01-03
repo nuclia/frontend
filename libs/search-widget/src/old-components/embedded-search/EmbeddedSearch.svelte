@@ -1,19 +1,18 @@
 <script lang="ts">
-  import { merge, map, pipe, tap } from 'rxjs';
+  import { merge, map } from 'rxjs';
   import Toggle from '../../common/toggle/Toggle.svelte';
-  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import Results from '../results/Results.svelte';
   import SearchInput from '../search-input/SearchInput.svelte';
   import { _ } from '../../core/i18n';
+  import { isEmptySearchQuery, searchOptions, smartResults, triggerSearch } from '../../core/stores/search.store';
 
-  const results = nucliaState().smartResults;
+  const results = smartResults;
   const showResults = merge(
-    nucliaStore().triggerSearch.pipe(map(() => true)),
-    nucliaState().smartResults.pipe(map((results) => results.length > 0)),
+    triggerSearch.pipe(map(() => true)),
+    smartResults.pipe(map((results) => results.length > 0)),
   );
-  const isEmptySearchQuery = nucliaState().isEmptySearchQuery;
   const onChange = (checked: boolean) =>
-    nucliaStore().searchOptions.next({
+    searchOptions.set({
       inTitleOnly: checked,
       highlight: true,
     });

@@ -2,7 +2,6 @@
 
 <script lang="ts">
   import type { KBStates } from '@nuclia/core';
-  import { resetStore, nucliaStore } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
@@ -14,6 +13,7 @@
   import { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
   import { activatePermalinks, initLabelStore } from '../../core/stores/effects';
+  import { searchQuery, triggerSearch } from '../../core/stores/search.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -31,8 +31,8 @@
   let _features: WidgetFeatures = {};
 
   export const search = (query: string) => {
-    nucliaStore().query.next(query);
-    nucliaStore().triggerSearch.next();
+    searchQuery.set(query);
+    triggerSearch.next();
   };
 
   const thisComponent = get_current_component();
@@ -97,7 +97,6 @@
     ready = true;
 
     return () => {
-      resetStore();
       resetNuclia();
     };
   });

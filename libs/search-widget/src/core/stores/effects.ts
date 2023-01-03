@@ -19,9 +19,9 @@ import {
 import { NO_RESULTS } from '../models';
 import { widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import { nucliaState, nucliaStore } from '../old-stores/main.store';
 import type { Classification, Search } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
+import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -84,10 +84,10 @@ export function activatePermalinks() {
   const query = urlParams.get(queryKey);
   const filters = urlParams.getAll(filterKey);
   if (query || filters.length > 0) {
-    nucliaStore().query.next(query || '');
-    nucliaStore().filters.next(filters);
+    searchQuery.set(query || '');
+    searchFilters.set(filters);
     typeAhead.set(query || '');
-    nucliaStore().triggerSearch.next();
+    triggerSearch.next();
     if (widgetMode.value === 'popup') {
       isPopupSearchOpen.set(true);
     }
@@ -95,11 +95,11 @@ export function activatePermalinks() {
 
   const permalinkSubscription = [
     // When a search is performed, save the query and filters in the current URL
-    nucliaStore()
-      .triggerSearch.pipe(
-        switchMap(() => nucliaState().isEmptySearchQuery.pipe(take(1))),
+    triggerSearch
+      .pipe(
+        switchMap(() => isEmptySearchQuery.pipe(take(1))),
         filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() => combineLatest([nucliaState().query, nucliaState().filters]).pipe(take(1))),
+        switchMap(() => combineLatest([searchQuery, searchFilters]).pipe(take(1))),
       )
       .subscribe(([query, filters]) => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -115,7 +115,7 @@ export function activatePermalinks() {
         skip(1),
         filter((isOpen) => !isOpen),
       ),
-      nucliaState().isEmptySearchQuery.pipe(
+      isEmptySearchQuery.pipe(
         distinctUntilChanged(),
         skip(1),
         filter((isEmpty) => isEmpty),

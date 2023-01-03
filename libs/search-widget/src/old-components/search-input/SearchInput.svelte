@@ -1,7 +1,6 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { addLabelFilter, nucliaState, nucliaStore, removeLabelFilter } from '../../core/old-stores/main.store';
   import { getCDN } from '../../core/utils';
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
@@ -24,6 +23,13 @@
   import { getParentLiRect } from '../../common/label/label.utils';
   import Button from '../../common/button/Button.svelte';
   import { hasFilterButton, widgetPlaceholder } from '../../core/stores/widget.store';
+  import {
+    addLabelFilter,
+    removeLabelFilter,
+    searchFilters,
+    searchQuery,
+    triggerSearch,
+  } from '../../core/stores/search.store';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -48,7 +54,7 @@
   let displayMoreFilters = false;
   const filterDisplayLimit = popupSearch ? 1 : 2;
 
-  const filters = nucliaState().filters.pipe(
+  const filters = searchFilters.pipe(
     tap((filters) => {
       // search box size changes when there are filters or not
       const hasFiltersNow = filters.length > 0;
@@ -84,8 +90,8 @@
   };
 
   const search = () => {
-    nucliaStore().query.next(typeAhead.getValue());
-    nucliaStore().triggerSearch.next();
+    searchQuery.set(typeAhead.getValue());
+    triggerSearch.next();
     dispatch('search');
   };
 
@@ -144,7 +150,7 @@
 
   function clear() {
     typeAhead.set('');
-    nucliaStore().query.next('');
+    searchQuery.set('');
   }
 </script>
 

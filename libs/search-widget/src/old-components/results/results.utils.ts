@@ -2,13 +2,13 @@ import type { IResource } from '@nuclia/core';
 import type { DisplayedResource } from '../../core/models';
 import { navigateToLink } from '../../core/stores/widget.store';
 import { goToUrl, isYoutubeUrl } from '../../core/utils';
-import { nucliaStore, setDisplayedResource } from '../../core/old-stores/main.store';
-import { combineLatest, take, map } from 'rxjs';
+import { combineLatest, map, take } from 'rxjs';
+import { displayedResource, searchResults } from '../../core/stores/search.store';
 
 export const goToResource = (params: DisplayedResource, text?: string) => {
   combineLatest([
     navigateToLink,
-    nucliaStore().searchResults.pipe(
+    searchResults.pipe(
       map((results) => (Object.values(results.resources || {}) as IResource[]).find((r) => r.id === params.uid)),
     ),
   ])
@@ -23,7 +23,7 @@ export const goToResource = (params: DisplayedResource, text?: string) => {
       } else if (navigateToLink && fileField?.value?.external && fileField?.value?.file?.uri) {
         goToUrl(fileField.value.file.uri);
       } else {
-        setDisplayedResource(params);
+        displayedResource.set(params);
       }
     });
 };
