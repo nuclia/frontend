@@ -15,7 +15,7 @@ export class OnboardingComponent {
   onboardingForm = new FormGroup({
     industry: new FormControl<string>(''),
     searchEngine: new FormControl<string>(''),
-    getUpdates: new FormControl<boolean>(false),
+    getUpdates: new FormControl<boolean>(true),
   });
 
   zones: Zone[] = [];
