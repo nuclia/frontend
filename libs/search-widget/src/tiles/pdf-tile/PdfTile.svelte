@@ -42,23 +42,33 @@
       );
     }
   };
+
+  let pdfJsLoaded = false;
+  const onPdfJsLoad = () => {
+    pdfJsLoaded = true;
+  };
 </script>
 
-<svelte:window bind:innerWidth></svelte:window>
+<svelte:window bind:innerWidth />
 <svelte:head>
-  <script src="{pdfJsBaseUrl}/build/pdf.min.js"></script>
-  <script src="{pdfJsBaseUrl}/web/pdf_viewer.js"></script>
+  <script
+    src="{pdfJsBaseUrl}/build/pdf.min.js"
+    on:load={onPdfJsLoad}></script>
+  {#if pdfJsLoaded}
+    <script src="{pdfJsBaseUrl}/web/pdf_viewer.js"></script>
+  {/if}
 </svelte:head>
 {#if $pdfStyle}
   <svelte:element this="style">{@html $pdfStyle}</svelte:element>
 {/if}
 <svelte:element this="style">{@html pdfOverrideStyle}</svelte:element>
 
-<DocumentTile previewKind={PreviewKind.PDF}
-              fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
-              {result}
-              resourceObs={resource$}
-              on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
+<DocumentTile
+  previewKind={PreviewKind.PDF}
+  fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
+  {result}
+  resourceObs={resource$}
+  on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
   <PdfViewer
     src={$pdfUrl}
     paragraph={selectedParagraph}
