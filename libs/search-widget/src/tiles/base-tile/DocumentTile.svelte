@@ -2,7 +2,6 @@
   import { Resource, Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
-  import { viewerStore } from '../../core/old-stores/viewer.store';
   import { Duration } from '../../common/transition.utils';
   import { mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -18,6 +17,7 @@
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import { fade, slide } from 'svelte/transition';
   import { searchQuery } from '../../core/stores/search.store';
+  import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
   export let resourceObs: Observable<Resource>;
@@ -42,8 +42,6 @@
   let findInputElement: HTMLElement;
 
   const globalQuery = searchQuery;
-  const findInResourceQuery = viewerStore.query;
-  findInResourceQuery['set'] = findInResourceQuery.next;
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
@@ -52,7 +50,7 @@
   let paragraphList: WidgetParagraph[];
   const isSearchingInResource = new BehaviorSubject(false);
   const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
-    viewerStore.results,
+    viewerSearchResults,
     isSearchingInResource,
   ]).pipe(
     map(([inResourceResults, isInResource]: [WidgetParagraph[], boolean]) => {
@@ -66,7 +64,6 @@
   );
 
   onMount(() => {
-    viewerStore.init();
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
   });
 
@@ -75,7 +72,7 @@
     resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
-      findInResourceQuery.next(globalQuery.getValue());
+      viewerSearchQuery.set(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
     }
@@ -124,12 +121,12 @@
       selectParagraph(undefined);
       resultIndex = -1;
       isSearchingInResource.next(false);
-      findInResourceQuery.next(globalQuery.getValue());
+      viewerSearchQuery.set(globalQuery.getValue());
     }
   };
 
   const findInPdf = () => {
-    const query = findInResourceQuery.value.trim();
+    const query = viewerSearchQuery.getValue();
     if (resource && query) {
       isSearchingInResource.next(true);
       resource
@@ -137,14 +134,14 @@
         .pipe(
           tap((results) => {
             if (results.error) {
-              viewerStore.hasSearchError.next(true);
+              hasViewerSearchError.set(true);
             }
           }),
           map((results) => results.paragraphs?.results || []),
         )
         .subscribe((paragraphs) => {
           resultIndex = -1;
-          viewerStore.results.next(
+          viewerSearchResults.set(
             paragraphs.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.PDF)),
           );
         });
@@ -166,7 +163,6 @@
     selectParagraph(undefined);
     setTimeout(() => {
       isSearchingInResource.next(false);
-      viewerStore.init();
       sidePanelExpanded = false;
       resultNavigatorDisabled = false;
     });
@@ -262,7 +258,7 @@
               placeholder="Find in document"
               tabindex="-1"
               bind:this={findInputElement}
-              bind:value={$findInResourceQuery}
+              bind:value={$viewerSearchQuery}
               on:change={findInPdf} />
           </div>
 

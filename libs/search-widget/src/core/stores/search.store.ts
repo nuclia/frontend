@@ -26,7 +26,7 @@ export const searchQuery = searchState.writer<string>(
   (state) => state.query,
   (state, query) => {
     const trimmedQuery = query.trim();
-    if (!!trimmedQuery && trimmedQuery !== state.query) {
+    if (trimmedQuery !== state.query) {
       return {
         ...state,
         query: trimmedQuery,

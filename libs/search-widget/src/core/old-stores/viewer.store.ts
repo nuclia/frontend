@@ -13,7 +13,6 @@ import { FIELD_TYPE, RESOURCE_STATUS, Search } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
-  distinctUntilChanged,
   filter,
   map,
   merge,
@@ -34,23 +33,19 @@ import type {
   WidgetParagraph,
   YoutubePreviewParams,
 } from '../models';
-import { PreviewKind, SearchOrder } from '../models';
+import { PreviewKind } from '../models';
 import { getFileUrls, setLabels } from '../api';
 import { resource } from '../stores/resource.store';
+import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../stores/viewer-search.store';
 
-const DEFAULT_SEARCH_ORDER = SearchOrder.SEQUENTIAL;
 const NEWLINE_REGEX = /\n/g;
 
 type ViewerStore = {
-  query: BehaviorSubject<string>;
-  results: BehaviorSubject<WidgetParagraph[] | null>;
-  hasSearchError: BehaviorSubject<boolean>;
   showPreview: BehaviorSubject<boolean>;
   selectedParagraph: BehaviorSubject<SelectedParagraph | null>;
   onlySelected: BehaviorSubject<boolean>;
   setPage: Subject<number>;
   linkPreview: BehaviorSubject<LinkPreviewParams | null>;
-  order: Subject<SearchOrder>;
   savingLabels: BehaviorSubject<boolean>;
   updatedLabels: Subject<{ [key: string]: Classification[] }>;
   currentField: BehaviorSubject<{ field_type: string; field_id: string } | null>;
@@ -58,15 +53,11 @@ type ViewerStore = {
 };
 
 export const viewerStore: ViewerStore = {
-  query: new BehaviorSubject(''),
-  results: new BehaviorSubject<WidgetParagraph[] | null>(null),
-  hasSearchError: new BehaviorSubject<boolean>(false),
   showPreview: new BehaviorSubject(false),
   selectedParagraph: new BehaviorSubject<SelectedParagraph | null>(null),
   onlySelected: new BehaviorSubject(false),
   setPage: new Subject(),
   linkPreview: new BehaviorSubject<LinkPreviewParams | null>(null),
-  order: new BehaviorSubject<SearchOrder>(DEFAULT_SEARCH_ORDER),
   savingLabels: new BehaviorSubject<boolean>(false),
   updatedLabels: new Subject<{ [key: string]: Classification[] }>(),
   currentField: new BehaviorSubject<{ field_type: string; field_id: string } | null>(null),
@@ -74,21 +65,12 @@ export const viewerStore: ViewerStore = {
 };
 
 export const viewerState = {
-  query: viewerStore.query.pipe(
-    tap(() => viewerStore.hasSearchError.next(false)),
-    map((q) => q.trim()),
-    distinctUntilChanged(),
-  ),
   paragraphs: resource.pipe(map((resource) => (resource ? getMainFieldParagraphs(resource) : []))),
   showPreview: viewerStore.showPreview.asObservable(),
   onlySelected: viewerStore.onlySelected.asObservable(),
   linkPreview: viewerStore.linkPreview.asObservable(),
   savingLabels: viewerStore.savingLabels.asObservable(),
   searchReady: resource.pipe(filter((resource) => !!resource && Object.keys(resource.data || {}).length > 0)),
-  results: combineLatest([viewerStore.results, viewerStore.order]).pipe(
-    map(([results, order]) => results && sortParagraphs(results, order)),
-  ),
-  hasSearchError: viewerStore.hasSearchError.asObservable(),
   pdfPreview: combineLatest([resource, viewerStore.selectedParagraph]).pipe(
     filter(([resource, selected]) => !!resource && !!selected),
     filter(([resource, selected]) => isParagraphOfKind(resource!, selected!, [PreviewKind.PDF])),
@@ -109,7 +91,7 @@ export const viewerState = {
 
 export const selectedParagraphIndex = combineLatest([
   resource,
-  merge(viewerState.results, viewerState.paragraphs),
+  merge(viewerSearchResults, viewerState.paragraphs),
   viewerStore.selectedParagraph,
 ]).pipe(
   filter(([resource, paragraphs, selected]) => !!resource && !!selected && !!paragraphs),
@@ -188,20 +170,16 @@ export const pdfUrl = combineLatest([
 ) as Observable<CloudLink>;
 
 export function initStore() {
-  viewerStore.query.next('');
-  viewerStore.results.next(null);
-  viewerStore.hasSearchError.next(false);
   viewerStore.showPreview.next(false);
   viewerStore.selectedParagraph.next(null);
   viewerStore.linkPreview.next(null);
-  viewerStore.order.next(DEFAULT_SEARCH_ORDER);
   viewerStore.currentField.next(null);
 }
 
 export function clearSearch() {
-  viewerStore.query.next('');
-  viewerStore.results.next(null);
-  viewerStore.hasSearchError.next(false);
+  viewerSearchQuery.set('');
+  viewerSearchResults.set(null);
+  hasViewerSearchError.set(false);
   viewerStore.onlySelected.next(false);
 }
 
@@ -312,7 +290,7 @@ export function search(resource: Resource, query: string): Observable<WidgetPara
   return resource.search(query, [Search.ResourceFeatures.PARAGRAPH]).pipe(
     tap((results) => {
       if (results.error) {
-        viewerStore.hasSearchError.next(true);
+        hasViewerSearchError.set(true);
       }
     }),
     map((results) => results.paragraphs?.results || []),
@@ -350,25 +328,6 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
   return mainField.field.extracted!.metadata!.metadata!.paragraphs.map((paragraph) => {
     return getParagraph(resource, mainField.field_type, mainField.field_id, mainField.field, paragraph, ners);
   });
-}
-
-function sortParagraphs(paragraphs: WidgetParagraph[], order: SearchOrder) {
-  if (order === SearchOrder.SEQUENTIAL) {
-    return paragraphs.slice().sort((a, b) => {
-      const aIsNumber = typeof a.paragraph.start === 'number';
-      const bIsNumber = typeof b.paragraph.start === 'number';
-      if (!aIsNumber && !bIsNumber) {
-        return 0;
-      } else if (aIsNumber && !bIsNumber) {
-        return 1;
-      } else if (!aIsNumber && bIsNumber) {
-        return -1;
-      } else {
-        return a.paragraph.start! - b.paragraph.start!;
-      }
-    });
-  }
-  return paragraphs;
 }
 
 function getPreviewKind(field: IFieldData, paragraph: Paragraph) {

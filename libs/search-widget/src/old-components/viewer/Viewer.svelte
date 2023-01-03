@@ -10,7 +10,7 @@
     selectSentence,
   } from '../../core/old-stores/viewer.store';
   import { onDestroy } from 'svelte';
-  import { combineLatest, filter, map, of, switchMap } from 'rxjs';
+  import { combineLatest, filter, map, switchMap } from 'rxjs';
   import Header from './Header.svelte';
   import Paragraphs from './paragraphs/Paragraphs.svelte';
   import InputViewer from './InputViewer.svelte';
@@ -21,16 +21,14 @@
   import { resource } from '../../core/stores/resource.store';
   import type { EntityGroup } from '../../core/models';
   import { displayedResource, searchQuery } from '../../core/stores/search.store';
+  import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
 
   let imagePath: string | undefined;
   let image: string | undefined;
   let header: HTMLElement;
   let headerHeight;
 
-  const query = viewerState.query;
   const paragraphs = viewerState.paragraphs;
-  const results = viewerState.results;
-  const hasSearchError = viewerState.hasSearchError;
   const showPreview = viewerState.showPreview;
   const notProcessed = viewerState.isNotProcessed;
   const nerStyle = selectedFamilyData.pipe(
@@ -53,6 +51,16 @@
 
   $: headerHeight = header?.clientHeight + 'px' || '0';
 
+  const triggerSearch = () => {
+    const query = viewerSearchQuery.getValue();
+    if (query) {
+      search(resource.value!, query).subscribe((paragraphs) => {
+        viewerStore.onlySelected.next(false);
+        viewerSearchResults.set(paragraphs);
+      });
+    }
+  };
+
   const subscriptions = [
     displayedResource.subscribe(() => viewerStore.init()),
     viewerState.searchReady
@@ -68,13 +76,6 @@
         } else if (displayedResource.paragraph) {
           selectParagraph(resource.value!, displayedResource.paragraph);
         }
-      }),
-
-    query
-      .pipe(switchMap((query) => (query.length > 0 ? search(resource.value!, query) : of(null))))
-      .subscribe((paragraphs) => {
-        viewerStore.onlySelected.next(false);
-        viewerStore.results.next(paragraphs);
       }),
 
     combineLatest([paragraphs, viewerStore.currentField])
@@ -105,19 +106,19 @@
     class="viewer-body"
     class:preview={$showPreview}>
     <div class="viewer-left">
-      <InputViewer />
+      <InputViewer on:triggerSearch={triggerSearch} />
       {#if $notProcessed}
         {$_('error.processing')}
       {/if}
 
       <div class="paragraphs">
-        {#if $hasSearchError}
+        {#if $hasViewerSearchError}
           <div>
             <strong>{$_('error.search')}</strong>
             <span>{$_('error.search-beta')}</span>
           </div>
         {:else}
-          <Paragraphs paragraphs={$results || $paragraphs} />
+          <Paragraphs paragraphs={$viewerSearchResults || $paragraphs} />
         {/if}
       </div>
 

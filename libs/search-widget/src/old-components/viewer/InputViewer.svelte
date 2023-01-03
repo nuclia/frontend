@@ -2,16 +2,19 @@
   import { _ } from '../../core/i18n';
   import { getCDN } from '../../core/utils';
   import { SearchOrder } from '../../core/models';
-  import { viewerStore, viewerState, clearSearch } from '../../core/old-stores/viewer.store';
+  import { viewerState, clearSearch } from '../../core/old-stores/viewer.store';
+  import { viewerSearchOrder, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
+  import { createEventDispatcher } from 'svelte';
 
-  const query = viewerStore.query;
-  query['set'] = query.next;
-
-  const order = viewerStore.order;
-  order['set'] = order.next;
-
-  const results = viewerState.results;
   const onlySelected = viewerState.onlySelected;
+
+  const dispatch = createEventDispatcher();
+
+  const onKeyup = (event) => {
+    if (event.key === 'Enter') {
+      dispatch('triggerSearch');
+    }
+  };
 
   const showAllParagraphs = () => {
     clearSearch();
@@ -28,9 +31,10 @@
         autocapitalize="off"
         spellcheck="false"
         aria-label="Search input"
-        bind:value={$query}
+        bind:value={$viewerSearchQuery}
+        on:keyup={onKeyup}
         style:background-image={`url(${getCDN()}icons/search.svg)`} />
-      {#if $results !== null || $onlySelected}
+      {#if $viewerSearchResults !== null || $onlySelected}
         <button on:click={showAllParagraphs}>
           <img
             src={`${getCDN()}icons/close.svg`}
@@ -39,7 +43,7 @@
       {/if}
     </div>
     <div class="sort">
-      <select bind:value={$order}>
+      <select bind:value={$viewerSearchOrder}>
         <option value={SearchOrder.RELEVANCE}>{$_('resource.relevance')}</option>
         <option value={SearchOrder.SEQUENTIAL}>{$_('resource.sequential')}</option>
       </select>

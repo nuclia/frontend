@@ -79,7 +79,6 @@
   const initViewer = () => {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.worker.min.js';
 
-    const SANDBOX_BUNDLE_SRC = 'https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.sandbox.js';
     const container = pdfContainer;
     eventBus = new pdfjsViewer.EventBus();
 
@@ -118,7 +117,7 @@
       findPrevious: undefined,
       highlightAll: true,
       phraseSearch: true,
-      query: query,
+      query,
     });
   };
 
