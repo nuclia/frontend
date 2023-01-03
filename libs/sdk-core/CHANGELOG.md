@@ -8,6 +8,9 @@
 - Add method to test if a trained model is available
 - Add `TextFieldFormat` type
 - Add `importDataset` method to `WritableKnowledgeBox`
+- Add `ResourceStatus` type
+- Add `with_status` search option
+- Fix `FacetsResult` model
 
 ### Bugfix
 

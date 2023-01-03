@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { UploadService } from '../upload.service';
+import { UploadDialogService } from '../upload-dialog.service';
 
 @Component({
   selector: 'app-upload-button',
@@ -9,7 +9,7 @@ import { UploadService } from '../upload.service';
 export class UploadButtonComponent implements OnInit {
   @Output() uploaded = new EventEmitter();
 
-  constructor(private uploadService: UploadService) {}
+  constructor(private uploadService: UploadDialogService) {}
 
   ngOnInit(): void {}
 
