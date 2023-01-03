@@ -10,13 +10,13 @@ import type {
 } from '@nuclia/core';
 import { FIELD_TYPE, Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
-import { nucliaStore } from './old-stores/main.store';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
 import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
+import { hasSearchError, searchOptions } from './stores/search.store';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -31,7 +31,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     SEARCH_MODE = [Search.Features.PARAGRAPH];
   }
   nucliaApi = new Nuclia(options);
-  nucliaStore().searchOptions.next({ inTitleOnly: false, highlight: widgetOptions.highlight });
+  searchOptions.set({ inTitleOnly: false, highlight: widgetOptions.highlight });
   if (widgetOptions.features?.suggestLabels) {
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
     if (kbPath) {
@@ -54,7 +54,7 @@ export const search = (query: string, options: SearchOptions) => {
   return nucliaApi.knowledgeBox.search(query, SEARCH_MODE, options).pipe(
     filter((res) => {
       if (res.error) {
-        nucliaStore().hasSearchError.next(true);
+        hasSearchError.set(true);
       }
       return !res.error;
     }),

@@ -1,17 +1,13 @@
 <script lang="ts">
-  import { nucliaState } from '../../core/old-stores/main.store';
   import Row from '../row/Row.svelte';
   import type { Search } from '@nuclia/core';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
+  import { hasSearchError, pendingResults } from '../../core/stores/search.store';
 
   export let displayThumbnail = true;
   export let formWidget = false;
   export let results: Search.SmartResult[] = [];
-
-  const hasSearchError = nucliaState().hasSearchError;
-  const pendingResults = nucliaState().pendingResults;
-  let showAll = false;
 </script>
 
 <div class="sw-results">

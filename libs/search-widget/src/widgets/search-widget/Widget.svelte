@@ -3,7 +3,6 @@
 <script lang="ts">
   import PopupSearch from '../../old-components/popup-search/PopupSearch.svelte';
   import EmbeddedSearch from '../../old-components/embedded-search/EmbeddedSearch.svelte';
-  import { resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { get_current_component } from 'svelte/internal';
@@ -22,7 +21,6 @@
     WidgetMode,
   } from '../../core/stores/widget.store';
   import {
-    activatePermalink,
     activatePermalinks,
     activateTypeAheadSuggestions,
     initLabelStore,
@@ -30,6 +28,7 @@
   } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
+  import { displayedResource } from '../../core/stores/search.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -61,14 +60,13 @@
 
   export const displayResource = (uid: string) => {
     if (uid) {
-      setDisplayedResource({ uid });
+      displayedResource.set({ uid });
     } else {
       isViewerOpen.set(false);
     }
   };
   export const setActions = setWidgetActions;
   export const reset = () => {
-    resetStore();
     resetNuclia();
     unsubscribeAllEffects();
     unsubscribeViewerEffects();

@@ -1,7 +1,6 @@
 <svelte:options tag="nuclia-viewer" />
 
 <script lang="ts">
-  import { resetStore, setDisplayedResource } from '../../core/old-stores/main.store';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
@@ -14,6 +13,7 @@
   import { isViewerOpen } from '../../core/stores/modal.store';
   import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
   import { WidgetFeatures } from '@nuclia/core';
+  import { displayedResource } from '../../core/stores/search.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -32,14 +32,13 @@
 
   export const displayResource = (uid: string) => {
     if (uid) {
-      setDisplayedResource({ uid });
+      displayedResource.set({ uid });
     } else {
       isViewerOpen.set(false);
     }
   };
   export const setActions = setWidgetActions;
   export const reset = () => {
-    resetStore();
     resetNuclia();
     unsubscribeAllEffects();
     unsubscribeViewerEffects();

@@ -2,8 +2,8 @@ import PopupSearch from './PopupSearch.svelte';
 import { fireEvent, render } from '@testing-library/svelte';
 import { firstValueFrom, of } from 'rxjs';
 import type { IResource, Search } from '@nuclia/core';
-import { nucliaStore } from '../../core/old-stores/main.store';
 import { shouldEmitQuery } from '../search-input/SearchInput.spec';
+import { searchQuery, searchResults } from '../../core/stores/search.store';
 
 jest.mock('../../core/api', () => {
   return {
@@ -23,7 +23,7 @@ describe('Popup search', () => {
     if (input) {
       await fireEvent.input(input, { target: { value: 'Who is Batman?' } });
       await fireEvent.keyPress(input, { key: 'Enter' });
-      const query = await firstValueFrom(nucliaStore().query);
+      const query = await firstValueFrom(searchQuery);
       expect(query).toEqual('Who is Batman?');
     }
   });
@@ -35,7 +35,7 @@ describe('Popup search', () => {
   });
 
   it('should open modal on enter', async () => {
-    nucliaStore().searchResults.next({
+    searchResults.set({
       resources: {
         res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
       },

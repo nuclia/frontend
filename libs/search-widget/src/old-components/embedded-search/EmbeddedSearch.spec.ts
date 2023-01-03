@@ -1,8 +1,8 @@
 import EmbeddedSearch from './EmbeddedSearch.svelte';
 import { render } from '@testing-library/svelte';
-import { nucliaStore } from '../../core/old-stores/main.store';
 import type { IResource, Search } from '@nuclia/core';
 import { shouldEmitQuery } from '../search-input/SearchInput.spec';
+import { searchResults } from '../../core/stores/search.store';
 
 describe('Embedded search', () => {
   it('should trigger search', async () => {
@@ -12,7 +12,7 @@ describe('Embedded search', () => {
   });
 
   it('should display results', async () => {
-    nucliaStore().searchResults.next({
+    searchResults.set({
       resources: {
         res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
       },

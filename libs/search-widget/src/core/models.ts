@@ -7,10 +7,7 @@ export const NO_RESULTS: Search.Results = {
   fulltext: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
 };
 export const PENDING_RESULTS = {
-  resources: {} as { [id: string]: IResource },
-  paragraphs: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
-  sentences: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
-  fulltext: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
+  ...NO_RESULTS,
   pending: true,
 };
 

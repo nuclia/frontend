@@ -3,7 +3,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { debounceTime, map } from 'rxjs';
-  import { nucliaState, nucliaStore } from '../../core/old-stores/main.store';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
@@ -13,12 +12,15 @@
   import { Duration } from '../../common/transition.utils';
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
   import TextTile from '../../tiles/text-tile/TextTile.svelte';
+  import {
+    hasSearchError,
+    isEmptySearchQuery,
+    pendingResults,
+    smartResults,
+    triggerSearch,
+  } from '../../core/stores/search.store';
 
-  const showResults = nucliaStore().triggerSearch.pipe(map(() => true));
-  const isEmptySearchQuery = nucliaState().isEmptySearchQuery;
-  const results = nucliaState().smartResults;
-  const hasSearchError = nucliaState().hasSearchError;
-  const pendingResults = nucliaState().pendingResults;
+  const showResults = triggerSearch.pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(2000));
   let svgSprite;
 
@@ -42,13 +44,13 @@
       {#if $showLoading}
         <LoadingDots />
       {/if}
-    {:else if $results.length === 0}
+    {:else if $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
       <div
         class="results"
         transition:fade={{ duration: Duration.SUPERFAST }}>
-        {#each $results as result}
+        {#each $smartResults as result}
           {#if result.icon === 'application/pdf'}
             <PdfTile {result} />
           {:else if result.icon.includes('video')}

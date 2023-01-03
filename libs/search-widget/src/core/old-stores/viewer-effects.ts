@@ -1,5 +1,4 @@
 import type { Subscription } from 'rxjs';
-import { nucliaState, setDisplayedResource } from './main.store';
 import { concatMap, filter, switchMap, tap } from 'rxjs/operators';
 import { getResource, loadEntities } from '../api';
 import type { Resource } from '@nuclia/core';
@@ -8,7 +7,9 @@ import { isViewerOpen } from '../stores/modal.store';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { canEditLabels } from '../stores/widget.store';
 import { initLabelStore } from '../stores/effects';
-import { entityGroups } from '../../core/stores/entities.store';
+import { entityGroups } from '../stores/entities.store';
+import { displayedResource } from '../stores/search.store';
+import type { DisplayedResource } from '../models';
 
 const subscriptions: Subscription[] = [];
 const previewQueryKey = formatQueryKey('preview');
@@ -23,10 +24,10 @@ export function initViewerEffects(permalinkEnabled: boolean | undefined) {
   }
   subscriptions.push(
     ...[
-      nucliaState()
-        .displayedResource.pipe(
-          filter((displayedResource) => !!displayedResource?.uid),
-          concatMap((displayedResource) => getResource(displayedResource.uid)),
+      displayedResource
+        .pipe(
+          filter((displayedResource) => !!displayedResource),
+          concatMap((displayedResource) => getResource((displayedResource as DisplayedResource).uid)),
           tap((res: Resource) => resource.set(res)),
         )
         .subscribe((res) => {
@@ -46,7 +47,7 @@ export function initViewerEffects(permalinkEnabled: boolean | undefined) {
       }),
       isViewerOpen.subscribe((isOpen) => {
         if (!isOpen) {
-          setDisplayedResource({ uid: '' });
+          displayedResource.set(null);
           const urlParams = new URLSearchParams(window.location.search);
           if (urlParams.get(previewQueryKey)) {
             urlParams.delete(previewQueryKey);
@@ -54,9 +55,7 @@ export function initViewerEffects(permalinkEnabled: boolean | undefined) {
           }
         }
       }),
-      nucliaState()
-        .displayedResource.pipe(switchMap(() => loadEntities()))
-        .subscribe((entities) => entityGroups.set(entities)),
+      displayedResource.pipe(switchMap(() => loadEntities())).subscribe((entities) => entityGroups.set(entities)),
     ],
   );
 }
@@ -65,6 +64,6 @@ const checkUrlParams = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const uuid = urlParams.get(previewQueryKey);
   if (uuid) {
-    setDisplayedResource({ uid: uuid });
+    displayedResource.set({ uid: uuid });
   }
 };

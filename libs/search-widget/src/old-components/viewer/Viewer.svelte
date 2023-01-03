@@ -1,6 +1,5 @@
 <script lang="ts">
   import { getFile } from '../../core/api';
-  import { nucliaState } from '../../core/old-stores/main.store';
   import { _ } from '../../core/i18n';
   import {
     findFileByType,
@@ -21,6 +20,7 @@
   import { selectedFamilyData } from '../../core/stores/entities.store';
   import { resource } from '../../core/stores/resource.store';
   import type { EntityGroup } from '../../core/models';
+  import { displayedResource, searchQuery } from '../../core/stores/search.store';
 
   let imagePath: string | undefined;
   let image: string | undefined;
@@ -54,17 +54,15 @@
   $: headerHeight = header?.clientHeight + 'px' || '0';
 
   const subscriptions = [
-    nucliaState().displayedResource.subscribe(() => {
-      viewerStore.init();
-    }),
+    displayedResource.subscribe(() => viewerStore.init()),
     viewerState.searchReady
       .pipe(
-        switchMap(() => combineLatest([nucliaState().query, nucliaState().displayedResource])),
+        switchMap(() => combineLatest([searchQuery, displayedResource])),
         filter(
-          ([query, displayedResource]) => !!query && (!!displayedResource.paragraph || !!displayedResource.sentence),
+          ([query, displayedResource]) => !!query && (!!displayedResource?.paragraph || !!displayedResource?.sentence),
         ),
       )
-      .subscribe(([query, displayedResource]) => {
+      .subscribe(([, displayedResource]) => {
         if (displayedResource.sentence) {
           selectSentence(resource.value!, displayedResource.sentence);
         } else if (displayedResource.paragraph) {

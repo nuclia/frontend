@@ -2,7 +2,6 @@
   import { Resource, Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
-  import { nucliaStore } from '../../core/old-stores/main.store';
   import { viewerStore } from '../../core/old-stores/viewer.store';
   import { Duration } from '../../common/transition.utils';
   import { mapSmartParagraph2WidgetParagraph } from '../../core/utils';
@@ -18,6 +17,7 @@
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import { fade, slide } from 'svelte/transition';
+  import { searchQuery } from '../../core/stores/search.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
   export let resourceObs: Observable<Resource>;
@@ -41,7 +41,7 @@
   const resizeEvent = new Subject();
   let findInputElement: HTMLElement;
 
-  const globalQuery = nucliaStore().query;
+  const globalQuery = searchQuery;
   const findInResourceQuery = viewerStore.query;
   findInResourceQuery['set'] = findInResourceQuery.next;
 
@@ -51,7 +51,10 @@
   let resource: Resource | undefined;
   let paragraphList: WidgetParagraph[];
   const isSearchingInResource = new BehaviorSubject(false);
-  const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([viewerStore.results, isSearchingInResource]).pipe(
+  const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
+    viewerStore.results,
+    isSearchingInResource,
+  ]).pipe(
     map(([inResourceResults, isInResource]: [WidgetParagraph[], boolean]) => {
       // paragraphList is used for next/previous buttons
       paragraphList = isInResource
@@ -72,7 +75,7 @@
     resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
-      findInResourceQuery.next(globalQuery.value);
+      findInResourceQuery.next(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
     }
@@ -84,8 +87,8 @@
 
   const selectParagraph = (paragraph) => {
     selectedParagraph = paragraph;
-    dispatch('selectParagraph', {paragraph});
-  }
+    dispatch('selectParagraph', { paragraph });
+  };
 
   const openPrevious = () => {
     if (resultIndex > 0) {
@@ -121,7 +124,7 @@
       selectParagraph(undefined);
       resultIndex = -1;
       isSearchingInResource.next(false);
-      findInResourceQuery.next(globalQuery.value);
+      findInResourceQuery.next(globalQuery.getValue());
     }
   };
 
@@ -197,7 +200,7 @@
           on:openNext={openNext} />
       {/if}
       <div class="resource-viewer-container">
-        <slot></slot>
+        <slot />
       </div>
     {/if}
   </div>

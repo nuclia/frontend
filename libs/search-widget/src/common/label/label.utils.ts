@@ -1,18 +1,18 @@
 import type { Classification } from '@nuclia/core';
 import { getFilterFromLabel } from '@nuclia/core';
 import { isViewerOpen } from '../../core/stores/modal.store';
-import { nucliaStore } from '../../core/old-stores/main.store';
 import { typeAhead } from '../../core/stores/suggestions.store';
+import { searchFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
 
 export function searchBy(label: Classification, resetSearch = false) {
   isViewerOpen.set(false);
   const labelFilter = getFilterFromLabel(label);
-  nucliaStore().filters.next([labelFilter]);
+  searchFilters.set([labelFilter]);
   if (resetSearch) {
     typeAhead.set('');
-    nucliaStore().query.next('');
+    searchQuery.set('');
   }
-  nucliaStore().triggerSearch.next();
+  triggerSearch.next();
 }
 
 let target;
