@@ -1,4 +1,6 @@
-# 1.1.1 (unreleased)
+# 1.1.2 (unreleased)
+
+# 1.1.1 (2023-01-03)
 
 ### Improvements
 
@@ -11,6 +13,7 @@
 - Add `ResourceStatus` type
 - Add `with_status` search option
 - Fix `FacetsResult` model
+- Store shard ids according their kb
 
 ### Bugfix
 

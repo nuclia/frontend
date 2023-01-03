@@ -27,7 +27,7 @@ export interface INuclia {
   auth: IAuthentication;
   rest: IRest;
   db: IDb;
-  currentShards?: string[];
+  currentShards?: { [kb: string]: string[] };
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;

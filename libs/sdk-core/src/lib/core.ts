@@ -9,6 +9,7 @@ export class Nuclia implements INuclia {
   auth: IAuthentication;
   rest: IRest;
   db: IDb;
+  currentShards?: { [kb: string]: string[] } = {};
   private readKb?: KnowledgeBox;
 
   get backend(): string {
