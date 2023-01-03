@@ -124,7 +124,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
-    return search(this.nuclia, this.path, query, features, options);
+    return search(this.nuclia, this.id, this.path, query, features, options);
   }
 
   suggest(query: string): Observable<Search.Suggestions> {

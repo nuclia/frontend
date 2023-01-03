@@ -4,6 +4,7 @@ import type { Search, SearchOptions } from './search.models';
 
 export const search = (
   nuclia: INuclia,
+  kbid: string,
   path: string,
   query: string,
   features: Search.Features[] | Search.ResourceFeatures[] = [],
@@ -18,7 +19,7 @@ export const search = (
     params.fields = ['a/title'];
   }
   Object.entries(others || {}).forEach(([k, v]) => (params[k] = Array.isArray(v) ? v.map((el) => `${el}`) : `${v}`));
-  const shards = nuclia.currentShards || [];
+  const shards = nuclia.currentShards?.[kbid] || [];
   params.shards = shards;
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params)}`)
@@ -28,7 +29,7 @@ export const search = (
     map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
     tap((res) => {
       if (res.shards) {
-        nuclia.currentShards = res.shards;
+        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
       }
     }),
   );
