@@ -264,3 +264,9 @@ export function getMediaTranscripts(
     };
   });
 }
+
+export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
+  const type = paragraph.fieldType.slice(0, -1);
+  const typeABBR = type === 'link' ? 'u' : type[0];
+  return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
+};

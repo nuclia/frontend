@@ -1,8 +1,8 @@
 import type { Resource, TokenAnnotation } from '@nuclia/core';
 import type { WidgetParagraph } from '../models';
-import { getParagraphId } from '../old-stores/viewer.store';
 import { writableSubject } from '../state-lib';
 import { map } from 'rxjs';
+import { getParagraphId } from '../utils';
 
 export type Annotation = {
   paragraphId: string;

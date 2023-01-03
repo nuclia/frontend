@@ -6,15 +6,14 @@
     ParagraphLabels,
   } from '../../../core/models';
   import { PreviewKind } from '../../../core/models';
-  import { formatTime } from '../../../core/utils';
+  import { formatTime, getParagraphId } from '../../../core/utils';
   import {
     viewerState,
     viewerStore,
     selectedParagraphIndex,
     paragraphLabels,
-    getParagraphId,
     setParagraphLabels,
-  } from '../../../core/old-stores/viewer.store';
+  } from '../../../core/stores/viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';

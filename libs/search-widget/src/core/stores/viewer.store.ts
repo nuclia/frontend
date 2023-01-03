@@ -34,9 +34,17 @@ import type {
 } from '../models';
 import { PreviewKind } from '../models';
 import { getFileUrls, setLabels } from '../api';
-import { resource } from '../stores/resource.store';
-import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../stores/viewer-search.store';
-import { getFields, getFieldType, getFileField, getLinkField, getVideoStream, NEWLINE_REGEX } from '../utils';
+import { resource } from './resource.store';
+import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from './viewer-search.store';
+import {
+  getFields,
+  getFieldType,
+  getFileField,
+  getLinkField,
+  getParagraphId,
+  getVideoStream,
+  NEWLINE_REGEX,
+} from '../utils';
 
 type ViewerStore = {
   showPreview: BehaviorSubject<boolean>;
@@ -452,12 +460,6 @@ export function findFileByType(resource: Resource | null, type: string): string 
   const url = file?.value?.file?.uri;
   return url ? url : undefined;
 }
-
-export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
-  const type = paragraph.fieldType.slice(0, -1);
-  const typeABBR = type === 'link' ? 'u' : type[0];
-  return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
-};
 
 function getFieldTypeKey(fieldType: string): keyof ResourceData {
   if (fieldType === 'f') {

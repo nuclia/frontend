@@ -2,7 +2,7 @@
   import { _ } from '../../core/i18n';
   import { getCDN } from '../../core/utils';
   import { SearchOrder } from '../../core/models';
-  import { viewerState, clearSearch } from '../../core/old-stores/viewer.store';
+  import { viewerState, clearSearch } from '../../core/stores/viewer.store';
   import { viewerSearchOrder, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { createEventDispatcher } from 'svelte';
 

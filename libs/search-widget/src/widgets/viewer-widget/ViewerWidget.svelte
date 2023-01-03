@@ -11,7 +11,7 @@
   import { setWidgetActions, widgetFeatures, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
-  import { initViewerEffects, unsubscribeViewerEffects } from '../../core/old-stores/viewer-effects';
+  import { initViewerEffects, unsubscribeViewerEffects } from '../../core/stores/viewer-effects';
   import { WidgetFeatures } from '@nuclia/core';
   import { displayedResource } from '../../core/stores/search.store';
 
