@@ -1,6 +1,6 @@
 <script lang="ts">
   import Expander from '../../common/expander/Expander.svelte';
-  import { viewerStore } from '../../core/stores/viewer.store';
+  import { viewerStore } from './store/viewer.store';
   import { _ } from '../../core/i18n';
   import { combineLatest, map, Observable } from 'rxjs';
   import type { EntityGroup } from '../../core/models';

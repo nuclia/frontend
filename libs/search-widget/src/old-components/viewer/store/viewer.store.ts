@@ -31,11 +31,11 @@ import type {
   SelectedParagraph,
   WidgetParagraph,
   YoutubePreviewParams,
-} from '../models';
-import { PreviewKind } from '../models';
-import { getFileUrls, setLabels } from '../api';
-import { resource } from './resource.store';
-import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from './viewer-search.store';
+} from '../../../core/models';
+import { PreviewKind } from '../../../core/models';
+import { getFileUrls, setLabels } from '../../../core/api';
+import { resource } from '../../../core/stores/resource.store';
+import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../../core/stores/viewer-search.store';
 import {
   getFields,
   getFieldType,
@@ -44,7 +44,7 @@ import {
   getParagraphId,
   getVideoStream,
   NEWLINE_REGEX,
-} from '../utils';
+} from '../../../core/utils';
 
 type ViewerStore = {
   showPreview: BehaviorSubject<boolean>;

@@ -27,7 +27,7 @@
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';
-  import { initViewerEffects, unsubscribeViewerEffects } from '../../core/stores/viewer-effects';
+  import { initViewerEffects, unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
   import { displayedResource } from '../../core/stores/search.store';
 
   export let backend = 'https://nuclia.cloud/api';

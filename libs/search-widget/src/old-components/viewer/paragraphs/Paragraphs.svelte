@@ -13,7 +13,7 @@
     selectedParagraphIndex,
     paragraphLabels,
     setParagraphLabels,
-  } from '../../../core/stores/viewer.store';
+  } from '../store/viewer.store';
   import ParagraphWithMenu from './ParagraphWithMenu.svelte';
   import ParagraphWithIcon from './ParagraphWithIcon.svelte';
   import { ParagraphIcon } from './ParagraphWithIcon.svelte';

@@ -8,7 +8,7 @@
     viewerStore,
     viewerState,
     selectSentence,
-  } from '../../core/stores/viewer.store';
+  } from './store/viewer.store';
   import { onDestroy } from 'svelte';
   import { combineLatest, filter, map, switchMap } from 'rxjs';
   import Header from './Header.svelte';
