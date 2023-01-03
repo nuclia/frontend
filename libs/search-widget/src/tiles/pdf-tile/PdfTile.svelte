@@ -3,8 +3,7 @@
   import PdfViewer from './PdfViewer.svelte';
   import { map, Observable } from 'rxjs';
   import { getRegionalBackend, getResource } from '../../core/api';
-  import { getFileField } from '../../core/old-stores/viewer.store';
-  import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
+  import { getCDN, getFileField, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import DocumentTile from '../base-tile/DocumentTile.svelte';
 

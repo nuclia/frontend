@@ -6,12 +6,6 @@
   import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
-  import {
-    getFileField,
-    getLinkField,
-    getMainFieldParagraphs,
-    getVideoStream,
-  } from '../../core/old-stores/viewer.store';
   import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
   import Icon from '../../common/icons/Icon.svelte';
   import { fade, slide } from 'svelte/transition';
@@ -21,7 +15,13 @@
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import { _ } from '../../core/i18n';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import { mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import {
+    getFileField,
+    getLinkField,
+    getMediaTranscripts,
+    getVideoStream,
+    mapSmartParagraph2WidgetParagraph,
+  } from '../../core/utils';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -111,7 +111,7 @@
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
-          transcripts = getMainFieldParagraphs(res) as MediaWidgetParagraph[];
+          transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
           setupExpandedTile();
         }),
       );

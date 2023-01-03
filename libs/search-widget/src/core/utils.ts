@@ -1,8 +1,8 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
-import type { Search } from '@nuclia/core';
-import type { PreviewKind, WidgetParagraph } from './models';
+import type { CloudLink, FIELD_TYPE, FileFieldData, LinkFieldData, Resource, ResourceData, Search } from '@nuclia/core';
+import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -195,4 +195,72 @@ export function mapSmartParagraph2WidgetParagraph(
     start_seconds,
     end_seconds,
   } as WidgetParagraph;
+}
+
+export function getVideoStream(fileField: FileFieldData): CloudLink | undefined {
+  return fileField.extracted?.file?.file_generated?.['video.mpd'];
+}
+
+export function getFileField(resource: Resource, fieldId: string): FileFieldData | undefined {
+  return resource.data.files?.[fieldId];
+}
+
+export function getLinkField(resource: Resource, fieldId: string): LinkFieldData | undefined {
+  return resource.data.links?.[fieldId];
+}
+
+export function getFields(resource: Resource) {
+  return Object.keys(resource.data)
+    .reduce((acc, fieldType) => {
+      const fieldKeys = Object.keys(resource.data[fieldType as keyof ResourceData] || {});
+      const fields = fieldKeys.map((fieldId) => [fieldType, fieldId]);
+      return acc.concat(fields);
+    }, [] as string[][])
+    .map(([fieldType, fieldId]) => ({
+      field: resource.data[fieldType as keyof ResourceData]![fieldId],
+      field_type: fieldType,
+      field_id: fieldId,
+    }));
+}
+
+export function getFieldType(fieldType: string): FIELD_TYPE {
+  return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
+}
+
+export function getExtractedTexts(resource: Resource) {
+  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
+  if (fields.length === 0) {
+    return [];
+  }
+  const mainField = fields[0];
+  return (mainField.field.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
+    resource.getParagraphText(getFieldType(mainField.field_type), mainField.field_id, paragraph).trim(),
+  );
+}
+
+export const NEWLINE_REGEX = /\n/g;
+export function getMediaTranscripts(
+  resource: Resource,
+  kind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE,
+): MediaWidgetParagraph[] {
+  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
+  if (fields.length === 0) {
+    return [];
+  }
+  const mainField = fields[0];
+  const fieldType = getFieldType(mainField.field_type);
+  return (mainField.field.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) => {
+    const text = resource.getParagraphText(fieldType, mainField.field_id, paragraph);
+    return {
+      paragraph: paragraph,
+      text: text.trim().replace(NEWLINE_REGEX, '<br>'),
+      fieldType: fieldType,
+      fieldId: mainField.field_id,
+      preview: kind,
+      start: paragraph.start || 0,
+      end: paragraph.end || 0,
+      start_seconds: paragraph.start_seconds?.[0] || 0,
+      end_seconds: paragraph.end_seconds?.[0] || 0,
+    };
+  });
 }

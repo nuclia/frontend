@@ -3,7 +3,6 @@ import type {
   CloudLink,
   FileFieldData,
   IFieldData,
-  LinkFieldData,
   Paragraph,
   PositionedNER,
   Resource,
@@ -37,8 +36,7 @@ import { PreviewKind } from '../models';
 import { getFileUrls, setLabels } from '../api';
 import { resource } from '../stores/resource.store';
 import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../stores/viewer-search.store';
-
-const NEWLINE_REGEX = /\n/g;
+import { getFields, getFieldType, getFileField, getLinkField, getVideoStream, NEWLINE_REGEX } from '../utils';
 
 type ViewerStore = {
   showPreview: BehaviorSubject<boolean>;
@@ -330,25 +328,6 @@ export function getMainFieldParagraphs(resource: Resource): WidgetParagraph[] {
   });
 }
 
-function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
-  if (field.extracted && 'file' in field.extracted) {
-    if (getPages(field as FileFieldData).length && getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
-      return PreviewKind.PDF;
-    } else if (paragraph.kind === 'TRANSCRIPT') {
-      if (isFileType(field as FileFieldData, 'video/')) {
-        return PreviewKind.VIDEO;
-      } else if (isFileType(field as FileFieldData, 'audio/')) {
-        return PreviewKind.AUDIO;
-      }
-    }
-  } else if (field.value && 'uri' in field.value) {
-    if (paragraph.kind === 'INCEPTION' || paragraph.kind === 'TRANSCRIPT') {
-      return PreviewKind.YOUTUBE;
-    }
-  }
-  return PreviewKind.NONE;
-}
-
 function getParagraph(
   resource: Resource,
   fieldType: string,
@@ -412,33 +391,30 @@ function getParagraph(
   }
 }
 
-export function getFields(resource: Resource) {
-  return Object.keys(resource.data)
-    .reduce((acc, fieldType) => {
-      const fieldKeys = Object.keys(resource.data[fieldType as keyof ResourceData] || {});
-      const fields = fieldKeys.map((fieldId) => [fieldType, fieldId]);
-      return acc.concat(fields);
-    }, [] as string[][])
-    .map(([fieldType, fieldId]) => ({
-      field: resource.data[fieldType as keyof ResourceData]![fieldId],
-      field_type: fieldType,
-      field_id: fieldId,
-    }));
+function getPreviewKind(field: IFieldData, paragraph: Paragraph) {
+  if (field.extracted && 'file' in field.extracted) {
+    if (getPages(field as FileFieldData).length && getParagraphPageIndexes(field as FileFieldData, paragraph).length) {
+      return PreviewKind.PDF;
+    } else if (paragraph.kind === 'TRANSCRIPT') {
+      if (isFileType(field as FileFieldData, 'video/')) {
+        return PreviewKind.VIDEO;
+      } else if (isFileType(field as FileFieldData, 'audio/')) {
+        return PreviewKind.AUDIO;
+      }
+    }
+  } else if (field.value && 'uri' in field.value) {
+    if (paragraph.kind === 'INCEPTION' || paragraph.kind === 'TRANSCRIPT') {
+      return PreviewKind.YOUTUBE;
+    }
+  }
+  return PreviewKind.NONE;
 }
 
-export function getField(resource: Resource, fieldType: string, fieldId: string): IFieldData | undefined {
+function getField(resource: Resource, fieldType: string, fieldId: string): IFieldData | undefined {
   return resource.data[fieldType as keyof ResourceData]?.[fieldId];
 }
 
-export function getFileField(resource: Resource, fieldId: string): FileFieldData | undefined {
-  return resource.data.files?.[fieldId];
-}
-
-export function getLinkField(resource: Resource, fieldId: string): LinkFieldData | undefined {
-  return resource.data.links?.[fieldId];
-}
-
-export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
+function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Paragraph): number[] {
   return (fileField.extracted?.file?.file_pages_previews?.positions || []).reduce((acc, page, index) => {
     if (
       typeof paragraph.start !== 'number' ||
@@ -455,16 +431,13 @@ export function getParagraphPageIndexes(fileField: FileFieldData, paragraph: Par
   }, [] as number[]);
 }
 
-export function getParagraphPages(fileField: FileFieldData, paragraph: Paragraph): CloudLink[] {
-  return getParagraphPageIndexes(fileField, paragraph).map((index) => getPages(fileField)[index]);
-}
-
-export function getPages(fileField: FileFieldData): CloudLink[] {
+function getPages(fileField: FileFieldData): CloudLink[] {
   return fileField.extracted?.file?.file_pages_previews?.pages || [];
 }
 
-export function getVideoStream(fileField: FileFieldData): CloudLink | undefined {
-  return fileField.extracted?.file?.file_generated?.['video.mpd'];
+function isFileType(fileField: FileFieldData, type: string): boolean {
+  const contentType = fileField.extracted?.file?.icon || '';
+  return contentType === type || contentType.slice(0, type.length) === type;
 }
 
 // Temporary functions
@@ -486,11 +459,6 @@ export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
 };
 
-function isFileType(fileField: FileFieldData, type: string): boolean {
-  const contentType = fileField.extracted?.file?.icon || '';
-  return contentType === type || contentType.slice(0, type.length) === type;
-}
-
 function getFieldTypeKey(fieldType: string): keyof ResourceData {
   if (fieldType === 'f') {
     return 'files';
@@ -499,10 +467,6 @@ function getFieldTypeKey(fieldType: string): keyof ResourceData {
   } else {
     return 'texts';
   }
-}
-
-export function getFieldType(fieldType: string): FIELD_TYPE {
-  return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
 
 function findParagraphFromSearchParagraph(
