@@ -4,6 +4,7 @@ import { BackendConfigurationService, SDKService, UserService } from '@flaps/cor
 import { STFUtils, STFTrackingService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SOURCE_ID_KEY } from './sync/models';
+import { getDeeplink } from './utils';
 
 @Component({
   selector: 'nde-root',
@@ -55,7 +56,7 @@ export class AppComponent implements OnInit {
     this.sdk.nuclia.auth.isAuthenticated().subscribe((isAuthenticated) => {
       if (!isAuthenticated) {
         const interval = setInterval(() => {
-          const deeplink = (window as any)['deeplink'] || location.search;
+          const deeplink = getDeeplink();
           if (!this.sdk.nuclia.auth.getToken()) {
             if (deeplink && deeplink.includes('?')) {
               const querystring = new URLSearchParams(deeplink.split('?')[1]);
@@ -81,7 +82,7 @@ export class AppComponent implements OnInit {
         }, 500);
       } else if (localStorage.getItem(SOURCE_ID_KEY)) {
         const interval = setInterval(() => {
-          const deeplink = (window as any)['deeplink'] || location.search;
+          const deeplink = getDeeplink();
           if (deeplink && deeplink.includes('?')) {
             if ((window as any)['electron']) {
               this.router.navigate(['/add-upload']);

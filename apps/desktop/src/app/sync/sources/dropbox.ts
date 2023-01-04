@@ -8,6 +8,7 @@ import {
 } from '../models';
 import { BehaviorSubject, filter, from, map, Observable, of, switchMap, switchMapTo, take } from 'rxjs';
 import { injectScript } from '@flaps/core';
+import { getDeeplink } from '../../utils';
 
 declare var Dropbox: any;
 
@@ -76,7 +77,7 @@ class DropboxImpl implements ISourceConnector {
             this.dbxAuth.setCodeVerifier(localStorage.getItem(DROPBOX_VERIFIER_CODE_KEY));
           }
           const interval = setInterval(() => {
-            const deeplink = (window as any)['deeplink'] || location.search;
+            const deeplink = getDeeplink();
             if (deeplink && deeplink.includes('?')) {
               const code = new URLSearchParams(deeplink.split('?')[1]).get('code');
               clearInterval(interval);

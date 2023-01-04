@@ -27,6 +27,7 @@ export interface ISourceConnector {
   getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
   download(resource: SyncItem): Observable<Blob>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
+  isAuthError?: (message: any) => boolean;
 }
 
 export enum FileStatus {

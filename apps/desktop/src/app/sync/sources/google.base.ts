@@ -6,6 +6,7 @@ import { ConnectorSettings } from '../models';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { injectScript } from '@flaps/core';
 import { environment } from '../../../environments/environment';
+import { getDeeplink } from '../../utils';
 
 declare var gapi: any;
 
@@ -56,7 +57,7 @@ export class GoogleBaseImpl {
             discoveryDocs: this.DISCOVERY_DOCS,
           });
           const interval = setInterval(() => {
-            const deeplink = (window as any)['deeplink'] || location.search;
+            const deeplink = getDeeplink();
             if (deeplink && deeplink.includes('?')) {
               const params = new URLSearchParams(deeplink.split('?')[1]);
               const isGoogle = params.get('google');
