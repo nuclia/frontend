@@ -1,4 +1,6 @@
-<div class="plans">
+<div
+  class="plans"
+  *ngIf="isBillingEnabled | async">
   <h2>{{ 'billing.plans_available' | translate }}</h2>
 
   <div class="container">
