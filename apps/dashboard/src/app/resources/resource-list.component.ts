@@ -401,8 +401,12 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     const titleOnly = this.searchForm.value.searchIn === 'title';
     const page = this.page >= 1 ? this.page - 1 : 0;
 
-    this.sdk.nuclia.db
-      .getProcessingStatus(this.stateService.getAccount()?.id)
+    this.stateService.account
+      .pipe(
+        filter((account) => !!account),
+        take(1),
+        switchMap((account) => this.sdk.nuclia.db.getProcessingStatus(account!.id)),
+      )
       .subscribe((status) => (this.currentProcessingStatus = status));
 
     return of(1).pipe(
