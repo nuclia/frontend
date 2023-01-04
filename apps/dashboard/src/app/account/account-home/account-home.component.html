@@ -125,7 +125,7 @@
       <div
         class="container plan"
         [class.billing-enabled]="isBillingEnabled"
-        [routerLink]="isBillingEnabled ? '../billing' : null">
+        [routerLink]="(isBillingEnabled | async) ? '../billing' : null">
         <div class="plan-name">
           <strong>{{ 'billing.plan' | translate }}:</strong>
           <span>{{ 'account.type.' + (accountType | async) | translate }}</span>
