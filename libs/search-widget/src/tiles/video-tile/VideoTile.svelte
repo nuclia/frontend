@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { Observable } from 'rxjs';
+  import { Observable, Subject } from 'rxjs';
   import type { Resource, Search } from '@nuclia/core';
-  import { tap } from 'rxjs/operators';
-  import { getRegionalBackend, getResource } from '../../core/api';
+  import { switchMap, tap } from 'rxjs/operators';
+  import { getFileUrl, getRegionalBackend, getResource } from '../../core/api';
   import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
@@ -36,7 +36,6 @@
   let mediaLoading = true;
   let mediaTime = 0;
   let youtubeUri: string | undefined;
-  let mediaUri: string | undefined;
   let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
@@ -45,6 +44,9 @@
   let thumbnailLoaded = false;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
+
+  const _mediaUri = new Subject<string | undefined>();
+  const mediaUri = _mediaUri.pipe(switchMap((uri) => getFileUrl(uri)));
 
   const matchingParagraphs: MediaWidgetParagraph[] = (result.paragraphs?.map((paragraph) =>
     mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.VIDEO),
@@ -93,7 +95,7 @@
             const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
             if (file) {
               mediaContentType = file.content_type;
-              mediaUri = `${getRegionalBackend()}${file.uri}`;
+              _mediaUri.next(file.uri);
             }
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
@@ -155,10 +157,10 @@
             uri={youtubeUri}
             on:videoReady={onVideoReady} />
         {/if}
-        {#if mediaUri}
+        {#if $mediaUri}
           <Player
             time={mediaTime}
-            src={mediaUri}
+            src={$mediaUri}
             type={mediaContentType}
             on:videoReady={onVideoReady} />
         {/if}

@@ -244,3 +244,6 @@ export const getFileUrls = (paths: string[]): Observable<string[]> => {
     ),
   );
 };
+
+export const getFileUrl = (path?: string): Observable<string> =>
+  path ? getFileUrls([path]).pipe(map((urls) => urls[0])) : of('');
