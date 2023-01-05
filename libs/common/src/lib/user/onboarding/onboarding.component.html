@@ -16,10 +16,11 @@
             for="industry">
             {{ 'onboarding.industry_label' | translate }}
           </label>
-          <pa-input
+          <pa-select
             id="industry"
-            externalLabel
-            formControlName="industry"></pa-input>
+            [options]="industryOptions"
+            [errorMessages]="validationMessages.industry"
+            formControlName="industry"></pa-select>
         </div>
         <div class="field">
           <label
@@ -38,7 +39,8 @@
         <div class="form-footer">
           <pa-button
             type="submit"
-            kind="primary">
+            kind="primary"
+            [disabled]="onboardingForm.invalid">
             {{ 'onboarding.get_started' | translate }}
           </pa-button>
         </div>
