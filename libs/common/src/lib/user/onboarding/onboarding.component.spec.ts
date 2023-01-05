@@ -15,6 +15,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { UserContainerComponent } from '@flaps/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('OnboardingComponent', () => {
   let component: OnboardingComponent;
@@ -34,6 +35,9 @@ describe('OnboardingComponent', () => {
       providers: [
         MockProvider(OnboardingService),
         MockProvider(ZoneService, { getZones: jest.fn(() => of([{ id: 'zoneId', slug: 'zone' }])) }),
+        MockProvider(TranslateService, {
+          instant: jest.fn((key) => `translate--${key}`),
+        }),
         MockPipe(TranslatePipe, (key) => `translate--${key}`),
       ],
     }).compileComponents();
