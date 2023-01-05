@@ -1,7 +1,7 @@
 import type { IResource } from '@nuclia/core';
 import type { DisplayedResource } from '../../core/models';
 import { navigateToLink } from '../../core/stores/widget.store';
-import { goToUrl, isYoutubeUrl } from '../../core/utils';
+import { getExternalUrl, goToUrl, isYoutubeUrl } from '../../core/utils';
 import { combineLatest, map, take } from 'rxjs';
 import { displayedResource, searchResults } from '../../core/stores/search.store';
 
@@ -14,14 +14,9 @@ export const goToResource = (params: DisplayedResource, text?: string) => {
   ])
     .pipe(take(1))
     .subscribe(([navigateToLink, resource]) => {
-      const linkField = Object.values(resource?.data?.links || {})[0];
-      const fileField = Object.values(resource?.data?.files || {})[0];
-      if (navigateToLink && linkField?.value?.uri) {
-        const uri = linkField.value.uri;
-        const isYoutubeLink = isYoutubeUrl(uri);
-        goToUrl(uri, text && !isYoutubeLink ? text : undefined);
-      } else if (navigateToLink && fileField?.value?.external && fileField?.value?.file?.uri) {
-        goToUrl(fileField.value.file.uri);
+      const url = getExternalUrl(resource!);
+      if (navigateToLink && url && !isYoutubeUrl(url)) {
+        goToUrl(url, text);
       } else {
         displayedResource.set(params);
       }

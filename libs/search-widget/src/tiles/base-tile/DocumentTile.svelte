@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Resource, Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
-  import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject } from 'rxjs';
+  import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, take } from 'rxjs';
   import { Duration } from '../../common/transition.utils';
-  import { mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import { mapSmartParagraph2WidgetParagraph, getExternalUrl, goToUrl } from '../../core/utils';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { tap } from 'rxjs/operators';
@@ -18,6 +18,7 @@
   import { fade, slide } from 'svelte/transition';
   import { searchQuery } from '../../core/stores/search.store';
   import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
+  import { navigateToLink } from '../../core/stores/widget.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
   export let resourceObs: Observable<Resource>;
@@ -68,6 +69,17 @@
   });
 
   onDestroy(() => reset());
+  const onClickParagraph = (paragraph, index) => {
+    navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
+      const url = getExternalUrl(result);
+      if (navigateToLink && url) {
+        goToUrl(url, paragraph.text);
+      } else {
+        openParagraph(paragraph, index);
+      }
+    });
+  };
+
   const openParagraph = (paragraph, index) => {
     resultIndex = index;
     selectParagraph(paragraph);
@@ -279,7 +291,7 @@
                   minimized={isMobile && !expanded}
                   stack={expanded}
                   selected={paragraph === selectedParagraph}
-                  on:open={(event) => openParagraph(event.detail.paragraph, index)} />
+                  on:open={(event) => onClickParagraph(event.detail.paragraph, index)} />
               {/each}
             </ul>
           </div>

@@ -1,7 +1,16 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
-import type { CloudLink, FIELD_TYPE, FileFieldData, LinkFieldData, Resource, ResourceData, Search } from '@nuclia/core';
+import type {
+  CloudLink,
+  FIELD_TYPE,
+  FileFieldData,
+  IResource,
+  LinkFieldData,
+  Resource,
+  ResourceData,
+  Search,
+} from '@nuclia/core';
 import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -269,4 +278,15 @@ export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   const type = paragraph.fieldType.slice(0, -1);
   const typeABBR = type === 'link' ? 'u' : type[0];
   return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
+};
+
+export const getExternalUrl = (resource: IResource) => {
+  const linkField = Object.values(resource.data?.links || {})[0];
+  const fileField = Object.values(resource.data?.files || {})[0];
+  if (linkField?.value?.uri) {
+    return linkField.value.uri;
+  } else if (fileField?.value?.external && fileField?.value?.file?.uri) {
+    return fileField.value.file.uri;
+  }
+  return undefined;
 };

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Observable, Subject } from 'rxjs';
   import type { Resource, Search } from '@nuclia/core';
-  import { switchMap, tap } from 'rxjs/operators';
+  import { switchMap, take, tap } from 'rxjs/operators';
   import { getFileUrl, getRegionalBackend, getResource } from '../../core/api';
   import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
@@ -16,14 +16,18 @@
   import { _ } from '../../core/i18n';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import {
+    getExternalUrl,
     getFileField,
     getLinkField,
     getMediaTranscripts,
     getVideoStream,
+    goToUrl,
+    isYoutubeUrl,
     mapSmartParagraph2WidgetParagraph,
   } from '../../core/utils';
   import { filterParagraphs, isFileOrLink } from '../tile.utils';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
+  import { navigateToLink } from '../../core/stores/widget.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -61,6 +65,17 @@
 
   const playFromStart = () => {
     playFrom(0);
+  };
+
+  const onClickParagraph = (paragraph: MediaWidgetParagraph) => {
+    navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
+      const url = getExternalUrl(result);
+      if (navigateToLink && url && !isYoutubeUrl(url)) {
+        goToUrl(url, paragraph.text);
+      } else {
+        playParagraph(paragraph);
+      }
+    });
   };
 
   const playParagraph = (paragraph: MediaWidgetParagraph) => {
@@ -264,7 +279,7 @@
                   minimized={isMobile && !expanded}
                   stack={expanded}
                   selected={paragraph === paragraphInPlay}
-                  on:open={(event) => playParagraph(event.detail.paragraph)} />
+                  on:open={(event) => onClickParagraph(event.detail.paragraph)} />
               {/each}
             </ul>
           {/if}
