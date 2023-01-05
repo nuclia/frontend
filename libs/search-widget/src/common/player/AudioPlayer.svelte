@@ -8,6 +8,7 @@
 
   let currentTime = '';
   let totalTime = '';
+  let wavesAnimation: HTMLVideoElement;
   let timelineElement: HTMLElement;
   let volumeElement: HTMLElement;
   let audio: HTMLAudioElement;
@@ -51,6 +52,7 @@
     if (!audio.paused) {
       audio.pause();
       playing = false;
+      wavesAnimation.pause();
     } else {
       if (audio.currentTime === audio.duration) {
         audio.currentTime = 0;
@@ -65,7 +67,10 @@
   }
 
   function play() {
-    audio.play().then(() => (playing = true));
+    audio.play().then(() => {
+      playing = true;
+      wavesAnimation.play();
+    });
   }
 
   function seekTime(event: MouseEvent) {
@@ -88,35 +93,42 @@
 </script>
 
 <div class="sw-audio-player">
-  <IconButton
-    icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
-    size="small"
-    on:click={togglePlay} />
-  <div class="time">{currentTime}</div>
-  <div
-    class="timeline"
-    bind:this={timelineElement}
-    on:click={(event) => seekTime(event)}>
+  <video
+    class="waves-animation"
+    src="/tiles/audio-waves.mp4"
+    loop
+    bind:this={wavesAnimation} />
+  <div class="audio-controls">
+    <IconButton
+      icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
+      size="small"
+      on:click={togglePlay} />
+    <div class="time">{currentTime}</div>
     <div
-      class="progress"
-      style:width={`${progress}%`} />
-  </div>
-  <div class="time">{totalTime}</div>
-  <IconButton
-    icon={!audio?.volume ? 'volume-mute' : audio.volume > 0.5 ? 'volume-high' : 'volume-low'}
-    size="small"
-    aspect="basic"
-    on:click={toggleVolume} />
-  <div
-    class="volume-container"
-    class:visible={displayVolume}>
-    <div
-      class="volume"
-      bind:this={volumeElement}
-      on:click={(event) => updateVolume(event)}>
+      class="timeline"
+      bind:this={timelineElement}
+      on:click={(event) => seekTime(event)}>
       <div
-        class="level"
-        style:height={`${audio?.volume * 100}%`} />
+        class="progress"
+        style:width={`${progress}%`} />
+    </div>
+    <div class="time">{totalTime}</div>
+    <IconButton
+      icon={!audio?.volume ? 'volume-mute' : audio.volume > 0.5 ? 'volume-high' : 'volume-low'}
+      size="small"
+      aspect="basic"
+      on:click={toggleVolume} />
+    <div
+      class="volume-container"
+      class:visible={displayVolume}>
+      <div
+        class="volume"
+        bind:this={volumeElement}
+        on:click={(event) => updateVolume(event)}>
+        <div
+          class="level"
+          style:height={`${audio?.volume * 100}%`} />
+      </div>
     </div>
   </div>
 </div>

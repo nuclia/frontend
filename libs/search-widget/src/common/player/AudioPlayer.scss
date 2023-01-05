@@ -2,58 +2,63 @@
   --player-bar-height: var(--rhythm-5);
   --player-bar-background: var(--color-neutral-light);
 
-  align-items: center;
-  background: var(--player-bar-background);
   display: flex;
-  gap: var(--rhythm-2);
-  height: var(--player-bar-height);
-  justify-content: space-between;
-  padding: 0 var(--rhythm-1) 0 var(--rhythm-2);
-  position: relative;
+  flex-direction: column;
 
-  .timeline {
-    --progress-thickness: var(--rhythm-1);
-
-    background: var(--color-light-stronger);
-    cursor: pointer;
-    flex: 1 0 auto;
-    height: var(--progress-thickness);
-
-    .progress {
-      background: var(--color-primary-regular);
-      height: var(--progress-thickness);
-      transition: width 0.16s linear;
-    }
-  }
-
-  .volume-container {
-    --volume-thickness: var(--rhythm-0_5);
-
+  .audio-controls {
+    align-items: center;
     background: var(--player-bar-background);
-    bottom: var(--player-bar-height);
-    opacity: 0;
-    padding: var(--rhythm-1) var(--rhythm-1) 0 var(--rhythm-1);
-    position: absolute;
-    right: var(--rhythm-2);
-    transition: opacity var(--transition-superfast);
+    display: flex;
+    gap: var(--rhythm-2);
+    height: var(--player-bar-height);
+    justify-content: space-between;
+    padding: 0 var(--rhythm-1) 0 var(--rhythm-2);
+    position: relative;
 
-    &.visible {
-      opacity: 1;
-    }
+    .timeline {
+      --progress-thickness: var(--rhythm-1);
 
-    .volume {
       background: var(--color-light-stronger);
       cursor: pointer;
-      height: var(--rhythm-12);
-      width: var(--volume-thickness);
+      flex: 1 0 auto;
+      height: var(--progress-thickness);
 
-      .level {
+      .progress {
         background: var(--color-primary-regular);
-        bottom: 0;
-        max-height: var(--rhythm-12);
-        position: absolute;
-        transition: height var(--transition-fast);
+        height: var(--progress-thickness);
+        transition: width 0.16s linear;
+      }
+    }
+
+    .volume-container {
+      --volume-thickness: var(--rhythm-0_5);
+
+      background: var(--player-bar-background);
+      bottom: var(--player-bar-height);
+      opacity: 0;
+      padding: var(--rhythm-1) var(--rhythm-1) 0 var(--rhythm-1);
+      position: absolute;
+      right: var(--rhythm-2);
+      transition: opacity var(--transition-superfast);
+
+      &.visible {
+        opacity: 1;
+      }
+
+      .volume {
+        background: var(--color-light-stronger);
+        cursor: pointer;
+        height: var(--rhythm-12);
         width: var(--volume-thickness);
+
+        .level {
+          background: var(--color-primary-regular);
+          bottom: 0;
+          max-height: var(--rhythm-12);
+          position: absolute;
+          transition: height var(--transition-fast);
+          width: var(--volume-thickness);
+        }
       }
     }
   }
