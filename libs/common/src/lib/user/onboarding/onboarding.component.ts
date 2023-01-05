@@ -40,13 +40,15 @@ const industries = [
 })
 export class OnboardingComponent {
   onboardingForm = new FormGroup({
-    industry: new FormControl<string>('', [Validators.required]),
-    searchEngine: new FormControl<string>(''),
-    getUpdates: new FormControl<boolean>(true),
+    company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    industry: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    searchEngine: new FormControl<string>('', { nonNullable: true }),
+    getUpdates: new FormControl<boolean>(true, { nonNullable: true }),
   });
 
   validationMessages = {
     industry: { required: 'validation.required' },
+    company: { required: 'validation.required' },
   };
 
   zones: Zone[] = [];
@@ -62,13 +64,17 @@ export class OnboardingComponent {
   }
 
   submitForm() {
+    if (this.onboardingForm.invalid) {
+      return;
+    }
+    const formValue = this.onboardingForm.getRawValue();
     const data: OnboardingPayload = {
-      industry: this.onboardingForm.value.industry || '',
-      other_search_engines: this.onboardingForm.value.searchEngine || '',
-      receive_updates: this.onboardingForm.value.getUpdates || false,
+      company: formValue.company,
+      industry: formValue.industry,
+      other_search_engines: formValue.searchEngine,
+      receive_updates: formValue.getUpdates,
     };
-    console.log(data);
-    // this.onboardingService.startOnboarding(data, this.zones[0].id);
+    this.onboardingService.startOnboarding(data, this.zones[0].id);
   }
 
   private buildIndustryList(): OptionModel[] {

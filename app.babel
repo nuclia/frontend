@@ -6040,26 +6040,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>login.company</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>login.continue_with</name>
 						<description/>
 						<comment/>
@@ -7101,6 +7081,26 @@
 					</concept_node>
 					<concept_node>
 						<name>onboarding.account_creation</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>onboarding.company</name>
 						<description/>
 						<comment/>
 						<default_text/>

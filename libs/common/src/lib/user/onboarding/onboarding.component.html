@@ -14,6 +14,17 @@
           <label
             class="title-s"
             for="industry">
+            {{ 'onboarding.company' | translate }}
+          </label>
+          <pa-input
+            formControlName="company"
+            externalLabel
+            [errorMessages]="validationMessages.company"></pa-input>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
+            for="industry">
             {{ 'onboarding.industry_label' | translate }}
           </label>
           <pa-select

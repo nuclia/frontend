@@ -3,12 +3,12 @@ import { Observable } from 'rxjs';
 import {
   AuthTokens,
   LoginData,
-  OldSignupData,
   RecoverData,
   ResetData,
   ResetResponse,
   SetPasswordData,
   SetUserPreferences,
+  SignupData,
   SignupResponse,
   User,
 } from '../models';
@@ -94,7 +94,7 @@ export class LoginService {
     }
   }
 
-  signup(user: OldSignupData, token: string): Observable<SignupResponse> {
+  signup(user: SignupData, token: string): Observable<SignupResponse> {
     const headers = [['X-STF-VALIDATION', token]];
     return this.api.post(
       this.config.getAPIURL() + `/${AUTH}/signup`,
