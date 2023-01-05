@@ -2,11 +2,18 @@
   import { Resource, Search } from '@nuclia/core';
   import { Duration } from '../../common/transition.utils';
   import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
-  import { getCDN, getFileField, getMediaTranscripts, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import {
+    getCDN,
+    getExternalUrl,
+    getFileField,
+    getMediaTranscripts,
+    goToUrl,
+    mapSmartParagraph2WidgetParagraph,
+  } from '../../core/utils';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { getFileUrl, getResource } from '../../core/api';
-  import { tap } from 'rxjs/operators';
+  import { take, tap } from 'rxjs/operators';
   import { filterParagraphs, isFile } from '../tile.utils';
   import { Observable, Subject, switchMap } from 'rxjs';
   import { fade, slide } from 'svelte/transition';
@@ -17,6 +24,7 @@
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { AudioPlayer } from '../../common/player';
+  import { navigateToLink } from '../../core/stores/widget.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -54,6 +62,17 @@
 
   const playFromStart = () => {
     playFrom(0);
+  };
+
+  const onClickParagraph = (paragraph: MediaWidgetParagraph) => {
+    navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
+      const url = getExternalUrl(result);
+      if (navigateToLink && url) {
+        goToUrl(url, paragraph.text);
+      } else {
+        playParagraph(paragraph);
+      }
+    });
   };
 
   const playParagraph = (paragraph: MediaWidgetParagraph) => {
@@ -244,7 +263,7 @@
                   minimized={isMobile && !expanded}
                   stack={expanded}
                   selected={paragraph === paragraphInPlay}
-                  on:open={(event) => playParagraph(event.detail.paragraph)} />
+                  on:open={(event) => onClickParagraph(event.detail.paragraph)} />
               {/each}
             </ul>
           {/if}
