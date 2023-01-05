@@ -50,7 +50,6 @@
     mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.VIDEO),
   ) || []) as MediaWidgetParagraph[];
 
-
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: filteredMatchingParagraphs = !findInTranscript
@@ -134,7 +133,7 @@
   class:expanded
   class:showFullTranscripts
   bind:this={mediaTileElement}
-  style:--video-tile-height={mediaTileHeight ? mediaTileHeight : ''}>
+  style:--media-tile-height={mediaTileHeight ? mediaTileHeight : ''}>
   <div class="thumbnail-container">
     <div hidden={expanded && !mediaLoading}>
       <ThumbnailPlayer

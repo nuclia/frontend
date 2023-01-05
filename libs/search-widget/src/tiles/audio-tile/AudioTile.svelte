@@ -118,7 +118,8 @@
   class="sw-tile sw-audio-tile"
   class:expanded
   class:showFullTranscripts
-  bind:this={mediaTileElement}>
+  bind:this={mediaTileElement}
+  style:--media-tile-height={mediaTileHeight ? mediaTileHeight : ''}>
   <div class="thumbnail-container">
     <div hidden={expanded && !mediaLoading}>
       <ThumbnailPlayer
