@@ -1,29 +1,22 @@
 <script lang="ts">
-  import type { Observable } from 'rxjs';
-  import type { Resource, Search } from '@nuclia/core';
-  import { tap } from 'rxjs/operators';
-  import { getRegionalBackend, getResource } from '../../core/api';
-  import IconButton from '../../common/button/IconButton.svelte';
-  import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
-  import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
-  import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
-  import Icon from '../../common/icons/Icon.svelte';
-  import { fade, slide } from 'svelte/transition';
-  import Player from '../../old-components/viewer/previewers/Player.svelte';
+  import { Resource, Search } from '@nuclia/core';
   import { Duration } from '../../common/transition.utils';
+  import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
+  import { getCDN, getFileField, getMediaTranscripts, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
+  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+  import { getRegionalBackend, getResource } from '../../core/api';
+  import { tap } from 'rxjs/operators';
+  import { filterParagraphs, isFile } from '../tile.utils';
+  import { Observable } from 'rxjs';
+  import { fade, slide } from 'svelte/transition';
+  import { IconButton } from '../../common';
+  import { _ } from '../../core/i18n';
+  import Icon from '../../common/icons/Icon.svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
-  import { _ } from '../../core/i18n';
-  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import {
-    getFileField,
-    getLinkField,
-    getMediaTranscripts,
-    getVideoStream,
-    mapSmartParagraph2WidgetParagraph,
-  } from '../../core/utils';
-  import { filterParagraphs, isFileOrLink } from '../tile.utils';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
+  import { AudioPlayer } from '../../common/player';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -35,7 +28,6 @@
   let summary;
   let mediaLoading = true;
   let mediaTime = 0;
-  let youtubeUri: string | undefined;
   let mediaUri: string | undefined;
   let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
@@ -46,9 +38,10 @@
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
 
-  const matchingParagraphs: MediaWidgetParagraph[] = (result.paragraphs?.map((paragraph) =>
-    mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.VIDEO),
-  ) || []) as MediaWidgetParagraph[];
+  const matchingParagraphs: MediaWidgetParagraph[] =
+    result.paragraphs?.map(
+      (paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.AUDIO) as MediaWidgetParagraph,
+    ) || [];
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
@@ -79,18 +72,15 @@
     }
 
     const paragraph =
-      selectedParagraph && isFileOrLink(selectedParagraph.fieldType)
+      selectedParagraph && isFile(selectedParagraph.fieldType)
         ? selectedParagraph
-        : matchingParagraphs.filter((p) => isFileOrLink(p.fieldType))[0] || matchingParagraphs[0];
+        : matchingParagraphs.filter((p) => isFile(p.fieldType))[0] || matchingParagraphs[0];
     if (!resource) {
       resource = getResource(result.id).pipe(
         tap((res) => {
-          if (paragraph.fieldType === FieldType.LINK) {
-            const linkField = getLinkField(res, paragraph.fieldId);
-            youtubeUri = linkField?.value?.uri;
-          } else if (paragraph.fieldType === FieldType.FILE) {
+          if (paragraph.fieldType === FieldType.FILE) {
             const fileField = getFileField(res, res.id);
-            const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
+            const file = fileField && fileField.value?.file;
             if (file) {
               mediaContentType = file.content_type;
               mediaUri = `${getRegionalBackend()}${file.uri}`;
@@ -98,7 +88,7 @@
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
-          transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
+          transcripts = getMediaTranscripts(res, PreviewKind.AUDIO);
           setupExpandedTile();
         }),
       );
@@ -107,10 +97,6 @@
 
   const setupExpandedTile = () => {
     mediaTileHeight = `${mediaTileElement.offsetHeight}px`;
-  };
-
-  const onVideoReady = () => {
-    mediaLoading = false;
   };
 
   const closePreview = () => {
@@ -129,7 +115,7 @@
 
 <svelte:window bind:innerWidth />
 <div
-  class="sw-tile sw-video-tile"
+  class="sw-tile sw-audio-tile"
   class:expanded
   class:showFullTranscripts
   bind:this={mediaTileElement}
@@ -138,6 +124,7 @@
     <div hidden={expanded && !mediaLoading}>
       <ThumbnailPlayer
         thumbnail={result.thumbnail}
+        fallback={`${getCDN()}tiles/audio.svg`}
         spinner={expanded && mediaLoading}
         hasBackground={!result.thumbnail}
         aspectRatio={expanded ? '16/9' : '5/4'}
@@ -149,18 +136,11 @@
       <div
         class="media-container"
         class:loading={mediaLoading}>
-        {#if youtubeUri}
-          <Youtube
-            time={mediaTime}
-            uri={youtubeUri}
-            on:videoReady={onVideoReady} />
-        {/if}
         {#if mediaUri}
-          <Player
+          <AudioPlayer
             time={mediaTime}
             src={mediaUri}
-            type={mediaContentType}
-            on:videoReady={onVideoReady} />
+            on:error={() => (mediaLoading = false)} />
         {/if}
       </div>
     {/if}
@@ -182,7 +162,7 @@
       <header>
         <div class:header-title={expanded}>
           <div class="doc-type-container">
-            <DocTypeIndicator type="video" />
+            <DocTypeIndicator type="audio" />
           </div>
           <h3 class="ellipsis">{result?.title}</h3>
         </div>
@@ -321,4 +301,4 @@
 
 <style
   lang="scss"
-  src="./VideoTile.scss"></style>
+  src="./AudioTile.scss"></style>

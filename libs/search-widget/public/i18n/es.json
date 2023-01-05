@@ -19,6 +19,7 @@
 	"entities.time": "Tiempo",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Obras",
+	"error.audio-loading": "Ocurrió un error al cargar el archivo de audio.",
 	"error.processing": "Este recurso aún no se ha procesado por completo",
 	"error.search": "¡Cáspita, algo ha ido mal!",
 	"error.search-beta": "Suerte que te hemos avisado que aún estamos en beta! 🙃",
@@ -48,5 +49,6 @@
 	"results.sentences": "Frases relevantes",
 	"results.summary": "Resumen",
 	"suggest.intents": "Etiquetas",
-	"suggest.paragraphs": "Párrafo sugerido"
+	"suggest.paragraphs": "Párrafo sugerido",
+	"tile.find-transcript": "Encuentra una transcripción"
 }

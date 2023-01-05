@@ -19,6 +19,7 @@
 	"entities.time": "Temps",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Obres",
+	"error.audio-loading": "S'ha produït un error en carregar el fitxer d'àudio.",
 	"error.processing": "Aquest recurs encara no s'ha processat completament",
 	"error.search": "Ups! Alguna cosa ha anat malament!",
 	"error.search-beta": "Sort que t'hem avisat que encara estem en beta! 🙃",
@@ -48,5 +49,6 @@
 	"results.sentences": "Frases rellevants",
 	"results.summary": "Resum",
 	"suggest.intents": "Etiquetes",
-	"suggest.paragraphs": "Paràgraf suggerit"
+	"suggest.paragraphs": "Paràgraf suggerit",
+	"tile.find-transcript": "Busca una transcripció"
 }
