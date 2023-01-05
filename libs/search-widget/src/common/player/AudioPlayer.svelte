@@ -1,7 +1,9 @@
 <script lang="ts">
   import IconButton from '../button/IconButton.svelte';
-  import { onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { lightFormat } from 'date-fns';
+  import { getCDN } from '../../core/utils';
+  import { _ } from '../../core/i18n';
 
   export let src;
   export let time;
@@ -17,6 +19,9 @@
   let progress = 0;
   let playing = false;
   let displayVolume = false;
+  let onError = false;
+
+  const dispatch = createEventDispatcher();
 
   onMount(() => {
     if (src) {
@@ -30,6 +35,10 @@
         if (time && audio.paused) {
           play();
         }
+      };
+      audio.onerror = () => {
+        onError = true;
+        dispatch('error');
       };
       progressIntervalId = setInterval(() => {
         progress = (audio.currentTime / audio.duration) * 100;
@@ -74,8 +83,10 @@
   }
 
   function seekTime(event: MouseEvent) {
-    const timelineWidth = timelineElement.offsetWidth;
-    audio.currentTime = (event.offsetX / timelineWidth) * audio.duration;
+    if (!onError) {
+      const timelineWidth = timelineElement.offsetWidth;
+      audio.currentTime = (event.offsetX / timelineWidth) * audio.duration;
+    }
   }
 
   function getFormattedTimeFromSeconds(seconds: number): string {
@@ -93,15 +104,17 @@
 </script>
 
 <div class="sw-audio-player">
+  <div class="error">{$_('error.audio-loading')}</div>
   <video
     class="waves-animation"
-    src="/tiles/audio-waves.mp4"
+    src={`${getCDN()}tiles/audio-waves.mp4`}
     loop
     bind:this={wavesAnimation} />
   <div class="audio-controls">
     <IconButton
       icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
       size="small"
+      disabled={onError}
       on:click={togglePlay} />
     <div class="time">{currentTime}</div>
     <div

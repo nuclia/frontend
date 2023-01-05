@@ -133,12 +133,13 @@
 
     {#if expanded}
       <div
-        class="player-container"
+        class="media-container"
         class:loading={mediaLoading}>
         {#if mediaUri}
           <AudioPlayer
             time={mediaTime}
-            src={mediaUri} />
+            src={mediaUri}
+            on:error={() => (mediaLoading = false)} />
         {/if}
       </div>
     {/if}

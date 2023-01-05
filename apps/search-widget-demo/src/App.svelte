@@ -124,9 +124,6 @@
 
   <h2>Sistema in Svelte</h2>
   <div class="nuclia-widget">
-    <h3>Audio Player</h3>
-    <AudioPlayer src="https://ia800905.us.archive.org/19/items/FREE_background_music_dhalius/backsound.mp3" />
-
     <h3>Buttons</h3>
     <h4 class="section-title">Primary</h4>
     <div>

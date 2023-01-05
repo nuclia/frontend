@@ -5,7 +5,7 @@
   }
 
   &.expanded .media-container.loading {
-    position: absolute;
+    display: none;
   }
 
   &.expanded .side-panel .scrollable-area {

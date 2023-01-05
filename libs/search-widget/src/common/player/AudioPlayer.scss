@@ -5,6 +5,17 @@
   display: flex;
   flex-direction: column;
 
+  .error {
+    background: rgba(255, 255, 255, 0.8);
+    left: 50%;
+    padding: var(--rhythm-1);
+    position: absolute;
+    text-align: center;
+    top: 35%;
+    transform: translateX(-50%) translateY(-50%);
+    width: var(--rhythm-20);
+  }
+
   .audio-controls {
     align-items: center;
     background: var(--player-bar-background);
