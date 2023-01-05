@@ -401,7 +401,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     const titleOnly = this.searchForm.value.searchIn === 'title';
     const page = this.page >= 1 ? this.page - 1 : 0;
 
-    forkJoin([this.stateService.account, this.stateService.stash])
+    forkJoin([this.stateService.account.pipe(take(1)), this.stateService.stash.pipe(take(1))])
       .pipe(
         filter(([account, kb]) => !!account && !!kb),
         take(1),
