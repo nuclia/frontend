@@ -2,15 +2,13 @@
   import { Resource, Search } from '@nuclia/core';
   import { Duration } from '../../common/transition.utils';
   import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
-  import { getCDN, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import { getCDN, getFileField, getMediaTranscripts, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { getRegionalBackend, getResource } from '../../core/api';
   import { tap } from 'rxjs/operators';
-  import { getFileField, getMainFieldParagraphs, getVideoStream } from '../../core/old-stores/viewer.store';
   import { filterParagraphs, isFile } from '../tile.utils';
   import { Observable } from 'rxjs';
-  import Player from '../../old-components/viewer/previewers/Player.svelte';
   import { fade, slide } from 'svelte/transition';
   import { IconButton } from '../../common';
   import { _ } from '../../core/i18n';
@@ -90,7 +88,7 @@
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
-          transcripts = getMainFieldParagraphs(res) as MediaWidgetParagraph[];
+          transcripts = getMediaTranscripts(res, PreviewKind.AUDIO);
           setupExpandedTile();
         }),
       );
