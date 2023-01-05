@@ -15,10 +15,13 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { UserContainerComponent } from '@flaps/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('OnboardingComponent', () => {
   let component: OnboardingComponent;
   let fixture: ComponentFixture<OnboardingComponent>;
+
+  let onboardingService: OnboardingService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -32,8 +35,13 @@ describe('OnboardingComponent', () => {
       ],
       declarations: [OnboardingComponent, MockComponent(UserContainerComponent)],
       providers: [
-        MockProvider(OnboardingService),
+        MockProvider(OnboardingService, {
+          startOnboarding: jest.fn(),
+        }),
         MockProvider(ZoneService, { getZones: jest.fn(() => of([{ id: 'zoneId', slug: 'zone' }])) }),
+        MockProvider(TranslateService, {
+          instant: jest.fn((key) => `translate--${key}`),
+        }),
         MockPipe(TranslatePipe, (key) => `translate--${key}`),
       ],
     }).compileComponents();
@@ -43,7 +51,36 @@ describe('OnboardingComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('submitForm', () => {
+    const data = {
+      company: 'Atlas',
+      industry: 'construction',
+      searchEngine: 'Elastic',
+      getUpdates: true,
+    };
+
+    beforeEach(() => {
+      onboardingService = TestBed.inject(OnboardingService);
+    });
+
+    it('should do nothing when form is not valid', () => {
+      expect(component.onboardingForm.valid).toBe(false);
+      component.submitForm();
+      expect(onboardingService.startOnboarding).not.toHaveBeenCalled();
+    });
+
+    it('should call startOnboarding when form is valid', () => {
+      component.onboardingForm.setValue(data);
+      component.submitForm();
+      expect(onboardingService.startOnboarding).toHaveBeenCalledWith(
+        {
+          company: data.company,
+          industry: data.industry,
+          other_search_engines: data.searchEngine,
+          receive_updates: data.getUpdates,
+        },
+        'zoneId',
+      );
+    });
   });
 });

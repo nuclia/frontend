@@ -58,7 +58,6 @@ describe('SignupComponent', () => {
   describe('submitForm', () => {
     const data = {
       name: 'Bruce Wayne',
-      company: 'WayneCorp',
       email: 'bruce@wayne.corp',
       password: 'Batman = <3',
     };

@@ -14,12 +14,24 @@
           <label
             class="title-s"
             for="industry">
-            {{ 'onboarding.industry_label' | translate }}
+            {{ 'onboarding.company' | translate }}
           </label>
           <pa-input
-            id="industry"
+            formControlName="company"
             externalLabel
-            formControlName="industry"></pa-input>
+            [errorMessages]="validationMessages.company"></pa-input>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
+            for="industry">
+            {{ 'onboarding.industry_label' | translate }}
+          </label>
+          <pa-select
+            id="industry"
+            [options]="industryOptions"
+            [errorMessages]="validationMessages.industry"
+            formControlName="industry"></pa-select>
         </div>
         <div class="field">
           <label
@@ -38,7 +50,8 @@
         <div class="form-footer">
           <pa-button
             type="submit"
-            kind="primary">
+            kind="primary"
+            [disabled]="onboardingForm.invalid">
             {{ 'onboarding.get_started' | translate }}
           </pa-button>
         </div>

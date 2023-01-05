@@ -15,16 +15,12 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 export class SignupComponent implements OnInit {
   signupForm = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
   validationMessages = {
     name: {
-      required: 'validation.required',
-    },
-    company: {
       required: 'validation.required',
     },
     password: {
