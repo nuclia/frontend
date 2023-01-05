@@ -9,11 +9,13 @@
   let currentTime = '';
   let totalTime = '';
   let timelineElement: HTMLElement;
+  let volumeElement: HTMLElement;
   let audio: HTMLAudioElement;
   let progressIntervalId: number;
 
   let progress = 0;
   let playing = false;
+  let displayVolume = false;
 
   onMount(() => {
     if (src) {
@@ -58,6 +60,10 @@
     }
   }
 
+  function toggleVolume() {
+    displayVolume = !displayVolume;
+  }
+
   function play() {
     audio.play().then(() => (playing = true));
   }
@@ -72,15 +78,20 @@
     date.setSeconds(seconds);
     return seconds >= 3600 ? lightFormat(date, 'h:mm:ss') : lightFormat(date, 'm:ss');
   }
+
+  function updateVolume(event: MouseEvent) {
+    const volumeRect = volumeElement.getBoundingClientRect();
+    const volumeHeight = volumeElement.offsetHeight;
+    const level = volumeHeight - (event.clientY - volumeRect.y);
+    audio.volume = level <= 5 ? 0 : level / volumeHeight;
+  }
 </script>
 
 <div class="sw-audio-player">
-  <div class="play-button">
-    <IconButton
-      icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
-      size="small"
-      on:click={togglePlay} />
-  </div>
+  <IconButton
+    icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
+    size="small"
+    on:click={togglePlay} />
   <div class="time">{currentTime}</div>
   <div
     class="timeline"
@@ -91,6 +102,23 @@
       style:width={`${progress}%`} />
   </div>
   <div class="time">{totalTime}</div>
+  <IconButton
+    icon={!audio?.volume ? 'volume-mute' : audio.volume > 0.5 ? 'volume-high' : 'volume-low'}
+    size="small"
+    aspect="basic"
+    on:click={toggleVolume} />
+  <div
+    class="volume-container"
+    class:visible={displayVolume}>
+    <div
+      class="volume"
+      bind:this={volumeElement}
+      on:click={(event) => updateVolume(event)}>
+      <div
+        class="level"
+        style:height={`${audio?.volume * 100}%`} />
+    </div>
+  </div>
 </div>
 
 <style
