@@ -9,6 +9,7 @@
   transition: background var(--transition-superfast);
 
   h3 {
+    cursor: pointer;
     font-size: var(--font-size-title-m);
     font-weight: var(--font-weight-title-m);
     line-height: var(--line-height-title-m-mobile);

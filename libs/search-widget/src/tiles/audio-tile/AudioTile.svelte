@@ -185,7 +185,11 @@
           <div class="doc-type-container">
             <DocTypeIndicator type="audio" />
           </div>
-          <h3 class="ellipsis">{result?.title}</h3>
+          <h3
+            class="ellipsis"
+            on:click={playFromStart}>
+            {result?.title}
+          </h3>
         </div>
         {#if expanded}
           <div in:fade={{ duration: Duration.FAST }}>

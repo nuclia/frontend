@@ -81,14 +81,18 @@
   };
 
   const openParagraph = (paragraph, index) => {
-    resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
-      viewerSearchQuery.set(globalQuery.getValue());
-      expanded = true;
-      freezeBackground(true);
+      openDocument(index);
     }
     setTimeout(() => setHeaderActionWidth());
+  };
+
+  const openDocument = (index = -1) => {
+    resultIndex = index;
+    viewerSearchQuery.set(globalQuery.getValue());
+    expanded = true;
+    freezeBackground(true);
     if (!resource) {
       resourceObs.subscribe((res) => (resource = res));
     }
@@ -222,7 +226,11 @@
           <div class="doc-type-container">
             <DocTypeIndicator type={previewKind === PreviewKind.PDF ? 'pdf' : 'text'} />
           </div>
-          <h3 class="ellipsis">{result?.title}</h3>
+          <h3
+            class="ellipsis"
+            on:click={() => openDocument()}>
+            {result?.title}
+          </h3>
         </div>
 
         {#if expanded}
