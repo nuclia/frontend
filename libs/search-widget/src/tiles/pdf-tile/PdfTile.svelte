@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Resource, Search } from '@nuclia/core';
   import PdfViewer from './PdfViewer.svelte';
-  import { map, Observable } from 'rxjs';
-  import { getRegionalBackend, getResource } from '../../core/api';
+  import { map, Observable, of, switchMap } from 'rxjs';
+  import { getFileUrl, getRegionalBackend, getResource } from '../../core/api';
   import { getCDN, getFileField, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import DocumentTile from '../base-tile/DocumentTile.svelte';
@@ -33,9 +33,9 @@
       pdfUrl = resource$.pipe(
         map((res) => {
           const fileField = getFileField(res, res.id);
-          const file = fileField?.value?.file;
-          return file ? `${getRegionalBackend()}${file.uri}` : '';
+          return fileField?.value?.file;
         }),
+        switchMap((url) => (url ? getFileUrl(url.uri) : of(''))),
       );
     }
   };

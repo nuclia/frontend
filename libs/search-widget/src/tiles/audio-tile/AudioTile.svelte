@@ -5,10 +5,10 @@
   import { getCDN, getFileField, getMediaTranscripts, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import { getRegionalBackend, getResource } from '../../core/api';
+  import { getFileUrl, getResource } from '../../core/api';
   import { tap } from 'rxjs/operators';
   import { filterParagraphs, isFile } from '../tile.utils';
-  import { Observable } from 'rxjs';
+  import { Observable, Subject, switchMap } from 'rxjs';
   import { fade, slide } from 'svelte/transition';
   import { IconButton } from '../../common';
   import { _ } from '../../core/i18n';
@@ -28,7 +28,6 @@
   let summary;
   let mediaLoading = true;
   let mediaTime = 0;
-  let mediaUri: string | undefined;
   let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
@@ -37,6 +36,9 @@
   let thumbnailLoaded = false;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
+
+  const _mediaUri = new Subject<string | undefined>();
+  const mediaUri = _mediaUri.pipe(switchMap((uri) => getFileUrl(uri)));
 
   const matchingParagraphs: MediaWidgetParagraph[] =
     result.paragraphs?.map(
@@ -83,7 +85,7 @@
             const file = fileField && fileField.value?.file;
             if (file) {
               mediaContentType = file.content_type;
-              mediaUri = `${getRegionalBackend()}${file.uri}`;
+              _mediaUri.next(file.uri);
             }
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
@@ -136,10 +138,10 @@
       <div
         class="media-container"
         class:loading={mediaLoading}>
-        {#if mediaUri}
+        {#if $mediaUri}
           <AudioPlayer
             time={mediaTime}
-            src={mediaUri}
+            src={$mediaUri}
             on:error={() => (mediaLoading = false)} />
         {/if}
       </div>
