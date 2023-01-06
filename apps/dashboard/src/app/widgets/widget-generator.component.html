@@ -25,8 +25,8 @@
   </div>
 
   <form
-    [formGroup]="mainForm"
-    (change)="generateSnippet()">
+    *ngIf="mainForm"
+    [formGroup]="mainForm">
     <div class="snippet-configuration-container">
       <section class="snippet-configuration">
         <h3>{{ 'stash.widgets.configuration' | translate }}</h3>
