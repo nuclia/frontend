@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Resource, Search } from '@nuclia/core';
   import { Duration } from '../../common/transition.utils';
-  import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
+  import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
   import {
     getCDN,
     getExternalUrl,
@@ -14,7 +14,7 @@
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { getFileUrl, getResource } from '../../core/api';
   import { take, tap } from 'rxjs/operators';
-  import { filterParagraphs, isFile } from '../tile.utils';
+  import { filterParagraphs } from '../tile.utils';
   import { Observable, Subject, switchMap } from 'rxjs';
   import { fade, slide } from 'svelte/transition';
   import { IconButton } from '../../common';
@@ -76,7 +76,7 @@
   };
 
   const playParagraph = (paragraph: MediaWidgetParagraph) => {
-    playFrom(paragraph.start_seconds, paragraph);
+    playFrom(paragraph.start_seconds);
     paragraphInPlay = paragraph;
   };
 
@@ -85,27 +85,20 @@
     paragraphInPlay = paragraph;
   };
 
-  const playFrom = (time: number, selectedParagraph?: MediaWidgetParagraph) => {
+  const playFrom = (time: number) => {
     mediaTime = time;
     if (!expanded) {
       expanded = true;
       freezeBackground(true);
     }
-
-    const paragraph =
-      selectedParagraph && isFile(selectedParagraph.fieldType)
-        ? selectedParagraph
-        : matchingParagraphs.filter((p) => isFile(p.fieldType))[0] || matchingParagraphs[0];
     if (!resource) {
       resource = getResource(result.id).pipe(
         tap((res) => {
-          if (paragraph.fieldType === FieldType.FILE) {
-            const fileField = getFileField(res, res.id);
-            const file = fileField && fileField.value?.file;
-            if (file) {
-              mediaContentType = file.content_type;
-              _mediaUri.next(file.uri);
-            }
+          const fileField = getFileField(res, res.id);
+          const file = fileField && fileField.value?.file;
+          if (file) {
+            mediaContentType = file.content_type;
+            _mediaUri.next(file.uri);
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
