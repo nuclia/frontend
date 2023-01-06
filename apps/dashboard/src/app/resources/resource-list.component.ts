@@ -21,6 +21,7 @@ import {
   mergeMap,
   Observable,
   of,
+  skip,
   Subject,
   take,
 } from 'rxjs';
@@ -74,8 +75,20 @@ interface ResourceWithLabels {
 }
 
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
-const DEFAULT_PAGE_SIZE = 20;
+const DEFAULT_PREFERENCES = {
+  pageSize: 20,
+  columns: ['modification', 'language'],
+};
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
+const RESOURCE_LIST_PREFERENCES = 'NUCLIA_RESOURCE_LIST_PREFERENCES';
+
+interface ColumnModel {
+  value: string;
+  label: string;
+  visible: boolean;
+  showInPending?: boolean;
+  optional?: boolean;
+}
 
 @Component({
   selector: 'app-resource-list',
@@ -145,15 +158,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       ),
     ),
   );
-  columns = [
-    { value: 'title', label: 'resource.title', visible: true, showInPending: true },
-    { value: 'classification', label: 'resource.classification', visible: false, optional: true },
-    { value: 'modification', label: 'generic.date', visible: true, optional: true, showInPending: true },
-    { value: 'language', label: 'generic.language', visible: true, optional: true },
-    { value: 'status', label: 'resource.status', visible: false, optional: true, showInPending: true },
-  ];
+  userPreferences: typeof DEFAULT_PREFERENCES;
+  columns: ColumnModel[];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  optionalColumns = this.columns.filter((column) => column.optional);
+  optionalColumns: ColumnModel[];
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
@@ -225,6 +233,46 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         title: title.length > 0 ? title : undefined,
       });
     });
+
+    const pref = this.localStorage.getItem(RESOURCE_LIST_PREFERENCES);
+    if (pref) {
+      try {
+        this.userPreferences = JSON.parse(pref);
+      } catch (e) {
+        this.userPreferences = DEFAULT_PREFERENCES;
+        this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(DEFAULT_PREFERENCES));
+      }
+    } else {
+      this.userPreferences = DEFAULT_PREFERENCES;
+    }
+    this.columns = this.getInitialColumns();
+    this.optionalColumns = this.columns.filter((column) => column.optional && column.value !== 'status');
+  }
+
+  private getInitialColumns(): ColumnModel[] {
+    return [
+      { value: 'title', label: 'resource.title', visible: true, showInPending: true },
+      {
+        value: 'classification',
+        label: 'resource.classification',
+        visible: this.userPreferences.columns.includes('classification'),
+        optional: true,
+      },
+      {
+        value: 'modification',
+        label: 'generic.date',
+        visible: this.userPreferences.columns.includes('modification'),
+        optional: true,
+        showInPending: true,
+      },
+      {
+        value: 'language',
+        label: 'generic.language',
+        visible: this.userPreferences.columns.includes('language'),
+        optional: true,
+      },
+      { value: 'status', label: 'resource.status', visible: false, optional: true, showInPending: true },
+    ];
   }
 
   ngAfterViewInit() {
@@ -246,6 +294,13 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         switchMap(() => this.getResources()),
       )
       .subscribe();
+
+    this.columnVisibilityUpdate.pipe(skip(1), takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.userPreferences.columns = this.columns
+        .map((column) => (column.value !== 'status' && column.optional && column.visible ? column.value : ''))
+        .filter((value) => !!value);
+      this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
+    });
   }
 
   ngOnDestroy() {
@@ -317,7 +372,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   get pageSize(): number {
     const size = this.route.snapshot.queryParams.size;
-    return size ? parseInt(size, 10) : DEFAULT_PAGE_SIZE;
+    return size ? parseInt(size, 10) : this.userPreferences?.pageSize || DEFAULT_PREFERENCES.pageSize;
   }
 
   get page(): number {
@@ -354,6 +409,8 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.applyFilter({
       size: size.key,
     });
+    this.userPreferences.pageSize = parseInt(size.value);
+    this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
   }
 
   nextPage() {
