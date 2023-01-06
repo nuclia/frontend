@@ -153,7 +153,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     { value: 'status', label: 'resource.status', visible: false, optional: true, showInPending: true },
   ];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  optionalColumns = this.columns.filter((column) => column.optional);
+  optionalColumns = this.columns.filter((column) => column.optional && column.value !== 'status');
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
