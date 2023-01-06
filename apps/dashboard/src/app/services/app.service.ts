@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, map, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 
@@ -12,9 +12,6 @@ export class AppService {
   private currentLocaleSubject = new BehaviorSubject<string>(this.getLocaleFromLang(this.translateService.currentLang));
   readonly currentLocale = this.currentLocaleSubject.asObservable();
 
-  private _searchEnabled = new BehaviorSubject<boolean>(true);
-  readonly searchEnabled = this._searchEnabled.asObservable();
-
   constructor(
     private config: BackendConfigurationService,
     private translateService: TranslateService,
@@ -25,10 +22,6 @@ export class AppService {
 
   getCurrentLocale(): string {
     return this.currentLocaleSubject.getValue();
-  }
-
-  setSearchEnabled(value: boolean): void {
-    this._searchEnabled.next(value);
   }
 
   private listenLanguageChange(): void {
