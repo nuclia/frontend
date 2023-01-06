@@ -61,7 +61,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
       concat(
         (this.source as ISourceConnector).getFiles(this.query).pipe(
           catchError((error) => {
-            if (this.source && (this.source.isAuthError || defaultAuthCheck)(error)) {
+            if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
               localStorage.setItem(SOURCE_ID_KEY, this.sourceId || '');
               if (this.source.hasServerSideAuth) {
                 this.source.goToOAuth(true);
