@@ -1,14 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { NonNullableFormBuilder } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
-import { map, Subject, take, takeUntil } from 'rxjs';
+import { map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
 import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { AppService } from '../services/app.service';
 import { NavigationService } from '../services/navigation.service';
+import { LOCAL_STORAGE } from '@ng-web-apis/common';
+
+const DEFAULT_WIDGET_CONFIG: {
+  mode: 'video' | 'embedded' | 'popup';
+  features: string[];
+  placeholder?: string;
+} = {
+  mode: 'video',
+  features: [],
+};
+const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
 
 @Component({
   selector: 'app-widget-generator',
@@ -17,22 +28,13 @@ import { NavigationService } from '../services/navigation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetGeneratorComponent implements OnInit, OnDestroy {
+  private localStorage = inject(LOCAL_STORAGE);
+
   showWarning = this.sdk.currentKb.pipe(map((kb) => kb.state === 'PRIVATE'));
   showLink = this.sdk.currentKb.pipe(map((kb) => !!kb.admin && kb.state === 'PRIVATE'));
   homeUrl = this.navigation.homeUrl;
 
-  mainForm = this.fb.group({
-    mode: ['embedded'],
-    features: this.fb.group({
-      editLabels: [false],
-      entityAnnotation: [false],
-      filter: [false],
-      navigateToLink: [false],
-      permalink: [false],
-      suggestLabels: [false],
-      suggestions: [false],
-    }),
-  });
+  mainForm?: FormGroup;
   validationMessages = {
     title: {
       sluggable: 'stash.widgets.invalid-id',
@@ -48,12 +50,18 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   debouncePlaceholder = new Subject<string>();
 
+  widgetConfigurations: { [kbId: string]: typeof DEFAULT_WIDGET_CONFIG };
+
+  get mainFormFeatures() {
+    return this.mainForm?.controls.features.value || {};
+  }
+
   get widgetMode() {
-    return this.mainForm.controls.mode.value;
+    return this.mainForm?.controls.mode.value || DEFAULT_WIDGET_CONFIG.mode;
   }
 
   get features(): string {
-    return Object.entries(this.mainForm.controls.features.value || {}).reduce((features, [feature, enabled]) => {
+    return Object.entries(this.mainFormFeatures).reduce((features, [feature, enabled]) => {
       if (enabled) {
         features = `${features.length > 0 ? features + ',' : ''}${feature}`;
       }
@@ -73,23 +81,53 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private appService: AppService,
     private navigation: NavigationService,
   ) {
+    const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
+    if (config) {
+      try {
+        this.widgetConfigurations = JSON.parse(config);
+      } catch (error) {
+        this.widgetConfigurations = {};
+        this.localStorage.setItem(WIDGETS_CONFIGURATION, '{}');
+      }
+    } else {
+      this.widgetConfigurations = {};
+    }
+
     this.appService.setSearchEnabled(false);
     this.loadVideoWidget();
   }
 
   ngOnInit() {
-    // Wait for dashboard search widget to be removed before generating the preview
-    // FIXME: timeout to be removed once the widget won't be on the topbar anymore
-    setTimeout(() => this.generateSnippet(), 100);
-
-    this.mainForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.generateSnippet();
-      this.mainForm.markAsDirty();
-    });
+    this.sdk.currentKb
+      .pipe(
+        switchMap((kb) => {
+          const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
+          this.placeholder = config.placeholder;
+          this.mainForm = this.fb.group({
+            mode: [config.mode],
+            features: this.fb.group({
+              editLabels: [config.features.includes('editLabels')],
+              entityAnnotation: [config.features.includes('entityAnnotation')],
+              filter: [config.features.includes('filter')],
+              navigateToLink: [config.features.includes('navigateToLink')],
+              permalink: [config.features.includes('permalink')],
+              suggestLabels: [config.features.includes('suggestLabels')],
+              suggestions: [config.features.includes('suggestions')],
+            }),
+          });
+          this.generateSnippet();
+          return this.mainForm.valueChanges;
+        }),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => {
+        this.onFormChange();
+        this.mainForm?.markAsDirty();
+      });
 
     this.debouncePlaceholder.pipe(debounceTime(500)).subscribe((placeholder) => {
       this.placeholder = placeholder || undefined;
-      this.generateSnippet();
+      this.onFormChange();
     });
   }
 
@@ -180,5 +218,17 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       videoScript.src = `${this.backendConfig.getCDN()}/nuclia-video-widget.umd.js`;
       window.document.body.appendChild(videoScript);
     }
+  }
+
+  onFormChange() {
+    this.generateSnippet();
+    this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
+      this.widgetConfigurations[kb.id] = {
+        mode: this.widgetMode,
+        features: this.features.split(','),
+        placeholder: this.placeholder,
+      };
+      this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
+    });
   }
 }
