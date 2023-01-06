@@ -22,7 +22,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   homeUrl = this.navigation.homeUrl;
 
   mainForm = this.fb.group({
-    mode: ['embedded'],
+    mode: ['video'],
     features: this.fb.group({
       editLabels: [false],
       entityAnnotation: [false],
