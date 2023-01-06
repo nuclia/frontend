@@ -11,69 +11,55 @@
         <label class="title-s">
           {{ 'generic.uid' | translate }}
         </label>
-        <div fxFlex="70%">
-          <pa-input
-            formControlName="uid"
-            externalLabel
-            readonly></pa-input>
-        </div>
+        <pa-input
+          formControlName="uid"
+          externalLabel
+          readonly></pa-input>
       </div>
 
       <div>
         <label class="title-s">
           {{ 'generic.slug' | translate }}
         </label>
-        <div fxFlex="70%">
-          <pa-input
-            formControlName="slug"
-            externalLabel
-            [errorMessages]="validationMessages.slug"></pa-input>
-        </div>
+        <pa-input
+          formControlName="slug"
+          externalLabel
+          [errorMessages]="validationMessages.slug"></pa-input>
       </div>
 
       <div>
         <label class="title-s">
           {{ 'generic.name' | translate }}
         </label>
-        <div fxFlex="70%">
-          <pa-input
-            formControlName="title"
-            externalLabel
-            [errorMessages]="validationMessages.title"></pa-input>
-        </div>
+        <pa-input
+          formControlName="title"
+          externalLabel
+          [errorMessages]="validationMessages.title"></pa-input>
       </div>
 
       <div>
         <label class="title-s">
           {{ 'generic.description' | translate }}
         </label>
-        <div fxFlex="70%">
-          <pa-textarea
-            formControlName="description"
-            externalLabel
-            rows="4"></pa-textarea>
-        </div>
+        <pa-textarea
+          formControlName="description"
+          externalLabel
+          rows="4"></pa-textarea>
       </div>
 
       <footer>
-        <div></div>
-        <div
-          fxFlex="70%"
-          fxLayout="row"
-          fxLayoutGap="10px">
-          <pa-button
-            type="submit"
-            kind="primary"
-            [disabled]="kbForm.invalid || kbForm.pristine">
-            {{ 'generic.save' | translate }}
-          </pa-button>
-          <pa-button
-            *ngIf="!kbForm.pristine"
-            aspect="basic"
-            (click)="initKbForm()">
-            {{ 'generic.cancel' | translate }}
-          </pa-button>
-        </div>
+        <pa-button
+          type="submit"
+          kind="primary"
+          [disabled]="kbForm.invalid || kbForm.pristine">
+          {{ 'generic.save' | translate }}
+        </pa-button>
+        <pa-button
+          *ngIf="!kbForm.pristine"
+          aspect="basic"
+          (click)="initKbForm()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
       </footer>
     </form>
   </div>

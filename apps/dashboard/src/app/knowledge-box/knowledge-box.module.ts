@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -17,7 +16,6 @@ import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@f
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxManageComponent } from './knowledge-box-manage/knowledge-box-manage.component';
 import { KnowledgeBoxProfileComponent } from './knowledge-box-profile/knowledge-box-profile.component';
 import { KnowledgeBoxUsersComponent } from './knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
@@ -41,7 +39,6 @@ import { STFSectionNavbarModule } from '../components/section-navbar';
 const Components = [
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
-  KnowledgeBoxManageComponent,
   KnowledgeBoxProcessesComponent,
   KnowledgeBoxProfileComponent,
   KnowledgeBoxUsersComponent,
@@ -54,7 +51,6 @@ const Components = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    FlexLayoutModule,
     TranslateModule.forChild(),
     ReactiveFormsModule,
     FormsModule,
