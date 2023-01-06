@@ -4,6 +4,7 @@
   import IconButton from '../../common/button/IconButton.svelte';
   import { debounceTime, filter, Subject, Subscription } from 'rxjs';
   import { getUnMarked } from '../tile.utils';
+  import Spinner from '../../common/spinner/Spinner.svelte';
 
   export let src: string;
   export let paragraph;
@@ -166,6 +167,11 @@
   bind:offsetWidth={containerOffsetWidth}
   style:--container-width="{containerOffsetWidth}px">
   <div class="pdfViewer" />
+  {#if !src || !pdfInitialized}
+    <div class="loading-container">
+      <Spinner />
+    </div>
+  {/if}
 
   {#if showController}
     <div class="pdf-controller">

@@ -87,11 +87,11 @@
       viewerSearchQuery.set(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
+      if (!resource) {
+        resourceObs.subscribe((res) => (resource = res));
+      }
     }
     setTimeout(() => setHeaderActionWidth());
-    if (!resource) {
-      resourceObs.subscribe((res) => (resource = res));
-    }
   };
 
   const selectParagraph = (paragraph) => {
@@ -222,7 +222,11 @@
           <div class="doc-type-container">
             <DocTypeIndicator type={previewKind === PreviewKind.PDF ? 'pdf' : 'text'} />
           </div>
-          <h3 class="ellipsis">{result?.title}</h3>
+          <h3
+            class="ellipsis"
+            on:click={() => openParagraph(undefined, -1)}>
+            {result?.title}
+          </h3>
         </div>
 
         {#if expanded}
@@ -286,7 +290,6 @@
               {#each $matchingParagraphs$ as paragraph, index}
                 <ParagraphResult
                   {paragraph}
-                  hideIndicator={!paragraph.page}
                   ellipsis={!expanded}
                   minimized={isMobile && !expanded}
                   stack={expanded}
