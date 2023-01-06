@@ -81,21 +81,17 @@
   };
 
   const openParagraph = (paragraph, index) => {
+    resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
-      openDocument(index);
+      viewerSearchQuery.set(globalQuery.getValue());
+      expanded = true;
+      freezeBackground(true);
+      if (!resource) {
+        resourceObs.subscribe((res) => (resource = res));
+      }
     }
     setTimeout(() => setHeaderActionWidth());
-  };
-
-  const openDocument = (index = -1) => {
-    resultIndex = index;
-    viewerSearchQuery.set(globalQuery.getValue());
-    expanded = true;
-    freezeBackground(true);
-    if (!resource) {
-      resourceObs.subscribe((res) => (resource = res));
-    }
   };
 
   const selectParagraph = (paragraph) => {
@@ -228,7 +224,7 @@
           </div>
           <h3
             class="ellipsis"
-            on:click={() => openDocument()}>
+            on:click={() => openParagraph(undefined, -1)}>
             {result?.title}
           </h3>
         </div>
