@@ -46,6 +46,7 @@
     .viewer-body {
       grid-template-columns: 60% 40%;
       grid-template-rows: 100%;
+      overflow: hidden;
     }
     .viewer-body.preview {
       grid-template-columns: 33% 66%;
@@ -53,10 +54,13 @@
     .viewer-left {
       --viewer-left-padding: var(--rhythm-3) var(--rhythm-6) 0 var(--rhythm-4);
       grid-row: auto;
+      overflow: auto;
+      position: relative;
     }
     .viewer-right {
       --viewer-right-padding: var(--rhythm-4) var(--rhythm-6);
       grid-row: auto;
+      overflow: auto;
     }
   }
 }

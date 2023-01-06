@@ -4,10 +4,9 @@
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
-  import { AudioPlayer } from '../../../libs/search-widget/src/common/player';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'tiles';
+  let selected = 'embedded';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;
@@ -89,7 +88,7 @@
       cdn="https://cdn.stashify.cloud/"
       type="embedded"
       lang="en"
-      features="permalink,filter,suggestions" />
+      features="permalink,filter,suggestions,entityAnnotation" />
   {/if}
   {#if selected === 'tiles'}
     <h2>Two widgets: search bar and video results</h2>

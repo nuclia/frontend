@@ -1,6 +1,6 @@
 .sw-viewer-input {
   position: sticky;
-  top: var(--header-height);
+  top: calc(var(--rhythm-3) * -1);
   background-color: #fff;
   padding: 1em 0;
   z-index: 1;

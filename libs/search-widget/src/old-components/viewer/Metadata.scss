@@ -1,7 +1,8 @@
 .sw-metadata {
   &.annotation-mode {
     position: sticky;
-    top: calc(var(--header-height) + var(--rhythm-4));
+    top: 0;
+    margin-bottom: var(--rhythm-3);
   }
 
   h2 {

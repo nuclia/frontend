@@ -9,6 +9,8 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    max-height: var(--rhythm-40);
+    overflow: auto;
 
     li {
       cursor: pointer;
