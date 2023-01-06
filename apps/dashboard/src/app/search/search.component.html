@@ -1,3 +1,7 @@
 <div class="search-page">
-  <div [innerHtml]="searchWidget | async"></div>
+  <div
+    class="search-bar-container"
+    [innerHtml]="searchWidget | async"></div>
+
+  <div [innerHTML]="searchResults"></div>
 </div>

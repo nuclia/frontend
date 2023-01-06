@@ -7,7 +7,6 @@ import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular
 import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
-import { AppService } from '../services/app.service';
 import { NavigationService } from '../services/navigation.service';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 
@@ -78,7 +77,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private translation: TranslateService,
     private modalService: SisModalService,
     private sdk: SDKService,
-    private appService: AppService,
     private navigation: NavigationService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
@@ -93,8 +91,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.widgetConfigurations = {};
     }
 
-    this.appService.setSearchEnabled(false);
-    this.loadVideoWidget();
+    this.preloadAlternativeWidget();
   }
 
   ngOnInit() {
@@ -115,7 +112,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               suggestions: [config.features.includes('suggestions')],
             }),
           });
-          this.generateSnippet();
+          setTimeout(() => this.generateSnippet(), 100);
           return this.mainForm.valueChanges;
         }),
         takeUntil(this.unsubscribeAll),
@@ -134,10 +131,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-    setTimeout(() => {
-      // Wait until the component is destroyed
-      this.appService.setSearchEnabled(true);
-    }, 100);
   }
 
   deletePreview() {
@@ -207,16 +200,16 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.modalService.openModal(WidgetHintDialogComponent);
   }
 
-  private loadVideoWidget() {
-    const id = 'video-widget-script';
+  private preloadAlternativeWidget() {
+    const id = 'old-widget-script';
     if (!document.querySelector(`#${id}`)) {
-      const videoScript = window.document.createElement('script');
-      videoScript.id = id;
-      videoScript.type = 'text/javascript';
-      videoScript.async = true;
-      videoScript.defer = true;
-      videoScript.src = `${this.backendConfig.getCDN()}/nuclia-video-widget.umd.js`;
-      window.document.body.appendChild(videoScript);
+      const widgetScript = window.document.createElement('script');
+      widgetScript.id = id;
+      widgetScript.type = 'text/javascript';
+      widgetScript.async = true;
+      widgetScript.defer = true;
+      widgetScript.src = `${this.backendConfig.getCDN()}/nuclia-widget.umd.js`;
+      window.document.body.appendChild(widgetScript);
     }
   }
 

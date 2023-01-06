@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { distinctUntilKeyChanged, forkJoin, map, switchMap, tap } from 'rxjs';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
@@ -13,7 +13,7 @@ import { TrainingType } from '@nuclia/core';
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements AfterViewInit {
+export class SearchComponent implements AfterViewInit, OnDestroy {
   searchWidget = this.sdk.currentKb.pipe(
     distinctUntilKeyChanged('id'),
     tap(() => {
@@ -34,19 +34,20 @@ export class SearchComponent implements AfterViewInit {
       if (hasClassifier) {
         features += ',suggestLabels';
       }
-      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search id="search-widget" knowledgebox="${kb.id}"
-        zone="${this.sdk.nuclia.options.zone}"
-        client="dashboard"
-        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
-        backend="${this.backendConfig.getAPIURL()}"
-        state="${kb.state || ''}"
-        kbslug="${kb.slug || ''}"
-        account="${kb.account || ''}"
-        lang="${this.translation.currentLang}"
-        type="embedded"
-        features="${features}"></nuclia-search>`);
+      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar knowledgebox="${kb.id}"
+  zone="${this.sdk.nuclia.options.zone}"
+  client="dashboard"
+  cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
+  backend="${this.backendConfig.getAPIURL()}"
+  state="${kb.state || ''}"
+  kbslug="${kb.slug || ''}"
+  account="${kb.account || ''}"
+  lang="${this.translation.currentLang}"
+  features="${features}"
+></nuclia-search-bar>`);
     }),
   );
+  searchResults = this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-results></nuclia-search-results>`);
 
   constructor(
     private sdk: SDKService,
@@ -58,5 +59,9 @@ export class SearchComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.resourceViewer.init('search-widget');
+  }
+
+  ngOnDestroy() {
+    document.getElementById('search-widget')?.remove();
   }
 }

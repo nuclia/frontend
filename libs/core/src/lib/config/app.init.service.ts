@@ -99,7 +99,7 @@ function injectWidget(cdnUrl: string) {
   searchWidget.type = 'text/javascript';
   searchWidget.async = true;
   searchWidget.defer = true;
-  searchWidget.src = `${cdnUrl}/nuclia-widget.umd.js`;
+  searchWidget.src = `${cdnUrl}/nuclia-video-widget.umd.js`;
   searchWidget.onload = () => (JS_INJECTED = true);
   window.document.body.appendChild(searchWidget);
 
@@ -108,6 +108,5 @@ function injectWidget(cdnUrl: string) {
   viewer.async = true;
   viewer.defer = true;
   viewer.src = `${cdnUrl}/nuclia-viewer-widget.umd.js`;
-  viewer.onload = () => (JS_INJECTED = true);
   window.document.body.appendChild(viewer);
 }
