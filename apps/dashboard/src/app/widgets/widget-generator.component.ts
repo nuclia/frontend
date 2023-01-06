@@ -91,7 +91,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       this.widgetConfigurations = {};
     }
 
-    this.loadVideoWidget();
+    this.preloadAlternativeWidget();
   }
 
   ngOnInit() {
@@ -200,16 +200,16 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.modalService.openModal(WidgetHintDialogComponent);
   }
 
-  private loadVideoWidget() {
+  private preloadAlternativeWidget() {
     const id = 'old-widget-script';
     if (!document.querySelector(`#${id}`)) {
-      const videoScript = window.document.createElement('script');
-      videoScript.id = id;
-      videoScript.type = 'text/javascript';
-      videoScript.async = true;
-      videoScript.defer = true;
-      videoScript.src = `${this.backendConfig.getCDN()}/nuclia-widget.umd.js`;
-      window.document.body.appendChild(videoScript);
+      const widgetScript = window.document.createElement('script');
+      widgetScript.id = id;
+      widgetScript.type = 'text/javascript';
+      widgetScript.async = true;
+      widgetScript.defer = true;
+      widgetScript.src = `${this.backendConfig.getCDN()}/nuclia-widget.umd.js`;
+      window.document.body.appendChild(widgetScript);
     }
   }
 
