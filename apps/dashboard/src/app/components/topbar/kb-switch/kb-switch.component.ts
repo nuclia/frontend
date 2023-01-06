@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
@@ -27,6 +27,10 @@ export class KbSwitchComponent {
     switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account!.slug)),
   );
   showDemo = this.tracking.isFeatureEnabled('show-demo-kb');
+
+  showKbSelector: Observable<boolean> = combineLatest([this.knowledgeBoxes, this.showDemo]).pipe(
+    map(([kbs, demo]) => kbs.length > 1 || demo),
+  );
 
   constructor(
     private sdk: SDKService,
