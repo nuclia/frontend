@@ -11,7 +11,6 @@ import { AccountComponent } from './account/account.component';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box/knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxManageComponent } from './knowledge-box/knowledge-box-manage/knowledge-box-manage.component';
 import { KnowledgeBoxProfileComponent } from './knowledge-box/knowledge-box-profile/knowledge-box-profile.component';
 import { KnowledgeBoxUsersComponent } from './knowledge-box/knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box/knowledge-box-keys/knowledge-box-keys.component';
@@ -163,18 +162,7 @@ const routes: Routes = [
               },
               {
                 path: 'manage',
-                component: KnowledgeBoxManageComponent,
-                children: [
-                  {
-                    path: '',
-                    redirectTo: 'profile',
-                    pathMatch: 'full',
-                  },
-                  {
-                    path: 'profile',
-                    component: KnowledgeBoxProfileComponent,
-                  },
-                ],
+                component: KnowledgeBoxProfileComponent,
               },
               {
                 path: 'processes',
