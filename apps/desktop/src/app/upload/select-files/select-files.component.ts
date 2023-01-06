@@ -27,6 +27,7 @@ import {
 } from 'rxjs/operators';
 import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
 
+const defaultAuthCheck = (error: any) => error.message === 'Unauthorized' || error.status === 403;
 @Component({
   selector: 'nde-select-files',
   templateUrl: './select-files.component.html',
@@ -60,12 +61,12 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
       concat(
         (this.source as ISourceConnector).getFiles(this.query).pipe(
           catchError((error) => {
-            if (this.source && (error.message = 'Unauthorized' || error.status === 403)) {
+            if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
               localStorage.setItem(SOURCE_ID_KEY, this.sourceId || '');
               if (this.source.hasServerSideAuth) {
                 this.source.goToOAuth(true);
               }
-              return this.source.authenticate().pipe(mapTo({ items: [], nextPage: undefined }));
+              return this.source.authenticate().pipe(mapTo({ items: [], nextPage: undefined } as SearchResults));
             } else {
               return of({ items: [], nextPage: undefined });
             }
@@ -76,7 +77,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
           tap(() => {
             this.loading = true;
           }),
-          concatMap(() => (this.nextPage ? this.nextPage : of({ items: [], nextPage: undefined }))),
+          concatMap(() => (this.nextPage ? this.nextPage : of({ items: [], nextPage: undefined } as SearchResults))),
         ),
       ).pipe(
         tap((res) => {
