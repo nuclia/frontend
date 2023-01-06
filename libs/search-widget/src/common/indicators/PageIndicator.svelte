@@ -10,7 +10,7 @@
   class:hovering
   class:selected
   class:stack>
-  p. {page || 0}
+  p. {page || '–'}
 </div>
 
 <style

@@ -290,7 +290,6 @@
               {#each $matchingParagraphs$ as paragraph, index}
                 <ParagraphResult
                   {paragraph}
-                  hideIndicator={!paragraph.page}
                   ellipsis={!expanded}
                   minimized={isMobile && !expanded}
                   stack={expanded}
