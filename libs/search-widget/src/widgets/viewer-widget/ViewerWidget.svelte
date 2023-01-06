@@ -96,7 +96,7 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready}
+  {#if ready && !!svgSprite}
     <ViewerModal />
   {/if}
 
