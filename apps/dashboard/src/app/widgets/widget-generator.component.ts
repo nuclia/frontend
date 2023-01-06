@@ -78,9 +78,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Wait for dashboard search widget to be removed before generating the preview
-    // FIXME: timeout to be removed once the widget won't be on the topbar anymore
-    setTimeout(() => this.generateSnippet(), 100);
+    this.generateSnippet();
 
     this.mainForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.generateSnippet();
