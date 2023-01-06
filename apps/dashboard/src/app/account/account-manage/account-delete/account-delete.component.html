@@ -4,7 +4,9 @@
   </pa-modal-title>
   <pa-modal-content>
     <div>
-      <pa-checkbox [(value)]="deleteAccount">
+      <pa-checkbox
+        noEllipsis
+        [(value)]="deleteAccount">
         {{ 'account.delete_account_confirm' | translate: { account: (account | async)?.title } }}
       </pa-checkbox>
     </div>
