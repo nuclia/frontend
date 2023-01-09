@@ -5,37 +5,34 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import generatePackageJson from 'rollup-plugin-generate-package-json';
 import dts from 'rollup-plugin-dts';
 import copy from 'rollup-plugin-copy';
-
-const packageJson = require('./package.json');
-const production = !process.env.ROLLUP_WATCH;
+import packageJson from './package.json' assert {type: 'json'};
 
 export default [
   {
     input: 'src/index.ts',
     output: [
       {
-        sourcemap: !production,
-        file: `../../dist/prediction/${packageJson.module}`,
+        file: `../../dist/sdk-core/${packageJson.module}`,
         format: 'esm',
       },
     ],
     plugins: [
       generatePackageJson({
         inputFolder: '.',
-        outputFolder: '../../dist/prediction',
+        outputFolder: '../../dist/sdk-core',
         baseContents: (pkg) => ({ ...pkg }),
       }),
       peerDepsExternal({
-        packageJsonPath: 'libs/prediction/package.json',
+        packageJsonPath: 'libs/sdk-core/package.json',
       }),
       resolve(),
       typescript({ tsconfig: './tsconfig.lib.json' }),
       terser({ format: { comments: false } }),
       copy({
         targets: [
-          { src: './README.md', dest: '../../dist/prediction' },
-          { src: './CHANGELOG.md', dest: '../../dist/prediction' },
-          { src: '../../LICENSE.md', dest: '../../dist/prediction' },
+          { src: './README.md', dest: '../../dist/sdk-core' },
+          { src: './CHANGELOG.md', dest: '../../dist/sdk-core' },
+          { src: '../../LICENSE.md', dest: '../../dist/sdk-core' },
         ],
       }),
     ],
@@ -44,14 +41,14 @@ export default [
     input: 'src/index.ts',
     output: [
       {
-        file: `../../dist/prediction/${packageJson.main}`,
+        file: `../../dist/sdk-core/${packageJson.main}`,
         format: 'umd',
-        name: 'NucliaPredictionSDK',
+        name: 'NucliaSDK',
       },
     ],
     plugins: [
       peerDepsExternal({
-        packageJsonPath: 'libs/prediction/package.json',
+        packageJsonPath: 'libs/sdk-core/package.json',
       }),
       resolve(),
       typescript({ tsconfig: './tsconfig.lib.json' }),
@@ -59,8 +56,8 @@ export default [
     ],
   },
   {
-    input: '../../dist/prediction/esm/src/index.d.ts',
-    output: [{ file: '../../dist/prediction/types/index.d.ts', format: 'esm' }],
+    input: '../../dist/sdk-core/esm/src/index.d.ts',
+    output: [{ file: '../../dist/sdk-core/types/index.d.ts', format: 'esm' }],
     external: [/\.css$/],
     plugins: [dts()],
   },
