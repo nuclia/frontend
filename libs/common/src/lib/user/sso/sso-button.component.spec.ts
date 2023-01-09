@@ -5,6 +5,7 @@ import { MockModule, MockProvider } from 'ng-mocks';
 import { SsoService } from '@flaps/core';
 import { PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { WINDOW } from '@ng-web-apis/common';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('SsoButtonComponent', () => {
   let component: SsoButtonComponent;
@@ -17,6 +18,9 @@ describe('SsoButtonComponent', () => {
       providers: [
         MockProvider(SsoService, { getSsoLoginUrl: jest.fn((provider) => `sso/login/${provider}`) }),
         MockProvider(WINDOW, { location: { href: '' } } as Window),
+        MockProvider(TranslateService, {
+          instant: jest.fn((key) => `translate--${key}`),
+        }),
       ],
     }).compileComponents();
 
@@ -25,9 +29,22 @@ describe('SsoButtonComponent', () => {
   });
 
   it('should display the icon and capitalized text corresponding to the provider', () => {
+    expect(component.icon).toBe(`assets/icons/google.svg`);
+    expect(component.providerName).toBe(`Google`);
+
     component.provider = 'github';
     expect(component.icon).toBe(`assets/icons/github.svg`);
-    expect(component.capitalizedProvider).toBe(`Github`);
+    expect(component.providerName).toBe(`Github`);
+  });
+
+  it('should translate google workspace on signup', () => {
+    component.signup = true;
+    expect(component.icon).toBe(`assets/icons/google.svg`);
+    expect(component.providerName).toBe(`translate--login.google-workspace`);
+
+    component.provider = 'github';
+    expect(component.icon).toBe(`assets/icons/github.svg`);
+    expect(component.providerName).toBe(`Github`);
   });
 
   it('should redirect to sso login URL when clicking on the button', () => {
