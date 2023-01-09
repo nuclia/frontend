@@ -134,7 +134,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
 
   deletePreview() {
-    const customElement = document.getElementById('preview')?.getElementsByTagName('nuclia-search')[0];
+    const preview = document.getElementById('preview');
+    const searchBar = preview?.getElementsByTagName('nuclia-search-bar')[0];
+    searchBar?.remove();
+    const searchResults = preview?.getElementsByTagName('nuclia-search-results')[0];
+    searchResults?.remove();
+    const customElement = preview?.getElementsByTagName('nuclia-search')[0];
     customElement?.remove();
   }
 
