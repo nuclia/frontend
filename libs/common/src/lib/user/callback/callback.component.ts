@@ -77,8 +77,15 @@ export class CallbackComponent implements OnInit {
     const code = this.route.snapshot.queryParamMap.get('code');
     const state = this.route.snapshot.queryParamMap.get('state');
     if (code !== null && state !== null) {
-      this.ssoService.login(code, state).subscribe((token) => {
-        this.authenticate(token);
+      this.ssoService.login(code, state).subscribe({
+        next: (token) => this.authenticate(token),
+        error: (error) =>
+          this.router.navigate(['../signup'], {
+            relativeTo: this.route,
+            queryParams: {
+              error: error.status === 412 ? 'google_workspace' : 'oops',
+            },
+          }),
       });
     }
   }
