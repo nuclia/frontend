@@ -147,7 +147,7 @@
     "rimraf": "^3.0.2",
     "rollup": "3",
     "rollup-plugin-copy": "^3.4.0",
-    "rollup-plugin-dts": "^4.1.0",
+    "rollup-plugin-dts": "5",
     "rollup-plugin-generate-package-json": "^3.2.0",
     "rollup-plugin-local-resolve": "^1.0.7",
     "rollup-plugin-peer-deps-external": "^2.2.4",
