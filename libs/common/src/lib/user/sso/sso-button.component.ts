@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core
 import { SsoService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
+import { TranslateService } from '@ngx-translate/core';
 
 type Provider = 'google' | 'github';
 
@@ -31,6 +32,15 @@ export class SsoButtonComponent {
   get capitalizedProvider() {
     return this.provider.slice(0, 1).toUpperCase() + this.provider.slice(1);
   }
+
+  get providerName() {
+    if (this.provider === 'google' && this.signup) {
+      return this.translate.instant('login.google-workspace');
+    } else {
+      return this.capitalizedProvider;
+    }
+  }
+
   get icon() {
     return `assets/icons/${this.provider}.svg`;
   }
@@ -38,7 +48,11 @@ export class SsoButtonComponent {
   private _provider: Provider = 'google';
   private _signup = false;
 
-  constructor(private ssoService: SsoService, @Inject(WINDOW) private window: Window) {}
+  constructor(
+    private ssoService: SsoService,
+    @Inject(WINDOW) private window: Window,
+    private translate: TranslateService,
+  ) {}
 
   onClick() {
     this.window.location.href = this.ssoService.getSsoLoginUrl(this.provider);

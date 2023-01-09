@@ -28,11 +28,11 @@ export class MagicComponent implements OnDestroy {
       }),
     );
 
-    this.subscription = this.magic$.subscribe(
-      (data) => {
+    this.subscription = this.magic$.subscribe({
+      next: (data) => {
         this.magicService.execute(data);
       },
-      (error) => {
+      error: (error) => {
         let message: string;
         const cause = error.detail as MagicActionError;
         if (cause === 'local_user_already_exists' || cause === 'user_registered_as_external_user') {
@@ -44,7 +44,7 @@ export class MagicComponent implements OnDestroy {
           queryParams: { message: message },
         });
       },
-    );
+    });
   }
   ngOnDestroy() {
     this.subscription.unsubscribe();

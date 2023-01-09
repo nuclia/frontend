@@ -1,11 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { distinctUntilKeyChanged, forkJoin, map, switchMap, tap } from 'rxjs';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { ResourceViewerService } from '../resources/resource-viewer.service';
 import { TrainingType } from '@nuclia/core';
+
+const searchWidgetId = 'search-bar';
+const searchResultsId = 'search-results';
 
 @Component({
   selector: 'app-search',
@@ -13,11 +15,11 @@ import { TrainingType } from '@nuclia/core';
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements AfterViewInit, OnDestroy {
+export class SearchComponent implements OnDestroy {
   searchWidget = this.sdk.currentKb.pipe(
     distinctUntilKeyChanged('id'),
     tap(() => {
-      document.getElementById('search-widget')?.remove();
+      document.getElementById(searchWidgetId)?.remove();
     }),
     switchMap((kb) =>
       forkJoin([kb.getLabels(), kb.training.hasModel(TrainingType.classifier)]).pipe(
@@ -34,7 +36,8 @@ export class SearchComponent implements AfterViewInit, OnDestroy {
       if (hasClassifier) {
         features += ',suggestLabels';
       }
-      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar knowledgebox="${kb.id}"
+      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar id="${searchWidgetId}"
+  knowledgebox="${kb.id}"
   zone="${this.sdk.nuclia.options.zone}"
   client="dashboard"
   cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
@@ -47,21 +50,19 @@ export class SearchComponent implements AfterViewInit, OnDestroy {
 ></nuclia-search-bar>`);
     }),
   );
-  searchResults = this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-results></nuclia-search-results>`);
+  searchResults = this.sanitized.bypassSecurityTrustHtml(
+    `<nuclia-search-results id="${searchResultsId}"></nuclia-search-results>`,
+  );
 
   constructor(
     private sdk: SDKService,
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private translation: TranslateService,
-    private resourceViewer: ResourceViewerService,
   ) {}
 
-  ngAfterViewInit(): void {
-    this.resourceViewer.init('search-widget');
-  }
-
   ngOnDestroy() {
-    document.getElementById('search-widget')?.remove();
+    document.getElementById(searchWidgetId)?.remove();
+    document.getElementById(searchResultsId)?.remove();
   }
 }
