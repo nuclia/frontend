@@ -125,9 +125,17 @@
   const toggleTranscriptPanel = () => {
     showFullTranscripts = !showFullTranscripts;
   };
+
+  const handleKeydown = (event) => {
+    if (event.key === 'Escape') {
+      closePreview();
+    }
+  };
 </script>
 
-<svelte:window bind:innerWidth />
+<svelte:window
+  bind:innerWidth
+  on:keydown={handleKeydown} />
 <div
   class="sw-tile sw-audio-tile"
   class:expanded

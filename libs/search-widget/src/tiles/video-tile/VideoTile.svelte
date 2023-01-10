@@ -2,7 +2,7 @@
   import { Observable, Subject } from 'rxjs';
   import type { Resource, Search } from '@nuclia/core';
   import { switchMap, take, tap } from 'rxjs/operators';
-  import { getFileUrl, getRegionalBackend, getResource } from '../../core/api';
+  import { getFileUrl, getResource } from '../../core/api';
   import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
@@ -142,9 +142,17 @@
   const toggleTranscriptPanel = () => {
     showFullTranscripts = !showFullTranscripts;
   };
+
+  const handleKeydown = (event) => {
+    if (event.key === 'Escape') {
+      closePreview();
+    }
+  };
 </script>
 
-<svelte:window bind:innerWidth />
+<svelte:window
+  bind:innerWidth
+  on:keydown={handleKeydown} />
 <div
   class="sw-tile sw-video-tile"
   class:expanded
