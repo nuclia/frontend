@@ -13,8 +13,9 @@
   import { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
   import { activatePermalinks, initLabelStore, unsubscribeAllEffects } from '../../core/stores/effects';
-  import { searchQuery, triggerSearch } from '../../core/stores/search.store';
+  import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
   import { unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
+  import { suggestionState } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -101,6 +102,8 @@
       resetNuclia();
       unsubscribeAllEffects();
       unsubscribeViewerEffects();
+      searchState.reset();
+      suggestionState.reset();
     };
   });
 </script>
