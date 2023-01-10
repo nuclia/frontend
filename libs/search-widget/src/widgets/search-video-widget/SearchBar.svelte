@@ -99,11 +99,11 @@
     ready = true;
 
     return () => {
+      searchState.reset();
+      suggestionState.reset();
       resetNuclia();
       unsubscribeAllEffects();
       unsubscribeViewerEffects();
-      searchState.reset();
-      suggestionState.reset();
     };
   });
 </script>

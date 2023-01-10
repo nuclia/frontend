@@ -172,7 +172,6 @@
 
   function reset() {
     expanded = false;
-    selectParagraph(undefined);
     setTimeout(() => {
       isSearchingInResource.next(false);
       sidePanelExpanded = false;

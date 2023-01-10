@@ -44,6 +44,6 @@ describe('SearchComponent', () => {
   it('should generate and display a search widget', () => {
     expect(component).toBeTruthy();
     const searchPage = fixture.debugElement.nativeElement.querySelector('.search-page');
-    expect(searchPage.innerHTML).toContain('nuclia-search');
+    expect(searchPage.innerHTML).toContain('nuclia-search-bar');
   });
 });
