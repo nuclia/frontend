@@ -77,24 +77,26 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'profile',
+            redirectTo: 'edit',
             pathMatch: 'full',
           },
           {
-            path: 'profile',
+            path: 'edit',
             component: ResourceProfileComponent,
-          },
-          {
-            path: 'text',
-            component: ResourceTextComponent,
-          },
-          {
-            path: 'link',
-            component: ResourceLinkComponent,
-          },
-          {
-            path: 'file',
-            component: ResourceFileComponent,
+            children: [
+              {
+                path: 'text',
+                component: ResourceTextComponent,
+              },
+              {
+                path: 'link',
+                component: ResourceLinkComponent,
+              },
+              {
+                path: 'file',
+                component: ResourceFileComponent,
+              },
+            ],
           },
         ],
       },

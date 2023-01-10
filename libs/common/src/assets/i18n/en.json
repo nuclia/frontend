@@ -490,6 +490,7 @@
 	"resource.processed_resources": "Processed resources",
 	"resource.profile": "Profile",
 	"resource.resource_page_number": "{{num}} per page",
+	"resource.resources": "Resources",
 	"resource.search.in-resource": "in resource",
 	"resource.search.in-title": "in title",
 	"resource.selected_count": "{{num}} files selected",

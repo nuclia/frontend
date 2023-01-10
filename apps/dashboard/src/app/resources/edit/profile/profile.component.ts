@@ -3,8 +3,8 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { CloudLink, FileFieldData, Classification, Resource, deDuplicateList } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, switchMap, tap, timer } from 'rxjs';
+import { Classification, CloudLink, deDuplicateList, FileFieldData, Resource } from '@nuclia/core';
+import { filter, forkJoin, map, merge, Observable, switchMap, timer } from 'rxjs';
 import { BaseEditComponent } from '../base-edit.component';
 import { SisToastService } from '@nuclia/sistema';
 import { takeUntil } from 'rxjs/operators';
@@ -14,6 +14,7 @@ type Thumbnail = { uri: string; blob: SafeUrl };
 @Component({
   selector: 'app-resource-profile',
   templateUrl: 'profile.component.html',
+  styleUrls: ['profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceProfileComponent extends BaseEditComponent {
