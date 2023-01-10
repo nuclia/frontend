@@ -167,6 +167,8 @@
       event.preventDefault();
       event.stopPropagation();
       toggleSidePanel();
+    } else if (event.key === 'Escape') {
+      closePreview();
     }
   };
 
