@@ -11,7 +11,7 @@
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from '../../common/_global.scss';
+  import globalCss from '../../common/_global.scss?inline';
   import {
     setWidgetActions,
     widgetType,

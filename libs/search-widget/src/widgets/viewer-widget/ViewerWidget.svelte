@@ -7,7 +7,7 @@
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates } from '@nuclia/core';
-  import globalCss from '../../common/_global.scss';
+  import globalCss from '../../common/_global.scss?inline';
   import { setWidgetActions, widgetFeatures, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import { isViewerOpen } from '../../core/stores/modal.store';

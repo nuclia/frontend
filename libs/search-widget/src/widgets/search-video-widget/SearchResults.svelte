@@ -7,7 +7,7 @@
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import VideoTile from '../../tiles/video-tile/VideoTile.svelte';
-  import globalCss from '../../common/_global.scss';
+  import globalCss from '../../common/_global.scss?inline';
   import { fade } from 'svelte/transition';
   import { Duration } from '../../common/transition.utils';
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';

@@ -8,7 +8,7 @@
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from '../../common/_global.scss';
+  import globalCss from '../../common/_global.scss?inline';
   import { get_current_component } from 'svelte/internal';
   import { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
