@@ -11,7 +11,10 @@ export interface SvelteWritableObservable<U, V = U> extends ReadableObservable<U
 export class SvelteState<STATE> {
   store: BehaviorSubject<STATE>;
 
+  private readonly initialState: STATE;
+
   constructor(value: STATE) {
+    this.initialState = value;
     this.store = new BehaviorSubject(value);
   }
 
@@ -31,5 +34,9 @@ export class SvelteState<STATE> {
       this.store.next(updateFn(current, params));
     };
     return selector;
+  }
+
+  reset() {
+    this.store.next(this.initialState);
   }
 }

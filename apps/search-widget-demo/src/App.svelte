@@ -6,7 +6,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
-  let selected = 'embedded';
+  let selected = 'tiles';
   let showConfiguration = true;
   let widget: NucliaWidget;
   let viewerWidget: NucliaViewerWidget;

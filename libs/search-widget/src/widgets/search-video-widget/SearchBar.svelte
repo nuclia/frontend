@@ -8,13 +8,14 @@
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../old-components/search-input/SearchInput.svelte';
   import { setupTriggerSearch } from '../../core/search-bar';
-  import globalCss from '../../common/_global.scss';
+  import globalCss from '../../common/_global.scss?inline';
   import { get_current_component } from 'svelte/internal';
   import { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
   import { activatePermalinks, initLabelStore, unsubscribeAllEffects } from '../../core/stores/effects';
-  import { searchQuery, triggerSearch } from '../../core/stores/search.store';
+  import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
   import { unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
+  import { suggestionState } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -98,6 +99,8 @@
     ready = true;
 
     return () => {
+      searchState.reset();
+      suggestionState.reset();
       resetNuclia();
       unsubscribeAllEffects();
       unsubscribeViewerEffects();

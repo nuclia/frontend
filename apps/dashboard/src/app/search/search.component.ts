@@ -62,7 +62,13 @@ export class SearchComponent implements OnDestroy {
   ) {}
 
   ngOnDestroy() {
-    document.getElementById(searchWidgetId)?.remove();
-    document.getElementById(searchResultsId)?.remove();
+    const searchBarElement = document.querySelector('nuclia-search-bar') as any;
+    const searchResultsElement = document.querySelector('nuclia-search-results') as any;
+    if (typeof searchBarElement.$destroy === 'function') {
+      searchBarElement.$destroy();
+    }
+    if (typeof searchResultsElement.$destroy === 'function') {
+      searchResultsElement.$destroy();
+    }
   }
 }

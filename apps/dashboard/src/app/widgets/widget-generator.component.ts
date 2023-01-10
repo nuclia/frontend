@@ -131,16 +131,25 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.deletePreview();
   }
 
   deletePreview() {
-    const preview = document.getElementById('preview');
-    const searchBar = preview?.getElementsByTagName('nuclia-search-bar')[0];
-    searchBar?.remove();
-    const searchResults = preview?.getElementsByTagName('nuclia-search-results')[0];
-    searchResults?.remove();
-    const customElement = preview?.getElementsByTagName('nuclia-search')[0];
-    customElement?.remove();
+    const searchWidgetElement = document.querySelector('nuclia-search') as any;
+    const searchBarElement = document.querySelector('nuclia-search-bar') as any;
+    const searchResultsElement = document.querySelector('nuclia-search-results') as any;
+    if (typeof searchWidgetElement?.$destroy === 'function') {
+      searchWidgetElement.$destroy();
+    }
+    if (typeof searchBarElement?.$destroy === 'function') {
+      searchBarElement.$destroy();
+    }
+    if (typeof searchResultsElement?.$destroy === 'function') {
+      searchResultsElement.$destroy();
+    }
+    searchWidgetElement?.remove();
+    searchBarElement?.remove();
+    searchResultsElement?.remove();
   }
 
   generateSnippet() {
