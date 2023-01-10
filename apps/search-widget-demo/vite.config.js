@@ -11,4 +11,7 @@ export default defineConfig({
     }),
   ],
   publicDir: '../../libs/search-widget/public',
+  server: {
+    port: 3000,
+  },
 });
