@@ -68,7 +68,7 @@ export class SyncService {
     };
   } = {
     gdrive: { definition: GDrive, settings: environment.connectors.google },
-    onedrive: { definition: OneDriveConnector, settings: environment.connectors.google },
+    onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
     folder: { definition: FolderConnector, settings: {} },
     s3: { definition: S3Connector, settings: {} },
