@@ -5,6 +5,7 @@ import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models'
 import { SyncService } from '../sync/sync.service';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 
+const PARAMS_CACHE = 'PARAMS_CACHE';
 @Component({
   selector: 'nde-connectors',
   templateUrl: './connectors.component.html',
@@ -62,7 +63,7 @@ export class ConnectorsComponent {
         )
         .subscribe((fields) => {
           fields.length > 0
-            ? this.showFields(fields)
+            ? this.showFields(connectorId, fields)
             : this.selectedConnector && this.selectConnector.emit({ connector: this.selectedConnector, params: {} });
         });
     } else {
@@ -73,21 +74,26 @@ export class ConnectorsComponent {
           take(1),
         )
         .subscribe((fields) => {
-          this.showFields(fields);
+          this.showFields(connectorId, fields);
         });
     }
   }
 
-  showFields(fields: Field[]) {
+  showFields(connectorId: string, fields: Field[]) {
     this.fields = fields;
     this.form = this.formBuilder.group(
       fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
     );
+    const cache = this.getCache(connectorId);
+    if (cache) {
+      this.form.patchValue(cache);
+    }
     markForCheck(this.cdr);
   }
 
   validate() {
     if (this.selectedConnector) {
+      this.saveCache(this.selectedConnector.id, this.form?.value || {});
       this.selectConnector.emit({ connector: this.selectedConnector, params: this.form?.value || {} });
     }
   }
@@ -106,5 +112,16 @@ export class ConnectorsComponent {
           markForCheck(this.cdr);
         });
     }
+  }
+
+  private getCache(connectorId: string): any {
+    const cache = localStorage.getItem(PARAMS_CACHE) || '{}';
+    return JSON.parse(cache)[connectorId];
+  }
+
+  private saveCache(connectorId: string, params: any) {
+    const cache = localStorage.getItem(PARAMS_CACHE) || '{}';
+    const parsedCache = JSON.parse(cache);
+    localStorage.setItem(PARAMS_CACHE, JSON.stringify({ ...parsedCache, [connectorId]: params }));
   }
 }

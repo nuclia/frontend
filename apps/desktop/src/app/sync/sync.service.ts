@@ -39,6 +39,7 @@ import { ProcessingPullResponse } from '@nuclia/core';
 import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
 import { GCSConnector } from './sources/gcs';
 import { OneDriveConnector } from './sources/onedrive';
+import { BrightcoveConnector } from './sources/brightcove';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
@@ -67,11 +68,12 @@ export class SyncService {
     };
   } = {
     gdrive: { definition: GDrive, settings: environment.connectors.google },
-    onedrive: { definition: OneDriveConnector, settings: environment.connectors.google },
+    onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
     folder: { definition: FolderConnector, settings: {} },
     s3: { definition: S3Connector, settings: {} },
     gcs: { definition: GCSConnector, settings: environment.connectors.google },
+    brightcove: { definition: BrightcoveConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
@@ -150,6 +152,7 @@ export class SyncService {
                             this.handle403(sourceInstance, error);
                             throw error;
                           }),
+                          filter((link) => !!link.uri),
                           concatMap((link) =>
                             destinationInstance.uploadLink!(f.title, sync.destination.params, link).pipe(
                               tap(() => {
