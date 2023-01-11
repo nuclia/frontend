@@ -4,11 +4,10 @@ import type {
   KBStates,
   LabelSets,
   NucliaOptions,
-  ResourceField,
   SearchOptions,
   TokenAnnotation,
 } from '@nuclia/core';
-import { FIELD_TYPE, Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
+import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
@@ -88,18 +87,14 @@ export const getResource = (uid: string): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return merge(
-    nucliaApi.knowledgeBox.getResource(uid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN]),
-    nucliaApi.knowledgeBox.getResource(uid),
-  );
+  return merge(getResourceById(uid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN]), getResourceById(uid));
 };
 
-export const getField = (rid: string, type: FIELD_TYPE, field: string): Observable<ResourceField> => {
+export const getResourceById = (uid: string, show?: ResourceProperties[]): Observable<Resource> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  const resource = new Resource(nucliaApi, nucliaApi.knowledgeBox.id, { id: rid });
-  return resource.getField(type, field);
+  return merge(nucliaApi.knowledgeBox.getResource(uid, show));
 };
 
 let _entities: EntityGroup[] | undefined = undefined;

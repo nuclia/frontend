@@ -1,7 +1,7 @@
 import { SvelteState } from '../state-lib';
 import type { Classification, Search } from '@nuclia/core';
-import { NO_RESULTS } from '../models';
-import { combineLatest, map, Observable } from 'rxjs';
+import { FieldType, NO_RESULTS } from '../models';
+import { combineLatest, map, Observable, Subject } from 'rxjs';
 
 export type Suggestions = {
   results: Search.Results;
@@ -21,6 +21,8 @@ export const suggestionState = new SvelteState<SuggestionState>({
   },
   hasError: false,
 });
+
+export const triggerSuggestions = new Subject<void>();
 
 export const typeAhead = suggestionState.writer<string>(
   (state) => state.typeAhead,
@@ -47,8 +49,10 @@ export const suggestionsHasError = suggestionState.writer<boolean>(
   }),
 );
 
-export const suggestedParagraphs: Observable<Search.Paragraph[]> = suggestionState.reader<Search.Paragraph[]>(
-  (state) => state.suggestions.results.paragraphs?.results || [],
+export const suggestedParagraphs: Observable<Search.Paragraph[]> = suggestionState.reader<Search.Paragraph[]>((state) =>
+  (state.suggestions.results.paragraphs?.results || []).filter(
+    (paragraph) => paragraph.field_type === FieldType.GENERIC,
+  ),
 );
 
 export const suggestedLabels: Observable<Classification[]> = suggestionState.reader<Classification[]>(

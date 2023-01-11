@@ -49,19 +49,6 @@
           <ng-container *ngIf="widgetMode !== 'video'">
             <pa-toggle
               labelOnRight
-              help="stash.widgets.suggestions.help"
-              formControlName="suggestions">
-              {{ 'stash.widgets.suggestions' | translate }}
-            </pa-toggle>
-            <pa-toggle
-              *ngIf="isTrainingEnabled | async"
-              labelOnRight
-              help="stash.widgets.suggestLabels.help"
-              formControlName="suggestLabels">
-              {{ 'stash.widgets.suggestLabels' | translate }}
-            </pa-toggle>
-            <pa-toggle
-              labelOnRight
               help="stash.widgets.editLabels.help"
               formControlName="editLabels">
               {{ 'stash.widgets.editLabels' | translate }}
@@ -74,6 +61,19 @@
             </pa-toggle>
           </ng-container>
 
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.suggestions.help"
+            formControlName="suggestions">
+            {{ 'stash.widgets.suggestions' | translate }}
+          </pa-toggle>
+          <pa-toggle
+            *ngIf="isTrainingEnabled | async"
+            labelOnRight
+            help="stash.widgets.suggestLabels.help"
+            formControlName="suggestLabels">
+            {{ 'stash.widgets.suggestLabels' | translate }}
+          </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.filter.help"
