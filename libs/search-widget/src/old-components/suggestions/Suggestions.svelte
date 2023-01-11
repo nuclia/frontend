@@ -1,31 +1,49 @@
 <script lang="ts">
-  import type { Classification, LinkField, Search } from '@nuclia/core';
-  import { FIELD_TYPE } from '@nuclia/core';
-  import { getField } from '../../core/api';
-  import { goToUrl, isYoutubeUrl } from '../../core/utils';
+  import type { Classification, Search } from '@nuclia/core';
+  import { ResourceProperties } from '@nuclia/core';
+  import { getResourceById } from '../../core/api';
+  import { getExternalUrl, goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
-  import { DisplayedResource, FieldType } from '../../core/models';
-  import { suggestionsHasError } from '../../core/stores/suggestions.store';
+  import { DisplayedResource } from '../../core/models';
+  import { suggestionsHasError, suggestionState, typeAhead } from '../../core/stores/suggestions.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
-  import { take } from 'rxjs/operators';
-  import { addLabelFilter, displayedResource } from '../../core/stores/search.store';
+  import { of, switchMap, take } from 'rxjs';
+  import { addLabelFilter, displayedResource, searchQuery, triggerSearch } from '../../core/stores/search.store';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
+  export let searchBarWidget: boolean = false;
 
-  const goToResource = (params: DisplayedResource, text?: string) => {
-    navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
-      if (navigateToLink && params.paragraph?.field_type === FieldType.LINK) {
-        getField(params.paragraph.rid, FIELD_TYPE.link, params.paragraph.field).subscribe((field) => {
-          const uri = (field.value as LinkField).uri;
-          const isYoutubeLink = isYoutubeUrl(uri);
-          goToUrl(uri, text && !isYoutubeLink ? text : undefined);
-        });
-      } else {
-        displayedResource.set(params);
-      }
-    });
+  const onClickParagraph = (params: DisplayedResource, text: string) => {
+    if (searchBarWidget) {
+      searchQuery.set(text);
+      suggestionState.reset();
+      typeAhead.set(text);
+      triggerSearch.next();
+    } else {
+      goToResource(params, text);
+    }
+  };
+
+  const goToResource = (params: DisplayedResource, text: string) => {
+    navigateToLink
+      .pipe(
+        take(1),
+        switchMap((navigateToLink) =>
+          navigateToLink
+            ? getResourceById(params.paragraph!.rid, [ResourceProperties.BASIC, ResourceProperties.VALUES])
+            : of(null),
+        ),
+      )
+      .subscribe((resource) => {
+        const url = resource && getExternalUrl(resource);
+        if (url && !isYoutubeUrl(url)) {
+          goToUrl(url, text);
+        } else {
+          displayedResource.set(params);
+        }
+      });
   };
 </script>
 
@@ -58,9 +76,9 @@
           {#each paragraphs.slice(0, 4) as paragraph}
             <div
               class="paragraph"
-              on:click|preventDefault={() => goToResource({ uid: paragraph.rid, paragraph }, paragraph.text)}
+              on:click|preventDefault={() => onClickParagraph({ uid: paragraph.rid, paragraph }, paragraph.text)}
               on:keyup={(e) => {
-                if (e.key === 'Enter') goToResource({ uid: paragraph.rid, paragraph }, paragraph.text);
+                if (e.key === 'Enter') onClickParagraph({ uid: paragraph.rid, paragraph }, paragraph.text);
               }}
               tabindex="0">
               {paragraph.text}

@@ -296,7 +296,8 @@
   <div class="sw-suggestions-container">
     <Suggestions
       paragraphs={$suggestedParagraphs}
-      labels={$suggestedLabels} />
+      labels={$suggestedLabels}
+      {searchBarWidget} />
   </div>
 </Modal>
 

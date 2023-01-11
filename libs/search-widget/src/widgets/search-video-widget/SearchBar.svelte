@@ -12,7 +12,12 @@
   import { get_current_component } from 'svelte/internal';
   import { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
-  import { activatePermalinks, initLabelStore, unsubscribeAllEffects } from '../../core/stores/effects';
+  import {
+    activatePermalinks,
+    activateTypeAheadSuggestions,
+    initLabelStore,
+    unsubscribeAllEffects,
+  } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
   import { unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
   import { suggestionState } from '../../core/stores/suggestions.store';
@@ -87,6 +92,10 @@
     }
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+
+    if (_features.suggestions) {
+      activateTypeAheadSuggestions();
+    }
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
