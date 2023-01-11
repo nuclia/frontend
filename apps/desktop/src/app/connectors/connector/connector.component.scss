@@ -1,7 +1,7 @@
 @import 'variables';
 
 pa-card {
-  margin-right: rhythm(4);
+  margin: rhythm(2);
 
   &.selected ::ng-deep .pa-card-wrapper {
     border-color: $color-primary-regular;

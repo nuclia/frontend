@@ -1,69 +1,72 @@
-<div class="connectors-list">
-  <nde-connector
-    *ngFor="let connector of connectors"
-    [selected]="selectedConnector?.id === connector.id"
-    [title]="connector.title"
-    [logo]="connector.logo"
-    [description]="connector.description"
-    (selectConnector)="onSelectConnector(connector.id)"></nde-connector>
-</div>
-<form
-  *ngIf="!!fields && !!form"
-  [formGroup]="form"
-  qa="fields-form"
-  (ngSubmit)="validate()">
-  <div
-    *ngFor="let field of fields"
-    class="field">
-    <pa-input
-      *ngIf="field.type === 'text'"
-      [help]="field.help | translate"
-      [formControlName]="field.id">
-      {{ field.label | translate }}
-    </pa-input>
-
+<div class="container">
+  <div class="connectors-list">
+    <nde-connector
+      *ngFor="let connector of connectors"
+      [selected]="selectedConnector?.id === connector.id"
+      [title]="connector.title"
+      [logo]="connector.logo"
+      [description]="connector.description"
+      [hidden]="!!selectedConnector && selectedConnector.id !== connector.id"
+      (selectConnector)="onSelectConnector(connector.id)"></nde-connector>
+  </div>
+  <form
+    *ngIf="!!fields && !!form"
+    [formGroup]="form"
+    qa="fields-form"
+    (ngSubmit)="validate()">
     <div
-      *ngIf="field.type === 'select'"
-      class="select-field-container">
-      <pa-select
-        [formControlName]="field.id"
-        [label]="field.label">
-        <pa-option
-          *ngFor="let option of field.options"
-          [disabled]="option.disabled"
-          [value]="option.value">
-          {{ option.label }}
-        </pa-option>
-      </pa-select>
+      *ngFor="let field of fields"
+      class="field">
+      <pa-input
+        *ngIf="field.type === 'text'"
+        [help]="field.help | translate"
+        [formControlName]="field.id">
+        {{ field.label | translate }}
+      </pa-input>
 
-      <pa-button
-        *ngIf="field.canBeRefreshed"
-        icon="refresh"
-        [paTooltip]="'upload.refresh' | translate: { field: field.label }"
-        (click)="refreshField(field.id)">
-        {{ 'upload.refresh' | translate: { field: field.label } }}
-      </pa-button>
+      <div
+        *ngIf="field.type === 'select'"
+        class="select-field-container">
+        <pa-select
+          [formControlName]="field.id"
+          [label]="field.label">
+          <pa-option
+            *ngFor="let option of field.options"
+            [disabled]="option.disabled"
+            [value]="option.value">
+            {{ option.label }}
+          </pa-option>
+        </pa-select>
+
+        <pa-button
+          *ngIf="field.canBeRefreshed"
+          icon="refresh"
+          [paTooltip]="'upload.refresh' | translate: { field: field.label }"
+          (click)="refreshField(field.id)">
+          {{ 'upload.refresh' | translate: { field: field.label } }}
+        </pa-button>
+      </div>
+
+      <nde-folder-upload
+        *ngIf="field.type === 'folder'"
+        [formControlName]="field.id"></nde-folder-upload>
     </div>
 
-    <nde-folder-upload
-      *ngIf="field.type === 'folder'"
-      [formControlName]="field.id"></nde-folder-upload>
-  </div>
-
-  <div class="buttons">
-    <pa-button
-      qa="cancel"
-      kind="inverted"
-      (click)="cancel.next()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-    <pa-button
-      *ngIf="!!fields && !!form"
-      qa="validate"
-      type="submit"
-      kind="primary"
-      [disabled]="form.invalid || form.pristine">
-      {{ (type === 'sources' ? 'generic.next' : 'Upload') | translate }}
-    </pa-button>
-  </div>
-</form>
+    <div class="buttons">
+      <pa-button
+        qa="cancel"
+        kind="inverted"
+        (click)="cancel.next()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+      <pa-button
+        *ngIf="!!fields && !!form"
+        qa="validate"
+        type="submit"
+        kind="primary"
+        [disabled]="form.invalid || form.pristine">
+        {{ (type === 'sources' ? 'generic.next' : 'Upload') | translate }}
+      </pa-button>
+    </div>
+  </form>
+</div>

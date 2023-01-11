@@ -1,10 +1,17 @@
 @import 'variables';
 
+.container {
+  display: flex;
+}
 .connectors-list {
   display: flex;
   flex-wrap: wrap;
   padding: rhythm(1);
   margin-bottom: rhythm(8);
+}
+
+form {
+  width: 100%;
 }
 
 .field {
