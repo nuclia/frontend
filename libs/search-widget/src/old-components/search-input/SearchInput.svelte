@@ -10,6 +10,8 @@
     suggestedLabels,
     suggestedParagraphs,
     suggestionsHasError,
+    suggestionState,
+    triggerSuggestions,
     typeAhead,
   } from '../../core/stores/suggestions.store';
   import { tap } from 'rxjs/operators';
@@ -149,7 +151,7 @@
   }
 
   function clear() {
-    typeAhead.set('');
+    suggestionState.reset();
     searchQuery.set('');
   }
 </script>
@@ -197,6 +199,7 @@
       spellcheck="false"
       aria-label="Search input"
       bind:value={$typeAhead}
+      on:input={() => triggerSuggestions.next()}
       on:keypress={onKeyPress} />
 
     {#if $hasFilterButton}

@@ -22,6 +22,8 @@ export const suggestionState = new SvelteState<SuggestionState>({
   hasError: false,
 });
 
+export const triggerSuggestions = new Subject<void>();
+
 export const typeAhead = suggestionState.writer<string>(
   (state) => state.typeAhead,
   (state, query) => ({

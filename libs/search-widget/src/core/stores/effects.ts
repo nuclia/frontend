@@ -1,6 +1,6 @@
 import { getLabelSets, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
-import { suggestions, typeAhead } from './suggestions.store';
+import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
   combineLatest,
   debounceTime,
@@ -41,11 +41,12 @@ export function initLabelStore() {
  * Subscribe to type ahead, call suggest and predict with the query and set suggestions in the state accordingly.
  */
 export function activateTypeAheadSuggestions() {
+  const query = triggerSuggestions.pipe(switchMap(() => typeAhead.pipe(take(1))));
   const subscription = merge(
     // Trigger suggestion when hitting space between words
-    typeAhead.pipe(filter((query) => !!query && query.slice(-1) === ' ' && query.slice(-2, -1) !== ' ')),
+    query.pipe(filter((query) => !!query && query.slice(-1) === ' ' && query.slice(-2, -1) !== ' ')),
     // Trigger suggestion after 350ms of inactivity
-    typeAhead.pipe(debounceTime(350)),
+    query.pipe(debounceTime(350)),
   )
     .pipe(
       // Don't trigger suggestion after inactivity if only spaces were added at the end of the query
