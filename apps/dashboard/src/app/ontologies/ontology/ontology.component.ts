@@ -29,13 +29,13 @@ export class OntologyComponent implements OnDestroy {
   ontologyForm = this.formBuilder.group({
     title: ['', [Validators.required, Sluggable()]],
     description: [''],
+    kind: [undefined, [Validators.required]],
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
   kinds = [
     { id: LabelSetKind.RESOURCES, name: 'ontology.resources' },
     { id: LabelSetKind.PARAGRAPHS, name: 'ontology.paragraphs' },
-    { id: LabelSetKind.SENTENCES, name: 'ontology.sentences' },
   ];
 
   validationMessages: { [key: string]: OntologyTitleError } = {
@@ -82,8 +82,9 @@ export class OntologyComponent implements OnDestroy {
     this.ontologyForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
       if (this.ontology) {
         this.ontology.title = data.title;
-        // TODO: description field doesn't exist
-        //this.ontology.description = data.description;
+        if (data.kind) {
+          this.ontology.kind = [data.kind];
+        }
         this.hasChanges = true;
         this.cdr.markForCheck();
       }
@@ -97,8 +98,9 @@ export class OntologyComponent implements OnDestroy {
       this.ontology = new MutableLabelSet(EMTPY_LABEL_SET);
     }
     this.ontologyForm.get('title')?.patchValue(this.ontology.title);
-    // TODO: description field doesn't exist
-    //this.ontologyForm.get('description')?.patchValue(this.ontology.description);
+    if (this.ontology.kind.length > 0) {
+      this.ontologyForm.get('kind')?.patchValue(this.ontology.kind[0]);
+    }
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = false;
     this.cdr.markForCheck();
@@ -198,22 +200,6 @@ export class OntologyComponent implements OnDestroy {
 
   isDuplicatedLabel(title: string): boolean {
     return !!this.ontology?.labels?.find((label) => label.title === title);
-  }
-
-  isSelectedKind(kind: LabelSetKind): boolean {
-    return !!this.ontology?.kind.includes(kind);
-  }
-
-  setKind(kind: LabelSetKind, selected: boolean) {
-    if (this.ontology) {
-      if (selected) {
-        this.ontology.kind = this.ontology.kind.concat([kind]);
-      } else {
-        this.ontology.kind = this.ontology.kind.filter((item) => item !== kind);
-      }
-      this.hasChanges = true;
-      this.cdr.markForCheck();
-    }
   }
 
   setMultiple(selected: boolean) {

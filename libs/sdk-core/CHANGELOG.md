@@ -1,5 +1,9 @@
 # 1.1.2 (unreleased)
 
+### Bugfix
+
+- Remove the sentence labelset type
+
 # 1.1.1 (2023-01-03)
 
 ### Improvements

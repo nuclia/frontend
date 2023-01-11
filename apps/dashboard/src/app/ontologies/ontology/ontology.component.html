@@ -17,46 +17,47 @@
           [errorMessages]="validationMessages.title"></pa-input>
       </div>
     </div>
-  </form>
 
-  <div class="form-section-container">
-    <label class="title-xxs">
-      {{ 'generic.color' | translate }}
-    </label>
-    <div>
-      <app-color-picker
-        [hexColors]="colors"
-        [value]="ontology.color"
-        (valueChange)="setColor($event)"></app-color-picker>
-    </div>
-  </div>
-
-  <div class="form-section-container">
-    <div>
+    <div class="form-section-container">
       <label class="title-xxs">
-        {{ 'ontology.type_classification' | translate }}
+        {{ 'generic.color' | translate }}
       </label>
-      <div class="body-xs">{{ 'ontology.type_classification_subtitle' | translate }}</div>
+      <div>
+        <app-color-picker
+          [hexColors]="colors"
+          [value]="ontology.color"
+          (valueChange)="setColor($event)"></app-color-picker>
+      </div>
     </div>
 
-    <div>
-      <div
-        class="important"
-        [class.disabled-color]="!addNew">
-        <pa-icon name="warning"></pa-icon>
-        {{ 'ontology.type_classification_important' | translate }}
-      </div>
+    <div class="form-section-container">
       <div>
-        <pa-checkbox
-          *ngFor="let kind of kinds"
-          [value]="isSelectedKind(kind.id)"
-          (valueChange)="setKind(kind.id, $event)"
-          [disabled]="!addNew">
-          {{ kind.name | translate }}
-        </pa-checkbox>
+        <label class="title-xxs">
+          {{ 'ontology.type_classification' | translate }}
+        </label>
+        <div class="body-xs">{{ 'ontology.type_classification_subtitle' | translate }}</div>
+      </div>
+
+      <div>
+        <div
+          class="important"
+          [class.disabled-color]="!addNew">
+          <pa-icon name="warning"></pa-icon>
+          {{ 'ontology.type_classification_important' | translate }}
+        </div>
+        <div>
+          <pa-radio-group formControlName="kind">
+            <pa-radio
+              *ngFor="let kind of kinds"
+              [value]="kind.id"
+              [disabled]="!addNew">
+              {{ kind.name | translate }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
       </div>
     </div>
-  </div>
+  </form>
 
   <div
     *ngIf="showMultiple"
