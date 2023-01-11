@@ -27,7 +27,6 @@ export enum ExtractedDataTypes {
 export enum LabelSetKind {
   RESOURCES = 'RESOURCES',
   PARAGRAPHS = 'PARAGRAPHS',
-  SENTENCES = 'SENTENCES',
 }
 
 export enum EventType {
