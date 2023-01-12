@@ -10,7 +10,7 @@
   import { setLang } from '../../core/i18n';
   import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
   import type { KBStates, WidgetFeatures } from '@nuclia/core';
-  import { setupTriggerSearch } from '../../core/search-bar';
+  import { setupTriggerSearch, unsubscribeTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import {
     setWidgetActions,
@@ -70,6 +70,7 @@
     resetNuclia();
     unsubscribeAllEffects();
     unsubscribeViewerEffects();
+    unsubscribeTriggerSearch();
   };
 
   let svgSprite;
