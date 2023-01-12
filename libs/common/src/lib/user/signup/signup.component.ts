@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService } from '@flaps/core';
@@ -30,10 +30,13 @@ export class SignupComponent implements OnInit {
       required: 'validation.required',
       email: 'validation.email',
       conflict: 'login.email_already_exists',
+      personalEmail: 'login.error.no_personal_email',
     } as IErrorMessages,
   };
 
   unsubscribeAll = new Subject<void>();
+
+  error?: string;
 
   get emailControl() {
     return this.signupForm.controls['email'];
@@ -45,6 +48,7 @@ export class SignupComponent implements OnInit {
     private reCaptchaV3Service: ReCaptchaV3Service,
     private loginService: LoginService,
     public config: BackendConfigurationService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -68,16 +72,26 @@ export class SignupComponent implements OnInit {
 
   private signupFromForm(token: string) {
     const formValue = this.signupForm.getRawValue();
-    this.loginService.signup(formValue, token).subscribe((response) => {
-      if (response.action === 'check-mail') {
-        this.router.navigate(['../check-mail'], {
-          relativeTo: this.route,
-          queryParams: { email: formValue.email },
-          queryParamsHandling: 'merge', // Preserve login_challenge
-        });
-      } else if (response.action === 'user-exists') {
-        this.emailControl.setErrors({ conflict: true });
-      }
+    this.loginService.signup(formValue, token).subscribe({
+      next: (response) => {
+        if (response.action === 'check-mail') {
+          this.router.navigate(['../check-mail'], {
+            relativeTo: this.route,
+            queryParams: { email: formValue.email },
+            queryParamsHandling: 'merge', // Preserve login_challenge
+          });
+        } else if (response.action === 'user-exists') {
+          this.emailControl.setErrors({ conflict: true });
+        }
+      },
+      error: (error) => {
+        if (error.status === 412) {
+          this.emailControl.setErrors({ personalEmail: true });
+        } else {
+          this.error = 'login.error.oops';
+        }
+        this.cdr.markForCheck();
+      },
     });
   }
 }

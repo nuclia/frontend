@@ -310,6 +310,7 @@
 	"login.error.get_consent_error": "An error occurred while retrieving consent information",
 	"login.error.google_workspace": "Sign up with Google is restricted to workspace domains, sorry.",
 	"login.error.login_error": "An error occurred while logging in",
+	"login.error.no_personal_email": "Nuclia access is restricted to company emails",
 	"login.error.oops": "Oops! Something went wrong!",
 	"login.error.submit_consent_error": "An error occurred while giving permission",
 	"login.error.unknown_consent_challenge": "Invalid consent_challenge",
