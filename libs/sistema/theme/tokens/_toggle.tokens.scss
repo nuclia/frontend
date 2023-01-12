@@ -8,4 +8,4 @@ $color-background-toggle-unselected-disabled: $color-light-stronger;
 $color-border-toggle-unselected: $color-dark-stronger;
 $color-border-toggle-unselected-disabled: $color-neutral-light;
 
-$color-check-toggle-disabled: $color-light-stronger;
+$color-check-toggle-disabled: $color-neutral-lighter; //IMPORTANT: it must be an hsl color
