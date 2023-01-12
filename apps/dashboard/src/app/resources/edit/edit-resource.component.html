@@ -1,16 +1,41 @@
-<stf-section-navbar
-  [routes]="routes"
-  [hasInnerRoutes]="true">
-  <stf-section-navbar-header>
-    <nsi-back-button
-      class="back-button"
-      link=".."></nsi-back-button>
+<header>
+  <pa-button
+    iconAndText
+    icon="chevron-left"
+    aspect="basic"
+    size="small"
+    [routerLink]="backRoute | async">
+    {{ 'resource.resources' | translate }}
+  </pa-button>
+  <div class="title-s">{{ (resource | async)?.title }}</div>
+  <div class="actions">
+    <pa-button
+      icon="edit"
+      routerLink="profile"
+      [active]="currentView === 'profile'"
+      paTooltip="resource.tooltip.edition"
+      aspect="basic"></pa-button>
+    <pa-button
+      icon="label"
+      routerLink="classification"
+      [active]="currentView === 'classification'"
+      paTooltip="resource.tooltip.classification"
+      aspect="basic"></pa-button>
+  </div>
+</header>
 
-    <h1>{{ 'resource.edit' | translate }}</h1>
-    <div class="body-s">{{ resourceTitle | async }}</div>
-  </stf-section-navbar-header>
-
-  <stf-section-navbar-body>
+<div class="page-container">
+  <nav>
+    <ul>
+      <li>
+        <pa-icon
+          name="file"
+          size="small"></pa-icon>
+        <span class="active">{{ 'resource.profile' | translate }}</span>
+      </li>
+    </ul>
+  </nav>
+  <div class="page-content">
     <router-outlet></router-outlet>
-  </stf-section-navbar-body>
-</stf-section-navbar>
+  </div>
+</div>

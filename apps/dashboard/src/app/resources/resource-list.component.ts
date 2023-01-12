@@ -359,7 +359,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   edit(uid: string) {
-    this.router.navigate([`./${uid}`], { relativeTo: this.route });
+    this.router.navigate([`./${uid}/edit`], { relativeTo: this.route });
   }
 
   get filters(): ListFilters {

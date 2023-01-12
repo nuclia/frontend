@@ -1,113 +1,62 @@
 @import 'variables';
 
-stf-section-navbar-body {
-  margin-top: 70px;
-  display: block;
+header {
+  align-items: center;
+  background: $color-neutral-lightest;
+  display: flex;
+  height: rhythm(7);
+  justify-content: space-between;
+  padding: 0 rhythm(10);
 
-  ::ng-deep {
-    form > div {
+  .title-s {
+    flex: 1 0 auto;
+    padding-left: rhythm(6);
+  }
+
+  .actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+  }
+}
+.page-container {
+  display: flex;
+  gap: rhythm(0.5);
+  padding: rhythm(6) 0;
+
+  nav {
+    padding: rhythm(0.5) 0;
+    width: rhythm(32);
+
+    ul {
+      padding-left: rhythm(12);
+    }
+
+    li {
       align-items: center;
       display: flex;
       gap: rhythm(1);
-      margin-bottom: rhythm(2);
 
-      & > :first-child {
-        width: rhythm(20);
-      }
-
-      & > :last-child {
-        width: 100%;
-      }
-
-      .pa-field {
-        margin-bottom: 0;
-      }
-
-      &.classification-container {
-        margin-top: rhythm(5);
-      }
-
-      &.form-buttons {
-        margin-top: rhythm(20);
-
-        pa-button {
-          margin-right: rhythm(2);
-        }
-      }
-
-      .thumbnails-container {
-        $thumbnail-height: rhythm(14) + rhythm(1);
-
+      pa-icon {
         display: flex;
-
-        .drop-container {
-          display: flex;
-          flex-direction: column;
-
-          .drop-image-area {
-            align-items: center;
-            background-color: $color-light-stronger;
-            border: 1px dashed $color-neutral-light;
-            color: $color-neutral-light;
-            cursor: pointer;
-            display: flex;
-            flex: 1 0 auto;
-            justify-content: center;
-            margin-bottom: rhythm(2);
-            min-height: $thumbnail-height;
-            transition: background-color $transition-hint;
-            width: rhythm(28);
-
-            &.file-over {
-              background-color: $color-neutral-lightest;
-            }
-          }
-
-          .radio-placeholder {
-            height: rhythm(2);
-          }
-        }
-
-        pa-radio-group {
-          align-items: flex-start;
-          column-gap: rhythm(4);
-          display: flex !important;
-          flex-wrap: wrap;
-          row-gap: rhythm(2);
-        }
-
-        .radio-thumbnail-container {
-          align-items: center;
-          display: flex;
-          flex-direction: column;
-
-          img {
-            margin-bottom: rhythm(2);
-            max-height: $thumbnail-height;
-          }
-        }
       }
 
-      .resource-thumbnail {
-        max-height: rhythm(28);
-        max-width: rhythm(28);
+      .active {
+        font-weight: $font-weight-semi-bold;
       }
     }
   }
-}
 
-stf-section-navbar-header {
-  .back-button {
-    position: absolute;
-    top: rhythm(2);
-    left: rhythm(2);
-  }
+  .page-content {
+    flex: 1 0 auto;
+    max-width: rhythm(90);
 
-  h1 {
-    margin-bottom: rythm(1);
-  }
-
-  .body-s {
-    margin-bottom: rythm(2);
+    footer {
+      box-shadow: inset 0 1px 0 $color-neutral-light;
+      display: flex;
+      gap: rhythm(1);
+      margin-top: rhythm(4);
+      padding: rhythm(3) 0;
+    }
   }
 }
