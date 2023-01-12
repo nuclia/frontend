@@ -21,4 +21,9 @@
   .existing-account {
     text-align: center;
   }
+
+  .signup-error {
+    background-color: $color-secondary-regular;
+    padding: rhythm(0.5) rhythm(1);
+  }
 }

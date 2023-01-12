@@ -4,7 +4,11 @@
       <h1>{{ 'login.boarding_title' | translate }}</h1>
       <p>{{ 'login.subtitle' | translate }}</p>
     </div>
-
+    <div
+      class="signup-error title-xxs"
+      *ngIf="error">
+      {{ error | translate }}
+    </div>
     <form
       class="signup-form"
       [formGroup]="signupForm"

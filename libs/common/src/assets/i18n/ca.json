@@ -268,6 +268,7 @@
 	"login.error.get_consent_error": "S'ha produït un error a l'obtenir la informació de consentiment",
 	"login.error.google_workspace": "El registre amb Google està restringit als dominis de l'espai de treball, ho sento.",
 	"login.error.login_error": "S'ha produït un error durant l'autentificació",
+	"login.error.no_personal_email": "L'accés a Nuclia està restringit als correus electrònics de l'empresa",
 	"login.error.oops": "Vaja! Alguna cosa ha fallat!",
 	"login.error.submit_consent_error": "S'ha produït un error al donar els permisos",
 	"login.error.unknown_consent_challenge": "consent_challenge no és vàlid",
