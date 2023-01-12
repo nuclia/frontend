@@ -701,6 +701,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       take(1),
       switchMap((kb) =>
         kb.search('', [Search.Features.DOCUMENT], {
+          inTitleOnly: true,
           faceted: [statusFacet],
         }),
       ),
