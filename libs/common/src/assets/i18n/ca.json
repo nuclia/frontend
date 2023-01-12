@@ -463,6 +463,8 @@
 	"resource.thumbnail.drop": "Deixeu la imatge o feu clic aquí",
 	"resource.thumbnail.help": "Penja una imatge o tria entre els suggeriments",
 	"resource.title": "Títol del recurs",
+	"resource.tooltip.classification": "Classificació",
+	"resource.tooltip.edition": "Edició",
 	"resource.visible_columns_dropdown": "Es mostren les columnes",
 	"search.more_results": "mostrar més resultats",
 	"search.sort_by": "Ordenar per",

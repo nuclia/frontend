@@ -513,6 +513,8 @@
 	"resource.thumbnail.help": "Upload an image or pick from suggestions",
 	"resource.title": "Resource title",
 	"resource.toast.save-successful": "",
+	"resource.tooltip.classification": "Classification",
+	"resource.tooltip.edition": "Edition",
 	"resource.visible_columns_dropdown": "Columns displayed",
 	"search.more_results": "show more results",
 	"search.sort_by": "Sort by",
