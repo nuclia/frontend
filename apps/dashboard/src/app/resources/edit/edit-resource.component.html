@@ -3,16 +3,21 @@
     iconAndText
     icon="chevron-left"
     aspect="basic"
-    size="small">
+    size="small"
+    [routerLink]="backRoute | async">
     {{ 'resource.resources' | translate }}
   </pa-button>
-  <div class="title-s">{{ resourceTitle | async }}</div>
+  <div class="title-s">{{ (resource | async)?.title }}</div>
   <div class="actions">
     <pa-button
       icon="edit"
+      routerLink="profile"
+      [active]="currentView === 'profile'"
       aspect="basic"></pa-button>
     <pa-button
       icon="label"
+      routerLink="classification"
+      [active]="currentView === 'classification'"
       aspect="basic"></pa-button>
   </div>
 </header>
@@ -24,7 +29,7 @@
         <pa-icon
           name="file"
           size="small"></pa-icon>
-        <span>{{ 'resource.profile' | translate }}</span>
+        <span class="active">{{ 'resource.profile' | translate }}</span>
       </li>
     </ul>
   </nav>

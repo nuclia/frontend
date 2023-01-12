@@ -33,7 +33,7 @@
     <pa-textarea
       id="summary"
       formControlName="summary"
-      rows="3"></pa-textarea>
+      rows="5"></pa-textarea>
   </div>
   <div>
     <div>
@@ -82,6 +82,7 @@
               alt="thumbnail {{ index }}" />
             <pa-radio
               *ngIf="count > 1"
+              [disabled]="!currentValue"
               [value]="thumb.uri"
               [ariaLabel]="'Thumbnail ' + index"></pa-radio>
           </div>
@@ -90,16 +91,7 @@
     </div>
   </div>
 
-  <div class="classification-container">
-    <label class="title-s">{{ 'resource.classification' | translate }}</label>
-    <div>
-      <app-label-field
-        [selection]="currentLabels"
-        (selectionChange)="updateLabels($event)"></app-label-field>
-    </div>
-  </div>
-
-  <div class="form-buttons">
+  <footer class="form-buttons">
     <pa-button
       kind="primary"
       [disabled]="!form.valid || form.pristine"
@@ -113,7 +105,7 @@
       (click)="cancel()">
       {{ 'generic.cancel' | translate }}
     </pa-button>
-  </div>
+  </footer>
 </form>
 
 <ncom-hint

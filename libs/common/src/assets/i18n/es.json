@@ -443,6 +443,7 @@
 	"resource.profile": "Perfil",
 	"resource.resource_page_number": "{{num}} por página",
 	"resource.resources": "Recursos",
+	"resource.save-successful": "Recurso guardado",
 	"resource.search.in-resource": "en recurso",
 	"resource.search.in-title": "en el titulo",
 	"resource.selected_count": "{{num}} ficheros seleccionados",

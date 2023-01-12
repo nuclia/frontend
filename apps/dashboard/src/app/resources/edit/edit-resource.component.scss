@@ -40,11 +40,23 @@ header {
       pa-icon {
         display: flex;
       }
+
+      .active {
+        font-weight: $font-weight-semi-bold;
+      }
     }
   }
 
   .page-content {
     flex: 1 0 auto;
     max-width: rhythm(90);
+
+    footer {
+      box-shadow: inset 0 1px 0 $color-neutral-light;
+      display: flex;
+      gap: rhythm(1);
+      margin-top: rhythm(4);
+      padding: rhythm(3) 0;
+    }
   }
 }

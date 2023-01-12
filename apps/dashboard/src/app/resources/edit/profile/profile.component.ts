@@ -1,13 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ActivatedRoute } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { Classification, CloudLink, deDuplicateList, FileFieldData, Resource } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, switchMap, timer } from 'rxjs';
-import { BaseEditComponent } from '../base-edit.component';
+import { CloudLink, FileFieldData, Resource } from '@nuclia/core';
+import { filter, forkJoin, map, merge, Observable, Subject, switchMap, tap, timer } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { takeUntil } from 'rxjs/operators';
+import { EditResourceService } from '../edit-resource.service';
 
 type Thumbnail = { uri: string; blob: SafeUrl };
 
@@ -17,14 +16,26 @@ type Thumbnail = { uri: string; blob: SafeUrl };
   styleUrls: ['profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceProfileComponent extends BaseEditComponent {
+export class ResourceProfileComponent implements OnInit {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
 
-  form = this.formBuilder.group({
-    title: ['', [Validators.required]],
-    authors: [''],
-    summary: [''],
-    thumbnail: [''],
+  unsubscribeAll = new Subject<void>();
+  refresh = new Subject<boolean>();
+  resource: Observable<Resource> = this.editResource.resource.pipe(
+    filter((resource) => !!resource),
+    map((resource) => resource as Resource),
+    tap((resource: Resource) => {
+      this.currentValue = resource;
+      this.updateForm(resource);
+    }),
+    takeUntil(this.unsubscribeAll),
+  );
+  currentValue?: Resource;
+  form = new FormGroup({
+    title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    authors: new FormControl<string>('', { nonNullable: true }),
+    summary: new FormControl<string>('', { nonNullable: true }),
+    thumbnail: new FormControl<string>('', { nonNullable: true }),
   });
   thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
     map((res) => this.getThumbnailsAndImages(res)),
@@ -41,7 +52,7 @@ export class ResourceProfileComponent extends BaseEditComponent {
       ),
     ),
   );
-  currentLabels: Classification[] = [];
+
   hintValues = this.resource.pipe(
     map((res) => ({
       RESOURCE: this.sdk.nuclia.rest.getFullUrl(res.path),
@@ -54,14 +65,22 @@ export class ResourceProfileComponent extends BaseEditComponent {
   isUploading = false;
 
   constructor(
-    protected route: ActivatedRoute,
-    protected sdk: SDKService,
-    protected formBuilder: UntypedFormBuilder,
-    protected toaster: SisToastService,
+    private editResource: EditResourceService,
+    private sdk: SDKService,
+    private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
   ) {
-    super(route, sdk, formBuilder, toaster);
+    this.form.disable();
+  }
+
+  ngOnInit() {
+    this.editResource.setCurrentView('profile');
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   updateForm(data: Resource): void {
@@ -71,14 +90,20 @@ export class ResourceProfileComponent extends BaseEditComponent {
       authors: (data.origin?.colaborators || []).join(', '),
       thumbnail: data.thumbnail,
     });
-    this.currentLabels = this.currentValue?.getClassifications() || [];
+    this.form.enable();
     this.cdr?.markForCheck();
   }
 
-  updateLabels(labels: Classification[]) {
-    this.currentLabels = labels;
-    this.form.markAsDirty();
-    this.cdr?.markForCheck();
+  save() {
+    const data = this.getValue();
+    this.editResource.save(data).subscribe();
+  }
+
+  cancel() {
+    if (this.currentValue) {
+      this.updateForm(this.currentValue);
+      this.form.markAsPristine();
+    }
   }
 
   getValue(): Partial<Resource> {
@@ -87,31 +112,12 @@ export class ResourceProfileComponent extends BaseEditComponent {
           title: this.form.value.title,
           summary: this.form.value.summary,
           thumbnail: this.form.value.thumbnail,
-          usermetadata: {
-            ...this.currentValue.usermetadata,
-            classifications: this.getClassificationsPayload(this.currentValue, this.currentLabels),
-          },
           origin: {
             ...this.currentValue.origin,
             colaborators: (this.form.value.authors as string).split(',').map((s) => s.trim()),
           },
         }
       : {};
-  }
-
-  getClassificationsPayload(resource: Resource, labels: Classification[]) {
-    const extracted = deDuplicateList(
-      (resource.computedmetadata?.field_classifications || []).reduce((acc, field) => {
-        return acc.concat(field.classifications || []);
-      }, [] as Classification[]),
-    );
-    const userClassifications = labels.filter(
-      (label) => !extracted.some((l) => l.labelset === label.labelset && l.label === label.label),
-    );
-    const cancellations = extracted
-      .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label))
-      .map((label) => ({ ...label, cancelled_by_user: true }));
-    return [...userClassifications, ...cancellations];
   }
 
   chooseFiles($event: MouseEvent) {

@@ -46,6 +46,7 @@ import { STFSectionNavbarModule } from '../components/section-navbar';
 import { DatasetImportComponent } from './sample-dataset/dataset-import.component';
 import { LoadingModalComponent } from './sample-dataset/loading-modal/loading-modal.component';
 import { UploadButtonComponent } from './upload-button/upload-button.component';
+import { ResourceClassificationComponent } from './edit/classification/resource-classification.component';
 
 const Components = [
   ResourceListComponent,
@@ -72,16 +73,16 @@ const ROUTES: Routes = [
         component: DatasetImportComponent,
       },
       {
-        path: ':id',
+        path: ':id/edit',
         component: EditResourceComponent,
         children: [
           {
             path: '',
-            redirectTo: 'edit',
+            redirectTo: 'profile',
             pathMatch: 'full',
           },
           {
-            path: 'edit',
+            path: 'profile',
             component: ResourceProfileComponent,
             children: [
               {
@@ -97,6 +98,10 @@ const ROUTES: Routes = [
                 component: ResourceFileComponent,
               },
             ],
+          },
+          {
+            path: 'classification',
+            component: ResourceClassificationComponent,
           },
         ],
       },
@@ -142,7 +147,13 @@ const ROUTES: Routes = [
     SisLabelModule,
     PaPopupModule,
   ],
-  declarations: [...Components, DatasetImportComponent, LoadingModalComponent, UploadButtonComponent],
+  declarations: [
+    ...Components,
+    DatasetImportComponent,
+    LoadingModalComponent,
+    UploadButtonComponent,
+    ResourceClassificationComponent,
+  ],
   exports: [],
 })
 export class ResourcesModule {}

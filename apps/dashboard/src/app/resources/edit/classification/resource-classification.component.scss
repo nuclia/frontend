@@ -1,0 +1,7 @@
+@import 'variables';
+
+.classification-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+}
