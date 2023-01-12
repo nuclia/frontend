@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime, map } from 'rxjs';
+  import { debounceTime, map, merge, Subject } from 'rxjs';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
@@ -21,11 +21,15 @@
   } from '../../core/stores/search.store';
   import AudioTile from '../../tiles/audio-tile/AudioTile.svelte';
 
-  const showResults = triggerSearch.pipe(map(() => true));
+  const searchAlreadyTriggered = new Subject<void>();
+  const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(2000));
   let svgSprite;
 
   onMount(() => {
+    if (pendingResults.getValue() || smartResults.getValue().length > 0) {
+      searchAlreadyTriggered.next();
+    }
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
   });
