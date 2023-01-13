@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SDKService } from '@flaps/core';
 import { CloudLink, FileFieldData, Resource } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, Subject, switchMap, tap, timer } from 'rxjs';
+import { filter, forkJoin, map, Observable, Subject, switchMap, tap, timer } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { takeUntil } from 'rxjs/operators';
 import { EditResourceService } from '../edit-resource.service';
@@ -20,7 +20,6 @@ export class ResourceProfileComponent implements OnInit {
   @ViewChild('thumbnailFileInput') thumbnailFileInput?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
-  refresh = new Subject<boolean>();
   resource: Observable<Resource> = this.editResource.resource.pipe(
     filter((resource) => !!resource),
     map((resource) => resource as Resource),
@@ -61,8 +60,8 @@ export class ResourceProfileComponent implements OnInit {
   );
   hasBaseDropZoneOver = false;
 
-  stopThumbnailUploadStatus = merge(this.unsubscribeAll, this.refresh);
   isUploading = false;
+  isSaving = false;
 
   constructor(
     private editResource: EditResourceService,
@@ -95,8 +94,13 @@ export class ResourceProfileComponent implements OnInit {
   }
 
   save() {
+    this.isSaving = true;
     const data = this.getValue();
-    this.editResource.save(data).subscribe();
+    this.editResource.save(data).subscribe(() => {
+      this.form.markAsPristine();
+      this.isSaving = false;
+      this.cdr.markForCheck();
+    });
   }
 
   cancel() {
@@ -134,12 +138,12 @@ export class ResourceProfileComponent implements OnInit {
         ?.batchUpload(files)
         .pipe(
           filter((status) => status.completed),
-          switchMap(() => timer(500)),
-          takeUntil(this.stopThumbnailUploadStatus),
+          switchMap(() => timer(2000)),
+          takeUntil(this.unsubscribeAll),
         )
         .subscribe(() => {
-          this.refresh.next(true);
           this.isUploading = false;
+          this.editResource.loadResource(this.currentValue!.id);
         });
     }
   }

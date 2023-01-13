@@ -94,14 +94,14 @@
   <footer class="form-buttons">
     <pa-button
       kind="primary"
-      [disabled]="!form.valid || form.pristine"
+      [disabled]="!form.valid || form.pristine || isSaving"
       (click)="save()">
       {{ 'generic.save' | translate }}
     </pa-button>
 
     <pa-button
       aspect="basic"
-      [disabled]="form.pristine"
+      [disabled]="form.pristine || isSaving"
       (click)="cancel()">
       {{ 'generic.cancel' | translate }}
     </pa-button>
