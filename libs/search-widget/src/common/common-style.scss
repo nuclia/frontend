@@ -1,6 +1,6 @@
 .nuclia-widget {
   /* PALETTE */
-  --color-dark-stronger: #000;
+  --color-dark-stronger: var(--custom-color-dark-stronger, '#000');
   --color-dark-stronger-rgb: 0, 0, 0;
   --color-light-stronger: #fff;
 
@@ -73,7 +73,7 @@
   --font-weight-medium: 500;
   --font-weight-semi-bold: 600;
   --font-weight-bold: 700;
-  --font-family-body: Inter, sans-serif;
+  --font-family-body: var(--custom-font-family-body, 'Inter, sans-serif');
   --font-size-title-m: var(--font-size-base);
   --font-weight-title-m: var(--font-weight-semi-bold);
   --line-height-body-s: calc(var(--font-size-base) * 1.125);
