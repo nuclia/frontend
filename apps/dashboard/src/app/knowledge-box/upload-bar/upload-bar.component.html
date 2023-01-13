@@ -1,23 +1,15 @@
-<div
-  class="upload-bar"
-  fxLayout="flex"
-  fxLayoutAlign="start center">
+<div class="upload-bar">
   <div
     class="upload-bar-title"
-    fxFlex="0 0 auto"
     [innerHTML]="'upload.uploading_files' | translate"></div>
 
-  <div
-    class="upload-bar-progress"
-    fxFlex="1 1 auto">
+  <div class="upload-bar-progress">
     <stf-progress-bar
       track="white"
       [progress]="progress | async"></stf-progress-bar>
   </div>
 
-  <div
-    class="upload-bar-percentage"
-    fxFlex="0 0 auto">
+  <div class="upload-bar-percentage">
     <strong>{{ progress | async }}%</strong>
     {{ 'upload.completed' | translate }}
   </div>

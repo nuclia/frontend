@@ -2,20 +2,25 @@
 
 .upload-bar {
   @include dark-mode();
+  display:flex;
+  align-items: center;
   height: rhythm(6);
   padding: 0 var(--app-layout-margin-right) 0 rhythm(6);
   position: relative;
 
-  &-title {
+  .upload-bar-title {
+    flex: 0 0 auto;
     margin-right: rhythm(3);
     font-weight: var(--stf-font-weight-semibold);
   }
 
-  &-progress {
+  .upload-bar-progress {
+    flex: 1 1 auto;
     margin-right: rhythm(1.5);
   }
 
-  &-percentage {
+  .upload-bar-percentage {
+    flex: 0 0 auto;
     margin-right: rhythm(3);
   }
 
