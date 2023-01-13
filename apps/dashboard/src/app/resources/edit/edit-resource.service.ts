@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Classification, deDuplicateList, Resource, UserClassification } from '@nuclia/core';
+import { Classification, deDuplicateList, FIELD_TYPE, Resource, ResourceField, UserClassification } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -12,9 +12,24 @@ export type EditResourceView = 'profile' | 'classification';
 export class EditResourceService {
   private _resource = new BehaviorSubject<Resource | null>(null);
   private _currentView = new BehaviorSubject<EditResourceView | null>(null);
+  private _currentField = new BehaviorSubject<FIELD_TYPE | 'profile'>('profile');
 
-  resource = this._resource.asObservable();
-  currentView = this._currentView.asObservable();
+  currentView: Observable<EditResourceView | null> = this._currentView.asObservable();
+  currentField: Observable<FIELD_TYPE | 'profile'> = this._currentField.asObservable();
+  resource: Observable<Resource | null> = this._resource.asObservable();
+  fields: Observable<ResourceField[]> = this.resource.pipe(
+    map((resource) =>
+      Object.entries(resource?.data || {}).reduce((list, [type, dict]) => {
+        return list.concat(
+          Object.entries(dict).map(([fieldId, field]) => ({
+            ...field,
+            field_id: fieldId,
+            field_type: type.slice(0, -1),
+          })),
+        );
+      }, [] as ResourceField[]),
+    ),
+  );
 
   constructor(private sdk: SDKService, private toaster: SisToastService) {}
 
@@ -52,9 +67,14 @@ export class EditResourceService {
     this._currentView.next(view);
   }
 
+  setCurrentField(field: FIELD_TYPE | 'profile') {
+    this._currentField.next(field);
+  }
+
   reset() {
     this._resource.next(null);
     this._currentView.next(null);
+    this._currentField.next('profile');
   }
 
   getClassificationsPayload(labels: Classification[]): UserClassification[] {

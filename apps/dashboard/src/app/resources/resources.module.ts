@@ -20,9 +20,9 @@ import { TableHeaderComponent } from './table-header/table-header.component';
 import { EditResourceComponent } from './edit/edit-resource.component';
 import { ResourcesComponent } from './resources.component';
 import { ResourceProfileComponent } from './edit/profile/profile.component';
-import { ResourceTextComponent } from './edit/text/text.component';
-import { ResourceLinkComponent } from './edit/link/link.component';
-import { ResourceFileComponent } from './edit/file/file.component';
+import { ResourceTextComponent } from './edit/profile/text/text.component';
+import { ResourceLinkComponent } from './edit/profile/link/link.component';
+import { ResourceFileComponent } from './edit/profile/file/file.component';
 import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
 import {
@@ -84,24 +84,22 @@ const ROUTES: Routes = [
           {
             path: 'profile',
             component: ResourceProfileComponent,
-            children: [
-              {
-                path: 'text',
-                component: ResourceTextComponent,
-              },
-              {
-                path: 'link',
-                component: ResourceLinkComponent,
-              },
-              {
-                path: 'file',
-                component: ResourceFileComponent,
-              },
-            ],
           },
           {
             path: 'classification',
             component: ResourceClassificationComponent,
+          },
+          {
+            path: 'text/:fieldId',
+            component: ResourceTextComponent,
+          },
+          {
+            path: 'link/:fieldId',
+            component: ResourceLinkComponent,
+          },
+          {
+            path: 'file/:fieldId',
+            component: ResourceFileComponent,
           },
         ],
       },
