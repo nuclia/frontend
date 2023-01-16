@@ -5,6 +5,10 @@ interface Features {
   [key: string]: string | boolean | undefined;
 }
 
+const stageFeatures: Features = {
+  'demo-kb-id': 'eed07421-dc96-4067-a73b-32c89eac0229',
+};
+
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
   private features?: Features;
@@ -12,14 +16,18 @@ export class FeatureFlagService {
 
   isFeatureEnabled(feature: string): Observable<boolean> {
     if (this.isNotProd) {
-      return of(true);
+      return of(stageFeatures[feature] !== undefined ? !!stageFeatures[feature] : true);
     } else {
       return this.loadFeatures().pipe(map((features) => !!features[feature]));
     }
   }
 
   getFeatureFlag(feature: string): Observable<string | boolean | undefined> {
-    return this.loadFeatures().pipe(map((features) => features[feature]));
+    if (this.isNotProd) {
+      return of(stageFeatures[feature] || true);
+    } else {
+      return this.loadFeatures().pipe(map((features) => features[feature]));
+    }
   }
 
   getEnabledFeatures(): Observable<string[]> {
