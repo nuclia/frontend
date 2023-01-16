@@ -13,10 +13,10 @@
   let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
   /**
    * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
-   * Kb with different kind of media (owned by Mat): f67d94ee-bd5b-4044-8844-a291c2ac244c
-   * Kb with text contents (owned by Mat): 352695c6-51d2-4c36-88b2-e0b0edacfa09
+   * Kb with different kind of media (owned by Mat): 5c2bc432-a579-48cd-b408-4271e5e7a43c
+   * Kb with text contents (owned by Mat): ffbc498b-993c-4052-ab2a-1453c7e50198
    */
-  let kb = 'f67d94ee-bd5b-4044-8844-a291c2ac244c';
+  let kb = 'ffbc498b-993c-4052-ab2a-1453c7e50198';
 
   onMount(() => {
     widget?.setActions([
