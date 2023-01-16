@@ -97,7 +97,7 @@ export class ResourceProfileComponent implements OnInit {
   save() {
     this.isSaving = true;
     const data = this.getValue();
-    this.editResource.save(data).subscribe(() => {
+    this.editResource.savePartialResource(data).subscribe(() => {
       this.form.markAsPristine();
       this.isSaving = false;
       this.cdr.markForCheck();

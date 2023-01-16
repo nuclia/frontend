@@ -1,11 +1,12 @@
 @import 'variables';
+@import 'edit-resource.tokens';
 
 .edit-resource {
   header {
     align-items: center;
     background: $color-neutral-lightest;
     display: flex;
-    height: rhythm(7);
+    height: $height-header;
     justify-content: space-between;
     padding: 0 rhythm(10);
 
@@ -23,7 +24,7 @@
   .page-container {
     display: flex;
     gap: rhythm(0.5);
-    padding: rhythm(6) 0;
+    padding-top: $padding-top-page-container;
 
     nav {
       margin-top: calc(#{rhythm(0.5)} * -1);
@@ -63,8 +64,8 @@
       footer {
         box-shadow: inset 0 1px 0 $color-neutral-light;
         display: flex;
-        margin-top: rhythm(5);
-        padding: rhythm(3) 0;
+        margin-top: $margin-top-footer;
+        padding: $padding-vertical-footer 0;
 
         &.form-buttons,
         .save-actions {

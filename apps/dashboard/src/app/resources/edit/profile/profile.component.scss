@@ -10,14 +10,6 @@ form > div {
     margin-top: rhythm(5);
   }
 
-  &.form-buttons {
-    margin-top: rhythm(20);
-
-    pa-button {
-      margin-right: rhythm(2);
-    }
-  }
-
   .thumbnails-container {
     $thumbnail-height: rhythm(14) + rhythm(1);
 
