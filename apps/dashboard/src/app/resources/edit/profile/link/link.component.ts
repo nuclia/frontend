@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { filter, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { FIELD_TYPE, LinkField, LinkFieldData } from '@nuclia/core';
 import { ActivatedRoute } from '@angular/router';
@@ -29,9 +29,11 @@ export class ResourceLinkComponent implements OnInit, OnDestroy {
   field: Observable<LinkFieldData> = this.fieldId.pipe(
     switchMap((fieldId) => this.editResource.getField('links', fieldId)),
     map((fieldData) => fieldData as LinkFieldData),
+    tap(() => (this.isReady = true)),
   );
 
   linkBackup?: string;
+  isReady = false;
 
   constructor(private route: ActivatedRoute, private editResource: EditResourceService) {}
 

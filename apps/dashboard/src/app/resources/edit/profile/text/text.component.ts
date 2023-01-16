@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EditResourceService } from '../../edit-resource.service';
 import { FIELD_TYPE, TextField, TextFieldData } from '@nuclia/core';
 import { ActivatedRoute } from '@angular/router';
-import { filter, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -30,9 +30,11 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
   field: Observable<TextFieldData> = this.fieldId.pipe(
     switchMap((fieldId) => this.editResource.getField('texts', fieldId)),
     map((fieldData) => fieldData as TextFieldData),
+    tap(() => (this.isReady = true)),
   );
 
   textBackup?: string;
+  isReady = false;
 
   constructor(private route: ActivatedRoute, private editResource: EditResourceService) {}
 

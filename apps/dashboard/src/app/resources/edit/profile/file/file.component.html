@@ -1,1 +1,50 @@
-File
+<ng-container *ngIf="(field | async)?.value">
+  <p [innerHTML]="'resource.field-file.dropzone-label' | translate: { filename: (filename | async) }"></p>
+  <div
+    class="drop-zone"
+    [class.file-over]="hasBaseDropZoneOver"
+    stfFileDrop
+    (fileOver)="fileOverBase($event)"
+    (atFileDrop)="uploadFile($event)"
+    (click)="chooseFiles($event)">
+    <span *ngIf="!isUploading">{{ 'resource.field-file.dropzone' | translate }}</span>
+    <nsi-spinner
+      *ngIf="isUploading"
+      size="small"></nsi-spinner>
+  </div>
+</ng-container>
+<input
+  #fileInput
+  type="file"
+  stfFileSelect
+  hidden
+  (atFileSelect)="uploadFile($event)" />
+
+<p *ngIf="newFile">
+  <strong>{{ 'resource.field-file.new-file' | translate }}</strong>
+  {{ newFile.name }}
+</p>
+
+<footer class="form-field-buttons">
+  <div class="save-actions">
+    <pa-button
+      kind="primary"
+      [disabled]="!newFile || isUploading"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+
+    <pa-button
+      aspect="basic"
+      [disabled]="!newFile || isUploading"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+  </div>
+  <pa-button
+    kind="destructive"
+    [disabled]="!isReady || isUploading"
+    (click)="deleteField()">
+    {{ 'resource.field.delete' | translate }}
+  </pa-button>
+</footer>

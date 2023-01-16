@@ -29,6 +29,7 @@
     </div>
     <pa-button
       kind="destructive"
+      [disabled]="!isReady"
       (click)="deleteField()">
       {{ 'resource.field.delete' | translate }}
     </pa-button>

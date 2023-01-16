@@ -148,14 +148,51 @@ export class EditResourceService {
       return fields;
     });
     return forkJoin([
-      currentResource
-        .deleteField(fieldType, fieldId)
-        .pipe(switchMap(() => currentResource.addField(fieldType, fieldId, data))),
+      currentResource.updateField(fieldType, fieldId, data),
       this.sdk.currentKb.pipe(
         take(1),
         tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
       ),
     ]).pipe(
+      catchError(() => {
+        this.toaster.error('generic.error.oops');
+        this._resource.next(currentResource);
+        return of(null);
+      }),
+      map(() => this.toaster.success('resource.field.update-successful')),
+    );
+  }
+
+  updateFile(fieldId: string, file: File): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const updatedData: ResourceData = this.getUpdatedData(
+      FIELD_TYPE.file,
+      currentResource.data,
+      (fields, [id, field]) => {
+        if (id !== fieldId) {
+          fields[id] = field;
+        } else {
+          fields[id] = {
+            value: {
+              file: {
+                filename: file.name,
+                content_type: file.type,
+                size: file.size,
+              },
+            },
+          };
+        }
+        return fields;
+      },
+    );
+    return currentResource.deleteField(FIELD_TYPE.file, fieldId).pipe(
+      switchMap(() => currentResource.upload(fieldId, file)),
+      switchMap(() => this.sdk.currentKb.pipe(take(1))),
+      tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
       catchError(() => {
         this.toaster.error('generic.error.oops');
         this._resource.next(currentResource);
