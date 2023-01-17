@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { EditResourceService } from '../edit-resource.service';
-import { FIELD_TYPE, LinkField, Resource, TextField } from '@nuclia/core';
+import { FIELD_TYPE, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
-
-type TextFormat = 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-add-field',
@@ -13,7 +12,7 @@ type TextFormat = 'PLAIN' | 'HTML' | 'RST' | 'MARKDOWN';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddFieldComponent implements OnInit, OnDestroy {
-  availableFormats: TextFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN'];
+  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN'];
   availableTypes: FIELD_TYPE[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text];
 
   unsubscribeAll = new Subject<void>();
@@ -36,7 +35,7 @@ export class AddFieldComponent implements OnInit, OnDestroy {
     }),
   );
   form = new FormGroup({
-    format: new FormControl<TextFormat>('PLAIN', { nonNullable: true, validators: [Validators.required] }),
+    format: new FormControl<TextFieldFormat>('PLAIN', { nonNullable: true, validators: [Validators.required] }),
     text: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
   newFile?: File;
@@ -50,6 +49,10 @@ export class AddFieldComponent implements OnInit, OnDestroy {
 
   isModified = false;
   isSaving = false;
+
+  textErrors: IErrorMessages = {
+    pattern: 'validation.url_required',
+  };
 
   constructor(private editResource: EditResourceService, private cdr: ChangeDetectorRef) {}
 
@@ -72,7 +75,11 @@ export class AddFieldComponent implements OnInit, OnDestroy {
       this.textControl.setValidators([]);
       this.formatControl.setValidators([]);
     } else {
-      this.textControl.setValidators([Validators.required]);
+      const textValidators = [Validators.required];
+      if (newType === FIELD_TYPE.link) {
+        textValidators.push(Validators.pattern(/^http(s?):\/\//));
+      }
+      this.textControl.setValidators(textValidators);
       if (newType === FIELD_TYPE.text) {
         this.formatControl.setValidators([Validators.required]);
       } else {
