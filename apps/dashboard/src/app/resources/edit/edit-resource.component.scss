@@ -1,62 +1,85 @@
 @import 'variables';
+@import 'edit-resource.tokens';
 
-header {
-  align-items: center;
-  background: $color-neutral-lightest;
-  display: flex;
-  height: rhythm(7);
-  justify-content: space-between;
-  padding: 0 rhythm(10);
-
-  .title-s {
-    flex: 1 0 auto;
-    padding-left: rhythm(6);
-  }
-
-  .actions {
+.edit-resource {
+  header {
     align-items: center;
+    background: $color-neutral-lightest;
     display: flex;
-    gap: rhythm(1);
-  }
-}
-.page-container {
-  display: flex;
-  gap: rhythm(0.5);
-  padding: rhythm(6) 0;
+    height: $height-header;
+    justify-content: space-between;
+    padding: 0 rhythm(10);
 
-  nav {
-    padding: rhythm(0.5) 0;
-    width: rhythm(32);
-
-    ul {
-      padding-left: rhythm(12);
+    .title-s {
+      flex: 1 0 auto;
+      padding-left: rhythm(6);
+      padding-right: rhythm(1);
     }
 
-    li {
+    .actions {
       align-items: center;
       display: flex;
       gap: rhythm(1);
-
-      pa-icon {
-        display: flex;
-      }
-
-      .active {
-        font-weight: $font-weight-semi-bold;
-      }
     }
   }
+  .page-container {
+    display: flex;
+    gap: rhythm(0.5);
+    padding-top: $padding-top-page-container;
 
-  .page-content {
-    flex: 1 0 auto;
-    max-width: rhythm(90);
+    nav {
+      margin-top: calc(#{rhythm(0.5)} * -1);
+      padding: 0 rhythm(1);
+      width: rhythm(32);
 
-    footer {
-      box-shadow: inset 0 1px 0 $color-neutral-light;
-      display: flex;
-      gap: rhythm(1);
-      margin-top: rhythm(4);
-      padding: rhythm(3) 0;
+      ul {
+        padding-left: rhythm(10);
+      }
+
+      li {
+        align-items: center;
+        cursor: pointer;
+        display: flex;
+        gap: rhythm(1);
+        padding: rhythm(1) rhythm(1.5);
+
+        pa-icon {
+          display: flex;
+        }
+
+        &.active {
+          cursor: default;
+          font-weight: $font-weight-semi-bold;
+        }
+
+        &:not(.active):hover {
+          background: $color-neutral-lightest;
+        }
+      }
+    }
+
+    .page-content {
+      flex: 1 0 auto;
+      max-width: rhythm(90);
+
+      footer {
+        box-shadow: inset 0 1px 0 $color-neutral-light;
+        display: flex;
+        margin-top: $margin-top-footer;
+        padding: $padding-vertical-footer 0;
+
+        &.form-buttons,
+        .save-actions {
+          gap: rhythm(1);
+        }
+        &.form-field-buttons {
+          justify-content: space-between;
+        }
+
+        .save-actions {
+          display: flex;
+        }
+      }
     }
   }
 }

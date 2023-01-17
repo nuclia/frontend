@@ -41,6 +41,6 @@ export class ResourceClassificationComponent implements OnInit {
         classifications: this.editResource.getClassificationsPayload(this.currentLabels),
       },
     };
-    this.editResource.save(partial).subscribe();
+    this.editResource.savePartialResource(partial).subscribe();
   }
 }

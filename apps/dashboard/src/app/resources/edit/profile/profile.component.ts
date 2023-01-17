@@ -75,6 +75,7 @@ export class ResourceProfileComponent implements OnInit {
 
   ngOnInit() {
     this.editResource.setCurrentView('profile');
+    this.editResource.setCurrentField('profile');
   }
 
   ngOnDestroy(): void {
@@ -96,7 +97,7 @@ export class ResourceProfileComponent implements OnInit {
   save() {
     this.isSaving = true;
     const data = this.getValue();
-    this.editResource.save(data).subscribe(() => {
+    this.editResource.savePartialResource(data).subscribe(() => {
       this.form.markAsPristine();
       this.isSaving = false;
       this.cdr.markForCheck();
@@ -162,7 +163,7 @@ export class ResourceProfileComponent implements OnInit {
   private getThumbnailsAndImages(resource: Resource): CloudLink[] {
     return resource
       .getFields<FileFieldData>(['files'])
-      .filter((fileField) => fileField.value?.file?.content_type?.startsWith('image'))
+      .filter((fileField) => fileField.value?.file?.content_type?.startsWith('image') && fileField.value?.file?.uri)
       .map((fileField) => fileField.value?.file as CloudLink)
       .concat(resource.getThumbnails());
   }

@@ -1,41 +1,65 @@
-<header>
-  <pa-button
-    iconAndText
-    icon="chevron-left"
-    aspect="basic"
-    size="small"
-    [routerLink]="backRoute | async">
-    {{ 'resource.resources' | translate }}
-  </pa-button>
-  <div class="title-s">{{ (resource | async)?.title }}</div>
-  <div class="actions">
+<div class="edit-resource">
+  <header>
     <pa-button
-      icon="edit"
-      routerLink="profile"
-      [active]="currentView === 'profile'"
-      paTooltip="resource.tooltip.edition"
-      aspect="basic"></pa-button>
-    <pa-button
-      icon="label"
-      routerLink="classification"
-      [active]="currentView === 'classification'"
-      paTooltip="resource.tooltip.classification"
-      aspect="basic"></pa-button>
-  </div>
-</header>
+      iconAndText
+      icon="chevron-left"
+      aspect="basic"
+      size="small"
+      [routerLink]="backRoute | async">
+      {{ 'resource.resources' | translate }}
+    </pa-button>
+    <div class="title-s">{{ (resource | async)?.title }}</div>
+    <div class="actions">
+      <pa-button
+        icon="edit"
+        routerLink="profile"
+        [active]="currentView === 'profile'"
+        paTooltip="resource.tooltip.edition"
+        aspect="basic"
+        (click)="onViewChange()"></pa-button>
+      <pa-button
+        icon="label"
+        routerLink="classification"
+        [active]="currentView === 'classification'"
+        paTooltip="resource.tooltip.classification"
+        aspect="basic"
+        (click)="onViewChange()"></pa-button>
+      <pa-button
+        icon="plus"
+        routerLink="add-field"
+        [active]="currentView === 'add-field'"
+        paTooltip="resource.tooltip.add-field"
+        aspect="basic"
+        (click)="onViewChange()"></pa-button>
+    </div>
+  </header>
 
-<div class="page-container">
-  <nav>
-    <ul>
-      <li>
-        <pa-icon
-          name="file"
-          size="small"></pa-icon>
-        <span class="active">{{ 'resource.profile' | translate }}</span>
-      </li>
-    </ul>
-  </nav>
-  <div class="page-content">
-    <router-outlet></router-outlet>
+  <div class="page-container">
+    <nav>
+      <ul *ngIf="currentView !== 'add-field'">
+        <li
+          [class.active]="(currentField | async) === 'profile'"
+          (click)="navigateToField('profile')">
+          <pa-icon
+            name="file"
+            size="small"></pa-icon>
+          {{ 'resource.profile' | translate }}
+        </li>
+        <ng-container *ngIf="currentView === 'profile'">
+          <li
+            *ngFor="let field of fields | async"
+            [class.active]="isActive(field) | async"
+            (click)="navigateToField(field)">
+            <pa-icon
+              [name]="field.icon"
+              size="small"></pa-icon>
+            {{ 'resource.field-' + field.field_type | translate }}
+          </li>
+        </ng-container>
+      </ul>
+    </nav>
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

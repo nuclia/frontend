@@ -4,6 +4,11 @@
 
 - Remove the sentence labelset type
 
+### Improvements
+
+- Add `filename` and `md5` in `CloudLink` model
+- Add `updateField` method on resource
+
 # 1.1.1 (2023-01-03)
 
 ### Improvements

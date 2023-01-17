@@ -290,6 +290,8 @@ export interface Sentence {
 }
 
 export interface CloudLink {
+  filename?: string;
+  md5?: string;
   uri?: string;
   size?: number;
   content_type?: string;

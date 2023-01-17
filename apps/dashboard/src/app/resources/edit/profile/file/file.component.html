@@ -1,0 +1,35 @@
+<ng-container *ngIf="(field | async)?.value">
+  <p [innerHTML]="'resource.field-file.dropzone-label' | translate: { filename: (filename | async) }"></p>
+  <app-dropzone
+    [isUploading]="isUploading"
+    (file)="newFile = $event"></app-dropzone>
+</ng-container>
+
+<p *ngIf="newFile">
+  <strong>{{ 'resource.field-file.new-file' | translate }}</strong>
+  {{ newFile.name }}
+</p>
+
+<footer class="form-field-buttons">
+  <div class="save-actions">
+    <pa-button
+      kind="primary"
+      [disabled]="!newFile || isUploading"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+
+    <pa-button
+      aspect="basic"
+      [disabled]="!newFile || isUploading"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+  </div>
+  <pa-button
+    kind="destructive"
+    [disabled]="!isReady || isUploading"
+    (click)="deleteField()">
+    {{ 'resource.field.delete' | translate }}
+  </pa-button>
+</footer>
