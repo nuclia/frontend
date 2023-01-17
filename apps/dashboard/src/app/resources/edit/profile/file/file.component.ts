@@ -16,13 +16,14 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
   fieldId: Observable<string> = this.route.params.pipe(
     filter((params) => !!params.fieldId),
     map((params) => params.fieldId),
+    tap((fieldId) => this.editResource.setCurrentField({ field_type: FIELD_TYPE.file, field_id: fieldId })),
   );
   field: Observable<FileFieldData> = this.fieldId.pipe(
     switchMap((fieldId) => this.editResource.getField('files', fieldId)),
     map((fieldData) => fieldData as FileFieldData),
     tap(() => (this.isReady = true)),
   );
-  filename: Observable<string> = this.field.pipe(map((field) => decodeURI(field.value?.file?.filename || '')));
+  filename: Observable<string> = this.field.pipe(map((field) => decodeURIComponent(field.value?.file?.filename || '')));
 
   newFile?: File;
   isReady = false;
@@ -35,7 +36,6 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editResource.setCurrentView('profile');
-    this.editResource.setCurrentField(FIELD_TYPE.file);
   }
 
   ngOnDestroy() {

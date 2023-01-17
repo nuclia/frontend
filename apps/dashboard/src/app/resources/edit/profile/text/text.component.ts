@@ -26,6 +26,7 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
   fieldId: Observable<string> = this.route.params.pipe(
     filter((params) => !!params.fieldId),
     map((params) => params.fieldId),
+    tap((fieldId) => this.editResource.setCurrentField({ field_id: fieldId, field_type: FIELD_TYPE.text })),
   );
   field: Observable<TextFieldData> = this.fieldId.pipe(
     switchMap((fieldId) => this.editResource.getField('texts', fieldId)),
@@ -40,7 +41,6 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editResource.setCurrentView('profile');
-    this.editResource.setCurrentField(FIELD_TYPE.text);
     this.field.pipe(takeUntil(this.unsubscribeAll)).subscribe((field) => {
       const text = (field as TextFieldData).value?.body;
       if (text) {

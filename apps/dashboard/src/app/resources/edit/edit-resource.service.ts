@@ -16,6 +16,7 @@ import {
   Classification,
   deDuplicateList,
   FIELD_TYPE,
+  FieldId,
   FileFieldData,
   IFieldData,
   KeywordSetField,
@@ -39,10 +40,10 @@ export type EditResourceView = 'profile' | 'classification' | 'add-field';
 export class EditResourceService {
   private _resource = new BehaviorSubject<Resource | null>(null);
   private _currentView = new BehaviorSubject<EditResourceView | null>(null);
-  private _currentField = new BehaviorSubject<FIELD_TYPE | 'profile'>('profile');
+  private _currentField = new BehaviorSubject<FieldId | 'profile'>('profile');
 
   currentView: Observable<EditResourceView | null> = this._currentView.asObservable();
-  currentField: Observable<FIELD_TYPE | 'profile'> = this._currentField.asObservable();
+  currentField: Observable<FieldId | 'profile'> = this._currentField.asObservable();
   resource: Observable<Resource | null> = this._resource.asObservable();
   fields: Observable<ResourceField[]> = this.resource.pipe(
     map((resource) =>
@@ -110,7 +111,7 @@ export class EditResourceService {
     this._currentView.next(view);
   }
 
-  setCurrentField(field: FIELD_TYPE | 'profile') {
+  setCurrentField(field: FieldId | 'profile') {
     this._currentField.next(field);
   }
 

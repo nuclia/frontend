@@ -25,6 +25,7 @@ export class ResourceLinkComponent implements OnInit, OnDestroy {
   fieldId: Observable<string> = this.route.params.pipe(
     filter((params) => !!params.fieldId),
     map((params) => params.fieldId),
+    tap((fieldId) => this.editResource.setCurrentField({ field_type: FIELD_TYPE.link, field_id: fieldId })),
   );
   field: Observable<LinkFieldData> = this.fieldId.pipe(
     switchMap((fieldId) => this.editResource.getField('links', fieldId)),
@@ -39,7 +40,6 @@ export class ResourceLinkComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.editResource.setCurrentView('profile');
-    this.editResource.setCurrentField(FIELD_TYPE.link);
     this.field.pipe(takeUntil(this.unsubscribeAll)).subscribe((field) => {
       const link = (field as LinkFieldData).value?.uri;
       if (link) {

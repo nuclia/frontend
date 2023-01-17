@@ -8,8 +8,8 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject } from 'rxjs';
-import { FIELD_TYPE, Resource, ResourceField } from '@nuclia/core';
+import { filter, map, Observable, Subject, take } from 'rxjs';
+import { FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService, EditResourceView } from './edit-resource.service';
 import { NavigationService } from '../../services/navigation.service';
 import { takeUntil } from 'rxjs/operators';
@@ -29,7 +29,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   backRoute: Observable<string> = this.navigationService.homeUrl.pipe(map((homeUrl) => `${homeUrl}/resources`));
   currentView: EditResourceView | null = null;
-  currentField: Observable<FIELD_TYPE | 'profile'> = this.editResource.currentField;
+  currentField: Observable<FieldId | 'profile'> = this.editResource.currentField;
   resource: Observable<Resource | null> = this.editResource.resource;
   fields: Observable<ResourceFieldWithIcon[]> = this.editResource.fields.pipe(
     map((fields) =>
@@ -69,13 +69,24 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  navigateToField(field: FIELD_TYPE | 'profile', fieldId?: string) {
+  navigateToField(field: FieldId | 'profile') {
     this.editResource.setCurrentField(field);
-    const path = fieldId ? `./${field}/${fieldId}` : `./${field}`;
+    const path = field === 'profile' ? `./${field}` : `./${field.field_type}/${field.field_id}`;
     this.router.navigate([path], { relativeTo: this.route });
   }
 
   onViewChange() {
     this.editResource.setCurrentField('profile');
+  }
+
+  isActive(field: ResourceFieldWithIcon): Observable<boolean> {
+    return this.currentField.pipe(
+      take(1),
+      filter((current) => current !== 'profile'),
+      map(
+        (current) =>
+          (current as FieldId).field_type === field.field_type && (current as FieldId).field_id === field.field_id,
+      ),
+    );
   }
 }

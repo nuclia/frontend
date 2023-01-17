@@ -488,7 +488,7 @@
 	"resource.failed_resources_popover": "Processing failed files",
 	"resource.field-file": "File Field",
 	"resource.field-file.dropzone": "Drop your file here or click to select it",
-	"resource.field-file.dropzone-label": "To replace current file <strong>{{filename}}</strong>, drop your file below or click to select it",
+	"resource.field-file.dropzone-label": "To replace current file <strong>{{filename}}</strong>, drop your file or click below to select it",
 	"resource.field-file.new-file": "New file:",
 	"resource.field-link": "Link Field",
 	"resource.field-text": "Text Field",

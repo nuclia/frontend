@@ -48,8 +48,8 @@
         <ng-container *ngIf="currentView === 'profile'">
           <li
             *ngFor="let field of fields | async"
-            [class.active]="(currentField | async) === field.field_type"
-            (click)="navigateToField(field.field_type, field.field_id)">
+            [class.active]="isActive(field) | async"
+            (click)="navigateToField(field)">
             <pa-icon
               [name]="field.icon"
               size="small"></pa-icon>
