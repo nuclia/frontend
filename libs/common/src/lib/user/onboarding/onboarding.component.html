@@ -36,6 +36,26 @@
         <div class="field">
           <label
             class="title-s"
+            for="phoneNumber">
+            {{ 'onboarding.phone' | translate }}
+          </label>
+          <div class="phone-field">
+            <pa-input
+              class="phone-code"
+              formControlName="phoneInternationalCode"
+              externalLabel
+              placeholder="+99"
+              [errorMessages]="validationMessages.phoneInternationalCode"></pa-input>
+            <pa-input
+              formControlName="phoneNumber"
+              externalLabel
+              placeholder="11 1111 1111"
+              [errorMessages]="validationMessages.phoneNumber"></pa-input>
+          </div>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
             for="searchEngine">
             {{ 'onboarding.search_engine_label' | translate }}
           </label>

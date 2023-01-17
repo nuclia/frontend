@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { OnboardingService, OnboardingStatus } from './onboarding.service';
 import { OnboardingPayload } from './onboarding.models';
-import { Zone, ZoneService } from '@flaps/core';
+import { STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { Observable } from 'rxjs';
 import { OptionModel } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -32,6 +32,9 @@ const industries = [
   'other',
 ];
 
+const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
+const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
+
 @Component({
   selector: 'stf-onboarding',
   templateUrl: './onboarding.component.html',
@@ -42,6 +45,14 @@ export class OnboardingComponent {
   onboardingForm = new FormGroup({
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     industry: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    phoneInternationalCode: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.pattern(PHONE_INTERNATIONAL_CODE)],
+    }),
+    phoneNumber: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.pattern(PHONE_NUMBER)],
+    }),
     searchEngine: new FormControl<string>('', { nonNullable: true }),
     getUpdates: new FormControl<boolean>(true, { nonNullable: true }),
   });
@@ -49,6 +60,8 @@ export class OnboardingComponent {
   validationMessages = {
     industry: { required: 'validation.required' },
     company: { required: 'validation.required' },
+    phoneInternationalCode: { required: 'validation.required', pattern: 'onboarding.phone.invalid_code' },
+    phoneNumber: { required: 'validation.required', pattern: 'onboarding.phone.invalid_number' },
   };
 
   zones: Zone[] = [];
@@ -59,8 +72,15 @@ export class OnboardingComponent {
     private onboardingService: OnboardingService,
     private zoneService: ZoneService,
     private translate: TranslateService,
+    private tracking: STFTrackingService,
   ) {
     this.zoneService.getZones().subscribe((zones) => (this.zones = zones));
+    this.tracking.isFeatureEnabled('mandatory-phone').subscribe((enabled) => {
+      if (enabled) {
+        this.onboardingForm.get('phoneInternationalCode')?.setValidators([Validators.required]);
+        this.onboardingForm.get('phoneNumber')?.setValidators([Validators.required]);
+      }
+    });
   }
 
   submitForm() {
@@ -71,6 +91,7 @@ export class OnboardingComponent {
     const data: OnboardingPayload = {
       company: formValue.company,
       industry: formValue.industry,
+      phone: formValue.phoneNumber ? `${formValue.phoneInternationalCode} ${formValue.phoneNumber}` : undefined,
       other_search_engines: formValue.searchEngine,
       receive_updates: formValue.getUpdates,
     };
