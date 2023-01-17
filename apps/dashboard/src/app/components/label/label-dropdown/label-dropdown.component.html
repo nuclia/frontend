@@ -39,12 +39,18 @@
     <pa-option
       *ngFor="let labelValue of labelValues"
       class="level2-option"
-      dontCloseOnSelect>
-      <pa-checkbox
-        [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
-        (valueChange)="toggleLabel(labelValue)">
+      [dontCloseOnSelect]="!single"
+      (selectOption)="onOptionSelection(labelValue)">
+      <ng-container *ngIf="single; else multiple">
         {{ labelValue.label }}
-      </pa-checkbox>
+      </ng-container>
+      <ng-template #multiple>
+        <pa-checkbox
+          [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
+          (valueChange)="toggleLabel(labelValue)">
+          {{ labelValue.label }}
+        </pa-checkbox>
+      </ng-template>
     </pa-option>
   </pa-dropdown>
 </div>
