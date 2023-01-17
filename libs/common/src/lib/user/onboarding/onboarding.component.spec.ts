@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OnboardingComponent } from './onboarding.component';
 import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
 import { OnboardingService } from './onboarding.service';
-import { ZoneService } from '@flaps/core';
+import { STFTrackingService, ZoneService } from '@flaps/core';
 import { of } from 'rxjs';
 import {
   PaButtonModule,
@@ -43,6 +43,12 @@ describe('OnboardingComponent', () => {
           instant: jest.fn((key) => `translate--${key}`),
         }),
         MockPipe(TranslatePipe, (key) => `translate--${key}`),
+        {
+          provide: STFTrackingService,
+          useValue: {
+            isFeatureEnabled: () => of(false),
+          },
+        },
       ],
     }).compileComponents();
 
@@ -56,6 +62,8 @@ describe('OnboardingComponent', () => {
       company: 'Atlas',
       industry: 'construction',
       searchEngine: 'Elastic',
+      phoneInternationalCode: '+11',
+      phoneNumber: '111 111 111',
       getUpdates: true,
     };
 
@@ -76,6 +84,7 @@ describe('OnboardingComponent', () => {
         {
           company: data.company,
           industry: data.industry,
+          phone: '+11 111 111 111',
           other_search_engines: data.searchEngine,
           receive_updates: data.getUpdates,
         },
