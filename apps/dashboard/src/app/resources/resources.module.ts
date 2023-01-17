@@ -47,6 +47,8 @@ import { DatasetImportComponent } from './sample-dataset/dataset-import.componen
 import { LoadingModalComponent } from './sample-dataset/loading-modal/loading-modal.component';
 import { UploadButtonComponent } from './upload-button/upload-button.component';
 import { ResourceClassificationComponent } from './edit/classification/resource-classification.component';
+import { AddFieldComponent } from './edit/add-field/add-field.component';
+import { DropzoneComponent } from './dropzone/dropzone.component';
 
 const Components = [
   ResourceListComponent,
@@ -88,6 +90,10 @@ const ROUTES: Routes = [
           {
             path: 'classification',
             component: ResourceClassificationComponent,
+          },
+          {
+            path: 'add-field',
+            component: AddFieldComponent,
           },
           {
             path: 'text/:fieldId',
@@ -151,6 +157,8 @@ const ROUTES: Routes = [
     LoadingModalComponent,
     UploadButtonComponent,
     ResourceClassificationComponent,
+    AddFieldComponent,
+    DropzoneComponent,
   ],
   exports: [],
 })

@@ -1,24 +1,9 @@
 <ng-container *ngIf="(field | async)?.value">
   <p [innerHTML]="'resource.field-file.dropzone-label' | translate: { filename: (filename | async) }"></p>
-  <div
-    class="drop-zone"
-    [class.file-over]="hasBaseDropZoneOver"
-    stfFileDrop
-    (fileOver)="fileOverBase($event)"
-    (atFileDrop)="uploadFile($event)"
-    (click)="chooseFiles($event)">
-    <span *ngIf="!isUploading">{{ 'resource.field-file.dropzone' | translate }}</span>
-    <nsi-spinner
-      *ngIf="isUploading"
-      size="small"></nsi-spinner>
-  </div>
+  <app-dropzone
+    [isUploading]="isUploading"
+    (file)="newFile = $event"></app-dropzone>
 </ng-container>
-<input
-  #fileInput
-  type="file"
-  stfFileSelect
-  hidden
-  (atFileSelect)="uploadFile($event)" />
 
 <p *ngIf="newFile">
   <strong>{{ 'resource.field-file.new-file' | translate }}</strong>

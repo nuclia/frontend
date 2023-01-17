@@ -16,7 +16,7 @@ import {
   Classification,
   deDuplicateList,
   FIELD_TYPE,
-  FileField,
+  FileFieldData,
   IFieldData,
   KeywordSetField,
   LinkField,
@@ -31,7 +31,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-export type EditResourceView = 'profile' | 'classification';
+export type EditResourceView = 'profile' | 'classification' | 'add-field';
 
 @Injectable({
   providedIn: 'root',
@@ -138,10 +138,74 @@ export class EditResourceService {
     return [...userClassifications, ...cancellations];
   }
 
+  addField(
+    fieldType: FIELD_TYPE,
+    fieldId: string,
+    data: TextField | LinkField | KeywordSetField,
+  ): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const dataKey = this.getDataKeyFromFieldType(fieldType);
+    const updatedData: ResourceData = dataKey
+      ? {
+          ...currentResource.data,
+          [dataKey]: {
+            ...currentResource.data[dataKey],
+            [fieldId]: {
+              value: data,
+            },
+          },
+        }
+      : currentResource.data;
+    return forkJoin([
+      currentResource.addField(fieldType, fieldId, data),
+      this.sdk.currentKb.pipe(
+        take(1),
+        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
+      ),
+    ]).pipe(
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => this.toaster.success('resource.field.addition-successful')),
+    );
+  }
+
+  addFile(fieldId: string, file: File): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+
+    const dataKey = this.getDataKeyFromFieldType(FIELD_TYPE.file);
+    const updatedData: ResourceData = dataKey
+      ? {
+          ...currentResource.data,
+          [dataKey]: {
+            ...currentResource.data[dataKey],
+            [fieldId]: this.getFileFieldData(file),
+          },
+        }
+      : currentResource.data;
+    return currentResource.upload(fieldId, file).pipe(
+      switchMap(() => this.sdk.currentKb.pipe(take(1))),
+      tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
+      catchError((error) => {
+        this.toaster.error('generic.error.oops');
+        return throwError(() => error);
+      }),
+      map(() => this.toaster.success('resource.field.update-successful')),
+    );
+  }
+
   updateField(
     fieldType: FIELD_TYPE,
     fieldId: string,
-    data: TextField | LinkField | FileField | KeywordSetField,
+    data: TextField | LinkField | KeywordSetField,
   ): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
@@ -186,15 +250,7 @@ export class EditResourceService {
         if (id !== fieldId) {
           fields[id] = field;
         } else {
-          fields[id] = {
-            value: {
-              file: {
-                filename: file.name,
-                content_type: file.type,
-                size: file.size,
-              },
-            },
-          };
+          fields[id] = this.getFileFieldData(file);
         }
         return fields;
       },
@@ -261,27 +317,42 @@ export class EditResourceService {
     );
   }
 
-  private getUpdatedData(
-    fieldType: FIELD_TYPE,
-    currentData: ResourceData,
-    reduceCallback: (previous: any, current: [string, any]) => ResourceData,
-  ): ResourceData {
+  getDataKeyFromFieldType(fieldType: FIELD_TYPE): keyof ResourceData | null {
     // Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
-    let cleanedData: ResourceData;
     switch (fieldType) {
       case FIELD_TYPE.text:
       case FIELD_TYPE.file:
       case FIELD_TYPE.link:
       case FIELD_TYPE.keywordset:
-        cleanedData = {
-          ...currentData,
-          [`${fieldType}s`]: Object.entries(currentData[`${fieldType}s`] || {}).reduce(reduceCallback, {} as any),
-        };
-        break;
+        return `${fieldType}s`;
       default:
-        cleanedData = currentData;
-        break;
+        return null;
     }
-    return cleanedData;
+  }
+
+  private getUpdatedData(
+    fieldType: FIELD_TYPE,
+    currentData: ResourceData,
+    reduceCallback: (previous: any, current: [string, any]) => ResourceData,
+  ): ResourceData {
+    const dataKey = this.getDataKeyFromFieldType(fieldType);
+    return dataKey
+      ? {
+          ...currentData,
+          [dataKey]: Object.entries(currentData[dataKey] || {}).reduce(reduceCallback, {} as any),
+        }
+      : currentData;
+  }
+
+  private getFileFieldData(file: File): FileFieldData {
+    return {
+      value: {
+        file: {
+          filename: file.name,
+          content_type: file.type,
+          size: file.size,
+        },
+      },
+    };
   }
 }

@@ -163,7 +163,7 @@ export class ResourceProfileComponent implements OnInit {
   private getThumbnailsAndImages(resource: Resource): CloudLink[] {
     return resource
       .getFields<FileFieldData>(['files'])
-      .filter((fileField) => fileField.value?.file?.content_type?.startsWith('image'))
+      .filter((fileField) => fileField.value?.file?.content_type?.startsWith('image') && fileField.value?.file?.uri)
       .map((fileField) => fileField.value?.file as CloudLink)
       .concat(resource.getThumbnails());
   }

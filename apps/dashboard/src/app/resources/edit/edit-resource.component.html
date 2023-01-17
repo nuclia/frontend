@@ -24,12 +24,19 @@
         paTooltip="resource.tooltip.classification"
         aspect="basic"
         (click)="onViewChange()"></pa-button>
+      <pa-button
+        icon="plus"
+        routerLink="add-field"
+        [active]="currentView === 'add-field'"
+        paTooltip="resource.tooltip.add-field"
+        aspect="basic"
+        (click)="onViewChange()"></pa-button>
     </div>
   </header>
 
   <div class="page-container">
     <nav>
-      <ul>
+      <ul *ngIf="currentView !== 'add-field'">
         <li
           [class.active]="(currentField | async) === 'profile'"
           (click)="navigateToField('profile')">

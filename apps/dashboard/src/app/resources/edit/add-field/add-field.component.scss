@@ -1,0 +1,16 @@
+@import 'variables';
+:host {
+  form {
+    margin-top: rhythm(3);
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: rhythm(2);
+    }
+
+    pa-textarea ::ng-deep textarea {
+      height: rhythm(20);
+    }
+  }
+}

@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { FIELD_TYPE, FileFieldData } from '@nuclia/core';
 import { ActivatedRoute } from '@angular/router';
@@ -15,12 +7,9 @@ import { EditResourceService } from '../../edit-resource.service';
 @Component({
   selector: 'app-resource-file',
   templateUrl: 'file.component.html',
-  styleUrls: ['file.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFileComponent implements OnInit, OnDestroy {
-  @ViewChild('fileInput') fileInput?: ElementRef;
-
   unsubscribeAll = new Subject<void>();
   isUploading = false;
 
@@ -35,7 +24,6 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
   );
   filename: Observable<string> = this.field.pipe(map((field) => decodeURI(field.value?.file?.filename || '')));
 
-  hasBaseDropZoneOver = false;
   newFile?: File;
   isReady = false;
 
@@ -53,26 +41,6 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  fileOverBase(overBase: boolean) {
-    if (!this.isUploading) {
-      this.hasBaseDropZoneOver = overBase;
-      this.cdr?.markForCheck();
-    }
-  }
-
-  chooseFiles($event: MouseEvent) {
-    if (!this.isUploading) {
-      $event.preventDefault();
-      this.fileInput?.nativeElement?.click();
-    }
-  }
-
-  uploadFile(files: File[]) {
-    if (files.length > 0 && !this.isUploading) {
-      this.newFile = files[0];
-    }
   }
 
   save() {
