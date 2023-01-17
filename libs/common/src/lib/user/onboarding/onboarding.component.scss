@@ -50,4 +50,12 @@
       margin-bottom: rhythm(5);
     }
   }
+
+  .phone-field {
+    display: flex;
+    .phone-code {
+      width: rhythm(8);
+      margin-right: rhythm(1);
+    }
+  }
 }
