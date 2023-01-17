@@ -79,6 +79,9 @@ export class OnboardingComponent {
       if (enabled) {
         this.onboardingForm.get('phoneInternationalCode')?.setValidators([Validators.required]);
         this.onboardingForm.get('phoneNumber')?.setValidators([Validators.required]);
+        // force validation to be refreshed
+        this.onboardingForm.patchValue({ phoneNumber: '' });
+        this.onboardingForm.updateValueAndValidity();
       }
     });
   }
