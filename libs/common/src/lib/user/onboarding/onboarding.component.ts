@@ -77,8 +77,8 @@ export class OnboardingComponent {
     this.zoneService.getZones().subscribe((zones) => (this.zones = zones));
     this.tracking.isFeatureEnabled('mandatory-phone').subscribe((enabled) => {
       if (enabled) {
-        this.onboardingForm.get('phoneInternationalCode')?.setValidators([Validators.required]);
-        this.onboardingForm.get('phoneNumber')?.setValidators([Validators.required]);
+        this.onboardingForm.get('phoneInternationalCode')?.addValidators([Validators.required]);
+        this.onboardingForm.get('phoneNumber')?.addValidators([Validators.required]);
         // force validation to be refreshed
         this.onboardingForm.patchValue({ phoneNumber: '' });
         this.onboardingForm.updateValueAndValidity();
