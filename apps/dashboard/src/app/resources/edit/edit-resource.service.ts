@@ -1,5 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, filter, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+  tap,
+  throwError,
+} from 'rxjs';
 import {
   Classification,
   deDuplicateList,
@@ -86,10 +98,9 @@ export class EditResourceService {
         tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, ...partialResource }))),
       ),
     ]).pipe(
-      catchError(() => {
+      catchError((error) => {
         this.toaster.error('generic.error.oops');
-        this._resource.next(currentResource);
-        return of(null);
+        return throwError(() => error);
       }),
       map(() => this.toaster.success('resource.save-successful')),
     );
@@ -154,10 +165,9 @@ export class EditResourceService {
         tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
       ),
     ]).pipe(
-      catchError(() => {
+      catchError((error) => {
         this.toaster.error('generic.error.oops');
-        this._resource.next(currentResource);
-        return of(null);
+        return throwError(() => error);
       }),
       map(() => this.toaster.success('resource.field.update-successful')),
     );
@@ -193,10 +203,9 @@ export class EditResourceService {
       switchMap(() => currentResource.upload(fieldId, file)),
       switchMap(() => this.sdk.currentKb.pipe(take(1))),
       tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
-      catchError(() => {
+      catchError((error) => {
         this.toaster.error('generic.error.oops');
-        this._resource.next(currentResource);
-        return of(null);
+        return throwError(() => error);
       }),
       map(() => this.toaster.success('resource.field.update-successful')),
     );
@@ -244,10 +253,9 @@ export class EditResourceService {
         tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
       ),
     ]).pipe(
-      catchError(() => {
+      catchError((error) => {
         this.toaster.error('generic.error.oops');
-        this._resource.next(currentResource);
-        return of(null);
+        return throwError(() => error);
       }),
       map(() => this.toaster.success('resource.field.delete-successful')),
     );

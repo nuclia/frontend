@@ -84,10 +84,13 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
           take(1),
           switchMap((fieldId) => this.editResource.updateFile(fieldId, file)),
         )
-        .subscribe(() => {
-          this.isUploading = false;
-          this.newFile = undefined;
-          this.cdr.markForCheck();
+        .subscribe({
+          next: () => {
+            this.isUploading = false;
+            this.newFile = undefined;
+            this.cdr.markForCheck();
+          },
+          error: () => (this.isUploading = false),
         });
     }
   }

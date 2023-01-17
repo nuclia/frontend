@@ -64,9 +64,12 @@ export class ResourceLinkComponent implements OnInit, OnDestroy {
         take(1),
         switchMap((fieldId) => this.editResource.updateField(FIELD_TYPE.link, fieldId, linkField)),
       )
-      .subscribe(() => {
-        this.isSaving = false;
-        this.form.markAsPristine();
+      .subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.form.markAsPristine();
+        },
+        error: () => (this.isSaving = false),
       });
   }
 

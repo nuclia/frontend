@@ -65,9 +65,12 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
         take(1),
         switchMap((fieldId) => this.editResource.updateField(FIELD_TYPE.text, fieldId, textField)),
       )
-      .subscribe(() => {
-        this.isSaving = false;
-        this.form.markAsPristine();
+      .subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.form.markAsPristine();
+        },
+        error: () => (this.isSaving = false),
       });
   }
 
