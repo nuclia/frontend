@@ -5,6 +5,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   entityAnnotation: true,
   filter: true,
   permalink: true,
+  relations: true,
   suggestions: true,
   notPublic: true,
 };

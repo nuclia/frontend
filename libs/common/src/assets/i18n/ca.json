@@ -627,6 +627,8 @@
 	"stash.widgets.publish_kb": "Podeu publicar·lo des de",
 	"stash.widgets.publish_kb_link": "Panell",
 	"stash.widgets.recommendations": "Recomanacions",
+	"stash.widgets.relations": "Relacions",
+	"stash.widgets.relations.help": "Mostra informació de les entitats relacionades en els resultats de cerca",
 	"stash.widgets.snippet": "Fragment de codi",
 	"stash.widgets.suggestLabels": "Suggereix etiquetes",
 	"stash.widgets.suggestLabels.help": "Quan s'ha realitzat l'entrenament de la intenció de cerca d'etiquetes, es mostren les etiquetes suggerides en funció de la consulta",

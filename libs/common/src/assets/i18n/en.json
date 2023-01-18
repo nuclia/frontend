@@ -699,6 +699,8 @@
 	"stash.widgets.publish_kb": "You can publish it from the",
 	"stash.widgets.publish_kb_link": "Dashboard",
 	"stash.widgets.recommendations": "Recommendations",
+	"stash.widgets.relations": "Relations",
+	"stash.widgets.relations.help": "Displays information about related entities in the search results",
 	"stash.widgets.snippet": "Code snippet",
 	"stash.widgets.suggestLabels": "Suggest labels",
 	"stash.widgets.suggestLabels.help": "When label search intent training has been done, displays labels suggested based on the query",
