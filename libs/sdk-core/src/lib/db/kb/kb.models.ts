@@ -178,6 +178,7 @@ export interface WidgetFeatures {
   navigateToLink?: boolean;
   notPublic?: boolean;
   permalink?: boolean;
+  relations?: boolean;
   suggestions?: boolean;
   suggestLabels?: boolean;
 }

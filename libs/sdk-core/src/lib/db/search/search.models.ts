@@ -55,6 +55,7 @@ export namespace Search {
     sentences?: Sentences;
     paragraphs?: Paragraphs;
     fulltext?: Fulltext;
+    relations?: Relations;
     shards?: string[];
   }
 
@@ -91,6 +92,20 @@ export namespace Search {
   export interface Paragraphs extends Pagination {
     results: Paragraph[];
     facets: FacetsResult;
+  }
+
+  export interface Relations {
+    entities: {
+      [key: string]: {
+        related_to: Relation[];
+      };
+    };
+  }
+
+  export interface Relation {
+    entity: string;
+    relation: string;
+    direction: 'IN' | 'OUT';
   }
 
   export interface FacetsResult {
