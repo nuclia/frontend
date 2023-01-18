@@ -39,6 +39,9 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
       nucliaPrediction.loadModels(kbPath, authHeaders);
     }
   }
+  if (widgetOptions.features?.relations) {
+    SEARCH_MODE.push(Search.Features.RELATIONS);
+  }
   STATE = state;
 };
 

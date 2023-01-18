@@ -8,8 +8,56 @@
   width: var(--search-bar-max-width);
 }
 
+.results-container {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--rhythm-2);
+}
+
 .results {
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-2);
+  width: 100%;
 }
+
+.relations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-5);
+
+  .entity {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-1_5);
+  }
+
+  .entity-name {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .relation {
+    font-size: var(--font-size-medium);
+  }
+
+  .relation-name {
+    font-weight: var(--font-weight-semi-bold);
+  }
+}
+
+@media (min-width: 1200px) {
+  .results-container {
+    flex-direction: row;
+  }
+  .results.with-relations {
+    width: calc(100% - var(--rhythm-40) - var(--rhythm-2));
+  }
+  .relations {
+    width: var(--rhythm-40);
+    padding-left: var(--rhythm-2);
+    border-left: 1px solid var(--color-neutral-light);
+  }
+}
+
+

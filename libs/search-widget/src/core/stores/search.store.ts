@@ -146,6 +146,25 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   return smartResults;
 });
 
+export const entityRelations = searchState.reader((state) =>
+  Object.entries(state.results.relations?.entities || {})
+    .map(([entity, relations]) => ({
+      entity,
+      relations: relations.related_to
+        // TODO: filter resource relations appropriately when backend is ready
+        .filter((relation) => !/^[0-9a-z]{32}$/.test(relation.entity))
+        .reduce((acc, current) => {
+          if (!acc[current.relation]) {
+            acc[current.relation] = [current.entity];
+          } else {
+            acc[current.relation].push(current.entity);
+          }
+          return acc;
+        }, {} as { [relation: string]: string[] }),
+    }))
+    .filter((entity) => Object.keys(entity.relations).length > 0),
+);
+
 export const triggerSearch = new Subject<void>();
 
 export const addLabelFilter = (label: Classification) => {
