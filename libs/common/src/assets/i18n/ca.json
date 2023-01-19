@@ -423,7 +423,7 @@
 	"resource.delete_resources_confirm": "Vols suprimir documents?",
 	"resource.delete_resources_warning": "Si elimines aquests documents també s’esborrarà tota la informació processada.",
 	"resource.description.title": "Descripció",
-	"resource.edit": "Editar recurs",
+	"resource.edit": "Edita i anota",
 	"resource.entities.date": "Dates",
 	"resource.entities.event": "Esdeveniments",
 	"resource.entities.fac": "Construccions",

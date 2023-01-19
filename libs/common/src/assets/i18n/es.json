@@ -423,7 +423,7 @@
 	"resource.delete_resources_confirm": "¿Eliminar documentos?",
 	"resource.delete_resources_warning": "Si eliminas estos documentos también se borrará toda la información procesada.",
 	"resource.description.title": "Descripción",
-	"resource.edit": "Editar recurso",
+	"resource.edit": "Editar y anotar",
 	"resource.entities.date": "Fechas",
 	"resource.entities.event": "Eventos",
 	"resource.entities.fac": "Construcciones",

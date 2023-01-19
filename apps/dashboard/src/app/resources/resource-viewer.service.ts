@@ -91,7 +91,7 @@ export class ResourceViewerService {
       )
       .subscribe((kb) => {
         this.closeViewer();
-        this.router.navigate([`/at/${kb.account}/${kb.slug}/resources/${uid}/profile`]);
+        this.router.navigate([`/at/${kb.account}/${kb.slug}/resources/${uid}/edit/profile`]);
       });
   }
 

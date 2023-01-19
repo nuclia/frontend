@@ -469,7 +469,7 @@
 	"resource.delete_resources_confirm": "Delete documents?",
 	"resource.delete_resources_warning": "Deleting these documents will also delete all processed information.",
 	"resource.description.title": "Description",
-	"resource.edit": "Edit resource",
+	"resource.edit": "Edit & Annotate",
 	"resource.entities.date": "Date",
 	"resource.entities.event": "Events",
 	"resource.entities.fac": "Constructions",
