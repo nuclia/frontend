@@ -20,7 +20,7 @@
   } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
   import { unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
-  import { suggestionState } from '../../core/stores/suggestions.store';
+  import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -39,6 +39,7 @@
 
   export const search = (query: string) => {
     searchQuery.set(query);
+    typeAhead.set(query || '');
     triggerSearch.next();
   };
 

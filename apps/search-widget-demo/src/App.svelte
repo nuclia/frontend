@@ -9,6 +9,7 @@
   let selected = 'tiles';
   let showConfiguration = true;
   let widget: NucliaWidget;
+  let searchBar: NucliaSearchBar;
   let viewerWidget: NucliaViewerWidget;
   let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
   /**
@@ -92,9 +93,14 @@
   {/if}
   {#if selected === 'tiles'}
     <h2>Two widgets: search bar and video results</h2>
+    <p>
+      Click on this text to trigger the corresponding search:
+      <span on:click={() => searchBar.search('test query')}>test query</span>
+    </p>
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
+        bind:this={searchBar}
         knowledgebox={kb}
         backend="https://stashify.cloud/api"
         cdn="/"
