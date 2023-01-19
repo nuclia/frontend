@@ -15,7 +15,6 @@
   import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
-  import { fade, slide } from 'svelte/transition';
   import { searchQuery } from '../../core/stores/search.store';
   import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { navigateToLink } from '../../core/stores/widget.store';
@@ -215,9 +214,7 @@
   </div>
 
   {#if thumbnailLoaded}
-    <div
-      class="result-details"
-      transition:fade={{ duration: Duration.SUPERFAST }}>
+    <div class="result-details">
       <header style:--header-actions-width={`${headerActionsWidth}px`}>
         <div class:header-title={expanded}>
           <div class="doc-type-container">
@@ -231,9 +228,7 @@
         </div>
 
         {#if expanded}
-          <div
-            class="header-actions"
-            in:fade={{ duration: Duration.FAST }}>
+          <div class="header-actions">
             {#if !isMobile}
               <SearchResultNavigator
                 resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
@@ -283,7 +278,6 @@
             class="search-result-paragraphs"
             tabindex="-1">
             <ul
-              transition:slide={{ duration: defaultTransitionDuration }}
               class="paragraphs-container"
               class:expanded={showAllResults}
               class:can-expand={$matchingParagraphs$.length > 4}

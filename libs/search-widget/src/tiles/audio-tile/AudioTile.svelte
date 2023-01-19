@@ -16,7 +16,6 @@
   import { take, tap } from 'rxjs/operators';
   import { filterParagraphs } from '../tile.utils';
   import { Observable, Subject, switchMap } from 'rxjs';
-  import { fade, slide } from 'svelte/transition';
   import { IconButton } from '../../common';
   import { _ } from '../../core/i18n';
   import Icon from '../../common/icons/Icon.svelte';
@@ -170,17 +169,14 @@
     {#if $resource}
       <div
         class="summary-container"
-        hidden={!expanded}
-        transition:fade={{ duration: Duration.SUPERFAST }}>
+        hidden={!expanded}>
         <div class="summary">{summary}</div>
       </div>
     {/if}
   </div>
 
   {#if thumbnailLoaded}
-    <div
-      class="result-details"
-      transition:fade={{ duration: Duration.SUPERFAST }}>
+    <div class="result-details">
       <header>
         <div class:header-title={expanded}>
           <div class="doc-type-container">
@@ -193,7 +189,7 @@
           </h3>
         </div>
         {#if expanded}
-          <div in:fade={{ duration: Duration.FAST }}>
+          <div>
             <IconButton
               icon="cross"
               ariaLabel={$_('generic.close')}
@@ -232,11 +228,6 @@
             <div
               tabindex="0"
               class="transcript-expander-header"
-              transition:slide={{ duration: defaultTransitionDuration }}
-              on:introstart={() => (animatingShowFullTranscript = true)}
-              on:introend={() => (animatingShowFullTranscript = false)}
-              on:outrostart={() => (animatingShowFullTranscript = true)}
-              on:outroend={() => (animatingShowFullTranscript = false)}
               on:click={toggleTranscriptPanel}
               on:keyup={(e) => {
                 if (e.key === 'Enter') toggleTranscriptPanel();
@@ -256,7 +247,6 @@
 
           {#if !expanded || !showFullTranscripts}
             <ul
-              transition:slide={{ duration: defaultTransitionDuration }}
               class="paragraphs-container"
               class:expanded={showAllResults}
               class:can-expand={matchingParagraphs.length > 4}
@@ -298,10 +288,7 @@
             </div>
           </div>
           {#if showFullTranscripts}
-            <div
-              class="transcript-container scrollable-area"
-              in:slide={{ duration: defaultTransitionDuration, delay: defaultTransitionDuration }}
-              out:slide={{ duration: defaultTransitionDuration }}>
+            <div class="transcript-container scrollable-area">
               <ul class="paragraphs-container">
                 {#each filteredTranscripts as paragraph}
                   <ParagraphResult
