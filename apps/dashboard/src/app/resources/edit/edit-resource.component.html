@@ -45,17 +45,15 @@
             size="small"></pa-icon>
           {{ 'resource.profile' | translate }}
         </li>
-        <ng-container *ngIf="currentView === 'profile'">
-          <li
-            *ngFor="let field of fields | async"
-            [class.active]="isActive(field) | async"
-            (click)="navigateToField(field)">
-            <pa-icon
-              [name]="field.icon"
-              size="small"></pa-icon>
-            {{ 'resource.field-' + field.field_type | translate }}
-          </li>
-        </ng-container>
+        <li
+          *ngFor="let field of fields | async"
+          [class.active]="isActive(field) | async"
+          (click)="navigateToField(field)">
+          <pa-icon
+            [name]="field.icon"
+            size="small"></pa-icon>
+          {{ 'resource.field-' + field.field_type | translate }}
+        </li>
       </ul>
     </nav>
     <div class="page-content">

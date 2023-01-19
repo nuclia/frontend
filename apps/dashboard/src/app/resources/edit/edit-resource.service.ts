@@ -21,18 +21,23 @@ import {
   IFieldData,
   KeywordSetField,
   LinkField,
+  Paragraph,
   Resource,
   ResourceData,
   ResourceField,
   TextField,
   UserClassification,
+  UserFieldMetadata,
 } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
-
-export type EditResourceView = 'profile' | 'classification' | 'add-field';
+import {
+  EditResourceView,
+  getUpdatedUserFieldMetadata,
+  ParagraphWithTextAndAnnotations,
+} from './edit-resource.helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -105,6 +110,19 @@ export class EditResourceService {
       }),
       map(() => this.toaster.success('resource.save-successful')),
     );
+  }
+
+  saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndAnnotations[]): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+    const fieldMetadata: UserFieldMetadata[] = getUpdatedUserFieldMetadata(
+      field,
+      paragraphs,
+      currentResource.fieldmetadata || [],
+    );
+    return this.savePartialResource({ fieldmetadata: fieldMetadata });
   }
 
   setCurrentView(view: EditResourceView) {
@@ -291,6 +309,25 @@ export class EditResourceService {
       );
   }
 
+  getDataKeyFromFieldType(fieldType: FIELD_TYPE): keyof ResourceData | null {
+    // Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
+    switch (fieldType) {
+      case FIELD_TYPE.text:
+      case FIELD_TYPE.file:
+      case FIELD_TYPE.link:
+      case FIELD_TYPE.keywordset:
+        return `${fieldType}s`;
+      default:
+        return null;
+    }
+  }
+
+  getParagraphId(field: FieldId, paragraph: Paragraph): string {
+    const resource = this._resource.getValue();
+    const typeAbbreviation = field.field_type === 'link' ? 'u' : field.field_type[0];
+    return resource ? `${resource.id}/${typeAbbreviation}/${field.field_id}/${paragraph.start}-${paragraph.end}` : '';
+  }
+
   private deleteField(fieldType: FIELD_TYPE, fieldId: string): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
@@ -316,19 +353,6 @@ export class EditResourceService {
       }),
       map(() => this.toaster.success('resource.field.delete-successful')),
     );
-  }
-
-  getDataKeyFromFieldType(fieldType: FIELD_TYPE): keyof ResourceData | null {
-    // Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
-    switch (fieldType) {
-      case FIELD_TYPE.text:
-      case FIELD_TYPE.file:
-      case FIELD_TYPE.link:
-      case FIELD_TYPE.keywordset:
-        return `${fieldType}s`;
-      default:
-        return null;
-    }
   }
 
   private getUpdatedData(
