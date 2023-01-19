@@ -2,9 +2,7 @@
   import Thumbnail from './Thumbnail.svelte';
   import { createEventDispatcher } from 'svelte';
   import Icon from '../icons/Icon.svelte';
-  import { fade } from 'svelte/transition';
   import Spinner from '../spinner/Spinner.svelte';
-  import { Duration } from '../transition.utils';
 
   export let thumbnail = '';
   export let fallback = '';
@@ -30,7 +28,6 @@
   <div
     class="sw-thumbnail-player"
     tabindex="-1"
-    in:fade={{ delay: Duration.SUPERFAST }}
     on:click={play}>
     <Thumbnail
       src={thumbnail}
@@ -44,7 +41,6 @@
         class="action-container"
         class:play-icon={!spinner}
         tabindex="0"
-        in:fade={{ delay: Duration.SUPERFAST }}
         on:keyup={(e) => {
           if (e.key === 'Enter') play();
         }}>

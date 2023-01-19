@@ -8,8 +8,6 @@
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import VideoTile from '../../tiles/video-tile/VideoTile.svelte';
   import globalCss from '../../common/_global.scss?inline';
-  import { fade } from 'svelte/transition';
-  import { Duration } from '../../common/transition.utils';
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
   import TextTile from '../../tiles/text-tile/TextTile.svelte';
   import {
@@ -52,9 +50,7 @@
     {:else if $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      <div
-        class="results"
-        transition:fade={{ duration: Duration.SUPERFAST }}>
+      <div class="results">
         {#each $smartResults as result}
           {#if result.icon === 'application/pdf'}
             <PdfTile {result} />
