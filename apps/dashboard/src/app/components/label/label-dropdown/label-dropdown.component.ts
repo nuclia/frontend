@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { Classification, LabelSet, LabelSets } from '@nuclia/core';
 import { Aspect, PopupComponent, Size } from '@guillotinaweb/pastanaga-angular';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-label-dropdown',
@@ -43,6 +44,14 @@ export class LabelDropdownComponent {
     return this._labelSets;
   }
 
+  @Input()
+  set single(value: any) {
+    this._single = coerceBooleanProperty(value);
+  }
+  get single() {
+    return this._single;
+  }
+
   @Input() size: Size | undefined;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
@@ -58,6 +67,7 @@ export class LabelDropdownComponent {
 
   private _selection: Classification[] = [];
   private _labelSets: LabelSets = {};
+  private _single = false;
 
   onLevel1Selection(labelSetType: string, labelSet: LabelSet) {
     this.labelSetExpanded = labelSetType;
@@ -88,5 +98,12 @@ export class LabelDropdownComponent {
     }
     this.selection = newSelectedLabels;
     this.selectionChange.emit(newSelectedLabels);
+  }
+
+  onOptionSelection(labelValue: Classification) {
+    if (this.single) {
+      this.selection = [labelValue];
+      this.selectionChange.emit(this.selection);
+    }
   }
 }

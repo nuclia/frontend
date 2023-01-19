@@ -10,9 +10,10 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, Subject, take } from 'rxjs';
 import { FieldId, Resource, ResourceField } from '@nuclia/core';
-import { EditResourceService, EditResourceView } from './edit-resource.service';
+import { EditResourceService } from './edit-resource.service';
 import { NavigationService } from '../../services/navigation.service';
 import { takeUntil } from 'rxjs/operators';
+import { EditResourceView } from './edit-resource.helpers';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -71,8 +72,15 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   navigateToField(field: FieldId | 'profile') {
     this.editResource.setCurrentField(field);
-    const path = field === 'profile' ? `./${field}` : `./${field.field_type}/${field.field_id}`;
-    this.router.navigate([path], { relativeTo: this.route });
+    let path;
+    if (this.currentView === 'profile') {
+      path = field === 'profile' ? `./${field}` : `./${field.field_type}/${field.field_id}`;
+    } else if (this.currentView === 'classification') {
+      path = field === 'profile' ? './classification' : `./classification/${field.field_type}/${field.field_id}`;
+    }
+    if (path) {
+      this.router.navigate([path], { relativeTo: this.route });
+    }
   }
 
   onViewChange() {

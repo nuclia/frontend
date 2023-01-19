@@ -1,7 +1,6 @@
 @import 'variables';
 @import '../../edit-resource.tokens';
 
-$footer-height: $margin-top-footer + $padding-vertical-footer * 2 + rhythm(5);
 :host {
   pa-textarea ::ng-deep textarea {
     height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$footer-height} - #{rhythm(7)});

@@ -27,6 +27,7 @@ import { LabelModule } from '../components/label/label.module';
 import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
+  PaChipsModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -49,6 +50,7 @@ import { UploadButtonComponent } from './upload-button/upload-button.component';
 import { ResourceClassificationComponent } from './edit/classification/resource-classification.component';
 import { AddFieldComponent } from './edit/add-field/add-field.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
+import { ParagraphClassificationComponent } from './edit/classification/paragraph-classification/paragraph-classification.component';
 
 const Components = [
   ResourceListComponent,
@@ -90,6 +92,10 @@ const ROUTES: Routes = [
           {
             path: 'classification',
             component: ResourceClassificationComponent,
+          },
+          {
+            path: 'classification/:fieldType/:fieldId',
+            component: ParagraphClassificationComponent,
           },
           {
             path: 'add-field',
@@ -150,6 +156,7 @@ const ROUTES: Routes = [
     SisStatusComponent,
     SisLabelModule,
     PaPopupModule,
+    PaChipsModule,
   ],
   declarations: [
     ...Components,
@@ -159,6 +166,7 @@ const ROUTES: Routes = [
     ResourceClassificationComponent,
     AddFieldComponent,
     DropzoneComponent,
+    ParagraphClassificationComponent,
   ],
   exports: [],
 })
