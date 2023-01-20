@@ -49,10 +49,8 @@ export const suggestionsHasError = suggestionState.writer<boolean>(
   }),
 );
 
-export const suggestedParagraphs: Observable<Search.Paragraph[]> = suggestionState.reader<Search.Paragraph[]>((state) =>
-  (state.suggestions.results.paragraphs?.results || []).filter(
-    (paragraph) => paragraph.field_type === FieldType.GENERIC,
-  ),
+export const suggestedParagraphs: Observable<Search.Paragraph[]> = suggestionState.reader<Search.Paragraph[]>(
+  (state) => state.suggestions.results.paragraphs?.results || [],
 );
 
 export const suggestedLabels: Observable<Classification[]> = suggestionState.reader<Classification[]>(

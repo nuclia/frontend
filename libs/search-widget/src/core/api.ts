@@ -65,7 +65,7 @@ export const suggest = (query: string) => {
     throw new Error('Nuclia API not initialized');
   }
 
-  return nucliaApi.knowledgeBox.suggest(query).pipe(
+  return nucliaApi.knowledgeBox.suggest(query, true).pipe(
     filter((res) => {
       if (res.error) {
         suggestionsHasError.set(true);

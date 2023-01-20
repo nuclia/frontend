@@ -127,8 +127,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     return search(this.nuclia, this.id, this.path, query, features, options);
   }
 
-  suggest(query: string): Observable<Search.Suggestions> {
-    const params = `query=${encodeURIComponent(query)}`;
+  suggest(query: string, inTitleOnly = false): Observable<Search.Suggestions> {
+    const params = `query=${encodeURIComponent(query)}${inTitleOnly ? '&fields=a/title' : ''}`;
     return this.nuclia.rest.get<Search.Suggestions | { detail: string }>(`${this.path}/suggest?${params}`).pipe(
       catchError(() => of({ error: true } as Search.Suggestions)),
       map((res) =>

@@ -106,7 +106,7 @@
         cdn="/"
         lang="en"
         placeholder="Search"
-        features="filter" />
+        features="filter,suggestions" />
       <NucliaSearchResults />
     </div>
   {/if}
