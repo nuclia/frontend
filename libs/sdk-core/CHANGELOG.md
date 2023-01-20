@@ -8,6 +8,7 @@
 
 - Add `filename` and `md5` in `CloudLink` model
 - Add `updateField` method on resource
+- Allow to get suggestions based on title only
 
 # 1.1.1 (2023-01-03)
 
