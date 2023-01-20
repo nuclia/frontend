@@ -151,13 +151,12 @@ export const entityRelations = searchState.reader((state) =>
     .map(([entity, relations]) => ({
       entity,
       relations: relations.related_to
-        // TODO: filter resource relations appropriately when backend is ready
-        .filter((relation) => !/^[0-9a-z]{32}$/.test(relation.entity))
+        .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
         .reduce((acc, current) => {
-          if (!acc[current.relation]) {
-            acc[current.relation] = [current.entity];
+          if (!acc[current.relation_label]) {
+            acc[current.relation_label] = [current.entity];
           } else {
-            acc[current.relation].push(current.entity);
+            acc[current.relation_label].push(current.entity);
           }
           return acc;
         }, {} as { [relation: string]: string[] }),

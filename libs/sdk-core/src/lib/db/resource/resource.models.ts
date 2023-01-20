@@ -73,16 +73,21 @@ export interface UserMetadata {
   relations?: Relation[];
 }
 
+export type RelationType = 'ABOUT' | 'CHILD' | 'COLAB' | 'ENTITY' | 'OTHER' | 'SYNONYM';
+export type RelationValueType = 'entity' | 'label' | 'resource' | 'user';
+
 export interface Relation {
-  relation?: 'CHILD' | 'ABOUT' | 'ENTITY' | 'COLAB' | 'OTHER';
-  properties?: { [key: string]: string };
-  resource?: string;
+  relation: RelationType;
   label?: string;
-  user?: string;
-  other?: string;
-  entity?: {
-    entity: string;
-    entity_type: string;
+  from?: {
+    value: string;
+    type: RelationValueType;
+    group?: string;
+  };
+  to: {
+    value: string;
+    type: RelationValueType;
+    group?: string;
   };
 }
 
