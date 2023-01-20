@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="4.0.1" version="1.3">
+<babeledit_project be_version="4.0.3" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -12700,46 +12700,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.labeler</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.settings.processes.labeler.info</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>stash.settings.processes.ner</name>
 						<description/>
 						<comment/>
@@ -12761,6 +12721,86 @@
 					</concept_node>
 					<concept_node>
 						<name>stash.settings.processes.ner.info</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.settings.processes.paragraph_labeler</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.settings.processes.paragraph_labeler.info</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.settings.processes.resource_labeler</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.settings.processes.resource_labeler.info</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -12881,6 +12921,26 @@
 					</concept_node>
 					<concept_node>
 						<name>stash.settings.processes.training.select-entities</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.settings.processes.training.select-labelset</name>
 						<description/>
 						<comment/>
 						<default_text/>
