@@ -18,11 +18,11 @@ export const search = (
   if (inTitleOnly) {
     params.fields = ['a/title'];
   }
-  Object.entries(others || {}).forEach(([k, v]) => (params[k] = Array.isArray(v) ? v.map((el) => `${el}`) : `${v}`));
-  const shards = nuclia.currentShards?.[kbid] || [];
-  params.shards = shards;
+
+  params.shards = nuclia.currentShards?.[kbid] || [];
+
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params)}`)
+    ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params, others)}`)
     : nuclia.rest.post<Search.Results | { detail: string }>(`${path}/search`, params);
   return searchMethod.pipe(
     catchError(() => of({ error: true } as Search.Results)),
@@ -35,7 +35,16 @@ export const search = (
   );
 };
 
-const serialize = (params: { [key: string]: string | string[] }): string => {
+const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions): string => {
+  Object.entries(others || {}).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      params[key] = value.map((el) => `${el}`);
+    } else if (typeof value === 'object') {
+      Object.entries(value).forEach(([k, v]) => (params[`${key}_${k}`] = `${v}`));
+    } else {
+      params[key] = `${value}`;
+    }
+  });
   const queryParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) =>
     Array.isArray(value) ? value.forEach((item) => queryParams.append(key, item)) : queryParams.append(key, value),

@@ -3,6 +3,14 @@ import type { FIELD_TYPE, IResource } from '../resource';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
+export type SortOrder = 'asc' | 'desc';
+
+export interface SortOption {
+  field: 'created' | 'modified' | 'title';
+  limit?: number;
+  order?: SortOrder;
+}
+
 export interface SearchOptions {
   // non API-official options
   inTitleOnly?: boolean;
@@ -11,7 +19,7 @@ export interface SearchOptions {
   highlight?: boolean;
   faceted?: string[];
   filters?: string[];
-  sort?: 'created' | 'modified';
+  sort?: SortOption;
   page_number?: number;
   page_size?: number;
   max_score?: number;
