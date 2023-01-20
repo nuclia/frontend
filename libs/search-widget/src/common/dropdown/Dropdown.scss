@@ -1,7 +1,7 @@
 .sw-dropdown {
   background-color: var(--color-light-stronger);
   box-shadow: var(--shadow-modal);
-  position: absolute;
+  position: fixed;
   width: var(--rhythm-27);
   z-index: 10000;
 }
