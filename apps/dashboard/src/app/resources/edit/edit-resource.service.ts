@@ -35,8 +35,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   EditResourceView,
+  getDataKeyFromFieldType,
   getUpdatedUserFieldMetadata,
-  ParagraphWithTextAndAnnotations,
+  ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
 
 @Injectable({
@@ -112,7 +113,7 @@ export class EditResourceService {
     );
   }
 
-  saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndAnnotations[]): Observable<void | null> {
+  saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndClassifications[]): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
@@ -167,7 +168,7 @@ export class EditResourceService {
       return of(null);
     }
 
-    const dataKey = this.getDataKeyFromFieldType(fieldType);
+    const dataKey = getDataKeyFromFieldType(fieldType);
     const updatedData: ResourceData = dataKey
       ? {
           ...currentResource.data,
@@ -200,7 +201,7 @@ export class EditResourceService {
       return of(null);
     }
 
-    const dataKey = this.getDataKeyFromFieldType(FIELD_TYPE.file);
+    const dataKey = getDataKeyFromFieldType(FIELD_TYPE.file);
     const updatedData: ResourceData = dataKey
       ? {
           ...currentResource.data,
@@ -309,19 +310,6 @@ export class EditResourceService {
       );
   }
 
-  getDataKeyFromFieldType(fieldType: FIELD_TYPE): keyof ResourceData | null {
-    // Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
-    switch (fieldType) {
-      case FIELD_TYPE.text:
-      case FIELD_TYPE.file:
-      case FIELD_TYPE.link:
-      case FIELD_TYPE.keywordset:
-        return `${fieldType}s`;
-      default:
-        return null;
-    }
-  }
-
   getParagraphId(field: FieldId, paragraph: Paragraph): string {
     const resource = this._resource.getValue();
     const typeAbbreviation = field.field_type === 'link' ? 'u' : field.field_type[0];
@@ -360,7 +348,7 @@ export class EditResourceService {
     currentData: ResourceData,
     reduceCallback: (previous: any, current: [string, any]) => ResourceData,
   ): ResourceData {
-    const dataKey = this.getDataKeyFromFieldType(fieldType);
+    const dataKey = getDataKeyFromFieldType(fieldType);
     return dataKey
       ? {
           ...currentData,

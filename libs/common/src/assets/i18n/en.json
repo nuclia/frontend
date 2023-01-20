@@ -536,6 +536,7 @@
 	"resource.title": "Resource title",
 	"resource.toast.save-successful": "",
 	"resource.tooltip.add-field": "Add a field",
+	"resource.tooltip.annotation": "Annotation",
 	"resource.tooltip.classification": "Classification",
 	"resource.tooltip.edition": "Edition",
 	"resource.visible_columns_dropdown": "Columns displayed",

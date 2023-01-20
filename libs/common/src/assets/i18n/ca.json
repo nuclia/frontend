@@ -488,6 +488,7 @@
 	"resource.thumbnail.help": "Penja una imatge o tria entre els suggeriments",
 	"resource.title": "Títol del recurs",
 	"resource.tooltip.add-field": "Afegeix un camp",
+	"resource.tooltip.annotation": "Anotació",
 	"resource.tooltip.classification": "Classificació",
 	"resource.tooltip.edition": "Edició",
 	"resource.visible_columns_dropdown": "Es mostren les columnes",

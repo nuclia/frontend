@@ -52,6 +52,7 @@ import { AddFieldComponent } from './edit/add-field/add-field.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { ParagraphClassificationComponent } from './edit/classification/paragraph-classification/paragraph-classification.component';
 import { DatasetSelectorComponent } from './sample-dataset/dataset-selector/dataset-selector.component';
+import { ParagraphAnnotationComponent } from './edit/annotation/paragraph-annotation/paragraph-annotation.component';
 
 const Components = [
   ResourceListComponent,
@@ -70,6 +71,7 @@ const Components = [
   AddFieldComponent,
   DropzoneComponent,
   ParagraphClassificationComponent,
+  ParagraphAnnotationComponent,
 ];
 
 const ROUTES: Routes = [
@@ -105,6 +107,14 @@ const ROUTES: Routes = [
           {
             path: 'classification/:fieldType/:fieldId',
             component: ParagraphClassificationComponent,
+          },
+          {
+            path: 'annotation',
+            component: ParagraphAnnotationComponent,
+          },
+          {
+            path: 'annotation/:fieldType/:fieldId',
+            component: ParagraphAnnotationComponent,
           },
           {
             path: 'add-field',

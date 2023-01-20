@@ -488,6 +488,7 @@
 	"resource.thumbnail.help": "Sube una imagen o elige de las sugerencias",
 	"resource.title": "Título del recurso",
 	"resource.tooltip.add-field": "Agregar un campo",
+	"resource.tooltip.annotation": "Anotación",
 	"resource.tooltip.classification": "Clasificación",
 	"resource.tooltip.edition": "Edición",
 	"resource.visible_columns_dropdown": "Columnas mostradas",

@@ -25,6 +25,13 @@
         aspect="basic"
         (click)="onViewChange()"></pa-button>
       <pa-button
+        icon="form"
+        routerLink="annotation"
+        [active]="currentView === 'annotation'"
+        paTooltip="resource.tooltip.annotation"
+        aspect="basic"
+        (click)="onViewChange()"></pa-button>
+      <pa-button
         icon="plus"
         routerLink="add-field"
         [active]="currentView === 'add-field'"
@@ -38,6 +45,7 @@
     <nav>
       <ul *ngIf="currentView !== 'add-field'">
         <li
+          *ngIf="currentView !== 'annotation'"
           [class.active]="(currentField | async) === 'profile'"
           (click)="navigateToField('profile')">
           <pa-icon
@@ -47,7 +55,11 @@
         </li>
         <li
           *ngFor="let field of fields | async"
-          [class.active]="isActive(field) | async"
+          [class.active]="
+            activeField !== 'profile' &&
+            activeField?.field_id === field.field_id &&
+            activeField?.field_type === field.field_type
+          "
           (click)="navigateToField(field)">
           <pa-icon
             [name]="field.icon"
