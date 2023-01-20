@@ -3,7 +3,9 @@
 
 :host {
   pa-textarea ::ng-deep textarea {
-    height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$footer-height} - #{rhythm(7)});
+    height: calc(
+      100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+    );
     min-height: rhythm(10);
   }
 }

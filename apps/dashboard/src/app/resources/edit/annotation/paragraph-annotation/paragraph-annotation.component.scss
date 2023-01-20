@@ -1,0 +1,36 @@
+@import 'variables';
+@import '../../edit-resource.tokens';
+
+.paragraph-annotation {
+  display: flex;
+}
+
+.paragraphs-container {
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+  );
+  overflow: auto;
+
+  .paragraph-container {
+    margin-bottom: rhythm(2);
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.entity-families-container {
+  background: #0cad55;
+  height: 500px;
+  position: absolute;
+  top: calc(var(--app-topbar-height) + #{$height-header} + #{$padding-top-page-container});
+  right: $padding-horizontal-header;
+  width: rhythm(32);
+}
+
+@media (min-width: $size-viewport-xlarge-min) {
+  .entity-families-container {
+    right: $padding-horizontal-header-xlarge;
+  }
+}

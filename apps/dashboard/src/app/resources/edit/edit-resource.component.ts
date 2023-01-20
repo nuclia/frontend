@@ -42,6 +42,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   );
 
   activeField?: FieldId | 'profile';
+  hasRightPanel = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,6 +63,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.editResource.currentView.subscribe((view) => {
       this.currentView = view;
+      this.hasRightPanel = view === 'annotation';
       this.cdr.detectChanges();
     });
     this.currentField.pipe(takeUntil(this.unsubscribeAll)).subscribe((current) => {

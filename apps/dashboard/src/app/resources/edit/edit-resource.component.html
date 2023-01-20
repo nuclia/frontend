@@ -68,7 +68,9 @@
         </li>
       </ul>
     </nav>
-    <div class="page-content">
+    <div
+      class="page-content"
+      [class.has-right-panel]="hasRightPanel">
       <router-outlet></router-outlet>
     </div>
   </div>

@@ -9,7 +9,11 @@
 }
 
 .paragraphs-container {
-  max-height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$footer-height} - #{rhythm(20)});
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{rhythm(
+        7
+      )} - #{rhythm(7)}
+  );
   overflow: auto;
 
   &.disabled .paragraph-container p {

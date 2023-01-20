@@ -1,1 +1,27 @@
-<p>paragraph-annotation works!</p>
+<div class="paragraph-annotation">
+  <div class="paragraphs-container">
+    <div
+      class="paragraph-container"
+      *ngFor="let paragraph of paragraphs">
+      <p>{{ paragraph.text }}</p>
+    </div>
+  </div>
+
+  <div class="entity-families-container"></div>
+</div>
+
+<footer class="form-buttons">
+  <pa-button
+    kind="primary"
+    [disabled]="!isModified || isSaving"
+    (click)="save()">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+
+  <pa-button
+    aspect="basic"
+    [disabled]="!isModified || isSaving"
+    (click)="cancel()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+</footer>

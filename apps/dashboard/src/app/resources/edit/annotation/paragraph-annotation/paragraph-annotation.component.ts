@@ -79,4 +79,12 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
+
+  save() {
+    // TODO
+  }
+
+  cancel() {
+    // TODO
+  }
 }
