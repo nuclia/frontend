@@ -37,6 +37,7 @@ import {
   ResourceStatus,
   resourceToAlgoliaFormat,
   Search,
+  SortOrder,
 } from '@nuclia/core';
 import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -55,7 +56,7 @@ interface ListFilters {
   page?: string;
   size?: string;
   sortBy?: string;
-  sortDirection?: 'asc' | 'desc';
+  sortDirection?: SortOrder;
 }
 
 interface KeyValue {
@@ -482,7 +483,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
             inTitleOnly: titleOnly,
             page_number: page,
             page_size: this.pageSize,
-            sort: 'created',
+            sort: { field: 'created' },
             with_status: this.statusDisplayed.value,
           }),
           this.labelSets$.pipe(take(1)),

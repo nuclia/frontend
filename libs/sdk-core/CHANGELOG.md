@@ -1,4 +1,4 @@
-# 1.1.2 (unreleased)
+# 1.1.2 (2023-01-20)
 
 ### Bugfix
 
@@ -9,6 +9,7 @@
 - Add `filename` and `md5` in `CloudLink` model
 - Add `updateField` method on resource
 - Allow to get suggestions based on title only
+- Sort option on search is now an object. Add corresponding `SortOption` interface and `SortOrder` type in our model.
 
 # 1.1.1 (2023-01-03)
 
