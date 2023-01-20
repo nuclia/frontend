@@ -120,14 +120,8 @@
 
   const showMoreFilters = () => {
     if (moreFilterElement && inputContainerElement) {
-      const containerRect = inputContainerElement.getBoundingClientRect();
       const buttonRect = moreFilterElement.getBoundingClientRect();
-      moreFilterPosition = {
-        left: popupSearch
-          ? buttonRect.left - containerRect.right - 16
-          : buttonRect.left - containerRect.width + buttonRect.width + 16,
-        top: buttonRect.top - containerRect.top + buttonRect.height,
-      };
+      moreFilterPosition = { left: buttonRect.left, top: buttonRect.top + buttonRect.height + 6 };
     }
     displayMoreFilters = true;
   };
@@ -275,6 +269,7 @@
 {/if}
 {#if showFilterSubmenu}
   <Dropdown
+    secondary
     position={submenuPosition}
     on:close={() => (showFilterSubmenu = false)}>
     <ul class="sw-dropdown-options">

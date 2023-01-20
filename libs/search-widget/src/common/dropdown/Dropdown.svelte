@@ -1,8 +1,19 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { clickOutside } from '../actions/actions';
+  import { freezeBackground, unblockBackground } from '../modal/modal.utils';
 
   export let position: { top: number; left: number } | undefined = undefined;
+  export let secondary = false;
+
+  onMount(() => {
+    if (!secondary) {
+      freezeBackground();
+      return () => {
+        unblockBackground();
+      };
+    }
+  });
 
   const dispatch = createEventDispatcher();
   const close = () => {
