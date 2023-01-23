@@ -1,5 +1,5 @@
 import type { ExtractedDataTypes, ResourceProperties } from '../kb';
-import type { FIELD_TYPE, IResource, RelationType, RelationValueType } from '../resource';
+import type { FIELD_TYPE, IResource, RelationType, RelationEntityType } from '../resource';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -104,7 +104,7 @@ export namespace Search {
 
   export interface Relation {
     entity: string;
-    entity_type: RelationValueType;
+    entity_type: RelationEntityType;
     relation: RelationType;
     relation_label: string;
     direction: 'in' | 'out';
