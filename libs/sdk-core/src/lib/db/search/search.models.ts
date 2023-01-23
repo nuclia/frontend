@@ -1,5 +1,5 @@
 import type { ExtractedDataTypes, ResourceProperties } from '../kb';
-import type { FIELD_TYPE, IResource } from '../resource';
+import type { FIELD_TYPE, IResource, RelationType, RelationEntityType } from '../resource';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -55,6 +55,7 @@ export namespace Search {
     sentences?: Sentences;
     paragraphs?: Paragraphs;
     fulltext?: Fulltext;
+    relations?: Relations;
     shards?: string[];
   }
 
@@ -91,6 +92,22 @@ export namespace Search {
   export interface Paragraphs extends Pagination {
     results: Paragraph[];
     facets: FacetsResult;
+  }
+
+  export interface Relations {
+    entities: {
+      [key: string]: {
+        related_to: Relation[];
+      };
+    };
+  }
+
+  export interface Relation {
+    entity: string;
+    entity_type: RelationEntityType;
+    relation: RelationType;
+    relation_label: string;
+    direction: 'in' | 'out';
   }
 
   export interface FacetsResult {

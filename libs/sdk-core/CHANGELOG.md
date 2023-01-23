@@ -1,3 +1,10 @@
+# 1.1.3 (unreleased)
+
+### Improvements
+
+- Update `Relation` interface
+- Add `Search.Relations`and `Search.Relation` interfaces
+
 # 1.1.2 (2023-01-20)
 
 ### Bugfix

@@ -108,6 +108,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               filter: [config.features.includes('filter')],
               navigateToLink: [config.features.includes('navigateToLink')],
               permalink: [config.features.includes('permalink')],
+              relations: [config.features.includes('relations')],
               suggestLabels: [config.features.includes('suggestLabels')],
               suggestions: [config.features.includes('suggestions')],
             }),

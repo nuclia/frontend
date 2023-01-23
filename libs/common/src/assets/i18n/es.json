@@ -628,6 +628,8 @@
 	"stash.widgets.publish_kb": "Puedes publicarlo desde el",
 	"stash.widgets.publish_kb_link": "Tablero",
 	"stash.widgets.recommendations": "Recomendaciones",
+	"stash.widgets.relations": "Relaciones",
+	"stash.widgets.relations.help": "Muestra información de las entidades relacionadas en los resultados de búsqueda.",
 	"stash.widgets.snippet": "Fragmento de código",
 	"stash.widgets.suggestLabels": "Sugerir etiquetas",
 	"stash.widgets.suggestLabels.help": "Cuando se ha realizado el entrenamiento de la intención de búsqueda de etiquetas, muestra las etiquetas sugeridas en función de la consulta",

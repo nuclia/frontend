@@ -11,6 +11,7 @@
   import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
   import TextTile from '../../tiles/text-tile/TextTile.svelte';
   import {
+    entityRelations,
     hasSearchError,
     isEmptySearchQuery,
     pendingResults,
@@ -50,18 +51,37 @@
     {:else if $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      <div class="results">
-        {#each $smartResults as result}
-          {#if result.icon === 'application/pdf'}
-            <PdfTile {result} />
-          {:else if result.icon.includes('video')}
-            <VideoTile {result} />
-          {:else if result.icon.includes('audio')}
-            <AudioTile {result} />
-          {:else}
-            <TextTile {result} />
-          {/if}
-        {/each}
+      <div class="results-container">
+        <div
+          class="results"
+          class:with-relations={$entityRelations.length > 0}>
+          {#each $smartResults as result}
+            {#if result.icon === 'application/pdf'}
+              <PdfTile {result} />
+            {:else if result.icon.includes('video')}
+              <VideoTile {result} />
+            {:else if result.icon.includes('audio')}
+              <AudioTile {result} />
+            {:else}
+              <TextTile {result} />
+            {/if}
+          {/each}
+        </div>
+        {#if $entityRelations.length > 0}
+          <div class="relations">
+            {#each $entityRelations as entity}
+              <div class="entity">
+                <div class="entity-name">{entity.entity}</div>
+                {#each Object.entries(entity.relations) as [name, related]}
+                  <div class="relation">
+                    <span class="relation-name">{name}:</span>
+                    <span>{related.join(',')}</span>
+                  </div>
+                {/each}
+              </div>
+            {/each}
+          </div>
+        {/if}
       </div>
     {/if}
   {/if}
