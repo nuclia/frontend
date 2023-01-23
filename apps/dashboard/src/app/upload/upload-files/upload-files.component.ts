@@ -104,7 +104,7 @@ export class UploadFilesComponent {
     const nonMediaFiles = this.getFilesByType(this.files, false);
     return [
       ...nonMediaFiles.filter((file) => file.size <= this.maxFileSize),
-      ...mediFiles.filter((file) => file.size <= this.maxMediaFileSize),
+      ...mediaFiles.filter((file) => file.size <= this.maxMediaFileSize),
     ];
   }
 
