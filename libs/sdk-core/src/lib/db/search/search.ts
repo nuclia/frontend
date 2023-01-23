@@ -23,7 +23,7 @@ export const search = (
 
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params, others)}`)
-    : nuclia.rest.post<Search.Results | { detail: string }>(`${path}/search`, params);
+    : nuclia.rest.post<Search.Results | { detail: string }>(`${path}/search`, { ...params, ...others });
   return searchMethod.pipe(
     catchError(() => of({ error: true } as Search.Results)),
     map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
