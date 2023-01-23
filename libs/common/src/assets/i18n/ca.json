@@ -436,6 +436,7 @@
 	"resource.entities.loc": "Geografia",
 	"resource.entities.mail": "Emails",
 	"resource.entities.money": "Diners",
+	"resource.entities.no-entity": "Encara no hi ha cap entitat",
 	"resource.entities.norp": "Nacionalitats",
 	"resource.entities.org": "Organitzacions",
 	"resource.entities.percent": "Percentatge",

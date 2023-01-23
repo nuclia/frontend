@@ -3,7 +3,7 @@ import { EditResourceService } from '../../edit-resource.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, filter, map, Observable, Subject, switchMap } from 'rxjs';
 import { FieldId, Paragraph, Resource } from '@nuclia/core';
-import { getParagraphs, ParagraphWithText } from '../../edit-resource.helpers';
+import { EntityGroup, getParagraphs, ParagraphWithText } from '../../edit-resource.helpers';
 
 @Component({
   selector: 'app-paragraph-annotation',
@@ -33,6 +33,9 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   private paragraphsBackup: ParagraphWithText[] = [];
   paragraphs: ParagraphWithText[] = [];
 
+  selectedFamily?: EntityGroup;
+  entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities();
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -54,6 +57,7 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editResource.setCurrentView('annotation');
 
+    // Load paragraphs
     combineLatest([this.fieldId, this.resource])
       .pipe(
         map(([fieldId, resource]) => {

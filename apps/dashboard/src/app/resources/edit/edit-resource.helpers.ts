@@ -24,6 +24,14 @@ export interface ParagraphWithTextAndClassifications extends ParagraphWithText {
   generatedClassifications: Classification[];
 }
 
+export interface EntityGroup {
+  id: string;
+  title: string;
+  color: string;
+  custom?: boolean;
+  entities: string[];
+}
+
 /**
  * Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
  */
@@ -81,4 +89,33 @@ export const getUpdatedUserFieldMetadata: (
     });
   }
   return newEntries;
+};
+
+export const generatedEntitiesColor: { [key: string]: string } = {
+  DATE: '#ff8989',
+  EVENT: '#cba2da',
+  FAC: '#81d8ac',
+  GPE: '#454ade',
+  LANGUAGE: '#d1d3ff',
+  LAW: '#1E264F',
+  LOC: '#b7a38d',
+  MAIL: '#e81c66',
+  MONEY: '#ff8c4b',
+  NORP: '#743ccf',
+  ORG: '#6eb0ec',
+  PERCENT: '#1e264f',
+  PERSON: '#ffe186',
+  PRODUCT: '#d74f57',
+  QUANTITY: '#b035c9',
+  TIME: '#21b8a6',
+  WORK_OF_ART: '#ffbccc',
+};
+
+export const addEntitiesToGroups = (allGroups: EntityGroup[], entitiesMap: { [key: string]: string[] }) => {
+  Object.entries(entitiesMap).forEach(([groupId, entities]) => {
+    const group = allGroups.find((g) => g.id === groupId);
+    if (group) {
+      group.entities = group.entities.concat(entities);
+    }
+  });
 };

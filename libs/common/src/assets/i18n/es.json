@@ -436,6 +436,7 @@
 	"resource.entities.loc": "Geografía",
 	"resource.entities.mail": "Emails",
 	"resource.entities.money": "Dinero",
+	"resource.entities.no-entity": "Ninguna entidad todavía",
 	"resource.entities.norp": "Nacionalidades",
 	"resource.entities.org": "Organizaciones",
 	"resource.entities.percent": "Porcentaje",

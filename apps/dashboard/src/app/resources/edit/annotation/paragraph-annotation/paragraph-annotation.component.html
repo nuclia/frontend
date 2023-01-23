@@ -7,7 +7,33 @@
     </div>
   </div>
 
-  <div class="entity-families-container"></div>
+  <div class="entity-families-container">
+    <pa-expander
+      *ngFor="let family of entityFamilies | async"
+      emitOnly
+      [expanded]="selectedFamily?.id === family.id"
+      (toggleExpander)="selectedFamily = selectedFamily?.id === family.id ? undefined : family">
+      <pa-expander-header>
+        <div
+          class="family-color"
+          [style.background-color]="family.color"></div>
+        <span class="family-title">{{ family.title }}</span>
+        ({{ family.entities.length }})
+      </pa-expander-header>
+      <pa-expander-body>
+        <ul
+          class="entity-list"
+          [style.border-left-color]="family.color">
+          <li
+            *ngFor="let entity of family.entities"
+            paEllipsisTooltip>
+            {{ entity }}
+          </li>
+          <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
+        </ul>
+      </pa-expander-body>
+    </pa-expander>
+  </div>
 </div>
 
 <footer class="form-buttons">

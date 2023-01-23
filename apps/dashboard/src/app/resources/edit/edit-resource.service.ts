@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   filter,
   forkJoin,
   map,
@@ -34,7 +35,10 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  addEntitiesToGroups,
   EditResourceView,
+  EntityGroup,
+  generatedEntitiesColor,
   getDataKeyFromFieldType,
   getUpdatedUserFieldMetadata,
   ParagraphWithTextAndClassifications,
@@ -83,6 +87,37 @@ export class EditResourceService {
 
   loadResource(resourceId: string) {
     this._loadResource(resourceId).subscribe();
+  }
+
+  loadResourceEntities(): Observable<EntityGroup[]> {
+    return combineLatest([
+      this.resource.pipe(
+        filter((resource) => !!resource),
+        map((resource) => resource as Resource),
+      ),
+      this.sdk.currentKb.pipe(switchMap((kb) => kb.getEntities())),
+    ]).pipe(
+      map(([resource, allEntities]) => {
+        const allGroups: EntityGroup[] = Object.entries(allEntities)
+          .map(([groupId, group]) => {
+            const generatedColor = generatedEntitiesColor[groupId];
+            const title = group.title || (generatedColor ? `resource.entities.${groupId.toLowerCase()}` : groupId);
+            return {
+              id: groupId,
+              title: this.translate.instant(title),
+              color: group.color || generatedColor,
+              entities: [],
+              custom: group.custom,
+            };
+          })
+          .sort((a, b) => a.title.localeCompare(b.title));
+
+        addEntitiesToGroups(allGroups, resource.getNamedEntities());
+        addEntitiesToGroups(allGroups, resource.getAnnotatedEntities());
+        allGroups.forEach((group) => group.entities.sort((a, b) => a.localeCompare(b)));
+        return allGroups;
+      }),
+    );
   }
 
   getField(fieldType: keyof ResourceData, fieldId: string): Observable<IFieldData> {

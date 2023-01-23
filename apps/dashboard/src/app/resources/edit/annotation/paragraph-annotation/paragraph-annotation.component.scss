@@ -21,12 +21,44 @@
 }
 
 .entity-families-container {
-  background: #0cad55;
-  height: 500px;
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{rhythm(5)}
+  );
+  overflow: auto;
   position: absolute;
   top: calc(var(--app-topbar-height) + #{$height-header} + #{$padding-top-page-container});
   right: $padding-horizontal-header;
   width: rhythm(32);
+
+  pa-expander ::ng-deep .pa-expander-header {
+    padding-left: rhythm(1);
+  }
+
+  .family-title {
+    font-weight: $font-weight-semi-bold;
+  }
+
+  .family-color {
+    height: rhythm(5);
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: rhythm(1);
+  }
+
+  .entity-list {
+    border-left: 1px solid;
+    padding: rhythm(0.5) rhythm(1);
+    list-style: none;
+
+    li {
+      line-height: rhythm(4);
+
+      &:not(:last-of-type) {
+        box-shadow: $box-shadow-collapsed-expander-header;
+      }
+    }
+  }
 }
 
 @media (min-width: $size-viewport-xlarge-min) {
