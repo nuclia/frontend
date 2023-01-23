@@ -66,9 +66,6 @@ app-label-field {
   &:first-child {
     border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
   }
-  .file-select {
-    flex: 0 0 rhythm(3);
-  }
   .file-name {
     flex: 0 1 290px;
     @include text-truncate();
@@ -77,27 +74,9 @@ app-label-field {
   .file-size {
     flex: 0 0 rhythm(10);
   }
-  .file-lang {
-    flex: 1 0 rhythm(6);
-    text-align: center;
-  }
   .file-actions {
-    flex: 0 0 auto;
-  }
-}
-
-.select-language {
-  &-warning {
-    margin-bottom: rhythm(2);
-    font-weight: var(--stf-font-weight-semibold);
-    svg {
-      display: block;
-    }
-  }
-
-  select {
-    min-width: 200px;
-    margin-bottom: rhythm(0.5);
+    flex: 1 0 auto;
+    text-align: right;
   }
 }
 

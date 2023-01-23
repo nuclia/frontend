@@ -73,13 +73,12 @@
 
     <div
       class="file-list"
-      *ngIf="filesWithoutAudio.length > 0">
+      *ngIf="files.length > 0">
       <div
         class="file-item"
-        *ngFor="let file of filesWithoutAudio">
+        *ngFor="let file of files">
         <div class="file-name">{{ file.name }}</div>
         <div class="file-size">{{ file.size | size }}</div>
-        <div class="file-lang"></div>
         <div class="file-actions">
           <pa-button
             icon="trash"
@@ -93,65 +92,10 @@
       </div>
     </div>
 
-    <div
-      class="select-language"
-      *ngIf="filesWithAudio.length > 0">
-      <div
-        class="select-language-warning"
-        fxLayout="row"
-        fxLayoutAlign="start center"
-        fxLayoutGap="8px">
-        <pa-icon name="warning"></pa-icon>
-        <div>{{ (filesWithAudio.length === 1 ? 'upload.audio_detected' : 'upload.audios_detected') | translate }}</div>
-      </div>
-
-      <div class="file-list">
-        <ng-container *ngFor="let file of filesWithAudio; let i = index">
-          <div class="file-item">
-            <div
-              class="file-select"
-              *ngIf="filesWithAudio.length > 1">
-              <pa-checkbox
-                [id]="'upload-file-' + i"
-                [value]="fileSelection.isSelected(file)"
-                (change)="fileSelection.toggle(file)"></pa-checkbox>
-            </div>
-            <div class="file-name">
-              <label [for]="'upload-file-' + i">{{ file.name }}</label>
-            </div>
-            <div class="file-size">{{ file.size | size }}</div>
-            <div class="file-lang">{{ file.lang || '–' }}</div>
-            <div class="file-actions">
-              <pa-button
-                icon="trash"
-                aspect="basic"
-                size="small"
-                iconSize="small"
-                (click)="removeFile(file)">
-                Remove file
-              </pa-button>
-            </div>
-          </div>
-        </ng-container>
-      </div>
-      <select
-        stfSelect
-        [formControl]="langMultiSelect"
-        (change)="onSelectLanguageMulti($event)">
-        <option value="">{{ 'generic.select_language' | translate }}</option>
-        <option
-          [value]="language.lang"
-          *ngFor="let language of languageList">
-          {{ language.label }}
-        </option>
-      </select>
-    </div>
-
     <ncom-hint label="How to upload a file with the API">
       <pre><code class="highlight">curl $$KB_URL$$/upload \
   -X POST \
   -H "content-type: video/mp4"
-  -H "x-language: fr"
   -H "authorization: Bearer $$AUTH_TOKEN$$" \
   -T /path/to/your-video.mp4</code></pre>
       <p>
@@ -181,8 +125,7 @@
 
     <pa-button
       kind="primary"
-      [paTooltip]="!(files.length > 0 && pendingLangs > 0) ? null : 'upload.audios_detected'"
-      [disabled]="files.length === 0 || (files.length > 0 && pendingLangs > 0) || limitsExceeded"
+      [disabled]="files.length === 0 || limitsExceeded"
       (click)="startUpload()">
       {{ 'generic.add' | translate }}
     </pa-button>

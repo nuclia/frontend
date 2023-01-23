@@ -1,11 +1,8 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { UntypedFormControl } from '@angular/forms';
 import { filter, take } from 'rxjs';
 import { DroppedFile, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, UploadService } from '../upload.service';
-import { TranslateService } from '@ngx-translate/core';
 
 const GENERAL_LABELSET = 'General';
 
@@ -21,17 +18,8 @@ export class UploadFilesComponent {
   @Output() upload = new EventEmitter<void>();
 
   files: FileWithMetadata[] = [];
-  filesWithAudio: FileWithMetadata[] = [];
-  filesWithoutAudio: FileWithMetadata[] = [];
   selectedLabels: Classification[] = [];
   hasBaseDropZoneOver: boolean = false;
-  langSelect = new UntypedFormControl('');
-  langMultiSelect = new UntypedFormControl('');
-  languageList = STFUtils.supportedAudioLanguages()
-    .map((lang) => ({ lang, label: this.translateService.instant(`language.${lang}`) as string }))
-    .sort((langA, langB) => langA.label.localeCompare(langB.label));
-  pendingLangs = 0;
-  fileSelection = new SelectionModel<FileWithMetadata>(true, []);
   limitsExceeded = false;
   maxFileSize = 0;
   maxMediaFileSize = 0;
@@ -42,7 +30,6 @@ export class UploadFilesComponent {
     private uploadService: UploadService,
     private tracking: STFTrackingService,
     private stateService: StateService,
-    private translateService: TranslateService,
   ) {
     this.stateService.account
       .pipe(
@@ -73,9 +60,6 @@ export class UploadFilesComponent {
   }
 
   private updateFiles() {
-    this.filesWithAudio = this.getFilesByType(this.files, true);
-    this.filesWithoutAudio = this.getFilesByType(this.files, false);
-    this.pendingLangs = this.getPendingLangs();
     this.limitsExceeded = this.files.length > this.getAllowedFiles().length;
     this.cdr?.markForCheck();
   }
@@ -103,10 +87,6 @@ export class UploadFilesComponent {
     });
   }
 
-  getPendingLangs(): number {
-    return this.filesWithAudio.filter((f) => !f.lang).length;
-  }
-
   startUpload() {
     const files = this.getAllowedFiles();
     if (files.length > 0) {
@@ -120,26 +100,12 @@ export class UploadFilesComponent {
   }
 
   getAllowedFiles() {
+    const mediFiles = this.getFilesByType(this.files, true);
+    const nonMediaFiles = this.getFilesByType(this.files, false);
     return [
-      ...this.filesWithoutAudio.filter((file) => file.size <= this.maxFileSize),
-      ...this.filesWithAudio.filter((file) => file.size <= this.maxMediaFileSize),
+      ...nonMediaFiles.filter((file) => file.size <= this.maxFileSize),
+      ...mediFiles.filter((file) => file.size <= this.maxMediaFileSize),
     ];
-  }
-
-  onSelectLanguageMulti(event: Event) {
-    const lang = (<HTMLInputElement>event.target).value;
-    this.langMultiSelect.patchValue('', { emitEvent: false });
-    this.setLanguage(this.filesWithAudio.length === 1 ? this.filesWithAudio : this.fileSelection.selected, lang);
-    this.fileSelection.clear();
-    this.cdr.markForCheck();
-  }
-
-  setLanguage(files: FileWithMetadata[], lang: string) {
-    files.forEach((file) => {
-      file.lang = lang;
-    });
-    this.pendingLangs = this.getPendingLangs();
-    this.cdr.markForCheck();
   }
 
   private setLabels(files: FileWithMetadata[]): FileWithMetadata[] {
