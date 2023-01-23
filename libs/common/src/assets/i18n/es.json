@@ -572,6 +572,7 @@
 	"stash.settings.processes.training.time_requirement": "El tiempo necesario para entrenar es de unas {{hours}} horas que se restarán de las horas disponibles.",
 	"stash.side.activity": "Registro de actividad",
 	"stash.side.audit": "Auditoría",
+	"stash.side.classification": "Clasificación",
 	"stash.side.create": "Creación de contenido",
 	"stash.side.entities": "Conceptos clave",
 	"stash.side.import": "Importa ficheros",

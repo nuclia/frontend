@@ -644,6 +644,7 @@
 	"stash.side.activity": "Activity log",
 	"stash.side.api_keys": "API keys",
 	"stash.side.audit": "Audit",
+	"stash.side.classification": "Classification",
 	"stash.side.create": "Content creation",
 	"stash.side.entities": "Key concepts",
 	"stash.side.import": "Import files",
