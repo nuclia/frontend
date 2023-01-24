@@ -39,7 +39,7 @@
     class:hidden={hideIndicator}>
     {#if isPdf}
       <PageIndicator
-        page={paragraph.page}
+        page={paragraph.page >= 0 ? paragraph.page + 1 : undefined}
         {stack}
         {selected}
         {hovering} />
