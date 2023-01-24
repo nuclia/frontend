@@ -257,10 +257,6 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     );
   }
 
-  importDataset(datasetId: string): Observable<void> {
-    return this.nuclia.rest.post(`/import/${this.id}`, { export_id: datasetId });
-  }
-
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
   upload(buffer: ArrayBuffer, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
   upload(

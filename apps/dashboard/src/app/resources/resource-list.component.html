@@ -331,12 +331,23 @@
       </table>
     </div>
 
-    <div class="pagination">
+    <div
+      class="pagination"
+      *ngIf="!(isEmpty | async)">
       <stf-pagination
         [page]="page"
         [total]="totalPages"
         (prev)="prevPage()"
         (next)="nextPage()"></stf-pagination>
+    </div>
+    <div
+      *ngIf="isEmpty | async"
+      class="empty-kb">
+      <p>
+        <strong>{{ 'resource.empty' | translate }}</strong>
+      </p>
+      <p>{{ 'resource.empty.import' | translate }}</p>
+      <app-dataset-selector (imported)="onDatasetImport($event)"></app-dataset-selector>
     </div>
   </div>
 </div>

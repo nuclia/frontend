@@ -51,6 +51,7 @@ import { ResourceClassificationComponent } from './edit/classification/resource-
 import { AddFieldComponent } from './edit/add-field/add-field.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { ParagraphClassificationComponent } from './edit/classification/paragraph-classification/paragraph-classification.component';
+import { DatasetSelectorComponent } from './sample-dataset/dataset-selector/dataset-selector.component';
 
 const Components = [
   ResourceListComponent,
@@ -61,6 +62,14 @@ const Components = [
   ResourceTextComponent,
   ResourceLinkComponent,
   ResourceFileComponent,
+  DatasetImportComponent,
+  DatasetSelectorComponent,
+  LoadingModalComponent,
+  UploadButtonComponent,
+  ResourceClassificationComponent,
+  AddFieldComponent,
+  DropzoneComponent,
+  ParagraphClassificationComponent,
 ];
 
 const ROUTES: Routes = [
@@ -158,16 +167,7 @@ const ROUTES: Routes = [
     PaPopupModule,
     PaChipsModule,
   ],
-  declarations: [
-    ...Components,
-    DatasetImportComponent,
-    LoadingModalComponent,
-    UploadButtonComponent,
-    ResourceClassificationComponent,
-    AddFieldComponent,
-    DropzoneComponent,
-    ParagraphClassificationComponent,
-  ],
+  declarations: [...Components],
   exports: [],
 })
 export class ResourcesModule {}

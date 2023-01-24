@@ -1,0 +1,12 @@
+<div class="dataset-picker">
+  <pa-select
+    label="Pick a sample dataset"
+    [options]="sampleDatasets | async"
+    (valueChange)="selectDataset = $event"></pa-select>
+
+  <pa-button
+    [disabled]="!selectDataset || importing"
+    (click)="importDataset()">
+    {{ 'onboarding.dataset.import' | translate }}
+  </pa-button>
+</div>
