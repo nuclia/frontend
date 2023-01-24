@@ -47,7 +47,7 @@ jobs:
 
       - name: Install project dependencies
         run: |-
-          yarn --prefer-offline
+          yarn
           yarn missdev
 
       - name: Unit tests
@@ -261,7 +261,7 @@ jobs:
           cache: 'yarn'
       - name: Install project dependencies
         run: |-
-          yarn --prefer-offline
+          yarn
           yarn missdev
       - name: Build desktop app
         run: |-

@@ -1,6 +1,6 @@
 {
   "name": "nuclia",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "license": "MIT",
   "author": "Nuclia.cloud",
   "description": "Nuclia frontend apps and libs",
@@ -14,12 +14,12 @@
     "update": "nx migrate latest",
     "help": "nx help",
     "missdev": "npx missdev --output=../libs --https --default-to-master",
-    "prediction-build": "rimraf ./dist/prediction && cd ./libs/prediction && rollup -c && cd -",
+    "prediction-build": "rimraf ./dist/prediction && cd ./libs/prediction && rollup -c && cd ../..",
     "sdk-build": "run-script-os",
     "sdk-build:win32": "echo 'NO WIN32 BUILD'",
-    "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd -",
+    "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",
     "postsdk-build:default": "yarn sdk-build-node",
-    "sdk-build-node": "rimraf ./dist/sdk-core-node && cd ./libs/sdk-core/node && rollup -c && cd -",
+    "sdk-build-node": "rimraf ./dist/sdk-core-node && cd ./libs/sdk-core/node && rollup -c && cd ../..",
     "postinstall": "ngcc --properties es2020 browser module main"
   },
   "private": true,
@@ -160,5 +160,6 @@
     "tslint": "6.1.3",
     "typescript": "4.7.4",
     "vite": "4"
-  }
+  },
+  "packageManager": "yarn@3.3.1"
 }
