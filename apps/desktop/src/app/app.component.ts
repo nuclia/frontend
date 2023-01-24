@@ -12,8 +12,8 @@ import { getDeeplink } from './utils';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  version = '';
   isAuthenticated = true;
+  version = '';
   constructor(
     private config: BackendConfigurationService,
     private translate: TranslateService,

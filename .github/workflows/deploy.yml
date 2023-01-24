@@ -303,7 +303,7 @@ jobs:
           echo "APPLE_API_ISSUER=${{ secrets.APPLE_API_ISSUER }}" > .env
           echo "APPLE_API_KEY=${{ secrets.APPLE_API_KEY }}" >> .env
       - name: Package and publish electron app
-        run: npx nx run desktop-electron:make --publish always
+        run: PYTHON_PATH=$(which python) npx nx run desktop-electron:make --publish always
       - name: Release MacOSX installer
         uses: softprops/action-gh-release@v1
         if: startsWith(matrix.os, 'macos')
