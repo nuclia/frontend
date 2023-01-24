@@ -7,7 +7,7 @@ import {
   EntityDialogData,
   EntityDialogResponse,
 } from '../entity-dialog/entity-dialog.component';
-import { AppEntitiesGroup, GROUP_COLORS } from '../model';
+import { AppEntitiesGroup, generatedEntitiesColor } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
 import { EntitiesSearchService } from '../entities-search.service';
 import { EntitiesService } from '../../services/entities.service';
@@ -37,7 +37,7 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   editMode: boolean = false;
   searchResults$?: Observable<string[] | null>;
   updateExpander: number = 1;
-  colors = GROUP_COLORS;
+  colors = generatedEntitiesColor;
   unsubscribeAll = new Subject<void>();
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
 

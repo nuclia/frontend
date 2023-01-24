@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output } from '@angular/core';
-import { AppEntitiesGroup, Entity, GROUP_COLORS } from '../model';
+import { AppEntitiesGroup, Entity, generatedEntitiesColor } from '../model';
 
 @Component({
   selector: 'app-entity-name',
@@ -18,7 +18,7 @@ export class EntityNameComponent {
 
   @HostBinding('class.entity-name') defaultClass = true;
   @HostBinding('style.border-color') get color() {
-    return this.group && (this.group.color || GROUP_COLORS[this.group?.key]);
+    return this.group && (this.group.color || generatedEntitiesColor[this.group?.key]);
   }
 
   constructor() {}

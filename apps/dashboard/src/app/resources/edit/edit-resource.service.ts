@@ -38,11 +38,11 @@ import {
   addEntitiesToGroups,
   EditResourceView,
   EntityGroup,
-  generatedEntitiesColor,
   getDataKeyFromFieldType,
   getUpdatedUserFieldMetadata,
   ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
+import { generatedEntitiesColor } from '../../entities/model';
 
 @Injectable({
   providedIn: 'root',
