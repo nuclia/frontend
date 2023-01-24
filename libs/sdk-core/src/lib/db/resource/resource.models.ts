@@ -233,7 +233,11 @@ export interface FieldMetadata {
   thumbnail?: CloudLink;
   language?: string;
   summary?: string;
-  positions?: { [entityId: string]: { entity: string; position: { start: number; end: number }[] } };
+  positions?: EntityPositions;
+}
+
+export interface EntityPositions {
+  [entityId: string]: { entity: string; position: { start: number; end: number }[] };
 }
 
 export interface UserFieldMetadata {

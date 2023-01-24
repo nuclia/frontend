@@ -4,6 +4,7 @@
 
 - Update `Relation` interface
 - Add `Search.Relations`and `Search.Relation` interfaces
+- Add `EntityPositions` interface to resource models
 
 # 1.1.2 (2023-01-20)
 

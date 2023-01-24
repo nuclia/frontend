@@ -1,18 +1,53 @@
 <div class="paragraph-annotation">
-  <div class="paragraphs-container">
+  <div
+    #paragraphsContainer
+    class="paragraphs-container">
     <div
       class="paragraph-container"
       *ngFor="let paragraph of paragraphs">
-      <p>{{ paragraph.text }}</p>
+      <p
+        [class.family-selected]="!!selectedFamily.value"
+        [innerHTML]="paragraph.annotatedText | safe: 'html'"></p>
+
+      <div
+        class="annotation-buttons-container"
+        [style]="buttonPosition">
+        <ng-container
+          *ngIf="!!selectedFamily.value && (userSelection || selectedEntity?.paragraphId === paragraph.paragraphId)">
+          <button
+            class="annotation-button remove"
+            *ngIf="!!selectedEntity">
+            <pa-icon
+              size="small"
+              name="cross"></pa-icon>
+          </button>
+          <button
+            class="annotation-button confirm"
+            *ngIf="userSelection || selectedEntity?.klass !== selectedFamily.value.id">
+            <pa-icon
+              size="small"
+              [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
+          </button>
+        </ng-container>
+      </div>
     </div>
   </div>
 
   <div class="entity-families-container">
+    <div class="help">
+      <pa-icon
+        name="info"
+        size="small"></pa-icon>
+      <p>
+        {{ 'resource.field-annotation.help' | translate }}
+      </p>
+    </div>
+
     <pa-expander
       *ngFor="let family of entityFamilies | async"
       emitOnly
-      [expanded]="selectedFamily?.id === family.id"
-      (toggleExpander)="selectedFamily = selectedFamily?.id === family.id ? undefined : family">
+      [expanded]="selectedFamily.value?.id === family.id"
+      (toggleExpander)="selectFamily(family)">
       <pa-expander-header>
         <div
           class="family-color"

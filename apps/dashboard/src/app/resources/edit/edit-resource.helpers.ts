@@ -1,11 +1,13 @@
 import {
   Classification,
+  EntityPositions,
   FIELD_TYPE,
   FieldId,
   Paragraph,
   ParagraphAnnotation,
   Resource,
   ResourceData,
+  TokenAnnotation,
   UserClassification,
   UserFieldMetadata,
 } from '@nuclia/core';
@@ -14,7 +16,7 @@ export type EditResourceView = 'profile' | 'classification' | 'annotation' | 'ad
 
 export interface ParagraphWithText extends Paragraph {
   paragraphId: string;
-  text?: string;
+  text: string;
 }
 
 export interface ParagraphWithTextAndClassifications extends ParagraphWithText {
@@ -24,12 +26,23 @@ export interface ParagraphWithTextAndClassifications extends ParagraphWithText {
   generatedClassifications: Classification[];
 }
 
+export interface ParagraphWithTextAndAnnotations extends ParagraphWithText {
+  annotations: EntityAnnotation[];
+  annotatedText: string;
+}
+
 export interface EntityGroup {
   id: string;
   title: string;
   color: string;
   custom?: boolean;
   entities: string[];
+}
+
+export interface EntityAnnotation extends TokenAnnotation {
+  family: string;
+  immutable?: boolean;
+  cancelled_by_user?: boolean;
 }
 
 /**
@@ -111,11 +124,124 @@ export const generatedEntitiesColor: { [key: string]: string } = {
   WORK_OF_ART: '#ffbccc',
 };
 
-export const addEntitiesToGroups = (allGroups: EntityGroup[], entitiesMap: { [key: string]: string[] }) => {
+export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [key: string]: string[] }) {
   Object.entries(entitiesMap).forEach(([groupId, entities]) => {
     const group = allGroups.find((g) => g.id === groupId);
     if (group) {
       group.entities = group.entities.concat(entities);
     }
   });
+}
+
+export function getGeneratedFieldAnnotations(
+  resource: Resource,
+  fieldId: FieldId,
+  families: EntityGroup[],
+): EntityAnnotation[] {
+  const dataKey = getDataKeyFromFieldType(fieldId.field_type);
+  const annotations: EntityAnnotation[] = [];
+  if (dataKey && resource.data[dataKey]) {
+    const positions: EntityPositions =
+      resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata.positions || {};
+    Object.entries(positions).forEach(([family, entityPosition]) => {
+      const familyId = family.split('/')[0];
+      const familyTitle = families.find((group) => group.id === familyId)?.title || '';
+      entityPosition.position.forEach((position) =>
+        annotations.push({
+          klass: familyId,
+          family: familyTitle,
+          token: entityPosition.entity,
+          start: position.start,
+          end: position.end,
+          immutable: true,
+        }),
+      );
+    });
+  }
+  return annotations;
+}
+
+export function getParagraphAnnotations(
+  resource: Resource,
+  fieldId: FieldId,
+  generatedAnnotation: EntityAnnotation[],
+  paragraph: Paragraph,
+  families: EntityGroup[],
+) {
+  const userFieldMetadata = (resource.fieldmetadata || []).find(
+    (userFieldMetadata) =>
+      userFieldMetadata.field.field === fieldId.field_id && userFieldMetadata.field.field_type === fieldId.field_type,
+  );
+  // merge user annotations and generated annotations in one common list sorted by position
+  const annotations: EntityAnnotation[] = (userFieldMetadata?.token || [])
+    .map((tokenAnnotation) => {
+      const family = families.find((group) => group.id === tokenAnnotation.klass)?.title || '';
+      return { ...tokenAnnotation, family };
+    })
+    .concat(
+      generatedAnnotation.filter(
+        (annotation) => annotation.start >= (paragraph.start || 0) && annotation.end <= (paragraph.end || 0),
+      ),
+    )
+    .map((annotation) => ({
+      ...annotation,
+      start: annotation.start - (paragraph.start || 0),
+      end: annotation.end - (paragraph.start || 0),
+    }))
+    .sort((a, b) => {
+      if (a.start < b.start) {
+        return -1;
+      } else if (a.start > b.start) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  return annotations;
+}
+
+export function getAnnotatedText(
+  paragraphId: string,
+  paragraphText: string,
+  annotations: EntityAnnotation[],
+  selectedFamily?: EntityGroup | null,
+): string {
+  let textWithMarks = '';
+  let currentIndex = 0;
+  annotations.forEach((annotation) => {
+    let highlightedStyle = '';
+    if (selectedFamily?.id === annotation.klass) {
+      highlightedStyle = `style="background-color:${selectedFamily.color}"`;
+    }
+    textWithMarks += `${sliceUnicode(paragraphText, currentIndex, annotation.start)}<mark title="${
+      annotation.family
+    }" family="${annotation.klass}" start="${annotation.start}" end="${annotation.end}" token="${
+      annotation.token
+    }" paragraphId="${paragraphId}" ${highlightedStyle} >${sliceUnicode(
+      paragraphText,
+      annotation.start,
+      annotation.end,
+    )}</mark>`;
+    currentIndex = annotation.end;
+  });
+  textWithMarks += sliceUnicode(paragraphText, currentIndex);
+  return textWithMarks;
+}
+
+/**
+ * In JavaScript, '🤖'.length is 2, but all positions in API responses are based on Python and in Python len('🤖') is 1.
+ * By converting the string to an array, we can get the correct length and slicing becomes consistent with the API
+ * (because the array will split the string into characters, no matter how long they are)
+ * @param str
+ * @param start
+ * @param end
+ */
+export const sliceUnicode = (str: string | string[] | undefined, start?: number, end?: number) => {
+  if (!str) {
+    return '';
+  }
+  if (!Array.isArray(str)) {
+    str = Array.from(str);
+  }
+  return str.slice(start, end).join('');
 };
