@@ -132,6 +132,7 @@ export namespace Search {
     field_type: string;
     field: string;
     text: string;
+    position?: { page_number?: number; start: number; end: number; index: number };
   }
 
   export interface FulltextResource {
