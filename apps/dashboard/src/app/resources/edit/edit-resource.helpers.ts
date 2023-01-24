@@ -7,9 +7,9 @@ import {
   ParagraphAnnotation,
   Resource,
   ResourceData,
-  TokenAnnotation,
   UserClassification,
   UserFieldMetadata,
+  UserTokenAnnotation,
 } from '@nuclia/core';
 
 export type EditResourceView = 'profile' | 'classification' | 'annotation' | 'add-field';
@@ -39,10 +39,9 @@ export interface EntityGroup {
   entities: string[];
 }
 
-export interface EntityAnnotation extends TokenAnnotation {
+export interface EntityAnnotation extends UserTokenAnnotation {
   family: string;
   immutable?: boolean;
-  cancelled_by_user?: boolean;
 }
 
 /**
@@ -113,7 +112,7 @@ export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [ke
   });
 }
 
-export function getGeneratedFieldAnnotations(
+function getGeneratedFieldAnnotations(
   resource: Resource,
   fieldId: FieldId,
   families: EntityGroup[],
@@ -141,28 +140,32 @@ export function getGeneratedFieldAnnotations(
   return annotations;
 }
 
-export function getParagraphAnnotations(
-  resource: Resource,
-  fieldId: FieldId,
-  generatedAnnotation: EntityAnnotation[],
-  paragraph: Paragraph,
-  families: EntityGroup[],
-) {
+function getUserAnnotations(resource: Resource, fieldId: FieldId, families: EntityGroup[]): EntityAnnotation[] {
   const userFieldMetadata = (resource.fieldmetadata || []).find(
     (userFieldMetadata) =>
       userFieldMetadata.field.field === fieldId.field_id && userFieldMetadata.field.field_type === fieldId.field_type,
   );
-  // merge user annotations and generated annotations in one common list sorted by position
-  const annotations: EntityAnnotation[] = (userFieldMetadata?.token || [])
-    .map((tokenAnnotation) => {
-      const family = families.find((group) => group.id === tokenAnnotation.klass)?.title || '';
-      return { ...tokenAnnotation, family };
-    })
-    .concat(
-      generatedAnnotation.filter(
-        (annotation) => annotation.start >= (paragraph.start || 0) && annotation.end <= (paragraph.end || 0),
-      ),
-    )
+
+  return (userFieldMetadata?.token || []).map((tokenAnnotation) => ({
+    ...tokenAnnotation,
+    family: families.find((group) => group.id === tokenAnnotation.klass)?.title || '',
+  }));
+}
+
+export function getAllAnnotations(resource: Resource, fieldId: FieldId, families: EntityGroup[]): EntityAnnotation[] {
+  const generatedAnnotations: EntityAnnotation[] = getGeneratedFieldAnnotations(resource, fieldId, families);
+  const userAnnotations: EntityAnnotation[] = getUserAnnotations(resource, fieldId, families);
+
+  return userAnnotations.concat(generatedAnnotations);
+}
+
+export function isSameAnnotation(a: EntityAnnotation, b: EntityAnnotation) {
+  return a.end === b.end && a.start === b.start && a.family === b.family && a.klass === b.klass && a.token === b.token;
+}
+
+export function getParagraphAnnotations(allAnnotations: EntityAnnotation[], paragraph: Paragraph) {
+  const annotations: EntityAnnotation[] = allAnnotations
+    .filter((annotation) => annotation.start >= (paragraph.start || 0) && annotation.end <= (paragraph.end || 0))
     .map((annotation) => ({
       ...annotation,
       start: annotation.start - (paragraph.start || 0),
@@ -178,6 +181,15 @@ export function getParagraphAnnotations(
       }
     });
   return annotations;
+}
+
+export function getHighlightedAnnotations(allAnnotations: EntityAnnotation[]): EntityAnnotation[] {
+  const cancelledAnnotations: EntityAnnotation[] = allAnnotations.filter((annotation) => annotation.cancelled_by_user);
+  return allAnnotations.filter(
+    (annotation) =>
+      !annotation.cancelled_by_user &&
+      !cancelledAnnotations.find((cancelledAnnotation) => isSameAnnotation(annotation, cancelledAnnotation)),
+  );
 }
 
 export function getAnnotatedText(
@@ -197,7 +209,7 @@ export function getAnnotatedText(
       annotation.family
     }" family="${annotation.klass}" start="${annotation.start}" end="${annotation.end}" token="${
       annotation.token
-    }" paragraphId="${paragraphId}" ${highlightedStyle} >${sliceUnicode(
+    }" paragraphId="${paragraphId}" immutable="${annotation.immutable}" ${highlightedStyle} >${sliceUnicode(
       paragraphText,
       annotation.start,
       annotation.end,

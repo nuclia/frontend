@@ -243,7 +243,7 @@ export interface EntityPositions {
 export interface UserFieldMetadata {
   field: { field: string; field_type: string };
   paragraphs?: ParagraphAnnotation[];
-  token?: TokenAnnotation[];
+  token?: UserTokenAnnotation[];
 }
 
 export interface TokenAnnotation {
@@ -251,6 +251,10 @@ export interface TokenAnnotation {
   klass: string;
   start: number;
   end: number;
+}
+
+export interface UserTokenAnnotation extends TokenAnnotation {
+  cancelled_by_user?: boolean;
 }
 
 export interface ParagraphAnnotation {

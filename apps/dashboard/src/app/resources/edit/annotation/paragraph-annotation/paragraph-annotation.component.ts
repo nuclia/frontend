@@ -14,8 +14,9 @@ import { FieldId, Paragraph, Resource } from '@nuclia/core';
 import {
   EntityAnnotation,
   EntityGroup,
+  getAllAnnotations,
   getAnnotatedText,
-  getGeneratedFieldAnnotations,
+  getHighlightedAnnotations,
   getParagraphAnnotations,
   getParagraphs,
   ParagraphWithTextAndAnnotations,
@@ -85,18 +86,19 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
     combineLatest([this.fieldId, this.resource, this.entityFamilies])
       .pipe(
         map(([fieldId, resource, families]) => {
-          const generatedAnnotation: EntityAnnotation[] = getGeneratedFieldAnnotations(resource, fieldId, families);
+          const allAnnotations = getAllAnnotations(resource, fieldId, families);
           const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
           return paragraphs.map((paragraph) => {
             const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
-            const annotations = getParagraphAnnotations(resource, fieldId, generatedAnnotation, paragraph, families);
+            const allParagraphAnnotations = getParagraphAnnotations(allAnnotations, paragraph);
+            const highlightedAnnotation = getHighlightedAnnotations(allParagraphAnnotations);
             const paragraphText = resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph);
             const enhancedParagraph: ParagraphWithTextAndAnnotations = {
               ...paragraph,
               paragraphId,
               text: paragraphText,
-              annotatedText: getAnnotatedText(paragraphId, paragraphText, annotations),
-              annotations,
+              annotatedText: getAnnotatedText(paragraphId, paragraphText, highlightedAnnotation),
+              annotations: allParagraphAnnotations,
             };
             return enhancedParagraph;
           });
@@ -130,10 +132,13 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   selectFamily(family: EntityGroup) {
     const selectedFamily = this.selectedFamily.value?.id === family.id ? null : family;
     this.selectedFamily.next(selectedFamily);
-    this.paragraphs = this.paragraphs.map((paragraph) => ({
-      ...paragraph,
-      annotatedText: getAnnotatedText(paragraph.paragraphId, paragraph.text, paragraph.annotations, selectedFamily),
-    }));
+    this.paragraphs = this.paragraphs.map((paragraph) => {
+      const highlightedAnnotations = getHighlightedAnnotations(paragraph.annotations);
+      return {
+        ...paragraph,
+        annotatedText: getAnnotatedText(paragraph.paragraphId, paragraph.text, highlightedAnnotations, selectedFamily),
+      };
+    });
     setTimeout(() => {
       this.cleanUpMarkListener();
       this.setupMarkListener();
@@ -169,6 +174,7 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
       start: parseInt(mark.getAttribute('start') || '0', 10),
       end: parseInt(mark.getAttribute('end') || '0', 10),
       klass: mark.getAttribute('family') || '',
+      immutable: mark.getAttribute('immutable') === 'true',
     };
     const paragraph = mark.parentElement as HTMLElement;
     const paragraphRect = paragraph.getBoundingClientRect();
