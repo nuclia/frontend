@@ -119,7 +119,6 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
           resource,
           generateFakeParagraphForSentence(allResources, sentence),
         );
-        console.log('smartResults', smartResults);
       }
     });
   }
@@ -224,7 +223,6 @@ function generateFakeParagraphForSentence(
     return undefined;
   }
   const resource = resources[sentence.rid];
-  console.log('sentence', sentence);
   return resource
     ? {
         score: 0,
