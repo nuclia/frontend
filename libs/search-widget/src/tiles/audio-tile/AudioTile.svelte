@@ -24,6 +24,8 @@
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { AudioPlayer } from '../../common/player';
   import { navigateToLink } from '../../core/stores/widget.store';
+  import { onMount } from 'svelte';
+  import { displayedResource } from '../../core/stores/search.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -58,6 +60,12 @@
     ? matchingParagraphs
     : filterParagraphs(findInTranscript, matchingParagraphs || []);
   $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(findInTranscript, transcripts);
+
+  onMount(() => {
+    if (displayedResource.getValue()?.uid === result.id) {
+      playFromStart();
+    }
+  });
 
   const playFromStart = () => {
     playFrom(0);
@@ -119,6 +127,9 @@
     paragraphInPlay = undefined;
     findInTranscript = '';
     unblockBackground(true);
+    if (displayedResource.getValue()?.uid === result.id) {
+      displayedResource.set(null);
+    }
   };
 
   const toggleTranscriptPanel = () => {
