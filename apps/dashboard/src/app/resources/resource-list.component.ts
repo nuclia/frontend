@@ -115,6 +115,8 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   refreshing = true;
 
+  private _isEmpty = new BehaviorSubject<boolean>(false);
+  isEmpty = this._isEmpty.asObservable();
   private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
     pending: 0,
     error: 0,
@@ -282,7 +284,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getResources().subscribe();
-    this.updateStatusCount();
+    this.getResourceStatusCount().subscribe();
     this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
       this.totalResources = counters.resources;
       this.refreshing = false;
@@ -310,7 +312,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onUpload() {
-    this.updateStatusCount();
+    this.getResourceStatusCount().subscribe();
   }
 
   search() {
@@ -355,6 +357,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       .pipe(
         delay(500), // wait for reprocess to be effective
         switchMap(() => this.getResources()),
+        switchMap(() => this.getResourceStatusCount()),
       )
       .subscribe();
   }
@@ -696,7 +699,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.getResources().subscribe();
   }
 
-  private getResourceStatusCount(): Observable<{ pending: number; error: number }> {
+  private getResourceStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
     const statusFacet = '/n/s';
     return this.sdk.currentKb.pipe(
       take(1),
@@ -709,13 +712,20 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       map((results) => ({
         pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
         error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
+        processed: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PROCESSED`] || 0,
       })),
+      tap((count) => {
+        this._statusCount.next({ pending: count.pending, error: count.error });
+        this._isEmpty.next(count.pending === 0 && count.error === 0 && count.processed === 0);
+      }),
     );
   }
 
-  private updateStatusCount() {
-    this.getResourceStatusCount()
-      .pipe(tap((count) => this._statusCount.next(count)))
-      .subscribe();
+  onDatasetImport(success: boolean) {
+    if (success) {
+      this.getResources()
+        .pipe(switchMap(() => this.getResourceStatusCount()))
+        .subscribe();
+    }
   }
 }

@@ -22,11 +22,18 @@ export class SampleDatasetService {
   importDataset(sampleId: string): Observable<void> {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.importDataset(sampleId)),
+      switchMap((kb) => this.sdk.nuclia.rest.post(`/export/${sampleId}/import_to/${kb.id}`, {})),
       switchMap(() => this.labelService.refreshLabelsSets()),
       map(() => {
         this.refresh.next(true);
       }),
+    );
+  }
+
+  // non-documented API so we keep it out of the SDK
+  getDatasets(): Observable<{ id: string; title: string; description: string }[]> {
+    return this.sdk.currentKb.pipe(
+      switchMap(() => this.sdk.nuclia.rest.get<{ id: string; title: string; description: string }[]>(`/exports`)),
     );
   }
 

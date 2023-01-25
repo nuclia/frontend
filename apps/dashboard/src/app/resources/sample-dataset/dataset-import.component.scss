@@ -7,14 +7,10 @@
   height: calc(100vh - var(--app-topbar-height));
 
   .dataset-import-container {
-    display: flex;
-    flex-direction: column;
-    gap: rhythm(5);
-    margin-top: calc(var(--app-topbar-height) * -1);
     width: rhythm(60);
 
-    h1 {
-      margin-bottom: 0;
+    h2 {
+      margin-top: rhythm(3);
     }
 
     .upload-data p {

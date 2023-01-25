@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 
-import { DatasetImportComponent } from './dataset-import.component';
-import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
+import { DatasetSelectorComponent } from './dataset-selector.component';
+import { MockModule, MockProvider } from 'ng-mocks';
 import { SDKService } from '@flaps/core';
 import {
   ModalConfig,
@@ -10,16 +10,14 @@ import {
   PaTextFieldModule,
   PaTranslateModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { SampleDatasetService } from './sample-dataset.service';
+import { SampleDatasetService } from '../sample-dataset.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { LoadingModalComponent } from './loading-modal/loading-modal.component';
-import { UploadButtonComponent } from '../upload-button/upload-button.component';
+import { LoadingModalComponent } from '../loading-modal/loading-modal.component';
 
-describe('DatasetImportComponent', () => {
-  let component: DatasetImportComponent;
-  let fixture: ComponentFixture<DatasetImportComponent>;
+describe('DatasetSelectorComponent', () => {
+  let component: DatasetSelectorComponent;
+  let fixture: ComponentFixture<DatasetSelectorComponent>;
 
   const loadingModal: ModalRef = {
     close: jest.fn(),
@@ -28,12 +26,14 @@ describe('DatasetImportComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MockModule(PaButtonModule), MockModule(PaTextFieldModule), MockModule(PaTranslateModule)],
-      declarations: [DatasetImportComponent, MockComponent(UploadButtonComponent)],
+      declarations: [DatasetSelectorComponent],
       providers: [
         MockProvider(SDKService),
-        MockProvider(ActivatedRoute),
         MockProvider(SampleDatasetService, {
           importDataset: jest.fn(() => of(null) as any),
+          getDatasets: jest.fn(
+            () => of([{ id: 'universe', title: 'Universe', description: 'A universe dataset' }]) as any,
+          ),
         }),
         MockProvider(SisModalService, {
           openModal: jest.fn(() => loadingModal),
@@ -42,23 +42,19 @@ describe('DatasetImportComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DatasetImportComponent);
+    fixture = TestBed.createComponent(DatasetSelectorComponent);
     component = fixture.componentInstance;
 
     fixture.detectChanges();
   });
 
-  describe('importDataset', () => {
+  describe('Dataset selector', () => {
     let sampleService: SampleDatasetService;
     let modalService: SisModalService;
-    let router: Router;
 
     beforeEach(() => {
       sampleService = TestBed.inject(SampleDatasetService);
       modalService = TestBed.inject(SisModalService);
-      router = TestBed.inject(Router);
-      router.navigate = jest.fn();
-
       component.selectDataset = 'universe';
     });
 
@@ -77,10 +73,8 @@ describe('DatasetImportComponent', () => {
       expect(sampleService.importDataset).toHaveBeenCalledWith('universe');
     });
 
-    it('should navigate to resource list and close loading modal on success', fakeAsync(() => {
-      const route = TestBed.inject(ActivatedRoute);
+    it('should close loading modal on success', fakeAsync(() => {
       component.importDataset();
-      expect(router.navigate).toHaveBeenCalledWith(['..'], { relativeTo: route });
       expect(loadingModal.close).toHaveBeenCalled();
     }));
   });
