@@ -102,6 +102,17 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
     const twoBestSemantic = semanticResults.slice(0, 2);
     twoBestSemantic.forEach((sentence) => {
       const resource = allResources[sentence.rid];
+      const containingParagraph = state.results.paragraphs?.results?.find(
+        (p) =>
+          p.rid === sentence.rid &&
+          p.position &&
+          sentence.position &&
+          p.position.start <= sentence.position.start &&
+          p.position.end >= sentence.position.end,
+      );
+      if (containingParagraph && sentence.position) {
+        sentence.position.page_number = containingParagraph.position?.page_number;
+      }
       if (resource) {
         smartResults = addParagraphToSmartResults(
           smartResults,
@@ -221,6 +232,10 @@ function generateFakeParagraphForSentence(
         text: sentence.text,
         labels: [],
         sentences: [sentence],
+        position:
+          sentence.position && (sentence.position.page_number || sentence.position.page_number === 0)
+            ? { ...sentence.position, page_number: sentence.position.page_number as number }
+            : undefined,
       }
     : undefined;
 }
