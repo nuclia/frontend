@@ -36,3 +36,7 @@ $rhythm: (
   64: ($spacer * 64),     //  64   unit - 512px - 32     rem
   90: ($spacer * 90),     //  90   unit - 720px - 45     rem
 );
+
+// layout
+$height-viewport-medium-max: 799px;
+$height-viewport-medium-min: 800px;

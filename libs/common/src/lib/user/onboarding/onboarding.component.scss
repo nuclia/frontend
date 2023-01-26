@@ -1,10 +1,12 @@
 @import 'variables';
 
 .onboarding-container {
+  background: $color-light-stronger;
   display: flex;
   flex-direction: column;
   gap: rhythm(5);
   width: rhythm(50);
+  z-index: 1;
 
   header {
     text-align: left;
@@ -12,17 +14,20 @@
     h1 {
       margin-bottom: rhythm(1);
     }
+    p {
+      margin-bottom: 0;
+    }
   }
 
   .onboarding-form {
     display: flex;
     flex-direction: column;
-    gap: rhythm(4);
+    gap: rhythm(3);
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: rhythm(1);
+      gap: rhythm(0.25);
     }
 
     .form-footer {
@@ -57,5 +62,11 @@
       width: rhythm(8);
       margin-right: rhythm(1);
     }
+  }
+}
+
+@media (max-height: $height-viewport-medium-max) {
+  .onboarding-container .onboarding-form {
+    gap: rhythm(2);
   }
 }
