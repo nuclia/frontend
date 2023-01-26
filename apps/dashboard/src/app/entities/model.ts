@@ -19,7 +19,7 @@ export const generatedEntitiesColor: { [key: string]: string } = {
   PRODUCT: '#FF6363',
   QUANTITY: '#E7D2EF',
   TIME: '#21B8A6',
-  WORK_OF_ART: '#FFDBDB',
+  WORK_OF_ART: '#ffc7c7',
 };
 
 export interface Entity {
