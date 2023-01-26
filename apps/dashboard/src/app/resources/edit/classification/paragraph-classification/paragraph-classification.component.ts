@@ -40,12 +40,16 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   private paragraphClassificationMap: ParagraphClassificationMap = {};
 
   availableLabels: Observable<LabelSets | null> = this.labelsService.getLabelsByKind(LabelSetKind.PARAGRAPHS);
+  hasLabels: Observable<boolean> = this.availableLabels.pipe(
+    map((labels) => !!labels && Object.keys(labels).length > 0),
+  );
   currentLabel?: Classification;
   isModified = false;
   isSaving = false;
 
   private paragraphsBackup: ParagraphWithTextAndClassifications[] = [];
   paragraphs: ParagraphWithTextAndClassifications[] = [];
+  kbUrl = this.editResource.kbUrl;
 
   constructor(
     private route: ActivatedRoute,
