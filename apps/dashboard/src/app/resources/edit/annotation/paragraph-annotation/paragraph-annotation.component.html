@@ -15,15 +15,17 @@
         <ng-container
           *ngIf="!!selectedFamily.value && (userSelection || selectedEntity?.paragraphId === paragraph.paragraphId)">
           <button
+            *ngIf="!!selectedEntity"
             class="annotation-button remove"
-            *ngIf="!!selectedEntity">
+            (click)="removeEntityFromParagraph(paragraph)">
             <pa-icon
               size="small"
               name="cross"></pa-icon>
           </button>
           <button
             class="annotation-button confirm"
-            *ngIf="userSelection || selectedEntity?.klass !== selectedFamily.value.id">
+            *ngIf="userSelection || selectedEntity?.klass !== selectedFamily.value.id"
+            (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
             <pa-icon
               size="small"
               [name]="userSelection ? 'check' : 'pencil'"></pa-icon>

@@ -39,7 +39,9 @@ import {
   EditResourceView,
   EntityGroup,
   getDataKeyFromFieldType,
-  getUpdatedUserFieldMetadata,
+  getFieldMetadataForAnnotations,
+  getFieldMetadataForClassifications,
+  ParagraphWithTextAndAnnotations,
   ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor } from '../../entities/model';
@@ -148,12 +150,25 @@ export class EditResourceService {
     );
   }
 
-  saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndClassifications[]): Observable<void | null> {
+  saveClassifications(field: FieldId, paragraphs: ParagraphWithTextAndClassifications[]): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
     }
-    const fieldMetadata: UserFieldMetadata[] = getUpdatedUserFieldMetadata(
+    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForClassifications(
+      field,
+      paragraphs,
+      currentResource.fieldmetadata || [],
+    );
+    return this.savePartialResource({ fieldmetadata: fieldMetadata });
+  }
+
+  saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndAnnotations[]): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForAnnotations(
       field,
       paragraphs,
       currentResource.fieldmetadata || [],

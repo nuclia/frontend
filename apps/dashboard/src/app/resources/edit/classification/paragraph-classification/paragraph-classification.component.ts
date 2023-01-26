@@ -135,7 +135,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
   save() {
     this.isSaving = true;
-    this.fieldId.pipe(switchMap((field) => this.editResource.saveAnnotations(field, this.paragraphs))).subscribe({
+    this.fieldId.pipe(switchMap((field) => this.editResource.saveClassifications(field, this.paragraphs))).subscribe({
       next: () => {
         this.isModified = false;
         this.isSaving = false;

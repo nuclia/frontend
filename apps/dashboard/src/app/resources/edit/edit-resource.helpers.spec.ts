@@ -1,11 +1,11 @@
 import { FIELD_TYPE, FieldId } from '@nuclia/core';
-import { getUpdatedUserFieldMetadata } from './edit-resource.helpers';
+import { getFieldMetadataForClassifications } from './edit-resource.helpers';
 
 describe('Edit resource helpers', () => {
   const field: FieldId = { field_id: 'f1', field_type: FIELD_TYPE.text };
 
   it('should add a new label when none exists', () => {
-    const all = getUpdatedUserFieldMetadata(
+    const all = getFieldMetadataForClassifications(
       field,
       [
         {
@@ -25,7 +25,7 @@ describe('Edit resource helpers', () => {
   });
 
   it('should update labels and keep tokens as well as other fields', () => {
-    const all = getUpdatedUserFieldMetadata(
+    const all = getFieldMetadataForClassifications(
       field,
       [
         {
