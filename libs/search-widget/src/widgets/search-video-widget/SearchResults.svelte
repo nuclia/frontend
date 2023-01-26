@@ -17,7 +17,7 @@
     triggerSearch,
   } from '../../core/stores/search.store';
   import { getResourceById } from '../../core/api';
-  import Tile from './Tile.svelte';
+  import Tile from '../../tiles/Tile.svelte';
   import { ResourceProperties } from '@nuclia/core';
 
   const searchAlreadyTriggered = new Subject<void>();
