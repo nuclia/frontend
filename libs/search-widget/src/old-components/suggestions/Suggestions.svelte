@@ -20,7 +20,7 @@
         take(1),
         switchMap((navigateToLink) =>
           navigateToLink
-            ? getResourceById(params.paragraph!.rid, [ResourceProperties.BASIC, ResourceProperties.VALUES])
+            ? getResourceById(params.uid, [ResourceProperties.BASIC, ResourceProperties.VALUES])
             : of(null),
         ),
       )

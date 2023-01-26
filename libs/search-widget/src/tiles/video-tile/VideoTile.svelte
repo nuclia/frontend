@@ -75,13 +75,13 @@
     playFrom(0);
   };
 
-  const onClickParagraph = (paragraph: MediaWidgetParagraph) => {
+  const onClickParagraph = (paragraph?: MediaWidgetParagraph) => {
     navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
       const url = getExternalUrl(result);
       if (navigateToLink && url && !isYoutubeUrl(url)) {
-        goToUrl(url, paragraph.text);
+        goToUrl(url, paragraph?.text);
       } else {
-        playParagraph(paragraph);
+        paragraph ? playParagraph(paragraph) : playFromStart();
       }
     });
   };
@@ -223,7 +223,7 @@
           </div>
           <h3
             class="ellipsis"
-            on:click={playFromStart}>
+            on:click={() => onClickParagraph()}>
             {result?.title}
           </h3>
         </div>

@@ -75,7 +75,7 @@
     navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
       const url = getExternalUrl(result);
       if (navigateToLink && url) {
-        goToUrl(url, paragraph.text);
+        goToUrl(url, paragraph?.text);
       } else {
         openParagraph(paragraph, index);
       }
@@ -228,7 +228,7 @@
           </div>
           <h3
             class="ellipsis"
-            on:click={() => openParagraph(undefined, -1)}>
+            on:click={() => onClickParagraph(undefined, -1)}>
             {result?.title}
           </h3>
         </div>
