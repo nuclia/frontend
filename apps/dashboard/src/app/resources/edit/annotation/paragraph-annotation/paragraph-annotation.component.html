@@ -1,0 +1,90 @@
+<div class="paragraph-annotation">
+  <div
+    #paragraphsContainer
+    class="paragraphs-container">
+    <div
+      class="paragraph-container"
+      *ngFor="let paragraph of paragraphs">
+      <p
+        [class.family-selected]="!!selectedFamily.value"
+        [innerHTML]="paragraph.annotatedText | safe: 'html'"></p>
+
+      <div
+        class="annotation-buttons-container"
+        [style]="buttonPosition">
+        <ng-container
+          *ngIf="!!selectedFamily.value && (userSelection || selectedEntity?.paragraphId === paragraph.paragraphId)">
+          <button
+            *ngIf="!!selectedEntity"
+            class="annotation-button remove"
+            (click)="removeEntityFromParagraph(paragraph)">
+            <pa-icon
+              size="small"
+              name="cross"></pa-icon>
+          </button>
+          <button
+            class="annotation-button confirm"
+            *ngIf="userSelection || selectedEntity?.klass !== selectedFamily.value.id"
+            (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
+            <pa-icon
+              size="small"
+              [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="entity-families-container">
+    <div class="help">
+      <pa-icon
+        name="info"
+        size="small"></pa-icon>
+      <p>
+        {{ 'resource.field-annotation.help' | translate }}
+      </p>
+    </div>
+
+    <pa-expander
+      *ngFor="let family of entityFamilies | async"
+      emitOnly
+      [expanded]="selectedFamily.value?.id === family.id"
+      (toggleExpander)="selectFamily(family)">
+      <pa-expander-header>
+        <div
+          class="family-color"
+          [style.background-color]="family.color"></div>
+        <span class="family-title">{{ family.title }}</span>
+        ({{ family.entities.length }})
+      </pa-expander-header>
+      <pa-expander-body>
+        <ul
+          class="entity-list"
+          [style.border-left-color]="family.color">
+          <li
+            *ngFor="let entity of family.entities"
+            paEllipsisTooltip>
+            {{ entity }}
+          </li>
+          <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
+        </ul>
+      </pa-expander-body>
+    </pa-expander>
+  </div>
+</div>
+
+<footer class="form-buttons">
+  <pa-button
+    kind="primary"
+    [disabled]="!isModified || isSaving"
+    (click)="save()">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+
+  <pa-button
+    aspect="basic"
+    [disabled]="!isModified || isSaving"
+    (click)="cancel()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+</footer>

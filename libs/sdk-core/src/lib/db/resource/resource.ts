@@ -22,6 +22,7 @@ import type {
   Sentence,
   TextField,
   TokenAnnotation,
+  UserTokenAnnotation,
 } from './resource.models';
 import type { Search, SearchOptions } from '../search';
 import { search } from '../search';
@@ -82,14 +83,16 @@ export class ReadableResource implements IResource {
   getAnnotatedEntities(): { [key: string]: string[] } {
     const entities = (this.fieldmetadata || [])
       .filter((entry) => entry.token && entry.token.length > 0)
-      .map((entry) => entry.token as TokenAnnotation[]);
+      .map((entry) => entry.token as UserTokenAnnotation[]);
     return entities.reduce((acc, val) => {
-      val.forEach((token) => {
-        if (!acc[token.klass]) {
-          acc[token.klass] = [];
-        }
-        acc[token.klass].push(token.token);
-      });
+      val
+        .filter((token) => !token.cancelled_by_user)
+        .forEach((token) => {
+          if (!acc[token.klass]) {
+            acc[token.klass] = [];
+          }
+          acc[token.klass].push(token.token);
+        });
       return acc;
     }, {} as { [key: string]: string[] });
   }

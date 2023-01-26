@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   filter,
   forkJoin,
   map,
@@ -34,10 +35,16 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  addEntitiesToGroups,
   EditResourceView,
-  getUpdatedUserFieldMetadata,
+  EntityGroup,
+  getDataKeyFromFieldType,
+  getFieldMetadataForAnnotations,
+  getFieldMetadataForClassifications,
   ParagraphWithTextAndAnnotations,
+  ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
+import { generatedEntitiesColor } from '../../entities/model';
 
 @Injectable({
   providedIn: 'root',
@@ -84,6 +91,37 @@ export class EditResourceService {
     this._loadResource(resourceId).subscribe();
   }
 
+  loadResourceEntities(): Observable<EntityGroup[]> {
+    return combineLatest([
+      this.resource.pipe(
+        filter((resource) => !!resource),
+        map((resource) => resource as Resource),
+      ),
+      this.sdk.currentKb.pipe(switchMap((kb) => kb.getEntities())),
+    ]).pipe(
+      map(([resource, allEntities]) => {
+        const allGroups: EntityGroup[] = Object.entries(allEntities)
+          .map(([groupId, group]) => {
+            const generatedColor = generatedEntitiesColor[groupId];
+            const title = group.title || (generatedColor ? `resource.entities.${groupId.toLowerCase()}` : groupId);
+            return {
+              id: groupId,
+              title: this.translate.instant(title),
+              color: group.color || generatedColor,
+              entities: [],
+              custom: group.custom,
+            };
+          })
+          .sort((a, b) => a.title.localeCompare(b.title));
+
+        addEntitiesToGroups(allGroups, resource.getNamedEntities());
+        addEntitiesToGroups(allGroups, resource.getAnnotatedEntities());
+        allGroups.forEach((group) => group.entities.sort((a, b) => a.localeCompare(b)));
+        return allGroups;
+      }),
+    );
+  }
+
   getField(fieldType: keyof ResourceData, fieldId: string): Observable<IFieldData> {
     return this.resource.pipe(
       filter((resource) => !!resource),
@@ -112,12 +150,25 @@ export class EditResourceService {
     );
   }
 
+  saveClassifications(field: FieldId, paragraphs: ParagraphWithTextAndClassifications[]): Observable<void | null> {
+    const currentResource = this._resource.value;
+    if (!currentResource) {
+      return of(null);
+    }
+    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForClassifications(
+      field,
+      paragraphs,
+      currentResource.fieldmetadata || [],
+    );
+    return this.savePartialResource({ fieldmetadata: fieldMetadata });
+  }
+
   saveAnnotations(field: FieldId, paragraphs: ParagraphWithTextAndAnnotations[]): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
     }
-    const fieldMetadata: UserFieldMetadata[] = getUpdatedUserFieldMetadata(
+    const fieldMetadata: UserFieldMetadata[] = getFieldMetadataForAnnotations(
       field,
       paragraphs,
       currentResource.fieldmetadata || [],
@@ -167,7 +218,7 @@ export class EditResourceService {
       return of(null);
     }
 
-    const dataKey = this.getDataKeyFromFieldType(fieldType);
+    const dataKey = getDataKeyFromFieldType(fieldType);
     const updatedData: ResourceData = dataKey
       ? {
           ...currentResource.data,
@@ -200,7 +251,7 @@ export class EditResourceService {
       return of(null);
     }
 
-    const dataKey = this.getDataKeyFromFieldType(FIELD_TYPE.file);
+    const dataKey = getDataKeyFromFieldType(FIELD_TYPE.file);
     const updatedData: ResourceData = dataKey
       ? {
           ...currentResource.data,
@@ -309,19 +360,6 @@ export class EditResourceService {
       );
   }
 
-  getDataKeyFromFieldType(fieldType: FIELD_TYPE): keyof ResourceData | null {
-    // Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
-    switch (fieldType) {
-      case FIELD_TYPE.text:
-      case FIELD_TYPE.file:
-      case FIELD_TYPE.link:
-      case FIELD_TYPE.keywordset:
-        return `${fieldType}s`;
-      default:
-        return null;
-    }
-  }
-
   getParagraphId(field: FieldId, paragraph: Paragraph): string {
     const resource = this._resource.getValue();
     const typeAbbreviation = field.field_type === 'link' ? 'u' : field.field_type[0];
@@ -360,7 +398,7 @@ export class EditResourceService {
     currentData: ResourceData,
     reduceCallback: (previous: any, current: [string, any]) => ResourceData,
   ): ResourceData {
-    const dataKey = this.getDataKeyFromFieldType(fieldType);
+    const dataKey = getDataKeyFromFieldType(fieldType);
     return dataKey
       ? {
           ...currentData,

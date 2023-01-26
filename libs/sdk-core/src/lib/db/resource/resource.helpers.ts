@@ -1,4 +1,4 @@
-import type { Classification, ParagraphAnnotation, TokenAnnotation, UserFieldMetadata } from './resource.models';
+import type { Classification, ParagraphClassification, TokenAnnotation, UserFieldMetadata } from './resource.models';
 
 export const deDuplicateList = (a: any[]): any[] => {
   return [...new Set([...a].map((item) => JSON.stringify(item)))].map((item) => JSON.parse(item));
@@ -28,7 +28,7 @@ export const setLabels: (
   const paragraphs = deDuplicateList(
     allEntries
       .filter((entry) => hasLabelsForField(entry, fieldId, fieldType))
-      .map((entry) => entry.paragraphs as ParagraphAnnotation[])
+      .map((entry) => entry.paragraphs as ParagraphClassification[])
       .reduce((acc, val) => acc.concat(val), []),
   );
   const valuesForOtherParagraphs = paragraphs.filter((p) => p.key !== paragraphId);
@@ -68,7 +68,7 @@ export const setEntities: (
   const paragraphs = deDuplicateList(
     allEntries
       .filter((entry) => hasLabelsForField(entry, fieldId, fieldType))
-      .map((entry) => entry.paragraphs as ParagraphAnnotation[])
+      .map((entry) => entry.paragraphs as ParagraphClassification[])
       .reduce((acc, val) => acc.concat(val), []),
   );
   // remove all existing entries for the field

@@ -2,22 +2,24 @@ import { STFUtils } from '@flaps/core';
 import { EntitiesGroup } from '@nuclia/core';
 import { cloneDeep } from '../ontologies/utils';
 
-export const GROUP_COLORS: { [key: string]: string } = {
-  GPE: '#454ade',
-  FAC: '#81d8ac',
-  ORG: '#6eb0ec',
-  MAIL: '#e81c66',
-  MONEY: '#ff8c4b',
-  PERSON: '#ffe186',
-  DATE: '#ff8989',
-  PERCENT: '#1e264f',
-  TIME: '#21b8a6',
-  EVENT: '#cba2da',
-  LOC: '#b7a38d',
-  NORP: '#743ccf',
-  PRODUCT: '#d74f57',
-  WORK_OF_ART: '#ffbccc',
-  LANGUAGE: '#d1d3ff',
+export const generatedEntitiesColor: { [key: string]: string } = {
+  DATE: '#FF8989',
+  EVENT: '#CBA2DA',
+  FAC: '#81D8AC',
+  GPE: '#6EB0EC',
+  LANGUAGE: '#D1D3FF',
+  LAW: '#9295E7',
+  LOC: '#D1BEA9',
+  MAIL: '#D2F1E1',
+  MONEY: '#FF8C4B',
+  NORP: '#CFE8FF',
+  ORG: '#A0E3FF',
+  PERCENT: '#FBDBB9',
+  PERSON: '#FFDA69',
+  PRODUCT: '#FF6363',
+  QUANTITY: '#E7D2EF',
+  TIME: '#21B8A6',
+  WORK_OF_ART: '#ffc7c7',
 };
 
 export interface Entity {

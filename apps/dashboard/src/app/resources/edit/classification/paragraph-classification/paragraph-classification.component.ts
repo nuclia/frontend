@@ -12,7 +12,7 @@ import {
   UserClassification,
 } from '@nuclia/core';
 import { LabelsService } from '../../../../services/labels.service';
-import { ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
+import { getParagraphs, ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 
 type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
 
@@ -44,8 +44,8 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   isModified = false;
   isSaving = false;
 
-  private paragraphsBackup: ParagraphWithTextAndAnnotations[] = [];
-  paragraphs: ParagraphWithTextAndAnnotations[] = [];
+  private paragraphsBackup: ParagraphWithTextAndClassifications[] = [];
+  paragraphs: ParagraphWithTextAndClassifications[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -62,16 +62,11 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
           this.paragraphClassificationMap = this.getParagraphClassificationMap(resource, fieldId);
         }),
         map(([fieldId, resource]) => {
-          const dataKey = this.editResource.getDataKeyFromFieldType(fieldId.field_type);
-          if (!dataKey || !resource.data[dataKey]) {
-            return [];
-          }
-          const paragraphs: Paragraph[] =
-            resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata?.paragraphs || [];
+          const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
           return paragraphs.map((paragraph) => {
             const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
             const userClassifications = this.paragraphClassificationMap[paragraphId] || [];
-            const enhancedParagraph: ParagraphWithTextAndAnnotations = {
+            const enhancedParagraph: ParagraphWithTextAndClassifications = {
               ...paragraph,
               text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
               paragraphId,
@@ -98,7 +93,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     this.currentLabel = labels[0];
   }
 
-  addLabelOnParagraph(paragraph: ParagraphWithTextAndAnnotations) {
+  addLabelOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
     if (this.currentLabel) {
       const currentLabel = this.currentLabel;
       let existingIndex = -1;
@@ -125,13 +120,13 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
     }
   }
 
-  cancelGeneratedLabel(paragraph: ParagraphWithTextAndAnnotations, labelToCancel: Classification) {
+  cancelGeneratedLabel(paragraph: ParagraphWithTextAndClassifications, labelToCancel: Classification) {
     paragraph.userClassifications.push({ ...labelToCancel, cancelled_by_user: true });
     paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
     this.isModified = this.hasModifications();
   }
 
-  removeUserLabel(paragraph: ParagraphWithTextAndAnnotations, labelToRemove: Classification) {
+  removeUserLabel(paragraph: ParagraphWithTextAndClassifications, labelToRemove: Classification) {
     paragraph.userClassifications = paragraph.userClassifications.filter(
       (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
     );
@@ -140,7 +135,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
   save() {
     this.isSaving = true;
-    this.fieldId.pipe(switchMap((field) => this.editResource.saveAnnotations(field, this.paragraphs))).subscribe({
+    this.fieldId.pipe(switchMap((field) => this.editResource.saveClassifications(field, this.paragraphs))).subscribe({
       next: () => {
         this.isModified = false;
         this.isSaving = false;

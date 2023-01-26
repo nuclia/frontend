@@ -29,6 +29,7 @@ import {
   PaButtonModule,
   PaChipsModule,
   PaDropdownModule,
+  PaExpanderModule,
   PaIconModule,
   PaPopupModule,
   PaTextFieldModule,
@@ -42,7 +43,7 @@ import {
   SisProgressModule,
   SisStatusComponent,
 } from '@nuclia/sistema';
-import { FileUploadModule } from '@flaps/core';
+import { FileUploadModule, STFPipesModule } from '@flaps/core';
 import { STFSectionNavbarModule } from '../components/section-navbar';
 import { DatasetImportComponent } from './sample-dataset/dataset-import.component';
 import { LoadingModalComponent } from './sample-dataset/loading-modal/loading-modal.component';
@@ -52,6 +53,7 @@ import { AddFieldComponent } from './edit/add-field/add-field.component';
 import { DropzoneComponent } from './dropzone/dropzone.component';
 import { ParagraphClassificationComponent } from './edit/classification/paragraph-classification/paragraph-classification.component';
 import { DatasetSelectorComponent } from './sample-dataset/dataset-selector/dataset-selector.component';
+import { ParagraphAnnotationComponent } from './edit/annotation/paragraph-annotation/paragraph-annotation.component';
 
 const Components = [
   ResourceListComponent,
@@ -70,6 +72,7 @@ const Components = [
   AddFieldComponent,
   DropzoneComponent,
   ParagraphClassificationComponent,
+  ParagraphAnnotationComponent,
 ];
 
 const ROUTES: Routes = [
@@ -105,6 +108,14 @@ const ROUTES: Routes = [
           {
             path: 'classification/:fieldType/:fieldId',
             component: ParagraphClassificationComponent,
+          },
+          {
+            path: 'annotation',
+            component: ParagraphAnnotationComponent,
+          },
+          {
+            path: 'annotation/:fieldType/:fieldId',
+            component: ParagraphAnnotationComponent,
           },
           {
             path: 'add-field',
@@ -166,6 +177,8 @@ const ROUTES: Routes = [
     SisLabelModule,
     PaPopupModule,
     PaChipsModule,
+    PaExpanderModule,
+    STFPipesModule,
   ],
   declarations: [...Components],
   exports: [],

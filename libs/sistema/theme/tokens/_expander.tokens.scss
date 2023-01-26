@@ -1,0 +1,17 @@
+@import './palette.tokens';
+@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
+
+// Collapsed theme
+$background-color-collapsed-expander-header: $color-neutral-lightest;
+$background-color-collapsed-expander-header-hover: $color-neutral-lighter;
+$box-shadow-collapsed-expander-header: inset 0 -1px 0 $color-neutral-lighter;
+$color-collapsed-expander-header-title: $color-dark-stronger;
+$color-collapsed-expander-header-icon: $color-dark-stronger;
+
+// Expanded theme
+$background-color-expanded-expander-header: $color-dark-stronger;
+$background-color-expanded-expander-header-hover: lighten($color-dark-stronger, 10%);
+$box-shadow-expanded-expander-header: inset 0 -1px 0 $color-dark-stronger;
+$color-expanded-expander-header-title: $color-light-stronger;
+$color-expanded-expander-header-title-hover: $color-light-stronger;
+$color-expanded-expander-header-icon: $color-light-stronger;

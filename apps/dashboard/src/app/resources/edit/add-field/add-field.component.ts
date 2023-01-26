@@ -4,6 +4,7 @@ import { FIELD_TYPE, LinkField, Resource, TextField, TextFieldFormat } from '@nu
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { getDataKeyFromFieldType } from '../edit-resource.helpers';
 
 @Component({
   selector: 'app-add-field',
@@ -25,7 +26,7 @@ export class AddFieldComponent implements OnInit, OnDestroy {
     ),
   ]).pipe(
     map(([fieldType, resource]) => {
-      const dataKey = this.editResource.getDataKeyFromFieldType(fieldType);
+      const dataKey = getDataKeyFromFieldType(fieldType);
       if (dataKey) {
         const fieldsOfSameType = resource.getFields([dataKey]);
         return fieldsOfSameType.length > 0 ? `${fieldType}${fieldsOfSameType.length + 1}` : `${fieldType}1`;

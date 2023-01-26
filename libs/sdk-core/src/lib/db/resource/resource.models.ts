@@ -233,13 +233,17 @@ export interface FieldMetadata {
   thumbnail?: CloudLink;
   language?: string;
   summary?: string;
-  positions?: { [entityId: string]: { entity: string; position: { start: number; end: number }[] } };
+  positions?: EntityPositions;
+}
+
+export interface EntityPositions {
+  [entityId: string]: { entity: string; position: { start: number; end: number }[] };
 }
 
 export interface UserFieldMetadata {
   field: { field: string; field_type: string };
-  paragraphs?: ParagraphAnnotation[];
-  token?: TokenAnnotation[];
+  paragraphs?: ParagraphClassification[];
+  token?: UserTokenAnnotation[];
 }
 
 export interface TokenAnnotation {
@@ -249,7 +253,11 @@ export interface TokenAnnotation {
   end: number;
 }
 
-export interface ParagraphAnnotation {
+export interface UserTokenAnnotation extends TokenAnnotation {
+  cancelled_by_user?: boolean;
+}
+
+export interface ParagraphClassification {
   classifications: Classification[];
   key: string;
 }

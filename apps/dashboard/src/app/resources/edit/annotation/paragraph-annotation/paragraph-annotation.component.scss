@@ -1,0 +1,117 @@
+@import 'variables';
+@import '../../edit-resource.tokens';
+
+.paragraph-annotation {
+  display: flex;
+}
+
+.paragraphs-container {
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+  );
+  overflow: auto;
+
+  .paragraph-container {
+    position: relative;
+
+    p {
+      margin-bottom: 0;
+
+      ::ng-deep mark {
+        background: $color-neutral-lighter;
+        cursor: default;
+        padding: 0 rhythm(0.25);
+      }
+
+      &.family-selected ::ng-deep mark {
+        cursor: pointer;
+      }
+    }
+
+    .annotation-buttons-container {
+      display: inline-flex;
+      height: rhythm(2);
+      position: relative;
+
+      .annotation-button {
+        align-items: center;
+        border: none;
+        color: $color-light-stronger;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        height: rhythm(2);
+        width: rhythm(2);
+
+        pa-icon {
+          display: flex;
+        }
+
+        &.remove {
+          background: $color-dark-stronger;
+          &:hover {
+            background: lighten($color-dark-stronger, 25%);
+          }
+        }
+        &.confirm {
+          background: $color-primary-regular;
+          &:hover {
+            background: $color-primary-light;
+          }
+        }
+      }
+    }
+  }
+}
+
+.entity-families-container {
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{rhythm(5)}
+  );
+  overflow: auto;
+  position: absolute;
+  top: calc(var(--app-topbar-height) + #{$height-header} + #{$padding-top-page-container});
+  right: $padding-horizontal-header;
+  width: rhythm(32);
+
+  .help {
+    display: flex;
+    gap: rhythm(0.5);
+  }
+
+  pa-expander ::ng-deep .pa-expander-header {
+    padding-left: rhythm(1);
+  }
+
+  .family-title {
+    font-weight: $font-weight-semi-bold;
+  }
+
+  .family-color {
+    height: rhythm(5);
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: rhythm(1);
+  }
+
+  .entity-list {
+    border-left: 1px solid;
+    padding: rhythm(0.5) rhythm(1);
+    list-style: none;
+
+    li {
+      line-height: rhythm(4);
+
+      &:not(:last-of-type) {
+        box-shadow: $box-shadow-collapsed-expander-header;
+      }
+    }
+  }
+}
+
+@media (min-width: $size-viewport-xlarge-min) {
+  .entity-families-container {
+    right: $padding-horizontal-header-xlarge;
+  }
+}

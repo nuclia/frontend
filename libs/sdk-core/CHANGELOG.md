@@ -4,6 +4,10 @@
 
 - Update `Relation` interface
 - Add `Search.Relations`and `Search.Relation` interfaces
+- Add `EntityPositions` interface to resource models
+- Create `UserTokenAnnotation` interface which adds `cancelled_by_user` property, and use it instead of `TokenAnnotation` in `UserFieldMetadata`
+- Fix `getAnnotatedEntities` method to filter out `cancelled_by_user` annotations from the list.
+- Rename interface `ParagraphAnnotation` to `ParagraphClassification` to avoid confusion
 
 # 1.1.2 (2023-01-20)
 

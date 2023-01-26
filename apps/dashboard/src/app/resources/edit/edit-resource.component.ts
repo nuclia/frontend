@@ -8,7 +8,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject, take } from 'rxjs';
+import { filter, map, Observable, Subject } from 'rxjs';
 import { FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { NavigationService } from '../../services/navigation.service';
@@ -41,6 +41,9 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     ),
   );
 
+  activeField?: FieldId | 'profile';
+  hasRightPanel = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -60,6 +63,11 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.editResource.currentView.subscribe((view) => {
       this.currentView = view;
+      this.hasRightPanel = view === 'annotation';
+      this.cdr.detectChanges();
+    });
+    this.currentField.pipe(takeUntil(this.unsubscribeAll)).subscribe((current) => {
+      this.activeField = current;
       this.cdr.detectChanges();
     });
   }
@@ -85,16 +93,5 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   onViewChange() {
     this.editResource.setCurrentField('profile');
-  }
-
-  isActive(field: ResourceFieldWithIcon): Observable<boolean> {
-    return this.currentField.pipe(
-      take(1),
-      filter((current) => current !== 'profile'),
-      map(
-        (current) =>
-          (current as FieldId).field_type === field.field_type && (current as FieldId).field_id === field.field_id,
-      ),
-    );
   }
 }
