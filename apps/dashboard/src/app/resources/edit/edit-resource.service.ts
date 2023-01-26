@@ -45,6 +45,7 @@ import {
   ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor } from '../../entities/model';
+import { NavigationService } from '../../services/navigation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -70,6 +71,7 @@ export class EditResourceService {
       }, [] as ResourceField[]),
     ),
   );
+  kbUrl: Observable<string> = this.sdk.currentKb.pipe(map((kb) => this.navigation.getKbUrl(kb.account, kb.slug!)));
 
   constructor(
     private sdk: SDKService,
@@ -77,6 +79,7 @@ export class EditResourceService {
     private toaster: SisToastService,
     private modalService: SisModalService,
     private translate: TranslateService,
+    private navigation: NavigationService,
   ) {}
 
   private _loadResource(resourceId: string): Observable<Resource> {

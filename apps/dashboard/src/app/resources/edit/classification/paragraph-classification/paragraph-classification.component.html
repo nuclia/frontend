@@ -1,14 +1,24 @@
 <div class="classification-container">
   <div class="title-s">{{ 'resource.field-classification' | translate }}</div>
   <app-label-dropdown
+    *ngIf="(hasLabels | async) === true; else noLabel"
     single
     [labelSets]="availableLabels | async"
     (selectionChange)="updateSelection($event)">
     {{ currentLabel ? currentLabel.labelset + ' – ' + currentLabel.label : ('generic.select_tags' | translate) }}
   </app-label-dropdown>
+  <ng-template #noLabel>
+    <p>
+      {{ 'resource.classification.no-paragraph-labelset' | translate }}
+      <a [routerLink]="(kbUrl | async) + '/ontologies'">
+        {{ 'resource.classification-page-link' | translate }}
+      </a>
+    </p>
+  </ng-template>
 </div>
 
 <div
+  *ngIf="(hasLabels | async) === true"
   class="paragraphs-container"
   [class.disabled]="!currentLabel">
   <div

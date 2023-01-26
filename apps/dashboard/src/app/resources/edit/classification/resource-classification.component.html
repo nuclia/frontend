@@ -1,8 +1,13 @@
 <div class="classification-container">
   <label class="title-s">{{ 'resource.classification' | translate }}</label>
   <div>
+    <p *ngIf="noLabels">
+      {{ 'resource.classification.no-resource-labelset' | translate }}
+      <a [routerLink]="(kbUrl | async) + '/ontologies'">{{ 'resource.classification-page-link' | translate }}</a>
+    </p>
     <app-label-field
       [selection]="currentLabels"
+      (noLabels)="noLabels = $event"
       (selectionChange)="updateLabels($event)"></app-label-field>
   </div>
 </div>
