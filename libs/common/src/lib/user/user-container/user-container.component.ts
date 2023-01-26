@@ -16,4 +16,13 @@ export class UserContainerComponent {
     return this._alignLeft;
   }
   private _alignLeft = false;
+
+  @Input()
+  set alignTopOnSmallScreens(value: any) {
+    this._alignTopOnSmallScreens = coerceBooleanProperty(value);
+  }
+  get alignTopOnSmallScreens() {
+    return this._alignTopOnSmallScreens;
+  }
+  private _alignTopOnSmallScreens = false;
 }
