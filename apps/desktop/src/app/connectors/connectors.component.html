@@ -64,7 +64,7 @@
         qa="validate"
         type="submit"
         kind="primary"
-        [disabled]="form.invalid || form.pristine">
+        [disabled]="form.invalid">
         {{ (type === 'sources' ? 'generic.next' : 'Upload') | translate }}
       </pa-button>
     </div>
