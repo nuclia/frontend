@@ -12800,7 +12800,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.paragraph_labeler</name>
+						<name>stash.settings.processes.paragraph-labeler</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -12820,7 +12820,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.paragraph_labeler.info</name>
+						<name>stash.settings.processes.paragraph-labeler.info</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -12840,7 +12840,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.resource_labeler</name>
+						<name>stash.settings.processes.resource-labeler</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -12860,7 +12860,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.settings.processes.resource_labeler.info</name>
+						<name>stash.settings.processes.resource-labeler.info</name>
 						<description/>
 						<comment/>
 						<default_text/>

@@ -1,7 +1,7 @@
 export enum TrainingType {
   classifier = 'classifier',
-  resource_labeler = 'resource_labeler',
-  paragraph_labeler = 'paragraph_labeler',
+  resource_labeler = 'resource-labeler',
+  paragraph_labeler = 'paragraph-labeler',
   ner = 'ner',
 }
 
