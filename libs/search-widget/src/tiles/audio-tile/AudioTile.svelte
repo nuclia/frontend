@@ -24,6 +24,8 @@
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { AudioPlayer } from '../../common/player';
   import { navigateToLink } from '../../core/stores/widget.store';
+  import { onMount } from 'svelte';
+  import { displayedResource } from '../../core/stores/search.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -59,17 +61,23 @@
     : filterParagraphs(findInTranscript, matchingParagraphs || []);
   $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(findInTranscript, transcripts);
 
+  onMount(() => {
+    if (displayedResource.getValue()?.uid === result.id) {
+      playFromStart();
+    }
+  });
+
   const playFromStart = () => {
     playFrom(0);
   };
 
-  const onClickParagraph = (paragraph: MediaWidgetParagraph) => {
+  const onClickParagraph = (paragraph?: MediaWidgetParagraph) => {
     navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
       const url = getExternalUrl(result);
       if (navigateToLink && url) {
-        goToUrl(url, paragraph.text);
+        goToUrl(url, paragraph?.text);
       } else {
-        playParagraph(paragraph);
+        paragraph ? playParagraph(paragraph) : playFromStart();
       }
     });
   };
@@ -119,6 +127,9 @@
     paragraphInPlay = undefined;
     findInTranscript = '';
     unblockBackground(true);
+    if (displayedResource.getValue()?.uid === result.id) {
+      displayedResource.set(null);
+    }
   };
 
   const toggleTranscriptPanel = () => {
@@ -184,7 +195,7 @@
           </div>
           <h3
             class="ellipsis"
-            on:click={playFromStart}>
+            on:click={() => onClickParagraph()}>
             {result?.title}
           </h3>
         </div>

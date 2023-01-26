@@ -41,8 +41,12 @@
   };
 
   let pdfJsLoaded = false;
+  let pdfViewerLoaded = false;
   const onPdfJsLoad = () => {
     pdfJsLoaded = true;
+  };
+  const onPdfViewerLoad = () => {
+    pdfViewerLoaded = true;
   };
 </script>
 
@@ -52,7 +56,9 @@
     src="{pdfJsBaseUrl}/build/pdf.min.js"
     on:load={onPdfJsLoad}></script>
   {#if pdfJsLoaded}
-    <script src="{pdfJsBaseUrl}/web/pdf_viewer.js"></script>
+    <script
+      src="{pdfJsBaseUrl}/web/pdf_viewer.js"
+      on:load={onPdfViewerLoad}></script>
   {/if}
 </svelte:head>
 {#if $pdfStyle}
@@ -66,8 +72,10 @@
   {result}
   resourceObs={resource$}
   on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
-  <PdfViewer
-    src={$pdfUrl}
-    paragraph={selectedParagraph}
-    showController={!isMobile} />
+  {#if pdfViewerLoaded}
+    <PdfViewer
+      src={$pdfUrl}
+      paragraph={selectedParagraph}
+      showController={!isMobile} />
+  {/if}
 </DocumentTile>

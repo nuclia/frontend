@@ -15,7 +15,7 @@
   import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
-  import { searchQuery } from '../../core/stores/search.store';
+  import { displayedResource, searchQuery } from '../../core/stores/search.store';
   import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { navigateToLink } from '../../core/stores/widget.store';
 
@@ -65,6 +65,9 @@
 
   onMount(() => {
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
+    if (displayedResource.getValue()?.uid === result.id) {
+      openParagraph(undefined, -1);
+    }
   });
 
   onDestroy(() => reset());
@@ -72,7 +75,7 @@
     navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
       const url = getExternalUrl(result);
       if (navigateToLink && url) {
-        goToUrl(url, paragraph.text);
+        goToUrl(url, paragraph?.text);
       } else {
         openParagraph(paragraph, index);
       }
@@ -114,6 +117,9 @@
   const closePreview = () => {
     reset();
     unblockBackground(true);
+    if (displayedResource.getValue()?.uid === result.id) {
+      displayedResource.set(null);
+    }
   };
 
   const setHeaderActionWidth = () => {
@@ -222,7 +228,7 @@
           </div>
           <h3
             class="ellipsis"
-            on:click={() => openParagraph(undefined, -1)}>
+            on:click={() => onClickParagraph(undefined, -1)}>
             {result?.title}
           </h3>
         </div>

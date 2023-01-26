@@ -2,27 +2,32 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime, map, merge, Subject } from 'rxjs';
+  import { debounceTime, map, merge, of, shareReplay, Subject, switchMap } from 'rxjs';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
-  import VideoTile from '../../tiles/video-tile/VideoTile.svelte';
   import globalCss from '../../common/_global.scss?inline';
-  import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
-  import TextTile from '../../tiles/text-tile/TextTile.svelte';
   import {
     entityRelations,
+    displayedResource,
     hasSearchError,
     isEmptySearchQuery,
     pendingResults,
     smartResults,
     triggerSearch,
   } from '../../core/stores/search.store';
-  import AudioTile from '../../tiles/audio-tile/AudioTile.svelte';
+  import { getResourceById } from '../../core/api';
+  import Tile from './Tile.svelte';
+  import { ResourceProperties } from '@nuclia/core';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(2000));
+  const resource = displayedResource.pipe(
+    switchMap((data) => (data?.uid ? getResourceById(data.uid, [ResourceProperties.BASIC]) : of(null))),
+    shareReplay(),
+  );
+
   let svgSprite;
 
   onMount(() => {
@@ -56,15 +61,7 @@
           class="results"
           class:with-relations={$entityRelations.length > 0}>
           {#each $smartResults as result}
-            {#if result.icon === 'application/pdf'}
-              <PdfTile {result} />
-            {:else if result.icon.includes('video')}
-              <VideoTile {result} />
-            {:else if result.icon.includes('audio')}
-              <AudioTile {result} />
-            {:else}
-              <TextTile {result} />
-            {/if}
+            <Tile {result} />
           {/each}
         </div>
         {#if $entityRelations.length > 0}
@@ -84,6 +81,9 @@
         {/if}
       </div>
     {/if}
+  {/if}
+  {#if $displayedResource && $resource}
+    <Tile result={$resource} />
   {/if}
   <div
     id="nuclia-glyphs-sprite"

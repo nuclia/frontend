@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { Observable, Subject } from 'rxjs';
   import type { Resource, Search } from '@nuclia/core';
+  import { FIELD_TYPE } from '@nuclia/core';
   import { switchMap, take, tap } from 'rxjs/operators';
   import { getFileUrl, getResource } from '../../core/api';
   import IconButton from '../../common/button/IconButton.svelte';
@@ -27,6 +29,7 @@
   import { filterParagraphs, isFileOrLink } from '../tile.utils';
   import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { navigateToLink } from '../../core/stores/widget.store';
+  import { displayedResource } from '../../core/stores/search.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -62,17 +65,23 @@
     : filterParagraphs(findInTranscript, matchingParagraphs || []);
   $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(findInTranscript, transcripts);
 
+  onMount(() => {
+    if (displayedResource.getValue()?.uid === result.id) {
+      playFromStart();
+    }
+  });
+
   const playFromStart = () => {
     playFrom(0);
   };
 
-  const onClickParagraph = (paragraph: MediaWidgetParagraph) => {
+  const onClickParagraph = (paragraph?: MediaWidgetParagraph) => {
     navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
       const url = getExternalUrl(result);
       if (navigateToLink && url && !isYoutubeUrl(url)) {
-        goToUrl(url, paragraph.text);
+        goToUrl(url, paragraph?.text);
       } else {
-        playParagraph(paragraph);
+        paragraph ? playParagraph(paragraph) : playFromStart();
       }
     });
   };
@@ -94,17 +103,22 @@
       freezeBackground(true);
     }
 
-    const paragraph =
+    let paragraph =
       selectedParagraph && isFileOrLink(selectedParagraph.fieldType)
         ? selectedParagraph
         : matchingParagraphs.filter((p) => isFileOrLink(p.fieldType))[0] || matchingParagraphs[0];
     if (!resource) {
       resource = getResource(result.id).pipe(
         tap((res) => {
-          if (paragraph.fieldType === FieldType.LINK) {
+          transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
+          if (!paragraph) {
+            paragraph = transcripts[0];
+          }
+          // TO FIX: getMediaTranscripts and mapSmartParagraph2WidgetParagraph return different fieldType values
+          if (paragraph?.fieldType === FieldType.LINK || paragraph?.fieldType === FIELD_TYPE.link) {
             const linkField = getLinkField(res, paragraph.fieldId);
             youtubeUri = linkField?.value?.uri;
-          } else if (paragraph.fieldType === FieldType.FILE) {
+          } else if (paragraph?.fieldType === FieldType.FILE || paragraph?.fieldType === FIELD_TYPE.file) {
             const fileField = getFileField(res, res.id);
             const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
             if (file) {
@@ -114,7 +128,6 @@
           }
           const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
           summary = summaries.filter((s) => !!s)[0];
-          transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
           setupExpandedTile();
         }),
       );
@@ -136,6 +149,9 @@
     paragraphInPlay = undefined;
     findInTranscript = '';
     unblockBackground(true);
+    if (displayedResource.getValue()?.uid === result.id) {
+      displayedResource.set(null);
+    }
   };
 
   const toggleTranscriptPanel = () => {
@@ -207,7 +223,7 @@
           </div>
           <h3
             class="ellipsis"
-            on:click={playFromStart}>
+            on:click={() => onClickParagraph()}>
             {result?.title}
           </h3>
         </div>
