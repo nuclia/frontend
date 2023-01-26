@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { TrainingStatus, TrainingType } from '@nuclia/core';
-import { forkJoin, shareReplay, Subject, take, tap } from 'rxjs';
+import { LabelSetKind, TrainingStatus, TrainingType } from '@nuclia/core';
+import { forkJoin, Observable, shareReplay, Subject, take, tap } from 'rxjs';
 
 interface TrainingState {
   agreement: boolean;
@@ -25,9 +25,11 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
   cannotTrain = this.stateService.account.pipe(map((account) => !!account && account.type === 'stash-basic'));
   hasResources = this.sdk.counters.pipe(map((counters) => counters.resources > 0));
   trainingTypes = TrainingType;
-  labelsets = this.sdk.currentKb.pipe(
+  labelsets: Observable<{ value: string; title: string; kind?: LabelSetKind[] }[]> = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getLabels()),
-    map((labelsets) => Object.entries(labelsets).map(([id, labelset]) => ({ value: id, title: labelset.title }))),
+    map((labelsets) =>
+      Object.entries(labelsets).map(([id, labelset]) => ({ value: id, title: labelset.title, kind: labelset.kind })),
+    ),
     shareReplay(),
   );
   entitiesGroups = this.sdk.currentKb.pipe(
@@ -42,7 +44,12 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     ),
     shareReplay(),
   );
-  trainingList = [TrainingType.classifier, TrainingType.labeler, TrainingType.ner];
+  trainingList = [
+    TrainingType.classifier,
+    TrainingType.resource_labeler,
+    TrainingType.paragraph_labeler,
+    TrainingType.ner,
+  ];
   trainings = this.trainingList.reduce((acc, trainingType) => {
     acc[trainingType] = {
       agreement: false,
@@ -54,11 +61,22 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     return acc;
   }, {} as { [key in TrainingType]: TrainingState });
   hoursRequired = 10;
-  options = {
+  options: { [key: string]: Observable<{ value: string; title: string; kind?: LabelSetKind[] }[]> } = {
     [TrainingType.classifier]: this.labelsets,
-    [TrainingType.labeler]: this.labelsets,
+    [TrainingType.resource_labeler]: this.labelsets.pipe(
+      map((labelsets) => labelsets.filter((labelset) => labelset.kind?.includes(LabelSetKind.RESOURCES))),
+    ),
+    [TrainingType.paragraph_labeler]: this.labelsets.pipe(
+      map((labelsets) =>
+        labelsets.filter(
+          (labelset) =>
+            !labelset.kind?.includes(LabelSetKind.RESOURCES) && labelset.kind?.includes(LabelSetKind.PARAGRAPHS),
+        ),
+      ),
+    ),
     [TrainingType.ner]: this.entitiesGroups,
   };
+
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
   enabledTrainings = this.tracking
     .isFeatureEnabled('training_ner')
@@ -105,6 +123,11 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     markForCheck(this.cdr);
   }
 
+  updateSelection(type: TrainingType, value: string) {
+    this.trainings[type].selectedOptions = [value];
+    markForCheck(this.cdr);
+  }
+
   toggleAll(type: TrainingType) {
     this.options[type].pipe(take(1)).subscribe((options) => {
       const selectAll = this.trainings[type].selectedOptions.length < options.length;
@@ -117,8 +140,8 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     let params = {};
     if (this.trainings[type].selectedOptions.length > 0) {
       params = {
-        valid_labelsets: this.options[type] === this.labelsets ? this.trainings[type].selectedOptions : undefined,
-        entity_groups: this.options[type] === this.entitiesGroups ? this.trainings[type].selectedOptions : undefined,
+        valid_labelsets: type !== TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
+        entity_groups: type === TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
       };
     }
     this.sdk.currentKb

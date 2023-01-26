@@ -29,22 +29,32 @@
           <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
 
           <div class="select">
-            <nsi-dropdown-button
-              [popupRef]="dropdown"
-              [open]="trainings[type].open">
-              {{
-                (type === trainingTypes.ner
-                  ? 'stash.settings.processes.training.select-entities'
-                  : 'stash.settings.processes.training.select-labelsets'
-                ) | translate
-              }}
-            </nsi-dropdown-button>
+            <ng-container *ngIf="type === trainingTypes.ner || type === trainingTypes.classifier; else singleSelection">
+              <nsi-dropdown-button
+                [popupRef]="multiSelectDropdown"
+                [open]="trainings[type].open">
+                {{
+                  (type === trainingTypes.ner
+                    ? 'stash.settings.processes.training.select-entities'
+                    : 'stash.settings.processes.training.select-labelsets'
+                  ) | translate
+                }}
+              </nsi-dropdown-button>
+            </ng-container>
+
+            <ng-template #singleSelection>
+              <nsi-dropdown-button
+                [popupRef]="singleSelectDropdown"
+                [open]="trainings[type].open">
+                {{ 'stash.settings.processes.training.select-labelset' | translate }}
+              </nsi-dropdown-button>
+            </ng-template>
 
             <div class="selection">{{ trainings[type].selectedOptions.join(', ') }}</div>
           </div>
 
           <pa-dropdown
-            #dropdown
+            #multiSelectDropdown
             (onOpen)="trainings[type].open = true"
             (onClose)="trainings[type].open = false">
             <pa-option
@@ -63,6 +73,21 @@
               <pa-checkbox
                 [value]="trainings[type].selectedOptions.includes(option.value)"
                 (change)="toggleOption(type, option.value)">
+                {{ option.title | translate }}
+              </pa-checkbox>
+            </pa-option>
+          </pa-dropdown>
+
+          <pa-dropdown
+            #singleSelectDropdown
+            (onOpen)="trainings[type].open = true"
+            (onClose)="trainings[type].open = false">
+            <pa-option
+              *ngFor="let option of options[type] | async"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [value]="trainings[type].selectedOptions.includes(option.value)"
+                (change)="updateSelection(type, option.value)">
                 {{ option.title | translate }}
               </pa-checkbox>
             </pa-option>
