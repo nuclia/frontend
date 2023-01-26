@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Search } from '@nuclia/core';
-  import VideoTile from '../../tiles/video-tile/VideoTile.svelte';
-  import PdfTile from '../../tiles/pdf-tile/PdfTile.svelte';
-  import AudioTile from '../../tiles/audio-tile/AudioTile.svelte';
-  import TextTile from '../../tiles/text-tile/TextTile.svelte';
+  import type { Search } from '@nuclia/core';
+  import VideoTile from './video-tile/VideoTile.svelte';
+  import PdfTile from './pdf-tile/PdfTile.svelte';
+  import AudioTile from './audio-tile/AudioTile.svelte';
+  import TextTile from './text-tile/TextTile.svelte';
 
   export let result: Search.SmartResult;
 </script>
