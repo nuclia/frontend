@@ -31,6 +31,7 @@
           <div class="select">
             <ng-container *ngIf="type === trainingTypes.ner || type === trainingTypes.classifier; else singleSelection">
               <nsi-dropdown-button
+                [disabled]="trainings[type].running"
                 [popupRef]="multiSelectDropdown"
                 [open]="trainings[type].open">
                 {{
@@ -44,6 +45,7 @@
 
             <ng-template #singleSelection>
               <nsi-dropdown-button
+                [disabled]="trainings[type].running"
                 [popupRef]="singleSelectDropdown"
                 [open]="trainings[type].open">
                 {{ 'stash.settings.processes.training.select-labelset' | translate }}
@@ -100,7 +102,7 @@
 
             <div class="agreement-container">
               <pa-checkbox
-                [disabled]="(cannotTrain | async) || !(hasResources | async)"
+                [disabled]="(cannotTrain | async) || !(hasResources | async) || trainings[type].running"
                 [(value)]="trainings[type].agreement">
                 {{ 'stash.settings.processes.training.agreement' | translate }}
               </pa-checkbox>
