@@ -12,6 +12,7 @@ describe('Edit resource helpers', () => {
           paragraphId: 'p1',
           userClassifications: [{ labelset: 'heroes', label: 'batman' }],
           generatedClassifications: [],
+          text: '',
         },
       ],
       [],
@@ -35,16 +36,19 @@ describe('Edit resource helpers', () => {
             { labelset: 'heroes', label: 'catwoman' },
           ],
           generatedClassifications: [],
+          text: '',
         },
         {
           paragraphId: 'p2',
           userClassifications: [{ labelset: 'heroes', label: 'catwoman' }],
           generatedClassifications: [],
+          text: '',
         },
         {
           paragraphId: 'p3',
           userClassifications: [],
           generatedClassifications: [],
+          text: '',
         },
       ],
       [
