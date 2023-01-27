@@ -45,6 +45,7 @@ export class OnboardingComponent {
   onboardingForm = new FormGroup({
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     industry: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    jobTitle: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     phoneInternationalCode: new FormControl<string>('', {
       nonNullable: true,
       validators: [Validators.pattern(PHONE_INTERNATIONAL_CODE)],
@@ -60,6 +61,7 @@ export class OnboardingComponent {
   validationMessages = {
     industry: { required: 'validation.required' },
     company: { required: 'validation.required' },
+    jobTitle: { required: 'validation.required' },
     phoneInternationalCode: { required: 'validation.required', pattern: 'onboarding.phone.invalid_code' },
     phoneNumber: { required: 'validation.required', pattern: 'onboarding.phone.invalid_number' },
   };
@@ -94,6 +96,7 @@ export class OnboardingComponent {
     const data: OnboardingPayload = {
       company: formValue.company,
       industry: formValue.industry,
+      job_title: formValue.jobTitle,
       phone: formValue.phoneNumber ? `${formValue.phoneInternationalCode} ${formValue.phoneNumber}` : undefined,
       other_search_engines: formValue.searchEngine,
       receive_updates: formValue.getUpdates,
