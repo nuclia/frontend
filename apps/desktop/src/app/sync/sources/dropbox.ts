@@ -8,7 +8,7 @@ import {
   Field,
   ConnectorParameters,
 } from '../models';
-import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { filter, from, map, Observable, of, switchMap, take } from 'rxjs';
 
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
@@ -20,12 +20,9 @@ export const DropboxConnector: SourceConnectorDefinition = {
 
 const TOKEN = 'DROPBOX_TOKEN';
 class DropboxImpl implements ISourceConnector {
-  hasServerSideAuth = true;
+  hasServerSideAuth = false;
   isExternal = false;
   resumable = true;
-  private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  dbx?: any;
-  dbxAuth?: any;
 
   constructor(data?: ConnectorSettings) {
     // eslint-disable-next-line no-empty-function
