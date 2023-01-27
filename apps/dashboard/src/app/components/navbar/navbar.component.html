@@ -84,7 +84,7 @@
             <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
           </a>
         </div>
-        <ng-container *ngIf="isAccountManager | async">
+        <ng-container *ngIf="isAdmin | async">
           <div
             *ngIf="isUsersEnabled | async"
             class="group-items">
@@ -109,7 +109,7 @@
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
         </div>
-        <ng-container *ngIf="isAccountManager | async">
+        <ng-container *ngIf="isAdmin | async">
           <div
             *ngIf="isAPIKeysEnabled | async"
             class="group-items">
