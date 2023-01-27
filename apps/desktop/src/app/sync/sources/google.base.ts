@@ -2,77 +2,85 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
-import { ConnectorSettings } from '../models';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ConnectorParameters, ConnectorSettings, Field } from '../models';
+import { combineLatest, from, Observable, of, take, tap } from 'rxjs';
 import { injectScript } from '@flaps/core';
-import { environment } from '../../../environments/environment';
-import { getDeeplink } from '../../utils';
 
 declare var gapi: any;
 
+const CREDENTIALS = 'GOOGLE_CREDENTIALS';
 export class GoogleBaseImpl {
-  TOKEN = 'GOOGLE_TOKEN';
   DISCOVERY_DOCS: string[] = [];
-  hasServerSideAuth = true;
-  private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  API_KEY: string;
+  hasServerSideAuth = false;
+  token = '';
 
   constructor(data?: ConnectorSettings) {
-    this.API_KEY = data?.API_KEY || '';
+    // eslint-disable-next-line
   }
 
   goToOAuth(reset?: boolean) {
-    if (reset) {
-      localStorage.removeItem(this.TOKEN);
-    }
-    const token = localStorage.getItem(this.TOKEN);
-    if (token) {
-      injectScript('https://apis.google.com/js/api.js').subscribe(() =>
-        gapi.load('client', () => {
-          gapi.client.init({
-            apiKey: this.API_KEY,
-            discoveryDocs: this.DISCOVERY_DOCS,
-          });
-          gapi.client.setToken({ access_token: token });
-          this.isAuthenticated.next(true);
-        }),
-      );
+    return of(true);
+  }
+
+  authenticate(): Observable<boolean> {
+    return of(true);
+  }
+
+  getParameters(): Observable<Field[]> {
+    return of([
+      {
+        id: 'credentials',
+        label: 'Service Account Credentials',
+        type: 'textarea',
+        required: true,
+      },
+    ]);
+  }
+
+  handleParameters(params: ConnectorParameters) {
+    localStorage.setItem(CREDENTIALS, params.credentials);
+  }
+
+  getToken(): Observable<string> {
+    if (!(window as any)['electron']) {
+      throw 'Not running in electron';
     } else {
-      if ((window as any)['electron']) {
-        (window as any)['electron'].openExternal(
-          `${environment.connectors.google.endpoint}?redirect=nuclia-desktop://`,
-        );
+      if (this.token) {
+        return of(this.token);
       } else {
-        location.href = `${environment.connectors.google.endpoint}?redirect=http://localhost:4200`;
+        return (
+          from(
+            (window as any)['electron'].google.getToken(JSON.parse(localStorage.getItem(CREDENTIALS) || '{}')),
+          ) as Observable<string>
+        ).pipe(tap((token) => (this.token = token)));
       }
     }
   }
 
-  authenticate(): Observable<boolean> {
-    if (!this.isAuthenticated.getValue()) {
-      injectScript('https://apis.google.com/js/api.js').subscribe(() => {
+  getClient(): Observable<any> {
+    return new Observable<Blob>((observer) => {
+      combineLatest([
+        this.getToken().pipe(take(1)),
+        injectScript('https://apis.google.com/js/api.js').pipe(take(1)),
+      ]).subscribe(([token]) => {
         gapi.load('client', () => {
-          gapi.client.init({
-            apiKey: this.API_KEY,
-            discoveryDocs: this.DISCOVERY_DOCS,
-          });
-          const interval = setInterval(() => {
-            const deeplink = getDeeplink();
-            if (deeplink && deeplink.includes('?')) {
-              const params = new URLSearchParams(deeplink.split('?')[1]);
-              const isGoogle = params.get('google');
-              if (isGoogle) {
-                const token = params.get('token') || '';
-                localStorage.setItem(this.TOKEN, token);
-                gapi.client.setToken({ access_token: token });
-                clearInterval(interval);
-                this.isAuthenticated.next(true);
-              }
-            }
-          }, 500);
+          gapi.client.setToken({ access_token: token });
+          gapi.client
+            .init({
+              discoveryDocs: this.DISCOVERY_DOCS,
+            })
+            .then(
+              () => {
+                observer.next(gapi.client);
+                observer.complete();
+              },
+              (err: any) => {
+                console.error('Cannot initialize gapi client', err);
+                observer.error(err);
+              },
+            );
         });
       });
-    }
-    return this.isAuthenticated.asObservable();
+    });
   }
 }

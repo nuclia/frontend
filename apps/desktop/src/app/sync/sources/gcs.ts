@@ -32,18 +32,22 @@ class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
     super(data);
   }
 
-  getParameters(): Observable<Field[]> {
-    return of([
-      {
-        id: 'bucket',
-        label: 'Bucket',
-        type: 'text',
-        required: true,
-      },
-    ]);
+  override getParameters(): Observable<Field[]> {
+    return super.getParameters().pipe(
+      map((fields) => [
+        ...fields,
+        {
+          id: 'bucket',
+          label: 'Bucket',
+          type: 'text',
+          required: true,
+        },
+      ]),
+    );
   }
 
-  handleParameters(params: ConnectorParameters) {
+  override handleParameters(params: ConnectorParameters) {
+    super.handleParameters(params);
     localStorage.setItem(BUCKET_KEY, params.bucket);
   }
 
@@ -62,19 +66,30 @@ class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
     if (!bucket) {
       return of({ items: [] as SyncItem[] });
     } else {
-      return from(
-        fetch(
-          `https://storage.googleapis.com/storage/v1/b/${bucket}/o?maxResults=${pageSize}&pageToken=${nextPage || ''}`,
-          {
-            headers: { Authorization: 'Bearer ' + localStorage.getItem(this.TOKEN) },
-          },
+      return this.getToken().pipe(
+        switchMap((token) =>
+          from(
+            fetch(
+              `https://storage.googleapis.com/storage/v1/b/${bucket}/o?maxResults=${pageSize}&pageToken=${
+                nextPage || ''
+              }`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            ),
+          ),
         ),
-      ).pipe(
         switchMap((res) => res.json()),
-        map((res) => ({
-          items: (res.items as any[]).map(this.mapResult).filter((item) => !regexp || regexp.test(item.title)),
-          nextPage: res.nextPageToken ? this._getFiles(query, pageSize, res.nextPageToken) : undefined,
-        })),
+        map((res) => {
+          if (res.items) {
+            return {
+              items: (res.items as any[]).map(this.mapResult).filter((item) => !regexp || regexp.test(item.title)),
+              nextPage: res.nextPageToken ? this._getFiles(query, pageSize, res.nextPageToken) : undefined,
+            };
+          } else {
+            throw new Error(res.error.message || 'Unknown error');
+          }
+        }),
       );
     }
   }
@@ -93,8 +108,9 @@ class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
   }
 
   download(resource: SyncItem): Observable<Blob> {
-    return from(
-      fetch(resource.metadata.mediaLink, { headers: { Authorization: 'Bearer ' + localStorage.getItem(this.TOKEN) } }),
-    ).pipe(switchMap((res) => res.blob()));
+    return this.getToken().pipe(
+      switchMap((token) => from(fetch(resource.metadata.mediaLink, { headers: { Authorization: `Bearer ${token}` } }))),
+      switchMap((res) => res.blob()),
+    );
   }
 }

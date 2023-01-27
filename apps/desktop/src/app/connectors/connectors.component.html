@@ -23,6 +23,12 @@
         [formControlName]="field.id">
         {{ field.label | translate }}
       </pa-input>
+      <pa-textarea
+        *ngIf="field.type === 'textarea'"
+        [help]="field.help | translate"
+        [formControlName]="field.id">
+        {{ field.label | translate }}
+      </pa-textarea>
 
       <div
         *ngIf="field.type === 'select'"

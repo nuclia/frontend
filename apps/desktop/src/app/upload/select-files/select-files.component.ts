@@ -12,20 +12,9 @@ import {
 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
-import {
-  tap,
-  filter,
-  takeUntil,
-  auditTime,
-  scan,
-  switchMap,
-  concatMap,
-  share,
-  catchError,
-  mapTo,
-  map,
-} from 'rxjs/operators';
+import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
 import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
+import { SisToastService } from '@nuclia/sistema';
 
 const defaultAuthCheck = (error: any) => error.message === 'Unauthorized' || error.status === 403;
 @Component({
@@ -51,7 +40,6 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   loading = false;
   isSelectingAll = false;
 
-  items: SyncItem[] = [];
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     filter(() => !!this.source),
     tap(() => {
@@ -66,8 +54,9 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
               if (this.source.hasServerSideAuth) {
                 this.source.goToOAuth(true);
               }
-              return this.source.authenticate().pipe(mapTo({ items: [], nextPage: undefined } as SearchResults));
+              return this.source.authenticate().pipe(map(() => ({ items: [], nextPage: undefined } as SearchResults)));
             } else {
+              this.toaster.error(typeof error === 'string' ? error : error?.message || 'An error occurred');
               return of({ items: [], nextPage: undefined });
             }
           }),
@@ -90,18 +79,12 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     share(),
   );
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef, private toaster: SisToastService) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
       this.triggerSearch.next();
     }, 200);
-
-    // TODO: can't use async pipe in the template because (unexpectedly) it doesn't work on GDrive connector.
-    this.resources.pipe(takeUntil(this.unsubscribeAll)).subscribe((resources) => {
-      this.items = resources;
-      this.cdr.detectChanges();
-    });
 
     // Infinite scroll
     const container = this.scroll?.nativeElement;

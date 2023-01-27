@@ -67,12 +67,12 @@ export class SyncService {
       instance?: ReplaySubject<ISourceConnector>;
     };
   } = {
-    gdrive: { definition: GDrive, settings: environment.connectors.google },
+    gdrive: { definition: GDrive, settings: {} },
     onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
     folder: { definition: FolderConnector, settings: {} },
     s3: { definition: S3Connector, settings: {} },
-    gcs: { definition: GCSConnector, settings: environment.connectors.google },
+    gcs: { definition: GCSConnector, settings: {} },
     brightcove: { definition: BrightcoveConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {

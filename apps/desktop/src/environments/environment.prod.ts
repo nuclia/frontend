@@ -8,10 +8,6 @@ export const environment = {
   },
   locales: ['en-US', 'es', 'ca'],
   connectors: {
-    google: {
-      endpoint: 'https://nuclia.cloud/api/external_auth/gdrive/authorize',
-      API_KEY: '__GOOGLE_API_KEY__',
-    },
     nucliacloud: {
       backend: 'https://nuclia.cloud/api',
       client: 'desktop',

@@ -25,6 +25,7 @@ import { UploadModule } from './upload/upload.module';
 import { ConnectorsModule } from './connectors/connectors.module';
 import { AccountModule } from './account/account.module';
 import { LoginModule } from './login/login.module';
+import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -43,6 +44,7 @@ registerLocaleData(localeCa);
         deps: [HttpClient],
       },
     }),
+    PaToastModule,
     HomeModule,
     MainLayoutModule,
     UploadModule,
