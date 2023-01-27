@@ -67,7 +67,7 @@
             [routerLink]="kbUrl + '/manage'"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)">
+            [class.disabled]="!(isAdmin | async)">
             <pa-icon name="settings"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
@@ -79,12 +79,12 @@
             [routerLink]="kbUrl + '/processes'"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)">
+            [class.disabled]="!(isAdmin | async)">
             <pa-icon name="submenu"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
           </a>
         </div>
-        <ng-container *ngIf="isAccountManager | async">
+        <ng-container *ngIf="isAdmin | async">
           <div
             *ngIf="isUsersEnabled | async"
             class="group-items">
@@ -104,12 +104,12 @@
             [routerLink]="kbUrl + '/widget-generator'"
             routerLinkActive="active"
             class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)">
+            [class.disabled]="!(isAdmin | async)">
             <pa-icon name="widget"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
         </div>
-        <ng-container *ngIf="isAccountManager | async">
+        <ng-container *ngIf="isAdmin | async">
           <div
             *ngIf="isAPIKeysEnabled | async"
             class="group-items">
