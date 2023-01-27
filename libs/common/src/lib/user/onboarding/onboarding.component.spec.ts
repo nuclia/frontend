@@ -61,6 +61,7 @@ describe('OnboardingComponent', () => {
     const data = {
       company: 'Atlas',
       industry: 'construction',
+      jobTitle: 'Pop star',
       searchEngine: 'Elastic',
       phoneInternationalCode: '+11',
       phoneNumber: '111 111 111',
@@ -84,6 +85,7 @@ describe('OnboardingComponent', () => {
         {
           company: data.company,
           industry: data.industry,
+          job_title: data.jobTitle,
           phone: '+11 111 111 111',
           other_search_engines: data.searchEngine,
           receive_updates: data.getUpdates,

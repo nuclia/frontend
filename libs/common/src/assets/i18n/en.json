@@ -397,6 +397,7 @@
 	"onboarding.industry.telecommunications": "Telecommunications",
 	"onboarding.industry_label": "What industry are you in? ",
 	"onboarding.industry_placeholder": "Choose an industry",
+	"onboarding.job-title": "Job title",
 	"onboarding.kb_creation": "Storage creation…",
 	"onboarding.phone": "Phone number",
 	"onboarding.phone.invalid_code": "Invalid code",

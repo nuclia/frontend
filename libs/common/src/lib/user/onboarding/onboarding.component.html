@@ -36,6 +36,17 @@
         <div class="field">
           <label
             class="title-s"
+            for="jobTitle">
+            {{ 'onboarding.job-title' | translate }}
+          </label>
+          <pa-input
+            formControlName="jobTitle"
+            externalLabel
+            [errorMessages]="validationMessages.jobTitle"></pa-input>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
             for="phoneNumber">
             {{ 'onboarding.phone' | translate }}
           </label>
