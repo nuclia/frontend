@@ -114,10 +114,17 @@ table {
     width: rhythm(5);
   }
 
-  .title-icon {
+  .title-with-icon {
     align-items: center;
     display: flex;
     gap: rhythm(1);
+    .title-status {
+      margin-left: auto;
+      color: $color-secondary-strong;
+      .error {
+        color: $color-secondary-stronger;
+      }
+    }
   }
 
   .title-and-description small {
