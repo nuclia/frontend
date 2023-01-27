@@ -45,6 +45,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
 
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   account = this.stateService.account.pipe(filter((account) => !!account));
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigation.getAccountManageUrl(account!.slug)));
