@@ -141,7 +141,7 @@ export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
     if (this.trainings[type].selectedOptions.length > 0) {
       params = {
         valid_labelsets: type !== TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
-        entity_groups: type === TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
+        valid_nertags: type === TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
       };
     }
     this.sdk.currentKb

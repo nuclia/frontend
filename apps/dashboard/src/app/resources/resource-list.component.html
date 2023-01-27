@@ -199,13 +199,22 @@
             class="clickable"
             *cdkCellDef="let row"
             (click)="viewResource(row.resource.id)">
-            <div class="title-icon">
+            <div class="title-with-icon">
               <pa-icon
                 *ngIf="row.resource.icon | mimeIcon as icon"
                 [path]="'assets/icons/' + icon"></pa-icon>
               <div class="title-and-description">
                 <div>{{ row.resource.title }}</div>
                 <small *ngIf="row.description">{{ row.description }}</small>
+              </div>
+              <div class="title-status">
+                <pa-icon
+                  *ngIf="row.resource.metadata?.status === 'PENDING'"
+                  name="clock-dash"></pa-icon>
+                <pa-icon
+                  class="error"
+                  *ngIf="row.resource.metadata?.status === 'ERROR'"
+                  name="circle-cross"></pa-icon>
               </div>
             </div>
           </td>

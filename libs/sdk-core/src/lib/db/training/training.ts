@@ -14,7 +14,7 @@ export class Training {
 
   start(
     type: TrainingType,
-    params?: { entity_groups?: string[]; valid_labelsets?: string[] },
+    params?: { valid_nertags?: string[]; valid_labelsets?: string[] },
   ): Observable<TrainingTask> {
     return this.nuclia.rest.post<TrainingTask>(`${this.kb.path}/train/${type}/start`, params || {});
   }

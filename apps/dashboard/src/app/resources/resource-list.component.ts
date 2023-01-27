@@ -355,7 +355,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     resource
       .reprocess()
       .pipe(
-        delay(500), // wait for reprocess to be effective
+        delay(1000), // wait for reprocess to be effective
         switchMap(() => this.getResources()),
         switchMap(() => this.getResourceStatusCount()),
       )
