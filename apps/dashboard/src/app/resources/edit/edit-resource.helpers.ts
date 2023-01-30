@@ -146,7 +146,11 @@ export function addEntitiesToGroups(allGroups: EntityGroup[], entitiesMap: { [ke
   Object.entries(entitiesMap).forEach(([groupId, entities]) => {
     const group = allGroups.find((g) => g.id === groupId);
     if (group) {
-      group.entities = group.entities.concat(entities);
+      entities.forEach((entity) => {
+        if (!group.entities.includes(entity)) {
+          group.entities.push(entity);
+        }
+      });
     }
   });
 }
