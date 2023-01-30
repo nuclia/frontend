@@ -1,8 +1,8 @@
 import { WidgetFeatures } from '@nuclia/core';
 
 export const DEFAULT_FEATURES: WidgetFeatures = {
-  editLabels: true,
-  entityAnnotation: true,
+  editLabels: false,
+  entityAnnotation: false,
   filter: true,
   permalink: true,
   relations: true,
