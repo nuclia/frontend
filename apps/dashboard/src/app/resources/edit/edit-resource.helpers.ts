@@ -250,7 +250,7 @@ export function getAnnotatedText(
       annotation.family
     }" family="${annotation.klass}" start="${annotation.start}" end="${annotation.end}" token="${
       annotation.token
-    }" paragraphId="${paragraphId}" immutable="${annotation.immutable}" ${highlightedStyle} >${sliceUnicode(
+    }" immutable="${annotation.immutable}" ${highlightedStyle} >${sliceUnicode(
       paragraphText,
       annotation.start,
       annotation.end,
