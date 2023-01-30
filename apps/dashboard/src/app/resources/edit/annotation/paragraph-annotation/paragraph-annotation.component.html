@@ -6,14 +6,20 @@
       class="paragraph-container"
       *ngFor="let paragraph of paragraphs">
       <p
+        [attr.paragraphId]="paragraph.paragraphId"
         [class.family-selected]="!!selectedFamily.value"
-        [innerHTML]="paragraph.annotatedText | safe: 'html'"></p>
+        [innerHTML]="paragraph.annotatedText | safe: 'html'"
+        (mouseup)="onMouseUp($event)"></p>
 
       <div
         class="annotation-buttons-container"
         [style]="buttonPosition">
         <ng-container
-          *ngIf="!!selectedFamily.value && (userSelection || selectedEntity?.paragraphId === paragraph.paragraphId)">
+          *ngIf="
+            !!selectedFamily.value &&
+            (userSelection?.paragraphId === paragraph.paragraphId ||
+              selectedEntity?.paragraphId === paragraph.paragraphId)
+          ">
           <button
             *ngIf="!!selectedEntity"
             class="annotation-button remove"
@@ -24,7 +30,9 @@
           </button>
           <button
             class="annotation-button confirm"
-            *ngIf="userSelection || selectedEntity?.klass !== selectedFamily.value.id"
+            *ngIf="
+              userSelection?.paragraphId === paragraph.paragraphId || selectedEntity?.klass !== selectedFamily.value.id
+            "
             (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
             <pa-icon
               size="small"

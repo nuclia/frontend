@@ -59,7 +59,7 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities();
   selectedFamily: BehaviorSubject<EntityGroup | null> = new BehaviorSubject<EntityGroup | null>(null);
   selectedEntity?: EntityAnnotation & { paragraphId: string };
-  userSelection = false;
+  userSelection?: EntityAnnotation & { paragraphId: string };
   buttonPosition?: { top: string; left: string };
 
   constructor(
@@ -176,7 +176,14 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   }
 
   addEntity(paragraph: ParagraphWithTextAndAnnotations) {
-    // TODO
+    if (!this.userSelection) {
+      return;
+    }
+    paragraph.annotations.push(this.userSelection);
+    paragraph.annotations.sort(sortByPosition);
+    this.updateParagraphsWithAnnotations(this.selectedFamily.value);
+    this.isModified = this.hasModifications();
+    this.cleanupSelection();
   }
 
   updateEntity(paragraph: ParagraphWithTextAndAnnotations) {
@@ -212,6 +219,67 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
     this.isModified = this.hasModifications();
   }
 
+  onMouseUp($event: MouseEvent) {
+    const paragraph = $event.target as HTMLElement;
+    const family = this.selectedFamily.value;
+    const selection = window.getSelection();
+    if (paragraph && family && selection && !selection.isCollapsed) {
+      const paragraphRect = paragraph.getBoundingClientRect();
+      this.buttonPosition = {
+        top: `${$event.clientY - paragraphRect.bottom + 8}px`,
+        left: `${$event.clientX - paragraphRect.left}px`,
+      };
+
+      const paragraphText = paragraph.textContent as string;
+      const selectionText = selection.toString();
+      const range = selection.getRangeAt(0);
+      let start = range.startOffset;
+      let end = range.endOffset;
+      if (selectionText !== paragraphText.slice(start, end)) {
+        const exactPosition = this.getExactPositionOfSelection(paragraphText, selectionText, range);
+        if (exactPosition) {
+          start = exactPosition.start;
+          end = exactPosition.end;
+        }
+      }
+      const paragraphId = paragraph.getAttribute('paragraphId') as string;
+      this.userSelection = {
+        paragraphId,
+        start,
+        end,
+        klass: family.id,
+        token: selectionText.replace(/\s+/gi, ' ').trim(),
+        family: family.title,
+      };
+    } else {
+      this.cleanupSelection();
+    }
+  }
+
+  private getExactPositionOfSelection(
+    paragraphText: string,
+    selectionText: string,
+    range: Range,
+  ): { start: number; end: number } | null {
+    const expression = selectionText.replace(/ /g, `\\s*`);
+    const regexp = new RegExp(expression);
+    const match = paragraphText.match(regexp);
+    if (!match || !match.index) {
+      return null;
+    }
+
+    return {
+      start: match.index,
+      end: match.index + (range.endOffset - range.startOffset),
+    };
+  }
+
+  private cleanupSelection() {
+    this.userSelection = undefined;
+    this.buttonPosition = undefined;
+    this.selectedEntity = undefined;
+  }
+
   private setupMarkListener() {
     if (this.paragraphsContainer) {
       this.paragraphsContainer.nativeElement
@@ -234,8 +302,9 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
       return;
     }
     const mark = event.target as HTMLElement;
+    const paragraph = mark.parentElement as HTMLElement;
     this.selectedEntity = {
-      paragraphId: mark.getAttribute('paragraphId') || '',
+      paragraphId: paragraph.getAttribute('paragraphId') || '',
       family: mark.getAttribute('title') || '',
       token: mark.getAttribute('token') || '',
       start: parseInt(mark.getAttribute('start') || '0', 10),
@@ -243,7 +312,6 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
       klass: mark.getAttribute('family') || '',
       immutable: mark.getAttribute('immutable') === 'true',
     };
-    const paragraph = mark.parentElement as HTMLElement;
     const paragraphRect = paragraph.getBoundingClientRect();
     const markRect = mark.getBoundingClientRect();
     const buttonBlockWidth =
