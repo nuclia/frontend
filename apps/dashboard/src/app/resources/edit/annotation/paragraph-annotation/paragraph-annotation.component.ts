@@ -261,16 +261,30 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
     selectionText: string,
     range: Range,
   ): { start: number; end: number } | null {
-    const expression = selectionText.replace(/ /g, `\\s*`);
+    // when double-clicking on a word on firefox, we can end up with selection like `\t Sinbad`
+    // we trim the selection but need to know how many characters were trimmed, so we can then have the right positions
+    let shiftBy = 0;
+    // shift by the count of blanks at the beginning of the selection
+    const startWithBlank = selectionText.match(/^\s+/);
+    if (startWithBlank) {
+      shiftBy = startWithBlank[0].length;
+    }
+    const endWithBlanks = selectionText.match(/\s+$/);
+    if (endWithBlanks) {
+      shiftBy += endWithBlanks[0].length;
+    }
+
+    const expression = selectionText.trim().replace(/\s/g, `\\s*`);
     const regexp = new RegExp(expression);
     const match = paragraphText.match(regexp);
     if (!match || !match.index) {
       return null;
     }
 
+    const start = match.index;
     return {
-      start: match.index,
-      end: match.index + (range.endOffset - range.startOffset),
+      start,
+      end: start + (range.endOffset - range.startOffset - shiftBy),
     };
   }
 
