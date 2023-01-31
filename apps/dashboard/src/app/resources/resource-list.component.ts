@@ -541,8 +541,11 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       resource.queue === 'private'
         ? this.currentProcessingStatus.account?.last_delivered_seqid
         : this.currentProcessingStatus.shared?.last_delivered_seqid;
-    if (last_delivered_seqid && resource.last_account_seq !== undefined) {
-      const count = resource.last_account_seq - last_delivered_seqid;
+    if (resource.last_account_seq !== undefined) {
+      const count =
+        typeof last_delivered_seqid === 'number'
+          ? resource.last_account_seq - last_delivered_seqid
+          : resource.last_account_seq - 1;
       let statusKey = 'resource.status_processing';
       if (count === 1) {
         statusKey = 'resource.status_next';
