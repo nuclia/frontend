@@ -465,6 +465,7 @@
 	"resource.add_labels_success": "Labels successfully added on {{count}} resources",
 	"resource.authorship": "Authorship",
 	"resource.classification": "Resource classification",
+	"resource.classification-column": "Classification",
 	"resource.classification-page-link": "Classification page",
 	"resource.classification.no-paragraph-labelset": "There is no label set for paragraphs. You can add some in",
 	"resource.classification.no-resource-labelset": "There is no label set for resources. You can add some in",

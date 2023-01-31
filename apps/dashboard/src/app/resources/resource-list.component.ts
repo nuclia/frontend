@@ -34,6 +34,7 @@ import {
   LabelSets,
   ProcessingStatusResponse,
   Resource,
+  RESOURCE_STATUS,
   ResourceStatus,
   resourceToAlgoliaFormat,
   Search,
@@ -257,7 +258,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       { value: 'title', label: 'resource.title', visible: true, showInPending: true },
       {
         value: 'classification',
-        label: 'resource.classification',
+        label: 'resource.classification-column',
         visible: this.userPreferences.columns.includes('classification'),
         optional: true,
       },
@@ -324,6 +325,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   bulkDelete() {
     this.delete(this.selection.selected);
+  }
+
+  bulkReprocess() {
+    // TODO
   }
 
   delete(resources: Resource[]) {
@@ -480,6 +485,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
           hasQuery && !titleOnly
             ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
             : [Search.Features.DOCUMENT];
+        const status = this.statusDisplayed.value;
         return forkJoin([
           of(kb),
           kb.search(query, searchFeatures, {
@@ -487,7 +493,8 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
             page_number: page,
             page_size: this.pageSize,
             sort: { field: 'created' },
-            with_status: this.statusDisplayed.value,
+            filters: status === RESOURCE_STATUS.PROCESSED ? undefined : [`/n/s/${status}`],
+            with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
           }),
           this.labelSets$.pipe(take(1)),
         ]);
