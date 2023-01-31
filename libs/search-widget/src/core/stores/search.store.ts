@@ -1,6 +1,6 @@
 import { SvelteState } from '../state-lib';
 import type { IResource, Search, SearchOptions } from '@nuclia/core';
-import { Classification, getFilterFromLabel } from '@nuclia/core';
+import { Classification, FIELD_TYPE, getFilterFromLabel } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS, PENDING_RESULTS } from '../models';
 import { Subject } from 'rxjs';
 
@@ -86,7 +86,7 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   if (!allResources || Object.keys(allResources).length === 0) {
     return [] as Search.SmartResult[];
   }
-  const fullTextResults =
+  const fullTextResults: IResource[] =
     state.results.fulltext?.results.map((res) => allResources[res.rid]).filter((res) => !!res) || [];
   const semanticResults = state.results.sentences?.results || [];
   let smartResults: Search.SmartResult[] = [];
@@ -192,7 +192,7 @@ export const removeLabelFilter = (label: Classification) => {
 };
 
 const marksRE = /(<mark>|<\/mark>)/g;
-function addParagraphToSmartResults(
+export function addParagraphToSmartResults(
   smartResults: Search.SmartResult[],
   resource: Search.SmartResult,
   paragraph: Search.Paragraph | undefined,
@@ -200,7 +200,9 @@ function addParagraphToSmartResults(
   if (!paragraph) {
     return smartResults;
   }
-  const existingResource = smartResults.find((r) => r.id === resource.id);
+  const existingResource = smartResults.find(
+    (r) => r.id === resource.id && r.field?.field_id === paragraph.field && r.field.field_type === paragraph.field_type,
+  );
   if (existingResource) {
     const existingParagraph = existingResource.paragraphs?.find(
       (p) => p.text.replace(marksRE, '') === paragraph.text.replace(marksRE, ''),
@@ -210,7 +212,11 @@ function addParagraphToSmartResults(
       existingResource.paragraphs.push(paragraph);
     }
   } else {
-    smartResults.push({ ...resource, paragraphs: [paragraph] });
+    smartResults.push({
+      ...resource,
+      paragraphs: [paragraph],
+      field: { field_id: paragraph.field, field_type: paragraph.field_type as FIELD_TYPE },
+    });
   }
   return smartResults;
 }
