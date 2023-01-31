@@ -1,11 +1,4 @@
-import {
-  ConnectorSettings,
-  FileStatus,
-  ISourceConnector,
-  SourceConnectorDefinition,
-  SyncItem,
-  SearchResults,
-} from '../models';
+import { FileStatus, ISourceConnector, SourceConnectorDefinition, SyncItem, SearchResults } from '../models';
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import { GoogleBaseImpl } from './google.base';
 
@@ -17,17 +10,13 @@ export const GDrive: SourceConnectorDefinition = {
   title: 'Google Drive',
   logo: 'assets/logos/gdrive.svg',
   description: 'File storage and synchronization service developed by Google',
-  factory: (data?: ConnectorSettings) => of(new GDriveImpl(data)),
+  factory: () => of(new GDriveImpl()),
 };
 
 class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
   isExternal = false;
   resumable = true;
   override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
-
-  constructor(data?: ConnectorSettings) {
-    super(data);
-  }
 
   getFiles(query?: string, pageSize?: number) {
     return this.getDrive().pipe(switchMap((drive) => this._getFiles(drive, query, pageSize)));

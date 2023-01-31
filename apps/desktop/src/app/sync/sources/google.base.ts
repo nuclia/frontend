@@ -2,7 +2,7 @@
 /// <reference path="../../../../../../node_modules/@types/gapi.auth2/index.d.ts" />
 /// <reference path="../../../../../../node_modules/@types/gapi.client.drive/index.d.ts" />
 
-import { ConnectorParameters, ConnectorSettings, Field } from '../models';
+import { ConnectorParameters, Field } from '../models';
 import { combineLatest, from, Observable, of, take, tap } from 'rxjs';
 import { injectScript } from '@flaps/core';
 
@@ -13,10 +13,6 @@ export class GoogleBaseImpl {
   DISCOVERY_DOCS: string[] = [];
   hasServerSideAuth = false;
   token = '';
-
-  constructor(data?: ConnectorSettings) {
-    // eslint-disable-next-line
-  }
 
   goToOAuth(reset?: boolean) {
     return of(true);

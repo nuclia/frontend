@@ -1,5 +1,4 @@
 import {
-  ConnectorSettings,
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
@@ -10,7 +9,7 @@ import {
 } from '../models';
 import { _Object, S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Observable, of, from, map, switchMap } from 'rxjs';
+import { Observable, of, from, map } from 'rxjs';
 
 const MAX_PAGE_SIZE = 1000;
 
@@ -19,7 +18,7 @@ export const S3Connector: SourceConnectorDefinition = {
   title: 'AWS S3',
   logo: 'assets/logos/s3.svg',
   description: 'Object storage service developed by Amazon',
-  factory: (data?: ConnectorSettings) => of(new S3Impl(data)),
+  factory: () => of(new S3Impl()),
 };
 
 class S3Impl implements ISourceConnector {
@@ -28,10 +27,6 @@ class S3Impl implements ISourceConnector {
   resumable = false;
   client?: S3Client;
   bucket?: string;
-
-  constructor(data?: ConnectorSettings) {
-    // eslint-disable-next-line no-empty-function
-  }
 
   getParameters(): Observable<Field[]> {
     return of([

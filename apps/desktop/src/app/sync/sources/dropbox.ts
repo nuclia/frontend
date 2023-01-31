@@ -1,5 +1,4 @@
 import {
-  ConnectorSettings,
   FileStatus,
   ISourceConnector,
   SourceConnectorDefinition,
@@ -15,7 +14,7 @@ export const DropboxConnector: SourceConnectorDefinition = {
   title: 'Dropbox',
   logo: 'assets/logos/dropbox.svg',
   description: 'File storage and synchronization service developed by Dropbox',
-  factory: (data?: ConnectorSettings) => of(new DropboxImpl(data)),
+  factory: () => of(new DropboxImpl()),
 };
 
 const TOKEN = 'DROPBOX_TOKEN';
@@ -23,10 +22,6 @@ class DropboxImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
   resumable = true;
-
-  constructor(data?: ConnectorSettings) {
-    // eslint-disable-next-line no-empty-function
-  }
 
   getParameters(): Observable<Field[]> {
     return of([

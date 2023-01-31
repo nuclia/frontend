@@ -1,5 +1,4 @@
 import {
-  ConnectorSettings,
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
@@ -20,17 +19,13 @@ export const GCSConnector: SourceConnectorDefinition = {
   title: 'Google Cloud',
   logo: 'assets/logos/gcs.svg',
   description: 'File storage service developed by Google',
-  factory: (data?: ConnectorSettings) => of(new GCSImpl(data)),
+  factory: () => of(new GCSImpl()),
 };
 
 class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
   override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/storage/v1/rest'];
   isExternal = false;
   resumable = false;
-
-  constructor(data?: ConnectorSettings) {
-    super(data);
-  }
 
   override getParameters(): Observable<Field[]> {
     return super.getParameters().pipe(
