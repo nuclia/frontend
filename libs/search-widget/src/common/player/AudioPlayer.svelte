@@ -20,20 +20,28 @@
   let playing = false;
   let displayVolume = false;
   let onError = false;
+  let firstLoadDone = false;
+
+  $: if (firstLoadDone && typeof time === 'number') {
+    audio.currentTime = time;
+    play();
+  }
 
   const dispatch = createEventDispatcher();
 
   onMount(() => {
     if (src) {
       audio = new Audio(src);
-      if (time) {
+      if (typeof time === 'number') {
         audio.currentTime = time;
       }
       audio.onloadeddata = onAudioLoaded;
       audio.onended = () => (playing = false);
       audio.oncanplay = () => {
-        if (time && audio.paused) {
+        dispatch('audioReady');
+        if (typeof time === 'number' && audio.paused) {
           play();
+          firstLoadDone = true;
         }
       };
       audio.onerror = () => {
@@ -49,6 +57,7 @@
 
   onDestroy(() => {
     clearInterval(progressIntervalId);
+    audio.pause();
   });
 
   function onAudioLoaded() {
@@ -101,10 +110,19 @@
     const level = volumeHeight - (event.clientY - volumeRect.y);
     audio.volume = level <= 5 ? 0 : level / volumeHeight;
   }
+
+  function handleKeydown(event) {
+    if (event.code === 'Space') {
+      togglePlay();
+    }
+  }
 </script>
 
+<svelte:window on:keydown={handleKeydown} />
 <div class="sw-audio-player">
-  <div class="error">{$_('error.audio-loading')}</div>
+  {#if onError}
+    <div class="error">{$_('error.audio-loading')}</div>
+  {/if}
   <video
     class="waves-animation"
     src={`${getCDN()}tiles/audio-waves.mp4`}
@@ -115,6 +133,7 @@
       icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
       size="small"
       disabled={onError}
+      aspect="basic"
       on:click={togglePlay} />
     <div class="time">{currentTime}</div>
     <div

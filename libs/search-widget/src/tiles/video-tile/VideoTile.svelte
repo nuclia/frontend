@@ -182,7 +182,7 @@
         hasBackground={!result.thumbnail}
         aspectRatio={expanded ? '16/9' : '5/4'}
         on:loaded={() => (thumbnailLoaded = true)}
-        on:open={playFromStart} />
+        on:play={playFromStart} />
     </div>
 
     {#if expanded}
