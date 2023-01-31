@@ -9,6 +9,7 @@
 - Fix `getAnnotatedEntities` method to filter out `cancelled_by_user` annotations from the list.
 - Rename interface `ParagraphAnnotation` to `ParagraphClassification` to avoid confusion
 - Update training types: labeler split in two `resoure-labeler` and `paragraph-labeler`
+- Add `field` property to `Search.SmartResult` interface
 
 # 1.1.2 (2023-01-20)
 
