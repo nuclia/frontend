@@ -205,7 +205,7 @@ export function addParagraphToSmartResults(
   );
   if (existingResource) {
     const existingParagraph = existingResource.paragraphs?.find(
-      (p) => p.text.replace(marksRE, '') === paragraph.text.replace(marksRE, ''),
+      (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
     );
     if (!existingParagraph) {
       existingResource.paragraphs = existingResource.paragraphs || [];

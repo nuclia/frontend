@@ -78,6 +78,18 @@ describe('search.store', () => {
 
     it('should not add paragraph which already exists in smart results', () => {
       expect(addParagraphToSmartResults([r2], r2, r2p1)).toEqual([r2]);
+      const sameWithMarks = {
+        ...r2p1,
+        field: 'r3/f1',
+        text: `\n  Messi <mark>is</mark> <mark>the</mark> <mark>best</mark> <mark>player</mark>. \n`,
+      };
+      const sameWithBlanks = { ...r2p1, field: 'r3/f1', text: ` Messi is the best player.\n` };
+      const r3: Search.SmartResult = {
+        id: 'r3',
+        paragraphs: [sameWithMarks],
+        field: { field_id: 'r3/f1', field_type: r2p1.field_type as FIELD_TYPE },
+      };
+      expect(addParagraphToSmartResults([r3], { id: 'r3' }, sameWithBlanks)).toEqual([r3]);
     });
 
     it('should duplicate resource when adding paragraph from another field', () => {
