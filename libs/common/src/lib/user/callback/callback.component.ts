@@ -78,7 +78,7 @@ export class CallbackComponent implements OnInit {
     const state = this.route.snapshot.queryParamMap.get('state');
     if (code !== null && state !== null) {
       this.ssoService.login(code, state).subscribe({
-        next: (token) => this.authenticate(token),
+        next: (token) => this.authenticate(token, state),
         error: (error) =>
           this.router.navigate(['../signup'], {
             relativeTo: this.route,
@@ -90,8 +90,14 @@ export class CallbackComponent implements OnInit {
     }
   }
 
-  private authenticate(token: AuthTokens): void {
+  private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
-    this.router.navigate(['/']);
+    const came_from = state ? this.ssoService.decodeState(state).came_from : undefined;
+    if (came_from && came_from !== window.location.origin) {
+      const redirect = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
+      window.location.href = redirect;
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }

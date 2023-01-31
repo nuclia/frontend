@@ -11,16 +11,7 @@ export class SsoService {
   constructor(private api: DeprecatedApiService, private config: BackendConfigurationService) {}
 
   getSsoLoginUrl(provider: 'google' | 'github'): string {
-    let url;
-    switch (provider) {
-      case 'github':
-        url = 'https://stashify.cloud/user/callbacks/github';
-        break;
-      case 'google':
-        url = `${this.config.getAPIURL()}/auth/google/authorize`;
-        break;
-    }
-    return `${this.config.getAPIURL()}/auth/${provider}/authorize`;
+    return `${this.config.getAPIURL()}/auth/${provider}/authorize?came_from=${window.location.origin}`;
   }
 
   login(code: string, state: string): Observable<AuthTokens> {
@@ -33,18 +24,20 @@ export class SsoService {
   }
 
   private getLoginUrl(state: string): string | null {
-    let decoded;
-    try {
-      // state is a base64 encoded json
-      decoded = JSON.parse(atob(state));
-    } catch {
-      return null;
-    }
-    const hasUrl = typeof decoded === 'object' && typeof decoded.login_url === 'string';
+    const decoded = this.decodeState(state);
+    const hasUrl = typeof decoded.login_url === 'string';
     return hasUrl ? decoded.login_url : null;
   }
 
   private isSafeRedirect(redirectUrl: string) {
     return redirectUrl.startsWith(this.config.getAPIURL());
+  }
+
+  decodeState(state: string): { [key: string]: string } {
+    try {
+      return JSON.parse(atob(state));
+    } catch {
+      return {};
+    }
   }
 }
