@@ -1,5 +1,4 @@
 import {
-  ConnectorSettings,
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
@@ -18,7 +17,7 @@ export const OneDriveConnector: SourceConnectorDefinition = {
   title: 'One Drive',
   logo: 'assets/logos/onedrive.svg',
   description: 'Microsoft OneDrive file hosting service',
-  factory: (data?: ConnectorSettings) => of(new OneDriveImpl(data)),
+  factory: () => of(new OneDriveImpl()),
 };
 
 const CLIENT_ID = 'ONEDRIVE_CLIENT_ID';
@@ -29,12 +28,8 @@ class OneDriveImpl implements ISourceConnector {
   hasServerSideAuth = true;
   isExternal = true;
   resumable = false;
-  isAuthError = (error: any) => error.code === 'InvalidAuthenticationToken';
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
-  constructor(data?: ConnectorSettings) {
-    // eslint-disable-next-line no-empty-function
-  }
+  isAuthError = (error: any) => error.code === 'InvalidAuthenticationToken';
 
   getParameters(): Observable<Field[]> {
     return of([

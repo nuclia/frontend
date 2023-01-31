@@ -1,5 +1,4 @@
 import { Observable } from 'rxjs';
-import { FileField } from '@nuclia/core';
 
 export const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
 export interface ConnectorDefinition {
@@ -73,7 +72,7 @@ export interface Field {
   id: string;
   label: string;
   help?: string;
-  type: 'text' | 'select' | 'folder';
+  type: 'text' | 'select' | 'folder' | 'textarea';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
   canBeRefreshed?: boolean;

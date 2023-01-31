@@ -27,7 +27,7 @@
     class="body"
     #scroll>
     <table>
-      <tr *ngFor="let resource of items">
+      <tr *ngFor="let resource of resources | async">
         <td>
           <pa-checkbox
             [value]="selection.isSelected(resource)"

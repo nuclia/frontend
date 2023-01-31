@@ -266,8 +266,6 @@ jobs:
       - name: Build desktop app
         run: |-
           npx nx build desktop --configuration production
-          npx replace-in-file __DROPBOX_KEY__ ${{ secrets.DROPBOX_KEY }} ./dist/apps/desktop/main.*.js
-          npx replace-in-file __GOOGLE_API_KEY__ ${{ secrets.GOOGLE_API_KEY }} ./dist/apps/desktop/main.*.js
           npx replace-in-file __VERSION__ ${{ github.sha }} ./dist/apps/desktop/assets/deployment/app-config.json
       - name: Build electron app
         run: |-

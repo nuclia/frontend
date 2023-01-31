@@ -1,5 +1,4 @@
 import {
-  ConnectorSettings,
   ISourceConnector,
   SourceConnectorDefinition,
   SyncItem,
@@ -10,14 +9,12 @@ import {
 } from '../models';
 import { Observable, of, from, map, switchMap } from 'rxjs';
 
-const MAX_PAGE_SIZE = 1000;
-
 export const BrightcoveConnector: SourceConnectorDefinition = {
   id: 'brightcove',
   title: 'Brightcove',
   logo: 'assets/logos/brightcove.svg',
   description: 'Video delivery platform',
-  factory: (data?: ConnectorSettings) => of(new BrightcoveImpl(data)),
+  factory: () => of(new BrightcoveImpl()),
 };
 
 class BrightcoveImpl implements ISourceConnector {
@@ -27,10 +24,6 @@ class BrightcoveImpl implements ISourceConnector {
   account = '';
   client_id = '';
   client_secret = '';
-
-  constructor(data?: ConnectorSettings) {
-    // eslint-disable-next-line no-empty-function
-  }
 
   getParameters(): Observable<Field[]> {
     return of([

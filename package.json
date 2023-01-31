@@ -1,6 +1,6 @@
 {
   "name": "nuclia",
-  "version": "1.0.24",
+  "version": "1.1.0",
   "license": "MIT",
   "author": "Nuclia.cloud",
   "description": "Nuclia frontend apps and libs",
@@ -54,6 +54,7 @@
     "date-fns": "^2.29.3",
     "electron-updater": "^5.0.1",
     "fuse.js": "^3.6.1",
+    "googleapis": "^110.0.0",
     "latinize": "^0.5.0",
     "mrs-developer": "^1.7.1",
     "ngx-captcha": "^12.0.2",

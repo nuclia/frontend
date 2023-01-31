@@ -23,6 +23,12 @@
         [formControlName]="field.id">
         {{ field.label | translate }}
       </pa-input>
+      <pa-textarea
+        *ngIf="field.type === 'textarea'"
+        [help]="field.help | translate"
+        [formControlName]="field.id">
+        {{ field.label | translate }}
+      </pa-textarea>
 
       <div
         *ngIf="field.type === 'select'"
@@ -64,7 +70,7 @@
         qa="validate"
         type="submit"
         kind="primary"
-        [disabled]="form.invalid || form.pristine">
+        [disabled]="form.invalid">
         {{ (type === 'sources' ? 'generic.next' : 'Upload') | translate }}
       </pa-button>
     </div>
