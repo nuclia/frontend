@@ -5,7 +5,7 @@
   export let src: string;
   export let type: string;
   export let time: number | undefined;
-  let firstLoad: boolean = false;
+  let firstLoadDone = false;
   let currentTime: number | undefined;
   let paused: boolean = true;
   let player: HTMLMediaElement;
@@ -26,7 +26,7 @@
     }
   });
 
-  $: if (firstLoad && typeof time === 'number') {
+  $: if (firstLoadDone && typeof time === 'number') {
     currentTime = time;
     play();
   }
@@ -85,7 +85,7 @@
         crossorigin="anonymous"
         controls
         on:canplay={() => {
-          if (!firstLoad) firstLoad = true;
+          if (!firstLoadDone) firstLoadDone = true;
           dispatch('videoReady');
         }}
         bind:this={player}
@@ -103,7 +103,7 @@
       crossorigin="anonymous"
       controls
       on:canplay={() => {
-        if (!firstLoad) firstLoad = true;
+        if (!firstLoadDone) firstLoadDone = true;
       }}
       bind:this={player}
       bind:currentTime

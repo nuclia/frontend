@@ -16,7 +16,7 @@
    * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
    * Kb with different kind of media (owned by Mat): 5c2bc432-a579-48cd-b408-4271e5e7a43c
    */
-  let kb = '6b241c4d-3eb1-4ed8-9c4f-c88dbf738416';
+  let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c';
 
   onMount(() => {
     widget?.setActions([

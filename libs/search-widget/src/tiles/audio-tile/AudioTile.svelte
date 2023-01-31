@@ -83,12 +83,12 @@
   };
 
   const playParagraph = (paragraph: MediaWidgetParagraph) => {
-    playFrom(paragraph.start_seconds);
+    playFrom(paragraph.start_seconds || 0);
     paragraphInPlay = paragraph;
   };
 
   const playTranscript = (paragraph) => {
-    mediaTime = paragraph.start_seconds || 0;
+    playFrom(paragraph.start_seconds || 0);
     paragraphInPlay = paragraph;
   };
 
@@ -161,7 +161,7 @@
         hasBackground={!result.thumbnail}
         aspectRatio={expanded ? '16/9' : '5/4'}
         on:loaded={() => (thumbnailLoaded = true)}
-        on:open={playFromStart} />
+        on:play={playFromStart} />
     </div>
 
     {#if expanded}
@@ -172,6 +172,7 @@
           <AudioPlayer
             time={mediaTime}
             src={$mediaUri}
+            on:audioReady={() => (mediaLoading = false)}
             on:error={() => (mediaLoading = false)} />
         {/if}
       </div>
