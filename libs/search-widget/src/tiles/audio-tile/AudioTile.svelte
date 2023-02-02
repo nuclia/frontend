@@ -16,16 +16,15 @@
   import { take, tap } from 'rxjs/operators';
   import { filterParagraphs } from '../tile.utils';
   import { Observable, Subject, switchMap } from 'rxjs';
-  import { IconButton } from '../../common';
   import { _ } from '../../core/i18n';
   import Icon from '../../common/icons/Icon.svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { AudioPlayer } from '../../common/player';
   import { navigateToLink } from '../../core/stores/widget.store';
   import { onMount } from 'svelte';
   import { displayedResource } from '../../core/stores/search.store';
+  import TileHeader from '../base-tile/TileHeader.svelte';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -189,27 +188,12 @@
 
   {#if thumbnailLoaded}
     <div class="result-details">
-      <header>
-        <div class:header-title={expanded}>
-          <div class="doc-type-container">
-            <DocTypeIndicator type="audio" />
-          </div>
-          <h3
-            class="ellipsis"
-            on:click={() => onClickParagraph()}>
-            {result?.title}
-          </h3>
-        </div>
-        {#if expanded}
-          <div>
-            <IconButton
-              icon="cross"
-              ariaLabel={$_('generic.close')}
-              aspect="basic"
-              on:click={closePreview} />
-          </div>
-        {/if}
-      </header>
+      <TileHeader
+        {expanded}
+        {result}
+        typeIndicator="audio"
+        on:clickOnTitle={onClickParagraph}
+        on:close={closePreview} />
 
       <div class:side-panel={expanded}>
         <div

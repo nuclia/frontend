@@ -5,7 +5,6 @@
   import { FIELD_TYPE } from '@nuclia/core';
   import { switchMap, take, tap } from 'rxjs/operators';
   import { getFileUrl, getResource } from '../../core/api';
-  import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
   import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
@@ -27,9 +26,9 @@
     mapSmartParagraph2WidgetParagraph,
   } from '../../core/utils';
   import { filterParagraphs, isFileOrLink } from '../tile.utils';
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { navigateToLink } from '../../core/stores/widget.store';
   import { displayedResource } from '../../core/stores/search.store';
+  import TileHeader from '../base-tile/TileHeader.svelte';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
@@ -216,27 +215,12 @@
 
   {#if thumbnailLoaded}
     <div class="result-details">
-      <header>
-        <div class:header-title={expanded}>
-          <div class="doc-type-container">
-            <DocTypeIndicator type="video" />
-          </div>
-          <h3
-            class="ellipsis"
-            on:click={() => onClickParagraph()}>
-            {result?.title}
-          </h3>
-        </div>
-        {#if expanded}
-          <div>
-            <IconButton
-              icon="cross"
-              ariaLabel={$_('generic.close')}
-              aspect="basic"
-              on:click={closePreview} />
-          </div>
-        {/if}
-      </header>
+      <TileHeader
+        {expanded}
+        {result}
+        typeIndicator="video"
+        on:clickOnTitle={onClickParagraph}
+        on:close={closePreview} />
 
       <div class:side-panel={expanded}>
         <div

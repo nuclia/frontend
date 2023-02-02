@@ -3,18 +3,6 @@
     position: relative;
   }
 
-  .header-actions {
-    align-items: center;
-    display: flex;
-    flex: 0 auto;
-    gap: var(--rhythm-1_5);
-    justify-content: flex-end;
-  }
-
-  .header-title {
-    max-width: calc(100% - var(--header-actions-width) - var(--header-padding-left) - var(--header-padding-right));
-  }
-
   &.expanded {
     padding-left: var(--rhythm-2);
     padding-right: var(--rhythm-2);
