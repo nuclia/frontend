@@ -1,6 +1,6 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher } from 'svelte';
   import { getCDN } from '../../core/utils';
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
@@ -81,10 +81,6 @@
     }
   }
 
-  onMount(() => {
-    setInputPosition();
-  });
-
   const setInputPosition = () => {
     if (inputContainerElement) {
       position = inputContainerElement.getBoundingClientRect();
@@ -104,6 +100,7 @@
       showSuggestions = false;
     } else {
       showSuggestions = true;
+      setInputPosition();
     }
   };
 
