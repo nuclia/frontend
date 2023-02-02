@@ -34,7 +34,7 @@ export const setupTriggerSearch = (
           forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1)), navigateToLink.pipe(take(1))]).pipe(
             map(([options, filters, navigateToLink]) => {
               const show = navigateToLink
-                ? [ResourceProperties.BASIC, ResourceProperties.VALUES]
+                ? [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN]
                 : [ResourceProperties.BASIC];
               const currentOptions = { ...options, show, filters };
               return { query, options: currentOptions };
