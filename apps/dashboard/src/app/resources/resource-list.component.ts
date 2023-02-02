@@ -53,7 +53,6 @@ import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { resource } from '../../../../../libs/search-widget/src/core/stores/resource.store';
 
 interface ListFilters {
   type?: string;
