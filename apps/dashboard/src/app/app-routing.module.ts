@@ -164,10 +164,10 @@ const routes: Routes = [
                 component: KnowledgeBoxProfileComponent,
               },
               {
-                path: 'processes',
+                path: 'training',
                 loadChildren: () =>
-                  import('./knowledge-box/knowledge-box-process/knowledge-box-processes.module').then(
-                    (m) => m.KnowledgeBoxProcessesModule,
+                  import('./knowledge-box/knowledge-box-training/knowledge-box-training.module').then(
+                    (m) => m.KnowledgeBoxTrainingModule,
                   ),
               },
               {

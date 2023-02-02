@@ -14,14 +14,14 @@ import {
   PaTableModule,
   PaScrollModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { KnowledgeBoxProcessesComponent } from './knowledge-box-processes.component';
+import { KnowledgeBoxTrainingComponent } from './knowledge-box-training.component';
 import { TrainingHistoryComponent } from './training-history/training-history.component';
 import { BackButtonComponent, DropdownButtonComponent } from '@nuclia/sistema';
 
 const ROUTES = [
   {
     path: '',
-    component: KnowledgeBoxProcessesComponent,
+    component: KnowledgeBoxTrainingComponent,
   },
   {
     path: 'history',
@@ -48,7 +48,7 @@ const ROUTES = [
     DropdownButtonComponent,
     BackButtonComponent,
   ],
-  declarations: [KnowledgeBoxProcessesComponent, TrainingHistoryComponent],
+  declarations: [KnowledgeBoxTrainingComponent, TrainingHistoryComponent],
   exports: [],
 })
-export class KnowledgeBoxProcessesModule {}
+export class KnowledgeBoxTrainingModule {}

@@ -3,7 +3,7 @@ import { SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
-import { KnowledgeBoxProcessesComponent } from './knowledge-box-processes.component';
+import { KnowledgeBoxTrainingComponent } from './knowledge-box-training.component';
 import { MockModule } from 'ng-mocks';
 import {
   PaButtonModule,
@@ -16,9 +16,9 @@ import {
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
 
-describe('KnowledgeBoxProcessComponent', () => {
-  let component: KnowledgeBoxProcessesComponent;
-  let fixture: ComponentFixture<KnowledgeBoxProcessesComponent>;
+describe('KnowledgeBoxTrainingComponent', () => {
+  let component: KnowledgeBoxTrainingComponent;
+  let fixture: ComponentFixture<KnowledgeBoxTrainingComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -31,7 +31,7 @@ describe('KnowledgeBoxProcessComponent', () => {
         MockModule(PaPopupModule),
         DropdownButtonComponent,
       ],
-      declarations: [KnowledgeBoxProcessesComponent, TranslatePipeMock],
+      declarations: [KnowledgeBoxTrainingComponent, TranslatePipeMock],
       providers: [
         {
           provide: SDKService,
@@ -52,7 +52,7 @@ describe('KnowledgeBoxProcessComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(KnowledgeBoxProcessesComponent);
+    fixture = TestBed.createComponent(KnowledgeBoxTrainingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
