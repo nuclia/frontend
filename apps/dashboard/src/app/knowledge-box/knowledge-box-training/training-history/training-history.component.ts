@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { concatMap, filter, map, scan, tap, take, BehaviorSubject } from 'rxjs';
 import { TrainingExecution, TrainingExecutionStatus } from '@nuclia/core';
-import { intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
 
 @Component({
   selector: 'app-training-history',
@@ -35,11 +35,12 @@ export class TrainingHistoryComponent {
 
   getDuration(start: Date, end: Date) {
     const duration = intervalToDuration({ start, end });
-    return (
-      `${duration.hours?.toString().padStart(2, '0')}:` +
-      `${duration.minutes?.toString().padStart(2, '0')}:` +
-      `${duration.seconds?.toString().padStart(2, '0')}`
-    );
+    return formatDuration(duration, {
+      format: ['hours', 'minutes', 'seconds'],
+      zero: true,
+      delimiter: ':',
+      locale: { formatDistance: (token, count) => count.toString().padStart(2, '0') },
+    });
   }
 
   fetchNextPage() {
