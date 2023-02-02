@@ -69,7 +69,7 @@ $table-breakpoint: 1400px;
   display: flex;
   height: rhythm(8);
   position: sticky;
-  top: calc(var(--app-topbar-height) + #{rhythm(7)} + 1px);
+  top: calc(var(--app-topbar-height) + #{rhythm(6)});
   z-index: 1;
 
   .resource-bulk-actions {
