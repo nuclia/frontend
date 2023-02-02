@@ -34,6 +34,7 @@
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
   export let features = '';
+  export let standalone = false;
 
   let _features: WidgetFeatures = {};
 
@@ -73,6 +74,7 @@
         client,
         apiKey: apikey,
         kbSlug: kbslug,
+        standalone,
         account,
       },
       state,
