@@ -103,7 +103,7 @@
       <div
         class="resource-bulk-actions"
         *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
-        {{ 'resource.selected_count' | translate: { num: selection.selected.length || '' } }}
+        {{ 'resource.selected_count' | translate: { num: selectionCount$ | async } }}
 
         <ng-container *ngIf="hasLabelSets | async">
           <app-label-dropdown
@@ -116,14 +116,47 @@
           </app-label-dropdown>
         </ng-container>
 
-        <pa-button
-          *ngIf="selection.selected.length > 0"
-          kind="destructive"
-          aspect="basic"
-          size="small"
-          (click)="bulkDelete()">
-          {{ 'generic.delete' | translate }}
-        </pa-button>
+        <ng-container *ngIf="selection.selected.length > 0">
+          <pa-button
+            kind="destructive"
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkDelete()">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+          <pa-button
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkReprocess()">
+            {{ (selection.selected.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+          </pa-button>
+          <div
+            class="body-m"
+            *ngIf="bulkAction.inProgress">
+            {{ bulkAction.label | translate }}
+            {{ bulkAction.done }} / {{ bulkAction.total }}
+          </div>
+        </ng-container>
+
+        <ng-container
+          *ngIf="isFailureView && isFullPageSelected() && this.resultsLength > this.pageSize && !bulkAction.inProgress">
+          <pa-button
+            aspect="basic"
+            kind="primary"
+            *ngIf="!allErrorsSelected"
+            (click)="selectAllErrors()">
+            {{ 'resource.select-all-failures' | translate: { count: (statusCount | async).error } }}
+          </pa-button>
+          <pa-button
+            aspect="basic"
+            kind="primary"
+            *ngIf="allErrorsSelected"
+            (click)="clearSelection()">
+            {{ 'generic.clear-selection' | translate }}
+          </pa-button>
+        </ng-container>
       </div>
       <div class="table-options">
         <div *ngIf="isMainView">
@@ -175,8 +208,9 @@
             cdk-header-cell
             *cdkHeaderCellDef>
             <pa-checkbox
-              [value]="selection.hasValue() && isAllSelected()"
-              [paTooltip]="(isAllSelected() ? 'generic.deselect_all' : 'generic.select_all') | translate"
+              [value]="selection.hasValue() && isFullPageSelected()"
+              [paTooltip]="(isFullPageSelected() ? 'generic.deselect_all' : 'generic.select_all') | translate"
+              [disabled]="bulkAction.inProgress"
               (change)="masterToggle()"></pa-checkbox>
           </th>
           <td
@@ -184,6 +218,7 @@
             *cdkCellDef="let row">
             <pa-checkbox
               [value]="selection.isSelected(row.resource)"
+              [disabled]="bulkAction.inProgress"
               (change)="selection.toggle(row.resource)"></pa-checkbox>
           </td>
         </ng-container>
@@ -296,6 +331,7 @@
               aspect="basic"
               size="small"
               paTooltip="generic.actions"
+              [disabled]="bulkAction.inProgress"
               [matMenuTriggerFor]="menu">
               {{ 'generic.actions' | translate }}
             </pa-button>

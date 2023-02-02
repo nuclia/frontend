@@ -16,11 +16,14 @@ import {
   catchError,
   combineLatest,
   distinctUntilKeyChanged,
+  EMPTY,
+  expand,
   forkJoin,
   from,
   mergeMap,
   Observable,
   of,
+  reduce,
   skip,
   Subject,
   take,
@@ -31,6 +34,7 @@ import {
   Classification,
   deDuplicateList,
   IResource,
+  KnowledgeBox,
   LabelSets,
   ProcessingStatusResponse,
   Resource,
@@ -147,6 +151,9 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   get isMainView() {
     return this.statusDisplayed.value === 'PROCESSED';
   }
+  get isFailureView() {
+    return this.statusDisplayed.value === 'ERROR';
+  }
   get showActions() {
     return this.statusDisplayed.value !== 'PENDING';
   }
@@ -214,6 +221,19 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     searchIn: new FormControl<'title' | 'resource'>('title'),
     query: new FormControl<string>(''),
   });
+
+  allErrorsSelected = false;
+  get selectionCount$() {
+    return this.allErrorsSelected
+      ? this.statusCount.pipe(map((count) => count.error))
+      : of(this.selection.selected.length);
+  }
+  bulkAction = {
+    inProgress: false,
+    total: 0,
+    done: 0,
+    label: '',
+  };
 
   constructor(
     private sdk: SDKService,
@@ -323,14 +343,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.changeQueryParams({ page: undefined });
   }
 
-  bulkDelete() {
-    this.delete(this.selection.selected);
-  }
-
-  bulkReprocess() {
-    // TODO
-  }
-
   delete(resources: Resource[]) {
     const title = resources.length > 1 ? 'resource.delete_resources_confirm' : 'resource.delete_resource_confirm';
     const message = resources.length > 1 ? 'resource.delete_resources_warning' : 'resource.delete_resource_warning';
@@ -342,18 +354,93 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       })
       .onClose.pipe(
         filter((yes) => !!yes),
-        tap(() => this.setLoading(true)),
-        switchMap(() => from(resources.map((resource) => resource.delete()))),
+        tap(() => {
+          this.setLoading(true);
+          if (resources.length > 1) {
+            this.bulkAction = {
+              inProgress: true,
+              done: 0,
+              total: resources.length,
+              label: 'generic.deleting',
+            };
+            this.cdr.markForCheck();
+          }
+        }),
+        switchMap(() =>
+          from(
+            resources.map((resource) =>
+              resource.delete().pipe(
+                tap(() => {
+                  this.bulkAction = {
+                    ...this.bulkAction,
+                    done: this.bulkAction.done + 1,
+                  };
+                  this.cdr.markForCheck();
+                }),
+              ),
+            ),
+          ),
+        ),
         mergeMap((resourceDelete) => resourceDelete, 6),
         toArray(),
+        delay(1000),
+        switchMap(() => this.getResourceStatusCount()),
       )
       .subscribe(() => {
-        this.selection.clear();
-        setTimeout(() => {
-          this.setLoading(false);
-          this.sdk.refreshCounter(true);
-        }, 1000);
+        this.afterBulkActions();
+        this.sdk.refreshCounter(true);
       });
+  }
+
+  bulkDelete() {
+    const getResources = this.allErrorsSelected ? this.getAllResourcesInError() : of(this.selection.selected);
+    getResources.subscribe((resources) => this.delete(resources));
+  }
+
+  bulkReprocess() {
+    const getResources: Observable<Resource[]> = this.allErrorsSelected
+      ? this.getAllResourcesInError()
+      : of(this.selection.selected);
+
+    let wait = 1000;
+    if (this.allErrorsSelected) {
+      this.toaster.info('resource.reindex-all-info');
+      wait = 2000;
+    }
+    this.setLoading(true);
+    getResources
+      .pipe(
+        tap((resources) => {
+          this.bulkAction = {
+            inProgress: true,
+            done: 0,
+            total: resources.length,
+            label: 'generic.reindexing',
+          };
+          this.cdr.markForCheck();
+        }),
+        switchMap((resources) =>
+          from(
+            resources.map((resource) =>
+              resource.reprocess().pipe(
+                tap(() => {
+                  this.bulkAction = {
+                    ...this.bulkAction,
+                    done: this.bulkAction.done + 1,
+                  };
+                  this.cdr.markForCheck();
+                }),
+              ),
+            ),
+          ),
+        ),
+        mergeMap((resource) => resource, 6),
+        toArray(),
+        delay(wait),
+        switchMap(() => this.getResourceStatusCount()),
+        switchMap(() => this.getResources()),
+      )
+      .subscribe(() => this.afterBulkActions());
   }
 
   reindex(resource: Resource) {
@@ -365,6 +452,13 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         switchMap(() => this.getResourceStatusCount()),
       )
       .subscribe();
+  }
+
+  private afterBulkActions() {
+    this.selection.clear();
+    this.setLoading(false);
+    this.bulkAction = { inProgress: false, total: 0, done: 0, label: '' };
+    this.cdr.markForCheck();
   }
 
   edit(uid: string) {
@@ -397,7 +491,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     (document.getElementById('viewer-widget') as unknown as any)?.displayResource(resourceId);
   }
 
-  isAllSelected() {
+  isFullPageSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = Math.min(this.resultsLength, this.pageSize);
     return numSelected === numRows;
@@ -405,12 +499,16 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
-    this.isAllSelected() ? this.selection.clear() : this.data?.forEach((row) => this.selection.select(row.resource));
+    this.isFullPageSelected()
+      ? this.selection.clear()
+      : this.data?.forEach((row) => this.selection.select(row.resource));
+    this.allErrorsSelected = false;
     this.cdr?.markForCheck();
   }
 
   clearSelected() {
     this.selection.clear();
+    this.allErrorsSelected = false;
     this.cdr?.markForCheck();
   }
 
@@ -497,22 +595,29 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
             with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
           }),
           this.labelSets$.pipe(take(1)),
+          this.statusCount.pipe(take(1)),
         ]);
       }),
-      map(([kb, results, labelSets]) => {
-        // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
+      map(([kb, results, labelSets, statusCount]) => {
         this.data = titleOnly
           ? this.getTitleOnlyData(results, kb.id, labelSets)
           : this.getResourceData(query, results, kb.id, labelSets);
-        if (hasQuery && results.fulltext) {
-          this.resultsLength =
-            results.fulltext.next_page || results.fulltext.page_number > 0
-              ? this.totalResources || this.data.length
-              : 1;
+
+        // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
+        if (this.isMainView) {
+          if (hasQuery && results.fulltext) {
+            this.resultsLength =
+              results.fulltext.next_page || results.fulltext.page_number > 0
+                ? this.totalResources || this.data.length
+                : 1;
+          } else {
+            // totalResources can be 0 while we have resources (specially when we import dataset) because counters is asynchronous and relies on indexing
+            this.resultsLength = this.totalResources || this.data.length;
+          }
         } else {
-          // totalResources can be 0 while we have resources (specially when we import dataset) because counters is asynchronous and relies on indexing
-          this.resultsLength = this.totalResources || this.data.length;
+          this.resultsLength = this.isFailureView ? statusCount.error : statusCount.pending;
         }
+
         this.clearSelected();
         this.setLoading(false);
         return results;
@@ -706,7 +811,9 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
 
   displayStatus(status: ResourceStatus) {
     this.statusDisplayed.next(status);
-    this.getResources().subscribe();
+    this.getResources()
+      .pipe(switchMap(() => this.getResourceStatusCount()))
+      .subscribe();
   }
 
   private getResourceStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
@@ -738,5 +845,46 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         .pipe(switchMap(() => this.getResourceStatusCount()))
         .subscribe();
     }
+  }
+
+  selectAllErrors() {
+    this.allErrorsSelected = true;
+  }
+
+  clearSelection() {
+    this.allErrorsSelected = false;
+    this.selection.clear();
+  }
+
+  private getAllResourcesInError(): Observable<Resource[]> {
+    this.setLoading(true);
+    let kb: KnowledgeBox;
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((current) => {
+        kb = current;
+        return this.getResourcesInError(kb);
+      }),
+      expand((results) =>
+        results.fulltext?.next_page ? this.getResourcesInError(kb, results.fulltext?.page_number + 1) : EMPTY,
+      ),
+      map((results) => {
+        return Object.values(results.resources || {}).map(
+          (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
+        );
+      }),
+      reduce((accData, data) => accData.concat(data), [] as Resource[]),
+      tap(() => this.setLoading(false)),
+    );
+  }
+
+  private getResourcesInError(kb: KnowledgeBox, page_number = 0): Observable<Search.Results> {
+    return kb.search('', [Search.Features.DOCUMENT], {
+      inTitleOnly: true,
+      page_number,
+      page_size: 20,
+      sort: { field: 'created' },
+      filters: [`/n/s/${RESOURCE_STATUS.ERROR}`],
+    });
   }
 }
