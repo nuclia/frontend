@@ -1,4 +1,13 @@
-import type { Classification, CloudLink, IResource, Paragraph, Search, WidgetFeatures } from '@nuclia/core';
+import type {
+  Classification,
+  CloudLink,
+  FIELD_TYPE,
+  IResource,
+  Paragraph,
+  Search,
+  SHORT_FIELD_TYPE,
+  WidgetFeatures,
+} from '@nuclia/core';
 
 export const NO_RESULTS: Search.Results = {
   resources: {} as { [id: string]: IResource },
@@ -29,13 +38,6 @@ export interface DisplayedResource {
   sentence?: Search.Paragraph;
 }
 
-export enum FieldType {
-  FILE = 'f',
-  GENERIC = 'a',
-  LINK = 'u',
-  TEXT = 't',
-}
-
 export enum PreviewKind {
   NONE,
   PDF,
@@ -50,7 +52,7 @@ export enum SearchOrder {
 }
 
 interface BaseWidgetParagraph {
-  fieldType: string;
+  fieldType: SHORT_FIELD_TYPE | FIELD_TYPE;
   fieldId: string;
   paragraph: Paragraph;
   text: string;
@@ -62,8 +64,6 @@ interface BaseWidgetParagraph {
 export type WidgetParagraph = RegularWidgetParagraph | PdfWidgetParagraph | MediaWidgetParagraph;
 
 export interface RegularWidgetParagraph extends BaseWidgetParagraph {
-  fieldType: string;
-  fieldId: string;
   preview: PreviewKind.NONE;
 }
 

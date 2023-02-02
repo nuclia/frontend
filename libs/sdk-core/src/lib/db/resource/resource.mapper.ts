@@ -1,5 +1,6 @@
 import type { Resource } from './resource';
-import type { Classification } from '@nuclia/core';
+import { Classification, FIELD_TYPE } from './resource.models';
+import { SHORT_FIELD_TYPE } from '../search';
 
 interface AlgoliaRecord {
   title?: string;
@@ -30,3 +31,28 @@ export const resourceToAlgoliaFormat = (resource: Resource, backend: string): Al
 
   return { ...record, images, ...resource.getNamedEntities() };
 };
+
+export function longToShortFieldType(fieldType: FIELD_TYPE): SHORT_FIELD_TYPE {
+  return SHORT_FIELD_TYPE[fieldType];
+}
+
+export function shortToLongFieldType(shortType: SHORT_FIELD_TYPE): FIELD_TYPE | null {
+  switch (shortType) {
+    case SHORT_FIELD_TYPE.conversation:
+      return FIELD_TYPE.conversation;
+    case SHORT_FIELD_TYPE.datetime:
+      return FIELD_TYPE.datetime;
+    case SHORT_FIELD_TYPE.file:
+      return FIELD_TYPE.file;
+    case SHORT_FIELD_TYPE.layout:
+      return FIELD_TYPE.layout;
+    case SHORT_FIELD_TYPE.keywordset:
+      return FIELD_TYPE.keywordset;
+    case SHORT_FIELD_TYPE.link:
+      return FIELD_TYPE.link;
+    case SHORT_FIELD_TYPE.text:
+      return FIELD_TYPE.text;
+    default:
+      return null;
+  }
+}

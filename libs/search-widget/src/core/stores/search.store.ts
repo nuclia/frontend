@@ -1,6 +1,6 @@
 import { SvelteState } from '../state-lib';
 import type { IResource, Search, SearchOptions } from '@nuclia/core';
-import { Classification, FIELD_TYPE, getFilterFromLabel } from '@nuclia/core';
+import { Classification, getFilterFromLabel, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS, PENDING_RESULTS } from '../models';
 import { Subject } from 'rxjs';
 
@@ -200,8 +200,12 @@ export function addParagraphToSmartResults(
   if (!paragraph) {
     return smartResults;
   }
+  const longFieldType = shortToLongFieldType(paragraph.field_type);
+  if (!longFieldType) {
+    return smartResults;
+  }
   const existingResource = smartResults.find(
-    (r) => r.id === resource.id && r.field?.field_id === paragraph.field && r.field.field_type === paragraph.field_type,
+    (r) => r.id === resource.id && r.field?.field_id === paragraph.field && r.field.field_type === longFieldType,
   );
   if (existingResource) {
     const existingParagraph = existingResource.paragraphs?.find(
@@ -215,7 +219,7 @@ export function addParagraphToSmartResults(
     smartResults.push({
       ...resource,
       paragraphs: [paragraph],
-      field: { field_id: paragraph.field, field_type: paragraph.field_type as FIELD_TYPE },
+      field: { field_id: paragraph.field, field_type: longFieldType },
     });
   }
   return smartResults;
@@ -251,7 +255,7 @@ function generateFakeParagraphForSummary(resource: IResource): Search.SmartParag
     ? {
         score: 0,
         rid: resource.id,
-        field_type: 'a',
+        field_type: SHORT_FIELD_TYPE.generic,
         field: '',
         text: resource.summary,
         labels: [],

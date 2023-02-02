@@ -2,12 +2,12 @@
   import { onMount } from 'svelte';
   import { Observable, Subject } from 'rxjs';
   import type { Resource, Search } from '@nuclia/core';
-  import { FIELD_TYPE } from '@nuclia/core';
+  import { FIELD_TYPE, SHORT_FIELD_TYPE } from '@nuclia/core';
   import { switchMap, take, tap } from 'rxjs/operators';
   import { getFileUrl, getResource } from '../../core/api';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
-  import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
+  import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
   import Icon from '../../common/icons/Icon.svelte';
   import Player from '../../old-components/viewer/previewers/Player.svelte';
   import { Duration } from '../../common/transition.utils';
@@ -113,11 +113,11 @@
           if (!paragraph) {
             paragraph = transcripts[0];
           }
-          // TO FIX: getMediaTranscripts and mapSmartParagraph2WidgetParagraph return different fieldType values
-          if (paragraph?.fieldType === FieldType.LINK || paragraph?.fieldType === FIELD_TYPE.link) {
+          // FIXME: getMediaTranscripts and mapSmartParagraph2WidgetParagraph return different fieldType values
+          if (paragraph?.fieldType === SHORT_FIELD_TYPE.link || paragraph?.fieldType === FIELD_TYPE.link) {
             const linkField = getLinkField(res, paragraph.fieldId);
             youtubeUri = linkField?.value?.uri;
-          } else if (paragraph?.fieldType === FieldType.FILE || paragraph?.fieldType === FIELD_TYPE.file) {
+          } else if (paragraph?.fieldType === SHORT_FIELD_TYPE.file || paragraph?.fieldType === FIELD_TYPE.file) {
             const fileField = getFileField(res, res.id);
             const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
             if (file) {
