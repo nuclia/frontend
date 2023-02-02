@@ -15,7 +15,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
-import { STFSectionNavbarModule } from '../../components/section-navbar';
 
 describe('KnowledgeBoxProcessComponent', () => {
   let component: KnowledgeBoxProcessesComponent;
@@ -30,7 +29,6 @@ describe('KnowledgeBoxProcessComponent', () => {
         MockModule(PaTogglesModule),
         MockModule(PaIconModule),
         MockModule(PaPopupModule),
-        MockModule(STFSectionNavbarModule),
         DropdownButtonComponent,
       ],
       declarations: [KnowledgeBoxProcessesComponent, TranslatePipeMock],

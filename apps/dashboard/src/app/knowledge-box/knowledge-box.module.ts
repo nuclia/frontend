@@ -23,6 +23,7 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { HintModule } from '../components/hint/hint.module';
 import { UsersManageModule } from './knowledge-box-users/users-manage/users-manage.module';
+import { KnowledgeBoxProcessesModule } from './knowledge-box-process/knowledge-box-processes.module';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -32,13 +33,11 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 
 const Components = [
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
-  KnowledgeBoxProcessesComponent,
   KnowledgeBoxProfileComponent,
   KnowledgeBoxUsersComponent,
   KnowledgeBoxKeysComponent,
@@ -73,6 +72,7 @@ const Components = [
     PaPopupModule,
     PaIconModule,
     DropdownButtonComponent,
+    KnowledgeBoxProcessesModule,
   ],
   declarations: [...Components],
   exports: [],

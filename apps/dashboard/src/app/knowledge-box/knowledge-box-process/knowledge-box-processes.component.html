@@ -10,6 +10,16 @@
     class="warning">
     {{ 'stash.settings.processes.training.no-resources' | translate }}
   </div>
+  <div
+    *ngIf="!(cannotTrain | async)"
+    class="history">
+    <p>{{ 'stash.settings.processes.training.consult-history' | translate }}</p>
+    <pa-button
+      aspect="basic"
+      routerLink="history">
+      {{ 'training.history' | translate }}
+    </pa-button>
+  </div>
   <section *ngFor="let type of enabledTrainings | async">
     <h2>{{ 'stash.settings.processes.' + type | translate }}</h2>
     <p class="last-run">

@@ -34,7 +34,6 @@ import { RedirectComponent } from './redirect/redirect.component';
 import { AccountNUAComponent } from './account/account-nua/account-nua.component';
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 import { AccountUsersComponent } from './account/account-users/account-users.component';
-import { KnowledgeBoxProcessesComponent } from './knowledge-box/knowledge-box-process/knowledge-box-processes.component';
 import { SearchComponent } from './search/search.component';
 
 @Component({
@@ -166,7 +165,10 @@ const routes: Routes = [
               },
               {
                 path: 'processes',
-                component: KnowledgeBoxProcessesComponent,
+                loadChildren: () =>
+                  import('./knowledge-box/knowledge-box-process/knowledge-box-processes.module').then(
+                    (m) => m.KnowledgeBoxProcessesModule,
+                  ),
               },
               {
                 path: 'users',
