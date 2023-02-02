@@ -40,9 +40,12 @@ export class OnboardingService {
     this.kbCreationFailureCount = 0;
     this._onboardingState.next({ creating: true, accountCreated: false, kbCreated: false, creationFailed: false });
 
+    // we cannot pass job_title before the account is created
+    const { job_title, ...initialFields } = payload;
+
     // onboarding_inquiry is quite slow and not blocking us for creating the account, so running those in parallel
     this.sdk.nuclia.rest
-      .put(`/user/onboarding_inquiry`, payload)
+      .put(`/user/onboarding_inquiry`, initialFields)
       .pipe(
         catchError((error) => {
           // onboarding_inquiry should never raise any error, but if so we only catch it and log it
@@ -68,7 +71,10 @@ export class OnboardingService {
             zone: zoneId,
           };
           this.tracking.logEvent('account_creation_submitted');
-          return this.sdk.nuclia.db.createAccount(accountData).pipe(map(() => ({ accountSlug: slug })));
+          return this.sdk.nuclia.db.createAccount(accountData).pipe(
+            switchMap(() => this.sdk.nuclia.rest.put(`/user/onboarding_inquiry`, { job_title })),
+            map(() => ({ accountSlug: slug })),
+          );
         }),
         catchError((error: Response) => {
           this.tracking.logEvent('account_creation_failed');
