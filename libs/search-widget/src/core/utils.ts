@@ -281,6 +281,9 @@ export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
 };
 
 export const getExternalUrl = (resource: IResource) => {
+  if (resource.origin?.url) {
+    return resource.origin.url;
+  }
   const linkField = Object.values(resource.data?.links || {})[0];
   const fileField = Object.values(resource.data?.files || {})[0];
   if (linkField?.value?.uri) {
