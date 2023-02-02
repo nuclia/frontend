@@ -14,12 +14,12 @@ interface TrainingState {
 }
 
 @Component({
-  selector: 'app-knowledge-box-processes',
-  templateUrl: './knowledge-box-processes.component.html',
-  styleUrls: ['./knowledge-box-processes.component.scss'],
+  selector: 'app-knowledge-box-training',
+  templateUrl: './knowledge-box-training.component.html',
+  styleUrls: ['./knowledge-box-training.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KnowledgeBoxProcessesComponent implements OnInit, OnDestroy {
+export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject();
 
   cannotTrain = this.stateService.account.pipe(map((account) => !!account && account.type === 'stash-basic'));

@@ -13,14 +13,37 @@ export enum TrainingStatus {
   stopped = 'stopped',
 }
 
-export interface TrainingExecution {
+export enum TrainingExecutionStatus {
+  succeeded = 'succeeded',
+  failed = 'failed',
+  stopped = 'stopped',
+}
+
+export interface TrainingLastExecution {
   start: string;
   end: string;
-  result: string;
+  status: TrainingExecutionStatus;
 }
 
 export interface TrainingTask {
   task: string;
   status: TrainingStatus;
-  last_execution?: TrainingExecution;
+  last_execution?: TrainingLastExecution;
+}
+
+export interface TrainingExecutions {
+  items: TrainingExecution[];
+  pagination: {
+    page: number;
+    size: number;
+    last: boolean;
+  };
+}
+
+export interface TrainingExecution {
+  id: string;
+  task: string;
+  start: string;
+  end: string;
+  status: TrainingExecutionStatus;
 }

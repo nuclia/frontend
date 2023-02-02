@@ -1,9 +1,9 @@
 @import 'variables';
 
-.knowledge-box-processes {
+.knowledge-box-training {
   width: 770px;
   max-width: 100%;
-  margin: rythm(2.5) 0 rythm(6) 0;
+  padding: rhythm(6) rhythm(12);
 
   section {
     padding: rythm(4) 0;
@@ -13,6 +13,10 @@
 h2 {
   margin: 0;
   font-weight: var(--stf-font-weight-bold);
+}
+
+.history {
+  margin-top: rhythm(2);
 }
 
 .last-run {

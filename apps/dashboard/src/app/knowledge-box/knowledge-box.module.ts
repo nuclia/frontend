@@ -32,14 +32,11 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { KnowledgeBoxProcessesComponent } from './knowledge-box-process/knowledge-box-processes.component';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
-  KnowledgeBoxProcessesComponent,
   KnowledgeBoxProfileComponent,
   KnowledgeBoxUsersComponent,
   KnowledgeBoxKeysComponent,
@@ -57,7 +54,6 @@ const Components = [
     RouterModule,
     MatDialogModule,
     ProgressBarModule,
-    STFSectionNavbarModule,
     UserAvatarModule,
     STFFormDirectivesModule,
     STFTooltipModule,

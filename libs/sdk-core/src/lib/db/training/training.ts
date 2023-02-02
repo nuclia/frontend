@@ -1,7 +1,7 @@
 import { catchError, map, Observable, of } from 'rxjs';
 import type { INuclia } from '../../models';
 import type { WritableKnowledgeBox } from '../kb';
-import { TrainingStatus, TrainingTask, TrainingType } from './training.models';
+import { TrainingExecutions, TrainingStatus, TrainingTask, TrainingType } from './training.models';
 
 export class Training {
   kb: WritableKnowledgeBox;
@@ -27,6 +27,10 @@ export class Training {
     return this.nuclia.rest
       .get<TrainingTask>(`${this.kb.path}/train/${type}/inspect`)
       .pipe(catchError(() => of({ task: '', status: TrainingStatus.not_running } as TrainingTask)));
+  }
+
+  getExecutions(page = 0): Observable<TrainingExecutions> {
+    return this.nuclia.rest.get<TrainingExecutions>(`${this.kb.path}/train/executions?page=${page}`);
   }
 
   hasModel(type: TrainingType): Observable<boolean> {

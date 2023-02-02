@@ -10,6 +10,7 @@
 - Rename interface `ParagraphAnnotation` to `ParagraphClassification` to avoid confusion
 - Update training types: labeler split in two `resoure-labeler` and `paragraph-labeler`
 - Add `field` property to `Search.SmartResult` interface
+- Add support for `/train/executions` endpoint
 
 # 1.1.2 (2023-01-20)
 
