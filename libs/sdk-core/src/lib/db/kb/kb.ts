@@ -40,8 +40,10 @@ export class KnowledgeBox implements IKnowledgeBox {
     Object.assign(this, data);
   }
 
-  getEntities(): Observable<Entities> {
-    return this.nuclia.rest.get<{ groups: Entities }>(`${this.path}/entitiesgroups`).pipe(map((res) => res.groups));
+  getEntities(withEntities = false): Observable<Entities> {
+    return this.nuclia.rest
+      .get<{ groups: Entities }>(`${this.path}/entitiesgroups?show_entities=${withEntities}`)
+      .pipe(map((res) => res.groups));
   }
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup> {
