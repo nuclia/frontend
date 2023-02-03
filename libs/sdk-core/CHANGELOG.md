@@ -14,6 +14,7 @@
 - Add `SHORT_FIELD_TYPE` enum in search models and update `Paragraph` and `Sentence` interfaces accordingly 
 - Add mappers to translate `SHORT_FIELD_TYPE` into `FIELD_TYPE` and _vice versa_
 - Add mapper `getDataKeyFromFieldType` to translate `FIELD_TYPE` into key of `ResourceData`
+- Don't load entities by default when loading entity families, add `withEntities` parameter to `getEntities` method to load entities as well
 
 # 1.1.2 (2023-01-20)
 
