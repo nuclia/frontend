@@ -65,7 +65,7 @@ export class EntitiesService {
   }
 
   private _refreshEntities(kb: IKnowledgeBox): Observable<Entities> {
-    return kb.getEntities().pipe(
+    return kb.getEntities(true).pipe(
       catchError(() => {
         this.entitiesSubject.next(null);
         return EMPTY;
