@@ -25,13 +25,14 @@
   import { onMount } from 'svelte';
   import { displayedResource } from '../../core/stores/search.store';
   import TileHeader from '../base-tile/TileHeader.svelte';
+  import { resource } from '../../core/stores/resource.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let innerWidth = window.innerWidth;
   let mediaTileElement: HTMLElement;
   let mediaTileHeight;
-  let resource: Observable<Resource>;
+  let resourceObs: Observable<Resource>;
   let expanded = false;
   let summary;
   let mediaLoading = true;
@@ -97,9 +98,10 @@
       expanded = true;
       freezeBackground(true);
     }
-    if (!resource) {
-      resource = getResource(result.id).pipe(
+    if (!resourceObs) {
+      resourceObs = getResource(result.id).pipe(
         tap((res) => {
+          resource.set(res);
           const fileField = getFileField(res, res.id);
           const file = fileField && fileField.value?.file;
           if (file) {
@@ -177,7 +179,7 @@
       </div>
     {/if}
 
-    {#if $resource}
+    {#if $resourceObs}
       <div
         class="summary-container"
         hidden={!expanded}>

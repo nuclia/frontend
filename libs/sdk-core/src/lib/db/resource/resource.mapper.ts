@@ -1,5 +1,5 @@
 import type { Resource } from './resource';
-import { Classification, FIELD_TYPE } from './resource.models';
+import { Classification, FIELD_TYPE, ResourceData } from './resource.models';
 import { SHORT_FIELD_TYPE } from '../search';
 
 interface AlgoliaRecord {
@@ -30,6 +30,21 @@ export const resourceToAlgoliaFormat = (resource: Resource, backend: string): Al
     .map((link) => `${backend}/v1${link.uri}`);
 
   return { ...record, images, ...resource.getNamedEntities() };
+};
+
+/**
+ * Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
+ */
+export const getDataKeyFromFieldType = (fieldType: FIELD_TYPE): keyof ResourceData | null => {
+  switch (fieldType) {
+    case FIELD_TYPE.text:
+    case FIELD_TYPE.file:
+    case FIELD_TYPE.link:
+    case FIELD_TYPE.keywordset:
+      return `${fieldType}s`;
+    default:
+      return null;
+  }
 };
 
 export function longToShortFieldType(fieldType: FIELD_TYPE): SHORT_FIELD_TYPE {

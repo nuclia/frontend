@@ -13,6 +13,7 @@
 - Add support for `/train/executions` endpoint
 - Add `SHORT_FIELD_TYPE` enum in search models and update `Paragraph` and `Sentence` interfaces accordingly 
 - Add mappers to translate `SHORT_FIELD_TYPE` into `FIELD_TYPE` and _vice versa_
+- Add mapper `getDataKeyFromFieldType` to translate `FIELD_TYPE` into key of `ResourceData`
 
 # 1.1.2 (2023-01-20)
 

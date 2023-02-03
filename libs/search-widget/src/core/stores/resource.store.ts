@@ -1,6 +1,7 @@
 import { writableSubject } from '../state-lib';
-import type { CloudLink, LinkFieldData, Resource } from '@nuclia/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import type { CloudLink, FieldId, LinkFieldData, Resource, ResourceData } from '@nuclia/core';
+import { FIELD_TYPE, FileFieldData, getDataKeyFromFieldType } from '@nuclia/core';
+import { filter, map, Observable, of, switchMap, take } from 'rxjs';
 import { getFileUrls } from '../api';
 import { isYoutubeUrl } from '../utils';
 
@@ -58,4 +59,23 @@ export const previewLinks: Observable<CloudLink[]> = resource.pipe(
 
 function isYoutubeField(field: LinkFieldData): boolean {
   return field.value?.uri ? isYoutubeUrl(field.value.uri) : false;
+}
+
+export function getFieldUrl(field: FieldId): Observable<string> {
+  return resource.pipe(
+    filter((resource) => !!resource && Object.keys(resource.data).length > 0),
+    take(1),
+    switchMap((resource) => {
+      const dataKeyFromFieldType = getDataKeyFromFieldType(field.field_type) as keyof ResourceData;
+      const fieldData = (resource as Resource).getFieldData(dataKeyFromFieldType, field.field_id);
+      if (field.field_type === FIELD_TYPE.file) {
+        const uri = (fieldData as FileFieldData)?.value?.file?.uri;
+        return uri ? getFileUrls([uri]) : of(['']);
+      } else if (field.field_type === FIELD_TYPE.link) {
+        return of([(fieldData as LinkFieldData)?.value?.uri || '']);
+      }
+      return of(['']);
+    }),
+    map((url) => url[0]),
+  );
 }

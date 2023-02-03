@@ -29,13 +29,14 @@
   import { navigateToLink } from '../../core/stores/widget.store';
   import { displayedResource } from '../../core/stores/search.store';
   import TileHeader from '../base-tile/TileHeader.svelte';
+  import { resource } from '../../core/stores/resource.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let innerWidth = window.innerWidth;
   let mediaTileElement: HTMLElement;
   let mediaTileHeight;
-  let resource: Observable<Resource>;
+  let resourceObs: Observable<Resource>;
   let expanded = false;
   let summary;
   let mediaLoading = true;
@@ -106,9 +107,10 @@
       selectedParagraph && isFileOrLink(selectedParagraph.fieldType)
         ? selectedParagraph
         : matchingParagraphs.filter((p) => isFileOrLink(p.fieldType))[0] || matchingParagraphs[0];
-    if (!resource) {
-      resource = getResource(result.id).pipe(
+    if (!resourceObs) {
+      resourceObs = getResource(result.id).pipe(
         tap((res) => {
+          resource.set(res);
           transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
           if (!paragraph) {
             paragraph = transcripts[0];
@@ -204,7 +206,7 @@
       </div>
     {/if}
 
-    {#if $resource}
+    {#if $resourceObs}
       <div
         class="summary-container"
         hidden={!expanded}>

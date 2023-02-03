@@ -1,12 +1,11 @@
 import {
   Classification,
   EntityPositions,
-  FIELD_TYPE,
   FieldId,
+  getDataKeyFromFieldType,
   Paragraph,
   ParagraphClassification,
   Resource,
-  ResourceData,
   UserClassification,
   UserFieldMetadata,
   UserTokenAnnotation,
@@ -43,21 +42,6 @@ export interface EntityAnnotation extends UserTokenAnnotation {
   family: string;
   immutable?: boolean;
 }
-
-/**
- * Currently in our models, there are more FIELD_TYPEs than ResourceData keys, so we need the switch for typing reason
- */
-export const getDataKeyFromFieldType = (fieldType: FIELD_TYPE): keyof ResourceData | null => {
-  switch (fieldType) {
-    case FIELD_TYPE.text:
-    case FIELD_TYPE.file:
-    case FIELD_TYPE.link:
-    case FIELD_TYPE.keywordset:
-      return `${fieldType}s`;
-    default:
-      return null;
-  }
-};
 
 export const getParagraphs = (fieldId: FieldId, resource: Resource): Paragraph[] => {
   const dataKey = getDataKeyFromFieldType(fieldId.field_type);
