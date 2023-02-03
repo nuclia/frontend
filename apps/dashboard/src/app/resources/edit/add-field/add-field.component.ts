@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { EditResourceService } from '../edit-resource.service';
-import { FIELD_TYPE, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
+import { FIELD_TYPE, getDataKeyFromFieldType, LinkField, Resource, TextField, TextFieldFormat } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { BehaviorSubject, combineLatest, filter, map, Observable, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { getDataKeyFromFieldType } from '../edit-resource.helpers';
 
 @Component({
   selector: 'app-add-field',
