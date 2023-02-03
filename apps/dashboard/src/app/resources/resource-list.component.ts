@@ -35,6 +35,7 @@ import {
   deDuplicateList,
   IResource,
   KnowledgeBox,
+  LabelSetKind,
   LabelSets,
   ProcessingStatusResponse,
   Resource,
@@ -190,7 +191,10 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       return canEdit && this.showActions ? ['select', ...columns, 'actions'] : columns;
     }),
   );
-  labelSets$ = this.sdk.currentKb.pipe(switchMap((kb) => kb.getLabels()));
+  labelSets$: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(
+    filter((labelSets) => !!labelSets),
+    map((labelSets) => labelSets as LabelSets),
+  );
   currentLabelList: Classification[] = [];
 
   viewerWidget = this.sdk.currentKb.pipe(
@@ -247,6 +251,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private resourceViewer: ResourceViewerService,
+    private labelService: LabelsService,
   ) {
     const title = this.filters.title;
     this.filterTitle = new UntypedFormControl([title ? title : '']);
