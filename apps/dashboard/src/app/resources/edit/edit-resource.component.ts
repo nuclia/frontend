@@ -83,8 +83,9 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     let path;
     if (this.currentView === 'profile') {
       path = field === 'profile' ? `./${field}` : `./${field.field_type}/${field.field_id}`;
-    } else if (this.currentView === 'classification') {
-      path = field === 'profile' ? './classification' : `./classification/${field.field_type}/${field.field_id}`;
+    } else {
+      path =
+        field === 'profile' ? `./${this.currentView}` : `./${this.currentView}/${field.field_type}/${field.field_id}`;
     }
     if (path) {
       this.router.navigate([path], { relativeTo: this.route });
