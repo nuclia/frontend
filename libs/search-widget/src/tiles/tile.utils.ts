@@ -1,4 +1,5 @@
-import { FieldType, MediaWidgetParagraph } from '../core/models';
+import type { MediaWidgetParagraph } from '../core/models';
+import { SHORT_FIELD_TYPE } from '@nuclia/core';
 
 export const markRegex = new RegExp(/<\/*mark>/, 'g');
 
@@ -7,11 +8,11 @@ export function getUnMarked(paragraph: string): string {
 }
 
 export const isFileOrLink = (fieldType: string): boolean => {
-  return isFile(fieldType) || fieldType === FieldType.LINK;
+  return isFile(fieldType) || fieldType === SHORT_FIELD_TYPE.link;
 };
 
 export const isFile = (fieldType: string): boolean => {
-  return fieldType === FieldType.FILE;
+  return fieldType === SHORT_FIELD_TYPE.file;
 };
 
 export const filterParagraphs = (query: string, paragraphs: MediaWidgetParagraph[]): MediaWidgetParagraph[] => {

@@ -2,13 +2,12 @@
   import { onMount } from 'svelte';
   import { Observable, Subject } from 'rxjs';
   import type { Resource, Search } from '@nuclia/core';
-  import { FIELD_TYPE } from '@nuclia/core';
+  import { FIELD_TYPE, SHORT_FIELD_TYPE } from '@nuclia/core';
   import { switchMap, take, tap } from 'rxjs/operators';
   import { getFileUrl, getResource } from '../../core/api';
-  import IconButton from '../../common/button/IconButton.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
-  import { FieldType, MediaWidgetParagraph, PreviewKind } from '../../core/models';
+  import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
   import Icon from '../../common/icons/Icon.svelte';
   import Player from '../../old-components/viewer/previewers/Player.svelte';
   import { Duration } from '../../common/transition.utils';
@@ -27,16 +26,17 @@
     mapSmartParagraph2WidgetParagraph,
   } from '../../core/utils';
   import { filterParagraphs, isFileOrLink } from '../tile.utils';
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import { navigateToLink } from '../../core/stores/widget.store';
   import { displayedResource } from '../../core/stores/search.store';
+  import TileHeader from '../base-tile/TileHeader.svelte';
+  import { resource } from '../../core/stores/resource.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let innerWidth = window.innerWidth;
   let mediaTileElement: HTMLElement;
   let mediaTileHeight;
-  let resource: Observable<Resource>;
+  let resourceObs: Observable<Resource>;
   let expanded = false;
   let summary;
   let mediaLoading = true;
@@ -107,18 +107,19 @@
       selectedParagraph && isFileOrLink(selectedParagraph.fieldType)
         ? selectedParagraph
         : matchingParagraphs.filter((p) => isFileOrLink(p.fieldType))[0] || matchingParagraphs[0];
-    if (!resource) {
-      resource = getResource(result.id).pipe(
+    if (!resourceObs) {
+      resourceObs = getResource(result.id).pipe(
         tap((res) => {
+          resource.set(res);
           transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
           if (!paragraph) {
             paragraph = transcripts[0];
           }
-          // TO FIX: getMediaTranscripts and mapSmartParagraph2WidgetParagraph return different fieldType values
-          if (paragraph?.fieldType === FieldType.LINK || paragraph?.fieldType === FIELD_TYPE.link) {
+          // FIXME: getMediaTranscripts and mapSmartParagraph2WidgetParagraph return different fieldType values
+          if (paragraph?.fieldType === SHORT_FIELD_TYPE.link || paragraph?.fieldType === FIELD_TYPE.link) {
             const linkField = getLinkField(res, paragraph.fieldId);
             youtubeUri = linkField?.value?.uri;
-          } else if (paragraph?.fieldType === FieldType.FILE || paragraph?.fieldType === FIELD_TYPE.file) {
+          } else if (paragraph?.fieldType === SHORT_FIELD_TYPE.file || paragraph?.fieldType === FIELD_TYPE.file) {
             const fileField = getFileField(res, res.id);
             const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
             if (file) {
@@ -205,7 +206,7 @@
       </div>
     {/if}
 
-    {#if $resource}
+    {#if $resourceObs}
       <div
         class="summary-container"
         hidden={!expanded}>
@@ -216,27 +217,12 @@
 
   {#if thumbnailLoaded}
     <div class="result-details">
-      <header>
-        <div class:header-title={expanded}>
-          <div class="doc-type-container">
-            <DocTypeIndicator type="video" />
-          </div>
-          <h3
-            class="ellipsis"
-            on:click={() => onClickParagraph()}>
-            {result?.title}
-          </h3>
-        </div>
-        {#if expanded}
-          <div>
-            <IconButton
-              icon="cross"
-              ariaLabel={$_('generic.close')}
-              aspect="basic"
-              on:click={closePreview} />
-          </div>
-        {/if}
-      </header>
+      <TileHeader
+        {expanded}
+        {result}
+        typeIndicator="video"
+        on:clickOnTitle={onClickParagraph}
+        on:close={closePreview} />
 
       <div class:side-panel={expanded}>
         <div

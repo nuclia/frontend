@@ -47,6 +47,8 @@
     <h1>Welcome to Nuclia</h1>
 
     <h2>Widget</h2>
+
+    <p>Current KB: {kb}</p>
     <section class="configuration">
       <label for="widget-select">Select the widget to demo:</label>
       <select

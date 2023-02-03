@@ -19,9 +19,11 @@ import {
   FIELD_TYPE,
   FieldId,
   FileFieldData,
+  getDataKeyFromFieldType,
   IFieldData,
   KeywordSetField,
   LinkField,
+  longToShortFieldType,
   Paragraph,
   Resource,
   ResourceData,
@@ -38,7 +40,6 @@ import {
   addEntitiesToGroups,
   EditResourceView,
   EntityGroup,
-  getDataKeyFromFieldType,
   getFieldMetadataForAnnotations,
   getFieldMetadataForClassifications,
   ParagraphWithTextAndAnnotations,
@@ -65,7 +66,7 @@ export class EditResourceService {
           Object.entries(dict).map(([fieldId, field]) => ({
             ...field,
             field_id: fieldId,
-            field_type: type.slice(0, -1),
+            field_type: type.slice(0, -1), // remove the `s` from resource.data property
           })),
         );
       }, [] as ResourceField[]),
@@ -365,7 +366,7 @@ export class EditResourceService {
 
   getParagraphId(field: FieldId, paragraph: Paragraph): string {
     const resource = this._resource.getValue();
-    const typeAbbreviation = field.field_type === 'link' ? 'u' : field.field_type[0];
+    const typeAbbreviation = longToShortFieldType(field.field_type);
     return resource ? `${resource.id}/${typeAbbreviation}/${field.field_id}/${paragraph.start}-${paragraph.end}` : '';
   }
 

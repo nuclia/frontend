@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, Subject } from 'rxjs';
-import { FieldId, Resource, ResourceField } from '@nuclia/core';
+import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { NavigationService } from '../../services/navigation.service';
 import { takeUntil } from 'rxjs/operators';
@@ -36,7 +36,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     map((fields) =>
       fields.map((field) => ({
         ...field,
-        icon: field.field_type === 'text' ? 'file' : field.field_type,
+        icon: field.field_type === FIELD_TYPE.text ? 'file' : field.field_type,
       })),
     ),
   );

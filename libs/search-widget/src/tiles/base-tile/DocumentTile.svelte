@@ -10,14 +10,13 @@
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import { _ } from '../../core/i18n';
-  import { IconButton } from '../../common';
   import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import { displayedResource, searchQuery } from '../../core/stores/search.store';
   import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { navigateToLink } from '../../core/stores/widget.store';
+  import TileHeader from './TileHeader.svelte';
+  import { resource } from '../../core/stores/resource.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
   export let resourceObs: Observable<Resource>;
@@ -46,7 +45,6 @@
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
 
-  let resource: Resource | undefined;
   let paragraphList: WidgetParagraph[];
   const isSearchingInResource = new BehaviorSubject(false);
   const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
@@ -89,8 +87,9 @@
       viewerSearchQuery.set(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
-      if (!resource) {
-        resourceObs.subscribe((res) => (resource = res));
+
+      if (!resource.value) {
+        resourceObs.subscribe((res) => resource.set(res));
       }
     }
     setTimeout(() => setHeaderActionWidth());
@@ -144,9 +143,10 @@
 
   const findInPdf = () => {
     const query = viewerSearchQuery.getValue();
-    if (resource && query) {
+    const currentResource = resource.value;
+    if (currentResource && query) {
       isSearchingInResource.next(true);
-      resource
+      currentResource
         .search(query, [Search.ResourceFeatures.PARAGRAPH], { highlight: true })
         .pipe(
           tap((results) => {
@@ -221,37 +221,23 @@
 
   {#if thumbnailLoaded}
     <div class="result-details">
-      <header style:--header-actions-width={`${headerActionsWidth}px`}>
-        <div class:header-title={expanded}>
-          <div class="doc-type-container">
-            <DocTypeIndicator type={previewKind === PreviewKind.PDF ? 'pdf' : 'text'} />
-          </div>
-          <h3
-            class="ellipsis"
-            on:click={() => onClickParagraph(undefined, -1)}>
-            {result?.title}
-          </h3>
-        </div>
-
-        {#if expanded}
-          <div class="header-actions">
-            {#if !isMobile}
-              <SearchResultNavigator
-                resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
-                total={$matchingParagraphs$.length}
-                disabled={resultNavigatorDisabled}
-                on:offsetWidth={(event) => (resultNavigatorWidth = event.detail.offsetWidth)}
-                on:openPrevious={openPrevious}
-                on:openNext={openNext} />
-            {/if}
-            <IconButton
-              icon="cross"
-              ariaLabel={$_('generic.close')}
-              aspect="basic"
-              on:click={closePreview} />
-          </div>
+      <TileHeader
+        {expanded}
+        {result}
+        {headerActionsWidth}
+        typeIndicator={previewKind === PreviewKind.PDF ? 'pdf' : 'text'}
+        on:clickOnTitle={() => onClickParagraph(undefined, -1)}
+        on:close={closePreview}>
+        {#if !isMobile}
+          <SearchResultNavigator
+            resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
+            total={$matchingParagraphs$.length}
+            disabled={resultNavigatorDisabled}
+            on:offsetWidth={(event) => (resultNavigatorWidth = event.detail.offsetWidth)}
+            on:openPrevious={openPrevious}
+            on:openNext={openNext} />
         {/if}
-      </header>
+      </TileHeader>
 
       <div class:side-panel={expanded}>
         {#if expanded}

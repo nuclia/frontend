@@ -1,6 +1,6 @@
 import { SvelteState } from '../state-lib';
 import type { Classification, Search } from '@nuclia/core';
-import { FieldType, NO_RESULTS } from '../models';
+import { NO_RESULTS } from '../models';
 import { combineLatest, map, Observable, Subject } from 'rxjs';
 
 export type Suggestions = {

@@ -11,6 +11,7 @@ import type {
   ResourceData,
   Search,
 } from '@nuclia/core';
+import { longToShortFieldType } from '@nuclia/core';
 import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -275,9 +276,9 @@ export function getMediaTranscripts(
 }
 
 export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
-  const type = paragraph.fieldType.slice(0, -1);
-  const typeABBR = type === 'link' ? 'u' : type[0];
-  return `${rid}/${typeABBR}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph.end!}`;
+  const type = paragraph.fieldType.slice(0, -1) as FIELD_TYPE;
+  return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph
+    .end!}`;
 };
 
 export const getExternalUrl = (resource: IResource) => {

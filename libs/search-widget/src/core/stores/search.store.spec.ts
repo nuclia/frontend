@@ -1,5 +1,6 @@
 import { addParagraphToSmartResults } from './search.store';
 import type { FIELD_TYPE, Search } from '@nuclia/core';
+import { SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
 
 describe('search.store', () => {
   const r1: Search.SmartResult = {
@@ -7,7 +8,7 @@ describe('search.store', () => {
   };
   const r1p1: Search.SmartParagraph = {
     field: 'r1/f1',
-    field_type: 'file',
+    field_type: SHORT_FIELD_TYPE.file,
     rid: 'r1',
     score: 0.9,
     text: 'r1p1 text',
@@ -15,7 +16,7 @@ describe('search.store', () => {
   };
   const r2p1: Search.SmartParagraph = {
     field: 'r2/f1',
-    field_type: 'file',
+    field_type: SHORT_FIELD_TYPE.file,
     rid: 'r2',
     score: 0.9,
     text: 'r2p1 text',
@@ -23,7 +24,7 @@ describe('search.store', () => {
   };
   const r2p2: Search.SmartParagraph = {
     field: 'r2/f1',
-    field_type: 'file',
+    field_type: SHORT_FIELD_TYPE.file,
     rid: 'r2',
     score: 0.5,
     text: 'r2p2 text',
@@ -31,7 +32,7 @@ describe('search.store', () => {
   };
   const r2p3: Search.SmartParagraph = {
     field: 'r2/f2',
-    field_type: 'file',
+    field_type: SHORT_FIELD_TYPE.file,
     rid: 'r2',
     score: 0.6,
     text: 'r2p3 text',
@@ -40,7 +41,7 @@ describe('search.store', () => {
   const r2: Search.SmartResult = {
     id: 'r2',
     paragraphs: [r2p1],
-    field: { field_id: r2p1.field, field_type: r2p1.field_type as FIELD_TYPE },
+    field: { field_id: r2p1.field, field_type: shortToLongFieldType(r2p1.field_type) as FIELD_TYPE },
   };
 
   describe('addParagraphToSmartResults', () => {
@@ -54,7 +55,7 @@ describe('search.store', () => {
         {
           ...r1,
           paragraphs: [r1p1],
-          field: { field_id: r1p1.field, field_type: r1p1.field_type },
+          field: { field_id: r1p1.field, field_type: shortToLongFieldType(r1p1.field_type) },
         },
       ]);
       expect(addParagraphToSmartResults([r2], r1, r1p1)).toEqual([
@@ -62,7 +63,7 @@ describe('search.store', () => {
         {
           ...r1,
           paragraphs: [r1p1],
-          field: { field_id: r1p1.field, field_type: r1p1.field_type },
+          field: { field_id: r1p1.field, field_type: shortToLongFieldType(r1p1.field_type) },
         },
       ]);
     });
@@ -87,7 +88,7 @@ describe('search.store', () => {
       const r3: Search.SmartResult = {
         id: 'r3',
         paragraphs: [sameWithMarks],
-        field: { field_id: 'r3/f1', field_type: r2p1.field_type as FIELD_TYPE },
+        field: { field_id: 'r3/f1', field_type: shortToLongFieldType(r2p1.field_type) as FIELD_TYPE },
       };
       expect(addParagraphToSmartResults([r3], { id: 'r3' }, sameWithBlanks)).toEqual([r3]);
     });
@@ -95,7 +96,11 @@ describe('search.store', () => {
     it('should duplicate resource when adding paragraph from another field', () => {
       expect(addParagraphToSmartResults([r2], r2, r2p3)).toEqual([
         { ...r2 },
-        { id: r2.id, field: { field_id: r2p3.field, field_type: r2p3.field_type }, paragraphs: [r2p3] },
+        {
+          id: r2.id,
+          field: { field_id: r2p3.field, field_type: shortToLongFieldType(r2p3.field_type) },
+          paragraphs: [r2p3],
+        },
       ]);
     });
   });

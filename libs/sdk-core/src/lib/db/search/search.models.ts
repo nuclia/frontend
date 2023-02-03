@@ -34,6 +34,17 @@ export interface SearchOptions {
   with_status?: ResourceStatus;
 }
 
+export enum SHORT_FIELD_TYPE {
+  layout = 'l',
+  text = 't',
+  file = 'f',
+  link = 'u',
+  datetime = 'd',
+  keywordset = 'k',
+  generic = 'a',
+  conversation = 'c',
+}
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Search {
   export enum Features {
@@ -118,7 +129,7 @@ export namespace Search {
   export interface Paragraph {
     score: number;
     rid: string;
-    field_type: string;
+    field_type: SHORT_FIELD_TYPE;
     field: string;
     text: string;
     labels: string[];
@@ -130,7 +141,7 @@ export namespace Search {
   export interface Sentence {
     score: number;
     rid: string;
-    field_type: string;
+    field_type: SHORT_FIELD_TYPE;
     field: string;
     text: string;
     position?: { page_number?: number; start: number; end: number; index: number };
