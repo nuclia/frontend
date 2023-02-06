@@ -54,8 +54,7 @@
   </div>
   <div
     class="paragraph-text"
-    class:semantic={isSemantic}
-    class:ellipsis>
+    class:semantic={isSemantic}>
     {@html paragraph.text}
   </div>
 </li>

@@ -16,252 +16,38 @@
    * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
    * Kb with different kind of media (owned by Mat): 5c2bc432-a579-48cd-b408-4271e5e7a43c
    */
-  let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c';
-
-  onMount(() => {
-    widget?.setActions([
-      {
-        label: 'Delete',
-        action: (uid: string) => {
-          console.log('delete', uid);
-        },
-      },
-      {
-        label: 'Edit',
-        action: (uid: string) => {
-          console.log('edit', uid);
-        },
-      },
-      {
-        label: 'Close',
-        action: () => {
-          widget.displayResource('');
-        },
-      },
-    ]);
-  });
+  let kb = '97c145a3-0810-4222-a627-f88f0fc94b77';
 </script>
 
 <main>
   <header hidden={!showConfiguration}>
-    <h1>Welcome to Nuclia</h1>
-
-    <h2>Widget</h2>
-
-    <p>Current KB: {kb}</p>
-    <section class="configuration">
-      <label for="widget-select">Select the widget to demo:</label>
-      <select
-        id="widget-select"
-        bind:value={selected}>
-        <option value="popup">Popup search</option>
-        <option value="embedded">Embedded search</option>
-        <option value="tiles">Search bar and result widgets</option>
-        <option value="viewer">Viewer widget</option>
-      </select>
-      <button on:click={() => setLang('en')}>English</button>
-      <button on:click={() => setLang('es')}>Español</button>
-    </section>
+    <h1>Philosophy StackExchange</h1>
   </header>
 
-  {#if selected === 'popup'}
-    <h3>Input widget</h3>
-    <div class="input-container">
-      <NucliaWidget
-        bind:this={widget}
-        zone="europe-1"
-        knowledgebox={kb}
-        backend="https://stashify.cloud/api"
-        cdn="/"
-        type="popup"
-        features="permalink,filter,suggestions"
-        lang="en"
-        placeholder="Input placeholder is invisible" />
-    </div>
-  {/if}
-  {#if selected === 'embedded'}
-    <h2>
-      Embedded widget <small>(formerly known as form widget)</small>
-    </h2>
-    <NucliaWidget
+  <ul>
+    <li on:click={() => searchBar.search('Can logic help to understand the world?')}>
+      Can logic help to understand the world?
+    </li>
+    <li on:click={() => searchBar.search('Is beauty just a matter of taste?')}>Is beauty just a matter of taste?</li>
+    <li on:click={() => searchBar.search('Are mathematics real or just fictive?')}>
+      Are mathematics real or just fictive?
+    </li>
+    <li on:click={() => searchBar.search('Can we think without language?')}>Can we think without language?</li>
+    <li on:click={() => searchBar.search('Is time real?')}>Is time real?</li>
+  </ul>
+
+  <div class="two-widgets-container">
+    <NucliaSearchBar
       zone="europe-1"
+      bind:this={searchBar}
       knowledgebox={kb}
-      backend="https://stashify.cloud/api"
-      cdn="https://cdn.stashify.cloud/"
-      type="embedded"
+      backend="http://127.0.0.1:8000/api"
+      cdn="/"
       lang="en"
-      features="permalink,filter,suggestions,entityAnnotation" />
-  {/if}
-  {#if selected === 'tiles'}
-    <h2>Two widgets: search bar and video results</h2>
-    <p>
-      Click on this text to trigger the corresponding search:
-      <span on:click={() => searchBar.search('test query')}>test query</span>
-    </p>
-    <div class="two-widgets-container">
-      <NucliaSearchBar
-        zone="europe-1"
-        bind:this={searchBar}
-        knowledgebox={kb}
-        backend="https://stashify.cloud/api"
-        cdn="/"
-        lang="en"
-        placeholder="Search"
-        features="filter,suggestions" />
-      <NucliaSearchResults />
-    </div>
-  {/if}
-  {#if selected === 'viewer'}
-    <h2>Viewer widget</h2>
-    <label>Resource id:</label>
-    <input bind:value={resource} />
-    <button on:click={() => viewerWidget.displayResource(resource)}>Show resource</button>
-    <div class="viewer-widget">
-      <NucliaViewerWidget
-        bind:this={viewerWidget}
-        zone="europe-1"
-        knowledgebox={kb}
-        cdn="/"
-        backend="https://stashify.cloud/api"
-        permalink
-        lang="en" />
-    </div>
-  {/if}
-
-  <h2>Sistema in Svelte</h2>
-  <div class="nuclia-widget">
-    <h3>Buttons</h3>
-    <h4 class="section-title">Primary</h4>
-    <div>
-      <div class="demo-container">
-        <div class="buttons-block">
-          <Button
-            kind="primary"
-            aspect="solid">
-            Solid
-          </Button>
-          <IconButton
-            icon="search"
-            kind="primary"
-            aspect="solid">
-            Solid
-          </IconButton>
-        </div>
-
-        <div class="buttons-block">
-          <Button
-            kind="primary"
-            aspect="basic">
-            Basic
-          </Button>
-          <IconButton
-            icon="search"
-            kind="primary"
-            aspect="basic">
-            Basic
-          </IconButton>
-        </div>
-      </div>
-    </div>
-
-    <h4 class="section-title">Secondary</h4>
-    <div>
-      <div class="demo-container">
-        <div class="buttons-block">
-          <Button
-            kind="secondary"
-            aspect="solid">
-            Solid
-          </Button>
-          <IconButton
-            icon="search"
-            kind="secondary"
-            aspect="solid">
-            Solid
-          </IconButton>
-        </div>
-        <div class="buttons-block">
-          <Button
-            kind="secondary"
-            aspect="basic">
-            Basic
-          </Button>
-          <IconButton
-            icon="search"
-            kind="secondary"
-            aspect="basic">
-            Basic
-          </IconButton>
-        </div>
-      </div>
-    </div>
-
-    <h4 class="section-title">Inverted</h4>
-    <div class="inverted">
-      <div class="demo-container">
-        <div class="buttons-block">
-          <Button
-            kind="inverted"
-            aspect="solid">
-            Solid
-          </Button>
-          <IconButton
-            icon="search"
-            kind="inverted"
-            aspect="solid">
-            Solid
-          </IconButton>
-        </div>
-        <div class="buttons-block">
-          <Button
-            kind="inverted"
-            aspect="basic">
-            Basic
-          </Button>
-          <IconButton
-            icon="search"
-            kind="inverted"
-            aspect="basic">
-            Basic
-          </IconButton>
-        </div>
-      </div>
-    </div>
-
-    <h3>Labels</h3>
-    <p>
-      Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
-    </p>
-    <p><strong>Default: not removable, not clickable</strong></p>
-    <div class="demo-container">
-      <Label label={{ labelset: 'artist', label: 'Queen' }} />
-      <Label label={{ labelset: 'sentiment', label: 'positive' }} />
-      <Label label={{ labelset: 'genre', label: 'Rock' }} />
-    </div>
-    <p><strong>Clickable</strong></p>
-    <div class="demo-container">
-      <Label
-        clickable
-        label={{ labelset: 'artist', label: 'Queen' }} />
-      <Label
-        clickable
-        label={{ labelset: 'sentiment', label: 'positive' }} />
-      <Label
-        clickable
-        label={{ labelset: 'genre', label: 'Rock' }} />
-    </div>
-    <p><strong>Removable</strong></p>
-    <div class="demo-container">
-      <Label
-        removable
-        label={{ labelset: 'artist', label: 'Queen' }} />
-      <Label
-        removable
-        label={{ labelset: 'sentiment', label: 'positive' }} />
-      <Label
-        removable
-        label={{ labelset: 'genre', label: 'Rock' }} />
-    </div>
+      placeholder="Search"
+      standalone={true}
+      features="" />
+    <NucliaSearchResults />
   </div>
 </main>
 

@@ -88,7 +88,12 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   }
   const fullTextResults: IResource[] =
     state.results.fulltext?.results.map((res) => allResources[res.rid]).filter((res) => !!res) || [];
-  const semanticResults = state.results.sentences?.results || [];
+  const semanticResults = (state.results.sentences?.results || []).reduce((acc, sentence) => {
+    if (!acc.find((s) => s.text === sentence.text)) {
+      acc.push(sentence);
+    }
+    return acc;
+  }, [] as Search.Sentence[]);
   let smartResults: Search.SmartResult[] = [];
 
   // best fulltext match goes first
@@ -99,8 +104,8 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   // if not a keyword search, add the 2 best semantic sentences
   const looksLikeKeywordSearch = state.query.split(' ').length < 3;
   if (!looksLikeKeywordSearch) {
-    const twoBestSemantic = semanticResults.slice(0, 2);
-    twoBestSemantic.forEach((sentence) => {
+    const fourBestSemantic = semanticResults.slice(0, 4);
+    fourBestSemantic.forEach((sentence) => {
       const resource = allResources[sentence.rid];
       const containingParagraph = state.results.paragraphs?.results?.find(
         (p) =>

@@ -25,6 +25,7 @@
 
   .paragraph-text {
     overflow-wrap: break-word;
+    font-size: var(--font-size-base);
   }
   .paragraph-text.semantic {
     font-weight: var(--font-weight-medium);
