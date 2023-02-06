@@ -81,7 +81,6 @@ describe('Edit resource helpers', () => {
             key: 'p2',
             classifications: [{ labelset: 'heroes', label: 'catwoman' }],
           },
-          { key: 'p3', classifications: [] },
         ],
         token: [{ token: 'Joker', klass: 'villain', start: 0, end: 4 }],
       },

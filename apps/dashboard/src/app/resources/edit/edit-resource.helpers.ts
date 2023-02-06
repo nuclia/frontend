@@ -56,10 +56,16 @@ export function getFieldMetadataForClassifications(
   paragraphs: ParagraphWithTextAndClassifications[],
   existingEntries: UserFieldMetadata[],
 ): UserFieldMetadata[] {
-  const paragraphClassifications: ParagraphClassification[] = paragraphs.map((p) => ({
-    key: p.paragraphId,
-    classifications: p.userClassifications,
-  }));
+  const paragraphClassifications: ParagraphClassification[] = paragraphs
+    .map((p) =>
+      p.userClassifications.length > 0
+        ? {
+            key: p.paragraphId,
+            classifications: p.userClassifications,
+          }
+        : null,
+    )
+    .filter((classification) => !!classification) as ParagraphClassification[];
 
   let existingField = false;
   const newEntries = existingEntries.map((entry) => {

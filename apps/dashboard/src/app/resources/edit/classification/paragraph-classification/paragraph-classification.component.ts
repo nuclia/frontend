@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
-import { combineLatest, filter, map, Observable, Subject, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import {
   Classification,
   FieldId,
@@ -139,14 +139,19 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
   save() {
     this.isSaving = true;
-    this.fieldId.pipe(switchMap((field) => this.editResource.saveClassifications(field, this.paragraphs))).subscribe({
-      next: () => {
-        this.isModified = false;
-        this.isSaving = false;
-        this.cdr.markForCheck();
-      },
-      error: () => (this.isSaving = false),
-    });
+    this.fieldId
+      .pipe(
+        switchMap((field) => this.editResource.saveClassifications(field, this.paragraphs)),
+        take(1),
+      )
+      .subscribe({
+        next: () => {
+          this.isModified = false;
+          this.isSaving = false;
+          this.cdr.markForCheck();
+        },
+        error: () => (this.isSaving = false),
+      });
   }
 
   cancel() {
