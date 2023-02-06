@@ -3,7 +3,7 @@
   <div>
     <p *ngIf="noLabels">
       {{ 'resource.classification.no-resource-labelset' | translate }}
-      <a [routerLink]="(kbUrl | async) + '/ontologies'">{{ 'resource.classification-page-link' | translate }}</a>
+      <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
     </p>
     <app-label-field
       [selection]="currentLabels"

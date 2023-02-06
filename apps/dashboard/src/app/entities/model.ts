@@ -1,6 +1,6 @@
 import { STFUtils } from '@flaps/core';
 import { EntitiesGroup } from '@nuclia/core';
-import { cloneDeep } from '../ontologies/utils';
+import { cloneDeep } from '../label-sets/utils';
 
 export const generatedEntitiesColor: { [key: string]: string } = {
   DATE: '#FF8989',

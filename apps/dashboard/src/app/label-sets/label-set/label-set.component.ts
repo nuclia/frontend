@@ -20,12 +20,12 @@ interface OntologyTitleError extends IErrorMessages {
 }
 
 @Component({
-  selector: 'app-ontology',
-  templateUrl: './ontology.component.html',
-  styleUrls: ['./ontology.component.scss'],
+  selector: 'app-label-set',
+  templateUrl: './label-set.component.html',
+  styleUrls: ['./label-set.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OntologyComponent implements OnDestroy {
+export class LabelSetComponent implements OnDestroy {
   ontologyForm = this.formBuilder.group({
     title: ['', [Validators.required, Sluggable()]],
     description: [''],
@@ -34,14 +34,14 @@ export class OntologyComponent implements OnDestroy {
 
   colors: string[] = LABEL_MAIN_COLORS;
   kinds = [
-    { id: LabelSetKind.RESOURCES, name: 'ontology.resources' },
-    { id: LabelSetKind.PARAGRAPHS, name: 'ontology.paragraphs' },
+    { id: LabelSetKind.RESOURCES, name: 'label-set.resources' },
+    { id: LabelSetKind.PARAGRAPHS, name: 'label-set.paragraphs' },
   ];
 
   validationMessages: { [key: string]: OntologyTitleError } = {
     title: {
       required: 'validation.title_required',
-      sluggable: 'ontology.invalid_name',
+      sluggable: 'label-set.invalid_name',
     },
   };
 
@@ -177,8 +177,8 @@ export class OntologyComponent implements OnDestroy {
   deleteOntology(): void {
     this.modalService
       .openConfirm({
-        title: 'ontology.delete_confirm_title',
-        description: 'ontology.delete_warning_extra',
+        title: 'label-set.delete_confirm_title',
+        description: 'label-set.delete_warning_extra',
         isDestructive: true,
       })
       .onClose.pipe(
@@ -212,7 +212,7 @@ export class OntologyComponent implements OnDestroy {
 
   showDuplicationWarning(title: string) {
     this.translate
-      .get('ontology.duplicated_label', { title: title })
+      .get('label-set.duplicated_label', { title: title })
       .pipe(
         switchMap(
           (message) =>

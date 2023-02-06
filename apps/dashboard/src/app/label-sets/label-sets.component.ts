@@ -8,11 +8,11 @@ import { RouteInfo } from '../components/section-navbar';
 import { switchMap } from 'rxjs';
 
 @Component({
-  selector: 'app-ontologies',
-  templateUrl: './ontologies.component.html',
+  selector: 'app-label-sets',
+  templateUrl: './label-sets.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OntologiesComponent {
+export class LabelSetsComponent {
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   routes = this.isAdminOrContrib.pipe(
     filter((yes) => yes),

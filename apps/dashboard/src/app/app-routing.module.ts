@@ -15,9 +15,9 @@ import { KnowledgeBoxProfileComponent } from './knowledge-box/knowledge-box-prof
 import { KnowledgeBoxUsersComponent } from './knowledge-box/knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box/knowledge-box-keys/knowledge-box-keys.component';
 import { EntitiesComponent } from './entities/entities.component';
-import { OntologiesComponent } from './ontologies/ontologies.component';
-import { OntologyComponent } from './ontologies/ontology/ontology.component';
-import { OntologyListComponent } from './ontologies/ontology-list/ontology-list.component';
+import { LabelSetsComponent } from './label-sets/label-sets.component';
+import { LabelSetComponent } from './label-sets/label-set/label-set.component';
+import { LabelSetListComponent } from './label-sets/label-set-list/label-set-list.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
@@ -137,8 +137,8 @@ const routes: Routes = [
                 component: EntitiesComponent,
               },
               {
-                path: 'ontologies',
-                component: OntologiesComponent,
+                path: 'label-sets',
+                component: LabelSetsComponent,
                 children: [
                   {
                     path: '',
@@ -147,15 +147,15 @@ const routes: Routes = [
                   },
                   {
                     path: 'list',
-                    component: OntologyListComponent,
+                    component: LabelSetListComponent,
                   },
                   {
                     path: 'add',
-                    component: OntologyComponent,
+                    component: LabelSetComponent,
                   },
                   {
-                    path: ':ontology',
-                    component: OntologyComponent,
+                    path: ':label-set',
+                    component: LabelSetComponent,
                   },
                 ],
               },

@@ -8,12 +8,12 @@ import { LabelSet, LabelSets } from '@nuclia/core';
 import { getLabelColor } from '@nuclia/sistema';
 
 @Component({
-  selector: 'app-ontology-list',
-  templateUrl: './ontology-list.component.html',
-  styleUrls: ['./ontology-list.component.scss'],
+  selector: 'app-label-set-list',
+  templateUrl: './label-set-list.component.html',
+  styleUrls: ['./label-set-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OntologyListComponent implements OnDestroy {
+export class LabelSetListComponent implements OnDestroy {
   unsubscribeAll = new Subject<void>();
   labelSets?: LabelSets;
 

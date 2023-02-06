@@ -48,7 +48,7 @@
       pattern="[^/\{\}]+"
       [formControl]="title"
       cdkFocusInitial
-      [title]="'ontology.label_naming_constraint' | translate"
+      [title]="'label-set.label_naming_constraint' | translate"
       (keydown.enter)="title.valid ? save() : null"
       (mousedown)="preventDragAndDrop($event)" />
     <span class="validity"></span>

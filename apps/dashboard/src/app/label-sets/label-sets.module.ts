@@ -9,11 +9,11 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
 import { STFTooltipModule } from '@flaps/pastanaga';
 
-import { OntologiesComponent } from './ontologies.component';
-import { OntologyListComponent } from './ontology-list/ontology-list.component';
-import { OntologyComponent } from './ontology/ontology.component';
-import { ColorPickerComponent } from './ontology/color-picker/color-picker.component';
-import { LabelComponent } from './ontology/label/label.component';
+import { LabelSetsComponent } from './label-sets.component';
+import { LabelSetListComponent } from './label-set-list/label-set-list.component';
+import { LabelSetComponent } from './label-set/label-set.component';
+import { ColorPickerComponent } from './label-set/color-picker/color-picker.component';
+import { LabelComponent } from './label-set/label/label.component';
 import {
   PaButtonModule,
   PaIconModule,
@@ -23,13 +23,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { STFSectionNavbarModule } from '../components/section-navbar';
 
-const Components = [
-  OntologiesComponent,
-  OntologyListComponent,
-  OntologyComponent,
-  ColorPickerComponent,
-  LabelComponent,
-];
+const Components = [LabelSetsComponent, LabelSetListComponent, LabelSetComponent, ColorPickerComponent, LabelComponent];
 
 @NgModule({
   imports: [
@@ -52,4 +46,4 @@ const Components = [
   declarations: [...Components],
   exports: [],
 })
-export class OntologiesModule {}
+export class LabelSetsModule {}
