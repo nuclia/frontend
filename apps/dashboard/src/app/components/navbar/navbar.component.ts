@@ -34,9 +34,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
     ),
   );
   kbUrl: string = '';
-  isUploadFolderEnabled = this.tracking.isFeatureEnabled('upload-folder').pipe(shareReplay(1));
   isActivityEnabled = this.tracking.isFeatureEnabled('view-activity').pipe(shareReplay(1));
-  isOntologiesEnabled = this.tracking.isFeatureEnabled('manage-ontologies').pipe(shareReplay(1));
   isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities').pipe(shareReplay(1));
   isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
   isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets').pipe(shareReplay(1));

@@ -43,7 +43,6 @@
             <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
           </a>
           <a
-            *ngIf="isOntologiesEnabled | async"
             [routerLink]="kbUrl + '/label-sets'"
             routerLinkActive="active"
             class="nav-link">
