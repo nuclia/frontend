@@ -31,13 +31,7 @@ export class LabelDropdownComponent {
   @Input()
   set labelSets(value: LabelSets) {
     if (value) {
-      this._labelSets = Object.entries(value).reduce((labelSets, [key, labelSet]) => {
-        labelSets[key] = {
-          ...labelSet,
-          labels: labelSet.labels.sort((a, b) => a.title.localeCompare(b.title)),
-        };
-        return labelSets;
-      }, {} as LabelSets);
+      this._labelSets = value;
     }
   }
   get labelSets() {
