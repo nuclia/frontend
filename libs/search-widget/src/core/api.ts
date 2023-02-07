@@ -53,6 +53,9 @@ export const search = (query: string, options: SearchOptions) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
+  if (!query) {
+    options.inTitleOnly = true;
+  }
   return nucliaApi.knowledgeBox.search(query, SEARCH_MODE, options).pipe(
     filter((res) => {
       if (res.error) {

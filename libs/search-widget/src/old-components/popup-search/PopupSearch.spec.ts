@@ -36,9 +36,12 @@ describe('Popup search', () => {
 
   it('should open modal on enter', async () => {
     searchResults.set({
-      resources: {
-        res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
+      results: {
+        resources: {
+          res1: { title: 'Knowledge is power', summary: 'France is bacon' } as IResource,
+        },
       },
+      append: false,
     });
     const { container } = render(PopupSearch);
     const input = container.querySelector('input');

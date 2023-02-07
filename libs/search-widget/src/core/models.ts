@@ -15,10 +15,6 @@ export const NO_RESULTS: Search.Results = {
   sentences: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
   fulltext: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
 };
-export const PENDING_RESULTS = {
-  ...NO_RESULTS,
-  pending: true,
-};
 
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
