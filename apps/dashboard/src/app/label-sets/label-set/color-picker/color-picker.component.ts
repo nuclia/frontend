@@ -24,8 +24,6 @@ export class ColorPickerComponent {
 
   selectedCustomColor: boolean = false;
 
-  constructor() {}
-
   isExistingColor(color: string): boolean {
     return isHexColor(color) && isColorInList(color, this.hexColors);
   }
