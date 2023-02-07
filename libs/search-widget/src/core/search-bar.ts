@@ -1,11 +1,12 @@
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { PENDING_RESULTS } from './models';
+import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
 import { navigateToLink } from './stores/widget.store';
 import { ResourceProperties, Search } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   isEmptySearchQuery,
+  loadMore,
+  pendingResults,
   searchFilters,
   searchOptions,
   searchQuery,
@@ -25,29 +26,45 @@ export const setupTriggerSearch = (
   subscriptions.push(
     triggerSearch
       .pipe(
-        tap(() => searchResults.set(PENDING_RESULTS)),
-        switchMap(() => isEmptySearchQuery.pipe(take(1))),
-        filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() => searchQuery.pipe(take(1))),
-        tap((query) => (dispatch ? dispatch('search', query) : undefined)),
-        switchMap((query) =>
-          forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1)), navigateToLink.pipe(take(1))]).pipe(
-            map(([options, filters, navigateToLink]) => {
-              const show = navigateToLink
-                ? [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN]
-                : [ResourceProperties.BASIC];
-              const currentOptions = { ...options, show, filters };
-              return { query, options: currentOptions };
-            }),
+        tap(() => pendingResults.set(true)),
+        switchMap((trigger) =>
+          isEmptySearchQuery.pipe(
+            take(1),
+            filter((isEmptySearchQuery) => !isEmptySearchQuery),
+            switchMap(() => searchQuery.pipe(take(1))),
+            tap((query) => (dispatch ? dispatch('search', query) : undefined)),
+            switchMap((query) =>
+              forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1)), navigateToLink.pipe(take(1))]).pipe(
+                map(([options, filters, navigateToLink]) => {
+                  const show = navigateToLink
+                    ? [ResourceProperties.BASIC, ResourceProperties.VALUES]
+                    : [ResourceProperties.BASIC];
+                  const currentOptions = { ...options, show, filters };
+                  return { query, options: currentOptions };
+                }),
+              ),
+            ),
+            switchMap(({ query, options }) =>
+              search(query, options).pipe(map((results) => ({ results, append: !!trigger?.more }))),
+            ),
           ),
         ),
-        switchMap(({ query, options }) => search(query, options)),
-        tap((results) => {
-          if (typeof dispatch === 'function') {
-            dispatch('results', results);
-          }
-        }),
       )
-      .subscribe((results) => searchResults.set(results)),
+      .subscribe(({ results, append }) => searchResults.set({ results, append })),
+  );
+
+  if (typeof dispatch === 'function') {
+    subscriptions.push(searchResults.subscribe((results) => dispatch('results', results)));
+  }
+
+  subscriptions.push(
+    loadMore
+      .pipe(
+        filter((page) => !!page),
+        distinctUntilChanged(),
+      )
+      .subscribe(() => {
+        triggerSearch.next({ more: true });
+      }),
   );
 };

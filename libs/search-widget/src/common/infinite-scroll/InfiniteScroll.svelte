@@ -1,0 +1,39 @@
+<script lang="ts">
+  import { onMount, onDestroy, createEventDispatcher } from 'svelte';
+
+  export let hasMore = true;
+
+  const dispatch = createEventDispatcher();
+  let isLoadMore = false;
+  let component: HTMLElement | undefined = undefined;
+
+  onMount(() => {
+    document.addEventListener('scroll', onScroll);
+    document.addEventListener('resize', onScroll);
+  });
+
+  const isInViewport = (element: HTMLElement): boolean => {
+    const rect = element.getBoundingClientRect();
+    return rect.top >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+  };
+
+  const onScroll = () => {
+    if (component && isInViewport(component)) {
+      if (!isLoadMore && hasMore) {
+        dispatch('loadMore');
+      }
+      isLoadMore = true;
+    } else {
+      isLoadMore = false;
+    }
+  };
+
+  onDestroy(() => {
+    document.removeEventListener('scroll', onScroll, true);
+    document.removeEventListener('resize', onScroll, true);
+  });
+</script>
+
+<div
+  bind:this={component}
+  style="width:0px" />

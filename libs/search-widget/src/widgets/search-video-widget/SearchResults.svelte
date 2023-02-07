@@ -15,14 +15,17 @@
     pendingResults,
     smartResults,
     triggerSearch,
+    hasMore,
+    loadMore,
   } from '../../core/stores/search.store';
   import { getResourceById } from '../../core/api';
   import Tile from '../../tiles/Tile.svelte';
   import { ResourceProperties } from '@nuclia/core';
+  import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
-  const showLoading = pendingResults.pipe(debounceTime(2000));
+  const showLoading = pendingResults.pipe(debounceTime(1500));
   const resource = displayedResource.pipe(
     switchMap((data) => (data?.uid ? getResourceById(data.uid, [ResourceProperties.BASIC]) : of(null))),
     shareReplay(),
@@ -37,6 +40,8 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
   });
+
+  const onLoadMore = () => loadMore.set();
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
@@ -49,19 +54,20 @@
         <strong>{$_('error.search')}</strong>
         <span>{$_('error.search-beta')}</span>
       </div>
-    {:else if $pendingResults}
-      {#if $showLoading}
-        <LoadingDots />
-      {/if}
-    {:else if $smartResults.length === 0}
+    {:else if !$pendingResults && $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
       <div class="results-container">
         <div
           class="results"
           class:with-relations={$entityRelations.length > 0}>
-          {#each $smartResults as result}
+          {#each $smartResults as result, i}
             <Tile {result} />
+            {#if i === $smartResults.length - 10}
+              <InfiniteScroll
+                hasMore={$hasMore}
+                on:loadMore={onLoadMore} />
+            {/if}
           {/each}
         </div>
         {#if $entityRelations.length > 0}
@@ -80,6 +86,9 @@
           </div>
         {/if}
       </div>
+      {#if $showLoading}
+        <LoadingDots />
+      {/if}
     {/if}
   {/if}
   {#if $displayedResource && $resource}

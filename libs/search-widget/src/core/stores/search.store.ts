@@ -1,25 +1,27 @@
 import { SvelteState } from '../state-lib';
 import type { IResource, Search, SearchOptions } from '@nuclia/core';
 import { Classification, getFilterFromLabel, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
-import { DisplayedResource, NO_RESULTS, PENDING_RESULTS } from '../models';
+import { DisplayedResource, NO_RESULTS } from '../models';
 import { Subject } from 'rxjs';
 
 interface SearchState {
   query: string;
   filters: string[];
   options: SearchOptions;
-  results: Search.Results | typeof PENDING_RESULTS;
+  results: Search.Results;
   hasError: boolean;
   displayedResource: DisplayedResource | null;
+  pending: boolean;
 }
 
 export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: [],
-  options: { inTitleOnly: false, highlight: true },
+  options: { inTitleOnly: false, highlight: true, page_number: 0 },
   results: NO_RESULTS,
   hasError: false,
   displayedResource: null,
+  pending: false,
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -37,11 +39,12 @@ export const searchQuery = searchState.writer<string>(
   },
 );
 
-export const searchResults = searchState.writer<Search.Results | typeof PENDING_RESULTS>(
+export const searchResults = searchState.writer<Search.Results, { results: Search.Results; append: boolean }>(
   (state) => state.results,
-  (state, results) => ({
+  (state, params) => ({
     ...state,
-    results,
+    results: params.append ? appendResults(state.results, params.results) : params.results,
+    pending: false,
   }),
 );
 
@@ -50,6 +53,7 @@ export const hasSearchError = searchState.writer<boolean>(
   (state, hasError) => ({
     ...state,
     hasError,
+    pending: false,
   }),
 );
 
@@ -76,7 +80,19 @@ export const displayedResource = searchState.writer<DisplayedResource | null>(
 
 export const isEmptySearchQuery = searchState.reader<boolean>((state) => !state.query && state.filters.length === 0);
 
-export const pendingResults = searchState.reader<boolean>((state) => (state.results as typeof PENDING_RESULTS).pending);
+export const hasMore = searchState.reader<boolean>((state) => !!state.results.fulltext?.next_page);
+export const loadMore = searchState.writer<number, void>(
+  (state) => state.options.page_number || 0,
+  (state) => ({
+    ...state,
+    options: { ...state.options, page_number: (state.options.page_number || 0) + 1 },
+  }),
+);
+
+export const pendingResults = searchState.writer<boolean>(
+  (state) => state.pending,
+  (state, pending) => ({ ...state, pending }),
+);
 
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
   if (!state.results.resources) {
@@ -175,7 +191,7 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const triggerSearch = new Subject<void>();
+export const triggerSearch = new Subject<{ more: true } | void>();
 
 export const addLabelFilter = (label: Classification) => {
   const filter = getFilterFromLabel(label);
@@ -261,4 +277,42 @@ function generateFakeParagraphForSummary(resource: IResource): Search.SmartParag
         labels: [],
       }
     : undefined;
+}
+
+function appendResults(existingResults: Search.Results, newResults: Search.Results): Search.Results {
+  if (!existingResults) {
+    return newResults;
+  }
+  if (!newResults) {
+    return existingResults;
+  }
+  const results = {
+    ...existingResults,
+    resources: { ...existingResults.resources, ...newResults.resources },
+  };
+  if (!existingResults.paragraphs) {
+    results.paragraphs = newResults.paragraphs;
+  } else {
+    results.paragraphs = {
+      ...existingResults.paragraphs,
+      results: (existingResults.paragraphs?.results || []).concat(newResults.paragraphs?.results || []),
+    };
+  }
+  if (!existingResults.sentences) {
+    results.sentences = newResults.sentences;
+  } else {
+    results.sentences = {
+      ...existingResults.sentences,
+      results: (existingResults.sentences?.results || []).concat(newResults.sentences?.results || []),
+    };
+  }
+  if (!existingResults.fulltext) {
+    results.fulltext = newResults.fulltext;
+  } else {
+    results.fulltext = {
+      ...existingResults.fulltext,
+      results: (existingResults.fulltext?.results || []).concat(newResults.fulltext?.results || []),
+    };
+  }
+  return results;
 }
