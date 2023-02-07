@@ -22,6 +22,16 @@ export class LabelComponent {
   }
 
   @Input()
+  set existingTitles(value: string[] | undefined) {
+    if (value) {
+      this._existingTitles = value;
+    }
+  }
+  get existingTitles(): string[] {
+    return this._existingTitles;
+  }
+
+  @Input()
   set noHandle(value: any) {
     this._noHandle = coerceBooleanProperty(value);
   }
@@ -33,15 +43,20 @@ export class LabelComponent {
   @Output() deleteLabel = new EventEmitter<void>();
 
   title = new FormControl<string>('', { validators: [Validators.required], nonNullable: true });
+  errorMessage = '';
 
   private _label?: Label;
   private _noHandle = false;
+  private _existingTitles: string[] = [];
 
   delete() {
     this.deleteLabel.emit();
   }
 
   save() {
+    if (this.isDuplicatedLabel(this.title.value)) {
+      return;
+    }
     this.titleChange.emit(this.title.value);
     if (!this.label) {
       this.title.reset();
@@ -50,5 +65,11 @@ export class LabelComponent {
 
   preventDragAndDrop($event: MouseEvent) {
     $event.stopPropagation();
+  }
+
+  private isDuplicatedLabel(title: string): boolean {
+    const isDuplicated = this.existingTitles.includes(title);
+    this.errorMessage = isDuplicated ? 'label-set.form.labels.duplicated-name' : '';
+    return isDuplicated;
   }
 }

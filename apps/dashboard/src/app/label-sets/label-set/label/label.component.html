@@ -31,7 +31,8 @@
   </pa-button>
 </div>
 <div
-  *ngIf="!!title.errors?.pattern"
+  *ngIf="!!title.errors?.pattern || errorMessage"
   class="error-message">
-  {{ 'label-set.form.labels.naming-constraint' | translate }}
+  <ng-container *ngIf="errorMessage">{{ errorMessage | translate }}</ng-container>
+  <ng-container *ngIf="!errorMessage">{{ 'label-set.form.labels.naming-constraint' | translate }}</ng-container>
 </div>

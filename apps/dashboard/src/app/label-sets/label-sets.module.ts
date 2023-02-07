@@ -2,12 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
-import { STFTooltipModule } from '@flaps/pastanaga';
 
 import { LabelSetsComponent } from './label-sets.component';
 import { LabelSetListComponent } from './label-set-list/label-set-list.component';
@@ -22,7 +20,6 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { STFSectionNavbarModule } from '../components/section-navbar';
 import { LabelListPipe } from './label-list.pipe';
 
 const Components = [LabelSetsComponent, LabelSetListComponent, LabelSetComponent, ColorPickerComponent, LabelComponent];
@@ -57,14 +54,11 @@ const ROUTES: Routes = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    FlexLayoutModule,
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule.forChild(ROUTES),
     DragDropModule,
     A11yModule,
-    STFSectionNavbarModule,
-    STFTooltipModule,
     PaTextFieldModule,
     PaTogglesModule,
     PaButtonModule,

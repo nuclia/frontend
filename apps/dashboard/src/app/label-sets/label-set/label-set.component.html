@@ -78,12 +78,14 @@
         <app-label
           *ngFor="let title of labelOrder; let i = index"
           [label]="labelSet.getLabel(title)"
+          [existingTitles]="labelOrder"
           (deleteLabel)="deleteLabel(title)"
           (titleChange)="modifyLabel(title, $event)"
           cdkDrag></app-label>
       </div>
       <app-label
         noHandle
+        [existingTitles]="labelOrder"
         (titleChange)="addLabel($event)"></app-label>
     </div>
   </div>

@@ -290,6 +290,7 @@
 	"label-set.form.kind-warning": "This property cannot be modified afterward.",
 	"label-set.form.labels": "Labels",
 	"label-set.form.labels-description": "Create and sort the labels that are part of this label set.",
+	"label-set.form.labels.duplicated-name": "Duplicated label name",
 	"label-set.form.labels.naming-constraint": "Curly brackets not allowed",
 	"label-set.form.name": "Label set name",
 	"label-set.form.name-invalid": "Invalid label set name",

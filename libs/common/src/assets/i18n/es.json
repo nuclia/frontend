@@ -249,6 +249,7 @@
 	"label-set.form.kind-warning": "Esta propiedad no se puede modificar posteriormente.",
 	"label-set.form.labels": "Etiquetas",
 	"label-set.form.labels-description": "Cree y ordene las etiquetas que forman parte de este conjunto de etiquetas.",
+	"label-set.form.labels.duplicated-name": "Nombre de etiqueta duplicado",
 	"label-set.form.labels.naming-constraint": "No se permiten corchetes",
 	"label-set.form.name": "Nombre del conjunto de etiquetas",
 	"label-set.form.name-invalid": "Nombre de conjunto de etiquetas no válido",

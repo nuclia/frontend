@@ -249,6 +249,7 @@
 	"label-set.form.kind-warning": "Aquesta propietat no es pot modificar després.",
 	"label-set.form.labels": "Etiquetes",
 	"label-set.form.labels-description": "Creeu i ordeneu les etiquetes que formen part d'aquest conjunt d'etiquetes.",
+	"label-set.form.labels.duplicated-name": "Nom de l'etiqueta duplicat",
 	"label-set.form.labels.naming-constraint": "No es permeten claudàtors",
 	"label-set.form.name": "Nom del conjunt d'etiquetes",
 	"label-set.form.name-invalid": "El nom del conjunt d'etiquetes no és vàlid",

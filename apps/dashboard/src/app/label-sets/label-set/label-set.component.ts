@@ -12,7 +12,6 @@ import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService } from '@nuclia/sistema';
 
 interface LabelSetTitleError extends IErrorMessages {
   required: string;
@@ -59,7 +58,6 @@ export class LabelSetComponent implements OnDestroy {
     private labelsService: LabelsService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private modalService: SisModalService,
   ) {
     this.route.params
       .pipe(
@@ -129,10 +127,6 @@ export class LabelSetComponent implements OnDestroy {
   }
 
   addLabel(title: string) {
-    if (this.isDuplicatedLabel(title)) {
-      this.showDuplicationWarning(title);
-      return;
-    }
     this.labelSet?.addLabel(title);
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = this.hasChanged();
@@ -140,10 +134,6 @@ export class LabelSetComponent implements OnDestroy {
   }
 
   modifyLabel(title: string, newTitle: string) {
-    if (newTitle && this.isDuplicatedLabel(newTitle)) {
-      this.showDuplicationWarning(newTitle);
-      return;
-    }
     this.labelSet?.modifyLabel(title, { title: newTitle });
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = this.hasChanged();
@@ -184,26 +174,6 @@ export class LabelSetComponent implements OnDestroy {
         take(1),
       )
       .subscribe(() => this.goToLabelSetList());
-  }
-
-  isDuplicatedLabel(title: string): boolean {
-    return !!this.labelSet?.labels?.find((label) => label.title === title);
-  }
-
-  showDuplicationWarning(title: string) {
-    this.translate
-      .get('label-set.duplicated_label', { title: title })
-      .pipe(
-        switchMap(
-          (message) =>
-            this.modalService.openConfirm({
-              title: message,
-              onlyConfirm: true,
-              confirmLabel: 'OK',
-            }).onClose,
-        ),
-      )
-      .subscribe();
   }
 
   goToLabelSetList() {
