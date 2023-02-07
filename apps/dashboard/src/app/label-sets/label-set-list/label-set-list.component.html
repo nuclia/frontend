@@ -1,23 +1,49 @@
-<div
-  class="ontology-list"
-  *ngIf="labelSets">
-  <div
-    class="ontology-card"
-    *ngFor="let labelSet of labelSets | keyvalue: sortByTitle">
-    <div
-      class="ontology-card-title"
-      paEllipsisTooltip
-      [style.background-color]="getBackgroundColor(labelSet.value.color)"
-      [style.color]="getTextColor(labelSet.value.color)">
-      {{ labelSet.value.title }}
+<div class="label-sets-management">
+  <header>
+    <div class="title-container">
+      <div class="display-s">{{ 'label-set.title' | translate }}</div>
+      <div class="body-m">{{ 'label-set.subtitle' | translate }}</div>
     </div>
-    <div class="ontology-card-labels">
-      <div
-        class="ontology-card-label"
-        paEllipsisTooltip
-        *ngFor="let label of labelSet.value.labels || []">
-        {{ label.title }}
+    <pa-button
+      [disabled]="(isAdminOrContrib | async) === false"
+      iconAndText
+      icon="circle-plus"
+      kind="primary"
+      aspect="solid"
+      (click)="addLabelSet()">
+      {{ 'label-set.add-button' | translate }}
+    </pa-button>
+  </header>
+
+  <pa-expander
+    emitOnly
+    *ngFor="let labelSet of labelSets | async | keyvalue"
+    [expanded]="expandedLabelSetIds.includes(labelSet.key)"
+    (toggleExpander)="selectLabelSet(labelSet.key)">
+    <pa-expander-header>
+      <div paEllipsisTooltip>{{ labelSet.value.title }}</div>
+    </pa-expander-header>
+    <pa-expander-header-side-block>
+      <div>
+        <pa-button
+          icon="edit"
+          aspect="basic"
+          [routerLink]="'../' + labelSet.key"
+          [kind]="expandedLabelSetIds.includes(labelSet.key) ? 'inverted' : 'secondary'">
+          {{ 'label-set.edit' | translate }}
+        </pa-button>
+        <pa-button
+          icon="trash"
+          aspect="basic"
+          kind="destructive"
+          (click)="delete(labelSet.key, labelSet.value)">
+          {{ 'label-set.delete' | translate }}
+        </pa-button>
       </div>
-    </div>
-  </div>
+    </pa-expander-header-side-block>
+
+    <pa-expander-body>
+      <div class="labels">{{ labelSet.value.labels | labelList }}</div>
+    </pa-expander-body>
+  </pa-expander>
 </div>

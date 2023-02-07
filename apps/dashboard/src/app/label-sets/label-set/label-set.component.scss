@@ -1,53 +1,62 @@
 @import 'variables';
 
-.ontology {
-  margin: 70px 0 50px 0;
-  max-width: 770px;
+:host {
+  display: block;
+  padding: rhythm(6) rhythm(12);
+}
 
-  h2 {
-    margin-bottom: rhythm(3);
+.label-set-editor {
+  width: rhythm(80);
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+    margin: rhythm(9) 0 rhythm(4);
+
+    .multiple-description {
+      margin-bottom: rhythm(0.5);
+    }
+
+    pa-radio-group {
+      display: block;
+      margin-left: 3px; // aligning the first radio with the icon below
+    }
+    pa-radio {
+      display: inline-block;
+      margin: rythm(1) rythm(3) 0 0;
+    }
+
+    .warning {
+      align-items: center;
+      color: $color-secondary-stronger;
+      display: flex;
+      font-weight: $font-weight-semi-bold;
+      gap: rhythm(1);
+    }
   }
 
   .form-section-container {
     align-items: center;
     display: flex;
-    margin-bottom: rhythm(4);
+    gap: rhythm(2);
 
     & > :first-child {
       flex: 1 0 auto;
-      width: rhythm(24);
     }
+
     & > :last-child {
-      width: 100%;
+      flex: 0 0 auto;
+      width: rhythm(50);
     }
 
-    &.classification-label {
-      align-items: flex-start;
+    &.align-top {
+      align-items: start;
     }
-  }
-
-  .important {
-    display: flex;
-    align-items: center;
-    margin-top: 2px;
-    font-weight: var(--stf-font-weight-semibold);
-    color: $color-secondary-stronger;
-    pa-icon {
-      margin-right: rhythm(1);
-    }
-  }
-
-  .disabled-color {
-    color: var(--stf-gray-lighter-3);
-  }
-
-  pa-radio {
-    display: inline-block;
-    margin: rythm(1) rythm(3) 0 0;
   }
 
   .label-list {
-    margin-top: rhythm(4);
+    margin-top: rhythm(3);
 
     app-label {
       display: block;
@@ -60,35 +69,20 @@
 
     .cdk-drag-animating,
     &.cdk-drop-list-dragging app-label:not(.cdk-drag-placeholder) {
-      transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      transition: transform $transition-response;
     }
+  }
+
+  footer {
+    margin-top: rhythm(6);
   }
 
   .button-container {
-    margin-bottom: rhythm(8);
-
-    pa-button {
-      margin-right: rhythm(2);
-    }
+    display: flex;
+    gap: rhythm(1);
   }
+}
 
-  .danger-zone {
-    background: $color-secondary-regular;
-    padding: rhythm(3) rhythm(1);
-    width: 100%;
-
-    .danger-zone-title {
-      font-weight: $font-weight-semi-bold;
-      pa-icon {
-        margin-right: rhythm(1.5);
-      }
-    }
-    .danger-zone-action-container {
-      display: flex;
-    }
-    .danger-zone-warning {
-      flex: 1 1 auto;
-      padding-right: rhythm(3);
-    }
-  }
+app-label.cdk-drag-preview ::ng-deep .label {
+  background-color: $color-neutral-lighter;
 }

@@ -1,140 +1,107 @@
 <div
-  class="ontology"
-  *ngIf="ontology">
-  <h2>{{ addNew ? ('ontology.add_ontology' | translate) : ontology.title }}</h2>
+  class="label-set-editor"
+  *ngIf="labelSet">
+  <h1>{{ (addNew ? 'label-set.add' : 'label-set.edit') | translate }}</h1>
 
-  <form [formGroup]="ontologyForm">
+  <form [formGroup]="labelSetForm">
     <div class="form-section-container">
       <label
         class="title-xxs"
         for="title">
-        {{ 'ontology.ontology_name' | translate }}
+        {{ 'label-set.form.name' | translate }}
       </label>
-      <div>
-        <pa-input
-          id="title"
-          formControlName="title"
-          [errorMessages]="validationMessages.title"></pa-input>
-      </div>
+      <pa-input
+        id="title"
+        formControlName="title"
+        externalLabel
+        [showAllErrors]="false"
+        [errorMessages]="validationMessages.title"></pa-input>
     </div>
 
     <div class="form-section-container">
       <label class="title-xxs">
         {{ 'generic.color' | translate }}
       </label>
-      <div>
-        <app-color-picker
-          [hexColors]="colors"
-          [value]="ontology.color"
-          (valueChange)="setColor($event)"></app-color-picker>
-      </div>
+      <app-color-picker
+        [hexColors]="colors"
+        [value]="labelSet.color"
+        (valueChange)="setColor($event)"></app-color-picker>
     </div>
 
-    <div class="form-section-container">
-      <div>
-        <label class="title-xxs">
-          {{ 'ontology.type_classification' | translate }}
-        </label>
-        <div class="body-xs">{{ 'ontology.type_classification_subtitle' | translate }}</div>
-      </div>
+    <div
+      class="form-section-container"
+      [class.align-top]="addNew">
+      <label class="title-xxs">
+        {{ 'label-set.form.kind' | translate }}
+      </label>
 
       <div>
+        <pa-radio-group formControlName="kind">
+          <pa-radio
+            *ngFor="let kind of kinds"
+            [value]="kind.id"
+            [disabled]="!addNew">
+            {{ kind.name | translate }}
+          </pa-radio>
+        </pa-radio-group>
         <div
-          class="important"
-          [class.disabled-color]="!addNew">
+          *ngIf="addNew"
+          class="warning">
           <pa-icon name="warning"></pa-icon>
-          {{ 'ontology.type_classification_important' | translate }}
+          {{ 'label-set.form.kind-warning' | translate }}
         </div>
-        <div>
-          <pa-radio-group formControlName="kind">
-            <pa-radio
-              *ngFor="let kind of kinds"
-              [value]="kind.id"
-              [disabled]="!addNew">
-              {{ kind.name | translate }}
-            </pa-radio>
-          </pa-radio-group>
-        </div>
+      </div>
+    </div>
+    <div class="form-section-container align-top">
+      <label class="title-xxs">
+        {{ 'label-set.form.exclusive' | translate }}
+      </label>
+      <div>
+        <div class="multiple-description">{{ 'label-set.form.exclusive-description' | translate }}</div>
+        <pa-checkbox formControlName="exclusive">
+          {{ 'label-set.form.exclusive-checkbox' | translate }}
+        </pa-checkbox>
       </div>
     </div>
   </form>
 
-  <div
-    *ngIf="showMultiple"
-    class="form-section-container">
+  <div class="form-section-container align-top">
     <label class="title-xxs">
-      {{ 'ontology.type_labels' | translate }}
+      {{ 'label-set.form.labels' | translate }}
     </label>
     <div>
-      <div>{{ 'ontology.type_labels_subtitle' | translate }}</div>
-      <div>
-        <pa-checkbox
-          [value]="!ontology.multiple"
-          (valueChange)="setMultiple(!$event)">
-          {{ 'ontology.excluding_labels' | translate }}
-        </pa-checkbox>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-section-container classification-label">
-    <label class="title-xxs">
-      {{ 'ontology.label_classification' | translate }}
-    </label>
-    <div>
-      <div>{{ 'ontology.customize_classification' | translate }}</div>
-      <div>{{ 'ontology.manage_labels' | translate }}</div>
+      <div>{{ 'label-set.form.labels-description' | translate }}</div>
       <div
-        cdkDropList
         class="label-list"
+        cdkDropList
         (cdkDropListDropped)="drop($event)">
         <app-label
           *ngFor="let title of labelOrder; let i = index"
-          (labelDelete)="deleteLabel(title)"
-          (labelChange)="modifyLabel(title, $event)"
-          [label]="ontology.getLabel(title)"
+          [label]="labelSet.getLabel(title)"
+          (deleteLabel)="deleteLabel(title)"
+          (titleChange)="modifyLabel(title, $event)"
           cdkDrag></app-label>
       </div>
       <app-label
-        [addNew]="true"
-        (labelAdd)="addLabel($event)"></app-label>
+        noHandle
+        (titleChange)="addLabel($event)"></app-label>
     </div>
   </div>
 
-  <div class="form-section-container">
+  <footer class="form-section-container">
     <div></div>
     <div class="button-container">
       <pa-button
         kind="primary"
-        (click)="saveOntology()"
-        [disabled]="ontologyForm.invalid || !hasChanges">
+        (click)="saveLabelSet()"
+        [disabled]="labelSetForm.invalid || !hasChanges || !labelSet?.labels?.length">
         {{ 'generic.save' | translate }}
       </pa-button>
       <pa-button
-        *ngIf="!addNew && hasChanges"
         aspect="basic"
-        (click)="cancelChanges()">
-        {{ 'generic.reset' | translate }}
+        routerLink="..">
+        {{ 'generic.cancel' | translate }}
       </pa-button>
     </div>
-  </div>
-
-  <div
-    *ngIf="!addNew"
-    class="form-section-container danger-zone">
-    <div class="danger-zone-title">
-      <pa-icon name="warning"></pa-icon>
-      <span>{{ 'generic.dangerous' | translate }}</span>
-    </div>
-    <div class="danger-zone-action-container">
-      <div class="danger-zone-warning">
-        {{ 'ontology.delete_warning' | translate }}
-      </div>
-      <pa-button
-        kind="secondary"
-        (click)="deleteOntology()">
-        {{ 'generic.delete' | translate }}
-      </pa-button>
-    </div>
-  </div>
+  </footer>
 </div>

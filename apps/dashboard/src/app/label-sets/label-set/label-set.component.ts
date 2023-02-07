@@ -1,20 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { map, Subject, take } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { LabelsService } from '../../services/labels.service';
 import { Sluggable } from '@flaps/common';
 import { STFUtils } from '@flaps/core';
-import { Label, LabelSetKind, LabelSets } from '@nuclia/core';
-import { EMTPY_LABEL_SET, MutableLabelSet } from '../model';
+import { LabelSetKind, LabelSets } from '@nuclia/core';
+import { EMPTY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 
-interface OntologyTitleError extends IErrorMessages {
+interface LabelSetTitleError extends IErrorMessages {
   required: string;
   sluggable: string;
 }
@@ -26,10 +26,10 @@ interface OntologyTitleError extends IErrorMessages {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelSetComponent implements OnDestroy {
-  ontologyForm = this.formBuilder.group({
-    title: ['', [Validators.required, Sluggable()]],
-    description: [''],
-    kind: [undefined, [Validators.required]],
+  labelSetForm = new FormGroup({
+    title: new FormControl<string>('', { validators: [Validators.required, Sluggable()], nonNullable: true }),
+    kind: new FormControl<LabelSetKind | undefined>(undefined, { validators: [Validators.required] }),
+    exclusive: new FormControl<boolean>(false),
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
@@ -38,27 +38,25 @@ export class LabelSetComponent implements OnDestroy {
     { id: LabelSetKind.PARAGRAPHS, name: 'label-set.paragraphs' },
   ];
 
-  validationMessages: { [key: string]: OntologyTitleError } = {
+  validationMessages: { [key: string]: LabelSetTitleError } = {
     title: {
-      required: 'validation.title_required',
-      sluggable: 'label-set.invalid_name',
+      required: 'label-set.form.name-required',
+      sluggable: 'label-set.form.name-invalid',
     },
   };
 
-  ontology?: MutableLabelSet;
-  ontologySlug?: string;
+  labelSet?: MutableLabelSet;
+  labelSetId?: string;
   addNew: boolean = false;
   labelOrder: string[] = [];
-  initialLabels?: LabelSets;
+  labelSetBackup?: LabelSets;
   hasChanges: boolean = false;
-  showMultiple = false; // TODO: delete when multiple field works
   unsubscribeAll = new Subject<void>();
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private labelsService: LabelsService,
-    private formBuilder: UntypedFormBuilder,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
@@ -66,54 +64,66 @@ export class LabelSetComponent implements OnDestroy {
     this.route.params
       .pipe(
         tap((params) => {
-          this.ontologySlug = params.ontology;
-          this.addNew = params.ontology === undefined;
+          this.labelSetId = params.labelSet;
+          this.addNew = !params.labelSet;
+          this.cdr.markForCheck();
         }),
         switchMap(() => this.labelsService.labelSets),
-        filter((labels) => !!labels),
-        filter((labels) => !this.ontologySlug || !!(this.ontologySlug && labels![this.ontologySlug])),
+        filter((labelSets) => !!labelSets),
+        map((labelSets) => labelSets as LabelSets),
+        filter((labelSets) => !this.labelSetId || !!(this.labelSetId && labelSets[this.labelSetId])),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((labels) => {
-        this.initialLabels = labels || undefined;
-        this.initState(labels!);
+      .subscribe((labelSets: LabelSets) => {
+        this.labelSetBackup = labelSets;
+        this.initState(labelSets);
       });
 
-    this.ontologyForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-      if (this.ontology) {
-        this.ontology.title = data.title;
+    this.labelSetForm.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      if (this.labelSet) {
+        const data = this.labelSetForm.getRawValue();
+        this.labelSet.title = data.title;
+        this.labelSet.multiple = !data.exclusive;
         if (data.kind) {
-          this.ontology.kind = [data.kind];
+          this.labelSet.kind = [data.kind];
         }
-        this.hasChanges = true;
+        this.hasChanges = this.hasChanged();
         this.cdr.markForCheck();
       }
     });
   }
 
-  initState(labels: LabelSets) {
-    if (this.ontologySlug) {
-      this.ontology = new MutableLabelSet(labels![this.ontologySlug]);
+  private hasChanged(): boolean {
+    if (!this.labelSetId || !this.labelSetBackup || !this.labelSet) {
+      return true;
+    }
+    return !this.labelSet.isEqual(this.labelSetBackup[this.labelSetId]);
+  }
+
+  initState(labelSets: LabelSets) {
+    if (this.labelSetId) {
+      this.labelSet = new MutableLabelSet(labelSets[this.labelSetId]);
     } else {
-      this.ontology = new MutableLabelSet(EMTPY_LABEL_SET);
+      this.labelSet = new MutableLabelSet(EMPTY_LABEL_SET);
     }
-    this.ontologyForm.get('title')?.patchValue(this.ontology.title);
-    if (this.ontology.kind.length > 0) {
-      this.ontologyForm.get('kind')?.patchValue(this.ontology.kind[0]);
-    }
+    this.labelSetForm.patchValue({
+      title: this.labelSet.title,
+      kind: this.labelSet.kind[0],
+      exclusive: !this.labelSet.multiple,
+    });
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = false;
     this.cdr.markForCheck();
   }
 
   getLabelOrder(): string[] {
-    return this.ontology?.labels ? this.ontology.labels.map((label) => label.title) : [];
+    return this.labelSet?.labels ? this.labelSet.labels.map((label) => label.title) : [];
   }
 
   setColor(color: string) {
-    if (this.ontology) {
-      this.ontology.color = color;
-      this.hasChanges = true;
+    if (this.labelSet) {
+      this.labelSet.color = color;
+      this.hasChanges = this.hasChanged();
       this.cdr.markForCheck();
     }
   }
@@ -123,91 +133,61 @@ export class LabelSetComponent implements OnDestroy {
       this.showDuplicationWarning(title);
       return;
     }
-    this.ontology?.addLabel(title);
+    this.labelSet?.addLabel(title);
     this.labelOrder = this.getLabelOrder();
-    this.hasChanges = true;
+    this.hasChanges = this.hasChanged();
     this.cdr.markForCheck();
   }
 
-  modifyLabel(title: string, changes: Partial<Label>) {
-    if (changes.title && this.isDuplicatedLabel(changes.title)) {
-      this.showDuplicationWarning(changes.title);
+  modifyLabel(title: string, newTitle: string) {
+    if (newTitle && this.isDuplicatedLabel(newTitle)) {
+      this.showDuplicationWarning(newTitle);
       return;
     }
-    this.ontology?.modifyLabel(title, changes);
+    this.labelSet?.modifyLabel(title, { title: newTitle });
     this.labelOrder = this.getLabelOrder();
-    this.hasChanges = true;
+    this.hasChanges = this.hasChanged();
     this.cdr.markForCheck();
   }
 
   deleteLabel(title: string) {
-    this.ontology?.deleteLabel(title);
+    this.labelSet?.deleteLabel(title);
     this.labelOrder = this.getLabelOrder();
-    this.hasChanges = true;
+    this.hasChanges = this.hasChanged();
     this.cdr.markForCheck();
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.labelOrder, event.previousIndex, event.currentIndex);
-    this.ontology?.setLabelOrder(this.labelOrder);
-    this.hasChanges = true;
+    this.labelSet?.setLabelOrder(this.labelOrder);
+    this.hasChanges = this.hasChanged();
     this.cdr.markForCheck();
   }
 
-  saveOntology(): void {
-    if (!this.ontologyForm.valid) return;
+  saveLabelSet(): void {
+    if (!this.labelSetForm.valid || !this.labelSet) {
+      return;
+    }
+
     let slug: string;
     if (this.addNew) {
-      const slugs = Object.keys(this.initialLabels!);
-      slug = STFUtils.generateUniqueSlug(this.ontologyForm.value.title, slugs);
+      const slugs = Object.keys(this.labelSetBackup!);
+      slug = STFUtils.generateUniqueSlug(this.labelSetForm.getRawValue().title, slugs);
     } else {
-      slug = this.ontologySlug!;
+      slug = this.labelSetId as string;
     }
+
     this.labelsService
-      .saveLabelSet(slug, this.ontology!.getCopy())
+      .saveLabelSet(slug, this.labelSet.getCopy())
       .pipe(
         switchMap(() => this.labelsService.refreshLabelsSets()),
-        takeUntil(this.unsubscribeAll),
+        take(1),
       )
-      .subscribe(() => {
-        this.goToOntologyList();
-      });
-  }
-
-  deleteOntology(): void {
-    this.modalService
-      .openConfirm({
-        title: 'label-set.delete_confirm_title',
-        description: 'label-set.delete_warning_extra',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((confirm) => !!confirm),
-        switchMap(() => this.labelsService.deleteLabelSet(this.ontologySlug!)),
-        switchMap(() => this.labelsService.refreshLabelsSets()),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe(() => {
-        this.goToOntologyList();
-      });
-  }
-
-  cancelChanges(): void {
-    if (this.initialLabels) {
-      this.initState(this.initialLabels);
-    }
+      .subscribe(() => this.goToLabelSetList());
   }
 
   isDuplicatedLabel(title: string): boolean {
-    return !!this.ontology?.labels?.find((label) => label.title === title);
-  }
-
-  setMultiple(selected: boolean) {
-    if (this.ontology) {
-      this.ontology.multiple = selected;
-      this.hasChanges = true;
-      this.cdr.markForCheck();
-    }
+    return !!this.labelSet?.labels?.find((label) => label.title === title);
   }
 
   showDuplicationWarning(title: string) {
@@ -226,7 +206,7 @@ export class LabelSetComponent implements OnDestroy {
       .subscribe();
   }
 
-  goToOntologyList() {
+  goToLabelSetList() {
     this.router.navigate(['..'], { relativeTo: this.route });
   }
 

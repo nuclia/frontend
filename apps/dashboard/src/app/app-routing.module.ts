@@ -15,9 +15,6 @@ import { KnowledgeBoxProfileComponent } from './knowledge-box/knowledge-box-prof
 import { KnowledgeBoxUsersComponent } from './knowledge-box/knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box/knowledge-box-keys/knowledge-box-keys.component';
 import { EntitiesComponent } from './entities/entities.component';
-import { LabelSetsComponent } from './label-sets/label-sets.component';
-import { LabelSetComponent } from './label-sets/label-set/label-set.component';
-import { LabelSetListComponent } from './label-sets/label-set-list/label-set-list.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
@@ -38,6 +35,7 @@ import { SearchComponent } from './search/search.component';
 
 @Component({
   template: '<ng-container></ng-container>',
+  standalone: true,
 })
 export class EmptyComponent {
   constructor() {}
@@ -138,26 +136,7 @@ const routes: Routes = [
               },
               {
                 path: 'label-sets',
-                component: LabelSetsComponent,
-                children: [
-                  {
-                    path: '',
-                    redirectTo: 'list',
-                    pathMatch: 'full',
-                  },
-                  {
-                    path: 'list',
-                    component: LabelSetListComponent,
-                  },
-                  {
-                    path: 'add',
-                    component: LabelSetComponent,
-                  },
-                  {
-                    path: ':label-set',
-                    component: LabelSetComponent,
-                  },
-                ],
+                loadChildren: () => import('./label-sets/label-sets.module').then((m) => m.LabelSetsModule),
               },
               {
                 path: 'manage',

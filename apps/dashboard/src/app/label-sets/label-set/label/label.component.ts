@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { FormControl, Validators } from '@angular/forms';
 import { Label } from '@nuclia/core';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-label',
@@ -9,41 +10,42 @@ import { Label } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelComponent {
-  @Input() label: Label | undefined;
-  @Input() addNew: boolean = false;
-
-  @Output() labelAdd = new EventEmitter<string>();
-  @Output() labelChange = new EventEmitter<Partial<Label>>();
-  @Output() labelDelete = new EventEmitter<void>();
-
-  editMode: boolean = false;
-  title = new UntypedFormControl([''], [Validators.required]);
-
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  edit() {
-    this.title.setValue(this.label?.title);
-    this.editMode = true;
-    this.cdr.markForCheck();
+  @Input()
+  set label(value: Label | undefined) {
+    this._label = value;
+    if (value) {
+      this.title.setValue(value.title);
+    }
+  }
+  get label() {
+    return this._label;
   }
 
-  close() {
-    this.editMode = false;
-    this.cdr.markForCheck();
+  @Input()
+  set noHandle(value: any) {
+    this._noHandle = coerceBooleanProperty(value);
   }
+  get noHandle() {
+    return this._noHandle;
+  }
+
+  @Output() titleChange = new EventEmitter<string>();
+  @Output() deleteLabel = new EventEmitter<void>();
+
+  title = new FormControl<string>('', { validators: [Validators.required], nonNullable: true });
+
+  private _label?: Label;
+  private _noHandle = false;
 
   delete() {
-    this.labelDelete.emit();
+    this.deleteLabel.emit();
   }
 
   save() {
-    if (this.addNew) {
-      this.labelAdd.emit(this.title.value);
-    } else {
-      this.labelChange.emit({ title: this.title.value });
+    this.titleChange.emit(this.title.value);
+    if (!this.label) {
+      this.title.reset();
     }
-    this.editMode = false;
-    this.cdr.markForCheck();
   }
 
   preventDragAndDrop($event: MouseEvent) {

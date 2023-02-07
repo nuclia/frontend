@@ -2,42 +2,56 @@
 
 .label {
   align-items: center;
-  background-color: $color-light-stronger;
+  background-color: $color-neutral-lightest;
   display: flex;
+  gap: rhythm(1);
   height: rhythm(5);
-  padding: 0 rhythm(1) 0 rhythm(3);
+  padding: 0 rhythm(0.5) 0 0;
   width: rhythm(40);
 
-  &.add-new {
-    cursor: pointer;
+  &.no-handle {
+    padding-left: rhythm(3);
   }
 
-  &-content {
-    flex: 1 1 0;
-    padding-right: rhythm(1.5);
-    min-width: 0; // Allow truncated titles
-  }
+  .label-handle {
+    align-items: center;
+    color: $color-neutral-regular;
+    cursor: grab;
+    display: flex;
+    height: 100%;
 
-  &-title {
-    @include text-truncate();
-  }
-
-  input {
-    background-color: $color-light-stronger;
-    border: 0;
-    border-bottom: 1px solid $color-dark-stronger;
-    font-family: inherit;
-    padding: rhythm(0.25) rhythm(0.25);
-
-    &:invalid {
-      border: $color-secondary-regular solid 1px;
+    &:active {
+      cursor: grabbing;
     }
   }
 
-  &-actions {
-    align-items: center;
-    flex: 0 0 auto;
-    display: flex;
-    gap: rhythm(1);
+  .label-content {
+    flex: 1 1 0;
+    min-width: 0; // Allow truncated titles
+
+    &.unsaved-label {
+      padding-right: rhythm(4);
+    }
   }
+
+  input {
+    background-color: inherit;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    font-family: inherit;
+    padding: rhythm(0.25) 0;
+    width: 100%;
+
+    &:focus,
+    &.unsaved-label {
+      border-bottom: 1px solid $color-neutral-lighter;
+    }
+    &:invalid {
+      border-bottom: 1px solid $color-secondary-strong;
+    }
+  }
+}
+
+.error-message {
+  color: $color-secondary-strong;
 }

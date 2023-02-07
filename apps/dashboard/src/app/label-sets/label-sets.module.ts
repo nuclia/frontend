@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
 import { STFTooltipModule } from '@flaps/pastanaga';
@@ -16,14 +16,42 @@ import { ColorPickerComponent } from './label-set/color-picker/color-picker.comp
 import { LabelComponent } from './label-set/label/label.component';
 import {
   PaButtonModule,
+  PaExpanderModule,
   PaIconModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { STFSectionNavbarModule } from '../components/section-navbar';
+import { LabelListPipe } from './label-list.pipe';
 
 const Components = [LabelSetsComponent, LabelSetListComponent, LabelSetComponent, ColorPickerComponent, LabelComponent];
+
+const ROUTES: Routes = [
+  {
+    path: '',
+    component: LabelSetsComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'list',
+        pathMatch: 'full',
+      },
+      {
+        path: 'list',
+        component: LabelSetListComponent,
+      },
+      {
+        path: 'add',
+        component: LabelSetComponent,
+      },
+      {
+        path: ':labelSet',
+        component: LabelSetComponent,
+      },
+    ],
+  },
+];
 
 @NgModule({
   imports: [
@@ -32,7 +60,7 @@ const Components = [LabelSetsComponent, LabelSetListComponent, LabelSetComponent
     FlexLayoutModule,
     TranslateModule.forChild(),
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule.forChild(ROUTES),
     DragDropModule,
     A11yModule,
     STFSectionNavbarModule,
@@ -42,8 +70,9 @@ const Components = [LabelSetsComponent, LabelSetListComponent, LabelSetComponent
     PaButtonModule,
     PaIconModule,
     PaTooltipModule,
+    PaExpanderModule,
   ],
-  declarations: [...Components],
+  declarations: [...Components, LabelListPipe],
   exports: [],
 })
 export class LabelSetsModule {}

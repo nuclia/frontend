@@ -1,77 +1,37 @@
 <div
   class="label"
-  *ngIf="label && !editMode">
-  <div class="label-content">
-    <div class="label-title">{{ label.title }}</div>
+  [class.no-handle]="noHandle">
+  <div
+    *ngIf="!noHandle"
+    class="label-handle">
+    <pa-icon name="draggable"></pa-icon>
   </div>
-  <div class="label-actions">
-    <pa-button
-      aspect="basic"
-      size="small"
-      icon="edit"
-      iconSize="small"
-      paTooltip="generic.edit"
-      (click)="edit()">
-      {{ 'generic.edit' | translate }}
-    </pa-button>
-    <pa-button
-      aspect="basic"
-      size="small"
-      icon="trash"
-      iconSize="small"
-      paTooltip="generic.delete"
-      (click)="delete()">
-      {{ 'generic.delete' | translate }}
-    </pa-button>
-  </div>
-</div>
-
-<div
-  *ngIf="addNew && !editMode"
-  class="label add-new"
-  tabindex="0"
-  (click)="edit()"
-  (keyup.enter)="edit()">
-  <div class="label-content">
-    <div class="label-title">+</div>
-  </div>
-</div>
-
-<div
-  class="label"
-  *ngIf="editMode"
-  cdkTrapFocus
-  [cdkTrapFocusAutoCapture]="true">
-  <div class="label-content">
+  <div
+    class="label-content"
+    [class.unsaved-label]="!label">
     <input
       type="text"
       pattern="[^/\{\}]+"
-      [formControl]="title"
       cdkFocusInitial
-      [title]="'label-set.label_naming_constraint' | translate"
-      (keydown.enter)="title.valid ? save() : null"
+      [class.unsaved-label]="!label"
+      [formControl]="title"
+      (keydown.enter)="save()"
+      (keydown.tab)="save()"
       (mousedown)="preventDragAndDrop($event)" />
-    <span class="validity"></span>
   </div>
-  <div class="label-actions">
-    <pa-button
-      aspect="basic"
-      size="small"
-      icon="check"
-      iconSize="small"
-      paTooltip="generic.save"
-      [disabled]="title.invalid || title.value === label?.title"
-      (click)="save()">
-      {{ 'generic.save' | translate }}
-    </pa-button>
-    <pa-button
-      aspect="basic"
-      size="small"
-      icon="cross"
-      iconSize="small"
-      paTooltip="generic.close"
-      (click)="close()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </div>
+  <pa-button
+    *ngIf="!!label"
+    aspect="basic"
+    size="small"
+    icon="trash"
+    iconSize="small"
+    paTooltip="generic.delete"
+    (click)="delete()">
+    {{ 'generic.delete' | translate }}
+  </pa-button>
+</div>
+<div
+  *ngIf="!!title.errors?.pattern"
+  class="error-message">
+  {{ 'label-set.form.labels.naming-constraint' | translate }}
 </div>

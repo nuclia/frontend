@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { KeyValue } from '@angular/common';
-import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { LabelsService } from '../../services/labels.service';
-import { isLabelMainColor } from '../utils';
 import { LabelSet, LabelSets } from '@nuclia/core';
-import { getLabelColor } from '@nuclia/sistema';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SDKService } from '@flaps/core';
+import { SisModalService } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-label-set-list',
@@ -13,36 +14,48 @@ import { getLabelColor } from '@nuclia/sistema';
   styleUrls: ['./label-set-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LabelSetListComponent implements OnDestroy {
-  unsubscribeAll = new Subject<void>();
-  labelSets?: LabelSets;
+export class LabelSetListComponent {
+  isAdminOrContrib: Observable<boolean> = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  labelSets: Observable<LabelSets> = this.labelsService.labelSets.pipe(
+    filter((labelSets) => !!labelSets),
+    map((labelSets) => labelSets as LabelSets),
+  );
 
-  constructor(private labelsService: LabelsService, private cdr: ChangeDetectorRef) {
-    this.labelsService.labelSets
-      .pipe(
-        filter((labels) => !!labels),
-        takeUntil(this.unsubscribeAll),
+  expandedLabelSetIds: string[] = [];
+
+  constructor(
+    private sdk: SDKService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private labelsService: LabelsService,
+    private modalService: SisModalService,
+    private translate: TranslateService,
+  ) {}
+
+  addLabelSet() {
+    this.router.navigate(['../add'], { relativeTo: this.route });
+  }
+
+  selectLabelSet(labelSetId: string) {
+    if (this.expandedLabelSetIds.includes(labelSetId)) {
+      this.expandedLabelSetIds = this.expandedLabelSetIds.filter((id) => id !== labelSetId);
+    } else {
+      this.expandedLabelSetIds.push(labelSetId);
+    }
+  }
+
+  delete(setId: string, labelSet: LabelSet) {
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('label-set.delete.confirm-title', { labelset: labelSet.title }),
+        description: 'label-set.delete.confirm-description',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => confirm),
+        switchMap(() => this.labelsService.deleteLabelSet(setId)),
+        switchMap(() => this.labelsService.refreshLabelsSets()),
       )
-      .subscribe((labelSets) => {
-        this.labelSets = labelSets as LabelSets;
-        this.cdr?.markForCheck();
-      });
-  }
-
-  getTextColor(color: string): string | undefined {
-    return isLabelMainColor(color) ? getLabelColor(color)?.textColor : undefined;
-  }
-
-  getBackgroundColor(color: string): string | undefined {
-    return isLabelMainColor(color) ? color : undefined;
-  }
-
-  sortByTitle(a: KeyValue<string, LabelSet>, b: KeyValue<string, LabelSet>): number {
-    return a.value.title.localeCompare(b.value.title);
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
+      .subscribe();
   }
 }
