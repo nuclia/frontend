@@ -4,7 +4,7 @@
   export let hasMore = true;
 
   const dispatch = createEventDispatcher();
-  let isLoadMore = false;
+  let mustLoadMore = false;
   let component: HTMLElement | undefined = undefined;
 
   onMount(() => {
@@ -19,12 +19,12 @@
 
   const onScroll = () => {
     if (component && isInViewport(component)) {
-      if (!isLoadMore && hasMore) {
+      if (!mustLoadMore && hasMore) {
         dispatch('loadMore');
       }
-      isLoadMore = true;
+      mustLoadMore = true;
     } else {
-      isLoadMore = false;
+      mustLoadMore = false;
     }
   };
 
