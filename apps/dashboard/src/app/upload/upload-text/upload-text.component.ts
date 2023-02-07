@@ -3,10 +3,13 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { forkJoin } from 'rxjs';
+import { forkJoin, switchMap } from 'rxjs';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCSV } from '../utils';
+
+const SLUG_REGEX = /^[a-zA-Z0-9-_]+$/;
+const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
 
 @Component({
   selector: 'app-upload-text',
@@ -16,8 +19,7 @@ import { parseCSV } from '../utils';
 })
 export class UploadTextComponent {
   isUploading = false;
-  resources: string[][] = [];
-  selectedLabels: Classification[] = [];
+  resources: [string, string, string, Classification[]][] = [];
 
   constructor(
     private dialogRef: MatDialogRef<UploadTextComponent>,
@@ -40,7 +42,7 @@ export class UploadTextComponent {
       reader.onload = () => {
         const resources = parseCSV(reader.result as string);
         if (this.isValidCSV(resources)) {
-          this.resources = resources;
+          this.resources = resources.map((item) => [item[0], item[1], item[2], this.parseLabels(item[3])!]);
           markForCheck(this.cdr);
         } else {
           this.toaster.error('upload.invalid_csv');
@@ -53,19 +55,34 @@ export class UploadTextComponent {
     this.tracking.logEvent('upload_text_from_csv');
     this.isUploading = true;
     markForCheck(this.cdr);
-    forkJoin(
-      this.resources.map((resource) =>
-        this.uploadService.uploadTextResource(
-          resource[0],
-          resource[1],
-          resource[2] as TextFieldFormat,
-          this.selectedLabels,
+    const allLabels = this.resources.reduce((acc, current) => acc.concat(current[3]), [] as Classification[]);
+    this.uploadService
+      .createMissingLabels(allLabels)
+      .pipe(
+        switchMap(() =>
+          forkJoin(
+            this.resources.map((item) =>
+              this.uploadService.uploadTextResource(item[0], item[1], item[2] as TextFieldFormat, item[3]),
+            ),
+          ),
         ),
-      ),
-    ).subscribe(() => this.dialogRef.close());
+      )
+      .subscribe(() => this.dialogRef.close());
   }
 
   isValidCSV(data: string[][]) {
-    return data.every((row) => row.length === 3 && ['PLAIN', 'MARKDOWN', 'HTML', 'RST'].includes(row[2]));
+    return data.every((row) => row.length === 4 && FORMATS.includes(row[2]) && !!this.parseLabels(row[3]));
+  }
+
+  // Parse labels like: 'labelset1/label1|labelset2/label2'
+  parseLabels(labels: string): Classification[] | null {
+    if (labels.length === 0) return [];
+    let isValid = true;
+    const parsedLabels = labels.split('|').map((label) => {
+      const items = label.split('/');
+      isValid &&= items.length === 2 && SLUG_REGEX.test(items[0].trim()) && items[1].trim().length > 0;
+      return { labelset: items[0]?.trim(), label: items[1]?.trim() };
+    });
+    return isValid ? parsedLabels : null;
   }
 }

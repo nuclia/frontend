@@ -68,7 +68,7 @@ export class UploadService {
     this._barDisabled.next(true);
   }
 
-  private createMissingLabels(labels: Classification[]): Observable<void> {
+  createMissingLabels(labels: Classification[]): Observable<void> {
     if (labels.length === 0) {
       return of(undefined);
     }
