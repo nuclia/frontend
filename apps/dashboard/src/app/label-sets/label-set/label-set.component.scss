@@ -1,0 +1,88 @@
+@import 'variables';
+
+:host {
+  display: block;
+  padding: rhythm(6) rhythm(12);
+}
+
+.label-set-editor {
+  width: rhythm(80);
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(4);
+    margin: rhythm(9) 0 rhythm(4);
+
+    .multiple-description {
+      margin-bottom: rhythm(0.5);
+    }
+
+    pa-radio-group {
+      display: block;
+      margin-left: 3px; // aligning the first radio with the icon below
+    }
+    pa-radio {
+      display: inline-block;
+      margin: rythm(1) rythm(3) 0 0;
+    }
+
+    .warning {
+      align-items: center;
+      color: $color-secondary-stronger;
+      display: flex;
+      font-weight: $font-weight-semi-bold;
+      gap: rhythm(1);
+    }
+  }
+
+  .form-section-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+
+    & > :first-child {
+      flex: 1 0 auto;
+    }
+
+    & > :last-child {
+      flex: 0 0 auto;
+      width: rhythm(50);
+    }
+
+    &.align-top {
+      align-items: start;
+    }
+  }
+
+  .label-list {
+    margin-top: rhythm(3);
+
+    app-label {
+      display: block;
+      margin-bottom: rhythm(1);
+    }
+
+    .cdk-drag-placeholder {
+      opacity: 0.4;
+    }
+
+    .cdk-drag-animating,
+    &.cdk-drop-list-dragging app-label:not(.cdk-drag-placeholder) {
+      transition: transform $transition-response;
+    }
+  }
+
+  footer {
+    margin-top: rhythm(6);
+  }
+
+  .button-container {
+    display: flex;
+    gap: rhythm(1);
+  }
+}
+
+app-label.cdk-drag-preview ::ng-deep .label {
+  background-color: $color-neutral-lighter;
+}

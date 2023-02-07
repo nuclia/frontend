@@ -21,7 +21,7 @@ import { SelectModule } from './select/select.module';
 import { AccountModule } from './account/account.module';
 import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
 import { EntitiesModule } from './entities/entities.module';
-import { OntologiesModule } from './ontologies/ontologies.module';
+import { LabelSetsModule } from './label-sets/label-sets.module';
 import { UploadModule } from './upload/upload.module';
 
 // Components
@@ -54,7 +54,7 @@ const appModules = [
   AccountModule,
   KnowledgeBoxModule,
   EntitiesModule,
-  OntologiesModule,
+  LabelSetsModule,
   UploadModule,
   RedirectModule,
   SearchModule,

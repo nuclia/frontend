@@ -1,0 +1,57 @@
+@import 'variables';
+
+.label {
+  align-items: center;
+  background-color: $color-neutral-lightest;
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(5);
+  padding: 0 rhythm(0.5) 0 0;
+  width: rhythm(40);
+
+  &.no-handle {
+    padding-left: rhythm(3);
+  }
+
+  .label-handle {
+    align-items: center;
+    color: $color-neutral-regular;
+    cursor: grab;
+    display: flex;
+    height: 100%;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  .label-content {
+    flex: 1 1 0;
+    min-width: 0; // Allow truncated titles
+
+    &.unsaved-label {
+      padding-right: rhythm(4);
+    }
+  }
+
+  input {
+    background-color: inherit;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    font-family: inherit;
+    padding: rhythm(0.25) 0;
+    width: 100%;
+
+    &:focus,
+    &.unsaved-label {
+      border-bottom: 1px solid $color-neutral-lighter;
+    }
+    &:invalid {
+      border-bottom: 1px solid $color-secondary-strong;
+    }
+  }
+}
+
+.error-message {
+  color: $color-secondary-strong;
+}

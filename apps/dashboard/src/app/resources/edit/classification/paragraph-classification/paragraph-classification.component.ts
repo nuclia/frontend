@@ -17,7 +17,7 @@ import { getParagraphs, ParagraphWithTextAndClassifications } from '../../edit-r
 type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
 
 @Component({
-  selector: 'app-paragraph-classification',
+  selector: 'app-paragraph-label-sets',
   templateUrl: './paragraph-classification.component.html',
   styleUrls: ['./paragraph-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

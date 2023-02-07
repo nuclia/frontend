@@ -15,9 +15,6 @@ import { KnowledgeBoxProfileComponent } from './knowledge-box/knowledge-box-prof
 import { KnowledgeBoxUsersComponent } from './knowledge-box/knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box/knowledge-box-keys/knowledge-box-keys.component';
 import { EntitiesComponent } from './entities/entities.component';
-import { OntologiesComponent } from './ontologies/ontologies.component';
-import { OntologyComponent } from './ontologies/ontology/ontology.component';
-import { OntologyListComponent } from './ontologies/ontology-list/ontology-list.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
@@ -38,6 +35,7 @@ import { SearchComponent } from './search/search.component';
 
 @Component({
   template: '<ng-container></ng-container>',
+  standalone: true,
 })
 export class EmptyComponent {
   constructor() {}
@@ -137,27 +135,8 @@ const routes: Routes = [
                 component: EntitiesComponent,
               },
               {
-                path: 'ontologies',
-                component: OntologiesComponent,
-                children: [
-                  {
-                    path: '',
-                    redirectTo: 'list',
-                    pathMatch: 'full',
-                  },
-                  {
-                    path: 'list',
-                    component: OntologyListComponent,
-                  },
-                  {
-                    path: 'add',
-                    component: OntologyComponent,
-                  },
-                  {
-                    path: ':ontology',
-                    component: OntologyComponent,
-                  },
-                ],
+                path: 'label-sets',
+                loadChildren: () => import('./label-sets/label-sets.module').then((m) => m.LabelSetsModule),
               },
               {
                 path: 'manage',

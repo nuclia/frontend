@@ -2,7 +2,7 @@ import { cloneDeep } from '@flaps/common';
 import { Label, LabelSet, LabelSetKind } from '@nuclia/core';
 import { LABEL_MAIN_COLORS } from './utils';
 
-export const EMTPY_LABEL_SET: LabelSet = {
+export const EMPTY_LABEL_SET: LabelSet = {
   title: '',
   color: LABEL_MAIN_COLORS[0],
   multiple: true,
@@ -72,5 +72,12 @@ export class MutableLabelSet {
       kind: [...this.kind],
       labels: this.labels ? cloneDeep(this.labels) : [],
     };
+  }
+
+  isEqual(labelSet?: LabelSet): boolean {
+    if (!labelSet) {
+      return false;
+    }
+    return JSON.stringify(this.getCopy()) === JSON.stringify(labelSet);
   }
 }
