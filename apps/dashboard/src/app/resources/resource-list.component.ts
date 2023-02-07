@@ -155,8 +155,8 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   get isFailureView() {
     return this.statusDisplayed.value === 'ERROR';
   }
-  get showActions() {
-    return this.statusDisplayed.value !== 'PENDING';
+  get isPendingView() {
+    return this.statusDisplayed.value === 'PENDING';
   }
 
   pageSizeOptions: Observable<KeyValue[]> = forkJoin(
@@ -188,7 +188,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
         })
         .filter((column) => !!column);
 
-      return canEdit && this.showActions ? ['select', ...columns, 'actions'] : columns;
+      return canEdit ? ['select', ...columns, 'actions'] : columns;
     }),
   );
   labelSets$: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(

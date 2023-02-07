@@ -315,9 +315,7 @@
           </td>
         </ng-container>
 
-        <ng-container
-          cdkColumnDef="actions"
-          *ngIf="showActions">
+        <ng-container cdkColumnDef="actions">
           <th
             cdk-header-cell
             *cdkHeaderCellDef>
@@ -332,38 +330,30 @@
               size="small"
               paTooltip="generic.actions"
               [disabled]="bulkAction.inProgress"
-              [matMenuTriggerFor]="menu">
+              [paPopup]="menu">
               {{ 'generic.actions' | translate }}
             </pa-button>
-            <mat-menu
-              #menu="matMenu"
-              class="resource-actions">
-              <button
-                mat-menu-item
+            <pa-dropdown #menu>
+              <pa-option
                 *ngIf="isMainView"
-                (click)="edit(row.resource.id)"
-                [disabled]="!(isAdminOrContrib | async)">
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="edit(row.resource.id)">
                 {{ 'resource.edit' | translate }}
-              </button>
-              <button
-                mat-menu-item
-                (click)="delete([row.resource])"
-                [disabled]="!(isAdminOrContrib | async)">
-                {{ 'generic.delete' | translate }}
-              </button>
-              <button
-                mat-menu-item
-                (click)="reindex(row.resource)"
-                [disabled]="!(isAdminOrContrib | async)">
+              </pa-option>
+              <pa-option
+                *ngIf="!isPendingView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="reindex(row.resource)">
                 {{ 'generic.reindex' | translate }}
-              </button>
-              <button
-                mat-menu-item
-                *ngIf="isMainView"
-                (click)="downloadAlgoliaJson(row.resource)">
-                {{ 'generic.download_algolia_json' | translate }}
-              </button>
-            </mat-menu>
+              </pa-option>
+              <pa-separator *ngIf="!isPendingView"></pa-separator>
+              <pa-option
+                destructive
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="delete([row.resource])">
+                {{ 'generic.delete' | translate }}
+              </pa-option>
+            </pa-dropdown>
           </td>
         </ng-container>
 
