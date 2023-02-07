@@ -1,11 +1,7 @@
-<div
-  class="color-picker"
-  fxLayout="row"
-  fxLayoutGap="12px">
+<div class="color-picker">
   <button
     *ngIf="selectedCustomColor"
-    [class.selected]="true"
-    [class.custom]="true"
+    class="selected custom"
     [attr.aria-pressed]="true"
     [style.background-color]="'transparent'">
     {{ value }}
