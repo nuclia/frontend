@@ -16,7 +16,7 @@ import type { ICreateResource, IResource, LinkField, UserMetadata } from '../res
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import type { Search, SearchOptions } from '../search';
+import { catalog, Search, SearchOptions } from '../search';
 import { search } from '../search';
 import { Training } from '../training';
 
@@ -127,6 +127,10 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
     return search(this.nuclia, this.id, this.path, query, features, options);
+  }
+
+  catalog(query: string, options?: SearchOptions): Observable<Search.Results> {
+    return catalog(this.nuclia, this.id, query, options);
   }
 
   suggest(query: string, inTitleOnly = false): Observable<Search.Suggestions> {

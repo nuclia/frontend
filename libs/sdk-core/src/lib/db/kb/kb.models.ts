@@ -68,6 +68,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
 
+  catalog(query: string, options?: SearchOptions): Observable<Search.Results>;
+
   suggest(query: string): Observable<Search.Suggestions>;
 
   counters(): Observable<Counters>;

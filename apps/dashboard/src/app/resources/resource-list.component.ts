@@ -44,6 +44,7 @@ import {
   resourceToAlgoliaFormat,
   Search,
   SortOrder,
+  SearchOptions,
 } from '@nuclia/core';
 import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -584,21 +585,25 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       }),
       switchMap(() => this.sdk.currentKb.pipe(take(1))),
       switchMap((kb) => {
-        const searchFeatures =
-          hasQuery && !titleOnly
-            ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
-            : [Search.Features.DOCUMENT];
         const status = this.statusDisplayed.value;
+        const searchOptions: SearchOptions = {
+          page_number: page,
+          page_size: this.pageSize,
+          sort: { field: 'created' },
+          filters: status === RESOURCE_STATUS.PROCESSED ? undefined : [`/n/s/${status}`],
+          with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
+        };
         return forkJoin([
           of(kb),
-          kb.search(query, searchFeatures, {
-            inTitleOnly: titleOnly,
-            page_number: page,
-            page_size: this.pageSize,
-            sort: { field: 'created' },
-            filters: status === RESOURCE_STATUS.PROCESSED ? undefined : [`/n/s/${status}`],
-            with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
-          }),
+          titleOnly
+            ? kb.catalog(query, searchOptions)
+            : kb.search(
+                query,
+                hasQuery
+                  ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
+                  : [Search.Features.DOCUMENT],
+                searchOptions,
+              ),
           this.labelSets$.pipe(take(1)),
           this.statusCount.pipe(take(1)),
         ]);
@@ -826,8 +831,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.search('', [Search.Features.DOCUMENT], {
-          inTitleOnly: true,
+        kb.catalog('', {
           faceted: [statusFacet],
         }),
       ),
@@ -884,8 +888,7 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private getResourcesInError(kb: KnowledgeBox, page_number = 0): Observable<Search.Results> {
-    return kb.search('', [Search.Features.DOCUMENT], {
-      inTitleOnly: true,
+    return kb.catalog('', {
       page_number,
       page_size: 20,
       sort: { field: 'created' },
