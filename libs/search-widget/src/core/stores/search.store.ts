@@ -154,15 +154,15 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
     }
   });
 
-  // for resources without paragraphs, create a fake one using summary if it exists (else, remove the resource)
+  // for resources without paragraphs, create a fake one using summary or title if they exist (else, remove the resource)
   smartResults = smartResults
     .map((resource) => {
       if (resource.paragraphs && resource.paragraphs.length > 0) {
         return resource;
       } else {
-        const summaryParagraph = generateFakeParagraphForSummary(resource);
-        if (summaryParagraph) {
-          return { ...resource, paragraphs: [summaryParagraph] };
+        const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
+        if (fakeParagraph) {
+          return { ...resource, paragraphs: [fakeParagraph] };
         } else {
           return undefined;
         }
@@ -266,14 +266,21 @@ function generateFakeParagraphForSentence(
     : undefined;
 }
 
-function generateFakeParagraphForSummary(resource: IResource): Search.SmartParagraph | undefined {
-  return resource.summary
+function generateFakeParagraphForSummaryOrTitle(
+  resource: IResource,
+  paragraphs: Search.Paragraph[],
+): Search.SmartParagraph | undefined {
+  const title = paragraphs.find(
+    (paragraph) => paragraph.rid === resource.id && paragraph.field_type === SHORT_FIELD_TYPE.generic,
+  )?.text;
+  const text = resource.summary || title;
+  return text
     ? {
         score: 0,
         rid: resource.id,
         field_type: SHORT_FIELD_TYPE.generic,
         field: '',
-        text: resource.summary,
+        text: text,
         labels: [],
       }
     : undefined;
