@@ -35,14 +35,34 @@ export const search = (
   );
 };
 
+export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions) => {
+  const params: { [key: string]: string | string[] } = {};
+  params.query = query || '';
+  params.shards = nuclia.currentShards?.[kbid] || [];
+  const searchMethod = nuclia.rest.get<Search.Results | { detail: string }>(
+    `/kb/${kbid}/catalog?${options ? serialize(params, options) : ''}`,
+  );
+  return searchMethod.pipe(
+    catchError(() => of({ error: true } as Search.Results)),
+    map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
+    tap((res) => {
+      if (res.shards) {
+        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
+      }
+    }),
+  );
+};
+
 const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions): string => {
   Object.entries(others || {}).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      params[key] = value.map((el) => `${el}`);
-    } else if (typeof value === 'object') {
-      Object.entries(value).forEach(([k, v]) => (params[`${key}_${k}`] = `${v}`));
-    } else {
-      params[key] = `${value}`;
+    if (value !== undefined && value !== null) {
+      if (Array.isArray(value)) {
+        params[key] = value.map((el) => `${el}`);
+      } else if (typeof value === 'object') {
+        Object.entries(value).forEach(([k, v]) => (params[`${key}_${k}`] = `${v}`));
+      } else {
+        params[key] = `${value}`;
+      }
     }
   });
   const queryParams = new URLSearchParams();

@@ -1,4 +1,4 @@
-# 1.1.3 (unreleased)
+# 1.1.3 (2023-02-08)
 
 ### Improvements
 
@@ -11,10 +11,11 @@
 - Update training types: labeler split in two `resoure-labeler` and `paragraph-labeler`
 - Add `field` property to `Search.SmartResult` interface
 - Add support for `/train/executions` endpoint
-- Add `SHORT_FIELD_TYPE` enum in search models and update `Paragraph` and `Sentence` interfaces accordingly 
+- Add `SHORT_FIELD_TYPE` enum in search models and update `Paragraph` and `Sentence` interfaces accordingly
 - Add mappers to translate `SHORT_FIELD_TYPE` into `FIELD_TYPE` and _vice versa_
 - Add mapper `getDataKeyFromFieldType` to translate `FIELD_TYPE` into key of `ResourceData`
 - Don't load entities by default when loading entity families, add `withEntities` parameter to `getEntities` method to load entities as well
+- Add the `/catalog` endpoint
 
 # 1.1.2 (2023-01-20)
 
