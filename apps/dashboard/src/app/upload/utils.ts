@@ -15,7 +15,7 @@ export function parseCSV(content: string) {
     const firstFieldChar = currentField.length === 0;
     const fieldDelimiter = char === DELIMITER && !inQuotedField;
     const initialQuote = char === '"' && firstFieldChar;
-    const lastQuote = char === '"' && !firstFieldChar && inQuotedField && nextChar === DELIMITER;
+    const lastQuote = char === '"' && !firstFieldChar && inQuotedField && prevChar !== '"' && nextChar !== '"';
     const lineBreak = ['\n', '\r'].includes(char) && !inQuotedField;
     const endOfRow = lineBreak && (currentField.length > 0 || prevChar === DELIMITER);
 

@@ -42,10 +42,17 @@ app-label-field {
   display: flex;
   gap: rhythm(1);
   height: rhythm(4);
-  justify-content: space-between;
 
   &:first-child {
     border-top: 1px solid $color-neutral-lighter;
+  }
+
+  .title {
+    flex: 1 1 0;
+  }
+
+  .field {
+    width: rhythm(12);
   }
 }
 
