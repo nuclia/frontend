@@ -102,7 +102,7 @@
       resourceObs = getResource(result.id).pipe(
         tap((res) => {
           resource.set(res);
-          const fileField = getFileField(res, res.id);
+          const fileField = getFileField(res, result.field?.field_id || '');
           const file = fileField && fileField.value?.file;
           if (file) {
             mediaContentType = file.content_type;

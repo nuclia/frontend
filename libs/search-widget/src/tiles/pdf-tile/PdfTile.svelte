@@ -32,7 +32,7 @@
     if (!pdfUrl) {
       pdfUrl = resource$.pipe(
         map((res) => {
-          const fileField = getFileField(res, res.id);
+          const fileField = getFileField(res, result.field?.field_id || '');
           return fileField?.value?.file;
         }),
         switchMap((url) => (url ? getFileUrl(url.uri) : of(''))),

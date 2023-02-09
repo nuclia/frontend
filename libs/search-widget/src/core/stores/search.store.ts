@@ -102,8 +102,12 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   if (!allResources || Object.keys(allResources).length === 0) {
     return [] as Search.SmartResult[];
   }
-  const fullTextResults: IResource[] =
-    state.results.fulltext?.results.map((res) => allResources[res.rid]).filter((res) => !!res) || [];
+  const fullTextResults: IResource[] = (state.results.fulltext?.results || []).reduce((acc, curr) => {
+    if (!acc.find((res) => res.id === curr.rid)) {
+      acc.push(allResources[curr.rid]);
+    }
+    return acc;
+  }, [] as IResource[]);
   const semanticResults = state.results.sentences?.results || [];
   let smartResults: Search.SmartResult[] = [];
 
@@ -140,7 +144,7 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   }
 
   // add the rest of the fulltext results
-  if (fullTextResults.length > 0) {
+  if (fullTextResults.length > 1) {
     const existingResourceIds = smartResults.map((res) => res.id);
     const remainingFullTextResults = fullTextResults.slice(1).filter((res) => !existingResourceIds.includes(res.id));
     smartResults = [...smartResults, ...remainingFullTextResults];
@@ -220,10 +224,16 @@ export function addParagraphToSmartResults(
   if (!longFieldType) {
     return smartResults;
   }
-  const existingResource = smartResults.find(
-    (r) => r.id === resource.id && r.field?.field_id === paragraph.field && r.field.field_type === longFieldType,
-  );
+  const existingResource = smartResults.find((r) => {
+    if (r.id !== resource.id) {
+      return false;
+    }
+    const undefinedField = !r.field?.field_id && !r.field?.field_type;
+    const sameField = r.field?.field_id === paragraph.field && r.field.field_type === longFieldType;
+    return undefinedField || sameField;
+  });
   if (existingResource) {
+    existingResource.field = { field_id: paragraph.field, field_type: longFieldType };
     const existingParagraph = existingResource.paragraphs?.find(
       (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
     );
