@@ -15,6 +15,7 @@ export class LabelComponent {
     this._label = value;
     if (value) {
       this.title.setValue(value.title);
+      this._titleBackup = value.title;
     }
   }
   get label() {
@@ -48,12 +49,16 @@ export class LabelComponent {
   private _label?: Label;
   private _noHandle = false;
   private _existingTitles: string[] = [];
+  private _titleBackup?: string;
 
   delete() {
     this.deleteLabel.emit();
   }
 
   save() {
+    if (!this.title.value || (this._titleBackup && this.title.value === this._titleBackup)) {
+      return;
+    }
     if (this.isDuplicatedLabel(this.title.value)) {
       return;
     }
@@ -63,11 +68,10 @@ export class LabelComponent {
     }
   }
 
-  preventDragAndDrop($event: MouseEvent) {
-    $event.stopPropagation();
-  }
-
   private isDuplicatedLabel(title: string): boolean {
+    if (this._titleBackup && title === this._titleBackup) {
+      return false;
+    }
     const isDuplicated = this.existingTitles.includes(title);
     this.errorMessage = isDuplicated ? 'label-set.form.labels.duplicated-name' : '';
     return isDuplicated;
