@@ -59,7 +59,7 @@
           </nsi-dropdown-button>
         </ng-template>
 
-        <div class="selection">{{ trainings[type].selectedOptions.join(', ') }}</div>
+        <div class="selection">{{ getSelection(type) }}</div>
       </div>
 
       <pa-dropdown
@@ -80,8 +80,8 @@
           *ngFor="let option of options[type] | async"
           dontCloseOnSelect>
           <pa-checkbox
-            [value]="trainings[type].selectedOptions.includes(option.value)"
-            (change)="toggleOption(type, option.value)">
+            [value]="trainings[type].selectedOptions.includes(option)"
+            (change)="toggleOption(type, option)">
             {{ option.title | translate }}
           </pa-checkbox>
         </pa-option>
@@ -95,8 +95,8 @@
           *ngFor="let option of options[type] | async"
           dontCloseOnSelect>
           <pa-checkbox
-            [value]="trainings[type].selectedOptions.includes(option.value)"
-            (change)="updateSelection(type, option.value)">
+            [value]="trainings[type].selectedOptions.includes(option)"
+            (change)="updateSelection(type, option)">
             {{ option.title | translate }}
           </pa-checkbox>
         </pa-option>
@@ -124,7 +124,7 @@
     </div>
     <div class="cta-container">
       <pa-button
-        [kind]="trainings[type].running ? 'secondary' : 'primary'"
+        kind="primary"
         [disabled]="
           (!trainings[type].running && (isBillingEnabled | async) && !trainings[type].agreement) ||
           (cannotTrain | async) ||
