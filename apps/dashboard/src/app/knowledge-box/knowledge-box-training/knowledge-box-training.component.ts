@@ -8,9 +8,16 @@ import { forkJoin, Observable, shareReplay, Subject, take, tap } from 'rxjs';
 interface TrainingState {
   agreement: boolean;
   running: boolean;
-  selectedOptions: string[];
+  selectedOptions: TrainingOption[];
   open: boolean;
   lastRun: string;
+}
+
+interface TrainingOption {
+  value: string;
+  title: string;
+  multivalued?: boolean;
+  kind?: LabelSetKind[];
 }
 
 @Component({
@@ -25,14 +32,19 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
   cannotTrain = this.stateService.account.pipe(map((account) => !!account && account.type === 'stash-basic'));
   hasResources = this.sdk.counters.pipe(map((counters) => counters.resources > 0));
   trainingTypes = TrainingType;
-  labelsets: Observable<{ value: string; title: string; kind?: LabelSetKind[] }[]> = this.sdk.currentKb.pipe(
+  labelSets: Observable<TrainingOption[]> = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getLabels()),
     map((labelsets) =>
-      Object.entries(labelsets).map(([id, labelset]) => ({ value: id, title: labelset.title, kind: labelset.kind })),
+      Object.entries(labelsets).map(([id, labelset]) => ({
+        value: id,
+        title: labelset.title,
+        kind: labelset.kind,
+        multivalued: labelset.multiple,
+      })),
     ),
     shareReplay(),
   );
-  entitiesGroups = this.sdk.currentKb.pipe(
+  entitiesGroups: Observable<TrainingOption[]> = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getEntities()),
     map((entities) =>
       Object.entries(entities)
@@ -62,11 +74,11 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
   }, {} as { [key in TrainingType]: TrainingState });
   hoursRequired = 10;
   options: { [key: string]: Observable<{ value: string; title: string; kind?: LabelSetKind[] }[]> } = {
-    [TrainingType.classifier]: this.labelsets,
-    [TrainingType.resource_labeler]: this.labelsets.pipe(
+    [TrainingType.classifier]: this.labelSets,
+    [TrainingType.resource_labeler]: this.labelSets.pipe(
       map((labelsets) => labelsets.filter((labelset) => labelset.kind?.includes(LabelSetKind.RESOURCES))),
     ),
-    [TrainingType.paragraph_labeler]: this.labelsets.pipe(
+    [TrainingType.paragraph_labeler]: this.labelSets.pipe(
       map((labelsets) =>
         labelsets.filter(
           (labelset) =>
@@ -114,35 +126,44 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  toggleOption(type: TrainingType, value: string) {
-    if (this.trainings[type].selectedOptions.includes(value)) {
-      this.trainings[type].selectedOptions = this.trainings[type].selectedOptions.filter((item) => item !== value);
+  toggleOption(type: TrainingType, option: TrainingOption) {
+    if (this.trainings[type].selectedOptions.includes(option)) {
+      this.trainings[type].selectedOptions = this.trainings[type].selectedOptions.filter((item) => item !== option);
     } else {
-      this.trainings[type].selectedOptions = [...this.trainings[type].selectedOptions, value];
+      this.trainings[type].selectedOptions = [...this.trainings[type].selectedOptions, option];
     }
     markForCheck(this.cdr);
   }
 
-  updateSelection(type: TrainingType, value: string) {
-    this.trainings[type].selectedOptions = [value];
+  updateSelection(type: TrainingType, option: TrainingOption) {
+    this.trainings[type].selectedOptions = [option];
     markForCheck(this.cdr);
   }
 
   toggleAll(type: TrainingType) {
     this.options[type].pipe(take(1)).subscribe((options) => {
       const selectAll = this.trainings[type].selectedOptions.length < options.length;
-      this.trainings[type].selectedOptions = selectAll ? options.map((item) => item.value) : [];
+      this.trainings[type].selectedOptions = selectAll ? options.map((option) => option) : [];
       markForCheck(this.cdr);
     });
   }
 
   startOrStopTraining(type: TrainingType) {
-    let params = {};
+    let params: {
+      valid_labelsets?: string[];
+      valid_nertags?: string[];
+      multivalued?: boolean;
+    } = {};
     if (this.trainings[type].selectedOptions.length > 0) {
       params = {
-        valid_labelsets: type !== TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
-        valid_nertags: type === TrainingType.ner ? this.trainings[type].selectedOptions : undefined,
+        valid_labelsets:
+          type !== TrainingType.ner ? this.trainings[type].selectedOptions.map((option) => option.value) : undefined,
+        valid_nertags:
+          type === TrainingType.ner ? this.trainings[type].selectedOptions.map((option) => option.value) : undefined,
       };
+      if (type === TrainingType.resource_labeler || type === TrainingType.paragraph_labeler) {
+        params.multivalued = this.trainings[type].selectedOptions[0].multivalued;
+      }
     }
     this.sdk.currentKb
       .pipe(
@@ -152,5 +173,9 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
         this.trainings[type].running = !this.trainings[type].running;
         markForCheck(this.cdr);
       });
+  }
+
+  getSelection(type: TrainingType) {
+    return this.trainings[type].selectedOptions.map((option) => option.value).join(', ');
   }
 }
