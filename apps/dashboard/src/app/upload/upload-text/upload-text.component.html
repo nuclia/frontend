@@ -1,14 +1,16 @@
-<div class="upload-text">
-  <h1>{{ 'upload.upload_from_csv' | translate }}</h1>
-  <pa-button
-    class="close-button"
-    icon="cross"
-    aspect="basic"
-    (click)="close()">
-    {{ 'generic.close' | translate }}
-  </pa-button>
+<div class="upload-dialog upload-text">
+  <h1>
+    {{ 'upload.upload_from_csv' | translate }}
+    <pa-button
+      class="close-upload-button"
+      icon="cross"
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+  </h1>
 
-  <p class="body-s">
+  <p class="upload-help body-s">
     <span [innerHtml]="'upload.csv_description' | translate"></span>
     <br />
     <span [innerHtml]="'upload.csv_format' | translate"></span>

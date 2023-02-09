@@ -10,7 +10,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 @Component({
   selector: 'app-create-link',
   templateUrl: './create-link.component.html',
-  styleUrls: ['./create-link.component.scss'],
+  styleUrls: ['../_upload-dialog.scss', './create-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateLinkComponent {

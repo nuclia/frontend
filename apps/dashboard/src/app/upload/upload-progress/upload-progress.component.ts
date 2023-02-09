@@ -7,7 +7,7 @@ import { FileUploadStatus } from '@nuclia/core';
 @Component({
   selector: 'app-upload-progress',
   templateUrl: './upload-progress.component.html',
-  styleUrls: ['./upload-progress.component.scss'],
+  styleUrls: ['../_upload-dialog.scss', './upload-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadProgressComponent {

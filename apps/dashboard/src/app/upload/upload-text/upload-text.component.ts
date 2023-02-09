@@ -14,7 +14,7 @@ const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
 @Component({
   selector: 'app-upload-text',
   templateUrl: './upload-text.component.html',
-  styleUrls: ['./upload-text.component.scss'],
+  styleUrls: ['../_upload-dialog.scss', './upload-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadTextComponent {

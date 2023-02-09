@@ -1,16 +1,10 @@
 @import 'variables';
 
 .upload-text {
-  position: relative;
   width: 50vw;
-  padding: rhythm(2) rhythm(3);
 
-  h1 {
-    margin: 0 0 rhythm(3) 0;
-  }
-
-  p.body-s {
-    margin-bottom: rhythm(3);
+  .upload-help {
+    margin: rhythm(3) 0;
   }
 
   ncom-hint ::ng-deep .hint {
