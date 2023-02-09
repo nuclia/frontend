@@ -130,21 +130,18 @@ export class LabelSetComponent implements OnDestroy {
     this.labelSet?.addLabel(title);
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = this.hasChanged();
-    this.cdr.markForCheck();
   }
 
   modifyLabel(title: string, newTitle: string) {
     this.labelSet?.modifyLabel(title, { title: newTitle });
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = this.hasChanged();
-    this.cdr.markForCheck();
   }
 
   deleteLabel(title: string) {
     this.labelSet?.deleteLabel(title);
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = this.hasChanged();
-    this.cdr.markForCheck();
   }
 
   drop(event: CdkDragDrop<string[]>) {

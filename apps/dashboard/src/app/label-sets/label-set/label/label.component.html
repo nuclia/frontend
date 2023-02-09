@@ -17,7 +17,7 @@
       [formControl]="title"
       (keydown.enter)="save()"
       (keydown.tab)="save()"
-      (mousedown)="preventDragAndDrop($event)" />
+      (blur)="save()" />
   </div>
   <pa-button
     *ngIf="!!label"
