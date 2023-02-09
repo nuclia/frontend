@@ -120,7 +120,7 @@
             const linkField = getLinkField(res, paragraph.fieldId);
             youtubeUri = linkField?.value?.uri;
           } else if (paragraph?.fieldType === SHORT_FIELD_TYPE.file || paragraph?.fieldType === FIELD_TYPE.file) {
-            const fileField = getFileField(res, res.id);
+            const fileField = getFileField(res, paragraph.fieldId);
             const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
             if (file) {
               mediaContentType = file.content_type;
