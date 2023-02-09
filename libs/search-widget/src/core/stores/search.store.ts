@@ -191,7 +191,7 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const triggerSearch = new Subject<{ more: true } | void>();
+export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
 export const addLabelFilter = (label: Classification) => {
   const filter = getFilterFromLabel(label);

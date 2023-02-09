@@ -37,7 +37,7 @@
   export let embeddedSearch = false;
   export let searchBarWidget = false;
 
-  let element: HTMLInputElement;
+  let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
 
   let inputContainerElement: HTMLElement | undefined;
@@ -91,6 +91,8 @@
     searchQuery.set(typeAhead.getValue());
     triggerSearch.next();
     dispatch('search');
+    // Make sure the keyboard disappear when triggering search in Mobile
+    searchInputElement.blur();
   };
 
   const onKeyPress = (event: KeyboardEvent) => {
@@ -180,7 +182,7 @@
       {/if}
     </div>
     <input
-      bind:this={element}
+      bind:this={searchInputElement}
       class="search-field"
       name="nuclia-search-field"
       placeholder={$_($widgetPlaceholder)}

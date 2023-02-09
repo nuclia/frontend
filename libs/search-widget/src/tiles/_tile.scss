@@ -34,7 +34,7 @@
   }
 
   &.expanded {
-    --header-height: var(--rhythm-8);
+    --header-height: var(--rhythm-6);
 
     background: var(--expanded-background-color);
     bottom: 0;
@@ -70,6 +70,7 @@
     }
 
     &.expanded {
+      --header-height: var(--rhythm-8);
       .thumbnail-container {
         flex: 1;
       }
