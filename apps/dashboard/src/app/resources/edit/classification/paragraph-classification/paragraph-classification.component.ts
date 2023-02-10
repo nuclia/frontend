@@ -42,6 +42,8 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   kbUrl = this.editResource.kbUrl;
 
   searchQuery = '';
+  hasMoreResults = false;
+  nextPageNumber = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -109,18 +111,10 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   triggerSearch() {
-    const query = this.searchQuery;
-    if (query) {
-      forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))])
-        .pipe(
-          switchMap(([field, resource]) =>
-            resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
-              fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
-            }),
-          ),
-        )
-        .subscribe((results) => this.classificationService.setSearchResults(results));
-    }
+    this._triggerSearch(this.searchQuery).subscribe((results) => {
+      this.classificationService.setSearchResults(results);
+      this.updatePagination(results);
+    });
   }
 
   onSearchInputClick($event: MouseEvent) {
@@ -131,7 +125,36 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       $event.preventDefault();
       this.searchQuery = '';
       this.classificationService.setSearchResults(null);
+      this.hasMoreResults = false;
       this.cdr.markForCheck();
     }
+  }
+
+  loadMore() {
+    if (this.hasMoreResults && this.searchQuery) {
+      this._triggerSearch(this.searchQuery).subscribe((results) => {
+        this.classificationService.appendSearchResults(results);
+        this.updatePagination(results);
+      });
+    }
+  }
+
+  private updatePagination(results: Search.Results) {
+    if (results.paragraphs) {
+      this.hasMoreResults = results.paragraphs.next_page;
+      this.nextPageNumber = results.paragraphs.page_number + 1;
+    }
+  }
+
+  private _triggerSearch(query: string) {
+    console.log(`_triggerSearch with page number ${this.nextPageNumber}`);
+    return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
+      switchMap(([field, resource]) =>
+        resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
+          fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
+          page_number: this.nextPageNumber,
+        }),
+      ),
+    );
   }
 }

@@ -34,27 +34,29 @@
   *ngIf="(hasLabels | async) === true"
   class="paragraphs-container"
   [class.disabled]="!currentLabel">
-  <div
-    class="paragraph-container"
-    *ngFor="let paragraph of paragraphs | async">
-    <p (click)="addLabelOnParagraph(paragraph)">{{ paragraph.text }}</p>
-    <div class="labels-container">
-      <pa-chip-closeable
-        *ngFor="let label of paragraph.generatedClassifications"
-        [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-        (closed)="cancelGeneratedLabel(paragraph, label)">
-        {{ label.label }}
-      </pa-chip-closeable>
-      <ng-container *ngFor="let label of paragraph.userClassifications">
+  <pa-infinite-scroll (reachAnchor)="loadMore()">
+    <div
+      class="paragraph-container"
+      *ngFor="let paragraph of paragraphs | async">
+      <p (click)="addLabelOnParagraph(paragraph)">{{ paragraph.text }}</p>
+      <div class="labels-container">
         <pa-chip-closeable
-          *ngIf="!label.cancelled_by_user"
+          *ngFor="let label of paragraph.generatedClassifications"
           [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
-          (closed)="removeUserLabel(paragraph, label)">
+          (closed)="cancelGeneratedLabel(paragraph, label)">
           {{ label.label }}
         </pa-chip-closeable>
-      </ng-container>
+        <ng-container *ngFor="let label of paragraph.userClassifications">
+          <pa-chip-closeable
+            *ngIf="!label.cancelled_by_user"
+            [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
+            (closed)="removeUserLabel(paragraph, label)">
+            {{ label.label }}
+          </pa-chip-closeable>
+        </ng-container>
+      </div>
     </div>
-  </div>
+  </pa-infinite-scroll>
 </div>
 
 <footer class="form-buttons">

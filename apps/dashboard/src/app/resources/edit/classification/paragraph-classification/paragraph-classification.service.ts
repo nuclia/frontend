@@ -114,6 +114,22 @@ export class ParagraphClassificationService {
     this._searchResults.next(results);
   }
 
+  appendSearchResults(results: Search.Results) {
+    const currentResults: Search.Results | null = this._searchResults.value;
+    if (!currentResults || !currentResults.paragraphs) {
+      this._searchResults.next(results);
+    } else {
+      const paragraphs = (currentResults.paragraphs.results || []).concat(results.paragraphs?.results || []);
+      this._searchResults.next({
+        ...currentResults,
+        paragraphs: {
+          ...currentResults.paragraphs,
+          results: paragraphs,
+        },
+      });
+    }
+  }
+
   private getEnhancedParagraphs(fieldId: FieldId, resource: Resource): ParagraphWithTextAndClassifications[] {
     this._paragraphClassificationMap = this.getParagraphClassificationMap(resource, fieldId);
     const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
