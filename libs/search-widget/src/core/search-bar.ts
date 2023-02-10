@@ -36,9 +36,12 @@ export const setupTriggerSearch = (
             switchMap((query) =>
               forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1)), navigateToLink.pipe(take(1))]).pipe(
                 map(([options, filters, navigateToLink]) => {
+                  // We need to load the values in order to then choose the tiles depending on the field type
+                  // Once we will have search v2, we should load Values only for navigateToLink
                   const show = navigateToLink
                     ? [ResourceProperties.BASIC, ResourceProperties.VALUES]
-                    : [ResourceProperties.BASIC];
+                    : [ResourceProperties.BASIC, ResourceProperties.VALUES];
+                  show.push(ResourceProperties.VALUES);
                   const currentOptions = { ...options, show, filters };
                   return { query, options: currentOptions };
                 }),

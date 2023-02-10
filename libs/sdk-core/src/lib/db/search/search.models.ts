@@ -1,5 +1,5 @@
 import type { ExtractedDataTypes, ResourceProperties } from '../kb';
-import type { FIELD_TYPE, FieldId, IResource, RelationEntityType, RelationType } from '../resource';
+import type { FIELD_TYPE, FieldId, IFieldData, IResource, RelationEntityType, RelationType } from '../resource';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -80,6 +80,7 @@ export namespace Search {
   export interface SmartResult extends IResource {
     paragraphs?: SmartParagraph[];
     field?: FieldId;
+    fieldData?: IFieldData;
   }
 
   export interface SmartParagraph extends Paragraph {
