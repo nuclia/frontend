@@ -1,12 +1,25 @@
 <div class="classification-container">
   <div class="title-s">{{ 'resource.field-classification' | translate }}</div>
-  <app-label-dropdown
+  <div
     *ngIf="(hasLabels | async) === true; else noLabel"
-    single
-    [labelSets]="availableLabels | async"
-    (selectionChange)="updateSelection($event)">
-    {{ currentLabel ? currentLabel.labelset + ' – ' + currentLabel.label : ('generic.select_tags' | translate) }}
-  </app-label-dropdown>
+    class="classification-header">
+    <app-label-dropdown
+      single
+      [labelSets]="availableLabels | async"
+      (selectionChange)="updateSelection($event)">
+      {{ currentLabel ? currentLabel.labelset + ' – ' + currentLabel.label : ('generic.select_tags' | translate) }}
+    </app-label-dropdown>
+
+    <pa-input
+      [icon]="searchQuery ? 'cross' : 'search'"
+      [class.can-reset]="!!searchQuery"
+      [(ngModel)]="searchQuery"
+      (click)="onSearchInputClick($event)"
+      (keyup.enter)="triggerSearch()">
+      {{ 'resource.field-classification.search' | translate }}
+    </pa-input>
+  </div>
+
   <ng-template #noLabel>
     <p>
       {{ 'resource.classification.no-paragraph-labelset' | translate }}

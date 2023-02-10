@@ -67,7 +67,7 @@
       }
 
       footer {
-        box-shadow: inset 0 1px 0 $color-neutral-light;
+        box-shadow: $footer-separator;
         display: flex;
         margin-top: $margin-top-footer;
         padding: $padding-vertical-footer 0;

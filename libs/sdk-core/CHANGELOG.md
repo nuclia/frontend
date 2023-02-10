@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add `fieldData` to `Search.SmartResult`
+- Add `fields` in `SearchOptions`
 
 # 1.1.3 (2023-02-08)
 

@@ -1,18 +1,30 @@
 @import 'variables';
 @import '../../edit-resource.tokens';
 
+$padding-bottom-header: rhythm(3);
 .classification-container {
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
   margin-bottom: rhythm(4);
+
+  .classification-header {
+    align-items: center;
+    box-shadow: $header-separator;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: $padding-bottom-header;
+
+    pa-input.can-reset ::ng-deep pa-icon {
+      cursor: pointer;
+    }
+  }
 }
 
 .paragraphs-container {
   max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{rhythm(
-        7
-      )} - #{rhythm(7)}
+    100vh - var(--app-topbar-height) - #{$height-header + $padding-bottom-header} - #{$padding-top-page-container} - #{$footer-height} -
+      #{rhythm(7)} - #{rhythm(7)}
   );
   overflow: auto;
 

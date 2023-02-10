@@ -19,6 +19,7 @@ export interface SearchOptions {
   highlight?: boolean;
   faceted?: string[];
   filters?: string[];
+  fields?: string[];
   sort?: SortOption;
   page_number?: number;
   page_size?: number;

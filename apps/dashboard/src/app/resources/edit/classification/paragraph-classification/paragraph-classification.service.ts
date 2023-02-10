@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { getParagraphs, ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { EditResourceService } from '../../edit-resource.service';
-import { Classification, FieldId, Paragraph, Resource, UserClassification } from '@nuclia/core';
+import { Classification, FieldId, Paragraph, Resource, Search, UserClassification } from '@nuclia/core';
 import { cloneDeep } from '@flaps/common';
 
 type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
@@ -14,27 +14,49 @@ export class ParagraphClassificationService {
   private _paragraphsBackup: BehaviorSubject<ParagraphWithTextAndClassifications[]> = new BehaviorSubject<
     ParagraphWithTextAndClassifications[]
   >([]);
-  private _paragraphs: BehaviorSubject<ParagraphWithTextAndClassifications[]> = new BehaviorSubject<
+  private _allParagraphs: BehaviorSubject<ParagraphWithTextAndClassifications[]> = new BehaviorSubject<
     ParagraphWithTextAndClassifications[]
   >([]);
-  private paragraphClassificationMap: ParagraphClassificationMap = {};
+  private _searchResults: BehaviorSubject<Search.Results | null> = new BehaviorSubject<Search.Results | null>(null);
+  private _paragraphClassificationMap: ParagraphClassificationMap = {};
 
-  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this._paragraphs.asObservable();
+  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = combineLatest([
+    this._allParagraphs.asObservable(),
+    this._searchResults.asObservable(),
+  ]).pipe(
+    map(([allParagraphs, searchResults]) => {
+      if (!searchResults || !searchResults.paragraphs?.results) {
+        return allParagraphs;
+      }
+      return allParagraphs.filter(
+        (paragraph) =>
+          !!searchResults.paragraphs?.results.find(
+            (res) => paragraph.start === res.position?.start && paragraph.end === res.position?.end,
+          ),
+      );
+    }),
+  );
 
   constructor(private editResource: EditResourceService) {}
 
   initParagraphs(fieldId: FieldId, resource: Resource) {
     const paragraphs: ParagraphWithTextAndClassifications[] = this.getEnhancedParagraphs(fieldId, resource);
     this._paragraphsBackup.next(paragraphs);
-    this._paragraphs.next(cloneDeep(paragraphs));
+    this._allParagraphs.next(cloneDeep(paragraphs));
   }
 
   resetParagraphs() {
-    this._paragraphs.next(cloneDeep(this._paragraphsBackup.value));
+    this._allParagraphs.next(cloneDeep(this._paragraphsBackup.value));
+  }
+
+  cleanup() {
+    this._paragraphsBackup.next([]);
+    this._allParagraphs.next([]);
+    this._searchResults.next(null);
   }
 
   hasModifications(): boolean {
-    return JSON.stringify(this._paragraphsBackup.value) !== JSON.stringify(this._paragraphs.value);
+    return JSON.stringify(this._paragraphsBackup.value) !== JSON.stringify(this._allParagraphs.value);
   }
 
   /**
@@ -88,12 +110,16 @@ export class ParagraphClassificationService {
     );
   }
 
+  setSearchResults(results: Search.Results | null) {
+    this._searchResults.next(results);
+  }
+
   private getEnhancedParagraphs(fieldId: FieldId, resource: Resource): ParagraphWithTextAndClassifications[] {
-    this.paragraphClassificationMap = this.getParagraphClassificationMap(resource, fieldId);
+    this._paragraphClassificationMap = this.getParagraphClassificationMap(resource, fieldId);
     const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
     return paragraphs.map((paragraph) => {
       const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
-      const userClassifications = this.paragraphClassificationMap[paragraphId] || [];
+      const userClassifications = this._paragraphClassificationMap[paragraphId] || [];
       const enhancedParagraph: ParagraphWithTextAndClassifications = {
         ...paragraph,
         text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),

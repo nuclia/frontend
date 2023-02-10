@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
-import { Classification, FieldId, LabelSetKind, LabelSets, Resource } from '@nuclia/core';
+import { Classification, FieldId, LabelSetKind, LabelSets, longToShortFieldType, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../../../services/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { ParagraphClassificationService } from './paragraph-classification.service';
@@ -41,6 +41,8 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.classificationService.paragraphs;
   kbUrl = this.editResource.kbUrl;
 
+  searchQuery = '';
+
   constructor(
     private route: ActivatedRoute,
     private editResource: EditResourceService,
@@ -60,6 +62,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.classificationService.cleanup();
   }
 
   updateSelection(labels: Classification[]) {
@@ -103,5 +106,32 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   cancel() {
     this.classificationService.resetParagraphs();
     this.isModified = false;
+  }
+
+  triggerSearch() {
+    const query = this.searchQuery;
+    if (query) {
+      forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))])
+        .pipe(
+          switchMap(([field, resource]) =>
+            resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
+              fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
+            }),
+          ),
+        )
+        .subscribe((results) => this.classificationService.setSearchResults(results));
+    }
+  }
+
+  onSearchInputClick($event: MouseEvent) {
+    const target = $event.target as HTMLElement;
+    // Reset search query when clicking on the icon
+    if (this.searchQuery && (target.nodeName === 'svg' || target.parentElement?.nodeName === 'svg')) {
+      $event.stopPropagation();
+      $event.preventDefault();
+      this.searchQuery = '';
+      this.classificationService.setSearchResults(null);
+      this.cdr.markForCheck();
+    }
   }
 }

@@ -7,3 +7,6 @@ $padding-horizontal-header-xlarge: rhythm(10);
 $margin-top-footer: rhythm(5);
 $padding-vertical-footer: rhythm(3);
 $footer-height: $margin-top-footer + $padding-vertical-footer * 2 + rhythm(5);
+
+$header-separator: inset 0 -1px 0 $color-neutral-light;
+$footer-separator: inset 0 1px 0 $color-neutral-light;
