@@ -1,6 +1,12 @@
 import { SvelteState } from '../state-lib';
 import type { IResource, Search, SearchOptions } from '@nuclia/core';
-import { Classification, getFilterFromLabel, SHORT_FIELD_TYPE, shortToLongFieldType } from '@nuclia/core';
+import {
+  Classification,
+  getDataKeyFromFieldType,
+  getFilterFromLabel,
+  SHORT_FIELD_TYPE,
+  shortToLongFieldType,
+} from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
 import { Subject } from 'rxjs';
 
@@ -224,16 +230,25 @@ export function addParagraphToSmartResults(
   if (!longFieldType) {
     return smartResults;
   }
-  const existingResource = smartResults.find((r) => {
-    if (r.id !== resource.id) {
+  const existingResource = smartResults.find((result) => {
+    if (result.id !== resource.id) {
       return false;
     }
-    const undefinedField = !r.field?.field_id && !r.field?.field_type;
-    const sameField = r.field?.field_id === paragraph.field && r.field.field_type === longFieldType;
+    const undefinedField = !result.field?.field_id && !result.field?.field_type;
+    const sameField = result.field?.field_id === paragraph.field && result.field.field_type === longFieldType;
     return undefinedField || sameField;
   });
+
+  const field = { field_id: paragraph.field, field_type: longFieldType };
+  let fieldData;
+  const dataKey = getDataKeyFromFieldType(field.field_type);
+  if (dataKey) {
+    fieldData = resource.data?.[dataKey]?.[field.field_id];
+  }
+
   if (existingResource) {
-    existingResource.field = { field_id: paragraph.field, field_type: longFieldType };
+    existingResource.field = field;
+    existingResource.fieldData = fieldData;
     const existingParagraph = existingResource.paragraphs?.find(
       (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
     );
@@ -245,7 +260,8 @@ export function addParagraphToSmartResults(
     smartResults.push({
       ...resource,
       paragraphs: [paragraph],
-      field: { field_id: paragraph.field, field_type: longFieldType },
+      field,
+      fieldData,
     });
   }
   return smartResults;

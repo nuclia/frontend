@@ -1,3 +1,9 @@
+# 1.1.4 (unreleased)
+
+### Improvements
+
+- Add `fieldData` to `Search.SmartResult`
+
 # 1.1.3 (2023-02-08)
 
 ### Improvements
