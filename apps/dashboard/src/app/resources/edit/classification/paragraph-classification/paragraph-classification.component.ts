@@ -1,20 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
-import { combineLatest, filter, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
-import {
-  Classification,
-  FieldId,
-  LabelSetKind,
-  LabelSets,
-  Paragraph,
-  Resource,
-  UserClassification,
-} from '@nuclia/core';
+import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { Classification, FieldId, LabelSetKind, LabelSets, longToShortFieldType, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../../../services/labels.service';
-import { getParagraphs, ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
-
-type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
+import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
+import { ParagraphClassificationService } from './paragraph-classification.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-paragraph-label-sets',
@@ -37,7 +29,6 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       return field;
     }),
   );
-  private paragraphClassificationMap: ParagraphClassificationMap = {};
 
   availableLabels: Observable<LabelSets | null> = this.labelsService.getLabelsByKind(LabelSetKind.PARAGRAPHS);
   hasLabels: Observable<boolean> = this.availableLabels.pipe(
@@ -47,50 +38,33 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   isModified = false;
   isSaving = false;
 
-  private paragraphsBackup: ParagraphWithTextAndClassifications[] = [];
-  paragraphs: ParagraphWithTextAndClassifications[] = [];
+  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.classificationService.paragraphs;
   kbUrl = this.editResource.kbUrl;
+
+  searchQuery = '';
+  hasMoreResults = false;
+  nextPageNumber = 0;
 
   constructor(
     private route: ActivatedRoute,
     private editResource: EditResourceService,
+    private classificationService: ParagraphClassificationService,
     private labelsService: LabelsService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.editResource.setCurrentView('classification');
+
     combineLatest([this.fieldId, this.resource])
-      .pipe(
-        tap(([fieldId, resource]) => {
-          this.paragraphClassificationMap = this.getParagraphClassificationMap(resource, fieldId);
-        }),
-        map(([fieldId, resource]) => {
-          const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
-          return paragraphs.map((paragraph) => {
-            const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
-            const userClassifications = this.paragraphClassificationMap[paragraphId] || [];
-            const enhancedParagraph: ParagraphWithTextAndClassifications = {
-              ...paragraph,
-              text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
-              paragraphId,
-              userClassifications,
-              generatedClassifications: this.getGeneratedClassification(paragraph, userClassifications),
-            };
-            return enhancedParagraph;
-          });
-        }),
-      )
-      .subscribe((paragraphs) => {
-        this.paragraphsBackup = paragraphs.map((paragraph) => JSON.parse(JSON.stringify(paragraph)));
-        this.paragraphs = this.paragraphsBackup.map((paragraph) => JSON.parse(JSON.stringify(paragraph)));
-        this.cdr.markForCheck();
-      });
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([fieldId, resource]) => this.classificationService.initParagraphs(fieldId, resource));
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.classificationService.cleanup();
   }
 
   updateSelection(labels: Classification[]) {
@@ -99,49 +73,26 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
 
   addLabelOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
     if (this.currentLabel) {
-      const currentLabel = this.currentLabel;
-      let existingIndex = -1;
-      const existing = paragraph.userClassifications.find((label, index) => {
-        const found = label.label === currentLabel.label && label.labelset === currentLabel.labelset;
-        if (found) {
-          existingIndex = index;
-        }
-        return found;
-      });
-      if (existing && existing.cancelled_by_user) {
-        paragraph.userClassifications.splice(existingIndex, 1);
-        paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
-      }
-      if (
-        !existing &&
-        !paragraph.generatedClassifications.find(
-          (label) => label.label === currentLabel.label && label.labelset === currentLabel.labelset,
-        )
-      ) {
-        paragraph.userClassifications.push(currentLabel);
-      }
-      this.isModified = this.hasModifications();
+      this.classificationService.classifyParagraph(this.currentLabel, paragraph);
+      this.isModified = this.classificationService.hasModifications();
     }
   }
 
   cancelGeneratedLabel(paragraph: ParagraphWithTextAndClassifications, labelToCancel: Classification) {
-    paragraph.userClassifications.push({ ...labelToCancel, cancelled_by_user: true });
-    paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
-    this.isModified = this.hasModifications();
+    this.classificationService.cancelGeneratedLabel(paragraph, labelToCancel);
+    this.isModified = this.classificationService.hasModifications();
   }
 
   removeUserLabel(paragraph: ParagraphWithTextAndClassifications, labelToRemove: Classification) {
-    paragraph.userClassifications = paragraph.userClassifications.filter(
-      (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
-    );
-    this.isModified = this.hasModifications();
+    this.classificationService.removeUserLabel(paragraph, labelToRemove);
+    this.isModified = this.classificationService.hasModifications();
   }
 
   save() {
     this.isSaving = true;
-    this.fieldId
+    forkJoin([this.fieldId.pipe(take(1)), this.paragraphs.pipe(take(1))])
       .pipe(
-        switchMap((field) => this.editResource.saveClassifications(field, this.paragraphs)),
+        switchMap(([field, paragraphs]) => this.editResource.saveClassifications(field, paragraphs)),
         take(1),
       )
       .subscribe({
@@ -155,47 +106,55 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   cancel() {
-    this.paragraphs = this.paragraphsBackup.map((paragraph) => JSON.parse(JSON.stringify(paragraph)));
+    this.classificationService.resetParagraphs();
     this.isModified = false;
   }
 
-  private hasModifications() {
-    return JSON.stringify(this.paragraphsBackup) !== JSON.stringify(this.paragraphs);
+  triggerSearch() {
+    this._triggerSearch(this.searchQuery).subscribe((results) => {
+      this.classificationService.setSearchResults(results);
+      this.updatePagination(results);
+    });
   }
 
-  private getParagraphClassificationMap(resource: Resource, fieldId: FieldId): ParagraphClassificationMap {
-    return (resource.fieldmetadata || []).reduce((annotationMap, userFieldMetadata) => {
-      if (
-        userFieldMetadata.field.field === fieldId.field_id &&
-        userFieldMetadata.field.field_type === fieldId.field_type
-      ) {
-        annotationMap = {
-          ...annotationMap,
-          ...(userFieldMetadata.paragraphs || []).reduce((paragraphAnnotations, annotation) => {
-            paragraphAnnotations[annotation.key] = annotation.classifications;
-            return paragraphAnnotations;
-          }, {} as ParagraphClassificationMap),
-        };
-      }
-      return annotationMap;
-    }, {} as ParagraphClassificationMap);
+  onSearchInputClick($event: MouseEvent) {
+    const target = $event.target as HTMLElement;
+    // Reset search query when clicking on the icon
+    if (this.searchQuery && (target.nodeName === 'svg' || target.parentElement?.nodeName === 'svg')) {
+      $event.stopPropagation();
+      $event.preventDefault();
+      this.searchQuery = '';
+      this.classificationService.setSearchResults(null);
+      this.hasMoreResults = false;
+      this.cdr.markForCheck();
+    }
   }
 
-  /**
-   * Returns labels generated by the backend which weren't cancelled by the user
-   */
-  private getGeneratedClassification(
-    paragraph: Paragraph,
-    userClassifications: UserClassification[],
-  ): Classification[] {
-    return (paragraph.classifications || []).filter(
-      (classification) =>
-        !userClassifications.find(
-          (userClassification) =>
-            userClassification.cancelled_by_user &&
-            userClassification.labelset === classification.labelset &&
-            userClassification.label === classification.label,
-        ),
+  loadMore() {
+    if (this.hasMoreResults && this.searchQuery) {
+      this._triggerSearch(this.searchQuery).subscribe((results) => {
+        this.classificationService.appendSearchResults(results);
+        this.updatePagination(results);
+      });
+    }
+  }
+
+  private updatePagination(results: Search.Results) {
+    if (results.paragraphs) {
+      this.hasMoreResults = results.paragraphs.next_page;
+      this.nextPageNumber = results.paragraphs.page_number + 1;
+    }
+  }
+
+  private _triggerSearch(query: string) {
+    console.log(`_triggerSearch with page number ${this.nextPageNumber}`);
+    return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
+      switchMap(([field, resource]) =>
+        resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
+          fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
+          page_number: this.nextPageNumber,
+        }),
+      ),
     );
   }
 }
