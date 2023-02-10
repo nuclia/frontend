@@ -1,18 +1,10 @@
 @import 'variables';
 
 .upload-files {
-  position: relative;
   width: 50vw;
   min-width: 350px;
   max-width: 722px;
   max-height: 85vh;
-  padding: rhythm(2) rhythm(3);
-}
-
-h1 {
-  margin: 0;
-  font-size: var(--stf-font-size-title);
-  font-weight: var(--stf-font-weight-bold);
 }
 
 .size-warning {

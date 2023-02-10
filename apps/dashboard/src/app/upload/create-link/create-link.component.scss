@@ -1,17 +1,9 @@
 @import 'variables';
 
-.create-link {
-  position: relative;
-  padding: rhythm(2) rhythm(3);
-}
-
-h1 {
-  margin: 0 0 rhythm(3) 0;
-}
-
 .new-link {
   min-width: 350px;
   max-width: 672px;
+  margin-top: rhythm(3);
   width: 50vw;
 }
 

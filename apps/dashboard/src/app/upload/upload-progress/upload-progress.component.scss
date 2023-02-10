@@ -1,48 +1,37 @@
 @import 'variables';
 
 .upload-progress {
-  position: relative;
   width: 700px;
-  padding: rhythm(2) rhythm(3);
 
-  h1 {
-    margin: 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
-  }
-
-  .warning {
-    margin-bottom: rhythm(3);
-    line-height: 1.25;
-    strong {
-      font-weight: var(--stf-font-weight-semibold);
-    }
+  .dialog-description {
+    margin: rhythm(2) 0 rhythm(6);
   }
 
   .upload-list {
     max-height: 50vh;
     overflow: auto;
     @include scrollbar-black();
-    padding: rhythm(2) rhythm(3);
-    background-color: var(--stf-gray-background);
   }
 
-  .upload {
+  .upload-row {
     align-items: center;
+    background: $color-neutral-lightest;
     display: flex;
     height: rhythm(4);
-    padding-bottom: rhythm(1);
+    padding-left: rhythm(3);
+    transition: background $transition-hint;
+
+    &:hover {
+      background: $color-neutral-lighter;
+    }
     > div {
       width: 50%;
     }
   }
 
   .file {
+    align-items: center;
     display: flex;
-    font-size: var(--stf-font-size-ssmall);
-    &.failed {
-      color: var(--stf-gray-lighter-3);
-    }
   }
 
   .file-name {
@@ -52,7 +41,7 @@
 
   .file-size {
     flex: 0 0 auto;
-    padding-right: 30px;
+    padding-left: rhythm(1);
   }
 
   .progress-bar {
@@ -60,9 +49,23 @@
     background-color: $color-light-stronger;
     div {
       height: 100%;
-      background-color: var(--stf-primary);
-      transition: 0.1s width linear;
+      background-color: $color-primary-regular;
+      transition: width $duration-superfast linear;
     }
+  }
+
+  .status .error {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-icon {
+      color: $color-secondary-strong;
+    }
+  }
+
+  .queue-length {
+    font-weight: $font-weight-semi-bold;
   }
 
   .footer {
@@ -70,6 +73,5 @@
     display: flex;
     justify-content: space-between;
     margin-top: rhythm(6);
-    font-weight: var(--stf-font-weight-semibold);
   }
 }

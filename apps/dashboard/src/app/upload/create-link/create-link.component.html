@@ -1,12 +1,14 @@
-<div class="create-link">
-  <h1>{{ 'modal.create_link.title' | translate }}</h1>
-  <pa-button
-    class="close-button"
-    icon="cross"
-    aspect="basic"
-    (click)="close()">
-    {{ 'generic.close' | translate }}
-  </pa-button>
+<div class="upload-dialog create-link">
+  <h1>
+    {{ 'modal.create_link.title' | translate }}
+    <pa-button
+      class="close-upload-button"
+      icon="cross"
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.close' | translate }}
+    </pa-button>
+  </h1>
 
   <form
     class="link-input"

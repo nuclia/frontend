@@ -1,0 +1,17 @@
+@import 'variables';
+
+.upload-dialog {
+  position: relative;
+  padding: 0 rhythm(1);
+
+  h1 {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+
+    .close-upload-button {
+      margin-right: calc(-1 * #{rhythm(2)}); // align icon with content
+    }
+  }
+}
