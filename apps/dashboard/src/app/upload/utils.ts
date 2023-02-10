@@ -1,3 +1,7 @@
+import { Classification } from '@nuclia/core';
+import { Observable } from 'rxjs';
+
+const SLUG_REGEX = /^[a-zA-Z0-9-_]+$/;
 const DELIMITER = ',';
 
 // Simple CSV parser following RFC 4180
@@ -40,3 +44,36 @@ export function parseCSV(content: string) {
   }
   return rows;
 }
+
+export function readCSV(file: File): Observable<string[][]> {
+  return new Observable((observer) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      observer.next(parseCSV(reader.result as string));
+      observer.complete();
+    };
+    reader.onerror = () => {
+      observer.error();
+    };
+    reader.readAsText(file, 'UTF-8');
+  });
+}
+
+// Parse labels like: 'labelset1/label1|labelset2/label2'
+export function parseCSVLabels(labels: string): Classification[] | null {
+  if (labels.length === 0) return [];
+  let isValid = true;
+  const parsedLabels = labels.split('|').map((label) => {
+    const items = label.split('/');
+    isValid &&= items.length === 2 && SLUG_REGEX.test(items[0].trim()) && items[1].trim().length > 0;
+    return { labelset: items[0]?.trim(), label: items[1]?.trim() };
+  });
+  return isValid ? parsedLabels : null;
+}
+
+export const CSVSpecs = [
+  'Use commas as field delimiter',
+  'Fields containing commas or line breaks must be enclosed in double quotes',
+  'Double quotes appearing inside a quoted field must be prefixed with an additional double quote',
+  "Don't include a header line",
+];

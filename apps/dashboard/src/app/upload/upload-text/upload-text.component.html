@@ -20,16 +20,12 @@
 
   <ncom-hint label="CSV format details">
     <ul class="csv-format">
-      <li>Use commas as field delimiter</li>
-      <li>Fields containing commas or line breaks must be enclosed in double quotes</li>
-      <li>Double quotes appearing inside a quoted field must be prefixed with an additional double quote</li>
-      <li>Don't include a header line</li>
+      <li *ngFor="let spec of specs">{{ spec }}</li>
     </ul>
   </ncom-hint>
 
   <div class="select-csv">
     <pa-button
-      type="submit"
       kind="primary"
       (click)="fileUpload.click()">
       {{ 'upload.select_csv' | translate }}
@@ -43,19 +39,19 @@
   </div>
 
   <div
-    class="resource-list"
-    *ngIf="resources.length > 0">
+    class="upload-list"
+    *ngIf="csv.length > 0">
     <div
-      *ngFor="let resource of resources"
-      class="resource">
+      *ngFor="let row of csv"
+      class="upload">
       <span
         class="title"
         paEllipsisTooltip>
-        {{ resource[0] }}
+        {{ row[0] }}
       </span>
-      <code class="field">{{ resource[2] }}</code>
+      <code class="field">{{ row[2] }}</code>
       <span class="field">
-        {{ resource[3].length ? ('upload.labels_number' | translate: { num: resource[3].length }) : '' }}
+        {{ row[3].length ? ('upload.labels_number' | translate: { num: row[3].length }) : '' }}
       </span>
     </div>
   </div>
@@ -74,7 +70,7 @@
       type="submit"
       kind="primary"
       (click)="upload()"
-      [disabled]="resources.length === 0 || isUploading">
+      [disabled]="csv.length === 0 || isUploading">
       {{ 'generic.add' | translate }}
     </pa-button>
   </div>
