@@ -23,7 +23,7 @@
   [class.disabled]="!currentLabel">
   <div
     class="paragraph-container"
-    *ngFor="let paragraph of paragraphs">
+    *ngFor="let paragraph of paragraphs | async">
     <p (click)="addLabelOnParagraph(paragraph)">{{ paragraph.text }}</p>
     <div class="labels-container">
       <pa-chip-closeable
