@@ -7,6 +7,7 @@ import { EditResourceService } from '../../edit-resource.service';
 @Component({
   selector: 'app-resource-file',
   templateUrl: 'file.component.html',
+  styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceFileComponent implements OnInit, OnDestroy {

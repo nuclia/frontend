@@ -11,7 +11,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-paragraph-label-sets',
   templateUrl: './paragraph-classification.component.html',
-  styleUrls: ['./paragraph-classification.component.scss'],
+  styleUrls: ['../../common-page-layout.scss', './paragraph-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParagraphClassificationComponent implements OnInit, OnDestroy {
