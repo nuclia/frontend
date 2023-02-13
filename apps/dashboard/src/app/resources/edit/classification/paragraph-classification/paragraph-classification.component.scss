@@ -6,7 +6,6 @@ $padding-bottom-header: rhythm(3);
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
-  margin-bottom: rhythm(4);
 
   .classification-header {
     align-items: center;
@@ -24,9 +23,10 @@ $padding-bottom-header: rhythm(3);
 .paragraphs-container {
   max-height: calc(
     100vh - var(--app-topbar-height) - #{$height-header + $padding-bottom-header} - #{$padding-top-page-container} - #{$footer-height} -
-      #{rhythm(7)} - #{rhythm(7)}
+      #{rhythm(10)}
   );
   overflow: auto;
+  padding-top: rhythm(4);
 
   &.disabled .paragraph-container p {
     cursor: default;

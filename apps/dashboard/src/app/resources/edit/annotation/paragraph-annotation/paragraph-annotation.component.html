@@ -1,46 +1,61 @@
 <div class="paragraph-annotation">
-  <div
-    #paragraphsContainer
-    class="paragraphs-container">
-    <div
-      class="paragraph-container"
-      *ngFor="let paragraph of paragraphs | async">
-      <p
-        [attr.paragraphId]="paragraph.paragraphId"
-        [class.family-selected]="(selectedFamily | async) !== null"
-        [innerHTML]="paragraph.annotatedText | safe: 'html'"
-        (mouseup)="onMouseUp($event)"></p>
+  <div class="annotation-header">
+    <pa-input
+      [icon]="searchQuery ? 'cross' : 'search'"
+      [class.can-reset]="!!searchQuery"
+      [(ngModel)]="searchQuery"
+      (click)="onSearchInputClick($event)"
+      (keyup.enter)="triggerSearch()">
+      {{ 'resource.field.search' | translate }}
+    </pa-input>
+  </div>
 
-      <div
-        class="annotation-buttons-container"
-        [style]="buttonPosition">
-        <ng-container
-          *ngIf="
-            (selectedFamily | async) !== null &&
-            (userSelection?.paragraphId === paragraph.paragraphId ||
-              selectedEntity?.paragraphId === paragraph.paragraphId)
-          ">
-          <button
-            *ngIf="!!selectedEntity"
-            class="annotation-button remove"
-            (click)="removeEntityFromParagraph(paragraph)">
-            <pa-icon
-              size="small"
-              name="cross"></pa-icon>
-          </button>
-          <button
-            class="annotation-button confirm"
-            *ngIf="
-              userSelection?.paragraphId === paragraph.paragraphId ||
-              selectedEntity?.klass !== (selectedFamily | async)?.id
-            "
-            (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
-            <pa-icon
-              size="small"
-              [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
-          </button>
-        </ng-container>
-      </div>
+  <div class="scrollable-area">
+    <div
+      #paragraphsContainer
+      class="paragraphs-container">
+      <pa-infinite-scroll (reachAnchor)="loadMore()">
+        <div
+          class="paragraph-container"
+          *ngFor="let paragraph of paragraphs | async">
+          <p
+            [attr.paragraphId]="paragraph.paragraphId"
+            [class.family-selected]="(selectedFamily | async) !== null"
+            [innerHTML]="paragraph.annotatedText | safe: 'html'"
+            (mouseup)="onMouseUp($event)"></p>
+
+          <div
+            class="annotation-buttons-container"
+            [style]="buttonPosition">
+            <ng-container
+              *ngIf="
+                (selectedFamily | async) !== null &&
+                (userSelection?.paragraphId === paragraph.paragraphId ||
+                  selectedEntity?.paragraphId === paragraph.paragraphId)
+              ">
+              <button
+                *ngIf="!!selectedEntity"
+                class="annotation-button remove"
+                (click)="removeEntityFromParagraph(paragraph)">
+                <pa-icon
+                  size="small"
+                  name="cross"></pa-icon>
+              </button>
+              <button
+                class="annotation-button confirm"
+                *ngIf="
+                  userSelection?.paragraphId === paragraph.paragraphId ||
+                  selectedEntity?.klass !== (selectedFamily | async)?.id
+                "
+                (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
+                <pa-icon
+                  size="small"
+                  [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
+              </button>
+            </ng-container>
+          </div>
+        </div>
+      </pa-infinite-scroll>
     </div>
   </div>
 

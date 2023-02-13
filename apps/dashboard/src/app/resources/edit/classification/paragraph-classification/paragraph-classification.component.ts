@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
-import { Classification, FieldId, LabelSetKind, LabelSets, longToShortFieldType, Resource, Search } from '@nuclia/core';
+import { Classification, FieldId, LabelSetKind, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../../../services/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
 import { ParagraphClassificationService } from './paragraph-classification.service';
@@ -147,13 +147,9 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   private _triggerSearch(query: string) {
-    console.log(`_triggerSearch with page number ${this.nextPageNumber}`);
     return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
       switchMap(([field, resource]) =>
-        resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
-          fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
-          page_number: this.nextPageNumber,
-        }),
+        this.classificationService.searchInField(query, resource, field, this.nextPageNumber),
       ),
     );
   }

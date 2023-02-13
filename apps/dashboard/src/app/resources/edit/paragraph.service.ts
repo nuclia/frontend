@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { ParagraphWithText } from './edit-resource.helpers';
-import { Search } from '@nuclia/core';
+import { FieldId, longToShortFieldType, Resource, Search } from '@nuclia/core';
 import { cloneDeep } from '@flaps/common';
 
 @Injectable({
@@ -60,6 +60,13 @@ export class ParagraphService {
         },
       });
     }
+  }
+
+  searchInField(query: string, resource: Resource, field: FieldId, pageNumber = 0): Observable<Search.Results> {
+    return resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
+      fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
+      page_number: pageNumber,
+    });
   }
 
   protected _initParagraphs(paragraphs: ParagraphWithText[]) {

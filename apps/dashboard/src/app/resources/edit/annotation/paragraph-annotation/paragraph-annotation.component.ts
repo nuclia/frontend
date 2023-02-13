@@ -10,7 +10,7 @@ import {
 import { EditResourceService } from '../../edit-resource.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
-import { FieldId, Resource } from '@nuclia/core';
+import { FieldId, Resource, Search } from '@nuclia/core';
 import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
 import { takeUntil } from 'rxjs/operators';
 import { SisToastService } from '@nuclia/sistema';
@@ -57,6 +57,10 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   selectedEntity?: EntityAnnotationWithPid;
   userSelection?: EntityAnnotationWithPid;
   buttonPosition?: { top: string; left: string };
+
+  searchQuery = '';
+  hasMoreResults = false;
+  nextPageNumber = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -112,6 +116,35 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   cancel() {
     this.annotationService.resetParagraphs();
     this.isModified = false;
+  }
+
+  triggerSearch() {
+    this._triggerSearch(this.searchQuery).subscribe((results) => {
+      this.annotationService.setSearchResults(results);
+      this.updatePagination(results);
+    });
+  }
+
+  onSearchInputClick($event: MouseEvent) {
+    const target = $event.target as HTMLElement;
+    // Reset search query when clicking on the icon
+    if (this.searchQuery && (target.nodeName === 'svg' || target.parentElement?.nodeName === 'svg')) {
+      $event.stopPropagation();
+      $event.preventDefault();
+      this.searchQuery = '';
+      this.annotationService.setSearchResults(null);
+      this.hasMoreResults = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  loadMore() {
+    if (this.hasMoreResults && this.searchQuery) {
+      this._triggerSearch(this.searchQuery).subscribe((results) => {
+        this.annotationService.appendSearchResults(results);
+        this.updatePagination(results);
+      });
+    }
   }
 
   selectFamily(family: EntityGroup) {
@@ -274,5 +307,20 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
       top: `${markRect.bottom - paragraphRect.bottom}px`,
     };
     this.cdr.markForCheck();
+  }
+
+  private updatePagination(results: Search.Results) {
+    if (results.paragraphs) {
+      this.hasMoreResults = results.paragraphs.next_page;
+      this.nextPageNumber = results.paragraphs.page_number + 1;
+    }
+  }
+
+  private _triggerSearch(query: string) {
+    return forkJoin([this.fieldId.pipe(take(1)), this.resource.pipe(take(1))]).pipe(
+      switchMap(([field, resource]) =>
+        this.annotationService.searchInField(query, resource, field, this.nextPageNumber),
+      ),
+    );
   }
 }

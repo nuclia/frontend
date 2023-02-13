@@ -62,14 +62,9 @@
       flex: 1 0 auto;
       max-width: rhythm(90);
 
-      &.has-right-panel {
-        max-width: rhythm(64);
-      }
-
       footer {
         box-shadow: $footer-separator;
         display: flex;
-        margin-top: $margin-top-footer;
         padding: $padding-vertical-footer 0;
 
         &.form-buttons,
