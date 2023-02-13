@@ -6,9 +6,16 @@ import { SisToastService } from '@nuclia/sistema';
 import { forkJoin, switchMap } from 'rxjs';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
-import { CSVSpecs, parseCSVLabels, readCSV } from '../utils';
+import { parseCsvLabels } from '../utils';
 
 const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
+
+interface Row {
+  title: string;
+  body: string;
+  format: TextFieldFormat;
+  labels: Classification[];
+}
 
 @Component({
   selector: 'app-upload-text',
@@ -18,8 +25,7 @@ const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
 })
 export class UploadTextComponent {
   isUploading = false;
-  csv: [string, string, string, Classification[]][] = [];
-  specs = CSVSpecs;
+  csv: Row[] = [];
 
   constructor(
     private dialogRef: MatDialogRef<UploadTextComponent>,
@@ -34,18 +40,18 @@ export class UploadTextComponent {
     this.dialogRef.close({ cancel: true });
   }
 
-  readCSV(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      readCSV(file).subscribe((csv) => {
-        const isValid = csv.every((row) => row.length === 4 && FORMATS.includes(row[2]) && !!parseCSVLabels(row[3]));
-        if (isValid) {
-          this.csv = csv.map((row) => [row[0], row[1], row[2], parseCSVLabels(row[3])!]);
-          markForCheck(this.cdr);
-        } else {
-          this.toaster.error('upload.invalid_csv');
-        }
-      });
+  checkCsv(data: string[][]) {
+    const csv = data.map((row) => ({
+      title: row[0],
+      body: row[1],
+      format: row[2] as TextFieldFormat,
+      labels: parseCsvLabels(row[3]),
+    }));
+    if (csv.every((row) => FORMATS.includes(row.format) && !!row.labels)) {
+      this.csv = csv as Row[];
+      markForCheck(this.cdr);
+    } else {
+      this.toaster.error('upload.invalid_csv');
     }
   }
 
@@ -53,15 +59,13 @@ export class UploadTextComponent {
     this.tracking.logEvent('upload_text_from_csv');
     this.isUploading = true;
     markForCheck(this.cdr);
-    const allLabels = this.csv.reduce((acc, current) => acc.concat(current[3]), [] as Classification[]);
+    const allLabels = this.csv.reduce((acc, current) => acc.concat(current.labels), [] as Classification[]);
     this.uploadService
       .createMissingLabels(allLabels)
       .pipe(
         switchMap(() =>
           forkJoin(
-            this.csv.map((item) =>
-              this.uploadService.uploadTextResource(item[0], item[1], item[2] as TextFieldFormat, item[3]),
-            ),
+            this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
           ),
         ),
       )

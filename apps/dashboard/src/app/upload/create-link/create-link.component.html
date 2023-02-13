@@ -30,39 +30,17 @@
         {{ 'modal.create_link.textarea' | translate }}
       </pa-textarea>
       <div *ngIf="linkForm.value.type === 'csv'">
-        <p class="body-s">
-          <span [innerHtml]="'upload.csv_links_description' | translate"></span>
-          <br />
-          <span [innerHtml]="'upload.csv_labels' | translate"></span>
-        </p>
-        <ncom-hint label="CSV format details">
-          <ul>
-            <li *ngFor="let spec of specs">{{ spec }}</li>
-          </ul>
-        </ncom-hint>
-        <div class="select-csv">
-          <pa-button
-            kind="primary"
-            (click)="fileUpload.click()">
-            {{ 'upload.select_csv' | translate }}
-          </pa-button>
-          <input
-            (change)="readCSV($event)"
-            #fileUpload
-            type="file"
-            accept="text/csv"
-            hidden />
-        </div>
+        <app-csv-select
+          [help]="['upload.csv_links_description', 'upload.csv_labels']"
+          [fields]="2"
+          (select)="checkCsv($event)"></app-csv-select>
         <div
           *ngIf="csv.length > 0"
-          class="upload-list">
+          class="uploads">
           <div
             *ngFor="let row of csv"
             class="upload">
-            <span paEllipsisTooltip>{{ row[0] }}</span>
-            <span class="field">
-              {{ row[1].length ? ('upload.labels_number' | translate: { num: row[1].length }) : '' }}
-            </span>
+            <span paEllipsisTooltip>{{ row.link }}</span>
           </div>
         </div>
       </div>

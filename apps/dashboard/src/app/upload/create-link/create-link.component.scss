@@ -34,30 +34,20 @@ pa-radio {
   margin-right: rythm(1);
 }
 
-.select-csv {
-  margin-bottom: rhythm(2);
-}
-
-.upload-list {
+.uploads {
   max-height: rhythm(14);
   overflow-y: auto;
   margin-bottom: rhythm(4);
-}
 
-.upload {
-  align-items: center;
-  border-bottom: 1px solid $color-neutral-lighter;
-  display: flex;
-  gap: rhythm(3);
-  height: rhythm(4);
-  justify-content: space-between;
+  .upload {
+    align-items: center;
+    border-bottom: 1px solid $color-neutral-lighter;
+    display: flex;
+    height: rhythm(4);
 
-  .field {
-    width: rhythm(12);
-  }
-
-  &:first-child {
-    border-top: 1px solid $color-neutral-lighter;
+    &:first-child {
+      border-top: 1px solid $color-neutral-lighter;
+    }
   }
 }
 

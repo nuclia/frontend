@@ -9,6 +9,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
+import { CsvSelectComponent } from './csv-select/csv-select.component';
 import { UploadFilesComponent } from './upload-files/upload-files.component';
 import { UploadFilesDialogComponent } from './upload-files/upload-files-dialog.component';
 import { UploadProgressComponent } from './upload-progress/upload-progress.component';
@@ -27,6 +28,7 @@ import { SisProgressModule } from '@nuclia/sistema';
 
 const Components = [
   CreateLinkComponent,
+  CsvSelectComponent,
   UploadFilesComponent,
   UploadFilesDialogComponent,
   UploadProgressComponent,

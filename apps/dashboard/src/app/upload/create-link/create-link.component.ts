@@ -7,7 +7,12 @@ import { Observable, of, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
-import { CSVSpecs, parseCSVLabels, readCSV } from '../utils';
+import { parseCsvLabels } from '../utils';
+
+interface Row {
+  link: string;
+  labels: Classification[];
+}
 
 @Component({
   selector: 'app-create-link',
@@ -29,8 +34,7 @@ export class CreateLinkComponent {
   };
   pending = false;
   selectedLabels: Classification[] = [];
-  csv: [string, Classification[]][] = [];
-  specs = CSVSpecs;
+  csv: Row[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CreateLinkComponent>,
@@ -74,13 +78,13 @@ export class CreateLinkComponent {
         );
       } else {
         this.tracking.logEvent('link_upload_from_csv');
-        const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr[1]), [] as Classification[]);
+        const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
         obs = this.uploadService.createMissingLabels(allLabels).pipe(
           switchMap(() => this.sdk.currentKb.pipe(take(1))),
           switchMap((kb) =>
             this.csv.reduce(
               (acc, curr) =>
-                acc.pipe(switchMap(() => kb.createLinkResource({ uri: curr[0] }, { classifications: curr[1] }))),
+                acc.pipe(switchMap(() => kb.createLinkResource({ uri: curr.link }, { classifications: curr.labels }))),
               of({ uuid: '' }),
             ),
           ),
@@ -100,18 +104,13 @@ export class CreateLinkComponent {
     }
   }
 
-  readCSV(event: Event) {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (file) {
-      readCSV(file).subscribe((csv) => {
-        const isValid = csv.every((row) => row.length === 2 && !!parseCSVLabels(row[1]));
-        if (isValid) {
-          this.csv = csv.map((row) => [row[0], parseCSVLabels(row[1])!]);
-          this.cdr?.markForCheck();
-        } else {
-          this.toaster.error('upload.invalid_csv');
-        }
-      });
+  checkCsv(data: string[][]) {
+    const csv = data.map((row) => ({ link: row[0], labels: parseCsvLabels(row[1]) }));
+    if (csv.every((row) => !!row.labels)) {
+      this.csv = csv as Row[];
+      this.cdr?.markForCheck();
+    } else {
+      this.toaster.error('upload.invalid_csv');
     }
   }
 
