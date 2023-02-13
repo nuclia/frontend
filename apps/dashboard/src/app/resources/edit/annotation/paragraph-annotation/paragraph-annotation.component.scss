@@ -4,12 +4,24 @@
 .paragraph-annotation {
   display: flex;
 }
-
-.paragraphs-container {
+.annotation-header {
+  position: absolute;
+  background: white;
+  z-index: 1;
+}
+$annotation-header-height: rhythm(9);
+.scrollable-area {
   max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{$annotation-header-height}
   );
   overflow: auto;
+  margin-top: $annotation-header-height;
+  position: relative;
+  width: 100%;
+}
+
+.paragraphs-container {
+  max-width: rhythm(64);
 
   .paragraph-container {
     position: relative;

@@ -1,62 +1,29 @@
 import { Injectable } from '@angular/core';
 import { getParagraphs, ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { EditResourceService } from '../../edit-resource.service';
-import { Classification, FieldId, Paragraph, Resource, Search, UserClassification } from '@nuclia/core';
-import { cloneDeep } from '@flaps/common';
+import { Classification, FieldId, Paragraph, Resource, UserClassification } from '@nuclia/core';
+import { ParagraphService } from '../../paragraph.service';
+import { Observable } from 'rxjs';
 
 type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] };
 
 @Injectable({
   providedIn: 'root',
 })
-export class ParagraphClassificationService {
-  private _paragraphsBackup: BehaviorSubject<ParagraphWithTextAndClassifications[]> = new BehaviorSubject<
-    ParagraphWithTextAndClassifications[]
-  >([]);
-  private _allParagraphs: BehaviorSubject<ParagraphWithTextAndClassifications[]> = new BehaviorSubject<
-    ParagraphWithTextAndClassifications[]
-  >([]);
-  private _searchResults: BehaviorSubject<Search.Results | null> = new BehaviorSubject<Search.Results | null>(null);
+export class ParagraphClassificationService extends ParagraphService {
   private _paragraphClassificationMap: ParagraphClassificationMap = {};
 
-  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = combineLatest([
-    this._allParagraphs.asObservable(),
-    this._searchResults.asObservable(),
-  ]).pipe(
-    map(([allParagraphs, searchResults]) => {
-      if (!searchResults || !searchResults.paragraphs?.results) {
-        return allParagraphs;
-      }
-      return allParagraphs.filter(
-        (paragraph) =>
-          !!searchResults.paragraphs?.results.find(
-            (res) => paragraph.start === res.position?.start && paragraph.end === res.position?.end,
-          ),
-      );
-    }),
-  );
+  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this._paragraphList as Observable<
+    ParagraphWithTextAndClassifications[]
+  >;
 
-  constructor(private editResource: EditResourceService) {}
+  constructor(private editResource: EditResourceService) {
+    super();
+  }
 
   initParagraphs(fieldId: FieldId, resource: Resource) {
     const paragraphs: ParagraphWithTextAndClassifications[] = this.getEnhancedParagraphs(fieldId, resource);
-    this._paragraphsBackup.next(paragraphs);
-    this._allParagraphs.next(cloneDeep(paragraphs));
-  }
-
-  resetParagraphs() {
-    this._allParagraphs.next(cloneDeep(this._paragraphsBackup.value));
-  }
-
-  cleanup() {
-    this._paragraphsBackup.next([]);
-    this._allParagraphs.next([]);
-    this._searchResults.next(null);
-  }
-
-  hasModifications(): boolean {
-    return JSON.stringify(this._paragraphsBackup.value) !== JSON.stringify(this._allParagraphs.value);
+    this._initParagraphs(paragraphs);
   }
 
   /**
@@ -108,26 +75,6 @@ export class ParagraphClassificationService {
     paragraph.userClassifications = paragraph.userClassifications.filter(
       (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
     );
-  }
-
-  setSearchResults(results: Search.Results | null) {
-    this._searchResults.next(results);
-  }
-
-  appendSearchResults(results: Search.Results) {
-    const currentResults: Search.Results | null = this._searchResults.value;
-    if (!currentResults || !currentResults.paragraphs) {
-      this._searchResults.next(results);
-    } else {
-      const paragraphs = (currentResults.paragraphs.results || []).concat(results.paragraphs?.results || []);
-      this._searchResults.next({
-        ...currentResults,
-        paragraphs: {
-          ...currentResults.paragraphs,
-          results: paragraphs,
-        },
-      });
-    }
   }
 
   private getEnhancedParagraphs(fieldId: FieldId, resource: Resource): ParagraphWithTextAndClassifications[] {
