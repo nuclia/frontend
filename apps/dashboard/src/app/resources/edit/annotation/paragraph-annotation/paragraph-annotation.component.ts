@@ -9,22 +9,12 @@ import {
 } from '@angular/core';
 import { EditResourceService } from '../../edit-resource.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, filter, map, Observable, Subject, switchMap } from 'rxjs';
-import { FieldId, Paragraph, Resource } from '@nuclia/core';
-import {
-  EntityAnnotation,
-  EntityGroup,
-  getAllAnnotations,
-  getAnnotatedText,
-  getHighlightedAnnotations,
-  getParagraphAnnotations,
-  getParagraphs,
-  isSameAnnotation,
-  ParagraphWithTextAndAnnotations,
-  sortByPosition,
-} from '../../edit-resource.helpers';
+import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
+import { FieldId, Resource } from '@nuclia/core';
+import { EntityGroup, ParagraphWithTextAndAnnotations } from '../../edit-resource.helpers';
 import { takeUntil } from 'rxjs/operators';
 import { SisToastService } from '@nuclia/sistema';
+import { EntityAnnotationWithPid, ParagraphAnnotationService } from './paragraph-annotation.service';
 
 @Component({
   selector: 'app-paragraph-annotation',
@@ -53,18 +43,25 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   isModified = false;
   isSaving = false;
 
-  private paragraphsBackup: ParagraphWithTextAndAnnotations[] = [];
-  paragraphs: ParagraphWithTextAndAnnotations[] = [];
+  paragraphs: Observable<ParagraphWithTextAndAnnotations[]> = this.annotationService.paragraphs.pipe(
+    tap(() =>
+      setTimeout(() => {
+        this.cleanUpMarkListener();
+        this.setupMarkListener();
+      }),
+    ),
+  );
 
   entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities();
-  selectedFamily: BehaviorSubject<EntityGroup | null> = new BehaviorSubject<EntityGroup | null>(null);
-  selectedEntity?: EntityAnnotation & { paragraphId: string };
-  userSelection?: EntityAnnotation & { paragraphId: string };
+  selectedFamily: Observable<EntityGroup | null> = this.annotationService.selectedFamily;
+  selectedEntity?: EntityAnnotationWithPid;
+  userSelection?: EntityAnnotationWithPid;
   buttonPosition?: { top: string; left: string };
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private annotationService: ParagraphAnnotationService,
     private editResource: EditResourceService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
@@ -84,144 +81,79 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.editResource.setCurrentView('annotation');
 
-    // Load paragraphs
     combineLatest([this.fieldId, this.resource, this.entityFamilies])
-      .pipe(
-        map(([fieldId, resource, families]) => {
-          const allAnnotations = getAllAnnotations(resource, fieldId, families);
-          const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
-          return paragraphs.map((paragraph) => {
-            const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
-            const allParagraphAnnotations = getParagraphAnnotations(allAnnotations, paragraph);
-            const highlightedAnnotation = getHighlightedAnnotations(allParagraphAnnotations);
-            const paragraphText = resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph);
-            const enhancedParagraph: ParagraphWithTextAndAnnotations = {
-              ...paragraph,
-              paragraphId,
-              text: paragraphText,
-              annotatedText: getAnnotatedText(paragraphId, paragraphText, highlightedAnnotation),
-              annotations: allParagraphAnnotations,
-            };
-            return enhancedParagraph;
-          });
-        }),
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe((paragraphs) => {
-        this.paragraphsBackup = paragraphs.map((paragraph) => JSON.parse(JSON.stringify(paragraph)));
-        this.paragraphs = this.paragraphsBackup.map((paragraph) => JSON.parse(JSON.stringify(paragraph)));
-        this.cdr.markForCheck();
-        setTimeout(() => {
-          this.setupMarkListener();
-        });
-      });
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe(([fieldId, resource, families]) => this.annotationService.initParagraphs(fieldId, resource, families));
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+    this.annotationService.cleanup();
     this.cleanUpMarkListener();
   }
 
   save() {
     this.isSaving = true;
     this.selectedEntity = undefined;
-    this.selectedFamily.next(null);
-    this.fieldId.pipe(switchMap((field) => this.editResource.saveAnnotations(field, this.paragraphs))).subscribe({
-      next: () => {
-        this.isModified = false;
-        this.isSaving = false;
-        this.cdr.markForCheck();
-      },
-      error: () => (this.isSaving = false),
-    });
+    this.annotationService.resetFamily();
+    forkJoin([this.fieldId.pipe(take(1)), this.paragraphs.pipe(take(1))])
+      .pipe(switchMap(([field, paragraphs]) => this.editResource.saveAnnotations(field, paragraphs)))
+      .subscribe({
+        next: () => {
+          this.isModified = false;
+          this.isSaving = false;
+          this.cdr.markForCheck();
+        },
+        error: () => (this.isSaving = false),
+      });
   }
 
   cancel() {
-    this.paragraphs = this.paragraphsBackup.map((paragraph) => JSON.parse(JSON.stringify(paragraph)));
-    const selectedFamily = this.selectedFamily.value;
-    if (selectedFamily) {
-      this.updateParagraphsWithAnnotations(selectedFamily);
-    }
+    this.annotationService.resetParagraphs();
     this.isModified = false;
   }
 
   selectFamily(family: EntityGroup) {
-    const selectedFamily = this.selectedFamily.value?.id === family.id ? null : family;
-    this.selectedFamily.next(selectedFamily);
-    this.updateParagraphsWithAnnotations(selectedFamily);
+    this.annotationService.selectFamily(family);
   }
 
   removeEntityFromParagraph(paragraph: ParagraphWithTextAndAnnotations) {
-    if (!this.selectedEntity || !this.selectedFamily.value) {
+    if (!this.selectedEntity || !this.annotationService.selectedFamilyValue) {
       return;
     }
-    const selection = this.selectedEntity;
-    if (this.selectedEntity.immutable) {
-      paragraph.annotations.push({
-        ...this.selectedEntity,
-        cancelled_by_user: true,
-        immutable: false,
-      });
-    } else {
-      const annotationIndex = paragraph.annotations.findIndex((annotation) => isSameAnnotation(annotation, selection));
-      if (annotationIndex > -1) {
-        paragraph.annotations.splice(annotationIndex, 1);
-      }
-    }
-    this.updateParagraphsWithAnnotations(this.selectedFamily.value);
+    this.annotationService.removeEntityFromParagraph(paragraph, this.selectedEntity);
     // Unselect the deleted entity
     this.selectedEntity = undefined;
-    this.isModified = this.hasModifications();
+    this.isModified = this.annotationService.hasModifications();
   }
 
   addEntity(paragraph: ParagraphWithTextAndAnnotations) {
     if (!this.userSelection) {
       return;
     }
-    paragraph.annotations.push(this.userSelection);
-    paragraph.annotations.sort(sortByPosition);
-    this.updateParagraphsWithAnnotations(this.selectedFamily.value);
-    this.isModified = this.hasModifications();
+    this.annotationService.addEntity(paragraph, this.userSelection);
+    this.isModified = this.annotationService.hasModifications();
     this.cleanupSelection();
   }
 
   updateEntity(paragraph: ParagraphWithTextAndAnnotations) {
-    if (!this.selectedEntity || !this.selectedFamily.value) {
+    if (!this.selectedEntity || !this.annotationService.selectedFamilyValue) {
       return;
     }
-    const family: EntityGroup = this.selectedFamily.value;
-    const selection = this.selectedEntity;
-    const newEntity = {
-      start: this.selectedEntity.start,
-      end: this.selectedEntity.end,
-      klass: family.id,
-      token: this.selectedEntity.token,
-      family: family.title,
-    };
-    if (this.selectedEntity.immutable) {
-      paragraph.annotations.push(
-        {
-          ...this.selectedEntity,
-          immutable: false,
-          cancelled_by_user: true,
-        },
-        newEntity,
-      );
-    } else {
-      const annotationIndex = paragraph.annotations.findIndex((annotation) => isSameAnnotation(annotation, selection));
-      if (annotationIndex > -1) {
-        paragraph.annotations[annotationIndex] = newEntity;
-      }
-    }
-    paragraph.annotations.sort(sortByPosition);
-    this.updateParagraphsWithAnnotations(this.selectedFamily.value);
-    this.isModified = this.hasModifications();
+    this.annotationService.updateEntity(paragraph, this.selectedEntity);
+    this.isModified = this.annotationService.hasModifications();
   }
 
+  /**
+   * On mouse up on a paragraph, we check if there is a text selection:
+   * - if so, we set up the entity annotation corresponding to user selection, and we position the button accordingly
+   * - if not, we clean up previous selection if any
+   * @param $event
+   */
   onMouseUp($event: MouseEvent) {
     const paragraph = $event.target as HTMLElement;
-    const family = this.selectedFamily.value;
+    const family = this.annotationService.selectedFamilyValue;
     const selection = window.getSelection();
     if (paragraph && family && selection && !selection.isCollapsed) {
       const paragraphRect = paragraph.getBoundingClientRect();
@@ -256,6 +188,13 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
     }
   }
 
+  /**
+   * Returns the position of the selection in the paragraph
+   * @param paragraphText
+   * @param selectionText
+   * @param range
+   * @private
+   */
   private getExactPositionOfSelection(
     paragraphText: string,
     selectionText: string,
@@ -311,7 +250,7 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   }
 
   private clickOnAnnotation(event: Event) {
-    if (!this.selectedFamily.value) {
+    if (!this.annotationService.selectedFamilyValue) {
       this.toaster.info('resource.field-annotation.select-family-before');
       return;
     }
@@ -329,29 +268,11 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
     const paragraphRect = paragraph.getBoundingClientRect();
     const markRect = mark.getBoundingClientRect();
     const buttonBlockWidth =
-      !this.userSelection && this.selectedEntity.klass !== this.selectedFamily.value?.id ? 32 : 16;
+      !this.userSelection && this.selectedEntity.klass !== this.annotationService.selectedFamilyValue?.id ? 32 : 16;
     this.buttonPosition = {
       left: markRect.height < 16 ? `${markRect.right - paragraphRect.left - buttonBlockWidth}px` : '0',
       top: `${markRect.bottom - paragraphRect.bottom}px`,
     };
     this.cdr.markForCheck();
-  }
-
-  private updateParagraphsWithAnnotations(selectedFamily: null | EntityGroup) {
-    this.paragraphs = this.paragraphs.map((paragraph) => {
-      const highlightedAnnotations = getHighlightedAnnotations(paragraph.annotations);
-      return {
-        ...paragraph,
-        annotatedText: getAnnotatedText(paragraph.paragraphId, paragraph.text, highlightedAnnotations, selectedFamily),
-      };
-    });
-    setTimeout(() => {
-      this.cleanUpMarkListener();
-      this.setupMarkListener();
-    });
-  }
-
-  private hasModifications() {
-    return JSON.stringify(this.paragraphsBackup) !== JSON.stringify(this.paragraphs);
   }
 }

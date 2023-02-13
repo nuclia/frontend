@@ -4,10 +4,10 @@
     class="paragraphs-container">
     <div
       class="paragraph-container"
-      *ngFor="let paragraph of paragraphs">
+      *ngFor="let paragraph of paragraphs | async">
       <p
         [attr.paragraphId]="paragraph.paragraphId"
-        [class.family-selected]="!!selectedFamily.value"
+        [class.family-selected]="(selectedFamily | async) !== null"
         [innerHTML]="paragraph.annotatedText | safe: 'html'"
         (mouseup)="onMouseUp($event)"></p>
 
@@ -16,7 +16,7 @@
         [style]="buttonPosition">
         <ng-container
           *ngIf="
-            !!selectedFamily.value &&
+            (selectedFamily | async) !== null &&
             (userSelection?.paragraphId === paragraph.paragraphId ||
               selectedEntity?.paragraphId === paragraph.paragraphId)
           ">
@@ -31,7 +31,8 @@
           <button
             class="annotation-button confirm"
             *ngIf="
-              userSelection?.paragraphId === paragraph.paragraphId || selectedEntity?.klass !== selectedFamily.value.id
+              userSelection?.paragraphId === paragraph.paragraphId ||
+              selectedEntity?.klass !== (selectedFamily | async)?.id
             "
             (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
             <pa-icon
@@ -56,7 +57,7 @@
     <pa-expander
       *ngFor="let family of entityFamilies | async"
       emitOnly
-      [expanded]="selectedFamily.value?.id === family.id"
+      [expanded]="(selectedFamily | async)?.id === family.id"
       (toggleExpander)="selectFamily(family)">
       <pa-expander-header>
         <div
