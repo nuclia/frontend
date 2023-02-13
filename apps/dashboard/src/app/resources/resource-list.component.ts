@@ -15,7 +15,6 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  distinctUntilKeyChanged,
   EMPTY,
   expand,
   forkJoin,
@@ -43,14 +42,13 @@ import {
   ResourceStatus,
   resourceToAlgoliaFormat,
   Search,
-  SortOrder,
   SearchOptions,
+  SortOrder,
 } from '@nuclia/core';
 import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ResourceViewerService } from './resource-viewer.service';
-import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
@@ -197,30 +195,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     map((labelSets) => labelSets as LabelSets),
   );
   currentLabelList: Classification[] = [];
-
-  viewerWidget = this.sdk.currentKb.pipe(
-    distinctUntilKeyChanged('id'),
-    tap(() => {
-      document.getElementById('viewer-widget')?.remove();
-    }),
-    map((kb) => {
-      const features = DEFAULT_FEATURES_LIST.split(',')
-        .filter((feature) => feature !== 'filter')
-        .join(',');
-      return this.sanitized.bypassSecurityTrustHtml(`<nuclia-viewer id="viewer-widget"
-        knowledgebox="${kb.id}"
-        zone="${this.sdk.nuclia.options.zone}"
-        client="dashboard"
-        cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
-        backend="${this.backendConfig.getAPIURL()}"
-        state="${kb.state || ''}"
-        kbslug="${kb.slug || ''}"
-        account="${kb.account || ''}"
-        features="${features}"
-        lang="${this.translate.currentLang}"
-      ></nuclia-viewer>`);
-    }),
-  );
 
   searchForm = new FormGroup({
     searchIn: new FormControl<'title' | 'resource'>('title'),
@@ -467,10 +441,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  edit(uid: string) {
-    this.router.navigate([`./${uid}/edit`], { relativeTo: this.route });
-  }
-
   get filters(): ListFilters {
     return {
       ...this.route.snapshot.queryParams,
@@ -494,7 +464,11 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   viewResource(resourceId: string) {
-    (document.getElementById('viewer-widget') as unknown as any)?.displayResource(resourceId);
+    this.router.navigate([`./${resourceId}/edit/preview`], { relativeTo: this.route });
+  }
+
+  edit(resourceId: string) {
+    this.router.navigate([`./${resourceId}/edit`], { relativeTo: this.route });
   }
 
   isFullPageSelected() {

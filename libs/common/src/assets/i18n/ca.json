@@ -478,6 +478,7 @@
 	"resource.field.search": "Cerca",
 	"resource.field.update-successful": "El camp s'ha actualitzat correctament",
 	"resource.pending_resources_popover": "Expedients pendents de processar",
+	"resource.preview.open-viewer": "Visor obert",
 	"resource.processed_resources": "Recursos processats",
 	"resource.profile": "Perfil",
 	"resource.reindex-all-info": "S'ha iniciat el reprocessament de tots els recursos per error. Això pot trigar una mica.",

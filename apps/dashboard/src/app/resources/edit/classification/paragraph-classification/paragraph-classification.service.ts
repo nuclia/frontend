@@ -13,7 +13,7 @@ type ParagraphClassificationMap = { [paragraphId: string]: UserClassification[] 
 export class ParagraphClassificationService extends ParagraphService {
   private _paragraphClassificationMap: ParagraphClassificationMap = {};
 
-  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this._paragraphList as Observable<
+  paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.paragraphList as Observable<
     ParagraphWithTextAndClassifications[]
   >;
 
@@ -23,7 +23,7 @@ export class ParagraphClassificationService extends ParagraphService {
 
   initParagraphs(fieldId: FieldId, resource: Resource) {
     const paragraphs: ParagraphWithTextAndClassifications[] = this.getEnhancedParagraphs(fieldId, resource);
-    this._initParagraphs(paragraphs);
+    this.setupParagraphs(paragraphs);
   }
 
   /**

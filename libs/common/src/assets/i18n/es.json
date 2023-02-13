@@ -478,6 +478,7 @@
 	"resource.field.search": "Buscar",
 	"resource.field.update-successful": "Campo actualizado con éxito",
 	"resource.pending_resources_popover": "Expedientes pendientes de tramitar",
+	"resource.preview.open-viewer": "Visor abierto",
 	"resource.processed_resources": "Recursos procesados",
 	"resource.profile": "Perfil",
 	"resource.reindex-all-info": "Se inició el reprocesamiento de todos los recursos por error. Esto puede tomar algo de tiempo.",

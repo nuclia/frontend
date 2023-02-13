@@ -523,6 +523,7 @@
 	"resource.field.search": "Search",
 	"resource.field.update-successful": "Field updated successfully",
 	"resource.pending_resources_popover": "Files pending to be processed",
+	"resource.preview.open-viewer": "Open viewer",
 	"resource.processed_resources": "Processed resources",
 	"resource.profile": "Profile",
 	"resource.reindex-all-info": "Reprocessing all resources in error started. This may take some time.",

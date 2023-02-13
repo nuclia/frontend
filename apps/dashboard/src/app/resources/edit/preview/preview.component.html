@@ -1,0 +1,11 @@
+<div class="scrollable-area">
+  <div class="main-container">
+    <div
+      class="paragraph-container"
+      *ngFor="let paragraph of paragraphs | async">
+      <p>{{ paragraph.text }}</p>
+    </div>
+  </div>
+
+  <div class="viewer-button-container"></div>
+</div>

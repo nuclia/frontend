@@ -24,7 +24,7 @@ export interface EntityAnnotationWithPid extends EntityAnnotation {
   providedIn: 'root',
 })
 export class ParagraphAnnotationService extends ParagraphService {
-  paragraphs: Observable<ParagraphWithTextAndAnnotations[]> = this._paragraphList as Observable<
+  paragraphs: Observable<ParagraphWithTextAndAnnotations[]> = this.paragraphList as Observable<
     ParagraphWithTextAndAnnotations[]
   >;
 
@@ -41,7 +41,7 @@ export class ParagraphAnnotationService extends ParagraphService {
 
   initParagraphs(fieldId: FieldId, resource: Resource, families: EntityGroup[]) {
     const paragraphs: ParagraphWithTextAndAnnotations[] = this.getEnhancedParagraphs(fieldId, resource, families);
-    this._initParagraphs(paragraphs);
+    this.setupParagraphs(paragraphs);
   }
 
   resetParagraphs() {

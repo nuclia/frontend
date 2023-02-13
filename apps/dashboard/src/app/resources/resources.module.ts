@@ -55,6 +55,8 @@ import { DropzoneComponent } from './dropzone/dropzone.component';
 import { ParagraphClassificationComponent } from './edit/classification/paragraph-classification/paragraph-classification.component';
 import { DatasetSelectorComponent } from './sample-dataset/dataset-selector/dataset-selector.component';
 import { ParagraphAnnotationComponent } from './edit/annotation/paragraph-annotation/paragraph-annotation.component';
+import { PreviewComponent } from './edit/preview/preview.component';
+import { SelectFirstFieldDirective } from './edit/select-first-field/select-first-field.directive';
 
 const Components = [
   ResourceListComponent,
@@ -134,6 +136,14 @@ const ROUTES: Routes = [
             path: 'file/:fieldId',
             component: ResourceFileComponent,
           },
+          {
+            path: 'preview',
+            component: PreviewComponent,
+          },
+          {
+            path: 'preview/:fieldType/:fieldId',
+            component: PreviewComponent,
+          },
         ],
       },
     ],
@@ -182,7 +192,7 @@ const ROUTES: Routes = [
     STFPipesModule,
     PaScrollModule,
   ],
-  declarations: [...Components],
+  declarations: [...Components, PreviewComponent, SelectFirstFieldDirective],
   exports: [],
 })
 export class ResourcesModule {}

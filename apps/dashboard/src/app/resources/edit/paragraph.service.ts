@@ -11,7 +11,8 @@ export class ParagraphService {
   protected _paragraphsBackup: BehaviorSubject<ParagraphWithText[]> = new BehaviorSubject<ParagraphWithText[]>([]);
   protected _allParagraphs: BehaviorSubject<ParagraphWithText[]> = new BehaviorSubject<ParagraphWithText[]>([]);
   protected _searchResults: BehaviorSubject<Search.Results | null> = new BehaviorSubject<Search.Results | null>(null);
-  protected _paragraphList: Observable<ParagraphWithText[]> = combineLatest([
+
+  paragraphList: Observable<ParagraphWithText[]> = combineLatest([
     this._allParagraphs.asObservable(),
     this._searchResults.asObservable(),
   ]).pipe(
@@ -69,7 +70,7 @@ export class ParagraphService {
     });
   }
 
-  protected _initParagraphs(paragraphs: ParagraphWithText[]) {
+  setupParagraphs(paragraphs: ParagraphWithText[]) {
     this._paragraphsBackup.next(paragraphs);
     this._allParagraphs.next(cloneDeep(paragraphs));
   }

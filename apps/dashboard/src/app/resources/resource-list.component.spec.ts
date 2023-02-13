@@ -85,9 +85,7 @@ describe('ResourceListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should generate viewer widget', () => {
+  it('should be there', () => {
     expect(component).toBeTruthy();
-    const viewerContainer = fixture.debugElement.nativeElement.querySelector('.viewer-container');
-    expect(viewerContainer.innerHTML).toContain('nuclia-viewer');
   });
 });
