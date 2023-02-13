@@ -41,6 +41,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.classificationService.paragraphs;
   kbUrl = this.editResource.kbUrl;
 
+  previousQuery?: string;
   searchQuery = '';
   hasMoreResults = false;
   nextPageNumber = 0;
@@ -111,6 +112,11 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   triggerSearch() {
+    // Reset pagination on new query
+    if (this.previousQuery !== this.searchQuery) {
+      this.previousQuery = this.searchQuery;
+      this.nextPageNumber = 0;
+    }
     this._triggerSearch(this.searchQuery).subscribe((results) => {
       this.classificationService.setSearchResults(results);
       this.updatePagination(results);
@@ -126,6 +132,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       this.searchQuery = '';
       this.classificationService.setSearchResults(null);
       this.hasMoreResults = false;
+      this.nextPageNumber = 0;
       this.cdr.markForCheck();
     }
   }

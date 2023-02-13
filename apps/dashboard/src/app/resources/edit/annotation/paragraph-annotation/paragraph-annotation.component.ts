@@ -58,6 +58,7 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   userSelection?: EntityAnnotationWithPid;
   buttonPosition?: { top: string; left: string };
 
+  previousQuery?: string;
   searchQuery = '';
   hasMoreResults = false;
   nextPageNumber = 0;
@@ -119,6 +120,11 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
   }
 
   triggerSearch() {
+    // Reset pagination on new query
+    if (this.previousQuery !== this.searchQuery) {
+      this.previousQuery = this.searchQuery;
+      this.nextPageNumber = 0;
+    }
     this._triggerSearch(this.searchQuery).subscribe((results) => {
       this.annotationService.setSearchResults(results);
       this.updatePagination(results);
@@ -134,6 +140,7 @@ export class ParagraphAnnotationComponent implements OnInit, OnDestroy {
       this.searchQuery = '';
       this.annotationService.setSearchResults(null);
       this.hasMoreResults = false;
+      this.nextPageNumber = 0;
       this.cdr.markForCheck();
     }
   }
