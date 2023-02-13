@@ -1,11 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { Observable, of, switchMap, take } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { UploadService } from '../upload.service';
+import { parseCsvLabels } from '../utils';
+
+interface Row {
+  link: string;
+  labels: Classification[];
+}
 
 @Component({
   selector: 'app-create-link',
@@ -14,10 +21,10 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateLinkComponent {
-  linkForm = this.formBuilder.group({
-    link: ['', [Validators.pattern(/^http(s?):\/\//)]],
-    links: ['', [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)]],
-    multiple: [false],
+  linkForm = new FormGroup({
+    link: new FormControl<string>('', { validators: [Validators.pattern(/^http(s?):\/\//)] }),
+    links: new FormControl<string>('', { validators: [Validators.pattern(/^([\r\n]*http(s?):\/\/.*?)+$/)] }),
+    type: new FormControl<'one' | 'multiple' | 'csv'>('one'),
   });
 
   validationMessages: { [key: string]: IErrorMessages } = {
@@ -27,10 +34,11 @@ export class CreateLinkComponent {
   };
   pending = false;
   selectedLabels: Classification[] = [];
+  csv: Row[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<CreateLinkComponent>,
-    private formBuilder: UntypedFormBuilder,
+    private uploadService: UploadService,
     private sdk: SDKService,
     private tracking: STFTrackingService,
     private toaster: SisToastService,
@@ -42,9 +50,9 @@ export class CreateLinkComponent {
       this.pending = true;
       this.cdr?.markForCheck();
       let obs: Observable<{ uuid: string }>;
-      if (this.linkForm.value.multiple) {
+      if (this.linkForm.value.type === 'multiple') {
         this.tracking.logEvent('multiple_links_upload');
-        const links: string[] = this.linkForm.value.links
+        const links: string[] = (this.linkForm.value.links || '')
           .split('\n')
           .map((link: string) => link.trim())
           .filter((link: string) => !!link);
@@ -60,12 +68,25 @@ export class CreateLinkComponent {
             ),
           ),
         );
-      } else {
+      } else if (this.linkForm.value.type === 'one') {
         this.tracking.logEvent('link_upload');
         obs = this.sdk.currentKb.pipe(
           take(1),
           switchMap((kb) =>
-            kb.createLinkResource({ uri: this.linkForm.value.link }, { classifications: this.selectedLabels }),
+            kb.createLinkResource({ uri: this.linkForm.value.link || '' }, { classifications: this.selectedLabels }),
+          ),
+        );
+      } else {
+        this.tracking.logEvent('link_upload_from_csv');
+        const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
+        obs = this.uploadService.createMissingLabels(allLabels).pipe(
+          switchMap(() => this.sdk.currentKb.pipe(take(1))),
+          switchMap((kb) =>
+            this.csv.reduce(
+              (acc, curr) =>
+                acc.pipe(switchMap(() => kb.createLinkResource({ uri: curr.link }, { classifications: curr.labels }))),
+              of({ uuid: '' }),
+            ),
           ),
         );
       }
@@ -80,6 +101,16 @@ export class CreateLinkComponent {
           this.toaster.error('link.create.error');
         },
       });
+    }
+  }
+
+  checkCsv(data: string[][]) {
+    const csv = data.map((row) => ({ link: row[0], labels: parseCsvLabels(row[1]) }));
+    if (csv.every((row) => !!row.labels)) {
+      this.csv = csv as Row[];
+      this.cdr?.markForCheck();
+    } else {
+      this.toaster.error('upload.invalid_csv');
     }
   }
 

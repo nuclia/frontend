@@ -1,5 +1,11 @@
 @import 'variables';
 
+.create-link {
+  ncom-hint ::ng-deep .hint {
+    margin-bottom: rhythm(3);
+  }
+}
+
 .new-link {
   min-width: 350px;
   max-width: 672px;
@@ -16,6 +22,33 @@ pa-textarea {
 .link-input {
   min-width: 300px;
   width: 100%;
+}
+
+pa-radio-group {
+  margin-bottom: rhythm(3);
+  text-align: right;
+}
+
+pa-radio {
+  display: inline-block;
+  margin-right: rythm(1);
+}
+
+.uploads {
+  max-height: rhythm(14);
+  overflow-y: auto;
+  margin-bottom: rhythm(4);
+
+  .upload {
+    align-items: center;
+    border-bottom: 1px solid $color-neutral-lighter;
+    display: flex;
+    height: rhythm(4);
+
+    &:first-child {
+      border-top: 1px solid $color-neutral-lighter;
+    }
+  }
 }
 
 .link-actions {

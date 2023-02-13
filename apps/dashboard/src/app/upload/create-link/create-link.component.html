@@ -17,20 +17,41 @@
     (ngSubmit)="add()">
     <div class="new-link">
       <pa-input
-        *ngIf="!linkForm.value.multiple"
+        *ngIf="linkForm.value.type === 'one'"
         formControlName="link"
         [errorMessages]="validationMessages.link">
         {{ 'modal.create_link.input' | translate }}
       </pa-input>
       <pa-textarea
-        *ngIf="linkForm.value.multiple"
+        *ngIf="linkForm.value.type === 'multiple'"
         formControlName="links"
         rows="5"
         [errorMessages]="validationMessages.link">
         {{ 'modal.create_link.textarea' | translate }}
       </pa-textarea>
-      <pa-toggle formControlName="multiple">{{ 'modal.create_link.multiple' | translate }}</pa-toggle>
-      <app-label-field [(selection)]="selectedLabels"></app-label-field>
+      <div *ngIf="linkForm.value.type === 'csv'">
+        <app-csv-select
+          [help]="['upload.csv_links_description', 'upload.csv_labels']"
+          [fields]="2"
+          (select)="checkCsv($event)"></app-csv-select>
+        <div
+          *ngIf="csv.length > 0"
+          class="uploads">
+          <div
+            *ngFor="let row of csv"
+            class="upload">
+            <span paEllipsisTooltip>{{ row.link }}</span>
+          </div>
+        </div>
+      </div>
+      <pa-radio-group formControlName="type">
+        <pa-radio value="one">{{ 'generic.link' | translate }}</pa-radio>
+        <pa-radio value="multiple">{{ 'modal.create_link.multiple' | translate }}</pa-radio>
+        <pa-radio value="csv">{{ 'modal.create_link.csv_file' | translate }}</pa-radio>
+      </pa-radio-group>
+      <app-label-field
+        *ngIf="linkForm.value.type !== 'csv'"
+        [(selection)]="selectedLabels"></app-label-field>
     </div>
 
     <nsi-spinner
@@ -50,7 +71,7 @@
       <pa-button
         type="submit"
         kind="primary"
-        [disabled]="!linkForm.valid || pending">
+        [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending">
         {{ 'generic.add' | translate }}
       </pa-button>
     </div>

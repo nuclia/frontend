@@ -1,0 +1,30 @@
+<div class="upload-cvs">
+  <div class="upload-help body-s">
+    <div
+      *ngFor="let item of help"
+      [innerHtml]="item | translate"></div>
+  </div>
+
+  <ncom-hint label="CSV format details">
+    <ul class="csv-format">
+      <li>Use commas as field delimiter</li>
+      <li>Fields containing commas or line breaks must be enclosed in double quotes</li>
+      <li>Double quotes appearing inside a quoted field must be prefixed with an additional double quote</li>
+      <li>Don't include a header line</li>
+    </ul>
+  </ncom-hint>
+
+  <div class="select-csv">
+    <pa-button
+      kind="primary"
+      (click)="fileUpload.click()">
+      {{ 'upload.select_csv' | translate }}
+    </pa-button>
+    <input
+      (change)="readCsv($event)"
+      #fileUpload
+      type="file"
+      accept="text/csv"
+      hidden />
+  </div>
+</div>

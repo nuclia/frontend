@@ -61,7 +61,7 @@
         <div
           class="results"
           class:with-relations={$entityRelations.length > 0}>
-          {#each $smartResults as result, i}
+          {#each $smartResults as result, i (result.id + result.field_id)}
             <Tile {result} />
             {#if i === $smartResults.length - 10}
               <InfiniteScroll
