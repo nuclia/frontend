@@ -47,7 +47,7 @@
       <ng-template #multiple>
         <pa-checkbox
           [value]="checkboxSelection.includes(labelValue.labelset + labelValue.label)"
-          (valueChange)="toggleLabel(labelValue)">
+          (change)="toggleLabel(labelValue)">
           {{ labelValue.label }}
         </pa-checkbox>
       </ng-template>
