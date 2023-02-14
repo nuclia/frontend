@@ -1,0 +1,14 @@
+@import 'edit-resource.tokens';
+
+.scrollable-area {
+  height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container});
+  overflow: auto;
+}
+
+.main-container {
+  max-width: $max-width-page-content;
+}
+
+footer.with-margin {
+  margin-top: $footer-margin;
+}

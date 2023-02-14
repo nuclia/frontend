@@ -60,7 +60,6 @@
 
     .page-content {
       flex: 1 0 auto;
-      max-width: rhythm(90);
 
       footer {
         box-shadow: $footer-separator;
@@ -95,10 +94,6 @@
     .page-container {
       nav ul {
         padding-left: $padding-horizontal-header-xlarge;
-      }
-
-      .page-content.has-right-panel {
-        max-width: rhythm(90);
       }
     }
   }

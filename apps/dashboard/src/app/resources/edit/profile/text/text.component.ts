@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-resource-text',
   templateUrl: 'text.component.html',
-  styleUrls: ['./text.component.scss'],
+  styleUrls: ['../../common-page-layout.scss', './text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceTextComponent implements OnInit, OnDestroy {

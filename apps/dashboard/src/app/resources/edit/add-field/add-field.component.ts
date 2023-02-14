@@ -8,7 +8,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 @Component({
   selector: 'app-add-field',
   templateUrl: './add-field.component.html',
-  styleUrls: ['./add-field.component.scss'],
+  styleUrls: ['../common-page-layout.scss', './add-field.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddFieldComponent implements OnInit, OnDestroy {

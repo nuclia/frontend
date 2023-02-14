@@ -11,6 +11,13 @@
     <div class="title-s">{{ (resource | async)?.title }}</div>
     <div class="actions">
       <pa-button
+        icon="eye"
+        routerLink="preview"
+        [active]="currentView === 'preview'"
+        paTooltip="resource.tooltip.preview"
+        aspect="basic"
+        (click)="onViewChange()"></pa-button>
+      <pa-button
         icon="edit"
         routerLink="profile"
         [active]="currentView === 'profile'"
@@ -45,7 +52,7 @@
     <nav>
       <ul *ngIf="currentView !== 'add-field'">
         <li
-          *ngIf="currentView !== 'annotation'"
+          *ngIf="currentView !== 'preview' && currentView !== 'annotation'"
           [class.active]="(currentField | async) === 'profile'"
           (click)="navigateToField('profile')">
           <pa-icon

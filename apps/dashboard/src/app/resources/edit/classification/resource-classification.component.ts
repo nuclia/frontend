@@ -5,7 +5,7 @@ import { map, Subject } from 'rxjs';
 
 @Component({
   templateUrl: './resource-classification.component.html',
-  styleUrls: ['./resource-classification.component.scss'],
+  styleUrls: ['../common-page-layout.scss', './resource-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceClassificationComponent implements OnInit, OnDestroy {

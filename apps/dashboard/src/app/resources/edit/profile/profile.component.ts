@@ -13,7 +13,7 @@ type Thumbnail = { uri: string; blob: SafeUrl };
 @Component({
   selector: 'app-resource-profile',
   templateUrl: 'profile.component.html',
-  styleUrls: ['profile.component.scss'],
+  styleUrls: ['../common-page-layout.scss', 'profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceProfileComponent implements OnInit {

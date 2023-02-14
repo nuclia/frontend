@@ -9,6 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-resource-link',
   templateUrl: 'link.component.html',
+  styleUrls: ['../../common-page-layout.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceLinkComponent implements OnInit, OnDestroy {

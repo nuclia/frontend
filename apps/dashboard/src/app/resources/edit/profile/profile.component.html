@@ -1,128 +1,132 @@
-<form
-  [formGroup]="form"
-  (ngSubmit)="save()">
-  <div>
-    <label
-      class="title-s"
-      for="title">
-      {{ 'resource.title' | translate }}
-    </label>
-    <pa-input
-      id="title"
-      externalLabel
-      formControlName="title"></pa-input>
-  </div>
-  <div>
-    <label
-      class="title-s"
-      for="authors">
-      {{ 'resource.authorship' | translate }}
-    </label>
-    <pa-input
-      id="authors"
-      externalLabel
-      formControlName="authors"></pa-input>
-  </div>
-  <div>
-    <div>
-      <label
-        class="title-s"
-        for="summary">
-        {{ 'resource.summary' | translate }}
-      </label>
-      <div class="body-s">{{ 'resource.summary.help' | translate }}</div>
-    </div>
-    <pa-textarea
-      id="summary"
-      externalLabel
-      formControlName="summary"
-      rows="5"></pa-textarea>
-  </div>
-  <div>
-    <div>
-      <label
-        class="title-s"
-        for="radio-group-resource-thumbnail">
-        {{ 'resource.thumbnail' | translate }}
-      </label>
-      <div class="body-s">{{ 'resource.thumbnail.help' | translate }}</div>
-    </div>
-    <div class="thumbnails-container">
-      <pa-radio-group
-        name="resource-thumbnail"
-        id="radio-group-resource-thumbnail"
-        formControlName="thumbnail">
-        <div class="drop-container">
-          <div
-            class="drop-image-area"
-            [class.file-over]="hasBaseDropZoneOver"
-            stfFileDrop
-            fileDropAccept="image/*"
-            (fileOver)="fileOverBase($event)"
-            (atFileDrop)="uploadThumbnail($event)"
-            (click)="chooseFiles($event)">
-            <span *ngIf="!isUploading">{{ 'resource.thumbnail.drop' | translate }}</span>
-            <nsi-spinner
-              *ngIf="isUploading"
-              size="small"></nsi-spinner>
-          </div>
-          <div class="radio-placeholder"></div>
-
-          <input
-            #thumbnailFileInput
-            type="file"
-            accept="image/*"
-            stfFileSelect
-            multiple
-            hidden
-            (atFileSelect)="uploadThumbnail($event)" />
+<div class="scrollable-area">
+  <div class="main-container">
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()">
+      <div>
+        <label
+          class="title-s"
+          for="title">
+          {{ 'resource.title' | translate }}
+        </label>
+        <pa-input
+          id="title"
+          externalLabel
+          formControlName="title"></pa-input>
+      </div>
+      <div>
+        <label
+          class="title-s"
+          for="authors">
+          {{ 'resource.authorship' | translate }}
+        </label>
+        <pa-input
+          id="authors"
+          externalLabel
+          formControlName="authors"></pa-input>
+      </div>
+      <div>
+        <div>
+          <label
+            class="title-s"
+            for="summary">
+            {{ 'resource.summary' | translate }}
+          </label>
+          <div class="body-s">{{ 'resource.summary.help' | translate }}</div>
         </div>
-        <div *ngFor="let thumb of thumbnails | async; let index = index; let count = count; trackBy: trackByUri">
-          <div class="radio-thumbnail-container">
-            <img
-              class="resource-thumbnail"
-              [src]="thumb.blob"
-              alt="thumbnail {{ index }}" />
-            <pa-radio
-              *ngIf="count > 1"
-              [disabled]="!currentValue"
-              [value]="thumb.uri"
-              [ariaLabel]="'Thumbnail ' + index"></pa-radio>
-          </div>
+        <pa-textarea
+          id="summary"
+          externalLabel
+          formControlName="summary"
+          rows="5"></pa-textarea>
+      </div>
+      <div>
+        <div>
+          <label
+            class="title-s"
+            for="radio-group-resource-thumbnail">
+            {{ 'resource.thumbnail' | translate }}
+          </label>
+          <div class="body-s">{{ 'resource.thumbnail.help' | translate }}</div>
         </div>
-      </pa-radio-group>
-    </div>
-  </div>
+        <div class="thumbnails-container">
+          <pa-radio-group
+            name="resource-thumbnail"
+            id="radio-group-resource-thumbnail"
+            formControlName="thumbnail">
+            <div class="drop-container">
+              <div
+                class="drop-image-area"
+                [class.file-over]="hasBaseDropZoneOver"
+                stfFileDrop
+                fileDropAccept="image/*"
+                (fileOver)="fileOverBase($event)"
+                (atFileDrop)="uploadThumbnail($event)"
+                (click)="chooseFiles($event)">
+                <span *ngIf="!isUploading">{{ 'resource.thumbnail.drop' | translate }}</span>
+                <nsi-spinner
+                  *ngIf="isUploading"
+                  size="small"></nsi-spinner>
+              </div>
+              <div class="radio-placeholder"></div>
 
-  <footer class="form-buttons">
-    <pa-button
-      kind="primary"
-      [disabled]="!form.valid || form.pristine || isSaving"
-      (click)="save()">
-      {{ 'generic.save' | translate }}
-    </pa-button>
+              <input
+                #thumbnailFileInput
+                type="file"
+                accept="image/*"
+                stfFileSelect
+                multiple
+                hidden
+                (atFileSelect)="uploadThumbnail($event)" />
+            </div>
+            <div *ngFor="let thumb of thumbnails | async; let index = index; let count = count; trackBy: trackByUri">
+              <div class="radio-thumbnail-container">
+                <img
+                  class="resource-thumbnail"
+                  [src]="thumb.blob"
+                  alt="thumbnail {{ index }}" />
+                <pa-radio
+                  *ngIf="count > 1"
+                  [disabled]="!currentValue"
+                  [value]="thumb.uri"
+                  [ariaLabel]="'Thumbnail ' + index"></pa-radio>
+              </div>
+            </div>
+          </pa-radio-group>
+        </div>
+      </div>
 
-    <pa-button
-      aspect="basic"
-      [disabled]="form.pristine || isSaving"
-      (click)="cancel()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-  </footer>
-</form>
+      <footer class="form-buttons">
+        <pa-button
+          kind="primary"
+          [disabled]="!form.valid || form.pristine || isSaving"
+          (click)="save()">
+          {{ 'generic.save' | translate }}
+        </pa-button>
 
-<ncom-hint
-  label="How to modify a resource with the API"
-  inverted
-  [values]="hintValues | async">
-  <pre><code class="highlight">curl $$RESOURCE$$ \
+        <pa-button
+          aspect="basic"
+          [disabled]="form.pristine || isSaving"
+          (click)="cancel()">
+          {{ 'generic.cancel' | translate }}
+        </pa-button>
+      </footer>
+    </form>
+
+    <ncom-hint
+      label="How to modify a resource with the API"
+      inverted
+      [values]="hintValues | async">
+      <pre><code class="highlight">curl $$RESOURCE$$ \
  -X PATCH \
  -H "authorization: Bearer $$AUTH_TOKEN$$" \
  --data-raw '$$DATA$$'</code></pre>
-  <a
-    href="https://docs.nuclia.dev/docs/api#operation/Modify_Resource_kb__kbid__resource__rid__patch"
-    target="_new"
-    class="body-m">
-    Learn more
-  </a>
-</ncom-hint>
+      <a
+        href="https://docs.nuclia.dev/docs/api#operation/Modify_Resource_kb__kbid__resource__rid__patch"
+        target="_new"
+        class="body-m">
+        Learn more
+      </a>
+    </ncom-hint>
+  </div>
+</div>
