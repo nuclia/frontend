@@ -7,11 +7,12 @@
     padding-left: var(--rhythm-2);
     padding-right: var(--rhythm-2);
     transition: padding-right var(--transition-moderate);
+    overflow-y: auto;
 
     .resource-viewer-container {
       height: calc(100vh - var(--header-height) * 2);
       overflow-x: hidden;
-      overflow-y: auto;
+      // overflow-y: auto;
       position: relative;
     }
 

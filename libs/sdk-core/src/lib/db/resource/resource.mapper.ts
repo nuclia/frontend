@@ -71,3 +71,18 @@ export function shortToLongFieldType(shortType: SHORT_FIELD_TYPE): FIELD_TYPE | 
       return null;
   }
 }
+
+export function fieldTypeToDataKey(type?: FIELD_TYPE): keyof ResourceData | null {
+  switch (type) {
+    case FIELD_TYPE.file:
+      return 'files';
+    case FIELD_TYPE.link:
+      return 'links';
+    case FIELD_TYPE.keywordset:
+      return 'keywordsets';
+    case FIELD_TYPE.text:
+      return 'texts';
+    default:
+      return null;
+  }
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Resource, Search } from '@nuclia/core';
+  import { fieldTypeToDataKey, Resource, ResourceData, Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, take } from 'rxjs';
   import { Duration } from '../../common/transition.utils';
@@ -17,6 +17,7 @@
   import { navigateToLink } from '../../core/stores/widget.store';
   import TileHeader from './TileHeader.svelte';
   import { resource } from '../../core/stores/resource.store';
+  import KnowledgeGraph from '../../common/graph/KnowledgeGraph.svelte';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
   export let resourceObs: Observable<Resource>;
@@ -41,6 +42,16 @@
   let findInputElement: HTMLElement;
 
   const globalQuery = searchQuery;
+  const metadata = resourceObs.pipe(
+    map((res) => {
+      const dataKey = fieldTypeToDataKey(result.field?.field_type);
+      if (dataKey && result.field?.field_id) {
+        return res.getFieldData(dataKey, result.field?.field_id)?.extracted?.metadata?.metadata;
+      } else {
+        return undefined;
+      }
+    }),
+  );
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
@@ -213,6 +224,7 @@
           on:openPrevious={openPrevious}
           on:openNext={openNext} />
       {/if}
+      <KnowledgeGraph {metadata} />
       <div class="resource-viewer-container">
         <slot />
       </div>

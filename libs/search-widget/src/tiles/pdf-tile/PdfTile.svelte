@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Resource, Search } from '@nuclia/core';
   import PdfViewer from './PdfViewer.svelte';
-  import { map, Observable, of, switchMap } from 'rxjs';
+  import { map, Observable, of, shareReplay, switchMap } from 'rxjs';
   import { getFileUrl, getResource } from '../../core/api';
   import { getCDN, getFileField, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
@@ -25,7 +25,7 @@
 
   $: isMobile = innerWidth < 448;
 
-  let resource$: Observable<Resource> = getResource(result.id);
+  let resource$: Observable<Resource> = getResource(result.id).pipe(shareReplay());
 
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;

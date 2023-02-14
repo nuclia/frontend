@@ -16,7 +16,7 @@
    * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
    * Kb with different kind of media (owned by Mat): 5c2bc432-a579-48cd-b408-4271e5e7a43c
    */
-  let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6';
+  let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c';
 
   onMount(() => {
     widget?.setActions([
@@ -107,7 +107,7 @@
         cdn="/"
         lang="en"
         placeholder="Search"
-        features="filter,suggestions" />
+        features="filter,suggestions,permalink" />
       <NucliaSearchResults />
     </div>
   {/if}

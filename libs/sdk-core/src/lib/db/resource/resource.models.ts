@@ -234,6 +234,7 @@ export interface FieldMetadata {
   language?: string;
   summary?: string;
   positions?: EntityPositions;
+  relations?: Relation[];
 }
 
 export interface EntityPositions {
