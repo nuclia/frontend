@@ -58,6 +58,7 @@ export interface FileMetadata {
   contentType?: string;
   filename?: string;
   md5?: string;
+  rslug?: string;
 }
 
 export const upload = (
@@ -99,7 +100,8 @@ export const uploadFile = (
     ...getFileMetadata(metadata),
   };
   let retries = 1;
-  return nuclia.rest.post<Response>(`${path}/upload`, buffer, headers).pipe(
+  const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
+  return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers).pipe(
     repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     take(1),

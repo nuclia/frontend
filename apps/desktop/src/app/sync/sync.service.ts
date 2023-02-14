@@ -173,13 +173,15 @@ export class SyncService {
                         }),
                         concatMap((blob) => {
                           if (sync.destination.id === 'nucliacloud') {
-                            return destinationInstance.upload(f.title, sync.destination.params, { blob }).pipe(
-                              tap(() => {
-                                f.status = FileStatus.UPLOADED;
-                                sync.completed = true;
-                                this.onQueueUpdate();
-                              }),
-                            );
+                            return destinationInstance
+                              .upload(f.originalId, f.title, sync.destination.params, { blob })
+                              .pipe(
+                                tap(() => {
+                                  f.status = FileStatus.UPLOADED;
+                                  sync.completed = true;
+                                  this.onQueueUpdate();
+                                }),
+                              );
                           } else {
                             return md5(new File([blob], f.title)).pipe(
                               concatMap((file) => this.sdk.nuclia.db.upload(file)),
@@ -235,7 +237,7 @@ export class SyncService {
         switchMap(({ data, sync, item }) => {
           return this.getDestination(sync.destination.id).pipe(
             switchMap((dest) =>
-              dest.upload(item.title, sync.destination.params, {
+              dest.upload(item.originalId, item.title, sync.destination.params, {
                 metadata: data,
               }),
             ),
