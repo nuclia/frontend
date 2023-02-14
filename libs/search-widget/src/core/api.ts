@@ -1,15 +1,24 @@
 import type {
   Classification,
   Entity,
+  FieldId,
+  IFieldData,
   KBStates,
   LabelSets,
   NucliaOptions,
   SearchOptions,
   TokenAnnotation,
 } from '@nuclia/core';
-import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
+import {
+  Nuclia,
+  Resource,
+  ResourceFieldProperties,
+  ResourceProperties,
+  Search,
+  WritableKnowledgeBox,
+} from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
-import type { EntityGroup, WidgetOptions } from './models';
+import type { EntityGroup, FieldFullId, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
@@ -102,6 +111,16 @@ export const getResourceById = (uid: string, show?: ResourceProperties[]): Obser
   }
   return merge(nucliaApi.knowledgeBox.getResource(uid, show));
 };
+
+export function getResourceField(fullFieldId: FieldFullId, resourceSlug?: string): Observable<FieldId & IFieldData> {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.getResourceField(fullFieldId.resourceId, fullFieldId, resourceSlug, [
+    ResourceFieldProperties.VALUE,
+    ResourceFieldProperties.EXTRACTED,
+  ]);
+}
 
 let _entities: EntityGroup[] | undefined = undefined;
 export const loadEntities = (): Observable<EntityGroup[]> => {

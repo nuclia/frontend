@@ -2,6 +2,7 @@ import type {
   Classification,
   CloudLink,
   FIELD_TYPE,
+  FieldId,
   IResource,
   Paragraph,
   Search,
@@ -28,10 +29,17 @@ export interface WidgetAction {
   action: (uid: string) => void;
 }
 
+/**
+ * @deprecated This interface was used for the previous viewer implementation
+ */
 export interface DisplayedResource {
   uid: string;
   paragraph?: Search.Paragraph;
   sentence?: Search.Paragraph;
+}
+
+export interface FieldFullId extends FieldId {
+  resourceId: string;
 }
 
 export enum PreviewKind {

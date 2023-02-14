@@ -1,5 +1,6 @@
 import type { Observable } from 'rxjs';
 import type { IResource, LinkField, Resource, UserMetadata } from '../resource';
+import { FieldId, IFieldData } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import type { Search, SearchOptions } from '../search';
 
@@ -13,6 +14,12 @@ export enum ResourceProperties {
   VALUES = 'values',
   EXTRACTED = 'extracted',
   ERRORS = 'errors',
+}
+
+export enum ResourceFieldProperties {
+  VALUE = 'value',
+  EXTRACTED = 'extracted',
+  ERROR = 'error',
 }
 
 export enum ExtractedDataTypes {
@@ -64,7 +71,22 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getLabels(): Observable<LabelSets>;
 
-  getResource(uuid: string): Observable<IResource>;
+  getResource(uuid: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
+  getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
+
+  getResourceField(
+    rid: string,
+    fieldId: FieldId,
+    show?: ResourceFieldProperties[],
+    extracted?: ExtractedDataTypes[],
+  ): Observable<IFieldData & FieldId>;
+
+  getResourceFieldBySlug(
+    slug: string,
+    fieldId: FieldId,
+    show?: ResourceFieldProperties[],
+    extracted?: ExtractedDataTypes[],
+  ): Observable<IFieldData & FieldId>;
 
   search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
 
