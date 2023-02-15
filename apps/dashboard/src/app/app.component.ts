@@ -30,8 +30,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private unsubscribeAll: Subject<void>;
 
   constructor(
-    private state: StateService,
     private router: Router,
+    private state: StateService,
     private user: UserService,
     private splashScreenService: STFSplashScreenService,
     private ngxTranslate: TranslateService,
