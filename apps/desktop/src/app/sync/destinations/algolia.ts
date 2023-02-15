@@ -38,12 +38,17 @@ class AlgoliaImpl implements IDestinationConnector {
     return of(true);
   }
 
-  upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void> {
+  upload(
+    originalId: string,
+    filename: string,
+    params: ConnectorParameters,
+    data: { blob?: Blob; metadata?: any },
+  ): Observable<void> {
     if (!!params.appId && !!params.apiKey && !!params.index && !!data.metadata) {
       const client = algoliasearch(params.appId, params.apiKey);
       const index = client.initIndex(params.index);
       const newObject = {
-        objectID: data.metadata.uuid,
+        objectID: originalId,
         title: filename,
         fullText: data.metadata.extractedText?.[0]?.body?.text,
       };

@@ -1,5 +1,5 @@
 import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import {
   ConnectorParameters,
   ConnectorSettings,
@@ -8,6 +8,7 @@ import {
   IDestinationConnector,
 } from '../models';
 import { lookup } from 'mime-types';
+import { sha256 } from '../../utils';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 
@@ -47,7 +48,12 @@ class NucliaCloudKBImpl implements IDestinationConnector {
     return of(true);
   }
 
-  upload(filename: string, params: ConnectorParameters, data: { blob?: Blob; metadata?: any }): Observable<void> {
+  upload(
+    originalId: string,
+    filename: string,
+    params: ConnectorParameters,
+    data: { blob?: Blob; metadata?: any },
+  ): Observable<void> {
     if (params && params['kb'] && data.blob) {
       const blob = data.blob;
       const kb$ = this.kb
@@ -55,12 +61,28 @@ class NucliaCloudKBImpl implements IDestinationConnector {
         : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
       return kb$.pipe(
         switchMap((kb) =>
-          kb
-            .upload(new File([blob], filename), false, {
-              contentType: lookup(filename) || 'application/octet-stream',
-            })
-            .pipe(map(() => undefined)),
+          from(sha256(originalId)).pipe(
+            switchMap((slug) =>
+              kb.getResourceBySlug(slug, [], []).pipe(
+                catchError((error) => {
+                  if (error.status === 404) {
+                    return kb
+                      .createResource({ slug, title: filename }, true)
+                      .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
+                  } else {
+                    throw error;
+                  }
+                }),
+              ),
+            ),
+            switchMap((resource) => {
+              return resource.upload('file', new File([blob], filename), false, {
+                contentType: lookup(filename) || 'application/octet-stream',
+              });
+            }),
+          ),
         ),
+        map(() => undefined),
       );
     } else {
       return of(undefined);

@@ -9,7 +9,7 @@ import {
 } from '../models';
 import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 
-type ElectronFile = File & { path: string };
+type ElectronFile = File & { relativePath: string };
 const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 
 export const FolderConnector: SourceConnectorDefinition = {
@@ -56,7 +56,7 @@ class FolderImpl implements ISourceConnector {
   private map(files: ElectronFile[]): SyncItem[] {
     return files.map((file) => ({
       title: file.name,
-      originalId: file.path,
+      originalId: file.relativePath,
       metadata: { mimeType: file.type },
       status: FileStatus.PENDING,
       uuid: '',
@@ -82,7 +82,7 @@ class FolderImpl implements ISourceConnector {
   }
 
   download(resource: SyncItem): Observable<Blob> {
-    const file = this.files.find((file) => file.path === resource.originalId);
+    const file = this.files.find((file) => file.relativePath === resource.originalId);
     if (file) {
       return of(file);
     }
