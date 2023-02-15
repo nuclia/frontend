@@ -1,5 +1,6 @@
 import {
   Classification,
+  deDuplicateList,
   EntityPositions,
   FieldId,
   getDataKeyFromFieldType,
@@ -271,4 +272,19 @@ export const sliceUnicode = (str: string | string[] | undefined, start?: number,
     str = Array.from(str);
   }
   return str.slice(start, end).join('');
+};
+
+export const getClassificationsPayload = (resource: Resource, labels: Classification[]): UserClassification[] => {
+  const extracted = deDuplicateList(
+    (resource.computedmetadata?.field_classifications || []).reduce((acc, field) => {
+      return acc.concat(field.classifications || []);
+    }, [] as Classification[]),
+  );
+  const userClassifications = labels.filter(
+    (label) => !extracted.some((l) => l.labelset === label.labelset && l.label === label.label),
+  );
+  const cancellations = extracted
+    .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label))
+    .map((label) => ({ ...label, cancelled_by_user: true }));
+  return [...userClassifications, ...cancellations];
 };
