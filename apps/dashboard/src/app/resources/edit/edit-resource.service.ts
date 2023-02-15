@@ -15,7 +15,6 @@ import {
 } from 'rxjs';
 import {
   Classification,
-  deDuplicateList,
   FIELD_TYPE,
   FieldId,
   FileFieldData,
@@ -40,6 +39,7 @@ import {
   addEntitiesToGroups,
   EditResourceView,
   EntityGroup,
+  getClassificationsPayload,
   getFieldMetadataForAnnotations,
   getFieldMetadataForClassifications,
   ParagraphWithTextAndAnnotations,
@@ -198,18 +198,7 @@ export class EditResourceService {
     if (!this._resource.value) {
       return [];
     }
-    const extracted = deDuplicateList(
-      (this._resource.value.computedmetadata?.field_classifications || []).reduce((acc, field) => {
-        return acc.concat(field.classifications || []);
-      }, [] as Classification[]),
-    );
-    const userClassifications = labels.filter(
-      (label) => !extracted.some((l) => l.labelset === label.labelset && l.label === label.label),
-    );
-    const cancellations = extracted
-      .filter((label) => !labels.some((l) => l.labelset === label.labelset && l.label === label.label))
-      .map((label) => ({ ...label, cancelled_by_user: true }));
-    return [...userClassifications, ...cancellations];
+    return getClassificationsPayload(this._resource.value, labels);
   }
 
   addField(

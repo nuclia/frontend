@@ -53,6 +53,7 @@ import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
+import { getClassificationsPayload } from './edit/edit-resource.helpers';
 
 interface ListFilters {
   type?: string;
@@ -726,15 +727,20 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   addLabelsToSelection() {
     if (this.currentLabelList.length > 0) {
       const requests = this.selection.selected.map((resource) => {
-        const updatedResource = {
-          usermetadata: {
-            ...resource.usermetadata,
-            classifications: this.mergeExistingAndSelectedLabels(resource.usermetadata?.classifications || []),
-          },
-        };
-        return resource.modify(updatedResource).pipe(
-          map(() => ({ isError: false })),
-          catchError((error) => of({ isError: true, error })),
+        return this.labelSets$.pipe(
+          take(1),
+          map((labelSets) => ({
+            usermetadata: {
+              ...resource.usermetadata,
+              classifications: this.mergeExistingAndSelectedLabels(resource, labelSets),
+            },
+          })),
+          switchMap((updatedResource) =>
+            resource.modify(updatedResource).pipe(
+              map(() => ({ isError: false })),
+              catchError((error) => of({ isError: true, error })),
+            ),
+          ),
         );
       });
 
@@ -779,12 +785,21 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       .subscribe();
   }
 
-  private mergeExistingAndSelectedLabels(classifications: Classification[] | undefined): Classification[] {
-    if (!classifications) {
-      return this.currentLabelList;
-    }
-    return deDuplicateList(
-      classifications.concat(this.currentLabelList.map((label) => ({ ...label, cancelled_by_user: false }))),
+  private mergeExistingAndSelectedLabels(resource: Resource, labelSets: LabelSets): Classification[] {
+    const exclusiveLabelSets = Object.entries(labelSets)
+      .filter(([, labelSet]) => !labelSet.multiple)
+      .filter(([id]) => this.currentLabelList.some((label) => label.labelset === id))
+      .map(([id]) => id);
+
+    const resourceLabels = resource
+      .getClassifications()
+      .filter((label) => !exclusiveLabelSets.includes(label.labelset));
+
+    return getClassificationsPayload(
+      resource,
+      deDuplicateList(
+        resourceLabels.concat(this.currentLabelList.map((label) => ({ ...label, cancelled_by_user: false }))),
+      ),
     );
   }
 
