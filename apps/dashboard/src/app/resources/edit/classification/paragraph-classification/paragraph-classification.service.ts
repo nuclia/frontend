@@ -32,8 +32,13 @@ export class ParagraphClassificationService extends ParagraphService {
    * If no generated nor user classification exists, we add classification
    * @param classification
    * @param paragraph
+   * @param multiple
    */
-  classifyParagraph(classification: Classification, paragraph: ParagraphWithTextAndClassifications) {
+  classifyParagraph(classification: Classification, paragraph: ParagraphWithTextAndClassifications, multiple: boolean) {
+    if (!multiple) {
+      this.removeAndCancelLabelsByLabelSet(classification.labelset, paragraph);
+    }
+
     let existingIndex = -1;
     const existing = paragraph.userClassifications.find((label, index) => {
       const found = label.label === classification.label && label.labelset === classification.labelset;
@@ -110,6 +115,21 @@ export class ParagraphClassificationService extends ParagraphService {
       }
       return annotationMap;
     }, {} as ParagraphClassificationMap);
+  }
+
+  /**
+   * Remove/cancel all labels belonging to a label set
+   */
+  private removeAndCancelLabelsByLabelSet(labelSet: string, paragraph: ParagraphWithTextAndClassifications) {
+    paragraph.userClassifications = paragraph.userClassifications.filter(
+      (label) => !(label.labelset === labelSet && !label.cancelled_by_user),
+    );
+    paragraph.userClassifications.push(
+      ...paragraph.generatedClassifications
+        .filter((label) => label.labelset === labelSet)
+        .map((label) => ({ ...label, cancelled_by_user: true })),
+    );
+    paragraph.generatedClassifications = this.getGeneratedClassification(paragraph, paragraph.userClassifications);
   }
 
   /**

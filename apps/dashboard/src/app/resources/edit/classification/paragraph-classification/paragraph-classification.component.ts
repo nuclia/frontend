@@ -73,10 +73,16 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   addLabelOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
-    if (this.currentLabel) {
-      this.classificationService.classifyParagraph(this.currentLabel, paragraph);
-      this.isModified = this.classificationService.hasModifications();
-    }
+    this.availableLabels.pipe(take(1)).subscribe((labelSets) => {
+      if (this.currentLabel) {
+        this.classificationService.classifyParagraph(
+          this.currentLabel,
+          paragraph,
+          !!labelSets?.[this.currentLabel.labelset]?.multiple,
+        );
+        this.isModified = this.classificationService.hasModifications();
+      }
+    });
   }
 
   cancelGeneratedLabel(paragraph: ParagraphWithTextAndClassifications, labelToCancel: Classification) {
