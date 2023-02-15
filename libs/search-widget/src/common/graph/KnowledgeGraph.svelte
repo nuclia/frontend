@@ -8,7 +8,7 @@
 
   let el: HTMLElement | undefined;
   let simulation;
-  let node, link;
+  let node, link, edgelabels;
   let groups = ['Resource'];
   let displayedGroups: { [group: string]: boolean } = { Resource: true, PERSON: true };
   let displayedGroupList = Object.keys(displayedGroups).filter((key) => displayedGroups[key]);
@@ -68,7 +68,7 @@
       .map((rel) => ({
         source: `${rel.from.group}/${rel.from.value}`,
         target: `${rel.to.group}/${rel.to.value}`,
-        sourceGroup: rel.from.group,
+        fromGroup: rel.from.group,
         toGroup: rel.to.group,
         label: rel.label,
         value: 2,
@@ -78,7 +78,7 @@
       links.push({
         source: 'Resource/Resource',
         target: node.id,
-        sourceGroup: 'Resource',
+        fromGroup: 'Resource',
         toGroup: node.family,
         label: '',
         value: 1,
@@ -90,7 +90,24 @@
       width = el?.getBoundingClientRect().width,
       height = el?.getBoundingClientRect().height;
 
-    // const color = d3.scaleOrdinal((d3 as any).schemeCategory20);
+    //appending little triangles, path object, as arrowhead
+    //The <defs> element is used to store graphical objects that will be used at a later time
+    //The <marker> element defines the graphic that is to be used for drawing arrowheads or polymarkers on a given <path>, <line>, <polyline> or <polygon> element.
+    svg
+      .append('defs')
+      .append('marker')
+      .attr('id', 'arrowhead')
+      .attr('viewBox', '-0 -5 10 10') //the bound of the SVG viewport for the current SVG fragment. defines a coordinate system 10 wide and 10 high starting on (0,-5)
+      .attr('refX', 15) // x coordinate for the reference point of the marker. If circle is bigger, this need to be bigger.
+      .attr('refY', 0)
+      .attr('orient', 'auto')
+      .attr('markerWidth', 10)
+      .attr('markerHeight', 10)
+      .attr('xoverflow', 'visible')
+      .append('svg:path')
+      .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+      .attr('fill', '#999')
+      .style('stroke', 'none');
 
     simulation = d3
       .forceSimulation()
@@ -107,25 +124,29 @@
     link = svg
       .append('g')
       .attr('class', 'links')
-      .selectAll('line')
+      .selectAll('.link')
       .data(links)
       .enter()
       .append('line')
-      .attr('stroke', '#999')
-      .style('visibility', function (d) {
-        return !!displayedGroups[d.sourceGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
+      .attr('class', 'link')
+      .attr('marker-end', function (d) {
+        return d.value === 1 ? null : 'url(#arrowhead)';
       })
+      .attr('stroke', '#999')
       .attr('stroke-width', function (d) {
         return Math.sqrt(d.value);
       })
       .attr('stroke-opacity', function (d) {
         return d.value === 1 ? 0.2 : 0.6;
+      })
+      .style('visibility', function (d) {
+        return !!displayedGroups[d.fromGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
       });
-
-    link.append('title').text((d) => d.label);
 
     const drag = d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
     node = svg
+      .append('g')
+      .attr('class', 'nodes')
       .selectAll('.node')
       .data(nodes)
       .enter()
@@ -151,6 +172,62 @@
 
     (simulation as any).force('link').links(links);
 
+    // link
+    //   .append('text')
+    //   .attr('transform', function (d) {
+    //     if (d.source.x && d.target.x && d.source.y && d.target.y) {
+    //       return 'translate(' + (d.source.y + d.target.y) / 2 + ',' + (d.source.x + d.target.x) / 2 + ')';
+    //     } else {
+    //       return null;
+    //     }
+    //   })
+    //   .attr('dy', '.35em')
+    //   .attr('text-anchor', 'middle')
+    //   .text((d) => d.label || '');
+
+    const edgepaths = svg
+      .append('g')
+      .attr('class', 'paths')
+      .selectAll('.edgepath') //make path go along with the link provide position for link labels
+      .data(links)
+      .enter()
+      .append('path')
+      .attr('class', 'edgepath')
+      .attr('fill-opacity', 0)
+      .attr('stroke-opacity', 0)
+      .attr('id', function (d, i) {
+        return 'edgepath' + i;
+      })
+      .style('pointer-events', 'none');
+
+    edgelabels = svg
+      .append('g')
+      .attr('class', 'labels')
+      .selectAll('.edgelabel')
+      .data(links)
+      .enter()
+      .append('text')
+      .style('pointer-events', 'none')
+      .attr('class', 'edgelabel')
+      .style('visibility', function (d) {
+        return !!displayedGroups[d.family] ? 'visible' : 'hidden';
+      })
+      .attr('id', function (d, i) {
+        return 'edgelabel' + i;
+      })
+      .attr('font-size', 10)
+      .attr('fill', '#aaa');
+
+    edgelabels
+      .append('textPath') //To render text along the shape of a <path>, enclose the text in a <textPath> element that has an href attribute with a reference to the <path> element.
+      .attr('xlink:href', function (d, i) {
+        return '#edgepath' + i;
+      })
+      .style('text-anchor', 'middle')
+      .style('pointer-events', 'none')
+      .attr('startOffset', '50%')
+      .text((d) => d.label || '');
+
     function ticked() {
       node.attr('transform', function (d: any) {
         return 'translate(' + d.x + ',' + d.y + ')';
@@ -168,6 +245,7 @@
         .attr('y2', function (d) {
           return d.target.y;
         });
+      edgepaths.attr('d', (d) => 'M ' + d.source.x + ' ' + d.source.y + ' L ' + d.target.x + ' ' + d.target.y);
     }
   }
 
@@ -194,7 +272,10 @@
       return !!displayedGroups[d.family] ? 'visible' : 'hidden';
     });
     link.style('visibility', function (d) {
-      return !!displayedGroups[d.sourceGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
+      return !!displayedGroups[d.fromGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
+    });
+    edgelabels.style('visibility', function (d) {
+      return !!displayedGroups[d.fromGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
     });
   };
 </script>
