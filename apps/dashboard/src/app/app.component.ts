@@ -24,8 +24,8 @@ import { MessageModalComponent } from './components/messages/message-modal.compo
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
-  version: string | undefined;
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
+  version: string | undefined;
 
   private unsubscribeAll: Subject<void>;
 

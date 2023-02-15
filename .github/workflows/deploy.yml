@@ -102,17 +102,17 @@ jobs:
         if: steps.check-deploy.outputs.deploy-app == 'yes'
         run: |-
           docker build -t $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=app --build-arg appFolder=dashboard .
-          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${GIT_BRANCH}
+          docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
-          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${GIT_BRANCH}
+          docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
 
       - name: Build manager image
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
         run: |-
           docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager .
-          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${GIT_BRANCH}
+          docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
-          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${GIT_BRANCH}
+          docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
 
       - name: Create 404 page for gh-pages
         if: steps.check-deploy.outputs.deploy-sistema == 'yes'
