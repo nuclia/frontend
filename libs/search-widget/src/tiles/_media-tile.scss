@@ -92,6 +92,10 @@
     &.expanded .summary-container {
       display: block;
       margin-top: var(--rhythm-3);
+
+      .summary {
+        overflow-wrap: break-word;
+      }
     }
 
     &.expanded .result-details {

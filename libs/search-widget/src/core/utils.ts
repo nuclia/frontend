@@ -5,13 +5,14 @@ import type {
   CloudLink,
   FIELD_TYPE,
   FileFieldData,
+  IFieldData,
   IResource,
   LinkFieldData,
   Resource,
   ResourceData,
   Search,
 } from '@nuclia/core';
-import { longToShortFieldType } from '@nuclia/core';
+import { longToShortFieldType, sliceUnicode } from '@nuclia/core';
 import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -237,14 +238,13 @@ export function getFieldType(fieldType: string): FIELD_TYPE {
   return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
 
-export function getExtractedTexts(resource: Resource) {
-  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
-  if (fields.length === 0) {
+export function getExtractedTexts(data: IFieldData | null): string[] {
+  if (!data) {
     return [];
   }
-  const mainField = fields[0];
-  return (mainField.field.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
-    resource.getParagraphText(getFieldType(mainField.field_type), mainField.field_id, paragraph).trim(),
+  const text = data.extracted?.text?.text || '';
+  return (data.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
+    sliceUnicode(text, paragraph.start, paragraph.end).trim(),
   );
 }
 

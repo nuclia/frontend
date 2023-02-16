@@ -26,6 +26,7 @@
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(1500));
+  // FIXME
   const resource = displayedResource.pipe(
     switchMap((data) => (data?.uid ? getResourceById(data.uid, [ResourceProperties.BASIC]) : of(null))),
     shareReplay(),
@@ -61,7 +62,7 @@
         <div
           class="results"
           class:with-relations={$entityRelations.length > 0}>
-          {#each $smartResults as result, i (result.id + result.field_id)}
+          {#each $smartResults as result, i (result.id + result.field.field_type + result.field.field_id)}
             <Tile {result} />
             {#if i === $smartResults.length - 10}
               <InfiniteScroll

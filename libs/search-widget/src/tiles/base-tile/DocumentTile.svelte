@@ -1,25 +1,24 @@
 <script lang="ts">
-  import { Resource, Search } from '@nuclia/core';
+  import { Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, take } from 'rxjs';
   import { Duration } from '../../common/transition.utils';
   import { mapSmartParagraph2WidgetParagraph, getExternalUrl, goToUrl } from '../../core/utils';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import { tap } from 'rxjs/operators';
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import { displayedResource, searchQuery } from '../../core/stores/search.store';
-  import { hasViewerSearchError, viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
+  import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import TileHeader from './TileHeader.svelte';
-  import { resource } from '../../core/stores/resource.store';
+  import { viewerState } from '../../core/stores/viewer.store';
+  import { searchInResource } from '../../core/api';
 
-  export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
-  export let resourceObs: Observable<Resource>;
+  export let result: Search.SmartResult;
   export let fallbackThumbnail;
   export let previewKind: PreviewKind;
 
@@ -69,6 +68,7 @@
   });
 
   onDestroy(() => reset());
+
   const onClickParagraph = (paragraph, index) => {
     navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
       const url = getExternalUrl(result);
@@ -87,10 +87,6 @@
       viewerSearchQuery.set(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
-
-      if (!resource.value) {
-        resourceObs.subscribe((res) => resource.set(res));
-      }
     }
     setTimeout(() => setHeaderActionWidth());
   };
@@ -116,9 +112,6 @@
   const closePreview = () => {
     reset();
     unblockBackground(true);
-    if (displayedResource.getValue()?.uid === result.id) {
-      displayedResource.set(null);
-    }
   };
 
   const setHeaderActionWidth = () => {
@@ -143,19 +136,11 @@
 
   const findInPdf = () => {
     const query = viewerSearchQuery.getValue();
-    const currentResource = resource.value;
-    if (currentResource && query) {
+
+    if (query) {
       isSearchingInResource.next(true);
-      currentResource
-        .search(query, [Search.ResourceFeatures.PARAGRAPH], { highlight: true })
-        .pipe(
-          tap((results) => {
-            if (results.error) {
-              hasViewerSearchError.set(true);
-            }
-          }),
-          map((results) => results.paragraphs?.results || []),
-        )
+      searchInResource(query, result, { highlight: true })
+        .pipe(map((results) => results.paragraphs?.results || []))
         .subscribe((paragraphs) => {
           resultIndex = -1;
           viewerSearchResults.set(
@@ -183,6 +168,7 @@
       isSearchingInResource.next(false);
       sidePanelExpanded = false;
       resultNavigatorDisabled = false;
+      viewerState.reset();
     });
   }
 </script>
@@ -223,8 +209,8 @@
     <div class="result-details">
       <TileHeader
         {expanded}
-        {result}
         {headerActionsWidth}
+        resourceTitle={result.title}
         typeIndicator={previewKind === PreviewKind.PDF ? 'pdf' : 'text'}
         on:clickOnTitle={() => onClickParagraph(undefined, -1)}
         on:close={closePreview}>

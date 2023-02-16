@@ -1,21 +1,13 @@
 <script lang="ts">
-  import { Resource, Search } from '@nuclia/core';
+  import { Search } from '@nuclia/core';
   import { Duration } from '../../common/transition.utils';
   import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
-  import {
-    getCDN,
-    getExternalUrl,
-    getFileField,
-    getMediaTranscripts,
-    goToUrl,
-    mapSmartParagraph2WidgetParagraph,
-  } from '../../core/utils';
+  import { getCDN, getExternalUrl, goToUrl, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import { getFileUrl, getResource } from '../../core/api';
-  import { take, tap } from 'rxjs/operators';
+  import { take } from 'rxjs/operators';
   import { filterParagraphs } from '../tile.utils';
-  import { Observable, Subject, switchMap } from 'rxjs';
+  import { map, Observable } from 'rxjs';
   import { _ } from '../../core/i18n';
   import Icon from '../../common/icons/Icon.svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
@@ -25,29 +17,35 @@
   import { onMount } from 'svelte';
   import { displayedResource } from '../../core/stores/search.store';
   import TileHeader from '../base-tile/TileHeader.svelte';
-  import { resource } from '../../core/stores/resource.store';
+  import {
+    fieldData,
+    fieldFullId,
+    getFieldSummary,
+    getFieldUrl,
+    getMediaTranscripts,
+    resourceTitle,
+    viewerState,
+  } from '../../core/stores/viewer.store';
+  import { getResourceField } from '../../core/api';
 
-  export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
+  export let result: Search.SmartResult;
 
   let innerWidth = window.innerWidth;
   let mediaTileElement: HTMLElement;
   let mediaTileHeight;
-  let resourceObs: Observable<Resource>;
   let expanded = false;
-  let summary;
   let mediaLoading = true;
   let mediaTime = 0;
-  let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
-  let transcripts: MediaWidgetParagraph[] = [];
   let showAllResults = false;
   let thumbnailLoaded = false;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
 
-  const _mediaUri = new Subject<string | undefined>();
-  const mediaUri = _mediaUri.pipe(switchMap((uri) => getFileUrl(uri)));
+  let mediaUrl: Observable<string>;
+  let summary: Observable<string>;
+  let transcripts: Observable<MediaWidgetParagraph[]>;
 
   const matchingParagraphs: MediaWidgetParagraph[] =
     result.paragraphs?.map(
@@ -59,7 +57,9 @@
   $: filteredMatchingParagraphs = !findInTranscript
     ? matchingParagraphs
     : filterParagraphs(findInTranscript, matchingParagraphs || []);
-  $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(findInTranscript, transcripts);
+  $: filteredTranscripts = !findInTranscript
+    ? transcripts
+    : transcripts.pipe(map((paragraphs) => filterParagraphs(findInTranscript, paragraphs)));
 
   onMount(() => {
     if (displayedResource.getValue()?.uid === result.id) {
@@ -98,22 +98,24 @@
       expanded = true;
       freezeBackground(true);
     }
-    if (!resourceObs) {
-      resourceObs = getResource(result.id).pipe(
-        tap((res) => {
-          resource.set(res);
-          const fileField = getFileField(res, result.field?.field_id || '');
-          const file = fileField && fileField.value?.file;
-          if (file) {
-            mediaContentType = file.content_type;
-            _mediaUri.next(file.uri);
-          }
-          const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
-          summary = summaries.filter((s) => !!s)[0];
-          transcripts = getMediaTranscripts(res, PreviewKind.AUDIO);
-          setupExpandedTile();
-        }),
-      );
+
+    if (!mediaUrl && result.field) {
+      const fullId = {
+        ...result.field,
+        resourceId: result.id,
+      };
+      fieldFullId.set(fullId);
+      fieldData.set(result.fieldData || null);
+      resourceTitle.set(result.title || '');
+
+      mediaUrl = getFieldUrl();
+
+      getResourceField(fullId).subscribe((field) => {
+        fieldData.set(field);
+        summary = getFieldSummary();
+        transcripts = getMediaTranscripts(PreviewKind.AUDIO);
+        setTimeout(() => setupExpandedTile(), 0);
+      });
     }
   };
 
@@ -127,10 +129,8 @@
     showFullTranscripts = false;
     paragraphInPlay = undefined;
     findInTranscript = '';
+    viewerState.reset();
     unblockBackground(true);
-    if (displayedResource.getValue()?.uid === result.id) {
-      displayedResource.set(null);
-    }
   };
 
   const toggleTranscriptPanel = () => {
@@ -169,21 +169,21 @@
       <div
         class="media-container"
         class:loading={mediaLoading}>
-        {#if $mediaUri}
+        {#if $mediaUrl}
           <AudioPlayer
             time={mediaTime}
-            src={$mediaUri}
+            src={$mediaUrl}
             on:audioReady={() => (mediaLoading = false)}
             on:error={() => (mediaLoading = false)} />
         {/if}
       </div>
     {/if}
 
-    {#if $resourceObs}
+    {#if $summary}
       <div
         class="summary-container"
         hidden={!expanded}>
-        <div class="summary">{summary}</div>
+        <div class="summary">{$summary}</div>
       </div>
     {/if}
   </div>
@@ -192,7 +192,7 @@
     <div class="result-details">
       <TileHeader
         {expanded}
-        {result}
+        resourceTitle={result.title}
         typeIndicator="audio"
         on:clickOnTitle={onClickParagraph}
         on:close={closePreview} />
@@ -288,7 +288,7 @@
           {#if showFullTranscripts}
             <div class="transcript-container scrollable-area">
               <ul class="paragraphs-container">
-                {#each filteredTranscripts as paragraph}
+                {#each $filteredTranscripts as paragraph}
                   <ParagraphResult
                     {paragraph}
                     selected={paragraph === paragraphInPlay}

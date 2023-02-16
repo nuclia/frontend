@@ -1,10 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Observable, Subject } from 'rxjs';
-  import type { Resource, Search } from '@nuclia/core';
-  import { FIELD_TYPE, SHORT_FIELD_TYPE } from '@nuclia/core';
-  import { switchMap, take, tap } from 'rxjs/operators';
-  import { getFileUrl, getResource } from '../../core/api';
+  import { map, Observable, tap } from 'rxjs';
+  import type { Search } from '@nuclia/core';
+  import { switchMap, take } from 'rxjs/operators';
+  import { getResourceField } from '../../core/api';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import Youtube from '../../old-components/viewer/previewers/Youtube.svelte';
   import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
@@ -15,44 +14,42 @@
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import { _ } from '../../core/i18n';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import {
-    getExternalUrl,
-    getFileField,
-    getLinkField,
-    getMediaTranscripts,
-    getVideoStream,
-    goToUrl,
-    isYoutubeUrl,
-    mapSmartParagraph2WidgetParagraph,
-  } from '../../core/utils';
-  import { filterParagraphs, isFileOrLink } from '../tile.utils';
+  import { getExternalUrl, goToUrl, isYoutubeUrl, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import { filterParagraphs } from '../tile.utils';
   import { navigateToLink } from '../../core/stores/widget.store';
   import { displayedResource } from '../../core/stores/search.store';
   import TileHeader from '../base-tile/TileHeader.svelte';
-  import { resource } from '../../core/stores/resource.store';
+  import {
+    fieldData,
+    fieldFullId,
+    getFieldSummary,
+    getFieldUrl,
+    getFileFieldContentType,
+    getMediaTranscripts,
+    isLinkField,
+    resourceTitle,
+  } from '../../core/stores/viewer.store';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let innerWidth = window.innerWidth;
   let mediaTileElement: HTMLElement;
   let mediaTileHeight;
-  let resourceObs: Observable<Resource>;
   let expanded = false;
-  let summary;
   let mediaLoading = true;
   let mediaTime = 0;
-  let youtubeUri: string | undefined;
   let mediaContentType: string | undefined;
   let paragraphInPlay: MediaWidgetParagraph | undefined;
   let findInTranscript = '';
-  let transcripts: MediaWidgetParagraph[] = [];
   let showAllResults = false;
   let thumbnailLoaded = false;
   let showFullTranscripts = false;
   let animatingShowFullTranscript = false;
 
-  const _mediaUri = new Subject<string | undefined>();
-  const mediaUri = _mediaUri.pipe(switchMap((uri) => getFileUrl(uri)));
+  let mediaUrl: Observable<string>;
+  let summary: Observable<string>;
+  let transcripts: Observable<MediaWidgetParagraph[]>;
+  let isYoutube = false;
 
   const matchingParagraphs: MediaWidgetParagraph[] = (result.paragraphs?.map((paragraph) =>
     mapSmartParagraph2WidgetParagraph(paragraph, PreviewKind.VIDEO),
@@ -63,7 +60,9 @@
   $: filteredMatchingParagraphs = !findInTranscript
     ? matchingParagraphs
     : filterParagraphs(findInTranscript, matchingParagraphs || []);
-  $: filteredTranscripts = !findInTranscript ? transcripts : filterParagraphs(findInTranscript, transcripts);
+  $: filteredTranscripts = !findInTranscript
+    ? transcripts
+    : transcripts.pipe(map((paragraphs) => filterParagraphs(findInTranscript, paragraphs)));
 
   onMount(() => {
     if (displayedResource.getValue()?.uid === result.id) {
@@ -87,7 +86,7 @@
   };
 
   const playParagraph = (paragraph: MediaWidgetParagraph) => {
-    playFrom(paragraph.start_seconds, paragraph);
+    playFrom(paragraph.start_seconds);
     paragraphInPlay = paragraph;
   };
 
@@ -96,42 +95,40 @@
     paragraphInPlay = paragraph;
   };
 
-  const playFrom = (time: number, selectedParagraph?: MediaWidgetParagraph) => {
+  const playFrom = (time: number) => {
     mediaTime = time;
     if (!expanded) {
       expanded = true;
       freezeBackground(true);
     }
 
-    let paragraph =
-      selectedParagraph && isFileOrLink(selectedParagraph.fieldType)
-        ? selectedParagraph
-        : matchingParagraphs.filter((p) => isFileOrLink(p.fieldType))[0] || matchingParagraphs[0];
-    if (!resourceObs) {
-      resourceObs = getResource(result.id).pipe(
-        tap((res) => {
-          resource.set(res);
-          transcripts = getMediaTranscripts(res, PreviewKind.VIDEO);
-          if (!paragraph) {
-            paragraph = transcripts[0];
-          }
-          // FIXME: getMediaTranscripts and mapSmartParagraph2WidgetParagraph return different fieldType values
-          if (paragraph?.fieldType === SHORT_FIELD_TYPE.link || paragraph?.fieldType === FIELD_TYPE.link) {
-            const linkField = getLinkField(res, paragraph.fieldId);
-            youtubeUri = linkField?.value?.uri;
-          } else if (paragraph?.fieldType === SHORT_FIELD_TYPE.file || paragraph?.fieldType === FIELD_TYPE.file) {
-            const fileField = getFileField(res, paragraph.fieldId);
-            const file = fileField && (getVideoStream(fileField) || fileField.value?.file);
-            if (file) {
-              mediaContentType = file.content_type;
-              _mediaUri.next(file.uri);
-            }
-          }
-          const summaries = res.summary ? [res.summary] : res.getExtractedSummaries();
-          summary = summaries.filter((s) => !!s)[0];
-          setupExpandedTile();
-        }),
-      );
+    if (!mediaUrl && result.field) {
+      const fullId = {
+        ...result.field,
+        resourceId: result.id,
+      };
+      fieldFullId.set(fullId);
+      fieldData.set(result.fieldData || null);
+      resourceTitle.set(result.title || '');
+
+      mediaUrl = getFieldUrl();
+
+      getResourceField(fullId)
+        .pipe(
+          tap((field) => {
+            fieldData.set(field);
+            summary = getFieldSummary();
+            transcripts = getMediaTranscripts(PreviewKind.VIDEO);
+            setTimeout(() => setupExpandedTile(), 0);
+          }),
+          switchMap(() => isLinkField()),
+          tap((isLink: boolean) => (isYoutube = isLink)),
+          switchMap(() => getFileFieldContentType()),
+        )
+        .subscribe((contentType) => {
+          mediaContentType = contentType;
+          console.log(contentType);
+        });
     }
   };
 
@@ -190,27 +187,28 @@
       <div
         class="media-container"
         class:loading={mediaLoading}>
-        {#if youtubeUri}
-          <Youtube
-            time={mediaTime}
-            uri={youtubeUri}
-            on:videoReady={onVideoReady} />
-        {/if}
-        {#if $mediaUri}
-          <Player
-            time={mediaTime}
-            src={$mediaUri}
-            type={mediaContentType}
-            on:videoReady={onVideoReady} />
+        {#if $mediaUrl}
+          {#if isYoutube}
+            <Youtube
+              time={mediaTime}
+              uri={$mediaUrl}
+              on:videoReady={onVideoReady} />
+          {:else if !!mediaContentType}
+            <Player
+              time={mediaTime}
+              src={$mediaUrl}
+              type={mediaContentType}
+              on:videoReady={onVideoReady} />
+          {/if}
         {/if}
       </div>
     {/if}
 
-    {#if $resourceObs}
+    {#if $summary}
       <div
         class="summary-container"
         hidden={!expanded}>
-        <div class="summary">{summary}</div>
+        <div class="summary">{$summary}</div>
       </div>
     {/if}
   </div>
@@ -219,7 +217,7 @@
     <div class="result-details">
       <TileHeader
         {expanded}
-        {result}
+        resourceTitle={result.title}
         typeIndicator="video"
         on:clickOnTitle={onClickParagraph}
         on:close={closePreview} />
@@ -315,7 +313,7 @@
           {#if showFullTranscripts}
             <div class="transcript-container scrollable-area">
               <ul class="paragraphs-container">
-                {#each filteredTranscripts as paragraph}
+                {#each $filteredTranscripts as paragraph}
                   <ParagraphResult
                     {paragraph}
                     selected={paragraph === paragraphInPlay}

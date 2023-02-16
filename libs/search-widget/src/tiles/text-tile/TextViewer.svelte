@@ -1,10 +1,9 @@
 <script lang="ts">
-  import { Resource } from '@nuclia/core';
   import { map, Observable } from 'rxjs';
   import { getUnMarked } from '../tile.utils';
   import { getExtractedTexts } from '../../core/utils';
+  import { fieldData } from '../../core/stores/viewer.store';
 
-  export let resource: Observable<Resource>;
   export let selectedParagraph;
 
   let textViewerElement: HTMLElement;
@@ -12,7 +11,7 @@
 
   $: !!selectedParagraph && textViewerElement && highlightSelection();
 
-  let extractedTexts: Observable<string[]> = resource?.pipe(map((resource) => getExtractedTexts(resource)));
+  let extractedTexts: Observable<string[]> = fieldData.pipe(map((data) => getExtractedTexts(data)));
 
   function highlightSelection() {
     const unmarkSelection = getUnMarked(selectedParagraph.text);

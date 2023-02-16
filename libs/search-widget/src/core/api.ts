@@ -3,6 +3,7 @@ import type {
   Entity,
   FieldId,
   IFieldData,
+  IResource,
   KBStates,
   LabelSets,
   NucliaOptions,
@@ -25,6 +26,7 @@ import type { Annotation } from './stores/annotation.store';
 import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { hasSearchError, searchOptions } from './stores/search.store';
+import { hasViewerSearchError } from './stores/viewer-search.store';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -75,6 +77,31 @@ export const search = (query: string, options: SearchOptions) => {
   );
 };
 
+export const searchInResource = (
+  query: string,
+  resource: IResource,
+  options: SearchOptions,
+  features: Search.ResourceFeatures[] = [Search.ResourceFeatures.PARAGRAPH],
+): Observable<Search.Results> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  if (!query) {
+    options.inTitleOnly = true;
+  }
+  return nucliaApi.knowledgeBox
+    .getResourceFromData(resource)
+    .search(query, features, options)
+    .pipe(
+      filter((res) => {
+        if (res.error) {
+          hasViewerSearchError.set(true);
+        }
+        return !res.error;
+      }),
+    );
+};
+
 export const suggest = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
@@ -112,11 +139,11 @@ export const getResourceById = (uid: string, show?: ResourceProperties[]): Obser
   return merge(nucliaApi.knowledgeBox.getResource(uid, show));
 };
 
-export function getResourceField(fullFieldId: FieldFullId, resourceSlug?: string): Observable<FieldId & IFieldData> {
+export function getResourceField(fullFieldId: FieldFullId): Observable<FieldId & IFieldData> {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.getResourceField(fullFieldId.resourceId, fullFieldId, resourceSlug, [
+  return nucliaApi.knowledgeBox.getResourceField(fullFieldId.resourceId, fullFieldId, [
     ResourceFieldProperties.VALUE,
     ResourceFieldProperties.EXTRACTED,
   ]);
