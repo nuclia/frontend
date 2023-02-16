@@ -36,7 +36,10 @@
         audio.currentTime = time;
       }
       audio.onloadeddata = onAudioLoaded;
-      audio.onended = () => (playing = false);
+      audio.onended = () => {
+        playing = false;
+        wavesAnimation.pause();
+      };
       audio.oncanplay = () => {
         dispatch('audioReady');
         if (typeof time === 'number' && audio.paused) {
@@ -92,10 +95,8 @@
   }
 
   function seekTime(event: MouseEvent) {
-    if (!onError) {
-      const timelineWidth = timelineElement.offsetWidth;
-      audio.currentTime = (event.offsetX / timelineWidth) * audio.duration;
-    }
+    const timelineWidth = timelineElement.offsetWidth;
+    audio.currentTime = (event.offsetX / timelineWidth) * audio.duration;
   }
 
   function getFormattedTimeFromSeconds(seconds: number): string {
@@ -113,6 +114,8 @@
 
   function handleKeydown(event) {
     if (event.code === 'Space') {
+      event.stopPropagation();
+      event.preventDefault();
       togglePlay();
     }
   }
@@ -132,8 +135,7 @@
     <IconButton
       icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
       size="small"
-      disabled={onError}
-      aspect="basic"
+      aspect="solid"
       on:click={togglePlay} />
     <div class="time">{currentTime}</div>
     <div
