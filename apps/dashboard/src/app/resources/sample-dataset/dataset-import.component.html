@@ -5,7 +5,7 @@
     {{ 'onboarding.dataset.option1.description' | translate }}
   </p>
 
-  <app-dataset-selector></app-dataset-selector>
+  <app-dataset-selector (imported)="onDatasetImported($event)"></app-dataset-selector>
 
   <div class="upload-data">
     <h2>{{ 'onboarding.dataset.option2' | translate }}</h2>
