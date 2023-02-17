@@ -3,6 +3,7 @@ import { filter, take } from 'rxjs';
 import { DroppedFile, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, UploadService } from '../upload.service';
+import * as mime from 'mime';
 
 const GENERAL_LABELSET = 'General';
 
@@ -69,21 +70,12 @@ export class UploadFilesComponent {
     this.cdr.markForCheck();
   }
 
-  getFilesByType(files: File[], withAudio: boolean): File[] {
+  getFilesByType(files: File[], mediaFile: boolean): File[] {
     return files.filter((file) => {
-      let hasAudio;
-      if (file.type) {
-        const type = file.type.split('/')[0];
-        hasAudio = type === 'audio' || type === 'video';
-      } else {
-        const extension = file.name.split('.').pop();
-        hasAudio =
-          !!extension &&
-          ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'mkv', 'avi', 'mov', 'mp4', 'mpeg', 'mpg', 'm4v'].includes(
-            extension,
-          );
-      }
-      return withAudio ? hasAudio : !hasAudio;
+      const mimeType = file.type || (mime as any).getType(file.name);
+      const type = mimeType.split('/')[0];
+      const isMediaFile = type === 'audio' || type === 'video' || type === 'image';
+      return mediaFile ? isMediaFile : !isMediaFile;
     });
   }
 
