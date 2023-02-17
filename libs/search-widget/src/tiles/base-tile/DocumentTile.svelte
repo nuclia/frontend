@@ -230,7 +230,7 @@
           <div
             class="side-panel-button"
             on:click={toggleSidePanel}>
-            <Icon name={sidePanelExpanded ? 'chevrons-left' : 'search'} />
+            <Icon name={sidePanelExpanded ? 'chevrons-right' : 'search'} />
           </div>
         {/if}
 
