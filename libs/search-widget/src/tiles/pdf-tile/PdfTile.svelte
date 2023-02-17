@@ -5,7 +5,7 @@
   import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import DocumentTile from '../base-tile/DocumentTile.svelte';
-  import { fieldData, fieldFullId, getFieldUrl, resourceTitle } from '../../core/stores/viewer.store';
+  import { getFieldUrl } from '../../core/stores/viewer.store';
 
   export let result: Search.SmartResult;
 
@@ -28,15 +28,6 @@
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;
     if (!pdfUrl) {
-      if (result.field) {
-        fieldFullId.set({
-          ...result.field,
-          resourceId: result.id,
-        });
-      }
-      fieldData.set(result.fieldData || null);
-      resourceTitle.set(result.title || '');
-
       pdfUrl = getFieldUrl();
     }
   };

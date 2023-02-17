@@ -4,16 +4,34 @@
   import TextViewer from './TextViewer.svelte';
   import DocumentTile from '../base-tile/DocumentTile.svelte';
   import { getCDN } from '../../core/utils';
+  import { getResourceField } from '../../core/api';
+  import { fieldData, fieldFullId } from '../../core/stores/viewer.store';
+  import { filter, switchMap, take } from 'rxjs';
 
   export let result: Search.SmartResult;
 
   let selectedParagraph: WidgetParagraph | undefined;
+  let isFieldLoaded = false;
+
+  function openParagraph(paragraph: WidgetParagraph) {
+    selectedParagraph = paragraph;
+    if (!isFieldLoaded) {
+      isFieldLoaded = true;
+      fieldFullId
+        .pipe(
+          filter((fullId) => !!fullId),
+          take(1),
+          switchMap((fullId) => getResourceField(fullId)),
+        )
+        .subscribe((field) => fieldData.set(field));
+    }
+  }
 </script>
 
 <DocumentTile
   previewKind={PreviewKind.NONE}
   fallbackThumbnail={`${getCDN()}icons/text/plain.svg`}
   {result}
-  on:selectParagraph={(event) => (selectedParagraph = event.detail.paragraph)}>
+  on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
   <TextViewer {selectedParagraph} />
 </DocumentTile>

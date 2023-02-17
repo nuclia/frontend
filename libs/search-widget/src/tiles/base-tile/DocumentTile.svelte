@@ -15,7 +15,7 @@
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import TileHeader from './TileHeader.svelte';
-  import { viewerState } from '../../core/stores/viewer.store';
+  import { fieldData, fieldFullId, resourceTitle, viewerState } from '../../core/stores/viewer.store';
   import { searchInResource } from '../../core/api';
 
   export let result: Search.SmartResult;
@@ -62,6 +62,7 @@
 
   onMount(() => {
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
+    // FIXME
     if (displayedResource.getValue()?.uid === result.id) {
       openParagraph(undefined, -1);
     }
@@ -84,6 +85,14 @@
     resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
+      if (result.field) {
+        fieldFullId.set({
+          ...result.field,
+          resourceId: result.id,
+        });
+      }
+      fieldData.set(result.fieldData || null);
+      resourceTitle.set(result.title || '');
       viewerSearchQuery.set(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
