@@ -5,7 +5,6 @@ import {
   ExtractedDataTypes,
   IKnowledgeBoxCreation,
   IWritableKnowledgeBox,
-  ResourceFieldProperties,
   ResourceList,
   ResourcePagination,
   ResourceProperties,
@@ -13,8 +12,8 @@ import {
   ServiceAccountCreation,
 } from './kb.models';
 import type { INuclia } from '../../models';
-import type { FieldId, ICreateResource, IResource, LinkField, UserMetadata } from '../resource';
-import { IFieldData, Resource } from '../resource';
+import type { ICreateResource, IResource, LinkField, UserMetadata } from '../resource';
+import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import { catalog, Search, search, SearchOptions } from '../search';
@@ -126,51 +125,6 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   getResourceFromData(data: IResource): Resource {
     return new Resource(this.nuclia, this.id, data);
-  }
-
-  getResourceField(
-    rid: string,
-    fieldId: FieldId,
-    show: ResourceFieldProperties[] = [ResourceFieldProperties.VALUE],
-    extracted: ExtractedDataTypes[] = [
-      ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
-      ExtractedDataTypes.LINK,
-      ExtractedDataTypes.FILE,
-    ],
-  ): Observable<IFieldData & FieldId> {
-    return this._getResourceField(fieldId, rid, undefined, show, extracted);
-  }
-
-  getResourceFieldBySlug(
-    slug: string,
-    fieldId: FieldId,
-    show: ResourceFieldProperties[] = [ResourceFieldProperties.VALUE],
-    extracted: ExtractedDataTypes[] = [
-      ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
-      ExtractedDataTypes.LINK,
-      ExtractedDataTypes.FILE,
-    ],
-  ): Observable<IFieldData & FieldId> {
-    return this._getResourceField(fieldId, undefined, slug, show, extracted);
-  }
-
-  private _getResourceField(
-    fieldId: FieldId,
-    uuid?: string,
-    slug?: string,
-    show: ResourceFieldProperties[] = [ResourceFieldProperties.VALUE],
-    extracted: ExtractedDataTypes[] = [
-      ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
-      ExtractedDataTypes.LINK,
-      ExtractedDataTypes.FILE,
-    ],
-  ): Observable<IFieldData & FieldId> {
-    const path = `${this._getPath(uuid, slug)}/${fieldId.field_type}/${fieldId.field_id}`;
-    const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
-    return this.nuclia.rest.get<IFieldData & FieldId>(`${path}?${params.join('&')}`);
   }
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {

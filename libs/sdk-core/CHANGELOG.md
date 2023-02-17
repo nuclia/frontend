@@ -4,8 +4,8 @@
 
 - Add `fieldData` to `Search.SmartResult`
 - Add `fields` in `SearchOptions`
-- Add `getResourceField` and `getResourceFieldBySlug` methods in `KnowledgeBox`
 - Add `ResourceFieldProperties` enum in kb models
+- Add `show` and `extracted` params to `getField` method in `Resource`
 
 # 1.1.3 (2023-02-08)
 

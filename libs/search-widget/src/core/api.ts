@@ -1,8 +1,6 @@
 import type {
   Classification,
   Entity,
-  FieldId,
-  IFieldData,
   IResource,
   KBStates,
   LabelSets,
@@ -13,6 +11,7 @@ import type {
 import {
   Nuclia,
   Resource,
+  ResourceField,
   ResourceFieldProperties,
   ResourceProperties,
   Search,
@@ -139,14 +138,16 @@ export const getResourceById = (uid: string, show?: ResourceProperties[]): Obser
   return merge(nucliaApi.knowledgeBox.getResource(uid, show));
 };
 
-export function getResourceField(fullFieldId: FieldFullId): Observable<FieldId & IFieldData> {
+export function getResourceField(fullFieldId: FieldFullId): Observable<ResourceField> {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.getResourceField(fullFieldId.resourceId, fullFieldId, [
-    ResourceFieldProperties.VALUE,
-    ResourceFieldProperties.EXTRACTED,
-  ]);
+  return nucliaApi.knowledgeBox
+    .getResourceFromData({ id: fullFieldId.resourceId })
+    .getField(fullFieldId.field_type, fullFieldId.field_id, [
+      ResourceFieldProperties.VALUE,
+      ResourceFieldProperties.EXTRACTED,
+    ]);
 }
 
 let _entities: EntityGroup[] | undefined = undefined;
