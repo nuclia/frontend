@@ -121,8 +121,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   refreshing = true;
 
-  private _isEmpty = new BehaviorSubject<boolean>(false);
-  isEmpty = this._isEmpty.asObservable();
   private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
     pending: 0,
     error: 0,
@@ -832,7 +830,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       })),
       tap((count) => {
         this._statusCount.next({ pending: count.pending, error: count.error });
-        this._isEmpty.next(count.pending === 0 && count.error === 0 && count.processed === 0);
       }),
     );
   }
