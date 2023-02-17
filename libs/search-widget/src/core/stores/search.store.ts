@@ -10,6 +10,7 @@ import {
 import { DisplayedResource, NO_RESULTS } from '../models';
 import { Subject } from 'rxjs';
 
+// TODO: once old widget will be removed, we should remove displayedResource from the store
 interface SearchState {
   query: string;
   filters: string[];

@@ -1,35 +1,42 @@
 <script lang="ts">
   import type { Classification, Search } from '@nuclia/core';
-  import { ResourceProperties } from '@nuclia/core';
-  import { getResourceById } from '../../core/api';
+  import { FIELD_TYPE, ResourceProperties, shortToLongFieldType } from '@nuclia/core';
+  import { getResourceById, getResourceField } from '../../core/api';
   import { getExternalUrl, goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
-  import { DisplayedResource, NO_RESULTS } from '../../core/models';
+  import { FieldFullId, NO_RESULTS } from '../../core/models';
   import { suggestionsHasError, suggestions } from '../../core/stores/suggestions.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
-  import { of, switchMap, take } from 'rxjs';
+  import { forkJoin, of, switchMap, take } from 'rxjs';
   import { addLabelFilter, displayedResource } from '../../core/stores/search.store';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
 
-  const goToResource = (params: DisplayedResource, text: string) => {
+  const goToResource = (paragraph: Search.Paragraph) => {
+    const text = paragraph.text;
+    const fullId: FieldFullId = {
+      resourceId: paragraph.rid,
+      field_type: shortToLongFieldType(paragraph.field_type) as FIELD_TYPE,
+      field_id: paragraph.field,
+    };
     navigateToLink
       .pipe(
         take(1),
         switchMap((navigateToLink) =>
           navigateToLink
-            ? getResourceById(params.uid, [ResourceProperties.BASIC, ResourceProperties.VALUES])
+            ? forkJoin([getResourceById(paragraph.rid, [ResourceProperties.ORIGIN]), getResourceField(fullId)])
             : of(null),
         ),
       )
-      .subscribe((resource) => {
-        const url = resource && getExternalUrl(resource);
+      .subscribe(([resource, field]) => {
+        const url = resource && getExternalUrl(resource, field);
         if (url && !isYoutubeUrl(url)) {
           goToUrl(url, text);
         } else {
-          displayedResource.set(params);
+          // to be removed once old widget will be gone
+          displayedResource.set({ uid: paragraph.rid });
         }
         suggestions.set({ results: NO_RESULTS });
       });
@@ -65,9 +72,9 @@
           {#each paragraphs.slice(0, 4) as paragraph}
             <div
               class="paragraph"
-              on:click|preventDefault={() => goToResource({ uid: paragraph.rid }, paragraph.text)}
+              on:click|preventDefault={() => goToResource(paragraph)}
               on:keyup={(e) => {
-                if (e.key === 'Enter') goToResource({ uid: paragraph.rid }, paragraph.text);
+                if (e.key === 'Enter') goToResource(paragraph);
               }}
               tabindex="0">
               {paragraph.text}

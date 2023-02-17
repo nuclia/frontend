@@ -3,16 +3,18 @@ import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import type {
   CloudLink,
-  FIELD_TYPE,
+  FileField,
   FileFieldData,
   IFieldData,
   IResource,
+  LinkField,
   LinkFieldData,
   Resource,
   ResourceData,
+  ResourceField,
   Search,
 } from '@nuclia/core';
-import { longToShortFieldType, sliceUnicode } from '@nuclia/core';
+import { FIELD_TYPE, longToShortFieldType, sliceUnicode } from '@nuclia/core';
 import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -277,20 +279,19 @@ export function getMediaTranscripts(
 
 export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   const type = paragraph.fieldType.slice(0, -1) as FIELD_TYPE;
-  return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph
-    .end!}`;
+  return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start || 0}-${
+    paragraph.paragraph.end || 0
+  }`;
 };
 
-export const getExternalUrl = (resource: IResource) => {
-  if (resource.origin?.url) {
+export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
+  if (field?.field_type === FIELD_TYPE.link) {
+    return (field.value as LinkField).uri;
+  } else if (field?.field_type === FIELD_TYPE.file) {
+    return (field.value as FileField).file?.uri;
+  } else if (resource.origin?.url) {
     return resource.origin.url;
+  } else {
+    return undefined;
   }
-  const linkField = Object.values(resource.data?.links || {})[0];
-  const fileField = Object.values(resource.data?.files || {})[0];
-  if (linkField?.value?.uri) {
-    return linkField.value.uri;
-  } else if (fileField?.value?.external && fileField?.value?.file?.uri) {
-    return fileField.value.file.uri;
-  }
-  return undefined;
 };
