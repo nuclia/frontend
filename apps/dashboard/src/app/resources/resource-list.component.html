@@ -368,7 +368,7 @@
 
     <div
       class="pagination"
-      *ngIf="!(isEmpty | async)">
+      *ngIf="resultsLength > 0">
       <stf-pagination
         [page]="page"
         [total]="totalPages"
@@ -376,7 +376,7 @@
         (next)="nextPage()"></stf-pagination>
     </div>
     <div
-      *ngIf="isEmpty | async"
+      *ngIf="isMainView && !!data && resultsLength === 0"
       class="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
