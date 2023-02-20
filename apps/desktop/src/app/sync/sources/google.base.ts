@@ -46,7 +46,12 @@ export class GoogleBaseImpl {
       } else {
         return (
           from(
-            (window as any)['electron'].google.getToken(JSON.parse(localStorage.getItem(CREDENTIALS) || '{}')),
+            (window as any)['electron'].google.getToken(JSON.parse(localStorage.getItem(CREDENTIALS) || '{}')).then(
+              (token: string) => token,
+              () => {
+                throw new Error('Unauthorized');
+              },
+            ),
           ) as Observable<string>
         ).pipe(tap((token) => (this.token = token)));
       }

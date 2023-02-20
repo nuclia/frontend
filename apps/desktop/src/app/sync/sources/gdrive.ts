@@ -1,5 +1,5 @@
 import { FileStatus, ISourceConnector, SourceConnectorDefinition, SyncItem, SearchResults } from '../models';
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { GoogleBaseImpl } from './google.base';
 
 // eslint-disable-next-line
@@ -89,6 +89,11 @@ class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
   }
 
   private getDrive(): Observable<any> {
-    return this.getClient().pipe(map((client) => client.drive));
+    return this.getClient().pipe(
+      map((client) => client.drive),
+      catchError(() => {
+        throw new Error('Unauthorized');
+      }),
+    );
   }
 }
