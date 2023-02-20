@@ -77,7 +77,7 @@ export class GoogleBaseImpl {
               },
               (err: any) => {
                 console.error('Cannot initialize gapi client', err);
-                observer.error(err);
+                throw new Error('Unauthorized');
               },
             );
         });
