@@ -10,12 +10,14 @@ interface ViewerState {
   fieldFullId: FieldFullId | null;
   fieldData: IFieldData | null;
   title: string;
+  summary: string;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
   fieldFullId: null,
   fieldData: null,
   title: '',
+  summary: '',
 });
 
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
@@ -28,15 +30,18 @@ export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | 
 
 export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null>(
   (state) => state.fieldData,
-  (state, fieldData) => ({
-    ...state,
-    fieldData: fieldData
-      ? {
-          value: fieldData.value,
-          extracted: fieldData.extracted,
-        }
-      : null,
-  }),
+  (state, data) => {
+    return {
+      ...state,
+      fieldData: data
+        ? {
+            value: data.value,
+            extracted: data.extracted,
+          }
+        : null,
+      summary: data?.extracted?.metadata?.metadata?.summary || '',
+    };
+  },
 );
 
 export const resourceTitle = viewerState.writer<string, string>(
@@ -46,6 +51,8 @@ export const resourceTitle = viewerState.writer<string, string>(
     title,
   }),
 );
+
+export const fieldSummary = viewerState.reader<string>((state) => state.summary);
 
 export const fieldType = viewerState.reader<FIELD_TYPE | null>((state) => state.fieldFullId?.field_type || null);
 
@@ -69,10 +76,6 @@ export function getFieldUrl(): Observable<string> {
 
 export function isLinkField(): Observable<boolean> {
   return fieldFullId.pipe(map((fullId) => fullId?.field_type === FIELD_TYPE.link));
-}
-
-export function getFieldSummary(): Observable<string> {
-  return fieldData.pipe(map((data) => data?.extracted?.metadata?.metadata?.summary || ''));
 }
 
 export function getMediaTranscripts(

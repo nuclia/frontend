@@ -4,8 +4,8 @@
   import { Observable } from 'rxjs';
   import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
-  import DocumentTile from '../base-tile/DocumentTile.svelte';
   import { getFieldUrl } from '../../core/stores/viewer.store';
+  import DocumentTile from '../base-tile/DocumentTile.svelte';
 
   export let result: Search.SmartResult;
 

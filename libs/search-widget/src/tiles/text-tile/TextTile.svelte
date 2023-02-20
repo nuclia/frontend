@@ -2,11 +2,11 @@
   import { Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import TextViewer from './TextViewer.svelte';
-  import DocumentTile from '../base-tile/DocumentTile.svelte';
   import { getCDN } from '../../core/utils';
   import { getResourceField } from '../../core/api';
   import { fieldData, fieldFullId } from '../../core/stores/viewer.store';
   import { filter, switchMap, take } from 'rxjs';
+  import DocumentTile from '../base-tile/DocumentTile.svelte';
 
   export let result: Search.SmartResult;
 
