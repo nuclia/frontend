@@ -34,7 +34,7 @@
   } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { searchInResource } from '../../core/api';
-  import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
+  import SearchResultNavigator from './SearchResultNavigator.svelte';
 
   export let result: Search.SmartResult;
   export let previewKind: PreviewKind;

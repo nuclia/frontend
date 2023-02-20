@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconButton from '../button/IconButton.svelte';
+  import IconButton from '../../common/button/IconButton.svelte';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { lightFormat } from 'date-fns';
   import { getCDN } from '../../core/utils';

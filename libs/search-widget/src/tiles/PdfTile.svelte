@@ -1,11 +1,11 @@
 <script lang="ts">
   import { Search } from '@nuclia/core';
-  import PdfViewer from './PdfViewer.svelte';
+  import PdfViewer from './viewers/PdfViewer.svelte';
   import { Observable } from 'rxjs';
-  import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
-  import { PreviewKind, WidgetParagraph } from '../../core/models';
-  import { getFieldUrl } from '../../core/stores/viewer.store';
-  import DocumentTile from '../base-tile/DocumentTile.svelte';
+  import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../core/utils';
+  import { PreviewKind, WidgetParagraph } from '../core/models';
+  import { getFieldUrl } from '../core/stores/viewer.store';
+  import DocumentTile from './base-tile/DocumentTile.svelte';
 
   export let result: Search.SmartResult;
 
