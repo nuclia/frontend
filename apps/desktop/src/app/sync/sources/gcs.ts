@@ -82,7 +82,11 @@ class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
               nextPage: res.nextPageToken ? this._getFiles(query, pageSize, res.nextPageToken) : undefined,
             };
           } else {
-            throw new Error(res.error.message || 'Unknown error');
+            if (res.error?.code?.startsWith('4')) {
+              throw new Error('Unauthorized');
+            } else {
+              throw new Error(res.error.message || 'Unknown error');
+            }
           }
         }),
       );

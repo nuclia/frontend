@@ -77,7 +77,18 @@ class BrightcoveImpl implements ISourceConnector {
               method: 'GET',
               headers: { Authorization: `Bearer ${token}` },
             },
-          ).then((res) => res.json()),
+          ).then(
+            (res) => {
+              if (res.status === 401 || res.status === 403) {
+                throw new Error('Unauthorized');
+              } else {
+                return res.json();
+              }
+            },
+            () => {
+              throw new Error();
+            },
+          ),
         ),
       ),
       map((results: any[]) => ({

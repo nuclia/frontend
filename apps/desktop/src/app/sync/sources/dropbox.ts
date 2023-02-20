@@ -51,6 +51,16 @@ class DropboxImpl implements ISourceConnector {
   }
 
   private _getFiles(query?: string, pageSize: number = 100, nextPage?: string | number): Observable<SearchResults> {
+    const success = (res: any) => {
+      if (res.status === 401) {
+        throw new Error('Unauthorized');
+      } else {
+        return res.json();
+      }
+    };
+    const failure = () => {
+      throw new Error();
+    };
     const request = query
       ? fetch(`https://api.dropboxapi.com/2/files/search_v2${nextPage ? '/continue' : ''}`, {
           method: 'POST',
@@ -59,7 +69,7 @@ class DropboxImpl implements ISourceConnector {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(nextPage ? { cursor: nextPage } : { query }),
-        })
+        }).then(success, failure)
       : fetch(`https://api.dropboxapi.com/2/files/list_folder${nextPage ? '/continue' : ''}`, {
           method: 'POST',
           headers: {
@@ -67,7 +77,7 @@ class DropboxImpl implements ISourceConnector {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: pageSize }),
-        });
+        }).then(success, failure);
     return this.authenticate().pipe(
       filter((isSigned) => isSigned),
       take(1),

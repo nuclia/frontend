@@ -38,12 +38,22 @@ class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
       }),
     ).pipe(
       /* eslint-disable  @typescript-eslint/no-explicit-any */
-      map((res: any) => ({
-        items: res.result.files.map(this.map),
-        nextPage: res.result.nextPageToken
-          ? this._getFiles(drive, query, pageSize, res.result.nextPageToken)
-          : undefined,
-      })),
+      map((res: any) => {
+        if (res.result) {
+          return {
+            items: res.result.files.map(this.map),
+            nextPage: res.result.nextPageToken
+              ? this._getFiles(drive, query, pageSize, res.result.nextPageToken)
+              : undefined,
+          };
+        } else {
+          if (res.error?.code?.startsWith('4')) {
+            throw new Error('Unauthorized');
+          } else {
+            throw new Error(res.error.message || 'Unknown error');
+          }
+        }
+      }),
     );
   }
 

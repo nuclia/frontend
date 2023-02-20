@@ -16,7 +16,8 @@ import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, c
 import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
 import { SisToastService } from '@nuclia/sistema';
 
-const defaultAuthCheck = (error: any) => error.message === 'Unauthorized' || error.status === 403;
+const defaultAuthCheck = (error: any) =>
+  error === 'Unauthorized' || error.message === 'Unauthorized' || error.status === 403;
 @Component({
   selector: 'nde-select-files',
   templateUrl: './select-files.component.html',
@@ -54,6 +55,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
               if (this.source.hasServerSideAuth) {
                 this.source.goToOAuth(true);
               }
+              this.toaster.error('You cannot access this source. Please check your credentials.');
               return this.source.authenticate().pipe(map(() => ({ items: [], nextPage: undefined } as SearchResults)));
             } else {
               this.toaster.error(typeof error === 'string' ? error : error?.message || 'An error occurred');
