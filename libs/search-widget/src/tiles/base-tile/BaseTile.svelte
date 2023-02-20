@@ -81,10 +81,14 @@
 
   onMount(() => {
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
-    // FIXME
-    // if (displayedResource.getValue()?.uid === result.id) {
-    //   openParagraph(undefined, -1);
-    // }
+    const currentId = fieldFullId.getValue();
+    if (
+      currentId?.resourceId === result.id &&
+      currentId?.field_type === result.field?.field_type &&
+      currentId.field_id === result.field?.field_id
+    ) {
+      openParagraph(undefined, -1);
+    }
   });
 
   onDestroy(() => reset());
@@ -212,6 +216,7 @@
 
   function reset() {
     expanded = false;
+    selectedParagraph = undefined;
     setTimeout(() => {
       isSearchingInResource.next(false);
       sidePanelExpanded = false;

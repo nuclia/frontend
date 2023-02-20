@@ -26,7 +26,7 @@
   }
 
   function playParagraph(paragraph: MediaWidgetParagraph) {
-    playFrom(paragraph.start_seconds || 0);
+    playFrom(paragraph?.start_seconds || 0);
   }
 
   function playFrom(time: number) {

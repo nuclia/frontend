@@ -20,8 +20,10 @@ import { NO_RESULTS } from '../models';
 import { widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
 import type { Classification, Search } from '@nuclia/core';
+import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
+import { fieldFullId } from './viewer.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -74,25 +76,15 @@ export function activateTypeAheadSuggestions() {
   subscriptions.push(subscription);
 }
 
+const queryKey = formatQueryKey('query');
+const filterKey = formatQueryKey('filter');
+const previewKey = formatQueryKey('preview');
+
 /**
  * Initialise permalink feature
  */
 export function activatePermalinks() {
-  const queryKey = formatQueryKey('query');
-  const filterKey = formatQueryKey('filter');
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const query = urlParams.get(queryKey);
-  const filters = urlParams.getAll(filterKey);
-  if (query || filters.length > 0) {
-    searchQuery.set(query || '');
-    searchFilters.set(filters);
-    typeAhead.set(query || '');
-    triggerSearch.next();
-    if (widgetMode.value === 'popup') {
-      isPopupSearchOpen.set(true);
-    }
-  }
+  initStoreFromUrlParams();
 
   const permalinkSubscription = [
     // When a search is performed, save the query and filters in the current URL
@@ -109,7 +101,7 @@ export function activatePermalinks() {
         filters.forEach((filter) => urlParams.append(filterKey, filter));
         updateQueryParams(urlParams);
       }),
-    // Remove parameters from the URL when search results are reset
+    // Remove search parameters from the URL when search results are reset
     merge(
       isPopupSearchOpen.pipe(
         distinctUntilChanged(),
@@ -127,7 +119,59 @@ export function activatePermalinks() {
       urlParams.delete(filterKey);
       updateQueryParams(urlParams);
     }),
+    // Add current field id in the URL when preview is open
+    fieldFullId
+      .pipe(
+        distinctUntilChanged(),
+        filter((fullId) => !!fullId),
+      )
+      .subscribe((fullId) => {
+        const previewId = `${fullId?.resourceId}|${fullId?.field_type}|${fullId?.field_id}`;
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set(previewKey, previewId);
+        updateQueryParams(urlParams);
+      }),
+    //Remove preview parameters from the URL when preview is closed
+    fieldFullId
+      .pipe(
+        distinctUntilChanged(),
+        filter((fullId) => !fullId),
+      )
+      .subscribe(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.delete(previewKey);
+        updateQueryParams(urlParams);
+      }),
   ];
 
   subscriptions.push(...permalinkSubscription);
+}
+
+/**
+ * Check URL params and set store from them
+ */
+function initStoreFromUrlParams() {
+  const urlParams = new URLSearchParams(window.location.search);
+  // Search store
+  const query = urlParams.get(queryKey);
+  const filters = urlParams.getAll(filterKey);
+  if (query || filters.length > 0) {
+    searchQuery.set(query || '');
+    searchFilters.set(filters);
+    typeAhead.set(query || '');
+    triggerSearch.next();
+    if (widgetMode.value === 'popup') {
+      isPopupSearchOpen.set(true);
+    }
+  }
+
+  // Viewer store
+  const preview = urlParams.get(previewKey);
+  if (preview) {
+    const [resourceId, type, field_id] = preview.split('|');
+    const field_type = getFieldTypeFromString(type);
+    if (resourceId && field_type && field_id) {
+      fieldFullId.set({ resourceId, field_type, field_id });
+    }
+  }
 }
