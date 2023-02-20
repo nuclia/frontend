@@ -1,5 +1,5 @@
 import { FileStatus, ISourceConnector, SourceConnectorDefinition, SyncItem, SearchResults } from '../models';
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { GoogleBaseImpl } from './google.base';
 
 // eslint-disable-next-line
@@ -38,12 +38,22 @@ class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
       }),
     ).pipe(
       /* eslint-disable  @typescript-eslint/no-explicit-any */
-      map((res: any) => ({
-        items: res.result.files.map(this.map),
-        nextPage: res.result.nextPageToken
-          ? this._getFiles(drive, query, pageSize, res.result.nextPageToken)
-          : undefined,
-      })),
+      map((res: any) => {
+        if (res.result) {
+          return {
+            items: res.result.files.map(this.map),
+            nextPage: res.result.nextPageToken
+              ? this._getFiles(drive, query, pageSize, res.result.nextPageToken)
+              : undefined,
+          };
+        } else {
+          if (res.error?.code?.startsWith('4')) {
+            throw new Error('Unauthorized');
+          } else {
+            throw new Error(res.error.message || 'Unknown error');
+          }
+        }
+      }),
     );
   }
 
@@ -79,6 +89,11 @@ class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
   }
 
   private getDrive(): Observable<any> {
-    return this.getClient().pipe(map((client) => client.drive));
+    return this.getClient().pipe(
+      map((client) => client.drive),
+      catchError(() => {
+        throw new Error('Unauthorized');
+      }),
+    );
   }
 }

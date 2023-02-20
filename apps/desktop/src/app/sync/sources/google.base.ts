@@ -46,7 +46,12 @@ export class GoogleBaseImpl {
       } else {
         return (
           from(
-            (window as any)['electron'].google.getToken(JSON.parse(localStorage.getItem(CREDENTIALS) || '{}')),
+            (window as any)['electron'].google.getToken(JSON.parse(localStorage.getItem(CREDENTIALS) || '{}')).then(
+              (token: string) => token,
+              () => {
+                throw new Error('Unauthorized');
+              },
+            ),
           ) as Observable<string>
         ).pipe(tap((token) => (this.token = token)));
       }
@@ -58,24 +63,27 @@ export class GoogleBaseImpl {
       combineLatest([
         this.getToken().pipe(take(1)),
         injectScript('https://apis.google.com/js/api.js').pipe(take(1)),
-      ]).subscribe(([token]) => {
-        gapi.load('client', () => {
-          gapi.client.setToken({ access_token: token });
-          gapi.client
-            .init({
-              discoveryDocs: this.DISCOVERY_DOCS,
-            })
-            .then(
-              () => {
-                observer.next(gapi.client);
-                observer.complete();
-              },
-              (err: any) => {
-                console.error('Cannot initialize gapi client', err);
-                observer.error(err);
-              },
-            );
-        });
+      ]).subscribe({
+        next: ([token]) => {
+          gapi.load('client', () => {
+            gapi.client.setToken({ access_token: token });
+            gapi.client
+              .init({
+                discoveryDocs: this.DISCOVERY_DOCS,
+              })
+              .then(
+                () => {
+                  observer.next(gapi.client);
+                  observer.complete();
+                },
+                (err: any) => {
+                  console.error('Cannot initialize gapi client', err);
+                  observer.error(err);
+                },
+              );
+          });
+        },
+        error: (err) => observer.error(err),
       });
     });
   }
