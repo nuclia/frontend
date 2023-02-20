@@ -26,6 +26,7 @@ import {
 } from 'rxjs';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
+const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
 
 @Injectable({ providedIn: 'root' })
 export class UploadService {
@@ -123,6 +124,20 @@ export class UploadService {
         );
       }),
       map(() => {}),
+    );
+  }
+
+  createLinkResource(uri: string, classifications: Classification[]) {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.createLinkResource(
+          { uri },
+          { classifications },
+          true,
+          REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
+        ),
+      ),
     );
   }
 
