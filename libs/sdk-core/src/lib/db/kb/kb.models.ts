@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import type { IResource, LinkField, Resource, UserMetadata } from '../resource';
+import type { IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import type { Search, SearchOptions } from '../search';
 
@@ -101,7 +101,12 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   createResource(resource: IResource): Observable<{ uuid: string }>;
 
-  createLinkResource(link: LinkField, metadata?: UserMetadata): Observable<{ uuid: string }>;
+  createLinkResource(
+    link: LinkField,
+    metadata?: UserMetadata,
+    synchronous?: boolean,
+    origin?: Origin,
+  ): Observable<{ uuid: string }>;
 
   upload(file: File | FileWithMetadata, TUS?: boolean, metadata?: FileMetadata): Observable<UploadResponse>;
 

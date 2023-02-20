@@ -4,6 +4,7 @@
 
 - Add `fieldData` to `Search.SmartResult`
 - Add `fields` in `SearchOptions`
+- Add `origin` parameter to `createLinkResource`
 
 # 1.1.3 (2023-02-08)
 

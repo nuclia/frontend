@@ -56,39 +56,26 @@ export class CreateLinkComponent {
           .split('\n')
           .map((link: string) => link.trim())
           .filter((link: string) => !!link);
-        obs = this.sdk.currentKb.pipe(
-          take(1),
-          switchMap((kb) =>
-            links.reduce(
-              (acc, curr) =>
-                acc.pipe(
-                  switchMap(() => kb.createLinkResource({ uri: curr }, { classifications: this.selectedLabels })),
-                ),
-              of({ uuid: '' }),
-            ),
-          ),
+        obs = links.reduce(
+          (acc, curr) => acc.pipe(switchMap(() => this.uploadService.createLinkResource(curr, this.selectedLabels))),
+          of({ uuid: '' }),
         );
       } else if (this.linkForm.value.type === 'one') {
         this.tracking.logEvent('link_upload');
-        obs = this.sdk.currentKb.pipe(
-          take(1),
-          switchMap((kb) =>
-            kb.createLinkResource({ uri: this.linkForm.value.link || '' }, { classifications: this.selectedLabels }),
-          ),
-        );
+        obs = this.uploadService.createLinkResource(this.linkForm.value.link || '', this.selectedLabels);
       } else {
         this.tracking.logEvent('link_upload_from_csv');
         const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
-        obs = this.uploadService.createMissingLabels(allLabels).pipe(
-          switchMap(() => this.sdk.currentKb.pipe(take(1))),
-          switchMap((kb) =>
-            this.csv.reduce(
-              (acc, curr) =>
-                acc.pipe(switchMap(() => kb.createLinkResource({ uri: curr.link }, { classifications: curr.labels }))),
-              of({ uuid: '' }),
+        obs = this.uploadService
+          .createMissingLabels(allLabels)
+          .pipe(
+            switchMap(() =>
+              this.csv.reduce(
+                (acc, curr) => acc.pipe(switchMap(() => this.uploadService.createLinkResource(curr.link, curr.labels))),
+                of({ uuid: '' }),
+              ),
             ),
-          ),
-        );
+          );
       }
       obs.subscribe({
         next: () => {
