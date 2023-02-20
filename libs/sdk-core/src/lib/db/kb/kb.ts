@@ -241,6 +241,9 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
         usermetadata: metadata,
         title: link.uri,
         icon: 'application/stf-link',
+        origin: {
+          url: link.uri,
+        },
       },
       synchronous,
     );
