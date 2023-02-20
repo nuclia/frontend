@@ -113,7 +113,7 @@
   }
 
   function handleKeydown(event) {
-    if (event.code === 'Space') {
+    if (event.target.tagName.toLowerCase() !== 'input' && event.code === 'Space') {
       event.stopPropagation();
       event.preventDefault();
       togglePlay();
