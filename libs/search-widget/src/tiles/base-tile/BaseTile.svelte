@@ -3,16 +3,35 @@
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import TileHeader from './TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import { Search } from '@nuclia/core';
+  import { ResourceField, Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  import { BehaviorSubject, combineLatest, debounceTime, map, Observable, Subject, take } from 'rxjs';
+  import {
+    BehaviorSubject,
+    combineLatest,
+    debounceTime,
+    filter,
+    iif,
+    map,
+    mergeMap,
+    Observable,
+    of,
+    Subject,
+    take,
+  } from 'rxjs';
   import { searchQuery } from '../../core/stores/search.store';
   import { Duration } from '../../common/transition.utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import { getExternalUrl, goToUrl, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import { navigateToLink } from '../../core/stores/widget.store';
-  import { fieldData, fieldFullId, fieldSummary, resourceTitle, viewerState } from '../../core/stores/viewer.store';
+  import {
+    fieldData,
+    fieldFullId,
+    fieldSummary,
+    resourceField,
+    resourceTitle,
+    viewerState,
+  } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { searchInResource } from '../../core/api';
   import SearchResultNavigator from '../pdf-tile/SearchResultNavigator.svelte';
@@ -71,30 +90,48 @@
   onDestroy(() => reset());
 
   const onClickParagraph = (paragraph, index) => {
-    // FIXME: load field data from the store
-    navigateToLink.pipe(take(1)).subscribe((navigateToLink) => {
-      const url = getExternalUrl(result);
-      if (navigateToLink && url) {
-        goToUrl(url, paragraph?.text);
-      } else {
-        openParagraph(paragraph, index);
-      }
-    });
+    if (result.field) {
+      fieldFullId.set({
+        ...result.field,
+        resourceId: result.id,
+      });
+    }
+    fieldData.set(result.fieldData || null);
+    resourceTitle.set(result.title || '');
+    viewerSearchQuery.set(globalQuery.getValue());
+
+    navigateToLink
+      .pipe(
+        take(1),
+        mergeMap((navigateToLink: boolean) =>
+          iif(
+            () => navigateToLink,
+            resourceField.pipe(
+              filter((data) => !!data),
+              take(1),
+            ),
+            of(false),
+          ),
+        ),
+      )
+      .subscribe((data) => {
+        if (data === false) {
+          openParagraph(paragraph, index);
+        } else {
+          const url = getExternalUrl(result, data as ResourceField);
+          if (url) {
+            goToUrl(url, paragraph?.text);
+          } else {
+            openParagraph(paragraph, index);
+          }
+        }
+      });
   };
 
   const openParagraph = (paragraph, index) => {
     resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
-      if (result.field) {
-        fieldFullId.set({
-          ...result.field,
-          resourceId: result.id,
-        });
-      }
-      fieldData.set(result.fieldData || null);
-      resourceTitle.set(result.title || '');
-      viewerSearchQuery.set(globalQuery.getValue());
       expanded = true;
       freezeBackground(true);
     }

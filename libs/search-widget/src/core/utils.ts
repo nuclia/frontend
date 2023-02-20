@@ -80,6 +80,7 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
  * Credit to Angular: https://github.com/angular/components/blob/2f9a59a24c0464cbed7f54cbeb5cba73e6007715/src/cdk/coercion/boolean-property.ts
  * @param value
  */
+/*eslint-disable  @typescript-eslint/no-explicit-any*/
 export const coerceBooleanProperty = (value: any): boolean => {
   return value != null && `${value}` !== 'false';
 };
@@ -287,7 +288,7 @@ export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
 export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
   if (field?.field_type === FIELD_TYPE.link) {
     return (field.value as LinkField).uri;
-  } else if (field?.field_type === FIELD_TYPE.file) {
+  } else if (field?.field_type === FIELD_TYPE.file && (field.value as FileField)?.external) {
     return (field.value as FileField).file?.uri;
   } else if (resource.origin?.url) {
     return resource.origin.url;

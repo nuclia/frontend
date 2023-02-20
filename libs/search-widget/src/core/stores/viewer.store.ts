@@ -1,6 +1,6 @@
 import type { FieldFullId, MediaWidgetParagraph, PreviewKind } from '../models';
 import { SvelteState } from '../state-lib';
-import type { IFieldData } from '@nuclia/core';
+import type { IFieldData, ResourceField } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
 import { filter, map, Observable, of, switchMap } from 'rxjs';
@@ -42,6 +42,10 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
       summary: data?.extracted?.metadata?.metadata?.summary || '',
     };
   },
+);
+
+export const resourceField = viewerState.reader<ResourceField | null>((state) =>
+  state.fieldData && state.fieldFullId ? { ...state.fieldData, ...state.fieldFullId } : null,
 );
 
 export const resourceTitle = viewerState.writer<string, string>(
