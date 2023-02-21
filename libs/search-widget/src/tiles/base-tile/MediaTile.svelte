@@ -61,7 +61,7 @@
 <BaseTile
   {previewKind}
   {result}
-  {thumbnailLoaded}
+  thumbnailLoaded={thumbnailLoaded || !mediaLoading}
   loading={mediaLoading}
   typeIndicator={previewKind === PreviewKind.AUDIO ? 'audio' : 'video'}
   withSummary={true}

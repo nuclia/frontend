@@ -30,7 +30,7 @@
   const dispatch = createEventDispatcher();
 
   onMount(() => {
-    if (src) {
+    if (src && !audio) {
       audio = new Audio(src);
       if (typeof time === 'number') {
         audio.currentTime = time;
