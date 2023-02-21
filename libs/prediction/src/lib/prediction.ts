@@ -4,6 +4,8 @@ import { BertTokenizer, loadTokenizer } from './bert/tokenizer';
 import { BehaviorSubject, filter, forkJoin, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import type { Classification } from '@nuclia/core';
 
+declare const ort: any;
+
 export class NucliaPrediction {
   options = {
     executionProviders: ['wasm'],
@@ -37,8 +39,11 @@ export class NucliaPrediction {
         switchMap((definition: { model: string }) => {
           const vocab = `${getCDN()}models/classifier/${definition.model}/vocab.json`;
           const model = `${kbPath}/train/classifier/model/onnx_models/model-int8.onnx`;
-          const session = (window.ort as any).InferenceSession.create(model, this.options);
-          return forkJoin([from(loadTokenizer(vocab, false, true)), from(session.then((s) => (this.session = s)))]);
+          const session = ort.InferenceSession.create(model, this.options);
+          return forkJoin([
+            from(loadTokenizer(vocab, false, true)),
+            from(session.then((s: any) => (this.session = s))),
+          ]);
         }),
       )
       .subscribe(([tokenizer, session]: [BertTokenizer, any]) => {
@@ -65,10 +70,10 @@ export class NucliaPrediction {
   }
 
   private async lm_inference(text: string): Promise<{ label: string; score: number }[]> {
-    const encoded_ids = this.tokenizer.tokenize(text);
+    const encoded_ids = this.tokenizer?.tokenize(text);
     logger(encoded_ids);
 
-    if (encoded_ids.length === 0) {
+    if (!encoded_ids || encoded_ids.length === 0) {
       return Promise.resolve([]);
     }
 
@@ -109,18 +114,9 @@ export class NucliaPrediction {
     attention_mask[encoded.length] = BigInt(1);
     token_type_ids[encoded.length] = BigInt(0);
     const sequence_length = input_ids.length;
-    const input_ids_tensor = new (window.ort as any).Tensor('int64', BigInt64Array.from(input_ids), [
-      1,
-      sequence_length,
-    ]);
-    const attention_mask_tensor = new (window.ort as any).Tensor('int64', BigInt64Array.from(attention_mask), [
-      1,
-      sequence_length,
-    ]);
-    const token_type_ids_tensor = new (window.ort as any).Tensor('int64', BigInt64Array.from(token_type_ids), [
-      1,
-      sequence_length,
-    ]);
+    const input_ids_tensor = new ort.Tensor('int64', BigInt64Array.from(input_ids), [1, sequence_length]);
+    const attention_mask_tensor = new ort.Tensor('int64', BigInt64Array.from(attention_mask), [1, sequence_length]);
+    const token_type_ids_tensor = new ort.Tensor('int64', BigInt64Array.from(token_type_ids), [1, sequence_length]);
     return {
       input_ids: input_ids_tensor,
       attention_mask: attention_mask_tensor,
