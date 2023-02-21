@@ -1,11 +1,11 @@
 <script lang="ts">
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
-  import { IconButton } from '../../common';
-  import { _ } from '../../core/i18n';
+  import DocTypeIndicator from '../../../common/indicators/DocTypeIndicator.svelte';
+  import { IconButton } from '../../../common';
+  import { _ } from '../../../core/i18n';
   import { FIELD_TYPE } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
   import { filter, take } from 'rxjs';
-  import { fieldType, getFieldUrl } from '../../core/stores/viewer.store';
+  import { fieldType, getFieldUrl } from '../../../core/stores/viewer.store';
 
   export let expanded = false;
   export let headerActionsWidth = 0;

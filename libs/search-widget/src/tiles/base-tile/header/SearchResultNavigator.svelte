@@ -1,6 +1,6 @@
 <script lang="ts">
-  import IconButton from '../../common/button/IconButton.svelte';
-  import { _ } from '../../core/i18n';
+  import IconButton from '../../../common/button/IconButton.svelte';
+  import { _ } from '../../../core/i18n';
   import { createEventDispatcher } from 'svelte';
 
   export let resultIndex;

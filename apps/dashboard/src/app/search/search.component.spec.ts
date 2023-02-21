@@ -6,7 +6,6 @@ import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { ResourceViewerService } from '../resources/resource-viewer.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -32,7 +31,6 @@ describe('SearchComponent', () => {
         }),
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService),
-        MockProvider(ResourceViewerService),
       ],
     }).compileComponents();
 

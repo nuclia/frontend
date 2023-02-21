@@ -1,7 +1,7 @@
 <script lang="ts">
   import AllResultsToggle from '../../common/paragraph-result/AllResultsToggle.svelte';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
-  import TileHeader from './TileHeader.svelte';
+  import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { ResourceField, Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../../core/models';
@@ -34,7 +34,7 @@
   } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { searchInResource } from '../../core/api';
-  import SearchResultNavigator from './SearchResultNavigator.svelte';
+  import SearchResultNavigator from './header/SearchResultNavigator.svelte';
   import { _ } from '../../core/i18n';
 
   export let result: Search.SmartResult;

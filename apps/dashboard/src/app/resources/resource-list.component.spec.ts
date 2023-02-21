@@ -11,7 +11,6 @@ import { MockModule, MockProvider } from 'ng-mocks';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { CdkTableModule } from '@angular/cdk/table';
 import { LabelModule } from '../components/label/label.module';
-import { ResourceViewerService } from './resource-viewer.service';
 import { ReactiveFormsModule } from '@angular/forms';
 
 describe('ResourceListComponent', () => {
@@ -74,7 +73,6 @@ describe('ResourceListComponent', () => {
           useValue: { get: () => of('') },
         },
         MockProvider(BackendConfigurationService),
-        MockProvider(ResourceViewerService),
       ],
     }).compileComponents();
   }));

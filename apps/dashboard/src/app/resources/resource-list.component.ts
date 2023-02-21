@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -48,7 +47,6 @@ import {
 import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ResourceViewerService } from './resource-viewer.service';
 import { SampleDatasetService } from './sample-dataset/sample-dataset.service';
 import { LabelsService } from '../services/labels.service';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
@@ -103,7 +101,7 @@ interface ColumnModel {
   styleUrls: ['./resource-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
+export class ResourceListComponent implements OnInit, OnDestroy {
   @ViewChild('pendingPopoverDirective') pendingPopoverDirective?: PopoverDirective;
   @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
 
@@ -226,7 +224,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
     private toaster: SisToastService,
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
-    private resourceViewer: ResourceViewerService,
     private labelService: LabelsService,
   ) {
     const title = this.filters.title;
@@ -278,10 +275,6 @@ export class ResourceListComponent implements AfterViewInit, OnInit, OnDestroy {
       },
       { value: 'status', label: 'resource.status', visible: false, optional: true, showInPending: true },
     ];
-  }
-
-  ngAfterViewInit() {
-    this.resourceViewer.init('viewer-widget');
   }
 
   ngOnInit(): void {
