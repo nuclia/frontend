@@ -11,6 +11,7 @@ interface ViewerState {
   fieldData: IFieldData | null;
   title: string;
   summary: string;
+  isPreviewing: boolean;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
@@ -18,7 +19,13 @@ export const viewerState = new SvelteState<ViewerState>({
   fieldData: null,
   title: '',
   summary: '',
+  isPreviewing: false,
 });
+
+export const isPreviewing = viewerState.writer(
+  (state) => state.isPreviewing,
+  (state, isPreviewing) => ({ ...state, isPreviewing }),
+);
 
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
   (state) => state.fieldFullId,

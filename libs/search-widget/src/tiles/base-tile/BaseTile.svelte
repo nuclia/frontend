@@ -28,6 +28,7 @@
     fieldData,
     fieldFullId,
     fieldSummary,
+    isPreviewing,
     resourceField,
     resourceTitle,
     viewerState,
@@ -151,6 +152,7 @@
     selectParagraph(paragraph);
     if (!expanded) {
       expanded = true;
+      isPreviewing.set(true);
       freezeBackground(true);
     }
     setTimeout(() => setHeaderActionWidth());
@@ -230,6 +232,7 @@
 
   function reset() {
     expanded = false;
+    isPreviewing.set(false);
     selectedParagraph = undefined;
     setTimeout(() => {
       isSearchingInResource.next(false);
