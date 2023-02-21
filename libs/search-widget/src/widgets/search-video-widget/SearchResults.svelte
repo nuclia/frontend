@@ -2,14 +2,13 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime, map, merge, of, shareReplay, Subject, switchMap } from 'rxjs';
+  import { debounceTime, map, merge, Subject } from 'rxjs';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
     entityRelations,
-    displayedResource,
     hasSearchError,
     isEmptySearchQuery,
     pendingResults,
@@ -18,19 +17,17 @@
     hasMore,
     loadMore,
   } from '../../core/stores/search.store';
-  import { getResourceById } from '../../core/api';
   import Tile from '../../tiles/Tile.svelte';
-  import { ResourceProperties } from '@nuclia/core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(1500));
-  // FIXME
-  const resource = displayedResource.pipe(
-    switchMap((data) => (data?.uid ? getResourceById(data.uid, [ResourceProperties.BASIC]) : of(null))),
-    shareReplay(),
-  );
+  // TODO: viewer
+  // const resource = displayedResource.pipe(
+  //   switchMap((data) => (data?.uid ? getResourceById(data.uid, [ResourceProperties.BASIC]) : of(null))),
+  //   shareReplay(),
+  // );
 
   let svgSprite;
 
@@ -62,7 +59,7 @@
         <div
           class="results"
           class:with-relations={$entityRelations.length > 0}>
-          {#each $smartResults as result, i (result.id + result.field.field_type + result.field.field_id)}
+          {#each $smartResults as result, i (result.id + result.field?.field_type + result.field?.field_id)}
             <Tile {result} />
             {#if i === $smartResults.length - 10}
               <InfiniteScroll
@@ -92,9 +89,9 @@
       {/if}
     {/if}
   {/if}
-  {#if $displayedResource && $resource}
-    <Tile result={$resource} />
-  {/if}
+  <!--{#if $displayedResource && $resource}-->
+  <!--  <Tile result={$resource} />-->
+  <!--{/if}-->
   <div
     id="nuclia-glyphs-sprite"
     hidden>

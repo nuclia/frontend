@@ -1,7 +1,8 @@
 import { SvelteState } from '../state-lib';
-import type { IResource, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
+  FIELD_TYPE,
   getDataKeyFromFieldType,
   getFilterFromLabel,
   SHORT_FIELD_TYPE,
@@ -171,9 +172,10 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
       if (resource.paragraphs && resource.paragraphs.length > 0) {
         return resource;
       } else {
+        const field = getFirstFieldFromResource(resource);
         const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
         if (fakeParagraph) {
-          return { ...resource, paragraphs: [fakeParagraph] };
+          return { ...resource, field, paragraphs: [fakeParagraph] };
         } else {
           return undefined;
         }
@@ -311,6 +313,21 @@ function generateFakeParagraphForSummaryOrTitle(
         labels: [],
       }
     : undefined;
+}
+
+function getFirstFieldFromResource(resource: IResource): FieldId | undefined {
+  if (!resource.data) {
+    return;
+  }
+  if (resource.data.files) {
+    return { field_id: Object.keys(resource.data.files)[0], field_type: FIELD_TYPE.file };
+  } else if (resource.data.links) {
+    return { field_id: Object.keys(resource.data.links)[0], field_type: FIELD_TYPE.link };
+  } else if (resource.data.texts) {
+    return { field_id: Object.keys(resource.data.texts)[0], field_type: FIELD_TYPE.text };
+  } else {
+    return;
+  }
 }
 
 function appendResults(existingResults: Search.Results, newResults: Search.Results): Search.Results {
