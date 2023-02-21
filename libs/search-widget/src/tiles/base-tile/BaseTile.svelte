@@ -35,6 +35,7 @@
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { searchInResource } from '../../core/api';
   import SearchResultNavigator from './SearchResultNavigator.svelte';
+  import { _ } from '../../core/i18n';
 
   export let result: Search.SmartResult;
   export let previewKind: PreviewKind;
@@ -58,11 +59,24 @@
   let sidePanelExpanded = false;
   const resizeEvent = new Subject();
   let findInputElement: HTMLElement;
+  let findInPlaceholder = 'tile.find-in-';
 
   const globalQuery = searchQuery;
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
+  $: switch (previewKind) {
+    case PreviewKind.AUDIO:
+      findInPlaceholder += 'audio';
+      break;
+    case PreviewKind.VIDEO:
+      findInPlaceholder += 'video';
+      break;
+    default:
+      findInPlaceholder += 'document';
+      break;
+  }
+
   let paragraphList: WidgetParagraph[];
   const isSearchingInResource = new BehaviorSubject(false);
   const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
@@ -308,8 +322,8 @@
               class="find-input"
               type="text"
               autocomplete="off"
-              aria-label="Find in document"
-              placeholder="Find in document"
+              aria-label={$_(findInPlaceholder)}
+              placeholder={$_(findInPlaceholder)}
               tabindex="-1"
               bind:this={findInputElement}
               bind:value={$viewerSearchQuery}

@@ -48,5 +48,7 @@
 	"results.summary": "Résumé",
 	"suggest.intents": "Labels",
 	"suggest.paragraphs": "Paragraphes suggérés",
-	"tile.find-transcript": "Trouver une transcription"
+	"tile.find-in-audio": "Rechercher dans l'audio",
+	"tile.find-in-document": "Rechercher dans le document",
+	"tile.find-in-video": "Rechercher dans la vidéo"
 }
