@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import {
+  BehaviorSubject,
   catchError,
   combineLatest,
   concatMap,
   delay,
   filter,
   forkJoin,
+  from,
   map,
   Observable,
   of,
@@ -31,7 +33,7 @@ import {
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { Algolia } from './destinations/algolia';
-import { md5, SDKService, UserService } from '@flaps/core';
+import { injectScript, md5, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
 import { FolderConnector } from './sources/folder';
 import { S3Connector } from './sources/s3';
@@ -40,6 +42,7 @@ import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
 import { GCSConnector } from './sources/gcs';
 import { OneDriveConnector } from './sources/onedrive';
 import { BrightcoveConnector } from './sources/brightcove';
+import { DynamicConnectorWrapper } from './dynamic-connector';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
@@ -85,6 +88,7 @@ export class SyncService {
       settings: {},
     },
   };
+  sourceObs = new BehaviorSubject(Object.values(this.sources).map((obj) => obj.definition));
 
   private _queue: Sync[] = [];
   queue = new ReplaySubject<Sync[]>(1);
@@ -107,6 +111,7 @@ export class SyncService {
     });
     this._queue = queue;
     this.onQueueUpdate();
+    this.fetchDynamicConnectors();
   }
 
   getConnectors(type: 'sources' | 'destinations'): ConnectorDefinition[] {
@@ -307,5 +312,25 @@ export class SyncService {
         ),
       )
       .subscribe(() => this.ready.next());
+  }
+
+  private fetchDynamicConnectors() {
+    (window as any).registerConnector = (connector: any) => {
+      this.sources[connector.id] = {
+        definition: { ...connector, factory: () => of(new DynamicConnectorWrapper(connector.factory())) },
+        settings: {},
+      };
+      this.sourceObs.next(Object.values(this.sources).map((obj) => obj.definition));
+    };
+    from(
+      fetch('https://nuclia.github.io/status/connectors.json').then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch connectors');
+        }
+        return res.json();
+      }),
+    )
+      .pipe(switchMap((urls: string[]) => forkJoin(urls.map((url) => injectScript(url)))))
+      .subscribe();
   }
 }
