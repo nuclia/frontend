@@ -7,5 +7,16 @@
     </div>
   </div>
 
-  <div class="viewer-button-container"></div>
+  <div class="viewer-button-container">
+    <pa-button
+      *ngIf="loaded"
+      [disabled]="loadingPreview"
+      (click)="openViewer()">
+      {{ 'resource.preview.open-viewer' | translate }}
+    </pa-button>
+  </div>
+</div>
+
+<div class="viewer-container">
+  <div [innerHTML]="viewerWidget | async"></div>
 </div>

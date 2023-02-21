@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { Resource, Search } from '@nuclia/core';
-  import PdfViewer from './PdfViewer.svelte';
-  import { map, Observable, of, switchMap } from 'rxjs';
-  import { getFileUrl, getResource } from '../../core/api';
-  import { getCDN, getFileField, getPdfJsBaseUrl, getPdfJsStyle } from '../../core/utils';
-  import { PreviewKind, WidgetParagraph } from '../../core/models';
-  import DocumentTile from '../base-tile/DocumentTile.svelte';
+  import { Search } from '@nuclia/core';
+  import PdfViewer from './viewers/PdfViewer.svelte';
+  import { Observable } from 'rxjs';
+  import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../core/utils';
+  import { PreviewKind, WidgetParagraph } from '../core/models';
+  import { getFieldUrl } from '../core/stores/viewer.store';
+  import DocumentTile from './base-tile/DocumentTile.svelte';
 
-  export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
+  export let result: Search.SmartResult;
 
   const pdfStyle = getPdfJsStyle();
   const pdfJsBaseUrl = getPdfJsBaseUrl();
@@ -25,18 +25,10 @@
 
   $: isMobile = innerWidth < 448;
 
-  let resource$: Observable<Resource> = getResource(result.id);
-
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;
     if (!pdfUrl) {
-      pdfUrl = resource$.pipe(
-        map((res) => {
-          const fileField = getFileField(res, result.field?.field_id || '');
-          return fileField?.value?.file;
-        }),
-        switchMap((url) => (url ? getFileUrl(url.uri) : of(''))),
-      );
+      pdfUrl = getFieldUrl();
     }
   };
 
@@ -70,8 +62,7 @@
   previewKind={PreviewKind.PDF}
   fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
   {result}
-  resourceObs={resource$}
-  on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
+  on:selectParagraph={(event) => openParagraph(event.detail)}>
   {#if pdfViewerLoaded}
     <PdfViewer
       src={$pdfUrl}

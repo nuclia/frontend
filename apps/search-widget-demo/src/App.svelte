@@ -11,12 +11,20 @@
   let widget: NucliaWidget;
   let searchBar: NucliaSearchBar;
   let viewerWidget: NucliaViewerWidget;
-  let resource = 'fe5cc983ded4330f65ae992f58d85fcf';
+
+  let resource = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
+  let fieldType = 'file';
+  let fieldId = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
+
   /**
    * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
    * Kb with different kind of media (owned by Mat): 5c2bc432-a579-48cd-b408-4271e5e7a43c
    */
-  let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4';
+  let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
+  // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
+  // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
+  // let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c'; // la classe américaine
+  // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
 
   onMount(() => {
     widget?.setActions([
@@ -107,15 +115,31 @@
         cdn="/"
         lang="en"
         placeholder="Search"
-        features="filter,suggestions" />
+        features="filter,suggestions,permalink" />
       <NucliaSearchResults />
     </div>
   {/if}
   {#if selected === 'viewer'}
     <h2>Viewer widget</h2>
-    <label>Resource id:</label>
-    <input bind:value={resource} />
-    <button on:click={() => viewerWidget.displayResource(resource)}>Show resource</button>
+    <label for="rid">Resource id:</label>
+    <input
+      id="rid"
+      bind:value={resource} />
+
+    <label for="fid">Field id:</label>
+    <input
+      id="fid"
+      bind:value={fieldId} />
+
+    <label for="ftype">Field type:</label>
+    <input
+      id="ftype"
+      bind:value={fieldType} />
+
+    <button
+      on:click={() => viewerWidget.openPreview({ resourceId: resource, field_type: fieldType, field_id: fieldId })}>
+      Preview
+    </button>
     <div class="viewer-widget">
       <NucliaViewerWidget
         bind:this={viewerWidget}
@@ -123,7 +147,6 @@
         knowledgebox={kb}
         cdn="/"
         backend="https://stashify.cloud/api"
-        permalink
         lang="en" />
     </div>
   {/if}

@@ -71,3 +71,22 @@ export function shortToLongFieldType(shortType: SHORT_FIELD_TYPE): FIELD_TYPE | 
       return null;
   }
 }
+
+export function getFieldTypeFromString(type: string): FIELD_TYPE | null {
+  switch (type) {
+    case FIELD_TYPE.file:
+      return FIELD_TYPE.file;
+    case FIELD_TYPE.link:
+      return FIELD_TYPE.link;
+    case FIELD_TYPE.text:
+      return FIELD_TYPE.text;
+    case FIELD_TYPE.layout:
+      return FIELD_TYPE.layout;
+    case FIELD_TYPE.conversation:
+      return FIELD_TYPE.conversation;
+    case FIELD_TYPE.datetime:
+      return FIELD_TYPE.datetime;
+    default:
+      return null;
+  }
+}

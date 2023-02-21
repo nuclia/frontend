@@ -1,21 +1,31 @@
 import type {
   Classification,
   Entity,
+  IResource,
   KBStates,
   LabelSets,
   NucliaOptions,
   SearchOptions,
   TokenAnnotation,
 } from '@nuclia/core';
-import { Nuclia, Resource, ResourceProperties, Search, WritableKnowledgeBox } from '@nuclia/core';
+import {
+  Nuclia,
+  Resource,
+  ResourceField,
+  ResourceFieldProperties,
+  ResourceProperties,
+  Search,
+  WritableKnowledgeBox,
+} from '@nuclia/core';
 import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
-import type { EntityGroup, WidgetOptions } from './models';
+import type { EntityGroup, FieldFullId, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
 import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { hasSearchError, searchOptions } from './stores/search.store';
+import { hasViewerSearchError } from './stores/viewer-search.store';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -66,6 +76,31 @@ export const search = (query: string, options: SearchOptions) => {
   );
 };
 
+export const searchInResource = (
+  query: string,
+  resource: IResource,
+  options: SearchOptions,
+  features: Search.ResourceFeatures[] = [Search.ResourceFeatures.PARAGRAPH],
+): Observable<Search.Results> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  if (!query) {
+    options.inTitleOnly = true;
+  }
+  return nucliaApi.knowledgeBox
+    .getResourceFromData(resource)
+    .search(query, features, options)
+    .pipe(
+      filter((res) => {
+        if (res.error) {
+          hasViewerSearchError.set(true);
+        }
+        return !res.error;
+      }),
+    );
+};
+
 export const suggest = (query: string) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
@@ -102,6 +137,18 @@ export const getResourceById = (uid: string, show?: ResourceProperties[]): Obser
   }
   return merge(nucliaApi.knowledgeBox.getResource(uid, show));
 };
+
+export function getResourceField(fullFieldId: FieldFullId): Observable<ResourceField> {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox
+    .getResourceFromData({ id: fullFieldId.resourceId })
+    .getField(fullFieldId.field_type, fullFieldId.field_id, [
+      ResourceFieldProperties.VALUE,
+      ResourceFieldProperties.EXTRACTED,
+    ]);
+}
 
 let _entities: EntityGroup[] | undefined = undefined;
 export const loadEntities = (): Observable<EntityGroup[]> => {

@@ -3,15 +3,18 @@ import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import type {
   CloudLink,
-  FIELD_TYPE,
+  FileField,
   FileFieldData,
+  IFieldData,
   IResource,
+  LinkField,
   LinkFieldData,
   Resource,
   ResourceData,
+  ResourceField,
   Search,
 } from '@nuclia/core';
-import { longToShortFieldType } from '@nuclia/core';
+import { FIELD_TYPE, longToShortFieldType, sliceUnicode } from '@nuclia/core';
 import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -77,6 +80,7 @@ export const updateQueryParams = (urlParams: URLSearchParams) => {
  * Credit to Angular: https://github.com/angular/components/blob/2f9a59a24c0464cbed7f54cbeb5cba73e6007715/src/cdk/coercion/boolean-property.ts
  * @param value
  */
+/*eslint-disable  @typescript-eslint/no-explicit-any*/
 export const coerceBooleanProperty = (value: any): boolean => {
   return value != null && `${value}` !== 'false';
 };
@@ -237,14 +241,13 @@ export function getFieldType(fieldType: string): FIELD_TYPE {
   return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
 
-export function getExtractedTexts(resource: Resource) {
-  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
-  if (fields.length === 0) {
+export function getExtractedTexts(data: IFieldData | null): string[] {
+  if (!data) {
     return [];
   }
-  const mainField = fields[0];
-  return (mainField.field.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
-    resource.getParagraphText(getFieldType(mainField.field_type), mainField.field_id, paragraph).trim(),
+  const text = data.extracted?.text?.text || '';
+  return (data.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
+    sliceUnicode(text, paragraph.start, paragraph.end).trim(),
   );
 }
 
@@ -277,20 +280,19 @@ export function getMediaTranscripts(
 
 export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   const type = paragraph.fieldType.slice(0, -1) as FIELD_TYPE;
-  return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start!}-${paragraph.paragraph
-    .end!}`;
+  return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start || 0}-${
+    paragraph.paragraph.end || 0
+  }`;
 };
 
-export const getExternalUrl = (resource: IResource) => {
-  if (resource.origin?.url) {
+export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
+  if (field?.field_type === FIELD_TYPE.link) {
+    return (field.value as LinkField).uri;
+  } else if (field?.field_type === FIELD_TYPE.file && (field.value as FileField)?.external) {
+    return (field.value as FileField).file?.uri;
+  } else if (resource.origin?.url) {
     return resource.origin.url;
+  } else {
+    return undefined;
   }
-  const linkField = Object.values(resource.data?.links || {})[0];
-  const fileField = Object.values(resource.data?.files || {})[0];
-  if (linkField?.value?.uri) {
-    return linkField.value.uri;
-  } else if (fileField?.value?.external && fileField?.value?.file?.uri) {
-    return fileField.value.file.uri;
-  }
-  return undefined;
 };

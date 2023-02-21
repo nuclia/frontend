@@ -14,7 +14,7 @@ export const goToResource = (params: DisplayedResource, text?: string) => {
   ])
     .pipe(take(1))
     .subscribe(([navigateToLink, resource]) => {
-      const url = getExternalUrl(resource!);
+      const url = getExternalUrl(resource as IResource);
       if (navigateToLink && url && !isYoutubeUrl(url)) {
         goToUrl(url, text);
       } else {

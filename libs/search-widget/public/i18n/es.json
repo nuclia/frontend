@@ -50,5 +50,7 @@
 	"results.summary": "Resumen",
 	"suggest.intents": "Etiquetas",
 	"suggest.paragraphs": "Párrafo sugerido",
-	"tile.find-transcript": "Encuentra una transcripción"
+	"tile.find-in-audio": "Buscar en audio",
+	"tile.find-in-document": "Buscar en documento",
+	"tile.find-in-video": "Encontrar en vídeo"
 }

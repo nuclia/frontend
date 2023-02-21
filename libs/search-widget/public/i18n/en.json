@@ -51,5 +51,7 @@
 	"results.summary": "Summary",
 	"suggest.intents": "Labels",
 	"suggest.paragraphs": "Suggested paragraphs",
-	"tile.find-transcript": "Find a transcript"
+	"tile.find-in-audio": "Find in audio",
+	"tile.find-in-document": "Find in document",
+	"tile.find-in-video": "Find in video"
 }

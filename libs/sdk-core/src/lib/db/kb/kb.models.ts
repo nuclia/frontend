@@ -15,6 +15,12 @@ export enum ResourceProperties {
   ERRORS = 'errors',
 }
 
+export enum ResourceFieldProperties {
+  VALUE = 'value',
+  EXTRACTED = 'extracted',
+  ERROR = 'error',
+}
+
 export enum ExtractedDataTypes {
   TEXT = 'text',
   METADATA = 'metadata',
@@ -64,7 +70,9 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getLabels(): Observable<LabelSets>;
 
-  getResource(uuid: string): Observable<IResource>;
+  getResource(uuid: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
+
+  getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
   search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
 

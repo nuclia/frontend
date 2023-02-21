@@ -16,8 +16,7 @@ import type { ICreateResource, IResource, LinkField, UserMetadata } from '../res
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, Search, SearchOptions } from '../search';
-import { search } from '../search';
+import { catalog, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -115,10 +114,13 @@ export class KnowledgeBox implements IKnowledgeBox {
     ],
   ): Observable<Resource> {
     const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
-    const path = !uuid ? `${this.path}/slug/${slug}` : `${this.path}/resource/${uuid}`;
     return this.nuclia.rest
-      .get<IResource>(`${path}?${params.join('&')}`)
+      .get<IResource>(`${this._getPath(uuid, slug)}?${params.join('&')}`)
       .pipe(map((res) => new Resource(this.nuclia, this.id, res)));
+  }
+
+  private _getPath(uuid?: string, slug?: string): string {
+    return !uuid ? `${this.path}/slug/${slug}` : `${this.path}/resource/${uuid}`;
   }
 
   getResourceFromData(data: IResource): Resource {

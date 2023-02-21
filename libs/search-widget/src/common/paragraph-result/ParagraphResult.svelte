@@ -16,7 +16,7 @@
 
   const dispatch = createEventDispatcher();
   const open = () => {
-    dispatch('open', { paragraph });
+    dispatch('open', paragraph);
   };
   const mediaKinds: PreviewKind[] = [PreviewKind.AUDIO, PreviewKind.VIDEO, PreviewKind.YOUTUBE];
   $: isMedia = mediaKinds.includes(paragraph.preview);
@@ -48,8 +48,7 @@
         start={paragraph.start_seconds || 0}
         {selected}
         hover={hovering}
-        {minimized}
-        on:play={open} />
+        {minimized} />
     {/if}
   </div>
   <div

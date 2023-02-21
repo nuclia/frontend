@@ -1,5 +1,5 @@
 <script lang="ts">
-  import IconButton from '../button/IconButton.svelte';
+  import IconButton from '../../common/button/IconButton.svelte';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { lightFormat } from 'date-fns';
   import { getCDN } from '../../core/utils';
@@ -30,13 +30,16 @@
   const dispatch = createEventDispatcher();
 
   onMount(() => {
-    if (src) {
+    if (src && !audio) {
       audio = new Audio(src);
       if (typeof time === 'number') {
         audio.currentTime = time;
       }
       audio.onloadeddata = onAudioLoaded;
-      audio.onended = () => (playing = false);
+      audio.onended = () => {
+        playing = false;
+        wavesAnimation.pause();
+      };
       audio.oncanplay = () => {
         dispatch('audioReady');
         if (typeof time === 'number' && audio.paused) {
@@ -92,10 +95,8 @@
   }
 
   function seekTime(event: MouseEvent) {
-    if (!onError) {
-      const timelineWidth = timelineElement.offsetWidth;
-      audio.currentTime = (event.offsetX / timelineWidth) * audio.duration;
-    }
+    const timelineWidth = timelineElement.offsetWidth;
+    audio.currentTime = (event.offsetX / timelineWidth) * audio.duration;
   }
 
   function getFormattedTimeFromSeconds(seconds: number): string {
@@ -112,7 +113,9 @@
   }
 
   function handleKeydown(event) {
-    if (event.code === 'Space') {
+    if (event.target.tagName.toLowerCase() !== 'input' && event.code === 'Space') {
+      event.stopPropagation();
+      event.preventDefault();
       togglePlay();
     }
   }
@@ -132,8 +135,7 @@
     <IconButton
       icon={playing ? 'pause' : audio?.currentTime === audio?.duration ? 'refresh' : 'play'}
       size="small"
-      disabled={onError}
-      aspect="basic"
+      aspect="solid"
       on:click={togglePlay} />
     <div class="time">{currentTime}</div>
     <div

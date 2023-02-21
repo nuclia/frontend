@@ -27,6 +27,7 @@ import type {
 import type { Search, SearchOptions } from '../search';
 import { search } from '../search';
 import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
+import { ExtractedDataTypes, ResourceFieldProperties } from '../kb';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
@@ -203,8 +204,19 @@ export class Resource extends ReadableResource implements IResource {
     return this.nuclia.rest.post<void>(`${this.path}/reprocess`, {}, undefined, undefined, true);
   }
 
-  getField(type: FIELD_TYPE, field: string): Observable<ResourceField> {
-    return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}`);
+  getField(
+    type: FIELD_TYPE,
+    field: string,
+    show: ResourceFieldProperties[] = [ResourceFieldProperties.VALUE],
+    extracted: ExtractedDataTypes[] = [
+      ExtractedDataTypes.TEXT,
+      ExtractedDataTypes.METADATA,
+      ExtractedDataTypes.LINK,
+      ExtractedDataTypes.FILE,
+    ],
+  ): Observable<ResourceField> {
+    const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
+    return this.nuclia.rest.get<ResourceField>(`${this.path}/${type}/${field}?${params.join('&')}`);
   }
 
   getThumbnailsUrl(): Observable<string[]> {

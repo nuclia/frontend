@@ -1,15 +1,15 @@
 <script lang="ts">
-  import DocTypeIndicator from '../../common/indicators/DocTypeIndicator.svelte';
-  import { IconButton } from '../../common';
-  import { _ } from '../../core/i18n';
-  import { FIELD_TYPE, Search } from '@nuclia/core';
+  import DocTypeIndicator from '../../../common/indicators/DocTypeIndicator.svelte';
+  import { IconButton } from '../../../common';
+  import { _ } from '../../../core/i18n';
+  import { FIELD_TYPE } from '@nuclia/core';
   import { createEventDispatcher } from 'svelte';
-  import { getFieldUrl } from '../../core/stores/resource.store';
-  import { take } from 'rxjs';
+  import { filter, take } from 'rxjs';
+  import { fieldType, getFieldUrl } from '../../../core/stores/viewer.store';
 
   export let expanded = false;
   export let headerActionsWidth = 0;
-  export let result: Search.SmartResult;
+  export let resourceTitle = '';
   export let typeIndicator = '';
 
   const dispatch = createEventDispatcher();
@@ -23,16 +23,12 @@
   }
 
   function openOrigin() {
-    if (!result.field) {
-      return;
-    }
-    getFieldUrl(result.field)
-      .pipe(take(1))
-      .subscribe((url) => {
-        if (url) {
-          window.open(url, 'blank', 'noreferrer');
-        }
-      });
+    getFieldUrl()
+      .pipe(
+        take(1),
+        filter((url) => !!url),
+      )
+      .subscribe((url) => window.open(url, 'blank', 'noreferrer'));
   }
 </script>
 
@@ -47,11 +43,11 @@
     <h3
       class="ellipsis"
       on:click={() => clickOnTitle()}>
-      {result?.title}
+      {resourceTitle}
     </h3>
-    {#if expanded && (result.field?.field_type === FIELD_TYPE.file || result.field?.field_type === FIELD_TYPE.link)}
+    {#if expanded && (fieldType.getValue() === FIELD_TYPE.file || fieldType.getValue() === FIELD_TYPE.link)}
       <IconButton
-        icon={result.field.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
+        icon={fieldType.getValue() === FIELD_TYPE.file ? 'download' : 'square-arrow'}
         ariaLabel={$_('resource.source')}
         aspect="basic"
         on:click={openOrigin} />

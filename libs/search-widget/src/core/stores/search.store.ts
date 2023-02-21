@@ -1,7 +1,8 @@
 import { SvelteState } from '../state-lib';
-import type { IResource, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
+  FIELD_TYPE,
   getDataKeyFromFieldType,
   getFilterFromLabel,
   SHORT_FIELD_TYPE,
@@ -10,6 +11,7 @@ import {
 import { DisplayedResource, NO_RESULTS } from '../models';
 import { Subject } from 'rxjs';
 
+// TODO: once old widget will be removed, we should remove displayedResource from the store
 interface SearchState {
   query: string;
   filters: string[];
@@ -170,9 +172,10 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
       if (resource.paragraphs && resource.paragraphs.length > 0) {
         return resource;
       } else {
+        const field = getFirstFieldIdFromResource(resource);
         const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
         if (fakeParagraph) {
-          return { ...resource, paragraphs: [fakeParagraph] };
+          return { ...resource, field, paragraphs: [fakeParagraph] };
         } else {
           return undefined;
         }
@@ -310,6 +313,39 @@ function generateFakeParagraphForSummaryOrTitle(
         labels: [],
       }
     : undefined;
+}
+
+function getFirstFieldIdFromResource(resource: IResource): FieldId | undefined {
+  if (!resource.data) {
+    return;
+  }
+  if (resource.data.files) {
+    return { field_id: Object.keys(resource.data.files)[0], field_type: FIELD_TYPE.file };
+  } else if (resource.data.links) {
+    return { field_id: Object.keys(resource.data.links)[0], field_type: FIELD_TYPE.link };
+  } else if (resource.data.texts) {
+    return { field_id: Object.keys(resource.data.texts)[0], field_type: FIELD_TYPE.text };
+  } else {
+    return;
+  }
+}
+
+export function getFirstResourceField(resource: IResource): ResourceField | undefined {
+  if (!resource.data) {
+    return;
+  }
+  if (resource.data.files) {
+    const fieldId = Object.keys(resource.data.files)[0];
+    return { field_id: fieldId, field_type: FIELD_TYPE.file, ...resource.data.files[fieldId] };
+  } else if (resource.data.links) {
+    const fieldId = Object.keys(resource.data.links)[0];
+    return { field_id: fieldId, field_type: FIELD_TYPE.link, ...resource.data.links[fieldId] };
+  } else if (resource.data.texts) {
+    const fieldId = Object.keys(resource.data.texts)[0];
+    return { field_id: fieldId, field_type: FIELD_TYPE.text, ...resource.data.texts[fieldId] };
+  } else {
+    return;
+  }
 }
 
 function appendResults(existingResults: Search.Results, newResults: Search.Results): Search.Results {
