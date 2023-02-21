@@ -1,28 +1,27 @@
-import { logger, setCDN } from './utils';
-import BertModel from './bert/model';
-import { BehaviorSubject, filter, from, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { logger, setCDN, getCDN } from './utils';
+import { BertTokenizer, loadTokenizer } from './bert/tokenizer';
+
+import { BehaviorSubject, filter, forkJoin, from, map, Observable, of, switchMap, take, throwError } from 'rxjs';
 import type { Classification } from '@nuclia/core';
 
+declare const ort: any;
+
 export class NucliaPrediction {
-  tfVersion = '3.15.0';
-  model?: BertModel;
+  options = {
+    executionProviders: ['wasm'],
+    graphOptimizationLevel: 'all',
+  };
+  session: any = undefined;
   labels: string[][] = [];
   isReady = false;
+  tokenizer?: BertTokenizer;
 
   private scriptsInjected = new BehaviorSubject(false);
 
   constructor(cdn: string) {
     setCDN(cdn);
-    this.injectScript(
-      `tfjs@${this.tfVersion}`,
-      `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@${this.tfVersion}/dist/tf.min.js`,
-      () => {
-        this.injectScript(
-          `tfjs-converter@${this.tfVersion}`,
-          `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@${this.tfVersion}/dist/tf-converter.min.js`,
-          () => this.scriptsInjected.next(true),
-        );
-      },
+    this.injectScript(`onnxruntime-web`, `https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js`, () =>
+      this.scriptsInjected.next(true),
     );
   }
 
@@ -33,40 +32,96 @@ export class NucliaPrediction {
       .pipe(
         filter((injected) => injected),
         take(1),
-        switchMap(() => {
-          this.model = new BertModel(128, kbPath);
-          return from(this.model.loadModelDefinition(headers));
-        }),
+        switchMap(() => from(this.loadModelDefinition(kbPath, headers))),
         switchMap((result) => {
           return result.ok ? from(result.json()) : throwError(() => new Error('Unable to load modelType'));
         }),
-        tap((data) => {
-          (this.model as BertModel).modelType = data.model;
-          (this.model as BertModel).outputSize = data.output_size;
-          (this.model as BertModel).meanPooling = data.mean_pooling;
+        switchMap((definition: { model: string }) => {
+          const vocab = `${getCDN()}models/classifier/${definition.model}/vocab.json`;
+          const model = `${kbPath}/train/classifier/model/onnx_models/model-int8.onnx`;
+          const session = ort.InferenceSession.create(model, this.options);
+          return forkJoin([
+            from(loadTokenizer(vocab, false, true)),
+            from(session.then((s: any) => (this.session = s))),
+          ]);
         }),
-        switchMap(() => from((this.model as BertModel).setup(headers))),
       )
-      .subscribe(() => (this.isReady = true));
+      .subscribe(([tokenizer, session]: [BertTokenizer, any]) => {
+        this.tokenizer = tokenizer;
+        this.isReady = true;
+      });
   }
 
   predict(query: string): Observable<Classification[]> {
-    if (!this.model || !this.isReady) {
+    if (!this.isReady) {
       logger('Model not loaded yet');
       return of([]);
     }
-    return from(this.model.predict(query)).pipe(
+    return from(this.lm_inference(query)).pipe(
       map((results) =>
         results
-          .map((score: number, index: number) => ({ score, label: this.labels[index][0] }))
           .filter((result) => result.score > 0.5)
-          .sort((a, b) => b.score - a.score)
           .map((result) => {
             const [labelset, label] = result.label.split('/');
             return { labelset, label };
           }),
       ),
     );
+  }
+
+  private async lm_inference(text: string): Promise<{ label: string; score: number }[]> {
+    const encoded_ids = this.tokenizer?.tokenize(text);
+    logger(encoded_ids);
+
+    if (!encoded_ids || encoded_ids.length === 0) {
+      return Promise.resolve([]);
+    }
+
+    const start = performance.now();
+    const model_input = this.create_model_input(encoded_ids);
+    const output = await this.session.run(model_input);
+    const duration = (performance.now() - start).toFixed(1);
+
+    const result: { label: string; score: number }[] = [];
+    for (let i = 0; i < this.labels.length; i++) {
+      result[i] = { label: this.labels[i][0], score: output.probabilities.data[i] };
+    }
+    result.sort((a, b) => {
+      if (a.score === b.score) {
+        return 0;
+      } else {
+        return a.score < b.score ? 1 : -1;
+      }
+    });
+    logger('duration', duration);
+    logger('result', result);
+    return result;
+  }
+
+  private create_model_input(encoded: number[]) {
+    const input_ids = new Array(encoded.length + 1);
+    const attention_mask = new Array(encoded.length + 1);
+    const token_type_ids = new Array(encoded.length + 1);
+    input_ids[0] = BigInt(101);
+    attention_mask[0] = BigInt(1);
+    token_type_ids[0] = BigInt(0);
+    for (let i = 0; i < encoded.length; i++) {
+      input_ids[i + 1] = BigInt(encoded[i]);
+      attention_mask[i + 1] = BigInt(1);
+      token_type_ids[i + 1] = BigInt(0);
+    }
+    input_ids[encoded.length] = BigInt(102);
+    attention_mask[encoded.length] = BigInt(1);
+    token_type_ids[encoded.length] = BigInt(0);
+    const sequence_length = input_ids.length;
+    const input_ids_tensor = new ort.Tensor('int64', BigInt64Array.from(input_ids), [1, sequence_length]);
+    const attention_mask_tensor = new ort.Tensor('int64', BigInt64Array.from(attention_mask), [1, sequence_length]);
+    const token_type_ids_tensor = new ort.Tensor('int64', BigInt64Array.from(token_type_ids), [1, sequence_length]);
+    return {
+      input_ids: input_ids_tensor,
+      attention_mask: attention_mask_tensor,
+      token_type_ids: token_type_ids_tensor,
+    };
   }
 
   private async loadLabelSets(kbPath: string, headers: { [key: string]: string }) {
@@ -90,5 +145,10 @@ export class NucliaPrediction {
       script.onload = callback;
       window.document.body.appendChild(script);
     }
+  }
+
+  private async loadModelDefinition(kbPath: string, headers: { [key: string]: string }) {
+    const modelTypeUrl = `${kbPath}/train/classifier/model/model/nuclia.json`;
+    return fetch(modelTypeUrl, { headers });
   }
 }
