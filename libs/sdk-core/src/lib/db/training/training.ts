@@ -34,7 +34,7 @@ export class Training {
   }
 
   hasModel(type: TrainingType): Observable<boolean> {
-    return this.nuclia.rest.get(`${this.kb.path}/train/${type}/model/json_models/nuclia.json`).pipe(
+    return this.nuclia.rest.get(`${this.kb.path}/train/${type}/model/model/nuclia.json`).pipe(
       map(() => true),
       catchError(() => of(false)),
     );

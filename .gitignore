@@ -9,6 +9,7 @@
 /out-tsc
 /src
 /apps/dashboard/src/assets/tmp
+/apps/search-widget-demo/public/tmp
 
 # dependencies
 node_modules
