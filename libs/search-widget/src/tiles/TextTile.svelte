@@ -32,6 +32,6 @@
   previewKind={PreviewKind.NONE}
   fallbackThumbnail={`${getCDN()}icons/text/plain.svg`}
   {result}
-  on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
+  on:selectParagraph={(event) => openParagraph(event.detail)}>
   <TextViewer {selectedParagraph} />
 </DocumentTile>

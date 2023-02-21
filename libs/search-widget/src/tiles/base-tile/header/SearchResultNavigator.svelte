@@ -23,33 +23,35 @@
   };
 </script>
 
-<div
-  class="search-result-navigator"
-  bind:offsetWidth>
-  <span
-    class="result-count"
-    class:disabled>
-    {$_('results.count', { index: resultIndex + 1, total: total })}
-  </span>
+{#if !!total}
+  <div
+    class="search-result-navigator"
+    bind:offsetWidth>
+    <span
+      class="result-count"
+      class:disabled>
+      {$_('results.count', { index: resultIndex + 1, total: total })}
+    </span>
 
-  <div class="navigation-buttons">
-    <IconButton
-      icon="chevron-up"
-      size="small"
-      ariaLabel={$_('result.previous')}
-      aspect="basic"
-      disabled={resultIndex <= 0 || disabled}
-      on:click={openPrevious} />
+    <div class="navigation-buttons">
+      <IconButton
+        icon="chevron-up"
+        size="small"
+        ariaLabel={$_('result.previous')}
+        aspect="basic"
+        disabled={resultIndex <= 0 || disabled}
+        on:click={openPrevious} />
 
-    <IconButton
-      icon="chevron-down"
-      size="small"
-      ariaLabel={$_('result.next')}
-      aspect="basic"
-      disabled={resultIndex === total - 1 || disabled}
-      on:click={openNext} />
+      <IconButton
+        icon="chevron-down"
+        size="small"
+        ariaLabel={$_('result.next')}
+        aspect="basic"
+        disabled={resultIndex === total - 1 || disabled}
+        on:click={openNext} />
+    </div>
   </div>
-</div>
+{/if}
 
 <style
   lang="scss"

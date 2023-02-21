@@ -62,7 +62,7 @@
   previewKind={PreviewKind.PDF}
   fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
   {result}
-  on:selectParagraph={(event) => openParagraph(event.detail.paragraph)}>
+  on:selectParagraph={(event) => openParagraph(event.detail)}>
   {#if pdfViewerLoaded}
     <PdfViewer
       src={$pdfUrl}

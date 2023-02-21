@@ -68,9 +68,7 @@
         public: !_features.notPublic && !apikey,
       },
       state,
-      {
-        highlight: true,
-      },
+      {},
     );
 
     // Setup widget in the store

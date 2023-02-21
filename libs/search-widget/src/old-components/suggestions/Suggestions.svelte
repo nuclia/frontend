@@ -1,46 +1,57 @@
 <script lang="ts">
-  import type { Classification, Search } from '@nuclia/core';
-  import { FIELD_TYPE, ResourceProperties, shortToLongFieldType } from '@nuclia/core';
-  import { getResourceById, getResourceField } from '../../core/api';
+  import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
+  import { ResourceProperties } from '@nuclia/core';
+  import { getResourceById } from '../../core/api';
   import { getExternalUrl, goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
-  import { FieldFullId, NO_RESULTS } from '../../core/models';
+  import { NO_RESULTS } from '../../core/models';
   import { suggestionsHasError, suggestions } from '../../core/stores/suggestions.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
-  import { forkJoin, of, switchMap, take } from 'rxjs';
-  import { addLabelFilter, displayedResource } from '../../core/stores/search.store';
+  import { map, switchMap, take } from 'rxjs';
+  import { addLabelFilter, displayedResource, getFirstResourceField } from '../../core/stores/search.store';
+  import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
 
   const goToResource = (paragraph: Search.Paragraph) => {
-    const text = paragraph.text;
-    const fullId: FieldFullId = {
-      resourceId: paragraph.rid,
-      field_type: shortToLongFieldType(paragraph.field_type) as FIELD_TYPE,
-      field_id: paragraph.field,
-    };
-    navigateToLink
+    getResourceById(paragraph.rid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN, ResourceProperties.VALUES])
       .pipe(
-        take(1),
-        switchMap((navigateToLink) =>
-          navigateToLink
-            ? forkJoin([getResourceById(paragraph.rid, [ResourceProperties.ORIGIN]), getResourceField(fullId)])
-            : of(null),
+        switchMap((resource) =>
+          navigateToLink.pipe(
+            take(1),
+            map((navigateToLink) => ({ navigateToLink, resource })),
+          ),
         ),
       )
-      .subscribe(([resource, field]) => {
-        const url = resource && getExternalUrl(resource, field);
-        if (url && !isYoutubeUrl(url)) {
-          goToUrl(url, text);
+      .subscribe(({ navigateToLink, resource }) => {
+        const resourceField = getFirstResourceField(resource);
+        if (navigateToLink) {
+          const url = getExternalUrl(resource, resourceField);
+          if (url && !isYoutubeUrl(url)) {
+            goToUrl(url, paragraph.text);
+          } else {
+            openViewer(resource, resourceField);
+          }
         } else {
-          // to be removed once old widget will be gone
-          displayedResource.set({ uid: paragraph.rid });
+          openViewer(resource, resourceField);
         }
         suggestions.set({ results: NO_RESULTS });
       });
   };
+
+  function openViewer(resource: IResource, field?: ResourceField) {
+    if (field) {
+      fieldFullId.set({ resourceId: resource.id, field_id: field.field_id, field_type: field.field_type });
+      fieldData.set(field);
+    }
+    if (resource.title) {
+      resourceTitle.set(resource.title);
+    }
+    // to be removed once old widget will be gone
+    displayedResource.set({ uid: resource.id });
+  }
 </script>
 
 <div class="sw-suggestions">

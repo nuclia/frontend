@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { debounceTime, map, merge, Subject } from 'rxjs';
+  import { combineLatest, debounceTime, map, merge, Observable, of, Subject, switchMap } from 'rxjs';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
@@ -19,15 +19,30 @@
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
+  import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
+  import { Search } from '@nuclia/core';
+  import type { FieldFullId } from '../../core/models';
+  import { getResourceField } from '../../core/api';
+  import { distinctUntilChanged } from 'rxjs/operators';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(1500));
-  // TODO: viewer
-  // const resource = displayedResource.pipe(
-  //   switchMap((data) => (data?.uid ? getResourceById(data.uid, [ResourceProperties.BASIC]) : of(null))),
-  //   shareReplay(),
-  // );
+
+  const tileResult: Observable<Search.SmartResult | null> = combineLatest([
+    fieldFullId.pipe(distinctUntilChanged()),
+    fieldData.pipe(distinctUntilChanged()),
+    resourceTitle.pipe(distinctUntilChanged()),
+  ]).pipe(
+    switchMap(([fullId, data, title]) =>
+      !!fullId && !data
+        ? getResourceField(fullId as FieldFullId).pipe(map((resourceField) => fieldData.set(resourceField)))
+        : of({ fullId, data, title }),
+    ),
+    map(({ fullId, data, title }) =>
+      fullId && data ? { id: fullId.resourceId, field: fullId, fieldData: data, title } : null,
+    ),
+  );
 
   let svgSprite;
 
@@ -88,10 +103,10 @@
         <LoadingDots />
       {/if}
     {/if}
+  {:else if $tileResult}
+    <Tile result={$tileResult} />
   {/if}
-  <!--{#if $displayedResource && $resource}-->
-  <!--  <Tile result={$resource} />-->
-  <!--{/if}-->
+
   <div
     id="nuclia-glyphs-sprite"
     hidden>

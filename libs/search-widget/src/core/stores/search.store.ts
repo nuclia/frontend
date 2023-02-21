@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { FieldId, IResource, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -172,7 +172,7 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
       if (resource.paragraphs && resource.paragraphs.length > 0) {
         return resource;
       } else {
-        const field = getFirstFieldFromResource(resource);
+        const field = getFirstFieldIdFromResource(resource);
         const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
         if (fakeParagraph) {
           return { ...resource, field, paragraphs: [fakeParagraph] };
@@ -315,7 +315,7 @@ function generateFakeParagraphForSummaryOrTitle(
     : undefined;
 }
 
-function getFirstFieldFromResource(resource: IResource): FieldId | undefined {
+function getFirstFieldIdFromResource(resource: IResource): FieldId | undefined {
   if (!resource.data) {
     return;
   }
@@ -325,6 +325,24 @@ function getFirstFieldFromResource(resource: IResource): FieldId | undefined {
     return { field_id: Object.keys(resource.data.links)[0], field_type: FIELD_TYPE.link };
   } else if (resource.data.texts) {
     return { field_id: Object.keys(resource.data.texts)[0], field_type: FIELD_TYPE.text };
+  } else {
+    return;
+  }
+}
+
+export function getFirstResourceField(resource: IResource): ResourceField | undefined {
+  if (!resource.data) {
+    return;
+  }
+  if (resource.data.files) {
+    const fieldId = Object.keys(resource.data.files)[0];
+    return { field_id: fieldId, field_type: FIELD_TYPE.file, ...resource.data.files[fieldId] };
+  } else if (resource.data.links) {
+    const fieldId = Object.keys(resource.data.links)[0];
+    return { field_id: fieldId, field_type: FIELD_TYPE.link, ...resource.data.links[fieldId] };
+  } else if (resource.data.texts) {
+    const fieldId = Object.keys(resource.data.texts)[0];
+    return { field_id: fieldId, field_type: FIELD_TYPE.text, ...resource.data.texts[fieldId] };
   } else {
     return;
   }
