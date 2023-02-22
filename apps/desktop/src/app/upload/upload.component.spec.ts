@@ -92,6 +92,14 @@ describe('UploadComponent', () => {
                 authenticate: () => of(true),
                 getParameters: () => of([]),
               }),
+            sourceObs: of([
+              {
+                id: 'source1',
+                title: 'Source 1',
+                icon: '',
+                description: '',
+              },
+            ]),
           },
         },
         {

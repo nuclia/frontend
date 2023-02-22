@@ -56,6 +56,14 @@ describe('ConnectorsComponent', () => {
                     },
                   ]),
               }),
+            sourceObs: of([
+              {
+                id: 'source1',
+                title: 'Source 1',
+                icon: '',
+                description: '',
+              },
+            ]),
           },
         },
         {

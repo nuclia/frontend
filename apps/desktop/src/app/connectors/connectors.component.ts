@@ -1,6 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+} from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { filter, switchMap, take } from 'rxjs';
+import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
@@ -12,9 +20,11 @@ const PARAMS_CACHE = 'PARAMS_CACHE';
   styleUrls: ['./connectors.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConnectorsComponent {
+export class ConnectorsComponent implements OnDestroy {
   private _type: 'sources' | 'destinations' = 'sources';
   private _connectorIds?: string[];
+  private sources: ConnectorDefinition[] = [];
+  private unsubscribeAll = new Subject<void>();
 
   @Input()
   set type(value: 'sources' | 'destinations') {
@@ -42,7 +52,19 @@ export class ConnectorsComponent {
   form?: UntypedFormGroup;
   selectedConnector?: ConnectorDefinition;
 
-  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {}
+  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {
+    this.sync.sourceObs.pipe(takeUntil(this.unsubscribeAll)).subscribe((sources) => {
+      if (this.type === 'sources') {
+        this.connectors = sources;
+        markForCheck(this.cdr);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+  }
 
   getConnectors() {
     this.connectors = this.sync.getConnectors(this.type);

@@ -23,3 +23,6 @@ export async function sha256(message: string) {
   const hashHex = hashArray.map((b) => ('00' + b.toString(16)).slice(-2)).join('');
   return hashHex;
 }
+
+export const defaultAuthCheck = (error: any) =>
+  error === 'Unauthorized' || error.message === 'Unauthorized' || error.status === 403;

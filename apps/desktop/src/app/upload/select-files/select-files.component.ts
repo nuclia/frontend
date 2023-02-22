@@ -14,10 +14,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
 import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
 import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
+import { defaultAuthCheck } from '../../utils';
 import { SisToastService } from '@nuclia/sistema';
 
-const defaultAuthCheck = (error: any) =>
-  error === 'Unauthorized' || error.message === 'Unauthorized' || error.status === 403;
 @Component({
   selector: 'nde-select-files',
   templateUrl: './select-files.component.html',
