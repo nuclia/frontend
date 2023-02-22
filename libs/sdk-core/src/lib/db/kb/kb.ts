@@ -12,7 +12,7 @@ import {
   ServiceAccountCreation,
 } from './kb.models';
 import type { INuclia } from '../../models';
-import type { ICreateResource, IResource, LinkField, UserMetadata } from '../resource';
+import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from '../resource';
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
@@ -234,13 +234,19 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     );
   }
 
-  createLinkResource(link: LinkField, metadata?: UserMetadata, synchronous = true): Observable<{ uuid: string }> {
+  createLinkResource(
+    link: LinkField,
+    metadata?: UserMetadata,
+    synchronous = true,
+    origin?: Origin,
+  ): Observable<{ uuid: string }> {
     return this.createResource(
       {
         links: { link },
         usermetadata: metadata,
         title: link.uri,
         icon: 'application/stf-link',
+        ...(origin ? { origin } : {}),
       },
       synchronous,
     );

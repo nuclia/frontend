@@ -6,6 +6,7 @@
 - Add `fields` in `SearchOptions`
 - Add `ResourceFieldProperties` enum in kb models
 - Add `show` and `extracted` params to `getField` method in `Resource`
+- Add `origin` param to `createLinkResource`
 
 # 1.1.3 (2023-02-08)
 
