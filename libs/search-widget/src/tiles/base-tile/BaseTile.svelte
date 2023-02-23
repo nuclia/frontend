@@ -44,6 +44,7 @@
   export let withSummary = false;
   export let thumbnailLoaded = false;
   export let loading = false;
+  export let noResultNavigator = false;
 
   const dispatch = createEventDispatcher();
 
@@ -72,6 +73,9 @@
       break;
     case PreviewKind.VIDEO:
       findInPlaceholder += 'video';
+      break;
+    case PreviewKind.IMAGE:
+      findInPlaceholder += 'image';
       break;
     default:
       findInPlaceholder += 'document';
@@ -295,7 +299,7 @@
         resourceTitle={result.title}
         on:clickOnTitle={() => onClickParagraph(undefined, -1)}
         on:close={closePreview}>
-        {#if !isMobile}
+        {#if !isMobile && !noResultNavigator}
           <SearchResultNavigator
             resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
             total={$matchingParagraphs$.length}
@@ -348,6 +352,7 @@
                   minimized={isMobile && !expanded}
                   stack={expanded}
                   selected={isSame(paragraph, selectedParagraph)}
+                  disabled={expanded && noResultNavigator}
                   on:open={(event) => onClickParagraph(event.detail, index)} />
               {/each}
             </ul>
