@@ -15,15 +15,16 @@ import {
   Subscription,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
-import { FieldFullId, NO_RESULTS } from '../models';
+import { NO_RESULTS } from '../models';
 import { widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
 import type { Classification, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
-import { fieldData, fieldFullId, resourceTitle } from './viewer.store';
+import { fieldData, fieldFullId } from './viewer.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -183,14 +184,20 @@ export function loadFieldData() {
       distinctUntilChanged(),
       switchMap((fullId) => {
         if (fullId) {
-          return getResourceField(fullId);
+          // load in 2 passes so we get the field value fast, so we can render the tile
+          // and then get the field extracted metadata later (as it is much bigger)
+          // TODO: reconsider when https://app.shortcut.com/flaps/story/4190/option-to-not-load-ners-related-data-when-getting-a-field
+          // is done (maybe a unique pass will be better then)
+          return getResourceField(fullId, true).pipe(
+            tap((resourceField) => fieldData.set(resourceField)),
+            switchMap(() => getResourceField(fullId, false)),
+            tap((resourceField) => fieldData.set(resourceField)),
+          );
         } else {
           return of(null);
         }
       }),
     )
-    .subscribe((resourceField) => {
-      fieldData.set(resourceField);
-    });
+    .subscribe();
   subscriptions.push(subscription);
 }

@@ -138,16 +138,17 @@ export const getResourceById = (uid: string, show?: ResourceProperties[]): Obser
   return merge(nucliaApi.knowledgeBox.getResource(uid, show));
 };
 
-export function getResourceField(fullFieldId: FieldFullId): Observable<ResourceField> {
+export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): Observable<ResourceField> {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox
     .getResourceFromData({ id: fullFieldId.resourceId })
-    .getField(fullFieldId.field_type, fullFieldId.field_id, [
-      ResourceFieldProperties.VALUE,
-      ResourceFieldProperties.EXTRACTED,
-    ]);
+    .getField(
+      fullFieldId.field_type,
+      fullFieldId.field_id,
+      valueOnly ? [ResourceFieldProperties.VALUE] : [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
+    );
 }
 
 let _entities: EntityGroup[] | undefined = undefined;
