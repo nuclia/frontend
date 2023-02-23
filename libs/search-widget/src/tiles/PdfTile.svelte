@@ -6,7 +6,6 @@
   import { FieldFullId, PreviewKind, WidgetParagraph } from '../core/models';
   import { fieldData, fieldFullId, getFieldUrl } from '../core/stores/viewer.store';
   import DocumentTile from './base-tile/DocumentTile.svelte';
-  import { getResourceField } from '../core/api';
 
   export let result: Search.SmartResult;
 
@@ -29,18 +28,7 @@
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;
     if (!pdfUrl) {
-      console.log(result);
-      // We need to call getResourceField to get the pdf preview url in extracted metadata
-      fieldFullId
-        .pipe(
-          filter((fullId) => !!fullId),
-          take(1),
-          switchMap((fullId) => getResourceField(fullId as FieldFullId)),
-        )
-        .subscribe((field) => {
-          fieldData.set(field);
-          pdfUrl = getFieldUrl(true);
-        });
+      pdfUrl = getFieldUrl(true);
     }
   };
 

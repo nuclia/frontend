@@ -21,8 +21,6 @@
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
   import { Search } from '@nuclia/core';
-  import type { FieldFullId } from '../../core/models';
-  import { getResourceField } from '../../core/api';
   import { distinctUntilChanged } from 'rxjs/operators';
 
   const searchAlreadyTriggered = new Subject<void>();
@@ -34,12 +32,7 @@
     fieldData.pipe(distinctUntilChanged()),
     resourceTitle.pipe(distinctUntilChanged()),
   ]).pipe(
-    switchMap(([fullId, data, title]) =>
-      !!fullId && !data
-        ? getResourceField(fullId as FieldFullId).pipe(map((resourceField) => fieldData.set(resourceField)))
-        : of({ fullId, data, title }),
-    ),
-    map(({ fullId, data, title }) =>
+    map(([fullId, data, title]) =>
       fullId && data ? { id: fullId.resourceId, field: fullId, fieldData: data, title } : null,
     ),
   );

@@ -16,6 +16,7 @@
     activatePermalinks,
     activateTypeAheadSuggestions,
     initLabelStore,
+    loadFieldData,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
@@ -104,6 +105,7 @@
     setLang(lang);
 
     setupTriggerSearch(dispatchCustomEvent);
+    loadFieldData();
     if (_features.permalink) {
       activatePermalinks();
     }

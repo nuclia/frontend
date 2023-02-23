@@ -4,7 +4,7 @@
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { ResourceField, Search } from '@nuclia/core';
-  import { PreviewKind, WidgetParagraph } from '../../core/models';
+  import { FieldFullId, PreviewKind, WidgetParagraph } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import {
     BehaviorSubject,
@@ -17,6 +17,7 @@
     Observable,
     of,
     Subject,
+    switchMap,
     take,
   } from 'rxjs';
   import { searchQuery } from '../../core/stores/search.store';
@@ -111,11 +112,11 @@
   const onClickParagraph = (paragraph, index) => {
     if (result.field) {
       fieldFullId.set({
-        ...result.field,
+        field_id: result.field.field_id,
+        field_type: result.field.field_type,
         resourceId: result.id,
       });
     }
-    fieldData.set(result.fieldData || null);
     resourceTitle.set(result.title || '');
     viewerSearchQuery.set(globalQuery.getValue());
 

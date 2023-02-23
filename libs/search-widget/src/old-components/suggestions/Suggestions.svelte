@@ -10,7 +10,7 @@
   import Label from '../../common/label/Label.svelte';
   import { map, switchMap, take } from 'rxjs';
   import { addLabelFilter, displayedResource, getFirstResourceField } from '../../core/stores/search.store';
-  import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
+  import { fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
@@ -44,7 +44,6 @@
   function openViewer(resource: IResource, field?: ResourceField) {
     if (field) {
       fieldFullId.set({ resourceId: resource.id, field_id: field.field_id, field_type: field.field_type });
-      fieldData.set(field);
     }
     if (resource.title) {
       resourceTitle.set(resource.title);

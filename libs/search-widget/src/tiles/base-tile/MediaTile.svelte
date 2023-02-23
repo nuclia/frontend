@@ -6,7 +6,6 @@
   import { createEventDispatcher } from 'svelte';
   import { filter, Observable, take } from 'rxjs';
   import { fieldData, fieldFullId, getFieldUrl } from '../../core/stores/viewer.store';
-  import { getResourceField } from '../../core/api';
   import { switchMap } from 'rxjs/operators';
 
   export let result: Search.SmartResult;
@@ -44,17 +43,6 @@
     if (!mediaUrl && result.field) {
       mediaUrl = getFieldUrl();
     }
-
-    // We need to call getResourceField to load the summary which is in extracted metadata
-    fieldFullId
-      .pipe(
-        filter((fullId) => !!fullId),
-        take(1),
-        switchMap((fullId) => getResourceField(fullId)),
-      )
-      .subscribe((field) => {
-        fieldData.set(field);
-      });
   }
 </script>
 

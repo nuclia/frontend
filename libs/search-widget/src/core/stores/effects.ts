@@ -1,4 +1,4 @@
-import { getLabelSets, predict, suggest } from '../api';
+import { getLabelSets, getResourceField, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -16,14 +16,14 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { NO_RESULTS } from '../models';
+import { FieldFullId, NO_RESULTS } from '../models';
 import { widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
 import type { Classification, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
-import { fieldFullId } from './viewer.store';
+import { fieldData, fieldFullId, resourceTitle } from './viewer.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -174,4 +174,23 @@ function initStoreFromUrlParams() {
       fieldFullId.set({ resourceId, field_type, field_id });
     }
   }
+}
+
+// Load field data when fieldFullId is set
+export function loadFieldData() {
+  const subscription = fieldFullId
+    .pipe(
+      distinctUntilChanged(),
+      switchMap((fullId) => {
+        if (fullId) {
+          return getResourceField(fullId);
+        } else {
+          return of(null);
+        }
+      }),
+    )
+    .subscribe((resourceField) => {
+      fieldData.set(resourceField);
+    });
+  subscriptions.push(subscription);
 }
