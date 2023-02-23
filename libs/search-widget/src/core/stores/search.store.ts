@@ -183,6 +183,18 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
     })
     .filter((r) => !!r) as Search.SmartResult[];
 
+  // set fieldData for each resource
+  smartResults = smartResults.map((resource) => {
+    const field = resource.field ? resource.field : getFirstFieldIdFromResource(resource);
+    if (field) {
+      const dataKey = getDataKeyFromFieldType(field.field_type);
+      const fieldData = dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
+      return { ...resource, field, fieldData };
+    } else {
+      return resource;
+    }
+  });
+
   return smartResults;
 });
 
@@ -243,15 +255,8 @@ export function addParagraphToSmartResults(
   });
 
   const field = { field_id: paragraph.field, field_type: longFieldType };
-  let fieldData;
-  const dataKey = getDataKeyFromFieldType(field.field_type);
-  if (dataKey) {
-    fieldData = resource.data?.[dataKey]?.[field.field_id];
-  }
-
   if (existingResource) {
     existingResource.field = field;
-    existingResource.fieldData = fieldData;
     const existingParagraph = existingResource.paragraphs?.find(
       (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
     );
@@ -264,7 +269,6 @@ export function addParagraphToSmartResults(
       ...resource,
       paragraphs: [paragraph],
       field,
-      fieldData,
     });
   }
   return smartResults;
