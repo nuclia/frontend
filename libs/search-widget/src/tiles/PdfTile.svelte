@@ -1,11 +1,12 @@
 <script lang="ts">
   import { Search } from '@nuclia/core';
   import PdfViewer from './viewers/PdfViewer.svelte';
-  import { Observable } from 'rxjs';
+  import { filter, Observable, switchMap, take } from 'rxjs';
   import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../core/utils';
-  import { PreviewKind, WidgetParagraph } from '../core/models';
-  import { getFieldUrl } from '../core/stores/viewer.store';
+  import { FieldFullId, PreviewKind, WidgetParagraph } from '../core/models';
+  import { fieldData, fieldFullId, getFieldUrl } from '../core/stores/viewer.store';
   import DocumentTile from './base-tile/DocumentTile.svelte';
+  import { getResourceField } from '../core/api';
 
   export let result: Search.SmartResult;
 
@@ -28,7 +29,18 @@
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;
     if (!pdfUrl) {
-      pdfUrl = getFieldUrl();
+      console.log(result);
+      // We need to call getResourceField to get the pdf preview url in extracted metadata
+      fieldFullId
+        .pipe(
+          filter((fullId) => !!fullId),
+          take(1),
+          switchMap((fullId) => getResourceField(fullId as FieldFullId)),
+        )
+        .subscribe((field) => {
+          fieldData.set(field);
+          pdfUrl = getFieldUrl(true);
+        });
     }
   };
 
@@ -63,7 +75,7 @@
   fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
   {result}
   on:selectParagraph={(event) => openParagraph(event.detail)}>
-  {#if pdfViewerLoaded}
+  {#if pdfViewerLoaded && $pdfUrl}
     <PdfViewer
       src={$pdfUrl}
       paragraph={selectedParagraph}

@@ -18,7 +18,7 @@
       tileType = 'audio';
     } else if (file.content_type?.includes('video')) {
       tileType = 'video';
-    } else if (file.content_type?.includes('pdf')) {
+    } else {
       tileType = 'pdf';
     }
   }
