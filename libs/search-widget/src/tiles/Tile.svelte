@@ -8,28 +8,36 @@
 
   export let result: Search.SmartResult;
 
-  let tileType: 'pdf' | 'video' | 'audio' | 'text' = 'text';
-  $: if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
-    const url = (result.fieldData as LinkFieldData).value.uri;
-    tileType = url.includes('youtube.com') || url.includes('youtu.be') ? 'video' : 'text';
-  } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
-    const file = (result.fieldData as FileFieldData).value.file;
-    if (file.content_type?.includes('audio')) {
-      tileType = 'audio';
-    } else if (file.content_type?.includes('video')) {
-      tileType = 'video';
-    } else if (file.content_type?.includes('pdf')) {
-      tileType = 'pdf';
+  let tileType: 'pdf' | 'video' | 'audio' | 'text';
+  $: {
+    if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
+      const url = (result.fieldData as LinkFieldData).value?.uri;
+      tileType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+    } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
+      const file = (result.fieldData as FileFieldData).value?.file;
+      if (file?.content_type?.includes('audio')) {
+        tileType = 'audio';
+      } else if (file?.content_type?.includes('video')) {
+        tileType = 'video';
+      } else if (file?.content_type?.startsWith('text/plain')) {
+        tileType = 'text';
+      } else {
+        tileType = 'pdf';
+      }
+    } else {
+      tileType = 'text';
     }
   }
 </script>
 
-{#if tileType === 'pdf'}
-  <PdfTile {result} />
-{:else if tileType === 'video'}
-  <VideoTile {result} />
-{:else if tileType === 'audio'}
-  <AudioTile {result} />
-{:else}
-  <TextTile {result} />
+{#if tileType}
+  {#if tileType === 'pdf'}
+    <PdfTile {result} />
+  {:else if tileType === 'video'}
+    <VideoTile {result} />
+  {:else if tileType === 'audio'}
+    <AudioTile {result} />
+  {:else}
+    <TextTile {result} />
+  {/if}
 {/if}

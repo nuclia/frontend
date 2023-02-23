@@ -111,11 +111,11 @@
   const onClickParagraph = (paragraph, index) => {
     if (result.field) {
       fieldFullId.set({
-        ...result.field,
+        field_id: result.field.field_id,
+        field_type: result.field.field_type,
         resourceId: result.id,
       });
     }
-    fieldData.set(result.fieldData || null);
     resourceTitle.set(result.title || '');
     viewerSearchQuery.set(globalQuery.getValue());
 

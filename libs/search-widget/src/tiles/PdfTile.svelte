@@ -28,7 +28,7 @@
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;
     if (!pdfUrl) {
-      pdfUrl = getFieldUrl();
+      pdfUrl = getFieldUrl(true);
     }
   };
 
@@ -63,7 +63,7 @@
   fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
   {result}
   on:selectParagraph={(event) => openParagraph(event.detail)}>
-  {#if pdfViewerLoaded}
+  {#if pdfViewerLoaded && $pdfUrl}
     <PdfViewer
       src={$pdfUrl}
       paragraph={selectedParagraph}

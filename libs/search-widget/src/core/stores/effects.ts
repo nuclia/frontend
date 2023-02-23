@@ -1,4 +1,4 @@
-import { getLabelSets, predict, suggest } from '../api';
+import { getLabelSets, getResourceField, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -15,6 +15,7 @@ import {
   Subscription,
   switchMap,
   take,
+  tap,
 } from 'rxjs';
 import { NO_RESULTS } from '../models';
 import { widgetFeatures, widgetMode } from './widget.store';
@@ -23,7 +24,7 @@ import type { Classification, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
-import { fieldFullId } from './viewer.store';
+import { fieldData, fieldFullId } from './viewer.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -174,4 +175,29 @@ function initStoreFromUrlParams() {
       fieldFullId.set({ resourceId, field_type, field_id });
     }
   }
+}
+
+// Load field data when fieldFullId is set
+export function loadFieldData() {
+  const subscription = fieldFullId
+    .pipe(
+      distinctUntilChanged(),
+      switchMap((fullId) => {
+        if (fullId) {
+          // load in 2 passes so we get the field value fast, so we can render the tile
+          // and then get the field extracted metadata later (as it is much bigger)
+          // TODO: reconsider when https://app.shortcut.com/flaps/story/4190/option-to-not-load-ners-related-data-when-getting-a-field
+          // is done (maybe a unique pass will be better then)
+          return getResourceField(fullId, true).pipe(
+            tap((resourceField) => fieldData.set(resourceField)),
+            switchMap(() => getResourceField(fullId, false)),
+            tap((resourceField) => fieldData.set(resourceField)),
+          );
+        } else {
+          return of(null);
+        }
+      }),
+    )
+    .subscribe();
+  subscriptions.push(subscription);
 }

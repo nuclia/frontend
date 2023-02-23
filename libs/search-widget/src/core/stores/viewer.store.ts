@@ -67,14 +67,19 @@ export const fieldSummary = viewerState.reader<string>((state) => state.summary)
 
 export const fieldType = viewerState.reader<FIELD_TYPE | null>((state) => state.fieldFullId?.field_type || null);
 
-export function getFieldUrl(): Observable<string> {
+export function getFieldUrl(forcePdf?: boolean): Observable<string> {
   return viewerState.store.pipe(
     switchMap((state) => {
       if (!state.fieldFullId || !state.fieldData) {
         return of(['']);
       } else if (state.fieldFullId.field_type === FIELD_TYPE.file) {
-        const uri = (state.fieldData as FileFieldData)?.value?.file?.uri;
-        return uri ? getFileUrls([uri]) : of(['']);
+        if (forcePdf && !(state.fieldData as FileFieldData)?.value?.file?.content_type?.includes('pdf')) {
+          const pdfPreview = (state.fieldData as FileFieldData).extracted?.file?.file_preview;
+          return pdfPreview?.uri ? getFileUrls([pdfPreview.uri]) : of(['']);
+        } else {
+          const uri = (state.fieldData as FileFieldData)?.value?.file?.uri;
+          return uri ? getFileUrls([uri]) : of(['']);
+        }
       } else if (state.fieldFullId.field_type === FIELD_TYPE.link) {
         return of([(state.fieldData as LinkFieldData)?.value?.uri || '']);
       } else {
