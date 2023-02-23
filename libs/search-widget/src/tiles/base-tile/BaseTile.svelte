@@ -4,7 +4,7 @@
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { ResourceField, Search } from '@nuclia/core';
-  import { FieldFullId, PreviewKind, WidgetParagraph } from '../../core/models';
+  import { PreviewKind, WidgetParagraph } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import {
     BehaviorSubject,
@@ -17,7 +17,6 @@
     Observable,
     of,
     Subject,
-    switchMap,
     take,
   } from 'rxjs';
   import { searchQuery } from '../../core/stores/search.store';

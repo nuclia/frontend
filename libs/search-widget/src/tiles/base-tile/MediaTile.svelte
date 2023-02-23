@@ -4,9 +4,8 @@
   import BaseTile from './BaseTile.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { filter, Observable, take } from 'rxjs';
-  import { fieldData, fieldFullId, getFieldUrl } from '../../core/stores/viewer.store';
-  import { switchMap } from 'rxjs/operators';
+  import { Observable } from 'rxjs';
+  import { getFieldUrl } from '../../core/stores/viewer.store';
 
   export let result: Search.SmartResult;
   export let fallbackThumbnail;
