@@ -266,7 +266,7 @@
     </div>
 
     {#if expanded}
-      {#if isMobile}
+      {#if isMobile && !noResultNavigator}
         <SearchResultNavigator
           {resultIndex}
           total={$matchingParagraphs$.length}
