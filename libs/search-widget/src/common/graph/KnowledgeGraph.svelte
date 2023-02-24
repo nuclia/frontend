@@ -35,6 +35,16 @@
           );
           ners = metadata.positions;
           relations = metadata.relations;
+          relations.forEach((rel) => {
+            const from = ners[`${rel.from.group}/${rel.from.value}`];
+            if (from) {
+              from.relevance = (from.relevance || 0) + 1;
+            }
+            const to = ners[`${rel.to.group}/${rel.to.value}`];
+            if (to) {
+              to.relevance = (to.relevance || 0) + 1;
+            }
+          });
           draw();
         }
       });
@@ -53,9 +63,11 @@
         id: cur,
         ner,
         family,
+        relevance: ners[cur].relevance || 0,
       });
       return acc;
-    }, [] as { id: string; ner: string; family: string }[]);
+    }, [] as { id: string; ner: string; family: string; relevance: number }[]);
+    console.log(nodes);
 
     const links = relations
       .filter(
@@ -157,7 +169,11 @@
       })
       .call(drag as any);
 
-    (node as any).append('circle').attr('r', 5).attr('stroke', '#fff').attr('fill', color);
+    (node as any)
+      .append('circle')
+      .attr('r', (d) => 5 + d.relevance * 0.5)
+      .attr('stroke', '#fff')
+      .attr('fill', color);
 
     node
       .append('text')
