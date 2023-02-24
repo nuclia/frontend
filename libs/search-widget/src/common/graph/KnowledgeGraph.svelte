@@ -10,10 +10,9 @@
   let simulation;
   let node, link, edgelabels;
   let groups = ['Resource'];
-  let displayedGroups: { [group: string]: boolean } = { Resource: true, PERSON: true };
-  let displayedGroupList = Object.keys(displayedGroups).filter((key) => displayedGroups[key]);
   let ners: EntityPositions = {};
   let relations: Relation[] = [];
+  let relevance = 5;
 
   onMount(() => {
     metadata
@@ -45,18 +44,21 @@
               to.relevance = (to.relevance || 0) + 1;
             }
           });
+          relations = relations.map((rel) => {
+            const from = ners[`${rel.from?.group}/${rel.from?.value}`];
+            const to = ners[`${rel.to?.group}/${rel.to?.value}`];
+            const relevance = Math.min(from?.relevance || 0, to?.relevance || 0);
+            return {
+              ...rel,
+              relevance,
+            };
+          });
           draw();
         }
       });
   });
 
   function draw() {
-    const color = (d) => {
-      if (d.family === 'Resource') {
-        return '#000';
-      }
-      return d3.interpolateRainbow(groups.indexOf(d.family) / groups.length);
-    };
     const nodes = Object.keys(ners).reduce((acc, cur) => {
       const [family, ner] = cur.split('/');
       acc.push({
@@ -82,9 +84,10 @@
         target: `${rel.to.group}/${rel.to.value}`,
         fromGroup: rel.from.group,
         toGroup: rel.to.group,
+        relevance: rel.relevance,
         label: rel.label,
-        value: 2,
       }));
+    console.log(links);
 
     nodes.forEach((node) =>
       links.push({
@@ -93,7 +96,6 @@
         fromGroup: 'Resource',
         toGroup: node.family,
         label: '',
-        value: 1,
       }),
     );
     nodes.push({ id: 'Resource/Resource', ner: '', family: 'Resource' });
@@ -105,21 +107,21 @@
     //appending little triangles, path object, as arrowhead
     //The <defs> element is used to store graphical objects that will be used at a later time
     //The <marker> element defines the graphic that is to be used for drawing arrowheads or polymarkers on a given <path>, <line>, <polyline> or <polygon> element.
-    svg
-      .append('defs')
-      .append('marker')
-      .attr('id', 'arrowhead')
-      .attr('viewBox', '-0 -5 10 10') //the bound of the SVG viewport for the current SVG fragment. defines a coordinate system 10 wide and 10 high starting on (0,-5)
-      .attr('refX', 15) // x coordinate for the reference point of the marker. If circle is bigger, this need to be bigger.
-      .attr('refY', 0)
-      .attr('orient', 'auto')
-      .attr('markerWidth', 10)
-      .attr('markerHeight', 10)
-      .attr('xoverflow', 'visible')
-      .append('svg:path')
-      .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
-      .attr('fill', '#999')
-      .style('stroke', 'none');
+    // svg
+    //   .append('defs')
+    //   .append('marker')
+    //   .attr('id', 'arrowhead')
+    //   .attr('viewBox', '-0 -5 10 10') //the bound of the SVG viewport for the current SVG fragment. defines a coordinate system 10 wide and 10 high starting on (0,-5)
+    //   .attr('refX', 15) // x coordinate for the reference point of the marker. If circle is bigger, this need to be bigger.
+    //   .attr('refY', 0)
+    //   .attr('orient', 'auto')
+    //   .attr('markerWidth', 10)
+    //   .attr('markerHeight', 10)
+    //   .attr('xoverflow', 'visible')
+    //   .append('svg:path')
+    //   .attr('d', 'M 0,-5 L 10 ,0 L 0,5')
+    //   .attr('fill', '#999')
+    //   .style('stroke', 'none');
 
     simulation = d3
       .forceSimulation()
@@ -141,9 +143,9 @@
       .enter()
       .append('line')
       .attr('class', 'link')
-      .attr('marker-end', function (d) {
-        return d.value === 1 ? null : 'url(#arrowhead)';
-      })
+      // .attr('marker-end', function (d) {
+      //   return d.value === 1 ? null : 'url(#arrowhead)';
+      // })
       .attr('stroke', '#999')
       .attr('stroke-width', function (d) {
         return Math.sqrt(d.value);
@@ -152,7 +154,7 @@
         return d.value === 1 ? 0.2 : 0.6;
       })
       .style('visibility', function (d) {
-        return !!displayedGroups[d.fromGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
+        return d.relevance >= relevance ? 'visible' : 'hidden';
       });
 
     const drag = d3.drag().on('start', dragstarted).on('drag', dragged).on('end', dragended);
@@ -165,7 +167,7 @@
       .append('g')
       .attr('class', 'node')
       .style('visibility', function (d) {
-        return !!displayedGroups[d.family] ? 'visible' : 'hidden';
+        return d.relevance >= relevance ? 'visible' : 'hidden';
       })
       .call(drag as any);
 
@@ -173,7 +175,7 @@
       .append('circle')
       .attr('r', (d) => 5 + d.relevance * 0.5)
       .attr('stroke', '#fff')
-      .attr('fill', color);
+      .attr('fill', 'var(--color-primary-regular)');
 
     node
       .append('text')
@@ -226,7 +228,7 @@
       .style('pointer-events', 'none')
       .attr('class', 'edgelabel')
       .style('visibility', function (d) {
-        return !!displayedGroups[d.family] ? 'visible' : 'hidden';
+        return d.relevance >= relevance ? 'visible' : 'hidden';
       })
       .attr('id', function (d, i) {
         return 'edgelabel' + i;
@@ -282,16 +284,15 @@
     d.fy = null;
   }
 
-  const toggleGroup = (group: string) => {
-    displayedGroups[group] = !displayedGroups[group];
+  const refresh = () => {
     node.style('visibility', function (d) {
-      return !!displayedGroups[d.family] ? 'visible' : 'hidden';
+      return d.relevance >= relevance ? 'visible' : 'hidden';
     });
     link.style('visibility', function (d) {
-      return !!displayedGroups[d.fromGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
+      return d.relevance >= relevance ? 'visible' : 'hidden';
     });
     edgelabels.style('visibility', function (d) {
-      return !!displayedGroups[d.fromGroup] && !!displayedGroups[d.toGroup] ? 'visible' : 'hidden';
+      return d.relevance >= relevance ? 'visible' : 'hidden';
     });
   };
 </script>
@@ -301,16 +302,10 @@
     bind:this={el}
     height="500" />
   <div class="groups">
-    {#each groups as group}
-      <div class="group">
-        <input
-          type="checkbox"
-          bind:group={displayedGroupList}
-          value={group}
-          on:change={() => toggleGroup(group)} />
-        <span>{group}</span>
-      </div>
-    {/each}
+    <input
+      type="number"
+      bind:value={relevance}
+      on:change={refresh} />
   </div>
 </div>
 
