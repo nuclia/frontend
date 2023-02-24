@@ -155,6 +155,10 @@ export default class App {
     ipcMain.on('close', () => app.quit());
     ipcMain.on('quitAndReInstall', () => autoUpdater.quitAndInstall());
 
+    ipcMain.on('debug', () => {
+      App.mainWindow?.webContents.openDevTools();
+    });
+
     const gotTheLock = app.requestSingleInstanceLock();
     if (gotTheLock) {
       app.on('second-instance', (e, argv) => {
