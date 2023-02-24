@@ -1,6 +1,10 @@
 <router-outlet></router-outlet>
 <nde-login *ngIf="!isAuthenticated"></nde-login>
-<div class="version">Version: {{ version }}</div>
+<div
+  class="version"
+  (click)="debug()">
+  Version: {{ version }}
+</div>
 <aside id="pa-toasts-block">
   <div class="pa-toasts-container">
     <div #toastsContainer></div>

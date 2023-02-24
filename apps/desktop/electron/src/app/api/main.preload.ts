@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electron', {
   close: () => ipcRenderer.send('close'),
   getMachineId: () => machineIdSync(true),
   quitAndReInstall: () => ipcRenderer.send('quitAndReInstall'),
+  debug: () => ipcRenderer.send('debug'),
   google: {
     getToken: async (credentials: any) => {
       const auth = new Auth.GoogleAuth({
