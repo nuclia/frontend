@@ -1,0 +1,11 @@
+.sw-image-viewer {
+  align-items: flex-start;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+  img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+}

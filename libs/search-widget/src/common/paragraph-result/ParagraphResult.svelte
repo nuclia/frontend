@@ -11,6 +11,7 @@
   export let selected = false;
   export let minimized = false;
   export let hideIndicator = false;
+  export let disabled = false;
 
   let hovering = false;
 
@@ -31,9 +32,10 @@
   class:no-indicator={hideIndicator}
   class:stack
   class:selected
+  class:disabled
   on:mouseenter={() => (hovering = true)}
   on:mouseleave={() => (hovering = false)}
-  on:click={open}>
+  on:click={disabled ? null : open}>
   <div
     class="indicator-container"
     class:hidden={hideIndicator}>

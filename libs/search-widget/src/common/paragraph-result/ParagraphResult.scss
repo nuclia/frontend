@@ -1,5 +1,4 @@
 .sw-paragraph-result {
-  cursor: pointer;
   display: flex;
   font-size: var(--font-size-medium);
   gap: var(--rhythm-1);
@@ -21,6 +20,9 @@
   }
   &.no-indicator.selected {
     color: var(--color-primary-regular);
+  }
+  &:not(.disabled) {
+    cursor: pointer;
   }
 
   .paragraph-text {

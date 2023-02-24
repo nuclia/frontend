@@ -48,6 +48,7 @@ export enum PreviewKind {
   VIDEO,
   AUDIO,
   YOUTUBE,
+  IMAGE,
 }
 
 export enum SearchOrder {
