@@ -83,10 +83,11 @@ export class SyncService {
       definition: NucliaCloudKB,
       settings: environment.connectors.nucliacloud,
     },
-    algolia: {
-      definition: Algolia,
-      settings: {},
-    },
+    // Disable algolia for now
+    // algolia: {
+    //   definition: Algolia,
+    //   settings: {},
+    // },
   };
   sourceObs = new BehaviorSubject(Object.values(this.sources).map((obj) => obj.definition));
 
