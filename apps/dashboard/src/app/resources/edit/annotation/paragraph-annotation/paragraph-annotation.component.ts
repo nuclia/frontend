@@ -18,7 +18,7 @@ import { SelectFirstFieldDirective } from '../../select-first-field/select-first
 @Component({
   selector: 'app-paragraph-annotation',
   templateUrl: './paragraph-annotation.component.html',
-  styleUrls: ['./paragraph-annotation.component.scss'],
+  styleUrls: ['../../common-page-layout.scss', './paragraph-annotation.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ParagraphAnnotationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {

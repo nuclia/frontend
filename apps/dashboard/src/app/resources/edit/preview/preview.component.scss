@@ -1,14 +1,12 @@
 @import 'variables';
 
-.scrollable-area {
+.main-container {
   display: flex;
   gap: rhythm(5);
 }
 
 .viewer-button-container {
-  flex: 1 0 auto;
   position: relative;
-  text-align: center;
 
   pa-button {
     position: sticky;

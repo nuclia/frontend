@@ -3,12 +3,15 @@
 .scrollable-area {
   height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container});
   overflow: auto;
-}
-
-.main-container {
-  max-width: $max-width-page-content;
+  width: $width-page-content;
 }
 
 footer.with-margin {
   margin-top: $footer-margin;
+}
+
+@media (min-width: $size-viewport-xlarge-min) {
+  .scrollable-area {
+    width: $width-page-content-large;
+  }
 }
