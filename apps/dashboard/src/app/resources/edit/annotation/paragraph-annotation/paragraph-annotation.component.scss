@@ -1,30 +1,6 @@
 @import 'variables';
 @import '../../edit-resource.tokens';
 
-.paragraph-annotation {
-  display: flex;
-  gap: rhythm(5);
-  max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
-  );
-}
-.annotation-header {
-  position: absolute;
-  background: white;
-  z-index: 1;
-}
-$annotation-header-height: rhythm(9);
-.scrollable-area {
-  max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{$annotation-header-height}
-  );
-  margin-top: $annotation-header-height;
-}
-
-footer {
-  max-width: $width-page-content;
-}
-
 .paragraph-container {
   position: relative;
 
@@ -77,13 +53,7 @@ footer {
   }
 }
 
-.entity-families-container {
-  max-height: calc(
-    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{rhythm(5)}
-  );
-  overflow: auto;
-  width: rhythm(32);
-
+.right-panel-container {
   .help {
     display: flex;
     gap: rhythm(0.5);
@@ -117,11 +87,5 @@ footer {
         box-shadow: $box-shadow-collapsed-expander-header;
       }
     }
-  }
-}
-
-@media (min-width: $size-viewport-xlarge-min) {
-  footer {
-    max-width: $width-page-content-large;
   }
 }

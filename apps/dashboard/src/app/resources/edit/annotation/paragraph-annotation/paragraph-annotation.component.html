@@ -1,5 +1,5 @@
-<div class="paragraph-annotation">
-  <div class="annotation-header">
+<div class="main-container">
+  <div class="search-box-container">
     <pa-input
       [icon]="searchQuery ? 'cross' : 'search'"
       [class.can-reset]="!!searchQuery"
@@ -10,7 +10,7 @@
     </pa-input>
   </div>
 
-  <div class="scrollable-area">
+  <div class="scrollable-area with-search-and-footer">
     <div
       #paragraphsContainer
       class="paragraphs-container">
@@ -59,7 +59,7 @@
     </div>
   </div>
 
-  <div class="entity-families-container">
+  <div class="right-panel-container">
     <div class="help">
       <pa-icon
         name="info"

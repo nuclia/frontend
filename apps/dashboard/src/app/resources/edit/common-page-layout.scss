@@ -1,17 +1,57 @@
 @import 'edit-resource.tokens';
 
+.main-container {
+  display: flex;
+  gap: rhythm(5);
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+  );
+}
+
+.search-box-container {
+  position: absolute;
+  background: white;
+  z-index: 1;
+
+  pa-input.can-reset ::ng-deep pa-icon {
+    cursor: pointer;
+  }
+}
 .scrollable-area {
   height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container});
   overflow: auto;
   width: $width-page-content;
+
+  &.with-footer {
+    height: calc(
+      100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+    );
+  }
+  &.with-search-and-footer {
+    height: calc(
+      100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{$annotation-header-height}
+    );
+    margin-top: $annotation-header-height;
+  }
 }
 
-footer.with-margin {
-  margin-top: $footer-margin;
+.right-panel-container {
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{rhythm(5)}
+  );
+  overflow: auto;
+  width: rhythm(32);
+}
+
+footer {
+  max-width: $width-page-content;
 }
 
 @media (min-width: $size-viewport-xlarge-min) {
   .scrollable-area {
     width: $width-page-content-large;
+  }
+  footer {
+    max-width: $width-page-content-large;
   }
 }

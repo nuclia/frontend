@@ -1,5 +1,5 @@
 <div class="main-container">
-  <div class="classification-container">
+  <div class="scrollable-area classification-container">
     <label class="title-s">{{ 'resource.classification' | translate }}</label>
     <div>
       <p *ngIf="noLabels">
@@ -12,20 +12,20 @@
         (selectionChange)="updateLabels($event)"></app-label-field>
     </div>
   </div>
-
-  <footer class="form-buttons">
-    <pa-button
-      kind="primary"
-      [disabled]="!isModified"
-      (click)="save()">
-      {{ 'generic.save' | translate }}
-    </pa-button>
-
-    <pa-button
-      aspect="basic"
-      [disabled]="!isModified"
-      (click)="cancel()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-  </footer>
 </div>
+
+<footer class="form-buttons">
+  <pa-button
+    kind="primary"
+    [disabled]="!isModified"
+    (click)="save()">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+
+  <pa-button
+    aspect="basic"
+    [disabled]="!isModified"
+    (click)="cancel()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+</footer>

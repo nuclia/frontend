@@ -69,3 +69,14 @@ form > div {
     max-width: rhythm(28);
   }
 }
+
+.right-panel-container {
+  margin-top: $line-height-title-s + rhythm(0.5);
+  width: rhythm(40);
+}
+
+@media (min-width: $size-viewport-medium-min) {
+  .right-panel-container {
+    margin-top: $line-height-title-s-md + rhythm(0.5);
+  }
+}

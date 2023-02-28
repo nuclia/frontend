@@ -1,7 +1,11 @@
 @import 'variables';
 :host {
+  .title-xxs {
+    margin-bottom: rhythm(1);
+  }
+
   form {
-    margin-top: rhythm(3);
+    margin-top: rhythm(4);
 
     .field-block {
       display: flex;
