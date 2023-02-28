@@ -25,7 +25,6 @@
   import { getExternalUrl, goToUrl, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
   import { navigateToLink } from '../../core/stores/widget.store';
   import {
-    fieldData,
     fieldFullId,
     fieldSummary,
     isPreviewing,
@@ -121,7 +120,6 @@
       });
     }
     resourceTitle.set(result.title || '');
-    viewerSearchQuery.set(globalQuery.getValue());
 
     navigateToLink
       .pipe(
@@ -157,6 +155,7 @@
     if (!expanded) {
       expanded = true;
       isPreviewing.set(true);
+      viewerSearchQuery.set(globalQuery.getValue());
       freezeBackground(true);
     }
     setTimeout(() => setHeaderActionWidth());
@@ -299,7 +298,7 @@
         resourceTitle={result.title}
         on:clickOnTitle={() => onClickParagraph(undefined, -1)}
         on:close={closePreview}>
-        {#if !isMobile && !noResultNavigator}
+        {#if !isMobile && !noResultNavigator && !sidePanelExpanded}
           <SearchResultNavigator
             resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
             total={$matchingParagraphs$.length}
