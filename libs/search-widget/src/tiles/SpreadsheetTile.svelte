@@ -3,7 +3,7 @@
   import { PreviewKind } from '../core/models';
   import { getCDN } from '../core/utils';
   import BaseTile from './base-tile/BaseTile.svelte';
-  import SpreadSheetViewer from './viewers/SpreadSheetViewer.svelte';
+  import SpreadsheetViewer from './viewers/SpreadsheetViewer.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
 
   export let result: Search.SmartResult;
@@ -23,5 +23,5 @@
       aspectRatio="5/4"
       on:loaded={() => (thumbnailLoaded = true)} />
   </span>
-  <SpreadSheetViewer slot="viewer" />
+  <SpreadsheetViewer slot="viewer" />
 </BaseTile>
