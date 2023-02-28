@@ -3,6 +3,7 @@
   import { PreviewKind } from '../core/models';
   import { getFieldUrl } from '../core/stores/viewer.store';
   import { Observable } from 'rxjs';
+  import { getCDN } from '../core/utils';
   import BaseTile from './base-tile/BaseTile.svelte';
   import ImageViewer from './viewers/ImageViewer.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
@@ -29,6 +30,7 @@
   <span slot="thumbnail">
     <Thumbnail
       src={result.thumbnail}
+      fallback={`${getCDN()}icons/image/jpg.svg`}
       aspectRatio="5/4"
       on:loaded={() => (thumbnailLoaded = true)} />
   </span>
