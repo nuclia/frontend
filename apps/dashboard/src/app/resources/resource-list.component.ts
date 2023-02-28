@@ -463,6 +463,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.router.navigate([`./${resourceId}/edit`], { relativeTo: this.route });
   }
 
+  annotate(resourceId: string) {
+    this.router.navigate([`./${resourceId}/edit/annotation`], { relativeTo: this.route });
+  }
+
+  classify(resourceId: string) {
+    this.router.navigate([`./${resourceId}/edit/classification`], { relativeTo: this.route });
+  }
+
   isFullPageSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = Math.min(this.resultsLength, this.pageSize);
