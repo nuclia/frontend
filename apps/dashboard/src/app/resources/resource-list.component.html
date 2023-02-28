@@ -338,7 +338,19 @@
                 *ngIf="isMainView"
                 [disabled]="!(isAdminOrContrib | async)"
                 (selectOption)="edit(row.resource.id)">
-                {{ 'resource.edit' | translate }}
+                {{ 'resource.menu.edit' | translate }}
+              </pa-option>
+              <pa-option
+                *ngIf="isMainView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="annotate(row.resource.id)">
+                {{ 'resource.menu.annotate' | translate }}
+              </pa-option>
+              <pa-option
+                *ngIf="isMainView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="classify(row.resource.id)">
+                {{ 'resource.menu.classify' | translate }}
               </pa-option>
               <pa-option
                 *ngIf="!isPendingView"
