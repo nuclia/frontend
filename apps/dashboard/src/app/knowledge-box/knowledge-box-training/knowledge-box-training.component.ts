@@ -167,6 +167,7 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     }
     this.sdk.currentKb
       .pipe(
+        take(1),
         switchMap((kb) => (this.trainings[type].running ? kb.training.stop(type) : kb.training.start(type, params))),
       )
       .subscribe(() => {
