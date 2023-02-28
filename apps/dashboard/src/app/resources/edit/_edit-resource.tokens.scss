@@ -8,7 +8,8 @@ $padding-vertical-footer: rhythm(3);
 $footer-height: $padding-vertical-footer * 2 + rhythm(5);
 $footer-margin: rhythm(5);
 
-$max-width-page-content: rhythm(90);
+$width-page-content: rhythm(64);
+$width-page-content-large: rhythm(90);
 
 $header-separator: inset 0 -1px 0 $color-neutral-light;
 $footer-separator: inset 0 1px 0 $color-neutral-light;

@@ -3,6 +3,10 @@
 
 .paragraph-annotation {
   display: flex;
+  gap: rhythm(5);
+  max-height: calc(
+    100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
+  );
 }
 .annotation-header {
   position: absolute;
@@ -14,15 +18,11 @@ $annotation-header-height: rhythm(9);
   max-height: calc(
     100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height} - #{$annotation-header-height}
   );
-  overflow: auto;
   margin-top: $annotation-header-height;
-  position: relative;
-  width: 100%;
 }
 
-.paragraphs-container,
 footer {
-  max-width: rhythm(64);
+  max-width: $width-page-content;
 }
 
 .paragraph-container {
@@ -82,9 +82,6 @@ footer {
     100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{rhythm(5)}
   );
   overflow: auto;
-  position: absolute;
-  top: calc(var(--app-topbar-height) + #{$height-header} + #{$padding-top-page-container});
-  right: $padding-horizontal-header;
   width: rhythm(32);
 
   .help {
@@ -124,12 +121,7 @@ footer {
 }
 
 @media (min-width: $size-viewport-xlarge-min) {
-  .entity-families-container {
-    right: $padding-horizontal-header-xlarge;
-  }
-
-  .paragraphs-container,
   footer {
-    max-width: rhythm(90);
+    max-width: $width-page-content-large;
   }
 }
