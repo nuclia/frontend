@@ -14,7 +14,6 @@
   const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer'];
   pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/build/pdf.worker.js`;
 
-  let innerHeight = window.innerHeight;
   let innerWidth = window.innerWidth;
   let pdfContainerElement: HTMLElement;
   let containerOffsetWidth;
@@ -37,7 +36,8 @@
   $: src && loadPdf();
   $: pdfViewer && paragraph && paragraph.text && findSelectedText();
   $: pdfViewer && !paragraph && unselectText();
-  $: containerOffsetWidth && resize();
+  $: isMobile = innerWidth < 448;
+  $: scale = isMobile ? 'page-fit' : 'auto';
 
   onMount(() => {
     loadPdf();
@@ -96,7 +96,7 @@
     // Display the right page and highlight the paragraph
     eventBus.on('pagesinit', () => {
       totalPage = pdfViewer.pagesCount;
-      pdfViewer.currentScaleValue = 'page-fit';
+      pdfViewer.currentScaleValue = scale;
       zoom = pdfViewer.currentScale;
       pdfInitialized = true;
 
@@ -155,12 +155,14 @@
 
   function resize() {
     if (!!pdfViewer && pdfInitialized) {
-      pdfViewer.currentScaleValue = 'page-fit';
+      pdfViewer.currentScaleValue = scale;
     }
   }
 </script>
 
-<svelte:window on:resize={resize} />
+<svelte:window
+  bind:innerWidth
+  on:resize={resize} />
 <div
   class="pdf-container"
   bind:this={pdfContainerElement}
