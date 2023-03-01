@@ -3,7 +3,8 @@
   import { combineLatest, filter, map, Subject, take } from 'rxjs';
   import { FileFieldExtractedData } from '@nuclia/core';
   import { fieldData } from '../../core/stores/viewer.store';
-  import Button from '../../common/button/Button.svelte';
+  import Tabs from '../../common/tabs/TabsList.svelte';
+  import Tab from '../../common/tabs/TabItem.svelte';
 
   const selectedSheetId = new Subject<string>();
   const sheets = fieldData.pipe(
@@ -30,33 +31,36 @@
 </script>
 
 <div class="sw-spreadsheet-viewer">
-  {#if $sheet}
-    {#if Object.keys($sheets).length > 1}
-      <div class="tabs">
+  <div class="tabs">
+    {#if $sheets && Object.keys($sheets).length > 1}
+      <Tabs>
         {#each Object.entries($sheets) as [id]}
-          <Button
+          <Tab
             on:click={select(id)}
-            active={$selectedSheetId === id}
-            size="small">
+            active={$selectedSheetId === id}>
             {id}
-          </Button>
+          </Tab>
         {/each}
-      </div>
+      </Tabs>
     {/if}
-    <table>
-      {#each $sheet.rows || [] as row, index}
-        <tr>
-          {#each row.cell || [] as cell}
-            <td
-              class="ellipsis"
-              title={cell}>
-              {cell}
-            </td>
-          {/each}
-        </tr>
-      {/each}
-    </table>
-  {/if}
+  </div>
+  <div class="table-container">
+    {#if $sheet}
+      <table>
+        {#each $sheet.rows || [] as row, index}
+          <tr>
+            {#each row.cell || [] as cell}
+              <td
+                class="ellipsis"
+                title={cell}>
+                {cell}
+              </td>
+            {/each}
+          </tr>
+        {/each}
+      </table>
+    {/if}
+  </div>
 </div>
 
 <style

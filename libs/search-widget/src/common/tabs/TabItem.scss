@@ -1,0 +1,30 @@
+.sw-tab-item {
+  display: inline-block;
+  line-height: 0;
+
+  .link {
+    background: transparent;
+    border: none;
+    font-size: var(--font-size-medium);
+    font-weight: var(--font-weight-semi-bold);
+    padding: 0;
+    width: 100%;
+
+    &:hover {
+      &:not([aria-expanded="true"]) {
+        cursor: pointer;
+      }
+    }
+
+    &[aria-expanded="true"] {
+      background: var(--color-light-stronger);
+      cursor: default;
+    }
+
+    .link-wrapper {
+      display: block;
+      padding: var(--rhythm-2);
+      text-align: center;
+    }
+  }
+}
