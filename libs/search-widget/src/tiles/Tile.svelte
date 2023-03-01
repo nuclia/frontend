@@ -4,12 +4,20 @@
   import PdfTile from './PdfTile.svelte';
   import AudioTile from './AudioTile.svelte';
   import ImageTile from './ImageTile.svelte';
+  import SpreadsheetTile from './SpreadsheetTile.svelte';
   import TextTile from './TextTile.svelte';
   import { FIELD_TYPE, FileFieldData, LinkFieldData } from '@nuclia/core';
 
   export let result: Search.SmartResult;
 
-  let tileType: 'pdf' | 'video' | 'audio' | 'image' | 'text';
+  const SpreadsheetContentTypes = [
+    'text/csv',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.oasis.opendocument.spreadsheet',
+  ];
+
+  let tileType: 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'text';
   $: {
     if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
       const url = (result.fieldData as LinkFieldData).value?.uri;
@@ -24,6 +32,8 @@
         tileType = 'image';
       } else if (file?.content_type?.startsWith('text/plain')) {
         tileType = 'text';
+      } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
+        tileType = 'spreadsheet';
       } else {
         tileType = 'pdf';
       }
@@ -42,6 +52,8 @@
     <AudioTile {result} />
   {:else if tileType === 'image'}
     <ImageTile {result} />
+  {:else if tileType === 'spreadsheet'}
+    <SpreadsheetTile {result} />
   {:else}
     <TextTile {result} />
   {/if}
