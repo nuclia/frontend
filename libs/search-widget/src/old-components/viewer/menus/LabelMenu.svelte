@@ -1,12 +1,13 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { map, Observable } from 'rxjs';
+  import type { Observable } from 'rxjs';
+  import { map } from 'rxjs';
   import type { ParagraphLabels } from '../../../core/models';
   import { LabelSetKind } from '@nuclia/core';
-  import { LabelSetWithId, orderedLabelSetList } from '../../../core/stores/labels.store';
+  import type { LabelSetWithId } from '../../../core/stores/labels.store';
+  import { orderedLabelSetList } from '../../../core/stores/labels.store';
   import Dropdown from '../../../common/dropdown/Dropdown.svelte';
   import Icon from '../../../common/icons/Icon.svelte';
-  import { getParentLiRect } from '../../../common/label/label.utils';
 
   const dispatch = createEventDispatcher();
   export let position: { top: number; left: number } | undefined = undefined;

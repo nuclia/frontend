@@ -2,7 +2,8 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { combineLatest, debounceTime, map, merge, Observable, of, Subject, switchMap } from 'rxjs';
+  import type { Observable } from 'rxjs';
+  import { combineLatest, debounceTime, map, merge, Subject } from 'rxjs';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
@@ -20,7 +21,7 @@
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
-  import { Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
 
   const searchAlreadyTriggered = new Subject<void>();

@@ -1,6 +1,7 @@
 <script lang="ts">
-  import { Search } from '@nuclia/core';
-  import { PreviewKind, WidgetParagraph } from '../core/models';
+  import type { Search } from '@nuclia/core';
+  import type { WidgetParagraph } from '../core/models';
+  import { PreviewKind } from '../core/models';
   import TextViewer from './viewers/TextViewer.svelte';
   import { getCDN } from '../core/utils';
   import DocumentTile from './base-tile/DocumentTile.svelte';

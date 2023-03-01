@@ -17,7 +17,8 @@ import {
   Search,
   WritableKnowledgeBox,
 } from '@nuclia/core';
-import { filter, forkJoin, map, merge, Observable, of, take, tap } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { filter, forkJoin, map, merge, of, take, tap } from 'rxjs';
 import type { EntityGroup, FieldFullId, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';

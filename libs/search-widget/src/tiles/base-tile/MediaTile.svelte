@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Search } from '@nuclia/core';
-  import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
+  import type { Search } from '@nuclia/core';
+  import type { MediaWidgetParagraph } from '../../core/models';
+  import { PreviewKind } from '../../core/models';
   import BaseTile from './BaseTile.svelte';
   import ThumbnailPlayer from '../../common/thumbnail/ThumbnailPlayer.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { Observable } from 'rxjs';
+  import type { Observable } from 'rxjs';
   import { getFieldUrl } from '../../core/stores/viewer.store';
 
   export let result: Search.SmartResult;

@@ -16,12 +16,14 @@
   } from '../../core/stores/suggestions.store';
   import { tap } from 'rxjs/operators';
   import Label from '../../common/label/Label.svelte';
-  import { map, Observable } from 'rxjs';
+  import type { Observable } from 'rxjs';
+  import { map } from 'rxjs';
   import type { Classification } from '@nuclia/core';
   import { getLabelFromFilter } from '@nuclia/core';
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
-  import { LabelSetWithId, orderedLabelSetList } from '../../core/stores/labels.store';
+  import type { LabelSetWithId } from '../../core/stores/labels.store';
+  import { orderedLabelSetList } from '../../core/stores/labels.store';
   import { getParentLiRect } from '../../common/label/label.utils';
   import Button from '../../common/button/Button.svelte';
   import { hasFilterButton, widgetPlaceholder } from '../../core/stores/widget.store';

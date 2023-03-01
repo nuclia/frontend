@@ -1,4 +1,5 @@
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { getCDN } from './utils';
 
 interface Translations {

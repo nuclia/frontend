@@ -3,7 +3,8 @@ import { SvelteState } from '../state-lib';
 import type { IFieldData, ResourceField } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
-import { filter, map, Observable, of, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { filter, map, of, switchMap } from 'rxjs';
 import { NEWLINE_REGEX } from '../utils';
 
 interface ViewerState {

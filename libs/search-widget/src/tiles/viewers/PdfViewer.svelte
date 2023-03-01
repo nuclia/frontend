@@ -2,7 +2,8 @@
   import { getPdfJsBaseUrl } from '../../core/utils';
   import { onDestroy, onMount } from 'svelte';
   import IconButton from '../../common/button/IconButton.svelte';
-  import { debounceTime, filter, Subject, Subscription } from 'rxjs';
+  import type { Subscription } from 'rxjs';
+  import { debounceTime, filter, Subject } from 'rxjs';
   import { getUnMarked } from '../tile.utils';
   import Spinner from '../../common/spinner/Spinner.svelte';
 

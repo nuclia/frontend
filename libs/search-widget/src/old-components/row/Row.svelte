@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { ReadableResource, Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
+  import { ReadableResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import MimeIcon from '../../common/icons/MimeIcon.svelte';

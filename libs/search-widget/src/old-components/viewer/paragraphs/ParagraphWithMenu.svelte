@@ -2,7 +2,7 @@
   import { hasAuthData } from '../../../core/api';
   import Paragraph from './Paragraph.svelte';
   import LabelMenu from '../menus/LabelMenu.svelte';
-  import { ParagraphLabels } from '../../../core/models';
+  import type { ParagraphLabels } from '../../../core/models';
   import { canEditLabels } from '../../../core/stores/widget.store';
   import { createEventDispatcher } from 'svelte';
   import type { Classification } from '@nuclia/core';

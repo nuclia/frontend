@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { IResource, ReadableResource } from '@nuclia/core';
+  import type { IResource } from '@nuclia/core';
+  import { ReadableResource } from '@nuclia/core';
   import { formatDate, formatTitle } from '../../core/utils';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import { goToResource } from '../results/results.utils';
