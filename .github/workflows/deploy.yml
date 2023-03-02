@@ -91,6 +91,13 @@ jobs:
           gsutil copy dist/libs/search-widget/nuclia-video-widget.css gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
+      - name: Publish widget library
+        if: steps.check-deploy.outputs.deploy-widget == 'yes'
+        uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./dist/search-widget-lib/package.json
+
       - name: Publish SDK
         if: steps.check-deploy.outputs.deploy-sdk == 'yes'
         uses: JS-DevTools/npm-publish@v1

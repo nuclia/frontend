@@ -1,18 +1,42 @@
 # Nuclia widget
 
-## Usage
+The Nuclia widget allows to embed a ready-to-use search box in your website or web application.
+
+## Usage as a web component
+
+Copy/paste the following snippet in your HTML code:
 
 ```html
-<nuclia-search></nuclia-search>
-<script src="/nuclia-widget.umd.js"></script>
+<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
+<nuclia-search-bar
+  knowledgebox="<YOUR-KB-ID>"
+  zone="europe-1"
+  features="filter,permalink"></nuclia-search-bar>
+
+<nuclia-search-results></nuclia-search-results>
 ```
 
-## Customize style
+## Usage as Svelte components
+
+You will need to install the following dependencies:
+
+```bash
+npm install @nuclia/widget @nuclia/core @nuclia/prediction rxjs@^7.5.2 date-fns sass
+```
+
+Then, you can use the components in your Svelte code:
 
 ```html
-<style>
-  nuclia-search {
-    --custom-color-primary-regular: pink;
-  }
-</style>
+<script lang="ts">
+  import { NucliaSearchBar, NucliaSearchResults } from '@nuclia/widget';
+</script>
+
+<NucliaSearchBar
+  zone="europe-1"
+  knowledgebox="<YOUR-KB-ID>"
+  lang="en"
+  placeholder="Search"
+  features="filter,suggestions,permalink" />
+
+<NucliaSearchResults />
 ```

@@ -16,6 +16,7 @@ echo "Build widget library"
 cd libs/search-widget
 svelte-package -i src -o ../../dist/search-widget-lib
 cp package.json ../../dist/search-widget-lib
+cp README.md ../../dist/search-widget-lib
 cp ../../LICENSE.md ../../dist/search-widget-lib
 cd ../..
 
