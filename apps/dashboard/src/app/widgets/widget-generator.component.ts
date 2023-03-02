@@ -11,11 +11,9 @@ import { NavigationService } from '../services/navigation.service';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 
 const DEFAULT_WIDGET_CONFIG: {
-  mode: 'video' | 'embedded' | 'popup';
   features: string[];
   placeholder?: string;
 } = {
-  mode: 'video',
   features: [],
 };
 const WIDGETS_CONFIGURATION = 'NUCLIA_WIDGETS_CONFIGURATION';
@@ -53,10 +51,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   get mainFormFeatures() {
     return this.mainForm?.controls.features.value || {};
-  }
-
-  get widgetMode() {
-    return this.mainForm?.controls.mode.value || DEFAULT_WIDGET_CONFIG.mode;
   }
 
   get features(): string {
@@ -101,7 +95,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
           this.placeholder = config.placeholder;
           this.mainForm = this.fb.group({
-            mode: [config.mode],
             features: this.fb.group({
               editLabels: [config.features.includes('editLabels')],
               entityAnnotation: [config.features.includes('entityAnnotation')],
@@ -156,22 +149,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   generateSnippet() {
     this.deletePreview();
     const cdn = this.backendConfig.getCDN() || '';
-    const mode = this.widgetMode || '';
 
     const placeholder = this.hasPlaceholder() ? `placeholder="${this.placeholder}"` : '';
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       const zone = this.sdk.nuclia.options.zone;
-      this.snippet =
-        mode !== 'video'
-          ? `<script src="${cdn}/nuclia-widget.umd.js"></script>
-<nuclia-search
-  knowledgebox="${kb.id}"
-  zone="${zone}"
-  type="${mode}"
-  features="${this.features}" ${placeholder}
-></nuclia-search>`
-          : `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
+      this.snippet = `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
 <nuclia-search-bar
   knowledgebox="${kb.id}"
   zone="${zone}"
@@ -232,7 +215,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     this.generateSnippet();
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       this.widgetConfigurations[kb.id] = {
-        mode: this.widgetMode,
         features: this.features.split(','),
         placeholder: this.placeholder,
       };

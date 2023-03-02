@@ -30,15 +30,7 @@
     <div class="snippet-configuration-container">
       <section class="snippet-configuration">
         <h3>{{ 'stash.widgets.configuration' | translate }}</h3>
-        <pa-select
-          [label]="'stash.widgets.mode' | translate"
-          formControlName="mode">
-          <pa-option value="popup">{{ 'stash.widgets.mode.popup' | translate }}</pa-option>
-          <pa-option value="embedded">{{ 'stash.widgets.mode.embedded' | translate }}</pa-option>
-          <pa-option value="video">{{ 'stash.widgets.mode.video' | translate }}</pa-option>
-        </pa-select>
         <pa-input
-          *ngIf="widgetMode !== 'popup'"
           [(value)]="placeholder"
           (valueChange)="onPlaceholderChange($event)">
           {{ 'stash.widgets.placeholder' | translate }}
@@ -46,21 +38,6 @@
         <div
           class="widget-features"
           formGroupName="features">
-          <ng-container *ngIf="widgetMode !== 'video'">
-            <pa-toggle
-              labelOnRight
-              help="stash.widgets.editLabels.help"
-              formControlName="editLabels">
-              {{ 'stash.widgets.editLabels' | translate }}
-            </pa-toggle>
-            <pa-toggle
-              labelOnRight
-              help="stash.widgets.entityAnnotation.help"
-              formControlName="entityAnnotation">
-              {{ 'stash.widgets.entityAnnotation' | translate }}
-            </pa-toggle>
-          </ng-container>
-
           <pa-toggle
             labelOnRight
             help="stash.widgets.suggestions.help"
@@ -80,14 +57,12 @@
             formControlName="filter">
             {{ 'stash.widgets.filter' | translate }}
           </pa-toggle>
-          <ng-container *ngIf="widgetMode === 'video'">
-            <pa-toggle
-              labelOnRight
-              help="stash.widgets.relations.help"
-              formControlName="relations">
-              {{ 'stash.widgets.relations' | translate }}
-            </pa-toggle>
-          </ng-container>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.relations.help"
+            formControlName="relations">
+            {{ 'stash.widgets.relations' | translate }}
+          </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.navigateToLink.help"
@@ -106,7 +81,6 @@
         <h3>
           {{ 'stash.widgets.snippet' | translate }}
           <pa-button
-            *ngIf="widgetMode !== 'popup'"
             aspect="basic"
             icon="info"
             iconAndText
