@@ -96,7 +96,7 @@ export interface Origin {
   modified?: string;
   metadata?: { [key: string]: string };
   tags?: string[];
-  colaborators?: string[];
+  collaborators?: string[];
   filename?: string;
   related?: string[];
   source?: 'WEB' | 'DESKTOP' | 'API';
