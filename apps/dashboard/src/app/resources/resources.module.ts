@@ -57,6 +57,7 @@ import { DatasetSelectorComponent } from './sample-dataset/dataset-selector/data
 import { ParagraphAnnotationComponent } from './edit/annotation/paragraph-annotation/paragraph-annotation.component';
 import { PreviewComponent } from './edit/preview/preview.component';
 import { SelectFirstFieldDirective } from './edit/select-first-field/select-first-field.directive';
+import { LabelSelectionComponent } from './edit/classification/paragraph-classification/label-selection.component';
 
 const Components = [
   ResourceListComponent,
@@ -76,6 +77,7 @@ const Components = [
   DropzoneComponent,
   ParagraphClassificationComponent,
   ParagraphAnnotationComponent,
+  LabelSelectionComponent,
 ];
 
 const ROUTES: Routes = [
@@ -97,15 +99,19 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'profile',
+            redirectTo: 'resource',
             pathMatch: 'full',
           },
           {
-            path: 'profile',
+            path: 'resource',
             component: ResourceProfileComponent,
           },
           {
             path: 'classification',
+            component: ResourceClassificationComponent,
+          },
+          {
+            path: 'classification/:fieldType',
             component: ResourceClassificationComponent,
           },
           {

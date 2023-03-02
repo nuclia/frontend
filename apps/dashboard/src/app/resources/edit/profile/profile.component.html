@@ -1,5 +1,5 @@
-<div class="scrollable-area">
-  <div class="main-container">
+<div class="main-container">
+  <div class="scrollable-area with-footer with-right-panel">
     <form
       [formGroup]="form"
       (ngSubmit)="save()">
@@ -95,24 +95,10 @@
           </pa-radio-group>
         </div>
       </div>
-
-      <footer class="form-buttons">
-        <pa-button
-          kind="primary"
-          [disabled]="!form.valid || form.pristine || isSaving"
-          (click)="save()">
-          {{ 'generic.save' | translate }}
-        </pa-button>
-
-        <pa-button
-          aspect="basic"
-          [disabled]="form.pristine || isSaving"
-          (click)="cancel()">
-          {{ 'generic.cancel' | translate }}
-        </pa-button>
-      </footer>
     </form>
+  </div>
 
+  <div class="right-panel-container">
     <ncom-hint
       label="How to modify a resource with the API"
       inverted
@@ -130,3 +116,19 @@
     </ncom-hint>
   </div>
 </div>
+
+<footer class="form-buttons with-right-panel">
+  <pa-button
+    kind="primary"
+    [disabled]="!form.valid || form.pristine || isSaving"
+    (click)="save()">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+
+  <pa-button
+    aspect="basic"
+    [disabled]="form.pristine || isSaving"
+    (click)="cancel()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+</footer>

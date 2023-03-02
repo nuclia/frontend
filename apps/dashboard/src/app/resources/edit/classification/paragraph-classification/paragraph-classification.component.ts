@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EditResourceService } from '../../edit-resource.service';
-import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take } from 'rxjs';
+import { combineLatest, filter, forkJoin, map, Observable, Subject, switchMap, take, tap } from 'rxjs';
 import { Classification, FieldId, LabelSetKind, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../../../services/labels.service';
 import { ParagraphWithTextAndClassifications } from '../../edit-resource.helpers';
@@ -33,12 +33,19 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   availableLabels: Observable<LabelSets | null> = this.labelsService.getLabelsByKind(LabelSetKind.PARAGRAPHS);
   hasLabels: Observable<boolean> = this.availableLabels.pipe(
     map((labels) => !!labels && Object.keys(labels).length > 0),
+    tap(() => {
+      this.labelLoaded = true;
+      this.cdr.markForCheck();
+    }),
   );
-  currentLabel?: Classification;
+  currentLabels: Classification[] = [];
   isModified = false;
   isSaving = false;
+  labelLoaded = false;
 
   paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.classificationService.paragraphs;
+  hasParagraph: Observable<boolean> = this.classificationService.hasParagraph;
+  paragraphLoaded: Observable<boolean> = this.classificationService.paragraphLoaded;
   kbUrl = this.editResource.kbUrl;
 
   previousQuery?: string;
@@ -69,19 +76,25 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   updateSelection(labels: Classification[]) {
-    this.currentLabel = labels[0];
+    this.currentLabels = labels;
   }
 
-  addLabelOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
+  cleanUpLabels() {
+    this.currentLabels = [];
+  }
+
+  removeLabelFromSelection(classificationToRemove: Classification) {
+    this.currentLabels = this.currentLabels.filter(
+      (item) => !(item.labelset === classificationToRemove.labelset && item.label === classificationToRemove.label),
+    );
+  }
+
+  addLabelsOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
     this.availableLabels.pipe(take(1)).subscribe((labelSets) => {
-      if (this.currentLabel) {
-        this.classificationService.classifyParagraph(
-          this.currentLabel,
-          paragraph,
-          !!labelSets?.[this.currentLabel.labelset]?.multiple,
-        );
-        this.isModified = this.classificationService.hasModifications();
-      }
+      this.currentLabels.forEach((label) => {
+        this.classificationService.classifyParagraph(label, paragraph, !!labelSets?.[label.labelset]?.multiple);
+      });
+      this.isModified = this.classificationService.hasModifications();
     });
   }
 

@@ -1,22 +1,23 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { EditResourceService } from '../edit-resource.service';
 import { Classification, Resource } from '@nuclia/core';
-import { map, Subject } from 'rxjs';
+import { map } from 'rxjs';
+import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
 
 @Component({
   templateUrl: './resource-classification.component.html',
   styleUrls: ['../common-page-layout.scss', './resource-classification.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResourceClassificationComponent implements OnInit, OnDestroy {
-  private unsubscribeAll = new Subject<void>();
+export class ResourceClassificationComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
   private resourceLabels: Classification[] = [];
   currentLabels: Classification[] = [];
   isModified = false;
   noLabels = false;
   kbUrl = this.editResource.kbUrl;
 
-  constructor(private editResource: EditResourceService, private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) {
+    super();
+  }
 
   ngOnInit(): void {
     this.editResource.setCurrentView('classification');
@@ -26,11 +27,6 @@ export class ResourceClassificationComponent implements OnInit, OnDestroy {
       this.isModified = false;
       this.cdr.detectChanges();
     });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribeAll.next();
-    this.unsubscribeAll.complete();
   }
 
   updateLabels(labels: Classification[]) {

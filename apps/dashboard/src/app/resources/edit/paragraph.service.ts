@@ -10,6 +10,7 @@ import { cloneDeep } from '@flaps/common';
 export class ParagraphService {
   protected _paragraphsBackup: BehaviorSubject<ParagraphWithText[]> = new BehaviorSubject<ParagraphWithText[]>([]);
   protected _allParagraphs: BehaviorSubject<ParagraphWithText[]> = new BehaviorSubject<ParagraphWithText[]>([]);
+  protected _paragraphLoaded: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   protected _searchResults: BehaviorSubject<Search.Results | null> = new BehaviorSubject<Search.Results | null>(null);
 
   paragraphList: Observable<ParagraphWithText[]> = combineLatest([
@@ -28,6 +29,10 @@ export class ParagraphService {
       );
     }),
   );
+  hasParagraph: Observable<boolean> = combineLatest([this._allParagraphs, this._paragraphLoaded]).pipe(
+    map(([paragraphs, loaded]) => !loaded || paragraphs.length > 0),
+  );
+  paragraphLoaded: Observable<boolean> = this._paragraphLoaded.asObservable();
 
   hasModifications(): boolean {
     return JSON.stringify(this._paragraphsBackup.value) !== JSON.stringify(this._allParagraphs.value);
@@ -41,6 +46,7 @@ export class ParagraphService {
     this._paragraphsBackup.next([]);
     this._allParagraphs.next([]);
     this._searchResults.next(null);
+    this._paragraphLoaded.next(false);
   }
 
   setSearchResults(results: Search.Results | null) {
@@ -73,5 +79,6 @@ export class ParagraphService {
   setupParagraphs(paragraphs: ParagraphWithText[]) {
     this._paragraphsBackup.next(paragraphs);
     this._allParagraphs.next(cloneDeep(paragraphs));
+    this._paragraphLoaded.next(true);
   }
 }

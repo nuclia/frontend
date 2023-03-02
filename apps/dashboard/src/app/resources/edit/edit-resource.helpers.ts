@@ -12,7 +12,7 @@ import {
   UserTokenAnnotation,
 } from '@nuclia/core';
 
-export type EditResourceView = 'preview' | 'profile' | 'classification' | 'annotation' | 'add-field';
+export type EditResourceView = 'preview' | 'resource' | 'classification' | 'annotation' | 'add-field';
 
 export interface ParagraphWithText extends Paragraph {
   paragraphId: string;

@@ -36,7 +36,7 @@ export class ResourceFileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.editResource.setCurrentView('profile');
+    this.editResource.setCurrentView('resource');
   }
 
   ngOnDestroy() {

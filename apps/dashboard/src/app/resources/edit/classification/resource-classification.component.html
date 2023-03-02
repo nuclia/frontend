@@ -1,31 +1,32 @@
 <div class="main-container">
-  <div class="classification-container">
-    <label class="title-s">{{ 'resource.classification' | translate }}</label>
-    <div>
-      <p *ngIf="noLabels">
-        {{ 'resource.classification.no-resource-labelset' | translate }}
-        <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
-      </p>
+  <p *ngIf="noLabels; else labelSelector">
+    {{ 'resource.classification.no-resource-labelset' | translate }}
+    <a [routerLink]="(kbUrl | async) + '/label-sets'">{{ 'resource.classification-page-link' | translate }}</a>
+  </p>
+  <ng-template #labelSelector>
+    <div class="scrollable-area classification-container">
       <app-label-field
         [selection]="currentLabels"
         (noLabels)="noLabels = $event"
         (selectionChange)="updateLabels($event)"></app-label-field>
     </div>
-  </div>
-
-  <footer class="form-buttons">
-    <pa-button
-      kind="primary"
-      [disabled]="!isModified"
-      (click)="save()">
-      {{ 'generic.save' | translate }}
-    </pa-button>
-
-    <pa-button
-      aspect="basic"
-      [disabled]="!isModified"
-      (click)="cancel()">
-      {{ 'generic.cancel' | translate }}
-    </pa-button>
-  </footer>
+  </ng-template>
 </div>
+
+<footer
+  *ngIf="!noLabels"
+  class="form-buttons">
+  <pa-button
+    kind="primary"
+    [disabled]="!isModified"
+    (click)="save()">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+
+  <pa-button
+    aspect="basic"
+    [disabled]="!isModified"
+    (click)="cancel()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+</footer>

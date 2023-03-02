@@ -9420,26 +9420,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>resource.classification</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>resource.classification-column</name>
 						<description/>
 						<comment/>
@@ -9480,6 +9460,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>resource.classification.clean-up</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>resource.classification.no-paragraph-labelset</name>
 						<description/>
 						<comment/>
@@ -9501,6 +9501,26 @@
 					</concept_node>
 					<concept_node>
 						<name>resource.classification.no-resource-labelset</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>resource.classification.remove-label</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -10221,6 +10241,26 @@
 					</concept_node>
 					<concept_node>
 						<name>resource.field-link</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>resource.field-no-paragraph</name>
 						<description/>
 						<comment/>
 						<default_text/>
