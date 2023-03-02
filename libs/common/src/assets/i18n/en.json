@@ -527,7 +527,7 @@
 	"resource.pending_resources_popover": "Files pending to be processed",
 	"resource.preview.open-viewer": "Open viewer",
 	"resource.processed_resources": "Processed resources",
-	"resource.profile": "Profile",
+	"resource.profile": "Resource",
 	"resource.reindex-all-info": "Reprocessing all resources in error started. This may take some time.",
 	"resource.resource_page_number": "{{num}} per page",
 	"resource.resources": "Resources",

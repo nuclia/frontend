@@ -30,7 +30,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   backRoute: Observable<string> = this.navigationService.homeUrl.pipe(map((homeUrl) => `${homeUrl}/resources`));
   currentView: EditResourceView | null = null;
-  currentField: Observable<FieldId | 'profile'> = this.editResource.currentField;
+  currentField: Observable<FieldId | 'resource'> = this.editResource.currentField;
   resource: Observable<Resource | null> = this.editResource.resource;
   fields: Observable<ResourceFieldWithIcon[]> = this.editResource.fields.pipe(
     map((fields) =>
@@ -41,7 +41,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     ),
   );
 
-  activeField?: FieldId | 'profile';
+  activeField?: FieldId | 'resource';
 
   constructor(
     private route: ActivatedRoute,
@@ -76,14 +76,19 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  navigateToField(field: FieldId | 'profile') {
+  navigateToField(field: FieldId | 'resource') {
     this.editResource.setCurrentField(field);
     let path;
-    if (this.currentView === 'profile') {
-      path = field === 'profile' ? `./${field}` : `./${field.field_type}/${field.field_id}`;
+    if (this.currentView === 'resource') {
+      path = field === 'resource' ? `./${field}` : `./${field.field_type}/${field.field_id}`;
+    } else if (this.currentView === 'classification') {
+      path =
+        field === 'resource'
+          ? `./${this.currentView}/${field}`
+          : `./${this.currentView}/${field.field_type}/${field.field_id}`;
     } else {
       path =
-        field === 'profile' ? `./${this.currentView}` : `./${this.currentView}/${field.field_type}/${field.field_id}`;
+        field === 'resource' ? `./${this.currentView}` : `./${this.currentView}/${field.field_type}/${field.field_id}`;
     }
     if (path) {
       this.router.navigate([path], { relativeTo: this.route });
@@ -91,6 +96,6 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   }
 
   onViewChange() {
-    this.editResource.setCurrentField('profile');
+    this.editResource.setCurrentField('resource');
   }
 }

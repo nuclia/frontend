@@ -54,10 +54,10 @@ import { NavigationService } from '../../services/navigation.service';
 export class EditResourceService {
   private _resource = new BehaviorSubject<Resource | null>(null);
   private _currentView = new BehaviorSubject<EditResourceView | null>(null);
-  private _currentField = new BehaviorSubject<FieldId | 'profile'>('profile');
+  private _currentField = new BehaviorSubject<FieldId | 'resource'>('resource');
 
   currentView: Observable<EditResourceView | null> = this._currentView.asObservable();
-  currentField: Observable<FieldId | 'profile'> = this._currentField.asObservable();
+  currentField: Observable<FieldId | 'resource'> = this._currentField.asObservable();
   resource: Observable<Resource | null> = this._resource.asObservable();
   fields: Observable<ResourceField[]> = this.resource.pipe(
     map((resource) =>
@@ -184,14 +184,14 @@ export class EditResourceService {
     this._currentView.next(view);
   }
 
-  setCurrentField(field: FieldId | 'profile') {
+  setCurrentField(field: FieldId | 'resource') {
     this._currentField.next(field);
   }
 
   reset() {
     this._resource.next(null);
     this._currentView.next(null);
-    this._currentField.next('profile');
+    this._currentField.next('resource');
   }
 
   getClassificationsPayload(labels: Classification[]): UserClassification[] {

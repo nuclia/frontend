@@ -74,8 +74,8 @@ export class ResourceProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.editResource.setCurrentView('profile');
-    this.editResource.setCurrentField('profile');
+    this.editResource.setCurrentView('resource');
+    this.editResource.setCurrentField('resource');
   }
 
   ngOnDestroy(): void {

@@ -40,7 +40,7 @@ export class ResourceLinkComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private editResource: EditResourceService) {}
 
   ngOnInit() {
-    this.editResource.setCurrentView('profile');
+    this.editResource.setCurrentView('resource');
     this.field.pipe(takeUntil(this.unsubscribeAll)).subscribe((field) => {
       const link = (field as LinkFieldData).value?.uri;
       if (link) {

@@ -40,7 +40,7 @@ export class ResourceTextComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private editResource: EditResourceService) {}
 
   ngOnInit() {
-    this.editResource.setCurrentView('profile');
+    this.editResource.setCurrentView('resource');
     this.field.pipe(takeUntil(this.unsubscribeAll)).subscribe((field) => {
       const text = (field as TextFieldData).value?.body;
       if (text) {

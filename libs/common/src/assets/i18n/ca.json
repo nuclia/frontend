@@ -482,7 +482,7 @@
 	"resource.pending_resources_popover": "Expedients pendents de processar",
 	"resource.preview.open-viewer": "Visor obert",
 	"resource.processed_resources": "Recursos processats",
-	"resource.profile": "Perfil",
+	"resource.profile": "Recurs",
 	"resource.reindex-all-info": "S'ha iniciat el reprocessament de tots els recursos per error. Això pot trigar una mica.",
 	"resource.resource_page_number": "{{num}} per pàgina",
 	"resource.resources": "Recursos",

@@ -97,15 +97,19 @@ const ROUTES: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'profile',
+            redirectTo: 'resource',
             pathMatch: 'full',
           },
           {
-            path: 'profile',
+            path: 'resource',
             component: ResourceProfileComponent,
           },
           {
             path: 'classification',
+            component: ResourceClassificationComponent,
+          },
+          {
+            path: 'classification/:fieldType',
             component: ResourceClassificationComponent,
           },
           {
