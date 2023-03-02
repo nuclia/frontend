@@ -6,6 +6,11 @@
   max-height: calc(
     100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container} - #{$footer-height}
   );
+
+  & > p {
+    margin-bottom: 0;
+    margin-top: rhythm(0.5); // align message with the navigation menu
+  }
 }
 
 .search-box-container {

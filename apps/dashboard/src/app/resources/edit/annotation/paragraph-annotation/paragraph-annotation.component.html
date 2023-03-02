@@ -1,114 +1,132 @@
-<div class="main-container">
-  <div class="search-box-container">
-    <pa-input
-      [icon]="searchQuery ? 'cross' : 'search'"
-      [class.can-reset]="!!searchQuery"
-      [(ngModel)]="searchQuery"
-      (click)="onSearchInputClick($event)"
-      (keyup.enter)="triggerSearch()">
-      {{ 'resource.field.search' | translate }}
-    </pa-input>
-  </div>
+<ng-container *ngIf="hasParagraph | async; else noParagraph">
+  <ng-container *ngIf="paragraphLoaded | async; else loading">
+    <div class="main-container">
+      <div class="search-box-container">
+        <pa-input
+          [icon]="searchQuery ? 'cross' : 'search'"
+          [class.can-reset]="!!searchQuery"
+          [(ngModel)]="searchQuery"
+          (click)="onSearchInputClick($event)"
+          (keyup.enter)="triggerSearch()">
+          {{ 'resource.field.search' | translate }}
+        </pa-input>
+      </div>
 
-  <div class="scrollable-area with-search-and-footer with-right-panel">
-    <div
-      #paragraphsContainer
-      class="paragraphs-container">
-      <pa-infinite-scroll (reachAnchor)="loadMore()">
+      <div class="scrollable-area with-search-and-footer with-right-panel">
         <div
-          class="paragraph-container"
-          *ngFor="let paragraph of paragraphs | async">
-          <p
-            [attr.paragraphId]="paragraph.paragraphId"
-            [class.family-selected]="(selectedFamily | async) !== null"
-            [innerHTML]="paragraph.annotatedText | safe: 'html'"
-            (mouseup)="onMouseUp($event)"></p>
+          #paragraphsContainer
+          class="paragraphs-container">
+          <pa-infinite-scroll (reachAnchor)="loadMore()">
+            <div
+              class="paragraph-container"
+              *ngFor="let paragraph of paragraphs | async">
+              <p
+                [attr.paragraphId]="paragraph.paragraphId"
+                [class.family-selected]="(selectedFamily | async) !== null"
+                [innerHTML]="paragraph.annotatedText | safe: 'html'"
+                (mouseup)="onMouseUp($event)"></p>
 
-          <div
-            class="annotation-buttons-container"
-            [style]="buttonPosition">
-            <ng-container
-              *ngIf="
-                (selectedFamily | async) !== null &&
-                (userSelection?.paragraphId === paragraph.paragraphId ||
-                  selectedEntity?.paragraphId === paragraph.paragraphId)
-              ">
-              <button
-                *ngIf="!!selectedEntity"
-                class="annotation-button remove"
-                (click)="removeEntityFromParagraph(paragraph)">
-                <pa-icon
-                  size="small"
-                  name="cross"></pa-icon>
-              </button>
-              <button
-                class="annotation-button confirm"
-                *ngIf="
-                  userSelection?.paragraphId === paragraph.paragraphId ||
-                  selectedEntity?.klass !== (selectedFamily | async)?.id
-                "
-                (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
-                <pa-icon
-                  size="small"
-                  [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
-              </button>
-            </ng-container>
-          </div>
+              <div
+                class="annotation-buttons-container"
+                [style]="buttonPosition">
+                <ng-container
+                  *ngIf="
+                    (selectedFamily | async) !== null &&
+                    (userSelection?.paragraphId === paragraph.paragraphId ||
+                      selectedEntity?.paragraphId === paragraph.paragraphId)
+                  ">
+                  <button
+                    *ngIf="!!selectedEntity"
+                    class="annotation-button remove"
+                    (click)="removeEntityFromParagraph(paragraph)">
+                    <pa-icon
+                      size="small"
+                      name="cross"></pa-icon>
+                  </button>
+                  <button
+                    class="annotation-button confirm"
+                    *ngIf="
+                      userSelection?.paragraphId === paragraph.paragraphId ||
+                      selectedEntity?.klass !== (selectedFamily | async)?.id
+                    "
+                    (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
+                    <pa-icon
+                      size="small"
+                      [name]="userSelection ? 'check' : 'pencil'"></pa-icon>
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+          </pa-infinite-scroll>
         </div>
-      </pa-infinite-scroll>
+      </div>
+
+      <div class="right-panel-container">
+        <div class="help">
+          <pa-icon
+            name="info"
+            size="small"></pa-icon>
+          <p>
+            {{ 'resource.field-annotation.help' | translate }}
+          </p>
+        </div>
+
+        <pa-expander
+          *ngFor="let family of entityFamilies | async"
+          emitOnly
+          [expanded]="(selectedFamily | async)?.id === family.id"
+          (toggleExpander)="selectFamily(family)">
+          <pa-expander-header>
+            <div
+              class="family-color"
+              [style.background-color]="family.color"></div>
+            <span class="family-title">{{ family.title }}</span>
+            ({{ family.entities.length }})
+          </pa-expander-header>
+          <pa-expander-body>
+            <ul
+              class="entity-list"
+              [style.border-left-color]="family.color">
+              <li
+                *ngFor="let entity of family.entities"
+                paEllipsisTooltip>
+                {{ entity }}
+              </li>
+              <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
+            </ul>
+          </pa-expander-body>
+        </pa-expander>
+      </div>
+    </div>
+
+    <footer class="form-buttons with-right-panel">
+      <pa-button
+        kind="primary"
+        [disabled]="!isModified || isSaving"
+        (click)="save()">
+        {{ 'generic.save' | translate }}
+      </pa-button>
+
+      <pa-button
+        aspect="basic"
+        [disabled]="!isModified || isSaving"
+        (click)="cancel()">
+        {{ 'generic.cancel' | translate }}
+      </pa-button>
+    </footer>
+  </ng-container>
+</ng-container>
+
+<ng-template #noParagraph>
+  <div class="main-container">
+    <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+  </div>
+</ng-template>
+
+<ng-template #loading>
+  <div class="main-container">
+    <div class="scrollable-area">
+      <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
     </div>
   </div>
-
-  <div class="right-panel-container">
-    <div class="help">
-      <pa-icon
-        name="info"
-        size="small"></pa-icon>
-      <p>
-        {{ 'resource.field-annotation.help' | translate }}
-      </p>
-    </div>
-
-    <pa-expander
-      *ngFor="let family of entityFamilies | async"
-      emitOnly
-      [expanded]="(selectedFamily | async)?.id === family.id"
-      (toggleExpander)="selectFamily(family)">
-      <pa-expander-header>
-        <div
-          class="family-color"
-          [style.background-color]="family.color"></div>
-        <span class="family-title">{{ family.title }}</span>
-        ({{ family.entities.length }})
-      </pa-expander-header>
-      <pa-expander-body>
-        <ul
-          class="entity-list"
-          [style.border-left-color]="family.color">
-          <li
-            *ngFor="let entity of family.entities"
-            paEllipsisTooltip>
-            {{ entity }}
-          </li>
-          <li *ngIf="family.entities.length === 0">{{ 'resource.entities.no-entity' | translate }}</li>
-        </ul>
-      </pa-expander-body>
-    </pa-expander>
-  </div>
-</div>
-
-<footer class="form-buttons with-right-panel">
-  <pa-button
-    kind="primary"
-    [disabled]="!isModified || isSaving"
-    (click)="save()">
-    {{ 'generic.save' | translate }}
-  </pa-button>
-
-  <pa-button
-    aspect="basic"
-    [disabled]="!isModified || isSaving"
-    (click)="cancel()">
-    {{ 'generic.cancel' | translate }}
-  </pa-button>
-</footer>
+</ng-template>

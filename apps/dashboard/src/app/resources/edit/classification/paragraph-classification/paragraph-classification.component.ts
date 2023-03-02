@@ -44,6 +44,8 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   labelLoaded = false;
 
   paragraphs: Observable<ParagraphWithTextAndClassifications[]> = this.classificationService.paragraphs;
+  hasParagraph: Observable<boolean> = this.classificationService.hasParagraph;
+  paragraphLoaded: Observable<boolean> = this.classificationService.paragraphLoaded;
   kbUrl = this.editResource.kbUrl;
 
   previousQuery?: string;
