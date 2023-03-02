@@ -87,7 +87,7 @@ export class ResourceProfileComponent implements OnInit {
     this.form.patchValue({
       title: data.title,
       summary: data.summary,
-      authors: (data.origin?.colaborators || []).join(', '),
+      authors: (data.origin?.collaborators || []).join(', '),
       thumbnail: data.thumbnail,
     });
     this.form.enable();
@@ -119,7 +119,7 @@ export class ResourceProfileComponent implements OnInit {
           thumbnail: this.form.value.thumbnail,
           origin: {
             ...this.currentValue.origin,
-            colaborators: (this.form.value.authors as string).split(',').map((s) => s.trim()),
+            collaborators: (this.form.value.authors as string).split(',').map((s) => s.trim()),
           },
         }
       : {};
