@@ -33,8 +33,8 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   availableLabels: Observable<LabelSets | null> = this.labelsService.getLabelsByKind(LabelSetKind.PARAGRAPHS);
   hasLabels: Observable<boolean> = this.availableLabels.pipe(
     map((labels) => !!labels && Object.keys(labels).length > 0),
-    tap((hasLabels) => {
-      this.labelLoaded = hasLabels;
+    tap(() => {
+      this.labelLoaded = true;
       this.cdr.markForCheck();
     }),
   );
