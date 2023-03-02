@@ -1,14 +1,11 @@
 <script lang="ts">
   import { setLang } from 'libs/search-widget/src/core/i18n';
-  import { onMount } from 'svelte';
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
-  import { NucliaWidget } from '../../../libs/search-widget/src/widgets/search-widget';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
 
   let selected = 'tiles';
   let showConfiguration = true;
-  let widget: NucliaWidget;
   let searchBar: NucliaSearchBar;
   let viewerWidget: NucliaViewerWidget;
 
@@ -25,29 +22,6 @@
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c'; // la classe américaine
   // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
-
-  onMount(() => {
-    widget?.setActions([
-      {
-        label: 'Delete',
-        action: (uid: string) => {
-          console.log('delete', uid);
-        },
-      },
-      {
-        label: 'Edit',
-        action: (uid: string) => {
-          console.log('edit', uid);
-        },
-      },
-      {
-        label: 'Close',
-        action: () => {
-          widget.displayResource('');
-        },
-      },
-    ]);
-  });
 </script>
 
 <main>
@@ -62,8 +36,6 @@
       <select
         id="widget-select"
         bind:value={selected}>
-        <option value="popup">Popup search</option>
-        <option value="embedded">Embedded search</option>
         <option value="tiles">Search bar and result widgets</option>
         <option value="viewer">Viewer widget</option>
       </select>
@@ -72,34 +44,6 @@
     </section>
   </header>
 
-  {#if selected === 'popup'}
-    <h3>Input widget</h3>
-    <div class="input-container">
-      <NucliaWidget
-        bind:this={widget}
-        zone="europe-1"
-        knowledgebox={kb}
-        backend="https://stashify.cloud/api"
-        cdn="/"
-        type="popup"
-        features="permalink,filter,suggestions"
-        lang="en"
-        placeholder="Input placeholder is invisible" />
-    </div>
-  {/if}
-  {#if selected === 'embedded'}
-    <h2>
-      Embedded widget <small>(formerly known as form widget)</small>
-    </h2>
-    <NucliaWidget
-      zone="europe-1"
-      knowledgebox={kb}
-      backend="https://stashify.cloud/api"
-      cdn="https://cdn.stashify.cloud/"
-      type="embedded"
-      lang="en"
-      features="permalink,filter,suggestions,entityAnnotation" />
-  {/if}
   {#if selected === 'tiles'}
     <h2>Two widgets: search bar and video results</h2>
     <p>

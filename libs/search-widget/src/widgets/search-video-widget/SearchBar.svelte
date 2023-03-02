@@ -6,7 +6,7 @@
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import SearchInput from '../../old-components/search-input/SearchInput.svelte';
+  import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch, unsubscribeTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import { get_current_component } from 'svelte/internal';
@@ -20,7 +20,6 @@
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
-  import { unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
   import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
@@ -117,7 +116,6 @@
       suggestionState.reset();
       resetNuclia();
       unsubscribeAllEffects();
-      unsubscribeViewerEffects();
       unsubscribeTriggerSearch();
     };
   });

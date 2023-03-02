@@ -2,9 +2,9 @@
   import { filter, Observable, tap } from 'rxjs';
   import type { Search } from '@nuclia/core';
   import { switchMap, take } from 'rxjs/operators';
-  import Youtube from '../old-components/viewer/previewers/Youtube.svelte';
+  import Youtube from '../components/previewers/Youtube.svelte';
   import { PreviewKind } from '../core/models';
-  import Player from '../old-components/viewer/previewers/Player.svelte';
+  import Player from '../components/previewers/Player.svelte';
   import { fieldData, getFieldUrl, getFileFieldContentType, isLinkField } from '../core/stores/viewer.store';
   import MediaTile from './base-tile/MediaTile.svelte';
 
