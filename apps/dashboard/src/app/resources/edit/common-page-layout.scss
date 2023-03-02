@@ -20,7 +20,11 @@
 .scrollable-area {
   height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container});
   overflow: auto;
-  width: $width-page-content;
+  width: $width-page-content-large;
+
+  &.with-right-panel {
+    width: $width-page-content;
+  }
 
   &.with-footer {
     height: calc(
@@ -43,15 +47,18 @@
   width: rhythm(32);
 }
 
-footer {
+footer:not(.with-right-panel) {
+  max-width: $width-page-content-large;
+}
+footer.with-right-panel {
   max-width: $width-page-content;
 }
 
 @media (min-width: $size-viewport-xlarge-min) {
-  .scrollable-area {
+  .scrollable-area.with-right-panel {
     width: $width-page-content-large;
   }
-  footer {
+  footer.with-right-panel {
     max-width: $width-page-content-large;
   }
 }

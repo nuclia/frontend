@@ -1,5 +1,6 @@
 <div class="main-container">
   <form
+    class="scrollable-area"
     [formGroup]="form"
     (ngSubmit)="save()">
     <label
@@ -11,29 +12,29 @@
       id="link"
       formControlName="link"
       externalLabel></pa-input>
-
-    <footer class="form-field-buttons with-margin">
-      <div class="save-actions">
-        <pa-button
-          kind="primary"
-          [disabled]="!form.valid || form.pristine || isSaving"
-          (click)="save()">
-          {{ 'generic.save' | translate }}
-        </pa-button>
-
-        <pa-button
-          aspect="basic"
-          [disabled]="form.pristine || isSaving"
-          (click)="cancel()">
-          {{ 'generic.cancel' | translate }}
-        </pa-button>
-      </div>
-      <pa-button
-        kind="destructive"
-        [disabled]="!isReady"
-        (click)="deleteField()">
-        {{ 'resource.field.delete' | translate }}
-      </pa-button>
-    </footer>
   </form>
 </div>
+
+<footer class="form-field-buttons">
+  <div class="save-actions">
+    <pa-button
+      kind="primary"
+      [disabled]="!form.valid || form.pristine || isSaving"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+
+    <pa-button
+      aspect="basic"
+      [disabled]="form.pristine || isSaving"
+      (click)="cancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+  </div>
+  <pa-button
+    kind="destructive"
+    [disabled]="!isReady"
+    (click)="deleteField()">
+    {{ 'resource.field.delete' | translate }}
+  </pa-button>
+</footer>
