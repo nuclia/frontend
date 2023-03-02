@@ -5,7 +5,6 @@ set -e
 echo "Build video widget"
 vite build -c=libs/search-widget/vite.config.js -- search-widget nuclia-video-widget
 mv dist/libs/search-widget/style.css dist/libs/search-widget/nuclia-video-widget.css
-cp dist/libs/search-widget/* dist/libs/search-widget
 
 echo "Build viewer widget"
 vite build -c=libs/search-widget/vite.config.js -- viewer-widget nuclia-viewer-widget
