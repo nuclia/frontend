@@ -23,6 +23,7 @@
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
+  import { setWidgetActions } from '../../core/stores/widget.store';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
@@ -34,9 +35,11 @@
     resourceTitle.pipe(distinctUntilChanged()),
   ]).pipe(
     map(([fullId, data, title]) =>
-      fullId && data ? { id: fullId.resourceId, field: fullId, fieldData: data, title } : null,
+      fullId && data ? ({ id: fullId.resourceId, field: fullId, fieldData: data, title } as Search.SmartResult) : null,
     ),
   );
+
+  export const setTileMenu = setWidgetActions;
 
   let svgSprite;
 

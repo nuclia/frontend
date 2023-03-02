@@ -7,7 +7,7 @@
   import { setLang } from '../../core/i18n';
   import type { KBStates } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { widgetType } from '../../core/stores/widget.store';
+  import { setWidgetActions, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
   import type { ResourceProperties, Search } from '@nuclia/core';
   import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
@@ -46,6 +46,7 @@
     closePreview();
   }
 
+  export const setTileMenu = setWidgetActions;
   export function openPreview(fullId: FieldFullId, title?: string): Observable<boolean> {
     fieldFullId.set(fullId);
     resourceTitle.set(title || '');

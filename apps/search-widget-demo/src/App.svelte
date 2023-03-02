@@ -3,11 +3,13 @@
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
+  import type { FieldFullId } from '../../../libs/search-widget/src/core/models';
 
   let selected = 'tiles';
   let showConfiguration = true;
   let searchBar: NucliaSearchBar;
   let viewerWidget: NucliaViewerWidget;
+  let resultsWidget: NucliaSearchResults;
 
   let resource = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
   let fieldType = 'file';
@@ -22,6 +24,43 @@
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c'; // la classe américaine
   // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
+
+  onMount(() => {
+    resultsWidget?.setTileMenu([
+      {
+        label: 'Delete',
+        action: (fullId: FieldFullId) => {
+          console.log('delete', fullId);
+        },
+      },
+      {
+        label: 'Edit',
+        action: (fullId: FieldFullId) => {
+          console.log('edit', fullId);
+        },
+      },
+    ]);
+    viewerWidget?.setTileMenu([
+      {
+        label: 'Delete',
+        action: (fullId: FieldFullId) => {
+          console.log('delete', fullId);
+        },
+      },
+      {
+        label: 'Edit',
+        action: (fullId: FieldFullId) => {
+          console.log('edit', fullId);
+        },
+      },
+      {
+        label: 'Close',
+        action: () => {
+          viewerWidget.closePreview();
+        },
+      },
+    ]);
+  });
 </script>
 
 <main>
@@ -60,7 +99,7 @@
         lang="en"
         placeholder="Search"
         features="filter,suggestions,permalink" />
-      <NucliaSearchResults />
+      <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
   {#if selected === 'viewer'}

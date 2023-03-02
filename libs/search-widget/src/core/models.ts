@@ -26,7 +26,7 @@ export interface WidgetOptions {
 export interface WidgetAction {
   label: string;
   destructive?: boolean;
-  action: (uid: string) => void;
+  action: (fullId: FieldFullId) => void;
 }
 
 /**
