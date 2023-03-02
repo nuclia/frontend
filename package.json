@@ -45,6 +45,8 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@sentry/angular": "^7.2.0",
     "@sentry/tracing": "^7.2.0",
+    "@sveltejs/kit": "^1.9.2",
+    "@sveltejs/package": "^2.0.2",
     "algoliasearch": "^4.13.1",
     "angular-svg-icon": "^14.0.0",
     "child_process": "^1.0.2",

@@ -6,7 +6,8 @@
   import ImageTile from './ImageTile.svelte';
   import SpreadsheetTile from './SpreadsheetTile.svelte';
   import TextTile from './TextTile.svelte';
-  import { FIELD_TYPE, FileFieldData, LinkFieldData } from '@nuclia/core';
+  import type { FileFieldData, LinkFieldData } from '@nuclia/core';
+  import { FIELD_TYPE } from '@nuclia/core';
 
   export let result: Search.SmartResult;
 

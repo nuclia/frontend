@@ -3,8 +3,9 @@
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import { ResourceField, Search } from '@nuclia/core';
-  import { PreviewKind, WidgetParagraph } from '../../core/models';
+  import type { ResourceField, Search } from '@nuclia/core';
+  import type { WidgetParagraph } from '../../core/models';
+  import { PreviewKind } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import {
     BehaviorSubject,

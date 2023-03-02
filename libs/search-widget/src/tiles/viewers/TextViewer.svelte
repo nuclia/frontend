@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { map, Observable } from 'rxjs';
+  import type { Observable } from 'rxjs';
+  import { map } from 'rxjs';
   import { getUnMarked } from '../tile.utils';
   import { getExtractedTexts } from '../../core/utils';
   import { fieldData } from '../../core/stores/viewer.store';

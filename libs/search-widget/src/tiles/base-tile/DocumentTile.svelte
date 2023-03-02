@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import { PreviewKind } from '../../core/models';
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import BaseTile from './BaseTile.svelte';

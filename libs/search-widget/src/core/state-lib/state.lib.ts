@@ -1,4 +1,5 @@
-import { BehaviorSubject, map, Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
+import { map, BehaviorSubject } from 'rxjs';
 
 export interface ReadableObservable<U> extends Observable<U> {
   getValue(): U;

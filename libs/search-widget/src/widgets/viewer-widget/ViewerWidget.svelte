@@ -9,11 +9,11 @@
   import globalCss from '../../common/_global.scss?inline';
   import { widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
-  import { ResourceProperties, Search } from '@nuclia/core';
+  import type { ResourceProperties, Search } from '@nuclia/core';
   import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
   import { fieldData, fieldFullId, isPreviewing, resourceTitle } from '../../core/stores/viewer.store';
   import { distinctUntilChanged } from 'rxjs/operators';
-  import { FieldFullId } from '../../core/models';
+  import type { FieldFullId } from '../../core/models';
   import Tile from '../../tiles/Tile.svelte';
 
   export let backend = 'https://nuclia.cloud/api';

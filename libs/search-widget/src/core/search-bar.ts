@@ -1,7 +1,8 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
 import { navigateToLink } from './stores/widget.store';
-import { ResourceProperties, Search } from '@nuclia/core';
+import type { Search } from '@nuclia/core';
+import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   isEmptySearchQuery,

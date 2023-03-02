@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import { PreviewKind } from '../core/models';
   import { getFieldUrl } from '../core/stores/viewer.store';
-  import { Observable } from 'rxjs';
+  import type { Observable } from 'rxjs';
   import { getCDN } from '../core/utils';
   import BaseTile from './base-tile/BaseTile.svelte';
   import ImageViewer from './viewers/ImageViewer.svelte';

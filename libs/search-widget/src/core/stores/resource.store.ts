@@ -1,6 +1,7 @@
 import { writableSubject } from '../state-lib';
 import type { CloudLink, FieldId, LinkFieldData, Resource, ResourceData } from '@nuclia/core';
-import { FIELD_TYPE, FileFieldData, getDataKeyFromFieldType } from '@nuclia/core';
+import type { FileFieldData } from '@nuclia/core';
+import { FIELD_TYPE, getDataKeyFromFieldType } from '@nuclia/core';
 import { filter, map, Observable, of, switchMap, take } from 'rxjs';
 import { getFileUrls } from '../api';
 import { isYoutubeUrl } from '../utils';

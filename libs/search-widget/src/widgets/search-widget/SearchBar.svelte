@@ -1,51 +1,48 @@
-<svelte:options tag="nuclia-search" />
+<svelte:options tag="nuclia-search-bar" />
 
 <script lang="ts">
-  import PopupSearch from '../../old-components/popup-search/PopupSearch.svelte';
-  import EmbeddedSearch from '../../old-components/embedded-search/EmbeddedSearch.svelte';
+  import type { KBStates } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { get_current_component } from 'svelte/internal';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import ViewerModal from '../../old-components/viewer/ViewerModal.svelte';
-  import type { KBStates, WidgetFeatures } from '@nuclia/core';
+  import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch, unsubscribeTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
-  import {
-    setWidgetActions,
-    widgetType,
-    widgetMode,
-    widgetFeatures,
-    widgetPlaceholder,
-    WidgetMode,
-  } from '../../core/stores/widget.store';
+  import { get_current_component } from 'svelte/internal';
+  import type { WidgetFeatures } from '@nuclia/core';
+  import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
     initLabelStore,
+    loadFieldData,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
-  import { isViewerOpen } from '../../core/stores/modal.store';
-  import { initViewerEffects, unsubscribeViewerEffects } from '../../old-components/viewer/store/viewer-effects';
-  import { displayedResource } from '../../core/stores/search.store';
+  import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
+  import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
   export let knowledgebox = '';
-  export let type = 'embedded'; // 'popup' | 'embedded'
   export let placeholder = '';
   export let lang = '';
-  export let cdn = '';
-  export let apikey = '';
+  export let cdn;
+  export let apikey;
   export let kbslug = '';
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
-  export let standalone = false;
   export let features = '';
+  export let standalone = false;
 
   let _features: WidgetFeatures = {};
+
+  export const search = (query: string) => {
+    searchQuery.set(query);
+    typeAhead.set(query || '');
+    triggerSearch.next();
+  };
 
   const thisComponent = get_current_component();
   const dispatchCustomEvent = (name: string, detail: any) => {
@@ -56,21 +53,6 @@
           composed: true,
         }),
       );
-  };
-
-  export const displayResource = (uid: string) => {
-    if (uid) {
-      displayedResource.set({ uid });
-    } else {
-      isViewerOpen.set(false);
-    }
-  };
-  export const setActions = setWidgetActions;
-  export const reset = () => {
-    resetNuclia();
-    unsubscribeAllEffects();
-    unsubscribeViewerEffects();
-    unsubscribeTriggerSearch();
   };
 
   let svgSprite;
@@ -92,9 +74,8 @@
         client,
         apiKey: apikey,
         kbSlug: kbslug,
-        account,
         standalone,
-        public: !_features.notPublic && !apikey,
+        account,
       },
       state,
       {
@@ -104,7 +85,7 @@
     );
 
     // Setup widget in the store
-    widgetMode.set(type as WidgetMode);
+    widgetMode.set('embedded');
     widgetFeatures.set(_features);
     if (placeholder) {
       widgetPlaceholder.set(placeholder);
@@ -112,11 +93,6 @@
     if (_features.filter) {
       initLabelStore();
     }
-    widgetType.set('search');
-
-    lang = lang || window.navigator.language.split('-')[0] || 'en';
-    setLang(lang);
-
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
@@ -124,34 +100,34 @@
       activateTypeAheadSuggestions();
     }
 
+    lang = lang || window.navigator.language.split('-')[0] || 'en';
+    setLang(lang);
+
     setupTriggerSearch(dispatchCustomEvent);
+    loadFieldData();
     if (_features.permalink) {
       activatePermalinks();
     }
-    initViewerEffects(_features.permalink);
 
     ready = true;
 
-    return () => reset();
+    return () => {
+      searchState.reset();
+      suggestionState.reset();
+      resetNuclia();
+      unsubscribeAllEffects();
+      unsubscribeTriggerSearch();
+    };
   });
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
-
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite}
-    {#if type === 'popup'}
-      <PopupSearch />
-    {:else if type === 'embedded'}
-      <EmbeddedSearch />
-    {:else}
-      {type} widget is not implemented yet
-    {/if}
-    <ViewerModal />
+    <SearchInput searchBarWidget={true} />
   {/if}
-
   <div
     id="nuclia-glyphs-sprite"
     hidden>
@@ -161,4 +137,4 @@
 
 <style
   lang="scss"
-  src="./Widget.scss"></style>
+  src="../../common/common-style.scss"></style>

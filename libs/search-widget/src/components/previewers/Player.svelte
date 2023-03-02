@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy } from 'svelte';
-  import { getTempToken, isPrivateKnowledgeBox } from '../../../core/api';
+  import { getTempToken, isPrivateKnowledgeBox } from '../../core/api';
 
   export let src: string;
   export let type: string;

@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import PdfViewer from './viewers/PdfViewer.svelte';
-  import { Observable } from 'rxjs';
+  import type { Observable } from 'rxjs';
   import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../core/utils';
-  import { PreviewKind, WidgetParagraph } from '../core/models';
+  import type { WidgetParagraph } from '../core/models';
+  import { PreviewKind } from '../core/models';
   import { getFieldUrl } from '../core/stores/viewer.store';
   import DocumentTile from './base-tile/DocumentTile.svelte';
 
