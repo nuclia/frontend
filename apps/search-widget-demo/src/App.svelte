@@ -2,7 +2,7 @@
   import { setLang } from 'libs/search-widget/src/core/i18n';
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
-  import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-video-widget';
+  import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
 
   let selected = 'tiles';
   let showConfiguration = true;
