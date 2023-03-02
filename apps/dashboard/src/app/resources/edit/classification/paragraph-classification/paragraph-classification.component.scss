@@ -44,3 +44,9 @@ $padding-bottom-header: rhythm(3);
     }
   }
 }
+
+.label-selection-container {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}

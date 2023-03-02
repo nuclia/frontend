@@ -38,7 +38,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
       this.cdr.markForCheck();
     }),
   );
-  currentLabel?: Classification;
+  currentLabels: Classification[] = [];
   isModified = false;
   isSaving = false;
   labelLoaded = false;
@@ -74,19 +74,25 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   }
 
   updateSelection(labels: Classification[]) {
-    this.currentLabel = labels[0];
+    this.currentLabels = labels;
   }
 
-  addLabelOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
+  cleanUpLabels() {
+    this.currentLabels = [];
+  }
+
+  removeLabelFromSelection(classificationToRemove: Classification) {
+    this.currentLabels = this.currentLabels.filter(
+      (item) => !(item.labelset === classificationToRemove.labelset && item.label === classificationToRemove.label),
+    );
+  }
+
+  addLabelsOnParagraph(paragraph: ParagraphWithTextAndClassifications) {
     this.availableLabels.pipe(take(1)).subscribe((labelSets) => {
-      if (this.currentLabel) {
-        this.classificationService.classifyParagraph(
-          this.currentLabel,
-          paragraph,
-          !!labelSets?.[this.currentLabel.labelset]?.multiple,
-        );
-        this.isModified = this.classificationService.hasModifications();
-      }
+      this.currentLabels.forEach((label) => {
+        this.classificationService.classifyParagraph(label, paragraph, !!labelSets?.[label.labelset]?.multiple);
+      });
+      this.isModified = this.classificationService.hasModifications();
     });
   }
 
