@@ -808,6 +808,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   displayStatus(status: ResourceStatus) {
+    this.searchForm.patchValue({ searchIn: 'title', query: '' });
     this.statusDisplayed.next(status);
     this.getResources()
       .pipe(switchMap(() => this.getResourceStatusCount()))
