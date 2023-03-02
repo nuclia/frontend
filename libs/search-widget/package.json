@@ -29,5 +29,6 @@
       "types": "./index.d.ts",
       "svelte": "./index.js"
     }
-  }
+  },
+  "private": false
 }
