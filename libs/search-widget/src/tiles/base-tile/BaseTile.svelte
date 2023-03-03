@@ -4,8 +4,8 @@
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import type { ResourceField, Search } from '@nuclia/core';
-  import type { WidgetParagraph } from '../../core/models';
-  import { MediaWidgetParagraph, PreviewKind } from '../../core/models';
+  import type { MediaWidgetParagraph, WidgetParagraph } from '../../core/models';
+  import { PreviewKind } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import {
     BehaviorSubject,
