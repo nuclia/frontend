@@ -4,6 +4,7 @@
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
   import type { FieldFullId } from '@nuclia/core';
+  import { onMount } from 'svelte';
 
   let selected = 'tiles';
   let showConfiguration = true;
@@ -17,9 +18,9 @@
 
   // let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
-  // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
+  let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c'; // la classe américaine
-  let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
+  // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
 
   onMount(() => {
     resultsWidget?.setTileMenu([

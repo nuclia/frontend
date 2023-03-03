@@ -1,3 +1,9 @@
+# 1.1.1 (2023-03-03)
+
+### Bug fix
+
+- Bring back full transcript section on expanded media tiles
+
 # 1.1.0 (2023-03-03)
 
 ### Feature

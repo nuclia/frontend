@@ -4,7 +4,7 @@
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import type { ResourceField, Search } from '@nuclia/core';
-  import type { WidgetParagraph } from '../../core/models';
+  import type { MediaWidgetParagraph, WidgetParagraph } from '../../core/models';
   import { PreviewKind } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import {
@@ -29,6 +29,7 @@
   import {
     fieldFullId,
     fieldSummary,
+    getMediaTranscripts,
     isPreviewing,
     resourceField,
     resourceTitle,
@@ -49,9 +50,11 @@
 
   const dispatch = createEventDispatcher();
   const unsubscribeAll = new Subject();
+  const resizeEvent = new Subject();
+  const closeButtonWidth = 48;
+  const findInPlaceholderPrefix = 'tile.find-in-';
 
   let innerWidth = window.innerWidth;
-  const closeButtonWidth = 48;
 
   let expanded = false;
   let showAllResults = false;
@@ -61,27 +64,35 @@
   let resultNavigatorWidth;
   let resultNavigatorDisabled = false;
   let sidePanelExpanded = false;
-  const resizeEvent = new Subject();
   let findInputElement: HTMLElement;
-  let findInPlaceholder = 'tile.find-in-';
-
-  const globalQuery = searchQuery;
+  let findInPlaceholder;
+  let withAllTranscript = false;
+  let showFullTranscripts = false;
+  let transcripts: Observable<MediaWidgetParagraph[]> = of([]);
 
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: switch (previewKind) {
     case PreviewKind.AUDIO:
-      findInPlaceholder += 'audio';
+      findInPlaceholder = `${findInPlaceholderPrefix}audio`;
+      initTranscript(previewKind);
       break;
     case PreviewKind.VIDEO:
-      findInPlaceholder += 'video';
+    case PreviewKind.YOUTUBE:
+      findInPlaceholder = `${findInPlaceholderPrefix}video`;
+      initTranscript(previewKind);
       break;
     case PreviewKind.IMAGE:
-      findInPlaceholder += 'image';
+      findInPlaceholder = `${findInPlaceholderPrefix}image`;
       break;
     default:
-      findInPlaceholder += 'document';
+      findInPlaceholder = `${findInPlaceholderPrefix}document`;
       break;
+  }
+
+  function initTranscript(kind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE) {
+    withAllTranscript = true;
+    transcripts = getMediaTranscripts(kind);
   }
 
   let paragraphList: WidgetParagraph[];
@@ -169,7 +180,7 @@
     if (!expanded) {
       expanded = true;
       isPreviewing.set(true);
-      viewerSearchQuery.set(globalQuery.getValue());
+      viewerSearchQuery.set(searchQuery.getValue());
       freezeBackground(true);
     }
     setTimeout(() => setHeaderActionWidth());
@@ -215,13 +226,13 @@
       selectParagraph(undefined);
       resultIndex = -1;
       isSearchingInResource.next(false);
-      viewerSearchQuery.set(globalQuery.getValue());
+      viewerSearchQuery.set(searchQuery.getValue());
     }
   };
 
   const findInField = () => {
     const query = viewerSearchQuery.getValue();
-
+    showFullTranscripts = false;
     if (query) {
       isSearchingInResource.next(true);
       searchInResource(query, result, { highlight: true })
@@ -262,6 +273,10 @@
   function isSame(paragraph, selectedParagraph: WidgetParagraph) {
     return JSON.stringify(paragraph) === JSON.stringify(selectedParagraph);
   }
+
+  function toggleTranscriptPanel() {
+    showFullTranscripts = !showFullTranscripts;
+  }
 </script>
 
 <svelte:window
@@ -272,7 +287,8 @@
 <div
   class="sw-tile"
   class:expanded
-  class:side-panel-expanded={sidePanelExpanded}>
+  class:side-panel-expanded={sidePanelExpanded}
+  class:with-all-transcript={withAllTranscript}>
   <div class="thumbnail-container">
     <div hidden={expanded && !loading}>
       <slot name="thumbnail" />
@@ -350,26 +366,78 @@
               on:change={findInField} />
           </div>
 
-          <div
-            class="search-result-paragraphs"
-            tabindex="-1">
-            <ul
-              class="paragraphs-container"
-              class:expanded={showAllResults}
-              class:can-expand={$matchingParagraphs$.length > 4}
-              style="--paragraph-count: {$matchingParagraphs$.length}">
-              {#each $matchingParagraphs$ as paragraph, index}
-                <ParagraphResult
-                  {paragraph}
-                  ellipsis={!expanded}
-                  minimized={isMobile && !expanded}
-                  stack={expanded}
-                  selected={isSame(paragraph, selectedParagraph)}
-                  disabled={expanded && noResultNavigator}
-                  on:open={(event) => onClickParagraph(event.detail, index)} />
-              {/each}
-            </ul>
-          </div>
+          {#if !showFullTranscripts}
+            <div
+              class="search-result-paragraphs"
+              tabindex="-1">
+              <ul
+                class="paragraphs-container"
+                class:expanded={showAllResults}
+                class:can-expand={$matchingParagraphs$.length > 4}
+                style="--paragraph-count: {$matchingParagraphs$.length}">
+                {#each $matchingParagraphs$ as paragraph, index}
+                  <ParagraphResult
+                    {paragraph}
+                    ellipsis={!expanded}
+                    minimized={isMobile && !expanded}
+                    stack={expanded}
+                    selected={isSame(paragraph, selectedParagraph)}
+                    disabled={expanded && noResultNavigator}
+                    on:open={(event) => onClickParagraph(event.detail, index)} />
+                {/each}
+              </ul>
+            </div>
+          {:else}
+            <div
+              class="transcript-expander-header"
+              tabindex="0"
+              class:expanded={!showFullTranscripts}
+              on:click={toggleTranscriptPanel}
+              on:keyup={(e) => {
+                if (e.key === 'Enter') toggleTranscriptPanel();
+              }}>
+              <div
+                tabindex="-1"
+                class="transcript-expander-header-title">
+                <strong>{$_('tile.search-results', { count: $matchingParagraphs$.length })}</strong>
+                <div class="expander-icon"><Icon name="chevron-right" /></div>
+              </div>
+            </div>
+          {/if}
+
+          {#if withAllTranscript && expanded}
+            <div class="full-transcript-container">
+              <div
+                class="transcript-expander-header"
+                tabindex="0"
+                class:expanded={showFullTranscripts}
+                on:click={toggleTranscriptPanel}
+                on:keyup={(e) => {
+                  if (e.key === 'Enter') toggleTranscriptPanel();
+                }}>
+                <div
+                  tabindex="-1"
+                  class="transcript-expander-header-title">
+                  <strong>{$_('tile.full-transcripts')}</strong>
+                  <div class="expander-icon"><Icon name="chevron-right" /></div>
+                </div>
+              </div>
+
+              {#if showFullTranscripts}
+                <div class="transcript-container scrollable-area">
+                  <ul class="paragraphs-container">
+                    {#each $transcripts as paragraph, index}
+                      <ParagraphResult
+                        {paragraph}
+                        selected={isSame(paragraph, selectedParagraph)}
+                        stack
+                        on:open={(event) => onClickParagraph(event.detail, index)} />
+                    {/each}
+                  </ul>
+                </div>
+              {/if}
+            </div>
+          {/if}
         </div>
       </div>
 

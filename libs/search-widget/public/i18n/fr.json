@@ -51,5 +51,7 @@
 	"tile.find-in-audio": "Rechercher dans l'audio",
 	"tile.find-in-document": "Rechercher dans le document",
 	"tile.find-in-image": "Rechercher dans l'image",
-	"tile.find-in-video": "Rechercher dans la vidéo"
+	"tile.find-in-video": "Rechercher dans la vidéo",
+	"tile.full-transcripts": "Transcription complète",
+	"tile.search-results": "{{count}} résultats de recherche"
 }

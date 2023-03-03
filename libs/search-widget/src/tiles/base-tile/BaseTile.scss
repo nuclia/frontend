@@ -67,6 +67,33 @@
     .summary-container {
       display: none;
     }
+
+    .transcript-expander-header {
+      .transcript-expander-header-title {
+        align-items: center;
+        background: var(--color-light-stronger);
+        display: flex;
+        height: var(--rhythm-5);
+        justify-content: space-between;
+        margin-bottom: var(--rhythm-1);
+        padding: 0 var(--rhythm-1);
+      }
+
+      .expander-icon {
+        display: flex;
+        transition: transform var(--transition-superfast);
+      }
+
+      &.expanded {
+        .transcript-expander-header-title {
+          margin-bottom: 1px;
+        }
+
+        .expander-icon {
+          transform: rotate(90deg);
+        }
+      }
+    }
   }
 }
 
@@ -132,6 +159,8 @@
     --side-panel-width: var(--rhythm-36);
     --side-panel-gap: var(--rhythm-1);
     --tile-padding-right: var(--rhythm-2);
+    --search-results-margin-bottom: var(--rhythm-1);
+    --expander-header-height: var(--rhythm-5);
 
     padding-right: var(--side-panel-button-size);
 
@@ -145,9 +174,8 @@
       overflow-wrap: break-word;
     }
 
-    .search-result-paragraphs {
-      --search-results-margin-bottom: var(--rhythm-1_5);
-
+    .search-result-paragraphs,
+    .transcript-container {
       background-color: var(--color-light-stronger);
       margin-bottom: var(--search-results-margin-bottom);
       max-height: calc(
@@ -155,6 +183,13 @@
           var(--search-results-margin-bottom)
       );
       overflow: auto;
+    }
+    &.with-all-transcript .search-result-paragraphs,
+    &.with-all-transcript .transcript-container {
+      max-height: calc(
+        100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) -
+          var(--search-results-margin-bottom) * 2 - var(--expander-header-height) * 2
+      );
     }
 
     .side-panel {
@@ -218,7 +253,18 @@
 }
 
 @media (hover: hover) {
-  .sw-tile.expanded .side-panel-button {
-    cursor: pointer;
+  .sw-tile.expanded {
+    .side-panel-button,
+    .transcript-expander-header-title {
+      cursor: pointer;
+    }
+
+    .transcript-expander-header-title {
+      transition: background var(--transition-superfast);
+
+      &:hover {
+        background: var(--color-neutral-lightest);
+      }
+    }
   }
 }
