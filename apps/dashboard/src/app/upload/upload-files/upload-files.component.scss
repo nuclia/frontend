@@ -21,6 +21,9 @@
 }
 
 .dropzone {
+  align-items: center;
+  display: flex;
+  justify-content: center;
   margin-bottom: rhythm(4);
   border: 2px dashed #ccc;
   color: rgba(0, 0, 0, 0.5);

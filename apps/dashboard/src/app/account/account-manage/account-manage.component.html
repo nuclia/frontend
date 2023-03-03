@@ -7,16 +7,13 @@
       <form
         [formGroup]="accountForm"
         (ngSubmit)="saveAccount()">
-        <div
-          class="account-field"
-          fxLayout="row">
+        <div class="account-field">
           <label
             for="account-title"
-            class="account-field-name mt-12"
-            fxFlex="30%">
+            class="account-field-name mt-12">
             {{ 'account.title' | translate }}
           </label>
-          <div fxFlex="70%">
+          <div>
             <pa-input
               id="account-title"
               formControlName="title"
@@ -25,16 +22,13 @@
           </div>
         </div>
 
-        <div
-          class="account-field"
-          fxLayout="row">
+        <div class="account-field">
           <label
             for="account-description"
-            class="account-field-name mt-12"
-            fxFlex="30%">
+            class="account-field-name mt-12">
             {{ 'generic.description' | translate }}
           </label>
-          <div fxFlex="70%">
+          <div>
             <pa-textarea
               id="account-description"
               formControlName="description"
@@ -42,28 +36,20 @@
           </div>
         </div>
 
-        <div
-          class="mt-44"
-          fxLayout="row">
-          <div fxFlex="30%"></div>
-          <div
-            fxFlex="70%"
-            fxLayout="row"
-            fxLayoutGap="10px">
-            <pa-button
-              type="submit"
-              kind="primary"
-              [disabled]="accountForm.invalid || accountForm.pristine">
-              {{ 'generic.save' | translate }}
-            </pa-button>
+        <div class="account-form-cta">
+          <pa-button
+            type="submit"
+            kind="primary"
+            [disabled]="accountForm.invalid || accountForm.pristine">
+            {{ 'generic.save' | translate }}
+          </pa-button>
 
-            <pa-button
-              *ngIf="!accountForm.pristine"
-              aspect="basic"
-              (click)="initAccountForm()">
-              {{ 'generic.cancel' | translate }}
-            </pa-button>
-          </div>
+          <pa-button
+            *ngIf="!accountForm.pristine"
+            aspect="basic"
+            (click)="initAccountForm()">
+            {{ 'generic.cancel' | translate }}
+          </pa-button>
         </div>
       </form>
     </div>
@@ -77,14 +63,11 @@
 
       <div
         class="account-field"
-        fxLayout="row"
         *ngIf="zones">
-        <div
-          class="account-field-name"
-          fxFlex="30%">
+        <div class="account-field-name">
           {{ 'generic.zone' | translate }}
         </div>
-        <div fxFlex="70%">
+        <div>
           <div class="mb-20">{{ 'account.zone_description' | translate }}</div>
           <select
             stfSelect

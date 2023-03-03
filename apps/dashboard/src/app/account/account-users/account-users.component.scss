@@ -20,6 +20,9 @@
   }
 
   .add-user {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
     margin-bottom: 48px;
     input {
       min-width: 240px;

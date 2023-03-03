@@ -11,17 +11,14 @@
   <div class="account-kbs-list">
     <div
       class="account-kb"
-      *ngFor="let kb of knowledgeBoxes"
-      fxLayoutAlign="space-between center">
+      *ngFor="let kb of knowledgeBoxes">
       <a
         class="account-kb-title"
         [class.disabled]="!kb.role_on_kb && !account.can_manage_account"
         [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
         {{ kb.title }}
       </a>
-      <div
-        fxLayout="row"
-        fxLayoutAlign="start center">
+      <div class="actions">
         <ng-container *ngIf="account.can_manage_account">
           <pa-button
             *ngIf="isUsersEnabled | async"
@@ -79,10 +76,7 @@
 
   <div
     *ngIf="canAddKb | async"
-    class="mt-24"
-    fxLayout="row"
-    fxLayoutAlign="start center"
-    fxLayoutGap="24px">
+    class="add-kb-container">
     <div
       class="account-kbs-counter"
       *ngIf="knowledgeBoxes.length > 0">

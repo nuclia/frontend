@@ -19,23 +19,18 @@
   <div
     class="add-user"
     *ngIf="canAddUsers | async">
-    <div
-      fxLayout="row"
-      fxLayoutGap="10px"
-      fxLayoutAlign="start center">
-      <input
-        type="email"
-        [formControl]="email"
-        stfFilterInput
-        [inputHeight]="32"
-        placeholder="{{ 'accounts.add_user_input' | translate }}" />
-      <pa-button
-        size="small"
-        [disabled]="email.invalid"
-        (click)="addUser()">
-        {{ 'account.add_user' | translate }}
-      </pa-button>
-    </div>
+    <input
+      type="email"
+      [formControl]="email"
+      stfFilterInput
+      [inputHeight]="32"
+      placeholder="{{ 'accounts.add_user_input' | translate }}" />
+    <pa-button
+      size="small"
+      [disabled]="email.invalid"
+      (click)="addUser()">
+      {{ 'account.add_user' | translate }}
+    </pa-button>
   </div>
 
   <table

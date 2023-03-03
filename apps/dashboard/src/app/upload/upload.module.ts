@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -20,9 +19,9 @@ import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
   PaIconModule,
+  PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
-  PaTextFieldModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SisProgressModule } from '@nuclia/sistema';
 
@@ -40,7 +39,6 @@ const Components = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    FlexLayoutModule,
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,

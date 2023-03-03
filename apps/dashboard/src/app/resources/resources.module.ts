@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
@@ -160,7 +159,6 @@ const ROUTES: Routes = [
   imports: [
     CommonModule,
     AngularSvgIconModule,
-    FlexLayoutModule,
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule.forChild(ROUTES),

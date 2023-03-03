@@ -21,6 +21,17 @@
     flex-direction: column;
     flex: 2 0 auto;
     justify-content: space-between;
+
+    .form-field {
+      display: flex;
+
+      label {
+        width: 25%;
+      }
+      div {
+        flex: 1 0 auto;
+      }
+    }
   }
 
   pa-radio-group {

@@ -15,19 +15,14 @@
     class="form-container"
     [formGroup]="kbForm"
     (ngSubmit)="save()">
-    <div
-      *ngIf="step === 0"
-      class="modal-body">
-      <div
-        class="mb-24"
-        fxLayout="row">
+    <div *ngIf="step === 0">
+      <div class="mb-24 form-field">
         <label
           for="kb-title"
-          fxFlex="24%"
           class="kb-add-field-name">
           {{ 'stash.name' | translate }}
         </label>
-        <div fxFlex="70%">
+        <div>
           <pa-input
             id="kb-title"
             formControlName="title"
@@ -35,14 +30,13 @@
         </div>
       </div>
 
-      <div fxLayout="row">
+      <div class="form-field">
         <label
           for="kb-description"
-          fxFlex="24%"
           class="kb-add-field-name">
           {{ 'generic.description' | translate }}
         </label>
-        <div fxFlex="70%">
+        <div>
           <pa-textarea
             id="kb-description"
             formControlName="description"
