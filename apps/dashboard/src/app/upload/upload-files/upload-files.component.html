@@ -37,9 +37,7 @@
       (fileOver)="fileOverBase($event)"
       (atFileDrop)="addFiles($event)"
       (click)="chooseFiles($event)"
-      class="dropzone"
-      fxLayout="row"
-      fxLayoutAlign="center center">
+      class="dropzone">
       <span>{{ (folderMode ? 'modal.upload.drop_folder' : 'modal.upload.drop') | translate }}</span>
     </div>
     <input
@@ -111,11 +109,7 @@
     </ncom-hint>
   </div>
 
-  <div
-    class="mt-28"
-    fxLayout="row"
-    fxLayoutAlign="center center"
-    fxLayoutGap="16px">
+  <footer class="mt-28">
     <pa-button
       aspect="basic"
       (click)="cancel()">
@@ -128,5 +122,5 @@
       (click)="startUpload()">
       {{ 'generic.add' | translate }}
     </pa-button>
-  </div>
+  </footer>
 </div>

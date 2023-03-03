@@ -19,10 +19,7 @@
     *ngIf="canAddUsers | async">
     <form
       (ngSubmit)="addUser()"
-      [formGroup]="addForm"
-      fxLayout="row"
-      fxLayoutGap="24px"
-      fxLayoutAlign="start center">
+      [formGroup]="addForm">
       <input
         type="email"
         formControlName="email"

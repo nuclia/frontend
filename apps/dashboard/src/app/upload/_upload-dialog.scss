@@ -14,4 +14,11 @@
       margin-right: calc(-1 * #{rhythm(2)}); // align icon with content
     }
   }
+
+  footer {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    justify-content: center;
+  }
 }

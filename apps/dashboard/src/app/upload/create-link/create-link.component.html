@@ -57,11 +57,7 @@
     <nsi-spinner
       *ngIf="pending"
       size="small"></nsi-spinner>
-    <div
-      class="link-actions"
-      fxLayout="row"
-      fxLayoutAlign="center center"
-      fxLayoutGap="12px">
+    <footer class="link-actions">
       <pa-button
         aspect="basic"
         (click)="close()">
@@ -74,6 +70,6 @@
         [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending">
         {{ 'generic.add' | translate }}
       </pa-button>
-    </div>
+    </footer>
   </form>
 </div>
