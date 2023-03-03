@@ -23,7 +23,7 @@
   let menuPosition: { left: number; top: number } | undefined;
   let displayMenu = false;
 
-  $: hasActions = menuItems.length > 0;
+  $: hasMenu = menuItems.length > 0;
 
   onMount(() => {
     menuItems = getWidgetActions();
@@ -91,11 +91,13 @@
 
   {#if expanded}
     <div class="header-actions">
-      <slot />
-      {#if $$slots.default && hasActions}
+      {#if $$slots.default}
+        <slot />
+      {/if}
+      {#if $$slots.default && hasMenu}
         <div class="separator" />
       {/if}
-      {#if hasActions}
+      {#if hasMenu}
         <div bind:this={menuButton}>
           <IconButton
             icon="more-vertical"
