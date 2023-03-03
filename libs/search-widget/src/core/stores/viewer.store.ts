@@ -1,6 +1,6 @@
-import type { FieldFullId, MediaWidgetParagraph, PreviewKind } from '../models';
+import type { MediaWidgetParagraph, PreviewKind } from '../models';
 import { SvelteState } from '../state-lib';
-import type { IFieldData, ResourceField } from '@nuclia/core';
+import type { FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';

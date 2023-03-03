@@ -38,11 +38,16 @@
 
   let _features: WidgetFeatures = {};
 
-  export const search = (query: string) => {
+  export function search(query: string) {
     searchQuery.set(query);
     typeAhead.set(query || '');
     triggerSearch.next();
-  };
+  }
+
+  export function reloadSearch() {
+    console.log(`reloadSearch`);
+    triggerSearch.next();
+  }
 
   const thisComponent = get_current_component();
   const dispatchCustomEvent = (name: string, detail: any) => {

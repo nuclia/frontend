@@ -3,7 +3,7 @@
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
-  import type { FieldFullId } from '../../../libs/search-widget/src/core/models';
+  import type { FieldFullId } from '@nuclia/core';
 
   let selected = 'tiles';
   let showConfiguration = true;

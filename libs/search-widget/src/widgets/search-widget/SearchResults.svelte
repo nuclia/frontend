@@ -24,6 +24,7 @@
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
   import { setWidgetActions } from '../../core/stores/widget.store';
+  import { onClosePreview } from '../../tiles/tile.utils';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
@@ -40,6 +41,9 @@
   );
 
   export const setTileMenu = setWidgetActions;
+  export function closePreview() {
+    onClosePreview();
+  }
 
   let svgSprite;
 

@@ -5,7 +5,7 @@
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite, getFieldType } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import type { KBStates } from '@nuclia/core';
+  import type { FieldFullId, KBStates } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { setWidgetActions, widgetType } from '../../core/stores/widget.store';
   import { unsubscribeAllEffects } from '../../core/stores/effects';
@@ -13,8 +13,8 @@
   import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
   import { fieldData, fieldFullId, isPreviewing, resourceTitle } from '../../core/stores/viewer.store';
   import { distinctUntilChanged } from 'rxjs/operators';
-  import type { FieldFullId } from '../../core/models';
   import Tile from '../../tiles/Tile.svelte';
+  import { onClosePreview } from '../../tiles/tile.utils';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -55,8 +55,7 @@
   }
 
   export function closePreview() {
-    fieldFullId.set(null);
-    resourceTitle.set('');
+    onClosePreview();
   }
 
   const tileResult: Observable<Search.SmartResult | null> = combineLatest([

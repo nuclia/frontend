@@ -1,23 +1,28 @@
-import { filter, map, switchMap, take, tap } from 'rxjs';
+import { filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { SDKService, STFTrackingService } from '@flaps/core';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
+import { FieldFullId } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ResourceViewerService {
+  private widgetId?: string;
+
   constructor(
     private router: Router,
     private sdk: SDKService,
     private translation: TranslateService,
     private modalService: SisModalService,
     private trackingService: STFTrackingService,
+    private zone: NgZone,
   ) {}
 
   init(widgetId: string) {
+    this.widgetId = widgetId;
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       const waitForWidget = window.setInterval(() => {
         const widget = document.getElementById(widgetId) as unknown as any;
@@ -32,9 +37,24 @@ export class ResourceViewerService {
           if (kb.admin || kb.contrib) {
             actions.push(
               {
-                label: this.translation.instant('generic.edit'),
+                label: this.translation.instant('resource.menu.edit'),
                 destructive: false,
                 action: this.edit.bind(this),
+              },
+              {
+                label: this.translation.instant('resource.menu.annotate'),
+                destructive: false,
+                action: this.annotate.bind(this),
+              },
+              {
+                label: this.translation.instant('resource.menu.classify'),
+                destructive: false,
+                action: this.classify.bind(this),
+              },
+              {
+                label: this.translation.instant('generic.reindex'),
+                destructive: false,
+                action: this.reindex.bind(this),
               },
               {
                 label: this.translation.instant('generic.delete'),
@@ -43,7 +63,7 @@ export class ResourceViewerService {
               },
             );
           }
-          widget.setActions(actions);
+          widget.setTileMenu(actions);
           widget.addEventListener('search', () => this.trackingService.logEvent('search'));
           clearInterval(waitForWidget);
         }
@@ -60,48 +80,77 @@ export class ResourceViewerService {
       });
   }
 
-  delete(uid: string) {
+  delete(fullId: FieldFullId) {
     this.modalService
       .openConfirm({
-        title: 'generic.alert',
+        title: 'resource.delete_resource_title',
         description: 'resource.delete_resource_warning',
         confirmLabel: 'generic.delete',
         isDestructive: true,
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
+        tap(() => this.closeViewer()),
         switchMap(() => this.sdk.currentKb),
         take(1),
-        switchMap((kb) => kb.getResource(uid)),
+        switchMap((kb) => kb.getResource(fullId.resourceId)),
         switchMap((res) => res.delete()),
-        tap(() => this.closeViewer()),
       )
       .subscribe(() => {
+        this.reloadSearch();
         setTimeout(() => {
           this.sdk.refreshCounter(true);
         }, 1000);
       });
   }
 
-  edit(uid: string) {
-    this.sdk.currentKb
-      .pipe(
-        take(1),
-        filter((kb) => !!kb.admin || !!kb.contrib),
-      )
-      .subscribe((kb) => {
-        this.closeViewer();
-        this.router.navigate([`/at/${kb.account}/${kb.slug}/resources/${uid}/edit/profile`]);
-      });
+  edit(fullId: FieldFullId) {
+    this.getResourcesBasePath().subscribe((basePath) => {
+      this.closeViewer();
+      this.navigateTo(`${basePath}/${fullId.resourceId}/edit`);
+    });
   }
 
-  showUID(uid: string) {
+  annotate(fullId: FieldFullId) {
+    this.getResourcesBasePath().subscribe((basePath) => {
+      this.closeViewer();
+      this.navigateTo(`${basePath}/${fullId.resourceId}/edit/annotation`);
+    });
+  }
+
+  classify(fullId: FieldFullId) {
+    this.getResourcesBasePath().subscribe((basePath) => {
+      this.closeViewer();
+      this.navigateTo(`${basePath}/${fullId.resourceId}/edit/classification`);
+    });
+  }
+
+  reindex(fullId: FieldFullId) {
+    this.modalService
+      .openConfirm({
+        title: 'resource.reprocess_resource_title',
+        description: 'resource.reprocess_resource_description',
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        tap(() => this.closeViewer()),
+        switchMap(() => this.sdk.currentKb),
+        take(1),
+        switchMap((kb) => kb.getResource(fullId.resourceId)),
+        switchMap((res) => res.reprocess()),
+      )
+      .subscribe();
+  }
+
+  showUID(fullId: FieldFullId) {
     this.sdk.currentKb
       .pipe(
         take(1),
         map(
           (kb) =>
-            `<pre><code class="endpoint">${this.sdk.nuclia.rest.getFullUrl(kb.path)}/resource/${uid}</code></pre>`,
+            `<pre><code class="endpoint">${this.sdk.nuclia.rest.getFullUrl(kb.path)}/resource/${
+              fullId.resourceId
+            }</code></pre>`,
         ),
         switchMap(
           (uidEndpoint) =>
@@ -117,6 +166,26 @@ export class ResourceViewerService {
   }
 
   closeViewer() {
-    (document.getElementById('search-widget') as unknown as any)?.displayResource('');
+    if (this.widgetId) {
+      (document.getElementById(this.widgetId) as unknown as any)?.closePreview();
+    }
+  }
+
+  reloadSearch() {
+    const searchBar = document.querySelector('nuclia-search-bar') as any;
+    if (typeof searchBar?.reloadSearch === 'function') {
+      searchBar.reloadSearch();
+    }
+  }
+
+  private getResourcesBasePath(): Observable<string> {
+    return this.sdk.currentKb.pipe(
+      take(1),
+      filter((kb) => !!kb.admin || !!kb.contrib),
+      map((kb) => `/at/${kb.account}/${kb.slug}/resources`),
+    );
+  }
+  private navigateTo(path: string) {
+    this.zone.run(() => this.router.navigate([path]));
   }
 }

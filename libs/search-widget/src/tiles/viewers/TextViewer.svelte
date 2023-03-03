@@ -21,7 +21,7 @@
         selectedIndex = texts.findIndex((text) => text === unmarkSelection);
         if (selectedIndex > -1) {
           setTimeout(() =>
-            textViewerElement.querySelector(`#paragraph${selectedIndex}`)?.scrollIntoView({ behavior: 'smooth' }),
+            textViewerElement?.querySelector(`#paragraph${selectedIndex}`)?.scrollIntoView({ behavior: 'smooth' }),
           );
         }
       });

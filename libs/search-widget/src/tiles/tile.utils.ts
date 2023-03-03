@@ -1,5 +1,6 @@
 import type { MediaWidgetParagraph } from '../core/models';
 import { SHORT_FIELD_TYPE } from '@nuclia/core';
+import { viewerState } from '../core/stores/viewer.store';
 
 export const markRegex = new RegExp(/<\/*mark>/, 'g');
 
@@ -26,3 +27,7 @@ export const filterParagraphs = (query: string, paragraphs: MediaWidgetParagraph
       };
     });
 };
+
+export function onClosePreview() {
+  viewerState.reset();
+}

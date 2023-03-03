@@ -50,7 +50,7 @@
     event.stopPropagation();
     if (menuButton) {
       displayMenu = true;
-      const menuWidth = 128;
+      const menuWidth = 176;
       menuPosition = {
         left: menuButton.offsetLeft - menuWidth + menuButton.offsetWidth,
         top: menuButton.clientHeight + 6,
