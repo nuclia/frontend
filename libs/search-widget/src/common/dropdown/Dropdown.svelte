@@ -3,7 +3,7 @@
   import { clickOutside } from '../actions/actions';
   import { freezeBackground, unblockBackground } from '../modal/modal.utils';
 
-  export let position: { top: number; left: number } | undefined = undefined;
+  export let position: { top: number; left: number; width?: number } | undefined = undefined;
   export let secondary = false;
 
   onMount(() => {
@@ -25,6 +25,7 @@
   class="sw-dropdown"
   style:left={position?.left + 'px'}
   style:top={position?.top + 'px'}
+  style:width={position?.width + 'px'}
   use:clickOutside
   on:outclick={close}>
   <slot />

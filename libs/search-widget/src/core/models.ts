@@ -2,7 +2,7 @@ import type {
   Classification,
   CloudLink,
   FIELD_TYPE,
-  FieldId,
+  FieldFullId,
   IResource,
   Paragraph,
   Search,
@@ -26,7 +26,7 @@ export interface WidgetOptions {
 export interface WidgetAction {
   label: string;
   destructive?: boolean;
-  action: (uid: string) => void;
+  action: (fullId: FieldFullId) => void;
 }
 
 /**
@@ -36,10 +36,6 @@ export interface DisplayedResource {
   uid: string;
   paragraph?: Search.Paragraph;
   sentence?: Search.Paragraph;
-}
-
-export interface FieldFullId extends FieldId {
-  resourceId: string;
 }
 
 export enum PreviewKind {

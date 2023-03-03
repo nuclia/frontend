@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { distinctUntilKeyChanged, forkJoin, map, switchMap, tap } from 'rxjs';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { TrainingType } from '@nuclia/core';
+import { ResourceViewerService } from '../resources/resource-viewer.service';
 
 const searchWidgetId = 'search-bar';
 const searchResultsId = 'search-results';
@@ -15,7 +16,7 @@ const searchResultsId = 'search-results';
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements OnDestroy {
+export class SearchComponent implements OnDestroy, OnInit {
   searchWidget = this.sdk.currentKb.pipe(
     distinctUntilKeyChanged('id'),
     tap(() => {
@@ -59,15 +60,20 @@ export class SearchComponent implements OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private translation: TranslateService,
+    private viewerService: ResourceViewerService,
   ) {}
+
+  ngOnInit() {
+    this.viewerService.init(searchResultsId);
+  }
 
   ngOnDestroy() {
     const searchBarElement = document.querySelector('nuclia-search-bar') as any;
     const searchResultsElement = document.querySelector('nuclia-search-results') as any;
-    if (typeof searchBarElement.$destroy === 'function') {
+    if (typeof searchBarElement?.$destroy === 'function') {
       searchBarElement.$destroy();
     }
-    if (typeof searchResultsElement.$destroy === 'function') {
+    if (typeof searchResultsElement?.$destroy === 'function') {
       searchResultsElement.$destroy();
     }
   }

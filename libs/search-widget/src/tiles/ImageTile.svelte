@@ -23,7 +23,7 @@
 <BaseTile
   previewKind={PreviewKind.IMAGE}
   typeIndicator="image"
-  noResultNavigator
+  noResultNavigator={!result.paragraphs || result.paragraphs.length <= 1}
   {thumbnailLoaded}
   {result}
   on:selectParagraph={() => showImage()}>

@@ -3,25 +3,60 @@
   import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
+  import type { FieldFullId } from '@nuclia/core';
 
   let selected = 'tiles';
   let showConfiguration = true;
   let searchBar: NucliaSearchBar;
   let viewerWidget: NucliaViewerWidget;
+  let resultsWidget: NucliaSearchResults;
 
   let resource = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
   let fieldType = 'file';
   let fieldId = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
 
-  /**
-   * Classifier_test kb (already trained, owned by Carmen): cbb4afd0-26e6-480a-a814-4e08398bdf3e
-   * Kb with different kind of media (owned by Mat): 5c2bc432-a579-48cd-b408-4271e5e7a43c
-   */
-  let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
+  // let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c'; // la classe américaine
-  // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
+  let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
+
+  onMount(() => {
+    resultsWidget?.setTileMenu([
+      {
+        label: 'Delete',
+        action: (fullId: FieldFullId) => {
+          console.log('delete', fullId);
+        },
+      },
+      {
+        label: 'Edit',
+        action: (fullId: FieldFullId) => {
+          console.log('edit', fullId);
+        },
+      },
+    ]);
+    viewerWidget?.setTileMenu([
+      {
+        label: 'Delete',
+        action: (fullId: FieldFullId) => {
+          console.log('delete', fullId);
+        },
+      },
+      {
+        label: 'Edit',
+        action: (fullId: FieldFullId) => {
+          console.log('edit', fullId);
+        },
+      },
+      {
+        label: 'Close',
+        action: () => {
+          viewerWidget.closePreview();
+        },
+      },
+    ]);
+  });
 </script>
 
 <main>
@@ -60,7 +95,7 @@
         lang="en"
         placeholder="Search"
         features="filter,suggestions,permalink" />
-      <NucliaSearchResults />
+      <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
   {#if selected === 'viewer'}

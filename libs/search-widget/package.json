@@ -1,6 +1,6 @@
 {
   "name": "@nuclia/widget",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Nuclia search widgets",
   "module": "nuclia.mjs",
   "main": "nuclia.umd.js",
@@ -18,7 +18,7 @@
     "url": "https://github.com/nuclia/frontend/issues"
   },
   "peerDependencies": {
-    "@nuclia/core": "^1.1.4",
+    "@nuclia/core": "^1.1.5",
     "@nuclia/prediction": "^1.0.0",
     "date-fns": "^2.29.3",
     "rxjs": "^7.5.2",

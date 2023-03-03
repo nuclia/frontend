@@ -1,6 +1,7 @@
 import type {
   Classification,
   Entity,
+  FieldFullId,
   IResource,
   KBStates,
   LabelSets,
@@ -19,7 +20,7 @@ import {
 } from '@nuclia/core';
 import type { Observable } from 'rxjs';
 import { filter, forkJoin, map, merge, of, take, tap } from 'rxjs';
-import type { EntityGroup, FieldFullId, WidgetOptions } from './models';
+import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';

@@ -322,6 +322,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       .openConfirm({
         title,
         description: message,
+        confirmLabel: 'generic.delete',
         isDestructive: true,
       })
       .onClose.pipe(

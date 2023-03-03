@@ -1,3 +1,9 @@
+# 1.1.5 (2023-03-03)
+
+### Improvements
+
+- Add `FieldFullId` interface to `resource.models`
+
 # 1.1.4 (2023-03-01)
 
 ### Improvements

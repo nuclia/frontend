@@ -19,6 +19,7 @@
     of,
     Subject,
     take,
+    takeUntil,
   } from 'rxjs';
   import { searchQuery } from '../../core/stores/search.store';
   import { Duration } from '../../common/transition.utils';
@@ -47,6 +48,7 @@
   export let noResultNavigator = false;
 
   const dispatch = createEventDispatcher();
+  const unsubscribeAll = new Subject();
 
   let innerWidth = window.innerWidth;
   const closeButtonWidth = 48;
@@ -108,9 +110,20 @@
     ) {
       openParagraph(undefined, -1);
     }
+
+    isPreviewing
+      .pipe(
+        filter((previewOpen) => !previewOpen && expanded),
+        takeUntil(unsubscribeAll),
+      )
+      .subscribe(() => closePreview());
   });
 
-  onDestroy(() => reset());
+  onDestroy(() => {
+    unsubscribeAll.next(true);
+    unsubscribeAll.complete();
+    reset();
+  });
 
   const onClickParagraph = (paragraph, index) => {
     if (result.field) {

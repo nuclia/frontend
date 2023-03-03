@@ -112,6 +112,10 @@ export interface FieldId {
   field_id: string;
 }
 
+export interface FieldFullId extends FieldId {
+  resourceId: string;
+}
+
 export interface ResourceField extends IFieldData, FieldId {}
 
 export class FileFieldData implements IFieldData {
