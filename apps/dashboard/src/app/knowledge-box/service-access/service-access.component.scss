@@ -35,18 +35,17 @@
     border-bottom: 1px solid $color-neutral-light;
 
     .service-access-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
       min-height: rhythm(4);
     }
 
     .service-access-title {
-      button {
-        @include reset-button();
-        cursor: pointer;
-        &[disabled] {
-          cursor: default;
-        }
-        text-align: left;
-      }
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.5);
+
       .service-access-title-arrow {
         transition: transform $transition-response;
         &.expanded {
@@ -64,6 +63,9 @@
       padding: 0 0 rhythm(1.5) rhythm(2);
     }
     .service-access-key {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
       height: rhythm(3);
       font-size: var(--stf-font-size-ssmall);
       width: 100%;
