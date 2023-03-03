@@ -23,7 +23,24 @@ h2 {
 }
 
 .account-field {
+  display: flex;
   margin-bottom: rhythm(4);
+
+  label,
+  .account-field-name {
+    width: 30%;
+  }
+  div:not(.account-field-name) {
+    flex: 1 0 auto;
+  }
+}
+
+.account-form-cta {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  margin-top: rhythm(5);
+  padding-left: 30%;
 }
 
 .account-field-name {
