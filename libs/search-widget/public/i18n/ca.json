@@ -53,5 +53,7 @@
 	"tile.find-in-audio": "Troba a l'àudio",
 	"tile.find-in-document": "Troba al document",
 	"tile.find-in-image": "Buscar a la imatge",
-	"tile.find-in-video": "Troba al vídeo"
+	"tile.find-in-video": "Troba al vídeo",
+	"tile.full-transcripts": "Transcripció completa",
+	"tile.search-results": "{{count}} resultats de cerca"
 }

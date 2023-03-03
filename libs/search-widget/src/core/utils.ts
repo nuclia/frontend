@@ -15,7 +15,7 @@ import type {
   Search,
 } from '@nuclia/core';
 import { FIELD_TYPE, longToShortFieldType, sliceUnicode } from '@nuclia/core';
-import type { MediaWidgetParagraph, PreviewKind, WidgetParagraph } from './models';
+import type { PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -252,31 +252,6 @@ export function getExtractedTexts(data: IFieldData | null): string[] {
 }
 
 export const NEWLINE_REGEX = /\n/g;
-export function getMediaTranscripts(
-  resource: Resource,
-  kind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE,
-): MediaWidgetParagraph[] {
-  const fields = getFields(resource).filter((field) => !!field.field.extracted?.metadata?.metadata?.paragraphs);
-  if (fields.length === 0) {
-    return [];
-  }
-  const mainField = fields[0];
-  const fieldType = getFieldType(mainField.field_type);
-  return (mainField.field.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) => {
-    const text = resource.getParagraphText(fieldType, mainField.field_id, paragraph);
-    return {
-      paragraph: paragraph,
-      text: text.trim().replace(NEWLINE_REGEX, '<br>'),
-      fieldType: fieldType,
-      fieldId: mainField.field_id,
-      preview: kind,
-      start: paragraph.start || 0,
-      end: paragraph.end || 0,
-      start_seconds: paragraph.start_seconds?.[0] || 0,
-      end_seconds: paragraph.end_seconds?.[0] || 0,
-    };
-  });
-}
 
 export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   const type = paragraph.fieldType.slice(0, -1) as FIELD_TYPE;
