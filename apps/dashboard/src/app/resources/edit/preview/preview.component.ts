@@ -72,6 +72,10 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
   ngOnDestroy() {
     super.ngOnDestroy();
     this.paragraphService.cleanup();
+    const viewerElement = document.querySelector('nuclia-viewer') as any;
+    if (typeof viewerElement?.$destroy === 'function') {
+      viewerElement.$destroy();
+    }
   }
 
   openViewer() {
