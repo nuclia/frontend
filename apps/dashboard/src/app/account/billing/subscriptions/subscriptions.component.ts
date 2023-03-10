@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BillingService, FEATURES, PARAMETERS } from '../billing.service';
 import { map } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
@@ -7,6 +7,7 @@ import { SisModalService } from '@nuclia/sistema';
   selector: 'app-subscriptions',
   templateUrl: './subscriptions.component.html',
   styleUrls: ['./subscriptions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionsComponent {
   isBasic = this.billing.type.pipe(map((type) => type === 'stash-basic'));

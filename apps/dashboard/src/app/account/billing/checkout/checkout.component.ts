@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
@@ -6,6 +6,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CheckoutComponent {
   billing = new FormGroup({
