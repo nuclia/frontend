@@ -4,14 +4,30 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { PaButtonModule, PaIconModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes = [
   {
     path: '',
     component: BillingComponent,
-    children: [],
+    children: [
+      {
+        path: '',
+        redirectTo: 'subscriptions',
+        pathMatch: 'full' as const,
+      },
+      {
+        path: 'subscriptions',
+        component: SubscriptionsComponent,
+      },
+      {
+        path: 'checkout',
+        component: CheckoutComponent,
+      },
+    ],
   },
 ];
 
@@ -23,10 +39,11 @@ const routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     PaButtonModule,
+    PaModalModule,
     PaTextFieldModule,
     PaIconModule,
   ],
-  declarations: [BillingComponent],
+  declarations: [BillingComponent, SubscriptionsComponent, CheckoutComponent],
   exports: [],
 })
 export class BillingModule {}

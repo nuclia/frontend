@@ -1,0 +1,71 @@
+@import 'variables';
+
+.subscriptions {
+  margin-bottom: rhythm(8);
+  table-layout: fixed;
+  min-width: 1000px;
+
+  th {
+    border-bottom: 1px solid $color-neutral-regular;
+    padding-bottom: rhythm(3);
+  }
+
+  td {
+    border-bottom: 1px solid $color-neutral-lighter;
+    height: rhythm(6);
+    text-align: left;
+  }
+
+  .plan {
+    vertical-align: top;
+    width: rhythm(28);
+  }
+
+  .plan-name {
+    font-size: $font-size-title-l;
+    margin-bottom: rhythm(1);
+  }
+
+  .price {
+    color: $color-primary-regular;
+    font-size: $font-size-title-l;
+    margin-bottom: rhythm(2);
+  }
+
+  .unit {
+    color: $color-neutral-regular;
+    font-size: $font-size-body-s;
+    font-weight: $font-weight-regular;
+  }
+}
+
+.usage-cost {
+  margin-bottom: rhythm(3);
+  h2 {
+    margin: 0;
+  }
+}
+
+.parameters {
+  min-width: 1000px;
+
+  th {
+    border-bottom: 1px solid $color-neutral-regular;
+    font-weight: $font-weight-semi-bold;
+    height: rhythm(5);
+  }
+
+  td {
+    border-bottom: 1px solid $color-neutral-lighter;
+    height: rhythm(5);
+  }
+
+  .limit {
+    width: rhythm(35);
+  }
+}
+
+.note {
+  color: $color-neutral-regular;
+  margin: rhythm(1.5) 0 rhythm(6) 0;
+}
