@@ -1,33 +1,26 @@
 <div class="container">
-  <div class="steps">
-    <nde-steps
-      [currentStep]="sync.step | async"
-      (goBackTo)="goBackTo($event)"></nde-steps>
-  </div>
-  <div class="content">
-    <ng-container *ngIf="(sync.step | async) === 0">
-      <h3>{{ 'upload.source.title' | translate }}</h3>
-      <p>{{ 'upload.source.help' | translate }}</p>
-      <nde-connectors
-        type="sources"
-        (selectConnector)="selectSource($event)"
-        (cancel)="cancel()"></nde-connectors>
-    </ng-container>
-    <ng-container *ngIf="(sync.step | async) === 1">
-      <nde-select-files
-        [source]="source"
-        [sourceId]="sourceId"
-        (next)="goTo(2)"
-        [(selection)]="selection"
-        (cancel)="cancel()"></nde-select-files>
-    </ng-container>
-    <ng-container *ngIf="(sync.step | async) === 2">
-      <h2>Push to</h2>
-      <nde-connectors
-        type="destinations"
-        [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
-        (selectConnector)="selectDestination($event)"
-        (cancel)="cancel()"></nde-connectors>
-    </ng-container>
-  </div>
+  <ng-container *ngIf="(sync.step | async) === 0">
+    <h3>{{ 'upload.source.title' | translate }}</h3>
+    <p>{{ 'upload.source.help' | translate }}</p>
+    <nde-connectors
+      type="sources"
+      (selectConnector)="selectSource($event)"
+      (cancel)="cancel()"></nde-connectors>
+  </ng-container>
+  <ng-container *ngIf="(sync.step | async) === 1">
+    <nde-select-files
+      [source]="source"
+      [sourceId]="sourceId"
+      (next)="goTo(2)"
+      [(selection)]="selection"
+      (cancel)="cancel()"></nde-select-files>
+  </ng-container>
+  <ng-container *ngIf="(sync.step | async) === 2">
+    <h2>Push to</h2>
+    <nde-connectors
+      type="destinations"
+      [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
+      (selectConnector)="selectDestination($event)"
+      (cancel)="cancel()"></nde-connectors>
+  </ng-container>
 </div>

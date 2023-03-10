@@ -1,20 +1,6 @@
 @import 'variables';
 
 .container {
-  display: flex;
-  flex-direction: column;
+  padding: 30px 40px;
   height: calc(100% - 20px);
-}
-.steps {
-  flex: 0 0 auto;
-  padding: 30px 40px;
-  background-color: #fff;
-  border-radius: 8px;
-  margin-bottom: 1em;
-}
-.content {
-  flex: 1 1 auto;
-  padding: 30px 40px;
-  background: #fff;
-  border-radius: 8px;
 }

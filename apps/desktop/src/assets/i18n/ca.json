@@ -28,8 +28,5 @@
 	"upload.steps.configure": "Configurar",
 	"upload.steps.data": "Escollir dades",
 	"upload.steps.destination": "Destinació",
-	"upload.steps.files": "Escull els fitxers",
-	"upload.steps.source": "Selecciona l'origen",
-	"upload.steps.sources": "Selecciona l'origen",
-	"upload.steps.upload": "Puja-ho!"
+	"upload.steps.source": "Selecciona l'origen"
 }

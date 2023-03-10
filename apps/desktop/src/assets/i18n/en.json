@@ -28,8 +28,5 @@
 	"upload.steps.configure": "Configure",
 	"upload.steps.data": "Choose data",
 	"upload.steps.destination": "Destination",
-	"upload.steps.files": "Define the files",
-	"upload.steps.source": "Select the source",
-	"upload.steps.sources": "Select the sources",
-	"upload.steps.upload": "Uploading"
+	"upload.steps.source": "Select the source"
 }
