@@ -7,7 +7,13 @@ import { OverlayModule } from '@angular/cdk/overlay';
 
 import { MainLayoutComponent } from './main-layout.component';
 import { TopbarComponent } from './topbar.component';
-import { PaAvatarModule, PaButtonModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaAvatarModule,
+  PaButtonModule,
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
   imports: [
@@ -20,6 +26,7 @@ import { PaAvatarModule, PaButtonModule, PaDropdownModule, PaPopupModule } from 
     PaAvatarModule,
     PaDropdownModule,
     PaPopupModule,
+    PaIconModule,
   ],
   exports: [],
   declarations: [MainLayoutComponent, TopbarComponent],

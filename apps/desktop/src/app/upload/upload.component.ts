@@ -15,7 +15,6 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadComponent implements OnInit {
-  step = 0;
   sourceId = '';
   source?: ISourceConnector;
   selection = new SelectionModel<SyncItem>(true, []);
@@ -48,8 +47,7 @@ export class UploadComponent implements OnInit {
   }
 
   goTo(step: number) {
-    this.step = step;
-    this.cdr.detectChanges();
+    this.sync.setStep(step);
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
@@ -115,7 +113,7 @@ export class UploadComponent implements OnInit {
   }
 
   goBackTo(step: number) {
-    this.step = step;
+    this.goTo(step);
     if (step === 0) {
       this.reset();
     }

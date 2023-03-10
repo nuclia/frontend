@@ -1,11 +1,70 @@
+@import 'variables';
+
 .page-wrapper {
-  padding: 70px 70px 0 70px;
+  padding: 70px 0 0 rhythm(35);
   height: 100%;
-  background-color: var(--stf-gray-background);
   display: flex;
   overflow: scroll;
 }
+
 .page-content {
   padding-top: 20px;
   width: 100%;
+}
+
+.sidebar {
+  background: $color-neutral-lightest;
+  height: 100%;
+  position: fixed;
+  top: 70px;
+  left: 0;
+  width: rhythm(35);
+
+  .upload-menu {
+    padding: rhythm(6) rhythm(4) rhythm(4);
+    border-bottom: 1px solid $color-neutral-light;
+  }
+
+  .upload-title {
+    font-weight: $font-weight-semi-bold;
+    margin-bottom: rhythm(1.5);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(1.5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1.5);
+
+    &.active {
+      font-weight: $font-weight-semi-bold;
+    }
+
+    &.pending {
+      opacity: 0.3;
+    }
+
+    &.completed {
+      cursor: pointer;
+    }
+
+    .step {
+      position: relative;
+    }
+    .number {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: $font-size-body-xs;
+    }
+  }
 }

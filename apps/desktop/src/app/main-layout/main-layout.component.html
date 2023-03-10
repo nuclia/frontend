@@ -1,4 +1,29 @@
 <nde-topbar></nde-topbar>
+<div class="sidebar">
+  <div class="upload-menu">
+    <div class="upload-title">{{ 'upload.data' | translate }}:</div>
+    <ul>
+      <li
+        *ngFor="let text of steps; let step = index"
+        [class.pending]="(sync.step | async) < step"
+        [class.active]="(sync.step | async) === step"
+        [class.completed]="(sync.step | async) > step"
+        (click)="goTo(step)">
+        <span
+          *ngIf="(sync.step | async) <= step"
+          class="step">
+          <pa-icon name="circle-dash"></pa-icon>
+          <span class="number">{{ step + 1 }}</span>
+        </span>
+        <pa-icon
+          *ngIf="(sync.step | async) > step"
+          name="circle-check"
+          color="#f06"></pa-icon>
+        {{ text | translate }}
+      </li>
+    </ul>
+  </div>
+</div>
 <div class="page-wrapper">
   <div
     class="page-content"

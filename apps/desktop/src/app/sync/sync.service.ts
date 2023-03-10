@@ -94,6 +94,8 @@ export class SyncService {
   private _queue: Sync[] = [];
   queue = new ReplaySubject<Sync[]>(1);
   ready = new Subject<void>();
+  private _step = new BehaviorSubject<number>(0);
+  step = this._step.asObservable();
 
   constructor(private sdk: SDKService, private user: UserService) {
     this.ready.subscribe(() => {
@@ -313,6 +315,10 @@ export class SyncService {
         ),
       )
       .subscribe(() => this.ready.next());
+  }
+
+  setStep(step: number) {
+    this._step.next(step);
   }
 
   private fetchDynamicConnectors() {

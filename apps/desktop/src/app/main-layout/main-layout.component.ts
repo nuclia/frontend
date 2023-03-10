@@ -12,6 +12,7 @@ import { SyncService } from '../sync/sync.service';
 })
 export class MainLayoutComponent {
   isLogged = false;
+  steps = ['upload.steps.source', 'upload.steps.configure', 'upload.steps.data', 'upload.steps.destination'];
   constructor(
     private router: Router,
     private sync: SyncService,
@@ -31,5 +32,13 @@ export class MainLayoutComponent {
         this.isLogged = true;
         this.cdr?.markForCheck();
       });
+  }
+
+  goTo(step: number) {
+    this.sync.step.pipe(take(1)).subscribe((currentStep) => {
+      if (step < currentStep) {
+        this.sync.setStep(step);
+      }
+    });
   }
 }
