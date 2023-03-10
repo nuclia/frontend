@@ -1,0 +1,140 @@
+<div class="checkout">
+  <div>
+    <h2>{{ 'billing.payment_details' | translate }}</h2>
+    <div>{{ 'billing.payment_details.description' | translate }}</div>
+  </div>
+
+  <div>
+    <div class="section-title">
+      <pa-icon name="circle-dash"></pa-icon>
+      {{ 'billing.billing_details' | translate }}
+    </div>
+    <form
+      [formGroup]="billing"
+      class="billing-data">
+      <div class="field-line">
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="name">
+            {{ 'generic.name' | translate }} *
+          </label>
+          <pa-input
+            id="name"
+            formControlName="name"
+            [errorMessages]="errors"
+            externalLabel></pa-input>
+        </div>
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="company">
+            {{ 'billing.company' | translate }} *
+          </label>
+          <pa-input
+            id="company"
+            formControlName="company"
+            [errorMessages]="errors"
+            externalLabel></pa-input>
+        </div>
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="vat">
+            {{ 'billing.vat_id' | translate }} *
+          </label>
+          <pa-input
+            id="vat"
+            formControlName="vat"
+            [errorMessages]="errors"
+            externalLabel></pa-input>
+        </div>
+      </div>
+      <div class="field-line">
+        <div class="field-block long">
+          <label
+            class="title-s"
+            for="address">
+            {{ 'billing.address' | translate }} *
+          </label>
+          <pa-input
+            id="address"
+            formControlName="address"
+            [errorMessages]="errors"
+            externalLabel></pa-input>
+        </div>
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="country">
+            {{ 'billing.country' | translate }} *
+          </label>
+          <pa-select
+            id="country"
+            formControlName="country"
+            [errorMessages]="errors"
+            externalLabel>
+            <pa-option value="1">Country 1</pa-option>
+            <pa-option value="2">Country 2</pa-option>
+          </pa-select>
+        </div>
+      </div>
+      <div class="field-line">
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="state">
+            {{ 'billing.state' | translate }}
+          </label>
+          <pa-input
+            id="state"
+            formControlName="state"
+            externalLabel></pa-input>
+        </div>
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="city">
+            {{ 'billing.city' | translate }} *
+          </label>
+          <pa-input
+            id="city"
+            formControlName="city"
+            [errorMessages]="errors"
+            externalLabel></pa-input>
+        </div>
+        <div class="field-block">
+          <label
+            class="title-s"
+            for="zip">
+            {{ 'billing.zip' | translate }} *
+          </label>
+          <pa-input
+            id="zip"
+            formControlName="zip"
+            [errorMessages]="errors"
+            externalLabel></pa-input>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div>
+    <div class="section-title">
+      <pa-icon name="circle-dash"></pa-icon>
+      {{ 'billing.budget' | translate }}
+    </div>
+    <div [innerHTML]="'billing.budget_description' | translate"></div>
+    <form [formGroup]="budget">
+      <div class="budget">
+        <pa-input
+          type="number"
+          formControlName="budget"
+          [errorMessages]="errors"></pa-input>
+        <span class="title-m">€</span>
+      </div>
+    </form>
+  </div>
+
+  <pa-button kind="primary">Review and Confirm</pa-button>
+</div>

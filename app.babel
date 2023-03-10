@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="4.0.1" version="1.3">
+<babeledit_project be_version="4.0.3" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -2100,7 +2100,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.add_card</name>
+						<name>billing.address</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2120,47 +2120,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.add_limit</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.annual</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.automatically_renewed</name>
+						<name>billing.billing_details</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2220,7 +2180,127 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.company_name</name>
+						<name>billing.city</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.company</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.contact</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.cost_per_usage</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.cost_per_usage.description</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.country</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.custom_plan</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2260,7 +2340,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.enter_card_details</name>
+						<name>billing.estimate_cost</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2280,7 +2360,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.free_account</name>
+						<name>billing.free</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2300,7 +2380,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.monthly</name>
+						<name>billing.month</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2320,267 +2400,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.monthly_consumibles</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.no_limit</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.no_limit_description</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.docs_no_media</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.max_size_file_media</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.max_size_file_no_media</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.max_storage_bytes</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.max_storage_docs</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.media</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.ml_characters</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.multiple_kb</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.parallel_processing</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.searches</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.parameter.train_hours</name>
+						<name>billing.notes</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2620,7 +2440,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.plan</name>
+						<name>billing.payment_details.description</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2640,7 +2460,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.plan_settings</name>
+						<name>billing.payment_method</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2660,7 +2480,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.plans</name>
+						<name>billing.state</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2680,87 +2500,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.plans_available</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.subscribe</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.subscribing_to</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.teams_account</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>billing.total_now</name>
+						<name>billing.subscription_plans</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2800,7 +2540,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.upgrade_to</name>
+						<name>billing.vat_id</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2820,7 +2560,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.vat_id</name>
+						<name>billing.zip</name>
 						<description/>
 						<comment/>
 						<default_text/>

@@ -1,0 +1,55 @@
+@import 'variables';
+
+.checkout {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}
+
+h2 {
+  margin: 0;
+}
+
+.section-title {
+  align-items: center;
+  display: flex;
+  font-size: font-size(l);
+  font-weight: $font-weight-bold;
+  gap: rhythm(1);
+  margin-bottom: rhythm(1.5);
+}
+
+.billing-data {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+  max-width: 970px;
+
+  .field-line {
+    display: flex;
+    gap: rhythm(3);
+  }
+
+  .field-block {
+    width: 33%;
+    &.long {
+      width: 69%;
+    }
+  }
+
+  label {
+    margin-bottom: rhythm(1);
+  }
+}
+
+.budget {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+  margin-top: rhythm(2);
+
+  pa-input {
+    display: block;
+    width: rhythm(14);
+  }
+}

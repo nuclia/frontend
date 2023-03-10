@@ -1,0 +1,95 @@
+<table class="subscriptions">
+  <tr>
+    <th>
+      <h2>{{ 'billing.subscription_plans' | translate }}</h2>
+      <pa-button
+        (click)="openCalculator()"
+        icon="settings"
+        iconAndText>
+        {{ 'billing.estimate_cost' | translate }}
+      </pa-button>
+    </th>
+    <th class="plan">
+      <div class="plan-name">Basic</div>
+      <div class="price">{{ 'billing.free' | translate }}</div>
+      <pa-button
+        *ngIf="isTeam | async"
+        kind="primary">
+        Downgrade
+      </pa-button>
+    </th>
+    <th class="plan">
+      <div class="plan-name">Professional</div>
+      <div class="price">
+        90€
+        <span class="unit">/{{ 'billing.month' | translate }}</span>
+      </div>
+      <pa-button
+        *ngIf="isBasic | async"
+        kind="primary"
+        routerLink="../checkout">
+        {{ 'billing.upgrade' | translate }}
+      </pa-button>
+    </th>
+    <th class="plan">
+      <div class="plan-name">Business</div>
+      <div class="price">{{ 'billing.custom_plan' | translate }}</div>
+      <pa-button kind="primary">{{ 'billing.contact' | translate }}</pa-button>
+    </th>
+  </tr>
+  <tr *ngFor="let feature of features">
+    <td class="title-s">
+      {{ feature.title | translate }}
+    </td>
+    <td>
+      <ng-container *ngIf="feature.basic !== 'yes'; else icon">
+        {{ feature.basic | translate }}
+      </ng-container>
+    </td>
+    <td>
+      <ng-container *ngIf="feature.pro !== 'yes'; else icon">
+        {{ feature.pro | translate }}
+      </ng-container>
+    </td>
+    <td>
+      <ng-container *ngIf="feature.business !== 'yes'; else icon">
+        {{ feature.business | translate }}
+      </ng-container>
+    </td>
+    <ng-template #icon>
+      <pa-icon
+        name="check"
+        size="small"
+        color="#f06"></pa-icon>
+    </ng-template>
+  </tr>
+</table>
+
+<div class="usage-cost">
+  <h2>{{ 'billing.cost_per_usage' | translate }}</h2>
+  <div class="body-m">{{ 'billing.cost_per_usage.description' | translate }}</div>
+</div>
+
+<table
+  class="parameters"
+  *ngFor="let type of parameters; let first = first">
+  <tr>
+    <th>{{ type.type | translate }}</th>
+    <th class="limit">
+      <span *ngIf="first">Free</span>
+    </th>
+    <th class="limit">
+      <span *ngIf="first">Over</span>
+    </th>
+  </tr>
+  <tr *ngFor="let item of type.items">
+    <td>{{ item.title | translate }}</td>
+    <td>{{ item.free | translate }}</td>
+    <td>{{ item.over | translate }}</td>
+  </tr>
+</table>
+
+<div class="note">{{ 'billing.notes' | translate }}</div>
+<div
+  class="title-s"
+  [innerHTML]="'billing.customized_plan' | translate"></div>

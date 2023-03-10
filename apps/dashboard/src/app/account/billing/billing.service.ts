@@ -2,54 +2,56 @@ import { Injectable } from '@angular/core';
 import { StateService } from '@flaps/core';
 import { filter, map } from 'rxjs';
 
-export interface PlanParameter {
-  key: string;
-}
-
-export interface Plan {
-  monthly: number;
-  annual: number;
-  parameters: { [key: string]: { value: string; overspend?: string } };
-}
-
-export const PLAN_PARAMETERS = [
-  ['ml_characters', 'docs_no_media', 'media', 'searches', 'train_hours'],
-  ['max_storage_bytes', 'max_storage_docs'],
-  ['max_size_file_media', 'max_size_file_no_media', 'multiple_kb', 'parallel_processing'],
+export const FEATURES = [
+  { title: 'Document thumnails generation', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Document Indexing', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Maximum file size', basic: 'Up to 10 Mb', pro: 'Up to 120 Mb', business: 'Up to 1.5 Gb' },
+  { title: 'Number of knowledge boxes', basic: '1', pro: '3', business: '10' },
+  { title: 'Seach trend topics', basic: '', pro: 'coming soon', business: 'coming soon' },
+  { title: 'Videos and audio indexing', basic: '', pro: 'yes', business: 'yes' },
+  { title: 'URL indexing', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Multi-language search', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Ranking tuner', basic: '', pro: '', business: 'yes' },
+  { title: 'Usage analytics and retention', basic: '', pro: '', business: '90 days' },
+  { title: 'Widget system access', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Typo tolerance search', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'NER Detection', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Indexing booster', basic: '', pro: 'yes', business: 'yes' },
+  { title: 'Nuclia widget for internal usage', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Self-hosted API key', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Chrome Extension', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Desktop Application for data ingestion', basic: 'yes', pro: 'yes', business: 'yes' },
+  { title: 'Data Anonymization', basic: '', pro: '', business: 'yes' },
 ];
 
-export const BASIC_PLAN: Plan = {
-  monthly: 0,
-  annual: 0,
-  parameters: {
-    ml_characters: { value: '300.000' },
-    docs_no_media: { value: '100' },
-    media: { value: '2 h' },
-    searches: { value: '5.000' },
-    max_storage_bytes: { value: '300 Mb' },
-    max_storage_docs: { value: '500' },
-    max_size_file_media: { value: '100 Mb' },
-    max_size_file_no_media: { value: '3 Mb' },
+export const PARAMETERS = [
+  {
+    type: 'Ingest',
+    items: [
+      { title: 'Extracted & analized paragraphs', free: '1000 paragraph/month', over: '0.0006€ /paragraph' },
+      { title: 'Extracted & analized documents', free: '100 documents/month', over: '0.014€ /document' },
+      { title: 'Extracted & analized hours video / audio', free: '2 hours/month', over: '7.20€ /hour' },
+    ],
   },
-};
-
-export const TEAM_PLAN: Plan = {
-  monthly: 36,
-  annual: 360,
-  parameters: {
-    ml_characters: { value: '3M', overspend: '+ 6€ / 1M char' },
-    docs_no_media: { value: '1.000', overspend: '+ 0.014€ /doc' },
-    media: { value: '10 h', overspend: '+ 0.002€ /sec' },
-    searches: { value: '100.000', overspend: '+ 1€/month / Gb' },
-    train_hours: { value: '1 h', overspend: '+ 1€/month / 1.000 docs' },
-    max_storage_bytes: { value: '10 Gb', overspend: '+ 1€ / 1.000 queries' },
-    max_storage_docs: { value: '2.000', overspend: '+ 1€ /h' },
-    max_size_file_media: { value: '500 Mb' },
-    max_size_file_no_media: { value: '20 Mb' },
-    multiple_kb: { value: 'True' },
-    parallel_processing: { value: 'True' },
+  {
+    type: 'Training',
+    items: [
+      { title: 'Classification', free: '0 hours', over: '3€ /hour' },
+      { title: 'Question & answering', free: '0 hours', over: '3€ /hour' },
+    ],
   },
-};
+  {
+    type: 'NucliaDB Hosted',
+    items: [
+      { title: 'Paragraphs stored', free: '4000 paragraphs/month', over: '0.0002€ /paragraph' },
+      { title: 'Searches, suggestions and questions', free: '5000 searches/month *', over: '0.0015€ /search' },
+    ],
+  },
+  {
+    type: 'NucliaDB Self-hosted',
+    items: [{ title: 'Searches, suggestions and questions', free: '5000 searches/month *', over: '0.0008€ /search' }],
+  },
+];
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {

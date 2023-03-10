@@ -4,14 +4,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MatDialogModule } from '@angular/material/dialog';
-import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaIconModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
-import { PlansComponent } from './plans/plans.component';
-import { PlansSettingsComponent } from './settings/plan-settings.component';
-import { PaymentComponent } from './payment/payment.component';
-import { CardComponent } from './card/card.component';
-import { STFSectionNavbarModule } from '../../components/section-navbar';
+import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes = [
   {
@@ -19,16 +15,17 @@ const routes = [
     component: BillingComponent,
     children: [
       {
-        path: 'plans',
-        component: PlansComponent,
+        path: '',
+        redirectTo: 'subscriptions',
+        pathMatch: 'full' as const,
       },
       {
-        path: 'settings',
-        component: PlansSettingsComponent,
+        path: 'subscriptions',
+        component: SubscriptionsComponent,
       },
       {
-        path: 'payment',
-        component: PaymentComponent,
+        path: 'checkout',
+        component: CheckoutComponent,
       },
     ],
   },
@@ -41,14 +38,12 @@ const routes = [
     AngularSvgIconModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
-    MatDialogModule,
-    STFSectionNavbarModule,
     PaButtonModule,
+    PaModalModule,
     PaTextFieldModule,
-    PaTooltipModule,
     PaIconModule,
   ],
-  declarations: [BillingComponent, PlansComponent, PlansSettingsComponent, PaymentComponent, CardComponent],
+  declarations: [BillingComponent, SubscriptionsComponent, CheckoutComponent],
   exports: [],
 })
 export class BillingModule {}

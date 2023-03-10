@@ -1,8 +1,8 @@
-<stf-section-navbar
-  [title]="'Billing'"
-  [routes]="(routes | async) || []"
-  [hasInnerRoutes]="true">
-  <stf-section-navbar-body>
+<div class="billing">
+  <div class="sidebar-menu">
+    <h1>{{ 'account.billing' | translate }}</h1>
+  </div>
+  <div class="main-content">
     <router-outlet></router-outlet>
-  </stf-section-navbar-body>
-</stf-section-navbar>
+  </div>
+</div>
