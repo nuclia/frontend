@@ -4,6 +4,7 @@ import { environment } from '../environments/environment';
 import { join } from 'path';
 import { format } from 'url';
 import { autoUpdater } from 'electron-updater';
+import { initSyncService } from '../service/app';
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -47,6 +48,8 @@ export default class App {
     App.initMainWindow();
     App.loadMainWindow();
     autoUpdater.checkForUpdatesAndNotify();
+    // fork(`${__dirname}/service/server.js`);
+    initSyncService();
   }
 
   private static onActivate() {
