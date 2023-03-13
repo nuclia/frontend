@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "../../../dist/service",
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/service/*.ts"]
+}
