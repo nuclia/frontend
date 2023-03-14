@@ -11,9 +11,9 @@ import { Router } from '@angular/router';
 import { StateService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
-import { NavigationService } from '../../services/navigation.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
+import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-user-menu',

@@ -4,9 +4,8 @@ import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { SDKService, SimpleAccount, STFUtils } from '@flaps/core';
-import { NavigationService } from '../../services/navigation.service';
 import { SelectService } from '../select.service';
-import { Sluggable } from '@flaps/common';
+import { NavigationService, Sluggable } from '@flaps/common';
 import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 

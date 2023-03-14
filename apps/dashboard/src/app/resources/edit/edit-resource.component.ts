@@ -11,9 +11,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, map, Observable, Subject } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
-import { NavigationService } from '../../services/navigation.service';
 import { takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
+import { NavigationService } from '@flaps/common';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;

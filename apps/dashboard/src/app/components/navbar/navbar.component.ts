@@ -3,10 +3,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { map, merge, of, shareReplay, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { AppService } from '../../services/app.service';
-import { NavigationService } from '../../services/navigation.service';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SmallNavbarDirective } from './small-navbar.directive';
+import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-navbar',
@@ -46,12 +46,11 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   account = this.stateService.account.pipe(filter((account) => !!account));
   kb = this.sdk.currentKb;
-  accountUrl = this.account.pipe(map((account) => this.navigation.getAccountManageUrl(account!.slug)));
+  accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
   constructor(
     private app: AppService,
-    private navigation: NavigationService,
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private stateService: StateService,
@@ -63,7 +62,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
 
   ngOnInit(): void {
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
-      this.kbUrl = this.navigation.getKbUrl(kb.account, kb.slug!);
+      this.kbUrl = this.navigationService.getKbUrl(kb.account, kb.slug!);
     });
   }
 

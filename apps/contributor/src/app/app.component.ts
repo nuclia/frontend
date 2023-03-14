@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BackendConfigurationService, STFTrackingService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, Subject, take } from 'rxjs';
+import { catchError, combineLatest, filter, of, Subject, switchMap, take, tap } from 'rxjs';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
-import { MessageModalComponent } from '@flaps/common';
+import { MessageModalComponent, NavigationService } from '@flaps/common';
+import { Title } from '@angular/platform-browser';
+import { NavigationEnd, Router } from '@angular/router';
 
 const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
@@ -25,7 +27,12 @@ export class AppComponent implements OnInit, OnDestroy {
     private paTranslate: PaTranslateService,
     private tracking: STFTrackingService,
     private modalService: SisModalService,
+    private sdk: SDKService,
+    private titleService: Title,
+    private router: Router,
+    private navigation: NavigationService,
   ) {
+    this.updateStateOnRouteChange();
     const userLocale = localStorage.getItem(userLocaleKey);
     this.initTranslate(userLocale);
   }
@@ -61,6 +68,49 @@ export class AppComponent implements OnInit, OnDestroy {
       localStorage.setItem(userLocaleKey, event.lang);
       this.paTranslate.initTranslationsAndUse(event.lang, event.translations);
     });
+  }
+
+  private updateStateOnRouteChange() {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        tap((event) => this.tracking.navigation(event as NavigationEnd)),
+        filter(
+          (event) =>
+            ((event as NavigationEnd).url.startsWith('/at/') || (event as NavigationEnd).url.startsWith('/select/')) &&
+            !!this.router.routerState.root.firstChild?.firstChild,
+        ),
+        switchMap(() =>
+          combineLatest([
+            this.router.routerState.root.firstChild?.firstChild?.paramMap || of(undefined),
+            this.router.routerState.root.firstChild?.firstChild?.firstChild?.paramMap || of(undefined),
+          ]),
+        ),
+        filter(([accountParams]) => !!accountParams?.get('account')),
+        switchMap(([accountParams, kbParams]) =>
+          combineLatest([
+            this.sdk.setCurrentAccount(accountParams?.get('account') as string),
+            kbParams && kbParams.get('stash')
+              ? this.sdk.setCurrentKnowledgeBox(
+                  accountParams?.get('account') as string,
+                  kbParams.get('stash') as string,
+                )
+              : of(undefined),
+          ]).pipe(
+            catchError((error) => {
+              if (error.status === 403) {
+                this.navigation.resetState();
+              }
+              return of([{ title: '' }, { title: '' }]);
+            }),
+          ),
+        ),
+      )
+      .subscribe(([account, kb]) =>
+        kb
+          ? this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`)
+          : this.titleService.setTitle(`Nuclia – ${account.title}`),
+      );
   }
 
   private preventDefault(e: DragEvent) {

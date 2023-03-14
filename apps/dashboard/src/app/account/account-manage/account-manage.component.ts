@@ -16,9 +16,8 @@ import { concatMap, distinctUntilChanged, filter, map, shareReplay, switchMap, t
 import { AccountModification, SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
-import { Sluggable } from '@flaps/common';
+import { NavigationService, Sluggable } from '@flaps/common';
 import { IErrorMessages, ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService } from '../../services/navigation.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
 import { SectionInfo } from '../../components/section-navbar';

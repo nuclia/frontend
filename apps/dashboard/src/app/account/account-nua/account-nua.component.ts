@@ -7,8 +7,8 @@ import { ClientDialogComponent, ClientDialogData } from './client-dialog/client-
 import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
 import { Router } from '@angular/router';
 import { StateService, STFTrackingService } from '@flaps/core';
-import { NavigationService } from '../../services/navigation.service';
 import { SisModalService } from '@nuclia/sistema';
+import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-account-nua',

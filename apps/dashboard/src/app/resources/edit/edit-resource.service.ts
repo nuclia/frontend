@@ -46,7 +46,7 @@ import {
   ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
 import { generatedEntitiesColor } from '../../entities/model';
-import { NavigationService } from '../../services/navigation.service';
+import { NavigationService } from '@flaps/common';
 
 @Injectable({
   providedIn: 'root',

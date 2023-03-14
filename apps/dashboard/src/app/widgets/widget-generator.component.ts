@@ -7,8 +7,8 @@ import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular
 import { debounceTime } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
-import { NavigationService } from '../services/navigation.service';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
+import { NavigationService } from '@flaps/common';
 
 const DEFAULT_WIDGET_CONFIG: {
   features: string[];

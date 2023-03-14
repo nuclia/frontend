@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SDKService, SimpleAccount } from '@flaps/core';
 import { AccountsKbs, SelectService } from './select.service';
-import { NavigationService } from '../services/navigation.service';
+import { NavigationService } from '@flaps/common';
 
 @Injectable({
   providedIn: 'root',
