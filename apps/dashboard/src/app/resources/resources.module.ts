@@ -10,8 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { STFExpanderModule, STFFormDirectivesModule, STFIconsModule } from '@flaps/pastanaga';
-import { PaginationModule } from '@flaps/common';
+import { HintModule, LabelModule, PaginationModule } from '@flaps/common';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { ResourceListComponent } from './resource-list.component';
@@ -22,8 +21,6 @@ import { ResourceProfileComponent } from './edit/profile/profile.component';
 import { ResourceTextComponent } from './edit/profile/text/text.component';
 import { ResourceLinkComponent } from './edit/profile/link/link.component';
 import { ResourceFileComponent } from './edit/profile/file/file.component';
-import { LabelModule } from '../components/label/label.module';
-import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
   PaChipsModule,
@@ -167,9 +164,6 @@ const ROUTES: Routes = [
     MatMenuModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
-    STFExpanderModule,
-    STFIconsModule,
-    STFFormDirectivesModule,
     PaginationModule,
     PipesModule,
     LabelModule,

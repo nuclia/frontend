@@ -5,9 +5,9 @@ import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { UploadService } from '../../upload/upload.service';
-import { AppService } from '../../services/app.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockModule } from 'ng-mocks';
+import { AppService } from '@flaps/common';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;

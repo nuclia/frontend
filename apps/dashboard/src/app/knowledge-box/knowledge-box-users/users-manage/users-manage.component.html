@@ -20,29 +20,21 @@
     <form
       (ngSubmit)="addUser()"
       [formGroup]="addForm">
-      <input
+      <pa-input
         type="email"
-        formControlName="email"
-        stfFilterInput
-        [inputHeight]="32"
-        [inputColor]="modal ? 'gray' : 'white'"
-        placeholder="{{ 'accounts.add_user_input' | translate }}" />
-      <select
-        stfSelect
-        selectSize="small"
-        [selectColor]="modal ? 'gray' : 'white'"
-        formControlName="role">
-        <option
-          value=""
-          *ngIf="addForm.value.role === ''">
-          {{ 'generic.role' | translate }}
-        </option>
-        <option
+        formControlName="email">
+        {{ 'accounts.add_user_input' | translate }}
+      </pa-input>
+      <pa-select
+        formControlName="role"
+        label="{{ 'generic.role' | translate }}">
+        <pa-option
           *ngFor="let role of initialRoles"
           [value]="role">
           {{ roleTitles[role] | translate }}
-        </option>
-      </select>
+        </pa-option>
+      </pa-select>
+
       <pa-button
         type="submit"
         size="small"
@@ -80,20 +72,19 @@
     <td
       cdk-cell
       *cdkCellDef="let user">
-      <select
-        stfSelect
-        selectSize="small"
+      <pa-select
         (ngModelChange)="changeRole(user.id, $event)"
         [ngModel]="user.role"
         [disabled]="
           (isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
-        ">
-        <ng-container *ngFor="let role of roles">
-          <option [value]="role">
-            {{ roleTitles[role] | translate }}
-          </option>
-        </ng-container>
-      </select>
+        "
+        dim>
+        <pa-option
+          *ngFor="let role of roles"
+          [value]="role">
+          {{ roleTitles[role] | translate }}
+        </pa-option>
+      </pa-select>
     </td>
   </ng-container>
 

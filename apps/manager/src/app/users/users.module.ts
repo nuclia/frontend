@@ -17,9 +17,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSortModule } from '@angular/material/sort';
 import { MatInputModule } from '@angular/material/input';
 import { UserResolve } from '../resolvers/user.resolver';
-import { STFInputModule } from '@flaps/pastanaga';
 import { MatButtonModule } from '@angular/material/button';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { STFInputModule } from '../inputfield/input-module';
 
 const usersRoutes: Routes = [
   {

@@ -10,7 +10,6 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
 import { MatDialogModule } from '@angular/material/dialog';
-import { STFExpanderModule } from '@flaps/pastanaga';
 
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
@@ -22,12 +21,14 @@ import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { GroupSelectComponent } from './entity-dialog/group-select/group-select.component';
 import {
   PaButtonModule,
+  PaExpanderModule,
   PaIconModule,
   PaModalModule,
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { EntityGroupDialogComponent } from './entity-group-dialog/entity-group-dialog.component';
+import { STFExpanderModule } from '@flaps/pastanaga';
 
 const Components = [
   EntitiesComponent,
@@ -53,12 +54,13 @@ const Components = [
     A11yModule,
     DragDropModule,
     MatDialogModule,
-    STFExpanderModule,
     PaTextFieldModule,
     PaButtonModule,
     PaIconModule,
     PaTooltipModule,
     PaModalModule,
+    STFExpanderModule,
+    PaExpanderModule,
   ],
   declarations: [...Components, EntityGroupDialogComponent],
   exports: [],

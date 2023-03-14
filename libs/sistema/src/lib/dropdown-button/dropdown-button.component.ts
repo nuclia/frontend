@@ -68,10 +68,12 @@ export class DropdownButtonComponent {
   }
 
   @Input()
-  set icon(value: string) {
-    this._icon = value;
+  set icon(value: string | undefined) {
+    if (value) {
+      this._icon = value;
+    }
   }
-  get icon() {
+  get icon(): string {
     return this._icon;
   }
 

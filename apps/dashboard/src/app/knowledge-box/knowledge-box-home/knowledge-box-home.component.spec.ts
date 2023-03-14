@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SDKService, StateService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
-import { AppService } from '../../services/app.service';
 
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { MatDialogModule } from '@angular/material/dialog';
+import { AppService } from '@flaps/common';
 
 function createTranslateLoader() {
   return {

@@ -14,8 +14,6 @@ import { UploadFilesDialogComponent } from './upload-files/upload-files-dialog.c
 import { UploadProgressComponent } from './upload-progress/upload-progress.component';
 import { UploadProgressDialogComponent } from './upload-progress/upload-progress-dialog.component';
 import { UploadTextComponent } from './upload-text/upload-text.component';
-import { LabelModule } from '../components/label/label.module';
-import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
   PaIconModule,
@@ -24,6 +22,7 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SisProgressModule } from '@nuclia/sistema';
+import { HintModule, LabelModule } from '@flaps/common';
 
 const Components = [
   CreateLinkComponent,

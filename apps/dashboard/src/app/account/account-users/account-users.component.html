@@ -19,12 +19,11 @@
   <div
     class="add-user"
     *ngIf="canAddUsers | async">
-    <input
+    <pa-input
       type="email"
-      [formControl]="email"
-      stfFilterInput
-      [inputHeight]="32"
-      placeholder="{{ 'accounts.add_user_input' | translate }}" />
+      [formControl]="email">
+      {{ 'accounts.add_user_input' | translate }}
+    </pa-input>
     <pa-button
       size="small"
       [disabled]="email.invalid"

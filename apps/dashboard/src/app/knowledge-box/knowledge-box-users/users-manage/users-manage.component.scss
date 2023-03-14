@@ -25,6 +25,9 @@
   input {
     flex: 1 1 0;
   }
+  pa-select {
+    min-width: rhythm(12);
+  }
 }
 
 .user-table {

@@ -3,10 +3,10 @@ import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
 import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take } from 'rxjs';
-import { AppService } from '../../services/app.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { getDesktopPlatform, getDesktopAppUrl, RELEASE_URL } from '../utils';
+import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../utils';
+import { AppService } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box-home',

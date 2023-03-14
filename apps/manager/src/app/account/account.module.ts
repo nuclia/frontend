@@ -1,4 +1,3 @@
-import { STFInputModule } from '@flaps/pastanaga';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
@@ -30,6 +29,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { StashDetailComponent } from './stash-detail/stash-detail.component';
 import { AccountBaseComponent } from './account-base/account-base.component';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { STFInputModule } from '../inputfield/input-module';
 
 const homeRoutes: Routes = [
   {

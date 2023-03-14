@@ -27,7 +27,6 @@ import { UploadModule } from './upload/upload.module';
 // Components
 import { AppComponent } from './app.component';
 import { BaseComponent } from './base/base.component';
-import { TopbarModule } from './components/topbar/topbar.module';
 
 // Load locales
 import localeEn from '@angular/common/locales/en';
@@ -36,6 +35,7 @@ import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
 import { SearchModule } from './search/search.module';
+import { TopbarModule } from '@flaps/common';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);

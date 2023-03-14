@@ -3,9 +3,9 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { UploadService } from '../../upload/upload.service';
-import { AppService } from '../../services/app.service';
 import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
 import { SisModalService } from '@nuclia/sistema';
+import { AppService } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box',

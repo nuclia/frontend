@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SmallNavbarDirective } from '../components/navbar/small-navbar.directive';
+import { SmallNavbarDirective } from '@flaps/common';
 
 @Component({
   selector: 'app-account',

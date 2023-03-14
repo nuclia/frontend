@@ -21,8 +21,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { DealersResolve } from '../resolvers/dealers.resolver';
 import { DealerResolve } from '../resolvers/dealer.resolver';
-import { STFInputModule } from '@flaps/pastanaga';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { STFInputModule } from '../inputfield/input-module';
 
 const usersRoutes: Routes = [
   {

@@ -10,8 +10,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { CdkTableModule } from '@angular/cdk/table';
-import { LabelModule } from '../components/label/label.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LabelModule } from '@flaps/common';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;

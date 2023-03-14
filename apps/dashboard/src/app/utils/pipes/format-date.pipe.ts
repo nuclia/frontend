@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { STFUtils } from '@flaps/core';
-import { AppService } from '../../services/app.service';
+import { AppService } from '@flaps/common';
 
 @Pipe({
   name: 'formatDate',

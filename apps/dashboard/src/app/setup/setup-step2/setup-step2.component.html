@@ -58,28 +58,21 @@
           fxLayout="row"
           fxLayoutAlign="start center"
           fxLayoutGap="10px">
-          <select
-            stfSelect
-            formControlName="kbZone"
-            [attr.aria-label]="'generic.zone_and_provider' | translate"
-            fxFlex="0 1 310px">
-            <option
+          <pa-select formControlName="kbZone">
+            <pa-option
               value=""
               *ngIf="kbForm.value.kbZone === ''"
               selected>
               {{ 'generic.zone_and_provider' | translate }}
-            </option>
-            <option
+            </pa-option>
+            <pa-option
               [value]="zone.id"
               *ngFor="let zone of zones">
               {{ zone.title }}
-            </option>
-          </select>
+            </pa-option>
+          </pa-select>
           <div
             class="setup-step2-tooltip"
-            stfTooltip
-            stfTooltipText="setup.soon_more_areas"
-            stfTooltipMaxWidth="120px"
             fxFlex="0 0 auto">
             <span>i</span>
           </div>
