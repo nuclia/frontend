@@ -1,5 +1,5 @@
 import express from 'express';
-import { getConnectors, setConnectors } from './connectors';
+import { getSources, setSources } from './sources';
 
 export const router = express.Router();
 
@@ -7,8 +7,8 @@ router.get('/', (req, res) => {
   res.send('Nuclia desktop service is running!');
 });
 
-router.post('/connector', (req, res) => {
-  const connectors = getConnectors();
-  setConnectors({ ...connectors, ...req.body });
+router.post('/source', (req, res) => {
+  const connectors = getSources();
+  setSources({ ...connectors, ...req.body });
   res.send('{ "success": true }');
 });
