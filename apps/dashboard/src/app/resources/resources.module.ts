@@ -10,7 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { STFExpanderModule, STFFormDirectivesModule, STFIconsModule, STFTooltipModule } from '@flaps/pastanaga';
+import { STFExpanderModule, STFFormDirectivesModule, STFIconsModule } from '@flaps/pastanaga';
 import { PaginationModule } from '@flaps/common';
 import { PipesModule } from '../utils/pipes/pipes.module';
 
@@ -169,7 +169,6 @@ const ROUTES: Routes = [
     MatProgressSpinnerModule,
     MatPaginatorModule,
     STFExpanderModule,
-    STFTooltipModule,
     STFIconsModule,
     STFFormDirectivesModule,
     PaginationModule,

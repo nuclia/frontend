@@ -1,5 +1,5 @@
 <pa-modal-dialog>
-  <pa-modal-title>{{ data?.title | translate }}</pa-modal-title>
+  <pa-modal-title>{{ data?.['title'] | translate }}</pa-modal-title>
   <pa-modal-content [innerHtml]="data?.['message']"></pa-modal-content>
   <pa-modal-footer>
     <pa-button

@@ -12,7 +12,7 @@ import { PipesModule } from '../utils/pipes/pipes.module';
 
 import { UserAvatarModule } from '@flaps/components';
 import { ProgressBarModule } from '@flaps/common';
-import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
+import { STFExpanderModule, STFFormDirectivesModule } from '@flaps/pastanaga';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
@@ -56,7 +56,6 @@ const Components = [
     ProgressBarModule,
     UserAvatarModule,
     STFFormDirectivesModule,
-    STFTooltipModule,
     STFExpanderModule,
     TokenDialogModule,
     ChartsModule,

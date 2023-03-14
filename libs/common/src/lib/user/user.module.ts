@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { LoggedinGuard, STFPipesModule } from '@flaps/core';
+import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { MatListModule } from '@angular/material/list';
@@ -12,7 +12,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { STFButtonDirectivesModule, STFInputModule } from '@flaps/pastanaga';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
@@ -114,9 +113,6 @@ export const userRoutes: Routes = [
     MatSelectModule,
     MatDialogModule,
     FlexLayoutModule,
-    STFInputModule,
-    STFButtonDirectivesModule,
-    STFPipesModule,
     UserAvatarModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),

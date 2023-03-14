@@ -1,25 +1,51 @@
-import { Component } from '@angular/core';
-import { STFUtils } from '@flaps/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { BackendConfigurationService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { filter, Subject, take } from 'rxjs';
+import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
+import { SisModalService } from '@nuclia/sistema';
+import { MessageModalComponent } from '@flaps/common';
+
+const userLocaleKey = 'NUCLIA_USER_LOCALE';
 
 @Component({
   selector: 'nco-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'contributor';
+export class AppComponent implements OnInit, OnDestroy {
+  version?: string;
 
   private unsubscribeAll: Subject<void> = new Subject<void>();
 
-  constructor(private ngxTranslate: TranslateService, private paTranslate: PaTranslateService) {
-    this.initTranslate(undefined);
+  constructor(
+    private config: BackendConfigurationService,
+    private ngxTranslate: TranslateService,
+    private paTranslate: PaTranslateService,
+    private tracking: STFTrackingService,
+    private modalService: SisModalService,
+  ) {
+    const userLocale = localStorage.getItem(userLocaleKey);
+    this.initTranslate(userLocale);
   }
 
-  initTranslate(userLocale?: string) {
+  ngOnInit() {
+    if (this.config.getVersion()) {
+      this.version = this.config.getVersion();
+    }
+    this.displayAlert();
+    this.displayAnnounce();
+    this.preventDragAndDropOnWindow();
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
+    this.cleanUpEventListener();
+  }
+
+  initTranslate(userLocale?: string | null) {
     this.ngxTranslate.setDefaultLang('en');
     const browserLang = this.ngxTranslate.getBrowserLang();
 
@@ -31,8 +57,51 @@ export class AppComponent {
       this.ngxTranslate.use('en');
     }
 
-    this.ngxTranslate.onLangChange
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((event) => this.paTranslate.initTranslationsAndUse(event.lang, event.translations));
+    this.ngxTranslate.onLangChange.pipe(takeUntil(this.unsubscribeAll)).subscribe((event) => {
+      localStorage.setItem(userLocaleKey, event.lang);
+      this.paTranslate.initTranslationsAndUse(event.lang, event.translations);
+    });
+  }
+
+  private preventDefault(e: DragEvent) {
+    e.preventDefault();
+  }
+
+  private preventDragAndDropOnWindow() {
+    window.addEventListener('dragover', this.preventDefault, false);
+    window.addEventListener('drop', this.preventDefault, false);
+  }
+
+  private cleanUpEventListener() {
+    window.removeEventListener('dragover', this.preventDefault);
+    window.removeEventListener('drop', this.preventDefault);
+  }
+
+  private displayAlert() {
+    this.checkMessages(true);
+  }
+
+  private displayAnnounce() {
+    this.checkMessages(false);
+  }
+
+  private checkMessages(alert: boolean) {
+    this.tracking
+      .getStatusMessage(alert)
+      .pipe(
+        take(1),
+        filter((message) => !!message),
+      )
+      .subscribe((message) => {
+        this.modalService.openModal(
+          MessageModalComponent,
+          new ModalConfig<{ title: string; message: string }>({
+            data: {
+              title: alert ? 'generic.alert' : 'generic.announce',
+              message,
+            },
+          }),
+        );
+      });
   }
 }

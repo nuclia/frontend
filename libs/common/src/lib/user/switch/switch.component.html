@@ -2,7 +2,9 @@
   <div class="outter_account_form">
     <div class="inner_account_form">
       <div class="logo">
-        <img src="assets/logos/logo.svg" />
+        <img
+          src="assets/logos/logo.svg"
+          alt="Nuclia" />
       </div>
       <div class="account_content">
         <div class="account_title">
@@ -16,9 +18,9 @@
         </div>
         <mat-list>
           <mat-list-item
-            *ngFor="let account of accounts"
+            *ngFor="let account of accounts | async"
             class="account"
-            (click)="goToAccount(account.slug)">
+            (click)="goToAccount()">
             {{ account.title | titlecase }} - ({{ account.slug }})
           </mat-list-item>
         </mat-list>

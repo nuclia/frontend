@@ -7,7 +7,7 @@
     <div
       class="login_alert title-xxs"
       *ngIf="message || error">
-      {{ message || error | translate }}
+      {{ message || error || '' | translate }}
     </div>
     <div class="login_form">
       <form

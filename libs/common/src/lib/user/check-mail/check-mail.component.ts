@@ -11,6 +11,6 @@ export class CheckMailComponent {
   email: string;
 
   constructor(private route: ActivatedRoute) {
-    this.email = this.route.snapshot.queryParams.email;
+    this.email = this.route.snapshot.queryParams['email'];
   }
 }

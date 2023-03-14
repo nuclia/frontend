@@ -16,7 +16,7 @@ import { Title } from '@angular/platform-browser';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
-import { MessageModalComponent } from './components/messages/message-modal.component';
+import { MessageModalComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-root',
