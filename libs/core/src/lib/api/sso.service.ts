@@ -25,8 +25,8 @@ export class SsoService {
 
   private getLoginUrl(state: string): string | null {
     const decoded = this.decodeState(state);
-    const hasUrl = typeof decoded.login_url === 'string';
-    return hasUrl ? decoded.login_url : null;
+    const hasUrl = typeof decoded['login_url'] === 'string';
+    return hasUrl ? decoded['login_url'] : null;
   }
 
   private isSafeRedirect(redirectUrl: string) {

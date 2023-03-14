@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add learning configuration in KB creation
+- Fix compiling errors about index signature
 
 # 1.1.5 (2023-03-03)
 
