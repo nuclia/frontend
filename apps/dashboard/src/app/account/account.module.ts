@@ -42,7 +42,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
-import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
   AccountComponent,
@@ -68,7 +67,6 @@ const Components = [
     OverlayModule,
     MatDialogModule,
     MatTableModule,
-    STFSectionNavbarModule,
     UserAvatarModule,
     STFFormDirectivesModule,
     STFExpanderModule,
