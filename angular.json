@@ -82,9 +82,15 @@
     },
     "contributor": {
       "projectType": "application",
+      "schematics": {
+        "@nrwl/angular:component": {
+          "style": "scss",
+          "changeDetection": "OnPush"
+        }
+      },
       "root": "apps/contributor",
       "sourceRoot": "apps/contributor/src",
-      "prefix": "nuclia",
+      "prefix": "nco",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -95,9 +101,36 @@
             "main": "apps/contributor/src/main.ts",
             "polyfills": "apps/contributor/src/polyfills.ts",
             "tsConfig": "apps/contributor/tsconfig.app.json",
+            "allowedCommonJsDependencies": [],
             "inlineStyleLanguage": "scss",
-            "assets": ["apps/contributor/src/favicon.ico", "apps/contributor/src/assets"],
+            "assets": [
+              "apps/contributor/src/favicon.ico",
+              "apps/contributor/src/assets",
+              {
+                "glob": "**/*",
+                "input": "libs/pastanaga/src/assets",
+                "output": "assets"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/common/src/assets/i18n",
+                "output": "assets/i18n"
+              },
+              {
+                "glob": "**/*",
+                "input": "apps/dashboard/src/environments_config/local-stage",
+                "output": "assets/deployment"
+              },
+              {
+                "glob": "**/*",
+                "input": "libs/sistema/assets",
+                "output": "assets"
+              }
+            ],
             "styles": ["apps/contributor/src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["apps/contributor/src"]
+            },
             "scripts": []
           },
           "configurations": {
@@ -120,7 +153,31 @@
                   "with": "apps/contributor/src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "assets": [
+                "apps/contributor/src/favicon.ico",
+                "apps/contributor/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/dashboard/src/environments_config/local-stage",
+                  "output": "assets/deployment"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
+                }
+              ]
             },
             "development": {
               "buildOptimizer": false,
@@ -129,6 +186,38 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "local-stage": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "assets": [
+                "apps/contributor/src/favicon.ico",
+                "apps/contributor/src/assets",
+                {
+                  "glob": "**/*",
+                  "input": "libs/pastanaga/src/assets",
+                  "output": "assets"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/common/src/assets/i18n",
+                  "output": "assets/i18n"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "apps/dashboard/src/environments_config/local-stage",
+                  "output": "assets/deployment"
+                },
+                {
+                  "glob": "**/*",
+                  "input": "libs/sistema/assets",
+                  "output": "assets"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -139,8 +228,8 @@
             "production": {
               "browserTarget": "contributor:build:production"
             },
-            "development": {
-              "browserTarget": "contributor:build:development"
+            "local-stage": {
+              "browserTarget": "contributor:build:local-stage"
             }
           },
           "defaultConfiguration": "development"
