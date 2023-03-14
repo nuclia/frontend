@@ -60,7 +60,7 @@ export class NavigationService {
   getSearchUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/search`;
   }
-  // Redirect authentificated users to the landing page.
+  // Redirect authenticated users to the landing page.
   goToLandingPage(): void {
     const data = this.stateService.dbGetStateData();
     const goToUrl = this.authService.getNextUrl();

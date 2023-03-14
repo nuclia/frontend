@@ -13,7 +13,7 @@ import { Account, Welcome } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
 import { Subject, takeUntil } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService } from '@flaps/common';
+import { NavigationService } from '../services';
 
 @Component({
   selector: 'app-user-menu',

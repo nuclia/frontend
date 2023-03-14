@@ -1,14 +1,17 @@
+@import 'variables';
+
 .version {
   position: fixed;
   bottom: 0;
   right: 0;
-  font-weight: 100;
-  color: #777;
+  font-weight: $font-weight-thin;
+  color: $color-neutral-regular;
   background-color: transparent;
-  font-size: 8px;
-  padding-right: 3px;
-  padding-bottom: 3px;
+  font-size: font-size(xxs);
+  padding-right: rhythm(0.5);
+  padding-bottom: rhythm(0.5);
 }
+
 aside#pa-toasts-block {
   position: fixed;
   bottom: 0;

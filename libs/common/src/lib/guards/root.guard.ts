@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, UrlTree } from '@angular/router';
-import { NavigationService } from '@flaps/common';
+import { NavigationService } from '../services';
 
 @Injectable({
   providedIn: 'root',

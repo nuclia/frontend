@@ -59,6 +59,11 @@ export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {
   role_on_kb?: KBRoles;
 }
 
+export interface IStandaloneKb {
+  slug: string;
+  uuid: string;
+}
+
 export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   get path(): string;
 

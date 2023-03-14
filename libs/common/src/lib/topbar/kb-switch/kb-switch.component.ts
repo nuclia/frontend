@@ -4,7 +4,7 @@ import { combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
-import { NavigationService } from '@flaps/common';
+import { NavigationService } from '../../services';
 
 @Component({
   selector: 'app-kb-switch',

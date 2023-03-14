@@ -7,6 +7,7 @@ import type {
   AccountTypes,
   EventList,
   IKnowledgeBoxItem,
+  IStandaloneKb,
   KnowledgeBox,
   KnowledgeBoxCreation,
   LearningConfigurations,
@@ -91,6 +92,7 @@ export interface IDb {
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
+  getStandaloneKbs(): Observable<IStandaloneKb[]>;
   getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;

@@ -10,7 +10,7 @@ export type AccountsKbs = { [account: string]: IKnowledgeBoxItem[] };
 @Injectable({
   providedIn: 'root',
 })
-export class SelectService {
+export class SelectAccountKbService {
   private readonly accountsSubject = new BehaviorSubject<Account[] | null>(null);
   readonly accounts = this.accountsSubject.asObservable();
 

@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { SDKService } from '@flaps/core';
-import { NavigationService } from '@flaps/common';
+import { NavigationService } from '../services';
 
 @Injectable({
   providedIn: 'root',

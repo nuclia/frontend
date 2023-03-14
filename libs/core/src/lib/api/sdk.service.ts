@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Account, Counters, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import {
+  BehaviorSubject,
   combineLatest,
-  of,
-  Observable,
-  switchMap,
-  tap,
+  delay,
   filter,
   map,
-  Subject,
-  takeUntil,
-  delay,
+  Observable,
+  of,
   ReplaySubject,
-  BehaviorSubject,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
 } from 'rxjs';
 import { BackendConfigurationService } from '../config';
 import { StateService } from '../state.service';
@@ -24,6 +24,7 @@ export class SDKService {
   nuclia: Nuclia = new Nuclia({
     backend: this.config.getAPIURL(),
     client: this.config.staticConf.client,
+    standalone: this.config.staticConf.standalone,
   });
 
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);

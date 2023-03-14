@@ -1,13 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
-import { SDKService, SimpleAccount, STFUtils } from '@flaps/core';
-import { SelectService } from '../select.service';
-import { NavigationService, Sluggable } from '@flaps/common';
-import { IKnowledgeBoxItem } from '@nuclia/core';
+import { SDKService, SimpleAccount, StaticEnvironmentConfiguration, STFUtils } from '@flaps/core';
+import { SelectAccountKbService } from '../select-account-kb.service';
+import { IKnowledgeBoxItem, IStandaloneKb } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { Sluggable } from '../../validators';
+import { NavigationService } from '../../services';
 
 @Component({
   selector: 'app-select-kb',
@@ -18,6 +19,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 export class SelectKbComponent implements OnInit, OnDestroy {
   account: SimpleAccount | undefined;
   kbs: IKnowledgeBoxItem[] | undefined;
+  standaloneKbs?: IStandaloneKb[];
   addKb: boolean = false;
   accountData = this.route.paramMap.pipe(
     filter((params) => params.get('account') !== null),
@@ -32,13 +34,16 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   errorMessages: IErrorMessages = { sluggable: 'stash.kb_name_invalid' } as IErrorMessages;
 
+  standalone = this.environmentConfiguration.standalone;
+
   constructor(
     private navigation: NavigationService,
-    private selectService: SelectService,
+    private selectService: SelectAccountKbService,
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
+    @Inject('staticEnvironmentConfiguration') private environmentConfiguration: StaticEnvironmentConfiguration,
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +65,16 @@ export class SelectKbComponent implements OnInit, OnDestroy {
         }
         this.cdr.markForCheck();
       });
+
+    if (this.environmentConfiguration.standalone) {
+      this.sdk.nuclia.db
+        .getStandaloneKbs()
+        .pipe(takeUntil(this.unsubscribeAll))
+        .subscribe((kbs) => {
+          console.log(kbs);
+          this.standaloneKbs = kbs;
+        });
+    }
   }
 
   getKbUrl(kbSlug: string) {
@@ -87,7 +102,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   }
 
   back() {
-    this.router.navigate(['/select']);
+    this.router.navigate(['/select-account-kb']);
   }
 
   goToAccountManage() {

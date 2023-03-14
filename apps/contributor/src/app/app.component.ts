@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils } from '@flaps/core';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,6 +17,7 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
+  @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
   version?: string;
 
   private unsubscribeAll: Subject<void> = new Subject<void>();
@@ -77,7 +78,8 @@ export class AppComponent implements OnInit, OnDestroy {
         tap((event) => this.tracking.navigation(event as NavigationEnd)),
         filter(
           (event) =>
-            ((event as NavigationEnd).url.startsWith('/at/') || (event as NavigationEnd).url.startsWith('/select/')) &&
+            ((event as NavigationEnd).url.startsWith('/at/') ||
+              (event as NavigationEnd).url.startsWith('/select-account-kb/')) &&
             !!this.router.routerState.root.firstChild?.firstChild,
         ),
         switchMap(() =>

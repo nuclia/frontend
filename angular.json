@@ -118,7 +118,7 @@
               },
               {
                 "glob": "**/*",
-                "input": "apps/dashboard/src/environments_config/local-stage",
+                "input": "apps/contributor/src/environments_config/local-stage",
                 "output": "assets/deployment"
               },
               {
@@ -169,7 +169,7 @@
                 },
                 {
                   "glob": "**/*",
-                  "input": "apps/dashboard/src/environments_config/local-stage",
+                  "input": "apps/contributor/src/environments_config/local-stage",
                   "output": "assets/deployment"
                 },
                 {
@@ -209,7 +209,7 @@
                 },
                 {
                   "glob": "**/*",
-                  "input": "apps/dashboard/src/environments_config/local-stage",
+                  "input": "apps/contributor/src/environments_config/local-stage",
                   "output": "assets/deployment"
                 },
                 {

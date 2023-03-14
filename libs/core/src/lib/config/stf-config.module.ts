@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders, APP_INITIALIZER } from '@angular/core';
+import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -26,7 +26,7 @@ export class STFConfigModule {
           multi: true,
         },
         {
-          provide: 'staticEnviromentConfiguration',
+          provide: 'staticEnvironmentConfiguration',
           useValue: environment,
         },
       ],

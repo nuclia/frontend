@@ -5,12 +5,12 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { SelectComponent } from './select.component';
+import { SelectAccountComponent } from './select-account/select-account.component';
 import { SelectKbComponent } from './select-kb/select-kb.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent } from '@nuclia/sistema';
 
-const Components = [SelectComponent, SelectKbComponent];
+const Components = [SelectAccountComponent, SelectKbComponent];
 
 @NgModule({
   imports: [
@@ -28,4 +28,4 @@ const Components = [SelectComponent, SelectKbComponent];
   declarations: [...Components],
   exports: [],
 })
-export class SelectModule {}
+export class SelectAccountKbModule {}

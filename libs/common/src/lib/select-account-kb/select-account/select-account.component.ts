@@ -1,26 +1,26 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { SimpleAccount } from '@flaps/core';
-import { SelectService, AccountsKbs } from './select.service';
-import { selectAnimations } from './utils';
+import { AccountsKbs, SelectAccountKbService } from '../select-account-kb.service';
+import { selectAnimations } from '../utils';
 
 @Component({
-  selector: 'app-select',
-  templateUrl: './select.component.html',
-  styleUrls: ['./select.component.scss'],
+  selector: 'app-select-account',
+  templateUrl: './select-account.component.html',
+  styleUrls: ['./select-account.component.scss'],
   animations: [selectAnimations],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectComponent implements OnInit, OnDestroy {
+export class SelectAccountComponent implements OnInit, OnDestroy {
   accounts: SimpleAccount[] | null = null;
   kbs: AccountsKbs | null = null;
   selectKb: boolean = false;
   unsubscribeAll = new Subject<void>();
 
   constructor(
-    private selectService: SelectService,
+    private selectService: SelectAccountKbService,
     private route: ActivatedRoute,
     private router: Router,
     private cdr: ChangeDetectorRef,

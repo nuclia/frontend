@@ -1,25 +1,25 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
-import { SelectService } from './select.service';
+import { SelectAccountKbService } from '../select-account-kb.service';
 
-import { SelectComponent } from './select.component';
+import { SelectAccountComponent } from './select-account.component';
 import { subscriptionPipeFn, TranslatePipeMock } from '@flaps/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MockModule } from 'ng-mocks';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('SelectComponent', () => {
-  let component: SelectComponent;
-  let fixture: ComponentFixture<SelectComponent>;
+  let component: SelectAccountComponent;
+  let fixture: ComponentFixture<SelectAccountComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, RouterTestingModule, MockModule(PaButtonModule)],
-      declarations: [SelectComponent, TranslatePipeMock],
+      declarations: [SelectAccountComponent, TranslatePipeMock],
       providers: [
         {
-          provide: SelectService,
+          provide: SelectAccountKbService,
           useValue: {
             getAccounts: () => [],
             getKbs: () => ({}),
@@ -41,7 +41,7 @@ describe('SelectComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SelectComponent);
+    fixture = TestBed.createComponent(SelectAccountComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

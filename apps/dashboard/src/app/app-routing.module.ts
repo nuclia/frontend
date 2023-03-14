@@ -1,12 +1,19 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
-import { PageNotFoundComponent, PageNotFoundModule } from '@flaps/common';
+import {
+  AccountOwnerGuard,
+  BaseComponent,
+  EmptyComponent,
+  PageNotFoundComponent,
+  PageNotFoundModule,
+  RootGuard,
+  SelectAccountComponent,
+  SelectAccountKbGuard,
+  SelectKbComponent,
+} from '@flaps/common';
 import { LoggedinGuard } from '@flaps/core';
 
-import { BaseComponent } from './base/base.component';
-import { SelectComponent } from './select/select.component';
-import { SelectKbComponent } from './select/select-kb/select-kb.component';
 import { AccountComponent } from './account/account.component';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box/knowledge-box.component';
@@ -21,10 +28,7 @@ import { SetupInviteComponent } from './setup/setup-invite/setup-invite.componen
 import { SetupAccountComponent } from './setup/setup-account/setup-account.component';
 import { FarewellComponent } from './setup/farewell/farewell.component';
 
-import { RootGuard } from './guards/root.guard';
-import { SelectGuard } from './select/select.guard';
 import { AccountKbsComponent } from './account/account-kbs/account-kbs.component';
-import { AccountOwnerGuard } from './guards/permission.guard';
 import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
 import { RedirectComponent } from './redirect/redirect.component';
@@ -32,14 +36,6 @@ import { AccountNUAComponent } from './account/account-nua/account-nua.component
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 import { AccountUsersComponent } from './account/account-users/account-users.component';
 import { SearchComponent } from './search/search.component';
-
-@Component({
-  template: '<ng-container></ng-container>',
-  standalone: true,
-})
-export class EmptyComponent {
-  constructor() {}
-}
 
 const routes: Routes = [
   {
@@ -171,8 +167,8 @@ const routes: Routes = [
   },
   {
     path: 'select',
-    component: SelectComponent,
-    canActivate: [LoggedinGuard, SelectGuard],
+    component: SelectAccountComponent,
+    canActivate: [LoggedinGuard, SelectAccountKbGuard],
     children: [
       {
         path: ':account',

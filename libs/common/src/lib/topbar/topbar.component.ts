@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SDKService, UserService } from '@flaps/core';
 import { take } from 'rxjs';
-import { NavigationService } from '@flaps/common';
+import { NavigationService } from '../services';
 
 @Component({
   selector: 'app-topbar',

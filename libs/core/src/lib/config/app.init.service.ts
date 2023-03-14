@@ -36,6 +36,7 @@ export type StaticEnvironmentConfiguration = {
   };
   base_asset_url?: string;
   locales?: string[]; // List of registred locales in the app
+  standalone?: boolean;
 };
 
 declare var window: any;

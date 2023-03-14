@@ -19,7 +19,7 @@ import {
 } from './db.models';
 import type { LearningConfigurations } from './db.models';
 import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
-import { WritableKnowledgeBox } from './kb';
+import { IStandaloneKb, WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
 
 export class Db implements IDb {
@@ -60,6 +60,12 @@ export class Db implements IDb {
       throw new Error('Account is not set');
     }
     return this.nuclia.rest.get<Account>(`/account/${account}`);
+  }
+
+  getStandaloneKbs(): Observable<IStandaloneKb[]> {
+    return this.nuclia.rest
+      .get<{ kbs: IStandaloneKb[] }>('/kbs', { 'X-NUCLIADB-ROLES': 'MANAGER' })
+      .pipe(map((result) => result.kbs));
   }
 
   getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]> {
