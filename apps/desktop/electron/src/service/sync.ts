@@ -1,8 +1,11 @@
-import { getConnectors } from './connectors';
+import { getSources } from './sources';
+import { importConnector, loadConnectors } from './dynamic-connectors';
 
 export const sync = () => {
+  importConnector('https://nuclia.github.io/status/connectors/youtube.js');
+  loadConnectors();
   setInterval(() => {
-    const connectors = getConnectors();
-    console.log(connectors);
+    const sources = getSources();
+    // console.log(sources);
   }, 5000);
 };

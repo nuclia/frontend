@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-export const getConnectors = () => {
+export const getSources = () => {
   try {
     const data = fs.readFileSync('./connectors-db.json', 'utf8');
     return JSON.parse(data);
@@ -9,9 +9,9 @@ export const getConnectors = () => {
   }
 };
 
-export const setConnectors = (connectors: any) => {
+export const setSources = (sources: any) => {
   try {
-    fs.writeFileSync('./connectors-db.json', JSON.stringify(connectors));
+    fs.writeFileSync('./connectors-db.json', JSON.stringify(sources));
   } catch (err) {
     console.log(`Error writing file: ${err}`);
     throw err;
