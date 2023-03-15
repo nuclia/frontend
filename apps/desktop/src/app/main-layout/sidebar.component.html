@@ -1,0 +1,44 @@
+<div class="sidebar">
+  <div class="upload-menu">
+    <div class="upload-title">{{ 'upload.data' | translate }}:</div>
+    <ul>
+      <li *ngFor="let text of steps; let step = index">
+        <div
+          class="step"
+          [class.pending]="(sync.step | async) < step"
+          [class.active]="(sync.step | async) === step">
+          <span
+            *ngIf="(sync.step | async) <= step"
+            class="step-number">
+            <pa-icon name="circle-dash"></pa-icon>
+            <span>{{ step + 1 }}</span>
+          </span>
+          <pa-icon
+            *ngIf="(sync.step | async) > step"
+            name="circle-check"
+            color="#f06"></pa-icon>
+          {{ text | translate }}
+        </div>
+        <div
+          *ngIf="step === 0 && (sync.step | async) === 0"
+          class="quick-access-list">
+          <div
+            *ngFor="let item of cache | async"
+            class="quick-access">
+            <span
+              (click)="goToSource(item.connectorId, item.name, false)"
+              paEllipsisTooltip>
+              {{ sync.sources[item.connectorId].definition.title + ' - ' + item.name }}
+            </span>
+            <pa-button
+              (click)="goToSource(item.connectorId, item.name, true)"
+              size="small"
+              iconSize="small"
+              icon="edit"
+              aspect="basic"></pa-button>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

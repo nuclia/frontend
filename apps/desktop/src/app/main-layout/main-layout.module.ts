@@ -6,6 +6,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { OverlayModule } from '@angular/cdk/overlay';
 
 import { MainLayoutComponent } from './main-layout.component';
+import { SidebarComponent } from './sidebar.component';
 import { TopbarComponent } from './topbar.component';
 import {
   PaAvatarModule,
@@ -13,6 +14,7 @@ import {
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 
 @NgModule({
@@ -27,9 +29,10 @@ import {
     PaDropdownModule,
     PaPopupModule,
     PaIconModule,
+    PaTooltipModule,
   ],
   exports: [],
-  declarations: [MainLayoutComponent, TopbarComponent],
+  declarations: [MainLayoutComponent, SidebarComponent, TopbarComponent],
   providers: [],
 })
 export class MainLayoutModule {}
