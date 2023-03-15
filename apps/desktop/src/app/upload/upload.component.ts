@@ -72,6 +72,7 @@ export class UploadComponent implements OnInit, OnDestroy {
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
     this.sourceId = event.connector.id;
     this.tracking.logEvent('desktop:select_source', { sourceId: this.sourceId });
+    this.sync.setSource(event.connector.id, event.connector.id, event.params).subscribe();
     this.sync
       .getSource(event.connector.id)
       .pipe(

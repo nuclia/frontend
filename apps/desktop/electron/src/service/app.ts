@@ -1,4 +1,5 @@
 import express, { Express } from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import { router } from './routes';
 import { sync } from './sync';
@@ -7,6 +8,11 @@ const app: Express = express();
 const port = 5001;
 
 export const initSyncService = () => {
+  app.use(
+    cors({
+      origin: '*',
+    }),
+  );
   app.use(bodyParser.json());
   app.use('/', router);
 
