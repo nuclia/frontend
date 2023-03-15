@@ -9,53 +9,35 @@ import {
 } from '../models';
 import { filter, from, map, Observable, of, switchMap, take } from 'rxjs';
 
+// eslint-disable-next-line no-new-func
+const importDynamic = new Function('modulePath', 'return import(modulePath)');
+
+const fetch = async (...args: any[]) => {
+  const module = await importDynamic('node-fetch');
+  return module.default(...args);
+};
+
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
   title: 'Dropbox',
   logo: 'assets/logos/dropbox.svg',
   description: 'File storage and synchronization service developed by Dropbox',
-  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda#dropbox-connector-usage',
-  factory: () => of(new DropboxImpl()),
+  factory: () => new DropboxImpl(),
 };
 
-const TOKEN = 'DROPBOX_TOKEN';
 class DropboxImpl implements ISourceConnector {
-  hasServerSideAuth = false;
   isExternal = false;
-  resumable = true;
+  params: ConnectorParameters = {};
 
-  getParameters(): Observable<Field[]> {
-    return of([
-      {
-        id: 'token',
-        label: 'App token',
-        type: 'text',
-        required: true,
-      },
-    ]);
-  }
-
-  handleParameters(params: ConnectorParameters) {
-    localStorage.setItem(TOKEN, params.token);
-  }
-
-  getData(): ConnectorParameters {
-    return {token: localStorage.getItem(TOKEN)};
-  }
-
-  goToOAuth(reset?: boolean) {
-    return of(true);
-  }
-
-  authenticate(): Observable<boolean> {
-    return of(true);
+  setParameters(params: ConnectorParameters) {
+    this.params = params;
   }
 
   getFiles(query?: string, pageSize?: number): Observable<SearchResults> {
     return this._getFiles(query, pageSize);
   }
 
-  private _getFiles(query?: string, pageSize: number = 100, nextPage?: string | number): Observable<SearchResults> {
+  private _getFiles(query?: string, pageSize = 100, nextPage?: string | number): Observable<SearchResults> {
     const success = (res: any) => {
       if (res.status === 401) {
         throw new Error('Unauthorized');
@@ -67,10 +49,10 @@ class DropboxImpl implements ISourceConnector {
       throw new Error();
     };
     const request = query
-      ? fetch(`https://api.dropboxapi.com/2/files/${nextPage ? 'search/continue_v2' : 'search_v2'}`, {
+      ? fetch(`https://api.dropboxapi.com/2/files/search_v2${nextPage ? '/continue' : ''}`, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${localStorage.getItem(TOKEN || '')}`,
+            Authorization: `Bearer ${this.params.token || ''}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(nextPage ? { cursor: nextPage } : { query }),
@@ -78,25 +60,19 @@ class DropboxImpl implements ISourceConnector {
       : fetch(`https://api.dropboxapi.com/2/files/list_folder${nextPage ? '/continue' : ''}`, {
           method: 'POST',
           headers: {
-            Authorization: `Bearer ${localStorage.getItem(TOKEN || '')}`,
+            Authorization: `Bearer ${this.params.token || ''}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: pageSize }),
         }).then(success, failure);
-    return this.authenticate().pipe(
-      filter((isSigned) => isSigned),
-      take(1),
-      switchMap(() =>
-        from(request).pipe(
-          map((result: any) => ({
-            items:
-              (query
-                ? result.matches?.filter(this.filterResults).map(this.mapResults)
-                : result.entries?.filter(this.filterFiles).map(this.mapFiles)) || [],
-            nextPage: result.has_more ? this._getFiles(query, pageSize, result.cursor) : undefined,
-          })),
-        ),
-      ),
+    return from(request).pipe(
+      map((result: any) => ({
+        items:
+          (query
+            ? result.matches?.filter(this.filterResults).map(this.mapResults)
+            : result.entries?.filter(this.filterFiles).map(this.mapFiles)) || [],
+        nextPage: result.has_more ? this._getFiles(query, pageSize, result.cursor) : undefined,
+      })),
     );
   }
 
@@ -137,7 +113,7 @@ class DropboxImpl implements ISourceConnector {
       fetch(`https://content.dropboxapi.com/2/files/download`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem(TOKEN || '')}`,
+          Authorization: `Bearer ${this.params.token || ''}`,
           'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
         },
       }).then((res) => res.blob()),

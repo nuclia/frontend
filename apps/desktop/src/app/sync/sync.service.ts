@@ -30,6 +30,7 @@ import {
   FileStatus,
   IDestinationConnector,
   ISourceConnector,
+  SearchResults,
   SourceConnectorDefinition,
   SyncItem,
 } from './models';
@@ -45,9 +46,11 @@ import { GCSConnector } from './sources/gcs';
 import { OneDriveConnector } from './sources/onedrive';
 import { BrightcoveConnector } from './sources/brightcove';
 import { DynamicConnectorWrapper } from './dynamic-connector';
+import { HttpClient } from '@angular/common/http';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
+const SYNC_SERVER = 'http://localhost:5001';
 
 interface Sync {
   date: string;
@@ -104,7 +107,7 @@ export class SyncService {
   private _showFirstStep = new Subject<void>();
   showFirstStep = this._showFirstStep.asObservable();
 
-  constructor(private sdk: SDKService, private user: UserService) {
+  constructor(private sdk: SDKService, private user: UserService, private http: HttpClient) {
     this.ready.subscribe(() => {
       this.watchProcessing();
       this.start();
@@ -226,6 +229,14 @@ export class SyncService {
           );
         }),
     ).subscribe();
+  }
+
+  setSource(sourceId: string, connectorId: string, data?: ConnectorParameters): Observable<void> {
+    return this.http.post<void>(`${SYNC_SERVER}/source`, { [sourceId]: { connectorId, data } });
+  }
+
+  getFiles(sourceId: string, query?: string): Observable<SearchResults> {
+    return this.http.get<SearchResults>(`${SYNC_SERVER}/source/${sourceId}/files${query ? `?query=${query}` : ''}`);
   }
 
   addSync(sync: Sync) {
