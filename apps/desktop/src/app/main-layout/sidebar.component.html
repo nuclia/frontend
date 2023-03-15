@@ -5,22 +5,22 @@
       <li *ngFor="let text of steps; let step = index">
         <div
           class="step"
-          [class.pending]="(sync.step | async) < step"
-          [class.active]="(sync.step | async) === step">
+          [class.pending]="(currentStep | async) < step"
+          [class.active]="(currentStep | async) === step">
           <span
-            *ngIf="(sync.step | async) <= step"
+            *ngIf="(currentStep | async) <= step"
             class="step-number">
             <pa-icon name="circle-dash"></pa-icon>
             <span>{{ step + 1 }}</span>
           </span>
           <pa-icon
-            *ngIf="(sync.step | async) > step"
+            *ngIf="(currentStep | async) > step"
             name="circle-check"
             color="#f06"></pa-icon>
           {{ text | translate }}
         </div>
         <div
-          *ngIf="step === 0 && (sync.step | async) === 0"
+          *ngIf="step === 0 && (currentStep | async) === 0"
           class="quick-access-list">
           <div
             *ngFor="let item of cache | async"
@@ -28,7 +28,7 @@
             <span
               (click)="goToSource(item.connectorId, item.name, false)"
               paEllipsisTooltip>
-              {{ sync.sources[item.connectorId].definition.title + ' - ' + item.name }}
+              {{ sources[item.connectorId].definition.title + ' - ' + item.name }}
             </span>
             <pa-button
               (click)="goToSource(item.connectorId, item.name, true)"

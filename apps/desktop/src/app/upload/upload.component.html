@@ -1,5 +1,5 @@
 <div class="container">
-  <ng-container *ngIf="(sync.step | async) === 0 || (sync.step | async) === 1">
+  <ng-container *ngIf="(step | async) === 0 || (step | async) === 1">
     <h2>{{ 'upload.source.title' | translate }}</h2>
     <p>{{ 'upload.source.description' | translate }}</p>
     <nde-connectors
@@ -8,7 +8,7 @@
       (selectConnector)="selectSource($event)"
       (cancel)="cancel()"></nde-connectors>
   </ng-container>
-  <ng-container *ngIf="(sync.step | async) === 2">
+  <ng-container *ngIf="(step | async) === 2">
     <nde-select-files
       [source]="source"
       [sourceId]="sourceId"
@@ -16,7 +16,7 @@
       [(selection)]="selection"
       (cancel)="cancel()"></nde-select-files>
   </ng-container>
-  <ng-container *ngIf="(sync.step | async) === 3">
+  <ng-container *ngIf="(step | async) === 3">
     <h2>Push to</h2>
     <nde-connectors
       type="destinations"

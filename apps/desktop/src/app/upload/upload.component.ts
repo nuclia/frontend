@@ -18,6 +18,7 @@ export class UploadComponent implements OnInit, OnDestroy {
   sourceId = '';
   source?: ISourceConnector;
   selection = new SelectionModel<SyncItem>(true, []);
+  step = this.sync.step;
   quickAccess?: { connectorId: string; quickAccessName: string };
   unsubscribeAll = new Subject<void>();
 

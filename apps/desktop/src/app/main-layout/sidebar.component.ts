@@ -10,6 +10,8 @@ import { SyncService } from '../sync/sync.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {
+  currentStep = this.sync.step;
+  sources = this.sync.sources;
   steps = ['upload.steps.source', 'upload.steps.configure', 'upload.steps.data', 'upload.steps.destination'];
   cache = this.sync.step.pipe(
     filter((step) => step === 0),
