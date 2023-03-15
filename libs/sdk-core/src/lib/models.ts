@@ -9,6 +9,7 @@ import type {
   IKnowledgeBoxItem,
   KnowledgeBox,
   KnowledgeBoxCreation,
+  LearningConfigurations,
   NUAClient,
   NUAClientPayload,
   ProcessingPullResponse,
@@ -112,6 +113,7 @@ export interface IDb {
   deleteNUAClient(account: string, client_id: string): Observable<void>;
   hasNUAClient(): boolean;
   getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
+  getLearningConfigurations(): Observable<LearningConfigurations>;
 }
 
 export interface NucliaOptions {

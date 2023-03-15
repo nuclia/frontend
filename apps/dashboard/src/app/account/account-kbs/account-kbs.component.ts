@@ -57,6 +57,8 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.account = account;
           this.maxKnowledgeBoxes = account.max_kbs;
           this.zones = zones;
+          const zoneSlug = zones.find((zone) => zone.id === account.zone)?.slug;
+          this.sdk.nuclia.options.zone = zoneSlug;
           return this.updateKbs();
         }),
       )

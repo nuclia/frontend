@@ -1,3 +1,9 @@
+# 1.1.6 (UNRELEASED)
+
+### Improvements
+
+- Add learning configuration in KB creation
+
 # 1.1.5 (2023-03-03)
 
 ### Improvements

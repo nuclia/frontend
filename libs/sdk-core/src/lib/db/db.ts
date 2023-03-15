@@ -17,6 +17,7 @@ import {
   StatsType,
   Welcome,
 } from './db.models';
+import type { LearningConfigurations } from './db.models';
 import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
 import { WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
@@ -236,5 +237,9 @@ export class Db implements IDb {
 
   deleteNUAClient(account: string, client_id: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${account}/nua_client/${client_id}`);
+  }
+
+  getLearningConfigurations(): Observable<LearningConfigurations> {
+    return this.nuclia.rest.get<LearningConfigurations>('/learning/configuration/schema');
   }
 }

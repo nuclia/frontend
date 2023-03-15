@@ -144,8 +144,7 @@ export interface KnowledgeBoxCreation {
   title: string;
   description?: string;
   zone?: string;
-  sentence_embedder?: string;
-  anonymization?: string;
+  learning_configuration?: { [configId: string]: string };
 }
 
 export interface Entities {
