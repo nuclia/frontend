@@ -19,6 +19,7 @@ export const GCSConnector: SourceConnectorDefinition = {
   title: 'Google Cloud',
   logo: 'assets/logos/gcs.svg',
   description: 'File storage service developed by Google',
+  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
   factory: () => of(new GCSImpl()),
 };
 

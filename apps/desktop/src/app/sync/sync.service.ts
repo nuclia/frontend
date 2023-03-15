@@ -21,6 +21,8 @@ import {
 import { environment } from '../../environments/environment';
 import { GDrive } from './sources/gdrive';
 import {
+  CONNECTOR_PARAMS_CACHE,
+  ConnectorCache,
   ConnectorDefinition,
   ConnectorParameters,
   ConnectorSettings,
@@ -96,6 +98,8 @@ export class SyncService {
   ready = new Subject<void>();
   private _step = new BehaviorSubject<number>(0);
   step = this._step.asObservable();
+  private _showSource = new Subject<{ connectorId: string; quickAccessName: string; edit: boolean }>();
+  showSource = this._showSource.asObservable();
 
   constructor(private sdk: SDKService, private user: UserService) {
     this.ready.subscribe(() => {
@@ -319,6 +323,37 @@ export class SyncService {
 
   setStep(step: number) {
     this._step.next(step);
+  }
+
+  goToSource(connectorId: string, quickAccessName: string, edit: boolean) {
+    this._showSource.next({ connectorId, quickAccessName, edit });
+  }
+
+  getConnectorsCache(): { [key: string]: ConnectorCache } {
+    try {
+      const cache = localStorage.getItem(CONNECTOR_PARAMS_CACHE) || '{}';
+      return JSON.parse(cache);
+    } catch (error) {
+      return {};
+    }
+  }
+
+  getConnectorCache(connectorId: string, name: string): ConnectorCache {
+    return this.getConnectorsCache()[`${connectorId}-${name}`];
+  }
+
+  saveConnectorCache(connectorId: string, name: string, params: any) {
+    const cache = this.getConnectorsCache();
+    localStorage.setItem(
+      CONNECTOR_PARAMS_CACHE,
+      JSON.stringify({ ...cache, [`${connectorId}-${name}`]: { connectorId, name, params } }),
+    );
+  }
+
+  removeConnectorCache(connectorId: string, name: string) {
+    const cache = this.getConnectorsCache();
+    delete cache[`${connectorId}-${name}`];
+    localStorage.setItem(CONNECTOR_PARAMS_CACHE, JSON.stringify(cache));
   }
 
   private fetchDynamicConnectors() {

@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, switchMap, take, tap } from 'rxjs';
+import { filter, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { STFTrackingService } from '@flaps/core';
 import { ConnectorDefinition, ConnectorParameters, ISourceConnector, SOURCE_ID_KEY, SyncItem } from '../sync/models';
@@ -14,10 +14,12 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
   styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadComponent implements OnInit {
+export class UploadComponent implements OnInit, OnDestroy {
   sourceId = '';
   source?: ISourceConnector;
   selection = new SelectionModel<SyncItem>(true, []);
+  quickAccess?: { connectorId: string; quickAccessName: string };
+  unsubscribeAll = new Subject<void>();
 
   constructor(
     private sync: SyncService,
@@ -40,14 +42,33 @@ export class UploadComponent implements OnInit {
           filter((yes) => yes),
         )
         .subscribe(() => {
-          this.goTo(1);
+          this.goTo(2);
           localStorage.removeItem(SOURCE_ID_KEY);
         });
     }
+    this.sync.showSource.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+      if (data.edit) {
+        this.quickAccess = { connectorId: data.connectorId, quickAccessName: data.quickAccessName };
+        this.goTo(0);
+      } else {
+        const params = this.sync.getConnectorCache(data.connectorId, data.quickAccessName)?.params;
+        const connector = this.sync.sources[data.connectorId].definition;
+        this.selectSource({ connector, params });
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.goTo(0);
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   goTo(step: number) {
     this.sync.setStep(step);
+    if (step === 0) {
+      this.reset();
+    }
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
@@ -71,13 +92,12 @@ export class UploadComponent implements OnInit {
         filter((yes) => yes),
       )
       .subscribe(() => {
-        this.goTo(1);
+        this.goTo(2);
       });
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
     this.tracking.logEvent('desktop:select_destination', { sourceId: event.connector.id });
-    this.goTo(3);
     this.dialog
       .open(ConfirmFilesComponent, {
         data: { files: this.selection.selected },
@@ -108,15 +128,7 @@ export class UploadComponent implements OnInit {
   }
 
   cancel() {
-    this.reset();
+    this.goTo(0);
     this.router.navigate(['/']);
-  }
-
-  goBackTo(step: number) {
-    this.goTo(step);
-    if (step === 0) {
-      this.reset();
-    }
-    this.cdr?.markForCheck();
   }
 }

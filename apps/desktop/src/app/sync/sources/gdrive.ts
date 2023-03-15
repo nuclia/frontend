@@ -10,6 +10,7 @@ export const GDrive: SourceConnectorDefinition = {
   title: 'Google Drive',
   logo: 'assets/logos/gdrive.svg',
   description: 'File storage and synchronization service developed by Google',
+  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
   factory: () => of(new GDriveImpl()),
 };
 

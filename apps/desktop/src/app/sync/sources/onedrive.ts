@@ -17,6 +17,7 @@ export const OneDriveConnector: SourceConnectorDefinition = {
   title: 'One Drive',
   logo: 'assets/logos/onedrive.svg',
   description: 'Microsoft OneDrive file hosting service',
+  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#onedrive-connector-usage',
   factory: () => of(new OneDriveImpl()),
 };
 

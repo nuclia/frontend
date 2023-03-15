@@ -14,6 +14,7 @@ export const DropboxConnector: SourceConnectorDefinition = {
   title: 'Dropbox',
   logo: 'assets/logos/dropbox.svg',
   description: 'File storage and synchronization service developed by Dropbox',
+  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda#dropbox-connector-usage',
   factory: () => of(new DropboxImpl()),
 };
 
