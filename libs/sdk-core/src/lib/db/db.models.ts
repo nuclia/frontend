@@ -131,3 +131,12 @@ export interface ProcessingStatusResponse {
   shared: { last_delivered_seqid: number | null };
   account?: { last_delivered_seqid: number | null };
 }
+
+export interface LearningConfigurations {
+  [key: string]: LearningConfiguration;
+}
+
+export interface LearningConfiguration {
+  options: { value: string; name: string }[];
+  default: string;
+}

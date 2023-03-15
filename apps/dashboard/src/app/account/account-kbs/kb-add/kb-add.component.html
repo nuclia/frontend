@@ -12,6 +12,7 @@
   </header>
 
   <form
+    *ngIf="kbForm"
     class="form-container"
     [formGroup]="kbForm"
     (ngSubmit)="save()">
@@ -67,47 +68,23 @@
     <div
       *ngIf="step === 1"
       class="modal-body">
-      <h2>{{ 'stash.create.languages' | translate }}</h2>
-      <p>{{ 'stash.create.languages-help' | translate }}</p>
-      <pa-radio-group
-        name="radio-group-language"
-        formControlName="languageMode">
-        <pa-radio
-          *ngFor="let radio of languages"
-          [value]="radio.value">
-          {{ radio.label | translate }}
-        </pa-radio>
-      </pa-radio-group>
+      <h2>{{ 'stash.create.configuration' | translate }}</h2>
+      <div formGroupName="config">
+        <div *ngFor="let conf of displayedLearningConfigurations">
+          <h3>{{ 'stash.create.' + conf.id | translate }}</h3>
+          <p>{{ 'stash.create.' + conf.id + '.help' | translate }}</p>
+          <pa-radio-group
+            [formControlName]="conf.id"
+            [name]="conf.id">
+            <pa-radio
+              *ngFor="let value of conf.data.options"
+              [value]="value.value">
+              {{ value.name }}
+            </pa-radio>
+          </pa-radio-group>
+        </div>
+      </div>
 
-      <pa-select
-        *ngIf="kbForm.controls.languageMode.value === 'monolingual'"
-        externalLabel
-        formControlName="selectedLanguage">
-        <pa-option
-          *ngFor="let lang of languageList"
-          [value]="lang">
-          {{ 'language.' + lang | translate }}
-        </pa-option>
-      </pa-select>
-    </div>
-
-    <div
-      *ngIf="step === 2 && (hasAnonymization | async)"
-      class="modal-body">
-      <ng-container *ngIf="!creationInProgress">
-        <h2>{{ 'stash.create.anonymization' | translate }}</h2>
-        <p>{{ 'stash.create.anonymization-help' | translate }}</p>
-        <pa-radio-group
-          name="radio-group-anonymization"
-          formControlName="useAnonymization">
-          <pa-radio
-            *ngFor="let radio of anonymizationOptions"
-            [value]="radio.value"
-            [disabled]="saving">
-            {{ radio.label | translate }}
-          </pa-radio>
-        </pa-radio-group>
-      </ng-container>
       <div
         *ngIf="creationInProgress"
         class="saving-spinner">
@@ -132,7 +109,7 @@
         </pa-button>
 
         <pa-button
-          *ngIf="step === (lastStep | async)"
+          *ngIf="step === lastStep"
           type="submit"
           kind="primary"
           [disabled]="saving">
@@ -140,14 +117,14 @@
         </pa-button>
 
         <pa-button
-          *ngIf="step < ((lastStep | async) || 2)"
+          *ngIf="step < lastStep"
           [disabled]="step === 0 && kbForm.invalid"
           (click)="next()">
           {{ 'generic.next' | translate }}
         </pa-button>
       </div>
       <div class="steps">
-        <small>{{ step + 1 }} / {{ totalSteps | async }}</small>
+        <small>{{ step + 1 }} / {{ totalSteps }}</small>
       </div>
     </footer>
   </form>

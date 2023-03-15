@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="4.0.3" version="1.3">
+<babeledit_project be_version="4.0.1" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -11580,7 +11580,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.create.anonymization</name>
+						<name>stash.create.anonymization_model</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -11600,7 +11600,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.create.anonymization-help</name>
+						<name>stash.create.anonymization_model.help</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -11620,7 +11620,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.create.anonymization-warning</name>
+						<name>stash.create.configuration</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -11700,7 +11700,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.create.language.mono</name>
+						<name>stash.create.semantic_model</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -11720,67 +11720,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.create.language.mono-help</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.create.language.multi</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.create.languages</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>stash.create.languages-help</name>
+						<name>stash.create.semantic_model.help</name>
 						<description/>
 						<comment/>
 						<default_text/>
