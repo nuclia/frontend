@@ -2,11 +2,9 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
 import { STFTrackingService } from '@flaps/core';
 import { ConnectorDefinition, ConnectorParameters, ISourceConnector, SOURCE_ID_KEY, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
-import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 @Component({
   selector: 'nde-upload',
@@ -26,7 +24,6 @@ export class UploadComponent implements OnInit, OnDestroy {
     private sync: SyncService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private dialog: MatDialog,
     private tracking: STFTrackingService,
   ) {}
 
@@ -99,27 +96,18 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
     this.tracking.logEvent('desktop:select_destination', { sourceId: event.connector.id });
-    this.dialog
-      .open(ConfirmFilesComponent, {
-        data: { files: this.selection.selected },
-      })
-      .afterClosed()
-      .pipe(filter((result) => !!result))
-      .subscribe(() => {
-        this.tracking.logEvent('desktop:upload_confirm');
-        this.sync.addSync({
-          date: new Date().toISOString(),
-          source: this.sourceId,
-          destination: {
-            id: event.connector.id,
-            params: event.params,
-          },
-          files: this.selection.selected,
-          resumable: !!this.source?.resumable,
-          fileUUIDs: [],
-        });
-        this.router.navigate(['/']);
-      });
+    this.sync.addSync({
+      date: new Date().toISOString(),
+      source: this.sourceId,
+      destination: {
+        id: event.connector.id,
+        params: event.params,
+      },
+      files: this.selection.selected,
+      resumable: !!this.source?.resumable,
+      fileUUIDs: [],
+    });
+    this.router.navigate(['/']);
   }
 
   private reset() {

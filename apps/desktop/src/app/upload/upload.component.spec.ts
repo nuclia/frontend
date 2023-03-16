@@ -3,7 +3,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { STFTrackingService, TranslatePipeMock } from '@flaps/core';
-import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, NEVER, of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
@@ -20,7 +19,6 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -29,20 +27,12 @@ describe('UploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        UploadComponent,
-        ConnectorsComponent,
-        ConnectorComponent,
-        TranslatePipeMock,
-        SelectFilesComponent,
-        ConfirmFilesComponent,
-      ],
+      declarations: [UploadComponent, ConnectorsComponent, ConnectorComponent, TranslatePipeMock, SelectFilesComponent],
       imports: [
         NoopAnimationsModule,
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        MatDialogModule,
         MockModule(PaButtonModule),
         MockModule(PaTextFieldModule),
         MockModule(PaCardModule),
@@ -132,8 +122,6 @@ describe('UploadComponent', () => {
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="fields-form"]').submit();
-    fixture.detectChanges();
-    (document.querySelector('[qa="confirm"]') as HTMLElement).click();
     fixture.detectChanges();
     expect(sync.addSync).toHaveBeenCalled();
   });
