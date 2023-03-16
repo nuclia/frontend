@@ -1,0 +1,14 @@
+@import 'apps/dashboard/src/variables';
+
+.knowledge-box-keys {
+  padding: 70px var(--app-layout-margin-right);
+
+  h2 {
+    margin: 0 0 rhythm(0.25) 0;
+  }
+
+  .warning {
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+}

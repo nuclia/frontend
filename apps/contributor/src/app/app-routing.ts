@@ -10,7 +10,6 @@ import {
 } from '@flaps/common';
 
 export const routerOptions: ExtraOptions = {
-  initialNavigation: 'enabledBlocking',
   onSameUrlNavigation: 'reload',
   scrollPositionRestoration: 'enabled',
 };

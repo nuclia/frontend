@@ -47,3 +47,7 @@ export interface TrainingExecution {
   end: string;
   status: TrainingExecutionStatus;
 }
+
+export interface TrainingExecutionWithDuration extends TrainingExecution {
+  duration: string;
+}

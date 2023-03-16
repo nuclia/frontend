@@ -10,8 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { HintModule, LabelModule, PaginationModule } from '@flaps/common';
-import { PipesModule } from '../utils/pipes/pipes.module';
+import { HintModule, LabelModule, PaginationModule, PipesModule } from '@flaps/common';
 
 import { ResourceListComponent } from './resource-list.component';
 import { TableHeaderComponent } from './table-header/table-header.component';
@@ -53,6 +52,7 @@ import { ParagraphAnnotationComponent } from './edit/annotation/paragraph-annota
 import { PreviewComponent } from './edit/preview/preview.component';
 import { SelectFirstFieldDirective } from './edit/select-first-field/select-first-field.directive';
 import { LabelSelectionComponent } from './edit/classification/paragraph-classification/label-selection.component';
+import { STFIconsModule } from '@flaps/pastanaga';
 
 const Components = [
   ResourceListComponent,
@@ -166,6 +166,7 @@ const ROUTES: Routes = [
     MatPaginatorModule,
     PaginationModule,
     PipesModule,
+    STFIconsModule,
     LabelModule,
     HintModule,
     PaTextFieldModule,

@@ -1,0 +1,32 @@
+@import 'apps/dashboard/src/variables';
+
+.upload-bar {
+  @include dark-mode();
+  display: flex;
+  align-items: center;
+  height: rhythm(6);
+  padding: 0 var(--app-layout-margin-right) 0 rhythm(6);
+  position: relative;
+
+  .upload-bar-title {
+    flex: 0 0 auto;
+    margin-right: rhythm(3);
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  .upload-bar-progress {
+    flex: 1 1 auto;
+    margin-right: rhythm(1.5);
+  }
+
+  .upload-bar-percentage {
+    flex: 0 0 auto;
+    margin-right: rhythm(3);
+  }
+
+  .close-button {
+    right: rhythm(2);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

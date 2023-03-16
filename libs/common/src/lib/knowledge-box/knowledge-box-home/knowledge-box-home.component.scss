@@ -1,0 +1,138 @@
+@import 'apps/dashboard/src/variables';
+
+.knowledge-box-home {
+  padding: 4.5vw var(--app-layout-margin-right);
+
+  $flex-gap: rhythm(4);
+  $width-right-column: rhythm(40) + rhythm(6);
+  .home-main-layout {
+    display: flex;
+    width: 100%;
+    gap: $flex-gap;
+  }
+
+  .left-column {
+    flex: 1 1 auto;
+    max-width: calc(100% - #{$width-right-column} - #{$flex-gap});
+  }
+
+  .right-column {
+    flex: 0 0 auto;
+    width: $width-right-column;
+  }
+
+  .container {
+    padding: rhythm(3);
+    background-color: $color-neutral-lightest;
+    border-radius: rhythm(0.5);
+    margin-bottom: $flex-gap;
+  }
+
+  .chart-container {
+    padding-bottom: rhythm(5);
+    margin-bottom: $flex-gap;
+  }
+
+  .chart-header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    line-height: 1;
+    margin-bottom: rhythm(4);
+  }
+
+  .resource-stats {
+    dl {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      font-size: font-size(m);
+      row-gap: rhythm(1);
+
+      dt {
+        flex: 1 0 75%;
+        font-weight: $font-weight-thin;
+      }
+
+      dd {
+        flex: 1 0 25%;
+        font-weight: $font-weight-bold;
+        margin-bottom: 0;
+        text-align: right;
+      }
+    }
+
+    .total-resources {
+      margin-bottom: rhythm(2);
+    }
+  }
+
+  .endpoint-container {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    gap: rhythm(2);
+    margin-bottom: rhythm(2);
+
+    .endpoint-text {
+      align-items: baseline;
+      display: flex;
+      gap: rhythm(2);
+    }
+
+    .endpoint {
+      display: inline-block;
+      font-family: $font-family-monospace;
+      font-size: font-size(s);
+      white-space: nowrap;
+    }
+  }
+
+  .go-to-desktop {
+    background: $color-neutral-lighter;
+    font-weight: $font-weight-regular;
+    padding: rhythm(5);
+    text-align: center;
+
+    img {
+      margin-bottom: rhythm(2);
+    }
+  }
+
+  .desktop-button {
+    margin-top: rhythm(4);
+    text-align: center;
+
+    p {
+      display: flex;
+      justify-content: center;
+      margin: rhythm(1.5) 0 0;
+    }
+    small {
+      font-size: size(xs);
+      font-style: italic;
+      font-weight: $font-weight-semi-bold;
+    }
+  }
+
+  .total-resources {
+    font-size: rhythm(5);
+    margin-bottom: rhythm(4);
+  }
+
+  .state-container {
+    align-items: center;
+    display: flex;
+    padding: rhythm(2) rhythm(3);
+
+    .title-s {
+      flex: 1 0 auto;
+      font-weight: $font-weight-bold;
+    }
+  }
+
+  .state {
+    font-weight: $font-weight-semi-bold;
+  }
+}

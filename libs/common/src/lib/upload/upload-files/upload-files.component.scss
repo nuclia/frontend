@@ -1,0 +1,84 @@
+@import 'apps/dashboard/src/variables';
+
+.upload-files {
+  width: 50vw;
+  min-width: 350px;
+  max-width: 722px;
+  max-height: 85vh;
+}
+
+.size-warning {
+  background-color: $color-secondary-regular;
+  padding: rhythm(1);
+  display: flex;
+  margin-bottom: rhythm(3);
+  strong {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+  pa-icon {
+    margin-right: rhythm(1);
+  }
+}
+
+.dropzone {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: rhythm(4);
+  border: 2px dashed #ccc;
+  color: rgba(0, 0, 0, 0.5);
+  min-height: rhythm(12);
+  cursor: pointer;
+  transition: border-color 0.15s;
+  span {
+    transition: opacity 0.15s;
+  }
+  &.file-over {
+    border: 2px dashed var(--stf-primary);
+    span {
+      opacity: 0.3;
+    }
+  }
+}
+
+app-label-field {
+  margin-bottom: rhythm(4);
+}
+
+.file-list {
+  @include scrollbar-style(6px, var(--stf-gray-background), var(--stf-gray-background), #000, #000, 0, 0);
+  max-height: 13vh;
+  overflow-y: auto;
+  margin-bottom: 26px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  height: rhythm(4);
+  margin-right: rhythm(1);
+  border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+  &:first-child {
+    border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+  }
+  .file-name {
+    flex: 0 1 290px;
+    @include text-truncate();
+    padding-right: rhythm(2);
+  }
+  .file-size {
+    flex: 0 0 rhythm(10);
+  }
+  .file-actions {
+    flex: 1 0 auto;
+    text-align: right;
+  }
+}
+
+pa-toggle {
+  display: block;
+  margin-bottom: rhythm(1);
+  ::ng-deep .pa-field .pa-toggle-label-container {
+    margin-left: 0 !important;
+  }
+}

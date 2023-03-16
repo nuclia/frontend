@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { CreateLinkComponent } from '../upload/create-link/create-link.component';
-import { UploadFilesDialogComponent } from '../upload/upload-files/upload-files-dialog.component';
-import { UploadTextComponent } from '../upload/upload-text/upload-text.component';
+import { CreateLinkComponent, UploadFilesDialogComponent, UploadTextComponent } from '@flaps/common';
 
 export type UploadType = 'files' | 'folder' | 'link' | 'csv';
 

@@ -10,7 +10,7 @@ import { RecoverComponent } from './recover.component';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
 import { SisPasswordInputModule } from '@nuclia/sistema';
-import { UserContainerModule } from '@flaps/common';
+import { UserContainerModule } from '../user-container';
 
 describe('RecoverComponent', () => {
   let component: RecoverComponent;

@@ -6,6 +6,11 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  KnowledgeBoxComponent,
+  KnowledgeBoxHomeComponent,
+  KnowledgeBoxKeysComponent,
+  KnowledgeBoxProfileComponent,
+  KnowledgeBoxUsersComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   RootGuard,
@@ -15,11 +20,6 @@ import {
 } from '@flaps/common';
 import { LoggedinGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
-import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box/knowledge-box.component';
-import { KnowledgeBoxHomeComponent } from './knowledge-box/knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxProfileComponent } from './knowledge-box/knowledge-box-profile/knowledge-box-profile.component';
-import { KnowledgeBoxUsersComponent } from './knowledge-box/knowledge-box-users/knowledge-box-users.component';
-import { KnowledgeBoxKeysComponent } from './knowledge-box/knowledge-box-keys/knowledge-box-keys.component';
 import { EntitiesComponent } from './entities/entities.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
@@ -140,9 +140,9 @@ const routes: Routes = [
               {
                 path: 'training',
                 loadChildren: () =>
-                  import('./knowledge-box/knowledge-box-training/knowledge-box-training.module').then(
-                    (m) => m.KnowledgeBoxTrainingModule,
-                  ),
+                  import(
+                    '../../../../libs/common/src/lib/knowledge-box/knowledge-box-training/knowledge-box-training.module'
+                  ).then((m) => m.KnowledgeBoxTrainingModule),
               },
               {
                 path: 'users',

@@ -17,10 +17,8 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { SetupModule } from './setup/setup.module';
 import { AccountModule } from './account/account.module';
-import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
 import { EntitiesModule } from './entities/entities.module';
 import { LabelSetsModule } from './label-sets/label-sets.module';
-import { UploadModule } from './upload/upload.module';
 
 // Components
 import { AppComponent } from './app.component';
@@ -32,7 +30,8 @@ import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
 import { SearchModule } from './search/search.module';
-import { AuthInterceptor, BaseModule, SelectAccountKbModule, TopbarModule } from '@flaps/common';
+import { AuthInterceptor, BaseModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
+import { KnowledgeBoxModule } from '../../../../libs/common/src/lib/knowledge-box/knowledge-box.module';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);

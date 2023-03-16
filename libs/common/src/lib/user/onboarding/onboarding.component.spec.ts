@@ -13,7 +13,7 @@ import {
   PaTranslateModule,
   TranslatePipe,
 } from '@guillotinaweb/pastanaga-angular';
-import { UserContainerComponent } from '@flaps/common';
+import { UserContainerComponent } from '../user-container';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 

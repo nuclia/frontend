@@ -4,7 +4,7 @@ import { SignupComponent } from './signup.component';
 import { MockComponent, MockModule, MockProvider } from 'ng-mocks';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
-import { UserContainerComponent } from '@flaps/common';
+import { UserContainerComponent } from '../user-container';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { BackendConfigurationService, LoginService, SignupResponse } from '@flaps/core';

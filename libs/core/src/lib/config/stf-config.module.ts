@@ -18,16 +18,16 @@ export class STFConfigModule {
     return {
       ngModule: STFConfigModule,
       providers: [
+        {
+          provide: 'staticEnvironmentConfiguration',
+          useValue: environment,
+        },
         AppInitService,
         {
           provide: APP_INITIALIZER,
           useFactory: init_app,
           deps: [AppInitService],
           multi: true,
-        },
-        {
-          provide: 'staticEnvironmentConfiguration',
-          useValue: environment,
         },
       ],
     };

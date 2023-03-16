@@ -8,9 +8,15 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 
-import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
-import { ChartsModule, HintModule, NavbarModule, STFSidebarModule, TokenDialogModule } from '@flaps/common';
+import {
+  ChartsModule,
+  HintModule,
+  NavbarModule,
+  PipesModule,
+  STFSidebarModule,
+  TokenDialogModule,
+} from '@flaps/common';
 
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
@@ -23,7 +29,7 @@ import { AccountUsersComponent } from './account-users/account-users.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
-import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';
+import { UsersManageModule } from '../../../../../libs/common/src/lib/knowledge-box/knowledge-box-users/users-manage/users-manage.module';
 import {
   PaButtonModule,
   PaDropdownModule,
