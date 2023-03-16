@@ -25,6 +25,7 @@
   import { distinctUntilChanged } from 'rxjs/operators';
   import { setWidgetActions } from '../../core/stores/widget.store';
   import { onClosePreview } from '../../tiles/tile.utils';
+  import InfoCard from '../../components/info-card/InfoCard.svelte';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
@@ -85,19 +86,7 @@
           {/each}
         </div>
         {#if $entityRelations.length > 0}
-          <div class="relations">
-            {#each $entityRelations as entity}
-              <div class="entity">
-                <div class="entity-name">{entity.entity}</div>
-                {#each Object.entries(entity.relations) as [name, related]}
-                  <div class="relation">
-                    <span class="relation-name">{name}:</span>
-                    <span>{related.join(',')}</span>
-                  </div>
-                {/each}
-              </div>
-            {/each}
-          </div>
+          <InfoCard entityRelations={$entityRelations} />
         {/if}
       </div>
       {#if $showLoading}
