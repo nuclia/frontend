@@ -14,6 +14,7 @@ import {
   searchResults,
   triggerSearch,
 } from './stores/search.store';
+import { ask } from './stores/effects';
 
 const subscriptions: Subscription[] = [];
 
@@ -48,6 +49,7 @@ export const setupTriggerSearch = (
                 }),
               ),
             ),
+            tap(({ query }) => ask.next(query)),
             switchMap(({ query, options }) =>
               search(query, options).pipe(map((results) => ({ results, append: !!trigger?.more }))),
             ),

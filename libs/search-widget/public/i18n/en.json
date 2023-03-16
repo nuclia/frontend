@@ -1,4 +1,5 @@
 {
+	"answer.chat-action": "Chat with your docs",
 	"entities.annotated": "Annotated",
 	"entities.annotations": "Annotations",
 	"entities.date": "Date",
