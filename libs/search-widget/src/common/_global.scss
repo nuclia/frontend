@@ -83,8 +83,20 @@ ul.sw-dropdown-options {
   }
 }
 
+.title-m {
+  font-size: var(--font-size-title-m);
+  font-weight: var(--font-weight-title-m);
+  line-height: var(--line-height-title-m);
+}
+
 .title-xs {
   font-size: var(--font-size-medium);
   font-weight: var(--font-weight-semi-bold);
   line-height: var(--line-height-title-xs);
+}
+
+.body-m {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
 }
