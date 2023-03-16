@@ -1,6 +1,15 @@
-import { trigger, animate, style, transition, query, group } from '@angular/animations';
+import { animate, group, query, style, transition, trigger } from '@angular/animations';
+import { SimpleAccount } from '@flaps/core';
 
 const duration = '350ms ease-in-out';
+
+export const standaloneSimpleAccount: SimpleAccount = {
+  id: 'local',
+  slug: 'local',
+  title: 'NucliaDB local',
+  zone: 'local',
+  type: 'stash-basic',
+};
 
 export const selectAnimations = [
   trigger('slideInOut', [

@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, StateService } from '@flaps/core';
+import { AuthService, StateService, StaticEnvironmentConfiguration } from '@flaps/core';
 import { combineLatest, map, Observable } from 'rxjs';
+import { standaloneSimpleAccount } from '../select-account-kb/utils';
 
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 
@@ -9,7 +10,12 @@ const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
   providedIn: 'root',
 })
 export class NavigationService {
-  constructor(private stateService: StateService, private router: Router, private authService: AuthService) {}
+  constructor(
+    private stateService: StateService,
+    private router: Router,
+    private authService: AuthService,
+    @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
+  ) {}
 
   homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.stash]).pipe(
     map(([account, kb]) => {
@@ -66,8 +72,9 @@ export class NavigationService {
     const goToUrl = this.authService.getNextUrl();
     if (goToUrl && goToUrl !== '/') {
       this.goToNextUrl(goToUrl);
-    } else if (!!data && data.account) {
-      this.router.navigate([this.getKbSelectUrl(data.account)]);
+    } else if ((!!data && data.account) || this.environment.standalone) {
+      const account = !!data && data.account ? data.account : standaloneSimpleAccount.slug;
+      this.router.navigate([this.getKbSelectUrl(account)]);
     } else {
       this.router.navigate([this.getAccountSelectUrl()]);
     }

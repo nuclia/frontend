@@ -1,5 +1,12 @@
 import { ExtraOptions, Routes } from '@angular/router';
-import { BaseComponent, EmptyComponent, PageNotFoundComponent, RootGuard, SelectKbComponent } from '@flaps/common';
+import {
+  BaseComponent,
+  EmptyComponent,
+  PageNotFoundComponent,
+  RootGuard,
+  SelectAccountComponent,
+  SelectKbComponent,
+} from '@flaps/common';
 
 export const routerOptions: ExtraOptions = {
   initialNavigation: 'enabledBlocking',
@@ -21,7 +28,13 @@ export const routes: Routes = [
   },
   {
     path: 'select',
-    component: SelectKbComponent,
+    component: SelectAccountComponent,
+    children: [
+      {
+        path: ':account',
+        component: SelectKbComponent,
+      },
+    ],
   },
   { path: '**', component: PageNotFoundComponent },
 ];

@@ -5,10 +5,11 @@ import { Subject } from 'rxjs';
 import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { SDKService, SimpleAccount, StaticEnvironmentConfiguration, STFUtils } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
-import { IKnowledgeBoxItem, IStandaloneKb } from '@nuclia/core';
+import { IKnowledgeBoxItem } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
+import { standaloneSimpleAccount } from '../utils';
 
 @Component({
   selector: 'app-select-kb',
@@ -19,7 +20,6 @@ import { NavigationService } from '../../services';
 export class SelectKbComponent implements OnInit, OnDestroy {
   account: SimpleAccount | undefined;
   kbs: IKnowledgeBoxItem[] | undefined;
-  standaloneKbs?: IStandaloneKb[];
   addKb: boolean = false;
   accountData = this.route.paramMap.pipe(
     filter((params) => params.get('account') !== null),
@@ -34,7 +34,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   errorMessages: IErrorMessages = { sluggable: 'stash.kb_name_invalid' } as IErrorMessages;
 
-  standalone = this.environmentConfiguration.standalone;
+  standalone = this.environment.standalone;
 
   constructor(
     private navigation: NavigationService,
@@ -43,7 +43,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
-    @Inject('staticEnvironmentConfiguration') private environmentConfiguration: StaticEnvironmentConfiguration,
+    @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
   ngOnInit(): void {
@@ -66,13 +66,20 @@ export class SelectKbComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       });
 
-    if (this.environmentConfiguration.standalone) {
+    if (this.standalone) {
       this.sdk.nuclia.db
         .getStandaloneKbs()
         .pipe(takeUntil(this.unsubscribeAll))
         .subscribe((kbs) => {
-          console.log(kbs);
-          this.standaloneKbs = kbs;
+          this.account = standaloneSimpleAccount;
+          this.kbs = kbs.map((kb) => ({
+            id: kb.uuid,
+            slug: kb.uuid,
+            zone: 'local',
+            title: kb.slug,
+            role_on_kb: 'SOWNER',
+          }));
+          this.cdr.markForCheck();
         });
     }
   }

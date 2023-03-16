@@ -28,7 +28,9 @@
             </a>
           </div>
         </div>
-        <div class="select-account-footer">
+        <div
+          class="select-account-footer"
+          *ngIf="!standalone">
           <pa-button
             kind="inverted"
             (click)="logout()">

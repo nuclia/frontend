@@ -3,6 +3,7 @@
   *ngIf="account && kbs">
   <div class="select-kb-header">
     <nsi-back-button
+      *ngIf="!standalone"
       class="select-kb-back"
       link="/select">
       {{ 'generic.back' | translate }}
@@ -71,7 +72,7 @@
 
   <div class="select-kb-footer">
     <pa-button
-      *ngIf="!addKb"
+      *ngIf="!addKb && !standalone"
       kind="inverted"
       (click)="back()">
       {{ 'generic.back_to_accounts' | translate }}
