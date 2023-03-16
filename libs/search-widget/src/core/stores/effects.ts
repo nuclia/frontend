@@ -1,4 +1,4 @@
-import { getLabelSets, getResourceField, predict, suggest } from '../api';
+import { getAnswer, getLabelSets, getResourceField, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -12,6 +12,7 @@ import {
   Observable,
   of,
   skip,
+  Subject,
   Subscription,
   switchMap,
   take,
@@ -25,6 +26,7 @@ import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
+import { currentAnswer, dialog } from './answers.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -80,6 +82,28 @@ export function activateTypeAheadSuggestions() {
 const queryKey = formatQueryKey('query');
 const filterKey = formatQueryKey('filter');
 const previewKey = formatQueryKey('preview');
+
+/**
+ * Initialise answer feature
+ */
+
+export const ask = new Subject<string>();
+
+export function initAnswer() {
+  subscriptions.push(
+    ask
+      .pipe(
+        distinctUntilChanged(),
+        switchMap((query) => getAnswer(query).pipe(map((answer) => ({ query, answer })))),
+      )
+      .subscribe(({ query, answer }) => {
+        currentAnswer.set(answer);
+        setTimeout(() => {
+          dialog.set({ question: query, answer, reset: true });
+        }, 2000);
+      }),
+  );
+}
 
 /**
  * Initialise permalink feature

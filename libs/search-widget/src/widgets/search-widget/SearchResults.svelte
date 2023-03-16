@@ -73,21 +73,23 @@
     {:else if !$pendingResults && $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      {#if $isAnswerEnabled}
-        <InitialAnswer />
-      {/if}
       <div class="results-container">
         <div
           class="results"
           class:with-relations={$entityRelations.length > 0}>
-          {#each $smartResults as result, i (result.id + result.field?.field_type + result.field?.field_id)}
-            <Tile {result} />
-            {#if i === $smartResults.length - 10}
-              <InfiniteScroll
-                hasMore={$hasMore}
-                on:loadMore={onLoadMore} />
-            {/if}
-          {/each}
+          {#if $isAnswerEnabled}
+            <InitialAnswer />
+          {/if}
+          <div>
+            {#each $smartResults as result, i (result.id + result.field?.field_type + result.field?.field_id)}
+              <Tile {result} />
+              {#if i === $smartResults.length - 10}
+                <InfiniteScroll
+                  hasMore={$hasMore}
+                  on:loadMore={onLoadMore} />
+              {/if}
+            {/each}
+          </div>
         </div>
         {#if $entityRelations.length > 0}
           <InfoCard entityRelations={$entityRelations} />

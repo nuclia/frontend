@@ -28,6 +28,7 @@ import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { hasSearchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
+import type { DialogEntry } from './answer.models';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -76,6 +77,18 @@ export const search = (query: string, options: SearchOptions) => {
       return !res.error;
     }),
   );
+};
+
+export const getAnswer = (query: string) => {
+  return of({
+    text: `${query}, and 42 is still the answer to life, the universe and everything`,
+    sources: [{ resourceId: '123', paragraph: 'The answer to life, the universe and everything is 42.' }],
+  });
+};
+
+export const sendFeedback = (dialog: DialogEntry[], approved: boolean) => {
+  console.log('sendFeedback', dialog, approved);
+  return of(undefined);
 };
 
 export const searchInResource = (
