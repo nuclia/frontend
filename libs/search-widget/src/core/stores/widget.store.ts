@@ -20,3 +20,4 @@ export const canAnnotateEntities = widgetFeatures.pipe(map((features) => !!featu
 export const canEditLabels = widgetFeatures.pipe(map((features) => !!features?.editLabels));
 export const navigateToLink = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const hasFilterButton = widgetFeatures.pipe(map((features) => !!features?.filter));
+export const isAnswerEnabled = widgetFeatures.pipe(map((features) => !!features?.answers));

@@ -205,6 +205,7 @@ export interface WidgetFeatures {
   relations?: boolean;
   suggestions?: boolean;
   suggestLabels?: boolean;
+  answers?: boolean;
 }
 
 export interface Counters {
