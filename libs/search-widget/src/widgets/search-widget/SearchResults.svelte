@@ -23,9 +23,10 @@
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
-  import { setWidgetActions } from '../../core/stores/widget.store';
+  import { isAnswerEnabled, setWidgetActions } from '../../core/stores/widget.store';
   import { onClosePreview } from '../../tiles/tile.utils';
   import InfoCard from '../../components/info-card/InfoCard.svelte';
+  import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
@@ -72,6 +73,9 @@
     {:else if !$pendingResults && $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>
     {:else}
+      {#if $isAnswerEnabled}
+        <InitialAnswer />
+      {/if}
       <div class="results-container">
         <div
           class="results"
