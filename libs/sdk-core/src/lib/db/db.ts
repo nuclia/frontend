@@ -1,5 +1,6 @@
 import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IDb, INuclia } from '../models';
+import type { LearningConfigurations } from './db.models';
 import {
   Account,
   AccountCreation,
@@ -17,7 +18,6 @@ import {
   StatsType,
   Welcome,
 } from './db.models';
-import type { LearningConfigurations } from './db.models';
 import type { EventList, IKnowledgeBox, IKnowledgeBoxItem, KnowledgeBoxCreation } from './kb';
 import { IStandaloneKb, WritableKnowledgeBox } from './kb';
 import { FileWithMetadata, uploadToProcess } from './upload';
@@ -81,9 +81,13 @@ export class Db implements IDb {
       if (!knowledgeBoxSlug) {
         throw new Error('account and knowledgeBox must be defined in the Nuclia options');
       }
-      return this.nuclia.rest.get<IKnowledgeBox>(`/account/${account}/kb/${knowledgeBoxSlug}`).pipe(
+
+      const kbEndpoint = this.nuclia.options.standalone
+        ? `/kb/${knowledgeBox}`
+        : `/account/${account}/kb/${knowledgeBoxSlug}`;
+      return this.nuclia.rest.get<IKnowledgeBox>(kbEndpoint).pipe(
         switchMap((kb) =>
-          this.nuclia.options.zone
+          this.nuclia.options.zone || this.nuclia.options.standalone
             ? of(kb)
             : this.nuclia.rest.getZoneSlug(kb.zone).pipe(
                 tap((zone) => (this.nuclia.options.zone = zone)),

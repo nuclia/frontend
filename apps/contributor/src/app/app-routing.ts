@@ -1,6 +1,7 @@
 import { ExtraOptions, Routes } from '@angular/router';
 import {
   BaseComponent,
+  DashboardLayoutComponent,
   EmptyComponent,
   PageNotFoundComponent,
   RootGuard,
@@ -23,6 +24,16 @@ export const routes: Routes = [
         path: '',
         component: EmptyComponent,
         canActivate: [RootGuard],
+      },
+      {
+        path: `at/:account`,
+        component: DashboardLayoutComponent,
+        children: [
+          {
+            path: `:stash`,
+            component: EmptyComponent,
+          },
+        ],
       },
     ],
   },

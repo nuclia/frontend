@@ -5,6 +5,7 @@
 - Add learning configuration in KB creation
 - Fix compiling errors about index signature
 - Add `getStandaloneKbs` method in db
+- Update `getKnowledgeBox` to also work on standalone mode
 
 # 1.1.5 (2023-03-03)
 

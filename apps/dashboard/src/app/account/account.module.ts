@@ -12,7 +12,6 @@ import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
 import { ChartsModule, HintModule, NavbarModule, STFSidebarModule, TokenDialogModule } from '@flaps/common';
 
-import { AccountComponent } from './account.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
@@ -39,7 +38,6 @@ import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
 
 const Components = [
-  AccountComponent,
   AccountHomeComponent,
   AccountManageComponent,
   AccountKbsComponent,
@@ -84,6 +82,6 @@ const Components = [
     PaTabsModule,
   ],
   declarations: [...Components, NuaActivityComponent],
-  exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
+  exports: [AccountHomeComponent, AccountManageComponent],
 })
 export class AccountModule {}

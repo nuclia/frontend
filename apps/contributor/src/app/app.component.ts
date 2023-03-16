@@ -78,8 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
         tap((event) => this.tracking.navigation(event as NavigationEnd)),
         filter(
           (event) =>
-            ((event as NavigationEnd).url.startsWith('/at/') ||
-              (event as NavigationEnd).url.startsWith('/select-account-kb/')) &&
+            ((event as NavigationEnd).url.startsWith('/at/') || (event as NavigationEnd).url.startsWith('/select/')) &&
             !!this.router.routerState.root.firstChild?.firstChild,
         ),
         switchMap(() =>

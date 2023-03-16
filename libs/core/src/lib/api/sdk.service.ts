@@ -65,7 +65,7 @@ export class SDKService {
 
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
-    const currentAccount = this.stateService.getAccount();
+    const currentAccount = this.config.staticConf.standalone ? { slug: accountSlug } : this.stateService.getAccount();
     return currentAccount && currentAccount.slug === accountSlug
       ? of(currentAccount as Account)
       : this.nuclia.db.getAccount(accountSlug).pipe(tap((account) => this.stateService.setAccount(account)));
@@ -85,9 +85,7 @@ export class SDKService {
       );
     } else {
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
-        switchMap((kb) => this.nuclia.rest.getZoneSlug(kb.zone).pipe(map((zoneSlug) => ({ kb, zoneSlug })))),
-        map(({ kb, zoneSlug }) => {
-          this.nuclia.options.zone = zoneSlug;
+        map((kb) => {
           this.stateService.setStash(kb);
           return kb;
         }),

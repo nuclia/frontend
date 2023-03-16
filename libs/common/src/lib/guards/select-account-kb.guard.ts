@@ -18,7 +18,6 @@ export class SelectAccountKbGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> {
-    console.log('canActivate select account guard');
     return this.selectService.refresh().pipe(
       map((res) => {
         return this.checkAccounts(res.accounts, res.kbs, route);

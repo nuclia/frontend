@@ -4,6 +4,7 @@ import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 import {
   AccountOwnerGuard,
   BaseComponent,
+  DashboardLayoutComponent,
   EmptyComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
@@ -13,8 +14,6 @@ import {
   SelectKbComponent,
 } from '@flaps/common';
 import { LoggedinGuard } from '@flaps/core';
-
-import { AccountComponent } from './account/account.component';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box/knowledge-box-home/knowledge-box-home.component';
@@ -54,7 +53,7 @@ const routes: Routes = [
       },
       {
         path: `at/:account`,
-        component: AccountComponent,
+        component: DashboardLayoutComponent,
         children: [
           {
             path: '',
