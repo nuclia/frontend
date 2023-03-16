@@ -82,3 +82,9 @@ ul.sw-dropdown-options {
     }
   }
 }
+
+.title-xs {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semi-bold);
+  line-height: var(--line-height-title-xs);
+}

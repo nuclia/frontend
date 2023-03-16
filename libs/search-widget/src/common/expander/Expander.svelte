@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
+  import Icon from '../icons/Icon.svelte';
 
   export let expanded: boolean = false;
   export let duration: number = 300;
@@ -33,7 +34,11 @@
 </script>
 
 <div class="sw-expander">
-  <slot name="header" />
+  <div
+    on:click={() => (expanded = !expanded)}
+    class="header">
+    <Icon name={expanded ? 'chevron-down' : 'chevron-right'} /><slot name="header" />
+  </div>
   <div
     class="expander-content"
     style:height={contentHeight}
