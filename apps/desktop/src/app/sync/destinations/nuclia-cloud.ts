@@ -113,6 +113,7 @@ class NucliaCloudKBImpl implements IDestinationConnector {
         id: 'kb',
         label: 'Knowledge Box',
         type: 'select',
+        required: true,
         canBeRefreshed: true,
         options: kbs
           .filter((kb) => !!kb.slug)

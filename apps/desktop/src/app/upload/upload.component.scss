@@ -1,7 +1,7 @@
 @import 'variables';
 
 .container {
-  padding: 30px 40px;
+  max-width: rhythm(90);
   height: calc(100% - 20px);
 }
 

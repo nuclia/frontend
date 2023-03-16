@@ -1,5 +1,6 @@
 <div class="select-files">
-  <h3>{{ 'upload.select.title' | translate }}</h3>
+  <h2>{{ 'upload.steps.data' | translate }}</h2>
+  <div>{{ 'upload.select.description' | translate }}</div>
   <div class="header">
     <pa-checkbox
       [value]="isSelectingAll"
@@ -40,16 +41,17 @@
   </div>
   <div class="footer">
     <pa-button
+      qa="next"
+      kind="primary"
+      [disabled]="selection.isEmpty()"
+      (click)="next.emit()">
+      {{ 'generic.save_continue' | translate }}
+    </pa-button>
+    <pa-button
       qa="cancel"
       kind="inverted"
       (click)="cancel.next()">
       {{ 'generic.cancel' | translate }}
-    </pa-button>
-    <pa-button
-      qa="next"
-      [disabled]="selection.isEmpty()"
-      (click)="next.emit()">
-      {{ 'generic.save_continue' | translate }}
     </pa-button>
   </div>
 </div>

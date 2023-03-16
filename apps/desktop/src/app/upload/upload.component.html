@@ -17,7 +17,8 @@
       (cancel)="cancel()"></nde-select-files>
   </ng-container>
   <ng-container *ngIf="(step | async) === 3">
-    <h2>Push to</h2>
+    <h2>{{ 'upload.destination.title' | translate }}</h2>
+    <p>{{ 'upload.destination.description' | translate }}</p>
     <nde-connectors
       type="destinations"
       [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"

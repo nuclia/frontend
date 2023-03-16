@@ -58,6 +58,7 @@ export class ConnectorsComponent implements OnDestroy {
   fields?: Field[];
   form?: UntypedFormGroup;
   selectedConnector?: ConnectorDefinition;
+  canStoreParams = false;
   quickAccessName?: string;
 
   constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {
@@ -78,6 +79,9 @@ export class ConnectorsComponent implements OnDestroy {
     this.connectors = this.sync.getConnectors(this.type);
     if (this.connectorIds) {
       this.connectors = this.connectors.filter((connector) => (this.connectorIds || []).includes(connector.id));
+    }
+    if (this.connectors.length === 1 && this.type === 'destinations') {
+      this.onSelectConnector(this.connectors[0].id);
     }
     markForCheck(this.cdr);
   }
@@ -114,13 +118,14 @@ export class ConnectorsComponent implements OnDestroy {
 
   showFields(connectorId: string, fields: Field[]) {
     this.fields = fields;
+    this.canStoreParams = this.type === 'sources' && this.fields.every((field) => field.type !== 'folder');
     this.form = this.formBuilder.group({
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
       ),
       quickAccess: this.formBuilder.group({
-        enabled: [this.type === 'sources'],
-        name: ['', [Validators.required]],
+        enabled: [this.canStoreParams],
+        name: ['', this.canStoreParams ? [Validators.required] : []],
       }),
     });
     if (this.quickAccessName) {

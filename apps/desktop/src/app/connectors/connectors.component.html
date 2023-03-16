@@ -56,6 +56,7 @@
       <pa-button
         *ngIf="field.canBeRefreshed"
         icon="refresh"
+        aspect="basic"
         [paTooltip]="'upload.refresh' | translate: { field: field.label }"
         (click)="refreshField(field.id)">
         {{ 'upload.refresh' | translate: { field: field.label } }}
@@ -81,7 +82,7 @@
   </div>
 
   <div
-    *ngIf="type === 'sources'"
+    *ngIf="canStoreParams"
     formGroupName="quickAccess"
     class="quick-access">
     <div class="field">
