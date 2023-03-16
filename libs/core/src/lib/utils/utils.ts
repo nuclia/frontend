@@ -51,6 +51,10 @@ export class STFUtils {
     slug = slug.trim();
     slug = slug.replace(/[\s]+/g, '-');
 
+    if (!slug) {
+      slug = crypto.randomUUID();
+    }
+
     // To lowercase
     slug = slug.toLowerCase();
 
