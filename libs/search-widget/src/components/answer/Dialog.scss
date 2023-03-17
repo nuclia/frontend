@@ -8,9 +8,22 @@
   .entries {
     overflow-y: scroll;
   }
-  .row {
+  .entry:not(:first-child) {
+    border-top: 1px solid var(--color-neutral-lighter);
+  }
+  .row-1 {
     display: grid;
-    grid-template-columns: var(--rhythm-10) auto var(--rhythm-16);
+    grid-template-columns: var(--rhythm-7) auto;
+  }
+  .row-2 {
+    display: grid;
+    grid-template-columns: var(--rhythm-2) auto;
+  }
+  .answer {
+    grid-column: 2;
+  }
+  .feedback {
+    display: none;
   }
   .icon {
     display: flex;
@@ -19,13 +32,25 @@
   }
   .input {
     display: grid;
-    grid-template-columns: var(--rhythm-10) auto var(--rhythm-10);
-    margin: auto 0 var(--rhythm-4) 0;
+    grid-template-columns: 0 auto 0;
+    margin: auto 0 0 0;
     padding-top: var(--rhythm-2);
   }
 }
 @media (min-width: 599px) {
   .sw-dialog {
     width: 90vw;
+    .row-1,
+    .row-2 {
+      display: grid;
+      grid-template-columns: var(--rhythm-10) auto var(--rhythm-16);
+    }
+    .input {
+      grid-template-columns: var(--rhythm-10) auto var(--rhythm-10);
+      margin: auto 0 var(--rhythm-4) 0;
+    }
+    .feedback {
+      display: block;
+    }
   }
 }

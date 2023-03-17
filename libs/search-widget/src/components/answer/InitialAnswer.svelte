@@ -17,7 +17,11 @@
 
 {#if $firstAnswer.text}
   <div class="sw-initial-answer">
-    <div class="answer"><Answer answer={$firstAnswer} /></div>
+    <div class="answer">
+      <Answer
+        answer={$firstAnswer}
+        rank={0} />
+    </div>
     <div class="actions">
       <div
         class="go-to-dialog"
@@ -25,11 +29,9 @@
         <Icon name="chat" />
         {$_('answer.chat-action')}
       </div>
-      {#if !$firstAnswer.incomplete}
-        <div>
-          <Feedback rank={0} />
-        </div>
-      {/if}
+      <div class="feedback">
+        <Feedback rank={0} />
+      </div>
     </div>
   </div>
 {/if}

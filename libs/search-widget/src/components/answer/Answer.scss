@@ -1,0 +1,16 @@
+.sw-answer {
+  .feedback {
+    float: right;
+    padding-top: var(--rhythm-0_5);
+  }
+  .text {
+    margin-top: var(--rhythm-1);
+  }
+}
+@media (min-width: 599px) {
+  .sw-answer {
+    .feedback {
+      display: none;
+    }
+  }
+}

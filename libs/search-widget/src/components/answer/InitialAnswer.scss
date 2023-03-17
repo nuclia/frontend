@@ -5,13 +5,23 @@
 
   .actions {
     margin-left: auto;
-    div {
+    .go-to-dialog {
       display: flex;
       align-items: center;
       justify-content: end;
-    }
-    .go-to-dialog {
       cursor: pointer;
+    }
+    .feedback {
+      display: none;
+    }
+  }
+}
+@media (min-width: 599px) {
+  .sw-initial-answer {
+    .actions .feedback {
+      display: flex;
+      align-items: center;
+      justify-content: end;
     }
   }
 }
