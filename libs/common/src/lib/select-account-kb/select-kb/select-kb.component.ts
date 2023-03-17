@@ -23,7 +23,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   kbs: IKnowledgeBoxItem[] | undefined;
   addKb: boolean = false;
   accountData = this.route.paramMap.pipe(
-    filter((params) => params.get('account') !== null),
+    filter((params) => !this.standalone && params.get('account') !== null),
     switchMap((params) => this.sdk.nuclia.db.getAccount(params.get('account')!)),
     shareReplay(),
   );

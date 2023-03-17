@@ -211,6 +211,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     label: '',
   };
 
+  standalone = this.sdk.nuclia.options.standalone;
+
   constructor(
     private sdk: SDKService,
     private router: Router,

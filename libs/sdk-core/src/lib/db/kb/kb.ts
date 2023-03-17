@@ -40,6 +40,9 @@ export class KnowledgeBox implements IKnowledgeBox {
     if (!data.id && data.uuid) {
       this.id = data.uuid;
     }
+    if (!data.title && data.slug) {
+      this.title = data.slug;
+    }
   }
 
   getEntities(withEntities = false): Observable<Entities> {

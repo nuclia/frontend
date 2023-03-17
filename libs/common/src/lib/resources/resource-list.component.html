@@ -388,7 +388,7 @@
         (next)="nextPage()"></stf-pagination>
     </div>
     <div
-      *ngIf="isMainView && !!data && resultsLength === 0"
+      *ngIf="isMainView && !!data && resultsLength === 0 && !standalone"
       class="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>

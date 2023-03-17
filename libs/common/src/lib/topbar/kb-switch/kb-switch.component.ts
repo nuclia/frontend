@@ -19,13 +19,16 @@ export class KbSwitchComponent {
   kb = this.sdk.currentKb;
   account?: Account;
 
-  knowledgeBoxes = this.stateService.account.pipe(
-    filter((account) => !!account),
-    tap((account) => {
-      this.account = account || undefined;
-    }),
-    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account!.slug)),
-  );
+  knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.nuclia.options.standalone
+    ? this.sdk.nuclia.db
+        .getStandaloneKbs()
+        .pipe(map((kbs) => kbs.map((kb) => ({ ...kb, id: kb.uuid, title: kb.slug, zone: 'local' }))))
+    : this.stateService.account.pipe(
+        filter((account) => !!account),
+        map((account) => account as Account),
+        tap((account) => (this.account = account)),
+        switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug)),
+      );
   showDemo = this.tracking.isFeatureEnabled('show-demo-kb');
 
   showKbSelector: Observable<boolean> = combineLatest([this.knowledgeBoxes, this.showDemo]).pipe(
