@@ -19654,7 +19654,7 @@ __metadata:
     svelte-check: ^2.10.3
     svelte-jester: ^2.3.2
     svelte-preprocess: ^4.10.7
-    talk2svelte: latest
+    talk2svelte: 0.0.4
     ts-jest: 28.0.8
     ts-node: 10.9.1
     tslib: ^2.0.1
@@ -24681,12 +24681,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"talk2svelte@npm:latest":
-  version: 0.0.3
-  resolution: "talk2svelte@npm:0.0.3"
+"talk2svelte@npm:0.0.4":
+  version: 0.0.4
+  resolution: "talk2svelte@npm:0.0.4"
   peerDependencies:
     rxjs: ^7.8.0
-  checksum: 1516f4474071e961e2a0fc7499cc228b7064fd9d0a9c8eb9875b7468ee23f6e8f48e81cecee41e52ac54fa28e2b674045de9a47f9ef2c30896177171d9bc2e3f
+  checksum: b1cfe30cf2006aadfd3f573501bc014aeeb228510c2f2f784ca01464859538a736a61e3f3c2aa73270a18f0983d2a654a89828563962fe7afa8dffb6d680de7f
   languageName: node
   linkType: hard
 
