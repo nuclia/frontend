@@ -16,11 +16,13 @@
   }
 </script>
 
-<IconButton
-  aspect="basic"
-  icon="smiley-happy"
-  on:click={() => send(true)} />
-<IconButton
-  aspect="basic"
-  icon="smiley-sad"
-  on:click={() => send(false)} />
+{#if !$dialog[rank]?.answer.incomplete}
+  <IconButton
+    aspect="basic"
+    icon="smiley-happy"
+    on:click={() => send(true)} />
+  <IconButton
+    aspect="basic"
+    icon="smiley-sad"
+    on:click={() => send(false)} />
+{/if}

@@ -23,30 +23,30 @@
     bind:this={entriesElement}>
     {#each $dialog as entry, i}
       <div class="entry">
-        <div class="row">
+        <div class="row-1">
           <div class="icon">
             <Icon name="chat" />
           </div>
           <h3 class="title-m">{entry.question}</h3>
-          <div />
         </div>
-        <div class="row">
-          <div />
-          {#if entry.answer.text}
-            <Answer answer={entry.answer} />
-          {:else}
-            <div>…</div>
-          {/if}
-          <div>
-            {#if !entry.answer.incomplete}
-              <Feedback rank={i} />
+        <div class="row-2">
+          <div class="answer">
+            {#if entry.answer.text}
+              <Answer
+                answer={entry.answer}
+                rank={i} />
+            {:else}
+              …
             {/if}
+          </div>
+          <div class="feedback">
+            <Feedback rank={i} />
           </div>
         </div>
       </div>
     {/each}
   </div>
-  <div class="row input">
+  <div class="input">
     <div />
     <DialogInput placeholder={$_('answer.placeholder')} />
   </div>

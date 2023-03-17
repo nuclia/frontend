@@ -4,7 +4,7 @@
   display: flex;
   flex: 1 0 auto;
   position: relative;
-  border: 1px solid var(--color-dark-stronger);
+  border-top: 1px solid var(--color-dark-stronger);
   height: var(--rhythm-6);
 
   .icon {
@@ -30,5 +30,10 @@
   input::placeholder {
     color: var(--color-neutral-regular);
     transition: all 0s ease;
+  }
+}
+@media (min-width: 599px) {
+  .sw-dialog-input {
+    border: 1px solid var(--color-dark-stronger);
   }
 }
