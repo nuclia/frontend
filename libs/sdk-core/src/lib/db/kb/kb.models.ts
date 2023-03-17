@@ -53,6 +53,7 @@ export interface IKnowledgeBoxCreation {
   state?: KBStates;
   description?: string;
   zone: string;
+  uuid?: string;
 }
 
 export interface IKnowledgeBoxItem extends IKnowledgeBoxCreation {

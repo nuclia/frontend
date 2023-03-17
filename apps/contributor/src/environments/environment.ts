@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  client: 'contributor',
+  client: 'dashboard',
   locales: ['en-US', 'es', 'ca'],
   standalone: true,
 };

@@ -6,6 +6,7 @@
 - Fix compiling errors about index signature
 - Add `getStandaloneKbs` method in db
 - Update `getKnowledgeBox` to also work on standalone mode
+- Add optional `uuid` in KnowledgeBox model
 
 # 1.1.5 (2023-03-03)
 

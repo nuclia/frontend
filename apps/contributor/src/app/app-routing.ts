@@ -8,7 +8,8 @@ import {
   SelectAccountComponent,
   SelectKbComponent,
 } from '@flaps/common';
-import { HomePageComponent } from './home-page/home-page.component';
+import { HomePageComponent } from './home/home-page.component';
+import { MainContainerComponent } from './home/main-container/main-container.component';
 
 export const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
@@ -31,7 +32,20 @@ export const routes: Routes = [
         children: [
           {
             path: `:stash`,
-            component: HomePageComponent,
+            component: MainContainerComponent,
+            children: [
+              {
+                path: '',
+                component: HomePageComponent,
+                resolve: {},
+              },
+              {
+                path: 'resources',
+                loadChildren: () =>
+                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+              },
+            ],
           },
         ],
       },

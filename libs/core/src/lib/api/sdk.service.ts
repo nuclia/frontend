@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Account, Counters, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, Counters, KnowledgeBox, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -49,12 +49,13 @@ export class SDKService {
     combineLatest([this.stateService.stash, this.stateService.account])
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
+        map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
         switchMap(([kb, account]) =>
           kb && kb.slug === this.DEMO_SLUG
             ? this.getDemoKb()
             : this.nuclia.db
-                .getKnowledgeBox(account!.slug, kb!.slug!)
-                .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account!.slug, data))),
+                .getKnowledgeBox(account.slug, (this.config.staticConf.standalone ? kb.id : kb.slug) as string)
+                .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug, data))),
         ),
         tap(() => (this._isKbLoaded = true)),
       )
@@ -66,9 +67,11 @@ export class SDKService {
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
     const currentAccount = this.config.staticConf.standalone ? { slug: accountSlug } : this.stateService.getAccount();
-    return currentAccount && currentAccount.slug === accountSlug
-      ? of(currentAccount as Account)
-      : this.nuclia.db.getAccount(accountSlug).pipe(tap((account) => this.stateService.setAccount(account)));
+    const accountObs =
+      currentAccount && currentAccount.slug === accountSlug
+        ? of(currentAccount as Account)
+        : this.nuclia.db.getAccount(accountSlug);
+    return accountObs.pipe(tap((account) => this.stateService.setAccount(account)));
   }
 
   setCurrentKnowledgeBox(accountSlug: string, kbSlug: string, force = false): Observable<WritableKnowledgeBox> {

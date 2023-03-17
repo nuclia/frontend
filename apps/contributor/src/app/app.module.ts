@@ -17,7 +17,9 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { environment } from '../environments/environment';
 import { RouterModule } from '@angular/router';
 import { routerOptions, routes } from './app-routing';
-import { HomePageComponent } from './home-page/home-page.component';
+import { HomePageComponent } from './home/home-page.component';
+import { MainContainerComponent } from './home/main-container/main-container.component';
+import { UploadModule } from '@flaps/common';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -28,7 +30,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
 }
 
 @NgModule({
-  declarations: [AppComponent, HomePageComponent],
+  declarations: [AppComponent, HomePageComponent, MainContainerComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -43,6 +45,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
       },
     }),
     RouterModule.forRoot(routes, routerOptions),
+    UploadModule,
     // PaIconModule,
     //
     // BaseModule,

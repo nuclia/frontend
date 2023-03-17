@@ -61,7 +61,8 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
 
   ngOnInit(): void {
     this.sdk.currentKb.pipe(takeUntil(this.unsubscribeAll)).subscribe((kb) => {
-      this.kbUrl = this.navigationService.getKbUrl(kb.account, kb.slug!);
+      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
+      this.kbUrl = this.navigationService.getKbUrl(kb.account, kbSlug);
     });
   }
 
