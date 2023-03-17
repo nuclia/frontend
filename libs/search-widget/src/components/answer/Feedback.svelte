@@ -2,21 +2,21 @@
   import { switchMap, take } from 'rxjs';
   import IconButton from '../../common/button/IconButton.svelte';
   import { sendFeedback } from '../../core/api';
-  import { dialog } from '../../core/stores/answers.store';
+  import { chat } from '../../core/stores/answers.store';
 
   export let rank = 0;
 
   function send(approved: boolean) {
-    dialog
+    chat
       .pipe(
         take(1),
-        switchMap((dialog) => sendFeedback(dialog.slice(0, rank + 1), approved)),
+        switchMap((chat) => sendFeedback(chat.slice(0, rank + 1), approved)),
       )
       .subscribe();
   }
 </script>
 
-{#if !$dialog[rank]?.answer.incomplete}
+{#if !$chat[rank]?.answer.incomplete}
   <IconButton
     aspect="basic"
     icon="smiley-happy"
