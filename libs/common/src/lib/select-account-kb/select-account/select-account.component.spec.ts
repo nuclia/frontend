@@ -4,9 +4,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SelectAccountKbService } from '../select-account-kb.service';
 
 import { SelectAccountComponent } from './select-account.component';
-import { subscriptionPipeFn, TranslatePipeMock } from '@flaps/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MockModule } from 'ng-mocks';
+import { TranslatePipeMock } from '@flaps/core';
+import { MockModule, MockProvider } from 'ng-mocks';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('SelectComponent', () => {
@@ -25,17 +24,7 @@ describe('SelectComponent', () => {
             getKbs: () => ({}),
           },
         },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            url: subscriptionPipeFn(),
-            children: [],
-          },
-        },
-        {
-          provide: Router,
-          useValue: {},
-        },
+        MockProvider('staticEnvironmentConfiguration', { standalone: false }),
       ],
     }).compileComponents();
   }));
