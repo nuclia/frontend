@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { Subject } from 'rxjs';
+import { catchError, Subject, throwError } from 'rxjs';
 import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 import { SDKService, SimpleAccount, StaticEnvironmentConfiguration, STFUtils } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb.service';
@@ -10,6 +10,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../validators';
 import { NavigationService } from '../../services';
 import { standaloneSimpleAccount } from '../utils';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-select-kb',
@@ -43,6 +44,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
+    private toast: SisToastService,
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
@@ -69,7 +71,15 @@ export class SelectKbComponent implements OnInit, OnDestroy {
     if (this.standalone) {
       this.sdk.nuclia.db
         .getStandaloneKbs()
-        .pipe(takeUntil(this.unsubscribeAll))
+        .pipe(
+          catchError((error) => {
+            this.toast.error(
+              'We cannot load your knowledge box, please check NucliaDB docker image is running and try again.',
+            );
+            return throwError(error);
+          }),
+          takeUntil(this.unsubscribeAll),
+        )
         .subscribe((kbs) => {
           this.account = standaloneSimpleAccount;
           this.kbs = kbs.map((kb) => ({
