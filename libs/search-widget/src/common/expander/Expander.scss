@@ -5,5 +5,13 @@
   .header {
     display: flex;
     align-items: center;
+    .expander-icon {
+      transition: transform var(--transition-superfast);
+    }
+    &.expanded {
+      .expander-icon {
+        transform: rotate(90deg);
+      }
+    }
   }
 }

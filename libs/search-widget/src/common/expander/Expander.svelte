@@ -36,8 +36,15 @@
 <div class="sw-expander">
   <div
     on:click={() => (expanded = !expanded)}
-    class="header">
-    <Icon name={expanded ? 'chevron-down' : 'chevron-right'} /><slot name="header" />
+    on:keypress={(e) => {
+      if (e.key === 'Enter') {
+        expanded = !expanded;
+      }
+    }}
+    class="header"
+    class:expanded>
+    <span class="expander-icon"><Icon name="chevron-right" /></span>
+    <slot name="header" />
   </div>
   <div
     class="expander-content"

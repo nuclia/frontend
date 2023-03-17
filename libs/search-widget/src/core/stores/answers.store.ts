@@ -22,7 +22,7 @@ export const currentQuestion = answerState.writer<string>(
   (state, value) => ({ ...state, currentQuestion: value }),
 );
 
-export const currentAnswer = answerState.writer<Partial<Answer>>(
+export const currentAnswer = answerState.writer<Answer, Partial<Answer>>(
   (state) => state.currentAnswer,
   (state, value) => ({
     ...state,
