@@ -2,16 +2,21 @@
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import { _ } from '../../core/i18n';
-  import { firstAnswer, isStreaming } from '../../core/stores/answers.store';
+  import { firstAnswer, resetDialog } from '../../core/stores/answers.store';
   import Answer from './Answer.svelte';
   import Dialog from './Dialog.svelte';
   import Feedback from './Feedback.svelte';
 
   let showDialog = false;
+
+  function onClose() {
+    showDialog = false;
+    resetDialog.set();
+  }
 </script>
 
 {#if $firstAnswer.text}
-  <div class="container">
+  <div class="sw-initial-answer">
     <div class="answer"><Answer answer={$firstAnswer} /></div>
     <div class="actions">
       <div
@@ -20,7 +25,7 @@
         <Icon name="chat" />
         {$_('answer.chat-action')}
       </div>
-      {#if !$isStreaming}
+      {#if !$firstAnswer.incomplete}
         <div>
           <Feedback rank={0} />
         </div>
@@ -31,7 +36,8 @@
 
 <Modal
   show={showDialog}
-  closeButton={true}>
+  closeButton={true}
+  on:close={onClose}>
   <Dialog />
 </Modal>
 
