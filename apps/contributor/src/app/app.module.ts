@@ -17,6 +17,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { environment } from '../environments/environment';
 import { RouterModule } from '@angular/router';
 import { routerOptions, routes } from './app-routing';
+import { HomePageComponent } from './home-page/home-page.component';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -27,7 +28,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
 }
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, HomePageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,

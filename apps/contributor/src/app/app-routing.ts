@@ -8,6 +8,7 @@ import {
   SelectAccountComponent,
   SelectKbComponent,
 } from '@flaps/common';
+import { HomePageComponent } from './home-page/home-page.component';
 
 export const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
@@ -30,7 +31,7 @@ export const routes: Routes = [
         children: [
           {
             path: `:stash`,
-            component: EmptyComponent,
+            component: HomePageComponent,
           },
         ],
       },

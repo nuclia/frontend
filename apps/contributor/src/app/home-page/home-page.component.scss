@@ -1,0 +1,13 @@
+@import 'variables';
+
+.home-container {
+  align-items: center;
+  display: flex;
+  height: calc(100vh - var(--app-topbar-height));
+  justify-content: center;
+
+  p {
+    max-width: rhythm(60);
+    text-align: center;
+  }
+}
