@@ -17,7 +17,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { SetupModule } from './setup/setup.module';
 import { AccountModule } from './account/account.module';
-import { EntitiesModule } from './entities/entities.module';
 import { LabelSetsModule } from './label-sets/label-sets.module';
 
 // Components
@@ -30,7 +29,14 @@ import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
 import { SearchModule } from './search/search.module';
-import { AuthInterceptor, BaseModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
+import {
+  AuthInterceptor,
+  BaseModule,
+  EntitiesModule,
+  SelectAccountKbModule,
+  TopbarModule,
+  UploadModule,
+} from '@flaps/common';
 import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
 
 registerLocaleData(localeEn);

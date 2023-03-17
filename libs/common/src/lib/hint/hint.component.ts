@@ -22,7 +22,7 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 })
 export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges {
   @Input() label?: string;
-  @Input() values?: { [key: string]: string };
+  @Input() values?: { [key: string]: string } | null;
 
   @Input()
   set inverted(value: any) {

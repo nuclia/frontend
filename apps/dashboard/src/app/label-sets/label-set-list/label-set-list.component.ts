@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { LabelsService } from '../../services/labels.service';
 import { LabelSet, LabelSets } from '@nuclia/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
+import { LabelsService } from '@flaps/common';
 
 @Component({
   selector: 'app-label-set-list',

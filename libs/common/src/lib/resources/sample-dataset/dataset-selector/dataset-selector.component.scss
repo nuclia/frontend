@@ -1,0 +1,11 @@
+@import 'apps/dashboard/src/variables';
+
+.dataset-picker {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+
+  pa-select {
+    flex: 1 0 auto;
+  }
+}

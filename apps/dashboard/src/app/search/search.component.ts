@@ -5,7 +5,7 @@ import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { TrainingType } from '@nuclia/core';
-import { ResourceViewerService } from '../resources/resource-viewer.service';
+import { ResourceViewerService } from '@flaps/common';
 
 const searchWidgetId = 'search-bar';
 const searchResultsId = 'search-results';

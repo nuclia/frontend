@@ -1,0 +1,20 @@
+@import 'apps/dashboard/src/variables';
+:host {
+  .title-xxs {
+    margin-bottom: rhythm(1);
+  }
+
+  form {
+    margin-top: rhythm(4);
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: rhythm(2);
+    }
+
+    pa-textarea ::ng-deep textarea {
+      height: rhythm(20);
+    }
+  }
+}

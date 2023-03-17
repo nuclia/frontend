@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Classification, LabelSetKind } from '@nuclia/core';
 import { BehaviorSubject, map, switchMap, tap } from 'rxjs';
-import { LabelsService } from '../../../../../../apps/dashboard/src/app/services/labels.service';
+import { LabelsService } from '../labels.service';
 import { Size } from '@guillotinaweb/pastanaga-angular';
 
 @Component({

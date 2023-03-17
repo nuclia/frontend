@@ -9,7 +9,7 @@ import {
   TextFieldFormat,
   UploadStatus,
 } from '@nuclia/core';
-import { LabelsService } from '../../../../../apps/dashboard/src/app/services/labels.service';
+import { LabelsService } from '../label/labels.service';
 import {
   BehaviorSubject,
   combineLatest,

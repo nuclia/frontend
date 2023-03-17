@@ -1,0 +1,70 @@
+@import 'apps/dashboard/src/variables';
+@import 'tokens';
+
+.entities {
+  padding: 3.8vw var(--app-layout-margin-right);
+
+  h1 {
+    margin: 0 0 rhythm(3) 0;
+  }
+
+  .entities-actions {
+    align-items: center;
+    display: flex;
+    gap: rhythm(3);
+  }
+
+  .entities-search {
+    align-items: center;
+    background-color: $color-light-stronger;
+    display: flex;
+    gap: rhythm(1);
+    padding: rhythm(2) rhythm(1) rhythm(2) rhythm(2);
+    width: rhythm(40);
+
+    pa-input {
+      flex: 1 0 auto;
+    }
+  }
+
+  .entities-no-results {
+    margin: rhythm(2) 0 0 rhythm(2);
+  }
+}
+
+.entity-table {
+  margin-top: rhythm(3);
+
+  .cell-color {
+    flex: $entity-table-color-flex;
+  }
+  .cell-name {
+    flex: $entity-table-name-flex;
+  }
+  .cell-synonyms {
+    flex: $entity-table-synonyms-flex;
+  }
+  .cell-description {
+    flex: $entity-table-description-flex;
+  }
+  .cell-presence {
+    flex: $entity-table-presence-flex;
+  }
+  .cell-actions {
+    flex: $entity-table-actions-flex;
+  }
+
+  &-header {
+    display: flex;
+    padding-bottom: rhythm(1);
+    border-bottom: 1px solid $color-dark-stronger;
+    font-weight: $font-weight-bold;
+
+    .cell-description {
+      text-align: center;
+    }
+    .cell-presence {
+      text-align: center;
+    }
+  }
+}

@@ -1,0 +1,80 @@
+@import '../tokens';
+@import 'apps/dashboard/src/variables';
+
+$itemHeight: rhythm(6);
+
+.entity-list {
+  background-color: $color-light-stronger;
+
+  &-virtual {
+    @include scrollbar-black(var(--stf-gray-lighter));
+    .entity-list-item {
+      padding-right: rhythm(4);
+    }
+  }
+
+  &-empty {
+    height: $itemHeight;
+  }
+
+  &-item {
+    display: flex;
+    height: $itemHeight;
+    transition: 0.2s background-color;
+    &.highlighted {
+      background-color: rgba(var(--stf-yellow-rgb), 0.1);
+    }
+
+    &:last-child {
+      .entity-list-item-cell {
+        border-bottom: 0;
+      }
+    }
+
+    &-cell {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid $color-neutral-regular;
+
+      &.cell-color {
+        flex: $entity-table-color-flex;
+      }
+      &.cell-name {
+        flex: $entity-table-name-flex;
+      }
+      &.cell-synonyms {
+        flex: $entity-table-synonyms-flex;
+      }
+      &.cell-description {
+        flex: $entity-table-description-flex;
+      }
+      &.cell-presence {
+        flex: $entity-table-presence-flex;
+      }
+      &.cell-actions {
+        flex: 0 0 86px;
+      }
+    }
+
+    .cell-color {
+      border-bottom: 0;
+      .color-border {
+        width: rhythm(1);
+        height: 100%;
+        background-color: var(--stf-gray-background);
+      }
+    }
+
+    .cell-name {
+      min-width: 0;
+      padding: 0 rhythm(2) 0 rhythm(0.25);
+      .drag {
+        max-width: 100%;
+        &.active {
+          cursor: move;
+          background-color: $color-light-stronger;
+        }
+      }
+    }
+  }
+}

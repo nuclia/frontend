@@ -1,0 +1,21 @@
+@import 'apps/dashboard/src/variables';
+
+.entity-dialog {
+  position: relative;
+  padding: 20px 20px 14px 20px;
+
+  h2 {
+    margin: 0;
+    font-size: var(--stf-font-size-title);
+    font-weight: var(--stf-font-weight-bold);
+    line-height: 1.1;
+  }
+
+  &-short-description {
+    font-weight: var(--stf-font-weight-semibold);
+  }
+
+  &-description {
+    padding-right: 40px;
+  }
+}

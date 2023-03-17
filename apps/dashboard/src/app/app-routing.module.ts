@@ -6,6 +6,7 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  EntitiesComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   RootGuard,
@@ -15,7 +16,6 @@ import {
 } from '@flaps/common';
 import { LoggedinGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
-import { EntitiesComponent } from './entities/entities.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
@@ -117,7 +117,8 @@ const routes: Routes = [
               },
               {
                 path: 'resources',
-                loadChildren: () => import('./resources/resources.module').then((m) => m.ResourcesModule),
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
               },
               {
                 path: 'search',

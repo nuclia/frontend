@@ -6,7 +6,7 @@ import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { ResourceViewerService } from '../resources/resource-viewer.service';
+import { ResourceViewerService } from '../../../../../libs/common/src/lib/resources/resource-viewer.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
