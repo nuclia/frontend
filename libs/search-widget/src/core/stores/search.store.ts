@@ -102,6 +102,7 @@ export const pendingResults = searchState.writer<boolean>(
   (state, pending) => ({ ...state, pending }),
 );
 
+const LATIN_CHAR = new RegExp(/[a-zA-Z0-9\s]+/);
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
   if (!state.results.resources) {
     return [];
@@ -124,8 +125,11 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
     smartResults.push(fullTextResults[0]);
   }
 
+  // check if less than 3 words in the query
+  // unless there are some non-latin characters (because in Chinese for example there is no space between words)
+  const nonLatinChars = state.query.trim().replace(LATIN_CHAR, '');
+  const looksLikeKeywordSearch = state.query.split(' ').length < 3 && nonLatinChars.length < 2;
   // if not a keyword search, add the 2 best semantic sentences
-  const looksLikeKeywordSearch = state.query.split(' ').length < 3;
   if (!looksLikeKeywordSearch) {
     const twoBestSemantic = semanticResults.slice(0, 2);
     twoBestSemantic.forEach((sentence) => {
