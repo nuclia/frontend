@@ -17,7 +17,6 @@ import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { SetupModule } from './setup/setup.module';
 import { AccountModule } from './account/account.module';
-import { LabelSetsModule } from './label-sets/label-sets.module';
 
 // Components
 import { AppComponent } from './app.component';
@@ -33,6 +32,7 @@ import {
   AuthInterceptor,
   BaseModule,
   EntitiesModule,
+  LabelSetsModule,
   SelectAccountKbModule,
   TopbarModule,
   UploadModule,

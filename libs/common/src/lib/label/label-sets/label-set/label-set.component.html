@@ -16,7 +16,7 @@
           formControlName="title"
           externalLabel
           [showAllErrors]="false"
-          [errorMessages]="validationMessages.title"></pa-input>
+          [errorMessages]="validationMessages['title']"></pa-input>
       </div>
 
       <div class="form-section-container">
@@ -98,7 +98,7 @@
       <pa-button
         kind="primary"
         (click)="saveLabelSet()"
-        [disabled]="labelSetForm.invalid || !hasChanges || !labelSet?.labels?.length">
+        [disabled]="labelSetForm.invalid || !hasChanges || !labelSet.labels?.length">
         {{ 'generic.save' | translate }}
       </pa-button>
       <pa-button

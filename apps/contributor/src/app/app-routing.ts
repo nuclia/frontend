@@ -3,7 +3,6 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
-  EntitiesComponent,
   PageNotFoundComponent,
   RootGuard,
   SelectAccountComponent,
@@ -47,8 +46,17 @@ export const routes: Routes = [
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
               },
               {
+                path: 'label-sets',
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
+                    (m) => m.LabelSetsModule,
+                  ),
+              },
+              {
                 path: 'entities',
-                component: EntitiesComponent,
+                loadChildren: () =>
+                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },
             ],
           },

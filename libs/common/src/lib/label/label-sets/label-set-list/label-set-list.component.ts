@@ -6,7 +6,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { SDKService } from '@flaps/core';
 import { SisModalService } from '@nuclia/sistema';
 import { TranslateService } from '@ngx-translate/core';
-import { LabelsService } from '@flaps/common';
+import { LabelsService } from '../../labels.service';
 
 @Component({
   selector: 'app-label-set-list',

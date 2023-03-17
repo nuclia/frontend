@@ -6,7 +6,6 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
-  EntitiesComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   RootGuard,
@@ -130,11 +129,16 @@ const routes: Routes = [
               },
               {
                 path: 'entities',
-                component: EntitiesComponent,
+                // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },
               {
                 path: 'label-sets',
-                loadChildren: () => import('./label-sets/label-sets.module').then((m) => m.LabelSetsModule),
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
+                    (m) => m.LabelSetsModule,
+                  ),
               },
               {
                 path: 'manage',

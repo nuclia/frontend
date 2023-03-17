@@ -5,12 +5,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { map, Subject, take } from 'rxjs';
 import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { LabelsService, Sluggable } from '@flaps/common';
 import { STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { Sluggable } from '../../../validators';
+import { LabelsService } from '../../labels.service';
 
 interface LabelSetTitleError extends IErrorMessages {
   required: string;
@@ -61,8 +62,8 @@ export class LabelSetComponent implements OnDestroy {
     this.route.params
       .pipe(
         tap((params) => {
-          this.labelSetId = params.labelSet;
-          this.addNew = !params.labelSet;
+          this.labelSetId = params['labelSet'];
+          this.addNew = !params['labelSet'];
           this.cdr.markForCheck();
         }),
         switchMap(() => this.labelsService.labelSets),

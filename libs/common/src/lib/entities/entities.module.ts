@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -41,6 +41,8 @@ const Components = [
   GroupSelectComponent,
 ];
 
+const ROUTES: Routes = [{ path: '', component: EntitiesComponent }];
+
 @NgModule({
   imports: [
     CommonModule,
@@ -48,7 +50,7 @@ const Components = [
     FlexLayoutModule,
     TranslateModule.forChild(),
     ReactiveFormsModule,
-    RouterModule,
+    RouterModule.forChild(ROUTES),
     ScrollingModule,
     OverlayModule,
     A11yModule,

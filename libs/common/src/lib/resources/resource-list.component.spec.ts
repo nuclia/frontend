@@ -1,35 +1,45 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { MatDialogModule } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { BackendConfigurationService, SDKService, TranslatePipeMock } from '@flaps/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResourceListComponent } from './resource-list.component';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { MockModule, MockProvider } from 'ng-mocks';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
-import { CdkTableModule } from '@angular/cdk/table';
+import { MockComponent, MockModule, MockPipe, MockProvider } from 'ng-mocks';
+import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { RouterTestingModule } from '@angular/router/testing';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { LabelsService } from '../label/labels.service';
+import { of } from 'rxjs';
+import {
+  PaDropdownModule,
+  PaIconModule,
+  PaPopupModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
+import { UploadButtonComponent } from './upload-button/upload-button.component';
+import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LabelModule } from '../label';
+import { CdkTableModule } from '@angular/cdk/table';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
   let fixture: ComponentFixture<ResourceListComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ResourceListComponent, MockPipe(TranslatePipe), MockComponent(UploadButtonComponent)],
       imports: [
-        CdkTableModule,
-        MatDialogModule,
-        MockModule(PaButtonModule),
+        RouterTestingModule,
+        MockModule(PaDropdownModule),
+        MockModule(PaIconModule),
+        MockModule(PaPopupModule),
+        MockModule(PaTogglesModule),
         MockModule(PaTextFieldModule),
-        MockModule(LabelModule),
+        MockModule(SisProgressModule),
         MockModule(ReactiveFormsModule),
+        MockModule(CdkTableModule),
+        MockComponent(DropdownButtonComponent),
       ],
-      declarations: [ResourceListComponent, TranslatePipeMock],
-      schemas: [CUSTOM_ELEMENTS_SCHEMA],
       providers: [
+        MockProvider(BackendConfigurationService),
         {
           provide: SDKService,
           useValue: {
@@ -55,29 +65,13 @@ describe('ResourceListComponent', () => {
             },
           },
         },
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            queryParams: of({}),
-            snapshot: {
-              queryParams: {},
-            },
-          },
-        },
-        {
-          provide: Router,
-          useValue: {},
-        },
-        {
-          provide: TranslateService,
-          useValue: { get: () => of('') },
-        },
-        MockProvider(BackendConfigurationService),
+        MockProvider(TranslateService),
+        MockProvider(LabelsService, {
+          getLabelsByKind: jest.fn(() => of({})),
+        }),
       ],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(ResourceListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

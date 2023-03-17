@@ -107,10 +107,8 @@ export class AppComponent implements OnInit, OnDestroy {
           ),
         ),
       )
-      .subscribe(([account, kb]) =>
-        kb
-          ? this.titleService.setTitle(`Nuclia – ${account.title} – ${kb.title}`)
-          : this.titleService.setTitle(`Nuclia – ${account.title}`),
+      .subscribe(([, kb]) =>
+        kb ? this.titleService.setTitle(`Nuclia – ${kb.title}`) : this.titleService.setTitle(`Nuclia`),
       );
   }
 
