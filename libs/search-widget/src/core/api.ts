@@ -81,7 +81,7 @@ export const search = (query: string, options: SearchOptions) => {
 
 export const getAnswer = (query: string) => {
   return of({
-    text: `${query}, and 42 is still the answer to life, the universe and everything`,
+    text: `${query}, and 42 is still the answer to life`,
     sources: [{ resourceId: '123', paragraph: 'The answer to life, the universe and everything is 42.' }],
   });
 };

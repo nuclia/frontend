@@ -1,0 +1,34 @@
+.sw-dialog-input {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 0 auto;
+  position: relative;
+  border: 1px solid var(--color-dark-stronger);
+  height: var(--rhythm-6);
+
+  .icon {
+    margin: 0 var(--rhythm-2);
+  }
+
+  input {
+    background-color: inherit;
+    border: 0;
+    box-sizing: border-box;
+    color: inherit;
+    font-family: inherit;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-body);
+    line-height: calc(var(--line-height-body) * 1.5);
+    outline: none;
+    text-overflow: ellipsis;
+    width: calc(100% - var(--rhythm-0_25));
+
+    -webkit-appearance: none;
+  }
+
+  input::placeholder {
+    color: var(--color-neutral-regular);
+    transition: all 0s ease;
+  }
+}

@@ -6,4 +6,5 @@ export interface DialogEntry {
 export interface Answer {
   text: string;
   sources: { resourceId: string; paragraph: string }[]; // TEMPORARY
+  incomplete?: boolean;
 }

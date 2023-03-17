@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Chat with your docs",
+	"answer.placeholder": "Let's chat",
 	"answer.sources": "Sources",
 	"entities.annotated": "Annotated",
 	"entities.annotations": "Annotations",

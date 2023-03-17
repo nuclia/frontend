@@ -26,7 +26,7 @@ import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { currentAnswer, dialog } from './answers.store';
+import { currentAnswer, currentQuestion, dialog } from './answers.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -94,12 +94,17 @@ export function initAnswer() {
     ask
       .pipe(
         distinctUntilChanged(),
+        tap((question) => currentQuestion.set(question)),
         switchMap((query) => getAnswer(query).pipe(map((answer) => ({ query, answer })))),
       )
       .subscribe(({ query, answer }) => {
         currentAnswer.set(answer);
         setTimeout(() => {
-          dialog.set({ question: query, answer, reset: true });
+          dialog.set({
+            question: query,
+            answer: { ...answer, text: `${answer.text}, the universe and everything` },
+            reset: false,
+          });
         }, 2000);
       }),
   );
