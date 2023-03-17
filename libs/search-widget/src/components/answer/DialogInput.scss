@@ -6,9 +6,15 @@
   position: relative;
   border-top: 1px solid var(--color-dark-stronger);
   height: var(--rhythm-6);
+  &.highlight {
+    background-color: var(--color-tertiary-lighter);
+  }
 
   .icon {
     margin: 0 var(--rhythm-2);
+  }
+  .microphone {
+    margin: 0 var(--rhythm-1);
   }
 
   input {

@@ -21,3 +21,4 @@ export const canEditLabels = widgetFeatures.pipe(map((features) => !!features?.e
 export const navigateToLink = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const hasFilterButton = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled = widgetFeatures.pipe(map((features) => !!features?.answers));
+export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));

@@ -85,5 +85,6 @@ export const ICONS = [
   'heart',
   'smiley-happy',
   'smiley-sad',
+  'microphone',
   'chat',
 ];
