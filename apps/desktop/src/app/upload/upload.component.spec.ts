@@ -88,6 +88,7 @@ describe('UploadComponent', () => {
                 description: '',
               },
             ]),
+            showFirstStep: NEVER,
             showSource: NEVER,
             step: new BehaviorSubject<number>(0),
             setStep: (step: number) => {

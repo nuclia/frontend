@@ -1,0 +1,30 @@
+@import 'variables';
+
+.upload-history {
+  max-width: calc(rhythm(90) + rhythm(12));
+
+  &.show-active {
+    max-width: calc(rhythm(90) + rhythm(32));
+  }
+
+  header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: rhythm(4);
+    h2 {
+      margin: 0;
+    }
+  }
+
+  // pa-table hacks
+  ::ng-deep .pa-table-grid--cell {
+    font-size: $font-size-body-s;
+    line-height: $line-height-body-s;
+    min-height: rhythm(5);
+  }
+  ::ng-deep .pa-table-grid--head .pa-table-grid--header {
+    font-size: $font-size-body-xs;
+    line-height: $line-height-body-xs;
+  }
+}

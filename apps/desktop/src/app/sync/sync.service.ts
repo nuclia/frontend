@@ -96,10 +96,13 @@ export class SyncService {
   private _queue: Sync[] = [];
   queue = new ReplaySubject<Sync[]>(1);
   ready = new Subject<void>();
+
   private _step = new BehaviorSubject<number>(0);
   step = this._step.asObservable();
   private _showSource = new Subject<{ connectorId: string; quickAccessName: string; edit: boolean }>();
   showSource = this._showSource.asObservable();
+  private _showFirstStep = new Subject<void>();
+  showFirstStep = this._showFirstStep.asObservable();
 
   constructor(private sdk: SDKService, private user: UserService) {
     this.ready.subscribe(() => {
@@ -226,6 +229,11 @@ export class SyncService {
     this.start();
   }
 
+  clearCompleted() {
+    this._queue = this._queue.filter((sync) => !sync.completed);
+    this.onQueueUpdate();
+  }
+
   private watchProcessing() {
     return this.sdk.nuclia.db
       .pull()
@@ -323,6 +331,10 @@ export class SyncService {
 
   setStep(step: number) {
     this._step.next(step);
+  }
+
+  goToFirstStep() {
+    this._showFirstStep.next();
   }
 
   goToSource(connectorId: string, quickAccessName: string, edit: boolean) {

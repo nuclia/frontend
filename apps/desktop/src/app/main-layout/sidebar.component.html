@@ -3,10 +3,12 @@
     <div class="upload-title">{{ 'upload.data' | translate }}:</div>
     <ul>
       <li *ngFor="let text of steps; let step = index">
-        <div
+        <span
           class="step"
           [class.pending]="(currentStep | async) < step"
-          [class.active]="(currentStep | async) === step">
+          [class.active]="(currentStep | async) === step"
+          [class.clickable]="step === 0"
+          (click)="goToStep(step)">
           <span
             *ngIf="(currentStep | async) <= step"
             class="step-number">
@@ -18,7 +20,7 @@
             name="circle-check"
             color="#f06"></pa-icon>
           {{ text | translate }}
-        </div>
+        </span>
         <div
           *ngIf="step === 0 && (currentStep | async) === 0"
           class="quick-access-list">
@@ -39,6 +41,19 @@
           </div>
         </div>
       </li>
+    </ul>
+  </div>
+
+  <div class="history-menu">
+    <ul>
+      <li>
+        <span (click)="goToHistory()">{{ 'history.title' | translate }}</span>
+      </li>
+      <ul>
+        <li *ngIf="hasActiveUploads | async">
+          <span (click)="goToHistory(true)">{{ 'history.active_uploads' | translate }}</span>
+        </li>
+      </ul>
     </ul>
   </div>
 </div>

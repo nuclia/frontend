@@ -39,6 +39,10 @@
     &.pending {
       opacity: 0.3;
     }
+
+    &.clickable {
+      cursor: pointer;
+    }
   }
 
   .step-number {
@@ -69,6 +73,22 @@
     }
     &:hover pa-button {
       visibility: visible;
+    }
+  }
+
+  .history-menu {
+    padding: rhythm(2) rhythm(4);
+
+    ul > ul {
+      padding-left: rhythm(3);
+    }
+
+    li {
+      font-weight: $font-weight-semi-bold;
+    }
+
+    span {
+      cursor: pointer;
     }
   }
 }

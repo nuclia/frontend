@@ -13,6 +13,7 @@ export class SidebarComponent {
   currentStep = this.sync.step;
   sources = this.sync.sources;
   steps = ['upload.steps.source', 'upload.steps.configure', 'upload.steps.data', 'upload.steps.destination'];
+  hasActiveUploads = this.sync.queue.pipe(map((syncs) => syncs.some((sync) => !sync.completed)));
   cache = this.sync.step.pipe(
     filter((step) => step === 0),
     map(() => Object.values(this.sync.getConnectorsCache())),
@@ -27,11 +28,25 @@ export class SidebarComponent {
 
   constructor(private sync: SyncService, private router: Router) {}
 
+  goToStep(step: number) {
+    if (step === 0) {
+      from(this.router.navigate(['/add-upload'])).subscribe(() => {
+        setTimeout(() => {
+          this.sync.goToFirstStep();
+        }, 0);
+      });
+    }
+  }
+
   goToSource(connectorId: string, quickAccessName: string, edit: boolean) {
     from(this.router.navigate(['/add-upload'])).subscribe(() => {
       setTimeout(() => {
         this.sync.goToSource(connectorId, quickAccessName, edit);
       }, 0);
     });
+  }
+
+  goToHistory(showActive = false) {
+    this.router.navigate(['/history'], { queryParams: showActive ? { active: 'true' } : {} });
   }
 }

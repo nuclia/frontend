@@ -145,7 +145,7 @@
 						</children>
 					</folder_node>
 					<folder_node>
-						<name>home</name>
+						<name>history</name>
 						<children>
 							<concept_node>
 								<name>active</name>
@@ -172,7 +172,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>add</name>
+								<name>back</name>
 								<description/>
 								<comment/>
 								<default_text/>
@@ -196,7 +196,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>completed</name>
+								<name>clean</name>
 								<description/>
 								<comment/>
 								<default_text/>
@@ -220,7 +220,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>files</name>
+								<name>data</name>
 								<description/>
 								<comment/>
 								<default_text/>
@@ -244,7 +244,79 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>pending</name>
+								<name>date</name>
+								<description/>
+								<comment/>
+								<default_text/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>knowledge_box</name>
+								<description/>
+								<comment/>
+								<default_text/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>source</name>
+								<description/>
+								<comment/>
+								<default_text/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>title</name>
 								<description/>
 								<comment/>
 								<default_text/>

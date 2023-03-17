@@ -44,10 +44,13 @@ export class UploadComponent implements OnInit, OnDestroy {
           localStorage.removeItem(SOURCE_ID_KEY);
         });
     }
+    this.sync.showFirstStep.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.reset();
+    });
     this.sync.showSource.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
       if (data.edit) {
         this.quickAccess = { connectorId: data.connectorId, quickAccessName: data.quickAccessName };
-        this.goTo(0);
+        this.goTo(1);
       } else {
         const params = this.sync.getConnectorCache(data.connectorId, data.quickAccessName)?.params;
         const connector = this.sync.sources[data.connectorId].definition;
@@ -64,9 +67,6 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   goTo(step: number) {
     this.sync.setStep(step);
-    if (step === 0) {
-      this.reset();
-    }
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
@@ -107,17 +107,19 @@ export class UploadComponent implements OnInit, OnDestroy {
       resumable: !!this.source?.resumable,
       fileUUIDs: [],
     });
-    this.router.navigate(['/']);
+    this.router.navigate(['/history'], { queryParams: { active: 'true' } });
   }
 
   private reset() {
     localStorage.removeItem(SOURCE_ID_KEY);
     this.sourceId = '';
     this.source = undefined;
+    this.quickAccess = undefined;
+    this.selection.clear();
+    this.goTo(0);
   }
 
   cancel() {
-    this.goTo(0);
-    this.router.navigate(['/']);
+    this.reset();
   }
 }

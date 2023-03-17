@@ -60,6 +60,7 @@ export class ConnectorsComponent implements OnDestroy {
   selectedConnector?: ConnectorDefinition;
   canStoreParams = false;
   quickAccessName?: string;
+  step = this.sync.step;
 
   constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {
     this.sync.sourceObs.pipe(takeUntil(this.unsubscribeAll)).subscribe((sources) => {
@@ -68,6 +69,18 @@ export class ConnectorsComponent implements OnDestroy {
         markForCheck(this.cdr);
       }
     });
+    this.step
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        filter((step) => step === 0),
+      )
+      .subscribe(() => {
+        this.form = undefined;
+        this.fields = undefined;
+        this.selectedConnector = undefined;
+        this.quickAccessName = undefined;
+        this.cdr.markForCheck();
+      });
   }
 
   ngOnDestroy() {
