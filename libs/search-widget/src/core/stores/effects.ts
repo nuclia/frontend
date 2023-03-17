@@ -26,7 +26,7 @@ import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { currentAnswer, currentQuestion, dialog } from './answers.store';
+import { currentAnswer, currentQuestion, chat } from './answers.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -100,7 +100,7 @@ export function initAnswer() {
       .subscribe(({ query, answer }) => {
         currentAnswer.set(answer);
         setTimeout(() => {
-          dialog.set({
+          chat.set({
             question: query,
             answer: { ...answer, text: `${answer.text}, the universe and everything` },
             reset: false,

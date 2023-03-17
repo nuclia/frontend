@@ -72,13 +72,13 @@
 </script>
 
 <div
-  class="sw-dialog-input"
+  class="sw-chat-input"
   class:highlight={isListening}>
   <div class="icon">
     <Icon name="chat" />
   </div>
   <input
-    name="nuclia-dialog-field"
+    name="nuclia-chat-field"
     bind:this={inputElement}
     {placeholder}
     tabindex="0"
@@ -100,4 +100,4 @@
 
 <style
   lang="scss"
-  src="./DialogInput.scss"></style>
+  src="./ChatInput.scss"></style>

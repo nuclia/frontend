@@ -1,27 +1,27 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import { dialog } from '../../core/stores/answers.store';
+  import { chat } from '../../core/stores/answers.store';
   import Feedback from './Feedback.svelte';
-  import DialogInput from './DialogInput.svelte';
+  import ChatInput from './ChatInput.svelte';
   import { _ } from '../../core/i18n';
   import { onMount } from 'svelte';
   import { delay } from 'rxjs';
 
   let entriesElement: HTMLDivElement;
   onMount(() => {
-    const sub = dialog.pipe(delay(200)).subscribe(() => {
+    const sub = chat.pipe(delay(200)).subscribe(() => {
       entriesElement.scrollTo({ top: entriesElement.scrollHeight, behavior: 'smooth' });
     });
     return () => sub.unsubscribe();
   });
 </script>
 
-<div class="sw-dialog">
+<div class="sw-chat">
   <div
     class="entries"
     bind:this={entriesElement}>
-    {#each $dialog as entry, i}
+    {#each $chat as entry, i}
       <div class="entry">
         <div class="row-1">
           <div class="icon">
@@ -48,10 +48,10 @@
   </div>
   <div class="input">
     <div />
-    <DialogInput placeholder={$_('answer.placeholder')} />
+    <ChatInput placeholder={$_('answer.placeholder')} />
   </div>
 </div>
 
 <style
   lang="scss"
-  src="./Dialog.scss"></style>
+  src="./Chat.scss"></style>

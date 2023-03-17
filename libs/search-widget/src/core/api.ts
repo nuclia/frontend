@@ -28,7 +28,7 @@ import { suggestionsHasError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { hasSearchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
-import type { DialogEntry } from './answer.models';
+import type { ChatEntry } from './answer.models';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -86,8 +86,8 @@ export const getAnswer = (query: string) => {
   });
 };
 
-export const sendFeedback = (dialog: DialogEntry[], approved: boolean) => {
-  console.log('sendFeedback', dialog, approved);
+export const sendFeedback = (chat: ChatEntry[], approved: boolean) => {
+  console.log('sendFeedback', chat, approved);
   return of(undefined);
 };
 

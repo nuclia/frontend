@@ -1,4 +1,4 @@
-export interface DialogEntry {
+export interface ChatEntry {
   question: string;
   answer: Answer;
 }
