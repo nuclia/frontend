@@ -26,3 +26,14 @@
     width: 30px;
   }
 }
+@media (min-width: 1024px) {
+  .sw-modal-header {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    left: calc((var(--resource-modal-width-md, fit-content) - 100vw) / 2);
+    .close {
+      margin-right: var(--rhythm-1);
+    }
+  }
+}

@@ -32,8 +32,8 @@
       left: max(calc(var(--popup-left) - var(--modal-width)), 0px);
     }
     &:not(.popup) .modal-content {
-      width: var(--modal-width-md, fit-content);
-      height: var(--modal-height-md, fit-content);
+      width: var(--resource-modal-width-md, fit-content);
+      height: 100vh;
     }
   }
 }
