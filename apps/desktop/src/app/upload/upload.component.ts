@@ -1,12 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, switchMap, take, tap } from 'rxjs';
-import { MatDialog } from '@angular/material/dialog';
+import { filter, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
 import { ConnectorDefinition, ConnectorParameters, ISourceConnector, SOURCE_ID_KEY, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
-import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 @Component({
   selector: 'nde-upload',
@@ -14,17 +12,18 @@ import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
   styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UploadComponent implements OnInit {
-  step = 0;
+export class UploadComponent implements OnInit, OnDestroy {
   sourceId = '';
   source?: ISourceConnector;
   selection = new SelectionModel<SyncItem>(true, []);
+  step = this.sync.step;
+  quickAccess?: { connectorId: string; quickAccessName: string };
+  unsubscribeAll = new Subject<void>();
 
   constructor(
     private sync: SyncService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private dialog: MatDialog,
     private tracking: STFTrackingService,
   ) {}
 
@@ -41,15 +40,33 @@ export class UploadComponent implements OnInit {
           filter((yes) => yes),
         )
         .subscribe(() => {
-          this.goTo(1);
+          this.goTo(2);
           localStorage.removeItem(SOURCE_ID_KEY);
         });
     }
+    this.sync.showFirstStep.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+      this.reset();
+    });
+    this.sync.showSource.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
+      if (data.edit) {
+        this.quickAccess = { connectorId: data.connectorId, quickAccessName: data.quickAccessName };
+        this.goTo(1);
+      } else {
+        const params = this.sync.getConnectorCache(data.connectorId, data.quickAccessName)?.params;
+        const connector = this.sync.sources[data.connectorId].definition;
+        this.selectSource({ connector, params });
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.goTo(0);
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   goTo(step: number) {
-    this.step = step;
-    this.cdr.detectChanges();
+    this.sync.setStep(step);
   }
 
   selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
@@ -73,52 +90,36 @@ export class UploadComponent implements OnInit {
         filter((yes) => yes),
       )
       .subscribe(() => {
-        this.goTo(1);
+        this.goTo(2);
       });
   }
 
   selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
     this.tracking.logEvent('desktop:select_destination', { sourceId: event.connector.id });
-    this.goTo(3);
-    this.dialog
-      .open(ConfirmFilesComponent, {
-        data: { files: this.selection.selected },
-      })
-      .afterClosed()
-      .pipe(filter((result) => !!result))
-      .subscribe(() => {
-        this.tracking.logEvent('desktop:upload_confirm');
-        this.sync.addSync({
-          date: new Date().toISOString(),
-          source: this.sourceId,
-          destination: {
-            id: event.connector.id,
-            params: event.params,
-          },
-          files: this.selection.selected,
-          resumable: !!this.source?.resumable,
-          fileUUIDs: [],
-        });
-        this.router.navigate(['/']);
-      });
+    this.sync.addSync({
+      date: new Date().toISOString(),
+      source: this.sourceId,
+      destination: {
+        id: event.connector.id,
+        params: event.params,
+      },
+      files: this.selection.selected,
+      resumable: !!this.source?.resumable,
+      fileUUIDs: [],
+    });
+    this.router.navigate(['/history'], { queryParams: { active: 'true' } });
   }
 
   private reset() {
     localStorage.removeItem(SOURCE_ID_KEY);
     this.sourceId = '';
     this.source = undefined;
+    this.quickAccess = undefined;
+    this.selection.clear();
+    this.goTo(0);
   }
 
   cancel() {
     this.reset();
-    this.router.navigate(['/']);
-  }
-
-  goBackTo(step: number) {
-    this.step = step;
-    if (step === 0) {
-      this.reset();
-    }
-    this.cdr?.markForCheck();
   }
 }

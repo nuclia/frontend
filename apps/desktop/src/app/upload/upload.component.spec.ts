@@ -3,12 +3,10 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { STFTrackingService, TranslatePipeMock } from '@flaps/core';
-import { MatDialogModule } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { BehaviorSubject, NEVER, of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
 import { ConnectorsComponent } from '../connectors/connectors.component';
-import { StepsComponent } from './steps/steps.component';
 import { SyncService } from '../sync/sync.service';
 import { SelectFilesComponent } from './select-files/select-files.component';
 
@@ -21,7 +19,6 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { ConfirmFilesComponent } from './confirm-files/confirm-files.component';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -30,21 +27,12 @@ describe('UploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        UploadComponent,
-        ConnectorsComponent,
-        ConnectorComponent,
-        StepsComponent,
-        TranslatePipeMock,
-        SelectFilesComponent,
-        ConfirmFilesComponent,
-      ],
+      declarations: [UploadComponent, ConnectorsComponent, ConnectorComponent, TranslatePipeMock, SelectFilesComponent],
       imports: [
         NoopAnimationsModule,
         RouterTestingModule,
         FormsModule,
         ReactiveFormsModule,
-        MatDialogModule,
         MockModule(PaButtonModule),
         MockModule(PaTextFieldModule),
         MockModule(PaCardModule),
@@ -100,6 +88,12 @@ describe('UploadComponent', () => {
                 description: '',
               },
             ]),
+            showFirstStep: NEVER,
+            showSource: NEVER,
+            step: new BehaviorSubject<number>(0),
+            setStep: (step: number) => {
+              (sync.step as BehaviorSubject<number>).next(step);
+            },
           },
         },
         {
@@ -119,18 +113,16 @@ describe('UploadComponent', () => {
   });
 
   it('should allow to add a new sync', () => {
-    expect(component.step).toEqual(0);
+    jest.spyOn(sync, 'setStep');
     fixture.debugElement.nativeElement.querySelector('.connector').click();
-    expect(component.step).toEqual(1);
+    expect(sync.setStep).toHaveBeenCalledWith(2);
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="next"]').click();
-    expect(component.step).toEqual(2);
+    expect(sync.setStep).toHaveBeenCalledWith(3);
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="fields-form"]').submit();
-    fixture.detectChanges();
-    (document.querySelector('[qa="confirm"]') as HTMLElement).click();
     fixture.detectChanges();
     expect(sync.addSync).toHaveBeenCalled();
   });

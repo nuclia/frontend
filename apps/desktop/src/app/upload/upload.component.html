@@ -1,33 +1,28 @@
 <div class="container">
-  <div class="steps">
-    <nde-steps
-      [currentStep]="step"
-      (goBackTo)="goBackTo($event)"></nde-steps>
-  </div>
-  <div class="content">
-    <ng-container *ngIf="step === 0">
-      <h3>{{ 'upload.source.title' | translate }}</h3>
-      <p>{{ 'upload.source.help' | translate }}</p>
-      <nde-connectors
-        type="sources"
-        (selectConnector)="selectSource($event)"
-        (cancel)="cancel()"></nde-connectors>
-    </ng-container>
-    <ng-container *ngIf="step === 1">
-      <nde-select-files
-        [source]="source"
-        [sourceId]="sourceId"
-        (next)="goTo(2)"
-        [(selection)]="selection"
-        (cancel)="cancel()"></nde-select-files>
-    </ng-container>
-    <ng-container *ngIf="step === 2">
-      <h2>Push to</h2>
-      <nde-connectors
-        type="destinations"
-        [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
-        (selectConnector)="selectDestination($event)"
-        (cancel)="cancel()"></nde-connectors>
-    </ng-container>
-  </div>
+  <ng-container *ngIf="(step | async) === 0 || (step | async) === 1">
+    <h2>{{ 'upload.source.title' | translate }}</h2>
+    <p>{{ 'upload.source.description' | translate }}</p>
+    <nde-connectors
+      type="sources"
+      [quickAccess]="quickAccess"
+      (selectConnector)="selectSource($event)"
+      (cancel)="cancel()"></nde-connectors>
+  </ng-container>
+  <ng-container *ngIf="(step | async) === 2">
+    <nde-select-files
+      [source]="source"
+      [sourceId]="sourceId"
+      (next)="goTo(3)"
+      [(selection)]="selection"
+      (cancel)="cancel()"></nde-select-files>
+  </ng-container>
+  <ng-container *ngIf="(step | async) === 3">
+    <h2>{{ 'upload.destination.title' | translate }}</h2>
+    <p>{{ 'upload.destination.description' | translate }}</p>
+    <nde-connectors
+      type="destinations"
+      [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
+      (selectConnector)="selectDestination($event)"
+      (cancel)="cancel()"></nde-connectors>
+  </ng-container>
 </div>

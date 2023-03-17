@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SelectAccountComponent } from './account/account.component';
-import { HomeComponent } from './home/home.component';
+import { HistoryComponent } from './history/history.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { UploadComponent } from './upload/upload.component';
 
@@ -12,7 +12,8 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: HomeComponent,
+        redirectTo: 'add-upload',
+        pathMatch: 'full',
       },
       {
         path: 'add-upload',
@@ -21,6 +22,10 @@ const routes: Routes = [
       {
         path: 'redirect',
         component: UploadComponent,
+      },
+      {
+        path: 'history',
+        component: HistoryComponent,
       },
     ],
   },

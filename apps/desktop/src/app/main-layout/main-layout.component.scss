@@ -1,11 +1,13 @@
+@import 'variables';
+
 .page-wrapper {
-  padding: 70px 70px 0 70px;
+  padding: 70px 0 0 rhythm(35);
   height: 100%;
-  background-color: var(--stf-gray-background);
   display: flex;
   overflow: scroll;
 }
+
 .page-content {
-  padding-top: 20px;
+  padding: rhythm(5) rhythm(10);
   width: 100%;
 }

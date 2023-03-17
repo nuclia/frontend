@@ -14,6 +14,7 @@ export const DropboxConnector: SourceConnectorDefinition = {
   title: 'Dropbox',
   logo: 'assets/logos/dropbox.svg',
   description: 'File storage and synchronization service developed by Dropbox',
+  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda#dropbox-connector-usage',
   factory: () => of(new DropboxImpl()),
 };
 
@@ -62,7 +63,7 @@ class DropboxImpl implements ISourceConnector {
       throw new Error();
     };
     const request = query
-      ? fetch(`https://api.dropboxapi.com/2/files/search_v2${nextPage ? '/continue' : ''}`, {
+      ? fetch(`https://api.dropboxapi.com/2/files/${nextPage ? 'search/continue_v2' : 'search_v2'}`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${localStorage.getItem(TOKEN || '')}`,
@@ -82,7 +83,7 @@ class DropboxImpl implements ISourceConnector {
       filter((isSigned) => isSigned),
       take(1),
       switchMap(() =>
-        from(request.then((res) => res.json())).pipe(
+        from(request).pipe(
           map((result: any) => ({
             items:
               (query

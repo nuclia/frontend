@@ -19,7 +19,7 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { HomeModule } from './home/home.module';
+import { HistoryModule } from './history/history.module';
 import { MainLayoutModule } from './main-layout/main-layout.module';
 import { UploadModule } from './upload/upload.module';
 import { ConnectorsModule } from './connectors/connectors.module';
@@ -45,7 +45,7 @@ registerLocaleData(localeCa);
       },
     }),
     PaToastModule,
-    HomeModule,
+    HistoryModule,
     MainLayoutModule,
     UploadModule,
     ConnectorsModule,

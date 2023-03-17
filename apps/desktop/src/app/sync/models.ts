@@ -1,11 +1,13 @@
 import { Observable } from 'rxjs';
 
 export const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
+export const CONNECTOR_PARAMS_CACHE = 'CONNECTOR_PARAMS_CACHE';
 export interface ConnectorDefinition {
   id: string;
   title: string;
   logo: string;
   description: string;
+  helpUrl?: string;
 }
 
 export interface SourceConnectorDefinition extends ConnectorDefinition {
@@ -81,4 +83,10 @@ export interface Field {
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
   canBeRefreshed?: boolean;
+}
+
+export interface ConnectorCache {
+  connectorId: string;
+  name: string;
+  params: any;
 }
