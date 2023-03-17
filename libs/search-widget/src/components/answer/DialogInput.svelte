@@ -4,6 +4,7 @@
   import { SpeechSettings, SpeechStore } from 'talk2svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import Icon from '../../common/icons/Icon.svelte';
+  import { _ } from '../../core/i18n';
   import { ask } from '../../core/stores/effects';
   import { isSpeechEnabled } from '../../core/stores/widget.store';
   export let placeholder = '';
@@ -84,7 +85,7 @@
     autocomplete="off"
     autocapitalize="off"
     spellcheck="false"
-    aria-label="Dialog input"
+    aria-label={$_('answer.input.label')}
     bind:value={question}
     on:keypress={onKeyPress} />
   {#if $isSpeechEnabled}

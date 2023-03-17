@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Discutez avec vos documents",
+	"answer.input.label": "Champ de saisie du chat",
 	"answer.placeholder": "Discutons",
 	"answer.sources": "Sources",
 	"entities.annotated": "Annotations",

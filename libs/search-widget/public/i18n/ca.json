@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Xateja amb els teus documents",
+	"answer.input.label": "Entrada de xat",
 	"answer.placeholder": "Parlem",
 	"answer.sources": "Fonts",
 	"entities.annotated": "Anotacions",
