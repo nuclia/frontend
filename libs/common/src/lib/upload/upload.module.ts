@@ -24,16 +24,8 @@ import {
 import { SisProgressModule } from '@nuclia/sistema';
 import { HintModule } from '../hint';
 import { LabelModule } from '../label';
-
-const Components = [
-  CreateLinkComponent,
-  CsvSelectComponent,
-  UploadFilesComponent,
-  UploadFilesDialogComponent,
-  UploadProgressComponent,
-  UploadProgressDialogComponent,
-  UploadTextComponent,
-];
+import { UploadBarComponent } from './upload-bar/upload-bar.component';
+import { ProgressBarModule } from '../progress-bar';
 
 @NgModule({
   imports: [
@@ -53,8 +45,18 @@ const Components = [
     PaTooltipModule,
     PaTextFieldModule,
     SisProgressModule,
+    ProgressBarModule,
   ],
-  declarations: [...Components],
-  exports: [],
+  declarations: [
+    CreateLinkComponent,
+    CsvSelectComponent,
+    UploadBarComponent,
+    UploadFilesComponent,
+    UploadFilesDialogComponent,
+    UploadProgressComponent,
+    UploadProgressDialogComponent,
+    UploadTextComponent,
+  ],
+  exports: [UploadBarComponent],
 })
 export class UploadModule {}

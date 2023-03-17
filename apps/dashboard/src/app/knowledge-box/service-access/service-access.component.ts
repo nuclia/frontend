@@ -6,7 +6,7 @@ import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SDKService, StateService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
-import { TokenDialogComponent } from '../../token-dialog';
+import { TokenDialogComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-service-access',

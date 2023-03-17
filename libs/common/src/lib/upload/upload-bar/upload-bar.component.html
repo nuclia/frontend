@@ -1,0 +1,33 @@
+<div class="upload-bar">
+  <div
+    class="upload-bar-title"
+    [innerHTML]="'upload.uploading_files' | translate"></div>
+
+  <div class="upload-bar-progress">
+    <stf-progress-bar
+      track="white"
+      [progress]="progress | async"></stf-progress-bar>
+  </div>
+
+  <div class="upload-bar-percentage">
+    <strong>{{ progress | async }}%</strong>
+    {{ 'upload.completed' | translate }}
+  </div>
+
+  <pa-button
+    kind="inverted"
+    size="small"
+    (click)="checkFiles()">
+    {{ 'upload.check_files' | translate }}
+  </pa-button>
+
+  <pa-button
+    class="close-button"
+    icon="cross"
+    kind="inverted"
+    aspect="basic"
+    size="small"
+    (click)="close()">
+    {{ 'generic.close' | translate }}
+  </pa-button>
+</div>

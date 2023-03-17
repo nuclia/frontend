@@ -31,7 +31,7 @@ import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
 import { SearchModule } from './search/search.module';
 import { AuthInterceptor, BaseModule, SelectAccountKbModule, TopbarModule, UploadModule } from '@flaps/common';
-import { KnowledgeBoxModule } from '../../../../libs/common/src/lib/knowledge-box/knowledge-box.module';
+import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);

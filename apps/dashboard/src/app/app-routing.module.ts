@@ -6,11 +6,6 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
-  KnowledgeBoxComponent,
-  KnowledgeBoxHomeComponent,
-  KnowledgeBoxKeysComponent,
-  KnowledgeBoxProfileComponent,
-  KnowledgeBoxUsersComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   RootGuard,
@@ -35,6 +30,13 @@ import { AccountNUAComponent } from './account/account-nua/account-nua.component
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 import { AccountUsersComponent } from './account/account-users/account-users.component';
 import { SearchComponent } from './search/search.component';
+import {
+  KnowledgeBoxComponent,
+  KnowledgeBoxHomeComponent,
+  KnowledgeBoxKeysComponent,
+  KnowledgeBoxProfileComponent,
+  KnowledgeBoxUsersComponent,
+} from './knowledge-box';
 
 const routes: Routes = [
   {
@@ -140,9 +142,9 @@ const routes: Routes = [
               {
                 path: 'training',
                 loadChildren: () =>
-                  import(
-                    '../../../../libs/common/src/lib/knowledge-box/knowledge-box-training/knowledge-box-training.module'
-                  ).then((m) => m.KnowledgeBoxTrainingModule),
+                  import('./knowledge-box/knowledge-box-training/knowledge-box-training.module').then(
+                    (m) => m.KnowledgeBoxTrainingModule,
+                  ),
               },
               {
                 path: 'users',

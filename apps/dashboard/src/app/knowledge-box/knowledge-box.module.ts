@@ -6,8 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { PipesModule } from '../pipes/pipes.module';
-
 import { UserAvatarModule } from '@flaps/components';
 import { STFExpanderModule } from '@flaps/pastanaga';
 
@@ -17,7 +15,6 @@ import { KnowledgeBoxProfileComponent } from './knowledge-box-profile/knowledge-
 import { KnowledgeBoxUsersComponent } from './knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
-import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { UsersManageModule } from './knowledge-box-users/users-manage/users-manage.module';
 import {
   PaButtonModule,
@@ -30,10 +27,14 @@ import {
   PaTranslateModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-import { ProgressBarModule } from '../progress-bar';
-import { TokenDialogModule } from '../token-dialog';
-import { ChartsModule } from '../charts';
-import { HintModule } from '../hint';
+import {
+  ChartsModule,
+  HintModule,
+  PipesModule,
+  ProgressBarModule,
+  TokenDialogModule,
+  UploadModule,
+} from '@flaps/common';
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { HintModule } from '../hint';
     PaIconModule,
     DropdownButtonComponent,
     PaTranslateModule,
+    UploadModule,
   ],
   declarations: [
     KnowledgeBoxComponent,
@@ -69,7 +71,6 @@ import { HintModule } from '../hint';
     KnowledgeBoxUsersComponent,
     KnowledgeBoxKeysComponent,
     ServiceAccessComponent,
-    UploadBarComponent,
   ],
   exports: [
     KnowledgeBoxComponent,
@@ -78,7 +79,6 @@ import { HintModule } from '../hint';
     KnowledgeBoxUsersComponent,
     KnowledgeBoxKeysComponent,
     ServiceAccessComponent,
-    UploadBarComponent,
   ],
 })
 export class KnowledgeBoxModule {}

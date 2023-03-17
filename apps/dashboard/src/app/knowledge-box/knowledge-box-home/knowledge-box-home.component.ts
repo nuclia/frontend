@@ -6,7 +6,7 @@ import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../utils';
-import { AppService } from '../../services';
+import { AppService } from '../../../../../../libs/common/src/lib/services';
 
 @Component({
   selector: 'app-knowledge-box-home',

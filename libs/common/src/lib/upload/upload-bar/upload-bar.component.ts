@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { map } from 'rxjs';
-import { UploadProgressDialogComponent, UploadService } from '../../upload';
+import { UploadService } from '../upload.service';
+import { UploadProgressDialogComponent } from '../upload-progress/upload-progress-dialog.component';
 
 @Component({
-  selector: 'app-upload-bar',
+  selector: 'stf-upload-bar',
   templateUrl: './upload-bar.component.html',
   styleUrls: ['./upload-bar.component.scss'],
 })

@@ -3,9 +3,9 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { concatMap, takeUntil } from 'rxjs/operators';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
-import { Sluggable } from '../../validators';
 import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { Sluggable } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box-profile',

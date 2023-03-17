@@ -4,9 +4,9 @@ import { SDKService, StateService, STFTrackingService, TranslatePipeMock } from 
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
-import * as EN from '../../../assets/i18n/en.json';
+import * as EN from '@flaps/common';
+import { AppService } from '@flaps/common';
 import { MatDialogModule } from '@angular/material/dialog';
-import { AppService } from '../../services';
 
 function createTranslateLoader() {
   return {

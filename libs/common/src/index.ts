@@ -7,7 +7,6 @@ export * from './lib/charts';
 export * from './lib/directives';
 export * from './lib/guards';
 export * from './lib/hint';
-export * from './lib/knowledge-box';
 export * from './lib/label';
 export * from './lib/messages';
 export * from './lib/navbar';

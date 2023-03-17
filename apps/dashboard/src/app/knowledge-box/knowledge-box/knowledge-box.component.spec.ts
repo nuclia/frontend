@@ -4,10 +4,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
-import { UploadService } from '../../upload/upload.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockModule } from 'ng-mocks';
-import { AppService } from '../../services';
+import { AppService, UploadService } from '@flaps/common';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;

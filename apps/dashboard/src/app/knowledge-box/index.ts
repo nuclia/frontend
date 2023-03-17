@@ -5,5 +5,4 @@ export * from './knowledge-box-profile/knowledge-box-profile.component';
 export * from './knowledge-box-training';
 export * from './knowledge-box-users';
 export * from './service-access/service-access.component';
-export * from './upload-bar/upload-bar.component';
 export * from './knowledge-box.module';
