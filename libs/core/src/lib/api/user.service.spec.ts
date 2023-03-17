@@ -17,9 +17,10 @@ describe('UserService', () => {
             nuclia: {
               auth: {
                 logout: () => {},
-                isAuthenticated: () => of(),
+                isAuthenticated: () => of(null),
               },
-              db: { getWelcome: () => of() },
+              db: { getWelcome: () => of(null) },
+              options: { standalone: false },
             },
           },
         },

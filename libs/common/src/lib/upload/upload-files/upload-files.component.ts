@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
-import { filter, take } from 'rxjs';
-import { DroppedFile, StateService, STFTrackingService, STFUtils } from '@flaps/core';
-import { Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
+import { filter, map, take } from 'rxjs';
+import { DroppedFile, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
+import { Account, Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, UploadService } from '../upload.service';
 import * as mime from 'mime';
 
@@ -25,21 +25,26 @@ export class UploadFilesComponent {
   maxFileSize = 0;
   maxMediaFileSize = 0;
   useFoldersAsLabels = false;
+  noLimit = this.sdk.nuclia.options.standalone;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private uploadService: UploadService,
     private tracking: STFTrackingService,
     private stateService: StateService,
+    private sdk: SDKService,
   ) {
     this.stateService.account
       .pipe(
         filter((account) => !!account),
+        map((account) => account as Account),
         take(1),
       )
       .subscribe((account) => {
-        this.maxFileSize = account!.limits.upload.upload_limit_max_non_media_file_size;
-        this.maxMediaFileSize = account!.limits.upload.upload_limit_max_media_file_size;
+        if (account.limits) {
+          this.maxFileSize = account.limits.upload.upload_limit_max_non_media_file_size;
+          this.maxMediaFileSize = account.limits.upload.upload_limit_max_media_file_size;
+        }
       });
   }
 
@@ -61,7 +66,9 @@ export class UploadFilesComponent {
   }
 
   private updateFiles() {
-    this.limitsExceeded = this.files.length > this.getAllowedFiles().length;
+    if (!this.noLimit) {
+      this.limitsExceeded = this.files.length > this.getAllowedFiles().length;
+    }
     this.cdr?.markForCheck();
   }
 
@@ -94,10 +101,12 @@ export class UploadFilesComponent {
   getAllowedFiles() {
     const mediaFiles = this.getFilesByType(this.files, true);
     const nonMediaFiles = this.getFilesByType(this.files, false);
-    return [
-      ...nonMediaFiles.filter((file) => file.size <= this.maxFileSize),
-      ...mediaFiles.filter((file) => file.size <= this.maxMediaFileSize),
-    ];
+    return this.noLimit
+      ? [...nonMediaFiles, ...mediaFiles]
+      : [
+          ...nonMediaFiles.filter((file) => file.size <= this.maxFileSize),
+          ...mediaFiles.filter((file) => file.size <= this.maxMediaFileSize),
+        ];
   }
 
   private setLabels(files: FileWithMetadata[]): FileWithMetadata[] {

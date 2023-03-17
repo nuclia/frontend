@@ -47,7 +47,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
     if (kbPath) {
       nucliaPrediction = new NucliaPrediction(getCDN());
-      const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
+      const authHeaders = state === 'PRIVATE' ? nucliaApi.auth.getAuthHeaders() : {};
       nucliaPrediction.loadModels(kbPath, authHeaders);
     }
   }

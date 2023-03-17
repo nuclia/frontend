@@ -548,13 +548,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     const titleOnly = this.searchForm.value.searchIn === 'title';
     const page = this.page >= 1 ? this.page - 1 : 0;
 
-    forkJoin([this.stateService.account.pipe(take(1)), this.stateService.stash.pipe(take(1))])
-      .pipe(
-        filter(([account, kb]) => !!account && !!kb),
-        take(1),
-        switchMap(([account]) => this.sdk.nuclia.db.getProcessingStatus(account!.id)),
-      )
-      .subscribe((status) => (this.currentProcessingStatus = status));
+    if (!this.standalone) {
+      forkJoin([this.stateService.account.pipe(take(1)), this.stateService.stash.pipe(take(1))])
+        .pipe(
+          filter(([account, kb]) => !!account && !!kb),
+          take(1),
+          switchMap(([account]) => this.sdk.nuclia.db.getProcessingStatus(account!.id)),
+        )
+        .subscribe((status) => (this.currentProcessingStatus = status));
+    }
 
     return of(1).pipe(
       tap(() => {

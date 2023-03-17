@@ -4,7 +4,7 @@ import { catchError, filter, map, skip, switchMap } from 'rxjs/operators';
 import { JwtHelper, JwtUser } from './jwt-helpers';
 import type { IAuthentication, INuclia } from '../models';
 
-import type { AuthTokens } from './auth.models';
+import type { AuthTokens, NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
@@ -25,14 +25,36 @@ export class Authentication implements IAuthentication {
     }
   }
 
-  getAuthHeaders(): { [key: string]: string } {
+  getAuthHeaders(): { [key: string]: string };
+  getAuthHeaders(method: string, path: string): { [key: string]: string };
+  getAuthHeaders(method?: string, path?: string): { [key: string]: string } {
     return this.nuclia.options.standalone
-      ? { 'X-NUCLIADB-ROLES': 'READER' }
+      ? { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) }
       : this.nuclia.options.apiKey
       ? { 'X-STF-Serviceaccount': `Bearer ${this.nuclia.options.apiKey}` }
       : this.getToken()
       ? { Authorization: `Bearer ${this.getToken()}` }
       : {};
+  }
+
+  private getNucliaDbRole(method?: string, path?: string): NucliaDBRole {
+    let nucliaDbRole: NucliaDBRole;
+    switch (method) {
+      case 'PUT':
+      case 'PATCH':
+      case 'POST':
+      case 'DELETE':
+        nucliaDbRole = 'WRITER';
+        break;
+      default:
+        nucliaDbRole = 'READER';
+    }
+    if (path === '/kbs') {
+      nucliaDbRole = 'MANAGER';
+    } else if (path === '/search') {
+      nucliaDbRole = 'READER';
+    }
+    return nucliaDbRole;
   }
 
   isAuthenticated(): Observable<boolean> {

@@ -63,9 +63,7 @@ export class Db implements IDb {
   }
 
   getStandaloneKbs(): Observable<IStandaloneKb[]> {
-    return this.nuclia.rest
-      .get<{ kbs: IStandaloneKb[] }>('/kbs', { 'X-NUCLIADB-ROLES': 'MANAGER' })
-      .pipe(map((result) => result.kbs));
+    return this.nuclia.rest.get<{ kbs: IStandaloneKb[] }>('/kbs').pipe(map((result) => result.kbs));
   }
 
   getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]> {

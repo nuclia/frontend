@@ -3,6 +3,7 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  EntitiesComponent,
   PageNotFoundComponent,
   RootGuard,
   SelectAccountComponent,
@@ -44,6 +45,10 @@ export const routes: Routes = [
                 loadChildren: () =>
                   // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+              },
+              {
+                path: 'entities',
+                component: EntitiesComponent,
               },
             ],
           },

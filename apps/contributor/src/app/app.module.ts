@@ -7,11 +7,6 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { registerLocaleData } from '@angular/common';
-
-// Load locales
-import localeEn from '@angular/common/locales/en';
-import localeEs from '@angular/common/locales/es';
-import localeCa from '@angular/common/locales/ca';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { environment } from '../environments/environment';
@@ -20,6 +15,11 @@ import { routerOptions, routes } from './app-routing';
 import { HomePageComponent } from './home/home-page.component';
 import { MainContainerComponent } from './home/main-container/main-container.component';
 import { UploadModule } from '@flaps/common';
+
+// Load locales
+import localeEn from '@angular/common/locales/en';
+import localeEs from '@angular/common/locales/es';
+import localeCa from '@angular/common/locales/ca';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -46,10 +46,6 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
     }),
     RouterModule.forRoot(routes, routerOptions),
     UploadModule,
-    // PaIconModule,
-    //
-    // BaseModule,
-    // SelectAccountKbModule,
   ],
   providers: [TranslatePipe],
   bootstrap: [AppComponent],
