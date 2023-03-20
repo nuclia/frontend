@@ -1,4 +1,4 @@
-# 1.1.6 (UNRELEASED)
+# 1.1.6 (2023-03-20)
 
 ### Improvements
 
