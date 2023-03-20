@@ -49,14 +49,14 @@ export class LoginComponent {
     private sdk: SDKService,
   ) {
     this.route.queryParams.subscribe((params) => {
-      this.message = params.message;
-      this.loginChallenge = params.login_challenge;
+      this.message = params['message'];
+      this.loginChallenge = params['login_challenge'];
       this.oauth = this.config.getOAuthLogin();
       if (this.oauth && !this.loginChallenge) {
         this.error = 'login.error.unknown_login_challenge';
       }
-      if (params.error) {
-        this.message = params.error_description || 'login.error.' + params.error;
+      if (params['error']) {
+        this.message = params['error_description'] || 'login.error.' + params['error'];
       }
     });
   }

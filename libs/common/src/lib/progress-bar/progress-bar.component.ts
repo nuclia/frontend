@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 type ProgressBarTrackColor = 'white' | 'gray';
 
@@ -9,7 +9,7 @@ type ProgressBarTrackColor = 'white' | 'gray';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressBarComponent {
-  @Input() progress: number = 0;
+  @Input() progress: number | null = 0;
   @Input() track: ProgressBarTrackColor = 'gray';
 
   constructor() {}

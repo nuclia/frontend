@@ -6,10 +6,10 @@ import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
 import { SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
-import { NavigationService } from '../../services/navigation.service';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-account-kbs',

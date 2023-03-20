@@ -35,7 +35,7 @@ export class UsersManageComponent {
   });
 
   columns: string[] = ['name', 'role', 'actions'];
-  usersKb = this.users.usersKb;
+  usersKb: Observable<KbUser[]> = this.users.usersKb;
   account = this.state.account.pipe(filter((account) => !!account));
   isAccountManager = this.account.pipe(
     filter((account) => !!account),

@@ -37,6 +37,12 @@ export class KnowledgeBox implements IKnowledgeBox {
     this.nuclia = nuclia;
     this.account = account;
     Object.assign(this, data);
+    if (!data.id && data.uuid) {
+      this.id = data.uuid;
+    }
+    if (!data.title && data.slug) {
+      this.title = data.slug;
+    }
   }
 
   getEntities(withEntities = false): Observable<Entities> {

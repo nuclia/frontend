@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable, Subject, combineLatest } from 'rxjs';
-import { switchMap, tap, filter, takeUntil, take } from 'rxjs/operators';
-import { StateService, SDKService } from '@flaps/core';
-import { TokenDialogComponent } from '../../components/token-dialog/token-dialog.component';
-import { SORTED_KB_ROLES, KB_ROLE_TITLES } from '../utils';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { SDKService, StateService } from '@flaps/core';
+import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
+import { TokenDialogComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-service-access',

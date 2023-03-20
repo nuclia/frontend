@@ -1,0 +1,107 @@
+@import 'apps/dashboard/src/variables';
+
+:host {
+  height: 100%;
+}
+
+.select-kb {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .select-kb-header {
+    border-bottom: 1px solid $color-neutral-regular;
+    flex: 0 0 auto;
+    padding-bottom: rhythm(1);
+    position: relative;
+
+    .select-kb-title {
+      flex: 1 0 auto;
+      margin-bottom: 0;
+      text-align: center;
+    }
+
+    .select-kb-back,
+    .manage-account-button {
+      bottom: rhythm(0.5);
+      position: absolute;
+    }
+
+    .select-kb-back {
+      left: 0;
+    }
+
+    .manage-account-button {
+      right: 0;
+    }
+  }
+
+  .select-kb-body {
+    flex: 1 0 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    // Move scrollbar to the edge
+    padding-left: rhythm(12);
+    padding-right: rhythm(12);
+    margin: 0 -#{rhythm(12)};
+    @include scrollbar-black();
+  }
+
+  .select-kb-footer {
+    display: flex;
+    gap: rhythm(2);
+    justify-content: center;
+    margin-top: rhythm(3);
+  }
+
+  .kb {
+    align-items: center;
+    border-bottom: 1px solid $color-border-menu-separator;
+    color: inherit;
+    display: flex;
+    height: rhythm(5);
+    justify-content: center;
+    position: relative;
+    text-decoration: none;
+    transition: background-color $transition-hint;
+    width: 100%;
+
+    &.disabled {
+      cursor: default;
+      color: $color-text-menu-option-disabled;
+      pointer-events: none;
+    }
+
+    &:hover {
+      background-color: $color-background-menu-option-hover;
+    }
+
+    pa-icon {
+      position: absolute;
+      top: 50%;
+      right: rhythm(1.5);
+      transform: translateY(-50%);
+    }
+  }
+
+  .select-kb-empty {
+    text-align: center;
+    .select-kb-empty-message {
+      margin-top: rhythm(6);
+      font-style: italic;
+    }
+    pa-button {
+      margin-top: rhythm(3);
+    }
+  }
+
+  .select-kb-input {
+    padding: rhythm(2) 0;
+  }
+  &-error {
+    margin-top: 12px;
+    font-weight: var(--stf-font-weight-semibold);
+    color: var(--stf-primary);
+    text-align: center;
+  }
+}

@@ -1,0 +1,15 @@
+@import 'apps/dashboard/src/variables';
+
+.main-container {
+  display: flex;
+  gap: rhythm(5);
+}
+
+.viewer-button-container {
+  position: relative;
+
+  pa-button {
+    position: sticky;
+    top: 0;
+  }
+}

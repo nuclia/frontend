@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { concatMap, filter, map, scan, tap, take, BehaviorSubject } from 'rxjs';
-import { TrainingExecution, TrainingExecutionStatus } from '@nuclia/core';
+import { BehaviorSubject, concatMap, filter, map, Observable, scan, take, tap } from 'rxjs';
+import { TrainingExecutionStatus, TrainingExecutionWithDuration } from '@nuclia/core';
 import { formatDuration, intervalToDuration } from 'date-fns';
 
 @Component({
@@ -13,7 +13,7 @@ export class TrainingHistoryComponent {
   status = TrainingExecutionStatus;
   isLastPage = false;
   currentPage = new BehaviorSubject<number>(0);
-  executions = this.currentPage.pipe(
+  executions: Observable<TrainingExecutionWithDuration[]> = this.currentPage.pipe(
     concatMap(() =>
       this.sdk.currentKb.pipe(
         filter((kb) => !!kb),
@@ -28,7 +28,7 @@ export class TrainingHistoryComponent {
         duration: this.getDuration(new Date(item.start), new Date(item.end)),
       })),
     ),
-    scan((acc, current) => acc.concat(current), [] as (TrainingExecution | { duration: string })[]),
+    scan((acc, current) => acc.concat(current), [] as TrainingExecutionWithDuration[]),
   );
 
   constructor(private sdk: SDKService) {}

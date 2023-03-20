@@ -12,14 +12,14 @@ export const search = (
   useGet?: boolean,
 ) => {
   const params: { [key: string]: string | string[] } = {};
-  params.query = query || '';
-  params.features = features;
+  params['query'] = query || '';
+  params['features'] = features;
   const { inTitleOnly, ...others } = options || {};
   if (inTitleOnly) {
-    params.fields = ['a/title'];
+    params['fields'] = ['a/title'];
   }
 
-  params.shards = nuclia.currentShards?.[kbid] || [];
+  params['shards'] = nuclia.currentShards?.[kbid] || [];
 
   const searchMethod = useGet
     ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params, others)}`)
@@ -37,8 +37,8 @@ export const search = (
 
 export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions) => {
   const params: { [key: string]: string | string[] } = {};
-  params.query = query || '';
-  params.shards = nuclia.currentShards?.[kbid] || [];
+  params['query'] = query || '';
+  params['shards'] = nuclia.currentShards?.[kbid] || [];
   const searchMethod = nuclia.rest.get<Search.Results | { detail: string }>(
     `/kb/${kbid}/catalog?${options ? serialize(params, options) : ''}`,
   );

@@ -6,7 +6,7 @@ describe('BackendConfigurationService', () => {
   beforeEach(() =>
     TestBed.configureTestingModule({
       providers: [
-        { provide: 'staticEnviromentConfiguration', useValue: {} },
+        { provide: 'staticEnvironmentConfiguration', useValue: {} },
         {
           provide: AppInitService,
           useValue: {

@@ -47,7 +47,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
     if (kbPath) {
       nucliaPrediction = new NucliaPrediction(getCDN());
-      const authHeaders = state === 'PRIVATE' ? nucliaApi!.auth.getAuthHeaders() : {};
+      const authHeaders = state === 'PRIVATE' ? nucliaApi.auth.getAuthHeaders() : {};
       nucliaPrediction.loadModels(kbPath, authHeaders);
     }
   }
@@ -259,7 +259,7 @@ export const getRegionalBackend = () => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.regionalBackend + '/v1';
+  return nucliaApi.options.standalone ? `${nucliaApi.options.backend}/v1` : nucliaApi.regionalBackend + '/v1';
 };
 
 export const getTempToken = (): Observable<string> => {
@@ -268,6 +268,13 @@ export const getTempToken = (): Observable<string> => {
   }
   return nucliaApi.knowledgeBox.getTempToken();
 };
+
+export function getPdfSrc(path: string): string | { url: string; httpHeaders: any } {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.options.standalone ? { url: path, httpHeaders: { 'X-NUCLIADB-ROLES': 'READER' } } : path;
+}
 
 export const isPrivateKnowledgeBox = (): boolean => {
   return STATE === 'PRIVATE';

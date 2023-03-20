@@ -1,0 +1,21 @@
+@import '../../../../../../../../apps/dashboard/src/variables';
+
+.color-picker {
+  display: flex;
+  gap: rhythm(1.5);
+
+  button {
+    @include reset-button();
+    cursor: pointer;
+    width: rhythm(3);
+    height: rhythm(3);
+    user-select: none;
+    &.selected {
+      border: 1px solid currentColor;
+    }
+    &.custom {
+      width: auto;
+      padding: 0 rhythm(2);
+    }
+  }
+}

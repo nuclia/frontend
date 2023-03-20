@@ -14,7 +14,6 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { WidgetGeneratorComponent } from './widget-generator.component';
 
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
-import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const routes = [
   {
@@ -27,7 +26,6 @@ const routes = [
   imports: [
     CommonModule,
     TranslateModule.forChild(),
-    STFSectionNavbarModule,
     RouterModule.forChild(routes),
     ReactiveFormsModule,
     PaTextFieldModule,

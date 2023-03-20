@@ -7,6 +7,7 @@ import type {
   AccountTypes,
   EventList,
   IKnowledgeBoxItem,
+  IStandaloneKb,
   KnowledgeBox,
   KnowledgeBoxCreation,
   LearningConfigurations,
@@ -40,6 +41,7 @@ export interface IAuthentication {
   login(username: string, password: string, validation?: string): Observable<boolean>;
   logout(): void;
   getAuthHeaders(): { [key: string]: string };
+  getAuthHeaders(method: string, path: string): { [key: string]: string };
   getToken(): string;
   getRefreshToken(): string;
   authenticate(tokens: AuthTokens): boolean;
@@ -91,6 +93,7 @@ export interface IDb {
   getWelcome(): Observable<Welcome>;
   getAccount(): Observable<Account>;
   getAccount(account?: string): Observable<Account>;
+  getStandaloneKbs(): Observable<IStandaloneKb[]>;
   getKnowledgeBoxes(account: string): Observable<IKnowledgeBoxItem[]>;
   getKnowledgeBox(): Observable<WritableKnowledgeBox>;
   getKnowledgeBox(account: string, knowledgeBox: string): Observable<WritableKnowledgeBox>;

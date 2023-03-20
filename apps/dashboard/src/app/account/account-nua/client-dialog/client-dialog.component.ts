@@ -1,7 +1,7 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { take, filter, map, Observable } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { filter, map, Observable, take } from 'rxjs';
 import { Account, NUAClient } from '@nuclia/core';
 import { SDKService, StateService, UserService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
@@ -14,6 +14,7 @@ export interface ClientDialogData {
   selector: 'app-client-dialog',
   templateUrl: './client-dialog.component.html',
   styleUrls: ['./client-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClientDialogComponent {
   account = this.stateService.account.pipe(
@@ -57,20 +58,22 @@ export class ClientDialogComponent {
     private userService: UserService,
     private nua: AccountNUAService,
     private sdkService: SDKService,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: ClientDialogData,
   ) {
     this.editMode = !!this.data.client;
 
     if (this.data.client) {
-      this.clientForm.get('title')?.patchValue(this.data.client.title);
-      this.clientForm.get('email')?.patchValue(this.data.client.contact);
-      this.clientForm.get('zone')?.patchValue(this.data.client.zone);
+      this.clientForm.patchValue(this.data.client);
+      this.cdr.markForCheck();
     } else {
       this.account.subscribe((account) => {
         this.clientForm.get('zone')?.patchValue(account.zone);
+        this.cdr.markForCheck();
       });
       this.email.subscribe((email) => {
         this.clientForm.get('email')?.patchValue(email);
+        this.cdr.markForCheck();
       });
     }
   }

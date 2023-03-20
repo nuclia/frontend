@@ -1,0 +1,26 @@
+<div class="main-container">
+  <div class="scrollable-area">
+    <div
+      class="paragraph-container"
+      *ngFor="let paragraph of paragraphs | async">
+      <p>{{ paragraph.text }}</p>
+    </div>
+    <div
+      *ngIf="(paragraphs | async)?.length === 0"
+      class="paragraph-container">
+      <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+    </div>
+  </div>
+  <div class="viewer-button-container">
+    <pa-button
+      *ngIf="loaded"
+      [disabled]="loadingPreview"
+      (click)="openViewer()">
+      {{ 'resource.preview.open-viewer' | translate }}
+    </pa-button>
+  </div>
+</div>
+
+<div class="viewer-container">
+  <div [innerHTML]="viewerWidget | async"></div>
+</div>

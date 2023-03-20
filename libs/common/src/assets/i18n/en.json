@@ -502,7 +502,7 @@
 	"resource.field-file.dropzone-label": "To replace current file <strong>{{filename}}</strong>, drop your file or click below to select it",
 	"resource.field-file.new-file": "New file:",
 	"resource.field-link": "Link Field",
-	"resource.field-no-paragraph": "This field doesn't contain any paragraph.",
+	"resource.field-no-paragraph": "No extracted paragraph for this field.",
 	"resource.field-text": "Text Field",
 	"resource.field-text-body-label": "Text body",
 	"resource.field-text-format-label": "Text format",

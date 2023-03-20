@@ -1,0 +1,11 @@
+@import 'apps/dashboard/src/variables';
+
+.label-list {
+  display: flex;
+  flex-wrap: wrap;
+
+  pa-chip-closeable {
+    margin-bottom: rhythm(0.5);
+    margin-right: rhythm(0.5);
+  }
+}

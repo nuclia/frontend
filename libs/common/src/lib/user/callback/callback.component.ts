@@ -22,20 +22,20 @@ export class CallbackComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.route.snapshot.queryParams.error) {
-      this.toaster.error(this.route.snapshot.queryParams.error_description || 'login.error.oops');
+    if (this.route.snapshot.queryParams['error']) {
+      this.toaster.error(this.route.snapshot.queryParams['error_description'] || 'login.error.oops');
       this.router.navigate(['../signup'], {
         relativeTo: this.route,
       });
     }
 
-    if (this.route.snapshot.data.saml) {
+    if (this.route.snapshot.data['saml']) {
       // Returning from SAML authentication
       this.getSAMLToken();
-    } else if (this.route.snapshot.data.samlOauth) {
+    } else if (this.route.snapshot.data['samlOauth']) {
       // Returning from SAML authentication in a OAuth flow
       this.redirect();
-    } else if (this.route.snapshot.data.google || this.route.snapshot.data.github) {
+    } else if (this.route.snapshot.data['google'] || this.route.snapshot.data['github']) {
       this.ssoLogin();
     } else {
       this.loadUrlToken();
@@ -92,10 +92,9 @@ export class CallbackComponent implements OnInit {
 
   private authenticate(token: AuthTokens, state?: string): void {
     this.sdk.nuclia.auth.authenticate(token);
-    const came_from = state ? this.ssoService.decodeState(state).came_from : undefined;
+    const came_from = state ? this.ssoService.decodeState(state)['came_from'] : undefined;
     if (came_from && came_from !== window.location.origin) {
-      const redirect = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
-      window.location.href = redirect;
+      window.location.href = `${came_from}${window.location.pathname}?token=${token.access_token}&refresh_token=${token.refresh_token}`;
     } else {
       this.router.navigate(['/']);
     }

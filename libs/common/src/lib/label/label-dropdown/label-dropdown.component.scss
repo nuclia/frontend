@@ -1,0 +1,7 @@
+@import 'apps/dashboard/src/variables';
+
+.label-selector {
+  .level2-option ::ng-deep .pa-option {
+    height: rhythm(5);
+  }
+}

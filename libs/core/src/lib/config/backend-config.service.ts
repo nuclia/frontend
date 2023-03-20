@@ -11,13 +11,13 @@ export class BackendConfigurationService {
   isBrowser = false;
 
   constructor(
-    @Inject('staticEnviromentConfiguration') private enviromentConf: StaticEnvironmentConfiguration,
+    @Inject('staticEnvironmentConfiguration') private environmentConfiguration: StaticEnvironmentConfiguration,
     private apiConfig: AppInitService,
     public platformLocation: PlatformLocation,
     @Inject(PLATFORM_ID) platformId: any,
   ) {
     this.config = this.apiConfig.getConfig();
-    this.staticConf = this.enviromentConf;
+    this.staticConf = this.environmentConfiguration;
     this.isBrowser = isPlatformBrowser(platformId);
 
     if (this.isBrowser && this.config.backend.posthog_key && this.config.backend.posthog_host) {

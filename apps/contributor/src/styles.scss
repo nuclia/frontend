@@ -1,0 +1,12 @@
+@import 'libs/sistema/theme/fonts';
+@import 'libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
+@import 'libs/common/src/lib/base/css-variables';
+@import 'libs/sistema/styles/apps-common';
+
+// To be removed once we get rid off material
+@import 'libs/pastanaga/src/lib/styles/partials/breakpoints';
+@import 'libs/pastanaga/src/lib/styles/partials/angular-materials';
+
+:root {
+  --app-background-color: $color-light-stronger;
+}

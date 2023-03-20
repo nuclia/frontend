@@ -69,16 +69,15 @@
         </div>
         <div>
           <div class="mb-20">{{ 'account.zone_description' | translate }}</div>
-          <select
-            stfSelect
+          <pa-select
             [formControl]="zone"
-            class="zone-select">
-            <option
+            externalLabel>
+            <pa-option
               *ngFor="let zone of zones"
               [value]="zone.id">
               {{ zone.title }}
-            </option>
-          </select>
+            </pa-option>
+          </pa-select>
         </div>
       </div>
     </div>

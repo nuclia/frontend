@@ -50,7 +50,7 @@ export class ResetComponent {
     private toaster: SisToastService,
   ) {
     this.route.queryParams.subscribe((params) => {
-      this.magicToken = params.token;
+      this.magicToken = params['token'];
     });
   }
 

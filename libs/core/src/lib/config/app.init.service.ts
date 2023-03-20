@@ -36,6 +36,7 @@ export type StaticEnvironmentConfiguration = {
   };
   base_asset_url?: string;
   locales?: string[]; // List of registred locales in the app
+  standalone?: boolean;
 };
 
 declare var window: any;
@@ -43,7 +44,7 @@ declare var window: any;
 export class AppInitService {
   // This is the method you want to call at bootstrap
   // Important: It should return a Promise
-  public init() {
+  public init(staticEnv: StaticEnvironmentConfiguration) {
     return firstValueFrom(
       from(
         fetch('assets/deployment/app-config.json').then(function (response) {
@@ -78,7 +79,7 @@ export class AppInitService {
               ? location.origin.replace('manage.', '').replace('auth.', '')
               : config.backend.apiOrigin;
           config.backend.api = apiOrigin + config.backend.apiPath;
-          config.backend.cdn = apiOrigin.replace('//', '//cdn.');
+          config.backend.cdn = staticEnv.standalone ? 'https://cdn.nuclia.cloud' : apiOrigin.replace('//', '//cdn.');
           if (config.backend.cdn && !JS_INJECTED) {
             injectWidget(config.backend.cdn);
           }

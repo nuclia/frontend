@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SDKService, StateService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
-import { AppService } from '../../services/app.service';
+import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
+import { AppService } from '@flaps/common';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MockProvider } from 'ng-mocks';
 
 function createTranslateLoader() {
   return {
@@ -33,10 +34,7 @@ describe('KnowledgeBoxHomeComponent', () => {
         }),
       ],
       providers: [
-        {
-          provide: AppService,
-          useValue: {},
-        },
+        MockProvider(AppService),
         {
           provide: SDKService,
           useValue: {
@@ -55,7 +53,7 @@ describe('KnowledgeBoxHomeComponent', () => {
             isFeatureEnabled: () => of(true),
           },
         },
-        { provide: TranslatePipe, useClass: TranslatePipeMock },
+        MockProvider(TranslatePipe),
       ],
     }).compileComponents();
   });

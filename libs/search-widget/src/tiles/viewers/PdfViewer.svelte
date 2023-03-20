@@ -6,6 +6,7 @@
   import { debounceTime, filter, Subject } from 'rxjs';
   import { getUnMarked } from '../tile.utils';
   import Spinner from '../../common/spinner/Spinner.svelte';
+  import { getPdfSrc } from '../../core/api';
 
   export let src: string;
   export let paragraph;
@@ -83,7 +84,7 @@
     linkService.setViewer(pdfViewer);
 
     // Load the pdf and pass it to PDF.js
-    const loadingTask = pdfJsLib.getDocument(src);
+    const loadingTask = pdfJsLib.getDocument(getPdfSrc(src));
     loadingTask.promise.then(
       (pdf) => {
         pdfViewer.setDocument(pdf);

@@ -6,13 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 
-import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
-import { ChartsModule } from '../components/charts/charts.module';
-import { PipesModule } from '../utils/pipes/pipes.module';
-
 import { UserAvatarModule } from '@flaps/components';
-import { ProgressBarModule } from '@flaps/common';
-import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
+import { STFExpanderModule } from '@flaps/pastanaga';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
@@ -20,8 +15,6 @@ import { KnowledgeBoxProfileComponent } from './knowledge-box-profile/knowledge-
 import { KnowledgeBoxUsersComponent } from './knowledge-box-users/knowledge-box-users.component';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
-import { UploadBarComponent } from './upload-bar/upload-bar.component';
-import { HintModule } from '../components/hint/hint.module';
 import { UsersManageModule } from './knowledge-box-users/users-manage/users-manage.module';
 import {
   PaButtonModule,
@@ -31,18 +24,17 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
+  PaTranslateModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
-
-const Components = [
-  KnowledgeBoxComponent,
-  KnowledgeBoxHomeComponent,
-  KnowledgeBoxProfileComponent,
-  KnowledgeBoxUsersComponent,
-  KnowledgeBoxKeysComponent,
-  ServiceAccessComponent,
-  UploadBarComponent,
-];
+import {
+  ChartsModule,
+  HintModule,
+  PipesModule,
+  ProgressBarModule,
+  TokenDialogModule,
+  UploadModule,
+} from '@flaps/common';
 
 @NgModule({
   imports: [
@@ -55,8 +47,6 @@ const Components = [
     MatDialogModule,
     ProgressBarModule,
     UserAvatarModule,
-    STFFormDirectivesModule,
-    STFTooltipModule,
     STFExpanderModule,
     TokenDialogModule,
     ChartsModule,
@@ -71,8 +61,24 @@ const Components = [
     PaPopupModule,
     PaIconModule,
     DropdownButtonComponent,
+    PaTranslateModule,
+    UploadModule,
   ],
-  declarations: [...Components],
-  exports: [],
+  declarations: [
+    KnowledgeBoxComponent,
+    KnowledgeBoxHomeComponent,
+    KnowledgeBoxProfileComponent,
+    KnowledgeBoxUsersComponent,
+    KnowledgeBoxKeysComponent,
+    ServiceAccessComponent,
+  ],
+  exports: [
+    KnowledgeBoxComponent,
+    KnowledgeBoxHomeComponent,
+    KnowledgeBoxProfileComponent,
+    KnowledgeBoxUsersComponent,
+    KnowledgeBoxKeysComponent,
+    ServiceAccessComponent,
+  ],
 })
 export class KnowledgeBoxModule {}

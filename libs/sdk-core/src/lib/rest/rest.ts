@@ -55,8 +55,13 @@ export class Rest implements IRest {
     return this.fetch('HEAD', path, undefined, extraHeaders, true);
   }
 
-  private getHeaders(extraHeaders?: { [key: string]: string }, synchronous = false): { [key: string]: string } {
-    const auth = extraHeaders && extraHeaders['x-stf-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders();
+  private getHeaders(
+    method: string,
+    path: string,
+    extraHeaders?: { [key: string]: string },
+    synchronous = false,
+  ): { [key: string]: string } {
+    const auth = extraHeaders && extraHeaders['x-stf-nuakey'] ? {} : this.nuclia.auth.getAuthHeaders(method, path);
     const defaultHeaders: { [key: string]: string } = {
       'content-type': 'application/json',
       'x-ndb-client': this.nuclia.options.client || 'web',
@@ -83,7 +88,7 @@ export class Rest implements IRest {
     const specialContentType = extraHeaders && extraHeaders['content-type'];
     return fromFetch(this.getFullUrl(path), {
       selector: (response) => Promise.resolve(response),
-      headers: this.getHeaders(extraHeaders, synchronous),
+      headers: this.getHeaders(method, path, extraHeaders, synchronous),
       method,
       body: specialContentType ? body : JSON.stringify(body),
     }).pipe(

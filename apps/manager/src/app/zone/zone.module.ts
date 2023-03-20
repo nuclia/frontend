@@ -5,7 +5,6 @@ import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { STFInputModule } from '@flaps/pastanaga';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatListModule } from '@angular/material/list';
@@ -22,6 +21,7 @@ import { ZonesResolve } from '../resolvers/zones.resolver';
 import { ZoneListComponent } from './zone-list/zone-list.component';
 import { ZoneDetailComponent } from './zone-detail/zone-detail.component';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { STFInputModule } from '../inputfield/input-module';
 
 const usersRoutes: Routes = [
   {

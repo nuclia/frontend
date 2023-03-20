@@ -52,7 +52,7 @@ export class SignupComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const token = this.route.snapshot.queryParams.token;
+    const token = this.route.snapshot.queryParams['token'];
     if (token) {
       // Token is set by the backend (confirmation link and SSO)
       this.router.navigate(['../magic'], {

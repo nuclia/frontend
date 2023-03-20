@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -16,22 +15,12 @@ import { concatMap, distinctUntilChanged, filter, map, shareReplay, switchMap, t
 import { AccountModification, SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
-import { Sluggable } from '@flaps/common';
+import { NavigationService, Sluggable } from '@flaps/common';
 import { IErrorMessages, ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { NavigationService } from '../../services/navigation.service';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
-import { SectionInfo } from '../../components/section-navbar';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
-
-const SECTION_TITLES: { [section in Section]: string } = {
-  account: 'account.manage',
-  config: 'generic.settings',
-  knowledgeboxes: 'account.knowledgeboxes',
-  users: 'account.users',
-  nucliaDBs: 'account.nua_keys',
-};
 
 @Component({
   selector: 'app-account-manage',
@@ -39,9 +28,8 @@ const SECTION_TITLES: { [section in Section]: string } = {
   styleUrls: ['./account-manage.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AccountManageComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
-  sectionsInfo: SectionInfo[] = [];
   topbarHeight = parseInt(TOPBAR_HEIGHT, 10);
   account: Account | undefined;
   @ViewChildren('section') sections: QueryList<ElementRef> | undefined;
@@ -100,15 +88,6 @@ export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy 
       .subscribe((zone) => this.saveZone(zone));
   }
 
-  ngAfterViewInit(): void {
-    this.sections?.changes.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.updateSectionInfo();
-    });
-    setTimeout(() => {
-      this.updateSectionInfo();
-    }, 10);
-  }
-
   initAccountForm(): void {
     this.accountForm.reset(this.initialValues);
   }
@@ -120,17 +99,6 @@ export class AccountManageComponent implements OnInit, AfterViewInit, OnDestroy 
         this.zone.patchValue(this.account!.zone, { emitEvent: false });
       }),
     );
-  }
-
-  updateSectionInfo(): void {
-    this.sectionsInfo = this.sections!.toArray().map((section: ElementRef) => {
-      const id = (section.nativeElement.getAttribute('id') || '') as Section;
-      const title = SECTION_TITLES[id];
-      return {
-        title: title,
-        element: section,
-      };
-    });
   }
 
   ngOnDestroy(): void {

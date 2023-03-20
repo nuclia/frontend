@@ -6,12 +6,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { MatRadioModule } from '@angular/material/radio';
-import {
-  STFButtonDirectivesModule,
-  STFExpanderModule,
-  STFFormDirectivesModule,
-  STFTooltipModule,
-} from '@flaps/pastanaga';
 
 import { SetupStep1Component } from './setup-step1/setup-step1.component';
 import { SetupContainerComponent } from './setup-container/setup-container.component';
@@ -41,10 +35,6 @@ const Components = [
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,
-    STFExpanderModule,
-    STFTooltipModule,
-    STFFormDirectivesModule,
-    STFButtonDirectivesModule,
     MatRadioModule,
     PaIconModule,
     PaButtonModule,

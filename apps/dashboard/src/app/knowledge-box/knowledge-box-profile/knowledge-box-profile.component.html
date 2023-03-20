@@ -24,7 +24,7 @@
         <pa-input
           formControlName="slug"
           externalLabel
-          [errorMessages]="validationMessages.slug"></pa-input>
+          [errorMessages]="validationMessages['slug']"></pa-input>
       </div>
 
       <div>
@@ -34,7 +34,7 @@
         <pa-input
           formControlName="title"
           externalLabel
-          [errorMessages]="validationMessages.title"></pa-input>
+          [errorMessages]="validationMessages['title']"></pa-input>
       </div>
 
       <div>
@@ -44,7 +44,7 @@
         <pa-textarea
           formControlName="description"
           externalLabel
-          rows="4"></pa-textarea>
+          [rows]="4"></pa-textarea>
       </div>
 
       <footer>

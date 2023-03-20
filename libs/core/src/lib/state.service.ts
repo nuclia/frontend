@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { KnowledgeBox, Account } from '@nuclia/core';
+import { Account, KnowledgeBox } from '@nuclia/core';
 import { LocalState } from './models';
 
 const STATE_DATA = 'STATE_DATA';
@@ -19,8 +19,8 @@ export class StateService {
   private readonly accountSubject = new BehaviorSubject<Account | null>(null);
   readonly account = this.accountSubject.asObservable();
 
-  private readonly stashSubject = new BehaviorSubject<KnowledgeBox | null>(null);
-  readonly stash = this.stashSubject.asObservable();
+  private readonly kbSubject = new BehaviorSubject<KnowledgeBox | null>(null);
+  readonly stash = this.kbSubject.asObservable();
 
   dbGetStateData(): StateData | null {
     return this.local.getStoredState<StateData>(STATE_DATA);
@@ -41,24 +41,24 @@ export class StateService {
   setAccount(account: Account, clean?: boolean) {
     this.accountSubject.next(account);
     if (clean) {
-      this.stashSubject.next(null);
+      this.kbSubject.next(null);
     }
   }
 
   cleanAccount() {
     this.accountSubject.next(null);
-    this.stashSubject.next(null);
+    this.kbSubject.next(null);
   }
 
   getStash(): KnowledgeBox | null {
-    return this.stashSubject.getValue();
+    return this.kbSubject.getValue();
   }
 
   setStash(stash: KnowledgeBox) {
-    this.stashSubject.next(stash);
+    this.kbSubject.next(stash);
   }
 
   cleanStash() {
-    this.stashSubject.next(null);
+    this.kbSubject.next(null);
   }
 }

@@ -8,13 +8,16 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 
-import { TokenDialogModule } from '../components/token-dialog/token-dialog.module';
-import { PipesModule } from '../utils/pipes/pipes.module';
 import { UserAvatarModule } from '@flaps/components';
-import { STFSidebarModule } from '@flaps/common';
-import { STFExpanderModule, STFFormDirectivesModule, STFTooltipModule } from '@flaps/pastanaga';
+import {
+  ChartsModule,
+  HintModule,
+  NavbarModule,
+  PipesModule,
+  STFSidebarModule,
+  TokenDialogModule,
+} from '@flaps/common';
 
-import { AccountComponent } from './account.component';
 import { AccountHomeComponent } from './account-home/account-home.component';
 import { AccountManageComponent } from './account-manage/account-manage.component';
 import { AccountKbsComponent } from './account-kbs/account-kbs.component';
@@ -23,13 +26,10 @@ import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.co
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
-import { ChartsModule } from '../components/charts/charts.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
-import { NavbarModule } from '../components/navbar/navbar.module';
 import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';
-import { HintModule } from '../components/hint/hint.module';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -42,10 +42,8 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
-import { STFSectionNavbarModule } from '../components/section-navbar';
 
 const Components = [
-  AccountComponent,
   AccountHomeComponent,
   AccountManageComponent,
   AccountKbsComponent,
@@ -68,11 +66,7 @@ const Components = [
     OverlayModule,
     MatDialogModule,
     MatTableModule,
-    STFSectionNavbarModule,
     UserAvatarModule,
-    STFFormDirectivesModule,
-    STFTooltipModule,
-    STFExpanderModule,
     PipesModule,
     TokenDialogModule,
     ChartsModule,
@@ -94,6 +88,6 @@ const Components = [
     PaTabsModule,
   ],
   declarations: [...Components, NuaActivityComponent],
-  exports: [AccountComponent, AccountHomeComponent, AccountManageComponent],
+  exports: [AccountHomeComponent, AccountManageComponent],
 })
 export class AccountModule {}

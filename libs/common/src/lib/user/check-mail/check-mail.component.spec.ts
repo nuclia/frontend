@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CheckMailComponent } from './check-mail.component';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MockComponent, MockModule } from 'ng-mocks';
-import { UserContainerComponent } from '@flaps/common';
+import { UserContainerComponent } from '../user-container';
 import { PaIconModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('CheckMailComponent', () => {

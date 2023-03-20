@@ -1,12 +1,11 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { takeUntil, concatMap } from 'rxjs/operators';
-import { StateService, SDKService } from '@flaps/core';
-import { Sluggable } from '@flaps/common';
+import { concatMap, takeUntil } from 'rxjs/operators';
+import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
-import { STFUtils } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { Sluggable } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box-profile',

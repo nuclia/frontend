@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { ResetComponent } from './reset.component';
 import { PaButtonModule, PaTextFieldModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { MockModule } from 'ng-mocks';
-import { UserContainerModule } from '@flaps/common';
+import { UserContainerModule } from '../user-container';
 import { SisPasswordInputModule } from '@nuclia/sistema';
 
 describe('ResetComponent', () => {

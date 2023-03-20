@@ -11,12 +11,11 @@ import {
 } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { catchError, combineLatest, filter, of, Subject, switchMap, take, tap } from 'rxjs';
-import { NavigationService } from './services/navigation.service';
 import { Title } from '@angular/platform-browser';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
-import { MessageModalComponent } from './components/messages/message-modal.component';
+import { MessageModalComponent, NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-root',

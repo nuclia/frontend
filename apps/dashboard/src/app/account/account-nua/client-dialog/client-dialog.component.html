@@ -84,16 +84,15 @@
     <div class="zone">
       <h2>{{ 'generic.zone' | translate }}</h2>
       <div class="mb-24">{{ 'account.db_zone_description' | translate }}</div>
-      <select
-        stfSelect
+      <pa-select
         formControlName="zone"
-        class="zone-select">
-        <option
+        externalLabel>
+        <pa-option
           *ngFor="let zone of zones | async"
           [value]="zone.id">
           {{ zone.title }}
-        </option>
-      </select>
+        </pa-option>
+      </pa-select>
     </div>
 
     <footer class="mt-40">

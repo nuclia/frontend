@@ -26,6 +26,7 @@
   export let account = '';
   export let client = 'widget';
   export let state: KBStates = 'PUBLISHED';
+  export let standalone = false;
 
   export let rid = '';
   export let field_id = '';
@@ -95,6 +96,7 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
+        standalone,
       },
       state,
       {},

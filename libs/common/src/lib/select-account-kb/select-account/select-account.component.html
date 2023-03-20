@@ -1,0 +1,44 @@
+<div
+  class="select"
+  *ngIf="accounts && kbs">
+  <div class="select-container">
+    <div class="logo">
+      <img
+        src="assets/logos/logo_text.svg"
+        alt="Nuclia" />
+    </div>
+    <div
+      class="select-content"
+      [@slideInOut]="selectKb">
+      <div
+        class="select-account"
+        *ngIf="!selectKb">
+        <div class="select-account-list">
+          <div
+            class="select-account-item"
+            *ngFor="let account of accounts">
+            <a
+              class="account"
+              [routerLink]="getAccountUrl(account.slug)">
+              {{ account.title }}
+              <pa-icon
+                class="account-arrow"
+                name="chevron-right"
+                size="small"></pa-icon>
+            </a>
+          </div>
+        </div>
+        <div
+          class="select-account-footer"
+          *ngIf="!standalone">
+          <pa-button
+            kind="inverted"
+            (click)="logout()">
+            {{ 'user.logout' | translate }}
+          </pa-button>
+        </div>
+      </div>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

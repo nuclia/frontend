@@ -13,11 +13,10 @@ import {
   shareReplay,
   switchMap,
 } from 'rxjs';
-import { AppService } from '../../services/app.service';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
-import { TickOptions } from '../../components/charts/chart-utils';
 import { SisToastService } from '@nuclia/sistema';
+import { AppService, TickOptions } from '@flaps/common';
 
 type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.DOCS_NO_MEDIA;
 

@@ -3,8 +3,7 @@ import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { concatMap } from 'rxjs';
 import { SamePassword } from '@flaps/common';
-import { LoginService, SDKService } from '@flaps/core';
-import { MIN_PASSWORD_LENGTH } from '@flaps/core';
+import { LoginService, MIN_PASSWORD_LENGTH, SDKService } from '@flaps/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({

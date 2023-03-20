@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
-import { UploadService } from '../../upload/upload.service';
-import { AppService } from '../../services/app.service';
-import { UploadFilesDialogComponent } from '../../upload/upload-files/upload-files-dialog.component';
 import { SisModalService } from '@nuclia/sistema';
+import { AppService, UploadFilesDialogComponent, UploadService } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box',
@@ -28,7 +26,7 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   ) {
     this.activatedRoute.queryParams
       .pipe(
-        filter((params) => !!params.firstUpload),
+        filter((params) => !!params['firstUpload']),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => {

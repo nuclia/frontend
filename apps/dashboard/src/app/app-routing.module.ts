@@ -1,30 +1,27 @@
-import { Component, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
-import { PageNotFoundComponent, PageNotFoundModule } from '@flaps/common';
+import {
+  AccountOwnerGuard,
+  BaseComponent,
+  DashboardLayoutComponent,
+  EmptyComponent,
+  PageNotFoundComponent,
+  PageNotFoundModule,
+  RootGuard,
+  SelectAccountComponent,
+  SelectAccountKbGuard,
+  SelectKbComponent,
+} from '@flaps/common';
 import { LoggedinGuard } from '@flaps/core';
-
-import { BaseComponent } from './base/base.component';
-import { SelectComponent } from './select/select.component';
-import { SelectKbComponent } from './select/select-kb/select-kb.component';
-import { AccountComponent } from './account/account.component';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
-import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box/knowledge-box.component';
-import { KnowledgeBoxHomeComponent } from './knowledge-box/knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxProfileComponent } from './knowledge-box/knowledge-box-profile/knowledge-box-profile.component';
-import { KnowledgeBoxUsersComponent } from './knowledge-box/knowledge-box-users/knowledge-box-users.component';
-import { KnowledgeBoxKeysComponent } from './knowledge-box/knowledge-box-keys/knowledge-box-keys.component';
-import { EntitiesComponent } from './entities/entities.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
 import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
 import { SetupAccountComponent } from './setup/setup-account/setup-account.component';
 import { FarewellComponent } from './setup/farewell/farewell.component';
 
-import { RootGuard } from './guards/root.guard';
-import { SelectGuard } from './select/select.guard';
 import { AccountKbsComponent } from './account/account-kbs/account-kbs.component';
-import { AccountOwnerGuard } from './guards/permission.guard';
 import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
 import { RedirectComponent } from './redirect/redirect.component';
@@ -32,14 +29,13 @@ import { AccountNUAComponent } from './account/account-nua/account-nua.component
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 import { AccountUsersComponent } from './account/account-users/account-users.component';
 import { SearchComponent } from './search/search.component';
-
-@Component({
-  template: '<ng-container></ng-container>',
-  standalone: true,
-})
-export class EmptyComponent {
-  constructor() {}
-}
+import {
+  KnowledgeBoxComponent,
+  KnowledgeBoxHomeComponent,
+  KnowledgeBoxKeysComponent,
+  KnowledgeBoxProfileComponent,
+  KnowledgeBoxUsersComponent,
+} from './knowledge-box';
 
 const routes: Routes = [
   {
@@ -58,7 +54,7 @@ const routes: Routes = [
       },
       {
         path: `at/:account`,
-        component: AccountComponent,
+        component: DashboardLayoutComponent,
         children: [
           {
             path: '',
@@ -120,7 +116,8 @@ const routes: Routes = [
               },
               {
                 path: 'resources',
-                loadChildren: () => import('./resources/resources.module').then((m) => m.ResourcesModule),
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
               },
               {
                 path: 'search',
@@ -132,11 +129,16 @@ const routes: Routes = [
               },
               {
                 path: 'entities',
-                component: EntitiesComponent,
+                // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },
               {
                 path: 'label-sets',
-                loadChildren: () => import('./label-sets/label-sets.module').then((m) => m.LabelSetsModule),
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
+                    (m) => m.LabelSetsModule,
+                  ),
               },
               {
                 path: 'manage',
@@ -171,8 +173,8 @@ const routes: Routes = [
   },
   {
     path: 'select',
-    component: SelectComponent,
-    canActivate: [LoggedinGuard, SelectGuard],
+    component: SelectAccountComponent,
+    canActivate: [LoggedinGuard, SelectAccountKbGuard],
     children: [
       {
         path: ':account',

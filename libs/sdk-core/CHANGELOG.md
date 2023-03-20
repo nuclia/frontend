@@ -1,8 +1,13 @@
-# 1.1.6 (UNRELEASED)
+# 1.1.6 (2023-03-20)
 
 ### Improvements
 
 - Add learning configuration in KB creation
+- Fix compiling errors about index signature
+- Add `getStandaloneKbs` method in db
+- Update `getKnowledgeBox` to also work on standalone mode
+- Add optional `uuid` in KnowledgeBox model
+- Update `getAuthHeaders` to automatically add the required `X-NUCLIADB-ROLES` depending on the method and the path
 
 # 1.1.5 (2023-03-03)
 

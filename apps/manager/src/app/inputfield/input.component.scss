@@ -1,0 +1,189 @@
+@import '../../../../../libs/pastanaga/src/lib/styles/partials/variables';
+@mixin form-field-label-floating($font-scale, $transformY) {
+  transform: translateY($transformY) scale($font-scale);
+}
+
+.stf-input-text,
+.stf-input-email,
+.stf-input-password,
+.stf-input-number,
+.stf-input-tel,
+.stf-input-url {
+  position: relative;
+
+  .stf-input-infix {
+    position: relative;
+  }
+
+  .stf-input-control {
+    border: 0;
+    outline: 0;
+    margin: 0;
+    padding: 22px var(--stf-input-padding-horizontal) 7px;
+    width: 100%;
+    max-width: 100%;
+    text-align: inherit;
+    line-height: 1.25;
+    color: var(--stf-black);
+    background: transparent;
+    display: flex;
+    font-size: var(--stf-font-size-regular);
+    font-weight: var(--stf-font-weight-regular);
+    -webkit-appearance: none;
+    text-overflow: ellipsis;
+
+    &:focus {
+      outline: none;
+    }
+
+    &__lessen {
+      padding: 15px var(--stf-input-padding-horizontal) 14px;
+    }
+
+    &__with-icon {
+      padding-right: calc(var(--stf-input-padding-horizontal) * 2.4);
+
+      // Center align Safari autofill button
+      &:not(&__lessen) {
+        &::-webkit-credentials-auto-fill-button {
+          margin-bottom: 7px;
+        }
+      }
+    }
+  }
+
+  .stf-input-label {
+    position: absolute;
+    left: var(--stf-input-padding-horizontal);
+    top: 14px;
+    display: inline-block;
+    max-width: calc(100% - 40px);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    transform-origin: left;
+    transition: transform var(--stf-input-label-duration);
+    color: var(--stf-input-label-color);
+    user-select: none;
+    touch-action: none;
+    pointer-events: none;
+  }
+  &.stf-label-float .stf-input-label {
+    @include form-field-label-floating(0.75, -12px);
+  }
+
+  .stf-input-help-error {
+    position: relative;
+    top: -9px;
+    left: var(--stf-input-padding-horizontal);
+    color: #f91919;
+    cursor: default;
+  }
+}
+
+stf-input.ng-invalid:not(.ng-untouched) .stf-input-infix {
+  background-color: #fae0dd;
+  .stf-input-label {
+    color: #f54731;
+  }
+  input {
+    -webkit-box-shadow: 0 0 0px 1000px #fae0dd inset;
+  }
+}
+
+input:-internal-autofill-previewed,
+input:-internal-autofill-selected {
+  -webkit-box-shadow: 0 0 0px 1000px var(--stf-input-background) inset;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: rgb(0, 0, 0) !important;
+  -webkit-text-fill-color: #333;
+}
+
+// Theme gray
+.stf-theme-gray {
+  .stf-input-infix {
+    background-color: var(--stf-input-background);
+  }
+  .stf-input-label {
+    color: var(--stf-input-label-color);
+  }
+  .stf-input-control {
+    &::placeholder {
+      color: var(--stf-input-label-color);
+    }
+    &::-moz-placeholder {
+      color: var(--stf-input-label-color);
+    }
+  }
+  .stf-field-disabled {
+    .stf-input-infix {
+      border: solid 2px var(--stf-gray-disabled);
+      background-color: var(--stf-white);
+    }
+    .stf-input-label {
+      opacity: 0.5;
+    }
+  }
+}
+
+// Theme white
+.stf-theme-white {
+  .stf-input-infix {
+    background-color: #fff;
+  }
+  .stf-input-label {
+    color: var(--stf-input-label-color);
+  }
+  .stf-input-control {
+    &::placeholder {
+      color: var(--stf-input-label-color);
+    }
+    &::-moz-placeholder {
+      color: var(--stf-input-label-color);
+    }
+  }
+  .stf-field-disabled {
+    .stf-input-infix {
+      border: solid 2px var(--stf-gray-disabled);
+      background-color: var(--stf-input-background);
+    }
+    .stf-input-label {
+      opacity: 0.5;
+    }
+  }
+}
+
+// Theme border
+.stf-theme-border {
+  .stf-input-infix {
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 4px;
+  }
+  .stf-input-label {
+    color: $gray-contrast;
+  }
+  .stf-input-control {
+    &::placeholder {
+      color: $gray-contrast;
+    }
+    &::-moz-placeholder {
+      color: $gray-contrast;
+    }
+  }
+  .stf-field-empty {
+    .stf-input-infix {
+      border-color: var(--stf-gray-lighter-3);
+    }
+  }
+  .stf-field-focused {
+    .stf-input-infix {
+      border-color: var(--stf-primary);
+      box-shadow: 0 0 2px rgba(var(--stf-primary-rgb), 0.3), 0 0 2px rgba(var(--stf-primary-rgb), 0.3) inset;
+    }
+  }
+  &.ng-invalid:not(.ng-untouched) .stf-input-infix {
+    border-color: #f91919;
+  }
+}
