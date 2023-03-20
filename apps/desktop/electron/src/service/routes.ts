@@ -9,8 +9,15 @@ router.get('/', (req, res) => {
 });
 
 router.post('/source', (req, res) => {
-  const connectors = getSources();
-  setSources({ ...connectors, ...req.body });
+  const sources = getSources();
+  setSources({ ...sources, ...req.body });
+  res.send('{ "success": true }');
+});
+
+router.patch('/source/:id', (req, res) => {
+  const sources = getSources();
+  const updatedSource = { ...sources[req.params.id], ...req.body };
+  setSources({ ...sources, ...updatedSource });
   res.send('{ "success": true }');
 });
 
