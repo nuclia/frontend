@@ -129,10 +129,11 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   // unless there are some non-latin characters (because in Chinese for example there is no space between words)
   const nonLatinChars = state.query.trim().replace(LATIN_CHAR, '');
   const looksLikeKeywordSearch = state.query.split(' ').length < 3 && nonLatinChars.length < 2;
-  // if not a keyword search, add the 2 best semantic sentences
+  // if not a keyword search, add semantic sentences
   if (!looksLikeKeywordSearch) {
-    const twoBestSemantic = semanticResults.slice(0, 2);
-    twoBestSemantic.forEach((sentence) => {
+    // if no fulltext results, we take all the semantic results, otherwise we take only the first 2
+    const bestSemantic = fullTextResults.length === 0 ? semanticResults : semanticResults.slice(0, 2);
+    bestSemantic.forEach((sentence) => {
       const resource = allResources[sentence.rid];
       const containingParagraph = state.results.paragraphs?.results?.find(
         (p) =>
