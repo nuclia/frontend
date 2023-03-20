@@ -5,6 +5,11 @@
       *ngFor="let paragraph of paragraphs | async">
       <p>{{ paragraph.text }}</p>
     </div>
+    <div
+      *ngIf="(paragraphs | async)?.length === 0"
+      class="paragraph-container">
+      <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+    </div>
   </div>
   <div class="viewer-button-container">
     <pa-button

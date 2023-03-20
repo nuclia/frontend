@@ -1,6 +1,6 @@
 import { Db, KnowledgeBox } from './db';
 import { Authentication } from './auth';
-import type { INuclia, NucliaOptions, IAuthentication, IRest, IDb, PromiseMapper } from './models';
+import type { IAuthentication, IDb, INuclia, IRest, NucliaOptions, PromiseMapper } from './models';
 import { Rest } from './rest';
 import { firstValueFrom } from 'rxjs';
 

@@ -476,7 +476,7 @@
 	"resource.field-file.dropzone-label": "Per substituir el fitxer actual <strong>{{filename}}</strong>, deixeu anar el fitxer o feu clic a continuació per seleccionar-lo",
 	"resource.field-file.new-file": "Nou fitxer:",
 	"resource.field-link": "Camp d'Enllaç",
-	"resource.field-no-paragraph": "Aquest camp no conté cap paràgraf.",
+	"resource.field-no-paragraph": "No s'ha extret cap paràgraf per a aquest camp.",
 	"resource.field-text": "Camp de Text",
 	"resource.field-text-body-label": "Cos del text",
 	"resource.field-text-format-label": "Format de text",
