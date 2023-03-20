@@ -3,6 +3,10 @@ import { Observable } from 'rxjs';
 export interface Source {
   connectorId: string;
   data: ConnectorParameters;
+  kb?: {
+    kbId: string;
+    apiKey: string;
+  };
 }
 
 export interface ConnectorDefinition {
