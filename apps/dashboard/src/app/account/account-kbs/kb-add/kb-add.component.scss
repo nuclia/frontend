@@ -12,9 +12,14 @@
     margin-bottom: rhythm(5);
   }
 
-  h2,
-  h3 {
+  h2 {
     margin-bottom: rhythm(1);
+  }
+  h3 {
+    margin-bottom: 0;
+  }
+  p {
+    margin-bottom: rhythm(0.5);
   }
 
   .form-container {

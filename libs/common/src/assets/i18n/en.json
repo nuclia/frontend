@@ -584,6 +584,8 @@
 	"stash.create.configuration": "Configuration",
 	"stash.create.error": "Something went wrong when creating the knowledge box. Please try again.",
 	"stash.create.failure": "Something is wrong at the moment. Contact your administrator.",
+	"stash.create.generative_model": "Answer generation",
+	"stash.create.generative_model.help": "Indicate the model used to generate answers to user questions.",
 	"stash.create.in_progress": "Knowledge box creation in progress…",
 	"stash.create.semantic_model": "Languages",
 	"stash.create.semantic_model.help": "Indicate the languages used in the information you will upload in your KB.",
