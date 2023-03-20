@@ -35,6 +35,7 @@ export enum FileStatus {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
   UPLOADED = 'UPLOADED',
+  ERROR = 'ERROR',
 }
 
 export interface SyncItem {
@@ -43,6 +44,7 @@ export interface SyncItem {
   originalId: string;
   metadata: { [key: string]: string };
   status: FileStatus;
+  error?: string;
 }
 
 export interface SearchResults {

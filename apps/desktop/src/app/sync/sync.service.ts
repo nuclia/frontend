@@ -172,7 +172,6 @@ export class SyncService {
                             destinationInstance.uploadLink!(f.title, sync.destination.params, link).pipe(
                               tap(() => {
                                 f.status = FileStatus.UPLOADED;
-                                sync.completed = true;
                                 this.onQueueUpdate();
                               }),
                             ),
@@ -191,9 +190,14 @@ export class SyncService {
                             return destinationInstance
                               .upload(f.originalId, f.title, sync.destination.params, { blob })
                               .pipe(
+                                catchError((error) => {
+                                  f.status = FileStatus.ERROR;
+                                  f.error = error.toString();
+                                  this.onQueueUpdate();
+                                  return of(undefined);
+                                }),
                                 tap(() => {
-                                  f.status = FileStatus.UPLOADED;
-                                  sync.completed = true;
+                                  f.status = FileStatus.ERROR ? FileStatus.ERROR : FileStatus.UPLOADED;
                                   this.onQueueUpdate();
                                 }),
                               );
@@ -216,6 +220,7 @@ export class SyncService {
               );
             }),
             tap(() => {
+              sync.completed = true;
               this.onQueueUpdate();
             }),
           );

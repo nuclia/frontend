@@ -14,15 +14,13 @@
     <nsi-back-button link="/history">{{ 'history.back' | translate }}</nsi-back-button>
   </header>
 
-  <pa-table [columns]="(showActive | async) ? 'repeat(4, 1fr) 200px 1fr' : 'repeat(5, 1fr)'">
+  <pa-table columns="repeat(4, 1fr) 200px 1fr">
     <pa-table-header>
       <pa-table-cell header>{{ 'history.date' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'history.source' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'upload.steps.destination' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'history.knowledge_box' | translate }}</pa-table-cell>
-      <pa-table-cell
-        *ngIf="showActive | async"
-        header></pa-table-cell>
+      <pa-table-cell header></pa-table-cell>
       <pa-table-cell header>{{ 'history.data' | translate }}</pa-table-cell>
     </pa-table-header>
     <pa-table-row *ngFor="let upload of uploads | async">
@@ -30,14 +28,19 @@
       <pa-table-cell>{{ upload.from }}</pa-table-cell>
       <pa-table-cell>{{ upload.to }}</pa-table-cell>
       <pa-table-cell>{{ upload.kbSlug }}</pa-table-cell>
-      <pa-table-cell *ngIf="showActive | async">
+      <pa-table-cell>
         <stf-progress-bar
           *ngIf="!upload.completed"
           [progress]="upload.progress"></stf-progress-bar>
         <pa-icon
-          *ngIf="upload.completed"
+          *ngIf="upload.completed && !upload.errors"
           name="check"
           color="#f06"></pa-icon>
+        <pa-icon
+          *ngIf="upload.completed && upload.errors"
+          name="circle-cross"
+          color="#f06"
+          [paTooltip]="upload.errors"></pa-icon>
       </pa-table-cell>
       <pa-table-cell>{{ upload.total }}</pa-table-cell>
     </pa-table-row>
