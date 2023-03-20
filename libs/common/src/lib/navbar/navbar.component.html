@@ -58,6 +58,14 @@
             <pa-icon name="form"></pa-icon>
             <span class="nav-link-title">{{ 'generic.insights' | translate }}</span>
           </a>
+          <a
+            *ngIf="isSynonymsEnabled | async"
+            [routerLink]="[kbUrl + '/synonyms']"
+            routerLinkActive="active"
+            class="nav-link">
+            <pa-icon name="synonyms"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.side.synonyms' | translate }}</span>
+          </a>
         </div>
       </div>
 

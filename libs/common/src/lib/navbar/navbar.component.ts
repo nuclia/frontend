@@ -35,6 +35,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   kbUrl: string = '';
   isActivityEnabled = this.tracking.isFeatureEnabled('view-activity').pipe(shareReplay(1));
   isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities').pipe(shareReplay(1));
+  isSynonymsEnabled = this.tracking.isFeatureEnabled('manage-synonyms').pipe(shareReplay(1));
   isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
   isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets').pipe(shareReplay(1));
   isAPIKeysEnabled = this.tracking.isFeatureEnabled('manage-api-keys').pipe(shareReplay(1));
