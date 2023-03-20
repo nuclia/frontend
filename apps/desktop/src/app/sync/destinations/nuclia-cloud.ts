@@ -1,5 +1,5 @@
-import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { Account, INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
   ConnectorParameters,
   ConnectorSettings,
@@ -25,7 +25,8 @@ export const NucliaCloudKB: DestinationConnectorDefinition = {
 
 class NucliaCloudKBImpl implements IDestinationConnector {
   nuclia: INuclia;
-  kb?: WritableKnowledgeBox;
+  kbs: { [slug: string]: WritableKnowledgeBox } = {};
+  account?: Account;
 
   constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
@@ -56,10 +57,18 @@ class NucliaCloudKBImpl implements IDestinationConnector {
   ): Observable<void> {
     if (params && params['kb'] && data.blob) {
       const blob = data.blob;
-      const kb$ = this.kb
-        ? of(this.kb)
-        : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
-      return kb$.pipe(
+      const mimetype = lookup(filename) || 'application/octet-stream';
+      return this.getAccount().pipe(
+        tap((account) => {
+          const applicableLimit = this.isMedia(mimetype)
+            ? account.limits.upload.upload_limit_max_media_file_size
+            : account.limits.upload.upload_limit_max_non_media_file_size;
+          if (blob.size > applicableLimit) {
+            console.error(`File too large. Size=${blob.size}, limit=${applicableLimit}`);
+            throw new Error(`File "${filename}" is too large.`);
+          }
+        }),
+        switchMap(() => this.getKb(params['kb'])),
         switchMap((kb) =>
           from(sha256(originalId)).pipe(
             switchMap((slug) =>
@@ -77,7 +86,7 @@ class NucliaCloudKBImpl implements IDestinationConnector {
             ),
             switchMap((resource) => {
               return resource.upload('file', new File([blob], filename), false, {
-                contentType: lookup(filename) || 'application/octet-stream',
+                contentType: mimetype,
               });
             }),
           ),
@@ -95,10 +104,7 @@ class NucliaCloudKBImpl implements IDestinationConnector {
     data: { uri: string; extra_headers: { [key: string]: string } },
   ): Observable<void> {
     if (params && params['kb']) {
-      const kb$ = this.kb
-        ? of(this.kb)
-        : this.nuclia.db.getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', params['kb']);
-      return kb$.pipe(
+      return this.getKb(params['kb']).pipe(
         switchMap((kb) => kb.createResource({ title: filename, files: { [filename]: { file: data } } })),
         map(() => undefined),
       );
@@ -127,5 +133,29 @@ class NucliaCloudKBImpl implements IDestinationConnector {
           }),
       })),
     );
+  }
+
+  private getKb(slug: string): Observable<WritableKnowledgeBox> {
+    if (!this.kbs[slug]) {
+      return this.nuclia.db
+        .getKnowledgeBox(localStorage.getItem(ACCOUNT_KEY) || '', slug)
+        .pipe(tap((kb) => (this.kbs[slug] = kb)));
+    } else {
+      return of(this.kbs[slug]);
+    }
+  }
+
+  private getAccount(): Observable<Account> {
+    if (!this.account) {
+      return this.nuclia.db
+        .getAccount(localStorage.getItem(ACCOUNT_KEY) || '')
+        .pipe(tap((account) => (this.account = account)));
+    } else {
+      return of(this.account);
+    }
+  }
+
+  private isMedia(mimetype: string): boolean {
+    return mimetype.startsWith('image/') || mimetype.startsWith('video/') || mimetype.startsWith('audio/');
   }
 }

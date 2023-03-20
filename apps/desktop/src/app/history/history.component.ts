@@ -35,6 +35,10 @@ export class HistoryComponent {
         progress: (100 * sync.files.filter((f) => f.status === FileStatus.UPLOADED).length) / sync.files.length,
         started: sync.started,
         completed: sync.completed,
+        errors: sync.files
+          .filter((f) => f.status === FileStatus.ERROR)
+          .map((f) => f.error || 'Unknown error')
+          .join(' – '),
       })),
     ),
   );
