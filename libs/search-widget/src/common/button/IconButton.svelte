@@ -8,6 +8,7 @@
   export let kind = 'secondary'; // primary | secondary | inverted
   export let size = 'medium'; // medium | small | xsmall
   export let disabled = false;
+  export let active = false;
 
   $: iconSize = size === 'xsmall' ? 'small' : 'medium';
 
@@ -22,6 +23,7 @@
 
 <button
   class="sw-button icon {aspect} {kind} {size}"
+  class:active
   type="button"
   aria-label={ariaLabel}
   tabindex="0"

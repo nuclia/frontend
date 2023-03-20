@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { Subscription, filter, take } from 'rxjs';
+  import { Subscription, filter } from 'rxjs';
   import { onMount } from 'svelte';
   import { SpeechSettings, SpeechStore } from 'talk2svelte';
   import IconButton from '../../common/button/IconButton.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { _ } from '../../core/i18n';
+  import { isSpeechOn } from '../../core/stores/answers.store';
   import { ask } from '../../core/stores/effects';
   import { isSpeechEnabled } from '../../core/stores/widget.store';
   export let placeholder = '';
@@ -16,20 +17,13 @@
   const isSpeechStarted = SpeechStore.isStarted;
 
   function toggleSpeech() {
-    isSpeechStarted.pipe(take(1)).subscribe((enabled) => {
-      if (enabled) {
-        SpeechSettings.stop();
-      } else {
-        SpeechSettings.start();
-      }
-    });
+    isSpeechOn.set({ toggle: true });
   }
 
   onMount(() => {
     subs.push(
       isSpeechEnabled.subscribe((enabled) => {
         if (enabled) {
-          SpeechSettings.init();
           SpeechSettings.declareCommand('question');
           SpeechSettings.declareCommand('search');
         }
@@ -92,7 +86,8 @@
     <div class="microphone">
       <IconButton
         icon="microphone"
-        aspect={$isSpeechStarted ? 'solid' : 'basic'}
+        active={$isSpeechStarted}
+        aspect="basic"
         on:click={toggleSpeech} />
     </div>
   {/if}

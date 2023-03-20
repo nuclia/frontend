@@ -19,14 +19,16 @@ import {
   tap,
 } from 'rxjs';
 import { NO_RESULTS } from '../models';
-import { widgetFeatures, widgetMode } from './widget.store';
+import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
 import type { Classification, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { currentAnswer, currentQuestion, chat } from './answers.store';
+import { currentAnswer, currentQuestion, chat, lastFullAnswer, isSpeechOn } from './answers.store';
+import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
+import type { Answer } from '../answer.models';
 
 const subscriptions: Subscription[] = [];
 
@@ -107,6 +109,38 @@ export function initAnswer() {
           });
         }, 2000);
       }),
+  );
+  subscriptions.push(
+    isSpeechEnabled
+      .pipe(
+        filter((isSpeechEnabled) => isSpeechEnabled),
+        take(1),
+      )
+      .subscribe(() => SpeechSettings.init()),
+  );
+  subscriptions.push(
+    combineLatest([isSpeechOn, SpeechStore.isStarted]).subscribe(([on, started]) => {
+      if (on && !started) {
+        SpeechSettings.start();
+      } else if (!on && started) {
+        SpeechSettings.stop();
+      }
+    }),
+  );
+  subscriptions.push(
+    lastFullAnswer
+      .pipe(
+        filter((answer) => !!answer),
+        map((answer) => (answer as Answer).text),
+        distinctUntilChanged(),
+        switchMap((answer) =>
+          isSpeechOn.pipe(
+            filter((on) => on),
+            map(() => answer),
+          ),
+        ),
+      )
+      .subscribe((text) => speak(text, 'en-GB')),
   );
 }
 
