@@ -39,7 +39,9 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   updateExpander: number = 1;
   colors = generatedEntitiesColor;
   unsubscribeAll = new Subject<void>();
-  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAdminOrContrib = this.sdk.currentKb.pipe(
+    map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
+  );
 
   constructor(
     private entitiesService: EntitiesService,

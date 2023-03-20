@@ -22,6 +22,7 @@
           <a
             class="nav-link"
             routerLinkActive="active"
+            [class.disabled]="standalone"
             [routerLink]="kbUrl + '/search'">
             <pa-icon name="search"></pa-icon>
             <span class="nav-link-title">{{ 'stash.search' | translate }}</span>

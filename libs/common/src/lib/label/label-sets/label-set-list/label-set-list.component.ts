@@ -15,7 +15,9 @@ import { LabelsService } from '../../labels.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelSetListComponent {
-  isAdminOrContrib: Observable<boolean> = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAdminOrContrib: Observable<boolean> = this.sdk.currentKb.pipe(
+    map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib),
+  );
   labelSets: Observable<LabelSets> = this.labelsService.labelSets.pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),

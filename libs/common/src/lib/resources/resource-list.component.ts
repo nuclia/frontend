@@ -171,7 +171,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
   optionalColumns: ColumnModel[];
   currentKb = this.sdk.currentKb;
-  isAdminOrContrib = this.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
   displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
     map(([canEdit, statusDisplayed]) => {
       const columns = this.columns

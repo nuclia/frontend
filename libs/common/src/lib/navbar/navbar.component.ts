@@ -48,6 +48,8 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
+  standalone = this.sdk.nuclia.options.standalone;
+
   constructor(
     private app: AppService,
     private tracking: STFTrackingService,
