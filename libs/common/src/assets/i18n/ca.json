@@ -556,6 +556,8 @@
 	"stash.create.configuration": "Configuració",
 	"stash.create.error": "Perdó, alguna cosa ha anat malament quan creavem la caixa de coneixement. Torneu-ho a intenta, sius plau",
 	"stash.create.failure": "Ho sento, alguna cosa definitivament no funciona en aquest moment. Si us plau, poseu-vos en contacte amb el vostre administrador.",
+	"stash.create.generative_model": "Generació de respostes",
+	"stash.create.generative_model.help": "Indiqueu el model utilitzat per generar respostes a les preguntes dels usuaris.",
 	"stash.create.in_progress": "Creació de la caixa de coneixement en curs...",
 	"stash.create.semantic_model.help": "Indiqueu els idiomes utilitzats a la informació que penjareu a la vostra KB.",
 	"stash.create.zone_description": "Escull la zona i el proveïdor de processament que vols fer servir per aquesta caixa de coneixament. De forma predeterminada apareix la zona escollida a l’Account",

@@ -556,6 +556,8 @@
 	"stash.create.configuration": "Configuración",
 	"stash.create.error": "Perdon, alguna cosa pasó mal cuando creabamos la caja de conocimiento. Por favor vuelve a intentarlo.",
 	"stash.create.failure": "Lo siento, definitivamente algo anda mal en este momento. Por favor, póngase en contacto con su administrador.",
+	"stash.create.generative_model": "Generación de respuesta",
+	"stash.create.generative_model.help": "Indique el modelo utilizado para generar respuestas a las preguntas de los usuarios.",
 	"stash.create.in_progress": "Creación de la caja de conocimiento en curso...",
 	"stash.create.semantic_model.help": "Indica los idiomas utilizados en la información que subirás en tu KB.",
 	"stash.create.zone_description": "Elige la zona y el proveedor de procesamiento que quieres utilizar para esta caja de conocimiento. De forma predeterminada aparece la zona escogida en el Account",
