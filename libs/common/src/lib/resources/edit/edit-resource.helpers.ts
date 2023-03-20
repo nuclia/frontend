@@ -221,11 +221,16 @@ export function sortByPosition(a: EntityAnnotation, b: EntityAnnotation): number
 
 export function getHighlightedAnnotations(allAnnotations: EntityAnnotation[]): EntityAnnotation[] {
   const cancelledAnnotations: EntityAnnotation[] = allAnnotations.filter((annotation) => annotation.cancelled_by_user);
-  return allAnnotations.filter(
-    (annotation) =>
+  return allAnnotations.reduce((list, annotation) => {
+    if (
       !annotation.cancelled_by_user &&
-      !cancelledAnnotations.find((cancelledAnnotation) => isSameAnnotation(annotation, cancelledAnnotation)),
-  );
+      !cancelledAnnotations.find((cancelledAnnotation) => isSameAnnotation(annotation, cancelledAnnotation)) &&
+      !list.find((item) => isSameAnnotation(annotation, item))
+    ) {
+      list.push(annotation);
+    }
+    return list;
+  }, [] as EntityAnnotation[]);
 }
 
 export function getAnnotatedText(
