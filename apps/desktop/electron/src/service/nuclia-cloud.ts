@@ -1,14 +1,20 @@
-import { INuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '../../../../../libs/sdk-core/src';
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { lookup } from 'mime-types';
-import { sha256 } from './utils';
+import { createHash } from 'node:crypto';
 
+require('localstorage-polyfill');
+require('isomorphic-unfetch');
+
+function sha256(message: string): string {
+  return createHash('sha256').update(message).digest('hex');
+}
 export class NucliaCloud {
   nuclia: INuclia;
-  private kb?: WritableKnowledgeBox;
+  private kb: WritableKnowledgeBox;
 
-  constructor(nuclia: INuclia) {
-    this.nuclia = nuclia;
+  constructor(options: NucliaOptions) {
+    this.nuclia = new Nuclia(options);
   }
 
   upload(originalId: string, filename: string, data: { blob?: Blob; metadata?: any }): Observable<void> {
@@ -30,11 +36,25 @@ export class NucliaCloud {
                 }),
               ),
             ),
-            switchMap((resource) => {
-              return resource.upload('file', new File([blob], filename), false, {
-                contentType: lookup(filename) || 'application/octet-stream',
-              });
-            }),
+            switchMap((resource) =>
+              resource
+                .upload('file', new File([blob], filename), false, {
+                  contentType: lookup(filename) || 'application/octet-stream',
+                })
+                .pipe(
+                  catchError((error: any) => {
+                    console.error(error.toString());
+                    return resource.delete();
+                  }),
+                  switchMap((res) => {
+                    if (res && (res.failed || res.conflict)) {
+                      return resource.delete();
+                    } else {
+                      return of(undefined);
+                    }
+                  }),
+                ),
+            ),
           ),
         ),
         map(() => undefined),

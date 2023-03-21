@@ -97,17 +97,19 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
     this.tracking.logEvent('desktop:select_destination', { sourceId: event.connector.id });
-    this.sync.addSync({
-      date: new Date().toISOString(),
-      source: this.sourceId,
-      destination: {
-        id: event.connector.id,
-        params: event.params,
-      },
-      files: this.selection.selected,
-      resumable: !!this.source?.resumable,
-      fileUUIDs: [],
-    });
+    this.sync
+      .addSync({
+        date: new Date().toISOString(),
+        source: this.sourceId,
+        destination: {
+          id: event.connector.id,
+          params: event.params,
+        },
+        files: this.selection.selected,
+        resumable: !!this.source?.resumable,
+        fileUUIDs: [],
+      })
+      .subscribe();
     this.router.navigate(['/history'], { queryParams: { active: 'true' } });
   }
 

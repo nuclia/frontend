@@ -1,11 +1,30 @@
-import { getSources } from './sources';
+import { getSources, syncFile } from './sources';
 import { importConnector, loadConnectors } from './dynamic-connectors';
+import { delay, forkJoin, of, repeat, switchMap, tap } from 'rxjs';
+import { FileStatus } from './models';
 
 export const sync = () => {
   importConnector('https://nuclia.github.io/status/connectors/youtube.js');
   loadConnectors();
-  setInterval(() => {
-    const sources = getSources();
-    // console.log(sources);
-  }, 5000);
+  of(...Object.values(getSources()))
+    .pipe(
+      switchMap((source) => {
+        if (!source.kb) {
+          console.log('No KB configured for source', source);
+          return of(undefined);
+        }
+        return forkJoin(
+          (source.items || []).map((item) =>
+            syncFile(source, item).pipe(tap(() => (item.status = FileStatus.UPLOADED))),
+          ),
+        ).pipe(
+          tap(() => {
+            // source.items = (source.items || []).filter((item) => item.status === FileStatus.UPLOADED);
+          }),
+        );
+      }),
+      delay(5000),
+      repeat(),
+    )
+    .subscribe();
 };

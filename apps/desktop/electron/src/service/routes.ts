@@ -17,7 +17,7 @@ router.post('/source', (req, res) => {
 router.patch('/source/:id', (req, res) => {
   const sources = getSources();
   const updatedSource = { ...sources[req.params.id], ...req.body };
-  setSources({ ...sources, ...updatedSource });
+  setSources({ ...sources, [req.params.id]: updatedSource });
   res.send('{ "success": true }');
 });
 
