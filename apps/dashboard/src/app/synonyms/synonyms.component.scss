@@ -52,6 +52,10 @@
       opacity: 1;
     }
   }
+
+  pa-table-row.pa-selected ::ng-deep .pa-table-grid--row .pa-table-grid--cell {
+    background: $color-neutral-lightest;
+  }
 }
 
 @media (min-width: $size-viewport-xlarge-min) {
