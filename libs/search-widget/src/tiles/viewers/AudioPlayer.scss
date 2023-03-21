@@ -74,3 +74,14 @@
     }
   }
 }
+
+@media (min-width: 648px) {
+  .sw-audio-player {
+    height: 100%;
+
+    .waves-animation {
+      background-color: var(--color-dark-stronger);
+      max-height: calc(100% - var(--player-bar-height));
+    }
+  }
+}

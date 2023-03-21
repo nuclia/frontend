@@ -62,6 +62,7 @@
   let resultIndex: number | undefined;
   let headerActionsWidth = 0;
   let resultNavigatorWidth;
+  let summaryHeight = 0;
   let resultNavigatorDisabled = false;
   let sidePanelExpanded = false;
   let findInputElement: HTMLElement;
@@ -303,14 +304,15 @@
           on:openNext={openNext} />
       {/if}
       <div
-        class="field-viewer-container"
-        class:full-height={!withSummary}
+        class="field-viewer-container full-height"
+        style:--summary-height={`${summaryHeight}px`}
         class:loading>
         <slot name="viewer" />
       </div>
 
       {#if withSummary}
         <div
+          bind:clientHeight={summaryHeight}
           class="summary-container"
           hidden={!expanded}>
           {$fieldSummary}
