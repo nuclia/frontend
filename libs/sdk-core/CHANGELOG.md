@@ -1,6 +1,7 @@
 # 1.1.7 (unreleased)
 
 - New endpoints for synonyms management on KnowledgeBox
+- New account types
 
 # 1.1.6 (2023-03-20)
 
