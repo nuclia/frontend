@@ -101,7 +101,7 @@ const hasLabelsForField = (entry: UserFieldMetadata, fieldId: string, fieldType:
   );
 };
 
-export const sliceUnicode = (str: string | string[] | undefined, start?: number, end?: number) => {
+export const sliceUnicode = (str: string | string[] | undefined, start?: number, end?: number): string => {
   if (!str) {
     return '';
   }

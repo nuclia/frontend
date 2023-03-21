@@ -68,6 +68,7 @@
   let findInputElement: HTMLElement;
   let findInPlaceholder;
   let withAllTranscript = false;
+  let transcriptsInitialized = false;
   let showFullTranscripts = false;
   let transcripts: Observable<MediaWidgetParagraph[]> = of([]);
 
@@ -76,12 +77,12 @@
   $: switch (previewKind) {
     case PreviewKind.AUDIO:
       findInPlaceholder = `${findInPlaceholderPrefix}audio`;
-      initTranscript(previewKind);
+      withAllTranscript = true;
       break;
     case PreviewKind.VIDEO:
     case PreviewKind.YOUTUBE:
       findInPlaceholder = `${findInPlaceholderPrefix}video`;
-      initTranscript(previewKind);
+      withAllTranscript = true;
       break;
     case PreviewKind.IMAGE:
       findInPlaceholder = `${findInPlaceholderPrefix}image`;
@@ -92,8 +93,10 @@
   }
 
   function initTranscript(kind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE) {
-    withAllTranscript = true;
-    transcripts = getMediaTranscripts(kind);
+    transcriptsInitialized = true;
+    setTimeout(() => {
+      transcripts = getMediaTranscripts(kind);
+    });
   }
 
   let paragraphList: WidgetParagraph[];
@@ -277,6 +280,10 @@
 
   function toggleTranscriptPanel() {
     showFullTranscripts = !showFullTranscripts;
+
+    if (showFullTranscripts && withAllTranscript && !transcriptsInitialized) {
+      initTranscript(previewKind as PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE);
+    }
   }
 </script>
 
