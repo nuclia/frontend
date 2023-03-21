@@ -4,3 +4,44 @@
   display: block;
   padding: rhythm(6) rhythm(12);
 }
+
+.page-title {
+  h1 {
+    margin-bottom: rhythm(1);
+  }
+}
+
+.add-synonyms {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  margin-top: rhythm(2);
+
+  .main-word-input {
+    min-width: rhythm(16);
+  }
+  .synonyms-input {
+    flex: 1 0 auto;
+    margin-right: rhythm(3);
+    min-width: rhythm(35);
+  }
+
+  pa-button {
+    margin-left: rhythm(5);
+  }
+}
+
+@media (min-width: $size-viewport-xlarge-min) {
+  :host {
+    padding-right: rhythm(32);
+  }
+
+  .add-synonyms {
+    .synonyms-input {
+      margin-right: rhythm(5);
+    }
+    pa-button {
+      margin-left: rhythm(7);
+    }
+  }
+}

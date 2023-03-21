@@ -74,6 +74,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup>;
 
+  getSynonyms(): Observable<Synonyms>;
+
   getLabels(): Observable<LabelSets>;
 
   getResource(uuid: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
@@ -112,6 +114,10 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   setLabelSet(setId: string, labelSet: LabelSet): Observable<void>;
 
   deleteLabelSet(setId: string): Observable<void>;
+
+  setSynonyms(synonyms: Synonyms): Observable<void>;
+
+  deleteAllSynonyms(): Observable<void>;
 
   createResource(resource: IResource): Observable<{ uuid: string }>;
 
@@ -242,4 +248,12 @@ export interface ServiceAccount {
 export interface ServiceAccountCreation {
   title: string;
   role: KBRoles;
+}
+
+export interface SynonymsPayload {
+  synonyms: Synonyms;
+}
+
+export interface Synonyms {
+  [main: string]: string[];
 }

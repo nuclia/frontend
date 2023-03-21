@@ -1,1 +1,31 @@
-<p>synonyms works!</p>
+<div class="page-title">
+  <h1>{{ 'synonyms.page-title' | translate }}</h1>
+  <p>{{ 'synonyms.page-description' | translate }}</p>
+</div>
+
+<form
+  class="add-synonyms"
+  [formGroup]="addSynonymForm"
+  (ngSubmit)="addSynonym()">
+  <pa-input
+    formControlName="mainWord"
+    class="main-word-input">
+    {{ 'synonyms.add-form.main-word-label' | translate }}
+  </pa-input>
+  <pa-input
+    formControlName="synonyms"
+    class="synonyms-input">
+    {{ 'synonyms.add-form.synonyms-label' | translate }}
+  </pa-input>
+
+  <pa-button
+    kind="primary"
+    type="submit"
+    [disabled]="addSynonymForm.invalid">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+</form>
+
+<div>
+  {{ synonyms | async | json }}
+</div>

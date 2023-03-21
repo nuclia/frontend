@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { SynonymsComponent } from './synonyms.component';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes = [
   {
@@ -13,7 +14,15 @@ const routes = [
 ];
 
 @NgModule({
-  imports: [CommonModule, RouterModule.forChild(routes), TranslateModule.forChild(), PaTextFieldModule],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    TranslateModule.forChild(),
+    PaTextFieldModule,
+    PaTogglesModule,
+    PaButtonModule,
+    ReactiveFormsModule,
+  ],
   declarations: [SynonymsComponent],
 })
 export class SynonymsModule {}
