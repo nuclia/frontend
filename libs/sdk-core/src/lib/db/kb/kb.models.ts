@@ -2,6 +2,7 @@ import type { Observable } from 'rxjs';
 import type { IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import type { Search, SearchOptions } from '../search';
+import { Chat } from '../search/chat.models';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -81,6 +82,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getResource(uuid: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
+
+  chat(query: string, context?: Chat.Entry[], features?: Search.Features[]): Observable<Chat.Answer>;
 
   find(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.FindResults>;
 

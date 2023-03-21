@@ -1,15 +1,15 @@
-import type { Answer, ChatEntry } from '../answer.models';
+import type { Chat } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
 
 interface AnswerState {
-  chat: ChatEntry[];
+  chat: Chat.Entry[];
   currentQuestion: string;
-  currentAnswer: Answer;
+  currentAnswer: Chat.Answer;
   isStreaming: boolean;
   isSpeechOn: boolean;
 }
 
-const EMPTY_ANSWER = { text: '', sources: [] };
+const EMPTY_ANSWER = { text: '' };
 export const answerState = new SvelteState<AnswerState>({
   chat: [],
   currentQuestion: '',
@@ -23,7 +23,7 @@ export const currentQuestion = answerState.writer<string>(
   (state, value) => ({ ...state, currentQuestion: value }),
 );
 
-export const currentAnswer = answerState.writer<Answer, Partial<Answer>>(
+export const currentAnswer = answerState.writer<Chat.Answer, Partial<Chat.Answer>>(
   (state) => state.currentAnswer,
   (state, value) => ({
     ...state,
@@ -42,7 +42,7 @@ export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
 );
 
-export const chat = answerState.writer<ChatEntry[], { question: string; answer: Answer; reset: boolean }>(
+export const chat = answerState.writer<Chat.Entry[], { question: string; answer: Chat.Answer; reset: boolean }>(
   (state) =>
     state.isStreaming
       ? [...state.chat, { question: state.currentQuestion, answer: { ...state.currentAnswer, incomplete: true } }]

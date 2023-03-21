@@ -76,6 +76,11 @@ export namespace Search {
     error?: boolean;
     resources?: { [id: string]: FindResource };
     shards?: string[];
+    next_page: boolean;
+    page_number: number;
+    page_size: number;
+    query: string;
+    total: number;
   }
 
   export interface FindResource extends IResource {

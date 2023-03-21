@@ -3,6 +3,7 @@
 ### Feature
 
 - `/find` endpoint support
+- `/chat` endpoint support
 
 ### Improvements
 

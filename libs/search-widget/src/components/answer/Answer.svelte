@@ -1,10 +1,12 @@
 <script lang="ts">
-  import type { Answer } from '../../core/answer.models';
   import { _ } from '../../core/i18n';
   import Expander from '../../common/expander/Expander.svelte';
   import Feedback from './Feedback.svelte';
-  export let answer: Partial<Answer>;
+  import type { Chat } from '@nuclia/core';
+  export let answer: Partial<Chat.Answer>;
   export let rank = 0;
+
+  const sources = answer.sources?.resources ? Object.values(answer.sources?.resources) : [];
 </script>
 
 <div class="sw-answer">
@@ -19,8 +21,8 @@
         slot="header">
         {$_('answer.sources')}
       </h3>
-      {#each answer.sources as source}
-        <div>{source.paragraph}</div>
+      {#each sources as source}
+        <div>{source.title}</div>
       {/each}
     </Expander>
   {/if}

@@ -148,4 +148,41 @@ export class Rest implements IRest {
       }),
     );
   }
+
+  getStream(path: string, body: any): Observable<Uint8Array> {
+    path = this.getFullUrl(path);
+    return new Observable<Uint8Array>((observer) => {
+      fetch(path, { method: 'POST', headers: this.getHeaders('POST', path), body: JSON.stringify(body) }).then(
+        (res) => {
+          const reader = res.body?.getReader();
+          if (!reader) {
+            observer.next(new Uint8Array());
+            observer.complete();
+          } else {
+            let data = new Uint8Array();
+            const readMore = () => {
+              reader.read().then(({ done, value }) => {
+                if (done) {
+                  observer.complete();
+                }
+                if (value) {
+                  data = this.concat(data, value);
+                  observer.next(data);
+                  readMore();
+                }
+              });
+            };
+            readMore();
+          }
+        },
+      );
+    });
+  }
+
+  private concat(arr1: Uint8Array, arr2: Uint8Array) {
+    const result = new Uint8Array(arr1.length + arr2.length);
+    result.set(arr1);
+    result.set(arr2, arr1.length);
+    return result;
+  }
 }

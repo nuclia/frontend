@@ -21,14 +21,13 @@ import {
 import { NO_RESULTS } from '../models';
 import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import type { Classification, Search } from '@nuclia/core';
+import type { Chat, Classification, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
 import { currentAnswer, currentQuestion, chat, lastFullAnswer, isSpeechOn } from './answers.store';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
-import type { Answer } from '../answer.models';
 
 const subscriptions: Subscription[] = [];
 
@@ -100,14 +99,15 @@ export function initAnswer() {
         switchMap((query) => getAnswer(query).pipe(map((answer) => ({ query, answer })))),
       )
       .subscribe(({ query, answer }) => {
-        currentAnswer.set(answer);
-        setTimeout(() => {
+        if (answer.incomplete) {
+          currentAnswer.set(answer);
+        } else {
           chat.set({
             question: query,
-            answer: { ...answer, text: `${answer.text}, the universe and everything` },
+            answer,
             reset: false,
           });
-        }, 2000);
+        }
       }),
   );
   subscriptions.push(
@@ -131,7 +131,7 @@ export function initAnswer() {
     lastFullAnswer
       .pipe(
         filter((answer) => !!answer),
-        map((answer) => (answer as Answer).text),
+        map((answer) => (answer as Chat.Answer).text),
         distinctUntilChanged(),
         switchMap((answer) =>
           isSpeechOn.pipe(
