@@ -1,5 +1,15 @@
 import { catchError, map, Observable, of, switchMap } from 'rxjs';
-import type { Entities, EntitiesGroup, EventList, EventType, IKnowledgeBox, LabelSet, LabelSets } from './kb.models';
+import type {
+  Entities,
+  EntitiesGroup,
+  EventList,
+  EventType,
+  IKnowledgeBox,
+  LabelSet,
+  LabelSets,
+  Synonyms,
+  SynonymsPayload,
+} from './kb.models';
 import {
   Counters,
   ExtractedDataTypes,
@@ -53,6 +63,10 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   getEntitiesGroup(groupId: string): Observable<EntitiesGroup> {
     return this.nuclia.rest.get<EntitiesGroup>(`${this.path}/entitiesgroup/${groupId}`);
+  }
+
+  getSynonyms(): Observable<Synonyms> {
+    return this.nuclia.rest.get<SynonymsPayload>(`${this.path}/custom-synonyms`).pipe(map((result) => result.synonyms));
   }
 
   getLabels(): Observable<LabelSets> {
@@ -228,6 +242,14 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
 
   deleteLabelSet(setId: string): Observable<void> {
     return this.nuclia.rest.delete(`${this.path}/labelset/${setId}`);
+  }
+
+  setSynonyms(synonyms: Synonyms): Observable<void> {
+    return this.nuclia.rest.put<void>(`${this.path}/custom-synonyms`, { synonyms });
+  }
+
+  deleteAllSynonyms(): Observable<void> {
+    return this.nuclia.rest.delete(`${this.path}/custom-synonyms`);
   }
 
   createResource(resource: ICreateResource, synchronous = true): Observable<{ uuid: string }> {

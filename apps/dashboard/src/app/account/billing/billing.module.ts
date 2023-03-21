@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { PaButtonModule, PaIconModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 
-const routes = [
+const routes: Routes = [
   {
     path: '',
     component: BillingComponent,
@@ -17,7 +17,7 @@ const routes = [
       {
         path: '',
         redirectTo: 'subscriptions',
-        pathMatch: 'full' as const,
+        pathMatch: 'full',
       },
       {
         path: 'subscriptions',

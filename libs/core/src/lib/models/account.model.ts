@@ -1,4 +1,4 @@
-export type AccountTypes = 'stash-basic' | 'stash-team' | 'stash-enterprise';
+import { AccountTypes } from '@nuclia/core';
 
 export interface SimpleAccount {
   id: string;

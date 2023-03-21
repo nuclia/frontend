@@ -1,11 +1,17 @@
 @import './palette.tokens';
+@import './spacing.tokens';
+@import '../../../pastanaga-angular/projects/pastanaga-angular/src/styles/theme/spacing.tokens';
 
 $color-text-table-header: $color-dark-stronger;
 $color-text-table-header-row: $color-dark-stronger;
 
-$color-border-table-header: $color-dark-stronger;
-$color-border-table-header-row: $color-dark-stronger;
-$color-border-table-row: $color-neutral-light;
+$color-border-table-header: $color-neutral-regular;
+$color-border-table-header-row: $color-neutral-regular;
+$color-border-table-row: $color-neutral-lighter;
 
 $color-background-table-header: $color-light-stronger;
 $color-background-table-header-row: $color-light-stronger;
+
+$padding-table-cell-medium: rhythm(0.5) rhythm(2);
+$min-height-table-cell: rhythm(5);
+$text-transform-table-header: default;
