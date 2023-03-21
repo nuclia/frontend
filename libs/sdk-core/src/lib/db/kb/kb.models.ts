@@ -82,6 +82,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
+  find(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.FindResults>;
+
   search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
 
   catalog(query: string, options?: SearchOptions): Observable<Search.Results>;
