@@ -149,7 +149,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     return new Resource(this.nuclia, this.id, data);
   }
 
-  chat(query: string, context?: Chat.Entry[], features?: Chat.Features[]): Observable<Chat.Answer> {
+  chat(query: string, context?: Chat.ContextEntry[], features?: Chat.Features[]): Observable<Chat.Answer> {
     return chat(this.nuclia, this.path, query, context, features);
   }
 

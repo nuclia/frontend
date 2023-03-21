@@ -1,6 +1,6 @@
 # 1.2.0 (unreleased)
 
-### Feature
+### Features
 
 - `/find` endpoint support
 - `/chat` endpoint support

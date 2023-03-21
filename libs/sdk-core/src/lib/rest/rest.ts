@@ -149,9 +149,9 @@ export class Rest implements IRest {
     );
   }
 
-  getStream(path: string, body: any): Observable<Uint8Array> {
+  getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean }> {
     path = this.getFullUrl(path);
-    return new Observable<Uint8Array>((observer) => {
+    return new Observable<{ data: Uint8Array; incomplete: boolean }>((observer) => {
       fetch(path, { method: 'POST', headers: this.getHeaders('POST', path), body: JSON.stringify(body) }).then(
         (res) => {
           const reader = res.body?.getReader();
@@ -163,11 +163,12 @@ export class Rest implements IRest {
             const readMore = () => {
               reader.read().then(({ done, value }) => {
                 if (done) {
+                  observer.next({ data, incomplete: false });
                   observer.complete();
                 }
                 if (value) {
                   data = this.concat(data, value);
-                  observer.next(data);
+                  observer.next({ data, incomplete: true });
                   readMore();
                 }
               });
