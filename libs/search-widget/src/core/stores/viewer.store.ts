@@ -23,7 +23,7 @@ export const viewerState = new SvelteState<ViewerState>({
   isPreviewing: false,
 });
 
-export const isPreviewing = viewerState.writer(
+export const isPreviewing = viewerState.writer<boolean>(
   (state) => state.isPreviewing,
   (state, isPreviewing) => ({ ...state, isPreviewing }),
 );
@@ -105,7 +105,10 @@ export function getMediaTranscripts(
       } else {
         const fullId = state.fieldFullId;
         const text = state.fieldData.extracted?.text?.text || '';
-        return (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) => {
+        const paragraphs = (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
+          (paragraph) => paragraph.kind === 'TRANSCRIPT',
+        );
+        return paragraphs.map((paragraph) => {
           const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
           return {
             paragraph,

@@ -16,7 +16,8 @@
   let fieldType = 'file';
   let fieldId = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
 
-  let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
+  let kb = '8ffb0344-9925-47e9-a172-487bdab6cf83'; // Kuba conf demo
+  // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
@@ -92,11 +93,9 @@
         zone="europe-1"
         bind:this={searchBar}
         knowledgebox={kb}
-        backend="https://stashify.cloud/api"
-        cdn="/"
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink" />
+        features="" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
