@@ -26,7 +26,7 @@ import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, Search, search, SearchOptions } from '../search';
+import { catalog, find, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -145,6 +145,10 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   getResourceFromData(data: IResource): Resource {
     return new Resource(this.nuclia, this.id, data);
+  }
+
+  find(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.FindResults> {
+    return find(this.nuclia, this.id, this.path, query, features, options);
   }
 
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {

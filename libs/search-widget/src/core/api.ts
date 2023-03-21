@@ -69,6 +69,7 @@ export const search = (query: string, options: SearchOptions) => {
   if (!query) {
     options.inTitleOnly = true;
   }
+  nucliaApi.knowledgeBox.find(query, SEARCH_MODE, options).subscribe((res) => console.log(res));
   return nucliaApi.knowledgeBox.search(query, SEARCH_MODE, options).pipe(
     filter((res) => {
       if (res.error) {

@@ -2,6 +2,45 @@ import { catchError, map, of, tap } from 'rxjs';
 import type { INuclia } from '../../models';
 import type { Search, SearchOptions } from './search.models';
 
+export const find = (
+  nuclia: INuclia,
+  kbid: string,
+  path: string,
+  query: string,
+  features: Search.Features[] = [],
+  options?: SearchOptions,
+  useGet?: boolean,
+) => {
+  const params: { [key: string]: string | string[] } = {};
+  if (options?.isAdvanced) {
+    params['advanced_query'] = query || '';
+  } else {
+    params['query'] = query || '';
+  }
+  params['features'] = features;
+  const { inTitleOnly, ...others } = options || {};
+  if (inTitleOnly) {
+    params['fields'] = ['a/title'];
+  }
+
+  params['shards'] = nuclia.currentShards?.[kbid] || [];
+
+  const searchMethod = useGet
+    ? nuclia.rest.get<Search.FindResults | { detail: string }>(`${path}/find?${serialize(params, others)}`)
+    : nuclia.rest.post<Search.FindResults | { detail: string }>(`${path}/find`, { ...params, ...others });
+  return searchMethod.pipe(
+    catchError(() => of({ error: true } as Search.FindResults)),
+    map((res) =>
+      Object.keys(res).includes('detail') ? ({ error: true } as Search.FindResults) : (res as Search.FindResults),
+    ),
+    tap((res) => {
+      if (res.shards) {
+        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
+      }
+    }),
+  );
+};
+
 export const search = (
   nuclia: INuclia,
   kbid: string,
@@ -70,8 +109,4 @@ const serialize = (params: { [key: string]: string | string[] }, others: SearchO
     Array.isArray(value) ? value.forEach((item) => queryParams.append(key, item)) : queryParams.append(key, value),
   );
   return queryParams.toString();
-};
-
-const hasFiltersOrFacets = (options?: SearchOptions): boolean => {
-  return (options?.filters || []).length > 0 || (options?.faceted || []).length > 0;
 };
