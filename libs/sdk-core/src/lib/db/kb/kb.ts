@@ -28,6 +28,8 @@ import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import { catalog, find, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
+import { chat } from '../search/chat';
+import { Chat } from '../search/chat.models';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
@@ -145,6 +147,10 @@ export class KnowledgeBox implements IKnowledgeBox {
 
   getResourceFromData(data: IResource): Resource {
     return new Resource(this.nuclia, this.id, data);
+  }
+
+  chat(query: string, context?: Chat.Entry[], features?: Chat.Features[]): Observable<Chat.Answer> {
+    return chat(this.nuclia, this.path, query, context, features);
   }
 
   find(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.FindResults> {
