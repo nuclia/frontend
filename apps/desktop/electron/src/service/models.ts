@@ -1,12 +1,11 @@
+import type { NucliaOptions } from '../../../../../libs/sdk-core/src';
 import { Observable } from 'rxjs';
 
 export interface Source {
   connectorId: string;
   data: ConnectorParameters;
-  kb?: {
-    kbId: string;
-    apiKey: string;
-  };
+  kb?: NucliaOptions;
+  items?: SyncItem[];
 }
 
 export interface ConnectorDefinition {

@@ -20,7 +20,7 @@
     "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",
     "postsdk-build:default": "yarn sdk-build-node",
     "sdk-build-node": "rimraf ./dist/sdk-core-node && cd ./libs/sdk-core/node && rollup -c && cd ../..",
-    "desktop-server-dev": "concurrently \"npx tsc -p apps/desktop/electron/tsconfig.server.json --watch\" \"nodemon -q dist/service/server.js\"",
+    "desktop-server-dev": "concurrently \"npx tsc -p apps/desktop/electron/tsconfig.server.json --watch\" \"nodemon -q dist/service/apps/desktop/electron/src/service/server.js\"",
     "postinstall": "ngcc --properties es2020 browser module main"
   },
   "private": true,
@@ -62,7 +62,9 @@
     "fuse.js": "^3.6.1",
     "googleapis": "^110.0.0",
     "https": "^1.0.0",
+    "isomorphic-unfetch": "^4.0.2",
     "latinize": "^0.5.0",
+    "localstorage-polyfill": "^1.0.1",
     "mime": "^3.0.0",
     "mime-types": "^2.1.35",
     "mrs-developer": "^1.7.1",

@@ -116,7 +116,11 @@ class DropboxImpl implements ISourceConnector {
           Authorization: `Bearer ${this.params.token || ''}`,
           'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
         },
-      }).then((res) => res.blob()),
+      }).then((res) => {
+        console.log(res);
+        const blob = res.blob();
+        return blob;
+      }),
     );
   }
 }

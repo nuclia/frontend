@@ -40,7 +40,7 @@ import { injectScript, md5, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
 import { FolderConnector } from './sources/folder';
 import { S3Connector } from './sources/s3';
-import { ProcessingPullResponse } from '@nuclia/core';
+import { NucliaOptions, ProcessingPullResponse } from '@nuclia/core';
 import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
 import { GCSConnector } from './sources/gcs';
 import { OneDriveConnector } from './sources/onedrive';
@@ -240,9 +240,17 @@ export class SyncService {
   }
 
   addSync(sync: Sync) {
-    this._queue.push(sync);
-    this.onQueueUpdate();
-    this.start();
+    const nucliaOptions: NucliaOptions = {
+      ...this.sdk.nuclia.options,
+      knowledgeBox: sync.destination.params.kb,
+    };
+    return this.http.patch<void>(`${SYNC_SERVER}/source/${sync.source}`, {
+      kb: nucliaOptions,
+      items: sync.files,
+    });
+    // this._queue.push(sync);
+    // this.onQueueUpdate();
+    // this.start();
   }
 
   clearCompleted() {
