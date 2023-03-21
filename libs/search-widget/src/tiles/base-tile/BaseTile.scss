@@ -165,12 +165,12 @@
     padding-right: var(--side-panel-button-size);
 
     .field-viewer-container.full-height {
-      height: calc(100vh - var(--header-height) - var(--rhythm-1));
+      height: calc(100vh - var(--header-height) - var(--rhythm-1) - var(--summary-height, 0px) );
     }
 
     .summary-container {
       display: block;
-      margin-top: var(--rhythm-3);
+      padding: var(--rhythm-3) 0;
       overflow-wrap: break-word;
     }
 

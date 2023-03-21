@@ -1,13 +1,17 @@
 .sw-youtube {
-  position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
-
   .player {
-    position: absolute;
-    top: 0;
-    left: 0;
+    aspect-ratio: 16 / 9;
+    display: block;
     width: 100%;
+  }
+}
+
+@media (min-width: 648px) {
+  .sw-youtube {
     height: 100%;
+
+    .player {
+      max-height: 100%;
+    }
   }
 }

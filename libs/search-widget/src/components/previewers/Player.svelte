@@ -79,24 +79,22 @@
 
 <div class="sw-player">
   {#if isVideo}
-    <div class="video-container">
-      <video
-        preload="auto"
-        crossorigin="anonymous"
-        controls
-        on:canplay={() => {
-          if (!firstLoadDone) firstLoadDone = true;
-          dispatch('videoReady');
-        }}
-        bind:this={player}
-        bind:currentTime
-        bind:paused>
-        <source
-          {src}
-          {type} />
-        <track kind="captions" />
-      </video>
-    </div>
+    <video
+      preload="auto"
+      crossorigin="anonymous"
+      controls
+      on:canplay={() => {
+        if (!firstLoadDone) firstLoadDone = true;
+        dispatch('videoReady');
+      }}
+      bind:this={player}
+      bind:currentTime
+      bind:paused>
+      <source
+        {src}
+        {type} />
+      <track kind="captions" />
+    </video>
   {:else}
     <audio
       preload="auto"

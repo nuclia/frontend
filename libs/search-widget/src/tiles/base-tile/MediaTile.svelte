@@ -65,7 +65,5 @@
       on:loaded={() => (thumbnailLoaded = true)}
       on:play={playFromStart} />
   </span>
-  <span slot="viewer">
-    <slot />
-  </span>
+  <slot slot="viewer" />
 </BaseTile>
