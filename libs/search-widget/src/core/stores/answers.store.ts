@@ -18,9 +18,9 @@ export const answerState = new SvelteState<AnswerState>({
   isSpeechOn: false,
 });
 
-export const currentQuestion = answerState.writer<string>(
+export const currentQuestion = answerState.writer<string, { question: string; reset: boolean }>(
   (state) => state.currentQuestion,
-  (state, value) => ({ ...state, currentQuestion: value }),
+  (state, value) => ({ ...state, currentQuestion: value.question, chat: value.reset ? [] : state.chat }),
 );
 
 export const currentAnswer = answerState.writer<Chat.Answer, Partial<Chat.Answer>>(
@@ -42,16 +42,14 @@ export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
 );
 
-export const chat = answerState.writer<Chat.Entry[], { question: string; answer: Chat.Answer; reset: boolean }>(
+export const chat = answerState.writer<Chat.Entry[], { question: string; answer: Chat.Answer }>(
   (state) =>
     state.isStreaming
       ? [...state.chat, { question: state.currentQuestion, answer: { ...state.currentAnswer, incomplete: true } }]
       : state.chat,
   (state, params) => ({
     ...state,
-    chat: params.reset
-      ? [{ question: params.question, answer: params.answer }]
-      : [...state.chat, { question: params.question, answer: params.answer }],
+    chat: [...state.chat, { question: params.question, answer: params.answer }],
     currentQuestion: '',
     currentAnswer: EMPTY_ANSWER,
     isStreaming: false,

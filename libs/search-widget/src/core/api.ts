@@ -1,4 +1,4 @@
-import type {
+import {
   Chat,
   Classification,
   Entity,
@@ -79,11 +79,17 @@ export const search = (query: string, options: SearchOptions) => {
   );
 };
 
-export const getAnswer = (query: string) => {
+export const getAnswer = (query: string, chat?: Chat.Entry[]) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return nucliaApi.knowledgeBox.chat(query);
+  const context = chat?.reduce((acc, curr) => {
+    acc.push({ author: Chat.Author.USER, text: curr.question });
+    acc.push({ author: Chat.Author.NUCLIA, text: curr.answer.text });
+    return acc;
+  }, [] as Chat.ContextEntry[]);
+
+  return nucliaApi.knowledgeBox.chat(query, context);
 };
 
 export const sendFeedback = (chat: Chat.Entry[], approved: boolean) => {

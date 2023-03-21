@@ -88,24 +88,28 @@ const previewKey = formatQueryKey('preview');
  * Initialise answer feature
  */
 
-export const ask = new Subject<string>();
+export const ask = new Subject<{ question: string; reset: boolean }>();
 
 export function initAnswer() {
   subscriptions.push(
     ask
       .pipe(
         distinctUntilChanged(),
-        tap((question) => currentQuestion.set(question)),
-        switchMap((query) => getAnswer(query).pipe(map((answer) => ({ query, answer })))),
+        tap((data) => currentQuestion.set(data)),
+        switchMap(({ question }) =>
+          chat.pipe(
+            take(1),
+            switchMap((chat) => getAnswer(question, chat).pipe(map((answer) => ({ question, answer })))),
+          ),
+        ),
       )
-      .subscribe(({ query, answer }) => {
+      .subscribe(({ question, answer }) => {
         if (answer.incomplete) {
           currentAnswer.set(answer);
         } else {
           chat.set({
-            question: query,
+            question,
             answer,
-            reset: false,
           });
         }
       }),

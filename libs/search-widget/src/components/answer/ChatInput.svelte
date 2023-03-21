@@ -49,7 +49,7 @@
     };
   });
   const askQuestion = () => {
-    ask.next(question);
+    ask.next({ question, reset: false });
     question = '';
     if ((navigator as any).userAgentData?.mobile) {
       // Make sure the keyboard disappear when triggering search in Mobile

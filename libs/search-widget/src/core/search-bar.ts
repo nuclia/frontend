@@ -49,7 +49,7 @@ export const setupTriggerSearch = (
                 }),
               ),
             ),
-            tap(({ query }) => ask.next(query)),
+            tap(({ query }) => ask.next({ question: query, reset: true })),
             switchMap(({ query, options }) =>
               search(query, options).pipe(map((results) => ({ results, append: !!trigger?.more }))),
             ),

@@ -17,4 +17,14 @@ export namespace Chat {
     sources?: Search.FindResults;
     incomplete?: boolean;
   }
+
+  export enum Author {
+    USER = 'USER',
+    NUCLIA = 'NUCLIA',
+  }
+
+  export interface ContextEntry {
+    author: Author;
+    text: string;
+  }
 }

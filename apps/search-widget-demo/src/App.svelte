@@ -91,6 +91,8 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
+        backend="https://stashify.cloud/api"
+        cdn="/"
         bind:this={searchBar}
         knowledgebox={kb}
         lang="en"

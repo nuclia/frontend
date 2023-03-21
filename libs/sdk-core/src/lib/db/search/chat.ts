@@ -9,15 +9,14 @@ export function chat(
   nuclia: INuclia,
   path: string,
   query: string,
-  context: Chat.Entry[] = [],
+  context: Chat.ContextEntry[] = [],
   features: Chat.Features[] = [],
 ): Observable<Chat.Answer> {
   let sourcesLength = 0;
   let sources: Search.FindResults | undefined;
   let text = '';
-  let end = false;
   return nuclia.rest.getStream(`${path}/chat`, { query, context, features }).pipe(
-    map((data) => {
+    map(({ data, incomplete }) => {
       if (sourcesLength === 0 && data.length >= 4) {
         sourcesLength = new DataView(data.buffer.slice(0, 4)).getUint32(0);
       }
@@ -27,13 +26,11 @@ export function chat(
       }
       if (sources && data.length > sourcesLength + 4) {
         text = new TextDecoder().decode(data.slice(sourcesLength + 4).buffer);
-        end = text.includes(END_OF_STREAM);
-        if (end) {
+        if (text.includes(END_OF_STREAM)) {
           text = text.split(END_OF_STREAM)[0];
         }
       }
-      return { text, sources, incomplete: !end };
+      return { text, sources, incomplete };
     }),
-    takeWhile((answer) => answer.incomplete),
   );
 }
