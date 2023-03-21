@@ -34,7 +34,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
         kbslug="${kb.slug || ''}"
         account="${kb.account || ''}"
         lang="${this.translate.currentLang}"
-        standalone="${this.sdk.nuclia.options.standalone}"
+        ${this.sdk.nuclia.options.standalone ? 'standalone="true"' : ''}
         ></nuclia-viewer>`);
     }),
   );
