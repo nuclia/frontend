@@ -21,7 +21,7 @@ router.patch('/source/:id', (req, res) => {
   res.send('{ "success": true }');
 });
 
-router.get('/source/:id/files', async (req, res) => {
+router.get('/source/:id/search', async (req, res) => {
   const results = await firstValueFrom(getSourceFiles(req.params.id, req.query.query as string));
   res.send(JSON.stringify(results));
 });

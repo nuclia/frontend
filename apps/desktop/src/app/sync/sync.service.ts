@@ -236,7 +236,7 @@ export class SyncService {
   }
 
   getFiles(sourceId: string, query?: string): Observable<SearchResults> {
-    return this.http.get<SearchResults>(`${SYNC_SERVER}/source/${sourceId}/files${query ? `?query=${query}` : ''}`);
+    return this.http.get<SearchResults>(`${SYNC_SERVER}/source/${sourceId}/search${query ? `?query=${query}` : ''}`);
   }
 
   addSync(sync: Sync) {
