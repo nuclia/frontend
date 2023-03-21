@@ -3,7 +3,13 @@ import { CommonModule } from '@angular/common';
 import { SynonymsComponent } from './synonyms.component';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaFocusableModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const routes = [
@@ -21,7 +27,9 @@ const routes = [
     PaTextFieldModule,
     PaTogglesModule,
     PaButtonModule,
+    PaTableModule,
     ReactiveFormsModule,
+    PaFocusableModule,
   ],
   declarations: [SynonymsComponent],
 })
