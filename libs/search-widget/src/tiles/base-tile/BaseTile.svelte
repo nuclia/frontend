@@ -148,7 +148,8 @@
     reset();
   });
 
-  const onClickParagraph = (paragraph, index) => {
+  const onClickParagraph = (paragraph: WidgetParagraph, index: number) => {
+    console.log(result);
     if (result.field) {
       fieldFullId.set({
         field_id: result.field.field_id,
@@ -398,7 +399,7 @@
                     stack={expanded}
                     selected={isSame(paragraph, selectedParagraph)}
                     disabled={expanded && noResultNavigator}
-                    on:open={(event) => onClickParagraph(event.detail, index)} />
+                    on:open={() => onClickParagraph(paragraph, index)} />
                 {/each}
               </ul>
             </div>
@@ -446,7 +447,7 @@
                         {paragraph}
                         selected={isSame(paragraph, selectedParagraph)}
                         stack
-                        on:open={(event) => onClickParagraph(event.detail, index)} />
+                        on:open={() => onClickParagraph(paragraph, index)} />
                     {/each}
                   </ul>
                 </div>

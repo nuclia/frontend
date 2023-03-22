@@ -2,10 +2,10 @@
   import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
-  import type { MediaWidgetParagraph, PdfWidgetParagraph } from '../../core/models';
+  import type { WidgetParagraph } from '../../core/models';
   import { PreviewKind } from '../../core/models';
 
-  export let paragraph: MediaWidgetParagraph | PdfWidgetParagraph;
+  export let paragraph: WidgetParagraph;
   export let stack = false;
   export let ellipsis = false;
   export let selected = false;
@@ -15,16 +15,13 @@
 
   let hovering = false;
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher<boolean>();
   const open = () => {
-    dispatch('open', paragraph);
+    dispatch('open', true);
   };
   const mediaKinds: PreviewKind[] = [PreviewKind.AUDIO, PreviewKind.VIDEO, PreviewKind.YOUTUBE];
   $: isMedia = mediaKinds.includes(paragraph.preview);
   $: isPdf = paragraph.preview === PreviewKind.PDF;
-  // paragraphs coming from transcripts always have sentences even though they are not semantic. They also have a kind, while real semantic paragraph doesn't
-  $: isSemantic =
-    !paragraph.paragraph.kind && paragraph.paragraph.sentences && paragraph.paragraph.sentences.length > 0;
 </script>
 
 <li
@@ -55,7 +52,6 @@
   </div>
   <div
     class="paragraph-text"
-    class:semantic={isSemantic}
     class:ellipsis>
     {@html paragraph.text}
   </div>

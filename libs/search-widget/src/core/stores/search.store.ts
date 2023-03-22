@@ -241,47 +241,47 @@ export const removeLabelFilter = (label: Classification) => {
   searchFilters.set(currentFilters.filter((f) => f !== filter));
 };
 
-const marksRE = /(<mark>|<\/mark>)/g;
-export function addParagraphToSmartResults(
-  smartResults: Search.SmartResult[],
-  resource: Search.SmartResult,
-  paragraph: Search.Paragraph | undefined,
-): Search.SmartResult[] {
-  if (!paragraph) {
-    return smartResults;
-  }
-  const longFieldType = shortToLongFieldType(paragraph.field_type);
-  if (!longFieldType) {
-    return smartResults;
-  }
-  const existingResource = smartResults.find((result) => {
-    if (result.id !== resource.id) {
-      return false;
-    }
-    const undefinedField = !result.field?.field_id && !result.field?.field_type;
-    const sameField = result.field?.field_id === paragraph.field && result.field.field_type === longFieldType;
-    return undefinedField || sameField;
-  });
+// const marksRE = /(<mark>|<\/mark>)/g;
+// export function addParagraphToSmartResults(
+//   smartResults: Search.SmartResult[],
+//   resource: Search.SmartResult,
+//   paragraph: Search.Paragraph | undefined,
+// ): Search.SmartResult[] {
+//   if (!paragraph) {
+//     return smartResults;
+//   }
+//   const longFieldType = shortToLongFieldType(paragraph.field_type);
+//   if (!longFieldType) {
+//     return smartResults;
+//   }
+//   const existingResource = smartResults.find((result) => {
+//     if (result.id !== resource.id) {
+//       return false;
+//     }
+//     const undefinedField = !result.field?.field_id && !result.field?.field_type;
+//     const sameField = result.field?.field_id === paragraph.field && result.field.field_type === longFieldType;
+//     return undefinedField || sameField;
+//   });
 
-  const field = { field_id: paragraph.field, field_type: longFieldType };
-  if (existingResource) {
-    existingResource.field = field;
-    const existingParagraph = existingResource.paragraphs?.find(
-      (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
-    );
-    if (!existingParagraph) {
-      existingResource.paragraphs = existingResource.paragraphs || [];
-      existingResource.paragraphs.push(paragraph);
-    }
-  } else {
-    smartResults.push({
-      ...resource,
-      paragraphs: [paragraph],
-      field,
-    });
-  }
-  return smartResults;
-}
+//   const field = { field_id: paragraph.field, field_type: longFieldType };
+//   if (existingResource) {
+//     existingResource.field = field;
+//     const existingParagraph = existingResource.paragraphs?.find(
+//       (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
+//     );
+//     if (!existingParagraph) {
+//       existingResource.paragraphs = existingResource.paragraphs || [];
+//       existingResource.paragraphs.push(paragraph);
+//     }
+//   } else {
+//     smartResults.push({
+//       ...resource,
+//       paragraphs: [paragraph],
+//       field,
+//     });
+//   }
+//   return smartResults;
+// }
 
 // function generateFakeParagraphForSentence(
 //   resources: { [id: string]: IResource },
