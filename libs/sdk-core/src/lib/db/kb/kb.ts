@@ -29,7 +29,7 @@ import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } fro
 import { catalog, find, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
 import { chat } from '../search/chat';
-import { Chat } from '../search/chat.models';
+import type { Chat } from '../search/chat.models';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}

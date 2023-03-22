@@ -1,4 +1,4 @@
-import { Search } from './search.models';
+import type { Search } from './search.models';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Chat {

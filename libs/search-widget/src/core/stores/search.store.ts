@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { FieldId, IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
+import type { IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -88,7 +88,7 @@ export const displayedResource = searchState.writer<DisplayedResource | null>(
 
 export const isEmptySearchQuery = searchState.reader<boolean>((state) => !state.query && state.filters.length === 0);
 
-export const hasMore = searchState.reader<boolean>((state) => !!state.results.fulltext?.next_page);
+export const hasMore = searchState.reader<boolean>((state) => !!state.results.next_page);
 export const loadMore = searchState.writer<number, void>(
   (state) => state.options.page_number || 0,
   (state) => ({
@@ -102,107 +102,11 @@ export const pendingResults = searchState.writer<boolean>(
   (state, pending) => ({ ...state, pending }),
 );
 
-// const LATIN_CHAR = new RegExp(/[a-zA-Z0-9\s]+/);
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
   if (!state.results.resources) {
     return [];
   }
   return getSortedResults(state.results.resources);
-
-  // const allResources = state.results.resources;
-  // if (!allResources || Object.keys(allResources).length === 0) {
-  //   return [] as Search.SmartResult[];
-  // }
-  // const fullTextResults: IResource[] = (state.results.fulltext?.results || []).reduce((acc, curr) => {
-  //   if (!acc.find((res) => res.id === curr.rid)) {
-  //     acc.push(allResources[curr.rid]);
-  //   }
-  //   return acc;
-  // }, [] as IResource[]);
-  // const semanticResults = state.results.sentences?.results || [];
-  // let smartResults: Search.SmartResult[] = [];
-
-  // // best fulltext match goes first
-  // if (fullTextResults.length > 0) {
-  //   smartResults.push(fullTextResults[0]);
-  // }
-
-  // // check if less than 3 words in the query
-  // // unless there are some non-latin characters (because in Chinese for example there is no space between words)
-  // const nonLatinChars = state.query.trim().replace(LATIN_CHAR, '');
-  // const looksLikeKeywordSearch = state.query.split(' ').length < 3 && nonLatinChars.length < 2;
-  // // if not a keyword search, add semantic sentences
-  // if (!looksLikeKeywordSearch) {
-  //   // if no fulltext results, we take all the semantic results, otherwise we take only the first 2
-  //   const bestSemantic = fullTextResults.length === 0 ? semanticResults : semanticResults.slice(0, 2);
-  //   bestSemantic.forEach((sentence) => {
-  //     const resource = allResources[sentence.rid];
-  //     const containingParagraph = state.results.paragraphs?.results?.find(
-  //       (p) =>
-  //         p.rid === sentence.rid &&
-  //         p.position &&
-  //         sentence.position &&
-  //         p.position.start <= sentence.position.start &&
-  //         p.position.end >= sentence.position.end,
-  //     );
-  //     if (containingParagraph && sentence.position) {
-  //       sentence.position.page_number = containingParagraph.position?.page_number;
-  //     }
-  //     if (resource) {
-  //       smartResults = addParagraphToSmartResults(
-  //         smartResults,
-  //         resource,
-  //         generateFakeParagraphForSentence(allResources, sentence),
-  //       );
-  //     }
-  //   });
-  // }
-
-  // // add the rest of the fulltext results
-  // if (fullTextResults.length > 1) {
-  //   const existingResourceIds = smartResults.map((res) => res.id);
-  //   const remainingFullTextResults = fullTextResults.slice(1).filter((res) => !existingResourceIds.includes(res.id));
-  //   smartResults = [...smartResults, ...remainingFullTextResults];
-  // }
-
-  // // put the paragraphs in each resource
-  // state.results.paragraphs?.results?.forEach((paragraph) => {
-  //   const resource = allResources[paragraph.rid];
-  //   if (resource) {
-  //     smartResults = addParagraphToSmartResults(smartResults, resource, paragraph);
-  //   }
-  // });
-
-  // // for resources without paragraphs, create a fake one using summary or title if they exist (else, remove the resource)
-  // smartResults = smartResults
-  //   .map((resource) => {
-  //     if (resource.paragraphs && resource.paragraphs.length > 0) {
-  //       return resource;
-  //     } else {
-  //       const field = getFirstFieldIdFromResource(resource);
-  //       const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
-  //       if (fakeParagraph) {
-  //         return { ...resource, field, paragraphs: [fakeParagraph] };
-  //       } else {
-  //         return undefined;
-  //       }
-  //     }
-  //   })
-  //   .filter((r) => !!r) as Search.SmartResult[];
-
-  // // set fieldData for each resource
-  // smartResults = smartResults.map((resource) => {
-  //   const field = resource.field ? resource.field : getFirstFieldIdFromResource(resource);
-  //   if (field) {
-  //     const dataKey = getDataKeyFromFieldType(field.field_type);
-  //     const fieldData = dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
-  //     return { ...resource, field, fieldData };
-  //   } else {
-  //     return resource;
-  //   }
-  // });
-
-  // return smartResults;
 });
 
 // TODO: restore relations
@@ -240,108 +144,6 @@ export const removeLabelFilter = (label: Classification) => {
   const currentFilters = searchFilters.getValue();
   searchFilters.set(currentFilters.filter((f) => f !== filter));
 };
-
-// const marksRE = /(<mark>|<\/mark>)/g;
-// export function addParagraphToSmartResults(
-//   smartResults: Search.SmartResult[],
-//   resource: Search.SmartResult,
-//   paragraph: Search.Paragraph | undefined,
-// ): Search.SmartResult[] {
-//   if (!paragraph) {
-//     return smartResults;
-//   }
-//   const longFieldType = shortToLongFieldType(paragraph.field_type);
-//   if (!longFieldType) {
-//     return smartResults;
-//   }
-//   const existingResource = smartResults.find((result) => {
-//     if (result.id !== resource.id) {
-//       return false;
-//     }
-//     const undefinedField = !result.field?.field_id && !result.field?.field_type;
-//     const sameField = result.field?.field_id === paragraph.field && result.field.field_type === longFieldType;
-//     return undefinedField || sameField;
-//   });
-
-//   const field = { field_id: paragraph.field, field_type: longFieldType };
-//   if (existingResource) {
-//     existingResource.field = field;
-//     const existingParagraph = existingResource.paragraphs?.find(
-//       (p) => p.text.replace(marksRE, '').trim() === paragraph.text.replace(marksRE, '').trim(),
-//     );
-//     if (!existingParagraph) {
-//       existingResource.paragraphs = existingResource.paragraphs || [];
-//       existingResource.paragraphs.push(paragraph);
-//     }
-//   } else {
-//     smartResults.push({
-//       ...resource,
-//       paragraphs: [paragraph],
-//       field,
-//     });
-//   }
-//   return smartResults;
-// }
-
-// function generateFakeParagraphForSentence(
-//   resources: { [id: string]: IResource },
-//   sentence: Search.Sentence | undefined,
-// ): Search.SmartParagraph | undefined {
-//   if (!sentence) {
-//     return undefined;
-//   }
-//   const resource = resources[sentence.rid];
-//   return resource
-//     ? {
-//         score: 0,
-//         rid: resource.id,
-//         field_type: sentence.field_type,
-//         field: sentence.field,
-//         text: sentence.text,
-//         labels: [],
-//         sentences: [sentence],
-//         position:
-//           sentence.position && (sentence.position.page_number || sentence.position.page_number === 0)
-//             ? { ...sentence.position, page_number: sentence.position.page_number as number }
-//             : undefined,
-//       }
-//     : undefined;
-// }
-
-// function generateFakeParagraphForSummaryOrTitle(
-//   resource: IResource,
-//   paragraphs: Search.Paragraph[],
-// ): Search.SmartParagraph | undefined {
-//   const title = paragraphs.find(
-//     (paragraph) => paragraph.rid === resource.id && paragraph.field_type === SHORT_FIELD_TYPE.generic,
-//   )?.text;
-//   const text = resource.summary || title;
-//   return text
-//     ? {
-//         score: 0,
-//         rid: resource.id,
-//         field_type: SHORT_FIELD_TYPE.generic,
-//         field: '',
-//         text: text,
-//         labels: [],
-//       }
-//     : undefined;
-// }
-
-function getFirstFieldIdFromResource(resource: IResource): FieldId | undefined {
-  if (!resource.data) {
-    return;
-  }
-  if (resource.data.files) {
-    return { field_id: Object.keys(resource.data.files)[0], field_type: FIELD_TYPE.file };
-  } else if (resource.data.links) {
-    return { field_id: Object.keys(resource.data.links)[0], field_type: FIELD_TYPE.link };
-  } else if (resource.data.texts) {
-    return { field_id: Object.keys(resource.data.texts)[0], field_type: FIELD_TYPE.text };
-  } else {
-    return;
-  }
-}
 
 export function getFirstResourceField(resource: IResource): ResourceField | undefined {
   if (!resource.data) {
