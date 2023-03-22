@@ -52,7 +52,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
       nucliaPrediction.loadModels(kbPath, authHeaders);
     }
   }
-  if (widgetOptions.features?.relations) {
+  if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);
   }
   STATE = state;

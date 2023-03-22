@@ -102,113 +102,107 @@ export const pendingResults = searchState.writer<boolean>(
   (state, pending) => ({ ...state, pending }),
 );
 
-const LATIN_CHAR = new RegExp(/[a-zA-Z0-9\s]+/);
+// const LATIN_CHAR = new RegExp(/[a-zA-Z0-9\s]+/);
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
   if (!state.results.resources) {
     return [];
   }
-  return Object.values(state.results.resources)
-    .map((res) => ({
-      ...res,
-      paragraphs: Object.values(res.fields)
-        .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
-        .sort((a, b) => b.score - a.score),
-    }))
-    .sort((a, b) => (b.paragraphs[0]?.score || 0) - (a.paragraphs[0]?.score || 0));
-  const allResources = state.results.resources;
-  if (!allResources || Object.keys(allResources).length === 0) {
-    return [] as Search.SmartResult[];
-  }
-  const fullTextResults: IResource[] = (state.results.fulltext?.results || []).reduce((acc, curr) => {
-    if (!acc.find((res) => res.id === curr.rid)) {
-      acc.push(allResources[curr.rid]);
-    }
-    return acc;
-  }, [] as IResource[]);
-  const semanticResults = state.results.sentences?.results || [];
-  let smartResults: Search.SmartResult[] = [];
+  return getSortedResults(state.results.resources);
 
-  // best fulltext match goes first
-  if (fullTextResults.length > 0) {
-    smartResults.push(fullTextResults[0]);
-  }
+  // const allResources = state.results.resources;
+  // if (!allResources || Object.keys(allResources).length === 0) {
+  //   return [] as Search.SmartResult[];
+  // }
+  // const fullTextResults: IResource[] = (state.results.fulltext?.results || []).reduce((acc, curr) => {
+  //   if (!acc.find((res) => res.id === curr.rid)) {
+  //     acc.push(allResources[curr.rid]);
+  //   }
+  //   return acc;
+  // }, [] as IResource[]);
+  // const semanticResults = state.results.sentences?.results || [];
+  // let smartResults: Search.SmartResult[] = [];
 
-  // check if less than 3 words in the query
-  // unless there are some non-latin characters (because in Chinese for example there is no space between words)
-  const nonLatinChars = state.query.trim().replace(LATIN_CHAR, '');
-  const looksLikeKeywordSearch = state.query.split(' ').length < 3 && nonLatinChars.length < 2;
-  // if not a keyword search, add semantic sentences
-  if (!looksLikeKeywordSearch) {
-    // if no fulltext results, we take all the semantic results, otherwise we take only the first 2
-    const bestSemantic = fullTextResults.length === 0 ? semanticResults : semanticResults.slice(0, 2);
-    bestSemantic.forEach((sentence) => {
-      const resource = allResources[sentence.rid];
-      const containingParagraph = state.results.paragraphs?.results?.find(
-        (p) =>
-          p.rid === sentence.rid &&
-          p.position &&
-          sentence.position &&
-          p.position.start <= sentence.position.start &&
-          p.position.end >= sentence.position.end,
-      );
-      if (containingParagraph && sentence.position) {
-        sentence.position.page_number = containingParagraph.position?.page_number;
-      }
-      if (resource) {
-        smartResults = addParagraphToSmartResults(
-          smartResults,
-          resource,
-          generateFakeParagraphForSentence(allResources, sentence),
-        );
-      }
-    });
-  }
+  // // best fulltext match goes first
+  // if (fullTextResults.length > 0) {
+  //   smartResults.push(fullTextResults[0]);
+  // }
 
-  // add the rest of the fulltext results
-  if (fullTextResults.length > 1) {
-    const existingResourceIds = smartResults.map((res) => res.id);
-    const remainingFullTextResults = fullTextResults.slice(1).filter((res) => !existingResourceIds.includes(res.id));
-    smartResults = [...smartResults, ...remainingFullTextResults];
-  }
+  // // check if less than 3 words in the query
+  // // unless there are some non-latin characters (because in Chinese for example there is no space between words)
+  // const nonLatinChars = state.query.trim().replace(LATIN_CHAR, '');
+  // const looksLikeKeywordSearch = state.query.split(' ').length < 3 && nonLatinChars.length < 2;
+  // // if not a keyword search, add semantic sentences
+  // if (!looksLikeKeywordSearch) {
+  //   // if no fulltext results, we take all the semantic results, otherwise we take only the first 2
+  //   const bestSemantic = fullTextResults.length === 0 ? semanticResults : semanticResults.slice(0, 2);
+  //   bestSemantic.forEach((sentence) => {
+  //     const resource = allResources[sentence.rid];
+  //     const containingParagraph = state.results.paragraphs?.results?.find(
+  //       (p) =>
+  //         p.rid === sentence.rid &&
+  //         p.position &&
+  //         sentence.position &&
+  //         p.position.start <= sentence.position.start &&
+  //         p.position.end >= sentence.position.end,
+  //     );
+  //     if (containingParagraph && sentence.position) {
+  //       sentence.position.page_number = containingParagraph.position?.page_number;
+  //     }
+  //     if (resource) {
+  //       smartResults = addParagraphToSmartResults(
+  //         smartResults,
+  //         resource,
+  //         generateFakeParagraphForSentence(allResources, sentence),
+  //       );
+  //     }
+  //   });
+  // }
 
-  // put the paragraphs in each resource
-  state.results.paragraphs?.results?.forEach((paragraph) => {
-    const resource = allResources[paragraph.rid];
-    if (resource) {
-      smartResults = addParagraphToSmartResults(smartResults, resource, paragraph);
-    }
-  });
+  // // add the rest of the fulltext results
+  // if (fullTextResults.length > 1) {
+  //   const existingResourceIds = smartResults.map((res) => res.id);
+  //   const remainingFullTextResults = fullTextResults.slice(1).filter((res) => !existingResourceIds.includes(res.id));
+  //   smartResults = [...smartResults, ...remainingFullTextResults];
+  // }
 
-  // for resources without paragraphs, create a fake one using summary or title if they exist (else, remove the resource)
-  smartResults = smartResults
-    .map((resource) => {
-      if (resource.paragraphs && resource.paragraphs.length > 0) {
-        return resource;
-      } else {
-        const field = getFirstFieldIdFromResource(resource);
-        const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
-        if (fakeParagraph) {
-          return { ...resource, field, paragraphs: [fakeParagraph] };
-        } else {
-          return undefined;
-        }
-      }
-    })
-    .filter((r) => !!r) as Search.SmartResult[];
+  // // put the paragraphs in each resource
+  // state.results.paragraphs?.results?.forEach((paragraph) => {
+  //   const resource = allResources[paragraph.rid];
+  //   if (resource) {
+  //     smartResults = addParagraphToSmartResults(smartResults, resource, paragraph);
+  //   }
+  // });
 
-  // set fieldData for each resource
-  smartResults = smartResults.map((resource) => {
-    const field = resource.field ? resource.field : getFirstFieldIdFromResource(resource);
-    if (field) {
-      const dataKey = getDataKeyFromFieldType(field.field_type);
-      const fieldData = dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
-      return { ...resource, field, fieldData };
-    } else {
-      return resource;
-    }
-  });
+  // // for resources without paragraphs, create a fake one using summary or title if they exist (else, remove the resource)
+  // smartResults = smartResults
+  //   .map((resource) => {
+  //     if (resource.paragraphs && resource.paragraphs.length > 0) {
+  //       return resource;
+  //     } else {
+  //       const field = getFirstFieldIdFromResource(resource);
+  //       const fakeParagraph = generateFakeParagraphForSummaryOrTitle(resource, state.results.paragraphs?.results || []);
+  //       if (fakeParagraph) {
+  //         return { ...resource, field, paragraphs: [fakeParagraph] };
+  //       } else {
+  //         return undefined;
+  //       }
+  //     }
+  //   })
+  //   .filter((r) => !!r) as Search.SmartResult[];
 
-  return smartResults;
+  // // set fieldData for each resource
+  // smartResults = smartResults.map((resource) => {
+  //   const field = resource.field ? resource.field : getFirstFieldIdFromResource(resource);
+  //   if (field) {
+  //     const dataKey = getDataKeyFromFieldType(field.field_type);
+  //     const fieldData = dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
+  //     return { ...resource, field, fieldData };
+  //   } else {
+  //     return resource;
+  //   }
+  // });
+
+  // return smartResults;
 });
 
 // TODO: restore relations
@@ -399,4 +393,18 @@ function deepMergeFields(
     acc[id] = !acc[id] ? obj : { ...acc[id], ...obj, paragraphs: { ...acc[id].paragraphs, ...obj.paragraphs } };
     return acc;
   }, existing);
+}
+
+export function getSortedResults(resources: { [id: string]: Search.FindResource } | undefined): Search.SmartResult[] {
+  if (!resources) {
+    return [];
+  }
+  return Object.values(resources)
+    .map((res) => ({
+      ...res,
+      paragraphs: Object.values(res.fields)
+        .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
+        .sort((a, b) => b.score - a.score),
+    }))
+    .sort((a, b) => (b.paragraphs[0]?.score || 0) - (a.paragraphs[0]?.score || 0));
 }

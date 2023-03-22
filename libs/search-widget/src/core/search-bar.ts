@@ -42,8 +42,7 @@ export const setupTriggerSearch = (
                   // Once we will have search v2, we should load Values only for navigateToLink
                   const show = navigateToLink
                     ? [ResourceProperties.BASIC, ResourceProperties.VALUES]
-                    : [ResourceProperties.BASIC, ResourceProperties.VALUES];
-                  show.push(ResourceProperties.VALUES);
+                    : [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.EXTRACTED];
                   const currentOptions = { ...options, show, filters };
                   return { query, options: currentOptions };
                 }),

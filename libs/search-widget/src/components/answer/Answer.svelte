@@ -3,20 +3,12 @@
   import Expander from '../../common/expander/Expander.svelte';
   import Feedback from './Feedback.svelte';
   import type { Chat, Search } from '@nuclia/core';
+  import { getSortedResults } from '../../core/stores/search.store';
+  import Tile from '../../tiles/Tile.svelte';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
 
-  const sources = answer.sources?.resources
-    ? Object.values(answer.sources?.resources).map((res) => ({
-        title: res.title,
-        paragraphs: Object.values(res.fields)
-          .reduce((acc, field) => {
-            acc = acc.concat(Object.values(field.paragraphs));
-            return acc;
-          }, [] as Search.FindParagraph[])
-          .sort((a, b) => b.score - a.score),
-      }))
-    : [];
+  const sources = getSortedResults(answer.sources?.resources);
 </script>
 
 <div class="sw-answer">
@@ -31,14 +23,11 @@
         slot="header">
         {$_('answer.sources')}
       </h3>
-      {#each sources as source}
-        <div><strong>{source.title}</strong></div>
-        <ul>
-          {#each source.paragraphs as paragraph}
-            <li>{paragraph.text}</li>
-          {/each}
-        </ul>
-      {/each}
+      <div class="results">
+        {#each sources as result}
+          <Tile {result} />
+        {/each}
+      </div>
     </Expander>
   {/if}
 </div>
