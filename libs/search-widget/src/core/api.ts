@@ -33,7 +33,7 @@ import { hasViewerSearchError } from './stores/viewer-search.store';
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
-let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
+let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {

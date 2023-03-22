@@ -24,7 +24,7 @@
   import { searchQuery } from '../../core/stores/search.store';
   import { Duration } from '../../common/transition.utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
-  import { getExternalUrl, goToUrl, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import { getExternalUrl, goToUrl, mapParagraph2WidgetParagraph } from '../../core/utils';
   import { navigateToLink } from '../../core/stores/widget.store';
   import {
     fieldFullId,
@@ -109,7 +109,7 @@
       // paragraphList is used for next/previous buttons
       paragraphList = isInResource
         ? inResourceResults
-        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)) || [];
+        : result.paragraphs?.map((paragraph) => mapParagraph2WidgetParagraph(paragraph, previewKind)) || [];
       return paragraphList;
     }),
     map((results) => results || []),
@@ -243,9 +243,7 @@
         .pipe(map((results) => results.paragraphs?.results || []))
         .subscribe((paragraphs) => {
           resultIndex = -1;
-          viewerSearchResults.set(
-            paragraphs.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)),
-          );
+          viewerSearchResults.set(paragraphs.map((paragraph) => mapParagraph2WidgetParagraph(paragraph, previewKind)));
         });
     } else {
       isSearchingInResource.next(false);

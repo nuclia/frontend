@@ -94,6 +94,7 @@ export namespace Search {
   export enum FindScoreType {
     VECTOR = 'VECTOR',
     BM25 = 'BM25',
+    BOTH = 'BOTH',
   }
 
   export interface FindParagraph {
@@ -101,7 +102,7 @@ export namespace Search {
     score_type: FindScoreType;
     text: string;
     id: string;
-    labels: Classification[];
+    labels: string[];
     position: {
       index: number;
       start: number;
