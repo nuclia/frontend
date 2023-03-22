@@ -3,18 +3,19 @@ import type {
   CloudLink,
   FIELD_TYPE,
   FieldFullId,
-  IResource,
   Paragraph,
   Search,
   SHORT_FIELD_TYPE,
   WidgetFeatures,
 } from '@nuclia/core';
 
-export const NO_RESULTS: Search.Results = {
-  resources: {} as { [id: string]: IResource },
-  paragraphs: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
-  sentences: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
-  fulltext: { results: [], facets: {}, total: 0, page_number: 0, next_page: false, page_size: 0 },
+export const NO_RESULTS: Search.FindResults = {
+  resources: {} as { [id: string]: Search.FindResource },
+  total: 0,
+  page_number: 0,
+  next_page: false,
+  page_size: 0,
+  query: '',
 };
 
 export interface WidgetOptions {

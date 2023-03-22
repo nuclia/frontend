@@ -16,7 +16,7 @@ interface SearchState {
   query: string;
   filters: string[];
   options: SearchOptions;
-  results: Search.Results;
+  results: Search.FindResults;
   hasError: boolean;
   displayedResource: DisplayedResource | null;
   pending: boolean;
@@ -47,7 +47,7 @@ export const searchQuery = searchState.writer<string>(
   },
 );
 
-export const searchResults = searchState.writer<Search.Results, { results: Search.Results; append: boolean }>(
+export const searchResults = searchState.writer<Search.FindResults, { results: Search.FindResults; append: boolean }>(
   (state) => state.results,
   (state, params) => ({
     ...state,
@@ -107,6 +107,14 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   if (!state.results.resources) {
     return [];
   }
+  return Object.values(state.results.resources)
+    .map((res) => ({
+      ...res,
+      paragraphs: Object.values(res.fields)
+        .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
+        .sort((a, b) => b.score - a.score),
+    }))
+    .sort((a, b) => (b.paragraphs[0]?.score || 0) - (a.paragraphs[0]?.score || 0));
   const allResources = state.results.resources;
   if (!allResources || Object.keys(allResources).length === 0) {
     return [] as Search.SmartResult[];
@@ -203,22 +211,24 @@ export const smartResults = searchState.reader<Search.SmartResult[]>((state) => 
   return smartResults;
 });
 
-export const entityRelations = searchState.reader((state) =>
-  Object.entries(state.results.relations?.entities || {})
-    .map(([entity, relations]) => ({
-      entity,
-      relations: relations.related_to
-        .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
-        .reduce((acc, current) => {
-          if (!acc[current.relation_label]) {
-            acc[current.relation_label] = [current.entity];
-          } else {
-            acc[current.relation_label].push(current.entity);
-          }
-          return acc;
-        }, {} as { [relation: string]: string[] }),
-    }))
-    .filter((entity) => Object.keys(entity.relations).length > 0),
+// TODO: restore relations
+export const entityRelations = searchState.reader(
+  (state) => [],
+  // Object.entries(state.results.relations?.entities || {})
+  //   .map(([entity, relations]) => ({
+  //     entity,
+  //     relations: relations.related_to
+  //       .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
+  //       .reduce((acc, current) => {
+  //         if (!acc[current.relation_label]) {
+  //           acc[current.relation_label] = [current.entity];
+  //         } else {
+  //           acc[current.relation_label].push(current.entity);
+  //         }
+  //         return acc;
+  //       }, {} as { [relation: string]: string[] }),
+  //   }))
+  //   .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
@@ -279,50 +289,50 @@ export function addParagraphToSmartResults(
   return smartResults;
 }
 
-function generateFakeParagraphForSentence(
-  resources: { [id: string]: IResource },
-  sentence: Search.Sentence | undefined,
-): Search.SmartParagraph | undefined {
-  if (!sentence) {
-    return undefined;
-  }
-  const resource = resources[sentence.rid];
-  return resource
-    ? {
-        score: 0,
-        rid: resource.id,
-        field_type: sentence.field_type,
-        field: sentence.field,
-        text: sentence.text,
-        labels: [],
-        sentences: [sentence],
-        position:
-          sentence.position && (sentence.position.page_number || sentence.position.page_number === 0)
-            ? { ...sentence.position, page_number: sentence.position.page_number as number }
-            : undefined,
-      }
-    : undefined;
-}
+// function generateFakeParagraphForSentence(
+//   resources: { [id: string]: IResource },
+//   sentence: Search.Sentence | undefined,
+// ): Search.SmartParagraph | undefined {
+//   if (!sentence) {
+//     return undefined;
+//   }
+//   const resource = resources[sentence.rid];
+//   return resource
+//     ? {
+//         score: 0,
+//         rid: resource.id,
+//         field_type: sentence.field_type,
+//         field: sentence.field,
+//         text: sentence.text,
+//         labels: [],
+//         sentences: [sentence],
+//         position:
+//           sentence.position && (sentence.position.page_number || sentence.position.page_number === 0)
+//             ? { ...sentence.position, page_number: sentence.position.page_number as number }
+//             : undefined,
+//       }
+//     : undefined;
+// }
 
-function generateFakeParagraphForSummaryOrTitle(
-  resource: IResource,
-  paragraphs: Search.Paragraph[],
-): Search.SmartParagraph | undefined {
-  const title = paragraphs.find(
-    (paragraph) => paragraph.rid === resource.id && paragraph.field_type === SHORT_FIELD_TYPE.generic,
-  )?.text;
-  const text = resource.summary || title;
-  return text
-    ? {
-        score: 0,
-        rid: resource.id,
-        field_type: SHORT_FIELD_TYPE.generic,
-        field: '',
-        text: text,
-        labels: [],
-      }
-    : undefined;
-}
+// function generateFakeParagraphForSummaryOrTitle(
+//   resource: IResource,
+//   paragraphs: Search.Paragraph[],
+// ): Search.SmartParagraph | undefined {
+//   const title = paragraphs.find(
+//     (paragraph) => paragraph.rid === resource.id && paragraph.field_type === SHORT_FIELD_TYPE.generic,
+//   )?.text;
+//   const text = resource.summary || title;
+//   return text
+//     ? {
+//         score: 0,
+//         rid: resource.id,
+//         field_type: SHORT_FIELD_TYPE.generic,
+//         field: '',
+//         text: text,
+//         labels: [],
+//       }
+//     : undefined;
+// }
 
 function getFirstFieldIdFromResource(resource: IResource): FieldId | undefined {
   if (!resource.data) {
@@ -357,40 +367,36 @@ export function getFirstResourceField(resource: IResource): ResourceField | unde
   }
 }
 
-function appendResults(existingResults: Search.Results, newResults: Search.Results): Search.Results {
+function appendResults(existingResults: Search.FindResults, newResults: Search.FindResults): Search.FindResults {
   if (!existingResults) {
     return newResults;
   }
   if (!newResults) {
     return existingResults;
   }
-  const results = {
+  return {
     ...existingResults,
-    resources: { ...existingResults.resources, ...newResults.resources },
+    ...newResults,
+    resources: deepMergeResources(existingResults.resources || {}, newResults.resources || {}),
   };
-  if (!existingResults.paragraphs) {
-    results.paragraphs = newResults.paragraphs;
-  } else {
-    results.paragraphs = {
-      ...existingResults.paragraphs,
-      results: (existingResults.paragraphs?.results || []).concat(newResults.paragraphs?.results || []),
-    };
-  }
-  if (!existingResults.sentences) {
-    results.sentences = newResults.sentences;
-  } else {
-    results.sentences = {
-      ...existingResults.sentences,
-      results: (existingResults.sentences?.results || []).concat(newResults.sentences?.results || []),
-    };
-  }
-  if (!existingResults.fulltext) {
-    results.fulltext = newResults.fulltext;
-  } else {
-    results.fulltext = {
-      ...existingResults.fulltext,
-      results: (existingResults.fulltext?.results || []).concat(newResults.fulltext?.results || []),
-    };
-  }
-  return results;
+}
+
+function deepMergeResources(
+  existing: { [id: string]: Search.FindResource },
+  newEntries: { [id: string]: Search.FindResource },
+): { [id: string]: Search.FindResource } {
+  return Object.entries(newEntries).reduce((acc, [id, obj]) => {
+    acc[id] = !acc[id] ? obj : { ...acc[id], ...obj, fields: deepMergeFields(acc[id].fields, obj.fields) };
+    return acc;
+  }, existing);
+}
+
+function deepMergeFields(
+  existing: { [id: string]: Search.FindField },
+  newEntries: { [id: string]: Search.FindField },
+): { [id: string]: Search.FindField } {
+  return Object.entries(newEntries).reduce((acc, [id, obj]) => {
+    acc[id] = !acc[id] ? obj : { ...acc[id], ...obj, paragraphs: { ...acc[id].paragraphs, ...obj.paragraphs } };
+    return acc;
+  }, existing);
 }

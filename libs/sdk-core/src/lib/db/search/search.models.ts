@@ -130,7 +130,7 @@ export namespace Search {
   }
 
   export interface SmartResult extends IResource {
-    paragraphs?: SmartParagraph[];
+    paragraphs?: FindParagraph[];
     field?: FieldId;
     fieldData?: IFieldData;
   }
