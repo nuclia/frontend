@@ -656,6 +656,8 @@
 	"stash.valid_emails_label": "Correos electrónicos",
 	"stash.view_edit_service_access": "Visualiza / Edita los Service Access existentes",
 	"stash.widgets": "Widgets",
+	"stash.widgets.answers": "Generación de respuesta",
+	"stash.widgets.answers.help": "Generar respuesta a las preguntas de los usuarios y permitir chatear con el sistema",
 	"stash.widgets.configuration": "Configuracion de Widget",
 	"stash.widgets.editLabels": "Editar etiquetas",
 	"stash.widgets.editLabels.help": "Permite agregar/eliminar etiquetas desde la vista de recursos",
