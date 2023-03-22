@@ -156,7 +156,7 @@ export class Rest implements IRest {
         (res) => {
           const reader = res.body?.getReader();
           if (!reader) {
-            observer.next(new Uint8Array());
+            observer.next({ data: new Uint8Array(), incomplete: false });
             observer.complete();
           } else {
             let data = new Uint8Array();
