@@ -8,8 +8,8 @@ export namespace Chat {
   }
 
   export enum Features {
-    PARAGRAPH = 'paragraph',
-    VECTOR = 'vector',
+    PARAGRAPHS = 'paragraphs',
+    RELATIONS = 'relations',
   }
 
   export interface Answer {
