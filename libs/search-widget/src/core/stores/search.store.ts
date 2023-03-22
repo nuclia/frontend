@@ -406,14 +406,21 @@ export function getSortedResults(resources: { [id: string]: Search.FindResource 
         .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
         .sort((a, b) => b.score - a.score),
     }))
-    .map((res) => {
-      const firstParagraph = res.paragraphs[0];
+    .map((res: Search.SmartResult) => {
+      const firstParagraph = res.paragraphs?.[0];
       if (!firstParagraph) {
         return res;
       }
       const [rid, fieldType, fieldId, position] = firstParagraph.id.split('/');
       const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
-      return field_type && fieldId ? { ...res, field: { field_type, field_id: fieldId } } : res;
+      if (field_type && fieldId) {
+        res.field = { field_type, field_id: fieldId };
+      }
+      if (field_type) {
+        const dataKey = getDataKeyFromFieldType(field_type);
+        res.fieldData = dataKey ? res.data?.[dataKey]?.[fieldId] : undefined;
+      }
+      return res;
     })
-    .sort((a, b) => (b.paragraphs[0]?.score || 0) - (a.paragraphs[0]?.score || 0));
+    .sort((a, b) => (b.paragraphs?.[0]?.score || 0) - (a.paragraphs?.[0]?.score || 0));
 }
