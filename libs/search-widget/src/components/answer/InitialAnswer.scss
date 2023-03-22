@@ -3,6 +3,10 @@
   display: flex;
   flex-wrap: wrap;
 
+  .answer {
+    width: 100%;
+  }
+
   .actions {
     margin-left: auto;
     .go-to-chat {
