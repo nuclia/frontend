@@ -20,6 +20,11 @@ export function chat(
     .pipe(
       map(({ data, incomplete, headers }) => {
         const id = headers.get('NUCLIA-LEARNING-ID') || '';
+        // /chat returns a readable stream structured as follow:
+        // - 1st block: 4 first bytes indicates the size of the 2nd block
+        // - 2nd block: a base64 encoded JSON containing the sources used to build the answer
+        // - 3rd block: the answer text, ended by "_END_"
+        // - 4th block (optionally): base64 encoded JSON containing the entities
         if (sourcesLength === 0 && data.length >= 4) {
           sourcesLength = new DataView(data.buffer.slice(0, 4)).getUint32(0);
         }

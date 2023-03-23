@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -207,20 +207,47 @@ export function getSortedResults(resources: { [id: string]: Search.FindResource 
         .sort((a, b) => b.score - a.score),
     }))
     .map((res: Search.SmartResult) => {
-      const firstParagraph = res.paragraphs?.[0];
-      if (!firstParagraph) {
-        return res;
+      // take the first paragraph which is not from a generic field
+      const firstFieldParagraph = res.paragraphs?.find(
+        (paragraph) => paragraph.id.split('/')[1] !== SHORT_FIELD_TYPE.generic,
+      );
+      if (firstFieldParagraph) {
+        const [rid, fieldType, fieldId, position] = firstFieldParagraph.id.split('/');
+        const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
+        if (field_type && fieldId) {
+          res.field = { field_type, field_id: fieldId };
+        }
+      } else {
+        // if none, guess the main field
+        res.field = getMainFieldFromResource(res);
       }
-      const [rid, fieldType, fieldId, position] = firstParagraph.id.split('/');
-      const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
-      if (field_type && fieldId) {
-        res.field = { field_type, field_id: fieldId };
-      }
-      if (field_type) {
-        const dataKey = getDataKeyFromFieldType(field_type);
-        res.fieldData = dataKey ? res.data?.[dataKey]?.[fieldId] : undefined;
+      if (res.field) {
+        const dataKey = getDataKeyFromFieldType(res.field.field_type);
+        res.fieldData = dataKey ? res.data?.[dataKey]?.[res.field.field_id] : undefined;
       }
       return res;
     })
     .sort((a, b) => (b.paragraphs?.[0]?.score || 0) - (a.paragraphs?.[0]?.score || 0));
+}
+
+function getMainFieldFromResource(resource: IResource): FieldId | undefined {
+  if (!resource.data) {
+    return;
+  }
+  // try to find a file field matching the resource icon
+  // if none, we just take the first field
+  const mainFileField = resource.data?.files
+    ? Object.entries(resource.data.files).find(([id, field]) => field.value?.file?.content_type === resource.icon)
+    : undefined;
+  if (mainFileField) {
+    return { field_type: FIELD_TYPE.file, field_id: mainFileField[0] };
+  } else if (resource.data.files) {
+    return { field_id: Object.keys(resource.data.files)[0], field_type: FIELD_TYPE.file };
+  } else if (resource.data.links) {
+    return { field_id: Object.keys(resource.data.links)[0], field_type: FIELD_TYPE.link };
+  } else if (resource.data.texts) {
+    return { field_id: Object.keys(resource.data.texts)[0], field_type: FIELD_TYPE.text };
+  } else {
+    return;
+  }
 }

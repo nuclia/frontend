@@ -149,7 +149,6 @@
   });
 
   const onClickParagraph = (paragraph: WidgetParagraph, index: number) => {
-    console.log(result);
     if (result.field) {
       fieldFullId.set({
         field_id: result.field.field_id,
