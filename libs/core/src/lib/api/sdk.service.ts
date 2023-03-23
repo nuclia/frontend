@@ -4,6 +4,7 @@ import {
   BehaviorSubject,
   combineLatest,
   delay,
+  distinctUntilChanged,
   filter,
   map,
   Observable,
@@ -50,6 +51,7 @@ export class SDKService {
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
+        distinctUntilChanged((previous, current) => previous[0].id === current[0].id),
         switchMap(([kb, account]) =>
           kb && kb.slug === this.DEMO_SLUG
             ? this.getDemoKb()

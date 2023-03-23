@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { combineLatest, filter, map, Observable, switchMap, tap } from 'rxjs';
+import { combineLatest, distinctUntilChanged, filter, map, Observable, share, switchMap, tap } from 'rxjs';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
 import { stfAnimations } from '@flaps/pastanaga';
@@ -26,8 +26,10 @@ export class KbSwitchComponent {
     : this.stateService.account.pipe(
         filter((account) => !!account),
         map((account) => account as Account),
+        distinctUntilChanged(),
         tap((account) => (this.account = account)),
         switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account.slug)),
+        share(),
       );
   showDemo = this.tracking.isFeatureEnabled('show-demo-kb');
 
