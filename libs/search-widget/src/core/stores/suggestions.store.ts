@@ -1,6 +1,6 @@
 import { SvelteState } from '../state-lib';
 import type { Classification, Search } from '@nuclia/core';
-import { NO_RESULTS } from '../models';
+import { NO_SUGGESTION_RESULTS } from '../models';
 import { combineLatest, map, Observable, Subject } from 'rxjs';
 
 export type Suggestions = {
@@ -17,7 +17,7 @@ interface SuggestionState {
 export const suggestionState = new SvelteState<SuggestionState>({
   typeAhead: '',
   suggestions: {
-    results: NO_RESULTS,
+    results: NO_SUGGESTION_RESULTS,
   },
   hasError: false,
 });

@@ -18,6 +18,10 @@ export const NO_RESULTS: Search.FindResults = {
   query: '',
 };
 
+export const NO_SUGGESTION_RESULTS: Search.Results = {
+  resources: {} as { [id: string]: Search.FindResource },
+};
+
 export interface WidgetOptions {
   fuzzyOnly?: boolean;
   highlight?: boolean;
