@@ -181,7 +181,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
       let start = range.startOffset;
       let end = range.endOffset;
       if (selectionText !== paragraphText.slice(start, end)) {
-        const exactPosition = this.getExactPositionOfSelection(paragraphText, selectionText, range);
+        const exactPosition = this.getExactPositionOfSelection(selectionText, range);
         if (exactPosition) {
           start = exactPosition.start;
           end = exactPosition.end;
@@ -208,11 +208,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
    * @param range
    * @private
    */
-  private getExactPositionOfSelection(
-    paragraphText: string,
-    selectionText: string,
-    range: Range,
-  ): { start: number; end: number } | null {
+  private getExactPositionOfSelection(selectionText: string, range: Range): { start: number; end: number } | null {
     // when double-clicking on a word on firefox, we can end up with selection like `\t Sinbad`
     // we trim the selection but need to know how many characters were trimmed, so we can then have the right positions
     let shiftBy = 0;
@@ -226,14 +222,15 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
       shiftBy += endWithBlanks[0].length;
     }
 
-    const expression = selectionText.trim().replace(/\s/g, `\\s*`);
-    const regexp = new RegExp(expression);
-    const match = paragraphText.match(regexp);
-    if (!match || !match.index) {
-      return null;
+    let start: number;
+    const previousMark = range.startContainer.previousSibling;
+    if (previousMark && previousMark.ELEMENT_NODE) {
+      const previousEnd = (previousMark as HTMLElement).getAttribute('end') || '';
+      start = parseInt(previousEnd, 10) + range.startOffset + shiftBy;
+    } else {
+      start = range.startOffset + shiftBy;
     }
 
-    const start = match.index;
     return {
       start,
       end: start + (range.endOffset - range.startOffset - shiftBy),
