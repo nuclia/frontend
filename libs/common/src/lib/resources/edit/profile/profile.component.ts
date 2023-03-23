@@ -32,9 +32,16 @@ export class ResourceProfileComponent implements OnInit {
   currentValue?: Resource;
   form = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-    authors: new FormControl<string>('', { nonNullable: true }),
     summary: new FormControl<string>('', { nonNullable: true }),
     thumbnail: new FormControl<string>('', { nonNullable: true }),
+    origin: new FormGroup({
+      collaborators: new FormControl<string>('', { nonNullable: true }),
+      url: new FormControl<string>('', { nonNullable: true }),
+      filename: new FormControl<string>('', { nonNullable: true }),
+      created: new FormControl<string>('', { nonNullable: true }),
+      modified: new FormControl<string>('', { nonNullable: true }),
+      related: new FormControl<string>('', { nonNullable: true }),
+    }),
   });
   thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
     map((res) => this.getThumbnailsAndImages(res)),
@@ -87,8 +94,15 @@ export class ResourceProfileComponent implements OnInit {
     this.form.patchValue({
       title: data.title,
       summary: data.summary,
-      authors: (data.origin?.collaborators || []).join(', '),
       thumbnail: data.thumbnail,
+      origin: {
+        collaborators: (data.origin?.collaborators || []).join(', '),
+        url: data.origin?.url,
+        filename: data.origin?.filename,
+        created: data.origin?.created,
+        modified: data.origin?.modified,
+        related: (data.origin?.related || []).join('\n'),
+      },
     });
     this.form.enable();
     this.cdr?.markForCheck();
@@ -96,7 +110,7 @@ export class ResourceProfileComponent implements OnInit {
 
   save() {
     this.isSaving = true;
-    const data = this.getValue();
+    const data: Partial<Resource> = this.getValue();
     this.editResource.savePartialResource(data).subscribe(() => {
       this.form.markAsPristine();
       this.isSaving = false;
@@ -112,14 +126,20 @@ export class ResourceProfileComponent implements OnInit {
   }
 
   getValue(): Partial<Resource> {
+    const value = this.form.getRawValue();
     return this.currentValue
       ? {
-          title: this.form.value.title,
-          summary: this.form.value.summary,
-          thumbnail: this.form.value.thumbnail,
+          title: value.title,
+          summary: value.summary,
+          thumbnail: value.thumbnail,
           origin: {
             ...this.currentValue.origin,
-            collaborators: (this.form.value.authors as string).split(',').map((s) => s.trim()),
+            collaborators: value.origin.collaborators.split(',').map((s) => s.trim()),
+            url: value.origin.url,
+            filename: value.origin.filename,
+            created: value.origin.created ? new Date(value.origin.created).toISOString() : undefined,
+            modified: value.origin.modified ? new Date(value.origin.modified).toISOString() : undefined,
+            related: value.origin.related.split('\n').map((s) => s.trim()),
           },
         }
       : {};

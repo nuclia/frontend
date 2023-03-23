@@ -1,12 +1,15 @@
 @import 'apps/dashboard/src/variables';
 @import '../edit-resource.tokens';
 
-form > div {
+form > div,
+form > section > div {
   display: flex;
   flex-direction: column;
   gap: rhythm(0.5);
   margin-bottom: rhythm(3);
+}
 
+form > div {
   &.classification-container {
     margin-top: rhythm(5);
   }
