@@ -55,6 +55,7 @@
     }
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+    entityRelations.subscribe((en) => console.log(en));
   });
 
   const onLoadMore = () => loadMore.set();

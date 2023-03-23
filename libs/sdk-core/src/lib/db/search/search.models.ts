@@ -1,13 +1,5 @@
 import type { ExtractedDataTypes, ResourceProperties } from '../kb';
-import type {
-  FIELD_TYPE,
-  FieldId,
-  IFieldData,
-  IResource,
-  RelationEntityType,
-  RelationType,
-  Classification,
-} from '../resource';
+import type { FIELD_TYPE, FieldId, IFieldData, IResource, RelationEntityType, RelationType } from '../resource';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
@@ -81,6 +73,7 @@ export namespace Search {
     page_size: number;
     query: string;
     total: number;
+    relations?: Relations;
   }
 
   export interface FindResource extends IResource {
