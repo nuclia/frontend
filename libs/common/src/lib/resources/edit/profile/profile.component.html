@@ -17,23 +17,9 @@
       <div>
         <label
           class="title-s"
-          for="authors">
-          {{ 'resource.authorship' | translate }}
+          for="summary">
+          {{ 'resource.summary' | translate }}
         </label>
-        <pa-input
-          id="authors"
-          externalLabel
-          formControlName="authors"></pa-input>
-      </div>
-      <div>
-        <div>
-          <label
-            class="title-s"
-            for="summary">
-            {{ 'resource.summary' | translate }}
-          </label>
-          <div class="body-s">{{ 'resource.summary.help' | translate }}</div>
-        </div>
         <pa-textarea
           id="summary"
           externalLabel
@@ -95,6 +81,77 @@
           </pa-radio-group>
         </div>
       </div>
+
+      <section formGroupName="origin">
+        <div>
+          <label
+            class="title-s"
+            for="authors">
+            {{ 'resource.origin.collaborators' | translate }}
+          </label>
+          <pa-input
+            id="authors"
+            externalLabel
+            help="resource.origin.collaborators-helper"
+            formControlName="collaborators"></pa-input>
+        </div>
+        <div>
+          <label
+            class="title-s"
+            for="created">
+            {{ 'resource.origin.created' | translate }}
+          </label>
+          <pa-input
+            id="created"
+            externalLabel
+            formControlName="created"></pa-input>
+        </div>
+        <div>
+          <label
+            class="title-s"
+            for="modified">
+            {{ 'resource.origin.modified' | translate }}
+          </label>
+          <pa-input
+            id="modified"
+            externalLabel
+            formControlName="modified"></pa-input>
+        </div>
+        <div>
+          <label
+            class="title-s"
+            for="filename">
+            {{ 'resource.origin.filename' | translate }}
+          </label>
+          <pa-input
+            id="filename"
+            externalLabel
+            formControlName="filename"></pa-input>
+        </div>
+        <div>
+          <label
+            class="title-s"
+            for="url">
+            {{ 'resource.origin.url' | translate }}
+          </label>
+          <pa-input
+            id="url"
+            externalLabel
+            formControlName="url"></pa-input>
+        </div>
+        <div>
+          <label
+            class="title-s"
+            for="related">
+            {{ 'resource.origin.related' | translate }}
+          </label>
+          <pa-textarea
+            id="related"
+            externalLabel
+            formControlName="related"
+            [rows]="3"></pa-textarea>
+        </div>
+      </section>
     </form>
   </div>
 
