@@ -4,6 +4,7 @@
 
 - `/find` endpoint support
 - `/chat` endpoint support
+- `/feedback` endpoint support
 
 ### Improvements
 

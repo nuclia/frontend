@@ -6,13 +6,15 @@
 
   export let rank = 0;
 
-  function send(approved: boolean) {
+  let approved: 'good' | 'bad' | '' = '';
+
+  function send(good: boolean) {
     chat
       .pipe(
         take(1),
-        switchMap((chat) => sendFeedback(chat.slice(0, rank + 1), approved)),
+        switchMap((chat) => sendFeedback(chat[rank].answer, good)),
       )
-      .subscribe();
+      .subscribe(() => (approved = good ? 'good' : 'bad'));
   }
 </script>
 
@@ -20,9 +22,11 @@
   <IconButton
     aspect="basic"
     icon="smiley-happy"
+    active={approved === 'good'}
     on:click={() => send(true)} />
   <IconButton
     aspect="basic"
     icon="smiley-sad"
+    active={approved === 'bad'}
     on:click={() => send(false)} />
 {/if}

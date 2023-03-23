@@ -14,6 +14,7 @@ export namespace Chat {
 
   export interface Answer {
     text: string;
+    id: string;
     sources?: Search.FindResults;
     incomplete?: boolean;
   }

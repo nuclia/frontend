@@ -16,6 +16,8 @@
   let fieldType = 'file';
   let fieldId = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
 
+  // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
+  // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
   let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs

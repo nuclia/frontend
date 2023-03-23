@@ -18,7 +18,8 @@ export function chat(
   return nuclia.rest
     .getStream(`${path}/chat`, { query, context, features: features.length > 0 ? features : undefined })
     .pipe(
-      map(({ data, incomplete }) => {
+      map(({ data, incomplete, headers }) => {
+        const id = headers.get('NUCLIA-LEARNING-ID') || '';
         if (sourcesLength === 0 && data.length >= 4) {
           sourcesLength = new DataView(data.buffer.slice(0, 4)).getUint32(0);
         }
@@ -32,7 +33,7 @@ export function chat(
             text = text.split(END_OF_STREAM)[0];
           }
         }
-        return { text, sources, incomplete };
+        return { text, sources, incomplete, id };
       }),
     );
 }

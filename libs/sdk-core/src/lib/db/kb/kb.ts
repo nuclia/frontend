@@ -175,6 +175,10 @@ export class KnowledgeBox implements IKnowledgeBox {
     );
   }
 
+  feedback(answerId: string, good: boolean): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/feedback`, { answerId, good });
+  }
+
   counters(): Observable<Counters> {
     return this.nuclia.rest.get<Counters>(`/kb/${this.id}/counters`);
   }

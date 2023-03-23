@@ -92,9 +92,11 @@ export const getAnswer = (query: string, chat?: Chat.Entry[]) => {
   return nucliaApi.knowledgeBox.chat(query, context);
 };
 
-export const sendFeedback = (chat: Chat.Entry[], approved: boolean) => {
-  console.log('sendFeedback', chat, approved);
-  return of(undefined);
+export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.feedback(answer.id, approved);
 };
 
 export const searchInResource = (

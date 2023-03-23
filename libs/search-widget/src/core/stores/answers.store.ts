@@ -9,7 +9,7 @@ interface AnswerState {
   isSpeechOn: boolean;
 }
 
-const EMPTY_ANSWER = { text: '' };
+const EMPTY_ANSWER = { text: '', id: '' };
 export const answerState = new SvelteState<AnswerState>({
   chat: [],
   currentQuestion: '',

@@ -149,26 +149,27 @@ export class Rest implements IRest {
     );
   }
 
-  getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean }> {
+  getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }> {
     path = this.getFullUrl(path);
-    return new Observable<{ data: Uint8Array; incomplete: boolean }>((observer) => {
+    return new Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>((observer) => {
       fetch(path, { method: 'POST', headers: this.getHeaders('POST', path), body: JSON.stringify(body) }).then(
         (res) => {
           const reader = res.body?.getReader();
+          const headers = res.headers;
           if (!reader) {
-            observer.next({ data: new Uint8Array(), incomplete: false });
+            observer.next({ data: new Uint8Array(), incomplete: false, headers });
             observer.complete();
           } else {
             let data = new Uint8Array();
             const readMore = () => {
               reader.read().then(({ done, value }) => {
                 if (done) {
-                  observer.next({ data, incomplete: false });
+                  observer.next({ data, incomplete: false, headers });
                   observer.complete();
                 }
                 if (value) {
                   data = this.concat(data, value);
-                  observer.next({ data, incomplete: true });
+                  observer.next({ data, incomplete: true, headers });
                   readMore();
                 }
               });
