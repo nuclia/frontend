@@ -16,14 +16,17 @@ export class LabelComponent {
     }
   }
   @Input()
-  set selected(value: any) {
-    this._selected = coerceBooleanProperty(value);
+  set disabled(value: any) {
+    this._disabled = coerceBooleanProperty(value);
   }
-  get selected() {
-    return this._selected;
+  get disabled() {
+    return this._disabled;
   }
 
-  @Output() selectLabel: EventEmitter<void> = new EventEmitter<void>();
+  @Output() removeLabel: EventEmitter<{ event: MouseEvent | KeyboardEvent; value: any }> = new EventEmitter<{
+    event: MouseEvent | KeyboardEvent;
+    value: any;
+  }>();
 
   get backgroundColor() {
     return this._color.mainColor;
@@ -35,6 +38,5 @@ export class LabelComponent {
     return this._color.textColor;
   }
   private _color: LabelColor = LABEL_COLORS[0];
-
-  private _selected = false;
+  private _disabled = false;
 }

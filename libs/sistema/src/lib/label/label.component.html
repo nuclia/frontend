@@ -1,7 +1,7 @@
-<pa-chip-selectionable
+<pa-chip-closeable
   [backgroundColor]="backgroundColor"
-  [borderColor]="borderColor"
   [textColor]="textColor"
-  (select)="selectLabel.emit()">
+  [disabled]="disabled"
+  (closed)="removeLabel.emit($event)">
   <ng-content></ng-content>
-</pa-chip-selectionable>
+</pa-chip-closeable>
