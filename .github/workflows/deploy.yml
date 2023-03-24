@@ -21,6 +21,7 @@ jobs:
     outputs:
       deploy-widget: ${{ steps.check-deploy.outputs.deploy-widget }}
       deploy-app: ${{ steps.check-deploy.outputs.deploy-app }}
+      deploy-contributor: ${{ steps.check-deploy.outputs.deploy-contributor }}
       deploy-manager: ${{ steps.check-deploy.outputs.deploy-manager }}
       deploy-desktop: ${{ steps.check-deploy.outputs.deploy-desktop }}
       deploy-sistema: ${{ steps.check-deploy.outputs.deploy-sistema }}
@@ -68,6 +69,7 @@ jobs:
         run: |-
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
+          (test -d dist/apps/contributor && echo "deploy-contributor=yes" >> $GITHUB_OUTPUT) || echo "Contributor unchanged"
           (test -d dist/apps/manager && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "deploy-desktop=yes" >> $GITHUB_OUTPUT) || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
@@ -112,6 +114,12 @@ jobs:
           docker tag $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$APP_IMAGE_NAME:main
+
+      - name: Publish contributor app
+        if: steps.check-deploy.outputs.deploy-contributor == 'yes'
+        run: |-
+          sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/contributor/assets/deployment/app-config.json
+          gsutil copy -r dist/apps/contributor gs://$CDN_STORAGE
 
       - name: Build manager image
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
