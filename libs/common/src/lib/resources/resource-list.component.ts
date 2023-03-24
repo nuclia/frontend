@@ -319,7 +319,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   delete(resources: Resource[]) {
     const title = resources.length > 1 ? 'resource.delete_resources_confirm' : 'resource.delete_resource_confirm';
-    const message = resources.length > 1 ? 'resource.delete_resources_warning' : 'resource.delete_resource_warning';
+    const message =
+      resources.length > 1 ? 'resource.confirm-delete.plural-description' : 'resource.confirm-delete.description';
     this.modalService
       .openConfirm({
         title,

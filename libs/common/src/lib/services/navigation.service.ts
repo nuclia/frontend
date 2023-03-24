@@ -55,7 +55,7 @@ export class NavigationService {
     return `${this.getAccountUrl(accountSlug)}/manage`;
   }
 
-  getKbMangeUrl(accountSlug: string, kbSlug: string): string {
+  getKbManageUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/manage`;
   }
 

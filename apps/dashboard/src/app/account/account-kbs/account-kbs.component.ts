@@ -79,7 +79,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   }
 
   manageKb(slug: string): void {
-    this.router.navigate([this.navigation.getKbMangeUrl(this.account!.slug, slug)]);
+    this.router.navigate([this.navigation.getKbManageUrl(this.account!.slug, slug)]);
   }
 
   manageKbUsers(kb: IKnowledgeBoxItem): void {
