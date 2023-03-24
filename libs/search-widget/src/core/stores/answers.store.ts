@@ -20,7 +20,12 @@ export const answerState = new SvelteState<AnswerState>({
 
 export const currentQuestion = answerState.writer<string, { question: string; reset: boolean }>(
   (state) => state.currentQuestion,
-  (state, value) => ({ ...state, currentQuestion: value.question, chat: value.reset ? [] : state.chat }),
+  (state, value) => ({
+    ...state,
+    currentQuestion: value.question,
+    chat: value.reset ? [] : state.chat,
+    isStreaming: true,
+  }),
 );
 
 export const currentAnswer = answerState.writer<Chat.Answer, Partial<Chat.Answer>>(

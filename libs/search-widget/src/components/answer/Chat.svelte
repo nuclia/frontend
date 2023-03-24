@@ -6,11 +6,11 @@
   import ChatInput from './ChatInput.svelte';
   import { _ } from '../../core/i18n';
   import { onMount } from 'svelte';
-  import { delay } from 'rxjs';
+  import { delay, distinctUntilChanged } from 'rxjs';
 
   let entriesElement: HTMLDivElement;
   onMount(() => {
-    const sub = chat.pipe(delay(200)).subscribe(() => {
+    const sub = chat.pipe(delay(200), distinctUntilChanged()).subscribe(() => {
       entriesElement.scrollTo({ top: entriesElement.scrollHeight, behavior: 'smooth' });
     });
     return () => sub.unsubscribe();
