@@ -8,12 +8,13 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject } from 'rxjs';
+import { filter, map, Observable, Subject, switchMap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
 import { NavigationService } from '../../services/navigation.service';
+import { SisModalService } from '@nuclia/sistema';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -50,6 +51,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private navigationService: NavigationService,
     private element: ElementRef,
     private cdr: ChangeDetectorRef,
+    private modal: SisModalService,
   ) {
     this.route.params
       .pipe(
@@ -97,5 +99,38 @@ export class EditResourceComponent implements OnInit, OnDestroy {
 
   onViewChange() {
     this.editResource.setCurrentField('resource');
+  }
+
+  reprocessResource() {
+    this.modal
+      .openConfirm({
+        title: 'resource.confirm-reprocess.title',
+        description: 'resource.confirm-reprocess.description',
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.editResource.resource),
+        map((resource) => resource as Resource),
+        switchMap((resource: Resource) => resource.reprocess()),
+      )
+      .subscribe();
+  }
+
+  deleteResource() {
+    this.modal
+      .openConfirm({
+        title: 'resource.confirm-delete.title',
+        description: 'resource.confirm-delete.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.editResource.resource),
+        map((resource) => resource as Resource),
+        switchMap((resource: Resource) => resource.delete(true)),
+        switchMap(() => this.backRoute),
+      )
+      .subscribe((route) => this.router.navigate([route]));
   }
 }

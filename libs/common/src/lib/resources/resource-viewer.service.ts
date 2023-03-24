@@ -83,8 +83,8 @@ export class ResourceViewerService {
   delete(fullId: FieldFullId) {
     this.modalService
       .openConfirm({
-        title: 'resource.delete_resource_title',
-        description: 'resource.delete_resource_warning',
+        title: 'resource.confirm-delete.title',
+        description: 'resource.confirm-delete.description',
         confirmLabel: 'generic.delete',
         isDestructive: true,
       })
@@ -128,8 +128,8 @@ export class ResourceViewerService {
   reindex(fullId: FieldFullId) {
     this.modalService
       .openConfirm({
-        title: 'resource.reprocess_resource_title',
-        description: 'resource.reprocess_resource_description',
+        title: 'resource.confirm-reprocess.title',
+        description: 'resource.confirm-reprocess.description',
       })
       .onClose.pipe(
         filter((confirm) => !!confirm),
