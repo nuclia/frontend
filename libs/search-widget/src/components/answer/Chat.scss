@@ -51,6 +51,9 @@
       grid-template-columns: var(--rhythm-10) auto var(--rhythm-10);
       margin: auto 0 var(--rhythm-4) 0;
     }
+    .answer {
+      width: calc(var(--resource-modal-width-md, fit-content) - var(--rhythm-10) - var(--rhythm-16));
+    }
     .feedback {
       display: block;
     }
