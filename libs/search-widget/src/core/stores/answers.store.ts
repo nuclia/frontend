@@ -47,6 +47,12 @@ export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
 );
 
+export const lastSpeakableFullAnswer = answerState.reader((state) =>
+  state.chat.length > 0 && !state.isStreaming && state.isSpeechOn
+    ? state.chat[state.chat.length - 1].answer
+    : undefined,
+);
+
 export const chat = answerState.writer<Chat.Entry[], { question: string; answer: Chat.Answer }>(
   (state) =>
     state.isStreaming

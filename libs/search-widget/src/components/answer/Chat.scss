@@ -52,7 +52,7 @@
       margin: auto 0 var(--rhythm-4) 0;
     }
     .answer {
-      width: calc(var(--resource-modal-width-md, fit-content) - var(--rhythm-10) - var(--rhythm-16));
+      width: calc(var(--resource-modal-width-md) - var(--rhythm-10) - var(--rhythm-16));
     }
     .feedback {
       display: block;
