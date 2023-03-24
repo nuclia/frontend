@@ -7,7 +7,7 @@ export const FEATURES = [
   { title: 'Document Indexing', basic: 'yes', pro: 'yes', business: 'yes' },
   { title: 'Maximum file size', basic: 'Up to 10 Mb', pro: 'Up to 120 Mb', business: 'Up to 1.5 Gb' },
   { title: 'Number of knowledge boxes', basic: '1', pro: '3', business: '10' },
-  { title: 'Seach trend topics', basic: '', pro: 'coming soon', business: 'coming soon' },
+  { title: 'Search trend topics', basic: '', pro: 'coming soon', business: 'coming soon' },
   { title: 'Videos and audio indexing', basic: '', pro: 'yes', business: 'yes' },
   { title: 'URL indexing', basic: 'yes', pro: 'yes', business: 'yes' },
   { title: 'Multi-language search', basic: 'yes', pro: 'yes', business: 'yes' },

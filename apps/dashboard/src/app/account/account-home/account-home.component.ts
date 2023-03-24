@@ -53,10 +53,7 @@ export class AccountHomeComponent {
   );
 
   kb = this.sdk.currentKb;
-  kbs = this.account.pipe(
-    switchMap((account) => this.sdk.nuclia.db.getKnowledgeBoxes(account?.slug!)),
-    share(),
-  );
+  kbs = this.sdk.kbList;
   kbsTotal = this.kbs.pipe(map((kbs) => kbs.length));
   kbsPublic = this.kbs.pipe(map((kbs) => kbs.filter((kb) => kb.state === 'PUBLISHED').length));
 

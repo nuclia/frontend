@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Account, Counters, KnowledgeBox, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, Counters, IKnowledgeBoxItem, KnowledgeBox, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -18,6 +18,7 @@ import {
 import { BackendConfigurationService } from '../config';
 import { StateService } from '../state.service';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
+import { take } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
@@ -29,15 +30,21 @@ export class SDKService {
   });
 
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
-  currentKb = this._currentKB.asObservable();
+  private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
+  private _refreshCounter = new Subject<boolean>();
+  private _repetitiveRefreshCounter = new Subject<void>();
+  private _isKbLoaded = false;
 
+  currentKb = this._currentKB.asObservable();
+  kbList: Observable<IKnowledgeBoxItem[]> = this._kbList.asObservable();
+  currentAccount: Observable<Account> = this.stateService.account.pipe(
+    filter((account) => !!account),
+    map((account) => account as Account),
+  );
   counters = new ReplaySubject<Counters>(1);
   pendingRefresh = new BehaviorSubject(false);
-  private _refreshCounter = new Subject<boolean>();
   refreshing = this._refreshCounter.asObservable();
-  private _repetitiveRefreshCounter = new Subject<void>();
 
-  private _isKbLoaded = false;
   get isKbLoaded() {
     return this._isKbLoaded;
   }
@@ -62,8 +69,10 @@ export class SDKService {
         tap(() => (this._isKbLoaded = true)),
       )
       .subscribe((kb) => this._currentKB.next(kb));
+
     this.countersRefreshSubcriptions();
     this.refreshCounter(true);
+    this.refreshKbList();
   }
 
   setCurrentAccount(accountSlug: string): Observable<Account> {
@@ -117,6 +126,23 @@ export class SDKService {
     if (!singleTry) {
       this._repetitiveRefreshCounter.next();
     }
+  }
+
+  refreshKbList() {
+    const kbList = this.nuclia.options.standalone
+      ? this.nuclia.db
+          .getStandaloneKbs()
+          .pipe(
+            map((kbs) => kbs.map((kb) => ({ ...kb, id: kb.uuid, title: kb.slug, zone: 'local' } as IKnowledgeBoxItem))),
+          )
+      : this.stateService.account.pipe(
+          filter((account) => !!account),
+          map((account) => account as Account),
+          take(1),
+          switchMap((account) => this.nuclia.db.getKnowledgeBoxes(account.slug)),
+        );
+
+    kbList.subscribe((list) => this._kbList.next(list));
   }
 
   private countersRefreshSubcriptions() {

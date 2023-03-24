@@ -127,7 +127,7 @@
         [class.billing-enabled]="isBillingEnabled"
         [routerLink]="(isBillingEnabled | async) ? '../billing' : null">
         <div class="plan-name">
-          <strong>{{ 'billing.plan' | translate }}:</strong>
+          <strong>{{ 'account.type.label' | translate }}:</strong>
           <span>{{ 'account.type.' + (accountType | async) | translate }}</span>
         </div>
         <pa-icon
