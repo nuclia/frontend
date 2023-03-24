@@ -3,8 +3,8 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SDKService, STFTrackingService, STFUtils, Zone } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
-import { Account, KnowledgeBoxCreation, LearningConfiguration, LearningConfigurations } from '@nuclia/core';
-import { forkJoin, map, share, take } from 'rxjs';
+import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
+import { forkJoin, share, take } from 'rxjs';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 

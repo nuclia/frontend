@@ -59,10 +59,11 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.zones = zones;
           const zoneSlug = zones.find((zone) => zone.id === account.zone)?.slug;
           this.sdk.nuclia.options.zone = zoneSlug;
-          return this.updateKbs();
+          return this.sdk.kbList;
         }),
       )
-      .subscribe(() => {
+      .subscribe((kbs) => {
+        this.knowledgeBoxes = kbs;
         this.cdr?.markForCheck();
       });
     // TODO: if no kbs, we should display to the default Empty page
@@ -107,7 +108,10 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         }),
         switchMap(() => this.updateKbs()),
       )
-      .subscribe(() => this.cdr?.markForCheck());
+      .subscribe(() => {
+        this.cdr?.markForCheck();
+        this.sdk.refreshKbList();
+      });
   }
 
   publishKb(kb: IKnowledgeBoxItem) {
@@ -167,7 +171,10 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe({
-        next: () => this.setLoading(false),
+        next: () => {
+          this.setLoading(false);
+          this.sdk.refreshKbList();
+        },
         error: () => {
           this.setLoading(false);
           this.toaster.error('stash.delete.error');
