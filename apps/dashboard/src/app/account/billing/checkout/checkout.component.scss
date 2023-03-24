@@ -3,11 +3,20 @@
 .checkout {
   display: flex;
   flex-direction: column;
-  gap: rhythm(4);
+  gap: rhythm(6);
+  max-width: calc(rhythm(90) + rhythm(32));
 }
 
 h2 {
   margin: 0;
+}
+
+.section-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: rhythm(1.5);
+  max-width: rhythm(64);
 }
 
 .section-title {
@@ -16,14 +25,17 @@ h2 {
   font-size: font-size(l);
   font-weight: $font-weight-bold;
   gap: rhythm(1);
-  margin-bottom: rhythm(1.5);
 }
 
-.billing-data {
+.section-body {
+  padding-left: rhythm(4);
+}
+
+
+.billing-form {
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
-  max-width: 970px;
 
   .field-line {
     display: flex;
@@ -40,16 +52,63 @@ h2 {
   label {
     margin-bottom: rhythm(1);
   }
+
+  pa-button {
+    align-self: flex-start;
+    margin-top: rhythm(2);
+  }
 }
 
-.budget {
+.powered-by {
   align-items: center;
   display: flex;
-  gap: rhythm(1);
-  margin-top: rhythm(2);
+  gap: rhythm(0.5);
+}
+
+.payment-method-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(64);
+
+  &.hidden {
+    height: 0;
+    visibility: hidden;
+  }
+
+  .card-element {
+    background: $color-background-field-regular;
+    border: 1px solid $border-color-field-regular;
+    padding: rhythm(2) $padding-field-control-left;
+    &:hover {
+      border-color: $border-color-field-hover;
+    }
+  }
+
+  .card-error {
+    color: $color-secondary-stronger;
+  }
+
+  pa-button {
+    align-self: flex-start;
+    margin-top: rhythm(2);
+  }
+}
+
+.budget-form {
+  .budget-input {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    margin-top: rhythm(2);
+  }
 
   pa-input {
     display: block;
     width: rhythm(14);
+  }
+
+  pa-button {
+    margin-top: rhythm(4);
   }
 }
