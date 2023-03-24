@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { UploadDialogService } from '../upload-dialog.service';
+import { UploadDialogService } from './upload-dialog.service';
 
 @Component({
-  selector: 'app-upload-button',
+  selector: 'stf-upload-button',
   templateUrl: './upload-button.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

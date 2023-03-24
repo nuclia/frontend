@@ -1,0 +1,402 @@
+<router-outlet></router-outlet>
+<div class="resource-list">
+  <div
+    class="loading-shade"
+    *ngIf="isLoading">
+    <nsi-spinner *ngIf="isLoading"></nsi-spinner>
+  </div>
+
+  <div class="resource-list-header">
+    <form
+      *ngIf="isMainView; else backButton"
+      class="search-bar-container"
+      [formGroup]="searchForm"
+      (ngSubmit)="search()">
+      <label
+        for="search-resources"
+        class="title-xxs">
+        {{ 'stash.search' | translate }}
+      </label>
+      <pa-select
+        dim
+        formControlName="searchIn">
+        <pa-option value="title">{{ 'resource.search.in-title' | translate }}</pa-option>
+        <pa-option value="resource">{{ 'resource.search.in-resource' | translate }}</pa-option>
+      </pa-select>
+      <pa-input
+        id="search-resources"
+        externalLabel
+        icon="search"
+        formControlName="query"></pa-input>
+    </form>
+    <ng-template #backButton>
+      <pa-button
+        iconAndText
+        icon="chevron-left"
+        aspect="basic"
+        size="small"
+        (click)="displayStatus('PROCESSED')">
+        {{ 'resource.processed_resources' | translate }}
+      </pa-button>
+    </ng-template>
+
+    <div class="upload-container">
+      <ng-container *ngIf="isMainView">
+        <stf-upload-button (uploaded)="onUpload()"></stf-upload-button>
+
+        <pa-button
+          *ngIf="hasSampleData | async"
+          kind="destructive"
+          aspect="basic"
+          (click)="deleteSampleDataset()">
+          {{ 'onboarding.dataset.delete' | translate }}
+        </pa-button>
+      </ng-container>
+    </div>
+    <div class="status-buttons-container">
+      <div
+        class="status-button"
+        *ngIf="(statusCount | async)?.pending || 0 > 0">
+        <pa-button
+          icon="clock-dash"
+          size="small"
+          kind="destructive"
+          aspect="basic"
+          #pendingPopoverDirective="paPopoverRef"
+          [paPopover]="pendingPopover"
+          paPopoverOffset="0px"
+          [active]="statusDisplayed.value === 'PENDING'"
+          (click)="displayStatus('PENDING')">
+          {{ 'resource.status-help.pending' | translate }}
+        </pa-button>
+        <div class="file-count">{{ (statusCount | async)?.pending }}</div>
+      </div>
+      <pa-popover #pendingPopover>
+        <div class="popover-content">{{ 'resource.pending_resources_popover' | translate }}</div>
+      </pa-popover>
+
+      <div
+        class="status-button"
+        *ngIf="(statusCount | async)?.error || 0 > 0">
+        <pa-button
+          icon="circle-cross"
+          size="small"
+          kind="destructive"
+          aspect="basic"
+          #failedPopoverDirective="paPopoverRef"
+          [paPopover]="failedPopover"
+          paPopoverOffset="0px"
+          [active]="statusDisplayed.value === 'ERROR'"
+          (click)="displayStatus('ERROR')">
+          {{ 'resource.status-help.failed' | translate }}
+        </pa-button>
+        <div class="file-count">{{ (statusCount | async)?.error }}</div>
+      </div>
+      <pa-popover #failedPopover>
+        <div class="popover-content">{{ 'resource.failed_resources_popover' | translate }}</div>
+      </pa-popover>
+    </div>
+  </div>
+
+  <div class="resource-list-content">
+    <div class="resource-table-header">
+      <div
+        class="resource-bulk-actions"
+        *ngIf="(isAdminOrContrib | async) && selection.selected.length > 0">
+        {{ 'resource.selected_count' | translate: { num: selectionCount$ | async } }}
+
+        <ng-container *ngIf="hasLabelSets | async">
+          <app-label-dropdown
+            [labelSets]="labelSets$ | async"
+            (selectionChange)="updateLabelList($event)"
+            (close)="addLabelsToSelection()"
+            aspect="basic"
+            size="small">
+            {{ 'resource.add_labels' | translate }}
+          </app-label-dropdown>
+        </ng-container>
+
+        <ng-container *ngIf="selection.selected.length > 0">
+          <pa-button
+            kind="destructive"
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkDelete()">
+            {{ 'generic.delete' | translate }}
+          </pa-button>
+          <pa-button
+            aspect="basic"
+            size="small"
+            [disabled]="bulkAction.inProgress"
+            (click)="bulkReprocess()">
+            {{ (selection.selected.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+          </pa-button>
+          <div
+            class="body-m"
+            *ngIf="bulkAction.inProgress">
+            {{ bulkAction.label | translate }}
+            {{ bulkAction.done }} / {{ bulkAction.total }}
+          </div>
+        </ng-container>
+
+        <ng-container
+          *ngIf="isFailureView && isFullPageSelected() && this.resultsLength > this.pageSize && !bulkAction.inProgress">
+          <pa-button
+            aspect="basic"
+            kind="primary"
+            *ngIf="!allErrorsSelected"
+            (click)="selectAllErrors()">
+            {{ 'resource.select-all-failures' | translate: { count: (statusCount | async)?.error } }}
+          </pa-button>
+          <pa-button
+            aspect="basic"
+            kind="primary"
+            *ngIf="allErrorsSelected"
+            (click)="clearSelection()">
+            {{ 'generic.clear-selection' | translate }}
+          </pa-button>
+        </ng-container>
+      </div>
+      <div class="table-options">
+        <div *ngIf="isMainView">
+          <nsi-dropdown-button
+            size="small"
+            aspect="basic"
+            [popupRef]="visibleColumns">
+            {{ 'resource.visible_columns_dropdown' | translate }}
+          </nsi-dropdown-button>
+          <pa-dropdown #visibleColumns>
+            <pa-option
+              *ngFor="let column of optionalColumns"
+              [value]="column.value"
+              dontCloseOnSelect>
+              <pa-checkbox
+                [(value)]="column.visible"
+                (valueChange)="columnVisibilityUpdate.next($event)">
+                {{ column.label | translate }}
+              </pa-checkbox>
+            </pa-option>
+          </pa-dropdown>
+        </div>
+        <div *ngIf="pageSizeOptions | async as options">
+          <nsi-dropdown-button
+            size="small"
+            aspect="basic"
+            [popupRef]="pageSizeMenu">
+            {{ 'resource.resource_page_number' | translate: { num: filters.size } }}
+          </nsi-dropdown-button>
+          <pa-dropdown #pageSizeMenu>
+            <pa-option
+              *ngFor="let option of options"
+              [value]="option.key"
+              (selectOption)="setPageSize(option)">
+              {{ option.value }}
+            </pa-option>
+          </pa-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table
+        *ngIf="currentKb | async"
+        [dataSource]="data || []"
+        cdk-table>
+        <ng-container cdkColumnDef="select">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            <pa-checkbox
+              [value]="selection.hasValue() && isFullPageSelected()"
+              [paTooltip]="(isFullPageSelected() ? 'generic.deselect_all' : 'generic.select_all') | translate"
+              [disabled]="bulkAction.inProgress"
+              (change)="masterToggle()"></pa-checkbox>
+          </th>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            <pa-checkbox
+              [value]="selection.isSelected(row.resource)"
+              [disabled]="bulkAction.inProgress"
+              (change)="selection.toggle(row.resource)"></pa-checkbox>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="title">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            {{ 'resource.title' | translate }}
+          </th>
+          <td
+            cdk-cell
+            class="clickable"
+            *cdkCellDef="let row"
+            (click)="viewResource(row.resource.id)">
+            <div class="title-with-icon">
+              <pa-icon
+                *ngIf="row.resource.icon | mimeIcon as icon"
+                [path]="'assets/icons/' + icon"></pa-icon>
+              <div class="title-and-description">
+                <div>{{ row.resource.title }}</div>
+                <small *ngIf="row.description">{{ row.description }}</small>
+              </div>
+              <div class="title-status">
+                <pa-icon
+                  *ngIf="row.resource.metadata?.status === 'PENDING'"
+                  name="clock-dash"></pa-icon>
+                <pa-icon
+                  class="error"
+                  *ngIf="row.resource.metadata?.status === 'ERROR'"
+                  name="circle-cross"></pa-icon>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="classification">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            {{ 'resource.classification-column' | translate }}
+          </th>
+          <td
+            cdk-cell
+            class="clickable"
+            *cdkCellDef="let row"
+            (click)="viewResource(row.resource.id)">
+            <div class="label-container">
+              <nsi-label
+                *ngFor="let label of row.labels"
+                [color]="label.color"
+                [disabled]="deletingLabel"
+                (removeLabel)="removeLabel(row.resource, label, $event)">
+                {{ label.label }}
+              </nsi-label>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="modification">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            {{ 'generic.date' | translate }}
+          </th>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            {{ row.resource.created | formatDate: { default: true } }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="status">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            {{ 'resource.status' | translate }}
+          </th>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            {{ row.status }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="language">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            {{ 'generic.language' | translate }}
+          </th>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            {{ row.resource.metadata.language || '–' }}
+          </td>
+        </ng-container>
+
+        <ng-container cdkColumnDef="actions">
+          <th
+            cdk-header-cell
+            *cdkHeaderCellDef>
+            {{ 'generic.actions' | translate }}
+          </th>
+          <td
+            cdk-cell
+            *cdkCellDef="let row">
+            <pa-button
+              icon="more-vertical"
+              aspect="basic"
+              size="small"
+              paTooltip="generic.actions"
+              [disabled]="bulkAction.inProgress"
+              [paPopup]="menu">
+              {{ 'generic.actions' | translate }}
+            </pa-button>
+            <pa-dropdown #menu>
+              <pa-option
+                *ngIf="isMainView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="edit(row.resource.id)">
+                {{ 'resource.menu.edit' | translate }}
+              </pa-option>
+              <pa-option
+                *ngIf="isMainView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="annotate(row.resource.id)">
+                {{ 'resource.menu.annotate' | translate }}
+              </pa-option>
+              <pa-option
+                *ngIf="isMainView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="classify(row.resource.id)">
+                {{ 'resource.menu.classify' | translate }}
+              </pa-option>
+              <pa-option
+                *ngIf="!isPendingView"
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="reindex(row.resource)">
+                {{ 'generic.reindex' | translate }}
+              </pa-option>
+              <pa-separator *ngIf="!isPendingView"></pa-separator>
+              <pa-option
+                destructive
+                [disabled]="!(isAdminOrContrib | async)"
+                (selectOption)="delete([row.resource])">
+                {{ 'generic.delete' | translate }}
+              </pa-option>
+            </pa-dropdown>
+          </td>
+        </ng-container>
+
+        <tr
+          cdk-header-row
+          *cdkHeaderRowDef="displayedColumns | async"></tr>
+        <tr
+          cdk-row
+          *cdkRowDef="let row; columns: displayedColumns | async"></tr>
+      </table>
+    </div>
+
+    <div
+      class="pagination"
+      *ngIf="resultsLength > 0">
+      <stf-pagination
+        [page]="page"
+        [total]="totalPages"
+        (prev)="prevPage()"
+        (next)="nextPage()"></stf-pagination>
+    </div>
+    <div
+      *ngIf="isMainView && !!data && resultsLength === 0 && !standalone"
+      class="empty-kb">
+      <p>
+        <strong>{{ 'resource.empty' | translate }}</strong>
+      </p>
+      <p>{{ 'resource.empty.import' | translate }}</p>
+      <stf-dataset-selector (imported)="onDatasetImport($event)"></stf-dataset-selector>
+    </div>
+  </div>
+</div>

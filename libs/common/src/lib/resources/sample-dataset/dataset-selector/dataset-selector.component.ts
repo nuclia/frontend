@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-dataset-selector',
+  selector: 'stf-dataset-selector',
   templateUrl: './dataset-selector.component.html',
   styleUrls: ['./dataset-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

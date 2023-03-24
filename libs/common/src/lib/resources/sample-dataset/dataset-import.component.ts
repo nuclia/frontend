@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angu
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-dataset-import',
   templateUrl: './dataset-import.component.html',
   styleUrls: ['./dataset-import.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,7 +2,6 @@ import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core
 import { BaseModalComponent } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
-  selector: 'app-loading-modal',
   templateUrl: './loading-modal.component.html',
   styleUrls: ['./loading-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
