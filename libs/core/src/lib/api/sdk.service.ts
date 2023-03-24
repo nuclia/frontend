@@ -6,6 +6,7 @@ import {
   delay,
   distinctUntilChanged,
   filter,
+  forkJoin,
   map,
   Observable,
   of,
@@ -128,7 +129,7 @@ export class SDKService {
     }
   }
 
-  refreshKbList() {
+  refreshKbList(refreshCurrentKb = false) {
     const kbList = this.nuclia.options.standalone
       ? this.nuclia.db
           .getStandaloneKbs()
@@ -143,6 +144,21 @@ export class SDKService {
         );
 
     kbList.subscribe((list) => this._kbList.next(list));
+
+    if (refreshCurrentKb) {
+      forkJoin([this.currentAccount.pipe(take(1)), this.currentKb.pipe(take(1))])
+        .pipe(
+          switchMap(([account, kb]) =>
+            this.nuclia.db
+              .getKnowledgeBox(
+                account.slug || account.id,
+                (this.config.staticConf.standalone ? kb.id : kb.slug) as string,
+              )
+              .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug || account.id, data))),
+          ),
+        )
+        .subscribe((kb) => this._currentKB.next(kb));
+    }
   }
 
   private countersRefreshSubcriptions() {

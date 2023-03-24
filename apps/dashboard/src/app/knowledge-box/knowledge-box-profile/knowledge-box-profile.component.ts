@@ -80,6 +80,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
         this.kbForm.markAsPristine();
         this.saving = false;
         this.stateService.setStash(kb);
+        this.sdk.refreshKbList(true);
       });
   }
 
