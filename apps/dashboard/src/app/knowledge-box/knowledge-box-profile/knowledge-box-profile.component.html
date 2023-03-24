@@ -51,7 +51,7 @@
         <pa-button
           type="submit"
           kind="primary"
-          [disabled]="kbForm.invalid || kbForm.pristine">
+          [disabled]="kbForm.invalid || kbForm.pristine || saving">
           {{ 'generic.save' | translate }}
         </pa-button>
         <pa-button

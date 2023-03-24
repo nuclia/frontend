@@ -33,6 +33,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
     },
   };
 
+  saving = false;
   unsubscribeAll = new Subject<void>();
 
   constructor(
@@ -65,6 +66,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
 
   saveKb(): void {
     if (this.kbForm.invalid) return;
+    this.saving = true;
     const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
     const data: Partial<KnowledgeBox> = {
       title: this.kbForm.value.title,
@@ -75,6 +77,8 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
       .modify(data)
       .pipe(concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, newSlug)))
       .subscribe((kb) => {
+        this.kbForm.markAsPristine();
+        this.saving = false;
         this.stateService.setStash(kb);
       });
   }
