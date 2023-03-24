@@ -97,6 +97,7 @@
           "outputs": ["{options.outputPath}"],
           "options": {
             "outputPath": "dist/apps/contributor",
+            "baseHref": "/contributor/",
             "index": "apps/contributor/src/index.html",
             "main": "apps/contributor/src/main.ts",
             "polyfills": "apps/contributor/src/polyfills.ts",
@@ -153,7 +154,7 @@
                   "with": "apps/contributor/src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "none",
+              "outputHashing": "all",
               "assets": [
                 "apps/contributor/src/favicon.ico",
                 "apps/contributor/src/assets",
@@ -169,7 +170,7 @@
                 },
                 {
                   "glob": "**/*",
-                  "input": "apps/contributor/src/environments_config/local-stage",
+                  "input": "apps/contributor/src/environments_config/production",
                   "output": "assets/deployment"
                 },
                 {
