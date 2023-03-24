@@ -269,7 +269,9 @@
             <div class="label-container">
               <nsi-label
                 *ngFor="let label of row.labels"
-                [color]="label.color">
+                [color]="label.color"
+                [disabled]="deletingLabel"
+                (removeLabel)="removeLabel(row.resource, label, $event)">
                 {{ label.label }}
               </nsi-label>
             </div>

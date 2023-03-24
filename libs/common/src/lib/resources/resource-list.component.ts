@@ -43,6 +43,7 @@ import {
   Search,
   SearchOptions,
   SortOrder,
+  UserClassification,
 } from '@nuclia/core';
 import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -212,6 +213,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   };
 
   standalone = this.sdk.nuclia.options.standalone;
+  deletingLabel = false;
 
   constructor(
     private sdk: SDKService,
@@ -888,5 +890,39 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       sort: { field: 'created' },
       filters: [`/n/s/${RESOURCE_STATUS.ERROR}`],
     });
+  }
+
+  removeLabel(
+    resource: Resource,
+    labelToRemove: ColoredLabel,
+    event: { event: MouseEvent | KeyboardEvent; value: any },
+  ) {
+    event.event.stopPropagation();
+    event.event.preventDefault();
+    this.deletingLabel = true;
+    let classifications: UserClassification[] = resource.usermetadata?.classifications || [];
+    if (!labelToRemove.immutable) {
+      classifications = classifications.filter(
+        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
+      );
+    } else {
+      classifications.push({
+        label: labelToRemove.label,
+        labelset: labelToRemove.labelset,
+        cancelled_by_user: true,
+      });
+    }
+    resource
+      .modify({
+        usermetadata: {
+          ...resource.usermetadata,
+          classifications,
+        },
+      })
+      .pipe(switchMap(() => this.getResources()))
+      .subscribe(() => {
+        this.deletingLabel = false;
+        this.cdr.markForCheck();
+      });
   }
 }
