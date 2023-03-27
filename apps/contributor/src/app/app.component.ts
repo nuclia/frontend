@@ -23,8 +23,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject<void>();
 
   constructor(
-    private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
+    private config: BackendConfigurationService,
     private paTranslate: PaTranslateService,
     private tracking: STFTrackingService,
     private modalService: SisModalService,
