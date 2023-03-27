@@ -176,7 +176,7 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   feedback(answerId: string, good: boolean): Observable<void> {
-    return this.nuclia.rest.post(`${this.path}/feedback`, { answerId, good });
+    return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback: '' });
   }
 
   counters(): Observable<Counters> {
