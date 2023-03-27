@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SearchComponent } from './search.component';
 import { MockProvider } from 'ng-mocks';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
@@ -33,6 +33,12 @@ describe('SearchComponent', () => {
         MockProvider(BackendConfigurationService),
         MockProvider(TranslateService),
         MockProvider(ResourceViewerService),
+        {
+          provide: STFTrackingService,
+          useValue: {
+            isFeatureEnabled: () => of(true),
+          },
+        },
       ],
     }).compileComponents();
 

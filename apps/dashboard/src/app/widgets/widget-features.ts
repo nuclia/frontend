@@ -8,7 +8,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   relations: true,
   suggestions: true,
   notPublic: true,
-  answers: true,
+  answers: false,
 };
 
 export const DEFAULT_FEATURES_LIST = Object.entries(DEFAULT_FEATURES)
