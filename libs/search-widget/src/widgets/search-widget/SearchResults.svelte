@@ -23,8 +23,10 @@
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
-  import { setWidgetActions } from '../../core/stores/widget.store';
+  import { isAnswerEnabled, setWidgetActions } from '../../core/stores/widget.store';
   import { onClosePreview } from '../../tiles/tile.utils';
+  import InfoCard from '../../components/info-card/InfoCard.svelte';
+  import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
 
   const searchAlreadyTriggered = new Subject<void>();
   const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
@@ -75,6 +77,9 @@
         <div
           class="results"
           class:with-relations={$entityRelations.length > 0}>
+          {#if $isAnswerEnabled}
+            <InitialAnswer />
+          {/if}
           {#each $smartResults as result, i (result.id + result.field?.field_type + result.field?.field_id)}
             <Tile {result} />
             {#if i === $smartResults.length - 10}
@@ -85,19 +90,7 @@
           {/each}
         </div>
         {#if $entityRelations.length > 0}
-          <div class="relations">
-            {#each $entityRelations as entity}
-              <div class="entity">
-                <div class="entity-name">{entity.entity}</div>
-                {#each Object.entries(entity.relations) as [name, related]}
-                  <div class="relation">
-                    <span class="relation-name">{name}:</span>
-                    <span>{related.join(',')}</span>
-                  </div>
-                {/each}
-              </div>
-            {/each}
-          </div>
+          <InfoCard entityRelations={$entityRelations} />
         {/if}
       </div>
       {#if $showLoading}

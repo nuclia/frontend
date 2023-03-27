@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
 import { distinctUntilKeyChanged, forkJoin, map, switchMap, tap } from 'rxjs';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -23,11 +23,13 @@ export class SearchComponent implements OnDestroy, OnInit {
       document.getElementById(searchWidgetId)?.remove();
     }),
     switchMap((kb) =>
-      forkJoin([kb.getLabels(), kb.training.hasModel(TrainingType.classifier)]).pipe(
-        map(([labelSets, hasClassifier]) => ({ kb, labelSets, hasClassifier })),
-      ),
+      forkJoin([
+        kb.getLabels(),
+        kb.training.hasModel(TrainingType.classifier),
+        this.tracking.isFeatureEnabled('answers'),
+      ]).pipe(map(([labelSets, hasClassifier, isChatEnabled]) => ({ kb, labelSets, hasClassifier, isChatEnabled }))),
     ),
-    map(({ kb, labelSets, hasClassifier }) => {
+    map(({ kb, labelSets, hasClassifier, isChatEnabled }) => {
       const hasLabels = Object.keys(labelSets).length > 0;
       let features = !hasLabels
         ? DEFAULT_FEATURES_LIST.split(',')
@@ -36,6 +38,9 @@ export class SearchComponent implements OnDestroy, OnInit {
         : DEFAULT_FEATURES_LIST;
       if (hasClassifier) {
         features += ',suggestLabels';
+      }
+      if (isChatEnabled) {
+        features += ',answers';
       }
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar id="${searchWidgetId}"
   knowledgebox="${kb.id}"
@@ -61,6 +66,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     private backendConfig: BackendConfigurationService,
     private translation: TranslateService,
     private viewerService: ResourceViewerService,
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit() {

@@ -1,0 +1,22 @@
+.sw-answer {
+  .feedback {
+    float: right;
+    padding-top: var(--rhythm-0_5);
+  }
+  .text {
+    margin-top: var(--rhythm-1);
+  }
+  .results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--rhythm-2);
+    width: 100%;
+  }
+}
+@media (min-width: 599px) {
+  .sw-answer {
+    .feedback {
+      display: none;
+    }
+  }
+}

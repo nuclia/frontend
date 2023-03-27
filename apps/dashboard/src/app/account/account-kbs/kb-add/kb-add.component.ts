@@ -29,7 +29,6 @@ export class KbAddComponent implements OnInit {
       sluggable: 'stash.kb_name_invalid',
     } as IErrorMessages,
   };
-  hasAnonymization = this.tracking.isFeatureEnabled('kb-anonymization').pipe(share());
   totalSteps = 2;
   lastStep = 1;
   saving = false;
@@ -51,12 +50,16 @@ export class KbAddComponent implements OnInit {
   ngOnInit(): void {
     forkJoin([
       this.tracking.isFeatureEnabled('kb-anonymization').pipe(take(1)),
+      this.tracking.isFeatureEnabled('answers').pipe(take(1)),
       this.sdk.nuclia.db.getLearningConfigurations().pipe(take(1)),
-    ]).subscribe(([hasAnonymization, conf]) => {
+    ]).subscribe(([hasAnonymization, hasAnswers, conf]) => {
       this.learningConfigurations = Object.entries(conf).map(([id, data]) => ({ id, data }));
       // Hide configurations with only one option or under feature flagging
       this.displayedLearningConfigurations = this.learningConfigurations.filter(
-        (entry) => entry.data.options.length > 1 || (entry.id === 'anonymization_model' && !hasAnonymization),
+        (entry) =>
+          entry.data.options.length > 1 &&
+          (entry.id !== 'anonymization_model' || hasAnonymization) &&
+          (entry.id !== 'generative_model' || hasAnswers),
       );
       this.kbForm = this.formBuilder.group({
         title: ['', [Sluggable()]],

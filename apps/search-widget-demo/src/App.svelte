@@ -16,7 +16,9 @@
   let fieldType = 'file';
   let fieldId = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
 
-  let kb = '8ffb0344-9925-47e9-a172-487bdab6cf83'; // Kuba conf demo
+  // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
+  // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
+  let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
@@ -91,11 +93,13 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
+        backend="https://stashify.cloud/api"
+        cdn="/"
         bind:this={searchBar}
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="" />
+        features="filter,suggestions,permalink,relations,answers,zspeech" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}

@@ -14,6 +14,7 @@ import {
   searchResults,
   triggerSearch,
 } from './stores/search.store';
+import { ask } from './stores/effects';
 
 const subscriptions: Subscription[] = [];
 
@@ -35,19 +36,15 @@ export const setupTriggerSearch = (
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
             switchMap((query) =>
-              forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1)), navigateToLink.pipe(take(1))]).pipe(
-                map(([options, filters, navigateToLink]) => {
-                  // We need to load the values in order to then choose the tiles depending on the field type
-                  // Once we will have search v2, we should load Values only for navigateToLink
-                  const show = navigateToLink
-                    ? [ResourceProperties.BASIC, ResourceProperties.VALUES]
-                    : [ResourceProperties.BASIC, ResourceProperties.VALUES];
-                  show.push(ResourceProperties.VALUES);
+              forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1))]).pipe(
+                map(([options, filters]) => {
+                  const show = [ResourceProperties.BASIC, ResourceProperties.VALUES];
                   const currentOptions = { ...options, show, filters };
                   return { query, options: currentOptions };
                 }),
               ),
             ),
+            tap(({ query }) => ask.next({ question: query, reset: true })),
             switchMap(({ query, options }) =>
               search(query, options).pipe(map((results) => ({ results, append: !!trigger?.more }))),
             ),

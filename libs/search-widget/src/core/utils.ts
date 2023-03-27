@@ -1,7 +1,7 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
-import type {
+import {
   CloudLink,
   FileField,
   FileFieldData,
@@ -188,27 +188,45 @@ function getTextFragment(paragraphText: string) {
   return '';
 }
 
-export function mapSmartParagraph2WidgetParagraph(
-  paragraph: Search.SmartParagraph,
-  kind: PreviewKind,
-): WidgetParagraph {
-  const start_seconds = paragraph.start_seconds?.[0];
-  const end_seconds = paragraph.end_seconds?.[0];
+export function mapSmartParagraph2WidgetParagraph(paragraph: Search.FindParagraph, kind: PreviewKind): WidgetParagraph {
+  const start_seconds = paragraph.position.start_seconds?.[0];
+  const end_seconds = paragraph.position.end_seconds?.[0];
   const start = paragraph.position?.start;
   const end = paragraph.position?.end;
+  const fieldId = paragraph.id.split('/');
   return {
     paragraph,
-    fieldType: paragraph.field_type,
-    fieldId: paragraph.field,
+    fieldType: fieldId[1],
+    fieldId: fieldId[2],
     text: paragraph.text,
     preview: kind,
     start,
     end,
     page: paragraph.position?.page_number,
-    pid: `${paragraph.field_type}${start}${end}`,
     start_seconds,
     end_seconds,
   } as WidgetParagraph;
+}
+
+export function mapParagraph2SmartParagraph(paragraph: Search.Paragraph): Search.FindParagraph {
+  const start_seconds = paragraph.start_seconds?.[0];
+  const end_seconds = paragraph.end_seconds?.[0];
+  const id = `${paragraph.rid}/${paragraph.field_type}/${paragraph.field}/${paragraph.position?.start || 0}-${
+    paragraph.position?.end || 0
+  }`;
+  return {
+    id,
+    text: paragraph.text,
+    score: paragraph.score,
+    labels: paragraph.labels,
+    score_type: Search.FindScoreType.BM25,
+    position: { ...paragraph.position, start_seconds, end_seconds },
+    page_number: paragraph.position?.page_number,
+  } as Search.FindParagraph;
+}
+
+export function mapParagraph2WidgetParagraph(paragraph: Search.Paragraph, kind: PreviewKind): WidgetParagraph {
+  return mapSmartParagraph2WidgetParagraph(mapParagraph2SmartParagraph(paragraph), kind);
 }
 
 export function getVideoStream(fileField: FileFieldData): CloudLink | undefined {

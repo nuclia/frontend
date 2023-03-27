@@ -26,8 +26,10 @@ import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, Search, search, SearchOptions } from '../search';
+import { catalog, find, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
+import { chat } from '../search/chat';
+import type { Chat } from '../search/chat.models';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}
@@ -147,6 +149,14 @@ export class KnowledgeBox implements IKnowledgeBox {
     return new Resource(this.nuclia, this.id, data);
   }
 
+  chat(query: string, context?: Chat.ContextEntry[], features?: Chat.Features[]): Observable<Chat.Answer> {
+    return chat(this.nuclia, this.path, query, context, features);
+  }
+
+  find(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.FindResults> {
+    return find(this.nuclia, this.id, this.path, query, features, options);
+  }
+
   search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
     return search(this.nuclia, this.id, this.path, query, features, options);
   }
@@ -163,6 +173,10 @@ export class KnowledgeBox implements IKnowledgeBox {
         Object.keys(res).includes('detail') ? ({ error: true } as Search.Suggestions) : (res as Search.Suggestions),
       ),
     );
+  }
+
+  feedback(answerId: string, good: boolean): Observable<void> {
+    return this.nuclia.rest.post(`${this.path}/feedback`, { ident: answerId, good, task: 'CHAT', feedback: '' });
   }
 
   counters(): Observable<Counters> {

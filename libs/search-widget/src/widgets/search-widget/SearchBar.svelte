@@ -15,6 +15,7 @@
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
+    initAnswer,
     initLabelStore,
     loadFieldData,
     unsubscribeAllEffects,
@@ -97,6 +98,9 @@
     }
     if (_features.filter) {
       initLabelStore();
+    }
+    if (_features.answers) {
+      initAnswer();
     }
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));

@@ -4,7 +4,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
 import { map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, shareReplay } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -43,7 +43,8 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
+  isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
+  areAnswersEnabled = this.tracking.isFeatureEnabled('answers').pipe(shareReplay(1));
 
   debouncePlaceholder = new Subject<string>();
 
@@ -96,8 +97,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           this.placeholder = config.placeholder;
           this.mainForm = this.fb.group({
             features: this.fb.group({
-              editLabels: [config.features.includes('editLabels')],
-              entityAnnotation: [config.features.includes('entityAnnotation')],
+              answers: [config.features.includes('answers')],
               filter: [config.features.includes('filter')],
               navigateToLink: [config.features.includes('navigateToLink')],
               permalink: [config.features.includes('permalink')],

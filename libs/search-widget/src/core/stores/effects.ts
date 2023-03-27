@@ -1,4 +1,4 @@
-import { getLabelSets, getResourceField, predict, suggest } from '../api';
+import { getAnswer, getLabelSets, getResourceField, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -12,19 +12,22 @@ import {
   Observable,
   of,
   skip,
+  Subject,
   Subscription,
   switchMap,
   take,
   tap,
 } from 'rxjs';
 import { NO_RESULTS } from '../models';
-import { widgetFeatures, widgetMode } from './widget.store';
+import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import type { Classification, Search } from '@nuclia/core';
+import type { Chat, Classification, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
+import { currentAnswer, currentQuestion, chat, lastSpeakableFullAnswer, isSpeechOn } from './answers.store';
+import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 
 const subscriptions: Subscription[] = [];
 
@@ -80,6 +83,66 @@ export function activateTypeAheadSuggestions() {
 const queryKey = formatQueryKey('query');
 const filterKey = formatQueryKey('filter');
 const previewKey = formatQueryKey('preview');
+
+/**
+ * Initialise answer feature
+ */
+
+export const ask = new Subject<{ question: string; reset: boolean }>();
+
+export function initAnswer() {
+  subscriptions.push(
+    ask
+      .pipe(
+        distinctUntilChanged(),
+        tap((data) => currentQuestion.set(data)),
+        switchMap(({ question }) =>
+          chat.pipe(
+            take(1),
+            switchMap((chat) => getAnswer(question, chat).pipe(map((answer) => ({ question, answer })))),
+          ),
+        ),
+      )
+      .subscribe(({ question, answer }) => {
+        if (answer.incomplete) {
+          currentAnswer.set(answer);
+        } else {
+          chat.set({
+            question,
+            answer,
+          });
+        }
+      }),
+  );
+  subscriptions.push(
+    isSpeechEnabled
+      .pipe(
+        filter((isSpeechEnabled) => isSpeechEnabled),
+        take(1),
+      )
+      .subscribe(() => SpeechSettings.init()),
+  );
+  subscriptions.push(
+    combineLatest([isSpeechOn, SpeechStore.isStarted])
+      .pipe(distinctUntilChanged())
+      .subscribe(([on, started]) => {
+        if (on && !started) {
+          SpeechSettings.start();
+        } else if (!on && started) {
+          SpeechSettings.stop();
+        }
+      }),
+  );
+  subscriptions.push(
+    lastSpeakableFullAnswer
+      .pipe(
+        filter((answer) => !!answer),
+        map((answer) => (answer as Chat.Answer).text),
+        distinctUntilChanged(),
+      )
+      .subscribe((text) => speak(text, 'en-GB')),
+  );
+}
 
 /**
  * Initialise permalink feature

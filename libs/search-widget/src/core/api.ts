@@ -1,4 +1,5 @@
-import type {
+import {
+  Chat,
   Classification,
   Entity,
   FieldFullId,
@@ -32,7 +33,7 @@ import { hasViewerSearchError } from './stores/viewer-search.store';
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
-let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT];
+let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
@@ -51,7 +52,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
       nucliaPrediction.loadModels(kbPath, authHeaders);
     }
   }
-  if (widgetOptions.features?.relations) {
+  if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);
   }
   STATE = state;
@@ -68,7 +69,7 @@ export const search = (query: string, options: SearchOptions) => {
   if (!query) {
     options.inTitleOnly = true;
   }
-  return nucliaApi.knowledgeBox.search(query, SEARCH_MODE, options).pipe(
+  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, options).pipe(
     filter((res) => {
       if (res.error) {
         hasSearchError.set(true);
@@ -76,6 +77,26 @@ export const search = (query: string, options: SearchOptions) => {
       return !res.error;
     }),
   );
+};
+
+export const getAnswer = (query: string, chat?: Chat.Entry[]) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  const context = chat?.reduce((acc, curr) => {
+    acc.push({ author: Chat.Author.USER, text: curr.question });
+    acc.push({ author: Chat.Author.NUCLIA, text: curr.answer.text });
+    return acc;
+  }, [] as Chat.ContextEntry[]);
+
+  return nucliaApi.knowledgeBox.chat(query, context);
+};
+
+export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox.feedback(answer.id, approved);
 };
 
 export const searchInResource = (

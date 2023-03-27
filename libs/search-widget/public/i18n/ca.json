@@ -1,4 +1,9 @@
 {
+	"answer.chat-action": "Xateja amb els teus documents",
+	"answer.input.label": "Entrada de xat",
+	"answer.placeholder": "Parlem",
+	"answer.sources": "A partir d'aquestes fonts",
+	"answer.title": "Resposta",
 	"entities.annotated": "Anotacions",
 	"entities.annotations": "Anotacions",
 	"entities.date": "Dates",

@@ -1,4 +1,12 @@
-# 1.1.7 (unreleased)
+# 1.2.0 (unreleased)
+
+### Features
+
+- `/find` endpoint support
+- `/chat` endpoint support
+- `/feedback` endpoint support
+
+### Improvements
 
 - New endpoints for synonyms management on KnowledgeBox
 - New account types

@@ -691,6 +691,8 @@
 	"stash.valid_emails_label": "Emails",
 	"stash.view_edit_service_access": "View / Edit existing Service Access",
 	"stash.widgets": "Widgets",
+	"stash.widgets.answers": "Answer generation",
+	"stash.widgets.answers.help": "Generate a response to the user's questions and allow to chat with the system",
 	"stash.widgets.configuration": "Widget configuration",
 	"stash.widgets.editLabels": "Edit labels",
 	"stash.widgets.editLabels.help": "Allows to add/remove labels from the resource view",

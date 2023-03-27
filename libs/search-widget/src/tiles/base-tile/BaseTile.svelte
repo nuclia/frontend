@@ -24,7 +24,12 @@
   import { searchQuery } from '../../core/stores/search.store';
   import { Duration } from '../../common/transition.utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
-  import { getExternalUrl, goToUrl, mapSmartParagraph2WidgetParagraph } from '../../core/utils';
+  import {
+    getExternalUrl,
+    goToUrl,
+    mapParagraph2WidgetParagraph,
+    mapSmartParagraph2WidgetParagraph,
+  } from '../../core/utils';
   import { navigateToLink } from '../../core/stores/widget.store';
   import {
     fieldFullId,
@@ -105,14 +110,17 @@
     viewerSearchResults,
     isSearchingInResource,
   ]).pipe(
-    map(([inResourceResults, isInResource]: [WidgetParagraph[], boolean]) => {
+    map(([inResourceResults, isInResource]) => {
       // paragraphList is used for next/previous buttons
-      paragraphList = isInResource
-        ? inResourceResults
-        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)) || [];
-      return paragraphList;
+      if (isInResource) {
+        return inResourceResults || [];
+      } else {
+        return (
+          result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)) ||
+          ([] as WidgetParagraph[])
+        );
+      }
     }),
-    map((results) => results || []),
   );
 
   onMount(() => {
@@ -140,7 +148,7 @@
     reset();
   });
 
-  const onClickParagraph = (paragraph, index) => {
+  const onClickParagraph = (paragraph: WidgetParagraph, index: number) => {
     if (result.field) {
       fieldFullId.set({
         field_id: result.field.field_id,
@@ -243,9 +251,7 @@
         .pipe(map((results) => results.paragraphs?.results || []))
         .subscribe((paragraphs) => {
           resultIndex = -1;
-          viewerSearchResults.set(
-            paragraphs.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)),
-          );
+          viewerSearchResults.set(paragraphs.map((paragraph) => mapParagraph2WidgetParagraph(paragraph, previewKind)));
         });
     } else {
       isSearchingInResource.next(false);
@@ -392,7 +398,7 @@
                     stack={expanded}
                     selected={isSame(paragraph, selectedParagraph)}
                     disabled={expanded && noResultNavigator}
-                    on:open={(event) => onClickParagraph(event.detail, index)} />
+                    on:open={() => onClickParagraph(paragraph, index)} />
                 {/each}
               </ul>
             </div>
@@ -440,7 +446,7 @@
                         {paragraph}
                         selected={isSame(paragraph, selectedParagraph)}
                         stack
-                        on:open={(event) => onClickParagraph(event.detail, index)} />
+                        on:open={() => onClickParagraph(paragraph, index)} />
                     {/each}
                   </ul>
                 </div>
