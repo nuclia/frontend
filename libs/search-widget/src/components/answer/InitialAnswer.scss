@@ -1,9 +1,13 @@
 .sw-initial-answer {
   margin: var(--rhythm-1) 0;
-  display: flex;
-  flex-wrap: wrap;
   border-bottom: 1px solid var(--color-neutral-light);
-
+  box-shadow: 0px 0px var(--rhythm-2_5) var(--color-neutral-light);
+  border-radius: var(--rhythm-2);
+  padding: var(--rhythm-3);
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
   .answer {
     width: 100%;
   }

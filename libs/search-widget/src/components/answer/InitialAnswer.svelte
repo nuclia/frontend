@@ -17,20 +17,23 @@
 
 {#if $firstAnswer.text}
   <div class="sw-initial-answer">
-    <div class="answer">
-      <Answer
-        answer={$firstAnswer}
-        rank={0} />
-    </div>
-    <div class="actions">
-      <div
-        class="go-to-chat"
-        on:click={() => (showDialog = true)}>
-        <Icon name="chat" />
-        {$_('answer.chat-action')}
+    <h3 class="title-s">{$_('answer.title')}</h3>
+    <div class="container">
+      <div class="answer">
+        <Answer
+          answer={$firstAnswer}
+          rank={0} />
       </div>
-      <div class="feedback">
-        <Feedback rank={0} />
+      <div class="actions">
+        <div
+          class="go-to-chat title-xs"
+          on:click={() => (showDialog = true)}>
+          <Icon name="chat" />
+          {$_('answer.chat-action')}
+        </div>
+        <div class="feedback">
+          <Feedback rank={0} />
+        </div>
       </div>
     </div>
   </div>

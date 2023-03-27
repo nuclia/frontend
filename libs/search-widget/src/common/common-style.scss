@@ -38,6 +38,7 @@
   --rhythm-1: var(--spacer); /*  1    unit -   8px */
   --rhythm-1_5: calc(var(--spacer) * 1.5); /*  1.5  unit -  12px */
   --rhythm-2: calc(var(--spacer) * 2); /*  2    unit -  16px */
+  --rhythm-2_5: calc(var(--spacer) * 2.5); /*  2    unit -  20px */
   --rhythm-3: calc(var(--spacer) * 3); /*  3    unit -  24px */
   --rhythm-4: calc(var(--spacer) * 4); /*  4    unit -  32px */
   --rhythm-5: calc(var(--spacer) * 5); /*  5    unit -  40px */
@@ -76,11 +77,13 @@
   --nuclia-family: Inter, sans-serif;
   --font-family-body: var(--custom-font-family-body, var(--nuclia-family));
   --font-size-title-m: var(--font-size-base);
+  --font-size-title-s: var(--font-size-medium);
   --font-weight-title-m: var(--font-weight-semi-bold);
   --line-height-body-s: calc(var(--font-size-base) * 1.125);
   --line-height-body: calc(var(--font-size-base) * 1.25);
   --line-height-title-m-mobile: calc(var(--font-size-base) * 1.625);
   --line-height-title-m: calc(var(--font-size-base) * 1.75);
+  --line-height-title-s: calc(var(--font-size-base) * 1.375);
   --line-height-title-xs: calc(var(--font-size-base) * 1.375);
 
   /* TRANSITIONS */
