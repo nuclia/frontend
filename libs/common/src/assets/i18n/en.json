@@ -458,6 +458,7 @@
 	"resource.add_labels": "Add labels",
 	"resource.add_labels_error": "An error occurred while adding labels on {{count}} resources",
 	"resource.add_labels_success": "Labels successfully added on {{count}} resources",
+	"resource.adding_labels": "Adding labels",
 	"resource.classification-column": "Classification",
 	"resource.classification-page-link": "Classification page",
 	"resource.classification.clean-up": "Clean up",

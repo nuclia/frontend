@@ -9,30 +9,13 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { SelectionModel } from '@angular/cdk/collections';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  EMPTY,
-  expand,
-  forkJoin,
-  from,
-  mergeMap,
-  Observable,
-  of,
-  reduce,
-  skip,
-  Subject,
-  take,
-} from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Classification,
   deDuplicateList,
   IResource,
-  KnowledgeBox,
   LabelSetKind,
   LabelSets,
   ProcessingStatusResponse,
@@ -48,11 +31,12 @@ import {
 import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
-import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
-import { LabelsService } from '../../label/labels.service';
+import { SampleDatasetService } from '../sample-dataset';
+import { LabelsService } from '../../label';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { getClassificationsPayload } from '../edit-resource/edit-resource.helpers';
+import { getClassificationsPayload } from '../edit-resource';
+import { ColoredLabel, DEFAULT_PREFERENCES, MenuAction, ResourceWithLabels } from './resource-list.model';
 
 interface ListFilters {
   type?: string;
@@ -69,32 +53,9 @@ interface KeyValue {
   value: string;
 }
 
-interface ColoredLabel extends Classification {
-  color: string;
-}
-
-interface ResourceWithLabels {
-  resource: Resource;
-  labels: ColoredLabel[];
-  description?: string;
-  status?: string;
-}
-
 const PAGE_SIZE_OPTIONS = [20, 50, 100];
-const DEFAULT_PREFERENCES = {
-  pageSize: 20,
-  columns: ['modification', 'language'],
-};
-const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
-const RESOURCE_LIST_PREFERENCES = 'NUCLIA_RESOURCE_LIST_PREFERENCES';
 
-interface ColumnModel {
-  value: string;
-  label: string;
-  visible: boolean;
-  showInPending?: boolean;
-  optional?: boolean;
-}
+const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
 @Component({
   templateUrl: './resource-list.component.html',
@@ -108,13 +69,11 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   private localStorage = inject(LOCAL_STORAGE);
   private sampleDatasetService = inject(SampleDatasetService);
   hasSampleData = this.sampleDatasetService.hasSampleResources();
-  hasLabelSets = inject(LabelsService).hasLabelSets();
 
   data: ResourceWithLabels[] | undefined;
   resultsLength = 0;
   totalResources = 0;
   isLoading = true;
-  selection = new SelectionModel<Resource>(true, []);
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
@@ -166,32 +125,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       ),
     ),
   );
-  userPreferences: typeof DEFAULT_PREFERENCES;
-  columns: ColumnModel[];
-  columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  optionalColumns: ColumnModel[];
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
-  displayedColumns = combineLatest([this.isAdminOrContrib, this.statusDisplayed, this.columnVisibilityUpdate]).pipe(
-    map(([canEdit, statusDisplayed]) => {
-      const columns = this.columns
-        .map((column) => {
-          if (statusDisplayed === 'PENDING') {
-            return column.showInPending ? column.value : '';
-          } else {
-            return !column.optional || column.visible ? column.value : '';
-          }
-        })
-        .filter((column) => !!column);
 
-      return canEdit ? ['select', ...columns, 'actions'] : columns;
-    }),
-  );
   labelSets$: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(
     filter((labelSets) => !!labelSets),
     map((labelSets) => labelSets as LabelSets),
   );
-  currentLabelList: Classification[] = [];
 
   searchForm = new FormGroup({
     searchIn: new FormControl<'title' | 'resource'>('title'),
@@ -199,11 +139,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   });
 
   allErrorsSelected = false;
-  get selectionCount$() {
-    return this.allErrorsSelected
-      ? this.statusCount.pipe(map((count) => count.error))
-      : of(this.selection.selected.length);
-  }
+
   bulkAction = {
     inProgress: false,
     total: 0,
@@ -212,7 +148,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   };
 
   standalone = this.sdk.nuclia.options.standalone;
-  deletingLabel = false;
 
   constructor(
     private sdk: SDKService,
@@ -236,46 +171,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         title: title.length > 0 ? title : undefined,
       });
     });
-
-    const pref = this.localStorage.getItem(RESOURCE_LIST_PREFERENCES);
-    if (pref) {
-      try {
-        this.userPreferences = JSON.parse(pref);
-      } catch (e) {
-        this.userPreferences = DEFAULT_PREFERENCES;
-        this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(DEFAULT_PREFERENCES));
-      }
-    } else {
-      this.userPreferences = DEFAULT_PREFERENCES;
-    }
-    this.columns = this.getInitialColumns();
-    this.optionalColumns = this.columns.filter((column) => column.optional && column.value !== 'status');
-  }
-
-  private getInitialColumns(): ColumnModel[] {
-    return [
-      { value: 'title', label: 'resource.title', visible: true, showInPending: true },
-      {
-        value: 'classification',
-        label: 'resource.classification-column',
-        visible: this.userPreferences.columns.includes('classification'),
-        optional: true,
-      },
-      {
-        value: 'modification',
-        label: 'generic.date',
-        visible: this.userPreferences.columns.includes('modification'),
-        optional: true,
-        showInPending: true,
-      },
-      {
-        value: 'language',
-        label: 'generic.language',
-        visible: this.userPreferences.columns.includes('language'),
-        optional: true,
-      },
-      { value: 'status', label: 'resource.status', visible: false, optional: true, showInPending: true },
-    ];
   }
 
   ngOnInit(): void {
@@ -293,13 +188,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         switchMap(() => this.getResources()),
       )
       .subscribe();
-
-    this.columnVisibilityUpdate.pipe(skip(1), takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.userPreferences.columns = this.columns
-        .map((column) => (column.value !== 'status' && column.optional && column.visible ? column.value : ''))
-        .filter((value) => !!value);
-      this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
-    });
   }
 
   ngOnDestroy() {
@@ -369,48 +257,35 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       });
   }
 
-  bulkDelete() {
-    const getResources = this.allErrorsSelected ? this.getAllResourcesInError() : of(this.selection.selected);
-    getResources.subscribe((resources) => this.delete(resources));
-  }
-
-  bulkReprocess() {
-    const getResources: Observable<Resource[]> = this.allErrorsSelected
-      ? this.getAllResourcesInError()
-      : of(this.selection.selected);
-
+  bulkReprocess(resources: Resource[]) {
     let wait = 1000;
     if (this.allErrorsSelected) {
       this.toaster.info('resource.reindex-all-info');
       wait = 2000;
     }
     this.setLoading(true);
-    getResources
-      .pipe(
-        tap((resources) => {
-          this.bulkAction = {
-            inProgress: true,
-            done: 0,
-            total: resources.length,
-            label: 'generic.reindexing',
-          };
-          this.cdr.markForCheck();
-        }),
-        switchMap((resources) =>
-          from(
-            resources.map((resource) =>
-              resource.reprocess().pipe(
-                tap(() => {
-                  this.bulkAction = {
-                    ...this.bulkAction,
-                    done: this.bulkAction.done + 1,
-                  };
-                  this.cdr.markForCheck();
-                }),
-              ),
-            ),
-          ),
+
+    this.bulkAction = {
+      inProgress: true,
+      done: 0,
+      total: resources.length,
+      label: 'generic.reindexing',
+    };
+
+    from(
+      resources.map((resource) =>
+        resource.reprocess().pipe(
+          tap(() => {
+            this.bulkAction = {
+              ...this.bulkAction,
+              done: this.bulkAction.done + 1,
+            };
+            this.cdr.markForCheck();
+          }),
         ),
+      ),
+    )
+      .pipe(
         mergeMap((resource) => resource, 6),
         toArray(),
         delay(wait),
@@ -432,7 +307,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   private afterBulkActions() {
-    this.selection.clear();
     this.setLoading(false);
     this.bulkAction = { inProgress: false, total: 0, done: 0, label: '' };
     this.cdr.markForCheck();
@@ -448,7 +322,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   get pageSize(): number {
     const size = this.route.snapshot.queryParams['size'];
-    return size ? parseInt(size, 10) : this.userPreferences?.pageSize || DEFAULT_PREFERENCES.pageSize;
+    return size ? parseInt(size, 10) : DEFAULT_PREFERENCES.pageSize;
   }
 
   get page(): number {
@@ -456,62 +330,12 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     return page ? parseInt(page, 10) : this.resultsLength > 0 ? 1 : 0;
   }
 
-  get totalPages(): number {
-    return Math.ceil(this.resultsLength / this.pageSize);
-  }
-
   viewResource(resourceId: string) {
     this.router.navigate([`./${resourceId}/edit/preview`], { relativeTo: this.route });
   }
 
-  edit(resourceId: string) {
-    this.router.navigate([`./${resourceId}/edit`], { relativeTo: this.route });
-  }
-
-  annotate(resourceId: string) {
-    this.router.navigate([`./${resourceId}/edit/annotation`], { relativeTo: this.route });
-  }
-
-  classify(resourceId: string) {
-    this.router.navigate([`./${resourceId}/edit/classification`], { relativeTo: this.route });
-  }
-
-  isFullPageSelected() {
-    const numSelected = this.selection.selected.length;
-    const numRows = Math.min(this.resultsLength, this.pageSize);
-    return numSelected === numRows;
-  }
-
-  /** Selects all rows if they are not all selected; otherwise clear selection. */
-  masterToggle() {
-    this.isFullPageSelected()
-      ? this.selection.clear()
-      : this.data?.forEach((row) => this.selection.select(row.resource));
-    this.allErrorsSelected = false;
-    this.cdr?.markForCheck();
-  }
-
-  clearSelected() {
-    this.selection.clear();
-    this.allErrorsSelected = false;
-    this.cdr?.markForCheck();
-  }
-
-  setPageSize(size: KeyValue) {
-    this.applyFilter({
-      size: size.key,
-    });
-    this.userPreferences.pageSize = parseInt(size.value);
-    this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
-  }
-
   nextPage() {
     const params = { page: (this.page + 1).toString() };
-    this.changeQueryParams(params);
-  }
-
-  prevPage() {
-    const params = { page: (this.page - 1).toString() };
     this.changeQueryParams(params);
   }
 
@@ -609,11 +433,33 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           this.resultsLength = this.isFailureView ? statusCount.error : statusCount.pending;
         }
 
-        this.clearSelected();
+        // FIXME: still needed?
+        // this.clearSelected();
         this.setLoading(false);
         return results;
       }),
     );
+  }
+
+  onMenuAction($event: { resource: Resource; action: MenuAction }) {
+    const resourceId = $event.resource.id;
+    switch ($event.action) {
+      case 'annotate':
+        this.router.navigate([`./${resourceId}/edit/annotation`], { relativeTo: this.route });
+        break;
+      case 'edit':
+        this.router.navigate([`./${resourceId}/edit`], { relativeTo: this.route });
+        break;
+      case 'classify':
+        this.router.navigate([`./${resourceId}/edit/classification`], { relativeTo: this.route });
+        break;
+      case 'delete':
+        this.delete([$event.resource]);
+        break;
+      case 'reprocess':
+        this.bulkReprocess([$event.resource]);
+        break;
+    }
   }
 
   private getResourceWithLabels(kbId: string, resourceData: IResource, labelSets: LabelSets): ResourceWithLabels {
@@ -726,19 +572,22 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     });
   }
 
-  updateLabelList($event: Classification[]) {
-    this.currentLabelList = $event;
-  }
-
-  addLabelsToSelection() {
-    if (this.currentLabelList.length > 0) {
-      const requests = this.selection.selected.map((resource) => {
+  addLabelsToSelection($event: { labels: Classification[]; resources: Resource[] }) {
+    const { labels, resources } = $event;
+    if (labels.length > 0) {
+      this.bulkAction = {
+        inProgress: true,
+        done: 0,
+        total: resources.length,
+        label: 'resource.adding_labels',
+      };
+      const requests = resources.map((resource) => {
         return this.labelSets$.pipe(
           take(1),
           map((labelSets) => ({
             usermetadata: {
               ...resource.usermetadata,
-              classifications: this.mergeExistingAndSelectedLabels(resource, labelSets),
+              classifications: this.mergeExistingAndSelectedLabels(resource, labelSets, labels),
             },
           })),
           switchMap((updatedResource) =>
@@ -755,6 +604,12 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           tap((results) => {
             const errorCount = results.filter((res) => res.isError).length;
             const successCount = results.length - errorCount;
+            this.bulkAction = {
+              inProgress: true,
+              done: successCount,
+              total: resources.length,
+              label: 'resource.adding_labels',
+            };
             if (successCount > 0) {
               this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
             }
@@ -765,7 +620,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           switchMap(() => this.getResources()),
         )
         .subscribe(() => {
-          this.currentLabelList = [];
+          this.bulkAction = {
+            inProgress: false,
+            done: 0,
+            total: 0,
+            label: '',
+          };
+          this.cdr.markForCheck();
         });
     }
   }
@@ -791,10 +652,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
-  private mergeExistingAndSelectedLabels(resource: Resource, labelSets: LabelSets): Classification[] {
+  private mergeExistingAndSelectedLabels(
+    resource: Resource,
+    labelSets: LabelSets,
+    labels: Classification[],
+  ): Classification[] {
     const exclusiveLabelSets = Object.entries(labelSets)
       .filter(([, labelSet]) => !labelSet.multiple)
-      .filter(([id]) => this.currentLabelList.some((label) => label.labelset === id))
+      .filter(([id]) => labels.some((label) => label.labelset === id))
       .map(([id]) => id);
 
     const resourceLabels = resource
@@ -803,13 +668,11 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
     return getClassificationsPayload(
       resource,
-      deDuplicateList(
-        resourceLabels.concat(this.currentLabelList.map((label) => ({ ...label, cancelled_by_user: false }))),
-      ),
+      deDuplicateList(resourceLabels.concat(labels.map((label) => ({ ...label, cancelled_by_user: false })))),
     );
   }
 
-  private setLoading(isLoading: boolean) {
+  setLoading(isLoading: boolean) {
     this.isLoading = isLoading;
     this.cdr?.markForCheck();
   }
@@ -851,54 +714,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectAllErrors() {
-    this.allErrorsSelected = true;
-  }
-
-  clearSelection() {
-    this.allErrorsSelected = false;
-    this.selection.clear();
-  }
-
-  private getAllResourcesInError(): Observable<Resource[]> {
-    this.setLoading(true);
-    let kb: KnowledgeBox;
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((current) => {
-        kb = current;
-        return this.getResourcesInError(kb);
-      }),
-      expand((results) =>
-        results.fulltext?.next_page ? this.getResourcesInError(kb, results.fulltext?.page_number + 1) : EMPTY,
-      ),
-      map((results) => {
-        return Object.values(results.resources || {}).map(
-          (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
-        );
-      }),
-      reduce((accData, data) => accData.concat(data), [] as Resource[]),
-      tap(() => this.setLoading(false)),
-    );
-  }
-
-  private getResourcesInError(kb: KnowledgeBox, page_number = 0): Observable<Search.Results> {
-    return kb.catalog('', {
-      page_number,
-      page_size: 20,
-      sort: { field: 'created' },
-      filters: [`/n/s/${RESOURCE_STATUS.ERROR}`],
-    });
-  }
-
-  removeLabel(
-    resource: Resource,
-    labelToRemove: ColoredLabel,
-    event: { event: MouseEvent | KeyboardEvent; value: any },
-  ) {
-    event.event.stopPropagation();
-    event.event.preventDefault();
-    this.deletingLabel = true;
+  removeLabel($event: { resource: Resource; labelToRemove: ColoredLabel }) {
+    const { resource, labelToRemove } = $event;
     let classifications: UserClassification[] = resource.usermetadata?.classifications || [];
     if (!labelToRemove.immutable) {
       classifications = classifications.filter(
@@ -919,9 +736,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         },
       })
       .pipe(switchMap(() => this.getResources()))
-      .subscribe(() => {
-        this.deletingLabel = false;
-        this.cdr.markForCheck();
-      });
+      .subscribe();
   }
 }

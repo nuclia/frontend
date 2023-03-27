@@ -11,7 +11,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
-import { ResourceListComponent } from './resource-list/resource-list.component';
+import { ResourceListComponent } from './resource-list';
 import {
   AddFieldComponent,
   EditResourceComponent,
@@ -33,7 +33,7 @@ import {
   SisStatusComponent,
 } from '@nuclia/sistema';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
-import { UploadButtonComponent } from './upload-button/upload-button.component';
+import { UploadButtonComponent } from './upload-button';
 import { STFIconsModule } from '@flaps/pastanaga';
 import { PaginationModule } from '../pagination';
 import { PipesModule } from '../pipes';
@@ -45,10 +45,15 @@ import {
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
+  PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { ProcessedResourceTableComponent } from './resource-list/processed-resource-table/processed-resource-table.component';
+import { PendingResourcesTableComponent } from './resource-list/pending-resources-table/pending-resources-table.component';
+import { ResourcesTableDirective } from './resource-list/resources-table.directive';
+import { ErrorResourcesTableComponent } from './resource-list/error-resources-table/error-resources-table.component';
 
 const ROUTES: Routes = [
   {
@@ -147,6 +152,7 @@ const ROUTES: Routes = [
     PaDropdownModule,
     PaIconModule,
     PaPopupModule,
+    PaTableModule,
     PaTextFieldModule,
     PaTogglesModule,
     PaTooltipModule,
@@ -176,7 +182,11 @@ const ROUTES: Routes = [
     LoadingModalComponent,
     ResourcesComponent,
     ResourceListComponent,
+    ProcessedResourceTableComponent,
     UploadButtonComponent,
+    PendingResourcesTableComponent,
+    ResourcesTableDirective,
+    ErrorResourcesTableComponent,
   ],
   exports: [],
 })
