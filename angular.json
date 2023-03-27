@@ -154,7 +154,7 @@
                   "with": "apps/contributor/src/environments/environment.prod.ts"
                 }
               ],
-              "outputHashing": "all",
+              "outputHashing": "none",
               "assets": [
                 "apps/contributor/src/favicon.ico",
                 "apps/contributor/src/assets",
