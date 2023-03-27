@@ -7,12 +7,17 @@
   import Tile from '../../tiles/Tile.svelte';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
+  let text = '';
+
+  const NEWLINE = new RegExp(/\n/g);
+
+  $: text = answer.text?.replace(NEWLINE, '<br>') || '';
 
   const sources = getSortedResults(answer.sources?.resources);
 </script>
 
 <div class="sw-answer">
-  <div class="text">{answer.text}</div>
+  <div class="text">{@html text}</div>
   {#if answer.sources}
     <div class="feedback">
       <Feedback {rank} />
