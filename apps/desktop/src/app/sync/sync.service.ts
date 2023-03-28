@@ -411,4 +411,27 @@ export class SyncService {
       .pipe(switchMap((urls: string[]) => forkJoin(urls.map((url) => injectScript(url)))))
       .subscribe();
   }
+
+  getNucliaKey(slug: string): Observable<{ token: string }> {
+    if (!this.sdk.nuclia.options.account) {
+      return of({ token: '' });
+    }
+    return this.sdk.nuclia.db.getKnowledgeBox(this.sdk.nuclia.options.account, slug).pipe(
+      switchMap((kb) =>
+        kb.createKeyForService(
+          {
+            title: 'Desktop',
+            role: 'SCONTRIBUTOR',
+          },
+          this.getExpirationDate(),
+        ),
+      ),
+    );
+  }
+
+  private getExpirationDate(): string {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() + 1);
+    return Math.floor(date.getTime() / 1000).toString();
+  }
 }

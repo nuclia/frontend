@@ -20,42 +20,41 @@ export class NucliaCloud {
   upload(originalId: string, filename: string, data: { blob?: Blob; metadata?: any }): Observable<void> {
     if (data.blob) {
       const blob = data.blob;
+      const slug = sha256(originalId);
       return this.getKb().pipe(
         switchMap((kb) =>
-          from(sha256(originalId)).pipe(
-            switchMap((slug) =>
-              kb.getResourceBySlug(slug, [], []).pipe(
-                catchError((error) => {
-                  if (error.status === 404) {
-                    return kb
-                      .createResource({ slug, title: filename }, true)
-                      .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
-                  } else {
-                    throw error;
-                  }
-                }),
-              ),
-            ),
-            switchMap((resource) =>
-              resource
-                .upload('file', new File([blob], filename), false, {
-                  contentType: lookup(filename) || 'application/octet-stream',
-                })
-                .pipe(
-                  catchError((error: any) => {
-                    console.error(error.toString());
-                    return resource.delete();
-                  }),
-                  switchMap((res) => {
-                    if (res && (res.failed || res.conflict)) {
-                      return resource.delete();
-                    } else {
-                      return of(undefined);
-                    }
-                  }),
-                ),
-            ),
+          kb.getResourceBySlug(slug, [], []).pipe(
+            catchError((error) => {
+              if (error.status === 404) {
+                console.log('not found');
+                return kb
+                  .createResource({ slug, title: filename }, true)
+                  .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
+              } else {
+                console.log('problme', slug, error.status);
+                throw error;
+              }
+            }),
           ),
+        ),
+        switchMap((resource) =>
+          resource
+            .upload('file', new File([blob], filename), false, {
+              contentType: lookup(filename) || 'application/octet-stream',
+            })
+            .pipe(
+              catchError((error: any) => {
+                console.error(error.toString());
+                return resource.delete();
+              }),
+              switchMap((res) => {
+                if (res && (res.failed || res.conflict)) {
+                  return resource.delete();
+                } else {
+                  return of(undefined);
+                }
+              }),
+            ),
         ),
         map(() => undefined),
       );

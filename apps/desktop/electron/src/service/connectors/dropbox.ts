@@ -117,7 +117,7 @@ class DropboxImpl implements ISourceConnector {
           'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
         },
       }).then((res) => {
-        console.log(res);
+        console.log('GOT', res.status);
         const blob = res.blob();
         return blob;
       }),

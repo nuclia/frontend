@@ -155,6 +155,8 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   deleteServiceAccount(saId: string): Observable<void>;
 
+  createKeyForService(data: ServiceAccountCreation, expires: string): Observable<{ token: string }>;
+
   createKey(saId: string, expires: string): Observable<{ token: string }>;
 
   deleteKey(saId: string, saKeyId: string): Observable<void>;
