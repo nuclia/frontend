@@ -5,11 +5,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
-import { CdkTableModule } from '@angular/cdk/table';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatPaginatorModule } from '@angular/material/paginator';
 
 import { ResourceListComponent } from './resource-list';
 import {
@@ -142,17 +138,14 @@ const ROUTES: Routes = [
     TranslateModule.forChild(),
 
     // Material
-    CdkTableModule,
     MatDialogModule,
-    MatMenuModule,
-    MatProgressSpinnerModule,
-    MatPaginatorModule,
 
     // Pastanaga
     PaButtonModule,
     PaDropdownModule,
     PaIconModule,
     PaPopupModule,
+    PaScrollModule,
     PaTableModule,
     PaTextFieldModule,
     PaTogglesModule,
@@ -176,7 +169,6 @@ const ROUTES: Routes = [
     FileUploadModule,
 
     EditResourceModule,
-    PaScrollModule,
   ],
   declarations: [
     DatasetImportComponent,
