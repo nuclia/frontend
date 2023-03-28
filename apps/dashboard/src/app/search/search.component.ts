@@ -39,9 +39,10 @@ export class SearchComponent implements OnDestroy, OnInit {
       if (hasClassifier) {
         features += ',suggestLabels';
       }
-      if (isChatEnabled) {
-        features += ',answers';
-      }
+      // TEMPORARILY DISABLE CHAT IN DASHBOARD SEARCH
+      // if (isChatEnabled) {
+      //   features += ',answers';
+      // }
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar id="${searchWidgetId}"
   knowledgebox="${kb.id}"
   zone="${this.sdk.nuclia.options.zone}"
