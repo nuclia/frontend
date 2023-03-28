@@ -5,6 +5,7 @@
     <h2>{{ 'stash.profile' | translate }}</h2>
 
     <form
+      *ngIf="kbForm"
       [formGroup]="kbForm"
       (ngSubmit)="saveKb()">
       <div>
@@ -45,6 +46,26 @@
           formControlName="description"
           externalLabel
           [rows]="4"></pa-textarea>
+      </div>
+
+      <div *ngIf="hasAnswers">
+        <div class="label">
+          <label class="title-s">
+            {{ 'stash.create.generative_model' | translate }}
+          </label>
+          <p>
+            {{ 'stash.create.generative_model.help' | translate }}
+          </p>
+        </div>
+        <pa-radio-group
+          formControlName="generative_model"
+          name="generative_model">
+          <pa-radio
+            *ngFor="let value of modelOptions"
+            [value]="value.value">
+            {{ value.name }}
+          </pa-radio>
+        </pa-radio-group>
       </div>
 
       <footer>

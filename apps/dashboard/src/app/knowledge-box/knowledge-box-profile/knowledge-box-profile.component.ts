@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { concatMap, takeUntil } from 'rxjs/operators';
-import { SDKService, StateService, STFUtils } from '@flaps/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { forkJoin, Subject } from 'rxjs';
+import { concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '@flaps/common';
@@ -17,12 +17,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   kb: KnowledgeBox | undefined;
   account: Account | undefined;
 
-  kbForm = this.formBuilder.group({
-    uid: [''],
-    slug: ['', [Sluggable()]],
-    title: ['', [Validators.required]],
-    description: [''],
-  });
+  kbForm?: UntypedFormGroup;
 
   validationMessages: { [key: string]: IErrorMessages } = {
     slug: {
@@ -35,37 +30,51 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
 
   saving = false;
   unsubscribeAll = new Subject<void>();
+  hasAnswers = false;
+  modelOptions: { value: string; name: string }[] = [];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
+    private tracking: STFTrackingService,
   ) {}
 
   ngOnInit(): void {
-    this.stateService.stash.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-      this.kb = data || undefined;
-      if (this.kb) {
-        this.initKbForm();
-        this.cdr?.markForCheck();
-      }
-    });
-    this.stateService.account.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-      this.account = data || undefined;
-      this.cdr?.markForCheck();
-    });
-  }
-
-  initKbForm(): void {
-    this.kbForm.get('uid')?.patchValue(this.kb?.id);
-    this.kbForm.get('slug')?.patchValue(this.kb?.slug);
-    this.kbForm.get('title')?.patchValue(this.kb?.title);
-    this.kbForm.get('description')?.patchValue(this.kb?.description);
+    this.stateService.stash
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        tap((data) => (this.kb = data || undefined)),
+        switchMap(() => this.stateService.account.pipe(takeUntil(this.unsubscribeAll))),
+        tap((data) => (this.account = data || undefined)),
+        switchMap(() =>
+          forkJoin([
+            this.sdk.nuclia.db.getLearningConfigurations().pipe(take(1)),
+            this.tracking.isFeatureEnabled('answers'),
+          ]),
+        ),
+      )
+      .subscribe(([config, isAnswersEnabled]) => {
+        if (this.kb) {
+          if (config.generative_model && isAnswersEnabled) {
+            this.hasAnswers = true;
+            this.modelOptions = config.generative_model.options;
+          }
+          this.kbForm = this.formBuilder.group({
+            uid: [this.kb?.id],
+            slug: [this.kb?.slug, [Sluggable()]],
+            title: [this.kb?.title, [Validators.required]],
+            description: [this.kb?.description],
+            generative_model: this.hasAnswers ? [] : undefined,
+          });
+          this.cdr?.markForCheck();
+        }
+      });
   }
 
   saveKb(): void {
-    if (this.kbForm.invalid) return;
+    if (!this.kbForm || this.kbForm.invalid) return;
     this.saving = true;
     const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
     const data: Partial<KnowledgeBox> = {
@@ -77,7 +86,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
       .modify(data)
       .pipe(concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, newSlug)))
       .subscribe((kb) => {
-        this.kbForm.markAsPristine();
+        this.kbForm?.markAsPristine();
         this.saving = false;
         this.stateService.setStash(kb);
         this.sdk.refreshKbList(true);
