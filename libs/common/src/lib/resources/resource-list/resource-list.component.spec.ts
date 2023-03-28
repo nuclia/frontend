@@ -17,7 +17,10 @@ import {
 import { UploadButtonComponent } from '../upload-button/upload-button.component';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { ReactiveFormsModule } from '@angular/forms';
-import { CdkTableModule } from '@angular/cdk/table';
+import { ProcessedResourceTableComponent } from './processed-resource-table/processed-resource-table.component';
+import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
+import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
+import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -25,7 +28,14 @@ describe('ResourceListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ResourceListComponent, MockPipe(TranslatePipe), MockComponent(UploadButtonComponent)],
+      declarations: [
+        ResourceListComponent,
+        MockPipe(TranslatePipe),
+        MockComponent(UploadButtonComponent),
+        MockComponent(ErrorResourcesTableComponent),
+        MockComponent(PendingResourcesTableComponent),
+        MockComponent(ProcessedResourceTableComponent),
+      ],
       imports: [
         RouterTestingModule,
         MockModule(PaDropdownModule),
@@ -35,11 +45,10 @@ describe('ResourceListComponent', () => {
         MockModule(PaTextFieldModule),
         MockModule(SisProgressModule),
         MockModule(ReactiveFormsModule),
-        MockModule(CdkTableModule),
         MockComponent(DropdownButtonComponent),
       ],
       providers: [
-        MockProvider(BackendConfigurationService),
+        MockProvider(SampleDatasetService),
         {
           provide: SDKService,
           useValue: {
@@ -65,6 +74,7 @@ describe('ResourceListComponent', () => {
             },
           },
         },
+        MockProvider(BackendConfigurationService),
         MockProvider(TranslateService),
         MockProvider(LabelsService, {
           getLabelsByKind: jest.fn(() => of({})),

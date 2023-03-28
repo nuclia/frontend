@@ -30,8 +30,8 @@ import {
 import { BackendConfigurationService, SDKService, StateService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
-import { SampleDatasetService } from '../sample-dataset';
-import { LabelsService } from '../../label';
+import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
+import { LabelsService } from '../../label/labels.service';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { getClassificationsPayload } from '../edit-resource';

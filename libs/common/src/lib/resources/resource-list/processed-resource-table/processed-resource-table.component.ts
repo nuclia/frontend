@@ -73,7 +73,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   userPreferences: typeof DEFAULT_PREFERENCES;
 
   // Set in constructor depending on user preferences
-  protected defaultColumns: ColumnHeader[];
+  protected override defaultColumns: ColumnHeader[];
   optionalColumns: ColumnHeader[];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
@@ -93,11 +93,11 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
         : [...visibleColumns];
     }),
   );
-  headerCells: Observable<HeaderCell[]> = this._visibleColumnDef.pipe(
+  override headerCells: Observable<HeaderCell[]> = this._visibleColumnDef.pipe(
     map((cells) => cells.map((cell) => new HeaderCell(cell))),
   );
   visibleColumnsId: Observable<string[]> = this._visibleColumnDef.pipe(map((cells) => cells.map((cell) => cell.id)));
-  tableLayout: Observable<string> = combineLatest([this.isAdminOrContrib, this._visibleColumnDef]).pipe(
+  override tableLayout: Observable<string> = combineLatest([this.isAdminOrContrib, this._visibleColumnDef]).pipe(
     map(([canEdit, cells]) => {
       const layout = cells.map((cell) => cell.size).join(' ');
       return canEdit ? `40px ${layout}` : layout;

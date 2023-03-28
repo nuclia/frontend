@@ -9,7 +9,7 @@ import { ColumnHeader } from '../resource-list.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PendingResourcesTableComponent extends ResourcesTableDirective {
-  protected defaultColumns: ColumnHeader[] = [
+  protected override defaultColumns: ColumnHeader[] = [
     ...COMMON_COLUMNS,
     { id: 'status', label: 'resource.status', size: 'minmax(176px, 1fr)', centered: true },
   ];
