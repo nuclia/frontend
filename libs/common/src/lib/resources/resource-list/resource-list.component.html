@@ -110,14 +110,16 @@
         (deleteResources)="delete($event)"
         (menuAction)="onMenuAction($event)"
         (removeLabel)="removeLabel($event)"
-        (reprocessResources)="bulkReprocess($event)"></stf-processed-resource-table>
+        (reprocessResources)="bulkReprocess($event)"
+        (loadMore)="loadMore()"></stf-processed-resource-table>
 
       <stf-pending-resources-table
         *ngIf="isPendingView && data?.length > 0"
         [data]="data"
         [bulkAction]="bulkAction"
         (menuAction)="onMenuAction($event)"
-        (deleteResources)="delete($event)"></stf-pending-resources-table>
+        (deleteResources)="delete($event)"
+        (loadMore)="loadMore()"></stf-pending-resources-table>
 
       <stf-error-resources-table
         *ngIf="isFailureView && data?.length > 0"
@@ -126,11 +128,12 @@
         [errorCount]="(statusCount | async)?.error"
         (isLoading)="setLoading($event)"
         (menuAction)="onMenuAction($event)"
-        (deleteResources)="delete($event)"></stf-error-resources-table>
+        (deleteResources)="delete($event)"
+        (loadMore)="loadMore()"></stf-error-resources-table>
     </ng-container>
 
     <div
-      *ngIf="isMainView && !!data && resultsLength === 0 && !standalone"
+      *ngIf="isMainView && data?.length === 0 && !standalone"
       class="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>

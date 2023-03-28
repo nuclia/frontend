@@ -46,6 +46,7 @@ export class ResourcesTableDirective {
     return this.selection.length > 0 && this.selection.length === this.data.length;
   }
 
+  @Output() loadMore: EventEmitter<void> = new EventEmitter();
   @Output() clickOnTitle: EventEmitter<{ resource: Resource }> = new EventEmitter();
   @Output() deleteResources: EventEmitter<Resource[]> = new EventEmitter();
   @Output() menuAction: EventEmitter<{ resource: Resource; action: MenuAction }> = new EventEmitter();
@@ -63,6 +64,10 @@ export class ResourcesTableDirective {
   protected sdk: SDKService = inject(SDKService);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
+
+  onLoadMore() {
+    this.loadMore.emit();
+  }
 
   triggerAction(resource: Resource, action: MenuAction) {
     this.menuAction.emit({ resource, action });

@@ -45,6 +45,7 @@ import {
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
+  PaScrollModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -175,6 +176,7 @@ const ROUTES: Routes = [
     FileUploadModule,
 
     EditResourceModule,
+    PaScrollModule,
   ],
   declarations: [
     DatasetImportComponent,

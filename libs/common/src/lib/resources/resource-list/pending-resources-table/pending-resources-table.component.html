@@ -24,73 +24,75 @@
 </div>
 
 <div class="table-container">
-  <pa-table [columns]="tableLayout | async">
-    <pa-table-sortable-header [cells]="headerCells | async">
-      <pa-table-cell
-        header
-        *ngIf="isAdminOrContrib | async">
-        <pa-checkbox
-          [value]="allSelected"
-          [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
-          [disabled]="bulkAction.inProgress"
-          (change)="toggleAll()"></pa-checkbox>
-      </pa-table-cell>
-    </pa-table-sortable-header>
+  <pa-infinite-scroll (reachAnchor)="onLoadMore()">
+    <pa-table [columns]="tableLayout | async">
+      <pa-table-sortable-header [cells]="headerCells | async">
+        <pa-table-cell
+          header
+          *ngIf="isAdminOrContrib | async">
+          <pa-checkbox
+            [value]="allSelected"
+            [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
+            [disabled]="bulkAction.inProgress"
+            (change)="toggleAll()"></pa-checkbox>
+        </pa-table-cell>
+      </pa-table-sortable-header>
 
-    <pa-table-row *ngFor="let row of data">
-      <pa-table-cell *ngIf="isAdminOrContrib | async">
-        <pa-checkbox
-          [value]="selection.includes(row.resource.id)"
-          (change)="toggleSelection(row.resource.id)"></pa-checkbox>
-      </pa-table-cell>
-      <pa-table-cell
-        clickable
-        (click)="onClickTitle(row.resource)">
-        <div class="title-with-icon">
-          <pa-icon
-            *ngIf="row.resource.icon | mimeIcon as icon"
-            [path]="'assets/icons/' + icon"></pa-icon>
-          <div class="title-and-description">
-            <div class="body-s">{{ row.resource.title }}</div>
-            <small *ngIf="row.description">{{ row.description }}</small>
-          </div>
-          <div class="title-status">
+      <pa-table-row *ngFor="let row of data">
+        <pa-table-cell *ngIf="isAdminOrContrib | async">
+          <pa-checkbox
+            [value]="selection.includes(row.resource.id)"
+            (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+        </pa-table-cell>
+        <pa-table-cell
+          clickable
+          (click)="onClickTitle(row.resource)">
+          <div class="title-with-icon">
             <pa-icon
-              *ngIf="row.resource.metadata?.status === 'PENDING'"
-              name="clock-dash"></pa-icon>
-            <pa-icon
-              class="error"
-              *ngIf="row.resource.metadata?.status === 'ERROR'"
-              name="circle-cross"></pa-icon>
+              *ngIf="row.resource.icon | mimeIcon as icon"
+              [path]="'assets/icons/' + icon"></pa-icon>
+            <div class="title-and-description">
+              <div class="body-s">{{ row.resource.title }}</div>
+              <small *ngIf="row.description">{{ row.description }}</small>
+            </div>
+            <div class="title-status">
+              <pa-icon
+                *ngIf="row.resource.metadata?.status === 'PENDING'"
+                name="clock-dash"></pa-icon>
+              <pa-icon
+                class="error"
+                *ngIf="row.resource.metadata?.status === 'ERROR'"
+                name="circle-cross"></pa-icon>
+            </div>
           </div>
-        </div>
-      </pa-table-cell>
+        </pa-table-cell>
 
-      <pa-table-cell center>
-        <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
-      </pa-table-cell>
-      <pa-table-cell center>
-        <span class="body-s">{{ row.status }}</span>
-      </pa-table-cell>
-      <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
-        <pa-button
-          icon="more-vertical"
-          aspect="basic"
-          size="small"
-          paTooltip="generic.actions"
-          [disabled]="bulkAction.inProgress"
-          [paPopup]="menu">
-          {{ 'generic.actions' | translate }}
-        </pa-button>
-        <pa-dropdown #menu>
-          <pa-option
-            destructive
-            [disabled]="!(isAdminOrContrib | async)"
-            (selectOption)="triggerAction(row.resource, 'delete')">
-            {{ 'generic.delete' | translate }}
-          </pa-option>
-        </pa-dropdown>
-      </pa-table-cell-menu>
-    </pa-table-row>
-  </pa-table>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
+        </pa-table-cell>
+        <pa-table-cell center>
+          <span class="body-s">{{ row.status }}</span>
+        </pa-table-cell>
+        <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
+          <pa-button
+            icon="more-vertical"
+            aspect="basic"
+            size="small"
+            paTooltip="generic.actions"
+            [disabled]="bulkAction.inProgress"
+            [paPopup]="menu">
+            {{ 'generic.actions' | translate }}
+          </pa-button>
+          <pa-dropdown #menu>
+            <pa-option
+              destructive
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'delete')">
+              {{ 'generic.delete' | translate }}
+            </pa-option>
+          </pa-dropdown>
+        </pa-table-cell-menu>
+      </pa-table-row>
+    </pa-table>
+  </pa-infinite-scroll>
 </div>

@@ -22,13 +22,12 @@ import {
   Resource,
   RESOURCE_STATUS,
   ResourceStatus,
-  resourceToAlgoliaFormat,
   Search,
   SearchOptions,
   SortOrder,
   UserClassification,
 } from '@nuclia/core';
-import { BackendConfigurationService, SDKService, StateService, STFUtils } from '@flaps/core';
+import { BackendConfigurationService, SDKService, StateService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SampleDatasetService } from '../sample-dataset';
@@ -48,13 +47,6 @@ interface ListFilters {
   sortDirection?: SortOrder;
 }
 
-interface KeyValue {
-  key: string;
-  value: string;
-}
-
-const PAGE_SIZE_OPTIONS = [20, 50, 100];
-
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
 @Component({
@@ -71,8 +63,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   hasSampleData = this.sampleDatasetService.hasSampleResources();
 
   data: ResourceWithLabels[] | undefined;
-  resultsLength = 0;
-  totalResources = 0;
+  page = 0;
+  hasMore = false;
+  pageSize = DEFAULT_PREFERENCES.pageSize;
   isLoading = true;
   filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
@@ -114,17 +107,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     return this.statusDisplayed.value === 'PENDING';
   }
 
-  pageSizeOptions: Observable<KeyValue[]> = forkJoin(
-    PAGE_SIZE_OPTIONS.map((size) =>
-      of(size.toString()).pipe(
-        switchMap((size) =>
-          this.translate
-            .get('resource.resource_page_number', { num: size })
-            .pipe(map((text) => ({ key: size, value: text }))),
-        ),
-      ),
-    ),
-  );
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
@@ -176,11 +158,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getResources().subscribe();
     this.getResourceStatusCount().subscribe();
-    this.sdk.counters.pipe(takeUntil(this.unsubscribeAll)).subscribe((counters) => {
-      this.totalResources = counters.resources;
-      this.refreshing = false;
-      this.cdr?.markForCheck();
-    });
     this.sdk.refreshing
       .pipe(
         takeUntil(this.unsubscribeAll),
@@ -203,7 +180,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     if (!this.searchForm.value.query) {
       this.searchForm.controls.searchIn.setValue('title');
     }
-    this.changeQueryParams({ page: undefined });
+    this.page = 0;
+    this.triggerLoadResources();
   }
 
   delete(resources: Resource[]) {
@@ -320,59 +298,41 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     };
   }
 
-  get pageSize(): number {
-    const size = this.route.snapshot.queryParams['size'];
-    return size ? parseInt(size, 10) : DEFAULT_PREFERENCES.pageSize;
-  }
-
-  get page(): number {
-    const page = this.route.snapshot.queryParams['page'];
-    return page ? parseInt(page, 10) : this.resultsLength > 0 ? 1 : 0;
-  }
-
   viewResource(resourceId: string) {
     this.router.navigate([`./${resourceId}/edit/preview`], { relativeTo: this.route });
   }
 
-  nextPage() {
-    const params = { page: (this.page + 1).toString() };
-    this.changeQueryParams(params);
+  loadMore() {
+    if (this.hasMore) {
+      this.page += 1;
+      this.triggerLoadResources(false);
+    }
   }
 
   sortBy(attribute: string) {
-    const params: ListFilters = {};
+    const filters: ListFilters = {};
     if (this.filters.sortBy !== attribute) {
-      params.sortBy = attribute;
-      params.sortDirection = 'desc';
+      filters.sortBy = attribute;
+      filters.sortDirection = 'desc';
     } else {
-      params.sortDirection = this.filters.sortDirection === 'desc' ? 'asc' : 'desc';
+      filters.sortDirection = this.filters.sortDirection === 'desc' ? 'asc' : 'desc';
     }
-    this.applyFilter({ ...params });
+    this.applyFilter({ ...filters });
   }
 
-  applyFilter(params: ListFilters) {
-    params.page = undefined;
-    this.changeQueryParams(params);
+  applyFilter(filters: ListFilters) {
+    this.page = 0;
+    this.triggerLoadResources();
   }
 
-  changeQueryParams(params: ListFilters) {
-    from(
-      this.router.navigate(['.'], {
-        queryParams: params,
-        queryParamsHandling: 'merge',
-        relativeTo: this.route,
-        replaceUrl: true,
-      }),
-    )
-      .pipe(switchMap(() => this.getResources()))
-      .subscribe();
+  triggerLoadResources(displayLoader = true) {
+    this.getResources(displayLoader).subscribe();
   }
 
-  getResources(): Observable<Search.Results> {
+  getResources(displayLoader = true): Observable<Search.Results> {
     const query = (this.searchForm.value.query || '').trim();
     const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
-    const page = this.page >= 1 ? this.page - 1 : 0;
 
     if (!this.standalone) {
       forkJoin([this.stateService.account.pipe(take(1)), this.stateService.stash.pipe(take(1))])
@@ -386,13 +346,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
     return of(1).pipe(
       tap(() => {
-        this.setLoading(true);
+        this.setLoading(displayLoader);
       }),
       switchMap(() => this.sdk.currentKb.pipe(take(1))),
       switchMap((kb) => {
         const status = this.statusDisplayed.value;
         const searchOptions: SearchOptions = {
-          page_number: page,
+          page_number: this.page,
           page_size: this.pageSize,
           sort: { field: 'created' },
           filters: status === RESOURCE_STATUS.PROCESSED ? undefined : [`/n/s/${status}`],
@@ -410,31 +370,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
                 searchOptions,
               ),
           this.labelSets$.pipe(take(1)),
-          this.statusCount.pipe(take(1)),
         ]);
       }),
-      map(([kb, results, labelSets, statusCount]) => {
-        this.data = titleOnly
+      map(([kb, results, labelSets]) => {
+        const newResults = titleOnly
           ? this.getTitleOnlyData(results, kb.id, labelSets)
           : this.getResourceData(query, results, kb.id, labelSets);
+        this.data = this.page === 0 ? newResults : (this.data || []).concat(newResults);
+        this.hasMore = !!results.fulltext?.next_page;
 
-        // FIXME: currently the backend doesn't provide the real total in pagination, if there is more than 1 page of result they return the number of item by page as total
-        if (this.isMainView) {
-          if (hasQuery && results.fulltext) {
-            this.resultsLength =
-              results.fulltext.next_page || results.fulltext.page_number > 0
-                ? this.totalResources || this.data.length
-                : 1;
-          } else {
-            // totalResources can be 0 while we have resources (specially when we import dataset) because counters is asynchronous and relies on indexing
-            this.resultsLength = this.totalResources || this.data.length;
-          }
-        } else {
-          this.resultsLength = this.isFailureView ? statusCount.error : statusCount.pending;
-        }
-
-        // FIXME: still needed?
-        // this.clearSelected();
         this.setLoading(false);
         return results;
       }),
@@ -565,13 +509,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     return smartResults;
   }
 
-  downloadAlgoliaJson(resource: Resource) {
-    this.sdk.currentKb.pipe(switchMap((kb) => kb.getResource(resource.uuid))).subscribe((fullResource) => {
-      const formatted = resourceToAlgoliaFormat(fullResource, this.sdk.nuclia.regionalBackend);
-      STFUtils.downloadJson(formatted, `algolia_record.json`);
-    });
-  }
-
   addLabelsToSelection($event: { labels: Classification[]; resources: Resource[] }) {
     const { labels, resources } = $event;
     if (labels.length > 0) {
@@ -678,6 +615,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   displayStatus(status: ResourceStatus) {
+    this.page = 0;
     this.searchForm.patchValue({ searchIn: 'title', query: '' });
     this.statusDisplayed.next(status);
     this.getResources()
