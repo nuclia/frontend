@@ -10,6 +10,7 @@ export const getSources: () => { [id: string]: Source } = () => {
     return JSON.parse(data);
   } catch (err) {
     console.log(`Error reading file: ${err}`);
+    return {};
   }
 };
 
@@ -49,7 +50,7 @@ export const syncFile = (source: Source, item: SyncItem) => {
   const nucliaConnector = new NucliaCloud(source.kb);
   console.log('Uploading', item);
   return downloadFile(source, item).pipe(
-    tap((blob) => console.log('Downloaded', blob),
-    // switchMap((blob) => nucliaConnector.upload(item.originalId, item.title, { blob })),
+    tap((blob) => console.log('Downloaded', blob.size)),
+    switchMap((blob) => nucliaConnector.upload(item.originalId, item.title, { blob })),
   );
 };
