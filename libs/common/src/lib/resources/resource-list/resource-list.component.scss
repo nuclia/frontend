@@ -1,0 +1,96 @@
+@import 'apps/dashboard/src/variables';
+
+$table-breakpoint: 1400px;
+
+.resource-list {
+  padding: rhythm(5) var(--app-layout-margin-right) rhythm(8) 5%;
+  position: relative;
+  min-height: rhythm(24);
+}
+
+.resource-list-header {
+  align-items: center;
+  background-color: $color-light-stronger;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  height: rhythm(6);
+  justify-content: space-between;
+  margin-bottom: rhythm(4);
+  padding-bottom: rhythm(1);
+  position: sticky;
+  top: var(--app-topbar-height);
+  z-index: 10;
+
+  .search-bar-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+
+    pa-select {
+      min-width: rhythm(16);
+    }
+  }
+
+  .upload-container {
+    display: flex;
+    gap: rhythm(4);
+  }
+
+  .status-buttons-container {
+    align-items: center;
+    display: flex;
+    gap: rhythm(2);
+    justify-content: flex-end;
+    min-width: rhythm(24);
+
+    .status-button {
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.25);
+    }
+    .file-count {
+      font-size: font-size(l);
+      font-weight: $font-weight-bold;
+      line-height: line-height(m);
+    }
+  }
+}
+
+.resource-filters {
+  padding: 0 rhythm(3) 0 rhythm(1.5);
+  .title-filter {
+    max-width: 35%;
+  }
+}
+
+::ng-deep .mat-menu-panel.resource-actions {
+  min-width: 0;
+  min-height: 0;
+  border-radius: 0;
+  box-shadow: var(--stf-shadow-dropdown);
+  .mat-menu-content {
+    padding: 0;
+  }
+}
+
+.loading-shade {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popover-content {
+  text-align: center;
+}
+
+.empty-kb {
+  padding: rhythm(2) 0;
+  width: rhythm(60);
+}

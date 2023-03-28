@@ -1,0 +1,173 @@
+<div class="resource-table-header">
+  <div
+    class="resource-bulk-actions"
+    *ngIf="(isAdminOrContrib | async) && selection.length > 0">
+    {{ 'resource.selected_count' | translate: { num: selection.length } }}
+
+    <ng-container *ngIf="hasLabelSets | async">
+      <app-label-dropdown
+        [labelSets]="labelSets"
+        (selectionChange)="updateLabelList($event)"
+        (close)="addLabelsToSelection()"
+        aspect="basic"
+        size="small">
+        {{ 'resource.add_labels' | translate }}
+      </app-label-dropdown>
+    </ng-container>
+
+    <ng-container *ngIf="selection.length > 0">
+      <pa-button
+        kind="destructive"
+        aspect="basic"
+        size="small"
+        [disabled]="bulkAction.inProgress"
+        (click)="bulkDelete()">
+        {{ 'generic.delete' | translate }}
+      </pa-button>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [disabled]="bulkAction.inProgress"
+        (click)="bulkReprocess()">
+        {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+      </pa-button>
+      <div
+        class="body-m"
+        *ngIf="bulkAction.inProgress">
+        {{ bulkAction.label | translate }}
+        {{ bulkAction.done }} / {{ bulkAction.total }}
+      </div>
+    </ng-container>
+  </div>
+  <div class="table-options">
+    <nsi-dropdown-button
+      size="small"
+      aspect="basic"
+      [popupRef]="visibleColumns">
+      {{ 'resource.visible_columns_dropdown' | translate }}
+    </nsi-dropdown-button>
+    <pa-dropdown #visibleColumns>
+      <pa-option
+        *ngFor="let column of optionalColumns"
+        [value]="column.id"
+        dontCloseOnSelect>
+        <pa-checkbox
+          [(value)]="column.visible"
+          (valueChange)="columnVisibilityUpdate.next($event)">
+          {{ column.label | translate }}
+        </pa-checkbox>
+      </pa-option>
+    </pa-dropdown>
+  </div>
+</div>
+
+<div class="table-container">
+  <pa-infinite-scroll (reachAnchor)="onLoadMore()">
+    <pa-table [columns]="tableLayout | async">
+      <pa-table-sortable-header
+        [cells]="headerCells | async"
+        (sort)="sortBy($event)">
+        <pa-table-cell
+          header
+          *ngIf="isAdminOrContrib | async">
+          <pa-checkbox
+            [value]="allSelected"
+            [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
+            [disabled]="bulkAction.inProgress"
+            (change)="toggleAll()"></pa-checkbox>
+        </pa-table-cell>
+      </pa-table-sortable-header>
+
+      <pa-table-row *ngFor="let row of data">
+        <pa-table-cell *ngIf="isAdminOrContrib | async">
+          <pa-checkbox
+            [value]="selection.includes(row.resource.id)"
+            (change)="toggleSelection(row.resource.id)"></pa-checkbox>
+        </pa-table-cell>
+        <pa-table-cell
+          clickable
+          (click)="onClickTitle(row.resource)">
+          <div class="title-with-icon">
+            <pa-icon
+              *ngIf="row.resource.icon | mimeIcon as icon"
+              [path]="'assets/icons/' + icon"></pa-icon>
+            <div class="title-and-description">
+              <div class="body-s">{{ row.resource.title }}</div>
+              <small *ngIf="row.description">{{ row.description }}</small>
+            </div>
+            <div class="title-status">
+              <pa-icon
+                *ngIf="row.resource.metadata?.status === 'PENDING'"
+                name="clock-dash"></pa-icon>
+              <pa-icon
+                class="error"
+                *ngIf="row.resource.metadata?.status === 'ERROR'"
+                name="circle-cross"></pa-icon>
+            </div>
+          </div>
+        </pa-table-cell>
+        <pa-table-cell *ngIf="(visibleColumnsId | async)?.includes('classification')">
+          <div class="label-container">
+            <nsi-label
+              *ngFor="let label of row.labels"
+              [color]="label.color"
+              [disabled]="deletingLabel"
+              (removeLabel)="onRemoveLabel(row.resource, label, $event)">
+              {{ label.label }}
+            </nsi-label>
+          </div>
+        </pa-table-cell>
+        <pa-table-cell
+          center
+          *ngIf="(visibleColumnsId | async)?.includes('created')">
+          <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
+        </pa-table-cell>
+        <pa-table-cell
+          center
+          *ngIf="(visibleColumnsId | async)?.includes('language')">
+          <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
+        </pa-table-cell>
+        <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
+          <pa-button
+            icon="more-vertical"
+            aspect="basic"
+            size="small"
+            paTooltip="generic.actions"
+            [disabled]="bulkAction.inProgress"
+            [paPopup]="menu">
+            {{ 'generic.actions' | translate }}
+          </pa-button>
+          <pa-dropdown #menu>
+            <pa-option
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'edit')">
+              {{ 'resource.menu.edit' | translate }}
+            </pa-option>
+            <pa-option
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'annotate')">
+              {{ 'resource.menu.annotate' | translate }}
+            </pa-option>
+            <pa-option
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'classify')">
+              {{ 'resource.menu.classify' | translate }}
+            </pa-option>
+            <pa-option
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'reprocess')">
+              {{ 'generic.reindex' | translate }}
+            </pa-option>
+            <pa-separator></pa-separator>
+            <pa-option
+              destructive
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'delete')">
+              {{ 'generic.delete' | translate }}
+            </pa-option>
+          </pa-dropdown>
+        </pa-table-cell-menu>
+      </pa-table-row>
+    </pa-table>
+  </pa-infinite-scroll>
+</div>

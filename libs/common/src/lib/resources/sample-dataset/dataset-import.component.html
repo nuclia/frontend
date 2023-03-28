@@ -5,7 +5,7 @@
     {{ 'onboarding.dataset.option1.description' | translate }}
   </p>
 
-  <app-dataset-selector (imported)="onDatasetImported($event)"></app-dataset-selector>
+  <stf-dataset-selector (imported)="onDatasetImported($event)"></stf-dataset-selector>
 
   <div class="upload-data">
     <h2>{{ 'onboarding.dataset.option2' | translate }}</h2>
@@ -14,6 +14,6 @@
       #uploadLinksContainer>
       {{ 'onboarding.dataset.option2.description' | translate }}
     </p>
-    <app-upload-button (uploaded)="onUpload()"></app-upload-button>
+    <stf-upload-button (uploaded)="onUpload()"></stf-upload-button>
   </div>
 </div>

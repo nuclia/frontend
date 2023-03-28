@@ -9,7 +9,10 @@ import { AppService } from '../services';
 export class FormatDatePipe implements PipeTransform {
   constructor(private appService: AppService) {}
 
-  transform(date: string | number | Date, args?: any): string {
+  transform(date: string | number | Date | undefined, args?: any): string {
+    if (!date) {
+      return '';
+    }
     if (args?.default) {
       return new Date(date).toLocaleDateString();
     } else {

@@ -1,0 +1,92 @@
+<div class="main-container">
+  <div class="scrollable-area with-footer">
+    <div class="title-xxs">{{ 'resource.field.add' | translate }}</div>
+
+    <nsi-dropdown-button [popupRef]="fieldTypeDropdown">
+      {{ 'resource.field-' + fieldType.value | translate }}
+    </nsi-dropdown-button>
+    <pa-dropdown #fieldTypeDropdown>
+      <pa-option
+        *ngFor="let type of availableTypes"
+        [value]="type"
+        (selectOption)="changeFieldType(type)">
+        {{ 'resource.field-' + type | translate }}
+      </pa-option>
+    </pa-dropdown>
+
+    <form [formGroup]="form">
+      <ng-container *ngIf="fieldType.value === 'text'">
+        <div class="field-block">
+          <label
+            class="title-xxs"
+            for="format">
+            {{ 'resource.field-text-format-label' | translate }}
+          </label>
+          <pa-select
+            id="format"
+            formControlName="format"
+            externalLabel>
+            <pa-option
+              *ngFor="let format of availableFormats"
+              [value]="format">
+              {{ format }}
+            </pa-option>
+          </pa-select>
+        </div>
+
+        <div class="field-block">
+          <label
+            class="title-xxs"
+            for="text">
+            {{ 'resource.field-text-body-label' | translate }}
+          </label>
+          <pa-textarea
+            id="text"
+            formControlName="text"
+            externalLabel></pa-textarea>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="fieldType.value === 'link'">
+        <div class="field-block">
+          <label
+            class="title-xxs"
+            for="link">
+            URL
+          </label>
+          <pa-input
+            id="link"
+            formControlName="text"
+            [errorMessages]="textErrors"
+            externalLabel></pa-input>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="fieldType.value === 'file'">
+        <stf-dropzone
+          [isUploading]="isSaving"
+          (file)="onFileChange($event)"></stf-dropzone>
+        <p *ngIf="newFile">
+          <strong>{{ 'resource.field-file.new-file' | translate }}</strong>
+          {{ newFile.name }}
+        </p>
+      </ng-container>
+    </form>
+  </div>
+</div>
+
+<footer class="form-buttons">
+  <pa-button
+    kind="primary"
+    [disabled]="form.invalid || !isModified"
+    (click)="save()">
+    {{ 'generic.save' | translate }}
+  </pa-button>
+
+  <pa-button
+    aspect="basic"
+    [disabled]="!isModified"
+    (click)="cancel()">
+    {{ 'generic.cancel' | translate }}
+  </pa-button>
+</footer>

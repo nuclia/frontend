@@ -434,6 +434,7 @@
 	"resource.add_labels": "Agregar etiquetas",
 	"resource.add_labels_error": "Se produjo un error al agregar etiquetas en {{count}} recursos",
 	"resource.add_labels_success": "Etiquetas añadidas correctamente en {{count}} recursos",
+	"resource.adding_labels": "Agregando etiquetas",
 	"resource.classification-column": "Clasificación",
 	"resource.classification-page-link": "página de Clasificación",
 	"resource.classification.clean-up": "Limpiar",
