@@ -64,7 +64,9 @@
 <div class="table-container">
   <pa-infinite-scroll (reachAnchor)="onLoadMore()">
     <pa-table [columns]="tableLayout | async">
-      <pa-table-sortable-header [cells]="headerCells | async">
+      <pa-table-sortable-header
+        [cells]="headerCells | async"
+        (sort)="sortBy($event)">
         <pa-table-cell
           header
           *ngIf="isAdminOrContrib | async">
@@ -117,7 +119,7 @@
         </pa-table-cell>
         <pa-table-cell
           center
-          *ngIf="(visibleColumnsId | async).includes('modification')">
+          *ngIf="(visibleColumnsId | async).includes('created')">
           <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
         </pa-table-cell>
         <pa-table-cell

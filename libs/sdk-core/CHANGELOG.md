@@ -1,4 +1,4 @@
-# 1.2.0 (unreleased)
+# 1.2.0 (2023-03-28)
 
 ### Features
 
@@ -10,6 +10,7 @@
 
 - New endpoints for synonyms management on KnowledgeBox
 - New account types
+- Add enum `SortField` for `SortOption`'s field.
 
 # 1.1.6 (2023-03-20)
 

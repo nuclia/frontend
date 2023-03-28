@@ -7,10 +7,10 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, UntypedFormControl } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
-import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
+import { delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Classification,
@@ -24,7 +24,7 @@ import {
   ResourceStatus,
   Search,
   SearchOptions,
-  SortOrder,
+  SortOption,
   UserClassification,
 } from '@nuclia/core';
 import { BackendConfigurationService, SDKService, StateService } from '@flaps/core';
@@ -35,17 +35,13 @@ import { LabelsService } from '../../label';
 import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { getClassificationsPayload } from '../edit-resource';
-import { ColoredLabel, DEFAULT_PREFERENCES, MenuAction, ResourceWithLabels } from './resource-list.model';
-
-interface ListFilters {
-  type?: string;
-  title?: string;
-  status?: string;
-  page?: string;
-  size?: string;
-  sortBy?: string;
-  sortDirection?: SortOrder;
-}
+import {
+  ColoredLabel,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SORTING,
+  MenuAction,
+  ResourceWithLabels,
+} from './resource-list.model';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -65,9 +61,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   data: ResourceWithLabels[] | undefined;
   page = 0;
   hasMore = false;
-  pageSize = DEFAULT_PREFERENCES.pageSize;
+  pageSize = DEFAULT_PAGE_SIZE;
+  sort: SortOption = DEFAULT_SORTING;
   isLoading = true;
-  filterTitle: UntypedFormControl;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
 
@@ -143,17 +139,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private labelService: LabelsService,
-  ) {
-    const title = this.filters.title;
-    this.filterTitle = new UntypedFormControl([title ? title : '']);
-
-    this.filterTitle.valueChanges.pipe(takeUntil(this.unsubscribeAll), debounceTime(200)).subscribe(() => {
-      const title = this.filterTitle.value;
-      this.applyFilter({
-        title: title.length > 0 ? title : undefined,
-      });
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.getResources().subscribe();
@@ -235,12 +221,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       });
   }
 
-  bulkReprocess(resources: Resource[]) {
-    let wait = 1000;
-    if (this.allErrorsSelected) {
-      this.toaster.info('resource.reindex-all-info');
-      wait = 2000;
-    }
+  bulkReprocess(resources: Resource[], wait = 1000) {
     this.setLoading(true);
 
     this.bulkAction = {
@@ -290,14 +271,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  get filters(): ListFilters {
-    return {
-      ...this.route.snapshot.queryParams,
-      size: this.pageSize.toString(),
-      page: this.pageSize.toString(),
-    };
-  }
-
   viewResource(resourceId: string) {
     this.router.navigate([`./${resourceId}/edit/preview`], { relativeTo: this.route });
   }
@@ -309,19 +282,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }
   }
 
-  sortBy(attribute: string) {
-    const filters: ListFilters = {};
-    if (this.filters.sortBy !== attribute) {
-      filters.sortBy = attribute;
-      filters.sortDirection = 'desc';
-    } else {
-      filters.sortDirection = this.filters.sortDirection === 'desc' ? 'asc' : 'desc';
-    }
-    this.applyFilter({ ...filters });
-  }
-
-  applyFilter(filters: ListFilters) {
-    this.page = 0;
+  sortBy(sortOption: SortOption) {
+    this.sort = sortOption;
     this.triggerLoadResources();
   }
 
@@ -354,7 +316,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         const searchOptions: SearchOptions = {
           page_number: this.page,
           page_size: this.pageSize,
-          sort: { field: 'created' },
+          sort: this.sort,
           filters: status === RESOURCE_STATUS.PROCESSED ? undefined : [`/n/s/${status}`],
           with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
         };

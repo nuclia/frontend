@@ -43,7 +43,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   get initialColumns(): ColumnHeader[] {
     return [
-      { id: 'title', label: 'resource.title', size: '3fr', sortable: true, visible: true },
+      { id: 'title', label: 'resource.title', size: '3fr', sortable: false, visible: true },
       {
         id: 'classification',
         label: 'resource.classification-column',
@@ -52,13 +52,13 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
         visible: this.userPreferences.columns.includes('classification'),
       },
       {
-        id: 'modification',
+        id: 'created',
         label: 'generic.date',
         size: '128px',
         sortable: true,
         centered: true,
         optional: true,
-        visible: this.userPreferences.columns.includes('modification'),
+        visible: this.userPreferences.columns.includes('created'),
       },
       {
         id: 'language',
@@ -73,7 +73,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   userPreferences: typeof DEFAULT_PREFERENCES;
 
   // Set in constructor depending on user preferences
-  columns: ColumnHeader[];
+  protected defaultColumns: ColumnHeader[];
   optionalColumns: ColumnHeader[];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
@@ -86,7 +86,8 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     this.columnVisibilityUpdate,
   ]).pipe(
     map(([canEdit]) => {
-      const visibleColumns = this.columns.filter((column) => column.visible);
+      const visibleColumns = this.defaultColumns.map(this.getApplySortingMapper()).filter((column) => column.visible);
+
       return canEdit
         ? [...visibleColumns, { id: 'menu', label: 'generic.actions', size: '96px' }]
         : [...visibleColumns];
@@ -120,13 +121,13 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     } else {
       this.userPreferences = DEFAULT_PREFERENCES;
     }
-    this.columns = this.initialColumns;
-    this.optionalColumns = this.columns.filter((column) => column.optional);
+    this.defaultColumns = this.initialColumns;
+    this.optionalColumns = this.defaultColumns.filter((column) => column.optional);
   }
 
   ngOnInit() {
     this.columnVisibilityUpdate.pipe(skip(1), takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.userPreferences.columns = this.columns
+      this.userPreferences.columns = this.defaultColumns
         .map((column) => (column.optional && column.visible ? column.id : ''))
         .filter((value) => !!value);
       this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));

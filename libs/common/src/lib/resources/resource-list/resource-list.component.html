@@ -103,6 +103,7 @@
       <stf-processed-resource-table
         *ngIf="isMainView && data?.length > 0"
         [data]="data"
+        [sorting]="sort"
         [labelSets]="labelSets$ | async"
         [bulkAction]="bulkAction"
         (addLabels)="addLabelsToSelection($event)"
@@ -111,25 +112,32 @@
         (menuAction)="onMenuAction($event)"
         (removeLabel)="removeLabel($event)"
         (reprocessResources)="bulkReprocess($event)"
-        (loadMore)="loadMore()"></stf-processed-resource-table>
+        (loadMore)="loadMore()"
+        (sort)="sortBy($event)"></stf-processed-resource-table>
 
       <stf-pending-resources-table
         *ngIf="isPendingView && data?.length > 0"
         [data]="data"
+        [sorting]="sort"
         [bulkAction]="bulkAction"
         (menuAction)="onMenuAction($event)"
         (deleteResources)="delete($event)"
-        (loadMore)="loadMore()"></stf-pending-resources-table>
+        (loadMore)="loadMore()"
+        (sort)="sortBy($event)"></stf-pending-resources-table>
 
       <stf-error-resources-table
         *ngIf="isFailureView && data?.length > 0"
         [data]="data"
+        [sorting]="sort"
         [bulkAction]="bulkAction"
         [errorCount]="(statusCount | async)?.error"
         (isLoading)="setLoading($event)"
         (menuAction)="onMenuAction($event)"
         (deleteResources)="delete($event)"
-        (loadMore)="loadMore()"></stf-error-resources-table>
+        (reprocessResources)="bulkReprocess($event)"
+        (reprocessAll)="bulkReprocess($event, 2000)"
+        (loadMore)="loadMore()"
+        (sort)="sortBy($event)"></stf-error-resources-table>
     </ng-container>
 
     <div

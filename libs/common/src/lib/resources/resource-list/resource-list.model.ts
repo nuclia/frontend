@@ -1,4 +1,4 @@
-import { Classification, Resource } from '@nuclia/core';
+import { Classification, Resource, SortField, SortOption } from '@nuclia/core';
 import { IHeaderCell } from '@guillotinaweb/pastanaga-angular';
 
 export interface ColoredLabel extends Classification {
@@ -21,9 +21,10 @@ export interface ColumnHeader extends IHeaderCell {
 export type MenuAction = 'edit' | 'annotate' | 'classify' | 'delete' | 'reprocess';
 
 export const DEFAULT_PREFERENCES = {
-  pageSize: 20,
   columns: ['modification', 'language'],
 };
+export const DEFAULT_PAGE_SIZE = 20;
+export const DEFAULT_SORTING: SortOption = { field: SortField.created, order: 'desc' };
 
 export const RESOURCE_LIST_PREFERENCES = 'NUCLIA_RESOURCE_LIST_PREFERENCES';
 

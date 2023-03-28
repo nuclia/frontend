@@ -5,8 +5,14 @@ export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
 export type SortOrder = 'asc' | 'desc';
 
+export enum SortField {
+  created = 'created',
+  modified = 'modified',
+  title = 'title',
+}
+
 export interface SortOption {
-  field: 'created' | 'modified' | 'title';
+  field: SortField;
   limit?: number;
   order?: SortOrder;
 }

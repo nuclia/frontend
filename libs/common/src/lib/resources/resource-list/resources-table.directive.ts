@@ -1,8 +1,21 @@
 import { Directive, EventEmitter, inject, Input, Output } from '@angular/core';
-import { BulkAction, MenuAction, ResourceWithLabels } from './resource-list.model';
-import { Resource } from '@nuclia/core';
+import { BulkAction, ColumnHeader, MenuAction, ResourceWithLabels } from './resource-list.model';
+import { Resource, SortField, SortOption } from '@nuclia/core';
 import { map } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
+import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
+import { combineLatest, Observable } from 'rxjs';
+
+export const COMMON_COLUMNS = [
+  { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
+  {
+    id: 'created',
+    label: 'generic.date',
+    size: '128px',
+    centered: true,
+    sortable: true,
+  },
+];
 
 @Directive({
   selector: '[stfResourcesTable]',
@@ -16,6 +29,14 @@ export class ResourcesTableDirective {
   }
   get data(): ResourceWithLabels[] {
     return this._data;
+  }
+
+  @Input()
+  set sorting(value: SortOption | undefined | null) {
+    this._sorting = value;
+  }
+  get sorting() {
+    return this._sorting;
   }
 
   @Input()
@@ -47,6 +68,7 @@ export class ResourcesTableDirective {
   }
 
   @Output() loadMore: EventEmitter<void> = new EventEmitter();
+  @Output() sort: EventEmitter<SortOption> = new EventEmitter();
   @Output() clickOnTitle: EventEmitter<{ resource: Resource }> = new EventEmitter();
   @Output() deleteResources: EventEmitter<Resource[]> = new EventEmitter();
   @Output() menuAction: EventEmitter<{ resource: Resource; action: MenuAction }> = new EventEmitter();
@@ -60,13 +82,54 @@ export class ResourcesTableDirective {
   };
   private _data: ResourceWithLabels[] = [];
   private _selection: string[] = [];
+  private _sorting?: SortOption | null;
 
   protected sdk: SDKService = inject(SDKService);
   currentKb = this.sdk.currentKb;
   isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
+  protected defaultColumns: ColumnHeader[] = COMMON_COLUMNS;
+  columns: Observable<ColumnHeader[]> = this.isAdminOrContrib.pipe(
+    map((canEdit) => {
+      const columns = this.defaultColumns.map(this.getApplySortingMapper());
+      return canEdit ? [...columns, { id: 'menu', label: 'generic.actions', size: '96px' }] : [...columns];
+    }),
+  );
+
+  headerCells: Observable<HeaderCell[]> = this.columns.pipe(map((cells) => cells.map((cell) => new HeaderCell(cell))));
+  tableLayout: Observable<string> = combineLatest([this.isAdminOrContrib, this.columns]).pipe(
+    map(([canEdit, cells]) => {
+      const layout = cells.map((cell) => cell.size).join(' ');
+      return canEdit ? `40px ${layout}` : layout;
+    }),
+  );
+
+  protected getApplySortingMapper() {
+    return (column: ColumnHeader) => {
+      if (this.sorting && column.id === this.sorting.field) {
+        column.active = true;
+        column.descending = this.sorting.order ? this.sorting.order === 'desc' : true;
+      }
+      return column;
+    };
+  }
+
   onLoadMore() {
     this.loadMore.emit();
+  }
+
+  sortBy(cell: HeaderCell) {
+    switch (cell.id) {
+      case SortField.title:
+      case SortField.created:
+      case SortField.modified:
+        const sorting: SortOption = {
+          field: cell.id,
+          order: cell.descending ? 'desc' : 'asc',
+        };
+        this.sort.emit(sorting);
+        break;
+    }
   }
 
   triggerAction(resource: Resource, action: MenuAction) {
