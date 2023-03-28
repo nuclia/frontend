@@ -74,6 +74,16 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
       });
   }
 
+  initKbForm() {
+    this.kbForm?.patchValue({
+      uid: this.kb?.id,
+      slug: this.kb?.slug,
+      title: this.kb?.title,
+      description: this.kb?.description,
+      config: this.currentConfig,
+    });
+  }
+
   saveKb(): void {
     if (!this.kbForm || this.kbForm.invalid) return;
     this.saving = true;
