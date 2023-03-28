@@ -18,10 +18,10 @@
 
   // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
   // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
-  let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
+  // let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = 'eda3f482-d432-4fac-913a-00f0a4696fd4'; // pdfs
-  // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
+  let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '49e0c43e-7beb-4418-94fa-ed90226f365c'; // la classe américaine
   // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // word, excel, csv, images,…
@@ -99,7 +99,7 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink,relations,answers,zspeech" />
+        features="filter,suggestions,permalink,relations,zanswers,zspeech" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
