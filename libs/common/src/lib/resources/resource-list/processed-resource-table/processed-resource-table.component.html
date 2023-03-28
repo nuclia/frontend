@@ -106,7 +106,7 @@
             </div>
           </div>
         </pa-table-cell>
-        <pa-table-cell *ngIf="(visibleColumnsId | async).includes('classification')">
+        <pa-table-cell *ngIf="(visibleColumnsId | async)?.includes('classification')">
           <div class="label-container">
             <nsi-label
               *ngFor="let label of row.labels"
@@ -119,13 +119,13 @@
         </pa-table-cell>
         <pa-table-cell
           center
-          *ngIf="(visibleColumnsId | async).includes('created')">
+          *ngIf="(visibleColumnsId | async)?.includes('created')">
           <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
         </pa-table-cell>
         <pa-table-cell
           center
-          *ngIf="(visibleColumnsId | async).includes('language')">
-          <span class="body-s">{{ row.resource.metadata.language || '–' }}</span>
+          *ngIf="(visibleColumnsId | async)?.includes('language')">
+          <span class="body-s">{{ row.resource.metadata?.language || '–' }}</span>
         </pa-table-cell>
         <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
           <pa-button

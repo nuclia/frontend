@@ -101,7 +101,7 @@
   <div class="resource-list-content">
     <ng-container *ngIf="currentKb | async">
       <stf-processed-resource-table
-        *ngIf="isMainView && data?.length > 0"
+        *ngIf="isMainView && (data?.length || 0) > 0"
         [data]="data"
         [sorting]="sort"
         [labelSets]="labelSets$ | async"
@@ -116,7 +116,7 @@
         (sort)="sortBy($event)"></stf-processed-resource-table>
 
       <stf-pending-resources-table
-        *ngIf="isPendingView && data?.length > 0"
+        *ngIf="isPendingView && (data?.length || 0) > 0"
         [data]="data"
         [sorting]="sort"
         [bulkAction]="bulkAction"
@@ -126,7 +126,7 @@
         (sort)="sortBy($event)"></stf-pending-resources-table>
 
       <stf-error-resources-table
-        *ngIf="isFailureView && data?.length > 0"
+        *ngIf="isFailureView && (data?.length || 0) > 0"
         [data]="data"
         [sorting]="sort"
         [bulkAction]="bulkAction"

@@ -5,7 +5,10 @@ import { getMimeIcon } from './icons';
   name: 'mimeIcon',
 })
 export class MimeIconPipe implements PipeTransform {
-  transform(mime: string): string | undefined {
+  transform(mime: string | undefined): string | undefined {
+    if (!mime) {
+      return;
+    }
     return getMimeIcon(mime.toLowerCase());
   }
 }
