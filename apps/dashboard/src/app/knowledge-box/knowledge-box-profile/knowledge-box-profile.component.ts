@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { concatMap, takeUntil } from 'rxjs/operators';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { of, Subject } from 'rxjs';
+import { concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
-import { Account, KnowledgeBox, WritableKnowledgeBox } from '@nuclia/core';
+import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '@flaps/common';
 
@@ -17,12 +17,7 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   kb: KnowledgeBox | undefined;
   account: Account | undefined;
 
-  kbForm = this.formBuilder.group({
-    uid: [''],
-    slug: ['', [Sluggable()]],
-    title: ['', [Validators.required]],
-    description: [''],
-  });
+  kbForm?: UntypedFormGroup;
 
   validationMessages: { [key: string]: IErrorMessages } = {
     slug: {
@@ -35,6 +30,10 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
 
   saving = false;
   unsubscribeAll = new Subject<void>();
+  hasAnswers = false;
+  learningConfigurations?: { id: string; data: LearningConfiguration }[];
+  displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
+  currentConfig: { [id: string]: string } = {};
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -44,28 +43,49 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.stateService.stash.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-      this.kb = data || undefined;
-      if (this.kb) {
-        this.initKbForm();
-        this.cdr?.markForCheck();
-      }
-    });
-    this.stateService.account.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-      this.account = data || undefined;
-      this.cdr?.markForCheck();
-    });
+    this.stateService.stash
+      .pipe(
+        takeUntil(this.unsubscribeAll),
+        tap((data) => (this.kb = data || undefined)),
+        switchMap(() => this.stateService.account.pipe(takeUntil(this.unsubscribeAll))),
+        tap((data) => (this.account = data || undefined)),
+        switchMap(() => (this.kb?.getConfiguration() || of({})).pipe(take(1))),
+        tap((conf) => (this.currentConfig = conf)),
+        switchMap(() => this.sdk.getVisibleLearningConfiguration(false)),
+      )
+      .subscribe(({ display, full }) => {
+        this.displayedLearningConfigurations = display;
+        this.learningConfigurations = full;
+        if (this.kb) {
+          this.kbForm = this.formBuilder.group({
+            uid: [this.kb?.id],
+            slug: [this.kb?.slug, [Sluggable()]],
+            title: [this.kb?.title, [Validators.required]],
+            description: [this.kb?.description],
+            config: this.formBuilder.group(
+              this.displayedLearningConfigurations.reduce((acc, entry) => {
+                acc[entry.id] = [this.currentConfig[entry.id]];
+                return acc;
+              }, {} as { [key: string]: any }),
+            ),
+          });
+          this.cdr?.markForCheck();
+        }
+      });
   }
 
-  initKbForm(): void {
-    this.kbForm.get('uid')?.patchValue(this.kb?.id);
-    this.kbForm.get('slug')?.patchValue(this.kb?.slug);
-    this.kbForm.get('title')?.patchValue(this.kb?.title);
-    this.kbForm.get('description')?.patchValue(this.kb?.description);
+  initKbForm() {
+    this.kbForm?.patchValue({
+      uid: this.kb?.id,
+      slug: this.kb?.slug,
+      title: this.kb?.title,
+      description: this.kb?.description,
+      config: this.currentConfig,
+    });
   }
 
   saveKb(): void {
-    if (this.kbForm.invalid) return;
+    if (!this.kbForm || this.kbForm.invalid) return;
     this.saving = true;
     const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
     const data: Partial<KnowledgeBox> = {
@@ -73,11 +93,26 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
       description: this.kbForm.value.description,
       slug: newSlug,
     };
-    (this.kb as WritableKnowledgeBox)
-      .modify(data)
-      .pipe(concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, newSlug)))
+    const kb = this.kb as WritableKnowledgeBox;
+    kb.modify(data)
+      .pipe(
+        switchMap(() => {
+          const current = (this.learningConfigurations || []).reduce((acc, entry) => {
+            if (this.currentConfig[entry.id]) {
+              acc[entry.id] = this.currentConfig[entry.id];
+            }
+            return acc;
+          }, {} as { [key: string]: string });
+          const conf = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
+            acc[entry.id] = this.kbForm?.value.config[entry.id];
+            return acc;
+          }, current);
+          return kb.setConfiguration(conf);
+        }),
+        concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, newSlug)),
+      )
       .subscribe((kb) => {
-        this.kbForm.markAsPristine();
+        this.kbForm?.markAsPristine();
         this.saving = false;
         this.stateService.setStash(kb);
         this.sdk.refreshKbList(true);

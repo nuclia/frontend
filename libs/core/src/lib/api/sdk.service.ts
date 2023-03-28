@@ -1,5 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Account, Counters, IKnowledgeBoxItem, KnowledgeBox, Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import {
+  Account,
+  Counters,
+  IKnowledgeBoxItem,
+  KnowledgeBox,
+  LearningConfiguration,
+  LearningConfigurationSet,
+  Nuclia,
+  WritableKnowledgeBox,
+} from '@nuclia/core';
 import {
   BehaviorSubject,
   combineLatest,
@@ -195,5 +204,33 @@ export class SDKService {
         }),
       )
       .subscribe();
+  }
+
+  getVisibleLearningConfiguration(
+    onCreation = true,
+  ): Observable<{ display: LearningConfigurationSet; full: LearningConfigurationSet }> {
+    return forkJoin([
+      this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
+      this.featureFlagService.isFeatureEnabled('answers').pipe(take(1)),
+      this.nuclia.db.getLearningConfigurations().pipe(take(1)),
+    ]).pipe(
+      map(([hasAnonymization, hasAnswers, conf]) => {
+        const full = Object.entries(conf)
+          .map(([id, data]) => ({ id, data }))
+          // semantic_model cannot be changed after kb creation
+          .filter((entry) => onCreation || entry.id !== 'semantic_model');
+
+        return {
+          // At display, hide configurations with only one option or under feature flagging
+          display: full.filter(
+            (entry) =>
+              entry.data.options.length > 1 &&
+              (entry.id !== 'anonymization_model' || hasAnonymization) &&
+              (entry.id !== 'generative_model' || hasAnswers),
+          ),
+          full,
+        };
+      }),
+    );
   }
 }

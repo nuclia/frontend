@@ -146,3 +146,5 @@ export interface LearningConfiguration {
   options: { value: string; name: string }[];
   default: string;
 }
+
+export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];

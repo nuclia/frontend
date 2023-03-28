@@ -5,6 +5,7 @@
     <h2>{{ 'stash.profile' | translate }}</h2>
 
     <form
+      *ngIf="kbForm"
       [formGroup]="kbForm"
       (ngSubmit)="saveKb()">
       <div>
@@ -45,6 +46,26 @@
           formControlName="description"
           externalLabel
           [rows]="4"></pa-textarea>
+      </div>
+
+      <div
+        formGroupName="config"
+        *ngFor="let conf of displayedLearningConfigurations">
+        <div class="label">
+          <label class="title-s">{{ 'stash.create.' + conf.id | translate }}</label>
+          <div>
+            <small>{{ 'stash.create.' + conf.id + '.help' | translate }}</small>
+          </div>
+        </div>
+        <pa-radio-group
+          [formControlName]="conf.id"
+          [name]="conf.id">
+          <pa-radio
+            *ngFor="let value of conf.data.options"
+            [value]="value.value">
+            {{ value.name }}
+          </pa-radio>
+        </pa-radio-group>
       </div>
 
       <footer>

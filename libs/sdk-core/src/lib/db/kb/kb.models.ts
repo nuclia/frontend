@@ -102,6 +102,8 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getTempToken(): Observable<string>;
 
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList>;
+
+  getConfiguration(): Observable<{ [id: string]: string }>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -156,6 +158,8 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
   createKey(saId: string, expires: string): Observable<{ token: string }>;
 
   deleteKey(saId: string, saKeyId: string): Observable<void>;
+
+  setConfiguration(config: { [id: string]: string }): Observable<void>;
 }
 
 export interface KnowledgeBoxCreation {

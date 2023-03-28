@@ -12,7 +12,8 @@
     display: flex;
     margin-bottom: rhythm(2);
 
-    label {
+    label,
+    .label {
       width: rhythm(28);
     }
 

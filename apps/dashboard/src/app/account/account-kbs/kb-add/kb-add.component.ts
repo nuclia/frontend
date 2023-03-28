@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { SDKService, STFTrackingService, STFUtils, Zone } from '@flaps/core';
+import { SDKService, STFUtils, Zone } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
-import { forkJoin, share, take } from 'rxjs';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
@@ -42,25 +41,14 @@ export class KbAddComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private dialogRef: MatDialogRef<KbAddComponent, { success: boolean } | undefined>,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
     @Inject(MAT_DIALOG_DATA) public data: KbAddData,
     private sdk: SDKService,
   ) {}
 
   ngOnInit(): void {
-    forkJoin([
-      this.tracking.isFeatureEnabled('kb-anonymization').pipe(take(1)),
-      this.tracking.isFeatureEnabled('answers').pipe(take(1)),
-      this.sdk.nuclia.db.getLearningConfigurations().pipe(take(1)),
-    ]).subscribe(([hasAnonymization, hasAnswers, conf]) => {
-      this.learningConfigurations = Object.entries(conf).map(([id, data]) => ({ id, data }));
-      // Hide configurations with only one option or under feature flagging
-      this.displayedLearningConfigurations = this.learningConfigurations.filter(
-        (entry) =>
-          entry.data.options.length > 1 &&
-          (entry.id !== 'anonymization_model' || hasAnonymization) &&
-          (entry.id !== 'generative_model' || hasAnswers),
-      );
+    this.sdk.getVisibleLearningConfiguration().subscribe(({ display, full }) => {
+      this.displayedLearningConfigurations = display;
+      this.learningConfigurations = full;
       this.kbForm = this.formBuilder.group({
         title: ['', [Sluggable()]],
         description: [''],
@@ -75,6 +63,7 @@ export class KbAddComponent implements OnInit {
       this.cdr.markForCheck();
     });
   }
+
   save() {
     // Prevent submitting the form by pressing "enter" in the kb input on first step
     if (this.step < this._lastStep) {

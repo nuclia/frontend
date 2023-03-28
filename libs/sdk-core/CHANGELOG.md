@@ -1,3 +1,9 @@
+# 1.2.1 (unreleased)
+
+### Improvements
+
+- Support Kb configuration endpoints
+
 # 1.2.0 (2023-03-28)
 
 ### Features
