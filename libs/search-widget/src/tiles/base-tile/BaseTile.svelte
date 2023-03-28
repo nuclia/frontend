@@ -76,7 +76,9 @@
   let transcriptsInitialized = false;
   let showFullTranscripts = false;
   let transcripts: Observable<MediaWidgetParagraph[]> = of([]);
+  const paragraphHeights: number[] = [];
 
+  $: fullListHeight = paragraphHeights.reduce((sum, height) => (sum += height), 0);
   $: isMobile = innerWidth < 448;
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: switch (previewKind) {
@@ -389,7 +391,7 @@
                 class="paragraphs-container"
                 class:expanded={showAllResults}
                 class:can-expand={$matchingParagraphs$.length > 4}
-                style="--paragraph-count: {$matchingParagraphs$.length}">
+                style="--full-height: {fullListHeight}">
                 {#each $matchingParagraphs$ as paragraph, index}
                   <ParagraphResult
                     {paragraph}
@@ -398,6 +400,7 @@
                     stack={expanded}
                     selected={isSame(paragraph, selectedParagraph)}
                     disabled={expanded && noResultNavigator}
+                    on:paragraphHeight={(event) => (paragraphHeights[index] = event.detail)}
                     on:open={() => onClickParagraph(paragraph, index)} />
                 {/each}
               </ul>

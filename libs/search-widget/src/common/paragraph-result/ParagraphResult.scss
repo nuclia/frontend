@@ -1,53 +1,72 @@
 .sw-paragraph-result {
+  --expander-width: var(--rhythm-3);
+  align-items: start;
   display: flex;
-  font-size: var(--font-size-medium);
-  gap: var(--rhythm-1);
-  line-height: var(--rhythm-3);
-  transition: background-color var(--transition-superfast), color var(--transition-superfast);
 
-  &:not(.stack) {
-    align-items: center;
+  .expander-button-container {
+    transition: transform var(--transition-superfast);
+    width: var(--expander-width);
 
-    &.no-indicator {
-      margin-left: calc(var(--rhythm-1) * -1);
-      padding-left: var(--rhythm-1);
+    &.expanded {
+      transform: rotate(90deg);
     }
   }
-  &.stack {
-    flex-direction: column;
-    gap: var(--rhythm-0_5);
-    padding: var(--rhythm-2);
-  }
-  &.no-indicator.selected {
-    color: var(--color-primary-regular);
-  }
-  &:not(.disabled) {
-    cursor: pointer;
-  }
 
-  .paragraph-text {
-    overflow-wrap: break-word;
-  }
-
-  .indicator-container {
+  .paragraph-result-container {
     display: flex;
-    flex: 0 0 auto;
-  }
-  .hidden {
-    display: none;
+    font-size: var(--font-size-medium);
+    gap: var(--rhythm-1);
+    line-height: var(--rhythm-3);
+    transition: background-color var(--transition-superfast), color var(--transition-superfast);
+    width: calc(100% - var(--expander-width));
+
+    &:not(.stack) {
+      align-items: start;
+
+      &.no-indicator {
+        margin-left: calc(var(--rhythm-1) * -1);
+        padding-left: var(--rhythm-1);
+      }
+    }
+    &.stack {
+      flex-direction: column;
+      gap: var(--rhythm-0_5);
+      padding: var(--rhythm-2);
+    }
+    &.no-indicator.selected {
+      color: var(--color-primary-regular);
+    }
+    &:not(.disabled) {
+      cursor: pointer;
+    }
+
+    .paragraph-text {
+      overflow-wrap: break-word;
+    }
+
+    .indicator-container {
+      display: flex;
+      flex: 0 0 auto;
+    }
+    .hidden {
+      display: none;
+    }
   }
 }
 
 @media (hover: hover) {
-  .sw-paragraph-result:not(.stack) .paragraph-text {
-    padding-right: var(--rhythm-1_5);
-  }
+  .sw-paragraph-result {
+    .paragraph-result-container:not(.stack) .paragraph-text {
+      padding-right: var(--rhythm-1_5);
+    }
 
-  .sw-paragraph-result:hover {
-    background-color: var(--color-neutral-lightest);
-  }
+    .paragraph-result-container:hover,
+    .paragraph-result-container.hover {
+      background-color: var(--color-neutral-lightest);
+    }
 
-  .sw-paragraph-result:not(.stack) {
-    border-radius: var(--rhythm-1_5);
+    .paragraph-result-container:not(.stack) {
+      border-radius: var(--rhythm-1_5);
+    }
   }
 }
