@@ -2,6 +2,7 @@
 	"generic.cancel": "Cancelar",
 	"generic.logout": "Salir",
 	"generic.save_continue": "Guardar y continuar",
+	"generic.server_down": "El servidor de sincronización está inactivo",
 	"generic.switch_account": "Cambia de cuenta",
 	"generic.upload": "Subir",
 	"history.active": "Subidas activas",

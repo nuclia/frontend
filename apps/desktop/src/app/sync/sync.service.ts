@@ -11,6 +11,7 @@ import {
   map,
   Observable,
   of,
+  repeat,
   repeatWhen,
   ReplaySubject,
   Subject,
@@ -468,5 +469,14 @@ export class SyncService {
     const date = new Date();
     date.setFullYear(date.getFullYear() + 1);
     return Math.floor(date.getTime() / 1000).toString();
+  }
+
+  isServerDown(): Observable<boolean> {
+    return of(true).pipe(
+      switchMap(() => this.http.get<{ running: boolean }>(`${SYNC_SERVER}/status`)),
+      map((res) => !res.running),
+      catchError(() => of(true)),
+      repeat({ delay: 5000 }),
+    );
   }
 }

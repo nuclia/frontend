@@ -2,6 +2,7 @@
 	"generic.cancel": "Annuler",
 	"generic.logout": "Déconnexion",
 	"generic.save_continue": "Enregistrer et continuer",
+	"generic.server_down": "Le serveur de synchronisation est en panne",
 	"generic.switch_account": "Changer de compte",
 	"generic.upload": "Télécharger",
 	"history.active": "Téléchargements actifs",

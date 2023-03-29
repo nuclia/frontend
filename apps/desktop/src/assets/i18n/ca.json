@@ -2,6 +2,7 @@
 	"generic.cancel": "Cancel·lar",
 	"generic.logout": "Sortir",
 	"generic.save_continue": "Desar i continuar",
+	"generic.server_down": "El servidor de sincronització està inactiu",
 	"generic.switch_account": "Canviar de compte",
 	"generic.upload": "Pujar",
 	"history.active": "Pujades actives",
