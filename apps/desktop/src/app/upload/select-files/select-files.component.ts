@@ -13,7 +13,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
 import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
+import { SyncItem, ISourceConnector, SearchResults, CONNECTOR_ID_KEY } from '../../sync/models';
 import { defaultAuthCheck } from '../../utils';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -50,7 +50,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
         (this.source as ISourceConnector).getFiles(this.query).pipe(
           catchError((error) => {
             if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
-              localStorage.setItem(SOURCE_ID_KEY, this.sourceId || '');
+              localStorage.setItem(CONNECTOR_ID_KEY, this.sourceId || '');
               if (this.source.hasServerSideAuth) {
                 this.source.goToOAuth(true);
               }

@@ -101,7 +101,7 @@ export const uploadFile = (
   };
   let retries = 1;
   const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
-  return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers).pipe(
+  return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true).pipe(
     repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     take(1),

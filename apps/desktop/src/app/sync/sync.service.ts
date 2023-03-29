@@ -40,7 +40,7 @@ import { injectScript, md5, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
 import { FolderConnector } from './sources/folder';
 import { S3Connector } from './sources/s3';
-import { NucliaOptions, ProcessingPullResponse } from '@nuclia/core';
+import { NucliaOptions, ProcessingPullResponse, WritableKnowledgeBox } from '@nuclia/core';
 import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
 import { GCSConnector } from './sources/gcs';
 import { OneDriveConnector } from './sources/onedrive';
@@ -66,6 +66,13 @@ interface Sync {
   resumable?: boolean;
 }
 
+// TODO: share models between server and Angular app
+interface Source {
+  connectorId: string;
+  data: ConnectorParameters;
+  kb?: NucliaOptions;
+  items?: SyncItem[];
+}
 @Injectable({ providedIn: 'root' })
 export class SyncService {
   sources: {
@@ -231,8 +238,12 @@ export class SyncService {
     ).subscribe();
   }
 
-  setSource(sourceId: string, connectorId: string, data?: ConnectorParameters): Observable<void> {
+  setSourceData(sourceId: string, connectorId: string, data?: ConnectorParameters): Observable<void> {
     return this.http.post<void>(`${SYNC_SERVER}/source`, { [sourceId]: { connectorId, data } });
+  }
+
+  getSourceData(sourceId: string): Observable<Source> {
+    return this.http.get<Source>(`${SYNC_SERVER}/source/${sourceId}`);
   }
 
   getFiles(sourceId: string, query?: string): Observable<SearchResults> {
@@ -240,14 +251,36 @@ export class SyncService {
   }
 
   addSync(sync: Sync) {
-    const nucliaOptions: NucliaOptions = {
-      ...this.sdk.nuclia.options,
-      knowledgeBox: sync.destination.params.kb,
-    };
-    return this.http.patch<void>(`${SYNC_SERVER}/source/${sync.source}`, {
-      kb: nucliaOptions,
-      items: sync.files,
-    });
+    return (
+      sync.destination.id === 'nucliacloud'
+        ? forkJoin([this.getSourceData(sync.source), this.getKb(sync.destination.params.kb)]).pipe(
+            switchMap(([source, kb]) => {
+              if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+                return of(source.kb);
+              } else {
+                return this.getNucliaKey(kb).pipe(
+                  map(
+                    (data) =>
+                      ({
+                        zone: this.sdk.nuclia.options.zone,
+                        backend: this.sdk.nuclia.options.backend,
+                        knowledgeBox: data.kbid,
+                        apiKey: data.token,
+                      } as NucliaOptions),
+                  ),
+                );
+              }
+            }),
+          )
+        : of({})
+    ).pipe(
+      switchMap((options) =>
+        this.http.patch<void>(`${SYNC_SERVER}/source/${sync.source}`, {
+          kb: options,
+          items: sync.files,
+        }),
+      ),
+    );
     // this._queue.push(sync);
     // this.onQueueUpdate();
     // this.start();
@@ -412,21 +445,23 @@ export class SyncService {
       .subscribe();
   }
 
-  getNucliaKey(slug: string): Observable<{ token: string }> {
-    if (!this.sdk.nuclia.options.account) {
-      return of({ token: '' });
-    }
-    return this.sdk.nuclia.db.getKnowledgeBox(this.sdk.nuclia.options.account, slug).pipe(
-      switchMap((kb) =>
-        kb.createKeyForService(
-          {
-            title: 'Desktop',
-            role: 'SCONTRIBUTOR',
-          },
-          this.getExpirationDate(),
-        ),
-      ),
+  getKb(slug: string): Observable<WritableKnowledgeBox> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, slug)),
     );
+  }
+
+  getNucliaKey(kb: WritableKnowledgeBox): Observable<{ token: string; kbid: string }> {
+    return kb
+      .createKeyForService(
+        {
+          title: 'Desktop',
+          role: 'SCONTRIBUTOR',
+        },
+        this.getExpirationDate(),
+      )
+      .pipe(map((token) => ({ ...token, kbid: kb.id })));
   }
 
   private getExpirationDate(): string {

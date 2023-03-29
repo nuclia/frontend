@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
+import { ConnectorDefinition, ConnectorParameters, Field, SOURCE_NAME_KEY } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 
@@ -52,7 +52,11 @@ export class ConnectorsComponent implements OnDestroy {
   }
 
   @Output() cancel = new EventEmitter<void>();
-  @Output() selectConnector = new EventEmitter<{ connector: ConnectorDefinition; params: ConnectorParameters }>();
+  @Output() selectConnector = new EventEmitter<{
+    name: string;
+    connector: ConnectorDefinition;
+    params: ConnectorParameters;
+  }>();
 
   connectors: ConnectorDefinition[] = [];
   fields?: Field[];
@@ -113,7 +117,8 @@ export class ConnectorsComponent implements OnDestroy {
             this.sync.setStep(1);
             this.showFields(connectorId, fields);
           } else {
-            this.selectedConnector && this.selectConnector.emit({ connector: this.selectedConnector, params: {} });
+            this.selectedConnector &&
+              this.selectConnector.emit({ name: '', connector: this.selectedConnector, params: {} });
           }
         });
     } else {
@@ -142,6 +147,7 @@ export class ConnectorsComponent implements OnDestroy {
       }),
     });
     if (this.quickAccessName) {
+      localStorage.setItem(SOURCE_NAME_KEY, this.quickAccessName);
       const cache = this.sync.getConnectorCache(connectorId, this.quickAccessName);
       if (cache) {
         this.form.patchValue({ fields: cache.params, quickAccess: { name: this.quickAccessName } });
@@ -172,7 +178,12 @@ export class ConnectorsComponent implements OnDestroy {
           this.form?.value.fields || {},
         );
       }
-      this.selectConnector.emit({ connector: this.selectedConnector, params: this.form?.value.fields || {} });
+      // TODO: we need a real id, the name is not good enough
+      this.selectConnector.emit({
+        name: this.form?.value.quickAccess.name || '',
+        connector: this.selectedConnector,
+        params: this.form?.value.fields || {},
+      });
     }
   }
 
