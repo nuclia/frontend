@@ -1,5 +1,5 @@
 import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '../../../../../libs/sdk-core/src';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, map, Observable, of, switchMap } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
 
@@ -17,49 +17,50 @@ export class NucliaCloud {
     this.nuclia = new Nuclia(options);
   }
 
-  upload(originalId: string, filename: string, data: { blob?: Blob; metadata?: any }): Observable<void> {
-    if (data.blob) {
-      const blob = data.blob;
+  upload(originalId: string, filename: string, data: { buffer?: ArrayBuffer; metadata?: any }): Observable<boolean> {
+    if (data.buffer) {
+      const buffer = data.buffer;
       const slug = sha256(originalId);
       return this.getKb().pipe(
         switchMap((kb) =>
           kb.getResourceBySlug(slug, [], []).pipe(
             catchError((error) => {
               if (error.status === 404) {
-                console.log('not found');
                 return kb
                   .createResource({ slug, title: filename }, true)
                   .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
               } else {
-                console.log('problme', slug, error.status);
-                throw error;
+                console.log(`Problem creating ${slug}, status ${error.status}`);
+                return of(undefined);
               }
             }),
           ),
         ),
-        switchMap((resource) =>
-          resource
-            .upload('file', new File([blob], filename), false, {
-              contentType: lookup(filename) || 'application/octet-stream',
-            })
-            .pipe(
-              catchError((error: any) => {
-                console.error(error.toString());
-                return resource.delete();
-              }),
-              switchMap((res) => {
-                if (res && (res.failed || res.conflict)) {
+        switchMap(
+          (resource) =>
+            resource
+              ?.upload('file', buffer, false, {
+                contentType: lookup(filename) || 'application/octet-stream',
+                filename,
+              })
+              .pipe(
+                catchError((error: any) => {
+                  console.error(error.toString());
                   return resource.delete();
-                } else {
-                  return of(undefined);
-                }
-              }),
-            ),
+                }),
+                switchMap((res) => {
+                  console.log('res', res);
+                  if (res && res.completed) {
+                    return of(true);
+                  } else {
+                    return resource.delete().pipe(map(() => false));
+                  }
+                }),
+              ) || of(false),
         ),
-        map(() => undefined),
       );
     } else {
-      return of(undefined);
+      return of(false);
     }
   }
 

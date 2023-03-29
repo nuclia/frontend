@@ -3,7 +3,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Router } from '@angular/router';
 import { filter, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
-import { ConnectorDefinition, ConnectorParameters, ISourceConnector, SOURCE_ID_KEY, SyncItem } from '../sync/models';
+import {
+  ConnectorDefinition,
+  ConnectorParameters,
+  ISourceConnector,
+  CONNECTOR_ID_KEY,
+  SyncItem,
+  SOURCE_NAME_KEY,
+} from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 
 @Component({
@@ -28,7 +35,7 @@ export class UploadComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.sourceId = localStorage.getItem(SOURCE_ID_KEY) || '';
+    this.sourceId = localStorage.getItem(CONNECTOR_ID_KEY) || '';
     // useful for dev mode in browser (in Electron, as the page is not reloaded, authneticate is already waiting for an answer)
     if (this.sourceId && !this.source) {
       this.sync
@@ -41,7 +48,8 @@ export class UploadComponent implements OnInit, OnDestroy {
         )
         .subscribe(() => {
           this.goTo(2);
-          localStorage.removeItem(SOURCE_ID_KEY);
+          localStorage.removeItem(CONNECTOR_ID_KEY);
+          localStorage.removeItem(SOURCE_NAME_KEY);
         });
     }
     this.sync.showFirstStep.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
@@ -54,7 +62,7 @@ export class UploadComponent implements OnInit, OnDestroy {
       } else {
         const params = this.sync.getConnectorCache(data.connectorId, data.quickAccessName)?.params;
         const connector = this.sync.sources[data.connectorId].definition;
-        this.selectSource({ connector, params });
+        this.selectSource({ name: data.quickAccessName, connector, params });
       }
     });
   }
@@ -69,10 +77,14 @@ export class UploadComponent implements OnInit, OnDestroy {
     this.sync.setStep(step);
   }
 
-  selectSource(event: { connector: ConnectorDefinition; params?: ConnectorParameters }) {
+  selectSource(event: { name: string; connector: ConnectorDefinition; params?: ConnectorParameters }) {
+    if (!event.name) {
+      // TODO fox flow we always have names
+      throw new Error('Name is mandatory');
+    }
     this.sourceId = event.connector.id;
     this.tracking.logEvent('desktop:select_source', { sourceId: this.sourceId });
-    this.sync.setSource(event.connector.id, event.connector.id, event.params).subscribe();
+    this.sync.setSourceData(event.name, event.connector.id, event.params).subscribe();
     this.sync
       .getSource(event.connector.id)
       .pipe(
@@ -83,7 +95,8 @@ export class UploadComponent implements OnInit, OnDestroy {
             source.handleParameters(event.params);
           }
           if (source.hasServerSideAuth) {
-            localStorage.setItem(SOURCE_ID_KEY, event.connector.id);
+            localStorage.setItem(CONNECTOR_ID_KEY, event.connector.id);
+            localStorage.setItem(SOURCE_NAME_KEY, event.name);
             source.goToOAuth();
           }
           return this.source.authenticate();
@@ -100,7 +113,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     this.sync
       .addSync({
         date: new Date().toISOString(),
-        source: this.sourceId,
+        source: localStorage.getItem(SOURCE_NAME_KEY) || '',
         destination: {
           id: event.connector.id,
           params: event.params,
@@ -114,7 +127,7 @@ export class UploadComponent implements OnInit, OnDestroy {
   }
 
   private reset() {
-    localStorage.removeItem(SOURCE_ID_KEY);
+    localStorage.removeItem(CONNECTOR_ID_KEY);
     this.sourceId = '';
     this.source = undefined;
     this.quickAccess = undefined;

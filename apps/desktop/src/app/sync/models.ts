@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 
-export const SOURCE_ID_KEY = 'NUCLIA_SOURCE_ID';
+export const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
+export const CONNECTOR_ID_KEY = 'NUCLIA_CONNECTOR_ID';
 export const CONNECTOR_PARAMS_CACHE = 'CONNECTOR_PARAMS_CACHE';
 export interface ConnectorDefinition {
   id: string;

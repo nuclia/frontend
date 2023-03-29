@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { STFUtils, STFTrackingService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
-import { SOURCE_ID_KEY } from './sync/models';
+import { CONNECTOR_ID_KEY } from './sync/models';
 import { getDeeplink } from './utils';
 
 @Component({
@@ -80,7 +80,7 @@ export class AppComponent implements OnInit {
           this.isAuthenticated = false;
           this.cdr?.markForCheck();
         }, 500);
-      } else if (localStorage.getItem(SOURCE_ID_KEY)) {
+      } else if (localStorage.getItem(CONNECTOR_ID_KEY)) {
         const interval = setInterval(() => {
           const deeplink = getDeeplink();
           if (deeplink && deeplink.includes('?')) {

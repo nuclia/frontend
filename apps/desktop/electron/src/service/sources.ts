@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { of, switchMap, tap } from 'rxjs';
+import { from, of, switchMap, tap } from 'rxjs';
 import { getConnector } from './connectors';
 import { Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
@@ -23,9 +23,13 @@ export const setSources = (sources: { [id: string]: Source }) => {
   }
 };
 
-export const getSourceFiles = (sourceId: string, query?: string) => {
+export const getSource = (sourceId: string) => {
   const sources = getSources();
-  const source = sources[sourceId];
+  return sources[sourceId];
+};
+
+export const getSourceFiles = (sourceId: string, query?: string) => {
+  const source = getSource(sourceId);
   if (!source) {
     throw new Error('Source not found');
   }
@@ -44,13 +48,12 @@ const downloadFile = (source: Source, item: SyncItem) => {
 
 export const syncFile = (source: Source, item: SyncItem) => {
   if (!source.kb) {
-    return of(undefined);
+    return of(false);
   }
 
   const nucliaConnector = new NucliaCloud(source.kb);
-  console.log('Uploading', item);
   return downloadFile(source, item).pipe(
-    tap((blob) => console.log('Downloaded', blob.size)),
-    switchMap((blob) => nucliaConnector.upload(item.originalId, item.title, { blob })),
+    switchMap((blob) => from(blob.arrayBuffer())),
+    switchMap((arrayBuffer) => nucliaConnector.upload(item.originalId, item.title, { buffer: arrayBuffer })),
   );
 };

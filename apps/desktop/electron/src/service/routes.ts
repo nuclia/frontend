@@ -1,6 +1,7 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
-import { getSourceFiles, getSources, setSources } from './sources';
+import { Source } from './models';
+import { getSource, getSourceFiles, getSources, setSources } from './sources';
 
 export const router = express.Router();
 
@@ -8,9 +9,20 @@ router.get('/', (req, res) => {
   res.send('Nuclia desktop service is running!');
 });
 
+router.get('/source/:id', async (req, res) => {
+  const source = getSource(req.params.id);
+  res.send(JSON.stringify(source));
+});
+
 router.post('/source', (req, res) => {
   const sources = getSources();
-  setSources({ ...sources, ...req.body });
+  const id = Object.keys(req.body)[0];
+  if (sources[id]) {
+    sources[id] = { ...sources[id], ...req.body[id] } as Source;
+  } else {
+    sources[id] = req.body[id] as Source;
+  }
+  setSources(sources);
   res.send('{ "success": true }');
 });
 
