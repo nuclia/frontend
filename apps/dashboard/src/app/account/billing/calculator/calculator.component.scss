@@ -1,0 +1,59 @@
+@import 'variables';
+
+:host {
+  pa-modal-dialog ::ng-deep dialog {
+    width: rhythm(90);
+  }
+  pa-slider ::ng-deep .pa-field .pa-field-control-range[type='range'] {
+    width: rhythm(35);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(5);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1.5);
+}
+
+.field-block {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+
+  .self-hosted {
+    display: flex;
+    font-weight: $font-weight-semi-bold;
+    gap: rhythm(1);
+    width: rhythm(28);
+    img {
+      width: rhythm(9);
+    }
+  }
+
+  pa-slider {
+    flex-grow: 1;
+  }
+
+  .price {
+    color: $color-primary-regular;
+    flex-shrink: 0;
+    font-weight: $font-weight-semi-bold;
+    min-width: rhythm(10);
+  }
+}
+
+.total {
+  color: $color-primary-regular;
+  margin-left: rhythm(1);
+}
+
+pa-modal-footer {
+  gap: rhythm(1);
+  justify-content: flex-end;
+}

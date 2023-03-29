@@ -1,0 +1,97 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    <h2>{{ 'billing.budget_calculator' | translate }}</h2>
+  </pa-modal-title>
+  <pa-modal-content>
+    <form>
+      <div class="section">
+        <div>
+          <div class="title-s">{{ 'billing.ingestion_cost' | translate }}</div>
+          <div
+            class="body-s"
+            [innerHTML]="'billing.ingestion_cost.description' | translate"></div>
+        </div>
+        <div class="field-block">
+          <pa-slider
+            [min]="params.hours.min"
+            [max]="params.hours.max"
+            [value]="values.hours"
+            (valueChange)="update('hours', $event)">
+            <span class="title-xxs">{{ 'billing.parameter.hours' | translate }}</span>
+          </pa-slider>
+          <div class="price">{{ calculatePrice('hours') }} €</div>
+        </div>
+        <div class="field-block">
+          <pa-slider
+            [min]="params.documents.min"
+            [max]="params.documents.max"
+            [value]="values.documents"
+            (valueChange)="update('documents', $event)">
+            <span class="title-xxs">{{ 'billing.parameter.documents' | translate }}</span>
+          </pa-slider>
+          <div class="price">{{ calculatePrice('documents') }} €</div>
+        </div>
+      </div>
+      <div class="section">
+        <div>
+          <div class="title-s">{{ 'billing.hosting_subscription' | translate }}</div>
+          <div class="body-s"></div>
+        </div>
+        <div class="field-block">
+          <label class="self-hosted">
+            <img
+              src="assets/images/nucliadb.svg"
+              alt="NucliaDB" />
+            <span>self-hosted</span>
+          </label>
+          <pa-toggle
+            [value]="selfHosting"
+            (valueChange)="toggleHosting()"></pa-toggle>
+        </div>
+        <div class="field-block">
+          <pa-slider
+            [min]="params.searches.min"
+            [max]="params.searches.max"
+            [value]="values.searches"
+            (valueChange)="update('searches', $event)">
+            <span class="title-xxs">{{ 'billing.parameter.searches' | translate }}</span>
+          </pa-slider>
+          <div class="price">{{ calculatePrice('searches') }} €</div>
+        </div>
+        <div
+          class="field-block"
+          *ngIf="!selfHosting">
+          <pa-slider
+            [min]="params.hosting.min"
+            [max]="params.hosting.max"
+            [value]="values.hosting"
+            (valueChange)="update('hosting', $event)">
+            <span class="title-xxs">{{ 'billing.parameter.hosting' | translate }}</span>
+          </pa-slider>
+          <div class="price">{{ calculatePrice('hosting') }} €</div>
+        </div>
+      </div>
+      <div class="section">
+        <div>
+          <div class="title-l">
+            {{ 'billing.monthly_estimation' | translate }}
+            <span class="total">{{ total }} €*</span>
+          </div>
+          <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
+        </div>
+      </div>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="modal.close()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

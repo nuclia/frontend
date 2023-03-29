@@ -3,6 +3,7 @@
     <th>
       <h2>{{ 'billing.subscription_plans' | translate }}</h2>
       <pa-button
+        *ngIf="isCalculatorEnabled | async"
         (click)="openCalculator()"
         icon="settings"
         iconAndText>

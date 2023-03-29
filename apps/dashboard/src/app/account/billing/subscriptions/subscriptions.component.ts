@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BillingService, FEATURES, PARAMETERS } from '../billing.service';
-import { map } from 'rxjs';
+import { CalculatorComponent } from '../calculator/calculator.component';
+import { map, shareReplay } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
+import { STFTrackingService } from '@flaps/core';
 
 @Component({
   selector: 'app-subscriptions',
@@ -10,14 +12,19 @@ import { SisModalService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionsComponent {
+  isCalculatorEnabled = this.tracking.isFeatureEnabled('calculator').pipe(shareReplay());
   isBasic = this.billing.type.pipe(map((type) => type === 'stash-basic'));
   isTeam = this.billing.type.pipe(map((type) => type === 'stash-team'));
   features = FEATURES;
   parameters = PARAMETERS;
 
-  constructor(private billing: BillingService) {}
+  constructor(
+    private billing: BillingService,
+    private modalService: SisModalService,
+    private tracking: STFTrackingService,
+  ) {}
 
   openCalculator() {
-    // TODO: open calculator
+    this.modalService.openModal(CalculatorComponent);
   }
 }
