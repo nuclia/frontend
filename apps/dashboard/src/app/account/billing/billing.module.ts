@@ -4,10 +4,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { PaButtonModule, PaIconModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaModalModule,
+  PaSliderModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { CalculatorComponent } from './calculator/calculator.component';
 
 const routes: Routes = [
   {
@@ -42,8 +50,10 @@ const routes: Routes = [
     PaModalModule,
     PaTextFieldModule,
     PaIconModule,
+    PaSliderModule,
+    PaTogglesModule,
   ],
-  declarations: [BillingComponent, SubscriptionsComponent, CheckoutComponent],
+  declarations: [BillingComponent, SubscriptionsComponent, CheckoutComponent, CalculatorComponent],
   exports: [],
 })
 export class BillingModule {}

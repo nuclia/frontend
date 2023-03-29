@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BillingService, FEATURES, PARAMETERS } from '../billing.service';
+import { CalculatorComponent } from '../calculator/calculator.component';
 import { map } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 
@@ -15,9 +16,10 @@ export class SubscriptionsComponent {
   features = FEATURES;
   parameters = PARAMETERS;
 
-  constructor(private billing: BillingService) {}
+  constructor(private billing: BillingService, private modalService: SisModalService) {}
 
   openCalculator() {
-    // TODO: open calculator
+    // TODO
+    //this.modalService.openModal(CalculatorComponent);
   }
 }
