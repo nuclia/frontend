@@ -2,6 +2,7 @@
 	"generic.cancel": "Cancel",
 	"generic.logout": "Log out",
 	"generic.save_continue": "Save & Continue",
+	"generic.server_down": "Sync server is down",
 	"generic.switch_account": "Switch account",
 	"generic.upload": "Upload",
 	"history.active": "Active uploads",

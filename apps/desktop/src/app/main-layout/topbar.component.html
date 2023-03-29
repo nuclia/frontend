@@ -6,6 +6,11 @@
       src="assets/nuclia-desktop-white.svg"
       alt="Nuclia Desktop" />
   </div>
+  <div class="status">
+    <span *ngIf="isServerDown | async">
+      {{ 'generic.server_down' | translate }}
+    </span>
+  </div>
   <div class="accounts">
     <pa-button
       *ngIf="account | async as account"

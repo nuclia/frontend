@@ -9,6 +9,10 @@ router.get('/', (req, res) => {
   res.send('Nuclia desktop service is running!');
 });
 
+router.get('/status', (req, res) => {
+  res.send('{"running": true}');
+});
+
 router.get('/source/:id', async (req, res) => {
   const source = getSource(req.params.id);
   res.send(JSON.stringify(source));
