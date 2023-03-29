@@ -1,6 +1,35 @@
 import { Injectable } from '@angular/core';
-import { StateService } from '@flaps/core';
-import { filter, map } from 'rxjs';
+import { SDKService } from '@flaps/core';
+import { map, Observable, switchMap, take } from 'rxjs';
+import { AccountTypes } from '@nuclia/core';
+
+export interface StripeCustomer {
+  customer_id: string;
+  billing_details: BillingDetails;
+}
+
+export interface BillingDetails {
+  name: string;
+  company: string;
+  vat?: string;
+  address: string;
+  country: string;
+  state?: string;
+  city: string;
+  postal_code: string;
+}
+
+enum RecurrentPriceInterval {
+  MONTHLY = 'monthly',
+  YEARLY = 'yearly',
+}
+
+export interface StripeSubscription {
+  payment_method_id: string;
+  on_demand_budget: number;
+  billing_interval?: RecurrentPriceInterval;
+  account_type: AccountTypes;
+}
 
 export const FEATURES = [
   { title: 'Document thumnails generation', basic: 'yes', pro: 'yes', business: 'yes' },
@@ -55,9 +84,47 @@ export const PARAMETERS = [
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
-  type = this.stateService.account.pipe(
-    filter((account) => !!account),
-    map((account) => account!.type),
-  );
-  constructor(private stateService: StateService) {}
+  type = this.sdk.currentAccount.pipe(map((account) => account.type));
+
+  constructor(private sdk: SDKService) {}
+
+  getCustomer(): Observable<StripeCustomer> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.get<StripeCustomer>(`/billing/account/${account.id}/customer`)),
+    );
+  }
+
+  createCustomer(data: BillingDetails) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.put<StripeCustomer>(`/billing/account/${account.id}/customer`, {
+          billing_details: data,
+        }),
+      ),
+    );
+  }
+
+  modifyCustomer(data: Partial<BillingDetails>) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.patch<void>(`/billing/account/${account.id}/customer`, {
+          billing_details: data,
+        }),
+      ),
+    );
+  }
+
+  getStripePublicKey() {
+    return this.sdk.nuclia.rest.get<{ public_key: string }>(`/auth/stripe/public`);
+  }
+
+  createSubscription(data: StripeSubscription) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.put<void>(`/billing/account/${account.id}/subscription`, data)),
+    );
+  }
 }
