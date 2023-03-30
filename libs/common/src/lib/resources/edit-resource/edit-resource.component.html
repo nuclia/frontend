@@ -82,6 +82,14 @@
             [name]="field.icon"
             size="small"></pa-icon>
           {{ 'resource.field-' + field.field_type | translate }}
+
+          <span
+            class="error-marker"
+            *ngIf="field.hasError">
+            <pa-icon
+              name="warning"
+              size="small"></pa-icon>
+          </span>
         </li>
       </ul>
     </nav>

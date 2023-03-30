@@ -4,6 +4,7 @@ import {
   EntityPositions,
   FieldId,
   getDataKeyFromFieldType,
+  IError,
   Paragraph,
   ParagraphClassification,
   Resource,
@@ -51,6 +52,14 @@ export const getParagraphs = (fieldId: FieldId, resource: Resource): Paragraph[]
   }
   return resource.data[dataKey]?.[fieldId.field_id]?.extracted?.metadata?.metadata?.paragraphs || [];
 };
+
+export function getErrors(fieldId: FieldId, resource: Resource): IError | null {
+  const dataKey = getDataKeyFromFieldType(fieldId.field_type);
+  if (!dataKey || !resource.data[dataKey]) {
+    return null;
+  }
+  return resource.data[dataKey]?.[fieldId.field_id]?.error || null;
+}
 
 export function getFieldMetadataForClassifications(
   field: FieldId,

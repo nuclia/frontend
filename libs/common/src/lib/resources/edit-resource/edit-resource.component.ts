@@ -18,6 +18,7 @@ import { SisModalService } from '@nuclia/sistema';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
+  hasError?: boolean;
 }
 
 @Component({
@@ -37,6 +38,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
       fields.map((field) => ({
         ...field,
         icon: field.field_type === FIELD_TYPE.text ? 'file' : field.field_type,
+        hasError: !!field.error,
       })),
     ),
   );

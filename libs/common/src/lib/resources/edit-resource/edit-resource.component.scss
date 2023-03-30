@@ -55,6 +55,10 @@
         &:not(.active):hover {
           background: $color-neutral-lightest;
         }
+
+        .error-marker {
+          color: $color-secondary-strong;
+        }
       }
     }
 

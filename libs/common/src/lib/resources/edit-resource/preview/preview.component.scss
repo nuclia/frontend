@@ -13,3 +13,18 @@
     top: 0;
   }
 }
+
+.error-container {
+  background: $color-secondary-regular;
+
+  p {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    padding: rhythm(0.5);
+
+    pa-icon {
+      display: flex;
+    }
+  }
+}
