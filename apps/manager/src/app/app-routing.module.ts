@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { LoggedinGuard } from '@flaps/core';
-import { environment } from '../environments/environment';
 import { SelectivePreloadingStrategyService } from './selective-preloading-strategy.service';
 
 const routes: Routes = [
@@ -55,7 +54,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      enableTracing: !environment.production,
+      enableTracing: false,
       preloadingStrategy: SelectivePreloadingStrategyService,
       relativeLinkResolution: 'legacy',
     }),
