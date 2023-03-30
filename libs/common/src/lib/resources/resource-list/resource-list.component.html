@@ -101,7 +101,7 @@
   <div class="resource-list-content">
     <ng-container *ngIf="currentKb | async">
       <stf-processed-resource-table
-        *ngIf="isMainView && (data?.length || 0) > 0"
+        *ngIf="isMainView && ((data?.length || 0) > 0 || !!query)"
         [data]="data"
         [sorting]="sort"
         [labelSets]="labelSets$ | async"
@@ -141,7 +141,7 @@
     </ng-container>
 
     <div
-      *ngIf="isMainView && data?.length === 0 && !standalone"
+      *ngIf="isMainView && emptyKb && !standalone"
       class="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
