@@ -652,7 +652,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           classifications,
         },
       })
-      .pipe(switchMap(() => this.getResources()))
+      .pipe(
+        switchMap(() => this.getResources()),
+        catchError(() => {
+          this.toaster.error(
+            `An error occurred while removing "${labelToRemove.labelset} – ${labelToRemove.label}" label, please try again later.`,
+          );
+          return this.getResources();
+        }),
+      )
       .subscribe();
   }
 }
