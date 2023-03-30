@@ -37,6 +37,12 @@ class DropboxImpl implements ISourceConnector {
     return this._getFiles(query, pageSize);
   }
 
+  getLastModified(since: string): Observable<SyncItem[]> {
+    return this.getFiles().pipe(
+      map((results) => results.items.filter((item) => item.modified && item.modified > since)),
+    );
+  }
+
   private _getFiles(query?: string, pageSize = 100, nextPage?: string | number): Observable<SearchResults> {
     const success = (res: any) => {
       if (res.status === 401) {
@@ -63,7 +69,9 @@ class DropboxImpl implements ISourceConnector {
             Authorization: `Bearer ${this.params.token || ''}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: pageSize }),
+          body: JSON.stringify(
+            nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: pageSize, include_media_info: true },
+          ),
         }).then(success, failure);
     return from(request).pipe(
       map((result: any) => ({
@@ -84,6 +92,7 @@ class DropboxImpl implements ISourceConnector {
       metadata: {},
       status: FileStatus.PENDING,
       uuid: raw.uuid || '',
+      modified: raw.client_modified,
     };
   }
 
@@ -108,18 +117,22 @@ class DropboxImpl implements ISourceConnector {
     return raw.match_type?.['.tag'] !== 'folder';
   }
 
-  download(resource: SyncItem): Observable<Blob> {
-    return from(
-      fetch(`https://content.dropboxapi.com/2/files/download`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${this.params.token || ''}`,
-          'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
-        },
-      }).then((res) => {
-        const blob = res.blob();
-        return blob;
-      }),
-    );
+  download(resource: SyncItem): Observable<Blob | undefined> {
+    try {
+      return from(
+        fetch(`https://content.dropboxapi.com/2/files/download`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.params.token || ''}`,
+            'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
+          },
+        }).then((res) => {
+          const blob = res.blob();
+          return blob;
+        }),
+      );
+    } catch (e) {
+      return of(undefined);
+    }
   }
 }

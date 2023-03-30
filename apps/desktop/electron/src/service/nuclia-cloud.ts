@@ -19,6 +19,7 @@ export class NucliaCloud {
 
   upload(originalId: string, filename: string, data: { buffer?: ArrayBuffer; metadata?: any }): Observable<boolean> {
     if (data.buffer) {
+      console.log(`Uploading ${filename} to Nuclia Cloud`);
       const buffer = data.buffer;
       const slug = sha256(originalId);
       return this.getKb().pipe(
@@ -49,7 +50,6 @@ export class NucliaCloud {
                   return resource.delete();
                 }),
                 switchMap((res) => {
-                  console.log('res', res);
                   if (res && res.completed) {
                     return of(true);
                   } else {
