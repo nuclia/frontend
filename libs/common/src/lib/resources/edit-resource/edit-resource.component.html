@@ -49,6 +49,7 @@
         icon="refresh"
         paTooltip="resource.tooltip.reprocess"
         aspect="basic"
+        [disabled]="(resource | async)?.metadata.status === 'PENDING'"
         (click)="reprocessResource()"></pa-button>
       <pa-button
         icon="trash"
