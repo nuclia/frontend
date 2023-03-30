@@ -6,6 +6,8 @@ export interface Source {
   data: ConnectorParameters;
   kb?: NucliaOptions;
   items?: SyncItem[];
+  permanentSync?: boolean;
+  lastSync?: string;
 }
 
 export interface ConnectorDefinition {
@@ -26,7 +28,8 @@ export interface ISourceConnector {
   isExternal: boolean;
   setParameters(params: ConnectorParameters): void;
   getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
-  download(resource: SyncItem): Observable<Blob>;
+  getLastModified(since: string): Observable<SyncItem[]>;
+  download(resource: SyncItem): Observable<Blob | undefined>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
   isAuthError?: (message: any) => boolean;
 }
@@ -43,6 +46,7 @@ export interface SyncItem {
   originalId: string;
   metadata: { [key: string]: string };
   status: FileStatus;
+  modified?: string;
 }
 
 export interface SearchResults {
