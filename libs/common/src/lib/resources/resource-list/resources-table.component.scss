@@ -62,3 +62,7 @@ table {
   display: flex;
   gap: rhythm(0.5);
 }
+
+.classification-cell ::ng-deep .pa-table-grid--cell {
+  overflow-x: auto;
+}
