@@ -3,22 +3,24 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   Account,
-  AccountSummary,
   AccountCreation,
   AccountPatch,
+  AccountSummary,
   AccountUserCreation,
   AccountUserPatch,
   ActiveCampaignStart,
+  BlockedFeaturesPayload,
 } from '../models/account.model';
 import {
   KnowledgeBoxCreation,
-  StashCreated,
-  StashSummary,
   ManagerStash,
-  StashPatch,
   StashAddUser,
+  StashCreated,
+  StashPatch,
   StashPatchUser,
+  StashSummary,
 } from '../models/stash.model';
+
 const STF_ACCOUNT = '/manage/@account';
 const STF_ACCOUNTS = '/manage/@accounts';
 
@@ -45,6 +47,10 @@ export class AccountService {
 
   edit(accountId: string, account: AccountPatch) {
     return this.api.patch(STF_ACCOUNT + '/' + accountId, account, true, undefined, true);
+  }
+
+  updateBlockedFeatures(accountId: string, payload: BlockedFeaturesPayload) {
+    return this.api.patch(`${STF_ACCOUNT}/${accountId}/blocking_status`, payload, true, undefined, true);
   }
 
   deleteAccount(accountId: string) {

@@ -81,3 +81,14 @@ h3 {
     width: 100%;
   }
 }
+
+.blocked-features-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 16px 0;
+
+  h5 {
+    margin-bottom: 8px;
+  }
+}

@@ -28,7 +28,7 @@ import { StashResolve } from '../resolvers/stash.resolver';
 import { MatTabsModule } from '@angular/material/tabs';
 import { StashDetailComponent } from './stash-detail/stash-detail.component';
 import { AccountBaseComponent } from './account-base/account-base.component';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 import { STFInputModule } from '../inputfield/input-module';
 
 const homeRoutes: Routes = [
@@ -96,6 +96,7 @@ const homeRoutes: Routes = [
     TranslateModule.forChild(),
     PaButtonModule,
     PaTextFieldModule,
+    PaTogglesModule,
   ],
   exports: [RouterModule],
 })

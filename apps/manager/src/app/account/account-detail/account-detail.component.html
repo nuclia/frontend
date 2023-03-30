@@ -114,19 +114,28 @@
           class="section"
           *ngIf="edit">
           <h3>State</h3>
-          <div>{{ state }}</div>
-          <pa-button
-            *ngIf="account.blocking_state === 0"
-            size="small"
-            (click)="block()">
-            Block
-          </pa-button>
-          <pa-button
-            *ngIf="account.blocking_state !== 0"
-            size="small"
-            (click)="unblock()">
-            Unblock
-          </pa-button>
+          <div>{{ currentState }}</div>
+
+          <form
+            class="blocked-features-form"
+            [formGroup]="blockedFeaturesForm"
+            (ngSubmit)="updateBlockedFeatures()">
+            <div>
+              <h5>Blocked features</h5>
+              <pa-checkbox
+                *ngFor="let feature of blockedFeaturesForm.controls | keyvalue"
+                [formControlName]="feature.key"
+                [value]="feature.value">
+                {{ feature.key }}
+              </pa-checkbox>
+            </div>
+            <pa-button
+              type="submit"
+              kind="primary"
+              [disabled]="blockedFeaturesForm.pristine">
+              Update blocked features
+            </pa-button>
+          </form>
 
           <h3>Info</h3>
           <mat-form-field>

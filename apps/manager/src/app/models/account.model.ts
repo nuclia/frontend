@@ -25,13 +25,25 @@ export interface Account {
   zone: string;
   indexer_slow_replicas: number;
   blocking_state: AccountBlockingState;
+  blocked_features: BlockedFeature[];
   limits: AccountManagerLimits;
 }
 
 export enum AccountBlockingState {
-  NONE = 0,
-  QUOTA = 1,
-  MANAGER = 2,
+  UNBLOCKED = 'unblocked',
+  QUOTA = 'quota',
+  MANAGER = 'manager',
+}
+export enum BlockedFeature {
+  UPLOAD = 'upload',
+  PROCESSING = 'processing',
+  SEARCH = 'search',
+  GENERATIVE = 'generative',
+}
+
+export interface BlockedFeaturesPayload {
+  blocking_state: AccountBlockingState;
+  blocked_features: BlockedFeature[];
 }
 
 export interface ActiveCampaignStart {

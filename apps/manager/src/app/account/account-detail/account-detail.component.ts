@@ -1,14 +1,15 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { UserSearch } from '../../models/user.model';
 import {
   Account,
-  AccountPatch,
-  AccountCreation,
-  ActiveCampaignStart,
   AccountBlockingState,
+  AccountCreation,
+  AccountPatch,
+  ActiveCampaignStart,
+  BlockedFeature,
 } from '../../models/account.model';
 import { KnowledgeBoxCreation } from '../../models/stash.model';
 import { UsersService } from '../../services/users.service';
@@ -21,7 +22,12 @@ import { Counters, Nuclia } from '@nuclia/core';
 import { catchError } from 'rxjs/operators';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 
-const STATUSES = { 0: 'Active', 1: 'Blocked due to quota', 2: 'Blocked by manager' };
+const BLOCKING_STATE_LABEL = {
+  [AccountBlockingState.UNBLOCKED]: 'Active',
+  [AccountBlockingState.QUOTA]: 'Blocked due to quota',
+  [AccountBlockingState.MANAGER]: 'Blocked by manager',
+};
+
 @Component({
   selector: 'app-account-detail',
   templateUrl: './account-detail.component.html',
@@ -80,7 +86,14 @@ export class AccountDetailComponent implements OnInit {
       monthly_limit_non_media_files_processed: this.fb.control(0),
     }),
   });
-  state = '';
+  blockingState?: AccountBlockingState;
+  currentState = '';
+  blockedFeaturesForm: FormGroup = new FormGroup({
+    upload: new FormControl<boolean>(false, { nonNullable: true }),
+    processing: new FormControl<boolean>(false, { nonNullable: true }),
+    search: new FormControl<boolean>(false, { nonNullable: true }),
+    generative: new FormControl<boolean>(false, { nonNullable: true }),
+  });
 
   constructor(
     private route: ActivatedRoute,
@@ -96,7 +109,11 @@ export class AccountDetailComponent implements OnInit {
     this.route.data.subscribe((data: { [account: string]: Account }) => {
       if (data.account) {
         this.account = data.account;
-        this.state = STATUSES[this.account.blocking_state];
+        this.blockingState = this.account.blocking_state;
+        this.currentState = BLOCKING_STATE_LABEL[this.account.blocking_state];
+        data.account.blocked_features.forEach((blockedFeature) => {
+          this.blockedFeaturesForm.controls[blockedFeature]?.patchValue(true);
+        });
         const user = this.sdk.nuclia.auth.getJWTUser();
         this.isRoot = user?.ext.type === 'r';
         this.isDealer = user?.ext.type === 'd';
@@ -228,26 +245,32 @@ export class AccountDetailComponent implements OnInit {
     }
   }
 
-  block() {
-    this.changeState(AccountBlockingState.MANAGER);
-  }
-
-  unblock() {
-    this.changeState(AccountBlockingState.NONE);
-  }
-
-  private changeState(state: AccountBlockingState) {
-    const obs = this.account?.id
-      ? this.accountService
-          .edit(this.account.id, { blocking_state: AccountBlockingState.MANAGER })
-          .pipe(map(() => true))
-      : of(false);
-    obs.subscribe((res) => {
-      if (res && this.account) {
-        this.account.blocking_state = state;
-        this.state = STATUSES[this.account.blocking_state];
-      }
-    });
+  updateBlockedFeatures() {
+    if (this.account?.id) {
+      const values: { [key: string]: boolean } = this.blockedFeaturesForm.getRawValue();
+      const blockedFeatures = Object.entries(values).reduce((blockedFeatures, [feature, blocked]) => {
+        if (blocked) {
+          blockedFeatures.push(feature as BlockedFeature);
+        }
+        return blockedFeatures;
+      }, [] as BlockedFeature[]);
+      this.accountService
+        .updateBlockedFeatures(this.account.id, {
+          blocking_state: blockedFeatures.length > 0 ? AccountBlockingState.MANAGER : AccountBlockingState.UNBLOCKED,
+          blocked_features: blockedFeatures,
+        })
+        .subscribe(() => {
+          if (blockedFeatures.length > 0 && this.blockingState === AccountBlockingState.UNBLOCKED) {
+            this.blockingState = AccountBlockingState.MANAGER;
+            this.currentState = BLOCKING_STATE_LABEL[AccountBlockingState.MANAGER];
+          } else if (blockedFeatures.length === 0 && this.blockingState !== AccountBlockingState.UNBLOCKED) {
+            this.blockingState = AccountBlockingState.UNBLOCKED;
+            this.currentState = BLOCKING_STATE_LABEL[AccountBlockingState.UNBLOCKED];
+          }
+          this.blockedFeaturesForm.markAsPristine();
+          this.cdr.markForCheck();
+        });
+    }
   }
 
   onTabSelection($event: MatTabChangeEvent) {
