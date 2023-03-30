@@ -740,7 +740,7 @@
 	"upload.select_csv": "Seleccionar CSV",
 	"upload.select_file": "Arrastre sus archivos o haga clic aquí",
 	"upload.size_warning_1": "Los archivos multimedia no pueden exceder {{ maxMedia }} y los archivos no multimedia {{ max }}.",
-	"upload.size_warning_2": "Los archivos que excedan este tamaño no se cargarán",
+	"upload.size_warning_2": "Los archivos que excedan esos tamaños no se cargarán",
 	"upload.takes_time": "Nuclia necesita un rato para procesar los archivos.",
 	"upload.upload_from_csv": "Añadir recursos desde CSV",
 	"upload.uploading_files": "<strong>Subiendo archivos.</strong> Siéntase libre de usar Nuclia mientras tanto",

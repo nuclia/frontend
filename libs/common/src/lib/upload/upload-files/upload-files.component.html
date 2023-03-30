@@ -16,7 +16,7 @@
       class="size-warning"
       *ngIf="limitsExceeded">
       <pa-icon name="warning"></pa-icon>
-      <span>
+      <div>
         <strong>
           {{
             'upload.size_warning_1'
@@ -27,8 +27,8 @@
                   }
           }}
         </strong>
-        <span>{{ 'upload.size_warning_2' | translate }}</span>
-      </span>
+        <div>{{ 'upload.size_warning_2' | translate }}</div>
+      </div>
     </div>
 
     <div
@@ -72,16 +72,17 @@
       *ngIf="files.length > 0">
       <div
         class="file-item"
-        *ngFor="let file of files">
-        <div class="file-name">{{ file.name }}</div>
-        <div class="file-size">{{ file.size | size }}</div>
+        [class.over-limit]="item.aboveLimit"
+        *ngFor="let item of files">
+        <div class="file-name">{{ item.file.name }}</div>
+        <div class="file-size">{{ item.file.size | size }}</div>
         <div class="file-actions">
           <pa-button
             icon="trash"
             aspect="basic"
             size="small"
             iconSize="small"
-            (click)="removeFile(file)">
+            (click)="removeFile(item.file)">
             Remove file
           </pa-button>
         </div>
@@ -117,7 +118,7 @@
 
     <pa-button
       kind="primary"
-      [disabled]="files.length === 0 || limitsExceeded"
+      [disabled]="allowedFiles.length === 0"
       (click)="startUpload()">
       {{ 'generic.add' | translate }}
     </pa-button>

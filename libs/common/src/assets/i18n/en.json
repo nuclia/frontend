@@ -786,7 +786,7 @@
 	"upload.select_csv": "Select CSV",
 	"upload.select_file": "Drop your file(s) or click here",
 	"upload.size_warning_1": "Media files can not exceed {{ maxMedia }} and non-media files {{ max }}.",
-	"upload.size_warning_2": "Files exceeding this size will not be uploaded",
+	"upload.size_warning_2": "Files exceeding those sizes will not be uploaded",
 	"upload.takes_time": "We needs some time to process the files. Feel free to close this dialog box and keep working.",
 	"upload.upload_from_csv": "Add resources from CSV",
 	"upload.uploading_files": "<strong>Uploading files.</strong> Feel free to use Nuclia in the meantime",

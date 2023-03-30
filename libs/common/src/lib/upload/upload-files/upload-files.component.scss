@@ -8,9 +8,10 @@
 }
 
 .size-warning {
+  align-items: center;
   background-color: $color-secondary-regular;
-  padding: rhythm(1);
   display: flex;
+  padding: rhythm(1);
   margin-bottom: rhythm(3);
   strong {
     font-weight: var(--stf-font-weight-semibold);
@@ -60,6 +61,9 @@ app-label-field {
   border-bottom: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
   &:first-child {
     border-top: 1px solid rgba(var(--stf-gray-lighter-3-rgb, 0.5));
+  }
+  &.over-limit {
+    color: $color-neutral-light;
   }
   .file-name {
     flex: 0 1 290px;
