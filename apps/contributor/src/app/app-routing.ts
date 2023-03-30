@@ -14,6 +14,7 @@ import { MainContainerComponent } from './home/main-container/main-container.com
 export const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
   scrollPositionRestoration: 'enabled',
+  useHash: true,
 };
 
 export const routes: Routes = [
