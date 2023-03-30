@@ -18,7 +18,7 @@ export class UploadFilesComponent {
   @Output() close = new EventEmitter<{ cancel: boolean }>();
   @Output() upload = new EventEmitter<void>();
 
-  files: FileWithMetadata[] = [];
+  files: { file: FileWithMetadata; aboveLimit: boolean }[] = [];
   selectedLabels: Classification[] = [];
   hasBaseDropZoneOver: boolean = false;
   limitsExceeded = false;
@@ -26,6 +26,12 @@ export class UploadFilesComponent {
   maxMediaFileSize = 0;
   useFoldersAsLabels = false;
   noLimit = this.sdk.nuclia.options.standalone;
+
+  get allowedFiles(): File[] {
+    return this.noLimit
+      ? this.files.map((item) => item.file)
+      : this.files.filter((item) => !item.aboveLimit).map((item) => item.file);
+  }
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -55,21 +61,27 @@ export class UploadFilesComponent {
     }
   }
 
-  addFiles(files: File[] | FileList) {
-    this.files = [...this.files, ...Array.from(files).filter((file) => !FILES_TO_IGNORE.includes(file.name))];
-    this.updateFiles();
+  addFiles(filesOrFileList: File[] | FileList) {
+    const files = Array.from(filesOrFileList).filter((file) => !FILES_TO_IGNORE.includes(file.name));
+    const mediaFiles = this.getFilesByType(files, true);
+    const nonMediaFiles = this.getFilesByType(files, false);
+
+    this.files = [
+      ...this.files,
+      ...mediaFiles.map((file) => ({ file, aboveLimit: file.size > this.maxMediaFileSize })),
+      ...nonMediaFiles.map((file) => ({ file, aboveLimit: file.size > this.maxFileSize })),
+    ];
+    this.checkLimits();
   }
 
   removeFile(file: File) {
-    this.files = this.files.filter((item) => item !== file);
-    this.updateFiles();
+    this.files = this.files.filter((item) => item.file !== file);
+    this.checkLimits();
   }
 
-  private updateFiles() {
-    if (!this.noLimit) {
-      this.limitsExceeded = this.files.length > this.getAllowedFiles().length;
-    }
-    this.cdr?.markForCheck();
+  private checkLimits() {
+    this.limitsExceeded = this.files.some((item) => item.aboveLimit);
+    this.cdr.markForCheck();
   }
 
   public fileOverBase(e: any): void {
@@ -87,7 +99,7 @@ export class UploadFilesComponent {
   }
 
   startUpload() {
-    const files = this.getAllowedFiles();
+    const files = this.allowedFiles;
     if (files.length > 0) {
       this.upload.emit();
       const labelledFiles = this.setLabels(files);
@@ -96,17 +108,6 @@ export class UploadFilesComponent {
     } else {
       this.close.emit();
     }
-  }
-
-  getAllowedFiles() {
-    const mediaFiles = this.getFilesByType(this.files, true);
-    const nonMediaFiles = this.getFilesByType(this.files, false);
-    return this.noLimit
-      ? [...nonMediaFiles, ...mediaFiles]
-      : [
-          ...nonMediaFiles.filter((file) => file.size <= this.maxFileSize),
-          ...mediaFiles.filter((file) => file.size <= this.maxMediaFileSize),
-        ];
   }
 
   private setLabels(files: FileWithMetadata[]): FileWithMetadata[] {

@@ -740,7 +740,7 @@
 	"upload.select_csv": "Seleccionar CSV",
 	"upload.select_file": "Arrossegueu els fitxers o feu clic aquí",
 	"upload.size_warning_1": "Els fitxers multimèdia no poden superar {{ maxMedia }} i els fitxers no multimèdia {{ max }}.",
-	"upload.size_warning_2": "Els fitxers que superin aquesta mida no es penjaran",
+	"upload.size_warning_2": "Els fitxers que superin aquestes mides no es penjaran",
 	"upload.takes_time": "Nuclia necessita una estona per a processar els fitxers.",
 	"upload.upload_from_csv": "Afegir recursos des de CSV",
 	"upload.uploading_files": "<strong>Càrrega de fitxers.</strong> Mentrestant, no dubteu a utilitzar Nuclia",
