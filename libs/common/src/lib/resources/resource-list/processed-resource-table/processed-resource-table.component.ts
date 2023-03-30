@@ -47,7 +47,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       {
         id: 'classification',
         label: 'resource.classification-column',
-        size: 'minmax(176px, 1fr)',
+        size: 'minmax(304px, 1fr)',
         optional: true,
         visible: this.userPreferences.columns.includes('classification'),
       },

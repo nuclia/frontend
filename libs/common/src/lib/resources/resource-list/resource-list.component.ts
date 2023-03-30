@@ -10,7 +10,7 @@ import {
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
-import { delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
+import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Classification,
@@ -32,7 +32,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
 import { LabelsService } from '../../label/labels.service';
-import { PopoverDirective } from '@guillotinaweb/pastanaga-angular';
+import { PopoverDirective, TRANSITION_DURATION } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { getClassificationsPayload } from '../edit-resource';
 import {
@@ -116,6 +116,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     query: new FormControl<string>(''),
   });
 
+  get query() {
+    return this.searchForm.controls.query.getRawValue();
+  }
+
   allErrorsSelected = false;
 
   bulkAction = {
@@ -126,6 +130,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   };
 
   standalone = this.sdk.nuclia.options.standalone;
+  emptyKb = false;
 
   constructor(
     private sdk: SDKService,
@@ -142,7 +147,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.getResources().subscribe();
+    this.getResources().subscribe(() => {
+      this.emptyKb = this.data?.length === 0;
+      this.cdr.markForCheck();
+    });
     this.getResourceStatusCount().subscribe();
     this.sdk.refreshing
       .pipe(
@@ -151,6 +159,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         switchMap(() => this.getResources()),
       )
       .subscribe();
+
+    // Reset resource list when query is empty (without forcing user to hit enter)
+    this.searchForm.controls.query.valueChanges
+      .pipe(
+        debounceTime(TRANSITION_DURATION.moderate),
+        filter((value) => !value),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => this.search());
   }
 
   ngOnDestroy() {
@@ -635,7 +652,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           classifications,
         },
       })
-      .pipe(switchMap(() => this.getResources()))
+      .pipe(
+        switchMap(() => this.getResources()),
+        catchError(() => {
+          this.toaster.error(
+            `An error occurred while removing "${labelToRemove.labelset} – ${labelToRemove.label}" label, please try again later.`,
+          );
+          return this.getResources();
+        }),
+      )
       .subscribe();
   }
 }

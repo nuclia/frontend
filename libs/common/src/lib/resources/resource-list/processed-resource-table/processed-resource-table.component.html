@@ -106,7 +106,9 @@
             </div>
           </div>
         </pa-table-cell>
-        <pa-table-cell *ngIf="(visibleColumnsId | async)?.includes('classification')">
+        <pa-table-cell
+          class="classification-cell"
+          *ngIf="(visibleColumnsId | async)?.includes('classification')">
           <div class="label-container">
             <nsi-label
               *ngFor="let label of row.labels"
