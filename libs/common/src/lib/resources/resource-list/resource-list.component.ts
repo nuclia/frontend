@@ -120,12 +120,11 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     return this.searchForm.controls.query.getRawValue();
   }
 
-  allErrorsSelected = false;
-
   bulkAction = {
     inProgress: false,
     total: 0,
     done: 0,
+    errors: 0,
     label: '',
   };
 
@@ -206,6 +205,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             this.bulkAction = {
               inProgress: true,
               done: 0,
+              errors: 0,
               total: resources.length,
               label: 'generic.deleting',
             };
@@ -223,6 +223,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
                   };
                   this.cdr.markForCheck();
                 }),
+                catchError(() => {
+                  this.bulkAction = {
+                    ...this.bulkAction,
+                    errors: this.bulkAction.errors + 1,
+                  };
+                  return of(null);
+                }),
               ),
             ),
           ),
@@ -233,6 +240,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         switchMap(() => this.getResourceStatusCount()),
       )
       .subscribe(() => {
+        if (this.bulkAction.errors > 0) {
+          this.toaster.error(`${this.bulkAction.errors > 1 ? 'error.deleting-resources' : 'error.deleting-resource'}`);
+        }
         this.afterBulkActions();
         this.sdk.refreshCounter(true);
       });
@@ -244,6 +254,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.bulkAction = {
       inProgress: true,
       done: 0,
+      errors: 0,
       total: resources.length,
       label: 'generic.reindexing',
     };
@@ -258,6 +269,13 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             };
             this.cdr.markForCheck();
           }),
+          catchError(() => {
+            this.bulkAction = {
+              ...this.bulkAction,
+              errors: this.bulkAction.errors + 1,
+            };
+            return of(null);
+          }),
         ),
       ),
     )
@@ -268,7 +286,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         switchMap(() => this.getResourceStatusCount()),
         switchMap(() => this.getResources()),
       )
-      .subscribe(() => this.afterBulkActions());
+      .subscribe(() => {
+        if (this.bulkAction.errors > 0) {
+          this.toaster.error(
+            `${this.bulkAction.errors > 1 ? 'error.reprocessing-resources' : 'error.reprocessing-resource'}`,
+          );
+        }
+        this.afterBulkActions();
+      });
   }
 
   reindex(resource: Resource) {
@@ -284,7 +309,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   private afterBulkActions() {
     this.setLoading(false);
-    this.bulkAction = { inProgress: false, total: 0, done: 0, label: '' };
+    this.bulkAction = { inProgress: false, total: 0, done: 0, errors: 0, label: '' };
     this.cdr.markForCheck();
   }
 
@@ -494,6 +519,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       this.bulkAction = {
         inProgress: true,
         done: 0,
+        errors: 0,
         total: resources.length,
         label: 'resource.adding_labels',
       };
@@ -523,6 +549,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             this.bulkAction = {
               inProgress: true,
               done: successCount,
+              errors: errorCount,
               total: resources.length,
               label: 'resource.adding_labels',
             };
@@ -540,6 +567,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             inProgress: false,
             done: 0,
             total: 0,
+            errors: 0,
             label: '',
           };
           this.cdr.markForCheck();

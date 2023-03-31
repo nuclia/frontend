@@ -4,6 +4,7 @@
 
 - Support Kb configuration endpoints
 - Add `error` property in `IFieldData` and corresponding `IError` interface
+- catch error and return an empty label set on `kb.getLabels` method 
 
 # 1.2.0 (2023-03-28)
 

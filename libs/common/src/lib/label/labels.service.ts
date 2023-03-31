@@ -1,16 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  catchError,
-  distinctUntilKeyChanged,
-  EMPTY,
-  filter,
-  map,
-  Observable,
-  switchMap,
-  take,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, distinctUntilKeyChanged, filter, map, Observable, switchMap, take, tap } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { LabelSet, LabelSetKind, LabelSets } from '@nuclia/core';
 
@@ -75,10 +64,6 @@ export class LabelsService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.getLabels()),
-      catchError(() => {
-        this._labelsSubject.next(null);
-        return EMPTY;
-      }),
       tap((labels) => {
         this._labelsSubject.next(labels);
       }),
