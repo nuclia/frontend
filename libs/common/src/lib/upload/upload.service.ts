@@ -26,6 +26,7 @@ import {
 } from 'rxjs';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
+export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];
 const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
 
 @Injectable({ providedIn: 'root' })
