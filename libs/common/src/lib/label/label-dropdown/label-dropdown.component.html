@@ -40,7 +40,7 @@
       *ngFor="let labelValue of labelValues"
       class="level2-option"
       [dontCloseOnSelect]="!single"
-      (selectOption)="onOptionSelection(labelValue)">
+      (selectOption)="onOptionSelection(labelValue, $event)">
       <ng-container *ngIf="single; else multiple">
         {{ labelValue.label }}
       </ng-container>
