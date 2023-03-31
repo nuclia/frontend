@@ -6,6 +6,7 @@
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
   import Feedback from './Feedback.svelte';
+  import { Button } from '../../common';
 
   let showDialog = false;
 
@@ -25,12 +26,14 @@
           rank={0} />
       </div>
       <div class="actions">
-        <div
-          class="go-to-chat title-xs"
+        <Button
+          aspect="basic"
           on:click={() => (showDialog = true)}>
-          <Icon name="chat" />
-          {$_('answer.chat-action')}
-        </div>
+          <span class="go-to-chat">
+            <Icon name="chat" />
+            {$_('answer.chat-action')}
+          </span>
+        </Button>
         <div class="feedback">
           <Feedback rank={0} />
         </div>

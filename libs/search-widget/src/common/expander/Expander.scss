@@ -3,8 +3,11 @@
     overflow: hidden;
   }
   .header {
-    display: flex;
     align-items: center;
+    cursor: pointer;
+    display: flex;
+    gap: var(--rhythm-0_5);
+
     .expander-icon {
       transition: transform var(--transition-superfast);
     }
