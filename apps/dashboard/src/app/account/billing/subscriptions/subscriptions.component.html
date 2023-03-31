@@ -1,7 +1,151 @@
-<table class="subscriptions">
-  <tr>
-    <th>
-      <h2>{{ 'billing.subscription_plans' | translate }}</h2>
+<h2>{{ 'billing.subscription.title' | translate }}</h2>
+
+<div
+  class="field-block"
+  *ngIf="!currency">
+  <label
+    class="title-s"
+    for="country">
+    {{ 'billing.subscription.country' | translate }}
+  </label>
+  <pa-select
+    externalLabel
+    (valueChange)="onSelectCountry($event)">
+    <pa-option
+      *ngFor="let country of countryList"
+      [value]="country.code">
+      {{ country.name }}
+    </pa-option>
+  </pa-select>
+</div>
+<div *ngIf="currency">
+  <div class="header">
+    <p class="body-m">{{ 'billing.subscription.help' | translate }}</p>
+    <pa-button
+      (click)="openFeatures()"
+      kind="secondary"
+      aspect="basic">
+      {{ 'billing.subscription.show-features' | translate }}
+    </pa-button>
+  </div>
+  <table class="subscriptions">
+    <tr>
+      <th>{{ 'billing.quotas' | translate }}</th>
+      <th class="plan">
+        <div class="plan-name">{{ 'billing.trial.title' | translate }}</div>
+        <div class="price">{{ 'billing.free' | translate }}</div>
+      </th>
+      <th class="plan">
+        <div class="plan-name">Starter/Developer</div>
+        <div class="price">
+          {{ (prices | async)?.['stash-developer'].recurring.month.price | currency: currency}}
+          <span class="unit">/{{ 'billing.month' | translate }}</span>
+        </div>
+        <pa-button
+          *ngIf="(accountType | async) === 'stash-basic'"
+          kind="primary"
+          routerLink="../checkout">
+          {{ 'billing.upgrade' | translate }}
+        </pa-button>
+      </th>
+      <th class="plan">
+        <div class="plan-name">Business</div>
+        <div class="price">
+          {{ (prices | async)?.['stash-business'].recurring.month.price | currency: currency}}
+          <span class="unit">/{{ 'billing.month' | translate }}</span>
+        </div>
+        <pa-button
+          *ngIf="(accountType | async) === 'stash-basic' || (accountType | async) === 'stash-developer'"
+          kind="primary"
+          routerLink="../checkout">
+          {{ 'billing.upgrade' | translate }}
+        </pa-button>
+      </th>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.kbs' | translate }}</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.files' | translate }}</td>
+      <td>
+        <div>70</div>
+        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 5Mb</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-developer'].usage['files'].threshold | number}}</div>
+        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 5Mb</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-business'].usage['files'].threshold | number}}</div>
+        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 1.5Gb</div>
+      </td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.medias' | translate }}</td>
+      <td>
+        <div>1 hour</div>
+        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 600Mb</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-developer'].usage['media'].threshold }} {{ 'hours' | translate }}</div>
+        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 600Mb</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-business'].usage['media'].threshold}} {{ 'hours' | translate }}</div>
+        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 1.5Gb</div>
+      </td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.searches' | translate }}</td>
+      <td>
+        <div>{{ 1000 | number }}</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-developer'].usage['searches'].threshold | number}}</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-business'].usage['searches'].threshold | number }}</div>
+      </td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.answers' | translate }}</td>
+      <td>
+        <div>30</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-developer'].usage['qa'].threshold | number}}</div>
+      </td>
+      <td>
+        <div>{{(prices | async)?.['stash-business'].usage['qa'].threshold | number }}</div>
+      </td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.training' | translate }}</td>
+      <td>
+        <div>–</div>
+      </td>
+      <td>
+        <div>
+          {{(prices | async)?.['stash-developer'].usage['training-hours'].threshold | number}} {{ 'hours' | translate }}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{(prices | async)?.['stash-business'].usage['training-hours'].threshold | number }} {{ 'hours' | translate }}
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div>
+    <div class="title-s">{{ 'billing.cost_per_usage' | translate }}</div>
+    <div class="body-s">
+      {{ 'billing.cost_per_usage.description' | translate }}
+    </div>
+    <div>
       <pa-button
         *ngIf="isCalculatorEnabled | async"
         (click)="openCalculator()"
@@ -9,88 +153,9 @@
         iconAndText>
         {{ 'billing.estimate_cost' | translate }}
       </pa-button>
-    </th>
-    <th class="plan">
-      <div class="plan-name">Basic</div>
-      <div class="price">{{ 'billing.free' | translate }}</div>
-      <pa-button
-        *ngIf="isTeam | async"
-        kind="primary">
-        Downgrade
-      </pa-button>
-    </th>
-    <th class="plan">
-      <div class="plan-name">Professional</div>
-      <div class="price">
-        90€
-        <span class="unit">/{{ 'billing.month' | translate }}</span>
-      </div>
-      <pa-button
-        *ngIf="isBasic | async"
-        kind="primary"
-        routerLink="../checkout">
-        {{ 'billing.upgrade' | translate }}
-      </pa-button>
-    </th>
-    <th class="plan">
-      <div class="plan-name">Business</div>
-      <div class="price">{{ 'billing.custom_plan' | translate }}</div>
-      <pa-button kind="primary">{{ 'billing.contact' | translate }}</pa-button>
-    </th>
-  </tr>
-  <tr *ngFor="let feature of features">
-    <td class="title-s">
-      {{ feature.title | translate }}
-    </td>
-    <td>
-      <ng-container *ngIf="feature.basic !== 'yes'; else icon">
-        {{ feature.basic | translate }}
-      </ng-container>
-    </td>
-    <td>
-      <ng-container *ngIf="feature.pro !== 'yes'; else icon">
-        {{ feature.pro | translate }}
-      </ng-container>
-    </td>
-    <td>
-      <ng-container *ngIf="feature.business !== 'yes'; else icon">
-        {{ feature.business | translate }}
-      </ng-container>
-    </td>
-    <ng-template #icon>
-      <pa-icon
-        name="check"
-        size="small"
-        color="#f06"></pa-icon>
-    </ng-template>
-  </tr>
-</table>
-
-<div class="usage-cost">
-  <h2>{{ 'billing.cost_per_usage' | translate }}</h2>
-  <div class="body-m">{{ 'billing.cost_per_usage.description' | translate }}</div>
+    </div>
+  </div>
+  <div
+    class="body-s note"
+    [innerHTML]="'billing.customized_plan' | translate"></div>
 </div>
-
-<table
-  class="parameters"
-  *ngFor="let type of parameters; let first = first">
-  <tr>
-    <th>{{ type.type | translate }}</th>
-    <th class="limit">
-      <span *ngIf="first">Free</span>
-    </th>
-    <th class="limit">
-      <span *ngIf="first">Over</span>
-    </th>
-  </tr>
-  <tr *ngFor="let item of type.items">
-    <td>{{ item.title | translate }}</td>
-    <td>{{ item.free | translate }}</td>
-    <td>{{ item.over | translate }}</td>
-  </tr>
-</table>
-
-<div class="note">{{ 'billing.notes' | translate }}</div>
-<div
-  class="title-s"
-  [innerHTML]="'billing.customized_plan' | translate"></div>

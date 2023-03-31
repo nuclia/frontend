@@ -1,5 +1,14 @@
 @import 'variables';
 
+.header {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: rhythm(4);
+}
+.field-block {
+  width: rhythm(24);
+  margin-bottom: rhythm(1);
+}
 .subscriptions {
   margin-bottom: rhythm(8);
   table-layout: fixed;
@@ -38,34 +47,6 @@
     font-weight: $font-weight-regular;
   }
 }
-
-.usage-cost {
-  margin-bottom: rhythm(3);
-  h2 {
-    margin: 0;
-  }
-}
-
-.parameters {
-  min-width: 1000px;
-
-  th {
-    border-bottom: 1px solid $color-neutral-regular;
-    font-weight: $font-weight-semi-bold;
-    height: rhythm(5);
-  }
-
-  td {
-    border-bottom: 1px solid $color-neutral-lighter;
-    height: rhythm(5);
-  }
-
-  .limit {
-    width: rhythm(35);
-  }
-}
-
 .note {
-  color: $color-neutral-regular;
-  margin: rhythm(1.5) 0 rhythm(6) 0;
+  margin-top: rhythm(4);
 }
