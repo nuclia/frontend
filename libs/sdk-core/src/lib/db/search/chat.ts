@@ -1,7 +1,8 @@
-import { map, Observable, takeWhile } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import type { INuclia } from '../../models';
 import { Chat } from './chat.models';
 import type { Search } from './search.models';
+import { ResourceProperties } from '../kb';
 
 const END_OF_STREAM = '_END_';
 
@@ -16,7 +17,12 @@ export function chat(
   let sources: Search.FindResults | undefined;
   let text = '';
   return nuclia.rest
-    .getStream(`${path}/chat`, { query, context, features: features.length > 0 ? features : undefined })
+    .getStream(`${path}/chat`, {
+      query,
+      context,
+      show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
+      features: features.length > 0 ? features : undefined,
+    })
     .pipe(
       map(({ data, incomplete, headers }) => {
         const id = headers.get('NUCLIA-LEARNING-ID') || '';
