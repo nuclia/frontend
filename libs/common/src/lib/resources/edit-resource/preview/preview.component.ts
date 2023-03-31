@@ -3,8 +3,8 @@ import { SelectFirstFieldDirective } from '../select-first-field/select-first-fi
 import { combineLatest, distinctUntilKeyChanged, filter, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
-import { Paragraph } from '@nuclia/core';
-import { getParagraphs, ParagraphWithText } from '../edit-resource.helpers';
+import { IError, Paragraph } from '@nuclia/core';
+import { getErrors, getParagraphs, ParagraphWithText } from '../edit-resource.helpers';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,6 +40,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
 
   loaded = false;
   loadingPreview = false;
+  errors?: IError | null;
 
   constructor(
     private paragraphService: ParagraphService,
@@ -59,6 +60,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([fieldId, resource]) => {
         this.loaded = true;
+        this.errors = getErrors(fieldId, resource);
         const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
         const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
           ...paragraph,

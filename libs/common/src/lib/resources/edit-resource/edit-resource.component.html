@@ -49,6 +49,7 @@
         icon="refresh"
         paTooltip="resource.tooltip.reprocess"
         aspect="basic"
+        [disabled]="(resource | async)?.metadata?.status === 'PENDING'"
         (click)="reprocessResource()"></pa-button>
       <pa-button
         icon="trash"
@@ -82,6 +83,14 @@
             [name]="field.icon"
             size="small"></pa-icon>
           {{ 'resource.field-' + field.field_type | translate }}
+
+          <span
+            class="error-marker"
+            *ngIf="field.hasError">
+            <pa-icon
+              name="warning"
+              size="small"></pa-icon>
+          </span>
         </li>
       </ul>
     </nav>

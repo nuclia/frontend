@@ -25,6 +25,7 @@ import {
   PaScrollModule,
   PaTextFieldModule,
   PaTogglesModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -57,6 +58,7 @@ import { HintModule } from '../../hint';
     PaTogglesModule,
 
     STFPipesModule,
+    PaTooltipModule,
   ],
   declarations: [
     AddFieldComponent,

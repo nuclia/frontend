@@ -3,6 +3,7 @@
 ### Improvements
 
 - Support Kb configuration endpoints
+- Add `error` property in `IFieldData` and corresponding `IError` interface
 
 # 1.2.0 (2023-03-28)
 

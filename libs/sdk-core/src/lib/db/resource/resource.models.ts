@@ -102,9 +102,15 @@ export interface Origin {
   source?: 'WEB' | 'DESKTOP' | 'API';
 }
 
+export interface IError {
+  body: string;
+  code: number;
+}
+
 export interface IFieldData {
   value?: TextField | FileField | LinkField | KeywordSetField;
   extracted?: ExtractedData;
+  error?: IError;
 }
 
 export interface FieldId {
@@ -121,6 +127,7 @@ export interface ResourceField extends IFieldData, FieldId {}
 export class FileFieldData implements IFieldData {
   value?: FileField;
   extracted?: FileFieldExtractedData;
+  error?: IError;
 }
 
 export interface FileField {
@@ -202,6 +209,7 @@ export interface LinkField {
 export class TextFieldData implements IFieldData {
   value?: TextField;
   extracted?: ExtractedData;
+  error?: IError;
 }
 
 export type TextFieldFormat = 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
@@ -269,6 +277,7 @@ export interface ParagraphClassification {
 export class KeywordSetFieldData implements IFieldData {
   value?: KeywordSetField;
   extracted?: ExtractedData;
+  error?: IError;
 }
 
 export interface KeywordSetField {
@@ -316,6 +325,7 @@ export interface CloudLink {
 export class LinkFieldData implements IFieldData {
   value?: LinkField;
   extracted?: LinkFieldExtractedData;
+  error?: IError;
 }
 
 export interface LinkFieldExtractedData extends ExtractedData {

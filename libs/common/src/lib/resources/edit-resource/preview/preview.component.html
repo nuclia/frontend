@@ -1,6 +1,16 @@
 <div class="main-container">
   <div class="scrollable-area">
     <div
+      class="error-container"
+      *ngIf="errors">
+      <p>
+        <pa-icon
+          name="warning"
+          size="small"></pa-icon>
+        {{ errors.body }}
+      </p>
+    </div>
+    <div
       class="paragraph-container"
       *ngFor="let paragraph of paragraphs | async">
       <p>{{ paragraph.text }}</p>
