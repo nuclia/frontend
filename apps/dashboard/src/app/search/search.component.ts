@@ -24,13 +24,12 @@ export class SearchComponent implements OnDestroy, OnInit {
     }),
     switchMap((kb) =>
       forkJoin([
-        kb.getLabels(),
+        kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
         this.tracking.isFeatureEnabled('answers'),
-      ]).pipe(map(([labelSets, hasClassifier, isChatEnabled]) => ({ kb, labelSets, hasClassifier, isChatEnabled }))),
+      ]).pipe(map(([hasLabels, hasClassifier, isChatEnabled]) => ({ kb, hasLabels, hasClassifier, isChatEnabled }))),
     ),
-    map(({ kb, labelSets, hasClassifier, isChatEnabled }) => {
-      const hasLabels = Object.keys(labelSets).length > 0;
+    map(({ kb, hasLabels, hasClassifier, isChatEnabled }) => {
       let features = !hasLabels
         ? DEFAULT_FEATURES_LIST.split(',')
             .filter((feature) => feature !== 'filter')

@@ -72,9 +72,10 @@ export class KnowledgeBox implements IKnowledgeBox {
   }
 
   getLabels(): Observable<LabelSets> {
-    return this.nuclia.rest
-      .get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`)
-      .pipe(map((res) => res?.labelsets || {}));
+    return this.nuclia.rest.get<{ labelsets?: { labelset: LabelSets } }>(`${this.path}/labelsets`).pipe(
+      map((res) => res?.labelsets || {}),
+      catchError(() => of({})),
+    );
   }
 
   getResource(
