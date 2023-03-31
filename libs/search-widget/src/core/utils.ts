@@ -3,18 +3,20 @@ import { switchMap } from 'rxjs/operators';
 import { from } from 'rxjs';
 import {
   CloudLink,
+  FIELD_TYPE,
   FileField,
   FileFieldData,
   IFieldData,
   IResource,
   LinkField,
   LinkFieldData,
+  longToShortFieldType,
   Resource,
   ResourceData,
   ResourceField,
   Search,
+  sliceUnicode,
 } from '@nuclia/core';
-import { FIELD_TYPE, longToShortFieldType, sliceUnicode } from '@nuclia/core';
 import type { PreviewKind, WidgetParagraph } from './models';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -218,6 +220,7 @@ export function mapParagraph2SmartParagraph(paragraph: Search.Paragraph): Search
     id,
     text: paragraph.text,
     score: paragraph.score,
+    order: paragraph.order,
     labels: paragraph.labels,
     score_type: Search.FindScoreType.BM25,
     position: { ...paragraph.position, start_seconds, end_seconds },

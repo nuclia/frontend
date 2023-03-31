@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import Icon from '../icons/Icon.svelte';
+  import { IconButton } from '../button';
 
   export let expanded: boolean = false;
   export let duration: number = 300;
@@ -43,7 +43,12 @@
     }}
     class="header"
     class:expanded>
-    <span class="expander-icon"><Icon name="chevron-right" /></span>
+    <span class="expander-icon">
+      <IconButton
+        icon="chevron-right"
+        size="small"
+        aspect="basic" />
+    </span>
     <slot name="header" />
   </div>
   <div

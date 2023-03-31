@@ -67,7 +67,7 @@ export const chat = answerState.writer<Chat.Entry[], { question: string; answer:
   }),
 );
 
-export const resetChat = answerState.writer<void>(
+export const resetChat = answerState.writer<void, void>(
   () => undefined,
   (state) => ({ ...state, chat: state.chat.slice(0, 1) }),
 );

@@ -97,6 +97,7 @@ export namespace Search {
   }
 
   export interface FindParagraph {
+    order: number;
     score: number;
     score_type: FindScoreType;
     text: string;
@@ -180,6 +181,7 @@ export namespace Search {
   }
 
   export interface Paragraph {
+    order: number;
     score: number;
     rid: string;
     field_type: SHORT_FIELD_TYPE;

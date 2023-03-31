@@ -88,7 +88,7 @@ export const displayedResource = searchState.writer<DisplayedResource | null>(
 
 export const isEmptySearchQuery = searchState.reader<boolean>((state) => !state.query && state.filters.length === 0);
 
-export const hasMore = searchState.reader<boolean>((state) => !!state.results.next_page);
+export const hasMore = searchState.reader<boolean>((state) => state.results.next_page);
 export const loadMore = searchState.writer<number, void>(
   (state) => state.options.page_number || 0,
   (state) => ({
@@ -204,7 +204,7 @@ export function getSortedResults(resources: { [id: string]: Search.FindResource 
       ...res,
       paragraphs: Object.values(res.fields)
         .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
-        .sort((a, b) => b.score - a.score),
+        .sort((a, b) => a.order - b.order),
     }))
     .map((res: Search.SmartResult) => {
       // take the first paragraph which is not from a generic field
@@ -212,7 +212,7 @@ export function getSortedResults(resources: { [id: string]: Search.FindResource 
         (paragraph) => paragraph.id.split('/')[1] !== SHORT_FIELD_TYPE.generic,
       );
       if (firstFieldParagraph) {
-        const [rid, fieldType, fieldId, position] = firstFieldParagraph.id.split('/');
+        const [, fieldType, fieldId] = firstFieldParagraph.id.split('/');
         const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
         if (field_type && fieldId) {
           res.field = { field_type, field_id: fieldId };
@@ -227,7 +227,7 @@ export function getSortedResults(resources: { [id: string]: Search.FindResource 
       }
       return res;
     })
-    .sort((a, b) => (b.paragraphs?.[0]?.score || 0) - (a.paragraphs?.[0]?.score || 0));
+    .sort((a, b) => (a.paragraphs?.[0]?.order || 0) - (b.paragraphs?.[0]?.order || 0));
 }
 
 function getMainFieldFromResource(resource: IResource): FieldId | undefined {
@@ -237,7 +237,7 @@ function getMainFieldFromResource(resource: IResource): FieldId | undefined {
   // try to find a file field matching the resource icon
   // if none, we just take the first field
   const mainFileField = resource.data?.files
-    ? Object.entries(resource.data.files).find(([id, field]) => field.value?.file?.content_type === resource.icon)
+    ? Object.entries(resource.data.files).find(([, field]) => field.value?.file?.content_type === resource.icon)
     : undefined;
   if (mainFileField) {
     return { field_type: FIELD_TYPE.file, field_id: mainFileField[0] };
