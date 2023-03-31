@@ -80,7 +80,7 @@ export class BillingService {
 
   getCurrency(country: string): Observable<Currency> {
     return this.sdk.nuclia.rest
-      .get<{ currency: Currency }>(`/billing/currencies?country=${country}`)
+      .get<{ currency: string }>(`/billing/currencies?country=${country}`)
       .pipe(map((res) => res.currency.toUpperCase() as Currency));
   }
 
