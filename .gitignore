@@ -10,6 +10,8 @@
 /src
 /apps/dashboard/src/assets/tmp
 /apps/search-widget-demo/public/tmp
+/connectors-db.json
+/remote-connectors
 
 # dependencies
 node_modules

@@ -1,6 +1,8 @@
 export type AccountTypes =
   | 'stash-basic'
   | 'stash-team'
+  | 'stash-developer'
+  | 'stash-startup'
   | 'stash-enterprise'
   | 'stash-pro'
   | 'stash-growth'
