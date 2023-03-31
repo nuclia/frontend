@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { filter, map, take } from 'rxjs';
 import { DroppedFile, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Account, Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
-import { FILES_TO_IGNORE, UploadService } from '../upload.service';
+import { FILES_TO_IGNORE, PATTERNS_TO_IGNORE, UploadService } from '../upload.service';
 import * as mime from 'mime';
 
 const GENERAL_LABELSET = 'General';
@@ -62,7 +62,9 @@ export class UploadFilesComponent {
   }
 
   addFiles(filesOrFileList: File[] | FileList) {
-    const files = Array.from(filesOrFileList).filter((file) => !FILES_TO_IGNORE.includes(file.name));
+    const files = Array.from(filesOrFileList).filter(
+      (file) => !FILES_TO_IGNORE.includes(file.name) && !PATTERNS_TO_IGNORE.some((pattern) => file.name.match(pattern)),
+    );
     const mediaFiles = this.getFilesByType(files, true);
     const nonMediaFiles = this.getFilesByType(files, false);
 
@@ -92,7 +94,7 @@ export class UploadFilesComponent {
   getFilesByType(files: File[], mediaFile: boolean): File[] {
     return files.filter((file) => {
       const mimeType = file.type || (mime as any).getType(file.name);
-      const type = mimeType.split('/')[0];
+      const type = mimeType?.split('/')[0];
       const isMediaFile = type === 'audio' || type === 'video' || type === 'image';
       return mediaFile ? isMediaFile : !isMediaFile;
     });
