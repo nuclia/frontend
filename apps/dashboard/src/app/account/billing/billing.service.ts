@@ -68,7 +68,7 @@ export class BillingService {
   }
 
   getStripePublicKey() {
-    return this.sdk.nuclia.rest.get<{ public_key: string }>(`/auth/stripe/public`);
+    return this.sdk.nuclia.rest.get<{ public_key: string }>(`/billing/stripe/public`);
   }
 
   createSubscription(data: StripeSubscription) {
