@@ -36,15 +36,13 @@ $stf-color-palette: (
 // Angular Material typography
 $typography: mat.define-typography-config(
   $font-family: var(--stf-font-family),
-  $title: mat.define-typography-level(20px, 32px, 600),
   $body-2: mat.define-typography-level(14px, 24px, 400),
   $button: mat.define-typography-level(14px, 14px, 600),
-  $input: mat.define-typography-level(16px, 1.125, 400) // line-height must be unitless !!!,
 );
 
 // Setup the typography
 @include mat.all-component-typographies($typography);
-@include mat.core($typography);
+@include mat.core();
 
 // Define the primary, accent and warn palettes
 $default-primary-palette: mat.define-palette($stf-color-palette);
@@ -52,7 +50,17 @@ $default-accent-palette: mat.define-palette(mat.$pink-palette, 600, 400, 700);
 $default-warn-palette: mat.define-palette(mat.$red-palette);
 
 // Create the Material theme object
-$theme: mat.define-light-theme($default-primary-palette, $default-accent-palette, $default-warn-palette);
+$theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $default-primary-palette,
+      accent: $default-accent-palette,
+      warn: $default-warn-palette,
+    ),
+    typography: $typography,
+    density: 0,
+  )
+);
 
 // Create an Angular Material theme from the $theme map
 @include mat.all-component-themes($theme);
@@ -185,7 +193,7 @@ mat-icon {
 }
 
 .mat-form-field-wrapper {
-  padding-bottom: 0px !important;
+  padding-bottom: 0 !important;
 }
 
 .mat-form-field-appearance-fill {
@@ -196,11 +204,11 @@ mat-icon {
   }
 
   .mat-form-field-underline::before {
-    height: 0px !important;
+    height: 0 !important;
   }
 
   .mat-form-field-ripple {
-    height: 0px !important;
+    height: 0 !important;
   }
 
   .mat-form-field-label {
