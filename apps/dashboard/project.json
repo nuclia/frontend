@@ -133,9 +133,9 @@
               "output": "assets"
             }
           ]
-        },
-        "defaultConfiguration": "production"
+        }
       },
+      "defaultConfiguration": "production",
       "outputs": ["{options.outputPath}"]
     },
     "serve": {

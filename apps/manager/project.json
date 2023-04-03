@@ -125,9 +125,9 @@
               "output": "assets/deployment"
             }
           ]
-        },
-        "defaultConfiguration": "production"
+        }
       },
+      "defaultConfiguration": "production",
       "outputs": ["{options.outputPath}"]
     },
     "serve": {

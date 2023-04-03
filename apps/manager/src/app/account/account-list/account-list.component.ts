@@ -1,10 +1,10 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { AccountSummary } from '../../models/account.model';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { merge, Observable, of as observableOf } from 'rxjs';
+import { merge, of as observableOf } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { AccountService } from '../../services/account.service';
 
@@ -75,13 +75,13 @@ export class AccountListComponent implements AfterViewInit {
 
   delete(row: any) {
     if (confirm('Are you sure?')) {
-      this.accountService.deleteAccount(row.id).subscribe(
-        (res) => {
+      this.accountService.deleteAccount(row.id).subscribe({
+        next: () => {
           alert('Done');
           this.refresh();
         },
-        (error) => console.log(error),
-      );
+        error: (error) => console.log(error),
+      });
     }
   }
 

@@ -2,11 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy
 import { filter, merge, Observable, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import {
-  EntityDialogComponent,
-  EntityDialogData,
-  EntityDialogResponse,
-} from '../entity-dialog/entity-dialog.component';
+import { EntityDialogComponent, EntityDialogData, EntityDialogResponse } from '../entity-dialog';
 import { AppEntitiesGroup, generatedEntitiesColor } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
 import { EntitiesSearchService } from '../entities-search.service';

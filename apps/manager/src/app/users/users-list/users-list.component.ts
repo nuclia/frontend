@@ -1,10 +1,10 @@
-import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { UserSearch } from '../../models/user.model';
 import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { Observable, of as observableOf, Subject } from 'rxjs';
-import { takeUntil, tap, filter, switchMap, auditTime, distinctUntilChanged } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { auditTime, distinctUntilChanged, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { UsersService } from '../../services/users.service';
 
 const MIN_TERM_LENGTH = 3;

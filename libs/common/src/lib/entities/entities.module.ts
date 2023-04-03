@@ -17,8 +17,7 @@ import { EntityGroupComponent } from './entity-group/entity-group.component';
 import { EntityNameComponent } from './entity-name/entity-name.component';
 import { SynonymListComponent } from './synonym-list/synonym-list.component';
 import { SynonymAddComponent } from './synonym-add/synonym-add.component';
-import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
-import { GroupSelectComponent } from './entity-dialog/group-select/group-select.component';
+import { EntityDialogComponent, GroupSelectComponent } from './entity-dialog';
 import {
   PaButtonModule,
   PaExpanderModule,

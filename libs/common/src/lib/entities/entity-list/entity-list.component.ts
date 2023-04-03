@@ -16,12 +16,7 @@ import { CdkDragDrop, CdkDragEnter, CdkDragExit } from '@angular/cdk/drag-drop';
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AppEntitiesGroup, Entity, MutableEntitiesGroup } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
-import {
-  EntityDialogComponent,
-  EntityDialogData,
-  EntityDialogMode,
-  EntityDialogResponse,
-} from '../entity-dialog/entity-dialog.component';
+import { EntityDialogComponent, EntityDialogData, EntityDialogMode, EntityDialogResponse } from '../entity-dialog';
 
 @Component({
   selector: 'app-entity-list',
@@ -82,7 +77,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
 
   filteredEntities(): Entity[] {
     let entities = Object.entries(this.entitiesGroup?.entities || [])
-      .map(([key, value]) => value)
+      .map(([, value]) => value)
       .filter((entity) => !entity.merged);
 
     if (this.searchResults) {
@@ -143,15 +138,10 @@ export class EntityListComponent implements OnInit, OnDestroy {
   }
 
   openDialog(mode: EntityDialogMode, entity?: Entity) {
-    const dialogRef = this.dialog.open<EntityDialogComponent, EntityDialogData, EntityDialogResponse>(
-      EntityDialogComponent,
-      {
-        width: '630px',
-        data: { mode, entity, group: this.group!.key },
-      },
-    );
-
-    return dialogRef;
+    return this.dialog.open<EntityDialogComponent, EntityDialogData, EntityDialogResponse>(EntityDialogComponent, {
+      width: '630px',
+      data: { mode, entity, group: this.group!.key },
+    });
   }
   getListHeight(): number {
     return Math.min(this.filteredEntities().length * this.entityHeight, this.maxListHeight);

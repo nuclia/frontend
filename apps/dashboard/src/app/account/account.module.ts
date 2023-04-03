@@ -29,7 +29,7 @@ import { AccountUsersComponent } from './account-users/account-users.component';
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
-import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';
+import { UsersManageModule } from '../knowledge-box';
 import {
   PaButtonModule,
   PaDropdownModule,

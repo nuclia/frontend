@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
-import { Observable, of, switchMap, take } from 'rxjs';
+import { Observable, of, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
