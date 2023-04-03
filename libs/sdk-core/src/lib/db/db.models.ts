@@ -1,12 +1,11 @@
 export type AccountTypes =
   | 'stash-basic'
   | 'stash-team'
+  | 'stash-trial'
   | 'stash-developer'
+  | 'stash-business'
   | 'stash-startup'
-  | 'stash-enterprise'
-  | 'stash-pro'
-  | 'stash-growth'
-  | 'stash-business';
+  | 'stash-enterprise';
 
 export const NUA_KEY = 'NUCLIA_NUA_KEY';
 export const NUA_CLIENT = 'NUCLIA_NUA_CLIENT';

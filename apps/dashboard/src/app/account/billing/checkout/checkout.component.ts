@@ -143,7 +143,7 @@ export class CheckoutComponent {
       .createSubscription({
         payment_method_id: this.token.id,
         on_demand_budget: parseInt(this.budget.value),
-        account_type: 'stash-pro',
+        account_type: 'stash-developer',
       })
       .subscribe({
         next: () => {
