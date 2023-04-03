@@ -2,7 +2,6 @@ import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { ZoneService } from '../../services/zone.service';
@@ -21,7 +20,6 @@ export class ZoneListComponent implements OnDestroy {
   search_zone: string = '';
   unsubscribeAll = new Subject<void>();
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | undefined;
   @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
 
   constructor(private route: ActivatedRoute, private router: Router, private zoneService: ZoneService) {

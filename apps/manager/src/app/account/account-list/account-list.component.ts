@@ -1,10 +1,9 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { AccountSummary } from '../../models/account.model';
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
-import { merge, of as observableOf } from 'rxjs';
+import { of as observableOf } from 'rxjs';
 import { catchError, map, startWith, switchMap } from 'rxjs/operators';
 import { AccountService } from '../../services/account.service';
 
@@ -21,7 +20,6 @@ export class AccountListComponent implements AfterViewInit {
   isLoadingResults = true;
   isRateLimitReached = false;
 
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator | undefined;
   @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
 
   constructor(private route: ActivatedRoute, private router: Router, private accountService: AccountService) {
@@ -40,15 +38,12 @@ export class AccountListComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     if (this.sort) {
-      this.sort.sortChange.subscribe(() => (this.paginator!.pageIndex = 0));
-
-      merge(this.sort.sortChange, this.paginator!.page)
+      this.sort.sortChange
         .pipe(
           startWith({}),
           switchMap(() => {
             this.isLoadingResults = true;
             return this.accountService.getAccounts();
-            // this.sort.active, this.sort.direction, this.paginator.pageIndex);
           }),
           map((data) => {
             // Flip flag to show that loading has finished.

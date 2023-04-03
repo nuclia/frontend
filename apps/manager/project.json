@@ -95,6 +95,11 @@
               "glob": "**/*",
               "input": "apps/manager/src/environments_config/production",
               "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
             }
           ]
         },
@@ -123,6 +128,11 @@
               "glob": "**/*",
               "input": "apps/manager/src/environments_config/local-stage",
               "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
             }
           ]
         }

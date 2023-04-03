@@ -36,6 +36,7 @@ $stf-color-palette: (
 // Angular Material typography
 $typography: mat.define-typography-config(
   $font-family: var(--stf-font-family),
+  $headline-1: mat.define-typography-level(20px, 32px, 600),
   $body-2: mat.define-typography-level(14px, 24px, 400),
   $button: mat.define-typography-level(14px, 14px, 600),
 );
