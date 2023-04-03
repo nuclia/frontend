@@ -94,10 +94,12 @@ export class LabelDropdownComponent {
     this.selectionChange.emit(newSelectedLabels);
   }
 
-  onOptionSelection(labelValue: Classification) {
+  onOptionSelection(labelValue: Classification, event: MouseEvent | KeyboardEvent) {
     if (this.single) {
       this.selection = [labelValue];
       this.selectionChange.emit(this.selection);
+    } else if ((event.target as HTMLElement).tagName === 'LI') {
+      this.toggleLabel(labelValue);
     }
   }
 }

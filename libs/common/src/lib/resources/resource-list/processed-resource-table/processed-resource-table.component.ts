@@ -87,7 +87,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   ]).pipe(
     map(([canEdit]) => {
       const visibleColumns = this.defaultColumns.map(this.getApplySortingMapper()).filter((column) => column.visible);
-
       return canEdit
         ? [...visibleColumns, { id: 'menu', label: 'generic.actions', size: '96px' }]
         : [...visibleColumns];
@@ -164,5 +163,12 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     const resources = this.getSelectedResources();
     this.addLabels.emit({ labels: this.currentLabelList, resources });
     this.currentLabelList = [];
+  }
+
+  selectColumn(column: ColumnHeader, event: MouseEvent | KeyboardEvent) {
+    if ((event.target as HTMLElement).tagName === 'LI') {
+      column.visible = !column.visible;
+      this.columnVisibilityUpdate.next(!column.visible);
+    }
   }
 }

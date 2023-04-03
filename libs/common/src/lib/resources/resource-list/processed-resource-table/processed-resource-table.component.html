@@ -50,10 +50,11 @@
       <pa-option
         *ngFor="let column of optionalColumns"
         [value]="column.id"
+        (selectOption)="selectColumn(column, $event)"
         dontCloseOnSelect>
         <pa-checkbox
           [(value)]="column.visible"
-          (valueChange)="columnVisibilityUpdate.next($event)">
+          (valueChange)="this.columnVisibilityUpdate.next($event)">
           {{ column.label | translate }}
         </pa-checkbox>
       </pa-option>
