@@ -5,8 +5,9 @@ import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockModule } from 'ng-mocks';
+import { MockModule, MockProvider } from 'ng-mocks';
 import { AppService, UploadService } from '@flaps/common';
+import { MatLegacyDialog } from '@angular/material/legacy-dialog';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -17,6 +18,7 @@ describe('KnowledgeBoxComponent', () => {
       imports: [MockModule(MatDialogModule), RouterTestingModule],
       declarations: [KnowledgeBoxComponent],
       providers: [
+        MockProvider(MatLegacyDialog),
         {
           provide: UploadService,
           useValue: {
