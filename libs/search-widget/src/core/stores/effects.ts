@@ -99,6 +99,7 @@ export function initAnswer() {
         switchMap(({ question }) =>
           chat.pipe(
             take(1),
+            map((chat) => chat.filter((chat) => !chat.answer.incomplete)),
             switchMap((chat) => getAnswer(question, chat).pipe(map((answer) => ({ question, answer })))),
           ),
         ),
