@@ -23,12 +23,12 @@ export const importConnector = (url: string) => {
   }
 };
 
-(global as any).registerConnector = (connector) => {
+(global as any).registerConnector = (connector: any) => {
   console.log(connector);
 };
 export const loadConnectors = () => {
   if (!fs.existsSync(connectorsPath)) {
-    return [];
+    return;
   }
   fs.readdirSync(connectorsPath).forEach((file) => {
     const filePath = path.join(connectorsPath, file);

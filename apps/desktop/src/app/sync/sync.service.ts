@@ -51,7 +51,8 @@ import { HttpClient } from '@angular/common/http';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
-const SYNC_SERVER = 'http://localhost:5001';
+const LOCAL_SYNC_SERVER = 'http://localhost:5001';
+const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 
 interface Sync {
   date: string;
@@ -103,6 +104,8 @@ export class SyncService {
     // },
   };
   sourceObs = new BehaviorSubject(Object.values(this.sources).map((obj) => obj.definition));
+  private _syncServer = new BehaviorSubject<string>(localStorage.getItem(SYNC_SERVER_KEY) || '');
+  syncServer = this._syncServer.asObservable();
 
   private _queue: Sync[] = [];
   queue = new ReplaySubject<Sync[]>(1);
@@ -240,15 +243,17 @@ export class SyncService {
   }
 
   setSourceData(sourceId: string, connectorId: string, data?: ConnectorParameters): Observable<void> {
-    return this.http.post<void>(`${SYNC_SERVER}/source`, { [sourceId]: { connectorId, data } });
+    return this.http.post<void>(`${this._syncServer.getValue()}/source`, { [sourceId]: { connectorId, data } });
   }
 
   getSourceData(sourceId: string): Observable<Source> {
-    return this.http.get<Source>(`${SYNC_SERVER}/source/${sourceId}`);
+    return this.http.get<Source>(`${this._syncServer.getValue()}/source/${sourceId}`);
   }
 
   getFiles(sourceId: string, query?: string): Observable<SearchResults> {
-    return this.http.get<SearchResults>(`${SYNC_SERVER}/source/${sourceId}/search${query ? `?query=${query}` : ''}`);
+    return this.http.get<SearchResults>(
+      `${this._syncServer.getValue()}/source/${sourceId}/search${query ? `?query=${query}` : ''}`,
+    );
   }
 
   addSync(sync: Sync) {
@@ -276,7 +281,7 @@ export class SyncService {
         : of({})
     ).pipe(
       switchMap((options) =>
-        this.http.patch<void>(`${SYNC_SERVER}/source/${sync.source}`, {
+        this.http.patch<void>(`${this._syncServer.getValue()}/source/${sync.source}`, {
           kb: options,
           items: sync.files,
         }),
@@ -471,12 +476,35 @@ export class SyncService {
     return Math.floor(date.getTime() / 1000).toString();
   }
 
+  serverStatus(server: string): Observable<{ running: boolean }> {
+    return this.http.get<{ running: boolean }>(`${server}/status`).pipe(catchError(() => of({ running: false })));
+  }
+
   isServerDown(): Observable<boolean> {
     return of(true).pipe(
-      switchMap(() => this.http.get<{ running: boolean }>(`${SYNC_SERVER}/status`)),
+      filter(() => !!this._syncServer.getValue()),
+      switchMap(() => this.serverStatus(this._syncServer.getValue())),
       map((res) => !res.running),
-      catchError(() => of(true)),
       repeat({ delay: 5000 }),
     );
+  }
+
+  setSyncServer(server: { url?: string; local?: boolean }) {
+    if (server.local) {
+      this._syncServer.next(LOCAL_SYNC_SERVER);
+      localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
+      this.serverStatus(LOCAL_SYNC_SERVER).subscribe((res) => {
+        if (!res.running && (window as any)['electron']) {
+          (window as any)['electron'].startLocalServer();
+        }
+      });
+    } else if (server.url) {
+      localStorage.setItem(SYNC_SERVER_KEY, server.url);
+      this._syncServer.next(server.url);
+    }
+  }
+
+  resetSyncServer() {
+    this._syncServer.next('');
   }
 }

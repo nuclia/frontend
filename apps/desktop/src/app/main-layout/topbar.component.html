@@ -7,9 +7,14 @@
       alt="Nuclia Desktop" />
   </div>
   <div class="status">
-    <span *ngIf="isServerDown | async">
+    <pa-button
+      *ngIf="isServerDown | async"
+      size="small"
+      kind="destructive"
+      aspect="basic"
+      (click)="resetSyncServer()">
       {{ 'generic.server_down' | translate }}
-    </span>
+    </pa-button>
   </div>
   <div class="accounts">
     <pa-button
