@@ -6,8 +6,8 @@ import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
+import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
+import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 
 const homeRoutes: Routes = [

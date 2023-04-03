@@ -1,0 +1,32 @@
+{
+  "name": "chrome-ext",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/chrome-ext/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "mkdir -p dist/libs/chrome-ext/",
+          "rimraf dist/libs/chrome-ext/",
+          "cp -a libs/chrome-ext/src/lib/ dist/libs/chrome-ext/",
+          "mkdir -p dist/libs/chrome-ext/vendor/",
+          "cp dist/sdk-core/umd/index.js dist/libs/chrome-ext/vendor/nuclia-sdk.umd.min.js",
+          "cp node_modules/rxjs/dist/bundles/rxjs.umd.min.js dist/libs/chrome-ext/vendor/rxjs.umd.min.js"
+        ],
+        "parallel": false
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/chrome-ext"],
+      "options": {
+        "jestConfig": "libs/chrome-ext/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["sdk-core"]
+}

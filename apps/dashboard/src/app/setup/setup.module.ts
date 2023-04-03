@@ -5,7 +5,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio';
 
 import { SetupStep1Component } from './setup-step1/setup-step1.component';
 import { SetupContainerComponent } from './setup-container/setup-container.component';

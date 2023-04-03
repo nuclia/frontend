@@ -13,7 +13,7 @@ import { delay, takeUntil } from 'rxjs/operators';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { SelectionModel } from '@angular/cdk/collections';
 import { CdkDragDrop, CdkDragEnter, CdkDragExit } from '@angular/cdk/drag-drop';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AppEntitiesGroup, Entity, MutableEntitiesGroup } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
 import {

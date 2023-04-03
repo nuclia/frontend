@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
 import { AccountNUAService } from './account-nua.service';

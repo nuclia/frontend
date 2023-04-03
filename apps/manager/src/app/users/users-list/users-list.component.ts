@@ -1,8 +1,8 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { UserSearch } from '../../models/user.model';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator';
+import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
 import { Observable, of as observableOf, Subject } from 'rxjs';
 import { takeUntil, tap, filter, switchMap, auditTime, distinctUntilChanged } from 'rxjs/operators';
 import { UsersService } from '../../services/users.service';

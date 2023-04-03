@@ -5,8 +5,8 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatTableModule } from '@angular/material/table';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 
 import { UserAvatarModule } from '@flaps/components';
 import {
@@ -26,7 +26,7 @@ import { UsersDialogComponent } from './account-kbs/users-dialog/users-dialog.co
 import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
 import { CdkTableModule } from '@angular/cdk/table';
 import { UsersManageModule } from '../knowledge-box/knowledge-box-users/users-manage/users-manage.module';

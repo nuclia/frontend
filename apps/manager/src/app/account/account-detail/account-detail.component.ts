@@ -20,7 +20,7 @@ import { forkJoin, map, Observable, of } from 'rxjs';
 import { ZoneSummary } from '../../models/zone.model';
 import { Counters, Nuclia } from '@nuclia/core';
 import { catchError } from 'rxjs/operators';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs';
 
 const BLOCKING_STATE_LABEL = {
   [AccountBlockingState.UNBLOCKED]: 'Active',

@@ -141,28 +141,6 @@
       "name": "update-workspace-config"
     },
     {
-      "cli": "ng",
-      "version": "15.2.0-beta.0",
-      "requires": {
-        "@angular/core": ">=15.0.0"
-      },
-      "description": "Remove exported `@angular/platform-server` `renderModule` method. The `renderModule` method is now exported by the Angular CLI.",
-      "factory": "./src/migrations/update-15-2-0/remove-platform-server-exports",
-      "package": "@nrwl/angular",
-      "name": "update-platform-server-exports"
-    },
-    {
-      "cli": "ng",
-      "version": "15.2.0-beta.0",
-      "requires": {
-        "@angular/core": ">=15.0.0"
-      },
-      "description": "Remove no longer needed require calls in Karma builder main file.",
-      "factory": "./src/migrations/update-15-2-0/update-karma-main-file",
-      "package": "@nrwl/angular",
-      "name": "update-karma-main-file"
-    },
-    {
       "cli": "nx",
       "version": "15.5.0-beta.0",
       "requires": {
