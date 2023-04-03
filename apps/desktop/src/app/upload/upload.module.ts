@@ -8,6 +8,7 @@ import { UploadComponent } from './upload.component';
 import { FormsModule } from '@angular/forms';
 import { SelectFilesComponent } from './select-files/select-files.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import { SyncServerComponent } from './sync-server/sync-server.component';
 
 @NgModule({
   imports: [
@@ -22,7 +23,7 @@ import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTogglesModule } from
     PaIconModule,
   ],
   exports: [],
-  declarations: [UploadComponent, SelectFilesComponent],
+  declarations: [UploadComponent, SelectFilesComponent, SyncServerComponent],
   providers: [],
 })
 export class UploadModule {}

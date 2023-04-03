@@ -1,0 +1,25 @@
+<h2>{{ 'upload.server.title' | translate }}</h2>
+<div class="container">
+  <div>
+    <h3>{{ 'upload.server.local' | translate }}</h3>
+    <pa-button
+      (click)="setLocalServer()"
+      kind="primary">
+      {{ 'upload.server.local-button' | translate }}
+    </pa-button>
+  </div>
+  <div>
+    <h3>{{ 'upload.server.external' | translate }}</h3>
+    <pa-input
+      [(value)]="serverUrl"
+      placeholder="https://my.local.server">
+      {{ 'upload.server.url' | translate }}
+    </pa-input>
+    <pa-button
+      (click)="setLocalServer()"
+      kind="primary"
+      [disabled]="!serverUrl">
+      {{ 'upload.server.external-button' | translate }}
+    </pa-button>
+  </div>
+</div>

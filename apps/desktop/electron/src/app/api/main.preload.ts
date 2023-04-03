@@ -19,4 +19,5 @@ contextBridge.exposeInMainWorld('electron', {
       return await auth.getAccessToken();
     },
   },
+  startLocalServer: () => ipcRenderer.send('local-server'),
 });

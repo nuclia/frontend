@@ -25,6 +25,7 @@ export class SidebarComponent {
       ),
     ),
   );
+  syncServer = this.sync.syncServer;
 
   constructor(private sync: SyncService, private router: Router) {}
 

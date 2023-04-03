@@ -48,8 +48,6 @@ export default class App {
     App.initMainWindow();
     App.loadMainWindow();
     autoUpdater.checkForUpdatesAndNotify();
-    // fork(`${__dirname}/service/server.js`);
-    initSyncService();
   }
 
   private static onActivate() {
@@ -160,6 +158,10 @@ export default class App {
 
     ipcMain.on('debug', () => {
       App.mainWindow?.webContents.openDevTools();
+    });
+    ipcMain.on('local-server', () => {
+      // fork(`${__dirname}/service/server.js`);
+      initSyncService();
     });
 
     const gotTheLock = app.requestSingleInstanceLock();

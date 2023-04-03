@@ -4,18 +4,12 @@ import {
   SourceConnectorDefinition,
   SyncItem,
   SearchResults,
-  Field,
   ConnectorParameters,
 } from '../models';
-import { filter, from, map, Observable, of, switchMap, take } from 'rxjs';
+import { from, map, Observable, of } from 'rxjs';
 
-// eslint-disable-next-line no-new-func
-const importDynamic = new Function('modulePath', 'return import(modulePath)');
-
-const fetch = async (...args: any[]) => {
-  const module = await importDynamic('node-fetch');
-  return module.default(...args);
-};
+// TODO: use the default fetch once upgraded to node 18
+import { fetch } from '../utils';
 
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',

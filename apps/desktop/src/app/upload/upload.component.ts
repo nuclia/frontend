@@ -26,6 +26,7 @@ export class UploadComponent implements OnInit, OnDestroy {
   step = this.sync.step;
   quickAccess?: { connectorId: string; quickAccessName: string };
   unsubscribeAll = new Subject<void>();
+  syncServer = this.sync.syncServer;
 
   constructor(
     private sync: SyncService,
