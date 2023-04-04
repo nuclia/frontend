@@ -2,35 +2,7 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { map, Observable, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
-import { Currency, Prices } from './billing.models';
-
-export interface StripeCustomer {
-  customer_id: string;
-  billing_details: BillingDetails;
-}
-
-export interface BillingDetails {
-  name: string;
-  company: string;
-  vat?: string;
-  address: string;
-  country: string;
-  state?: string;
-  city: string;
-  postal_code: string;
-}
-
-enum RecurrentPriceInterval {
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
-}
-
-export interface StripeSubscription {
-  payment_method_id: string;
-  on_demand_budget: number;
-  billing_interval?: RecurrentPriceInterval;
-  account_type: AccountTypes;
-}
+import { BillingDetails, Currency, Prices, StripeCustomer, StripeSubscription } from './billing.models';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
