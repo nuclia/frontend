@@ -11,7 +11,7 @@ import { ZoneResolve } from '../resolvers/zone.resolver';
 import { ZonesResolve } from '../resolvers/zones.resolver';
 import { ZoneListComponent } from './zone-list/zone-list.component';
 import { ZoneDetailComponent } from './zone-detail/zone-detail.component';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaCardModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { MatTableModule } from '@angular/material/table';
 
 const usersRoutes: Routes = [
@@ -53,6 +53,7 @@ const usersRoutes: Routes = [
     PaButtonModule,
     PaTextFieldModule,
     MatTableModule,
+    PaCardModule,
   ],
   exports: [RouterModule],
 })

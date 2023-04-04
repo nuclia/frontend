@@ -11,7 +11,13 @@ import { AccountResolve } from '../resolvers/account.resolver';
 import { StashResolve } from '../resolvers/stash.resolver';
 import { StashDetailComponent } from './stash-detail/stash-detail.component';
 import { AccountBaseComponent } from './account-base/account-base.component';
-import { PaButtonModule, PaTabsModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaTabsModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { SisProgressModule } from '@nuclia/sistema';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
@@ -73,6 +79,7 @@ const homeRoutes: Routes = [
     FlexLayoutModule,
     MatTableModule,
     MatSortModule,
+    PaTooltipModule,
   ],
   exports: [RouterModule],
 })

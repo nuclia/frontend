@@ -1,81 +1,47 @@
 <div
   fxLayout="row"
   fxLayoutAlign="start start">
-  <mat-card class="entity">
+  <pa-card class="entity">
     <form [formGroup]="form">
       <h2>Zone</h2>
       <p *ngIf="edit">
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="id"
-            placeholder="Id" />
-        </mat-form-field>
+        <pa-input formControlName="id">Id</pa-input>
       </p>
       <p>
-        <mat-form-field>
-          <input
-            matInput
-            required
-            formControlName="slug"
-            placeholder="Slug" />
-        </mat-form-field>
+        <pa-input
+          required
+          formControlName="slug">
+          Slug
+        </pa-input>
       </p>
       <p>
-        <mat-form-field>
-          <input
-            matInput
-            required
-            formControlName="title"
-            placeholder="Title" />
-        </mat-form-field>
+        <pa-input
+          required
+          formControlName="title">
+          Title
+        </pa-input>
       </p>
       <p *ngIf="edit">
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="creator"
-            placeholder="Creator" />
-        </mat-form-field>
+        <pa-input formControlName="creator">Creator</pa-input>
       </p>
       <p *ngIf="edit">
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="account"
-            placeholder="Account" />
-        </mat-form-field>
+        <pa-input formControlName="account">Account</pa-input>
       </p>
       <p *ngIf="edit">
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="created"
-            placeholder="Created" />
-        </mat-form-field>
+        <pa-input formControlName="created">Created</pa-input>
       </p>
       <p *ngIf="edit">
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="modified"
-            placeholder="Modified" />
-        </mat-form-field>
+        <pa-input formControlName="modified">Modified</pa-input>
       </p>
       <p *ngIf="edit">
-        <mat-form-field>
-          <input
-            matInput
-            formControlName="external"
-            placeholder="External" />
-        </mat-form-field>
+        <pa-input formControlName="external">External</pa-input>
       </p>
       <p></p>
       <p *ngIf="message">
         <span>{{ message }}</span>
       </p>
     </form>
-  </mat-card>
+  </pa-card>
 </div>
 
 <div
