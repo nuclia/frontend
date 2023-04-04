@@ -169,6 +169,7 @@
 	"billing.subscription.help": "All subscription plans have access to all features.",
 	"billing.subscription.show-features": "See all features",
 	"billing.subscription.title": "Subscription plans",
+	"billing.success": "You have been successfully subscribed",
 	"billing.trial.title": "30 days trial",
 	"billing.upgrade": "Upgrade",
 	"billing.vat_id": "VAT ID",

@@ -156,6 +156,7 @@
 	"billing.subscription.help": "Tots els plans de subscripció tenen accés a totes les funcions.",
 	"billing.subscription.show-features": "Veure totes les característiques",
 	"billing.subscription.title": "Plans de subscripció",
+	"billing.success": "T'has subscrit correctament",
 	"billing.trial.title": "30 dies de prova",
 	"billing.upgrade": "Actualitzar",
 	"billing.vat_id": "VAT ID",
