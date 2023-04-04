@@ -73,7 +73,6 @@
     "talk2svelte": "0.1.1",
     "tslib": "^2.0.1",
     "tus-js-client": "^2.3.1",
-    "types-checker": "^0.0.10",
     "uuid": "^7.0.3",
     "z-schema": "^4.2.2",
     "zone.js": "0.12.0"
@@ -129,7 +128,7 @@
     "codelyzer": "6.0.2",
     "crypto-browserify": "^3.12.0",
     "dotenv": "10.0.0",
-    "electron": "^17.0.0",
+    "electron": "^18.3.7",
     "electron-builder": "23.6.0",
     "electron-notarize": "^1.2.1",
     "es-dirname": "^0.1.0",
