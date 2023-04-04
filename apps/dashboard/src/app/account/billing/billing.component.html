@@ -1,6 +1,25 @@
 <div class="billing">
-  <div class="sidebar-menu">
+  <div class="sidebar">
     <h1>{{ 'account.billing' | translate }}</h1>
+    <ul class="menu">
+      <li>
+        <a
+          [routerLink]="'./subscriptions'"
+          routerLinkActive="active">
+          {{ 'billing.subscription.title' | translate }}
+        </a>
+      </li>
+      <li>
+        <a
+          [routerLink]="(isCheckoutActive | async) ? './checkout' : undefined"
+          class="link"
+          routerLinkActive="active"
+          queryParamsHandling="preserve">
+          {{ 'billing.payment_details' | translate }}
+        </a>
+      </li>
+    </ul>
+    <div></div>
   </div>
   <div class="main-content">
     <router-outlet></router-outlet>

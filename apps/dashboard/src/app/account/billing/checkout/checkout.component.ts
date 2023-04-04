@@ -1,11 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, from, switchMap, take } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { delay, filter, from, switchMap, take, tap } from 'rxjs';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { injectScript } from '@flaps/core';
+import { injectScript, SDKService, StateService } from '@flaps/core';
 import { BillingService, StripeCustomer } from '../billing.service';
 import { COUNTRIES } from '../utils';
 import { SisToastService } from '@nuclia/sistema';
+import { AccountTypes } from '@nuclia/core';
+import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-checkout',
@@ -13,7 +16,7 @@ import { SisToastService } from '@nuclia/sistema';
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements OnInit {
   billing = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -32,6 +35,8 @@ export class CheckoutComponent {
     required: 'validation.required',
   };
 
+  subscribing = false;
+  accountType?: AccountTypes;
   countries = COUNTRIES;
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
@@ -52,9 +57,20 @@ export class CheckoutComponent {
     private billingService: BillingService,
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
+    private sdk: SDKService,
+    private stateService: StateService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private navigation: NavigationService,
   ) {
     this.getCustomer();
     this.initStripe();
+  }
+
+  ngOnInit() {
+    this.route.queryParams.pipe(take(1)).subscribe((params) => {
+      this.accountType = params['type'];
+    });
   }
 
   getCustomer() {
@@ -139,18 +155,34 @@ export class CheckoutComponent {
   }
 
   subscribe() {
+    if (!this.accountType) return;
+    this.subscribing = true;
+    this.cdr?.markForCheck();
     this.billingService
       .createSubscription({
         payment_method_id: this.token.id,
         on_demand_budget: parseInt(this.budget.value),
-        account_type: 'stash-developer',
+        account_type: this.accountType,
       })
+      .pipe(
+        switchMap(() =>
+          this.sdk.currentAccount.pipe(
+            take(1),
+            delay(2000), // Need to wait for the updated account data to be available
+          ),
+        ),
+        switchMap((account) => this.sdk.nuclia.db.getAccount(account.slug)),
+        tap((newAccount) => this.stateService.setAccount(newAccount)),
+      )
       .subscribe({
-        next: () => {
-          this.toaster.success('TODO: subscription success');
+        next: (newAccount) => {
+          this.toaster.success('billing.success');
+          this.router.navigateByUrl(this.navigation.getAccountUrl(newAccount.slug));
         },
         error: () => {
-          this.toaster.error('TODO: subscription error');
+          this.subscribing = false;
+          this.cdr?.markForCheck();
+          this.toaster.error('generic.error.oops');
         },
       });
   }

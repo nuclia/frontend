@@ -5,7 +5,7 @@
   min-height: calc(100vh - var(--app-topbar-height));
   width: 100%;
 
-  .sidebar-menu {
+  .sidebar {
     background-color: $color-light-stronger;
     flex-shrink: 0;
     padding: rhythm(7) rhythm(2) 0 rhythm(6);
@@ -16,5 +16,26 @@
     background-color: $color-neutral-lightest;
     flex-grow: 1;
     padding: rhythm(8) rhythm(10);
+  }
+
+  .menu {
+    padding: 0;
+    list-style: none;
+
+    li {
+      margin-bottom: rhythm(1.5);
+    }
+
+    a {
+      color: inherit;
+      font-weight: $font-weight-regular;
+      text-decoration: none;
+      &.active {
+        font-weight: $font-weight-bold;
+      }
+      &:not([href]) {
+        color: $color-neutral-light;
+      }
+    }
   }
 }

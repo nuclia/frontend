@@ -156,6 +156,7 @@
 	"billing.subscription.help": "Todos los planes de suscripción tienen acceso a todas las funciones.",
 	"billing.subscription.show-features": "Ver todas las funciones",
 	"billing.subscription.title": "Planes de subscripción",
+	"billing.success": "Suscripción exitosa",
 	"billing.trial.title": "30 días de prueba",
 	"billing.upgrade": "Actualizar",
 	"billing.vat_id": "VAT ID",

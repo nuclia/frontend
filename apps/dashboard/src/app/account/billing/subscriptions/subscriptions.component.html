@@ -44,7 +44,8 @@
         <pa-button
           *ngIf="(accountType | async) === 'stash-basic'"
           kind="primary"
-          routerLink="../checkout">
+          routerLink="../checkout"
+          [queryParams]="{ type: 'stash-developer' }">
           {{ 'billing.upgrade' | translate }}
         </pa-button>
       </th>
@@ -57,7 +58,8 @@
         <pa-button
           *ngIf="(accountType | async) === 'stash-basic' || (accountType | async) === 'stash-developer'"
           kind="primary"
-          routerLink="../checkout">
+          routerLink="../checkout"
+          [queryParams]="{ type: 'stash-business' }">
           {{ 'billing.upgrade' | translate }}
         </pa-button>
       </th>
