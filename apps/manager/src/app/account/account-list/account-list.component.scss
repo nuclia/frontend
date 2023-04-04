@@ -1,3 +1,11 @@
+.list-wrapper {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+
+  padding: 16px;
+}
+
 table {
   width: 100%;
 }
@@ -5,6 +13,13 @@ table {
 .llistat {
   overflow-y: scroll;
   height: 100%;
+}
+
+.example-loading-shade {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }
 
 .actions {

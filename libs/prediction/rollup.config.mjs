@@ -59,7 +59,7 @@ export default [
     ],
   },
   {
-    input: '../../dist/prediction/esm/src/index.d.ts',
+    input: '../../dist/prediction/esm/libs/prediction/src/index.d.ts',
     output: [{ file: '../../dist/prediction/types/index.d.ts', format: 'esm' }],
     external: [/\.css$/],
     plugins: [dts()],

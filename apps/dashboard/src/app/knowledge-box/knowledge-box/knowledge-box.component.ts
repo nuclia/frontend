@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { AppService, UploadFilesDialogComponent, UploadService } from '@flaps/common';

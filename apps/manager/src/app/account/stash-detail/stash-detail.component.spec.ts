@@ -8,8 +8,7 @@ import { UsersService } from '../../services/users.service';
 
 import { StashDetailComponent } from './stash-detail.component';
 import { MockModule } from 'ng-mocks';
-import { MatIconModule } from '@angular/material/icon';
-import { STFInputModule } from '../../inputfield/input-module';
+import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('StashDetailComponent', () => {
   let component: StashDetailComponent;
@@ -18,7 +17,12 @@ describe('StashDetailComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [StashDetailComponent],
-      imports: [RouterTestingModule, ReactiveFormsModule, STFInputModule, MockModule(MatIconModule)],
+      imports: [
+        RouterTestingModule,
+        MockModule(ReactiveFormsModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaButtonModule),
+      ],
       providers: [
         {
           provide: AccountService,

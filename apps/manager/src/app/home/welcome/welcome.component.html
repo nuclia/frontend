@@ -1,67 +1,32 @@
-<h3>Aquesta es la interficie per administrar stashify!</h3>
-<div
-  fxLayout="row"
-  fxLayoutAlign="start center">
-  <mat-card
+<h3>Here is the interface to manage stashify!</h3>
+<div class="card-container">
+  <pa-card
     [routerLink]="['/zones']"
     *ngIf="isRoot">
-    <mat-card-header>
-      <mat-card-title>Zones</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Flaps zones</p>
+    <h4>Zones</h4>
+    <div>
+      <p>Nuclia zones</p>
       <p>Add new zone</p>
-    </mat-card-content>
-    <mat-card-actions
-      fxLayout="row"
-      fxLayoutAlign="center center">
-      <pa-button
-        kind="primary"
-        size="small">
-        Go
-      </pa-button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </pa-card>
 
-  <mat-card
+  <pa-card
     [routerLink]="['/users']"
     *ngIf="isRoot">
-    <mat-card-header>
-      <mat-card-title>Users</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Flaps users</p>
+    <h4>Users</h4>
+    <div>
+      <p>Nuclia users</p>
       <p>Add new user</p>
-    </mat-card-content>
-    <mat-card-actions
-      fxLayout="row"
-      fxLayoutAlign="center center">
-      <pa-button
-        kind="primary"
-        size="small">
-        Go
-      </pa-button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </pa-card>
 
-  <mat-card
+  <pa-card
     [routerLink]="['/accounts']"
     *ngIf="isDealer || isRoot">
-    <mat-card-header>
-      <mat-card-title>Accounts</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Flaps accounts</p>
+    <h4>Accounts</h4>
+    <div>
+      <p>Nuclia accounts</p>
       <p>Add new account</p>
-    </mat-card-content>
-    <mat-card-actions
-      fxLayout="row"
-      fxLayoutAlign="center center">
-      <pa-button
-        kind="primary"
-        size="small">
-        Go
-      </pa-button>
-    </mat-card-actions>
-  </mat-card>
+    </div>
+  </pa-card>
 </div>

@@ -7,9 +7,7 @@ import { ZoneService } from '../../services/zone.service';
 
 import { ZoneDetailComponent } from './zone-detail.component';
 import { MockModule } from 'ng-mocks';
-import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaCardModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('ZoneDetailComponent', () => {
   let component: ZoneDetailComponent;
@@ -20,9 +18,9 @@ describe('ZoneDetailComponent', () => {
       declarations: [ZoneDetailComponent],
       imports: [
         RouterTestingModule,
-        ReactiveFormsModule,
-        MockModule(MatCardModule),
-        MockModule(MatFormFieldModule),
+        MockModule(PaCardModule),
+        MockModule(ReactiveFormsModule),
+        MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
       ],
       providers: [

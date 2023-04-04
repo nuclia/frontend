@@ -14,12 +14,12 @@
     fxLayout="row"
     fxLayoutAlign="space-between center">
     <span>Change title</span>
-    <stf-input formControlName="title">New title</stf-input>
-    <button
-      mat-icon-button
+    <pa-input formControlName="title">New title</pa-input>
+    <pa-button
+      icon="check"
       (click)="saveTitle()">
-      <mat-icon>save</mat-icon>
-    </button>
+      save
+    </pa-button>
   </form>
   <div class="actual-user">
     <form [formGroup]="searchUserForm">
@@ -28,28 +28,27 @@
         class="search-user"
         fxLayout="row"
         fxLayoutAlign="space-between center">
-        <stf-input
+        <pa-input
           formControlName="user"
           (keyUp)="searching($event)"
-          (enterPressed)="search()">
+          (enter)="search()">
           User
-        </stf-input>
-        <button
-          mat-icon-button
-          (click)="search()">
-          <mat-icon>search</mat-icon>
-        </button>
+        </pa-input>
+        <pa-button
+          icon="search"
+          (click)="search()"></pa-button>
       </div>
       <div *ngIf="userSearchList.length === 0">No results</div>
       <div
         *ngFor="let user of userSearchList"
         class="users_list">
         <span class="user_desc">{{ user['id'] }} - {{ user['email'] }} - {{ user['name'] }}</span>
-        <button
-          mat-icon-button
+        <pa-button
+          icon="plus"
+          aspect="basic"
           (click)="addSeachedUser(user['id'])">
-          <mat-icon>add</mat-icon>
-        </button>
+          Add
+        </pa-button>
       </div>
     </form>
   </div>
@@ -59,24 +58,25 @@
       <li *ngFor="let member of stash.members">
         <ng-container *ngIf="member">
           {{ member.id }} - {{ member.name }} - {{ member.email }}
-          <button
-            mat-icon-button
-            (click)="updateToOwner(member.id)"
-            matTooltip="Update to owner">
-            <mat-icon>verified_user</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="updateToContributor(member.id)"
-            matTooltip="Update to contributor">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="remove(member.id)"
-            matTooltip="Delete">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <pa-button
+            paTooltip="Update to owner"
+            aspect="basic"
+            icon="shield-check"
+            (click)="updateToOwner(member.id)"></pa-button>
+          <pa-button
+            icon="edit"
+            aspect="basic"
+            paTooltip="Update to contributor"
+            (click)="updateToContributor(member.id)">
+            Update to contributor
+          </pa-button>
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            (click)="remove(member.id)">
+            Delete
+          </pa-button>
         </ng-container>
       </li>
     </ul>
@@ -85,24 +85,26 @@
       <li *ngFor="let owner of stash.owners">
         <ng-container *ngIf="owner">
           {{ owner.id }} - {{ owner.name }} - {{ owner.email }}
-          <button
-            mat-icon-button
-            (click)="updateToMember(owner.id)"
-            matTooltip="Update to member">
-            <mat-icon>accessibility</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="updateToContributor(owner.id)"
-            matTooltip="Update to contributor">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="remove(owner.id)"
-            matTooltip="Delete">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <pa-button
+            icon="user"
+            paTooltip="Update to member"
+            aspect="basic"
+            (click)="updateToMember(owner.id)"></pa-button>
+
+          <pa-button
+            icon="edit"
+            aspect="basic"
+            paTooltip="Update to contributor"
+            (click)="updateToContributor(owner.id)">
+            Update to contributor
+          </pa-button>
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            (click)="remove(owner.id)">
+            Delete
+          </pa-button>
         </ng-container>
       </li>
     </ul>
@@ -111,24 +113,23 @@
       <li *ngFor="let contributor of stash.contributors">
         <ng-container *ngIf="contributor">
           {{ contributor.id }} - {{ contributor.name }} - {{ contributor.email }}
-          <button
-            mat-icon-button
-            (click)="updateToOwner(contributor.id)"
-            matTooltip="Update to owner">
-            <mat-icon>verified_user</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="updateToMember(contributor.id)"
-            matTooltip="Update to member">
-            <mat-icon>accessibility</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="remove(contributor.id)"
-            matTooltip="Delete">
-            <mat-icon>delete</mat-icon>
-          </button>
+          <pa-button
+            paTooltip="Update to owner"
+            aspect="basic"
+            icon="shield-check"
+            (click)="updateToOwner(contributor.id)"></pa-button>
+          <pa-button
+            icon="user"
+            paTooltip="Update to member"
+            aspect="basic"
+            (click)="updateToMember(contributor.id)"></pa-button>
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            (click)="remove(contributor.id)">
+            Delete
+          </pa-button>
         </ng-container>
       </li>
     </ul>

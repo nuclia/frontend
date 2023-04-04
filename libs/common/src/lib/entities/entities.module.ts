@@ -9,7 +9,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { A11yModule } from '@angular/cdk/a11y';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
@@ -17,8 +17,7 @@ import { EntityGroupComponent } from './entity-group/entity-group.component';
 import { EntityNameComponent } from './entity-name/entity-name.component';
 import { SynonymListComponent } from './synonym-list/synonym-list.component';
 import { SynonymAddComponent } from './synonym-add/synonym-add.component';
-import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
-import { GroupSelectComponent } from './entity-dialog/group-select/group-select.component';
+import { EntityDialogComponent, GroupSelectComponent } from './entity-dialog';
 import {
   PaButtonModule,
   PaExpanderModule,

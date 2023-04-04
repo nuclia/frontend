@@ -5,10 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoggedinGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
-import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaCardModule } from '@guillotinaweb/pastanaga-angular';
 
 const homeRoutes: Routes = [
   {
@@ -23,12 +20,10 @@ const homeRoutes: Routes = [
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatCardModule,
-    MatListModule,
-    FlexLayoutModule,
     RouterModule.forChild(homeRoutes),
     TranslateModule.forChild(),
     PaButtonModule,
+    PaCardModule,
   ],
   exports: [RouterModule],
 })

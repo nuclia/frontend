@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 
 import { UserAvatarModule } from '@flaps/components';
 import { STFExpanderModule } from '@flaps/pastanaga';
@@ -12,10 +12,9 @@ import { STFExpanderModule } from '@flaps/pastanaga';
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
 import { KnowledgeBoxProfileComponent } from './knowledge-box-profile/knowledge-box-profile.component';
-import { KnowledgeBoxUsersComponent } from './knowledge-box-users/knowledge-box-users.component';
+import { KnowledgeBoxUsersComponent, UsersManageModule } from './knowledge-box-users';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
-import { UsersManageModule } from './knowledge-box-users/users-manage/users-manage.module';
 import {
   PaButtonModule,
   PaDropdownModule,

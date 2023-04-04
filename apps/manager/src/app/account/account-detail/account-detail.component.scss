@@ -1,3 +1,5 @@
+@import 'variables';
+
 .entity {
   margin: 20px;
   max-width: 400px;
@@ -14,27 +16,58 @@ h3 {
   font-weight: 800;
 }
 
-.stash {
+.content_area .stash {
   min-width: 752px;
 }
 .new_stash {
-  margin-left: 20px;
-  margin-right: 20px;
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed #ccc;
-}
-.search-user {
-  stf-input {
-    width: 250px;
+  margin: 24px 0;
+  padding-top: 16px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 }
+
+form .section pa-input {
+  display: block;
+  margin-bottom: 24px;
+}
+
+.limits {
+  width: 400px;
+}
+
 .actual-user {
   min-width: 300px;
 }
+
 .content_area {
-  width: 100%;
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+    }
+  }
+
+  ul.stash li {
+    border-bottom: 1px solid $color-neutral-lighter;
+    justify-content: space-between;
+
+    .body-s {
+      color: $color-neutral-regular;
+      flex: 1 0 auto;
+      text-align: right;
+    }
+  }
 }
+
 .users_list {
   margin-top: 10px;
   padding-top: 10px;
@@ -73,9 +106,15 @@ h3 {
   }
   .section {
     border: 1px dashed #ccc;
-    padding: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    margin: 12px 0;
+
+    h3 {
+      margin: 0;
+    }
   }
   .new-user {
     width: 100%;
@@ -86,7 +125,6 @@ h3 {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  margin: 16px 0;
 
   h5 {
     margin-bottom: 8px;

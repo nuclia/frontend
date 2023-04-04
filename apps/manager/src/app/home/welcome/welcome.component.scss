@@ -1,8 +1,11 @@
-mat-card {
-  max-width: 300px;
-  margin: 20px;
-}
+@import 'variables';
 
 h3 {
-  padding-left: 20px;
+  padding: 16px;
+}
+
+.card-container {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
 }

@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { UserSearch } from '../../models/user.model';
@@ -16,11 +16,10 @@ import { UsersService } from '../../services/users.service';
 import { ZoneService } from '../../services/zone.service';
 import { validSlug } from '../../models/form.validator';
 import { SDKService } from '@flaps/core';
-import { forkJoin, map, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable, of, switchMap } from 'rxjs';
 import { ZoneSummary } from '../../models/zone.model';
 import { Counters, Nuclia } from '@nuclia/core';
-import { catchError } from 'rxjs/operators';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { catchError, tap } from 'rxjs/operators';
 
 const BLOCKING_STATE_LABEL = {
   [AccountBlockingState.UNBLOCKED]: 'Active',
@@ -32,6 +31,7 @@ const BLOCKING_STATE_LABEL = {
   selector: 'app-account-detail',
   templateUrl: './account-detail.component.html',
   styleUrls: ['./account-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountDetailComponent implements OnInit {
   edit: boolean = false;
@@ -95,6 +95,8 @@ export class AccountDetailComponent implements OnInit {
     generative: new FormControl<boolean>(false, { nonNullable: true }),
   });
 
+  selectedTab: 'users' | 'kbs' | 'limits' = 'users';
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -106,42 +108,48 @@ export class AccountDetailComponent implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {
     this.userSearchList = [];
-    this.route.data.subscribe((data: { [account: string]: Account }) => {
-      if (data.account) {
-        this.account = data.account;
-        this.blockingState = this.account.blocking_state;
-        this.currentState = BLOCKING_STATE_LABEL[this.account.blocking_state];
-        data.account.blocked_features.forEach((blockedFeature) => {
-          this.blockedFeaturesForm.controls[blockedFeature]?.patchValue(true);
-        });
-        const user = this.sdk.nuclia.auth.getJWTUser();
-        this.isRoot = user?.ext.type === 'r';
-        this.isDealer = user?.ext.type === 'd';
-        this.edit = true;
-
-        this.accountTitleForm.controls.id.setValue(data.account.slug);
-        this.accountTitleForm.controls.id.disable();
-
-        const formData = {
-          email: data.account.email,
-          type: data.account.type,
-          kbs: data.account.stashes.max_stashes,
-          creator: data.account.creator,
-          zone: data.account.zone,
-          indexer_slow_replicas: data.account.indexer_slow_replicas,
-        };
-
-        this.accountForm.patchValue(formData);
-        this.accountForm.controls.zone.disable();
-        this.limitsForm.patchValue(this.account.limits);
-      }
-    });
   }
 
   ngOnInit() {
-    this.zoneService.getZones().subscribe((zones) => {
-      this.zones = zones;
-    });
+    this.zoneService
+      .getZones()
+      .pipe(
+        tap((zones) => {
+          this.zones = zones;
+          this.cdr.detectChanges();
+        }),
+        switchMap(() => this.route.data),
+      )
+      .subscribe((data: { [account: string]: Account }) => {
+        if (data.account) {
+          this.account = data.account;
+          this.blockingState = this.account.blocking_state;
+          this.currentState = BLOCKING_STATE_LABEL[this.account.blocking_state];
+          data.account.blocked_features.forEach((blockedFeature) => {
+            this.blockedFeaturesForm.controls[blockedFeature]?.patchValue(true);
+          });
+          const user = this.sdk.nuclia.auth.getJWTUser();
+          this.isRoot = user?.ext.type === 'r';
+          this.isDealer = user?.ext.type === 'd';
+          this.edit = true;
+
+          this.accountTitleForm.controls.id.setValue(data.account.slug);
+          this.accountTitleForm.controls.id.disable();
+
+          const formData = {
+            email: data.account.email,
+            type: data.account.type,
+            kbs: data.account.stashes.max_stashes,
+            creator: data.account.creator,
+            zone: data.account.zone,
+            indexer_slow_replicas: data.account.indexer_slow_replicas,
+          };
+          this.accountForm.patchValue(formData);
+          this.limitsForm.patchValue(this.account.limits);
+          this.accountForm.controls.zone.disable();
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   goToStash(stash: string) {
@@ -273,8 +281,9 @@ export class AccountDetailComponent implements OnInit {
     }
   }
 
-  onTabSelection($event: MatTabChangeEvent) {
-    if ($event.index === 1) {
+  onTabSelection(tab: 'users' | 'kbs' | 'limits') {
+    this.selectedTab = tab;
+    if (tab === 'kbs') {
       this._loadKbCount();
     }
   }

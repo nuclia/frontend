@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { map } from 'rxjs';
 import { UploadService } from '../upload.service';
 import { UploadProgressDialogComponent } from '../upload-progress/upload-progress-dialog.component';

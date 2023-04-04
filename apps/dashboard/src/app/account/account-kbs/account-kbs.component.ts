@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
@@ -57,8 +57,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
           this.account = account;
           this.maxKnowledgeBoxes = account.max_kbs;
           this.zones = zones;
-          const zoneSlug = zones.find((zone) => zone.id === account.zone)?.slug;
-          this.sdk.nuclia.options.zone = zoneSlug;
+          this.sdk.nuclia.options.zone = zones.find((zone) => zone.id === account.zone)?.slug;
           return this.sdk.kbList;
         }),
       )

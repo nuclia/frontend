@@ -1,7 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatMenuModule } from '@angular/material/menu';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
@@ -11,6 +9,8 @@ import { DashboardComponent } from './dashboard.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MockModule } from 'ng-mocks';
 import { MatIconModule } from '@angular/material/icon';
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 
 describe('DashboardComponent', () => {
   let component: DashboardComponent;
@@ -20,12 +20,12 @@ describe('DashboardComponent', () => {
     TestBed.configureTestingModule({
       declarations: [DashboardComponent],
       imports: [
-        MatDialogModule,
         RouterTestingModule,
         MatBottomSheetModule,
-        MatMenuModule,
         MockModule(MatToolbarModule),
         MockModule(MatIconModule),
+        MockModule(MatDialogModule),
+        MockModule(MatMenuModule),
       ],
       providers: [
         { provide: UsersService, useValue: { loggedout: () => of() } },

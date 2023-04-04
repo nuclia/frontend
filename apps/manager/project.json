@@ -1,0 +1,173 @@
+{
+  "name": "manager",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "generators": {
+    "@nrwl/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
+  "sourceRoot": "apps/manager/src",
+  "prefix": "app",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "options": {
+        "outputPath": "dist/apps/manager",
+        "index": "apps/manager/src/index.html",
+        "main": "apps/manager/src/main.ts",
+        "polyfills": "apps/manager/src/polyfills.ts",
+        "tsConfig": "apps/manager/tsconfig.app.json",
+        "allowedCommonJsDependencies": ["lru-cache"],
+        "budgets": [
+          {
+            "type": "initial",
+            "maximumWarning": "2mb",
+            "maximumError": "5mb"
+          },
+          {
+            "type": "anyComponentStyle",
+            "maximumWarning": "60kb",
+            "maximumError": "100kb"
+          }
+        ],
+        "assets": [
+          "apps/manager/src/favicon.ico",
+          "apps/manager/src/assets",
+          {
+            "glob": "**/*",
+            "input": "libs/pastanaga/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/manager/src/environments_config/local",
+            "output": "assets/deployment"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sistema/assets",
+            "output": "assets"
+          }
+        ],
+        "styles": ["apps/manager/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/manager/src"]
+        },
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "aot": true,
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false,
+          "buildOptimizer": true,
+          "fileReplacements": [
+            {
+              "replace": "apps/manager/src/environments/environment.ts",
+              "with": "apps/manager/src/environments/environment.prod.ts"
+            }
+          ],
+          "assets": [
+            "apps/manager/src/favicon.ico",
+            "apps/manager/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/manager/src/environments_config/production",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "local-stage": {
+          "aot": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/manager/src/favicon.ico",
+            "apps/manager/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/manager/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production",
+      "outputs": ["{options.outputPath}"]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "options": {
+        "browserTarget": "manager:build"
+      },
+      "configurations": {
+        "production": {
+          "browserTarget": "manager:build:production"
+        },
+        "local-stage": {
+          "browserTarget": "manager:build:local-stage"
+        }
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "manager:build"
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/manager"],
+      "options": {
+        "jestConfig": "apps/manager/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}

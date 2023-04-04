@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';

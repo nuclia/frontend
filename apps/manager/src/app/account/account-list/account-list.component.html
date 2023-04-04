@@ -1,16 +1,11 @@
-<div class="list-wrapper">
-  <div
-    fxLayout="row"
-    fxLayoutAlign="start center">
+<div>
+  <div class="list-wrapper">
     <pa-input
-      fxFlex="80%"
       (keyup)="applyFilter($event.target.value)"
       placeholder="Filter">
       Filter
     </pa-input>
-    <div
-      fxLayout="row"
-      fxLayoutAlign="center center">
+    <div>
       <pa-button
         kind="primary"
         (click)="addNewAccount()">
@@ -19,13 +14,11 @@
     </div>
   </div>
 
-  <div
-    class="mat-elevation-z8"
-    class="llistat">
+  <div class="llistat mat-elevation-z8">
     <div
       class="example-loading-shade"
       *ngIf="isLoadingResults || isRateLimitReached">
-      <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
+      <nsi-spinner *ngIf="isLoadingResults"></nsi-spinner>
     </div>
     <table
       mat-table
@@ -102,8 +95,19 @@
           mat-cell
           *matCellDef="let row"
           class="actions">
-          <mat-icon (click)="delete(row)">delete</mat-icon>
-          <mat-icon (click)="edit(row)">edit</mat-icon>
+          <pa-button
+            icon="trash"
+            aspect="basic"
+            kind="destructive"
+            (click)="delete(row)">
+            delete
+          </pa-button>
+          <pa-button
+            icon="edit"
+            aspect="basic"
+            (click)="edit(row)">
+            edit
+          </pa-button>
         </td>
       </ng-container>
 
@@ -114,7 +118,5 @@
         mat-row
         *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
   </div>
 </div>

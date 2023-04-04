@@ -1,11 +1,7 @@
 module.exports = {
   displayName: 'search-widget-demo',
   preset: '../../jest.preset.js',
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.spec.json',
-    },
-  },
+  globals: {},
   transform: {
     '^(.+\\.svelte$)': [
       'svelte-jester',
@@ -13,7 +9,12 @@ module.exports = {
         preprocess: 'apps/search-widget-demo/jest.config.js/svelte.config.js',
       },
     ],
-    '^.+\\.[tj]s$': 'ts-jest',
+    '^.+\\.[tj]s$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/tsconfig.spec.json',
+      },
+    ],
   },
   moduleFileExtensions: ['svelte', 'ts', 'js', 'html'],
   coverageDirectory: '../../coverage/apps/search-widget-demo',

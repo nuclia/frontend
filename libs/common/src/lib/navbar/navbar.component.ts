@@ -22,14 +22,12 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   @Input() isUnfolded: boolean = false;
 
   unsubscribeAll = new Subject<void>();
-  inAccount = merge(
+  inAccount: Observable<boolean> = merge(
     of(this.navigationService.inAccountManagement(location.pathname)),
     this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map((event) => this.navigationService.inAccountManagement((event as NavigationEnd).url)),
       takeUntil(this.unsubscribeAll),
-      map(
-        (event) =>
-          event instanceof NavigationEnd && this.navigationService.inAccountManagement((event as NavigationEnd).url),
-      ),
     ),
   );
   kbUrl: string = '';

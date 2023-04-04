@@ -1,0 +1,179 @@
+{
+  "name": "contributor",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "generators": {
+    "@nrwl/angular:component": {
+      "style": "scss",
+      "changeDetection": "OnPush"
+    }
+  },
+  "sourceRoot": "apps/contributor/src",
+  "prefix": "nco",
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/contributor",
+        "baseHref": "/contributor/",
+        "index": "apps/contributor/src/index.html",
+        "main": "apps/contributor/src/main.ts",
+        "polyfills": "apps/contributor/src/polyfills.ts",
+        "tsConfig": "apps/contributor/tsconfig.app.json",
+        "allowedCommonJsDependencies": [],
+        "inlineStyleLanguage": "scss",
+        "assets": [
+          "apps/contributor/src/favicon.ico",
+          "apps/contributor/src/assets",
+          {
+            "glob": "**/*",
+            "input": "libs/pastanaga/src/assets",
+            "output": "assets"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/common/src/assets/i18n",
+            "output": "assets/i18n"
+          },
+          {
+            "glob": "**/*",
+            "input": "apps/contributor/src/environments_config/local-stage",
+            "output": "assets/deployment"
+          },
+          {
+            "glob": "**/*",
+            "input": "libs/sistema/assets",
+            "output": "assets"
+          }
+        ],
+        "styles": ["apps/contributor/src/styles.scss"],
+        "stylePreprocessorOptions": {
+          "includePaths": ["apps/contributor/src"]
+        },
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "3mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "fileReplacements": [
+            {
+              "replace": "apps/contributor/src/environments/environment.ts",
+              "with": "apps/contributor/src/environments/environment.prod.ts"
+            }
+          ],
+          "outputHashing": "none",
+          "assets": [
+            "apps/contributor/src/favicon.ico",
+            "apps/contributor/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/contributor/src/environments_config/production",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        },
+        "local-stage": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/contributor/src/favicon.ico",
+            "apps/contributor/src/assets",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/contributor/src/environments_config/local-stage",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "contributor:build:production"
+        },
+        "local-stage": {
+          "browserTarget": "contributor:build:local-stage"
+        }
+      },
+      "defaultConfiguration": "development"
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "contributor:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/contributor/**/*.ts", "apps/contributor/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/contributor"],
+      "options": {
+        "jestConfig": "apps/contributor/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
