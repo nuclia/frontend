@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { map, Observable, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import { BillingDetails, Currency, Prices, StripeCustomer, StripeSubscription } from './billing.models';
 
@@ -8,12 +8,20 @@ import { BillingDetails, Currency, Prices, StripeCustomer, StripeSubscription } 
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
 
+  private _country = new BehaviorSubject<string | null>(null);
+  country = this._country.asObservable();
+
   constructor(private sdk: SDKService) {}
 
-  getCustomer(): Observable<StripeCustomer> {
+  setCountry(country: string | null) {
+    this._country.next(country);
+  }
+
+  getCustomer(): Observable<StripeCustomer | null> {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) => this.sdk.nuclia.rest.get<StripeCustomer>(`/billing/account/${account.id}/customer`)),
+      catchError(() => of(null)),
     );
   }
 

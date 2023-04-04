@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { delay, filter, from, switchMap, take, tap } from 'rxjs';
+import { delay, filter, forkJoin, from, switchMap, take, tap } from 'rxjs';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, StateService } from '@flaps/core';
 import { BillingService } from '../billing.service';
@@ -75,13 +75,19 @@ export class CheckoutComponent implements OnInit {
   }
 
   getCustomer() {
-    this.billingService.getCustomer().subscribe((customer) => {
-      this.customer = customer;
-      this.billing.patchValue(customer.billing_details);
-      this.editCustomer = false;
-      this.editCard = true;
-      this.cdr?.markForCheck();
-    });
+    forkJoin([this.billingService.getCustomer(), this.billingService.country.pipe(take(1))]).subscribe(
+      ([customer, country]) => {
+        if (customer) {
+          this.customer = customer;
+          this.billing.patchValue(customer.billing_details);
+          this.editCustomer = false;
+          this.editCard = true;
+          this.cdr?.markForCheck();
+        } else if (country) {
+          this.billing.patchValue({ country });
+        }
+      },
+    );
   }
 
   showCustomerForm() {
@@ -97,14 +103,16 @@ export class CheckoutComponent implements OnInit {
           .pipe(switchMap(() => this.billingService.getCustomer()))
       : this.billingService.createCustomer(this.billing.getRawValue());
     observable.subscribe((customer) => {
-      this.customer = customer;
-      this.billing.reset();
-      this.billing.patchValue(customer.billing_details);
-      this.editCustomer = false;
-      if (!this.token) {
-        this.editCard = true;
+      if (customer) {
+        this.customer = customer;
+        this.billing.reset();
+        this.billing.patchValue(customer.billing_details);
+        this.editCustomer = false;
+        if (!this.token) {
+          this.editCard = true;
+        }
+        this.cdr?.markForCheck();
       }
-      this.cdr?.markForCheck();
     });
   }
 
