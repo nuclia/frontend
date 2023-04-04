@@ -8,15 +8,16 @@
     for="country">
     {{ 'billing.subscription.country' | translate }}
   </label>
-  <pa-select
+  <pa-typeahead-select
     externalLabel
+    id="country"
     (valueChange)="onSelectCountry($event)">
     <pa-option
       *ngFor="let country of countryList"
       [value]="country.code">
       {{ country.name }}
     </pa-option>
-  </pa-select>
+  </pa-typeahead-select>
 </div>
 <div *ngIf="currency">
   <div class="header">
