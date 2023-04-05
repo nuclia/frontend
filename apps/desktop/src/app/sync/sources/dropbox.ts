@@ -39,20 +39,12 @@ class DropboxImpl implements ISourceConnector {
     localStorage.setItem(TOKEN, params.token);
   }
 
-  getData(): ConnectorParameters {
-    return {token: localStorage.getItem(TOKEN)};
-  }
-
   goToOAuth(reset?: boolean) {
     return of(true);
   }
 
   authenticate(): Observable<boolean> {
     return of(true);
-  }
-
-  getFiles(query?: string, pageSize?: number): Observable<SearchResults> {
-    return this._getFiles(query, pageSize);
   }
 
   private _getFiles(query?: string, pageSize: number = 100, nextPage?: string | number): Observable<SearchResults> {
@@ -130,17 +122,5 @@ class DropboxImpl implements ISourceConnector {
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   private filterResults(raw: any): boolean {
     return raw.match_type?.['.tag'] !== 'folder';
-  }
-
-  download(resource: SyncItem): Observable<Blob> {
-    return from(
-      fetch(`https://content.dropboxapi.com/2/files/download`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem(TOKEN || '')}`,
-          'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
-        },
-      }).then((res) => res.blob()),
-    );
   }
 }

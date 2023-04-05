@@ -13,9 +13,10 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
 import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults, CONNECTOR_ID_KEY } from '../../sync/models';
+import { SyncItem, ISourceConnector, SearchResults, CONNECTOR_ID_KEY, SOURCE_NAME_KEY } from '../../sync/models';
 import { defaultAuthCheck } from '../../utils';
 import { SisToastService } from '@nuclia/sistema';
+import { SyncService } from '../../sync/sync.service';
 
 @Component({
   selector: 'nde-select-files',
@@ -39,6 +40,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   nextPage?: Observable<SearchResults>;
   loading = false;
   isSelectingAll = false;
+  currentSource = this.sync.sourcesCache.pipe(map((sources) => sources[localStorage.getItem(SOURCE_NAME_KEY) || '']));
 
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     filter(() => !!this.source),
@@ -47,7 +49,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     }),
     switchMap(() =>
       concat(
-        (this.source as ISourceConnector).getFiles(this.query).pipe(
+        this.sync.getFiles(localStorage.getItem(SOURCE_NAME_KEY) || '', this.query).pipe(
           catchError((error) => {
             if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
               localStorage.setItem(CONNECTOR_ID_KEY, this.sourceId || '');
@@ -80,7 +82,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     share(),
   );
 
-  constructor(private cdr: ChangeDetectorRef, private toaster: SisToastService) {}
+  constructor(private cdr: ChangeDetectorRef, private toaster: SisToastService, private sync: SyncService) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
@@ -138,7 +140,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   }
 
   getAllFiles(): Observable<SyncItem[]> {
-    return (this.source as ISourceConnector).getFiles().pipe(
+    return this.sync.getFiles(localStorage.getItem(SOURCE_NAME_KEY) || '').pipe(
       concatMap((res) => this._getAllFiles(res)),
       map((res) => res.items),
     );

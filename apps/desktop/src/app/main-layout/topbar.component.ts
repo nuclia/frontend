@@ -18,9 +18,7 @@ export class TopbarComponent {
     private state: StateService,
     private sdk: SDKService,
     private sync: SyncService,
-  ) {
-    this.isServerDown.subscribe((isDown) => console.log('isDown', isDown));
-  }
+  ) {}
 
   menuOpen = false;
   account = this.state.account;

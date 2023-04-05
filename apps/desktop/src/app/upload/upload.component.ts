@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { filter, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { delay, filter, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
 import {
   ConnectorDefinition,
@@ -61,9 +61,9 @@ export class UploadComponent implements OnInit, OnDestroy {
         this.quickAccess = { connectorId: data.connectorId, quickAccessName: data.quickAccessName };
         this.goTo(1);
       } else {
-        const params = this.sync.getConnectorCache(data.connectorId, data.quickAccessName)?.params;
+        const params = this.sync.getSourceCache(data.quickAccessName).data;
         const connector = this.sync.sources[data.connectorId].definition;
-        this.selectSource({ name: data.quickAccessName, connector, params });
+        this.selectSource({ name: data.quickAccessName, connector, params }, false);
       }
     });
   }
@@ -78,17 +78,27 @@ export class UploadComponent implements OnInit, OnDestroy {
     this.sync.setStep(step);
   }
 
-  selectSource(event: { name: string; connector: ConnectorDefinition; params?: ConnectorParameters }) {
+  selectSource(
+    event: { name: string; connector: ConnectorDefinition; params?: ConnectorParameters; permanentSync?: boolean },
+    update = true,
+  ) {
     if (!event.name) {
-      // TODO fox flow we always have names
       throw new Error('Name is mandatory');
     }
     this.sourceId = event.connector.id;
     this.tracking.logEvent('desktop:select_source', { sourceId: this.sourceId });
-    this.sync.setSourceData(event.name, event.connector.id, event.params).subscribe();
-    this.sync
-      .getSource(event.connector.id)
+    (update
+      ? this.sync
+          .setSourceData(event.name, {
+            connectorId: event.connector.id,
+            data: event.params || {},
+            permanentSync: event.permanentSync,
+          })
+          .pipe(map(() => true))
+      : of(true)
+    )
       .pipe(
+        switchMap(() => this.sync.getSource(event.connector.id)),
         take(1),
         switchMap((source) => {
           this.source = source;
@@ -103,6 +113,7 @@ export class UploadComponent implements OnInit, OnDestroy {
           return this.source.authenticate();
         }),
         filter((yes) => yes),
+        delay(500), // wait for source data to be stored
       )
       .subscribe(() => {
         this.goTo(2);

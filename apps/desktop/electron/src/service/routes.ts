@@ -13,6 +13,11 @@ router.get('/status', (req, res) => {
   res.send('{"running": true}');
 });
 
+router.get('/sources', async (req, res) => {
+  const sources = getSources();
+  res.send(JSON.stringify(sources));
+});
+
 router.get('/source/:id', async (req, res) => {
   const source = getSource(req.params.id);
   res.send(JSON.stringify(source));
@@ -38,6 +43,14 @@ router.patch('/source/:id', (req, res) => {
 });
 
 router.get('/source/:id/search', async (req, res) => {
-  const results = await firstValueFrom(getSourceFiles(req.params.id, req.query.query as string));
-  res.send(JSON.stringify(results));
+  try {
+    const results = await firstValueFrom(getSourceFiles(req.params.id, req.query.query as string));
+    res.send(JSON.stringify(results));
+  } catch (e) {
+    if (e.message === 'Unauthorized') {
+      res.status(401).send('');
+    } else {
+      res.status(500).send(`{"message": "${e.message}"}`);
+    }
+  }
 });

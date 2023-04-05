@@ -8,6 +8,8 @@ export interface Source {
   items?: SyncItem[];
   permanentSync?: boolean;
   lastSync?: string;
+  total?: number;
+  lastBatch?: number;
 }
 
 export interface ConnectorDefinition {

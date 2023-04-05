@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { from, map, of, switchMap, tap } from 'rxjs';
+import { from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { getConnector } from './connectors';
 import { Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
@@ -21,6 +21,12 @@ export const setSources = (sources: { [id: string]: Source }) => {
     console.log(`Error writing file: ${err}`);
     throw err;
   }
+};
+
+export const updateSource = (id: string, source: Source) => {
+  const sources = getSources();
+  sources[id] = source;
+  setSources(sources);
 };
 
 export const getSource = (sourceId: string) => {
@@ -55,15 +61,24 @@ export const syncFile = (sourceId: string, source: Source, item: SyncItem) => {
   );
 };
 
-export const getLastModified = (sourceId: string, since?: string) => {
+export function getLastModified(
+  sourceId: string,
+  since?: string,
+): Observable<{ success: boolean; results: SyncItem[]; error?: string }> {
   console.log('getLastModified', sourceId, since);
   const connector = getSourceInstance(sourceId);
-  return connector.getLastModified(since || '2000-01-01T00:00:00.000Z').pipe(
-    tap((results) => {
-      console.log('getLastModified', results);
-    }),
-  );
-};
+  try {
+    return connector.getLastModified(since || '2000-01-01T00:00:00.000Z').pipe(
+      map((results) => ({ success: true, results })),
+      tap((results) => {
+        console.log('getLastModified', results);
+      }),
+    );
+  } catch (err) {
+    console.log('getLastModified', err);
+    return of({ success: false, results: [], error: `${err}` });
+  }
+}
 
 const getSourceInstance = (sourceId: string) => {
   const source = getSource(sourceId);

@@ -56,6 +56,7 @@ export class ConnectorsComponent implements OnDestroy {
     name: string;
     connector: ConnectorDefinition;
     params: ConnectorParameters;
+    permanentSync?: boolean;
   }>();
 
   connectors: ConnectorDefinition[] = [];
@@ -141,16 +142,20 @@ export class ConnectorsComponent implements OnDestroy {
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
       ),
+      permanentSync: [false],
       quickAccess: this.formBuilder.group({
-        enabled: [this.canStoreParams],
         name: ['', this.canStoreParams ? [Validators.required] : []],
       }),
     });
     if (this.quickAccessName) {
       localStorage.setItem(SOURCE_NAME_KEY, this.quickAccessName);
-      const cache = this.sync.getConnectorCache(connectorId, this.quickAccessName);
+      const cache = this.sync.getSourceCache(this.quickAccessName);
       if (cache) {
-        this.form.patchValue({ fields: cache.params, quickAccess: { name: this.quickAccessName } });
+        this.form.patchValue({
+          fields: cache.data,
+          quickAccess: { name: this.quickAccessName },
+          permanentSync: cache.permanentSync,
+        });
       }
     }
     markForCheck(this.cdr);
@@ -166,23 +171,12 @@ export class ConnectorsComponent implements OnDestroy {
 
   validate() {
     if (this.selectedConnector) {
-      if (this.quickAccessName) {
-        if (!this.form?.value.quickAccess.enabled || this.form?.value.quickAccess.name !== this.quickAccessName) {
-          this.sync.removeConnectorCache(this.selectedConnector.id, this.quickAccessName);
-        }
-      }
-      if (this.form?.value.quickAccess.enabled) {
-        this.sync.saveConnectorCache(
-          this.selectedConnector.id,
-          this.form?.value.quickAccess.name,
-          this.form?.value.fields || {},
-        );
-      }
-      // TODO: we need a real id, the name is not good enough
+      // TODO: we need a real id, the name is not good enough, or add restrictions on the name
       this.selectConnector.emit({
         name: this.form?.value.quickAccess.name || '',
         connector: this.selectedConnector,
         params: this.form?.value.fields || {},
+        permanentSync: this.form?.value.permanentSync,
       });
     }
   }
