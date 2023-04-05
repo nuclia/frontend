@@ -1,3 +1,4 @@
+import { NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
 
 export const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
@@ -26,8 +27,6 @@ export interface ISourceConnector {
   handleParameters?(params: ConnectorParameters): void;
   goToOAuth(reset?: boolean): void;
   authenticate(): Observable<boolean>;
-  getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
-  download(resource: SyncItem): Observable<Blob>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
   isAuthError?: (message: any) => boolean;
 }
@@ -92,4 +91,16 @@ export interface ConnectorCache {
   connectorId: string;
   name: string;
   params: any;
+  permanentSync?: boolean;
+}
+
+export interface Source {
+  connectorId: string;
+  data: ConnectorParameters;
+  kb?: NucliaOptions;
+  items?: SyncItem[];
+  permanentSync?: boolean;
+  lastSync?: string;
+  total?: number;
+  lastBatch?: number;
 }

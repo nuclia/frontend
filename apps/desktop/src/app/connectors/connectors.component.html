@@ -23,6 +23,15 @@
     <div>{{ selectedConnector.title }}</div>
   </div>
   <div
+    formGroupName="quickAccess"
+    class="settings">
+    <div class="field">
+      <pa-input formControlName="name">
+        {{ 'upload.source.quick_access_name' | translate }}
+      </pa-input>
+    </div>
+  </div>
+  <div
     *ngFor="let field of fields"
     formGroupName="fields"
     class="field">
@@ -81,21 +90,11 @@
     </a>
   </div>
 
-  <div
-    *ngIf="canStoreParams"
-    formGroupName="quickAccess"
-    class="quick-access">
+  <div class="settings">
     <div class="field">
-      <pa-checkbox
-        formControlName="enabled"
-        (valueChange)="updateValidators($event)">
-        {{ 'upload.source.quick_access' | translate }}
+      <pa-checkbox formControlName="permanentSync">
+        {{ 'upload.source.permanent-sync' | translate }}
       </pa-checkbox>
-    </div>
-    <div class="field">
-      <pa-input formControlName="name">
-        {{ 'upload.source.quick_access_name' | translate }}
-      </pa-input>
     </div>
   </div>
 

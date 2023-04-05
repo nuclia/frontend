@@ -1,7 +1,6 @@
-import { getLastModified, getSources, setSources, syncFile } from './sources';
+import { getLastModified, getSources, syncFile, updateSource } from './sources';
 import { importConnector, loadConnectors } from './dynamic-connectors';
-import { delay, forkJoin, map, of, switchMap, tap, toArray } from 'rxjs';
-import { FileStatus } from './models';
+import { delay, map, of, switchMap, tap, toArray } from 'rxjs';
 
 export const sync = () => {
   importConnector('https://nuclia.github.io/status/connectors/youtube.js');
@@ -28,6 +27,7 @@ function syncFiles() {
                     if (!source.kb || !source.items || source.items.length === 0) {
                       return of(undefined);
                     }
+                    updateSource(id, { ...source, lastBatch: source.items.length });
                     return of(...source.items.slice(0, 10)).pipe(
                       switchMap((item) =>
                         syncFile(id, source, item).pipe(
@@ -43,8 +43,8 @@ function syncFiles() {
                           source.items = (source.items || []).filter(
                             (item) => !successfullyUploaded.includes(item.originalId),
                           );
-                          const updated = { ...sources, [id]: source };
-                          setSources(updated);
+                          source.total = (source.total || 0) + successfullyUploaded.length;
+                          updateSource(id, source);
                         }
                       }),
                     );
@@ -72,11 +72,15 @@ function collectLastModified() {
                   switchMap(([id, source]) =>
                     getLastModified(id, source.lastSync).pipe(
                       tap((results) => {
-                        const existing = source.items || [];
-                        source.items = [...existing, ...results];
-                        source.lastSync = new Date().toISOString();
-                        const updated = { ...sources, [id]: source };
-                        setSources(updated);
+                        if (results.success) {
+                          const existing = source.items || [];
+                          source.items = [...existing, ...results.results];
+                          source.lastSync = new Date().toISOString();
+                          updateSource(id, source);
+                        } else {
+                          // TODO: log the error somewhere
+                          console.error(results.error);
+                        }
                       }),
                     ),
                   ),

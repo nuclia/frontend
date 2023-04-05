@@ -43,7 +43,7 @@
     <pa-button
       qa="next"
       kind="primary"
-      [disabled]="selection.isEmpty()"
+      [disabled]="selection.isEmpty() && !(currentSource | async)?.permanentSync"
       (click)="next.emit()">
       {{ 'generic.save_continue' | translate }}
     </pa-button>

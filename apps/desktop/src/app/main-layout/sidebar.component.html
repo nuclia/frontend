@@ -26,12 +26,12 @@
             *ngIf="step === 0 && (currentStep | async) === 0"
             class="quick-access-list">
             <div
-              *ngFor="let item of cache | async"
+              *ngFor="let item of sources | async"
               class="quick-access">
               <span
                 (click)="goToSource(item.connectorId, item.name, false)"
                 paEllipsisTooltip>
-                {{ sources[item.connectorId].definition.title + ' - ' + item.name }}
+                {{ item.name }}
               </span>
               <pa-button
                 (click)="goToSource(item.connectorId, item.name, true)"

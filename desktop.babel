@@ -930,7 +930,7 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>quick_access</name>
+										<name>permanent-sync</name>
 										<description/>
 										<comment/>
 										<default_text/>
