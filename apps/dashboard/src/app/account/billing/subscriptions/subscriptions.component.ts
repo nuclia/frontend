@@ -39,7 +39,15 @@ export class SubscriptionsComponent {
   }
 
   openCalculator() {
-    this.modalService.openModal(CalculatorComponent);
+    this.prices.pipe(take(1)).subscribe((prices) => {
+      this.modalService.openModal(CalculatorComponent, {
+        dismissable: true,
+        data: {
+          prices: prices['stash-developer'],
+          currency: this.currency,
+        },
+      });
+    });
   }
 
   openFeatures() {

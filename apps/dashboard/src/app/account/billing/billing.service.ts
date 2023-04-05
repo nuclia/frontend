@@ -11,10 +11,17 @@ export class BillingService {
   private _country = new BehaviorSubject<string | null>(null);
   country = this._country.asObservable();
 
+  private _budgetEstimation = new BehaviorSubject<number>(0);
+  budgetEstimation = this._budgetEstimation.asObservable();
+
   constructor(private sdk: SDKService) {}
 
   setCountry(country: string | null) {
     this._country.next(country);
+  }
+
+  setBudgetEstimation(budget: number) {
+    this._budgetEstimation.next(Math.floor(budget));
   }
 
   getCustomer(): Observable<StripeCustomer | null> {

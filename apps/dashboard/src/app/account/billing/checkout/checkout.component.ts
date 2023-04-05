@@ -64,7 +64,7 @@ export class CheckoutComponent implements OnInit {
     private router: Router,
     private navigation: NavigationService,
   ) {
-    this.getCustomer();
+    this.initForms();
     this.initStripe();
   }
 
@@ -74,7 +74,7 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
-  getCustomer() {
+  initForms() {
     forkJoin([this.billingService.getCustomer(), this.billingService.country.pipe(take(1))]).subscribe(
       ([customer, country]) => {
         if (customer) {
@@ -88,6 +88,9 @@ export class CheckoutComponent implements OnInit {
         }
       },
     );
+    this.billingService.budgetEstimation.pipe(take(1)).subscribe((budget) => {
+      this.budget.setValue(budget.toString());
+    });
   }
 
   showCustomerForm() {
