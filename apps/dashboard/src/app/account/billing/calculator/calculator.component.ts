@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { map } from 'rxjs';
+import { Currency, Prices, UsageType } from '../billing.models';
+import { BillingService } from '../billing.service';
 
 @Component({
   selector: 'app-calculator',
@@ -8,51 +11,40 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent {
-  // TODO: this data will come from the API
-  params: { [param: string]: { min: number; max: number; unitPrice: number } } = {
-    hours: { min: 1000, max: 10000, unitPrice: 2.1 },
-    documents: { min: 10, max: 500, unitPrice: 10 },
-    searches: { min: 1000, max: 5000, unitPrice: 0.5 },
-    hosting: { min: 1000, max: 10000, unitPrice: 2.14 },
-  };
+  params: UsageType[] = ['media', 'files', 'searches', 'qa', 'training-hours'];
+  prices = this.modal.config.data!.prices;
+  currency = this.modal.config.data!.currency;
 
-  values: { [param: string]: number } = {
-    hours: this.params.hours.min,
-    documents: this.params.documents.min,
-    searches: this.params.searches.min,
-    hosting: this.params.hosting.min,
-  };
+  values = this.params.reduce((acc, param) => {
+    acc[param] = 0;
+    return acc;
+  }, {} as { [param in UsageType]: number });
 
-  selfHosting = false;
   total = this.calculateTotal();
+  isSpain = this.billing.country.pipe(map((country) => country === 'ES'));
 
-  constructor(public modal: ModalRef, private cdr: ChangeDetectorRef) {}
+  constructor(
+    public modal: ModalRef<{ prices: Prices; currency: Currency }>,
+    private billing: BillingService,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
-  update(param: string, value: number) {
+  update(param: UsageType, value: number) {
     this.values[param] = value;
     this.total = this.calculateTotal();
     this.cdr?.markForCheck();
   }
 
-  toggleHosting() {
-    this.selfHosting = !this.selfHosting;
-    this.total = this.calculateTotal();
-    this.cdr?.markForCheck();
-  }
-
-  calculatePrice(param: string) {
-    return ((this.values[param] - this.params[param].min) * this.params[param].unitPrice).toLocaleString(undefined, {
-      maximumFractionDigits: 2,
-    });
+  calculatePrice(param: UsageType) {
+    return this.values[param] * this.prices.usage[param].price;
   }
 
   calculateTotal() {
-    const total = Object.keys(this.params)
-      .filter((param) => !(param === 'hosting' && this.selfHosting))
-      .reduce(
-        (acc, current) => acc + (this.values[current] - this.params[current].min) * this.params[current].unitPrice,
-        0,
-      );
-    return total.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return this.params.reduce((acc, current) => acc + this.calculatePrice(current), 0);
+  }
+
+  save() {
+    this.billing.setBudgetEstimation(this.total);
+    this.modal.close();
   }
 }

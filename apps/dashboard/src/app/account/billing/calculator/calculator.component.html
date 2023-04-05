@@ -11,74 +11,29 @@
             class="body-s"
             [innerHTML]="'billing.ingestion_cost.description' | translate"></div>
         </div>
-        <div class="field-block">
-          <pa-slider
-            [min]="params.hours.min"
-            [max]="params.hours.max"
-            [value]="values.hours"
-            (valueChange)="update('hours', $event)">
-            <span class="title-xxs">{{ 'billing.parameter.hours' | translate }}</span>
-          </pa-slider>
-          <div class="price">{{ calculatePrice('hours') }} €</div>
-        </div>
-        <div class="field-block">
-          <pa-slider
-            [min]="params.documents.min"
-            [max]="params.documents.max"
-            [value]="values.documents"
-            (valueChange)="update('documents', $event)">
-            <span class="title-xxs">{{ 'billing.parameter.documents' | translate }}</span>
-          </pa-slider>
-          <div class="price">{{ calculatePrice('documents') }} €</div>
-        </div>
-      </div>
-      <div class="section">
-        <div>
-          <div class="title-s">{{ 'billing.hosting_subscription' | translate }}</div>
-          <div class="body-s"></div>
-        </div>
-        <div class="field-block">
-          <label class="self-hosted">
-            <img
-              src="assets/images/nucliadb.svg"
-              alt="NucliaDB" />
-            <span>self-hosted</span>
-          </label>
-          <pa-toggle
-            [value]="selfHosting"
-            (valueChange)="toggleHosting()"></pa-toggle>
-        </div>
-        <div class="field-block">
-          <pa-slider
-            [min]="params.searches.min"
-            [max]="params.searches.max"
-            [value]="values.searches"
-            (valueChange)="update('searches', $event)">
-            <span class="title-xxs">{{ 'billing.parameter.searches' | translate }}</span>
-          </pa-slider>
-          <div class="price">{{ calculatePrice('searches') }} €</div>
-        </div>
         <div
           class="field-block"
-          *ngIf="!selfHosting">
+          *ngFor="let param of params">
           <pa-slider
-            [min]="params.hosting.min"
-            [max]="params.hosting.max"
-            [value]="values.hosting"
-            (valueChange)="update('hosting', $event)">
-            <span class="title-xxs">{{ 'billing.parameter.hosting' | translate }}</span>
+            [min]="0"
+            [max]="prices.usage[param].threshold ? prices.usage[param].threshold * 200 : 300"
+            [value]="values[param]"
+            (valueChange)="update(param, $event)">
+            <span class="title-xxs">{{ 'billing.parameter.' + param | translate }}</span>
           </pa-slider>
-          <div class="price">{{ calculatePrice('hosting') }} €</div>
+          <div class="price">{{ calculatePrice(param) | currency: currency }}</div>
         </div>
       </div>
       <div class="section">
         <div>
           <div class="title-l">
             {{ 'billing.monthly_estimation' | translate }}
-            <span class="total">{{ total }} €*</span>
+            <span class="total">{{ total | currency: currency }} *</span>
           </div>
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
+          <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>
         </div>
+        <div>{{ 'billing.self_hosted' | translate }}</div>
       </div>
     </form>
   </pa-modal-content>
@@ -90,8 +45,8 @@
     </pa-button>
     <pa-button
       kind="primary"
-      (click)="modal.close()">
-      {{ 'generic.save' | translate }}
+      (click)="save()">
+      {{ 'billing.save_budget' | translate }}
     </pa-button>
   </pa-modal-footer>
 </pa-modal-dialog>

@@ -1,47 +1,34 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { map, Observable, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
-import { Currency, Prices } from './billing.models';
-
-export interface StripeCustomer {
-  customer_id: string;
-  billing_details: BillingDetails;
-}
-
-export interface BillingDetails {
-  name: string;
-  company: string;
-  vat?: string;
-  address: string;
-  country: string;
-  state?: string;
-  city: string;
-  postal_code: string;
-}
-
-enum RecurrentPriceInterval {
-  MONTHLY = 'monthly',
-  YEARLY = 'yearly',
-}
-
-export interface StripeSubscription {
-  payment_method_id: string;
-  on_demand_budget: number;
-  billing_interval?: RecurrentPriceInterval;
-  account_type: AccountTypes;
-}
+import { BillingDetails, Currency, Prices, StripeCustomer, StripeSubscription } from './billing.models';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
 
+  private _country = new BehaviorSubject<string | null>(null);
+  country = this._country.asObservable();
+
+  private _budgetEstimation = new BehaviorSubject<number>(0);
+  budgetEstimation = this._budgetEstimation.asObservable();
+
   constructor(private sdk: SDKService) {}
 
-  getCustomer(): Observable<StripeCustomer> {
+  setCountry(country: string | null) {
+    this._country.next(country);
+  }
+
+  setBudgetEstimation(budget: number) {
+    this._budgetEstimation.next(Math.floor(budget));
+  }
+
+  getCustomer(): Observable<StripeCustomer | null> {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) => this.sdk.nuclia.rest.get<StripeCustomer>(`/billing/account/${account.id}/customer`)),
+      catchError(() => of(null)),
     );
   }
 

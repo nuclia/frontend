@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { BillingService } from '../billing.service';
 import { CalculatorComponent } from '../calculator/calculator.component';
-import { map, shareReplay, switchMap, tap } from 'rxjs';
+import { forkJoin, shareReplay, take, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
@@ -28,10 +28,26 @@ export class SubscriptionsComponent {
     private modalService: SisModalService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
-  ) {}
+  ) {
+    forkJoin([this.billing.getCustomer(), this.billing.country.pipe(take(1))]).subscribe(([customer, country]) => {
+      if (customer) {
+        this.onSelectCountry(customer.billing_details.country);
+      } else if (country) {
+        this.onSelectCountry(country);
+      }
+    });
+  }
 
   openCalculator() {
-    this.modalService.openModal(CalculatorComponent);
+    this.prices.pipe(take(1)).subscribe((prices) => {
+      this.modalService.openModal(CalculatorComponent, {
+        dismissable: true,
+        data: {
+          prices: prices['stash-developer'],
+          currency: this.currency,
+        },
+      });
+    });
   }
 
   openFeatures() {
@@ -39,6 +55,7 @@ export class SubscriptionsComponent {
   }
 
   onSelectCountry(country: string) {
+    this.billing.setCountry(country);
     this.billing
       .getCurrency(country)
       .pipe(tap((currency) => (this.currency = currency)))

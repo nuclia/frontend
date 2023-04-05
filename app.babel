@@ -2840,26 +2840,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.hosting_subscription</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>billing.hours</name>
 						<description/>
 						<comment/>
@@ -2980,7 +2960,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.parameter.documents</name>
+						<name>billing.parameter.files</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -3000,7 +2980,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.parameter.hosting</name>
+						<name>billing.parameter.media</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -3020,7 +3000,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.parameter.hours</name>
+						<name>billing.parameter.qa</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -3041,6 +3021,26 @@
 					</concept_node>
 					<concept_node>
 						<name>billing.parameter.searches</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.parameter.training-hours</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -3300,7 +3300,47 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.save_budget</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.save_continue</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.self_hosted</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -3481,6 +3521,26 @@
 					</concept_node>
 					<concept_node>
 						<name>billing.vat_id</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.without_vat</name>
 						<description/>
 						<comment/>
 						<default_text/>
