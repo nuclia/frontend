@@ -73,8 +73,8 @@
       cdk-cell
       *cdkCellDef="let user">
       <pa-select
-        (ngModelChange)="changeRole(user.id, $event)"
-        [ngModel]="user.role"
+        (valueChange)="changeRole(user.id, $event)"
+        [value]="user.role"
         [disabled]="
           (isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
         "
