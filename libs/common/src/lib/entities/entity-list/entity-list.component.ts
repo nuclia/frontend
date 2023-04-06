@@ -13,10 +13,10 @@ import { delay, takeUntil } from 'rxjs/operators';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import { SelectionModel } from '@angular/cdk/collections';
 import { CdkDragDrop, CdkDragEnter, CdkDragExit } from '@angular/cdk/drag-drop';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { AppEntitiesGroup, Entity, MutableEntitiesGroup } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
-import { EntityDialogComponent, EntityDialogData, EntityDialogMode, EntityDialogResponse } from '../entity-dialog';
+import { EntityDialogComponent, EntityDialogMode } from '../entity-dialog';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-entity-list',
@@ -40,7 +40,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private modalService: SisModalService,
     private editService: EntitiesEditService,
     private renderer2: Renderer2,
   ) {}
@@ -127,19 +127,16 @@ export class EntityListComponent implements OnInit, OnDestroy {
 
   editEntity(entity: Entity) {
     const dialogRef = this.openDialog('edit', entity);
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((result) => {
-        if (result) {
-          // TODO
-        }
-      });
+    dialogRef.onClose.pipe(takeUntil(this.unsubscribeAll)).subscribe((result) => {
+      if (result) {
+        // TODO
+      }
+    });
   }
 
   openDialog(mode: EntityDialogMode, entity?: Entity) {
-    return this.dialog.open<EntityDialogComponent, EntityDialogData, EntityDialogResponse>(EntityDialogComponent, {
-      width: '630px',
+    return this.modalService.openModal(EntityDialogComponent, {
+      dismissable: true,
       data: { mode, entity, group: this.group!.key },
     });
   }

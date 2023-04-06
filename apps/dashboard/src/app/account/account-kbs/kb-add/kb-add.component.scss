@@ -1,76 +1,66 @@
 @import 'variables';
 
-.kb-add {
+.form-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  min-height: 70vh;
-  padding: rhythm(2) rhythm(4);
-  position: relative;
+  flex: 1 0 auto;
+  gap: rhythm(2);
+  padding: rhythm(1) 0;
 
-  h1 {
-    margin-bottom: rhythm(5);
-  }
-
-  h2 {
-    margin-bottom: rhythm(1);
-  }
-  h3 {
-    margin-bottom: 0;
-  }
-  p {
-    margin-bottom: rhythm(0.5);
-  }
-
-  .form-container {
+  .learning-config {
     display: flex;
     flex-direction: column;
-    flex: 2 0 auto;
-    justify-content: space-between;
+    gap: rhythm(1);
 
-    .form-field {
-      display: flex;
-
-      label {
-        width: 25%;
-      }
-      div {
-        flex: 1 0 auto;
-      }
+    h3 {
+      margin-bottom: rhythm(0.5);
+    }
+    p {
+      margin-bottom: rhythm(0.5);
     }
   }
+}
 
-  pa-radio-group {
+pa-radio-group {
+  display: block;
+  margin-bottom: rhythm(2);
+
+  pa-radio {
     display: block;
-    margin-bottom: rhythm(2);
-
-    pa-radio {
-      display: block;
-      margin-bottom: rhythm(1);
-    }
+    margin-bottom: rhythm(1);
   }
+}
 
-  .kb-add-separator {
-    border-bottom: 1px solid var(--stf-gray-lighter-2);
-    margin: rhythm(4) 0;
-  }
+.kb-add-separator {
+  margin: rhythm(1) 0;
+}
 
-  &-field-name {
-    margin-top: 12px;
-    font-weight: var(--stf-font-weight-semibold);
-  }
+.kb-add-zone h4 {
+  margin-bottom: rhythm(1.5);
+}
 
-  &-zone {
-    margin-top: 40px;
-    &-select {
-      min-width: 305px;
-    }
-  }
+.saving-spinner {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: rhythm(2);
+}
+
+.kb-creation-footer {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  width: 100%;
 
   .steps {
+    bottom: rhythm(0.25);
     color: $color-neutral-regular;
+    left: 50%;
     margin-top: rhythm(1);
+    position: absolute;
     text-align: center;
+    transform: translateX(-50%);
   }
 
   .error {
@@ -84,14 +74,5 @@
     display: flex;
     justify-content: center;
     gap: rhythm(2);
-    margin-top: rhythm(3);
-  }
-
-  .saving-spinner {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-top: rhythm(2);
   }
 }

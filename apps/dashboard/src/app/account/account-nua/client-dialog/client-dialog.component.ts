@@ -1,17 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-import { filter, map, Observable, take } from 'rxjs';
+import { filter, map, take, tap } from 'rxjs';
 import { Account, NUAClient } from '@nuclia/core';
 import { SDKService, StateService, UserService } from '@flaps/core';
 import { AccountNUAService } from '../account-nua.service';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 export interface ClientDialogData {
   client?: NUAClient;
 }
 
 @Component({
-  selector: 'app-client-dialog',
   templateUrl: './client-dialog.component.html',
   styleUrls: ['./client-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,35 +46,43 @@ export class ClientDialogComponent {
     },
   };
 
-  zones: Observable<{ id: string; title: string }[]> = this.sdkService.nuclia.rest
-    .getZones()
-    .pipe(map((zoneMap) => Object.entries(zoneMap).map(([key, title]) => ({ id: key, title }))));
+  zones: { id: string; title: string }[] = [];
 
   constructor(
+    public modal: ModalRef,
     private formBuilder: UntypedFormBuilder,
-    private dialogRef: MatDialogRef<ClientDialogComponent>,
     private stateService: StateService,
     private userService: UserService,
     private nua: AccountNUAService,
     private sdkService: SDKService,
     private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: ClientDialogData,
   ) {
-    this.editMode = !!this.data.client;
+    this.editMode = !!this.modal.config.data?.client;
 
-    if (this.data.client) {
-      this.clientForm.patchValue(this.data.client);
-      this.cdr.markForCheck();
-    } else {
-      this.account.subscribe((account) => {
-        this.clientForm.get('zone')?.patchValue(account.zone);
-        this.cdr.markForCheck();
+    this.sdkService.nuclia.rest
+      .getZones()
+      .pipe(
+        map((zoneMap) => Object.entries(zoneMap).map(([key, title]) => ({ id: key, title }))),
+        tap((zones) => {
+          this.zones = zones;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe(() => {
+        if (this.modal.config.data?.client) {
+          this.clientForm.patchValue(this.modal.config.data.client);
+          this.cdr.markForCheck();
+        } else {
+          this.account.subscribe((account) => {
+            this.clientForm.get('zone')?.patchValue(account.zone);
+            this.cdr.markForCheck();
+          });
+          this.email.subscribe((email) => {
+            this.clientForm.get('email')?.patchValue(email);
+            this.cdr.markForCheck();
+          });
+        }
       });
-      this.email.subscribe((email) => {
-        this.clientForm.get('email')?.patchValue(email);
-        this.cdr.markForCheck();
-      });
-    }
   }
 
   save() {
@@ -84,7 +91,7 @@ export class ClientDialogComponent {
       this.create();
     } else {
       // TODO: edit
-      this.dialogRef.close(true);
+      this.modal.close(true);
     }
   }
 
@@ -95,11 +102,11 @@ export class ClientDialogComponent {
       webhook: this.clientForm.value.webhook,
     };
     this.nua.createClient(payload).subscribe(({ token }) => {
-      this.dialogRef.close(token);
+      this.modal.close(token);
     });
   }
 
   close(): void {
-    this.dialogRef.close(false);
+    this.modal.close(false);
   }
 }

@@ -1,10 +1,10 @@
-import { Component, Inject, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { Entities } from '@nuclia/core';
 import { Entity } from '../model';
 import { EntitiesService } from '../entities.service';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 export type EntityDialogMode = 'view' | 'edit' | 'add';
 
@@ -27,30 +27,31 @@ export interface EntityDialogResponse {
   styleUrls: ['./entity-dialog.component.scss'],
 })
 export class EntityDialogComponent implements OnDestroy {
-  entityForm: UntypedFormGroup;
+  entityForm?: UntypedFormGroup;
   validationMessages = {
     name: {
       required: 'validation.required',
     },
   };
-  mode: EntityDialogMode;
-  group: string;
+  mode?: EntityDialogMode;
+  group?: string;
   groups$: Observable<Entities>;
   unsubscribeAll = new Subject<void>();
 
   constructor(
-    private dialogRef: MatDialogRef<EntityDialogComponent>,
+    public modal: ModalRef,
     private formBuilder: UntypedFormBuilder,
     private entitiesService: EntitiesService,
-    @Inject(MAT_DIALOG_DATA) public data: EntityDialogData,
   ) {
-    this.mode = data.mode;
-    this.group = data.group;
-    this.entityForm = this.formBuilder.group({
-      name: [data.entity?.value || '', [Validators.required]],
-      shortDescription: [''],
-      description: [''],
-    });
+    if (modal.config.data) {
+      this.mode = modal.config.data.mode;
+      this.group = modal.config.data.group;
+      this.entityForm = this.formBuilder.group({
+        name: [modal.config.data.entity?.value || '', [Validators.required]],
+        shortDescription: [''],
+        description: [''],
+      });
+    }
 
     this.groups$ = this.entitiesService.getEntities().pipe(
       map((entities) => entities || {}),
@@ -64,7 +65,7 @@ export class EntityDialogComponent implements OnDestroy {
   }
 
   close() {
-    this.dialogRef.close();
+    this.modal.close();
   }
 
   edit() {
@@ -72,14 +73,14 @@ export class EntityDialogComponent implements OnDestroy {
   }
 
   save() {
-    if (this.entityForm.valid) {
+    if (this.entityForm?.valid && this.group) {
       const response: EntityDialogResponse = {
         name: this.entityForm.value['name'],
         shortDescription: this.entityForm.value['shortDescription'],
         description: this.entityForm.value['description'],
         group: this.group,
       };
-      this.dialogRef.close(response);
+      this.modal.close(response);
     }
   }
 }

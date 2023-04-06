@@ -1,54 +1,12 @@
 @import 'variables';
 
-.client-dialog {
-  position: relative;
-  padding: 16px 35px;
+.nua-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  padding-top: rhythm(0.5);
+}
 
-  h1 {
-    margin: 0 0 42px 0;
-    font-size: var(--stf-font-size-title);
-    font-weight: var(--stf-font-weight-bold);
-  }
-
-  h2 {
-    margin: 0 0 6px 0;
-    font-weight: var(--stf-font-weight-bold);
-  }
-
-  .field-container {
-    align-items: center;
-    display: flex;
-    margin-bottom: rhythm(1.5);
-
-    & > :first-child {
-      flex: 1 0 auto;
-      width: rhythm(20);
-    }
-    & > :last-child {
-      width: 100%;
-    }
-  }
-
-  .info {
-    color: $color-neutral-regular;
-    margin-left: rhythm(1);
-    vertical-align: text-bottom;
-  }
-
-  .zone {
-    width: 90%;
-    &-select {
-      min-width: 305px;
-    }
-  }
-  .webhook-hint {
-    margin-top: rhythm(2);
-  }
-
-  footer {
-    align-items: center;
-    display: flex;
-    gap: rhythm(2);
-    justify-content: center;
-  }
+.zone h4 {
+  margin-bottom: rhythm(0.25);
 }

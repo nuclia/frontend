@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { NUAClient } from '@nuclia/core';
 import { AccountNUAService } from './account-nua.service';
@@ -23,7 +22,6 @@ export class AccountNUAComponent {
 
   constructor(
     private nua: AccountNUAService,
-    private dialog: MatDialog,
     private router: Router,
     private stateService: StateService,
     private navigation: NavigationService,
@@ -64,8 +62,8 @@ export class AccountNUAComponent {
   }
 
   showToken(token: string) {
-    this.dialog.open(TokenDialogComponent, {
-      width: '780px',
+    this.modalService.openModal(TokenDialogComponent, {
+      dismissable: true,
       data: {
         token: token,
       },
@@ -74,13 +72,12 @@ export class AccountNUAComponent {
 
   openDialog(client?: NUAClient) {
     const data: ClientDialogData = { client };
-    this.dialog
-      .open(ClientDialogComponent, {
-        width: '780px',
-        data: data,
+    this.modalService
+      .openModal(ClientDialogComponent, {
+        dismissable: true,
+        data,
       })
-      .afterClosed()
-      .pipe(
+      .onClose.pipe(
         takeUntil(this.unsubscribeAll),
         filter((result) => typeof result === 'string'),
       )

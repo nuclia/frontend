@@ -1,72 +1,35 @@
-<div class="client-dialog">
-  <h1>{{ (editMode ? 'account.edit_nua_key' : 'account.create_nua_key') | translate }}</h1>
-  <pa-button
-    class="close-button"
-    icon="cross"
-    aspect="basic"
-    (click)="close()">
-    {{ 'generic.close' | translate }}
-  </pa-button>
+<pa-modal-advanced>
+  <pa-modal-title>{{ (editMode ? 'account.edit_nua_key' : 'account.create_nua_key') | translate }}</pa-modal-title>
 
-  <form
-    [formGroup]="clientForm"
-    (ngSubmit)="save()">
-    <div class="field-container">
-      <label
-        class="title-xxs"
-        for="client-title">
+  <pa-modal-content>
+    <form
+      class="nua-form"
+      [formGroup]="clientForm"
+      (ngSubmit)="save()">
+      <pa-input
+        formControlName="title"
+        [errorMessages]="validationMessages.title">
         {{ 'account.nua_client' | translate }}*
-      </label>
-      <div>
-        <pa-input
-          id="client-title"
-          externalLabel
-          formControlName="title"
-          [errorMessages]="validationMessages.title"></pa-input>
-      </div>
-    </div>
+      </pa-input>
 
-    <div class="field-container">
-      <label
-        class="title-xxs"
-        for="client-email">
-        <span>{{ 'generic.email' | translate }}*</span>
-        <pa-icon
-          class="info"
-          name="info"
-          size="small"
-          paTooltip="account.email_info"></pa-icon>
-      </label>
-      <div>
-        <pa-input
-          id="client-email"
-          externalLabel
-          formControlName="email"
-          [errorMessages]="validationMessages.email"></pa-input>
-      </div>
-    </div>
+      <pa-input
+        id="client-email"
+        formControlName="email"
+        help="account.email_info"
+        [errorMessages]="validationMessages.email">
+        {{ 'generic.email' | translate }}*
+      </pa-input>
 
-    <div>
-      <div class="field-container">
-        <label
-          class="title-xxs"
-          for="client-webhook">
-          <span>{{ 'account.nua_webhook' | translate }}</span>
-          <pa-icon
-            class="info"
-            name="info"
-            size="small"
-            paTooltip="account.nua_webhook.help"></pa-icon>
-        </label>
-        <div>
-          <pa-input
-            id="client-webhook"
-            externalLabel
-            formControlName="webhook"></pa-input>
-        </div>
-      </div>
+      <pa-input
+        formControlName="webhook"
+        help="account.nua_webhook.help">
+        {{ 'account.nua_webhook' | translate }}
+      </pa-input>
+
       <div class="webhook-hint">
-        <ncom-hint label="Learn more about webhooks">
+        <ncom-hint
+          noMaxWidth
+          label="Learn more about webhooks">
           <p>
             If webhook is defined, anytime a new result is available, Nuclia will make a
             <code>POST</code>
@@ -79,33 +42,36 @@
           </a>
         </ncom-hint>
       </div>
-    </div>
 
-    <div class="zone">
-      <h2>{{ 'generic.zone' | translate }}</h2>
-      <div class="mb-24">{{ 'account.db_zone_description' | translate }}</div>
-      <pa-select
-        formControlName="zone"
-        externalLabel>
-        <pa-option
-          *ngFor="let zone of zones | async"
-          [value]="zone.id">
-          {{ zone.title }}
-        </pa-option>
-      </pa-select>
-    </div>
+      <div class="zone">
+        <h4>{{ 'generic.zone' | translate }}</h4>
+        <p>{{ 'account.db_zone_description' | translate }}</p>
+        <pa-select
+          formControlName="zone"
+          [readonly]="zones?.length <= 1"
+          [label]="'generic.zone' | translate">
+          <pa-option
+            *ngFor="let zone of zones"
+            [value]="zone.id">
+            {{ zone.title }}
+          </pa-option>
+        </pa-select>
+      </div>
+    </form>
+  </pa-modal-content>
 
-    <footer class="mt-40">
-      <pa-button
-        aspect="basic"
-        (click)="close()">
-        {{ 'generic.cancel' | translate }}
-      </pa-button>
-      <pa-button
-        kind="primary"
-        type="submit">
-        {{ 'generic.save' | translate }}
-      </pa-button>
-    </footer>
-  </form>
-</div>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      type="submit"
+      [disabled]="clientForm.pristine || clientForm.invalid"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

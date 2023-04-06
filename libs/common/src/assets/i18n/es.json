@@ -612,7 +612,6 @@
 	"stash.add_user": "Añadir usuario",
 	"stash.added_user": "El usuario {{user}} ha sido añadido",
 	"stash.create": "Crea una caja de conocimiento",
-	"stash.create.configuration": "Configuración",
 	"stash.create.error": "Perdon, alguna cosa pasó mal cuando creabamos la caja de conocimiento. Por favor vuelve a intentarlo.",
 	"stash.create.failure": "Lo siento, definitivamente algo anda mal en este momento. Por favor, póngase en contacto con su administrador.",
 	"stash.create.generative_model": "Generación de respuesta",

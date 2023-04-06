@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SDKService, StateService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../utils';
 import { Account, KnowledgeBox, ServiceAccount, ServiceAccountCreation } from '@nuclia/core';
 import { TokenDialogComponent } from '@flaps/common';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'app-service-access',
@@ -34,7 +34,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private formBuilder: UntypedFormBuilder,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private modalService: SisModalService,
     private sdk: SDKService,
   ) {}
 
@@ -126,8 +126,8 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   }
 
   showToken(token: string) {
-    this.dialog.open(TokenDialogComponent, {
-      width: '780px',
+    this.modalService.openModal(TokenDialogComponent, {
+      dismissable: true,
       data: { token: token },
     });
   }

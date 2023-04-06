@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { SDKService, STFUtils, Zone } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 export interface KbAddData {
   account: Account;
@@ -38,10 +37,9 @@ export class KbAddComponent implements OnInit {
   private _lastStep = 1;
 
   constructor(
+    public modal: ModalRef,
     private formBuilder: UntypedFormBuilder,
-    private dialogRef: MatDialogRef<KbAddComponent, { success: boolean } | undefined>,
     private cdr: ChangeDetectorRef,
-    @Inject(MAT_DIALOG_DATA) public data: KbAddData,
     private sdk: SDKService,
   ) {}
 
@@ -52,7 +50,7 @@ export class KbAddComponent implements OnInit {
       this.kbForm = this.formBuilder.group({
         title: ['', [Sluggable()]],
         description: [''],
-        zone: [this.data.account.zone],
+        zone: [this.modal.config.data?.account.zone],
         config: this.formBuilder.group(
           this.displayedLearningConfigurations.reduce((acc, entry) => {
             acc[entry.id] = [entry.data.default];
@@ -93,10 +91,10 @@ export class KbAddComponent implements OnInit {
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.error = '';
     this.cdr?.markForCheck();
-    this.sdk.nuclia.db.createKnowledgeBox(this.data.account.slug, payload).subscribe({
+    this.sdk.nuclia.db.createKnowledgeBox(this.modal.config.data?.account.slug, payload).subscribe({
       next: () => {
         clearTimeout(inProgressTimeout);
-        this.dialogRef.close({ success: true });
+        this.modal.close({ success: true });
       },
       error: () => {
         clearTimeout(inProgressTimeout);
@@ -107,7 +105,7 @@ export class KbAddComponent implements OnInit {
           this.error = 'stash.create.error';
         } else {
           Sentry.captureMessage(`KB creation failed`, { tags: { host: location.hostname } });
-          this.dialogRef.close({ success: false });
+          this.modal.close({ success: false });
         }
         this.cdr?.markForCheck();
       },
@@ -115,7 +113,7 @@ export class KbAddComponent implements OnInit {
   }
 
   close(): void {
-    this.dialogRef.close();
+    this.modal.close();
   }
 
   next() {

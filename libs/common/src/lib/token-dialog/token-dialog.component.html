@@ -1,31 +1,24 @@
-<div class="token-dialog">
-  <h1>{{ 'account.new_token' | translate }}</h1>
-  <pa-button
-    class="close-button"
-    icon="cross"
-    aspect="basic"
-    (click)="close()">
-    {{ 'generic.close' | translate }}
-  </pa-button>
-
-  <div
-    class="mb-48"
-    [innerHTML]="'account.token_description' | translate"></div>
-  <div
-    fxLayout="row"
-    fxLayoutAlign="start center"
-    fxLayoutGap="10px">
-    <div
-      class="token-dialog-value"
-      fxFlex="1 1 0">
-      {{ data.token | slice: 1:30 }}...
+<pa-modal-dialog>
+  <pa-modal-title>
+    <div class="title-with-button">
+      {{ 'account.new_token' | translate }}
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        (click)="close()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
     </div>
-    <div
-      *ngIf="clipboardSuppordted"
-      fxFlex="0 0 auto">
-      <pa-button (click)="copy()">
+  </pa-modal-title>
+  <pa-modal-content>
+    <div [innerHTML]="'account.token_description' | translate"></div>
+    <div class="token-container">
+      <div class="token-dialog-value">{{ modal.config.data?.token | slice: 1:30 }}…</div>
+      <pa-button
+        *ngIf="clipboardSupported"
+        (click)="copy()">
         {{ (successMessage ? 'generic.copied' : 'generic.copy') | translate }}
       </pa-button>
     </div>
-  </div>
-</div>
+  </pa-modal-content>
+</pa-modal-dialog>

@@ -11,7 +11,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
 import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +22,7 @@ import { DealersResolve } from '../resolvers/dealers.resolver';
 import { DealerResolve } from '../resolvers/dealer.resolver';
 import { PaButtonModule } from '@guillotinaweb/pastanaga-angular';
 import { STFInputModule } from '../inputfield/input-module';
+import { SisProgressModule } from '@nuclia/sistema';
 
 const usersRoutes: Routes = [
   {
@@ -59,7 +59,6 @@ const usersRoutes: Routes = [
     MatCardModule,
     MatListModule,
     MatTableModule,
-    MatProgressSpinnerModule,
     MatPaginatorModule,
     MatFormFieldModule,
     MatInputModule,
@@ -71,6 +70,7 @@ const usersRoutes: Routes = [
     RouterModule.forChild(usersRoutes),
     TranslateModule.forChild(),
     PaButtonModule,
+    SisProgressModule,
   ],
   exports: [RouterModule],
 })

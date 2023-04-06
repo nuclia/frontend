@@ -637,7 +637,6 @@
 	"stash.create": "Create a knowledge box",
 	"stash.create.anonymization_model": "Anonymization ",
 	"stash.create.anonymization_model.help": "Apply General Data Protection Regulation (GDPR) compliant anonymization to all resources in the Knowledge Box",
-	"stash.create.configuration": "Configuration",
 	"stash.create.error": "Something went wrong when creating the knowledge box. Please try again.",
 	"stash.create.failure": "Something is wrong at the moment. Contact your administrator.",
 	"stash.create.generative_model": "Answer generation",

@@ -1,99 +1,79 @@
-<div class="kb-add">
-  <header>
-    <h1>{{ 'stash.create' | translate }}</h1>
-    <pa-button
-      class="close-button"
-      icon="cross"
-      aspect="basic"
-      [disabled]="saving"
-      (click)="close()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </header>
-
-  <form
-    *ngIf="kbForm"
-    class="form-container"
-    [formGroup]="kbForm"
-    (ngSubmit)="save()">
-    <div *ngIf="step === 0">
-      <div class="mb-24 form-field">
-        <label
-          for="kb-title"
-          class="kb-add-field-name">
+<pa-modal-advanced>
+  <pa-modal-title>
+    {{ 'stash.create' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <form
+      *ngIf="kbForm"
+      class="form-container"
+      [formGroup]="kbForm"
+      (ngSubmit)="save()">
+      <ng-container *ngIf="step === 0">
+        <pa-input
+          id="kb-title"
+          formControlName="title"
+          [errorMessages]="validationMessages.title">
           {{ 'stash.name' | translate }}
-        </label>
-        <div>
-          <pa-input
-            id="kb-title"
-            formControlName="title"
-            [errorMessages]="validationMessages.title"></pa-input>
-        </div>
-      </div>
+        </pa-input>
 
-      <div class="form-field">
-        <label
-          for="kb-description"
-          class="kb-add-field-name">
+        <pa-textarea
+          id="kb-description"
+          formControlName="description"
+          rows="4">
           {{ 'generic.description' | translate }}
-        </label>
-        <div>
-          <pa-textarea
-            id="kb-description"
-            formControlName="description"
-            rows="4"></pa-textarea>
+        </pa-textarea>
+
+        <div class="kb-add-separator"></div>
+        <div
+          class="kb-add-zone"
+          *ngIf="modal.config.data?.zones">
+          <h4>{{ 'generic.zone' | translate }}</h4>
+          <div class="mb-24">{{ 'stash.create.zone_description' | translate }}</div>
+          <pa-select
+            formControlName="zone"
+            externalLabel
+            [readonly]="modal.config.data.zones.length === 1"
+            class="kb-add-zone-select">
+            <pa-option
+              *ngFor="let zone of modal.config.data.zones"
+              [value]="zone.id">
+              {{ zone.title }}
+            </pa-option>
+          </pa-select>
         </div>
-      </div>
+      </ng-container>
 
-      <div class="kb-add-separator"></div>
-
-      <div
-        class="kb-add-zone"
-        *ngIf="data.zones">
-        <h2>{{ 'generic.zone' | translate }}</h2>
-        <div class="mb-24">{{ 'stash.create.zone_description' | translate }}</div>
-        <pa-select
-          formControlName="zone"
-          externalLabel
-          class="kb-add-zone-select">
-          <pa-option
-            *ngFor="let zone of data.zones"
-            [value]="zone.id">
-            {{ zone.title }}
-          </pa-option>
-        </pa-select>
-      </div>
-    </div>
-
-    <div
-      *ngIf="step === 1"
-      class="modal-body">
-      <h2>{{ 'stash.create.configuration' | translate }}</h2>
-      <div formGroupName="config">
-        <div *ngFor="let conf of displayedLearningConfigurations">
-          <h3>{{ 'stash.create.' + conf.id | translate }}</h3>
-          <p>{{ 'stash.create.' + conf.id + '.help' | translate }}</p>
-          <pa-radio-group
-            [formControlName]="conf.id"
-            [name]="conf.id">
-            <pa-radio
-              *ngFor="let value of conf.data.options"
-              [value]="value.value">
-              {{ value.name }}
-            </pa-radio>
-          </pa-radio-group>
+      <ng-container *ngIf="step === 1">
+        <div
+          formGroupName="config"
+          class="learning-config">
+          <div *ngFor="let conf of displayedLearningConfigurations">
+            <h3>{{ 'stash.create.' + conf.id | translate }}</h3>
+            <p>{{ 'stash.create.' + conf.id + '.help' | translate }}</p>
+            <pa-radio-group
+              [formControlName]="conf.id"
+              [name]="conf.id">
+              <pa-radio
+                *ngFor="let value of conf.data.options"
+                [value]="value.value">
+                {{ value.name.toLocaleLowerCase() }}
+              </pa-radio>
+            </pa-radio-group>
+          </div>
         </div>
-      </div>
 
-      <div
-        *ngIf="creationInProgress"
-        class="saving-spinner">
-        <nsi-spinner size="large"></nsi-spinner>
-        <p>{{ 'stash.create.in_progress' | translate }}</p>
-      </div>
-    </div>
+        <div
+          *ngIf="creationInProgress"
+          class="saving-spinner">
+          <nsi-spinner size="large"></nsi-spinner>
+          <p>{{ 'stash.create.in_progress' | translate }}</p>
+        </div>
+      </ng-container>
+    </form>
+  </pa-modal-content>
 
-    <footer>
+  <pa-modal-footer>
+    <div class="kb-creation-footer">
       <div
         *ngIf="error"
         class="error body-m">
@@ -112,13 +92,14 @@
           *ngIf="step === lastStep"
           type="submit"
           kind="primary"
-          [disabled]="saving">
+          [disabled]="saving"
+          (click)="save()">
           {{ 'generic.save' | translate }}
         </pa-button>
 
         <pa-button
           *ngIf="step < lastStep"
-          [disabled]="step === 0 && kbForm.invalid"
+          [disabled]="step === 0 && kbForm?.invalid"
           (click)="next()">
           {{ 'generic.next' | translate }}
         </pa-button>
@@ -126,6 +107,6 @@
       <div class="steps">
         <small>{{ step + 1 }} / {{ totalSteps }}</small>
       </div>
-    </footer>
-  </form>
-</div>
+    </div>
+  </pa-modal-footer>
+</pa-modal-advanced>

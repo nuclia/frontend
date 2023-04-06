@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { filter, merge, Observable, Subject } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
-import { EntityDialogComponent, EntityDialogData, EntityDialogResponse } from '../entity-dialog';
+import { EntityDialogComponent } from '../entity-dialog';
 import { AppEntitiesGroup, generatedEntitiesColor } from '../model';
 import { EntitiesEditService } from '../entities-edit.service';
 import { EntitiesSearchService } from '../entities-search.service';
@@ -45,7 +44,6 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
     private searchService: EntitiesSearchService,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
-    private dialog: MatDialog,
     private modalService: SisModalService,
   ) {}
 
@@ -104,22 +102,16 @@ export class EntityGroupComponent implements OnInit, OnDestroy {
   }
 
   addEntity() {
-    const dialogRef = this.dialog.open<EntityDialogComponent, EntityDialogData, EntityDialogResponse>(
-      EntityDialogComponent,
-      {
-        width: '630px',
-        data: { mode: 'add', group: this.group!.key },
-      },
-    );
+    const dialogRef = this.modalService.openModal(EntityDialogComponent, {
+      dismissable: true,
+      data: { mode: 'add', group: this.group!.key },
+    });
 
-    dialogRef
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((result) => {
-        if (result) {
-          this.editService.addEntity(result.group, result.name);
-        }
-      });
+    dialogRef.onClose.pipe(takeUntil(this.unsubscribeAll)).subscribe((result) => {
+      if (result) {
+        this.editService.addEntity(result.group, result.name);
+      }
+    });
   }
 
   deleteGroup() {

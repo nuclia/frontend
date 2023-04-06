@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
@@ -34,7 +33,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private navigation: NavigationService,
     private router: Router,
-    private dialog: MatDialog,
     private stateService: StateService,
     private zoneService: ZoneService,
     private tracking: STFTrackingService,
@@ -85,7 +83,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     if (kb.role_on_kb) {
       this.router.navigate([this.navigation.getKbUsersUrl(this.account!.slug, kb.slug!)]);
     } else {
-      this.dialog.open(UsersDialogComponent, { width: '920px', data: { kb: kb.slug } });
+      this.modalService.openModal(UsersDialogComponent, { dismissable: true, data: { kb: kb.slug } });
     }
   }
 
@@ -94,10 +92,9 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
       zones: zones,
       account: account,
     };
-    this.dialog
-      .open(KbAddComponent, { width: '780px', data: data })
-      .afterClosed()
-      .pipe(
+    this.modalService
+      .openModal(KbAddComponent, { dismissable: true, data: data })
+      .onClose.pipe(
         takeUntil(this.unsubscribeAll),
         filter((result) => {
           if (result?.success === false) {
