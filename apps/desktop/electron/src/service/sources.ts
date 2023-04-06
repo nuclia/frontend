@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import path from 'path';
 import { from, map, Observable, of, switchMap } from 'rxjs';
 import { getConnector } from './connectors';
 import { Source, SyncItem } from './models';
@@ -75,24 +76,43 @@ const getSourceInstance = (sourceId: string) => {
   return connector;
 };
 
+function getDataPath(): string {
+  switch (process.platform) {
+    case 'darwin': {
+      return path.join(process.env.HOME || '.', 'Library', 'Application Support', 'nuclia', 'connectors-db.json');
+    }
+    case 'win32': {
+      return path.join(process.env.APPDATA || '.', 'nuclia', 'connectors-db.json');
+    }
+    case 'linux': {
+      return path.join(process.env.HOME || '.', '.nuclia', 'connectors-db.json');
+    }
+    default: {
+      return '.';
+    }
+  }
+}
+
 function readSources() {
   try {
     console.log('Reading sources');
-    const data = fs.readFileSync('./connectors-db.json', 'utf8');
+    const data = fs.readFileSync(getDataPath(), 'utf8');
     SOURCES = JSON.parse(data);
   } catch (err) {
     console.log(`Error reading file: ${err}`);
   }
 }
+
 readSources();
 
 function exitHandler() {
   try {
-    fs.writeFileSync('./connectors-db.json', JSON.stringify(SOURCES));
+    fs.writeFileSync(getDataPath(), JSON.stringify(SOURCES));
   } catch (err) {
     console.log(`Error writing file: ${err}`);
     throw err;
   }
+  console.log('Exit now');
   process.exit();
 }
 
@@ -101,4 +121,4 @@ process.on('exit', exitHandler);
 //catches ctrl+c event
 process.on('SIGINT', exitHandler);
 //catches uncaught exceptions
-process.on('uncaughtException', exitHandler);
+// process.on('uncaughtException', exitHandler);
