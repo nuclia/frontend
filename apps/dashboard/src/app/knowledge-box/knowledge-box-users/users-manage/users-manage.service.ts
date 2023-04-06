@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, map } from 'rxjs';
-import { switchMap, filter, take, tap } from 'rxjs/operators';
+import { switchMap, filter, shareReplay, take, tap } from 'rxjs/operators';
 import { UsersService, InviteKbData } from '@flaps/core';
 import { StateService } from '@flaps/core';
 import { KBRoles } from '@nuclia/core';
@@ -19,6 +19,7 @@ export class UsersManageService {
     switchMap((kbSlug: string) =>
       this.accountSlug.pipe(switchMap((accountSlug) => this.users.getKbUsers(accountSlug, kbSlug))),
     ),
+    shareReplay(),
   );
 
   constructor(private users: UsersService, private state: StateService) {}
