@@ -9,7 +9,7 @@ import {
 import { from, map, Observable, of } from 'rxjs';
 
 // TODO: use the default fetch once upgraded to node 18
-import { fetch } from '../utils';
+// import { fetch } from '../utils';
 
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
@@ -113,19 +113,29 @@ class DropboxImpl implements ISourceConnector {
 
   download(resource: SyncItem): Observable<Blob | undefined> {
     try {
-      return from(
+      return new Observable<Blob | undefined>((observer) => {
         fetch(`https://content.dropboxapi.com/2/files/download`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${this.params.token || ''}`,
             'Dropbox-API-Arg': JSON.stringify({ path: resource.originalId }),
           },
-        }).then((res) => {
-          const blob = res.blob();
-          return blob;
-        }),
-      );
+        })
+          .then((res) => res.blob())
+          .then(
+            (blob) => {
+              observer.next(blob);
+              observer.complete();
+            },
+            (e) => {
+              console.error(e);
+              observer.next(undefined);
+              observer.complete();
+            },
+          );
+      });
     } catch (e) {
+      console.error(e);
       return of(undefined);
     }
   }

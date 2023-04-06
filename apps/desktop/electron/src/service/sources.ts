@@ -1,32 +1,21 @@
 import * as fs from 'fs';
-import { from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { from, map, Observable, of, switchMap } from 'rxjs';
 import { getConnector } from './connectors';
 import { Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
 
+let SOURCES: { [id: string]: Source } = {};
+
 export const getSources: () => { [id: string]: Source } = () => {
-  try {
-    const data = fs.readFileSync('./connectors-db.json', 'utf8');
-    return JSON.parse(data);
-  } catch (err) {
-    console.log(`Error reading file: ${err}`);
-    return {};
-  }
+  return SOURCES;
 };
 
 export const setSources = (sources: { [id: string]: Source }) => {
-  try {
-    fs.writeFileSync('./connectors-db.json', JSON.stringify(sources));
-  } catch (err) {
-    console.log(`Error writing file: ${err}`);
-    throw err;
-  }
+  SOURCES = sources;
 };
 
 export const updateSource = (id: string, source: Source) => {
-  const sources = getSources();
-  sources[id] = source;
-  setSources(sources);
+  SOURCES[id] = source;
 };
 
 export const getSource = (sourceId: string) => {
@@ -65,17 +54,12 @@ export function getLastModified(
   sourceId: string,
   since?: string,
 ): Observable<{ success: boolean; results: SyncItem[]; error?: string }> {
-  console.log('getLastModified', sourceId, since);
   const connector = getSourceInstance(sourceId);
   try {
-    return connector.getLastModified(since || '2000-01-01T00:00:00.000Z').pipe(
-      map((results) => ({ success: true, results })),
-      tap((results) => {
-        console.log('getLastModified', results);
-      }),
-    );
+    return connector
+      .getLastModified(since || '2000-01-01T00:00:00.000Z')
+      .pipe(map((results) => ({ success: true, results })));
   } catch (err) {
-    console.log('getLastModified', err);
     return of({ success: false, results: [], error: `${err}` });
   }
 }
@@ -90,3 +74,31 @@ const getSourceInstance = (sourceId: string) => {
   connector.setParameters(source.data);
   return connector;
 };
+
+function readSources() {
+  try {
+    console.log('Reading sources');
+    const data = fs.readFileSync('./connectors-db.json', 'utf8');
+    SOURCES = JSON.parse(data);
+  } catch (err) {
+    console.log(`Error reading file: ${err}`);
+  }
+}
+readSources();
+
+function exitHandler() {
+  try {
+    fs.writeFileSync('./connectors-db.json', JSON.stringify(SOURCES));
+  } catch (err) {
+    console.log(`Error writing file: ${err}`);
+    throw err;
+  }
+  process.exit();
+}
+
+//do something when app is closing
+process.on('exit', exitHandler);
+//catches ctrl+c event
+process.on('SIGINT', exitHandler);
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler);

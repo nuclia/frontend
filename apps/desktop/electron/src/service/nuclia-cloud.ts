@@ -1,12 +1,12 @@
 import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '../../../../../libs/sdk-core/src';
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, delay, map, Observable, of, switchMap } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
 
 // DO NOT REMOVE
 // TODO: use the default fetch once upgraded to node 18
-import { fetch } from './utils';
-console.log(fetch);
+// import { fetch } from './utils';
+// console.log(fetch);
 
 require('localstorage-polyfill');
 
@@ -41,6 +41,7 @@ export class NucliaCloud {
             }),
           ),
         ),
+        delay(500),
         switchMap(
           (resource) =>
             resource
@@ -50,7 +51,8 @@ export class NucliaCloud {
               })
               .pipe(
                 catchError((error: any) => {
-                  console.error(error.toString());
+                  console.log(`Problem uploading ${filename} to ${slug}, status ${error}`);
+                  // console.error(error.toString());
                   return resource.delete();
                 }),
                 switchMap((res) => {

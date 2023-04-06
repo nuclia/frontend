@@ -27,7 +27,9 @@ function syncFiles() {
                     if (!source.kb || !source.items || source.items.length === 0) {
                       return of(undefined);
                     }
-                    updateSource(id, { ...source, lastBatch: source.items.length });
+                    if (source.items.length !== source.lastBatch) {
+                      updateSource(id, { ...source, lastBatch: source.items.length });
+                    }
                     return of(...source.items.slice(0, 10)).pipe(
                       switchMap((item) =>
                         syncFile(id, source, item).pipe(
@@ -44,7 +46,9 @@ function syncFiles() {
                             (item) => !successfullyUploaded.includes(item.originalId),
                           );
                           source.total = (source.total || 0) + successfullyUploaded.length;
-                          updateSource(id, source);
+                          if (successfullyUploaded.length > 0) {
+                            updateSource(id, source);
+                          }
                         }
                       }),
                     );
