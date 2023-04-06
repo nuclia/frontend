@@ -21,7 +21,6 @@ export * from './lib/sidebar';
 export * from './lib/token-dialog';
 export * from './lib/topbar';
 export * from './lib/upload';
-export * from './lib/useful';
 export * from './lib/user';
 export * from './lib/utils';
 export * from './lib/validators';
