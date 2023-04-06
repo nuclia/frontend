@@ -6,7 +6,6 @@ import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
 import { AppService } from '@flaps/common';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MockProvider } from 'ng-mocks';
 
 function createTranslateLoader() {
@@ -23,7 +22,6 @@ describe('KnowledgeBoxHomeComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [KnowledgeBoxHomeComponent],
       imports: [
-        MatDialogModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,

@@ -44,10 +44,10 @@ export class EntityDialogComponent implements OnDestroy {
     private entitiesService: EntitiesService,
   ) {
     if (modal.config.data) {
-      this.mode = modal.config.data.mode;
-      this.group = modal.config.data.group;
+      this.mode = modal.config.data['mode'];
+      this.group = modal.config.data['group'];
       this.entityForm = this.formBuilder.group({
-        name: [modal.config.data.entity?.value || '', [Validators.required]],
+        name: [modal.config.data['entity']?.value || '', [Validators.required]],
         shortDescription: [''],
         description: [''],
       });

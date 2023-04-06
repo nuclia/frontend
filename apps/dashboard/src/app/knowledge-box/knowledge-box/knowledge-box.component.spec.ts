@@ -1,13 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialogModule } from '@angular/material/dialog';
 import { BehaviorSubject, of } from 'rxjs';
 
 import { KnowledgeBoxComponent } from './knowledge-box.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MockModule, MockProvider } from 'ng-mocks';
+import { MockModule } from 'ng-mocks';
 import { AppService, UploadService } from '@flaps/common';
-import { MatLegacyDialog } from '@angular/material/legacy-dialog';
+import { PaModalModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('KnowledgeBoxComponent', () => {
   let component: KnowledgeBoxComponent;
@@ -15,10 +14,9 @@ describe('KnowledgeBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(MatDialogModule), RouterTestingModule],
+      imports: [MockModule(PaModalModule), RouterTestingModule],
       declarations: [KnowledgeBoxComponent],
       providers: [
-        MockProvider(MatLegacyDialog),
         {
           provide: UploadService,
           useValue: {

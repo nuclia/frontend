@@ -9,7 +9,6 @@ import { DashboardComponent } from './dashboard.component';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MockModule } from 'ng-mocks';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
 
 describe('DashboardComponent', () => {
@@ -24,7 +23,6 @@ describe('DashboardComponent', () => {
         MatBottomSheetModule,
         MockModule(MatToolbarModule),
         MockModule(MatIconModule),
-        MockModule(MatDialogModule),
         MockModule(MatMenuModule),
       ],
       providers: [

@@ -13,7 +13,7 @@ export class TokenDialogComponent {
   constructor(public modal: ModalRef) {}
 
   copy() {
-    navigator.clipboard.writeText(this.modal.config.data?.token);
+    navigator.clipboard.writeText(this.modal.config.data?.['token']);
     this.successMessage = true;
     setTimeout(() => (this.successMessage = false), 2000);
   }
