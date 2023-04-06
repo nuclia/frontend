@@ -2,7 +2,7 @@
   <pa-modal-title>{{ 'account.stash.users' | translate }}</pa-modal-title>
   <pa-modal-content>
     <app-users-manage
-      [kb]="modal.config.data.kb"
+      [kb]="modal.config.data?.['kb']"
       [modal]="true"></app-users-manage>
   </pa-modal-content>
 </pa-modal-advanced>
