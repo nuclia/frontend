@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { CreateLinkComponent, UploadFilesDialogComponent, UploadTextComponent } from '@flaps/common';
+import { SisModalService } from '@nuclia/sistema';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 export type UploadType = 'files' | 'folder' | 'link' | 'csv';
 
@@ -8,13 +9,9 @@ export type UploadType = 'files' | 'folder' | 'link' | 'csv';
   providedIn: 'root',
 })
 export class UploadDialogService {
-  constructor(
-    private dialog: MatDialog, //FIXME replace old upload dialog with sistema modal service
-  ) {}
+  constructor(private modal: SisModalService) {}
 
-  upload(
-    type: 'files' | 'folder' | 'link' | 'csv',
-  ): MatDialogRef<CreateLinkComponent | UploadFilesDialogComponent | UploadTextComponent> {
+  upload(type: 'files' | 'folder' | 'link' | 'csv'): ModalRef {
     switch (type) {
       case 'folder':
       case 'files':
@@ -26,17 +23,18 @@ export class UploadDialogService {
     }
   }
 
-  private uploadLink(): MatDialogRef<CreateLinkComponent> {
-    return this.dialog.open(CreateLinkComponent);
+  private uploadLink(): ModalRef {
+    return this.modal.openModal(CreateLinkComponent);
   }
 
-  private uploadFiles(folderMode = false): MatDialogRef<UploadFilesDialogComponent> {
-    return this.dialog.open(UploadFilesDialogComponent, {
+  private uploadFiles(folderMode = false): ModalRef {
+    return this.modal.openModal(UploadFilesDialogComponent, {
+      dismissable: true,
       data: { folderMode: folderMode },
     });
   }
 
-  private uploadCsv(): MatDialogRef<UploadTextComponent> {
-    return this.dialog.open(UploadTextComponent);
+  private uploadCsv(): ModalRef {
+    return this.modal.openModal(UploadTextComponent);
   }
 }

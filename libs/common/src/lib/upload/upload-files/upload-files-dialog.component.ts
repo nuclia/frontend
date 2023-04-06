@@ -1,39 +1,30 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
-
-export interface UploadFileDialogData {
-  folderMode: boolean;
-}
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-upload-files-dialog',
   template: `
-    <div>
-      <app-upload-files
-        *ngIf="!showProgress"
-        [folderMode]="data.folderMode"
-        (upload)="onUpload()"
-        (close)="close($event)"></app-upload-files>
-      <app-upload-progress
-        *ngIf="showProgress"
-        (close)="close()"></app-upload-progress>
-    </div>
+    <app-upload-files
+      *ngIf="!showProgress"
+      [folderMode]="modal.config.data?.folderMode"
+      (upload)="onUpload()"
+      (close)="close($event)"></app-upload-files>
+    <app-upload-progress
+      *ngIf="showProgress"
+      (close)="close()"></app-upload-progress>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadFilesDialogComponent {
   showProgress: boolean = false;
 
-  constructor(
-    private dialogRef: MatDialogRef<UploadFilesDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: UploadFileDialogData,
-  ) {}
+  constructor(public modal: ModalRef) {}
 
   onUpload() {
     this.showProgress = true;
   }
 
   close($event?: { cancel: boolean }): void {
-    this.dialogRef.close($event);
+    this.modal.close($event);
   }
 }

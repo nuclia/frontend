@@ -14,13 +14,10 @@ export class UploadButtonComponent implements OnInit {
   ngOnInit(): void {}
 
   upload(type: 'files' | 'folder' | 'link' | 'csv') {
-    this.uploadService
-      .upload(type)
-      .afterClosed()
-      .subscribe((data) => {
-        if (!data || !data.cancel) {
-          this.uploaded.emit();
-        }
-      });
+    this.uploadService.upload(type).onClose.subscribe((data) => {
+      if (!data || !data.cancel) {
+        this.uploaded.emit();
+      }
+    });
   }
 }

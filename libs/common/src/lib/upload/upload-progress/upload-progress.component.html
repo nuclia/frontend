@@ -1,63 +1,56 @@
-<div class="upload-dialog upload-progress">
-  <h1>
-    {{ 'upload.progress-dialog-title' | translate }}
-    <pa-button
-      class="close-upload-button"
-      icon="cross"
-      aspect="basic"
-      (click)="close.emit()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </h1>
-
-  <div class="dialog-description">
+<pa-modal-advanced>
+  <pa-modal-title>{{ 'upload.progress-dialog-title' | translate }}</pa-modal-title>
+  <pa-modal-description>
     <strong>{{ 'upload.takes_time' | translate }}</strong>
     <span>{{ 'upload.once_uploaded' | translate }}</span>
-  </div>
-  <div
-    class="upload-list"
-    *ngIf="(files | async)?.length || 0 > 0">
+  </pa-modal-description>
+  <pa-modal-content>
     <div
-      class="upload-row"
-      *ngFor="let file of files | async">
+      class="upload-list"
+      *ngIf="(files | async)?.length || 0 > 0">
       <div
-        class="file body-s"
-        [class.failed]="file.failed">
-        <span class="file-name">{{ file.file.name }}</span>
-        <span class="file-size body-xs">– {{ file.file.size | size }}</span>
-      </div>
-      <div class="status">
-        <pa-icon
-          *ngIf="file.uploaded"
-          name="check"></pa-icon>
-
+        class="upload-row"
+        *ngFor="let file of files | async">
         <div
-          class="error body-xs"
-          *ngIf="file.conflicts">
-          <pa-icon name="warning"></pa-icon>
-          {{ 'upload.conflict' | translate }}
+          class="file body-s"
+          [class.failed]="file.failed">
+          <span class="file-name">{{ file.file.name }}</span>
+          <span class="file-size body-xs">– {{ file.file.size | size }}</span>
         </div>
+        <div class="status">
+          <pa-icon
+            *ngIf="file.uploaded"
+            name="check"></pa-icon>
 
-        <div
-          class="error body-xs"
-          *ngIf="file.failed && !file.conflicts">
-          <pa-icon name="circle-cross"></pa-icon>
-          {{ 'upload.error' | translate }}
-        </div>
+          <div
+            class="error body-xs"
+            *ngIf="file.conflicts">
+            <pa-icon name="warning"></pa-icon>
+            {{ 'upload.conflict' | translate }}
+          </div>
 
-        <div
-          class="progress-bar"
-          *ngIf="file.progress !== 100">
-          <div [style.width.%]="file.progress"></div>
+          <div
+            class="error body-xs"
+            *ngIf="file.failed && !file.conflicts">
+            <pa-icon name="circle-cross"></pa-icon>
+            {{ 'upload.error' | translate }}
+          </div>
+
+          <div
+            class="progress-bar"
+            *ngIf="file.progress !== 100">
+            <div [style.width.%]="file.progress"></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
-  <div class="footer">
-    <div class="queue-length">{{ 'modal.upload.queue_length' | translate }}: {{ (files | async)?.length }}</div>
-    <pa-button (click)="close.emit()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </div>
-</div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <div class="progress-footer">
+      <div class="queue-length">{{ 'modal.upload.queue_length' | translate }}: {{ (files | async)?.length }}</div>
+      <pa-button (click)="close.emit()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-footer>
+</pa-modal-advanced>

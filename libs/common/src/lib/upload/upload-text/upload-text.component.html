@@ -1,35 +1,35 @@
-<div class="upload-dialog upload-text">
-  <h1>
-    {{ 'upload.upload_from_csv' | translate }}
-    <pa-button
-      class="close-upload-button"
-      icon="cross"
-      aspect="basic"
-      (click)="close()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </h1>
-
-  <app-csv-select
-    [help]="['upload.csv_description', 'upload.csv_format', 'upload.csv_labels']"
-    [fields]="4"
-    (select)="checkCsv($event)"></app-csv-select>
-  <div
-    class="uploads"
-    *ngIf="csv.length > 0">
-    <div
-      *ngFor="let row of csv"
-      class="upload">
-      <span paEllipsisTooltip>{{ row.title }}</span>
-      <code>{{ row.format }}</code>
+<pa-modal-dialog>
+  <pa-modal-title>
+    <div class="dialog-title-with-button">
+      {{ 'upload.upload_from_csv' | translate }}
+      <pa-button
+        icon="cross"
+        aspect="basic"
+        (click)="close()">
+        {{ 'generic.close' | translate }}
+      </pa-button>
     </div>
-  </div>
-
-  <nsi-spinner
-    *ngIf="isUploading"
-    size="small"></nsi-spinner>
-
-  <div class="buttons">
+  </pa-modal-title>
+  <pa-modal-content>
+    <app-csv-select
+      [help]="['upload.csv_description', 'upload.csv_format', 'upload.csv_labels']"
+      [fields]="4"
+      (select)="checkCsv($event)"></app-csv-select>
+    <div
+      class="uploads"
+      *ngIf="csv.length > 0">
+      <div
+        *ngFor="let row of csv"
+        class="upload">
+        <span paEllipsisTooltip>{{ row.title }}</span>
+        <code>{{ row.format }}</code>
+      </div>
+    </div>
+    <nsi-spinner
+      *ngIf="isUploading"
+      size="small"></nsi-spinner>
+  </pa-modal-content>
+  <pa-modal-footer>
     <pa-button
       aspect="basic"
       (click)="close()">
@@ -42,5 +42,5 @@
       [disabled]="csv.length === 0 || isUploading">
       {{ 'generic.add' | translate }}
     </pa-button>
-  </div>
-</div>
+  </pa-modal-footer>
+</pa-modal-dialog>

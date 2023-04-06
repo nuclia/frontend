@@ -10,7 +10,7 @@ const GENERAL_LABELSET = 'General';
 @Component({
   selector: 'app-upload-files',
   templateUrl: './upload-files.component.html',
-  styleUrls: ['../_upload-dialog.scss', './upload-files.component.scss'],
+  styleUrls: ['./upload-files.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadFilesComponent {

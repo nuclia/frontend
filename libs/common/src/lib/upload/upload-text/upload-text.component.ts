@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { forkJoin, switchMap } from 'rxjs';
-import { markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../utils';
 
@@ -20,7 +19,7 @@ interface Row {
 @Component({
   selector: 'app-upload-text',
   templateUrl: './upload-text.component.html',
-  styleUrls: ['../_upload-dialog.scss', './upload-text.component.scss'],
+  styleUrls: ['./upload-text.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadTextComponent {
@@ -28,7 +27,7 @@ export class UploadTextComponent {
   csv: Row[] = [];
 
   constructor(
-    private dialogRef: MatDialogRef<UploadTextComponent>,
+    public modal: ModalRef,
     private sdk: SDKService,
     private uploadService: UploadService,
     private tracking: STFTrackingService,
@@ -37,7 +36,7 @@ export class UploadTextComponent {
   ) {}
 
   close(): void {
-    this.dialogRef.close({ cancel: true });
+    this.modal.close({ cancel: true });
   }
 
   checkCsv(data: string[][]) {
@@ -69,6 +68,6 @@ export class UploadTextComponent {
           ),
         ),
       )
-      .subscribe(() => this.dialogRef.close());
+      .subscribe(() => this.modal.close());
   }
 }

@@ -4,7 +4,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
 
 import { CreateLinkComponent } from './create-link/create-link.component';
@@ -17,6 +16,7 @@ import { UploadTextComponent } from './upload-text/upload-text.component';
 import {
   PaButtonModule,
   PaIconModule,
+  PaModalModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
@@ -34,7 +34,6 @@ import { ProgressBarModule } from '../progress-bar';
     TranslateModule.forChild(),
     ReactiveFormsModule,
     RouterModule,
-    MatDialogModule,
     FileUploadModule,
     STFPipesModule,
     LabelModule,
@@ -46,6 +45,7 @@ import { ProgressBarModule } from '../progress-bar';
     PaTextFieldModule,
     SisProgressModule,
     ProgressBarModule,
+    PaModalModule,
   ],
   declarations: [
     CreateLinkComponent,

@@ -1,77 +1,66 @@
 @import 'apps/dashboard/src/variables';
 
-.upload-progress {
-  width: 700px;
+.upload-row {
+  align-items: center;
+  background: $color-neutral-lightest;
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(4);
+  padding: 0 rhythm(1);
+  transition: background $transition-hint;
 
-  .dialog-description {
-    margin: rhythm(2) 0 rhythm(6);
+  &:hover {
+    background: $color-neutral-lighter;
   }
+}
 
-  .upload-list {
-    max-height: 50vh;
-    overflow: auto;
-    @include scrollbar-black();
+.file {
+  align-items: center;
+  display: flex;
+  max-width: 75%;
+}
+
+.file-name {
+  flex: 0 1 auto;
+  @include text-truncate();
+}
+
+.file-size {
+  flex: 0 0 auto;
+  padding-left: rhythm(1);
+}
+
+.progress-bar {
+  height: rhythm(0.5);
+  background-color: $color-light-stronger;
+  div {
+    height: 100%;
+    background-color: $color-primary-regular;
+    transition: width $duration-superfast linear;
   }
+}
 
-  .upload-row {
-    align-items: center;
-    background: $color-neutral-lightest;
-    display: flex;
-    height: rhythm(4);
-    padding-left: rhythm(3);
-    transition: background $transition-hint;
+.status {
+  width: 25%;
+}
 
-    &:hover {
-      background: $color-neutral-lighter;
-    }
-    > div {
-      width: 50%;
-    }
+.status .error {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+
+  pa-icon {
+    color: $color-secondary-strong;
   }
+}
 
-  .file {
-    align-items: center;
-    display: flex;
-  }
+.queue-length {
+  font-weight: $font-weight-semi-bold;
+}
 
-  .file-name {
-    flex: 0 1 auto;
-    @include text-truncate();
-  }
-
-  .file-size {
-    flex: 0 0 auto;
-    padding-left: rhythm(1);
-  }
-
-  .progress-bar {
-    height: rhythm(0.5);
-    background-color: $color-light-stronger;
-    div {
-      height: 100%;
-      background-color: $color-primary-regular;
-      transition: width $duration-superfast linear;
-    }
-  }
-
-  .status .error {
-    align-items: center;
-    display: flex;
-    gap: rhythm(1);
-
-    pa-icon {
-      color: $color-secondary-strong;
-    }
-  }
-
-  .queue-length {
-    font-weight: $font-weight-semi-bold;
-  }
-
-  .footer {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin-top: rhythm(6);
-  }
+.progress-footer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }

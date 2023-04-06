@@ -1,7 +1,9 @@
 @import 'apps/dashboard/src/variables';
 
-.upload-text {
-  width: 50vw;
+.dialog-title-with-button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }
 
 app-label-field {

@@ -1,75 +1,76 @@
-<div class="upload-dialog create-link">
-  <h1>
-    {{ 'modal.create_link.title' | translate }}
-    <pa-button
-      class="close-upload-button"
-      icon="cross"
-      aspect="basic"
-      (click)="close()">
-      {{ 'generic.close' | translate }}
-    </pa-button>
-  </h1>
-
-  <form
-    class="link-input"
-    id="link-form"
-    [formGroup]="linkForm"
-    (ngSubmit)="add()">
-    <div class="new-link">
-      <pa-input
-        *ngIf="linkForm.value.type === 'one'"
-        formControlName="link"
-        [errorMessages]="validationMessages['link']">
-        {{ 'modal.create_link.input' | translate }}
-      </pa-input>
-      <pa-textarea
-        *ngIf="linkForm.value.type === 'multiple'"
-        formControlName="links"
-        [rows]="5"
-        [errorMessages]="validationMessages['link']">
-        {{ 'modal.create_link.textarea' | translate }}
-      </pa-textarea>
-      <div *ngIf="linkForm.value.type === 'csv'">
-        <app-csv-select
-          [help]="['upload.csv_links_description', 'upload.csv_labels']"
-          [fields]="2"
-          (select)="checkCsv($event)"></app-csv-select>
-        <div
-          *ngIf="csv.length > 0"
-          class="uploads">
-          <div
-            *ngFor="let row of csv"
-            class="upload">
-            <span paEllipsisTooltip>{{ row.link }}</span>
-          </div>
-        </div>
-      </div>
-      <pa-radio-group formControlName="type">
-        <pa-radio value="one">{{ 'generic.link' | translate }}</pa-radio>
-        <pa-radio value="multiple">{{ 'modal.create_link.multiple' | translate }}</pa-radio>
-        <pa-radio value="csv">{{ 'modal.create_link.csv_file' | translate }}</pa-radio>
-      </pa-radio-group>
-      <app-label-field
-        *ngIf="linkForm.value.type !== 'csv'"
-        [(selection)]="selectedLabels"></app-label-field>
-    </div>
-
-    <nsi-spinner
-      *ngIf="pending"
-      size="small"></nsi-spinner>
-    <footer class="link-actions">
+<pa-modal-dialog>
+  <pa-modal-title>
+    <div class="dialog-title-with-button">
+      {{ 'modal.create_link.title' | translate }}
       <pa-button
+        icon="cross"
         aspect="basic"
         (click)="close()">
-        {{ 'generic.cancel' | translate }}
+        {{ 'generic.close' | translate }}
       </pa-button>
+    </div>
+  </pa-modal-title>
+  <pa-modal-content>
+    <form
+      id="link-form"
+      [formGroup]="linkForm"
+      (ngSubmit)="add()">
+      <div class="link-form">
+        <pa-input
+          *ngIf="linkForm.value.type === 'one'"
+          formControlName="link"
+          [errorMessages]="validationMessages['link']">
+          {{ 'modal.create_link.input' | translate }}
+        </pa-input>
+        <pa-textarea
+          *ngIf="linkForm.value.type === 'multiple'"
+          formControlName="links"
+          [rows]="5"
+          [errorMessages]="validationMessages['link']">
+          {{ 'modal.create_link.textarea' | translate }}
+        </pa-textarea>
+        <div *ngIf="linkForm.value.type === 'csv'">
+          <app-csv-select
+            [help]="['upload.csv_links_description', 'upload.csv_labels']"
+            [fields]="2"
+            (select)="checkCsv($event)"></app-csv-select>
+          <div
+            *ngIf="csv.length > 0"
+            class="uploads">
+            <div
+              *ngFor="let row of csv"
+              class="upload">
+              <span paEllipsisTooltip>{{ row.link }}</span>
+            </div>
+          </div>
+        </div>
+        <pa-radio-group formControlName="type">
+          <pa-radio value="one">{{ 'generic.link' | translate }}</pa-radio>
+          <pa-radio value="multiple">{{ 'modal.create_link.multiple' | translate }}</pa-radio>
+          <pa-radio value="csv">{{ 'modal.create_link.csv_file' | translate }}</pa-radio>
+        </pa-radio-group>
+        <app-label-field
+          *ngIf="linkForm.value.type !== 'csv'"
+          [(selection)]="selectedLabels"></app-label-field>
+      </div>
 
-      <pa-button
-        type="submit"
-        kind="primary"
-        [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending">
-        {{ 'generic.add' | translate }}
-      </pa-button>
-    </footer>
-  </form>
-</div>
+      <nsi-spinner
+        *ngIf="pending"
+        size="small"></nsi-spinner>
+    </form>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="close()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+
+    <pa-button
+      type="submit"
+      kind="primary"
+      [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending">
+      {{ 'generic.add' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>
