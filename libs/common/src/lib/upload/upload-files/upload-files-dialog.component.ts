@@ -6,7 +6,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
   template: `
     <app-upload-files
       *ngIf="!showProgress"
-      [folderMode]="modal.config.data?.folderMode"
+      [folderMode]="modal.config.data?.['folderMode']"
       (upload)="onUpload()"
       (close)="close($event)"></app-upload-files>
     <app-upload-progress

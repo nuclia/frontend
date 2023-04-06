@@ -8,7 +8,7 @@
     </div>
 
     <ng-container *ngIf="mode === 'view'">
-      <h2 class="mb-44">{{ modal.config.data?.entity?.value }}</h2>
+      <h2 class="mb-44">{{ modal.config.data?.['entity']?.value }}</h2>
       <div class="entity-dialog-short-description mb-40">Capital d’Argentina</div>
       <div class="entity-dialog-description">
         Buenos Aires es la gran capital cosmopolita de Argentina. Su centro es la Plaza de Mayo, rodeada de imponentes
@@ -21,15 +21,15 @@
     <ng-container *ngIf="mode === 'edit' || mode === 'add'">
       <h2
         class="mb-16"
-        *ngIf="modal.config.data?.entity">
-        {{ modal.config.data?.entity.value }}
+        *ngIf="modal.config.data?.['entity']">
+        {{ modal.config.data?.['entity'].value }}
       </h2>
       <form
         [formGroup]="entityForm"
         (submit)="save()">
         <div
           class="mb-8"
-          *ngIf="!modal.config.data?.entity">
+          *ngIf="!modal.config.data?.['entity']">
           <pa-input
             formControlName="name"
             [errorMessages]="validationMessages.name">

@@ -13,7 +13,7 @@
   <pa-modal-content>
     <div [innerHTML]="'account.token_description' | translate"></div>
     <div class="token-container">
-      <div class="token-dialog-value">{{ modal.config.data?.token | slice: 1:30 }}…</div>
+      <div class="token-dialog-value">{{ modal.config.data?.['token'] | slice: 1:30 }}…</div>
       <pa-button
         *ngIf="clipboardSupported"
         (click)="copy()">

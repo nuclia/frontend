@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { Entities } from '@nuclia/core';
 import { Entity } from '../model';
@@ -27,7 +27,11 @@ export interface EntityDialogResponse {
   styleUrls: ['./entity-dialog.component.scss'],
 })
 export class EntityDialogComponent implements OnDestroy {
-  entityForm?: UntypedFormGroup;
+  entityForm: FormGroup = new FormGroup({
+    name: new FormControl<string>('', [Validators.required]),
+    shortDescription: new FormControl<string>(''),
+    description: new FormControl<string>(''),
+  });
   validationMessages = {
     name: {
       required: 'validation.required',
@@ -46,11 +50,7 @@ export class EntityDialogComponent implements OnDestroy {
     if (modal.config.data) {
       this.mode = modal.config.data['mode'];
       this.group = modal.config.data['group'];
-      this.entityForm = this.formBuilder.group({
-        name: [modal.config.data['entity']?.value || '', [Validators.required]],
-        shortDescription: [''],
-        description: [''],
-      });
+      this.entityForm.patchValue(modal.config.data);
     }
 
     this.groups$ = this.entitiesService.getEntities().pipe(
