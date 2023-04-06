@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { filter, map, take, tap } from 'rxjs';
 import { Account, NUAClient } from '@nuclia/core';
@@ -15,7 +15,7 @@ export interface ClientDialogData {
   styleUrls: ['./client-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClientDialogComponent {
+export class ClientDialogComponent implements OnInit {
   account = this.stateService.account.pipe(
     filter((account): account is Account => !!account),
     take(1),
@@ -58,7 +58,9 @@ export class ClientDialogComponent {
     private cdr: ChangeDetectorRef,
   ) {
     this.editMode = !!this.modal.config.data?.client;
+  }
 
+  ngOnInit() {
     this.sdkService.nuclia.rest
       .getZones()
       .pipe(
