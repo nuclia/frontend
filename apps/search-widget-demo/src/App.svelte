@@ -25,6 +25,9 @@
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // multiple types
 
+  const backend = 'https://stashify.cloud/api';
+  // const backend = 'https://nuclia.cloud/api';
+
   onMount(() => {
     resultsWidget?.setTileMenu([
       {
@@ -92,7 +95,7 @@
     <div class="two-widgets-container">
       <NucliaSearchBar
         zone="europe-1"
-        backend="https://stashify.cloud/api"
+        {backend}
         cdn="/"
         bind:this={searchBar}
         knowledgebox={kb}
@@ -129,7 +132,7 @@
         zone="europe-1"
         knowledgebox={kb}
         cdn="/"
-        backend="https://stashify.cloud/api"
+        {backend}
         lang="en" />
     </div>
   {/if}
