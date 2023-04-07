@@ -218,7 +218,6 @@ const routes: Routes = [
 ];
 
 const routerOptions: ExtraOptions = {
-  onSameUrlNavigation: 'reload',
   scrollPositionRestoration: 'enabled',
 };
 

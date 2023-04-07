@@ -1,13 +1,8 @@
-<div class="users-dialog">
-  <h2 class="display-s">{{ 'account.stash.users' | translate }}</h2>
-  <pa-button
-    class="close-button"
-    icon="cross"
-    aspect="basic"
-    (click)="close()">
-    {{ 'generic.close' | translate }}
-  </pa-button>
-  <app-users-manage
-    [kb]="data.kb"
-    [modal]="true"></app-users-manage>
-</div>
+<pa-modal-advanced fitContent>
+  <pa-modal-title>{{ 'account.stash.users' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <app-users-manage
+      [kb]="modal.config.data?.['kb']"
+      [modal]="true"></app-users-manage>
+  </pa-modal-content>
+</pa-modal-advanced>

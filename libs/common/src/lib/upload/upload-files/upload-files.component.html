@@ -1,17 +1,8 @@
-<div class="upload-dialog upload-files">
-  <div mat-dialog-title>
-    <h1>
-      {{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}
-      <pa-button
-        class="close-upload-button"
-        icon="cross"
-        aspect="basic"
-        (click)="cancel()">
-        {{ 'generic.close' | translate }}
-      </pa-button>
-    </h1>
-  </div>
-  <div mat-dialog-content>
+<pa-modal-advanced>
+  <pa-modal-title>
+    {{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
     <div
       class="size-warning"
       *ngIf="limitsExceeded">
@@ -89,7 +80,9 @@
       </div>
     </div>
 
-    <ncom-hint label="How to upload a file with the API">
+    <ncom-hint
+      noMaxWidth
+      label="How to upload a file with the API">
       <pre><code class="highlight">curl $$KB_URL$$/upload \
   -X POST \
   -H "content-type: video/mp4"
@@ -107,9 +100,8 @@
         Learn more
       </a>
     </ncom-hint>
-  </div>
-
-  <footer class="mt-28">
+  </pa-modal-content>
+  <pa-modal-footer>
     <pa-button
       aspect="basic"
       (click)="cancel()">
@@ -122,5 +114,5 @@
       (click)="startUpload()">
       {{ 'generic.add' | translate }}
     </pa-button>
-  </footer>
-</div>
+  </pa-modal-footer>
+</pa-modal-advanced>

@@ -76,5 +76,6 @@ import { SistemaSpinnerComponent } from './sistema-spinner/sistema-spinner.compo
     SisProgressModule,
     ReactiveFormsModule,
   ],
+  exports: [SistemaSpinnerComponent],
 })
 export class SistemaPagesModule {}

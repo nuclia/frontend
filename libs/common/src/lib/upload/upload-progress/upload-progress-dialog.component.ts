@@ -1,5 +1,5 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'app-upload-progress-dialog',
@@ -10,9 +10,9 @@ import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dia
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadProgressDialogComponent {
-  constructor(private dialogRef: MatDialogRef<UploadProgressDialogComponent>) {}
+  constructor(public modal: ModalRef) {}
 
   close(): void {
-    this.dialogRef.close();
+    this.modal.close();
   }
 }

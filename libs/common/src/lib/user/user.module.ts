@@ -10,7 +10,6 @@ import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-l
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
@@ -111,7 +110,6 @@ export const userRoutes: Routes = [
     MatCardModule,
     MatExpansionModule,
     MatSelectModule,
-    MatDialogModule,
     FlexLayoutModule,
     UserAvatarModule,
     RouterModule.forChild(userRoutes),

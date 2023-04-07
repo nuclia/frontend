@@ -1,56 +1,13 @@
 @import 'apps/dashboard/src/variables';
 
-.create-link {
-  ncom-hint ::ng-deep .hint {
-    margin-bottom: rhythm(3);
-  }
+.link-form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
 }
 
-.new-link {
-  min-width: 350px;
-  max-width: 672px;
-  margin-top: rhythm(3);
-  width: 50vw;
-}
-
-pa-input,
-pa-textarea {
-  display: block;
-  margin-bottom: rhythm(3);
-}
-
-.link-input {
-  min-width: 300px;
-  width: 100%;
-}
-
-pa-radio-group {
-  margin-bottom: rhythm(3);
-  text-align: right;
-}
-
-pa-radio {
-  display: inline-block;
-  margin-right: rythm(1);
-}
-
-.uploads {
-  max-height: rhythm(14);
-  overflow-y: auto;
-  margin-bottom: rhythm(4);
-
-  .upload {
-    align-items: center;
-    border-bottom: 1px solid $color-neutral-lighter;
-    display: flex;
-    height: rhythm(4);
-
-    &:first-child {
-      border-top: 1px solid $color-neutral-lighter;
-    }
-  }
-}
-
-.link-actions {
-  margin-top: rhythm(4);
+.dialog-title-with-button {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
 }

@@ -612,7 +612,6 @@
 	"stash.add_user": "Afegeix l'usuari",
 	"stash.added_user": "L'usuari {{user}} s'ha afegit",
 	"stash.create": "Crea una caixa de coneixement",
-	"stash.create.configuration": "Configuració",
 	"stash.create.error": "Perdó, alguna cosa ha anat malament quan creavem la caixa de coneixement. Torneu-ho a intenta, sius plau",
 	"stash.create.failure": "Ho sento, alguna cosa definitivament no funciona en aquest moment. Si us plau, poseu-vos en contacte amb el vostre administrador.",
 	"stash.create.generative_model": "Generació de respostes",

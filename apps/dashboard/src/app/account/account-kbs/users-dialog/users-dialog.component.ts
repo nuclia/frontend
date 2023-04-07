@@ -1,19 +1,15 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
-  selector: 'app-users-dialog',
   templateUrl: './users-dialog.component.html',
   styleUrls: ['./users-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsersDialogComponent {
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { kb: string },
-    private dialogRef: MatDialogRef<UsersDialogComponent>,
-  ) {}
+  constructor(public modal: ModalRef) {}
 
   close() {
-    this.dialogRef.close();
+    this.modal.close();
   }
 }

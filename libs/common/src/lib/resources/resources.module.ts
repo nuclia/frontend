@@ -5,7 +5,6 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 
 import { ResourceListComponent } from './resource-list';
 import {
@@ -136,9 +135,6 @@ const ROUTES: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(ROUTES),
     TranslateModule.forChild(),
-
-    // Material
-    MatDialogModule,
 
     // Pastanaga
     PaButtonModule,

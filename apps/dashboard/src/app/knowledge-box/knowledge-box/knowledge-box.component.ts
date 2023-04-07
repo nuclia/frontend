@@ -1,12 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { combineLatest, filter, map, of, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { AppService, UploadFilesDialogComponent, UploadService } from '@flaps/common';
 
 @Component({
-  selector: 'app-knowledge-box',
   templateUrl: './knowledge-box.component.html',
   styleUrls: ['./knowledge-box.component.scss'],
 })
@@ -20,7 +18,6 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   constructor(
     private uploadService: UploadService,
     private activatedRoute: ActivatedRoute,
-    private dialog: MatDialog,
     private appService: AppService,
     private modalService: SisModalService,
   ) {
@@ -62,7 +59,8 @@ export class KnowledgeBoxComponent implements OnInit, OnDestroy {
   }
 
   openUploadDialog() {
-    this.dialog.open(UploadFilesDialogComponent, {
+    this.modalService.openModal(UploadFilesDialogComponent, {
+      dismissable: true,
       data: { folderMode: false },
     });
   }

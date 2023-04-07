@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
-import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../utils';
 
@@ -17,7 +16,7 @@ interface Row {
 @Component({
   selector: 'app-create-link',
   templateUrl: './create-link.component.html',
-  styleUrls: ['../_upload-dialog.scss', './create-link.component.scss'],
+  styleUrls: ['./create-link.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateLinkComponent {
@@ -37,7 +36,7 @@ export class CreateLinkComponent {
   csv: Row[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<CreateLinkComponent>,
+    public modal: ModalRef,
     private uploadService: UploadService,
     private sdk: SDKService,
     private tracking: STFTrackingService,
@@ -79,7 +78,7 @@ export class CreateLinkComponent {
       }
       obs.subscribe({
         next: () => {
-          this.dialogRef.close();
+          this.modal.close();
           this.sdk.refreshCounter();
         },
         error: () => {
@@ -102,6 +101,6 @@ export class CreateLinkComponent {
   }
 
   close(): void {
-    this.dialogRef.close({ cancel: true });
+    this.modal.close({ cancel: true });
   }
 }

@@ -4,7 +4,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
 import { PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
 import { NavbarComponent } from './navbar.component';
@@ -17,7 +16,6 @@ import { SmallNavbarDirective } from './small-navbar.directive';
     AngularSvgIconModule,
     FlexLayoutModule,
     TranslateModule.forChild(),
-    MatDialogModule,
     PaIconModule,
   ],
   declarations: [NavbarComponent, SmallNavbarDirective],

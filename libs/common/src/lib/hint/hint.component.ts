@@ -33,6 +33,15 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   }
   private _inverted = false;
 
+  @Input()
+  set noMaxWidth(value: any) {
+    this._noMaxWidth = coerceBooleanProperty(value);
+  }
+  get noMaxWidth() {
+    return this._noMaxWidth;
+  }
+  private _noMaxWidth = false;
+
   isExpanded = false;
 
   @ViewChild('content') content?: ElementRef;
@@ -43,9 +52,11 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   constructor(private sdk: SDKService) {}
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.containerWidth = `${this.container?.nativeElement.getBoundingClientRect().width}px`;
-    }, 0);
+    if (!this.noMaxWidth) {
+      setTimeout(() => {
+        this.containerWidth = `${this.container?.nativeElement.getBoundingClientRect().width}px`;
+      }, 0);
+    }
   }
 
   ngAfterContentInit() {

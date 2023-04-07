@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
 import { map } from 'rxjs';
 import { UploadService } from '../upload.service';
 import { UploadProgressDialogComponent } from '../upload-progress/upload-progress-dialog.component';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'stf-upload-bar',
@@ -12,10 +12,10 @@ import { UploadProgressDialogComponent } from '../upload-progress/upload-progres
 export class UploadBarComponent {
   progress = this.uploadService.progress.pipe(map((p) => p.progress));
 
-  constructor(private dialog: MatDialog, private uploadService: UploadService) {}
+  constructor(private modalService: SisModalService, private uploadService: UploadService) {}
 
   checkFiles() {
-    this.dialog.open(UploadProgressDialogComponent);
+    this.modalService.openModal(UploadProgressDialogComponent);
   }
 
   close() {
