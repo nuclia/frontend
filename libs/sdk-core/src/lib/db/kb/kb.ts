@@ -22,6 +22,7 @@ import {
   ServiceAccountCreation,
 } from './kb.models';
 import type { INuclia } from '../../models';
+import { IErrorResponse } from '../../models';
 import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from '../resource';
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
@@ -154,25 +155,31 @@ export class KnowledgeBox implements IKnowledgeBox {
     return chat(this.nuclia, this.path, query, context, features);
   }
 
-  find(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.FindResults> {
+  find(
+    query: string,
+    features: Search.Features[] = [],
+    options?: SearchOptions,
+  ): Observable<Search.FindResults | IErrorResponse> {
     return find(this.nuclia, this.id, this.path, query, features, options);
   }
 
-  search(query: string, features: Search.Features[] = [], options?: SearchOptions): Observable<Search.Results> {
+  search(
+    query: string,
+    features: Search.Features[] = [],
+    options?: SearchOptions,
+  ): Observable<Search.Results | IErrorResponse> {
     return search(this.nuclia, this.id, this.path, query, features, options);
   }
 
-  catalog(query: string, options?: SearchOptions): Observable<Search.Results> {
+  catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse> {
     return catalog(this.nuclia, this.id, query, options);
   }
 
-  suggest(query: string, inTitleOnly = false): Observable<Search.Suggestions> {
+  suggest(query: string, inTitleOnly = false): Observable<Search.Suggestions | IErrorResponse> {
     const params = `query=${encodeURIComponent(query)}${inTitleOnly ? '&fields=a/title' : ''}`;
-    return this.nuclia.rest.get<Search.Suggestions | { detail: string }>(`${this.path}/suggest?${params}`).pipe(
-      catchError(() => of({ error: true } as Search.Suggestions)),
-      map((res) =>
-        Object.keys(res).includes('detail') ? ({ error: true } as Search.Suggestions) : (res as Search.Suggestions),
-      ),
+    return this.nuclia.rest.get<Search.Suggestions | IErrorResponse>(`${this.path}/suggest?${params}`).pipe(
+      catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
+      map((res) => (res.type === 'error' ? res : { ...res, type: 'suggestions' })),
     );
   }
 

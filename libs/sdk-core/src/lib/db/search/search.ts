@@ -1,5 +1,5 @@
-import { catchError, map, of, tap } from 'rxjs';
-import type { INuclia } from '../../models';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import type { IErrorResponse, INuclia } from '../../models';
 import type { Search, SearchOptions } from './search.models';
 
 export const find = (
@@ -10,7 +10,7 @@ export const find = (
   features: Search.Features[] = [],
   options?: SearchOptions,
   useGet?: boolean,
-) => {
+): Observable<Search.FindResults | IErrorResponse> => {
   const params: { [key: string]: string | string[] } = {};
   if (options?.isAdvanced) {
     params['advanced_query'] = query || '';
@@ -24,17 +24,14 @@ export const find = (
   }
 
   params['shards'] = nuclia.currentShards?.[kbid] || [];
-
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.FindResults | { detail: string }>(`${path}/find?${serialize(params, others)}`)
-    : nuclia.rest.post<Search.FindResults | { detail: string }>(`${path}/find`, { ...params, ...others });
+    ? nuclia.rest.get<Search.FindResults | IErrorResponse>(`${path}/find?${serialize(params, others)}`)
+    : nuclia.rest.post<Search.FindResults | IErrorResponse>(`${path}/find`, { ...params, ...others });
   return searchMethod.pipe(
-    catchError(() => of({ error: true } as Search.FindResults)),
-    map((res) =>
-      Object.keys(res).includes('detail') ? ({ error: true } as Search.FindResults) : (res as Search.FindResults),
-    ),
+    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
+    map((res) => (res.type === 'error' ? res : ({ ...res, type: 'findResults' } as Search.FindResults))),
     tap((res) => {
-      if (res.shards) {
+      if (res.type === 'findResults' && res.shards) {
         nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
       }
     }),
@@ -49,7 +46,7 @@ export const search = (
   features: Search.Features[] | Search.ResourceFeatures[] = [],
   options?: SearchOptions,
   useGet?: boolean,
-) => {
+): Observable<Search.Results | IErrorResponse> => {
   const params: { [key: string]: string | string[] } = {};
   params['query'] = query || '';
   params['features'] = features;
@@ -61,36 +58,36 @@ export const search = (
   params['shards'] = nuclia.currentShards?.[kbid] || [];
 
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.Results | { detail: string }>(`${path}/search?${serialize(params, others)}`)
-    : nuclia.rest.post<Search.Results | { detail: string }>(`${path}/search`, { ...params, ...others });
-  return searchMethod.pipe(
-    catchError(() => of({ error: true } as Search.Results)),
-    map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
-    tap((res) => {
-      if (res.shards) {
-        nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
-      }
-    }),
-  );
+    ? nuclia.rest.get<Search.Results | IErrorResponse>(`${path}/search?${serialize(params, others)}`)
+    : nuclia.rest.post<Search.Results | IErrorResponse>(`${path}/search`, { ...params, ...others });
+  return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 
 export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: SearchOptions) => {
   const params: { [key: string]: string | string[] } = {};
   params['query'] = query || '';
   params['shards'] = nuclia.currentShards?.[kbid] || [];
-  const searchMethod = nuclia.rest.get<Search.Results | { detail: string }>(
+  const searchMethod = nuclia.rest.get<Search.Results | IErrorResponse>(
     `/kb/${kbid}/catalog?${options ? serialize(params, options) : ''}`,
   );
+  return manageSearchRequest(nuclia, kbid, searchMethod);
+};
+
+function manageSearchRequest(
+  nuclia: INuclia,
+  kbid: string,
+  searchMethod: Observable<Search.Results | IErrorResponse>,
+): Observable<Search.Results | IErrorResponse> {
   return searchMethod.pipe(
-    catchError(() => of({ error: true } as Search.Results)),
-    map((res) => (Object.keys(res).includes('detail') ? ({ error: true } as Search.Results) : (res as Search.Results))),
+    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
+    map((res) => (res.type === 'error' ? res : ({ ...res, type: 'searchResults' } as Search.Results))),
     tap((res) => {
-      if (res.shards) {
+      if (res.type === 'searchResults' && res.shards) {
         nuclia.currentShards = { ...nuclia.currentShards, [kbid]: res.shards };
       }
     }),
   );
-};
+}
 
 const serialize = (params: { [key: string]: string | string[] }, others: SearchOptions): string => {
   Object.entries(others || {}).forEach(([key, value]) => {

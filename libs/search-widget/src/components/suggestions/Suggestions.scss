@@ -1,6 +1,9 @@
 .sw-suggestions {
   --suggestion-side-padding: var(--rhythm-3);
 
+  .error-message {
+    padding: 0 var(--rhythm-2);
+  }
   section {
     padding: var(--rhythm-2) var(--suggestion-side-padding);
   }

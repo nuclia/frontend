@@ -3,6 +3,7 @@ import type { IResource, LinkField, Origin, Resource, UserMetadata } from '../re
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import type { Search, SearchOptions } from '../search';
 import type { Chat } from '../search/chat.models';
+import { IErrorResponse } from '../../models';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
@@ -85,13 +86,21 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   chat(query: string, context?: Chat.ContextEntry[], features?: Chat.Features[]): Observable<Chat.Answer>;
 
-  find(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.FindResults>;
+  find(
+    query: string,
+    features?: Search.Features[],
+    options?: SearchOptions,
+  ): Observable<Search.FindResults | IErrorResponse>;
 
-  search(query: string, features?: Search.Features[], options?: SearchOptions): Observable<Search.Results>;
+  search(
+    query: string,
+    features?: Search.Features[],
+    options?: SearchOptions,
+  ): Observable<Search.Results | IErrorResponse>;
 
-  catalog(query: string, options?: SearchOptions): Observable<Search.Results>;
+  catalog(query: string, options?: SearchOptions): Observable<Search.Results | IErrorResponse>;
 
-  suggest(query: string): Observable<Search.Suggestions>;
+  suggest(query: string): Observable<Search.Suggestions | IErrorResponse>;
 
   feedback(answerId: string, good: boolean): Observable<void>;
 

@@ -5,6 +5,7 @@ import {
   FIELD_TYPE,
   getDataKeyFromFieldType,
   getFilterFromLabel,
+  IErrorResponse,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
@@ -17,7 +18,7 @@ interface SearchState {
   filters: string[];
   options: SearchOptions;
   results: Search.FindResults;
-  hasError: boolean;
+  error?: IErrorResponse;
   displayedResource: DisplayedResource | null;
   pending: boolean;
 }
@@ -27,7 +28,6 @@ export const searchState = new SvelteState<SearchState>({
   filters: [],
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   results: NO_RESULTS,
-  hasError: false,
   displayedResource: null,
   pending: false,
 });
@@ -56,11 +56,12 @@ export const searchResults = searchState.writer<Search.FindResults, { results: S
   }),
 );
 
-export const hasSearchError = searchState.writer<boolean>(
-  (state) => state.hasError,
-  (state, hasError) => ({
+export const hasSearchError = searchState.reader<boolean>((state) => !!state.error);
+export const searchError = searchState.writer<IErrorResponse | undefined>(
+  (state) => state.error,
+  (state, error) => ({
     ...state,
-    hasError,
+    error,
     pending: false,
   }),
 );
