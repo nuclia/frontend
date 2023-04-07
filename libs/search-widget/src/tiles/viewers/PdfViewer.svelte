@@ -7,6 +7,7 @@
   import { getUnMarked } from '../tile.utils';
   import Spinner from '../../common/spinner/Spinner.svelte';
   import { getPdfSrc } from '../../core/api';
+  import { isMobileViewport } from '../../common/utils';
 
   export let src: string;
   export let paragraph;
@@ -38,7 +39,7 @@
   $: src && loadPdf();
   $: pdfViewer && paragraph && paragraph.text && findSelectedText();
   $: pdfViewer && !paragraph && unselectText();
-  $: isMobile = innerWidth < 448;
+  $: isMobile = isMobileViewport(innerWidth);
   $: scale = isMobile ? 'page-fit' : 'auto';
 
   onMount(() => {

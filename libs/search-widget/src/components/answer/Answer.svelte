@@ -2,10 +2,11 @@
   import { _ } from '../../core/i18n';
   import Expander from '../../common/expander/Expander.svelte';
   import Feedback from './Feedback.svelte';
-  import type { Chat, Search } from '@nuclia/core';
+  import type { Chat } from '@nuclia/core';
   import { getSortedResults } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import { createEventDispatcher } from 'svelte';
+  import { isMobileViewport } from '../../common/utils';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
   export let hideFeedback = false;
@@ -15,7 +16,7 @@
   const dispatch = createEventDispatcher();
   const NEWLINE = new RegExp(/\n/g);
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
-  $: isMobile = innerWidth < 448;
+  $: isMobile = isMobileViewport(innerWidth);
 
   const sources = getSortedResults(answer.sources?.resources);
 </script>

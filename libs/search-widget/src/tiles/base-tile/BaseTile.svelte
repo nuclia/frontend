@@ -22,7 +22,7 @@
     takeUntil,
   } from 'rxjs';
   import { searchQuery } from '../../core/stores/search.store';
-  import { Duration } from '../../common/transition.utils';
+  import { Duration, isMobileViewport } from '../../common/utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import {
     getExternalUrl,
@@ -78,7 +78,7 @@
   const paragraphHeights: number[] = [];
 
   $: fullListHeight = paragraphHeights.reduce((sum, height) => (sum += height), 0);
-  $: isMobile = innerWidth < 448;
+  $: isMobile = isMobileViewport(innerWidth);
   $: defaultTransitionDuration = expanded ? Duration.MODERATE : 0;
   $: switch (previewKind) {
     case PreviewKind.AUDIO:
