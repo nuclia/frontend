@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, forkJoin, map, Observable, of, switchMap, take, tap } from 'rxjs';
-import { Resource, Search } from '@nuclia/core';
+import { IErrorResponse, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '../../label/labels.service';
 
 const sampleLabelSet = 'dataset';
@@ -87,9 +87,14 @@ export class SampleDatasetService {
         kb
           .search('', [Search.Features.DOCUMENT], { filters: [`/l/${sampleLabelSet}/${sampleLabel}`], page_size: 20 })
           .pipe(
-            map((results: Search.Results) =>
-              Object.values(results.resources || {}).map((resource) => new Resource(this.sdk.nuclia, kb.id, resource)),
-            ),
+            map((results: Search.Results | IErrorResponse) => {
+              if (results.type === 'error') {
+                return [];
+              }
+              return Object.values(results.resources || {}).map(
+                (resource) => new Resource(this.sdk.nuclia, kb.id, resource),
+              );
+            }),
           ),
       ),
     );

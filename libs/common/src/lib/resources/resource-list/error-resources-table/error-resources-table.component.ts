@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import { EMPTY, expand, map, Observable, of, reduce, take } from 'rxjs';
-import { IResource, KnowledgeBox, Resource, RESOURCE_STATUS, Search } from '@nuclia/core';
+import { IErrorResponse, IResource, KnowledgeBox, Resource, RESOURCE_STATUS, Search } from '@nuclia/core';
 import { switchMap, tap } from 'rxjs/operators';
 import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING } from '../resource-list.model';
 import { SisToastService } from '@nuclia/sistema';
@@ -68,19 +68,23 @@ export class ErrorResourcesTableComponent extends ResourcesTableDirective {
         return this.getResourcesInError(kb);
       }),
       expand((results) =>
-        results.fulltext?.next_page ? this.getResourcesInError(kb, results.fulltext?.page_number + 1) : EMPTY,
+        results.type !== 'error' && results.fulltext?.next_page
+          ? this.getResourcesInError(kb, results.fulltext?.page_number + 1)
+          : EMPTY,
       ),
       map((results) => {
-        return Object.values(results.resources || {}).map(
-          (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
-        );
+        return results.type === 'error'
+          ? []
+          : Object.values(results.resources || {}).map(
+              (resourceData: IResource) => new Resource(this.sdk.nuclia, kb.id, resourceData),
+            );
       }),
       reduce((accData, data) => accData.concat(data), [] as Resource[]),
       tap(() => this.isLoading.emit(false)),
     );
   }
 
-  private getResourcesInError(kb: KnowledgeBox, page_number = 0): Observable<Search.Results> {
+  private getResourcesInError(kb: KnowledgeBox, page_number = 0): Observable<Search.Results | IErrorResponse> {
     return kb.catalog('', {
       page_number,
       page_size: DEFAULT_PAGE_SIZE,

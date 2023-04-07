@@ -6,17 +6,15 @@ import {
   IResource,
   KBStates,
   LabelSets,
-  NucliaOptions,
-  SearchOptions,
-  TokenAnnotation,
-} from '@nuclia/core';
-import {
   Nuclia,
+  NucliaOptions,
   Resource,
   ResourceField,
   ResourceFieldProperties,
   ResourceProperties,
   Search,
+  SearchOptions,
+  TokenAnnotation,
   WritableKnowledgeBox,
 } from '@nuclia/core';
 import type { Observable } from 'rxjs';
@@ -25,9 +23,9 @@ import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
 import type { Annotation } from './stores/annotation.store';
-import { suggestionsHasError } from './stores/suggestions.store';
+import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
-import { hasSearchError, searchOptions } from './stores/search.store';
+import { searchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
 
 let nucliaApi: Nuclia | null;
@@ -71,10 +69,10 @@ export const search = (query: string, options: SearchOptions) => {
   }
   return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, options).pipe(
     filter((res) => {
-      if (res.error) {
-        hasSearchError.set(true);
+      if (res.type === 'error') {
+        searchError.set(res);
       }
-      return !res.error;
+      return res.type === 'findResults';
     }),
   );
 };
@@ -116,11 +114,12 @@ export const searchInResource = (
     .search(query, features, options)
     .pipe(
       filter((res) => {
-        if (res.error) {
+        if (res.type === 'error') {
           hasViewerSearchError.set(true);
         }
-        return !res.error;
+        return res.type === 'searchResults';
       }),
+      map((res) => res as Search.Results),
     );
 };
 
@@ -131,10 +130,10 @@ export const suggest = (query: string) => {
 
   return nucliaApi.knowledgeBox.suggest(query, true).pipe(
     filter((res) => {
-      if (res.error) {
-        suggestionsHasError.set(true);
+      if (res.type === 'error') {
+        suggestionError.set(res);
       }
-      return !res.error;
+      return res.type === 'suggestions';
     }),
   );
 };

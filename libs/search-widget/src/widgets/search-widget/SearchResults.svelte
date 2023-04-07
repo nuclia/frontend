@@ -17,6 +17,7 @@
     triggerSearch,
     hasMore,
     loadMore,
+    searchError,
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
@@ -67,8 +68,12 @@
   {#if $showResults && !$isEmptySearchQuery}
     {#if $hasSearchError}
       <div class="error">
-        <strong>{$_('error.search')}</strong>
-        <span>{$_('error.search-beta')}</span>
+        {#if $searchError.status === 402}
+          <strong>{$_('error.feature-blocked')}</strong>
+        {:else}
+          <strong>{$_('error.search')}</strong>
+          <span>{$_('error.search-beta')}</span>
+        {/if}
       </div>
     {:else if !$pendingResults && $smartResults.length === 0}
       <strong>{$_('results.empty')}</strong>

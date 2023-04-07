@@ -70,10 +70,12 @@ export class ParagraphService {
   }
 
   searchInField(query: string, resource: Resource, field: FieldId, pageNumber = 0): Observable<Search.Results> {
-    return resource.search(query, [Search.ResourceFeatures.PARAGRAPH], {
-      fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
-      page_number: pageNumber,
-    });
+    return resource
+      .search(query, [Search.ResourceFeatures.PARAGRAPH], {
+        fields: [`${longToShortFieldType(field.field_type)}/${field.field_id}`],
+        page_number: pageNumber,
+      })
+      .pipe(map((res) => (res.type === 'error' ? { type: 'searchResults' } : res)));
   }
 
   setupParagraphs(paragraphs: ParagraphWithText[]) {

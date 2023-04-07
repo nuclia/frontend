@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { Classification, Search } from '@nuclia/core';
+import type { Classification, IErrorResponse, Search } from '@nuclia/core';
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { combineLatest, map, Observable, Subject } from 'rxjs';
 
@@ -11,7 +11,7 @@ export type Suggestions = {
 interface SuggestionState {
   typeAhead: string;
   suggestions: Suggestions;
-  hasError: boolean;
+  error?: IErrorResponse;
 }
 
 export const suggestionState = new SvelteState<SuggestionState>({
@@ -19,7 +19,6 @@ export const suggestionState = new SvelteState<SuggestionState>({
   suggestions: {
     results: NO_SUGGESTION_RESULTS,
   },
-  hasError: false,
 });
 
 export const triggerSuggestions = new Subject<void>();
@@ -41,13 +40,14 @@ export const suggestions = suggestionState.writer<Suggestions>(
   }),
 );
 
-export const suggestionsHasError = suggestionState.writer<boolean>(
-  (state) => state.hasError,
-  (state, hasError) => ({
+export const suggestionError = suggestionState.writer<IErrorResponse | undefined>(
+  (state) => state.error,
+  (state, error) => ({
     ...state,
-    hasError,
+    error,
   }),
 );
+export const suggestionsHasError = suggestionState.reader<boolean>((state) => !!state.error);
 
 export const suggestedParagraphs: Observable<Search.Paragraph[]> = suggestionState.reader<Search.Paragraph[]>(
   (state) => state.suggestions.results.paragraphs?.results || [],

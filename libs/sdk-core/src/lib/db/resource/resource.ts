@@ -1,7 +1,7 @@
 import { forkJoin, Observable, tap } from 'rxjs';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import type { INuclia } from '../../models';
+import type { IErrorResponse, INuclia } from '../../models';
 import type {
   Classification,
   CloudLink,
@@ -262,7 +262,11 @@ export class Resource extends ReadableResource implements IResource {
     return batchUpload(this.nuclia, this.path, files, true);
   }
 
-  search(query: string, features: Search.ResourceFeatures[] = [], options?: SearchOptions): Observable<Search.Results> {
+  search(
+    query: string,
+    features: Search.ResourceFeatures[] = [],
+    options?: SearchOptions,
+  ): Observable<Search.Results | IErrorResponse> {
     return search(this.nuclia, this.kb, this.path, query, features, options, true);
   }
 

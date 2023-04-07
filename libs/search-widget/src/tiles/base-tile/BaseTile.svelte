@@ -56,7 +56,6 @@
   const dispatch = createEventDispatcher();
   const unsubscribeAll = new Subject();
   const resizeEvent = new Subject();
-  const closeButtonWidth = 48;
   const findInPlaceholderPrefix = 'tile.find-in-';
 
   let innerWidth = window.innerWidth;
@@ -226,7 +225,7 @@
 
   const setHeaderActionWidth = () => {
     if (expanded) {
-      headerActionsWidth = isMobile ? closeButtonWidth : resultNavigatorWidth + closeButtonWidth;
+      headerActionsWidth = isMobile ? 0 : resultNavigatorWidth;
     }
   };
 

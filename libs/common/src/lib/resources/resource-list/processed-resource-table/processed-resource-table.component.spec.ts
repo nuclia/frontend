@@ -5,6 +5,7 @@ import { MockModule, MockProvider } from 'ng-mocks';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   PaButtonModule,
+  PaDropdownModule,
   PaScrollModule,
   PaTableModule,
   PaTogglesModule,
@@ -13,6 +14,7 @@ import {
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 
 describe('ResourceTableComponent', () => {
   let component: ProcessedResourceTableComponent;
@@ -28,6 +30,8 @@ describe('ResourceTableComponent', () => {
         MockModule(PaButtonModule),
         MockModule(PaTogglesModule),
         MockModule(PaTooltipModule),
+        MockModule(PaDropdownModule),
+        DropdownButtonComponent,
       ],
       providers: [
         MockProvider(SDKService, {

@@ -5,7 +5,7 @@
   import { getExternalUrl, goToUrl, isYoutubeUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import { NO_RESULTS } from '../../core/models';
-  import { suggestionsHasError, suggestions } from '../../core/stores/suggestions.store';
+  import { suggestionsHasError, suggestions, suggestionError } from '../../core/stores/suggestions.store';
   import { navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
   import { map, switchMap, take } from 'rxjs';
@@ -55,9 +55,13 @@
 
 <div class="sw-suggestions">
   {#if $suggestionsHasError}
-    <div>
-      <strong>{$_('error.search')}</strong>
-      <span>{$_('error.search-beta')}</span>
+    <div class="error-message">
+      {#if $suggestionError.status === 402}
+        <p>{$_('error.feature-blocked')}</p>
+      {:else}
+        <strong>{$_('error.search')}</strong>
+        <span>{$_('error.search-beta')}</span>
+      {/if}
     </div>
   {:else}
     {#if labels.length > 0}

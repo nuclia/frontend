@@ -71,7 +71,7 @@ export namespace Search {
   }
 
   export interface FindResults {
-    error?: boolean;
+    type: 'findResults';
     resources?: { [id: string]: FindResource };
     shards?: string[];
     next_page: boolean;
@@ -114,7 +114,7 @@ export namespace Search {
   }
 
   export interface Results {
-    error?: boolean;
+    type: 'searchResults';
     resources?: { [id: string]: IResource };
     sentences?: Sentences;
     paragraphs?: Paragraphs;
@@ -141,7 +141,7 @@ export namespace Search {
   }
 
   export interface Suggestions {
-    error?: boolean;
+    type: 'suggestions';
     paragraphs?: Paragraphs;
   }
 

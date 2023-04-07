@@ -136,3 +136,9 @@ export interface NucliaOptions {
 export type PromiseMapper<T> = {
   [K in keyof T]: T[K] extends (...args: infer A) => Observable<infer V> ? (...args: A) => Promise<V> : T[K];
 };
+
+export interface IErrorResponse {
+  status: number;
+  detail: string;
+  type: 'error';
+}

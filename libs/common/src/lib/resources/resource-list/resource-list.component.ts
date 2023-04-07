@@ -347,12 +347,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         )
         .subscribe((status) => (this.currentProcessingStatus = status));
     }
-
-    return of(1).pipe(
-      tap(() => {
-        this.setLoading(displayLoader);
-      }),
-      switchMap(() => this.sdk.currentKb.pipe(take(1))),
+    this.setLoading(displayLoader);
+    return this.sdk.currentKb.pipe(
+      take(1),
       switchMap((kb) => {
         const status = this.statusDisplayed.value;
         const searchOptions: SearchOptions = {
@@ -364,7 +361,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         };
         return forkJoin([
           of(kb),
-          titleOnly
+          (titleOnly
             ? kb.catalog(query, searchOptions)
             : kb.search(
                 query,
@@ -372,7 +369,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
                   ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
                   : [Search.Features.DOCUMENT],
                 searchOptions,
-              ),
+              )
+          ).pipe(map((res) => (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results)),
           this.labelSets$.pipe(take(1)),
         ]);
       }),
@@ -639,8 +637,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           faceted: [statusFacet],
         }),
       ),
-      filter((results) => !!results.fulltext?.facets),
-      map((results) => ({
+      filter((results) => results.type !== 'error' && !!results.fulltext?.facets),
+      map((results) => results as Search.Results),
+      map((results: Search.Results) => ({
         pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
         error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
         processed: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PROCESSED`] || 0,
