@@ -5,28 +5,38 @@
   import type { Chat, Search } from '@nuclia/core';
   import { getSortedResults } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
+  import { createEventDispatcher } from 'svelte';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
+  export let hideFeedback = false;
   let text = '';
+  let innerWidth = window.innerWidth;
 
+  const dispatch = createEventDispatcher();
   const NEWLINE = new RegExp(/\n/g);
-
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
+  $: isMobile = innerWidth < 448;
 
   const sources = getSortedResults(answer.sources?.resources);
 </script>
 
+<svelte:window bind:innerWidth />
 <div class="sw-answer">
-  <div class="text">{@html text}</div>
+  <div class="answer-container">
+    <div class="text">{@html text}</div>
+    {#if !isMobile && !hideFeedback}
+      <Feedback {rank} />
+    {/if}
+  </div>
   {#if answer.sources}
     <div class="feedback">
       <Feedback {rank} />
     </div>
-    <Expander>
+    <Expander on:toggleExpander>
       <h3
         class="title-xs"
         slot="header">
-        {$_('answer.sources')}
+        {isMobile ? $_('answer.sources-mobile') : $_('answer.sources')}
       </h3>
       <div class="results">
         {#each sources as result}

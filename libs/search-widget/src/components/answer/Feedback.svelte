@@ -8,6 +8,9 @@
 
   let approved: 'good' | 'bad' | '' = '';
 
+  $: isGood = approved === 'good';
+  $: isBad = approved === 'bad';
+
   function send(good: boolean) {
     chat
       .pipe(
@@ -22,11 +25,13 @@
   <IconButton
     aspect="basic"
     icon="smiley-happy"
-    active={approved === 'good'}
+    active={isGood}
+    kind={isGood ? 'primary' : 'secondary'}
     on:click={() => send(true)} />
   <IconButton
     aspect="basic"
     icon="smiley-sad"
-    active={approved === 'bad'}
+    active={isBad}
+    kind={isBad ? 'primary' : 'secondary'}
     on:click={() => send(false)} />
 {/if}

@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { onMount, tick } from 'svelte';
+  import { createEventDispatcher, onMount, tick } from 'svelte';
   import { IconButton } from '../button';
 
   export let expanded: boolean = false;
   export let duration: number = 300;
 
+  const dispatch = createEventDispatcher();
   let content;
   let showContent: boolean = false;
   let contentHeight: string = '0px';
@@ -22,6 +23,7 @@
     showContent = true;
     await tick();
     contentHeight = parseInt(content.getBoundingClientRect().height) + 'px';
+    setTimeout(() => dispatch('toggleExpander', { expanded: true }), duration);
   };
 
   const collapse = () => {
@@ -29,6 +31,7 @@
     timer && timer.clearTimeout();
     setTimeout(() => {
       showContent = false;
+      dispatch('toggleExpander', { expanded: false });
     }, duration);
   };
 </script>
