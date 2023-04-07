@@ -114,11 +114,12 @@ export const searchInResource = (
     .search(query, features, options)
     .pipe(
       filter((res) => {
-        if (res.error) {
+        if (res.type === 'error') {
           hasViewerSearchError.set(true);
         }
-        return !res.error;
+        return res.type === 'searchResults';
       }),
+      map((res) => res as Search.Results),
     );
 };
 

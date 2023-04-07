@@ -10,6 +10,7 @@ import type {
 } from '@nuclia/core';
 
 export const NO_RESULTS: Search.FindResults = {
+  type: 'findResults',
   resources: {} as { [id: string]: Search.FindResource },
   total: 0,
   page_number: 0,
@@ -19,6 +20,7 @@ export const NO_RESULTS: Search.FindResults = {
 };
 
 export const NO_SUGGESTION_RESULTS: Search.Results = {
+  type: 'searchResults',
   resources: {} as { [id: string]: Search.FindResource },
 };
 

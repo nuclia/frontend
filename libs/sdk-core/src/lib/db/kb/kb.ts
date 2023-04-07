@@ -21,16 +21,14 @@ import {
   ServiceAccount,
   ServiceAccountCreation,
 } from './kb.models';
-import type { INuclia } from '../../models';
-import { IErrorResponse } from '../../models';
+import type { IErrorResponse, INuclia } from '../../models';
 import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from '../resource';
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import { catalog, find, Search, search, SearchOptions } from '../search';
+import type { Chat } from '../search';
+import { catalog, chat, find, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
-import { chat } from '../search/chat';
-import type { Chat } from '../search/chat.models';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}

@@ -1,9 +1,8 @@
 import type { Observable } from 'rxjs';
 import type { IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
-import type { Search, SearchOptions } from '../search';
-import type { Chat } from '../search/chat.models';
-import { IErrorResponse } from '../../models';
+import type { Chat, Search, SearchOptions } from '../search';
+import type { IErrorResponse } from '../../models';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
