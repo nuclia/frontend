@@ -34,7 +34,7 @@
       } else if (file?.content_type?.startsWith('text/plain')) {
         tileType = 'text';
       } else if (file?.content_type?.startsWith('application/pdf')) {
-        tileType = 'text';
+        tileType = 'pdf';
       } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
         tileType = 'spreadsheet';
       } else {
