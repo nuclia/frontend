@@ -267,8 +267,12 @@ export function getExtractedTexts(data: IFieldData | null): string[] {
     return [];
   }
   const text = data.extracted?.text?.text || '';
+  const hasUnicodeCharacters =
+    text.length > 0 && text.length !== (data.extracted?.metadata?.metadata?.paragraphs || []).pop()?.end;
   return (data.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
-    sliceUnicode(text, paragraph.start, paragraph.end).trim(),
+    hasUnicodeCharacters
+      ? sliceUnicode(text, paragraph.start, paragraph.end).trim()
+      : text.slice(paragraph.start, paragraph.end).trim(),
   );
 }
 

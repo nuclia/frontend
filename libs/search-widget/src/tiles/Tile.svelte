@@ -25,18 +25,20 @@
       tileType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
     } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
       const file = (result.fieldData as FileFieldData).value?.file;
-      if (file?.content_type?.includes('audio')) {
+      if (file?.content_type?.startsWith('audio')) {
         tileType = 'audio';
-      } else if (file?.content_type?.includes('video')) {
+      } else if (file?.content_type?.startsWith('video')) {
         tileType = 'video';
-      } else if (file?.content_type?.includes('image')) {
+      } else if (file?.content_type?.startsWith('image')) {
         tileType = 'image';
       } else if (file?.content_type?.startsWith('text/plain')) {
         tileType = 'text';
+      } else if (file?.content_type?.startsWith('application/pdf')) {
+        tileType = 'pdf';
       } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
         tileType = 'spreadsheet';
       } else {
-        tileType = 'pdf';
+        tileType = 'text';
       }
     } else {
       tileType = 'text';
