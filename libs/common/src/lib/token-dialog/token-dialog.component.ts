@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { data } from '../../../../pastanaga-angular/projects/demo/src';
 
 @Component({
   templateUrl: './token-dialog.component.html',
@@ -21,6 +20,4 @@ export class TokenDialogComponent {
   close(): void {
     this.modal.close();
   }
-
-  protected readonly data = data;
 }

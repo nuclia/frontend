@@ -1,10 +1,10 @@
 <pa-modal-advanced>
   <pa-modal-title>{{ 'upload.progress-dialog-title' | translate }}</pa-modal-title>
-  <pa-modal-description>
-    <strong>{{ 'upload.takes_time' | translate }}</strong>
-    <span>{{ 'upload.once_uploaded' | translate }}</span>
-  </pa-modal-description>
   <pa-modal-content>
+    <p>
+      <strong>{{ 'upload.takes_time' | translate }}</strong>
+    </p>
+    <p>{{ 'upload.once_uploaded' | translate }}</p>
     <div
       class="upload-list"
       *ngIf="(files | async)?.length || 0 > 0">

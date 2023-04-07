@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ModalRef } from '@guillotinaweb/pastanaga-angular';
-import { data } from '../../../../../../../libs/pastanaga-angular/projects/demo/src';
 
 @Component({
   templateUrl: './users-dialog.component.html',
@@ -13,6 +12,4 @@ export class UsersDialogComponent {
   close() {
     this.modal.close();
   }
-
-  protected readonly data = data;
 }
