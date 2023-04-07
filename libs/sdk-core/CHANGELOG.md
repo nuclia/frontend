@@ -1,10 +1,12 @@
-# 1.2.1 (unreleased)
+# 1.2.1 (2023-04-07)
 
 ### Improvements
 
 - Support Kb configuration endpoints
 - Add `error` property in `IFieldData` and corresponding `IError` interface
 - catch error and return an empty label set on `kb.getLabels` method 
+- Add common `IErrorResponse` interface
+- Better error management for search, find, catalog and suggest endpoints
 
 # 1.2.0 (2023-03-28)
 
