@@ -17,6 +17,7 @@
 
   const dispatch = createEventDispatcher();
 
+  const buttonWidth = 40;
   let menuItems: WidgetAction[] = [];
 
   let menuButton: HTMLElement | undefined;
@@ -24,6 +25,7 @@
   let displayMenu = false;
 
   $: hasMenu = menuItems.length > 0;
+  $: actionsWidth = headerActionsWidth + (hasMenu ? buttonWidth * 2 : buttonWidth);
 
   onMount(() => {
     menuItems = getWidgetActions();
@@ -70,7 +72,7 @@
 <header
   class="sw-tile-header"
   class:expanded
-  style:--header-actions-width={`${headerActionsWidth}px`}>
+  style:--header-actions-width={`${actionsWidth}px`}>
   <div class:header-title={expanded}>
     <div class="doc-type-container">
       <DocTypeIndicator type={typeIndicator} />
