@@ -73,6 +73,7 @@ export class ResourcesTableDirective {
   @Output() deleteResources: EventEmitter<Resource[]> = new EventEmitter();
   @Output() menuAction: EventEmitter<{ resource: Resource; action: MenuAction }> = new EventEmitter();
   @Output() reprocessResources: EventEmitter<Resource[]> = new EventEmitter();
+  @Output() selectionChange: EventEmitter<string[]> = new EventEmitter();
 
   private _bulkAction: BulkAction = {
     inProgress: false,
@@ -156,6 +157,7 @@ export class ResourcesTableDirective {
     } else {
       this.selection = this.data.map((row) => row.resource.id);
     }
+    this.selectionChange.emit(this.selection);
   }
 
   toggleSelection(resourceId: string) {
@@ -164,6 +166,7 @@ export class ResourcesTableDirective {
     } else {
       this.selection = this.selection.concat([resourceId]);
     }
+    this.selectionChange.emit(this.selection);
   }
 
   protected getSelectedResources(): Resource[] {
