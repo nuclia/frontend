@@ -54,6 +54,14 @@
       <div
         class="right-panel-container"
         *ngIf="(hasLabels | async) === true">
+        <div class="help">
+          <pa-icon
+            name="info"
+            size="small"></pa-icon>
+          <p>
+            {{ 'resource.field-classification.help' | translate }}
+          </p>
+        </div>
         <div class="label-selection-container">
           <app-label-dropdown
             [labelSets]="availableLabels | async"
