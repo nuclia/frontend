@@ -1,8 +1,6 @@
 @import 'apps/dashboard/src/variables';
 
 .pa-modal {
-  @include centered-dialog;
-
   padding: $padding-modal;
   text-align: center;
   width: $breakpoint-small - rhythm(2) * 2; // smallest device width minus the margin in each side
