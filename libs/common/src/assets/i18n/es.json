@@ -528,6 +528,7 @@
 	"resource.field-annotation.help": "Seleccione una familia para resaltar y anotar las entidades correspondientes",
 	"resource.field-annotation.select-family-before": "Seleccione una familia para que pueda agregar/editar/eliminar anotaciones",
 	"resource.field-classification": "Clasificación de párrafos",
+	"resource.field-classification.help": "Elija una etiqueta y luego seleccione los párrafos en los que desea que se aplique",
 	"resource.field-file": "Campo de Archivo",
 	"resource.field-file.dropzone": "Suelte su archivo aquí o haga clic para seleccionarlo",
 	"resource.field-file.dropzone-label": "Para reemplazar el archivo actual <strong>{{filename}}</strong>, suelte su archivo o haga clic a continuación para seleccionarlo",

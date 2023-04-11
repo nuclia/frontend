@@ -550,6 +550,7 @@
 	"resource.field-annotation.help": "Select a family to highlight and annotate the corresponding entities",
 	"resource.field-annotation.select-family-before": "Select a family so you can add/edit/remove annotations",
 	"resource.field-classification": "Paragraphs classification",
+	"resource.field-classification.help": "Choose a label and then select the paragraphs on which you want it to be applied",
 	"resource.field-file": "File Field",
 	"resource.field-file.dropzone": "Drop your file here or click to select it",
 	"resource.field-file.dropzone-label": "To replace current file <strong>{{filename}}</strong>, drop your file or click below to select it",

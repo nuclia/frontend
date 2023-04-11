@@ -528,6 +528,7 @@
 	"resource.field-annotation.help": "Seleccioneu una família per destacar i anotar les entitats corresponents",
 	"resource.field-annotation.select-family-before": "Seleccioneu una família perquè pugueu afegir/editar/eliminar anotacions",
 	"resource.field-classification": "Classificació de paràgrafs",
+	"resource.field-classification.help": "Trieu una etiqueta i seleccioneu els paràgrafs sobre els quals voleu que s'apliqui",
 	"resource.field-file": "Camp de Fitxer",
 	"resource.field-file.dropzone": "Deixeu anar el vostre fitxer aquí o feu clic per seleccionar-lo",
 	"resource.field-file.dropzone-label": "Per substituir el fitxer actual <strong>{{filename}}</strong>, deixeu anar el fitxer o feu clic a continuació per seleccionar-lo",
