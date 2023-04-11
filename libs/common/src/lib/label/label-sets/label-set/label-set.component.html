@@ -4,90 +4,92 @@
   <h1>{{ (addNew ? 'label-set.add' : 'label-set.edit') | translate }}</h1>
 
   <div class="scrollable-container">
-    <form [formGroup]="labelSetForm">
-      <div class="form-section-container">
-        <label
-          class="title-xxs"
-          for="title">
-          {{ 'label-set.form.name' | translate }}
-        </label>
-        <pa-input
-          id="title"
-          formControlName="title"
-          externalLabel
-          [showAllErrors]="false"
-          [errorMessages]="validationMessages['title']"></pa-input>
-      </div>
+    <div class="form-container">
+      <form [formGroup]="labelSetForm">
+        <div class="form-section-container">
+          <label
+            class="title-xxs"
+            for="title">
+            {{ 'label-set.form.name' | translate }}
+          </label>
+          <pa-input
+            id="title"
+            formControlName="title"
+            externalLabel
+            [showAllErrors]="false"
+            [errorMessages]="validationMessages['title']"></pa-input>
+        </div>
 
-      <div class="form-section-container">
-        <label class="title-xxs">
-          {{ 'generic.color' | translate }}
-        </label>
-        <app-color-picker
-          [hexColors]="colors"
-          [value]="labelSet.color"
-          (valueChange)="setColor($event)"></app-color-picker>
-      </div>
+        <div class="form-section-container">
+          <label class="title-xxs">
+            {{ 'generic.color' | translate }}
+          </label>
+          <app-color-picker
+            [hexColors]="colors"
+            [value]="labelSet.color"
+            (valueChange)="setColor($event)"></app-color-picker>
+        </div>
 
-      <div
-        class="form-section-container"
-        [class.align-top]="addNew">
-        <label class="title-xxs">
-          {{ 'label-set.form.kind' | translate }}
-        </label>
+        <div
+          class="form-section-container"
+          [class.align-top]="addNew">
+          <label class="title-xxs">
+            {{ 'label-set.form.kind' | translate }}
+          </label>
 
-        <div>
-          <pa-radio-group formControlName="kind">
-            <pa-radio
-              *ngFor="let kind of kinds"
-              [value]="kind.id"
-              [disabled]="!addNew">
-              {{ kind.name | translate }}
-            </pa-radio>
-          </pa-radio-group>
-          <div
-            *ngIf="addNew"
-            class="warning">
-            <pa-icon name="warning"></pa-icon>
-            {{ 'label-set.form.kind-warning' | translate }}
+          <div>
+            <pa-radio-group formControlName="kind">
+              <pa-radio
+                *ngFor="let kind of kinds"
+                [value]="kind.id"
+                [disabled]="!addNew">
+                {{ kind.name | translate }}
+              </pa-radio>
+            </pa-radio-group>
+            <div
+              *ngIf="addNew"
+              class="warning">
+              <pa-icon name="warning"></pa-icon>
+              {{ 'label-set.form.kind-warning' | translate }}
+            </div>
           </div>
         </div>
-      </div>
+        <div class="form-section-container align-top">
+          <label class="title-xxs">
+            {{ 'label-set.form.exclusive' | translate }}
+          </label>
+          <div>
+            <div class="multiple-description">{{ 'label-set.form.exclusive-description' | translate }}</div>
+            <pa-checkbox formControlName="exclusive">
+              {{ 'label-set.form.exclusive-checkbox' | translate }}
+            </pa-checkbox>
+          </div>
+        </div>
+      </form>
+
       <div class="form-section-container align-top">
         <label class="title-xxs">
-          {{ 'label-set.form.exclusive' | translate }}
+          {{ 'label-set.form.labels' | translate }}
         </label>
         <div>
-          <div class="multiple-description">{{ 'label-set.form.exclusive-description' | translate }}</div>
-          <pa-checkbox formControlName="exclusive">
-            {{ 'label-set.form.exclusive-checkbox' | translate }}
-          </pa-checkbox>
-        </div>
-      </div>
-    </form>
-
-    <div class="form-section-container align-top">
-      <label class="title-xxs">
-        {{ 'label-set.form.labels' | translate }}
-      </label>
-      <div>
-        <div>{{ 'label-set.form.labels-description' | translate }}</div>
-        <div
-          class="label-list"
-          cdkDropList
-          (cdkDropListDropped)="drop($event)">
+          <div>{{ 'label-set.form.labels-description' | translate }}</div>
+          <div
+            class="label-list"
+            cdkDropList
+            (cdkDropListDropped)="drop($event)">
+            <app-label
+              *ngFor="let title of labelOrder; let i = index"
+              [label]="labelSet.getLabel(title)"
+              [existingTitles]="labelOrder"
+              (deleteLabel)="deleteLabel(title)"
+              (titleChange)="modifyLabel(title, $event)"
+              cdkDrag></app-label>
+          </div>
           <app-label
-            *ngFor="let title of labelOrder; let i = index"
-            [label]="labelSet.getLabel(title)"
+            noHandle
             [existingTitles]="labelOrder"
-            (deleteLabel)="deleteLabel(title)"
-            (titleChange)="modifyLabel(title, $event)"
-            cdkDrag></app-label>
+            (titleChange)="addLabel($event)"></app-label>
         </div>
-        <app-label
-          noHandle
-          [existingTitles]="labelOrder"
-          (titleChange)="addLabel($event)"></app-label>
       </div>
     </div>
   </div>
