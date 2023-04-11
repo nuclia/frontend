@@ -17,8 +17,9 @@ $footer-top-margin: rhythm(2);
 }
 
 .label-set-editor {
-  width: $global-width;
-
+  .form-container {
+    width: $global-width;
+  }
   form {
     display: flex;
     flex-direction: column;
