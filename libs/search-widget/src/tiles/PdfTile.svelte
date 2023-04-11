@@ -7,6 +7,7 @@
   import { PreviewKind } from '../core/models';
   import { getFieldUrl } from '../core/stores/viewer.store';
   import DocumentTile from './base-tile/DocumentTile.svelte';
+  import { isMobileViewport } from '../common/utils';
 
   export let result: Search.SmartResult;
 
@@ -24,7 +25,7 @@
   let selectedParagraph: WidgetParagraph | undefined;
   let pdfUrl: Observable<string>;
 
-  $: isMobile = innerWidth < 448;
+  $: isMobile = isMobileViewport(innerWidth);
 
   const openParagraph = (paragraph) => {
     selectedParagraph = paragraph;

@@ -1,5 +1,5 @@
 import Tooltip from './Tooltip.svelte';
-import { Duration } from '../transition.utils';
+import { Duration } from '../utils';
 
 export function tooltip(node: HTMLElement, params: { title: string; type?: 'action' | 'system' }) {
   let tooltipComponent: Tooltip;

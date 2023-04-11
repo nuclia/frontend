@@ -3,6 +3,7 @@
 	"answer.input.label": "Champ de saisie du chat",
 	"answer.placeholder": "Discutons",
 	"answer.sources": "Sur la base de ces sources",
+	"answer.sources-mobile": "Sources",
 	"answer.title": "Réponse",
 	"entities.annotated": "Annotations",
 	"entities.annotations": "Annotations",

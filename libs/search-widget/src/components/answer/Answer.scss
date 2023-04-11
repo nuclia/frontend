@@ -3,8 +3,15 @@
     float: right;
     padding-top: var(--rhythm-0_5);
   }
-  .text {
+  .answer-container {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-1);
     margin-top: var(--rhythm-1);
+
+    .text {
+      flex: 1 1 auto;
+    }
   }
   .results {
     display: flex;

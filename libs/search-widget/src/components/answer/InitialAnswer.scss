@@ -1,8 +1,9 @@
 .sw-initial-answer {
   border-radius: var(--rhythm-2);
   box-shadow: 0 0 var(--rhythm-2_5) var(--color-neutral-light);
-  padding: var(--rhythm-2) var(--rhythm-3);
   margin: var(--rhythm-1) 0;
+  padding: var(--rhythm-2) var(--rhythm-3);
+  position: relative;
 
   .title-s {
     margin: 0;
@@ -16,7 +17,6 @@
   }
 
   .actions {
-    width: 100%;
     .go-to-chat {
       align-items: center;
       display: flex;
@@ -27,13 +27,23 @@
     }
   }
 }
+@media (max-width: 600px) {
+  .sw-initial-answer .actions {
+    position: absolute;
+    right: var(--rhythm-2);
+    top: var(--rhythm-1_5);
+  }
+}
+
 @media (min-width: 599px) {
   .sw-initial-answer {
     .answer {
-      width: calc(100% - var(--rhythm-27));
+      max-width: calc(100% - var(--rhythm-27));
     }
-
     .actions {
+      position: absolute;
+      right: var(--rhythm-4);
+      text-align: right;
       width: var(--rhythm-27);
       .feedback {
         display: flex;

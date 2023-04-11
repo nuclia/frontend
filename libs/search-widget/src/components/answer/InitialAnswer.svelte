@@ -1,17 +1,22 @@
 <script lang="ts">
   import Icon from '../../common/icons/Icon.svelte';
-  import Modal from '../../common/modal/Modal.svelte';
   import { _ } from '../../core/i18n';
   import { firstAnswer, resetChat } from '../../core/stores/answers.store';
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
   import Feedback from './Feedback.svelte';
   import { Button } from '../../common';
+  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
 
-  let showDialog = false;
+  let showChat = false;
 
+  function openChat() {
+    showChat = true;
+    freezeBackground(true);
+  }
   function onClose() {
-    showDialog = false;
+    showChat = false;
+    unblockBackground(true);
     resetChat.set();
   }
 </script>
@@ -23,12 +28,14 @@
       <div class="answer">
         <Answer
           answer={$firstAnswer}
-          rank={0} />
+          rank={0}
+          hideFeedback={true} />
       </div>
       <div class="actions">
         <Button
           aspect="basic"
-          on:click={() => (showDialog = true)}>
+          size="small"
+          on:click={openChat}>
           <span class="go-to-chat">
             <Icon name="chat" />
             {$_('answer.chat-action')}
@@ -42,12 +49,9 @@
   </div>
 {/if}
 
-<Modal
-  show={showDialog}
-  closeButton={true}
-  on:close={onClose}>
-  <Chat />
-</Modal>
+{#if showChat}
+  <Chat on:close={onClose} />
+{/if}
 
 <style
   lang="scss"

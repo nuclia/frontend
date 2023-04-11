@@ -2,53 +2,68 @@
   import Answer from './Answer.svelte';
   import Icon from '../../common/icons/Icon.svelte';
   import { chat } from '../../core/stores/answers.store';
-  import Feedback from './Feedback.svelte';
   import ChatInput from './ChatInput.svelte';
   import { _ } from '../../core/i18n';
-  import { onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged } from 'rxjs';
+  import { IconButton } from '../../common';
 
-  let entriesElement: HTMLDivElement;
+  const dispatch = createEventDispatcher();
+  let entriesContainerElement: HTMLDivElement;
+
+  let isScrolling = false;
+
   onMount(() => {
     const sub = chat.pipe(delay(200), distinctUntilChanged()).subscribe(() => {
-      entriesElement.scrollTo({ top: entriesElement.scrollHeight, behavior: 'smooth' });
+      entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
     });
     return () => sub.unsubscribe();
   });
+
+  function checkIfScrolling() {
+    isScrolling =
+      !!entriesContainerElement && entriesContainerElement.offsetHeight < entriesContainerElement.scrollHeight;
+  }
 </script>
 
 <div class="sw-chat">
-  <div
-    class="entries"
-    bind:this={entriesElement}>
-    {#each $chat as entry, i}
-      <div class="entry">
-        <div class="row-1">
-          <div class="icon">
-            <Icon name="chat" />
+  <header>
+    <IconButton
+      icon="cross"
+      aspect="basic"
+      on:click={() => dispatch('close')} />
+  </header>
+  <div class="chat-container">
+    <div
+      class="entries-container"
+      bind:this={entriesContainerElement}>
+      {#each $chat as entry, i}
+        <div class="chat-entry">
+          <div class="question">
+            <div class="chat-icon">
+              <Icon name="chat" />
+            </div>
+            <div class="title-m">{entry.question}</div>
           </div>
-          <h3 class="title-m">{entry.question}</h3>
-        </div>
-        <div class="row-2">
           <div class="answer">
             {#if entry.answer.text}
               <Answer
                 answer={entry.answer}
-                rank={i} />
+                rank={i}
+                on:toggleExpander={checkIfScrolling} />
             {:else}
               …
             {/if}
           </div>
-          <div class="feedback">
-            <Feedback rank={i} />
-          </div>
         </div>
-      </div>
-    {/each}
-  </div>
-  <div class="input">
-    <div />
-    <ChatInput placeholder={$_('answer.placeholder')} />
+      {/each}
+    </div>
+
+    <div
+      class="input-container"
+      class:scrolling-behind={isScrolling}>
+      <ChatInput placeholder={$_('answer.placeholder')} />
+    </div>
   </div>
 </div>
 
