@@ -15,14 +15,9 @@ import {
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
-import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
-import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
-import { SetupInviteComponent } from './setup/setup-invite/setup-invite.component';
-import { SetupAccountComponent } from './setup/setup-account/setup-account.component';
-import { FarewellComponent } from './setup/farewell/farewell.component';
+import { FarewellComponent } from './farewell/farewell.component';
 
 import { AccountKbsComponent } from './account/account-kbs/account-kbs.component';
-import { InviteGuard } from './setup/setup-invite/invite.guard';
 import { AccountHomeComponent } from './account/account-home/account-home.component';
 import { RedirectComponent } from './redirect/redirect.component';
 import { AccountNUAComponent } from './account/account-nua/account-nua.component';
@@ -185,26 +180,6 @@ const routes: Routes = [
         component: SelectKbComponent,
       },
     ],
-  },
-  {
-    path: 'setup/password',
-    component: SetupStep1Component,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'setup/account',
-    component: SetupStep2Component,
-    canActivate: [authGuard],
-  },
-  {
-    path: 'setup/invite',
-    component: SetupInviteComponent,
-    canActivate: [authGuard, InviteGuard],
-  },
-  {
-    path: 'setup/account-config',
-    component: SetupAccountComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'setup/farewell',

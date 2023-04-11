@@ -15,7 +15,7 @@ import { environment } from '../environments/environment';
 
 // App modules
 import { AppRoutingModule } from './app-routing.module';
-import { SetupModule } from './setup/setup.module';
+import { FarewellModule } from './farewell/farewell.module';
 import { AccountModule } from './account/account.module';
 
 // Components
@@ -51,7 +51,7 @@ const components = [AppComponent];
 
 const appModules = [
   AppRoutingModule,
-  SetupModule,
+  FarewellModule,
   SelectAccountKbModule,
   AccountModule,
   KnowledgeBoxModule,
