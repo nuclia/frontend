@@ -3,6 +3,7 @@
 	"generic.logout": "Salir",
 	"generic.save_continue": "Guardar y continuar",
 	"generic.server_down": "El servidor de sincronización está inactivo",
+	"generic.server_up": "El servidor de sincronización está activo",
 	"generic.switch_account": "Cambia de cuenta",
 	"generic.upload": "Subir",
 	"history.active": "Subidas activas",

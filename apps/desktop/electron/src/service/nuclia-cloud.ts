@@ -3,11 +3,6 @@ import { catchError, delay, map, Observable, of, switchMap } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
 
-// DO NOT REMOVE
-// TODO: use the default fetch once upgraded to node 18
-// import { fetch } from './utils';
-// console.log(fetch);
-
 require('localstorage-polyfill');
 
 function sha256(message: string): string {
@@ -23,36 +18,37 @@ export class NucliaCloud {
 
   upload(originalId: string, filename: string, data: { buffer?: ArrayBuffer; metadata?: any }): Observable<boolean> {
     if (data.buffer) {
-      console.log(`Uploading ${filename} to Nuclia Cloud`);
       const buffer = data.buffer;
       const slug = sha256(originalId);
       return this.getKb().pipe(
         switchMap((kb) =>
           kb.getResourceBySlug(slug, [], []).pipe(
             catchError((error) => {
-              if (error.status === 404) {
+              if (error.message === '404') {
                 return kb
                   .createResource({ slug, title: filename }, true)
                   .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
               } else {
-                console.log(`Problem creating ${slug}, status ${error.status}`);
+                console.error(`Problem creating ${slug}, status ${error.message}`);
                 return of(undefined);
               }
             }),
           ),
         ),
         delay(500),
-        switchMap(
-          (resource) =>
-            resource
-              ?.upload('file', buffer, false, {
+        switchMap((resource) => {
+          if (!resource) {
+            return of(false);
+          }
+          try {
+            return resource
+              .upload('file', buffer, false, {
                 contentType: lookup(filename) || 'application/octet-stream',
                 filename,
               })
               .pipe(
                 catchError((error: any) => {
-                  console.log(`Problem uploading ${filename} to ${slug}, status ${error}`);
-                  // console.error(error.toString());
+                  console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
                   return resource.delete();
                 }),
                 switchMap((res) => {
@@ -62,8 +58,17 @@ export class NucliaCloud {
                     return resource.delete().pipe(map(() => false));
                   }
                 }),
-              ) || of(false),
-        ),
+              );
+          } catch (error) {
+            console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
+            try {
+              return resource.delete().pipe(map(() => false));
+            } catch (error) {
+              console.error(`Problem deleting ${slug}, status ${error}`);
+              return of(false);
+            }
+          }
+        }),
       );
     } else {
       return of(false);

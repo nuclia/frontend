@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { getConnector } from './connectors';
 import { Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
@@ -48,6 +48,7 @@ export const syncFile = (sourceId: string, source: Source, item: SyncItem) => {
           )
         : of(false),
     ),
+    tap((success) => console.log(`Uploaded ${item.originalId} to ${source.kb} with success: ${success}`)),
   );
 };
 
@@ -93,32 +94,28 @@ function getDataPath(): string {
   }
 }
 
-function readSources() {
+export function readSources() {
   try {
-    console.log('Reading sources');
     const data = fs.readFileSync(getDataPath(), 'utf8');
     SOURCES = JSON.parse(data);
   } catch (err) {
-    console.log(`Error reading file: ${err}`);
+    console.error(`Error reading file: ${err}`);
   }
+  //do something when app is closing
+  process.on('exit', exitHandler);
+  //catches ctrl+c event
+  process.on('SIGINT', exitHandler);
+  //catches uncaught exceptions
+  // process.on('uncaughtException', exitHandler);
 }
-
-readSources();
 
 function exitHandler() {
   try {
     fs.writeFileSync(getDataPath(), JSON.stringify(SOURCES));
   } catch (err) {
-    console.log(`Error writing file: ${err}`);
+    console.error(`Error writing file: ${err}`);
     throw err;
   }
   console.log('Exit now');
   process.exit();
 }
-
-//do something when app is closing
-process.on('exit', exitHandler);
-//catches ctrl+c event
-process.on('SIGINT', exitHandler);
-//catches uncaught exceptions
-// process.on('uncaughtException', exitHandler);

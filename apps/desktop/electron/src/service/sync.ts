@@ -1,11 +1,16 @@
-import { getLastModified, getSources, syncFile, updateSource } from './sources';
+import { getLastModified, getSources, readSources, syncFile, updateSource } from './sources';
 import { importConnector, loadConnectors } from './dynamic-connectors';
-import { delay, map, of, switchMap, tap, toArray } from 'rxjs';
+import { concatMap, delay, map, of, switchMap, tap, toArray } from 'rxjs';
 
 export const sync = () => {
   importConnector('https://nuclia.github.io/status/connectors/youtube.js');
   loadConnectors();
-  syncFiles();
+  readSources();
+  try {
+    syncFiles();
+  } catch (error) {
+    console.log('Sync failed', error);
+  }
   collectLastModified();
 };
 
@@ -23,6 +28,7 @@ function syncFiles() {
             return arr.length === 0
               ? of(undefined)
               : of(...arr).pipe(
+                  tap(([id, source]) => console.log(`Syncing ${source.items.length} items from ${id}`)),
                   switchMap(([id, source]) => {
                     if (!source.kb || !source.items || source.items.length === 0) {
                       return of(undefined);
@@ -30,8 +36,10 @@ function syncFiles() {
                     if (source.items.length !== source.lastBatch) {
                       updateSource(id, { ...source, lastBatch: source.items.length });
                     }
-                    return of(...source.items.slice(0, 10)).pipe(
-                      switchMap((item) =>
+                    const batch = source.items.slice(0, 10);
+                    console.log('batch', batch);
+                    return of(...batch).pipe(
+                      concatMap((item) =>
                         syncFile(id, source, item).pipe(
                           map((success) => (success ? item.originalId : undefined)),
                           // do not overwhelm the source
