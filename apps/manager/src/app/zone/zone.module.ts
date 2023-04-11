@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { LoggedinGuard } from '@flaps/core';
+import { authGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -17,7 +17,7 @@ import { MatTableModule } from '@angular/material/table';
 const usersRoutes: Routes = [
   {
     path: '',
-    canActivateChild: [LoggedinGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: '',

@@ -1,15 +1,16 @@
 import { ExtraOptions, Routes } from '@angular/router';
+
+import { HomePageComponent } from './home/home-page.component';
+import { MainContainerComponent } from './home/main-container/main-container.component';
 import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
   PageNotFoundComponent,
-  RootGuard,
+  rootGuard,
   SelectAccountComponent,
   SelectKbComponent,
 } from '@flaps/common';
-import { HomePageComponent } from './home/home-page.component';
-import { MainContainerComponent } from './home/main-container/main-container.component';
 
 export const routerOptions: ExtraOptions = {
   onSameUrlNavigation: 'reload',
@@ -25,7 +26,7 @@ export const routes: Routes = [
       {
         path: '',
         component: EmptyComponent,
-        canActivate: [RootGuard],
+        canActivate: [rootGuard],
       },
       {
         path: `at/:account`,
@@ -49,6 +50,7 @@ export const routes: Routes = [
               {
                 path: 'label-sets',
                 loadChildren: () =>
+                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
                     (m) => m.LabelSetsModule,
                   ),

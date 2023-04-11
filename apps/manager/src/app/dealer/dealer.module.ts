@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { DealerListComponent } from './dealer-list/dealer-list.component';
 import { DealerDetailComponent } from './dealer-detail/dealer-detail.component';
 import { RouterModule, Routes } from '@angular/router';
-import { LoggedinGuard } from '@flaps/core';
+import { authGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -27,7 +27,7 @@ import { SisProgressModule } from '@nuclia/sistema';
 const usersRoutes: Routes = [
   {
     path: '',
-    canActivateChild: [LoggedinGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: '',

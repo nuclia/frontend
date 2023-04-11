@@ -2,42 +2,42 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { LoggedinGuard } from '@flaps/core';
+import { authGuard } from '@flaps/core';
 import { SelectivePreloadingStrategyService } from './selective-preloading-strategy.service';
 
 const routes: Routes = [
   {
     path: '',
     component: DashboardComponent,
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
-        canActivate: [LoggedinGuard],
+        canActivate: [authGuard],
         loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
         data: { preload: false },
       },
       {
         path: 'users',
-        canActivate: [LoggedinGuard],
+        canActivate: [authGuard],
         loadChildren: () => import('./users/users.module').then((m) => m.UsersModule),
         data: { preload: false },
       },
       {
         path: 'dealers',
-        canActivate: [LoggedinGuard],
+        canActivate: [authGuard],
         loadChildren: () => import('./dealer/dealer.module').then((m) => m.DealerModule),
         data: { preload: false },
       },
       {
         path: 'accounts',
-        canActivate: [LoggedinGuard],
+        canActivate: [authGuard],
         loadChildren: () => import('./account/account.module').then((m) => m.AccountModule),
         data: { preload: false },
       },
       {
         path: 'zones',
-        canActivate: [LoggedinGuard],
+        canActivate: [authGuard],
         loadChildren: () => import('./zone/zone.module').then((m) => m.ZoneModule),
         data: { preload: false },
       },
@@ -54,9 +54,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-    enableTracing: false,
-    preloadingStrategy: SelectivePreloadingStrategyService
-}),
+      enableTracing: false,
+      preloadingStrategy: SelectivePreloadingStrategyService,
+    }),
   ],
   exports: [RouterModule],
 })
