@@ -35,6 +35,7 @@
 	"account.generate_key": "Generar un nou codi",
 	"account.home": "Tauler de control del compte",
 	"account.invited_user": "L'usuari {{user}} ha rebut un correu amb una invitació a participar en aquest compte",
+	"account.kb-description": "Un Knowledge Box és una col·lecció de contingut en què cerca Nuclia. Alguns motors de cerca l'anomenen \"índex\" o \"corpus\". En la majoria dels casos, només necessiteu un Knowledge Box per a la vostra aplicació.",
 	"account.knowledgeboxes": "Caixes de coneixement",
 	"account.licence": "Llicència",
 	"account.logo": "Imatge de la caixa",

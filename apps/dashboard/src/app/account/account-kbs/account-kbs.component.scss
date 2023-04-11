@@ -3,11 +3,11 @@
 .account-kbs {
   padding: 70px var(--app-layout-margin-right) 60px 5%;
   h2 {
-    margin: 0 0 36px 0;
-    font-weight: var(--stf-font-weight-bold);
+    margin: 0 0 rhythm(1) 0;
   }
 
   .account-kbs-list {
+    margin-top: rhythm(5);
     max-width: 1024px;
 
     pa-button:not(:last-child) {

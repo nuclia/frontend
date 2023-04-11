@@ -35,6 +35,7 @@
 	"account.generate_key": "Generar un nuevo código",
 	"account.home": "Panel de cuenta",
 	"account.invited_user": "Hemos enviado un correo a {{user}} invitándolo en esta cuenta",
+	"account.kb-description": "Una caja de conocimiento es una colección de contenido en la que Nuclia busca. Algunos motores de búsqueda lo llaman \"índice\" o \"corpus\". En la mayoría de los casos, solo necesita un Knowledge Box para su aplicación.",
 	"account.knowledgeboxes": "Cajas de conocimiento",
 	"account.licence": "Licencia",
 	"account.logo": "Imagen de la caja",
