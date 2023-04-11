@@ -331,6 +331,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     const query = (this.searchForm.value.query || '').trim();
     const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
+    if (replaceData) {
+      this.page = 0;
+    }
 
     return this.sdk.currentKb.pipe(
       take(1),
