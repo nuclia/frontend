@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 import { ExtraOptions, RouterModule, Routes } from '@angular/router';
 
 import {
-  AccountOwnerGuard,
+  accountOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
-  RootGuard,
+  rootGuard,
   SelectAccountComponent,
-  SelectAccountKbGuard,
+  selectAccountKbGuard,
   SelectKbComponent,
 } from '@flaps/common';
-import { LoggedinGuard } from '@flaps/core';
+import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
 import { SetupStep1Component } from './setup/setup-step1/setup-step1.component';
 import { SetupStep2Component } from './setup/setup-step2/setup-step2.component';
@@ -41,12 +41,12 @@ const routes: Routes = [
   {
     path: '',
     component: BaseComponent,
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
         component: EmptyComponent,
-        canActivate: [RootGuard],
+        canActivate: [rootGuard],
       },
       {
         path: 'redirect',
@@ -72,32 +72,32 @@ const routes: Routes = [
               {
                 path: 'settings',
                 component: AccountManageComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'home',
                 component: AccountHomeComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'nua',
                 component: AccountNUAComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'nua/:id/activity',
                 component: NuaActivityComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'kbs',
                 component: AccountKbsComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'users',
                 component: AccountUsersComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'billing',
@@ -158,12 +158,12 @@ const routes: Routes = [
               {
                 path: 'users',
                 component: KnowledgeBoxUsersComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
-                canActivate: [AccountOwnerGuard],
+                canActivate: [accountOwnerGuard],
               },
               {
                 path: 'widget-generator',
@@ -178,7 +178,7 @@ const routes: Routes = [
   {
     path: 'select',
     component: SelectAccountComponent,
-    canActivate: [LoggedinGuard, SelectAccountKbGuard],
+    canActivate: [authGuard, selectAccountKbGuard],
     children: [
       {
         path: ':account',
@@ -189,22 +189,22 @@ const routes: Routes = [
   {
     path: 'setup/password',
     component: SetupStep1Component,
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'setup/account',
     component: SetupStep2Component,
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'setup/invite',
     component: SetupInviteComponent,
-    canActivate: [LoggedinGuard, InviteGuard],
+    canActivate: [authGuard, InviteGuard],
   },
   {
     path: 'setup/account-config',
     component: SetupAccountComponent,
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
   },
   {
     path: 'setup/farewell',

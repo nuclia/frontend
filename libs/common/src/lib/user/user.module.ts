@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { LoggedinGuard } from '@flaps/core';
+import { authGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
@@ -62,12 +62,12 @@ export const userRoutes: Routes = [
   },
   {
     path: 'switch',
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
     component: SwitchComponent,
   },
   {
     path: 'profile',
-    canActivate: [LoggedinGuard],
+    canActivate: [authGuard],
     component: ProfileComponent,
   },
   { path: 'login', component: LoginComponent },
