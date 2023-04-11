@@ -127,6 +127,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     errors: 0,
     label: '',
   };
+  selection: string[] = [];
 
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = false;
@@ -212,38 +213,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             this.cdr.markForCheck();
           }
         }),
-        switchMap(() =>
-          from(
-            resources.map((resource) =>
-              resource.delete().pipe(
-                tap(() => {
-                  this.bulkAction = {
-                    ...this.bulkAction,
-                    done: this.bulkAction.done + 1,
-                  };
-                  this.cdr.markForCheck();
-                }),
-                catchError(() => {
-                  this.bulkAction = {
-                    ...this.bulkAction,
-                    errors: this.bulkAction.errors + 1,
-                  };
-                  return of(null);
-                }),
-              ),
-            ),
-          ),
-        ),
-        mergeMap((resourceDelete) => resourceDelete, 6),
+        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.delete())))),
+        mergeMap((obs) => obs, 6),
         toArray(),
         delay(1000),
         switchMap(() => this.getResourceStatusCount()),
+        switchMap(() => this._getResources(true)),
       )
       .subscribe(() => {
-        if (this.bulkAction.errors > 0) {
-          this.toaster.error(`${this.bulkAction.errors > 1 ? 'error.deleting-resources' : 'error.deleting-resource'}`);
-        }
-        this.afterBulkActions();
+        this.manageBulkActionResults('deleting');
         this.sdk.refreshCounter(true);
       });
   }
@@ -259,41 +237,43 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       label: 'generic.reindexing',
     };
 
-    from(
-      resources.map((resource) =>
-        resource.reprocess().pipe(
-          tap(() => {
-            this.bulkAction = {
-              ...this.bulkAction,
-              done: this.bulkAction.done + 1,
-            };
-            this.cdr.markForCheck();
-          }),
-          catchError(() => {
-            this.bulkAction = {
-              ...this.bulkAction,
-              errors: this.bulkAction.errors + 1,
-            };
-            return of(null);
-          }),
-        ),
-      ),
-    )
+    from(resources.map((resource) => this.updateBulkAction(resource.reprocess())))
       .pipe(
-        mergeMap((resource) => resource, 6),
+        mergeMap((obs) => obs, 6),
         toArray(),
         delay(wait),
         switchMap(() => this.getResourceStatusCount()),
-        switchMap(() => this.getResources()),
+        switchMap(() => this._getResources(true)),
       )
-      .subscribe(() => {
-        if (this.bulkAction.errors > 0) {
-          this.toaster.error(
-            `${this.bulkAction.errors > 1 ? 'error.reprocessing-resources' : 'error.reprocessing-resource'}`,
-          );
-        }
-        this.afterBulkActions();
-      });
+      .subscribe(() => this.manageBulkActionResults('reprocessing'));
+  }
+
+  private updateBulkAction(observable: Observable<void>): Observable<any> {
+    return observable.pipe(
+      tap(() => {
+        this.bulkAction = {
+          ...this.bulkAction,
+          done: this.bulkAction.done + 1,
+        };
+        this.cdr.markForCheck();
+      }),
+      catchError(() => {
+        this.bulkAction = {
+          ...this.bulkAction,
+          errors: this.bulkAction.errors + 1,
+        };
+        return of(null);
+      }),
+    );
+  }
+
+  private manageBulkActionResults(action: 'reprocessing' | 'deleting') {
+    if (this.bulkAction.errors > 0) {
+      this.toaster.error(this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`);
+    } else {
+      this.selection = [];
+    }
+    this.afterBulkActions();
   }
 
   reindex(resource: Resource) {
@@ -301,7 +281,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       .reprocess()
       .pipe(
         delay(1000), // wait for reprocess to be effective
-        switchMap(() => this.getResources()),
+        switchMap(() => this._getResources(true)),
         switchMap(() => this.getResourceStatusCount()),
       )
       .subscribe();
@@ -334,10 +314,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   getResources(displayLoader = true): Observable<Search.Results> {
-    const query = (this.searchForm.value.query || '').trim();
-    const hasQuery = query.length > 0;
-    const titleOnly = this.searchForm.value.searchIn === 'title';
-
     if (!this.standalone) {
       forkJoin([this.stateService.account.pipe(take(1)), this.stateService.stash.pipe(take(1))])
         .pipe(
@@ -348,6 +324,17 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         .subscribe((status) => (this.currentProcessingStatus = status));
     }
     this.setLoading(displayLoader);
+    return this._getResources();
+  }
+
+  private _getResources(replaceData = false): Observable<Search.Results> {
+    const query = (this.searchForm.value.query || '').trim();
+    const hasQuery = query.length > 0;
+    const titleOnly = this.searchForm.value.searchIn === 'title';
+    if (replaceData) {
+      this.page = 0;
+    }
+
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => {
@@ -378,7 +365,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         const newResults = titleOnly
           ? this.getTitleOnlyData(results, kb.id, labelSets)
           : this.getResourceData(query, results, kb.id, labelSets);
-        this.data = this.page === 0 ? newResults : (this.data || []).concat(newResults);
+        this.data = this.page === 0 || replaceData ? newResults : (this.data || []).concat(newResults);
         this.hasMore = !!results.fulltext?.next_page;
 
         this.setLoading(false);
