@@ -111,6 +111,10 @@ export class AccountDetailComponent implements OnInit {
   }
 
   ngOnInit() {
+    const user = this.sdk.nuclia.auth.getJWTUser();
+    this.isRoot = user?.ext.type === 'r';
+    this.isDealer = user?.ext.type === 'd';
+
     this.zoneService
       .getZones()
       .pipe(
@@ -128,9 +132,7 @@ export class AccountDetailComponent implements OnInit {
           data.account.blocked_features.forEach((blockedFeature) => {
             this.blockedFeaturesForm.controls[blockedFeature]?.patchValue(true);
           });
-          const user = this.sdk.nuclia.auth.getJWTUser();
-          this.isRoot = user?.ext.type === 'r';
-          this.isDealer = user?.ext.type === 'd';
+
           this.edit = true;
 
           this.accountTitleForm.controls.id.setValue(data.account.slug);
