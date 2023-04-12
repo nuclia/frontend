@@ -1,7 +1,7 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
 import { Source } from './models';
-import { getSource, getSourceFiles, getSources, setSources } from './sources';
+import { getSource, getSourceFiles, getSourceFolders, getSources, setSources } from './sources';
 
 export const router = express.Router();
 
@@ -42,9 +42,13 @@ router.patch('/source/:id', (req, res) => {
   res.send('{ "success": true }');
 });
 
-router.get('/source/:id/search', async (req, res) => {
+router.get('/source/:id/:type/search', async (req, res) => {
   try {
-    const results = await firstValueFrom(getSourceFiles(req.params.id, req.query.query as string));
+    const results = await firstValueFrom(
+      req.params.type === 'folders'
+        ? getSourceFolders(req.params.id, req.query.query as string)
+        : getSourceFiles(req.params.id, req.query.query as string),
+    );
     res.send(JSON.stringify(results));
   } catch (e) {
     if (e.message === 'Unauthorized') {

@@ -27,8 +27,12 @@ class DropboxImpl implements ISourceConnector {
     this.params = params;
   }
 
-  getFiles(query?: string, pageSize?: number): Observable<SearchResults> {
-    return this._getFiles(query, pageSize);
+  getFolders(query?: string): Observable<SearchResults> {
+    return this._getFiles(query, true);
+  }
+
+  getFiles(query?: string): Observable<SearchResults> {
+    return this._getFiles(query);
   }
 
   getLastModified(since: string): Observable<SyncItem[]> {
@@ -37,7 +41,7 @@ class DropboxImpl implements ISourceConnector {
     );
   }
 
-  private _getFiles(query?: string, pageSize = 100, nextPage?: string | number): Observable<SearchResults> {
+  private _getFiles(query?: string, loadFolders = false, nextPage?: string | number): Observable<SearchResults> {
     const success = (res: any) => {
       if (res.status === 401) {
         throw new Error('Unauthorized');
@@ -64,16 +68,16 @@ class DropboxImpl implements ISourceConnector {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(
-            nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: pageSize, include_media_info: true },
+            nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: 100, include_media_info: true },
           ),
         }).then(success, failure);
     return from(request).pipe(
       map((result: any) => ({
         items:
           (query
-            ? result.matches?.filter(this.filterResults).map(this.mapResults)
-            : result.entries?.filter(this.filterFiles).map(this.mapFiles)) || [],
-        nextPage: result.has_more ? this._getFiles(query, pageSize, result.cursor) : undefined,
+            ? result.matches?.filter((item: any) => this.filterResults(item, loadFolders)).map(this.mapResults)
+            : result.entries?.filter((item: any) => this.filterFiles(item, loadFolders)).map(this.mapFiles)) || [],
+        nextPage: result.has_more ? this._getFiles(query, loadFolders, result.cursor) : undefined,
       })),
     );
   }
@@ -87,6 +91,7 @@ class DropboxImpl implements ISourceConnector {
       status: FileStatus.PENDING,
       uuid: raw.uuid || '',
       modified: raw.client_modified,
+      isFolder: raw['.tag'] === 'folder',
     };
   }
 
@@ -98,17 +103,18 @@ class DropboxImpl implements ISourceConnector {
       metadata: {},
       status: FileStatus.PENDING,
       uuid: raw.metadata?.metadata?.['uuid'] || '',
+      isFolder: raw.match_type?.['.tag'] === 'folder',
     };
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  private filterFiles(raw: any): boolean {
-    return raw?.['.tag'] !== 'folder';
+  private filterFiles(raw: any, folders = false): boolean {
+    return folders ? raw?.['.tag'] === 'folder' : raw?.['.tag'] !== 'folder';
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
-  private filterResults(raw: any): boolean {
-    return raw.match_type?.['.tag'] !== 'folder';
+  private filterResults(raw: any, folders = false): boolean {
+    return folders ? raw.match_type?.['.tag'] === 'folder' : raw.match_type?.['.tag'] !== 'folder';
   }
 
   download(resource: SyncItem): Observable<Blob | undefined> {

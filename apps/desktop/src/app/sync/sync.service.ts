@@ -164,7 +164,13 @@ export class SyncService {
 
   getFiles(sourceId: string, query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue()}/source/${sourceId}/search${query ? `?query=${query}` : ''}`,
+      `${this._syncServer.getValue()}/source/${sourceId}/files/search${query ? `?query=${query}` : ''}`,
+    );
+  }
+
+  getFolders(sourceId: string, query?: string): Observable<SearchResults> {
+    return this.http.get<SearchResults>(
+      `${this._syncServer.getValue()}/source/${sourceId}/folders/search${query ? `?query=${query}` : ''}`,
     );
   }
 

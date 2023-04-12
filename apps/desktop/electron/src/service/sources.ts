@@ -29,6 +29,11 @@ export const getSourceFiles = (sourceId: string, query?: string) => {
   return connector.getFiles(query);
 };
 
+export const getSourceFolders = (sourceId: string, query?: string) => {
+  const connector = getSourceInstance(sourceId);
+  return connector.getFolders(query);
+};
+
 const downloadFile = (sourceId: string, item: SyncItem) => {
   const connector = getSourceInstance(sourceId);
   return connector.download(item);

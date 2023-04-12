@@ -29,7 +29,8 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
 export interface ISourceConnector {
   isExternal: boolean;
   setParameters(params: ConnectorParameters): void;
-  getFiles(query?: string, pageSize?: number): Observable<SearchResults>;
+  getFolders(query?: string): Observable<SearchResults>;
+  getFiles(query?: string): Observable<SearchResults>;
   getLastModified(since: string): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob | undefined>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
@@ -49,6 +50,7 @@ export interface SyncItem {
   metadata: { [key: string]: string };
   status: FileStatus;
   modified?: string;
+  isFolder?: boolean;
 }
 
 export interface SearchResults {
