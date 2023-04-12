@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { PaExpanderModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaExpanderModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 import { HintComponent } from './hint.component';
 
 @NgModule({
-  imports: [CommonModule, PaIconModule, PaExpanderModule],
+  imports: [CommonModule, PaIconModule, PaExpanderModule, PaButtonModule],
   exports: [HintComponent],
   declarations: [HintComponent],
 })

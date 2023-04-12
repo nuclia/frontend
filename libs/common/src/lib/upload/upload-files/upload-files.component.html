@@ -82,10 +82,11 @@
 
     <ncom-hint
       noMaxWidth
+      learnMore="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
       label="How to upload a file with the API">
-      <pre><code class="highlight">curl $$KB_URL$$/upload \
+      <pre><code>curl $$KB_URL$$/upload \
   -X POST \
-  -H "content-type: video/mp4"
+  -H "content-type: video/mp4" \
   -H "authorization: Bearer $$AUTH_TOKEN$$" \
   -T /path/to/your-video.mp4</code></pre>
       <p>
@@ -94,11 +95,6 @@
         <code>X-STF-Serviceaccount</code>
         header.
       </p>
-      <a
-        href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
-        target="_new">
-        Learn more
-      </a>
     </ncom-hint>
   </pa-modal-content>
   <pa-modal-footer>

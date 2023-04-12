@@ -99,7 +99,9 @@
       </div>
     </div>
   </div>
-  <ncom-hint label="How to use your service access token in the API">
+  <ncom-hint
+    label="How to use your service access token in the API"
+    learnMore="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api">
     <p>
       The service access token can be used on any call to the API. It goes in the
       <code>X-STF-Serviceaccount</code>
@@ -107,16 +109,11 @@
       <code>Authorization</code>
       header
     </p>
-    <pre><code class="highlight">curl $$KB_URL$$/upload \
+    <pre><code>curl $$KB_URL$$/upload \
  -X POST \
  -H "content-type: video/mp4"
  -H "x-language: fr"
  -H "X-STF-Serviceaccount: Bearer YOUR-SERVICE-ACCESS-TOKEN" \
  -T /path/to/file.mp4</code></pre>
-    <a
-      href="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api"
-      target="_new">
-      Learn more
-    </a>
   </ncom-hint>
 </div>
