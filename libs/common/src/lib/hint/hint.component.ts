@@ -2,6 +2,7 @@ import {
   AfterContentInit,
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
@@ -21,17 +22,9 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
   encapsulation: ViewEncapsulation.None,
 })
 export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges {
+  @Input() learnMore?: string;
   @Input() label?: string;
   @Input() values?: { [key: string]: string } | null;
-
-  @Input()
-  set inverted(value: any) {
-    this._inverted = coerceBooleanProperty(value);
-  }
-  get inverted() {
-    return this._inverted;
-  }
-  private _inverted = false;
 
   @Input()
   set noMaxWidth(value: any) {
@@ -42,14 +35,18 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
   }
   private _noMaxWidth = false;
 
-  isExpanded = false;
-
   @ViewChild('content') content?: ElementRef;
   @ViewChild('container') container?: ElementRef;
+  @ViewChild('codeExample') codeExample?: ElementRef;
+  @ViewChild('instructions') instructions?: ElementRef;
+
+  clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
+  hasCodeExample = false;
 
   containerWidth = '100%';
+  copyIcon: 'copy' | 'check' = 'copy';
 
-  constructor(private sdk: SDKService) {}
+  constructor(private sdk: SDKService, private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit() {
     if (!this.noMaxWidth) {
@@ -57,6 +54,7 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
         this.containerWidth = `${this.container?.nativeElement.getBoundingClientRect().width}px`;
       }, 0);
     }
+    this.hasCodeExample = !!this.content?.nativeElement.querySelector('pre>code');
   }
 
   ngAfterContentInit() {
@@ -65,6 +63,19 @@ export class HintComponent implements AfterContentInit, AfterViewInit, OnChanges
 
   ngOnChanges() {
     this.replacePlaceholders();
+  }
+
+  copyCode() {
+    const code = this.content?.nativeElement.querySelector('pre>code')?.textContent;
+    if (code) {
+      navigator.clipboard.writeText(code);
+      this.copyIcon = 'check';
+      this.cdr.markForCheck();
+      setTimeout(() => {
+        this.copyIcon = 'copy';
+        this.cdr.markForCheck();
+      }, 2000);
+    }
   }
 
   private replacePlaceholders() {

@@ -2,12 +2,9 @@
 
 .hint {
   pre {
-    overflow: scroll;
     font-size: font-size(xs);
-  }
-
-  &.inverted {
-    background-color: $color-light-stronger;
+    margin-bottom: rhythm(0.5);
+    overflow: auto;
   }
 
   .hint-title {
@@ -19,6 +16,12 @@
   .hint-content {
     background-color: $color-neutral-lightest;
     padding: rhythm(2);
+  }
+
+  .hint-actions {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
   }
 
   pa-expander .pa-expander-header {

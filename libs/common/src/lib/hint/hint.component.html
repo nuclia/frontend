@@ -1,7 +1,6 @@
 <div
   class="hint"
   #container
-  [class.inverted]="inverted"
   [style.max-width]="containerWidth">
   <pa-expander card>
     <pa-expander-header>
@@ -11,10 +10,27 @@
       </div>
     </pa-expander-header>
     <pa-expander-body>
-      <div
-        class="hint-content"
-        #content>
-        <ng-content></ng-content>
+      <div class="hint-content">
+        <div #content>
+          <ng-content></ng-content>
+        </div>
+
+        <div class="hint-actions">
+          <a
+            *ngIf="learnMore"
+            [href]="learnMore"
+            target="_new"
+            class="body-m">
+            Learn more
+          </a>
+          <pa-button
+            *ngIf="clipboardSupported && hasCodeExample"
+            [icon]="copyIcon"
+            aspect="basic"
+            (click)="copyCode()">
+            Copy code
+          </pa-button>
+        </div>
       </div>
     </pa-expander-body>
   </pa-expander>
