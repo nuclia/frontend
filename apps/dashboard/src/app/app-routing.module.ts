@@ -31,6 +31,8 @@ import {
   KnowledgeBoxProfileComponent,
   KnowledgeBoxUsersComponent,
 } from './knowledge-box';
+import { inviteGuard } from './invite/invite.guard';
+import { InviteComponent } from './invite/invite.component';
 
 const routes: Routes = [
   {
@@ -184,6 +186,11 @@ const routes: Routes = [
   {
     path: 'setup/farewell',
     component: FarewellComponent,
+  },
+  {
+    path: 'setup/invite',
+    component: InviteComponent,
+    canActivate: [authGuard, inviteGuard],
   },
   {
     path: 'user',

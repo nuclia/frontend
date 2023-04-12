@@ -1,0 +1,33 @@
+<stf-user-container>
+  <div class="setup-invite">
+    <h2 class="setup-invite-title">{{ 'setup.set_password' | translate }}</h2>
+
+    <form
+      [formGroup]="passwordForm"
+      (submit)="submit()">
+      <pa-input
+        formControlName="username"
+        [errorMessages]="validationMessages.username"
+        autocapitalize="off">
+        {{ 'login.full_name' | translate }}
+      </pa-input>
+      <pa-input
+        formControlName="password"
+        type="password"
+        [errorMessages]="validationMessages.passowrd">
+        {{ 'login.password' | translate }}
+      </pa-input>
+      <pa-input
+        formControlName="passwordConfirm"
+        type="password"
+        [errorMessages]="validationMessages.passwordConfirm">
+        {{ 'generic.confirm_password' | translate }}
+      </pa-input>
+      <div class="setup-invite-actions">
+        <pa-button type="submit">
+          {{ 'generic.go!' | translate }}
+        </pa-button>
+      </div>
+    </form>
+  </div>
+</stf-user-container>
