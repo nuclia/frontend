@@ -2,7 +2,7 @@
   <div class="list-wrapper">
     <pa-input
       (keyup)="applyFilter($event.target.value)"
-      placeholder="Filter">
+      placeholder="Filter (it only displays the 100 first matches)">
       Filter
     </pa-input>
     <div>
@@ -22,17 +22,12 @@
     </div>
     <table
       mat-table
-      [dataSource]="accounts"
-      matSort
-      matSortActive="created"
-      matSortDisableClear
-      matSortDirection="desc">
+      [dataSource]="accounts">
       <!-- ID Column -->
       <ng-container matColumnDef="id">
         <th
           mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+          *matHeaderCellDef>
           ID
         </th>
         <td
@@ -45,8 +40,7 @@
       <ng-container matColumnDef="title">
         <th
           mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+          *matHeaderCellDef>
           Title
         </th>
         <td
@@ -59,8 +53,7 @@
       <ng-container matColumnDef="slug">
         <th
           mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+          *matHeaderCellDef>
           Slug
         </th>
         <td
@@ -73,8 +66,7 @@
       <ng-container matColumnDef="type">
         <th
           mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+          *matHeaderCellDef>
           Type
         </th>
         <td
@@ -87,8 +79,7 @@
       <ng-container matColumnDef="actions">
         <th
           mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header>
+          *matHeaderCellDef>
           Actions
         </th>
         <td
