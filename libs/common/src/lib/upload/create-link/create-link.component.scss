@@ -1,6 +1,7 @@
 @import 'apps/dashboard/src/variables';
 
 .link-form {
+  margin-top: rhythm(1);
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
@@ -10,4 +11,11 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
+}
+
+nsi-spinner {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
 }
