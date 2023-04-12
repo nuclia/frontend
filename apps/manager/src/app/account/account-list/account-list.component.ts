@@ -15,6 +15,7 @@ export class AccountListComponent {
   displayedColumns: string[] = ['id', 'title', 'slug', 'type', 'actions'];
   private _accounts: AccountSummary[] = [];
   accounts: MatTableDataSource<AccountSummary> | undefined;
+  filter = '';
 
   resultsLength = 0;
   isLoadingResults = true;
@@ -33,10 +34,12 @@ export class AccountListComponent {
   }
 
   private renderAccounts() {
-    if (!this.accounts?.filter || this.accounts?.filter.length < 2) {
+    if (!this.filter || this.filter.length < 2) {
       this.accounts = new MatTableDataSource([] as AccountSummary[]);
     } else {
-      this.accounts = new MatTableDataSource(this._accounts.slice(0, 100));
+      this.accounts = new MatTableDataSource(
+        this._accounts.filter((account) => this.isMatching(account)).slice(0, 100),
+      );
       if (this.accounts?.paginator) {
         this.accounts.paginator.firstPage();
       }
@@ -46,7 +49,7 @@ export class AccountListComponent {
   }
 
   applyFilter(filterValue: string) {
-    this.accounts!.filter = filterValue.trim().toLowerCase();
+    this.filter = filterValue.trim().toLowerCase();
     this.renderAccounts();
   }
 
@@ -73,5 +76,14 @@ export class AccountListComponent {
 
   edit(row: any) {
     this.router.navigate(['/accounts/' + row.id]);
+  }
+
+  private isMatching(account: AccountSummary): boolean {
+    return (
+      account.id.toLocaleLowerCase().includes(this.filter) ||
+      account.title.toLocaleLowerCase().includes(this.filter) ||
+      account.slug.toLocaleLowerCase().includes(this.filter) ||
+      account.type.toLocaleLowerCase().includes(this.filter)
+    );
   }
 }
