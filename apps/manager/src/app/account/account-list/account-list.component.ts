@@ -1,5 +1,5 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { AccountSummary } from '../../models/account.model';
 import { MatSort } from '@angular/material/sort';
 import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table';
@@ -11,6 +11,7 @@ import { AccountService } from '../../services/account.service';
   selector: 'app-account-list',
   templateUrl: './account-list.component.html',
   styleUrls: ['./account-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountListComponent implements AfterViewInit {
   displayedColumns: string[] = ['id', 'title', 'slug', 'type', 'actions'];
@@ -22,9 +23,15 @@ export class AccountListComponent implements AfterViewInit {
 
   @ViewChild(MatSort, { static: false }) sort: MatSort | undefined;
 
-  constructor(private route: ActivatedRoute, private router: Router, private accountService: AccountService) {
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private accountService: AccountService,
+    private cdr: ChangeDetectorRef,
+  ) {
     this.route.data.subscribe((data) => {
       this.accounts = new MatTableDataSource(data.accounts);
+      this.cdr.detectChanges();
     });
   }
 
@@ -34,6 +41,7 @@ export class AccountListComponent implements AfterViewInit {
     if (this.accounts?.paginator) {
       this.accounts.paginator.firstPage();
     }
+    this.cdr.detectChanges();
   }
 
   ngAfterViewInit() {
@@ -60,7 +68,10 @@ export class AccountListComponent implements AfterViewInit {
             return observableOf([] as AccountSummary[]);
           }),
         )
-        .subscribe((data) => (this.accounts = new MatTableDataSource(data)));
+        .subscribe((data) => {
+          this.accounts = new MatTableDataSource(data);
+          this.cdr.detectChanges();
+        });
     }
   }
 
@@ -83,6 +94,7 @@ export class AccountListComponent implements AfterViewInit {
   refresh() {
     this.accountService.getAccounts().subscribe((res) => {
       this.accounts = new MatTableDataSource(res);
+      this.cdr.detectChanges();
     });
   }
 

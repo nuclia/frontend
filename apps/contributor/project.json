@@ -73,7 +73,7 @@
               "with": "apps/contributor/src/environments/environment.prod.ts"
             }
           ],
-          "outputHashing": "none",
+          "outputHashing": "all",
           "assets": [
             "apps/contributor/src/favicon.ico",
             "apps/contributor/src/assets",
