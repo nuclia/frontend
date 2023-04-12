@@ -38,6 +38,7 @@ import {
   UploadModule,
 } from '@flaps/common';
 import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
+import { InviteModule } from './invite/invite.module';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -52,6 +53,7 @@ const components = [AppComponent];
 const appModules = [
   AppRoutingModule,
   FarewellModule,
+  InviteModule,
   SelectAccountKbModule,
   AccountModule,
   KnowledgeBoxModule,
