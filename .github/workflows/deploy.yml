@@ -36,7 +36,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Calculate short sha
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-8`" >> $GITHUB_ENV
@@ -62,7 +62,7 @@ jobs:
           github_repo: ${{ github.repository }}
           version: ${{ env.PACKAGE_VERSION }}
           git_commit_sha: ${{ github.sha }}
-          git_tag_prefix: "v"
+          git_tag_prefix: 'v'
 
       - name: Check apps to deploy
         id: check-deploy
@@ -77,10 +77,10 @@ jobs:
 
       - uses: google-github-actions/auth@v0
         with:
-          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
 
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v0"
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v0'
 
       - name: Configure Docker
         run: gcloud auth configure-docker --quiet
@@ -119,7 +119,6 @@ jobs:
         if: steps.check-deploy.outputs.deploy-contributor == 'yes'
         run: |-
           sed -i.bak "s,STF_DOCKER_CONFIG_VERSION,$GITHUB_SHA,g" dist/apps/contributor/assets/deployment/app-config.json
-          gsutil copy -r dist/apps/contributor gs://$CDN_STORAGE
           cp -r dist/apps/contributor/* tools/python-contributor-dist/nucliadb_contributor_assets/
           make -C tools/python-contributor-dist/ publish ARGS="--build=${{github.run_number}}"
         env:
@@ -232,10 +231,10 @@ jobs:
           curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=manager" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
 
   pre-release:
-    name: "Pre Release"
+    name: 'Pre Release'
     needs: build
     if: needs.build.outputs.deploy-desktop == 'yes'
-    runs-on: "ubuntu-latest"
+    runs-on: 'ubuntu-latest'
     outputs:
       release-desktop: ${{ steps.release.outputs.released }}
       release-tag: ${{ steps.release.outputs.release_tag }}
@@ -267,7 +266,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: "yarn"
+          cache: 'yarn'
       - name: Install project dependencies
         run: |-
           yarn
