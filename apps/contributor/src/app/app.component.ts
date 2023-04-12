@@ -30,8 +30,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private sdk: SDKService,
     private titleService: Title,
-    private navigation: NavigationService,
     private router: Router,
+    private navigation: NavigationService,
   ) {
     this.updateStateOnRouteChange();
     const userLocale = localStorage.getItem(userLocaleKey);
