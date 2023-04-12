@@ -1,3 +1,9 @@
+# 1.2.2 (unreleased)
+
+### Improvements
+
+- Add `navigateToFile` property to `WidgetFeatures` interface
+
 # 1.2.1 (2023-04-07)
 
 ### Improvements

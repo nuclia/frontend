@@ -19,6 +19,7 @@ export const widgetType = writableSubject<'search' | 'viewer' | null>(null);
 export const canAnnotateEntities = widgetFeatures.pipe(map((features) => !!features?.entityAnnotation));
 export const canEditLabels = widgetFeatures.pipe(map((features) => !!features?.editLabels));
 export const navigateToLink = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
+export const navigateToFile = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));
 export const hasFilterButton = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled = widgetFeatures.pipe(map((features) => !!features?.answers));
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));

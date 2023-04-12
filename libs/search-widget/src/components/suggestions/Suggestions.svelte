@@ -2,13 +2,13 @@
   import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import { getResourceById } from '../../core/api';
-  import { getExternalUrl, goToUrl, isYoutubeUrl } from '../../core/utils';
+  import { getNavigationUrl, goToUrl } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import { NO_RESULTS } from '../../core/models';
   import { suggestionsHasError, suggestions, suggestionError } from '../../core/stores/suggestions.store';
-  import { navigateToLink } from '../../core/stores/widget.store';
+  import { navigateToFile, navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
-  import { map, switchMap, take } from 'rxjs';
+  import { combineLatest, iif, map, of, switchMap, take } from 'rxjs';
   import { addLabelFilter, displayedResource, getFirstResourceField } from '../../core/stores/search.store';
   import { fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
 
@@ -19,22 +19,29 @@
     getResourceById(paragraph.rid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN, ResourceProperties.VALUES])
       .pipe(
         switchMap((resource) =>
-          navigateToLink.pipe(
+          combineLatest([navigateToFile, navigateToLink]).pipe(
             take(1),
-            map((navigateToLink) => ({ navigateToLink, resource })),
+            switchMap(([navigateToFile, navigateToLink]) =>
+              iif(
+                () => (navigateToFile || navigateToLink) && !!getFirstResourceField(resource),
+                getNavigationUrl(
+                  navigateToFile,
+                  navigateToLink,
+                  resource,
+                  getFirstResourceField(resource) as ResourceField,
+                ),
+                of(false),
+              ),
+            ),
+            map((url) => ({ url, resource })),
           ),
         ),
       )
-      .subscribe(({ navigateToLink, resource }) => {
-        const resourceField = getFirstResourceField(resource);
-        if (navigateToLink) {
-          const url = getExternalUrl(resource, resourceField);
-          if (url && !isYoutubeUrl(url)) {
-            goToUrl(url, paragraph.text);
-          } else {
-            openViewer(resource, resourceField);
-          }
+      .subscribe(({ url, resource }) => {
+        if (url) {
+          goToUrl(url);
         } else {
+          const resourceField = getFirstResourceField(resource);
           openViewer(resource, resourceField);
         }
         suggestions.set({ results: NO_RESULTS });

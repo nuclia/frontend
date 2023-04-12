@@ -99,6 +99,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
             features: this.fb.group({
               answers: [config.features.includes('answers')],
               filter: [config.features.includes('filter')],
+              navigateToFile: [config.features.includes('navigateToFile')],
               navigateToLink: [config.features.includes('navigateToLink')],
               permalink: [config.features.includes('permalink')],
               relations: [config.features.includes('relations')],
