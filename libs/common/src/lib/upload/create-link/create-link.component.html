@@ -69,7 +69,8 @@
     <pa-button
       type="submit"
       kind="primary"
-      [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending">
+      [disabled]="(linkForm.value.type === 'csv' ? csv.length === 0 : !linkForm.valid) || pending"
+      (click)="add()">
       {{ 'generic.add' | translate }}
     </pa-button>
   </pa-modal-footer>
