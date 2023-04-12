@@ -148,13 +148,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   generateSnippet() {
     this.deletePreview();
-    const cdn = this.backendConfig.getCDN() || '';
-
     const placeholder = this.hasPlaceholder() ? `placeholder="${this.placeholder}"` : '';
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       const zone = this.sdk.nuclia.options.zone;
-      this.snippet = `<script src="${cdn}/nuclia-video-widget.umd.js"></script>
+      this.snippet = `
 <nuclia-search-bar
   knowledgebox="${kb.id}"
   zone="${zone}"
@@ -168,7 +166,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           'zone=',
           `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
       lang="${this.translation.currentLang}"
-      state="${kb.state}" notpublic zone=`,
+      account="${kb.account}"
+      kbslug="${kb.slug}"
+      state="${kb.state}" zone=`,
         ),
       );
     });
