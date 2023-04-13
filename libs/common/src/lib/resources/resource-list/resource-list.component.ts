@@ -269,7 +269,11 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   private manageBulkActionResults(action: 'reprocessing' | 'deleting') {
     if (this.bulkAction.errors > 0) {
-      this.toaster.error(this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`);
+      const message = this.translate.instant(
+        this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`,
+        { count: this.bulkAction.errors },
+      );
+      this.toaster.error(message);
     } else {
       this.selection = [];
     }
