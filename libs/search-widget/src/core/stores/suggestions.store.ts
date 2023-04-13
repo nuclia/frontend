@@ -4,7 +4,7 @@ import { NO_SUGGESTION_RESULTS } from '../models';
 import { combineLatest, map, Observable, Subject } from 'rxjs';
 
 export type Suggestions = {
-  results: Search.Results;
+  results: Search.Suggestions;
   labels?: Classification[];
 };
 

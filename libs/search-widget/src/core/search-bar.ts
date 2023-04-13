@@ -1,6 +1,5 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
-import { navigateToLink } from './stores/widget.store';
 import type { Search } from '@nuclia/core';
 import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
@@ -23,7 +22,7 @@ export function unsubscribeTriggerSearch() {
 }
 
 export const setupTriggerSearch = (
-  dispatch: (event: string, details: string | Search.Results) => void | undefined,
+  dispatch: (event: string, details: string | Search.Results | Search.FindResults) => void | undefined,
 ): void => {
   subscriptions.push(
     triggerSearch

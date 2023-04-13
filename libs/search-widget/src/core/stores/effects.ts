@@ -1,6 +1,6 @@
 import { getAnswer, getLabelSets, getResourceField, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
-import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
+import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
   combineLatest,
   debounceTime,
@@ -18,15 +18,15 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { NO_RESULTS } from '../models';
+import { NO_SUGGESTION_RESULTS } from '../models';
 import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import type { Chat, Classification, Search } from '@nuclia/core';
+import type { Chat, Classification, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { currentAnswer, currentQuestion, chat, lastSpeakableFullAnswer, isSpeechOn } from './answers.store';
+import { chat, currentAnswer, currentQuestion, isSpeechOn, lastSpeakableFullAnswer } from './answers.store';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 
 const subscriptions: Subscription[] = [];
@@ -60,16 +60,14 @@ export function activateTypeAheadSuggestions() {
       switchMap((query) => {
         if (!query || query.length <= 2) {
           return of({
-            results: NO_RESULTS,
-          });
+            results: NO_SUGGESTION_RESULTS,
+          } as Suggestions);
         }
-        const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = widgetFeatures.getValue()
-          ?.suggestLabels
-          ? [suggest(query), predict(query)]
-          : [suggest(query), of([])];
+        const requests: [Observable<Search.Suggestions | IErrorResponse>, Observable<Classification[]>] =
+          widgetFeatures.getValue()?.suggestLabels ? [suggest(query), predict(query)] : [suggest(query), of([])];
         return forkJoin(requests).pipe(
           map(([results, predictions]) => ({
-            results,
+            results: results.type !== 'error' ? results : NO_SUGGESTION_RESULTS,
             labels: predictions,
           })),
         );

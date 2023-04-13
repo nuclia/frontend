@@ -19,9 +19,9 @@ export const NO_RESULTS: Search.FindResults = {
   query: '',
 };
 
-export const NO_SUGGESTION_RESULTS: Search.Results = {
-  type: 'searchResults',
-  resources: {} as { [id: string]: Search.FindResource },
+export const NO_SUGGESTION_RESULTS: Search.Suggestions = {
+  type: 'suggestions',
+  paragraphs: {} as Search.Paragraphs,
 };
 
 export interface WidgetOptions {

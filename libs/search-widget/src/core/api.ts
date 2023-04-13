@@ -60,7 +60,7 @@ export const resetNuclia = () => {
   nucliaApi = null;
 };
 
-export const search = (query: string, options: SearchOptions) => {
+export const search = (query: string, options: SearchOptions): Observable<Search.FindResults> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -74,6 +74,7 @@ export const search = (query: string, options: SearchOptions) => {
       }
       return res.type === 'findResults';
     }),
+    map((res) => res as Search.FindResults),
   );
 };
 
@@ -249,10 +250,11 @@ export const saveEntities = (backup: EntityGroup[], newGroups: EntityGroup[]) =>
     throw new Error('Nuclia API not initialized');
   }
   const requestList: Observable<void>[] = [];
+  const nucliaAPI = nucliaApi;
   newGroups.forEach((group) => {
-    const writableKb = new WritableKnowledgeBox(nucliaApi!, '', {
-      id: nucliaApi!.options.knowledgeBox!,
-      zone: nucliaApi!.options.zone!,
+    const writableKb = new WritableKnowledgeBox(nucliaAPI, '', {
+      id: nucliaAPI.options.knowledgeBox || '',
+      zone: nucliaAPI.options.zone || '',
     });
     const backupGroup = backup.find((g) => g.id === group.id);
     if (!!backupGroup && JSON.stringify(group.entities) !== JSON.stringify(backupGroup.entities)) {
