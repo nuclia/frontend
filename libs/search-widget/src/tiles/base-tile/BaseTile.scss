@@ -35,6 +35,8 @@
 
   &.expanded {
     --header-height: var(--rhythm-6);
+    --search-results-margin-bottom: var(--rhythm-1);
+    --expander-header-height: var(--rhythm-5);
 
     background: var(--expanded-background-color);
     bottom: 0;
@@ -56,6 +58,10 @@
 
       &.full-height {
         height: calc(100vh - var(--header-height) * 2);
+
+        .side-panel {
+          display: none;
+        }
       }
 
       &.loading {
@@ -63,9 +69,28 @@
       }
     }
 
-    .side-panel,
     .summary-container {
       display: none;
+    }
+
+    .search-result-paragraphs,
+    .transcript-container {
+      background-color: var(--color-light-stronger);
+      margin-bottom: var(--search-results-margin-bottom);
+      max-height: calc(100vh - var(--header-height) - var(--viewer-height) - var(--search-results-margin-bottom));
+      overflow: auto;
+    }
+    &.with-all-transcript .search-result-paragraphs {
+      max-height: calc(
+        100vh - var(--header-height) - var(--viewer-height) - var(--search-results-margin-bottom) * 3 -
+          var(--expander-header-height)
+      );
+    }
+    &.with-all-transcript .transcript-container {
+      max-height: calc(
+        100vh - var(--header-height) - var(--viewer-height) - var(--search-results-margin-bottom) * 3 -
+          var(--expander-header-height) * 2
+      );
     }
 
     .transcript-expander-header {
@@ -97,6 +122,13 @@
   }
 }
 
+@media (max-width: 647px) {
+  .sw-tile.expanded {
+    .side-panel-content {
+      margin-top: var(--search-results-margin-bottom);
+    }
+  }
+}
 @media (min-width: 648px) {
   .sw-tile {
     --flex-gap: var(--rhythm-2);
@@ -159,13 +191,11 @@
     --side-panel-width: var(--rhythm-36);
     --side-panel-gap: var(--rhythm-1);
     --tile-padding-right: var(--rhythm-2);
-    --search-results-margin-bottom: var(--rhythm-1);
-    --expander-header-height: var(--rhythm-5);
 
     padding-right: var(--side-panel-button-size);
 
     .field-viewer-container.full-height {
-      height: calc(100vh - var(--header-height) - var(--rhythm-1) - var(--summary-height, 0px) );
+      height: calc(100vh - var(--header-height) - var(--rhythm-1) - var(--summary-height, 0px));
     }
 
     .summary-container {
@@ -176,13 +206,10 @@
 
     .search-result-paragraphs,
     .transcript-container {
-      background-color: var(--color-light-stronger);
-      margin-bottom: var(--search-results-margin-bottom);
       max-height: calc(
         100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) -
           var(--search-results-margin-bottom)
       );
-      overflow: auto;
     }
     &.with-all-transcript .search-result-paragraphs,
     &.with-all-transcript .transcript-container {

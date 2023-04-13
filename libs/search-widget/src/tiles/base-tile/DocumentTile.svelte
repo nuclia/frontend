@@ -16,6 +16,7 @@
   {result}
   {thumbnailLoaded}
   typeIndicator={previewKind === PreviewKind.PDF ? 'pdf' : 'text'}
+  viewerFullHeight={true}
   on:selectParagraph>
   <span slot="thumbnail">
     <Thumbnail

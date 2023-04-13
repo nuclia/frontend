@@ -9,13 +9,13 @@
   .header-title {
     align-items: center;
     display: flex;
-    gap: var(--rhythm-1_5);
+    gap: var(--rhythm-1);
   }
   .header-actions {
     align-items: center;
     display: flex;
     flex: 0 auto;
-    gap: var(--rhythm-1_5);
+    gap: var(--rhythm-1);
     justify-content: flex-end;
   }
   .header-title {
@@ -66,8 +66,14 @@
 }
 
 @media (min-width: 648px) {
-  .sw-tile-header.expanded {
-    gap: var(--rhythm-2);
+  .sw-tile-header {
+    .expanded {
+      gap: var(--rhythm-2);
+    }
+    .header-title,
+    .header-actions {
+      gap: var(--rhythm-1_5);
+    }
   }
 }
 
