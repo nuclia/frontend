@@ -416,7 +416,7 @@
 	"onboarding.dataset.delete_successful": "S'ha suprimit el conjunt de dades de mostra",
 	"onboarding.dataset.import": "Importa dades",
 	"onboarding.dataset.import_failed": "La importació del conjunt de dades de mostra ha fallat",
-	"onboarding.dataset.importing_description": "Això pot trigar uns segons... Gairebé allà! 🙃",
+	"onboarding.dataset.importing_description": "Això hauria de ser ràpid, però pot trigar fins a 1 o 2 minuts... Gairebé allà! 🙃",
 	"onboarding.dataset.importing_title": "Importació del conjunt de dades",
 	"onboarding.dataset.option1": "Juga amb un conjunt de dades de mostra a l'instant...",
 	"onboarding.dataset.option1.description": "La manera més ràpida de començar i explorar com funciona Nuclia és importar un conjunt de dades de mostra. Podreu suprimir-lo fàcilment en qualsevol moment.",
