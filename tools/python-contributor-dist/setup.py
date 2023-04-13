@@ -16,5 +16,4 @@ setup(
     packages=["nucliadb_contributor_assets"],
     zip_safe=True,
     include_package_data=True,
-    package_data={"nucliadb_contributor_assets": ["*", "**/*"]},
 )
