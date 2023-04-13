@@ -435,7 +435,7 @@
 	"onboarding.dataset.delete_successful": "Sample dataset deleted",
 	"onboarding.dataset.import": "Import data",
 	"onboarding.dataset.import_failed": "Sample dataset import failed",
-	"onboarding.dataset.importing_description": "This can take a few seconds… Almost there! 🙃",
+	"onboarding.dataset.importing_description": "This should be quick but can take up to 1 or 2 minutes… Almost there! 🙃",
 	"onboarding.dataset.importing_title": "Importing dataset",
 	"onboarding.dataset.option1": "Play with a sample dataset instantly…",
 	"onboarding.dataset.option1.description": "The fastest way to get started and explore how Nuclia works is to import a sample dataset. You'll be able to easily delete it at any time.",

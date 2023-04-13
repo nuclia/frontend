@@ -416,7 +416,7 @@
 	"onboarding.dataset.delete_successful": "Conjunto de datos de muestra eliminado",
 	"onboarding.dataset.import": "Datos de importacion",
 	"onboarding.dataset.import_failed": "La importación del conjunto de datos de muestra falló",
-	"onboarding.dataset.importing_description": "Esto puede tardar unos segundos... ¡Ya casi llegamos! 🙃",
+	"onboarding.dataset.importing_description": "Esto debería ser rápido, pero puede tomar hasta 1 o 2 minutos... ¡Ya falta poco! 🙃",
 	"onboarding.dataset.importing_title": "Importando conjunto de datos",
 	"onboarding.dataset.option1": "Juega con un conjunto de datos de muestra al instante...",
 	"onboarding.dataset.option1.description": "La forma más rápida de comenzar y explorar cómo funciona Nuclia es importar un conjunto de datos de muestra. Podrás eliminarlo fácilmente en cualquier momento.",
