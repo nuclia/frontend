@@ -1,19 +1,5 @@
 import type { Classification } from '@nuclia/core';
-import { getFilterFromLabel } from '@nuclia/core';
-import { isViewerOpen } from '../../core/stores/modal.store';
-import { typeAhead } from '../../core/stores/suggestions.store';
-import { searchFilters, searchQuery, triggerSearch } from '../../core/stores/search.store';
-
-export function searchBy(label: Classification, resetSearch = false) {
-  isViewerOpen.set(false);
-  const labelFilter = getFilterFromLabel(label);
-  searchFilters.set([labelFilter]);
-  if (resetSearch) {
-    typeAhead.set('');
-    searchQuery.set('');
-  }
-  triggerSearch.next();
-}
+import { LabelSetKind } from '@nuclia/core';
 
 let target;
 export function getParentLiRect(event: any): DOMRect | null {
@@ -25,4 +11,12 @@ export function getParentLiRect(event: any): DOMRect | null {
   } else {
     return null;
   }
+}
+
+export interface LabelFilter {
+  classification: Classification;
+  kind: LabelSetKind;
+}
+export function isTitleOnly(query: string, labelFilters: LabelFilter[]): boolean {
+  return !query && labelFilters.every((labelFilter) => labelFilter.kind === LabelSetKind.RESOURCES);
 }

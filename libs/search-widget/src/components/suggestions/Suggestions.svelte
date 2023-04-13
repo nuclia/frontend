@@ -80,7 +80,7 @@
               <Label
                 {label}
                 clickable
-                on:click={() => addLabelFilter(label)} />
+                on:click={() => addLabelFilter(label, [])} />
             </li>
           {/each}
         </ul>

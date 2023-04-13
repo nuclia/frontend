@@ -130,7 +130,7 @@
   const selectLabel = (label) => {
     showFilterSubmenu = false;
     if (selectedLabelSet) {
-      addLabelFilter({ labelset: selectedLabelSet.id, label: label.title });
+      addLabelFilter({ labelset: selectedLabelSet.id, label: label.title }, selectedLabelSet.kind);
       selectedLabelSet = undefined;
     }
   };

@@ -1,6 +1,6 @@
 import { getAnswer, getLabelSets, getResourceField, predict, suggest } from '../api';
 import { labelSets } from './labels.store';
-import { suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
+import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
   combineLatest,
   debounceTime,
@@ -18,16 +18,17 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { NO_RESULTS } from '../models';
+import { NO_SUGGESTION_RESULTS } from '../models';
 import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import type { Chat, Classification, Search } from '@nuclia/core';
+import type { Chat, Classification, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
-import { isEmptySearchQuery, searchFilters, searchQuery, triggerSearch } from './search.store';
+import { isEmptySearchQuery, labelFilters, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { currentAnswer, currentQuestion, chat, lastSpeakableFullAnswer, isSpeechOn } from './answers.store';
+import { chat, currentAnswer, currentQuestion, isSpeechOn, lastSpeakableFullAnswer } from './answers.store';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
+import { isTitleOnly } from '../../common/label/label.utils';
 
 const subscriptions: Subscription[] = [];
 
@@ -60,16 +61,14 @@ export function activateTypeAheadSuggestions() {
       switchMap((query) => {
         if (!query || query.length <= 2) {
           return of({
-            results: NO_RESULTS,
-          });
+            results: NO_SUGGESTION_RESULTS,
+          } as Suggestions);
         }
-        const requests: [Observable<Search.Suggestions>, Observable<Classification[]>] = widgetFeatures.getValue()
-          ?.suggestLabels
-          ? [suggest(query), predict(query)]
-          : [suggest(query), of([])];
+        const requests: [Observable<Search.Suggestions | IErrorResponse>, Observable<Classification[]>] =
+          widgetFeatures.getValue()?.suggestLabels ? [suggest(query), predict(query)] : [suggest(query), of([])];
         return forkJoin(requests).pipe(
           map(([results, predictions]) => ({
-            results,
+            results: results.type !== 'error' ? results : NO_SUGGESTION_RESULTS,
             labels: predictions,
           })),
         );
@@ -82,6 +81,7 @@ export function activateTypeAheadSuggestions() {
 
 const queryKey = formatQueryKey('query');
 const filterKey = formatQueryKey('filter');
+const titleOnlyKey = formatQueryKey('titleOnly');
 const previewKey = formatQueryKey('preview');
 
 /**
@@ -157,13 +157,15 @@ export function activatePermalinks() {
       .pipe(
         switchMap(() => isEmptySearchQuery.pipe(take(1))),
         filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() => combineLatest([searchQuery, searchFilters]).pipe(take(1))),
+        switchMap(() => combineLatest([searchQuery, searchFilters, labelFilters]).pipe(take(1))),
       )
-      .subscribe(([query, filters]) => {
+      .subscribe(([query, filters, labelFilters]) => {
         const urlParams = new URLSearchParams(window.location.search);
         urlParams.set(queryKey, query);
         urlParams.delete(filterKey);
+        urlParams.delete(titleOnlyKey);
         filters.forEach((filter) => urlParams.append(filterKey, filter));
+        urlParams.append(titleOnlyKey, `${isTitleOnly(query, labelFilters)}`);
         updateQueryParams(urlParams);
       }),
     // Remove search parameters from the URL when search results are reset
@@ -182,6 +184,7 @@ export function activatePermalinks() {
       const urlParams = new URLSearchParams(window.location.search);
       urlParams.delete(queryKey);
       urlParams.delete(filterKey);
+      urlParams.delete(titleOnlyKey);
       updateQueryParams(urlParams);
     }),
     // Add current field id in the URL when preview is open
@@ -219,10 +222,12 @@ function initStoreFromUrlParams() {
   const urlParams = new URLSearchParams(window.location.search);
   // Search store
   const query = urlParams.get(queryKey);
+  const titleOnly = urlParams.get(titleOnlyKey) === 'true';
   const filters = urlParams.getAll(filterKey);
+
   if (query || filters.length > 0) {
     searchQuery.set(query || '');
-    searchFilters.set(filters);
+    searchFilters.set({ filters, titleOnly });
     typeAhead.set(query || '');
     triggerSearch.next();
     if (widgetMode.value === 'popup') {
