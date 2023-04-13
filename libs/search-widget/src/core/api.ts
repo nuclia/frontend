@@ -64,9 +64,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  if (!query) {
-    options.inTitleOnly = true;
-  }
+
   return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, options).pipe(
     filter((res) => {
       if (res.type === 'error') {

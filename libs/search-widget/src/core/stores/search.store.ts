@@ -5,17 +5,24 @@ import {
   FIELD_TYPE,
   getDataKeyFromFieldType,
   getFilterFromLabel,
+  getLabelFromFilter,
   IErrorResponse,
+  LabelSetKind,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
 import { Subject } from 'rxjs';
+import type { LabelFilter } from '../../common/label/label.utils';
+
+interface SearchFilters {
+  labels?: LabelFilter[];
+}
 
 // TODO: once old widget will be removed, we should remove displayedResource from the store
 interface SearchState {
   query: string;
-  filters: string[];
+  filters: SearchFilters;
   options: SearchOptions;
   results: Search.FindResults;
   error?: IErrorResponse;
@@ -25,7 +32,7 @@ interface SearchState {
 
 export const searchState = new SvelteState<SearchState>({
   query: '',
-  filters: [],
+  filters: {},
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   results: NO_RESULTS,
   displayedResource: null,
@@ -74,9 +81,40 @@ export const searchOptions = searchState.writer<SearchOptions>(
   }),
 );
 
-export const searchFilters = searchState.writer<string[]>(
-  (state) => state.filters,
-  (state, filters) => ({ ...state, filters }),
+export const searchFilters = searchState.writer<string[], { filters: string[]; titleOnly: boolean }>(
+  (state) => (state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
+  (state, data) => {
+    const filters: SearchFilters = {};
+    data.filters.forEach((filter) => {
+      const spreadFilter = filter.split('/').filter((val) => !!val);
+      if (spreadFilter[0] === 'l') {
+        const labelFilter = {
+          classification: getLabelFromFilter(filter),
+          kind: data.titleOnly ? LabelSetKind.RESOURCES : LabelSetKind.PARAGRAPHS,
+        };
+        if (!filters.labels) {
+          filters.labels = [labelFilter];
+        } else {
+          filters.labels.push(labelFilter);
+        }
+      }
+    });
+    return {
+      ...state,
+      filters,
+    };
+  },
+);
+
+export const labelFilters = searchState.writer<LabelFilter[]>(
+  (state) => state.filters.labels || [],
+  (state, labelFilters) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      labels: labelFilters,
+    },
+  }),
 );
 
 export const displayedResource = searchState.writer<DisplayedResource | null>(
@@ -87,7 +125,9 @@ export const displayedResource = searchState.writer<DisplayedResource | null>(
   }),
 );
 
-export const isEmptySearchQuery = searchState.reader<boolean>((state) => !state.query && state.filters.length === 0);
+export const isEmptySearchQuery = searchState.reader<boolean>(
+  (state) => !state.query && (!state.filters.labels || state.filters.labels.length === 0),
+);
 
 export const hasMore = searchState.reader<boolean>((state) => state.results.next_page);
 export const loadMore = searchState.writer<number, void>(
@@ -130,18 +170,26 @@ export const entityRelations = searchState.reader((state) =>
 
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
-export const addLabelFilter = (label: Classification) => {
-  const filter = getFilterFromLabel(label);
-  const currentFilters = searchFilters.getValue();
+export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => {
+  const kind =
+    kinds.length === 1 || (kinds.length > 1 && !kinds.includes(LabelSetKind.RESOURCES))
+      ? kinds[0]
+      : LabelSetKind.RESOURCES;
+  const filter = { classification: label, kind };
+  const currentFilters = labelFilters.getValue();
+
   if (!currentFilters.includes(filter)) {
-    searchFilters.set(currentFilters.concat([filter]));
+    labelFilters.set(currentFilters.concat([filter]));
   }
 };
 
 export const removeLabelFilter = (label: Classification) => {
-  const filter = getFilterFromLabel(label);
-  const currentFilters = searchFilters.getValue();
-  searchFilters.set(currentFilters.filter((f) => f !== filter));
+  const currentFilters = labelFilters.getValue();
+  labelFilters.set(
+    currentFilters.filter(
+      (filter) => filter.classification.label !== label.label && filter.classification.labelset !== label.labelset,
+    ),
+  );
 };
 
 export function getFirstResourceField(resource: IResource): ResourceField | undefined {
