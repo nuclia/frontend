@@ -29,7 +29,6 @@ interface DynamicConnector {
 export class DynamicConnectorWrapper implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
-  resumable = true;
   connector: DynamicConnector;
 
   constructor(connector: DynamicConnector) {

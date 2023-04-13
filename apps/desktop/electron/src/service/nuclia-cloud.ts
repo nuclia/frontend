@@ -1,4 +1,11 @@
-import { INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '../../../../../libs/sdk-core/src';
+import {
+  INuclia,
+  Nuclia,
+  NucliaOptions,
+  Resource,
+  UploadResponse,
+  WritableKnowledgeBox,
+} from '../../../../../libs/sdk-core/src';
 import { catchError, delay, map, Observable, of, switchMap } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
@@ -49,28 +56,32 @@ export class NucliaCloud {
               .pipe(
                 catchError((error: any) => {
                   console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
-                  return resource.delete();
+                  return of(false);
                 }),
                 switchMap((res) => {
-                  if (res && res.completed) {
+                  if (res && (res as UploadResponse).completed) {
                     return of(true);
                   } else {
-                    return resource.delete().pipe(map(() => false));
+                    return this.deleteResource(slug, resource);
                   }
                 }),
               );
           } catch (error) {
-            console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
-            try {
-              return resource.delete().pipe(map(() => false));
-            } catch (error) {
-              console.error(`Problem deleting ${slug}, status ${error}`);
-              return of(false);
-            }
+            console.error(`Error uploading ${filename} to ${slug}, status ${error}`);
+            return this.deleteResource(slug, resource);
           }
         }),
       );
     } else {
+      return of(false);
+    }
+  }
+
+  private deleteResource(slug: string, resource: Resource): Observable<false> {
+    try {
+      return resource.delete().pipe(map(() => false));
+    } catch (error) {
+      console.error(`Problem deleting ${slug}, status ${error}`);
       return of(false);
     }
   }

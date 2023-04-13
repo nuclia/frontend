@@ -1,7 +1,7 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
 import { Source } from './models';
-import { getSource, getSourceFiles, getSourceFolders, getSources, setSources } from './sources';
+import { getSource, getSourceFiles, getSourceFolders, getSourceFromBody, getSources, setSources } from './sources';
 
 export const router = express.Router();
 
@@ -27,9 +27,9 @@ router.post('/source', (req, res) => {
   const sources = getSources();
   const id = Object.keys(req.body)[0];
   if (sources[id]) {
-    sources[id] = { ...sources[id], ...req.body[id] } as Source;
+    sources[id] = { ...sources[id], ...getSourceFromBody(req.body[id], sources[id].items || []) };
   } else {
-    sources[id] = req.body[id] as Source;
+    sources[id] = getSourceFromBody(req.body[id], []);
   }
   setSources(sources);
   res.send('{ "success": true }');
@@ -37,7 +37,9 @@ router.post('/source', (req, res) => {
 
 router.patch('/source/:id', (req, res) => {
   const sources = getSources();
-  const updatedSource = { ...sources[req.params.id], ...req.body };
+  const existing = sources[req.params.id];
+  console.log('BODY', req.body);
+  const updatedSource = { ...existing, ...getSourceFromBody(req.body, existing.items || []) };
   setSources({ ...sources, [req.params.id]: updatedSource });
   res.send('{ "success": true }');
 });

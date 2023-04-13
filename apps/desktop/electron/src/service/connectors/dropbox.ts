@@ -6,7 +6,7 @@ import {
   SearchResults,
   ConnectorParameters,
 } from '../models';
-import { from, map, Observable, of } from 'rxjs';
+import { forkJoin, from, map, Observable, of, tap } from 'rxjs';
 
 // TODO: use the default fetch once upgraded to node 18
 // import { fetch } from '../utils';
@@ -35,13 +35,23 @@ class DropboxImpl implements ISourceConnector {
     return this._getFiles(query);
   }
 
-  getLastModified(since: string): Observable<SyncItem[]> {
-    return this.getFiles().pipe(
-      map((results) => results.items.filter((item) => item.modified && item.modified > since)),
+  getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]> {
+    return forkJoin((folders || []).map((folder) => this._getFiles('', false, folder.uuid))).pipe(
+      map((results) =>
+        results.reduce(
+          (acc, result) => acc.concat(result.items.filter((item) => item.modified && item.modified > since)),
+          [] as SyncItem[],
+        ),
+      ),
     );
   }
 
-  private _getFiles(query?: string, loadFolders = false, nextPage?: string | number): Observable<SearchResults> {
+  private _getFiles(
+    query?: string,
+    loadFolders = false,
+    path = '',
+    nextPage?: string | number,
+  ): Observable<SearchResults> {
     const success = (res: any) => {
       if (res.status === 401) {
         throw new Error('Unauthorized');
@@ -68,7 +78,7 @@ class DropboxImpl implements ISourceConnector {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(
-            nextPage ? { cursor: nextPage } : { path: '', recursive: true, limit: 100, include_media_info: true },
+            nextPage ? { cursor: nextPage } : { path, recursive: true, limit: 100, include_media_info: true },
           ),
         }).then(success, failure);
     return from(request).pipe(
@@ -77,21 +87,22 @@ class DropboxImpl implements ISourceConnector {
           (query
             ? result.matches?.filter((item: any) => this.filterResults(item, loadFolders)).map(this.mapResults)
             : result.entries?.filter((item: any) => this.filterFiles(item, loadFolders)).map(this.mapFiles)) || [],
-        nextPage: result.has_more ? this._getFiles(query, loadFolders, result.cursor) : undefined,
+        nextPage: result.has_more ? this._getFiles(query, loadFolders, path, result.cursor) : undefined,
       })),
     );
   }
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   private mapFiles(raw: any): SyncItem {
+    const isFolder = raw['.tag'] === 'folder';
     return {
       title: raw.name || '',
-      originalId: raw.id || '',
+      originalId: (isFolder ? raw.path_lower : raw.id) || '',
       metadata: {},
       status: FileStatus.PENDING,
       uuid: raw.uuid || '',
       modified: raw.client_modified,
-      isFolder: raw['.tag'] === 'folder',
+      isFolder,
     };
   }
 

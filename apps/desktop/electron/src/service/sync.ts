@@ -28,7 +28,7 @@ function syncFiles() {
             return arr.length === 0
               ? of(undefined)
               : of(...arr).pipe(
-                  tap(([id, source]) => console.log(`Syncing ${source.items.length} items from ${id}`)),
+                  tap(([id, source]) => console.log(`Syncing ${source.items?.length} items from ${id}`)),
                   switchMap(([id, source]) => {
                     if (!source.kb || !source.items || source.items.length === 0) {
                       return of(undefined);
@@ -37,7 +37,6 @@ function syncFiles() {
                       updateSource(id, { ...source, lastBatch: source.items.length });
                     }
                     const batch = source.items.slice(0, 10);
-                    console.log('batch', batch);
                     return of(...batch).pipe(
                       concatMap((item) =>
                         syncFile(id, source, item).pipe(
@@ -71,7 +70,7 @@ function syncFiles() {
 
 function collectLastModified() {
   let running = false;
-  setInterval(() => {
+  function _collectLastModified() {
     if (!running) {
       running = true;
       of(getSources())
@@ -82,10 +81,11 @@ function collectLastModified() {
               ? of(undefined)
               : of(...arr).pipe(
                   switchMap(([id, source]) =>
-                    getLastModified(id, source.lastSync).pipe(
+                    getLastModified(id, source.lastSync, source.folders).pipe(
                       tap((results) => {
                         if (results.success) {
                           const existing = source.items || [];
+                          console.log(`Found ${results.results.length} new items from ${id}`);
                           source.items = [...existing, ...results.results];
                           source.lastSync = new Date().toISOString();
                           updateSource(id, source);
@@ -101,5 +101,7 @@ function collectLastModified() {
         )
         .subscribe(() => (running = false));
     }
-  }, 60 * 60 * 1000);
+  }
+  _collectLastModified();
+  setInterval(() => _collectLastModified(), 60 * 60 * 1000);
 }

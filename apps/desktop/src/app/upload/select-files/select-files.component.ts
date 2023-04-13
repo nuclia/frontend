@@ -40,16 +40,20 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   nextPage?: Observable<SearchResults>;
   loading = false;
   isSelectingAll = false;
-  currentSource = this.sync.sourcesCache.pipe(map((sources) => sources[localStorage.getItem(SOURCE_NAME_KEY) || '']));
+  currentSource = this.sync.currentSource;
 
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     filter(() => !!this.source),
     tap(() => {
       this.loading = true;
     }),
-    switchMap(() =>
+    switchMap(() => this.currentSource),
+    switchMap((source) =>
       concat(
-        this.sync.getFiles(localStorage.getItem(SOURCE_NAME_KEY) || '', this.query).pipe(
+        (source.permanentSync
+          ? this.sync.getFolders(localStorage.getItem(SOURCE_NAME_KEY) || '', this.query)
+          : this.sync.getFiles(localStorage.getItem(SOURCE_NAME_KEY) || '', this.query)
+        ).pipe(
           catchError((error) => {
             if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
               localStorage.setItem(CONNECTOR_ID_KEY, this.sourceId || '');

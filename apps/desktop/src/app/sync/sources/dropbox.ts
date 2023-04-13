@@ -14,7 +14,6 @@ const TOKEN = 'DROPBOX_TOKEN';
 class DropboxImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = false;
-  resumable = true;
 
   getParameters(): Observable<Field[]> {
     return of([

@@ -30,12 +30,12 @@ export class HistoryComponent {
         date: sync.date.slice(0, 10),
         from: this.sync.sources[sync.source]?.definition.title,
         to: this.sync.destinations[sync.destination.id]?.definition.title,
-        total: sync.files.length,
+        total: sync.items.length,
         kbSlug: sync.destination.params.kb,
-        progress: (100 * sync.files.filter((f) => f.status === FileStatus.UPLOADED).length) / sync.files.length,
+        progress: (100 * sync.items.filter((f) => f.status === FileStatus.UPLOADED).length) / sync.items.length,
         started: sync.started,
         completed: sync.completed,
-        errors: sync.files
+        errors: sync.items
           .filter((f) => f.status === FileStatus.ERROR)
           .map((f) => f.error || 'Unknown error')
           .join(' – '),

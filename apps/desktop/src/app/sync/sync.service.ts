@@ -30,6 +30,7 @@ import {
   SourceConnectorDefinition,
   SyncItem,
   Source,
+  SOURCE_NAME_KEY,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { injectScript, SDKService, UserService } from '@flaps/core';
@@ -55,8 +56,7 @@ interface Sync {
     id: string;
     params: ConnectorParameters;
   };
-  files: SyncItem[];
-  fileUUIDs: string[];
+  items: SyncItem[];
   started?: boolean;
   completed?: boolean;
   resumable?: boolean;
@@ -100,6 +100,7 @@ export class SyncService {
   showFirstStep = this._showFirstStep.asObservable();
   private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
   sourcesCache = this._sourcesCache.asObservable();
+  currentSource = this.sourcesCache.pipe(map((sources) => sources[localStorage.getItem(SOURCE_NAME_KEY) || '']));
 
   constructor(private sdk: SDKService, private user: UserService, private http: HttpClient) {
     const account = this.getAccountId();
@@ -175,36 +176,40 @@ export class SyncService {
   }
 
   addSync(sync: Sync) {
-    return (
-      sync.destination.id === 'nucliacloud'
-        ? forkJoin([this.getSourceData(sync.source), this.getKb(sync.destination.params.kb)]).pipe(
-            switchMap(([source, kb]) => {
-              if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
-                return of(source.kb);
-              } else {
-                return this.getNucliaKey(kb).pipe(
-                  map(
-                    (data) =>
-                      ({
-                        zone: this.sdk.nuclia.options.zone,
-                        backend: this.sdk.nuclia.options.backend,
-                        knowledgeBox: data.kbid,
-                        apiKey: data.token,
-                      } as NucliaOptions),
-                  ),
-                );
-              }
-            }),
-          )
-        : of({})
-    ).pipe(
-      switchMap((options) =>
-        this.http.patch<void>(`${this._syncServer.getValue()}/source/${sync.source}`, {
-          kb: options,
-          items: sync.files,
-        }),
-      ),
-    );
+    return this.getSourceData(sync.source)
+      .pipe(
+        switchMap((source) =>
+          sync.destination.id === 'nucliacloud'
+            ? this.getKb(sync.destination.params.kb).pipe(
+                switchMap((kb) => {
+                  if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+                    return of(source);
+                  } else {
+                    return this.getNucliaKey(kb).pipe(
+                      map((data) => ({
+                        ...source,
+                        options: {
+                          zone: this.sdk.nuclia.options.zone,
+                          backend: this.sdk.nuclia.options.backend,
+                          knowledgeBox: data.kbid,
+                          apiKey: data.token,
+                        } as NucliaOptions,
+                      })),
+                    );
+                  }
+                }),
+              )
+            : of(source),
+        ),
+      )
+      .pipe(
+        switchMap((source) =>
+          this.http.patch<void>(`${this._syncServer.getValue()}/source/${sync.source}`, {
+            ...source,
+            items: sync.items,
+          }),
+        ),
+      );
   }
 
   clearCompleted() {

@@ -49,22 +49,33 @@ export const syncFile = (sourceId: string, source: Source, item: SyncItem) => {
     switchMap((blob) =>
       blob
         ? from(blob.arrayBuffer()).pipe(
-            switchMap((arrayBuffer) => nucliaConnector.upload(item.originalId, item.title, { buffer: arrayBuffer })),
+            switchMap((arrayBuffer) => {
+              try {
+                return nucliaConnector.upload(item.originalId, item.title, { buffer: arrayBuffer });
+              } catch (err) {
+                return of(false);
+              }
+            }),
           )
         : of(false),
     ),
-    tap((success) => console.log(`Uploaded ${item.originalId} to ${source.kb} with success: ${success}`)),
+    tap((success) =>
+      success
+        ? console.log(`Uploaded ${item.originalId} with success`)
+        : console.log(`Failed to upload ${item.originalId}`),
+    ),
   );
 };
 
 export function getLastModified(
   sourceId: string,
   since?: string,
+  folders?: SyncItem[],
 ): Observable<{ success: boolean; results: SyncItem[]; error?: string }> {
   const connector = getSourceInstance(sourceId);
   try {
     return connector
-      .getLastModified(since || '2000-01-01T00:00:00.000Z')
+      .getLastModified(since || '2000-01-01T00:00:00.000Z', folders)
       .pipe(map((results) => ({ success: true, results })));
   } catch (err) {
     return of({ success: false, results: [], error: `${err}` });
@@ -99,6 +110,15 @@ function getDataPath(): string {
   }
 }
 
+export function getSourceFromBody(data: any, existingFiles: SyncItem[]): Source {
+  const source = data as unknown as Source;
+  if (source.permanentSync) {
+    source.folders = [...(source.items || [])];
+    source.items = [...existingFiles];
+  }
+  return source;
+}
+
 export function readSources() {
   try {
     const data = fs.readFileSync(getDataPath(), 'utf8');
@@ -110,8 +130,6 @@ export function readSources() {
   process.on('exit', exitHandler);
   //catches ctrl+c event
   process.on('SIGINT', exitHandler);
-  //catches uncaught exceptions
-  // process.on('uncaughtException', exitHandler);
 }
 
 function exitHandler() {

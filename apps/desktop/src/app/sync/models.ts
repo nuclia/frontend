@@ -22,7 +22,6 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
 export interface ISourceConnector {
   hasServerSideAuth: boolean;
   isExternal: boolean;
-  resumable: boolean;
   getParameters(): Observable<Field[]>;
   handleParameters?(params: ConnectorParameters): void;
   goToOAuth(reset?: boolean): void;

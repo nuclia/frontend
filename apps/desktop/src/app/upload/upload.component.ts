@@ -92,7 +92,7 @@ export class UploadComponent implements OnInit, OnDestroy {
           .setSourceData(event.name, {
             connectorId: event.connector.id,
             data: event.params || {},
-            permanentSync: event.permanentSync,
+            permanentSync: !!event.permanentSync,
           })
           .pipe(map(() => true))
       : of(true)
@@ -130,9 +130,7 @@ export class UploadComponent implements OnInit, OnDestroy {
           id: event.connector.id,
           params: event.params,
         },
-        files: this.selection.selected,
-        resumable: !!this.source?.resumable,
-        fileUUIDs: [],
+        items: this.selection.selected,
       })
       .subscribe();
     this.router.navigate(['/history'], { queryParams: { active: 'true' } });
