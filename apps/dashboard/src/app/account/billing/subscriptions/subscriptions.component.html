@@ -148,7 +148,7 @@
     <div class="body-s">
       {{ 'billing.cost_per_usage.description' | translate }}
     </div>
-    <div>
+    <div class="calculator">
       <pa-button
         *ngIf="isCalculatorEnabled | async"
         (click)="openCalculator()"

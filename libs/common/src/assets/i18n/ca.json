@@ -160,6 +160,8 @@
 	"billing.subscription.show-features": "Veure totes les característiques",
 	"billing.subscription.title": "Nivells de subscripció",
 	"billing.success": "Subscripció satisfactòria",
+	"billing.tier_select.help": "Cada nivell té quotes diferents. Selecciona un ivell per obtenir informació més acurada dels costos de consum.",
+	"billing.tier_select.title": "Nivell de subscripció",
 	"billing.trial.title": "30 dies de prova",
 	"billing.upgrade": "Actualitzar",
 	"billing.vat_id": "VAT ID",

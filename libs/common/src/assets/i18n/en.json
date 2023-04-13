@@ -173,6 +173,8 @@
 	"billing.subscription.show-features": "See all features",
 	"billing.subscription.title": "Subscription tiers",
 	"billing.success": "Successful subscription",
+	"billing.tier_select.help": "Each tier has different quotas. Select a tier to get a more accurate understanding of the consumption costs.",
+	"billing.tier_select.title": "Tier of subscription",
 	"billing.trial.title": "30 days trial",
 	"billing.upgrade": "Upgrade",
 	"billing.vat_id": "VAT ID",

@@ -15,6 +15,12 @@ form {
   gap: rhythm(5);
 }
 
+pa-radio-group {
+  display: flex !important;
+  gap: rhythm(4);
+  margin-top: rhythm(1);
+}
+
 .section {
   display: flex;
   flex-direction: column;

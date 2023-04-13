@@ -43,7 +43,7 @@ export class SubscriptionsComponent {
       this.modalService.openModal(CalculatorComponent, {
         dismissable: true,
         data: {
-          prices: prices['stash-developer'],
+          prices,
           currency: this.currency,
         },
       });
