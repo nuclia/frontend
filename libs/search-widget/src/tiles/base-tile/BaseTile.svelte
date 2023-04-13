@@ -3,7 +3,7 @@
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import type { ResourceField, Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import type { MediaWidgetParagraph, WidgetParagraph } from '../../core/models';
   import { PreviewKind } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -25,23 +25,22 @@
   import { Duration, isMobileViewport } from '../../common/utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import {
-    getExternalUrl,
+    getNavigationUrl,
     goToUrl,
     mapParagraph2WidgetParagraph,
     mapSmartParagraph2WidgetParagraph,
   } from '../../core/utils';
-  import { navigateToLink } from '../../core/stores/widget.store';
+  import { navigateToFile, navigateToLink } from '../../core/stores/widget.store';
   import {
     fieldFullId,
     fieldSummary,
     getMediaTranscripts,
     isPreviewing,
-    resourceField,
     resourceTitle,
     viewerState,
   } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
-  import { searchInResource } from '../../core/api';
+  import { getResourceField, searchInResource } from '../../core/api';
   import SearchResultNavigator from './header/SearchResultNavigator.svelte';
   import { _ } from '../../core/i18n';
 
@@ -150,39 +149,32 @@
   });
 
   const onClickParagraph = (paragraph: WidgetParagraph, index: number) => {
-    if (result.field) {
-      fieldFullId.set({
-        field_id: result.field.field_id,
-        field_type: result.field.field_type,
-        resourceId: result.id,
-      });
-    }
-    resourceTitle.set(result.title || '');
-
-    navigateToLink
+    if (!result.field) return;
+    const fullId = {
+      field_id: result.field.field_id,
+      field_type: result.field.field_type,
+      resourceId: result.id,
+    };
+    combineLatest([navigateToFile, navigateToLink])
       .pipe(
         take(1),
-        mergeMap((navigateToLink: boolean) =>
+        mergeMap(([navigateToFile, navigateToLink]) =>
           iif(
-            () => navigateToLink,
-            resourceField.pipe(
-              filter((data) => !!data),
-              take(1),
+            () => navigateToFile || navigateToLink,
+            getResourceField(fullId, true).pipe(
+              mergeMap((field) => getNavigationUrl(navigateToFile, navigateToLink, result, field)),
             ),
             of(false),
           ),
         ),
       )
-      .subscribe((data) => {
-        if (data === false) {
-          openParagraph(paragraph, index);
+      .subscribe((url) => {
+        if (url) {
+          goToUrl(url as string, paragraph?.text);
         } else {
-          const url = getExternalUrl(result, data as ResourceField);
-          if (url) {
-            goToUrl(url, paragraph?.text);
-          } else {
-            openParagraph(paragraph, index);
-          }
+          fieldFullId.set(fullId);
+          resourceTitle.set(result.title || '');
+          openParagraph(paragraph, index);
         }
       });
   };

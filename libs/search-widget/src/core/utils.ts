@@ -1,6 +1,6 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { from, map, of } from 'rxjs';
 import {
   CloudLink,
   FIELD_TYPE,
@@ -18,6 +18,7 @@ import {
   sliceUnicode,
 } from '@nuclia/core';
 import type { PreviewKind, WidgetParagraph } from './models';
+import { getFileUrls } from './api';
 
 let CDN = 'https://cdn.nuclia.cloud/';
 export const setCDN = (cdn: string) => (CDN = cdn);
@@ -283,6 +284,28 @@ export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
   return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start || 0}-${
     paragraph.paragraph.end || 0
   }`;
+};
+
+export const getNavigationUrl = (
+  navigateToFile: boolean,
+  navigateToLink: boolean,
+  resource: IResource,
+  field: ResourceField,
+) => {
+  const url = getExternalUrl(resource, field);
+  const isFile = field.field_type === FIELD_TYPE.file;
+  if (url && navigateToLink && !isYoutubeUrl(url)) {
+    return of(url);
+  } else if (isFile && navigateToFile) {
+    if (url) {
+      return of(url);
+    } else {
+      const fileUrl = (field as FileFieldData)?.value?.file?.uri;
+      return fileUrl ? getFileUrls([fileUrl]).pipe(map((urls) => urls[0])) : of(undefined);
+    }
+  } else {
+    return of(undefined);
+  }
 };
 
 export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
