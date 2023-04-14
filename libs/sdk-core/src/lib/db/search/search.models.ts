@@ -177,7 +177,9 @@ export namespace Search {
   }
 
   export interface FacetsResult {
-    [key: string]: any;
+    [key: string]: {
+      [value: string]: number;
+    };
   }
 
   export interface Paragraph {

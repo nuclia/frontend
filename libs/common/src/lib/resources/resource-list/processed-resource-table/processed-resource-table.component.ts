@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   inject,
@@ -11,13 +12,19 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
-import { map, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Observable, skip, Subject } from 'rxjs';
-import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
-import { Classification, LabelSets, Resource } from '@nuclia/core';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, skip, Subject, take, tap } from 'rxjs';
+import { HeaderCell, OptionModel } from '@guillotinaweb/pastanaga-angular';
+import { Classification, LabelSets, Resource, Search } from '@nuclia/core';
 import { LabelsService } from '@flaps/common';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
+import mime from 'mime';
+
+interface Filters {
+  classification: OptionModel[];
+  mainTypes: OptionModel[];
+}
 
 @Component({
   selector: 'stf-processed-resource-table',
@@ -38,6 +45,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   @Output() addLabels: EventEmitter<{ resources: Resource[]; labels: Classification[] }> = new EventEmitter();
   @Output() removeLabel: EventEmitter<{ resource: Resource; labelToRemove: ColoredLabel }> = new EventEmitter();
+  @Output() filter: EventEmitter<string[]> = new EventEmitter();
 
   private _labelSets: LabelSets = {};
 
@@ -103,11 +111,18 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     }),
   );
 
+  hasFilters = false;
+  isFiltering = false;
+  filterOptions: Filters = {
+    classification: [],
+    mainTypes: [],
+  };
+
   unsubscribeAll = new Subject<void>();
 
   private localStorage = inject(LOCAL_STORAGE);
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
     super();
     const pref = this.localStorage.getItem(RESOURCE_LIST_PREFERENCES);
     if (pref) {
@@ -131,6 +146,8 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
         .filter((value) => !!value);
       this.localStorage.setItem(RESOURCE_LIST_PREFERENCES, JSON.stringify(this.userPreferences));
     });
+
+    this.loadFilters();
   }
 
   ngOnDestroy() {
@@ -170,5 +187,125 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       column.visible = !column.visible;
       this.columnVisibilityUpdate.next(!column.visible);
     }
+  }
+
+  toggleFilter() {
+    const filters = this.selectedFilters;
+    this.filter.emit(filters);
+    this.isFiltering = filters.length > 0;
+  }
+
+  clearFilters() {
+    this.filter.emit([]);
+    this.isFiltering = false;
+    this.filterOptions.classification.forEach((option) => (option.selected = false));
+    this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
+  }
+
+  get selectedFilters(): string[] {
+    return this.getSelectionFor('classification').concat(this.getSelectionFor('mainTypes'));
+  }
+
+  private getSelectionFor(type: 'classification' | 'mainTypes') {
+    return this.filterOptions[type].filter((option) => option.selected).map((option) => option.value);
+  }
+
+  private loadFilters() {
+    const mimeFacetFamily = '/n/i';
+    const faceted = [mimeFacetFamily].concat(Object.keys(this._labelSets).map((setId) => `/l/${setId}`));
+    let allFacets: Search.FacetsResult;
+    this.sdk.currentKb
+      .pipe(
+        take(1),
+        switchMap((kb) =>
+          kb.catalog('', { faceted }).pipe(
+            switchMap((results) => {
+              if (results.type === 'error') {
+                return of(results);
+              }
+              const facetsResult = results.fulltext?.facets || {};
+              // Store all facets but mimetype ones
+              allFacets = Object.entries(facetsResult).reduce((facets, [key, value]) => {
+                if (key !== mimeFacetFamily) {
+                  facets[key] = value;
+                }
+                return facets;
+              }, {} as Search.FacetsResult);
+              const mimeFaceted = Object.keys(facetsResult[mimeFacetFamily]);
+              return kb.catalog('', { faceted: mimeFaceted });
+            }),
+          ),
+        ),
+        tap((results) => {
+          if (results.type !== 'error') {
+            allFacets = { ...allFacets, ...(results.fulltext?.facets || {}) };
+          }
+        }),
+      )
+      .subscribe(() => this.formatFiltersFromFacets(allFacets));
+  }
+
+  private formatFiltersFromFacets(allFacets: Search.FacetsResult) {
+    // Group facets by types
+    const facetGroups: {
+      classification: { key: string; count: number }[];
+      mainTypes: { key: string; count: number }[];
+    } = Object.entries(allFacets).reduce(
+      (groups, [facetId, values]) => {
+        if (facetId.startsWith('/l/')) {
+          Object.entries(values).forEach(([key, count]) => {
+            groups.classification.push({ key, count });
+          });
+        } else if (facetId.startsWith('/n/i/')) {
+          Object.entries(values).forEach(([key, count]) => {
+            groups.mainTypes.push({ key, count });
+          });
+        }
+        return groups;
+      },
+      {
+        classification: [] as { key: string; count: number }[],
+        mainTypes: [] as { key: string; count: number }[],
+      },
+    );
+
+    // Create corresponding filter options
+    const filters: Filters = {
+      classification: [],
+      mainTypes: [],
+    };
+    if (facetGroups.classification.length > 0) {
+      facetGroups.classification.forEach((facet) =>
+        filters.classification.push(this.getOptionFromFacet(facet, facet.key.substring(3))),
+      );
+      filters.classification.sort((a, b) => a.label.localeCompare(b.label));
+    }
+    if (facetGroups.mainTypes.length > 0) {
+      facetGroups.mainTypes.forEach((facet) => {
+        let help: string | undefined = facet.key.substring(5);
+        let label = mime.getExtension(help) || (facet.key.split('/').pop() as string);
+        if (label === 'stf-link') {
+          label = 'link';
+        }
+        if (help.includes('.')) {
+          help = help.split('.').pop();
+        }
+        return filters.mainTypes.push(this.getOptionFromFacet(facet, label, help));
+      });
+      filters.mainTypes.sort((a, b) => a.label.localeCompare(b.label));
+    }
+
+    this.filterOptions = filters;
+    this.hasFilters = filters.classification.length > 0 || filters.mainTypes.length > 0;
+    this.cdr.markForCheck();
+  }
+
+  private getOptionFromFacet(facet: { key: string; count: number }, label: string, help?: string): OptionModel {
+    return new OptionModel({
+      id: facet.key,
+      value: facet.key,
+      label: `${label} (${facet.count})`,
+      help,
+    });
   }
 }

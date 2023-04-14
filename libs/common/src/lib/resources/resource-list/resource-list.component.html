@@ -101,7 +101,7 @@
   <div class="resource-list-content">
     <ng-container *ngIf="currentKb | async">
       <stf-processed-resource-table
-        *ngIf="isMainView && ((data?.length || 0) > 0 || !!query)"
+        *ngIf="isMainView && ((data?.length || 0) > 0 || !!query || !!isFiltering)"
         [data]="data"
         [sorting]="sort"
         [labelSets]="labelSets$ | async"
@@ -114,7 +114,8 @@
         (removeLabel)="removeLabel($event)"
         (reprocessResources)="bulkReprocess($event)"
         (loadMore)="loadMore()"
-        (sort)="sortBy($event)"></stf-processed-resource-table>
+        (sort)="sortBy($event)"
+        (filter)="filter($event)"></stf-processed-resource-table>
 
       <stf-pending-resources-table
         *ngIf="isPendingView && (data?.length || 0) > 0"

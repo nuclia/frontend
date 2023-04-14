@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add `navigateToFile` property to `WidgetFeatures` interface
+- Explicit `FacetsResult` type: replace `any` by the actual object type
 
 # 1.2.1 (2023-04-07)
 
