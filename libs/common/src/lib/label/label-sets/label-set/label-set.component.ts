@@ -109,6 +109,9 @@ export class LabelSetComponent implements OnDestroy {
       kind: this.labelSet.kind[0],
       exclusive: !this.labelSet.multiple,
     });
+    if (!this.addNew) {
+      this.labelSetForm.controls.kind.disable();
+    }
     this.labelOrder = this.getLabelOrder();
     this.hasChanges = false;
     this.cdr.markForCheck();
