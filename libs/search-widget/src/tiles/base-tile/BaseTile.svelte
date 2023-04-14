@@ -312,7 +312,7 @@
       <div
         bind:offsetHeight={viewerHeight}
         class="field-viewer-container"
-        class:full-height={viewerFullHeight || !isMobile}
+        class:full-height={viewerFullHeight}
         style:--summary-height={`${summaryHeight}px`}
         class:loading>
         <slot name="viewer" />
@@ -393,7 +393,6 @@
                     minimized={isMobile && !expanded}
                     stack={expanded}
                     selected={isSame(paragraph, selectedParagraph)}
-                    disabled={expanded && noResultNavigator}
                     on:paragraphHeight={(event) => (paragraphHeights[index] = event.detail)}
                     on:open={() => onClickParagraph(paragraph, index)} />
                 {/each}
