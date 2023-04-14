@@ -304,7 +304,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   loadMore() {
     if (this.hasMore) {
       this.page += 1;
-      this.triggerLoadResources(false);
+      this.getResources(false).subscribe();
     }
   }
 
@@ -313,8 +313,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.triggerLoadResources();
   }
 
-  triggerLoadResources(displayLoader = true) {
-    this.getResources(displayLoader).subscribe();
+  triggerLoadResources() {
+    this.setLoading(true);
+    this._getResources(true).subscribe();
   }
 
   getResources(displayLoader = true): Observable<Search.Results> {
@@ -549,7 +550,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
               this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
             }
           }),
-          switchMap(() => this.getResources()),
+          switchMap(() => this._getResources(true)),
         )
         .subscribe(() => {
           this.bulkAction = {
@@ -671,12 +672,12 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         },
       })
       .pipe(
-        switchMap(() => this.getResources()),
+        switchMap(() => this._getResources(true)),
         catchError(() => {
           this.toaster.error(
             `An error occurred while removing "${labelToRemove.labelset} – ${labelToRemove.label}" label, please try again later.`,
           );
-          return this.getResources();
+          return this._getResources(true);
         }),
       )
       .subscribe();
