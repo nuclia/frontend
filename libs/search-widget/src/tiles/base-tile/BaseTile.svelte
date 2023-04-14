@@ -51,6 +51,7 @@
   export let thumbnailLoaded = false;
   export let loading = false;
   export let noResultNavigator = false;
+  export let viewerFullHeight = false;
 
   const dispatch = createEventDispatcher();
   const unsubscribeAll = new Subject();
@@ -58,6 +59,7 @@
   const findInPlaceholderPrefix = 'tile.find-in-';
 
   let innerWidth = window.innerWidth;
+  let viewerHeight = 0;
 
   let expanded = false;
   let showAllResults = false;
@@ -104,7 +106,7 @@
     });
   }
 
-  let paragraphList: WidgetParagraph[];
+  let paragraphList: WidgetParagraph[] = [];
   const isSearchingInResource = new BehaviorSubject(false);
   const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
     viewerSearchResults,
@@ -112,14 +114,11 @@
   ]).pipe(
     map(([inResourceResults, isInResource]) => {
       // paragraphList is used for next/previous buttons
-      if (isInResource) {
-        return inResourceResults || [];
-      } else {
-        return (
-          result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)) ||
-          ([] as WidgetParagraph[])
-        );
-      }
+      paragraphList = isInResource
+        ? ((inResourceResults || []) as WidgetParagraph[])
+        : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)) ||
+          ([] as WidgetParagraph[]);
+      return paragraphList;
     }),
   );
 
@@ -295,7 +294,8 @@
   class="sw-tile"
   class:expanded
   class:side-panel-expanded={sidePanelExpanded}
-  class:with-all-transcript={withAllTranscript}>
+  class:with-all-transcript={withAllTranscript}
+  style={'--viewer-height:' + viewerHeight + 'px'}>
   <div class="thumbnail-container">
     <div hidden={expanded && !loading}>
       <slot name="thumbnail" />
@@ -310,7 +310,9 @@
           on:openNext={openNext} />
       {/if}
       <div
-        class="field-viewer-container full-height"
+        bind:offsetHeight={viewerHeight}
+        class="field-viewer-container"
+        class:full-height={viewerFullHeight}
         style:--summary-height={`${summaryHeight}px`}
         class:loading>
         <slot name="viewer" />
@@ -348,7 +350,7 @@
       </TileHeader>
 
       <div class:side-panel={expanded}>
-        {#if expanded}
+        {#if expanded && !isMobile}
           <div
             class="side-panel-button"
             on:click={toggleSidePanel}>
@@ -357,22 +359,24 @@
         {/if}
 
         <div class:side-panel-content={expanded}>
-          <div
-            class="find-bar-container"
-            tabindex="0"
-            hidden={!expanded}>
-            <Icon name="search" />
-            <input
-              class="find-input"
-              type="text"
-              autocomplete="off"
-              aria-label={$_(findInPlaceholder)}
-              placeholder={$_(findInPlaceholder)}
-              tabindex="-1"
-              bind:this={findInputElement}
-              bind:value={$viewerSearchQuery}
-              on:change={findInField} />
-          </div>
+          {#if !isMobile}
+            <div
+              class="find-bar-container"
+              tabindex="0"
+              hidden={!expanded}>
+              <Icon name="search" />
+              <input
+                class="find-input"
+                type="text"
+                autocomplete="off"
+                aria-label={$_(findInPlaceholder)}
+                placeholder={$_(findInPlaceholder)}
+                tabindex="-1"
+                bind:this={findInputElement}
+                bind:value={$viewerSearchQuery}
+                on:change={findInField} />
+            </div>
+          {/if}
 
           {#if !showFullTranscripts}
             <div
@@ -381,8 +385,7 @@
               <ul
                 class="paragraphs-container"
                 class:expanded={showAllResults}
-                class:can-expand={$matchingParagraphs$.length > 4}
-                style="--full-height: {fullListHeight}">
+                class:can-expand={$matchingParagraphs$.length > 4}>
                 {#each $matchingParagraphs$ as paragraph, index}
                   <ParagraphResult
                     {paragraph}
@@ -390,7 +393,6 @@
                     minimized={isMobile && !expanded}
                     stack={expanded}
                     selected={isSame(paragraph, selectedParagraph)}
-                    disabled={expanded && noResultNavigator}
                     on:paragraphHeight={(event) => (paragraphHeights[index] = event.detail)}
                     on:open={() => onClickParagraph(paragraph, index)} />
                 {/each}

@@ -21,9 +21,9 @@
   // let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
   // let kb = '6b9f8f55-a57f-4ed4-b60e-759da54281fd'; // Robin Hobb
-  // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
+  let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
-  let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // multiple types
+  // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // multiple types
   // let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
 
   const backend = 'https://stashify.cloud/api';
