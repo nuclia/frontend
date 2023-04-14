@@ -2460,7 +2460,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.customized_plan</name>
+						<name>billing.enterprise_ready</name>
 						<description/>
 						<comment/>
 						<default_text/>

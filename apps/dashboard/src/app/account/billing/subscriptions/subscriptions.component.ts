@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { BillingService } from '../billing.service';
 import { CalculatorComponent } from '../calculator/calculator.component';
 import { forkJoin, shareReplay, take, tap } from 'rxjs';
@@ -7,6 +7,7 @@ import { STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { FeaturesComponent } from '../features/features.component';
+import { WINDOW } from '@ng-web-apis/common';
 
 @Component({
   selector: 'app-subscriptions',
@@ -28,6 +29,7 @@ export class SubscriptionsComponent {
     private modalService: SisModalService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
   ) {
     forkJoin([this.billing.getCustomer(), this.billing.country.pipe(take(1))]).subscribe(([customer, country]) => {
       if (customer) {
@@ -60,5 +62,9 @@ export class SubscriptionsComponent {
       .getCurrency(country)
       .pipe(tap((currency) => (this.currency = currency)))
       .subscribe(() => this.cdr.markForCheck());
+  }
+
+  contact() {
+    this.window.location.href = 'mailto:billing@nuclia.com';
   }
 }

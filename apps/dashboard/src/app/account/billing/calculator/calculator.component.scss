@@ -7,6 +7,10 @@
   pa-slider ::ng-deep .pa-field .pa-field-control-range[type='range'] {
     width: rhythm(35);
   }
+  ::ng-deep .contact a {
+    color: currentColor;
+    text-decoration: underline;
+  }
 }
 
 form {

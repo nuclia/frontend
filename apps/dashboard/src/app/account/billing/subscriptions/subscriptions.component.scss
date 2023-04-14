@@ -17,17 +17,25 @@
   th {
     border-bottom: 1px solid $color-neutral-regular;
     padding-bottom: rhythm(3);
+    text-align: center;
+    &:first-child {
+      text-align: left;
+      vertical-align: bottom;
+    }
   }
 
   td {
     border-bottom: 1px solid $color-neutral-lighter;
     height: rhythm(6);
-    text-align: left;
+    text-align: center;
+    &:first-child {
+      text-align: left;
+    }
   }
 
   .plan {
     vertical-align: top;
-    width: rhythm(28);
+    width: rhythm(24);
   }
 
   .plan-name {
@@ -49,7 +57,4 @@
 }
 .calculator {
   margin-top: rhythm(1);
-}
-.note {
-  margin-top: rhythm(4);
 }

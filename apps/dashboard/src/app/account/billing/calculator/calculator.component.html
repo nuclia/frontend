@@ -44,7 +44,9 @@
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
           <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>
         </div>
-        <div>{{ 'billing.self_hosted' | translate }}</div>
+        <div
+          class="contact"
+          [innerHTML]="'billing.self_hosted' | translate: { url: 'mailto:billing@nuclia.com' }"></div>
       </div>
     </form>
   </pa-modal-content>

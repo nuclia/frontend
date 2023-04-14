@@ -64,12 +64,24 @@
           {{ 'billing.upgrade' | translate }}
         </pa-button>
       </th>
+      <th class="plan">
+        <div class="plan-name">Enterprise</div>
+        <div class="price">
+          <span class="unit">{{ 'billing.enterprise_ready' | translate }}</span>
+        </div>
+        <pa-button
+          kind="primary"
+          (click)="contact()">
+          {{ 'billing.contact' | translate }}
+        </pa-button>
+      </th>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.kbs' | translate }}</td>
       <td>1</td>
       <td>1</td>
       <td>1</td>
+      <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.files' | translate }}</td>
@@ -85,6 +97,7 @@
         <div>{{(prices | async)?.['stash-business'].usage['files'].threshold | number}}</div>
         <div class="unit">{{ 'billing.quotas.up-to' | translate }} 1.5Gb</div>
       </td>
+      <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.medias' | translate }}</td>
@@ -100,6 +113,7 @@
         <div>{{(prices | async)?.['stash-business'].usage['media'].threshold}} {{ 'hours' | translate }}</div>
         <div class="unit">{{ 'billing.quotas.up-to' | translate }} 1.5Gb</div>
       </td>
+      <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.searches' | translate }}</td>
@@ -112,6 +126,7 @@
       <td>
         <div>{{(prices | async)?.['stash-business'].usage['searches'].threshold | number }}</div>
       </td>
+      <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.answers' | translate }}</td>
@@ -124,6 +139,7 @@
       <td>
         <div>{{(prices | async)?.['stash-business'].usage['qa'].threshold | number }}</div>
       </td>
+      <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.training' | translate }}</td>
@@ -140,6 +156,7 @@
           {{(prices | async)?.['stash-business'].usage['training-hours'].threshold | number }} {{ 'hours' | translate }}
         </div>
       </td>
+      <td>-</td>
     </tr>
   </table>
 
@@ -158,7 +175,4 @@
       </pa-button>
     </div>
   </div>
-  <div
-    class="body-s note"
-    [innerHTML]="'billing.customized_plan' | translate"></div>
 </div>
