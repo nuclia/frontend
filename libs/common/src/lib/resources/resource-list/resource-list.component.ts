@@ -314,7 +314,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   triggerLoadResources(displayLoader = true) {
-    this.getResources(displayLoader).subscribe();
+    this.setLoading(displayLoader);
+    this._getResources(true).subscribe();
   }
 
   getResources(displayLoader = true): Observable<Search.Results> {
