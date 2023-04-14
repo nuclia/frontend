@@ -40,6 +40,53 @@
     </ng-container>
   </div>
   <div class="table-options">
+    <ng-container *ngIf="hasFilters">
+      <pa-button
+        *ngIf="isFiltering"
+        aspect="basic"
+        kind="primary"
+        (click)="clearFilters()">
+        {{ 'resource.filter.clear' | translate }}
+      </pa-button>
+      <nsi-dropdown-button
+        size="small"
+        freeWidth
+        [aspect]="isFiltering ? 'solid' : 'basic'"
+        [popupRef]="availableFilters">
+        {{ 'resource.filtered-by' | translate }}
+      </nsi-dropdown-button>
+      <pa-dropdown #availableFilters>
+        <ng-container *ngIf="filterOptions.classification.length > 0">
+          <pa-option-header>{{ 'resource.classification-column' | translate }}</pa-option-header>
+          <pa-option
+            *ngFor="let option of filterOptions.classification"
+            dontCloseOnSelect>
+            <pa-checkbox
+              [(value)]="option.selected"
+              (valueChange)="toggleFilter()">
+              {{ option.label }}
+            </pa-checkbox>
+          </pa-option>
+        </ng-container>
+        <ng-container *ngIf="filterOptions.classification.length > 0 && filterOptions.mainTypes.length > 0">
+          <pa-separator></pa-separator>
+        </ng-container>
+        <ng-container *ngIf="filterOptions.mainTypes.length > 0">
+          <pa-option-header>{{ 'resource.filter.main-type' | translate }}</pa-option-header>
+          <pa-option
+            *ngFor="let option of filterOptions.mainTypes"
+            [paTooltip]="option.help"
+            dontCloseOnSelect>
+            <pa-checkbox
+              [(value)]="option.selected"
+              (valueChange)="toggleFilter()">
+              {{ option.label }}
+            </pa-checkbox>
+          </pa-option>
+        </ng-container>
+      </pa-dropdown>
+    </ng-container>
+
     <nsi-dropdown-button
       size="small"
       aspect="basic"

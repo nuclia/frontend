@@ -128,6 +128,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     label: '',
   };
   selection: string[] = [];
+  isFiltering = false;
 
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = false;
@@ -313,6 +314,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.triggerLoadResources();
   }
 
+  filter(filters: string[]) {
+    this._getResources(true, filters).subscribe();
+  }
+
   triggerLoadResources() {
     this.setLoading(true);
     this._getResources(true).subscribe();
@@ -332,13 +337,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     return this._getResources();
   }
 
-  private _getResources(replaceData = false): Observable<Search.Results> {
+  private _getResources(replaceData = false, filters: string[] = []): Observable<Search.Results> {
     const query = (this.searchForm.value.query || '').trim();
     const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
     if (replaceData) {
       this.page = 0;
     }
+    this.isFiltering = filters.length > 0;
 
     return this.sdk.currentKb.pipe(
       take(1),
@@ -348,7 +354,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           page_number: this.page,
           page_size: this.pageSize,
           sort: this.sort,
-          filters: status === RESOURCE_STATUS.PROCESSED ? undefined : [`/n/s/${status}`],
+          filters: status === RESOURCE_STATUS.PROCESSED ? filters : [`/n/s/${status}`].concat(filters),
           with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
         };
         return forkJoin([

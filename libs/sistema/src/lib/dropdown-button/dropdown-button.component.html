@@ -7,7 +7,7 @@
   [paPopup]="popupRef"
   [icon]="icon"
   [iconAndText]="!!icon"
-  sameWidth>
+  [sameWidth]="!freeWidth">
   <ng-content></ng-content>
   <pa-icon name="chevron-down"></pa-icon>
 </pa-button>

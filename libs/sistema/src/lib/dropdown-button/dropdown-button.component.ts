@@ -68,6 +68,14 @@ export class DropdownButtonComponent {
   }
 
   @Input()
+  set freeWidth(value: any) {
+    this._freeWidth = coerceBooleanProperty(value);
+  }
+  get freeWidth() {
+    return this._freeWidth;
+  }
+
+  @Input()
   set icon(value: string | undefined) {
     this._icon = value || '';
   }
@@ -80,5 +88,6 @@ export class DropdownButtonComponent {
   private _size: Size = 'medium';
   private _open = false;
   private _disabled = false;
+  private _freeWidth = false;
   private _icon = '';
 }
