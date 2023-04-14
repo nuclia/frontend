@@ -1,5 +1,5 @@
 import {
-  ISourceConnector,
+  ISourceConnectorOld,
   SourceConnectorDefinition,
   SyncItem,
   SearchResults,
@@ -14,16 +14,16 @@ const BUCKET_KEY = 'GCS_BUCKET';
 
 const MAX_PAGE_SIZE = 1000;
 
-export const GCSConnector: SourceConnectorDefinition = {
-  id: 'gcs',
-  title: 'Google Cloud',
-  logo: 'assets/logos/gcs.svg',
-  description: 'File storage service developed by Google',
-  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
-  factory: () => of(new GCSImpl()),
-};
+// export const GCSConnector: SourceConnectorDefinition = {
+//   id: 'gcs',
+//   title: 'Google Cloud',
+//   logo: 'assets/logos/gcs.svg',
+//   description: 'File storage service developed by Google',
+//   helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
+//   factory: () => of(new GCSImpl()),
+// };
 
-class GCSImpl extends GoogleBaseImpl implements ISourceConnector {
+class GCSImpl extends GoogleBaseImpl implements ISourceConnectorOld {
   override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/storage/v1/rest'];
   isExternal = false;
   resumable = false;

@@ -13,15 +13,16 @@ import { forkJoin, from, map, Observable, of, tap } from 'rxjs';
 
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
-  title: 'Dropbox',
-  logo: 'assets/logos/dropbox.svg',
-  description: 'File storage and synchronization service developed by Dropbox',
   factory: () => new DropboxImpl(),
 };
 
 class DropboxImpl implements ISourceConnector {
   isExternal = false;
   params: ConnectorParameters = {};
+
+  hasAuthData(): boolean {
+    return !!this.params.token;
+  }
 
   setParameters(params: ConnectorParameters) {
     this.params = params;
@@ -36,14 +37,18 @@ class DropboxImpl implements ISourceConnector {
   }
 
   getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]> {
-    return forkJoin((folders || []).map((folder) => this._getFiles('', false, folder.uuid))).pipe(
-      map((results) =>
-        results.reduce(
-          (acc, result) => acc.concat(result.items.filter((item) => item.modified && item.modified > since)),
-          [] as SyncItem[],
+    try {
+      return forkJoin((folders || []).map((folder) => this._getFiles('', false, folder.uuid))).pipe(
+        map((results) =>
+          results.reduce(
+            (acc, result) => acc.concat(result.items.filter((item) => item.modified && item.modified > since)),
+            [] as SyncItem[],
+          ),
         ),
-      ),
-    );
+      );
+    } catch (err) {
+      return of([]);
+    }
   }
 
   private _getFiles(

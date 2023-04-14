@@ -1,5 +1,5 @@
 import {
-  ISourceConnector,
+  ISourceConnectorOld,
   SourceConnectorDefinition,
   SyncItem,
   SearchResults,
@@ -13,15 +13,15 @@ import { Observable, of, from, map } from 'rxjs';
 
 const MAX_PAGE_SIZE = 1000;
 
-export const S3Connector: SourceConnectorDefinition = {
-  id: 's3',
-  title: 'AWS S3',
-  logo: 'assets/logos/s3.svg',
-  description: 'Object storage service developed by Amazon',
-  factory: () => of(new S3Impl()),
-};
+// export const S3Connector: SourceConnectorDefinition = {
+//   id: 's3',
+//   title: 'AWS S3',
+//   logo: 'assets/logos/s3.svg',
+//   description: 'Object storage service developed by Amazon',
+//   factory: () => of(new S3Impl()),
+// };
 
-class S3Impl implements ISourceConnector {
+class S3Impl implements ISourceConnectorOld {
   hasServerSideAuth = false;
   isExternal = true;
   resumable = false;

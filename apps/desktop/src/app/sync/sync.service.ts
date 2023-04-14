@@ -16,10 +16,7 @@ import {
   tap,
 } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { GDrive } from './sources/gdrive';
 import {
-  CONNECTOR_PARAMS_CACHE,
-  ConnectorCache,
   ConnectorDefinition,
   ConnectorParameters,
   ConnectorSettings,
@@ -30,17 +27,12 @@ import {
   SourceConnectorDefinition,
   SyncItem,
   Source,
-  SOURCE_NAME_KEY,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { injectScript, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
-import { FolderConnector } from './sources/folder';
-import { S3Connector } from './sources/s3';
 import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { GCSConnector } from './sources/gcs';
 import { OneDriveConnector } from './sources/onedrive';
-import { BrightcoveConnector } from './sources/brightcove';
 import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 
@@ -48,6 +40,7 @@ const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 const QUEUE_KEY = 'NUCLIA_QUEUE';
 const LOCAL_SYNC_SERVER = 'http://localhost:5001';
 const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
+const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
 
 interface Sync {
   date: string;
@@ -71,13 +64,13 @@ export class SyncService {
       instance?: ReplaySubject<ISourceConnector>;
     };
   } = {
-    gdrive: { definition: GDrive, settings: {} },
+    // gdrive: { definition: GDrive, settings: {} },
     onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
-    folder: { definition: FolderConnector, settings: {} },
-    s3: { definition: S3Connector, settings: {} },
-    gcs: { definition: GCSConnector, settings: {} },
-    brightcove: { definition: BrightcoveConnector, settings: {} },
+    // folder: { definition: FolderConnector, settings: {} },
+    // s3: { definition: S3Connector, settings: {} },
+    // gcs: { definition: GCSConnector, settings: {} },
+    // brightcove: { definition: BrightcoveConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
@@ -100,7 +93,7 @@ export class SyncService {
   showFirstStep = this._showFirstStep.asObservable();
   private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
   sourcesCache = this._sourcesCache.asObservable();
-  currentSource = this.sourcesCache.pipe(map((sources) => sources[localStorage.getItem(SOURCE_NAME_KEY) || '']));
+  currentSource = this.sourcesCache.pipe(map((sources) => sources[this.getCurrentSourceId()]));
 
   constructor(private sdk: SDKService, private user: UserService, private http: HttpClient) {
     const account = this.getAccountId();
@@ -159,19 +152,29 @@ export class SyncService {
     return this.http.get<Source>(`${this._syncServer.getValue()}/source/${sourceId}`);
   }
 
+  hasCurrentSourceAuth(): Observable<boolean> {
+    return this.http
+      .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/auth`)
+      .pipe(map((res) => res.hasAuth));
+  }
+
   getSources(): Observable<{ [id: string]: Source }> {
     return this.http.get<{ [id: string]: Source }>(`${this._syncServer.getValue()}/sources`);
   }
 
-  getFiles(sourceId: string, query?: string): Observable<SearchResults> {
+  getFiles(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue()}/source/${sourceId}/files/search${query ? `?query=${query}` : ''}`,
+      `${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/files/search${
+        query ? `?query=${query}` : ''
+      }`,
     );
   }
 
-  getFolders(sourceId: string, query?: string): Observable<SearchResults> {
+  getFolders(query?: string): Observable<SearchResults> {
     return this.http.get<SearchResults>(
-      `${this._syncServer.getValue()}/source/${sourceId}/folders/search${query ? `?query=${query}` : ''}`,
+      `${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/folders/search${
+        query ? `?query=${query}` : ''
+      }`,
     );
   }
 
@@ -259,6 +262,7 @@ export class SyncService {
   }
 
   goToSource(connectorId: string, quickAccessName: string, edit: boolean) {
+    this.setCurrentSourceId(quickAccessName);
     this._showSource.next({ connectorId, quickAccessName, edit });
   }
 
@@ -328,11 +332,13 @@ export class SyncService {
     if (server.local) {
       this._syncServer.next(LOCAL_SYNC_SERVER);
       localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
-      this.serverStatus(LOCAL_SYNC_SERVER).subscribe((res) => {
-        if (!res.running && (window as any)['electron']) {
-          (window as any)['electron'].startLocalServer();
-        }
-      });
+      this.serverStatus(LOCAL_SYNC_SERVER)
+        .pipe(take(1))
+        .subscribe((res) => {
+          if (!res.running && (window as any)['electron']) {
+            (window as any)['electron'].startLocalServer();
+          }
+        });
     } else if (server.url) {
       localStorage.setItem(SYNC_SERVER_KEY, server.url);
       this._syncServer.next(server.url);
@@ -341,5 +347,33 @@ export class SyncService {
 
   resetSyncServer() {
     this._syncServer.next('');
+  }
+
+  authenticateToSource(source: ISourceConnector): Observable<boolean> {
+    return source.authenticate().pipe(
+      filter((authenticated) => authenticated),
+      take(1),
+      switchMap(() => {
+        return this.currentSource.pipe(
+          take(1),
+          switchMap((currentSource) =>
+            this.setSourceData(this.getCurrentSourceId(), { ...currentSource, data: source.getParametersValues() }),
+          ),
+          map(() => true),
+        );
+      }),
+    );
+  }
+
+  getCurrentSourceId(): string {
+    return localStorage.getItem(SOURCE_NAME_KEY) || '';
+  }
+
+  setCurrentSourceId(id: string) {
+    if (id) {
+      localStorage.setItem(SOURCE_NAME_KEY, id);
+    } else {
+      localStorage.removeItem(SOURCE_NAME_KEY);
+    }
   }
 }

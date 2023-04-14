@@ -1,7 +1,14 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
-import { Source } from './models';
-import { getSource, getSourceFiles, getSourceFolders, getSourceFromBody, getSources, setSources } from './sources';
+import {
+  getSource,
+  getSourceFiles,
+  getSourceFolders,
+  getSourceFromBody,
+  getSources,
+  hasAuth,
+  setSources,
+} from './sources';
 
 export const router = express.Router();
 
@@ -21,6 +28,10 @@ router.get('/sources', async (req, res) => {
 router.get('/source/:id', async (req, res) => {
   const source = getSource(req.params.id);
   res.send(JSON.stringify(source));
+});
+
+router.get('/source/:id/auth', async (req, res) => {
+  res.send(JSON.stringify({ hasAuth: hasAuth(req.params.id) }));
 });
 
 router.post('/source', (req, res) => {

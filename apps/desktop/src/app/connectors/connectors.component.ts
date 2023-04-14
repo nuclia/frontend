@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
-import { ConnectorDefinition, ConnectorParameters, Field, SOURCE_NAME_KEY } from '../sync/models';
+import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 
@@ -148,7 +148,7 @@ export class ConnectorsComponent implements OnDestroy {
       }),
     });
     if (this.quickAccessName) {
-      localStorage.setItem(SOURCE_NAME_KEY, this.quickAccessName);
+      this.sync.setCurrentSourceId(this.quickAccessName);
       const cache = this.sync.getSourceCache(this.quickAccessName);
       if (cache) {
         this.form.patchValue({

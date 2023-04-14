@@ -30,6 +30,12 @@ class DropboxImpl implements ISourceConnector {
     localStorage.setItem(TOKEN, params.token);
   }
 
+  getParametersValues(): ConnectorParameters {
+    return {
+      token: localStorage.getItem(TOKEN),
+    };
+  }
+
   goToOAuth(reset?: boolean) {
     return of(true);
   }

@@ -1,7 +1,6 @@
 import { NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
 
-export const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
 export const CONNECTOR_ID_KEY = 'NUCLIA_CONNECTOR_ID';
 export const CONNECTOR_PARAMS_CACHE = 'CONNECTOR_PARAMS_CACHE';
 export interface ConnectorDefinition {
@@ -19,7 +18,7 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
   factory: (data?: ConnectorSettings) => Observable<IDestinationConnector>;
 }
 
-export interface ISourceConnector {
+export interface ISourceConnectorOld {
   hasServerSideAuth: boolean;
   isExternal: boolean;
   getParameters(): Observable<Field[]>;
@@ -28,6 +27,17 @@ export interface ISourceConnector {
   authenticate(): Observable<boolean>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
   isAuthError?: (message: any) => boolean;
+}
+
+export interface ISourceConnector {
+  hasServerSideAuth: boolean;
+  isExternal: boolean;
+  getParameters(): Observable<Field[]>;
+  handleParameters?(params: ConnectorParameters): void;
+  getParametersValues(): ConnectorParameters;
+  goToOAuth(reset?: boolean): void;
+  authenticate(): Observable<boolean>;
+  getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
 }
 
 export enum FileStatus {

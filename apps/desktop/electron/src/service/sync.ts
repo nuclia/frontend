@@ -90,7 +90,7 @@ function collectLastModified() {
                           source.lastSync = new Date().toISOString();
                           updateSource(id, source);
                         } else {
-                          // TODO: log the error somewhere
+                          // TODO: log the error in history
                           console.error(results.error);
                         }
                       }),

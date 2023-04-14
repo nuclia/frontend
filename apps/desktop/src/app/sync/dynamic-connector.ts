@@ -23,7 +23,6 @@ interface DynamicConnector {
   getFiles(query?: string, pageSize?: number): Promise<PromisedSearchResults>;
   download?(resource: SyncItem): Promise<Blob>;
   getLink?(resource: SyncItem): Promise<{ uri: string; extra_headers: { [key: string]: string } }>;
-  isAuthError: (message: any) => boolean;
 }
 
 export class DynamicConnectorWrapper implements ISourceConnector {
@@ -33,7 +32,6 @@ export class DynamicConnectorWrapper implements ISourceConnector {
 
   constructor(connector: DynamicConnector) {
     this.connector = connector;
-    this.isAuthError = this.connector.isAuthError;
     this.isExternal = !!this.connector.isExternal;
   }
 
@@ -56,6 +54,11 @@ export class DynamicConnectorWrapper implements ISourceConnector {
     if (this.connector.handleParameters) {
       this.connector.handleParameters(params);
     }
+  }
+
+  getParametersValues(): ConnectorParameters {
+    //TODO
+    return {};
   }
 
   goToOAuth(reset?: boolean) {
@@ -117,14 +120,6 @@ export class DynamicConnectorWrapper implements ISourceConnector {
       );
     } else {
       throw new Error('Not implemented');
-    }
-  }
-
-  isAuthError(message: any): boolean {
-    if (this.connector.isAuthError) {
-      return this.connector.isAuthError(message);
-    } else {
-      return defaultAuthCheck(message);
     }
   }
 }

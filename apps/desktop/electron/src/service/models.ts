@@ -15,9 +15,6 @@ export interface Source {
 
 export interface ConnectorDefinition {
   id: string;
-  title: string;
-  logo: string;
-  description: string;
 }
 
 export interface SourceConnectorDefinition extends ConnectorDefinition {
@@ -35,7 +32,7 @@ export interface ISourceConnector {
   getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob | undefined>;
   getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
-  isAuthError?: (message: any) => boolean;
+  hasAuthData(): boolean;
 }
 
 export enum FileStatus {

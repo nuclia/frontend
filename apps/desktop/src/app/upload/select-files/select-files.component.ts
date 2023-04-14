@@ -13,7 +13,7 @@ import {
 import { SelectionModel } from '@angular/cdk/collections';
 import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
 import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults, CONNECTOR_ID_KEY, SOURCE_NAME_KEY } from '../../sync/models';
+import { SyncItem, ISourceConnector, SearchResults, CONNECTOR_ID_KEY } from '../../sync/models';
 import { defaultAuthCheck } from '../../utils';
 import { SisToastService } from '@nuclia/sistema';
 import { SyncService } from '../../sync/sync.service';
@@ -50,22 +50,10 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     switchMap(() => this.currentSource),
     switchMap((source) =>
       concat(
-        (source.permanentSync
-          ? this.sync.getFolders(localStorage.getItem(SOURCE_NAME_KEY) || '', this.query)
-          : this.sync.getFiles(localStorage.getItem(SOURCE_NAME_KEY) || '', this.query)
-        ).pipe(
+        (source.permanentSync ? this.sync.getFolders(this.query) : this.sync.getFiles(this.query)).pipe(
           catchError((error) => {
-            if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
-              localStorage.setItem(CONNECTOR_ID_KEY, this.sourceId || '');
-              if (this.source.hasServerSideAuth) {
-                this.source.goToOAuth(true);
-              }
-              this.toaster.error('You cannot access this source. Please check your credentials.');
-              return this.source.authenticate().pipe(map(() => ({ items: [], nextPage: undefined } as SearchResults)));
-            } else {
-              this.toaster.error(typeof error === 'string' ? error : error?.message || 'An error occurred');
-              return of({ items: [], nextPage: undefined });
-            }
+            this.toaster.error(typeof error === 'string' ? error : error?.message || 'An error occurred');
+            return of({ items: [], nextPage: undefined });
           }),
         ),
         this.triggerNextPage.pipe(
@@ -144,7 +132,7 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   }
 
   getAllFiles(): Observable<SyncItem[]> {
-    return this.sync.getFiles(localStorage.getItem(SOURCE_NAME_KEY) || '').pipe(
+    return this.sync.getFiles().pipe(
       concatMap((res) => this._getAllFiles(res)),
       map((res) => res.items),
     );

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import path from 'path';
-import { from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { getConnector } from './connectors';
 import { Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
@@ -22,6 +22,16 @@ export const updateSource = (id: string, source: Source) => {
 export const getSource = (sourceId: string) => {
   const sources = getSources();
   return sources[sourceId];
+};
+
+export const hasAuth = (sourceId: string) => {
+  try {
+    const connector = getSourceInstance(sourceId);
+    return connector.hasAuthData();
+  } catch (err) {
+    console.error(`Error on ${sourceId} when reading auth data: ${err.message}`);
+    return false;
+  }
 };
 
 export const getSourceFiles = (sourceId: string, query?: string) => {
@@ -74,9 +84,14 @@ export function getLastModified(
 ): Observable<{ success: boolean; results: SyncItem[]; error?: string }> {
   const connector = getSourceInstance(sourceId);
   try {
-    return connector
-      .getLastModified(since || '2000-01-01T00:00:00.000Z', folders)
-      .pipe(map((results) => ({ success: true, results })));
+    return connector.getLastModified(since || '2000-01-01T00:00:00.000Z', folders).pipe(
+      catchError((err) => {
+        // TODO: log the error in history
+        console.error(`Error on ${sourceId}: ${err.message}`);
+        return of([]);
+      }),
+      map((results) => ({ success: true, results })),
+    );
   } catch (err) {
     return of({ success: false, results: [], error: `${err}` });
   }

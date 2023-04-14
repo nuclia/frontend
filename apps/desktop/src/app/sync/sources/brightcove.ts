@@ -1,5 +1,5 @@
 import {
-  ISourceConnector,
+  ISourceConnectorOld,
   SourceConnectorDefinition,
   SyncItem,
   SearchResults,
@@ -9,15 +9,15 @@ import {
 } from '../models';
 import { Observable, of, from, map, switchMap } from 'rxjs';
 
-export const BrightcoveConnector: SourceConnectorDefinition = {
-  id: 'brightcove',
-  title: 'Brightcove',
-  logo: 'assets/logos/brightcove.svg',
-  description: 'Video delivery platform',
-  factory: () => of(new BrightcoveImpl()),
-};
+// export const BrightcoveConnector: SourceConnectorDefinition = {
+//   id: 'brightcove',
+//   title: 'Brightcove',
+//   logo: 'assets/logos/brightcove.svg',
+//   description: 'Video delivery platform',
+//   factory: () => of(new BrightcoveImpl()),
+// };
 
-class BrightcoveImpl implements ISourceConnector {
+class BrightcoveImpl implements ISourceConnectorOld {
   hasServerSideAuth = false;
   isExternal = true;
   resumable = false;
