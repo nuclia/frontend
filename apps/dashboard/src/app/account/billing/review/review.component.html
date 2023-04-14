@@ -1,0 +1,26 @@
+<pa-modal-advanced>
+  <pa-modal-title>
+    {{ 'billing.review.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div>
+      <h2 class="title-s">
+        {{ 'billing.review.subscribe_to' | translate: { account: 'account.type.' + account | translate } }}
+      </h2>
+      <div>
+        {{
+          'billing.review.cost' | translate: { cost: cost | currency: currency, budget: budget | currency: currency }
+        }}
+      </div>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <div class="button-container">
+      <pa-button
+        kind="primary"
+        (click)="confirm()">
+        {{ 'billing.review.confirm_subscription' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-footer>
+</pa-modal-advanced>

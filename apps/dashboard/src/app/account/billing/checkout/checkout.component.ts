@@ -7,9 +7,10 @@ import { injectScript, SDKService, StateService } from '@flaps/core';
 import { BillingService } from '../billing.service';
 import { StripeCustomer } from '../billing.models';
 import { COUNTRIES } from '../utils';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { NavigationService } from '@flaps/common';
+import { ReviewComponent } from '../review/review.component';
 
 @Component({
   selector: 'app-checkout',
@@ -63,6 +64,7 @@ export class CheckoutComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private navigation: NavigationService,
+    private modalService: SisModalService,
   ) {
     this.initForms();
     this.initStripe();
@@ -168,15 +170,21 @@ export class CheckoutComponent implements OnInit {
 
   subscribe() {
     if (!this.accountType) return;
-    this.subscribing = true;
-    this.cdr?.markForCheck();
-    this.billingService
-      .createSubscription({
-        payment_method_id: this.token.id,
-        on_demand_budget: parseInt(this.budget.value),
-        account_type: this.accountType,
-      })
+    this.openReview()
       .pipe(
+        take(1),
+        filter((result) => !!result),
+        tap(() => {
+          this.subscribing = true;
+          this.cdr?.markForCheck();
+        }),
+        switchMap(() =>
+          this.billingService.createSubscription({
+            payment_method_id: this.token.id,
+            on_demand_budget: parseInt(this.budget.value),
+            account_type: this.accountType!,
+          }),
+        ),
         switchMap(() =>
           this.sdk.currentAccount.pipe(
             take(1),
@@ -197,5 +205,25 @@ export class CheckoutComponent implements OnInit {
           this.toaster.error('generic.error.oops');
         },
       });
+  }
+
+  openReview() {
+    return forkJoin([
+      this.billingService.getPrices(),
+      this.billingService.getCurrency(this.billing.value.country || ''),
+    ]).pipe(
+      switchMap(
+        ([prices, currency]) =>
+          this.modalService.openModal(ReviewComponent, {
+            dismissable: true,
+            data: {
+              account: this.accountType,
+              prices: prices[this.accountType!],
+              budget: this.budget.value,
+              currency,
+            },
+          }).onClose,
+      ),
+    );
   }
 }

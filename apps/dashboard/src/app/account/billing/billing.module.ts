@@ -16,6 +16,7 @@ import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CalculatorComponent } from './calculator/calculator.component';
+import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
 
 const routes: Routes = [
@@ -54,7 +55,14 @@ const routes: Routes = [
     PaSliderModule,
     PaTogglesModule,
   ],
-  declarations: [BillingComponent, SubscriptionsComponent, CheckoutComponent, CalculatorComponent, FeaturesComponent],
+  declarations: [
+    BillingComponent,
+    SubscriptionsComponent,
+    CheckoutComponent,
+    CalculatorComponent,
+    ReviewComponent,
+    FeaturesComponent,
+  ],
   exports: [],
 })
 export class BillingModule {}
