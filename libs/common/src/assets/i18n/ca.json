@@ -108,6 +108,7 @@
 	"billing.cost_per_usage.description": "Si supereu els límits, s'aplicarà el cost per ús.",
 	"billing.country": "País",
 	"billing.custom_plan": "Pla personalitzat",
+	"billing.email": "Factures enviades a",
 	"billing.enterprise_ready": "Llest par a l'empresa",
 	"billing.estimate_cost": "Estima el teu cost",
 	"billing.features.anon": "Anonimat de dades",

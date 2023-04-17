@@ -67,7 +67,19 @@
           </div>
         </div>
         <div class="field-line">
-          <div class="field-block long">
+          <div class="field-block">
+            <label
+              class="title-s"
+              for="email">
+              {{ 'billing.email' | translate }} *
+            </label>
+            <pa-input
+              id="email"
+              formControlName="email"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
+          </div>
+          <div class="field-block">
             <label
               class="title-s"
               for="address">
@@ -148,6 +160,7 @@
         <div>{{ customer.billing_details.name }}</div>
         <div>{{ customer.billing_details.company }}</div>
         <div *ngIf="customer.billing_details.vat">{{ customer.billing_details.vat }}</div>
+        <div>{{ customer.billing_details.email }}</div>
         <div>{{ customer.billing_details.address }}</div>
         <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
         <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>

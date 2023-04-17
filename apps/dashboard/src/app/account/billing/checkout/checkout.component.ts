@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { delay, filter, forkJoin, from, switchMap, take, tap } from 'rxjs';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { injectScript, SDKService, StateService } from '@flaps/core';
+import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
 import { StripeCustomer } from '../billing.models';
 import { COUNTRIES } from '../utils';
@@ -21,6 +21,7 @@ import { ReviewComponent } from '../review/review.component';
 export class CheckoutComponent implements OnInit {
   billing = new FormGroup({
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     vat: new FormControl<string>('', { nonNullable: true }),
     address: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
@@ -35,6 +36,7 @@ export class CheckoutComponent implements OnInit {
 
   errors: IErrorMessages = {
     required: 'validation.required',
+    email: 'validation.email',
   };
 
   subscribing = false;
@@ -61,6 +63,7 @@ export class CheckoutComponent implements OnInit {
     private toaster: SisToastService,
     private sdk: SDKService,
     private stateService: StateService,
+    private userService: UserService,
     private route: ActivatedRoute,
     private router: Router,
     private navigation: NavigationService,
@@ -77,19 +80,29 @@ export class CheckoutComponent implements OnInit {
   }
 
   initForms() {
-    forkJoin([this.billingService.getCustomer(), this.billingService.country.pipe(take(1))]).subscribe(
-      ([customer, country]) => {
-        if (customer) {
-          this.customer = customer;
-          this.billing.patchValue(customer.billing_details);
-          this.editCustomer = false;
-          this.editCard = true;
-          this.cdr?.markForCheck();
-        } else if (country) {
+    forkJoin([
+      this.billingService.getCustomer(),
+      this.billingService.country.pipe(take(1)),
+      this.userService.userPrefs.pipe(
+        filter((user) => !!user),
+        take(1),
+      ),
+    ]).subscribe(([customer, country, user]) => {
+      if (customer) {
+        this.customer = customer;
+        this.billing.patchValue(customer.billing_details);
+        this.editCustomer = false;
+        this.editCard = true;
+        this.cdr?.markForCheck();
+      } else {
+        if (country) {
           this.billing.patchValue({ country });
         }
-      },
-    );
+        if (user?.email) {
+          this.billing.patchValue({ email: user.email });
+        }
+      }
+    });
     this.billingService.budgetEstimation.pipe(take(1)).subscribe((budget) => {
       this.budget.setValue(budget.toString());
     });

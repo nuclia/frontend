@@ -121,6 +121,7 @@
 	"billing.cost_per_usage.description": "If you exceed the limits, cost per usage will be applied.",
 	"billing.country": "Country",
 	"billing.custom_plan": "Custom plan",
+	"billing.email": "Invoices sent to",
 	"billing.enterprise_ready": "We are enterprise ready",
 	"billing.estimate_cost": "Estimate your cost",
 	"billing.features.anon": "Data Anonymization",

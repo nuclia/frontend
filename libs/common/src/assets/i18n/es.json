@@ -108,6 +108,7 @@
 	"billing.cost_per_usage.description": "Si excede los límites, se aplicará el costo por uso.",
 	"billing.country": "País",
 	"billing.custom_plan": "Plan personalizado",
+	"billing.email": "Facturas enviadas a",
 	"billing.enterprise_ready": "Listo para la empresa",
 	"billing.estimate_cost": "Estima tu coste",
 	"billing.features.anon": "Anonimización de datos",
