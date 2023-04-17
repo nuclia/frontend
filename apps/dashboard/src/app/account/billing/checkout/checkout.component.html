@@ -238,13 +238,12 @@
             type="number"
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
-          <span class="title-m">€</span>
         </div>
         <pa-button
           (click)="subscribe()"
           [disabled]="editCustomer || editCard || budget.invalid || subscribing"
           kind="primary">
-          {{ 'Subscribe' | translate }}
+          {{ 'billing.review_confirm' | translate }}
         </pa-button>
       </div>
     </div>

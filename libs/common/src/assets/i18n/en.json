@@ -167,6 +167,7 @@
 	"billing.review.cost": "Monthly {{cost}} subscription + consumption costs with a monthly budget restriction of {{budget}}",
 	"billing.review.subscribe_to": "Subscribing to {{account}}",
 	"billing.review.title": "Review your subscription",
+	"billing.review_confirm": "Review & Confirm",
 	"billing.save_budget": "Save as budget limit",
 	"billing.save_continue": "Save & Continue",
 	"billing.self_hosted": "<a href=\"{{ url }}\">Contact us</a> if you want your data self-hosted using NucliaDB to know all payment details.",

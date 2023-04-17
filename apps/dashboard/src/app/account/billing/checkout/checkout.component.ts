@@ -218,6 +218,8 @@ export class CheckoutComponent implements OnInit {
             dismissable: true,
             data: {
               account: this.accountType,
+              customer: this.customer,
+              token: this.token,
               prices: prices[this.accountType!],
               budget: this.budget.value,
               currency,

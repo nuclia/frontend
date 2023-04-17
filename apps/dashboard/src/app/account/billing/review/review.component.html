@@ -7,11 +7,30 @@
       <h2 class="title-s">
         {{ 'billing.review.subscribe_to' | translate: { account: 'account.type.' + account | translate } }}
       </h2>
-      <div>
+      <div class="body-m">
         {{
           'billing.review.cost' | translate: { cost: cost | currency: currency, budget: budget | currency: currency }
         }}
       </div>
+    </div>
+    <div
+      *ngIf="customer"
+      class="body-m">
+      <h2 class="title-s">{{ 'billing.billing_details' | translate }}</h2>
+      <div>{{ customer.billing_details.name }}</div>
+      <div>{{ customer.billing_details.company }}</div>
+      <div *ngIf="customer.billing_details.vat">{{ customer.billing_details.vat }}</div>
+      <div>{{ customer.billing_details.email }}</div>
+      <div>{{ customer.billing_details.address }}</div>
+      <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
+      <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
+    </div>
+    <div
+      *ngIf="token"
+      class="body-m">
+      <h2 class="title-s">{{ 'billing.payment_details' | translate }}</h2>
+      <div>{{ token.card.brand }}</div>
+      <div>**** **** **** {{ token.card.last4 }}</div>
     </div>
   </pa-modal-content>
   <pa-modal-footer>

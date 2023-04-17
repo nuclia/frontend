@@ -154,6 +154,7 @@
 	"billing.review.cost": "Subscripció mensual de {{cost}} + costos dels consums amb un límit mensual de {{budget}}",
 	"billing.review.subscribe_to": "T'estàs subscribint a {{account}}",
 	"billing.review.title": "Revisa la teva subscripció",
+	"billing.review_confirm": "Revisar i confirmar",
 	"billing.save_budget": "Guardar límit de pressupost",
 	"billing.save_continue": "Desar i Continuar",
 	"billing.self_hosted": "<a href=\"{{ url }}\">Poseu-vos en contacte</a> amb nosaltres per conèixer tots els detalls de pagament en cas d'autoallotjar les vostres dades  mitjançant NucliaDB",
