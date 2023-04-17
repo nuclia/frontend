@@ -1,8 +1,22 @@
-<div class="upload-cvs">
+<div class="upload-csv">
   <div class="upload-help body-s">
     <div
       *ngFor="let item of help"
       [innerHtml]="item | translate"></div>
+  </div>
+
+  <div class="select-csv">
+    <pa-button
+      [kind]="buttonKind"
+      (click)="onUpload()">
+      {{ 'upload.select_csv' | translate }}
+    </pa-button>
+    <input
+      (change)="readCsv($event)"
+      #fileUpload
+      type="file"
+      accept="text/csv"
+      hidden />
   </div>
 
   <ncom-hint label="CSV format details">
@@ -13,18 +27,4 @@
       <li>Don't include a header line</li>
     </ul>
   </ncom-hint>
-
-  <div class="select-csv">
-    <pa-button
-      kind="primary"
-      (click)="fileUpload.click()">
-      {{ 'upload.select_csv' | translate }}
-    </pa-button>
-    <input
-      (change)="readCsv($event)"
-      #fileUpload
-      type="file"
-      accept="text/csv"
-      hidden />
-  </div>
 </div>

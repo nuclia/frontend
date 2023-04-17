@@ -5,6 +5,11 @@
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
+
+  .csv-container app-csv-select {
+    display: block;
+    margin-bottom: rhythm(4);
+  }
 }
 
 .dialog-title-with-button {
