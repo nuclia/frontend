@@ -37,7 +37,7 @@ export const selectAccountKbGuard = (route: ActivatedRouteSnapshot) => {
         // One account with multiple kbs
         else {
           if (hasInvalidParams(route, accounts)) {
-            return router.createUrlTree(['/select-account-kb']);
+            return router.createUrlTree(['/select']);
           } else {
             return true;
           }
@@ -45,7 +45,7 @@ export const selectAccountKbGuard = (route: ActivatedRouteSnapshot) => {
       }
 
       if (hasInvalidParams(route, accounts)) {
-        return router.createUrlTree(['/select-account-kb']);
+        return router.createUrlTree(['/select']);
       }
       return true;
     }),
