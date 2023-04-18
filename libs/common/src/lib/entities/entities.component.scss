@@ -1,70 +1,117 @@
 @import 'apps/dashboard/src/variables';
-@import 'tokens';
 
-.entities {
-  padding: 3.8vw var(--app-layout-margin-right);
+$page-padding-top: rhythm(5);
+$page-padding-bottom: rhythm(8);
+$page-padding-left: 5%;
+$header-height: rhythm(12);
+$header-margin-bottom: rhythm(5);
+$navbar-width: rhythm(7);
 
-  h1 {
-    margin: 0 0 rhythm(3) 0;
+$family-list-width: rhythm(48);
+$gap-family-selection: rhythm(7);
+
+.ner-management {
+  padding: $page-padding-top var(--app-layout-margin-right) $page-padding-bottom $page-padding-left;
+  position: relative;
+
+  header {
+    margin-bottom: $header-margin-bottom;
+    max-width: rhythm(80);
   }
 
-  .entities-actions {
-    align-items: center;
+  .ner-container {
     display: flex;
-    gap: rhythm(3);
+    gap: calc(#{$gap-family-selection} - #{$scrollbar-width});
+    max-height: calc(
+      100vh - var(--app-topbar-height) - #{$page-padding-top} - #{$page-padding-bottom} - #{$header-height} - #{$header-margin-bottom}
+    );
+    overflow: hidden;
   }
 
-  .entities-search {
-    align-items: center;
-    background-color: $color-light-stronger;
-    display: flex;
-    gap: rhythm(1);
-    padding: rhythm(2) rhythm(1) rhythm(2) rhythm(2);
-    width: rhythm(40);
+  .ner-family-list-container,
+  .selected-family-container {
+    max-height: calc(100% - #{rhythm(8)});
+  }
 
-    pa-input {
-      flex: 1 0 auto;
+  .ner-family-list-container {
+    flex: 0 0 auto;
+    overflow: auto;
+    width: calc(#{$family-list-width} + #{$scrollbar-width});
+
+    .ner-family-actions {
+      align-items: center;
+      background: $color-light-stronger;
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: rhythm(2);
+      padding-bottom: rhythm(1);
+      padding-right: $scrollbar-width;
+      position: sticky;
+      top: 0;
+    }
+
+    .ner-family-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: $family-list-width;
+
+      .ner-family {
+        background: $color-neutral-lightest;
+        cursor: pointer;
+        display: flex;
+        gap: rhythm(1);
+        justify-content: space-between;
+        line-height: rhythm(5);
+        padding-right: rhythm(1);
+        transition: background $transition-hint;
+
+        &:not(:last-of-type) {
+          box-shadow: inset 0 -1px 0px $color-neutral-light;
+        }
+
+        &:hover {
+          background: $color-neutral-lighter;
+        }
+
+        &.selected-family {
+          background: $color-neutral-light;
+        }
+
+        .family-color {
+          width: rhythm(1);
+        }
+        .family-name {
+          flex: 1 0 auto;
+        }
+      }
     }
   }
 
-  .entities-no-results {
-    margin: rhythm(2) 0 0 rhythm(2);
-  }
-}
+  .selected-family-container {
+    flex: 1 0 auto;
+    max-width: calc(
+      100vw - #{$navbar-width} - #{$family-list-width} - var(--app-layout-margin-right) - #{$page-padding-left} - #{$gap-family-selection} -
+        #{$scrollbar-width}* 2
+    );
+    overflow: hidden;
 
-.entity-table {
-  margin-top: rhythm(3);
+    .family-toolbar {
+      align-items: center;
+      background: $color-light-stronger;
+      display: flex;
+      gap: rhythm(2);
+      justify-content: space-between;
+      padding-right: $scrollbar-width;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 1;
 
-  .cell-color {
-    flex: $entity-table-color-flex;
-  }
-  .cell-name {
-    flex: $entity-table-name-flex;
-  }
-  .cell-synonyms {
-    flex: $entity-table-synonyms-flex;
-  }
-  .cell-description {
-    flex: $entity-table-description-flex;
-  }
-  .cell-presence {
-    flex: $entity-table-presence-flex;
-  }
-  .cell-actions {
-    flex: $entity-table-actions-flex;
-  }
-
-  &-header {
-    display: flex;
-    padding-bottom: rhythm(1);
-    border-bottom: 1px solid $color-dark-stronger;
-    font-weight: $font-weight-bold;
-
-    .cell-description {
-      text-align: center;
-    }
-    .cell-presence {
-      text-align: center;
+      .family-actions {
+        display: flex;
+        gap: rhythm(1);
+      }
     }
   }
 }

@@ -57,6 +57,6 @@ import { ProgressBarModule } from '../progress-bar';
     UploadProgressDialogComponent,
     UploadTextComponent,
   ],
-  exports: [UploadBarComponent],
+  exports: [UploadBarComponent, CsvSelectComponent],
 })
 export class UploadModule {}

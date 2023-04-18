@@ -1,56 +1,71 @@
-<div class="entities">
-  <h1>{{ 'entity.name_entities_management' | translate }}</h1>
+<div class="ner-management">
+  <header>
+    <h1>{{ 'ner-management.page-title' | translate }}</h1>
+    <p>{{ 'ner-management.page-description' | translate }}</p>
+  </header>
 
-  <div class="entities-actions">
-    <div class="entities-search">
-      <pa-input
-        id="entity-search"
-        [formControl]="searchInput"
-        (keydown.enter)="search()">
-        {{ 'entity.entity_search' | translate }}
-      </pa-input>
+  <div class="ner-container">
+    <div class="ner-family-list-container">
+      <div class="ner-family-actions">
+        <pa-button
+          iconAndText
+          icon="circle-plus"
+          (click)="addFamily()">
+          {{ 'ner-management.add-family' | translate }}
+        </pa-button>
+      </div>
 
-      <pa-button
-        icon="search"
-        aspect="basic"
-        (click)="search()">
-        {{ 'generic.search' | translate }}
-      </pa-button>
+      <ul class="ner-family-list">
+        <li
+          *ngFor="let family of nerFamilies | async; trackBy: trackByFamily"
+          class="ner-family"
+          [class.selected-family]="family.key === selectedFamily?.key"
+          (click)="selectFamily(family)">
+          <div
+            class="family-color"
+            [style.background-color]="family.color || familyColors[family.key || '']"></div>
+          <div class="family-name">
+            {{ family.title }}
+          </div>
+          <pa-icon name="chevron-right"></pa-icon>
+        </li>
+      </ul>
     </div>
 
-    <pa-button
-      *ngIf="(canAddEntities | async) === true"
-      paTooltip="Add entity group"
-      icon="plus"
-      (click)="addEntityGroup()">
-      {{ 'entity.add_group' | translate }}
-    </pa-button>
-  </div>
-
-  <ng-container *ngIf="searchTerm | async as term">
     <div
-      *ngIf="noResults | async"
-      class="entities-no-results">
-      <span [innerHtml]="'generic.no_results_for' | translate"></span>
-      <span>&nbsp;</span>
-      <strong>{{ term }}</strong>
-    </div>
-  </ng-container>
+      class="selected-family-container"
+      *ngIf="selectedFamily">
+      <div class="family-toolbar">
+        <div class="title-s">{{ selectedFamily.title }}</div>
+        <div class="family-actions">
+          <pa-button
+            aspect="basic"
+            icon="plus"
+            paTooltip="ner-family-toolbar.add-button"
+            (click)="addEntity()">
+            {{ 'ner-family-toolbar.add-button' | translate }}
+          </pa-button>
+          <!-- blocked by https://app.shortcut.com/flaps/story/5117/missing-a-way-to-update-entities-group-title-and-color
+          <pa-button
+            *ngIf="selectedFamily.custom"
+            aspect="basic"
+            icon="edit"
+            paTooltip="ner-family-toolbar.edit-button"
+            (click)="updateFamily()">
+            {{ 'ner-family-toolbar.edit-button' | translate }}
+          </pa-button>-->
+          <pa-button
+            aspect="basic"
+            icon="trash"
+            kind="destructive"
+            paTooltip="ner-family-toolbar.remove-button"
+            (click)="removeFamily()">
+            {{ 'ner-family-toolbar.remove-button' | translate }}
+          </pa-button>
+        </div>
+      </div>
 
-  <div class="entity-table">
-    <div class="entity-table-header">
-      <div class="entity-table-header-cell cell-color"></div>
-      <div class="entity-table-header-cell cell-name">{{ 'entity.entity' | translate }}</div>
-      <div class="entity-table-header-cell cell-synonyms">{{ 'entity.synonym' | translate }}</div>
-      <div class="entity-table-header-cell cell-description">{{ 'generic.description' | translate }}</div>
-      <div class="entity-table-header-cell cell-presence">{{ 'generic.presence' | translate }}</div>
-      <div class="entity-table-header-cell cell-actions"></div>
-    </div>
-
-    <div *ngFor="let group of groups | async; trackBy: trackByFn">
-      <app-entity-group
-        [group]="group"
-        [searchTerm]="searchTerm | async"></app-entity-group>
+      <app-entity-list [family]="selectedFamily"></app-entity-list>
     </div>
   </div>
 </div>

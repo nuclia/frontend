@@ -1,19 +1,12 @@
 @import 'apps/dashboard/src/variables';
 
-.upload-cvs {
-  .upload-help {
-    margin: rhythm(3) 0;
-  }
+.upload-csv {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
 
-  ncom-hint ::ng-deep .hint {
-    margin-bottom: rhythm(3);
-  }
   .csv-format {
     margin-bottom: 0;
     padding-left: rhythm(5);
-  }
-
-  .select-csv {
-    margin-bottom: rhythm(4);
   }
 }

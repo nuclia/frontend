@@ -1,4 +1,8 @@
-# 1.2.2 (unreleased)
+# 1.3.0 (2023-04-18)
+
+### Breaking changes
+- Rename `setEntitiesGroup` into `createEntitiesGroup` and call the new POST `/kb/{kbid}/entitiesgroups` endpoint replacing deprecated POST to `/kb/{kbid}/entitiesgroups/{group}` 
+- Add method `updateEntitiesGroup` allowing to PATCH existing entity groups using the new `UpdateEntitiesGroupPayload` payload.
 
 ### Improvements
 

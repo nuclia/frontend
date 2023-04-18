@@ -9,6 +9,7 @@ import type {
   LabelSets,
   Synonyms,
   SynonymsPayload,
+  UpdateEntitiesGroupPayload,
 } from './kb.models';
 import {
   Counters,
@@ -252,8 +253,12 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}`);
   }
 
-  setEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {
-    return this.nuclia.rest.post<void>(`${this.path}/entitiesgroup/${groupId}`, group);
+  createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void> {
+    return this.nuclia.rest.post<void>(`${this.path}/entitiesgroups`, { ...group, group: groupId });
+  }
+
+  updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void> {
+    return this.nuclia.rest.patch<void>(`${this.path}/entitiesgroup/${groupId}`, payload);
   }
 
   deleteEntitiesGroup(groupId: string): Observable<void> {

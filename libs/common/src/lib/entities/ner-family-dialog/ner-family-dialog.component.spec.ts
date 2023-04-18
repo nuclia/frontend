@@ -1,8 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EntityGroupDialogComponent } from './entity-group-dialog.component';
+import { NerFamilyDialogComponent } from './ner-family-dialog.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { SDKService } from '@flaps/core';
 import {
   ModalRef,
   PaButtonModule,
@@ -11,10 +10,12 @@ import {
   PaTranslateModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { EntitiesService } from '../entities.service';
+import { UploadModule } from '@flaps/common';
 
 describe('EntityGroupDialogComponent', () => {
-  let component: EntityGroupDialogComponent;
-  let fixture: ComponentFixture<EntityGroupDialogComponent>;
+  let component: NerFamilyDialogComponent;
+  let fixture: ComponentFixture<NerFamilyDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -24,18 +25,19 @@ describe('EntityGroupDialogComponent', () => {
         MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
         MockModule(ReactiveFormsModule),
+        MockModule(UploadModule),
       ],
-      declarations: [EntityGroupDialogComponent],
+      declarations: [NerFamilyDialogComponent],
       providers: [
         {
           provide: ModalRef,
           useValue: new ModalRef({ id: 1 }),
         },
-        MockProvider(SDKService),
+        MockProvider(EntitiesService),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EntityGroupDialogComponent);
+    fixture = TestBed.createComponent(NerFamilyDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
