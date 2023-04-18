@@ -1,7 +1,6 @@
 import {
   Chat,
   Classification,
-  Entity,
   FieldFullId,
   IResource,
   KBStates,
@@ -14,15 +13,12 @@ import {
   ResourceProperties,
   Search,
   SearchOptions,
-  TokenAnnotation,
-  WritableKnowledgeBox,
 } from '@nuclia/core';
 import type { Observable } from 'rxjs';
 import { filter, forkJoin, map, merge, of, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
-import type { Annotation } from './stores/annotation.store';
 import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
@@ -204,68 +200,6 @@ export const getLabelSets = (): Observable<LabelSets> => {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.knowledgeBox.getLabels();
-};
-
-export const setLabels = (
-  resource: Resource,
-  fieldId: string,
-  fieldType: string,
-  paragraphId: string,
-  labels: Classification[],
-): Observable<void> => {
-  if (!nucliaApi) {
-    throw new Error('Nuclia API not initialized');
-  }
-  return resource.setLabels(fieldId, fieldType, paragraphId, labels);
-};
-
-export const saveEntitiesAnnotations = (
-  resource: Resource,
-  field: { field_id: string; field_type: string },
-  annotations: Annotation[],
-) => {
-  if (!nucliaApi) {
-    throw new Error('Nuclia API not initialized');
-  }
-  const tokens: TokenAnnotation[] = annotations.map((annotation) => ({
-    klass: annotation.entityFamilyId,
-    token: annotation.entity,
-    start: annotation.start + annotation.paragraphStart,
-    end: annotation.end + annotation.paragraphStart,
-  }));
-  return resource.setEntities(field.field_id, field.field_type, tokens);
-};
-
-function entityListToMap(entityList: string[]): { [key: string]: Entity } {
-  return entityList.reduce((map, currentValue) => {
-    map[currentValue] = { value: currentValue };
-    return map;
-  }, {} as { [key: string]: Entity });
-}
-
-export const saveEntities = (backup: EntityGroup[], newGroups: EntityGroup[]) => {
-  if (!nucliaApi) {
-    throw new Error('Nuclia API not initialized');
-  }
-  const requestList: Observable<void>[] = [];
-  const nucliaAPI = nucliaApi;
-  newGroups.forEach((group) => {
-    const writableKb = new WritableKnowledgeBox(nucliaAPI, '', {
-      id: nucliaAPI.options.knowledgeBox || '',
-      zone: nucliaAPI.options.zone || '',
-    });
-    const backupGroup = backup.find((g) => g.id === group.id);
-    if (!!backupGroup && JSON.stringify(group.entities) !== JSON.stringify(backupGroup.entities)) {
-      requestList.push(
-        writableKb.createEntitiesGroup(group.id, {
-          title: group.title,
-          color: group.color,
-          entities: entityListToMap(group.entities),
-        }),
-      );
-    }
-  });
-  return forkJoin(requestList);
 };
 
 export const getFile = (path: string): Observable<string> => {

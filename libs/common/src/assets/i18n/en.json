@@ -412,7 +412,7 @@
 	"ner-family-dialog.ner-list-title": "Enter named entity list manually",
 	"ner-family-dialog.new-family-title": "Create named entity family",
 	"ner-family-dialog.upload-csv-button": "Select CSV",
-	"ner-family-dialog.upload-csv-format": "Expected CSV format: one column with one named entity by row.",
+	"ner-family-dialog.upload-csv-format": "Expected CSV format: one column with one named entity per row.",
 	"ner-family-dialog.upload-csv-title": "Upload a CSV file",
 	"ner-family-toolbar.add-button": "Add named entity",
 	"ner-family-toolbar.edit-button": "Edit named entity family",
