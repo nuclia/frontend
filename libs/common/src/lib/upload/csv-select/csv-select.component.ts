@@ -26,7 +26,7 @@ export class CsvSelectComponent<T> {
       this._buttonKind = value;
     }
   }
-  get buttonKind() {
+  get buttonKind(): Kind {
     return this._buttonKind;
   }
   private _buttonKind: Kind = 'primary';
