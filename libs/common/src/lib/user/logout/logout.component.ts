@@ -3,9 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'stf-logout',
-  templateUrl: './logout.component.html',
-  styleUrls: ['./logout.component.scss'],
+  template: '<div class="user-background"></div>',
 })
 export class LogoutComponent implements OnInit {
   constructor(private router: Router, private sdk: SDKService) {}

@@ -6,11 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { authGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list';
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
@@ -21,7 +16,6 @@ import { LogoutComponent } from './logout/logout.component';
 import { ResetComponent } from './reset/reset.component';
 import { CallbackComponent } from './callback/callback.component';
 import { ProfileComponent } from './profile/profile.component';
-import { SwitchComponent } from './switch/switch.component';
 import { ConsentComponent } from './consent/consent.component';
 import { UserContainerLogoComponent } from './user-container/user-container-logo/user-container-logo.component';
 import {
@@ -61,11 +55,6 @@ export const userRoutes: Routes = [
     data: { github: true },
   },
   {
-    path: 'switch',
-    canActivate: [authGuard],
-    component: SwitchComponent,
-  },
-  {
     path: 'profile',
     canActivate: [authGuard],
     component: ProfileComponent,
@@ -92,7 +81,6 @@ export const userRoutes: Routes = [
     CallbackComponent,
     ResetComponent,
     ProfileComponent,
-    SwitchComponent,
     ConsentComponent,
     UserContainerLogoComponent,
     SignupComponent,
@@ -106,11 +94,6 @@ export const userRoutes: Routes = [
     ReactiveFormsModule,
     NgxCaptchaModule,
     AngularSvgIconModule,
-    MatListModule,
-    MatCardModule,
-    MatExpansionModule,
-    MatSelectModule,
-    FlexLayoutModule,
     UserAvatarModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
