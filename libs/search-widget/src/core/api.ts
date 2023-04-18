@@ -257,7 +257,7 @@ export const saveEntities = (backup: EntityGroup[], newGroups: EntityGroup[]) =>
     const backupGroup = backup.find((g) => g.id === group.id);
     if (!!backupGroup && JSON.stringify(group.entities) !== JSON.stringify(backupGroup.entities)) {
       requestList.push(
-        writableKb.setEntitiesGroup(group.id, {
+        writableKb.createEntitiesGroup(group.id, {
           title: group.title,
           color: group.color,
           entities: entityListToMap(group.entities),

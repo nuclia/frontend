@@ -124,7 +124,9 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   delete(): Observable<void>;
 
-  setEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void>;
+  createEntitiesGroup(groupId: string, group: EntitiesGroup): Observable<void>;
+
+  updateEntitiesGroup(groupId: string, payload: UpdateEntitiesGroupPayload): Observable<void>;
 
   deleteEntitiesGroup(groupId: string): Observable<void>;
 
@@ -193,6 +195,12 @@ export interface EntitiesGroup {
   color?: string;
   entities: { [key: string]: Entity };
   custom?: boolean;
+}
+
+export interface UpdateEntitiesGroupPayload {
+  add: { [key: string]: Entity };
+  update: { [key: string]: Entity };
+  delete: string[];
 }
 
 export interface Label {
