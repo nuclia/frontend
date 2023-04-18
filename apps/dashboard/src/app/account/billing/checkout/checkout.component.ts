@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { delay, filter, forkJoin, from, switchMap, take, tap } from 'rxjs';
+import { catchError, delay, filter, forkJoin, from, of, switchMap, take, tap } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
@@ -68,6 +69,7 @@ export class CheckoutComponent implements OnInit {
     private router: Router,
     private navigation: NavigationService,
     private modalService: SisModalService,
+    private translate: TranslateService,
   ) {
     this.initForms();
     this.initStripe();
@@ -192,12 +194,45 @@ export class CheckoutComponent implements OnInit {
           this.cdr?.markForCheck();
         }),
         switchMap(() =>
-          this.billingService.createSubscription({
-            payment_method_id: this.token.id,
-            on_demand_budget: parseInt(this.budget.value),
-            account_type: this.accountType!,
-          }),
+          this.billingService
+            .createSubscription({
+              payment_method_id: this.token.id,
+              on_demand_budget: parseInt(this.budget.value),
+              account_type: this.accountType!,
+            })
+            .pipe(
+              catchError((error) => {
+                if (error.status === 400) {
+                  // Error with the card
+                  throw new Error('billing.card_error');
+                }
+                throw error;
+              }),
+            ),
         ),
+        switchMap((subscription) => {
+          if (subscription.status === 'active') {
+            // Success
+            return of(true);
+          } else if (subscription.status === 'incomplete' && subscription.requires_action && !subscription.error) {
+            // 3D secure required
+            return from(
+              this._stripe.confirmCardPayment(subscription.client_secret, {
+                payment_method: subscription.payment_method_id,
+              }),
+            ).pipe(
+              tap((result: any) => {
+                if (result.error) {
+                  // 3D secure failed
+                  throw new Error(result.error.message);
+                }
+              }),
+            );
+          } else {
+            // Other card errors
+            throw new Error();
+          }
+        }),
         switchMap(() =>
           this.sdk.currentAccount.pipe(
             take(1),
@@ -210,12 +245,16 @@ export class CheckoutComponent implements OnInit {
       .subscribe({
         next: (newAccount) => {
           this.toaster.success('billing.success');
-          this.router.navigateByUrl(this.navigation.getAccountUrl(newAccount.slug));
+          this.router.navigateByUrl(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
         },
-        error: () => {
+        error: (error) => {
           this.subscribing = false;
           this.cdr?.markForCheck();
-          this.toaster.error('generic.error.oops');
+          this.toaster.error(
+            (error?.message || this.translate.instant('generic.error.oops')) +
+              '<br>' +
+              this.translate.instant('billing.assistance', { url: 'mailto:billing@nuclia.com' }),
+          );
         },
       });
   }
