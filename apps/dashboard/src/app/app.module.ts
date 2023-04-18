@@ -6,7 +6,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -73,7 +72,6 @@ const appModules = [
     HttpClientModule,
     ReactiveFormsModule,
     AngularSvgIconModule.forRoot(),
-    FlexLayoutModule,
     STFConfigModule.forRoot(environment),
     OverlayModule,
     STFPipesModule,

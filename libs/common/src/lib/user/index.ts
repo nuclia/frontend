@@ -13,6 +13,5 @@ export * from './recover/recover.component';
 export * from './reset/reset.component';
 export * from './signup/signup.component';
 export * from './sso/sso-button.component';
-export * from './switch/switch.component';
 export * from './user-container';
 export * from './user.module';
