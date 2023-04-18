@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { of } from 'rxjs';
 import { EntitiesService } from './entities.service';
 
@@ -7,6 +6,7 @@ import { EntitiesComponent } from './entities.component';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { ModalService, PaButtonModule, PaModalModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 describe('EntitiesComponent', () => {
   let component: EntitiesComponent;
@@ -15,26 +15,19 @@ describe('EntitiesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
+        MockModule(TranslateModule),
         MockModule(PaModalModule),
         MockModule(PaTextFieldModule),
         MockModule(PaButtonModule),
         MockModule(ReactiveFormsModule),
       ],
-      declarations: [EntitiesComponent, TranslatePipeMock],
+      declarations: [EntitiesComponent],
       providers: [
-        {
-          provide: EntitiesService,
-          useValue: {
-            getEntities: () => of({}),
-          },
-        },
-        {
-          provide: STFTrackingService,
-          useValue: {
-            isFeatureEnabled: () => of(false),
-          },
-        },
+        MockProvider(TranslateService),
         MockProvider(ModalService),
+        MockProvider(EntitiesService, {
+          entities: of({}),
+        }),
       ],
     }).compileComponents();
   });

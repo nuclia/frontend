@@ -1,67 +1,48 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Routes } from '@angular/router';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { OverlayModule } from '@angular/cdk/overlay';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { A11yModule } from '@angular/cdk/a11y';
+import { RouterModule } from '@angular/router';
 
 import { EntitiesComponent } from './entities.component';
 import { EntityListComponent } from './entity-list/entity-list.component';
-import { EntityGroupComponent } from './entity-group/entity-group.component';
-import { EntityNameComponent } from './entity-name/entity-name.component';
-import { SynonymListComponent } from './synonym-list/synonym-list.component';
-import { SynonymAddComponent } from './synonym-add/synonym-add.component';
-import { EntityDialogComponent, GroupSelectComponent } from './entity-dialog';
+import { AddNerDialogComponent } from './add-ner-dialog';
 import {
   PaButtonModule,
   PaExpanderModule,
+  PaFocusableModule,
   PaIconModule,
   PaModalModule,
+  PaPopupModule,
+  PaTableModule,
   PaTextFieldModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { EntityGroupDialogComponent } from './entity-group-dialog/entity-group-dialog.component';
-import { STFExpanderModule } from '@flaps/pastanaga';
-
-const Components = [
-  EntitiesComponent,
-  EntityGroupComponent,
-  EntityListComponent,
-  EntityNameComponent,
-  SynonymListComponent,
-  SynonymAddComponent,
-  EntityDialogComponent,
-  GroupSelectComponent,
-];
-
-const ROUTES: Routes = [{ path: '', component: EntitiesComponent }];
+import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
+import { HintModule } from '../hint';
+import { UploadModule } from '../upload';
+import { SisProgressModule } from '@nuclia/sistema';
 
 @NgModule({
   imports: [
     CommonModule,
-    AngularSvgIconModule,
-    FlexLayoutModule,
+    RouterModule.forChild([{ path: '', component: EntitiesComponent }]),
     TranslateModule.forChild(),
     ReactiveFormsModule,
-    RouterModule.forChild(ROUTES),
-    ScrollingModule,
-    OverlayModule,
-    A11yModule,
-    DragDropModule,
     PaTextFieldModule,
     PaButtonModule,
     PaIconModule,
     PaTooltipModule,
     PaModalModule,
-    STFExpanderModule,
     PaExpanderModule,
+    HintModule,
+    UploadModule,
+    SisProgressModule,
+    PaTableModule,
+    PaPopupModule,
+    PaFocusableModule,
   ],
-  declarations: [...Components, EntityGroupDialogComponent],
+  declarations: [EntitiesComponent, EntityListComponent, AddNerDialogComponent, NerFamilyDialogComponent],
   exports: [],
 })
 export class EntitiesModule {}

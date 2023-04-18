@@ -2,21 +2,15 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   Input,
   OnDestroy,
   OnInit,
-  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { delay, takeUntil } from 'rxjs/operators';
-import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { SelectionModel } from '@angular/cdk/collections';
-import { CdkDragDrop, CdkDragEnter, CdkDragExit } from '@angular/cdk/drag-drop';
-import { AppEntitiesGroup, Entity, MutableEntitiesGroup } from '../model';
-import { EntitiesEditService } from '../entities-edit.service';
-import { EntityDialogComponent, EntityDialogMode } from '../entity-dialog';
-import { SisModalService } from '@nuclia/sistema';
+import { Entity, NerFamily } from '../model';
+import { EntitiesService } from '../entities.service';
 
 @Component({
   selector: 'app-entity-list',
@@ -25,142 +19,82 @@ import { SisModalService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntityListComponent implements OnInit, OnDestroy {
-  @Input() editMode: boolean = false;
-  @Input() group: AppEntitiesGroup | undefined;
-  @Input() searchTerm: string | null = '';
-  @Input() searchResults: string[] | null = null;
+  @Input()
+  set family(value: NerFamily | undefined) {
+    const oldValue = this._family;
+    this._family = value;
+    if (this.listContainer && oldValue?.key !== value?.key) {
+      (this.listContainer.nativeElement as HTMLElement).scrollTo({ top: 0 });
+    }
+  }
+  get family() {
+    return this._family;
+  }
 
-  editableGroup: MutableEntitiesGroup | null = null;
-  highlightedEntities = new SelectionModel<string>(true);
-  entityHeight = 50;
-  maxListHeight = 500;
+  get entities(): Entity[] {
+    return Object.values(this.family?.entities || {})
+      .filter((entity) => !entity.merged)
+      .sort((a, b) => a.value.localeCompare(b.value));
+  }
+
+  @ViewChild('listContainer') listContainer?: ElementRef;
+  @ViewChild('entityInput') entityInput?: ElementRef;
+
   unsubscribeAll = new Subject<void>();
+  deletedNer?: string;
+  duplicatedEntity?: Entity;
+  matchingEntities: Entity[] = [];
 
-  @ViewChild('virtualContainer') virtualContainer?: CdkVirtualScrollViewport;
+  private _family: NerFamily | undefined;
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-    private modalService: SisModalService,
-    private editService: EntitiesEditService,
-    private renderer2: Renderer2,
-  ) {}
+  constructor(private cdr: ChangeDetectorRef, private entitiesService: EntitiesService) {}
 
-  get entitiesGroup(): AppEntitiesGroup | undefined {
-    return this.editableGroup || this.group;
-  }
-
-  ngOnInit(): void {
-    this.editService
-      .getGroup(this.group!.key)
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((entitiesGroup) => {
-        this.editableGroup = entitiesGroup;
-        this.cdr.markForCheck();
-      });
-
-    this.editService
-      .getAddedEntity(this.group!.key)
-      .pipe(
-        delay(10), // Wait until the new entity is added to the DOM
-        takeUntil(this.unsubscribeAll),
-      )
-      .subscribe((entity) => {
-        this.scrollToEntity(entity);
-        this.highlightedEntities.toggle(entity.value);
-        this.cdr.markForCheck();
-        setTimeout(() => {
-          this.highlightedEntities.toggle(entity.value);
-          this.cdr.markForCheck();
-        }, 2000);
-      });
-  }
-
-  filteredEntities(): Entity[] {
-    let entities = Object.entries(this.entitiesGroup?.entities || [])
-      .map(([, value]) => value)
-      .filter((entity) => !entity.merged);
-
-    if (this.searchResults) {
-      entities = entities.filter((entity) => this.searchResults!.includes(entity.value));
-    }
-    return entities.sort((a, b) => a.value.localeCompare(b.value));
-  }
-
-  dragEnter(event: CdkDragEnter<any>) {
-    if (event.container.data.value !== event.item.data.value) {
-      this.renderer2.setStyle(event.container.element.nativeElement, 'background-color', 'rgba(255, 220, 27,0.1)');
-    }
-  }
-
-  dragExit(event: CdkDragExit<any>) {
-    if (event.container.data.value !== event.item.data.value) {
-      this.renderer2.removeStyle(event.container.element.nativeElement, 'background-color');
-    }
-  }
-
-  dragDrop(event: CdkDragDrop<Entity, any, Entity>) {
-    this.addSynonym(event.container.data, event.item.data);
-    this.renderer2.removeStyle(event.container.element.nativeElement, 'background-color');
-  }
-
-  addSynonym(entity: Entity, synonym: Entity) {
-    this.editableGroup!.addSynonym(entity.value, synonym.value);
-    this.editService.setGroup(this.group!.key, this.editableGroup!);
-    this.cdr.markForCheck();
-  }
-
-  unlinkSynonym(entity: Entity, synonym: Entity) {
-    this.editableGroup!.unlinkSynonym(entity.value, synonym.value);
-    this.editService.setGroup(this.group!.key, this.editableGroup!);
-    this.cdr.markForCheck();
-  }
-
-  deleteEntity(entity: Entity) {
-    this.editableGroup?.deleteEntity(entity.value);
-    this.editService.setGroup(this.group!.key, this.editableGroup!);
-    this.cdr.markForCheck();
-  }
-
-  viewEntity(entity: Entity) {
-    this.openDialog('view', entity);
-  }
-
-  editEntity(entity: Entity) {
-    const dialogRef = this.openDialog('edit', entity);
-    dialogRef.onClose.pipe(takeUntil(this.unsubscribeAll)).subscribe((result) => {
-      if (result) {
-        // TODO
-      }
-    });
-  }
-
-  openDialog(mode: EntityDialogMode, entity?: Entity) {
-    return this.modalService.openModal(EntityDialogComponent, {
-      dismissable: true,
-      data: { mode, entity, group: this.group!.key },
-    });
-  }
-  getListHeight(): number {
-    return Math.min(this.filteredEntities().length * this.entityHeight, this.maxListHeight);
-  }
-
-  isHighlighted(entity: Entity): boolean {
-    return this.highlightedEntities.isSelected(entity.value);
-  }
-
-  scrollToEntity(entity: Entity) {
-    const index = this.filteredEntities().findIndex((item) => item.value === entity.value);
-    if (this.virtualContainer) {
-      this.virtualContainer.scrollToIndex(index);
-    }
-  }
-
-  preserveOrder() {
-    return 0;
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  trackByValue(index: number, ner: Entity) {
+    return ner.value;
+  }
+
+  deleteEntity(ner: Entity) {
+    if (this.family) {
+      this.deletedNer = ner.value;
+      this.entitiesService.deleteEntity(this.family.key, ner.value).subscribe(() => (this.deletedNer = undefined));
+    }
+  }
+
+  openDuplicatesOfPopup(ner: Entity) {
+    this.duplicatedEntity = ner;
+    if (this.entityInput) {
+      const inputElement: HTMLInputElement = this.entityInput.nativeElement;
+      setTimeout(() => {
+        inputElement.focus();
+        this.cdr.markForCheck();
+      });
+    }
+  }
+
+  getMatchingEntities(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    if (value.length > 2) {
+      this.matchingEntities = this.entities.filter((entity) => entity.value.startsWith(value));
+    }
+  }
+  addDuplicateOf(entity: Entity) {
+    if (this.family && this.duplicatedEntity) {
+      this.entitiesService.addDuplicate(this.family.key, this.duplicatedEntity, entity).subscribe(() => {
+        this.duplicatedEntity = undefined;
+        this.matchingEntities = [];
+      });
+    }
+  }
+  removeDuplicate(ner: Entity, duplicate: string) {
+    if (this.family) {
+      this.entitiesService.removeDuplicate(this.family.key, ner, duplicate).subscribe();
+    }
   }
 }
