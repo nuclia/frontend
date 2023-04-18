@@ -24,15 +24,21 @@ export interface DestinationConnectorDefinition extends ConnectorDefinition {
   factory: (data?: ConnectorSettings) => Observable<IDestinationConnector>;
 }
 
+export interface Link {
+  uri: string;
+  extra_headers: { [key: string]: string };
+}
 export interface ISourceConnector {
   isExternal: boolean;
   setParameters(params: ConnectorParameters): void;
+  getParameters(): ConnectorParameters;
   getFolders(query?: string): Observable<SearchResults>;
   getFiles(query?: string): Observable<SearchResults>;
   getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]>;
   download(resource: SyncItem): Observable<Blob | undefined>;
-  getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
+  getLink(resource: SyncItem): Observable<Link>;
   hasAuthData(): boolean;
+  refreshAuthentication(): Observable<boolean>;
 }
 
 export enum FileStatus {

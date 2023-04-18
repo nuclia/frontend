@@ -103,7 +103,7 @@ export class UploadComponent implements OnInit, OnDestroy {
             if (source.hasServerSideAuth) {
               localStorage.setItem(CONNECTOR_ID_KEY, event.connector.id);
               this.sync.setCurrentSourceId(event.name);
-              source.goToOAuth();
+              source.goToOAuth(true);
             }
             return this.sync.authenticateToSource(this.source);
           }

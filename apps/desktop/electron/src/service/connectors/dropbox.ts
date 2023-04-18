@@ -5,6 +5,7 @@ import {
   SyncItem,
   SearchResults,
   ConnectorParameters,
+  Link,
 } from '../models';
 import { forkJoin, from, map, Observable, of, tap } from 'rxjs';
 
@@ -26,6 +27,10 @@ class DropboxImpl implements ISourceConnector {
 
   setParameters(params: ConnectorParameters) {
     this.params = params;
+  }
+
+  getParameters(): ConnectorParameters {
+    return this.params;
   }
 
   getFolders(query?: string): Observable<SearchResults> {
@@ -160,5 +165,13 @@ class DropboxImpl implements ISourceConnector {
       console.error(e);
       return of(undefined);
     }
+  }
+
+  getLink(resource: SyncItem): Observable<Link> {
+    throw new Error('Method not implemented.');
+  }
+
+  refreshAuthentication(): Observable<boolean> {
+    return of(true);
   }
 }

@@ -36,7 +36,23 @@ export const hasAuth = (sourceId: string) => {
 
 export const getSourceFiles = (sourceId: string, query?: string) => {
   const connector = getSourceInstance(sourceId);
-  return connector.getFiles(query);
+  connector;
+  return connector.getFiles(query).pipe(
+    catchError((err) => {
+      return connector.refreshAuthentication().pipe(
+        tap((success) => {
+          if (success) {
+            const source = getSource(sourceId);
+            source.data = connector.getParameters();
+            updateSource(sourceId, source);
+            return connector.getFiles(query);
+          } else {
+            throw new Error('Failed to refresh authentication');
+          }
+        }),
+      );
+    }),
+  );
 };
 
 export const getSourceFolders = (sourceId: string, query?: string) => {
@@ -44,38 +60,49 @@ export const getSourceFolders = (sourceId: string, query?: string) => {
   return connector.getFolders(query);
 };
 
-const downloadFile = (sourceId: string, item: SyncItem) => {
+function downloadFileOrLink(
+  sourceId: string,
+  item: SyncItem,
+): Observable<{ type: 'blob' | 'link'; blob?: Blob; link?: any }> {
   const connector = getSourceInstance(sourceId);
-  return connector.download(item);
-};
+  if (connector.isExternal) {
+    return connector.getLink(item).pipe(map((link) => ({ type: 'link', link })));
+  } else {
+    return connector.download(item).pipe(map((blob) => ({ type: 'blob', blob })));
+  }
+}
 
-export const syncFile = (sourceId: string, source: Source, item: SyncItem) => {
+export function syncFile(sourceId: string, source: Source, item: SyncItem): Observable<boolean> {
   if (!source.kb) {
     return of(false);
   }
 
   const nucliaConnector = new NucliaCloud(source.kb);
-  return downloadFile(sourceId, item).pipe(
-    switchMap((blob) =>
-      blob
-        ? from(blob.arrayBuffer()).pipe(
-            switchMap((arrayBuffer) => {
-              try {
-                return nucliaConnector.upload(item.originalId, item.title, { buffer: arrayBuffer });
-              } catch (err) {
-                return of(false);
-              }
-            }),
-          )
-        : of(false),
-    ),
+  return downloadFileOrLink(sourceId, item).pipe(
+    switchMap((data) => {
+      if (data.type === 'blob' && data.blob) {
+        return from(data.blob.arrayBuffer()).pipe(
+          switchMap((arrayBuffer) => {
+            try {
+              return nucliaConnector.upload(item.originalId, item.title, { buffer: arrayBuffer });
+            } catch (err) {
+              return of(false);
+            }
+          }),
+        );
+      } else if (data.type === 'link' && data.link) {
+        return nucliaConnector.uploadLink(item.title, data.link).pipe(map(() => true));
+      } else {
+        return of(false);
+      }
+    }),
     tap((success) =>
       success
         ? console.log(`Uploaded ${item.originalId} with success`)
         : console.log(`Failed to upload ${item.originalId}`),
     ),
   );
-};
+}
 
 export function getLastModified(
   sourceId: string,

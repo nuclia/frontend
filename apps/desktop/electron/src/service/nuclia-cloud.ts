@@ -9,6 +9,7 @@ import {
 import { catchError, delay, map, Observable, of, switchMap } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
+import { Link } from './models';
 
 require('localstorage-polyfill');
 
@@ -86,7 +87,7 @@ export class NucliaCloud {
     }
   }
 
-  uploadLink(filename: string, data: { uri: string; extra_headers: { [key: string]: string } }): Observable<void> {
+  uploadLink(filename: string, data: Link): Observable<void> {
     return this.getKb().pipe(
       switchMap((kb) => kb.createResource({ title: filename, files: { [filename]: { file: data } } })),
       map(() => undefined),

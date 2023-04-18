@@ -31,6 +31,7 @@ router.get('/source/:id', async (req, res) => {
 });
 
 router.get('/source/:id/auth', async (req, res) => {
+  console.log('hasAuth', req.params.id, hasAuth(req.params.id));
   res.send(JSON.stringify({ hasAuth: hasAuth(req.params.id) }));
 });
 
@@ -49,7 +50,6 @@ router.post('/source', (req, res) => {
 router.patch('/source/:id', (req, res) => {
   const sources = getSources();
   const existing = sources[req.params.id];
-  console.log('BODY', req.body);
   const updatedSource = { ...existing, ...getSourceFromBody(req.body, existing.items || []) };
   setSources({ ...sources, [req.params.id]: updatedSource });
   res.send('{ "success": true }');
@@ -67,7 +67,7 @@ router.get('/source/:id/:type/search', async (req, res) => {
     if (e.message === 'Unauthorized') {
       res.status(401).send('');
     } else {
-      res.status(500).send(`{"message": "${e.message}"}`);
+      res.status(500).send(`{"message": "${e.message || e}"}`);
     }
   }
 });

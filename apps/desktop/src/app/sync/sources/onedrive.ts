@@ -22,7 +22,6 @@ export const OneDriveConnector: SourceConnectorDefinition = {
 };
 
 const CLIENT_ID = 'ONEDRIVE_CLIENT_ID';
-const CLIENT_SECRET = 'ONEDRIVE_CLIENT_SECRET';
 const TOKEN = 'ONEDRIVE_TOKEN';
 const REFRESH = 'ONEDRIVE_REFRESH_TOKEN';
 const CODE_VERIFIER = 'ONEDRIVE_CODE_VERIFIER';
@@ -41,24 +40,16 @@ class OneDriveImpl implements ISourceConnector {
         type: 'text',
         required: true,
       },
-      {
-        id: 'client_secret',
-        label: 'Client secret',
-        type: 'text',
-        required: true,
-      },
     ]);
   }
 
   handleParameters(params: ConnectorParameters) {
     localStorage.setItem(CLIENT_ID, params.client_id);
-    localStorage.setItem(CLIENT_SECRET, params.client_secret);
   }
 
   getParametersValues(): ConnectorParameters {
     return {
       client_id: localStorage.getItem(CLIENT_ID),
-      client_secret: localStorage.getItem(CLIENT_SECRET),
       token: localStorage.getItem(TOKEN),
       refresh: localStorage.getItem(REFRESH),
     };

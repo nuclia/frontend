@@ -52,7 +52,9 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
       concat(
         (source.permanentSync ? this.sync.getFolders(this.query) : this.sync.getFiles(this.query)).pipe(
           catchError((error) => {
-            this.toaster.error(typeof error === 'string' ? error : error?.message || 'An error occurred');
+            this.toaster.error(
+              typeof error === 'string' ? error : error?.error?.message || error?.message || 'An error occurred',
+            );
             return of({ items: [], nextPage: undefined });
           }),
         ),

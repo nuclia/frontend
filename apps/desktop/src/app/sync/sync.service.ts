@@ -191,7 +191,7 @@ export class SyncService {
                     return this.getNucliaKey(kb).pipe(
                       map((data) => ({
                         ...source,
-                        options: {
+                        kb: {
                           zone: this.sdk.nuclia.options.zone,
                           backend: this.sdk.nuclia.options.backend,
                           knowledgeBox: data.kbid,
