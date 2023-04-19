@@ -7,6 +7,33 @@
     <div class="section-header">
       <div class="section-title">
         <pa-icon
+          name="circle-check"
+          color="#f06"></pa-icon>
+        {{ 'billing.subscription_tier' | translate }}
+      </div>
+      <pa-button
+        routerLink="../subscriptions"
+        icon="edit"
+        size="small"
+        aspect="basic"></pa-button>
+    </div>
+    <div class="section-body">
+      <div class="body-m">
+        {{ 'account.type.' + accountType | translate }}
+        -
+        <ng-container *ngIf="currency | async as currency">
+          <ng-container *ngIf="prices | async as prices">
+            {{ prices[accountType].recurring.month.price | currency: currency }}/{{ 'billing.month' | translate }}
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-header">
+      <div class="section-title">
+        <pa-icon
           *ngIf="editCustomer"
           name="circle-dash"></pa-icon>
         <pa-icon
@@ -251,6 +278,7 @@
             type="number"
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
+          <span class="title-m">{{ (currency | async) === 'USD' ? '$' : '€' }}</span>
         </div>
         <pa-button
           (click)="subscribe()"

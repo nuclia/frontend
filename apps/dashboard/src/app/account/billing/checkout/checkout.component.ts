@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, delay, filter, forkJoin, from, of, switchMap, take, tap } from 'rxjs';
+import { forkJoin, from, of, Subject } from 'rxjs';
+import { catchError, delay, filter, distinctUntilChanged, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
@@ -41,14 +42,31 @@ export class CheckoutComponent implements OnInit {
   };
 
   subscribing = false;
-  accountType?: AccountTypes;
   countries = COUNTRIES;
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  accountType: AccountTypes = 'stash-developer';
+  prices = this.billingService.getPrices().pipe(shareReplay());
+  updateCurrency = new Subject<string>();
+  currency = this.updateCurrency.pipe(
+    distinctUntilChanged(),
+    switchMap((country) => this.billingService.getCurrency(country)),
+    shareReplay(),
+  );
+
   editCustomer = true;
-  customer?: StripeCustomer;
+  private _customer?: StripeCustomer;
+  get customer() {
+    return this._customer;
+  }
+  set customer(customer) {
+    this._customer = customer;
+    if (customer) {
+      this.updateCurrency.next(customer.billing_details.country);
+    }
+  }
 
   private _stripe: any;
   @ViewChild('card') private cardContainer?: ElementRef;
@@ -77,7 +95,9 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.pipe(take(1)).subscribe((params) => {
-      this.accountType = params['type'];
+      if (params['type']) {
+        this.accountType = params['type'];
+      }
     });
   }
 
@@ -99,6 +119,7 @@ export class CheckoutComponent implements OnInit {
       } else {
         if (country) {
           this.billing.patchValue({ country });
+          this.updateCurrency.next(country);
         }
         if (user?.email) {
           this.billing.patchValue({ email: user.email });
@@ -184,7 +205,6 @@ export class CheckoutComponent implements OnInit {
   }
 
   subscribe() {
-    if (!this.accountType) return;
     this.openReview()
       .pipe(
         take(1),
@@ -260,10 +280,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   openReview() {
-    return forkJoin([
-      this.billingService.getPrices(),
-      this.billingService.getCurrency(this.billing.value.country || ''),
-    ]).pipe(
+    return forkJoin([this.prices.pipe(take(1)), this.currency.pipe(take(1))]).pipe(
       switchMap(
         ([prices, currency]) =>
           this.modalService.openModal(ReviewComponent, {
@@ -272,7 +289,7 @@ export class CheckoutComponent implements OnInit {
               account: this.accountType,
               customer: this.customer,
               token: this.token,
-              prices: prices[this.accountType!],
+              prices: prices[this.accountType],
               budget: this.budget.value,
               currency,
             },

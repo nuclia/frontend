@@ -54,6 +54,13 @@
     font-size: $font-size-body-s;
     font-weight: $font-weight-regular;
   }
+
+  .subscribed {
+    color: $color-primary-regular;
+    display: flex;
+    gap: rhythm(1);
+    justify-content: center;
+  }
 }
 .calculator {
   margin-top: rhythm(1);

@@ -49,6 +49,12 @@
           [queryParams]="{ type: 'stash-developer' }">
           {{ 'billing.upgrade' | translate }}
         </pa-button>
+        <div
+          *ngIf="(accountType | async) === 'stash-developer'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+          <span class="title-s">{{ 'billing.subscribed' | translate }}</span>
+        </div>
       </th>
       <th class="plan">
         <div class="plan-name">Business</div>
@@ -57,16 +63,18 @@
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
         <pa-button
-          *ngIf="
-            (accountType | async) === 'stash-basic' ||
-            (accountType | async) === 'stash-trial' ||
-            (accountType | async) === 'stash-developer'
-          "
+          *ngIf="(accountType | async) === 'stash-basic' || (accountType | async) === 'stash-trial'"
           kind="primary"
           routerLink="../checkout"
           [queryParams]="{ type: 'stash-business' }">
           {{ 'billing.upgrade' | translate }}
         </pa-button>
+        <div
+          *ngIf="(accountType | async) === 'stash-business'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+          <span class="title-s">{{ 'billing.subscribed' | translate }}</span>
+        </div>
       </th>
       <th class="plan">
         <div class="plan-name">Enterprise</div>
@@ -74,10 +82,17 @@
           <span class="unit">{{ 'billing.enterprise_ready' | translate }}</span>
         </div>
         <pa-button
+          *ngIf="(accountType | async) !== 'stash-enterprise'"
           kind="primary"
           (click)="contact()">
           {{ 'billing.contact' | translate }}
         </pa-button>
+        <div
+          *ngIf="(accountType | async) === 'stash-enterprise'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+          <span class="title-s">{{ 'billing.subscribed' | translate }}</span>
+        </div>
       </th>
     </tr>
     <tr>
