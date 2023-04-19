@@ -8,7 +8,7 @@ export interface Source {
   folders?: SyncItem[];
   items?: SyncItem[];
   permanentSync?: boolean;
-  lastSync?: string;
+  lastSyncGMT?: string;
   total?: number;
   lastBatch?: number;
 }
@@ -53,7 +53,7 @@ export interface SyncItem {
   originalId: string;
   metadata: { [key: string]: string };
   status: FileStatus;
-  modified?: string;
+  modifiedGMT?: string;
   isFolder?: boolean;
 }
 

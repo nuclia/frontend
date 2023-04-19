@@ -49,29 +49,21 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     }),
     switchMap(() => this.currentSource),
     switchMap((source) =>
-      concat(
-        (source.permanentSync ? this.sync.getFolders(this.query) : this.sync.getFiles(this.query)).pipe(
+      (source.permanentSync ? this.sync.getFolders(this.query) : this.sync.getFiles(this.query))
+        .pipe(
           catchError((error) => {
             this.toaster.error(
               typeof error === 'string' ? error : error?.error?.message || error?.message || 'An error occurred',
             );
             return of({ items: [], nextPage: undefined });
           }),
-        ),
-        this.triggerNextPage.pipe(
-          filter(() => !this.loading),
+        )
+        .pipe(
           tap(() => {
-            this.loading = true;
+            this.loading = false;
           }),
-          concatMap(() => (this.nextPage ? this.nextPage : of({ items: [], nextPage: undefined } as SearchResults))),
+          scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
         ),
-      ).pipe(
-        tap((res) => {
-          this.nextPage = res.nextPage;
-          this.loading = false;
-        }),
-        scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
-      ),
     ),
     share(),
   );
@@ -82,21 +74,6 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.triggerSearch.next();
     }, 200);
-
-    // Infinite scroll
-    const container = this.scroll?.nativeElement;
-    if (container) {
-      merge(fromEvent(container, 'scroll'), this.resources)
-        .pipe(
-          auditTime(300),
-          filter(() => !!this.nextPage && !this.loading),
-          filter(() => container.scrollTop > container.scrollHeight - container.clientHeight - 400),
-          takeUntil(this.unsubscribeAll),
-        )
-        .subscribe(() => {
-          this.triggerNextPage.next();
-        });
-    }
   }
 
   ngOnDestroy() {
@@ -134,18 +111,6 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   }
 
   getAllFiles(): Observable<SyncItem[]> {
-    return this.sync.getFiles().pipe(
-      concatMap((res) => this._getAllFiles(res)),
-      map((res) => res.items),
-    );
-  }
-
-  private _getAllFiles(currentResults?: SearchResults): Observable<SearchResults> {
-    return currentResults && currentResults.nextPage
-      ? currentResults.nextPage.pipe(
-          map((res) => ({ ...res, items: [...currentResults.items, ...res.items] })),
-          concatMap((res) => this._getAllFiles(res)),
-        )
-      : of(currentResults || { items: [] });
+    return this.sync.getFiles().pipe(map((res) => res.items));
   }
 }

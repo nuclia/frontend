@@ -57,7 +57,22 @@ export const getSourceFiles = (sourceId: string, query?: string) => {
 
 export const getSourceFolders = (sourceId: string, query?: string) => {
   const connector = getSourceInstance(sourceId);
-  return connector.getFolders(query);
+  return connector.getFolders(query).pipe(
+    catchError((err) => {
+      return connector.refreshAuthentication().pipe(
+        tap((success) => {
+          if (success) {
+            const source = getSource(sourceId);
+            source.data = connector.getParameters();
+            updateSource(sourceId, source);
+            return connector.getFolders(query);
+          } else {
+            throw new Error('Failed to refresh authentication');
+          }
+        }),
+      );
+    }),
+  );
 };
 
 function downloadFileOrLink(
@@ -106,12 +121,12 @@ export function syncFile(sourceId: string, source: Source, item: SyncItem): Obse
 
 export function getLastModified(
   sourceId: string,
-  since?: string,
+  sinceGMT?: string,
   folders?: SyncItem[],
 ): Observable<{ success: boolean; results: SyncItem[]; error?: string }> {
   const connector = getSourceInstance(sourceId);
   try {
-    return connector.getLastModified(since || '2000-01-01T00:00:00.000Z', folders).pipe(
+    return connector.getLastModified(sinceGMT || '2000-01-01T00:00:00.000Z', folders).pipe(
       catchError((err) => {
         // TODO: log the error in history
         console.error(`Error on ${sourceId}: ${err.message}`);

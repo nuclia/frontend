@@ -7,7 +7,7 @@ import {
   ConnectorParameters,
   Link,
 } from '../models';
-import { forkJoin, from, map, Observable, of, tap } from 'rxjs';
+import { concatMap, forkJoin, from, map, Observable, of, tap } from 'rxjs';
 
 // TODO: use the default fetch once upgraded to node 18
 // import { fetch } from '../utils';
@@ -46,7 +46,7 @@ class DropboxImpl implements ISourceConnector {
       return forkJoin((folders || []).map((folder) => this._getFiles('', false, folder.uuid))).pipe(
         map((results) =>
           results.reduce(
-            (acc, result) => acc.concat(result.items.filter((item) => item.modified && item.modified > since)),
+            (acc, result) => acc.concat(result.items.filter((item) => item.modifiedGMT && item.modifiedGMT > since)),
             [] as SyncItem[],
           ),
         ),
@@ -61,6 +61,7 @@ class DropboxImpl implements ISourceConnector {
     loadFolders = false,
     path = '',
     nextPage?: string | number,
+    previous?: SearchResults,
   ): Observable<SearchResults> {
     const success = (res: any) => {
       if (res.status === 401) {
@@ -92,13 +93,16 @@ class DropboxImpl implements ISourceConnector {
           ),
         }).then(success, failure);
     return from(request).pipe(
-      map((result: any) => ({
-        items:
+      concatMap((result: any) => {
+        const newItems =
           (query
             ? result.matches?.filter((item: any) => this.filterResults(item, loadFolders)).map(this.mapResults)
-            : result.entries?.filter((item: any) => this.filterFiles(item, loadFolders)).map(this.mapFiles)) || [],
-        nextPage: result.has_more ? this._getFiles(query, loadFolders, path, result.cursor) : undefined,
-      })),
+            : result.entries?.filter((item: any) => this.filterFiles(item, loadFolders)).map(this.mapFiles)) || [];
+        const items = [...(previous?.items || []), ...newItems];
+        return result.has_more
+          ? this._getFiles(query, loadFolders, path, result.cursor, { items, nextPage: result.cursor })
+          : of({ items });
+      }),
     );
   }
 
@@ -111,7 +115,7 @@ class DropboxImpl implements ISourceConnector {
       metadata: {},
       status: FileStatus.PENDING,
       uuid: raw.uuid || '',
-      modified: raw.client_modified,
+      modifiedGMT: raw.client_modified,
       isFolder,
     };
   }

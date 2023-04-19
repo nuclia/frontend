@@ -81,13 +81,13 @@ function collectLastModified() {
               ? of(undefined)
               : of(...arr).pipe(
                   switchMap(([id, source]) =>
-                    getLastModified(id, source.lastSync, source.folders).pipe(
+                    getLastModified(id, source.lastSyncGMT, source.folders).pipe(
                       tap((results) => {
                         if (results.success) {
                           const existing = source.items || [];
                           console.log(`Found ${results.results.length} new items from ${id}`);
                           source.items = [...existing, ...results.results];
-                          source.lastSync = new Date().toISOString();
+                          source.lastSyncGMT = new Date().toISOString();
                           updateSource(id, source);
                         } else {
                           // TODO: log the error in history
