@@ -301,7 +301,7 @@ export const getNavigationUrl = (
       return of(url);
     } else {
       const fileUrl = (field as FileFieldData)?.value?.file?.uri;
-      return fileUrl ? getFileUrls([fileUrl]).pipe(map((urls) => urls[0])) : of(undefined);
+      return fileUrl ? getFileUrls([fileUrl], true).pipe(map((urls) => urls[0])) : of(undefined);
     }
   } else {
     return of(undefined);
