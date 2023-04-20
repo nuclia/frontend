@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { of, Subject } from 'rxjs';
+import { filter, of, Subject } from 'rxjs';
 import { concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
@@ -45,13 +45,14 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.stateService.stash
       .pipe(
-        takeUntil(this.unsubscribeAll),
+        filter((data) => !!data),
         tap((data) => (this.kb = data || undefined)),
         switchMap(() => this.stateService.account.pipe(takeUntil(this.unsubscribeAll))),
         tap((data) => (this.account = data || undefined)),
         switchMap(() => (this.kb?.getConfiguration() || of({})).pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() => this.sdk.getVisibleLearningConfiguration(false)),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ display, full }) => {
         this.displayedLearningConfigurations = display;

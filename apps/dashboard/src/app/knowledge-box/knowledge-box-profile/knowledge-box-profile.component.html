@@ -63,7 +63,7 @@
           <pa-radio
             *ngFor="let value of conf.data.options"
             [value]="value.value">
-            {{ value.name }}
+            {{ value.name.toLowerCase() }}
           </pa-radio>
         </pa-radio-group>
       </div>
