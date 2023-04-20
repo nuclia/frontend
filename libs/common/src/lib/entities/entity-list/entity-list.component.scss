@@ -39,6 +39,12 @@
   .duplicate-list {
     display: flex;
     gap: rhythm(1);
+
+    .duplicate-item {
+      align-items: center;
+      display: flex;
+      gap: rhythm(0.5);
+    }
   }
 
   .duplicate-of-popup {

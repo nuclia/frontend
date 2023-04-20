@@ -30,7 +30,7 @@
             {{ 'ner-list.add-duplicate-tooltip' | translate }}
           </pa-button>
           <pa-button
-            icon="circle-plus"
+            icon="arrows-related"
             aspect="basic"
             iconSize="small"
             size="small"
@@ -72,10 +72,12 @@
       </pa-table-cell>
       <pa-table-cell>
         <div class="duplicate-list">
-          <div *ngFor="let duplicate of ner.represents">
+          <div
+            *ngFor="let duplicate of ner.represents"
+            class="duplicate-item">
             <pa-button
               class="table-row-action"
-              icon="circle-minus"
+              icon="arrows-unrelated"
               aspect="basic"
               iconSize="small"
               size="small"
