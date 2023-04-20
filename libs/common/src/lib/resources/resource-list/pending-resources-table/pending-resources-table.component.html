@@ -13,6 +13,13 @@
         (click)="bulkDelete()">
         {{ 'generic.delete' | translate }}
       </pa-button>
+      <pa-button
+        aspect="basic"
+        size="small"
+        [disabled]="bulkAction.inProgress"
+        (click)="bulkReprocess()">
+        {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
+      </pa-button>
       <div
         class="body-m"
         *ngIf="bulkAction.inProgress">
@@ -84,6 +91,12 @@
             {{ 'generic.actions' | translate }}
           </pa-button>
           <pa-dropdown #menu>
+            <pa-option
+              [disabled]="!(isAdminOrContrib | async)"
+              (selectOption)="triggerAction(row.resource, 'reprocess')">
+              {{ 'generic.reindex' | translate }}
+            </pa-option>
+            <pa-separator></pa-separator>
             <pa-option
               destructive
               [disabled]="!(isAdminOrContrib | async)"
