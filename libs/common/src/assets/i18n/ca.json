@@ -407,7 +407,7 @@
 	"ner-management.add-family": "Família de l'entitat",
 	"ner-management.page-description": "Creeu la vostra pròpia llista d'entitats amb nom, personalitzeu-les i, a continuació, entreneu-les. Podeu carregar-los des d'un fitxer CSV per accelerar el procés o introduir totes les entitats anomenades manualment.",
 	"ner-management.page-title": "Gestió d'entitats denominades",
-	"ner-remove-family-dialog.description": "Si suprimiu aquesta família d'entitats amb nom, s'eliminarà de tots els recursos i suggeriments de cerca.",
+	"ner-remove-family-dialog.description": "Si suprimiu una família d'entitats amb nom, ja no podreu anotar recursos amb ella. Però les anotacions ja fetes amb entitats d'aquesta família encara seran visibles als vostres recursos.",
 	"ner-remove-family-dialog.title": "Confirmeu que voleu suprimir \"{{familyName}}\"?",
 	"onboarding.account_creation": "Creació del compte...",
 	"onboarding.company": "Per a quina empresa treballes?",

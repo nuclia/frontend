@@ -425,7 +425,7 @@
 	"ner-management.add-family": "Entity family",
 	"ner-management.page-description": "Create your own list of named entities, customize them, and then train them. You can upload them from a CSV file for speeding up the process, or enter all the named entities manually.",
 	"ner-management.page-title": "Named entities management",
-	"ner-remove-family-dialog.description": "If you delete this named entities family, it will be removed from all resources and search suggestions.",
+	"ner-remove-family-dialog.description": "If you delete a named entities family, you won't be able to annotate resources with it anymore. But annotations already made with entities from this family will still be visible on your resources.",
 	"ner-remove-family-dialog.title": "Are you sure you want to delete \"{{familyName}}\"?",
 	"onboarding.account_creation": "Account creation…",
 	"onboarding.company": "What company are you working for?",

@@ -198,6 +198,8 @@ export interface EntitiesGroup {
 }
 
 export interface UpdateEntitiesGroupPayload {
+  title?: string;
+  color?: string;
   add: { [key: string]: Entity };
   update: { [key: string]: Entity };
   delete: string[];
