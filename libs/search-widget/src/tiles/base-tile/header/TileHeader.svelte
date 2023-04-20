@@ -58,6 +58,7 @@
         top: menuButton.clientHeight + 6,
         width: menuWidth,
       };
+      dispatch('menuOpen');
     }
   }
 

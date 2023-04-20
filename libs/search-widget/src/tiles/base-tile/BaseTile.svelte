@@ -214,6 +214,10 @@
     dispatch('close');
   };
 
+  const closeSidePanel = () => {
+    sidePanelExpanded = false;
+  };
+
   const setHeaderActionWidth = () => {
     if (expanded) {
       headerActionsWidth = isMobile ? 0 : resultNavigatorWidth;
@@ -337,7 +341,8 @@
         {typeIndicator}
         resourceTitle={result.title}
         on:clickOnTitle={() => onClickParagraph(undefined, -1)}
-        on:close={closePreview}>
+        on:close={closePreview}
+        on:menuOpen={closeSidePanel}>
         {#if !isMobile && !noResultNavigator && !sidePanelExpanded}
           <SearchResultNavigator
             resultIndex={$matchingParagraphs$.length > 0 ? resultIndex : -1}
