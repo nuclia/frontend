@@ -1,11 +1,13 @@
 import * as fs from 'fs';
-import path from 'path';
-import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, concatMap, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import { getConnector } from './connectors';
-import { Source, SyncItem } from './models';
+import { LogRow, SearchResults, Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
+import { getDataPath } from './utils';
 
 let SOURCES: { [id: string]: Source } = {};
+let LOG: LogRow[] = [];
+const ACTIVE_SYNC: { [id: string]: LogRow } = {};
 
 export const getSources: () => { [id: string]: Source } = () => {
   return SOURCES;
@@ -34,13 +36,13 @@ export const hasAuth = (sourceId: string) => {
   }
 };
 
-export const getSourceFiles = (sourceId: string, query?: string) => {
+export function getSourceFiles(sourceId: string, query?: string): Observable<SearchResults> {
   const connector = getSourceInstance(sourceId);
   connector;
   return connector.getFiles(query).pipe(
     catchError((err) => {
       return connector.refreshAuthentication().pipe(
-        tap((success) => {
+        concatMap((success) => {
           if (success) {
             const source = getSource(sourceId);
             source.data = connector.getParameters();
@@ -53,14 +55,14 @@ export const getSourceFiles = (sourceId: string, query?: string) => {
       );
     }),
   );
-};
+}
 
-export const getSourceFolders = (sourceId: string, query?: string) => {
+export function getSourceFolders(sourceId: string, query?: string): Observable<SearchResults> {
   const connector = getSourceInstance(sourceId);
   return connector.getFolders(query).pipe(
     catchError((err) => {
       return connector.refreshAuthentication().pipe(
-        tap((success) => {
+        concatMap((success) => {
           if (success) {
             const source = getSource(sourceId);
             source.data = connector.getParameters();
@@ -73,7 +75,7 @@ export const getSourceFolders = (sourceId: string, query?: string) => {
       );
     }),
   );
-};
+}
 
 function downloadFileOrLink(
   sourceId: string,
@@ -127,12 +129,11 @@ export function getLastModified(
   const connector = getSourceInstance(sourceId);
   try {
     return connector.getLastModified(sinceGMT || '2000-01-01T00:00:00.000Z', folders).pipe(
-      catchError((err) => {
-        // TODO: log the error in history
-        console.error(`Error on ${sourceId}: ${err.message}`);
-        return of([]);
-      }),
       map((results) => ({ success: true, results })),
+      catchError((err) => {
+        console.error(`Error on ${sourceId}: ${err.message}`);
+        return of({ success: false, results: [], error: `${err}` });
+      }),
     );
   } catch (err) {
     return of({ success: false, results: [], error: `${err}` });
@@ -150,23 +151,6 @@ const getSourceInstance = (sourceId: string) => {
   return connector;
 };
 
-function getDataPath(): string {
-  switch (process.platform) {
-    case 'darwin': {
-      return path.join(process.env.HOME || '.', 'Library', 'Application Support', 'nuclia', 'connectors-db.json');
-    }
-    case 'win32': {
-      return path.join(process.env.APPDATA || '.', 'nuclia', 'connectors-db.json');
-    }
-    case 'linux': {
-      return path.join(process.env.HOME || '.', '.nuclia', 'connectors-db.json');
-    }
-    default: {
-      return '.';
-    }
-  }
-}
-
 export function getSourceFromBody(data: any, existingFiles: SyncItem[]): Source {
   const source = data as unknown as Source;
   if (source.permanentSync) {
@@ -176,12 +160,76 @@ export function getSourceFromBody(data: any, existingFiles: SyncItem[]): Source 
   return source;
 }
 
-export function readSources() {
+export function getLogs(): LogRow[] {
+  return LOG;
+}
+
+export function addLog(id: string, source: Source, count: number, errors: string) {
+  LOG.push({
+    from: id,
+    to: source.kb?.knowledgeBox || 'Unknown kb',
+    errors,
+    progress: 100,
+    started: true,
+    completed: true,
+    date: new Date().toISOString(),
+    total: count,
+  });
+}
+
+export function addErrorLog(id: string, source: Source, error?: string) {
+  LOG.push({
+    from: id,
+    to: source.kb?.knowledgeBox || 'Unknown kb',
+    errors: error || 'Unknown error',
+    progress: 100,
+    started: true,
+    completed: true,
+    date: new Date().toISOString(),
+    total: 0,
+  });
+}
+
+export function getActiveSyncs(): { [id: string]: LogRow } {
+  return ACTIVE_SYNC;
+}
+
+export function addActiveSyncLog(id: string, source: Source) {
+  ACTIVE_SYNC[id] = {
+    from: id,
+    to: source.kb?.knowledgeBox || 'Unknown kb',
+    errors: '',
+    progress: 0,
+    started: true,
+    completed: false,
+    date: new Date().toISOString(),
+    total: source.items?.length || 0,
+  };
+}
+
+export function incrementActiveSyncLog(id: string) {
+  const existing = ACTIVE_SYNC[id];
+  if (existing) {
+    ACTIVE_SYNC[id] = { ...existing, progress: Math.round(((existing.progress + 1) / (existing.total || 1)) * 100) };
+  }
+}
+
+export function removeActiveSyncLog(id: string) {
+  delete ACTIVE_SYNC[id];
+}
+
+export function readPersistentData() {
   try {
-    const data = fs.readFileSync(getDataPath(), 'utf8');
+    const data = fs.readFileSync(getDataPath('connectors-db.json'), 'utf8');
     SOURCES = JSON.parse(data);
   } catch (err) {
-    console.error(`Error reading file: ${err}`);
+    console.error(`Error reading connectors-db.json file: ${err}`);
+  }
+  try {
+    const data = fs.readFileSync(getDataPath('connectors-log.json'), 'utf8');
+    LOG = JSON.parse(data);
+  } catch (err) {
+    console.error(`Error reading connectors-log.json file: ${err}`);
   }
   //do something when app is closing
   process.on('exit', exitHandler);
@@ -191,9 +239,23 @@ export function readSources() {
 
 function exitHandler() {
   try {
-    fs.writeFileSync(getDataPath(), JSON.stringify(SOURCES));
+    fs.writeFileSync(getDataPath('connectors-db.json'), JSON.stringify(SOURCES));
   } catch (err) {
-    console.error(`Error writing file: ${err}`);
+    console.error(`Error writing connectors-db.json file: ${err}`);
+    throw err;
+  }
+  try {
+    if (LOG.length > 1000) {
+      // if longer than 1000 entries, we keep the last 100 and save the rest in a separate file
+      const past = LOG.slice(0, LOG.length - 100);
+      const recent = LOG.slice(LOG.length - 100);
+      fs.writeFileSync(getDataPath(`connectors-log-${new Date().toISOString()}.json`), JSON.stringify(past));
+      fs.writeFileSync(getDataPath('connectors-log.json'), JSON.stringify(recent));
+    } else {
+      fs.writeFileSync(getDataPath('connectors-log.json'), JSON.stringify(LOG));
+    }
+  } catch (err) {
+    console.error(`Error writing connectors-log.json file: ${err}`);
     throw err;
   }
   console.log('Exit now');

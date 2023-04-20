@@ -1,11 +1,11 @@
-import { getLastModified, getSources, readSources, syncFile, updateSource } from './sources';
+import { addErrorLog, getLastModified, getSources, addActiveSyncLog, readPersistentData, syncFile, updateSource, incrementActiveSyncLog, addLog, removeActiveSyncLog } from './sources';
 import { importConnector, loadConnectors } from './dynamic-connectors';
 import { concatMap, delay, map, of, switchMap, tap, toArray } from 'rxjs';
 
 export const sync = () => {
   importConnector('https://nuclia.github.io/status/connectors/youtube.js');
   loadConnectors();
-  readSources();
+  readPersistentData();
   try {
     syncFiles();
   } catch (error) {
@@ -28,7 +28,10 @@ function syncFiles() {
             return arr.length === 0
               ? of(undefined)
               : of(...arr).pipe(
-                  tap(([id, source]) => console.log(`Syncing ${source.items?.length} items from ${id}`)),
+                  tap(([id, source]) => {
+                    console.log(`Syncing ${source.items?.length} items from ${id}`);
+                    addActiveSyncLog(id, source)
+                  }),
                   switchMap(([id, source]) => {
                     if (!source.kb || !source.items || source.items.length === 0) {
                       return of(undefined);
@@ -40,6 +43,11 @@ function syncFiles() {
                     return of(...batch).pipe(
                       concatMap((item) =>
                         syncFile(id, source, item).pipe(
+                          tap((success) => {
+                            if (success) {
+                              incrementActiveSyncLog(id);
+                            }
+                          }),
                           map((success) => (success ? item.originalId : undefined)),
                           // do not overwhelm the source
                           delay(500),
@@ -49,13 +57,16 @@ function syncFiles() {
                       tap((result) => {
                         if (result) {
                           const successfullyUploaded = result.filter((originalId) => !!originalId);
+                          const hasFailures = successfullyUploaded.length !== result.length;
                           source.items = (source.items || []).filter(
                             (item) => !successfullyUploaded.includes(item.originalId),
                           );
                           source.total = (source.total || 0) + successfullyUploaded.length;
+                          addLog(id, source, successfullyUploaded.length, hasFailures ? `${result.length - successfullyUploaded.length} failures` : '');
                           if (successfullyUploaded.length > 0) {
                             updateSource(id, source);
                           }
+                          removeActiveSyncLog(id);
                         }
                       }),
                     );
@@ -90,7 +101,9 @@ function collectLastModified() {
                           source.lastSyncGMT = new Date().toISOString();
                           updateSource(id, source);
                         } else {
-                          // TODO: log the error in history
+                          addErrorLog(
+                            id,
+                            source, results.error);
                           console.error(results.error);
                         }
                       }),

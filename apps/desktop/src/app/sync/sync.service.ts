@@ -10,6 +10,8 @@ import {
   of,
   repeat,
   ReplaySubject,
+  share,
+  shareReplay,
   Subject,
   switchMap,
   take,
@@ -27,6 +29,7 @@ import {
   SourceConnectorDefinition,
   SyncItem,
   Source,
+  SyncRow,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { injectScript, SDKService, UserService } from '@flaps/core';
@@ -37,7 +40,6 @@ import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
-const QUEUE_KEY = 'NUCLIA_QUEUE';
 const LOCAL_SYNC_SERVER = 'http://localhost:5001';
 const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
@@ -82,9 +84,6 @@ export class SyncService {
   private _syncServer = new BehaviorSubject<string>(localStorage.getItem(SYNC_SERVER_KEY) || '');
   syncServer = this._syncServer.asObservable();
 
-  private _queue: Sync[] = [];
-  queue = new ReplaySubject<Sync[]>(1);
-
   private _step = new BehaviorSubject<number>(0);
   step = this._step.asObservable();
   private _showSource = new Subject<{ connectorId: string; quickAccessName: string; edit: boolean }>();
@@ -100,14 +99,6 @@ export class SyncService {
     if (account) {
       this.setAccount();
     }
-    const queue: Sync[] = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
-    Object.values(queue).forEach((sync) => {
-      if (!sync.completed) {
-        sync.started = false;
-      }
-    });
-    this._queue = queue;
-    this.onQueueUpdate();
     this.fetchDynamicConnectors();
     this._syncServer
       .pipe(
@@ -215,19 +206,6 @@ export class SyncService {
       );
   }
 
-  clearCompleted() {
-    this._queue = this._queue.filter((sync) => !sync.completed);
-    this.onQueueUpdate();
-  }
-
-  onQueueUpdate() {
-    this.queue.next(this._queue);
-    localStorage.setItem(
-      QUEUE_KEY,
-      JSON.stringify(this._queue.filter((sync) => !(!sync.resumable && !sync.completed))),
-    );
-  }
-
   getAccountId(): string {
     return localStorage.getItem(ACCOUNT_KEY) || '';
   }
@@ -324,6 +302,7 @@ export class SyncService {
       filter(() => !!this._syncServer.getValue()),
       switchMap(() => this.serverStatus(this._syncServer.getValue())),
       map((res) => !res.running),
+      share(),
       repeat({ delay: 5000 }),
     );
   }
@@ -375,5 +354,15 @@ export class SyncService {
     } else {
       localStorage.removeItem(SOURCE_NAME_KEY);
     }
+  }
+
+  getLogs(): Observable<SyncRow[]> {
+    return this.http.get<SyncRow[]>(`${this._syncServer.getValue()}/logs`).pipe(map((logs) => logs.reverse()));
+  }
+
+  getActiveLogs(): Observable<SyncRow[]> {
+    return this.http
+      .get<{ [id: string]: SyncRow }>(`${this._syncServer.getValue()}/active-logs`)
+      .pipe(map((logs) => Object.values(logs)));
   }
 }

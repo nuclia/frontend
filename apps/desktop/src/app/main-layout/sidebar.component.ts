@@ -13,7 +13,6 @@ import { SyncService } from '../sync/sync.service';
 export class SidebarComponent {
   currentStep = this.sync.step;
   steps = ['upload.steps.source', 'upload.steps.configure', 'upload.steps.data', 'upload.steps.destination'];
-  hasActiveUploads = this.sync.queue.pipe(map((syncs) => syncs.some((sync) => !sync.completed)));
   sources = this.sync.step.pipe(
     filter((step) => step === 0),
     switchMap(() => this.sync.sourcesCache),

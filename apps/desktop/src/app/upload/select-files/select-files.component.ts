@@ -11,10 +11,9 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
-import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults, CONNECTOR_ID_KEY } from '../../sync/models';
-import { defaultAuthCheck } from '../../utils';
+import { Observable, Subject, of } from 'rxjs';
+import { tap, filter, scan, switchMap, share, catchError, map } from 'rxjs/operators';
+import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
 import { SisToastService } from '@nuclia/sistema';
 import { SyncService } from '../../sync/sync.service';
 
@@ -53,7 +52,9 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
         .pipe(
           catchError((error) => {
             this.toaster.error(
-              typeof error === 'string' ? error : error?.error?.message || error?.message || 'An error occurred',
+              typeof error === 'string'
+                ? error
+                : error?.error?.message || error?.error || error?.message || 'An error occurred',
             );
             return of({ items: [], nextPage: undefined });
           }),

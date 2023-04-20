@@ -37,7 +37,6 @@ class OneDriveImpl implements ISourceConnector {
     try {
       return forkJoin((folders || []).map((folder) => this._getItems('', folder.uuid))).pipe(
         map((results) => {
-          console.log(results[0].items[0].modifiedGMT, since);
           return results.reduce(
             (acc, result) => acc.concat(result.items.filter((item) => item.modifiedGMT && item.modifiedGMT > since)),
             [] as SyncItem[],

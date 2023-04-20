@@ -9,9 +9,6 @@ import {
 } from '../models';
 import { concatMap, forkJoin, from, map, Observable, of, tap } from 'rxjs';
 
-// TODO: use the default fetch once upgraded to node 18
-// import { fetch } from '../utils';
-
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
   factory: () => new DropboxImpl(),
@@ -64,10 +61,14 @@ class DropboxImpl implements ISourceConnector {
     previous?: SearchResults,
   ): Observable<SearchResults> {
     const success = (res: any) => {
-      if (res.status === 401) {
+      if (res.status === 200) {
+        return res.json();
+      } else if (res.status === 401) {
         throw new Error('Unauthorized');
       } else {
-        return res.json();
+        return res.text().then((text: string) => {
+          throw new Error(text || 'Unknown error');
+        });
       }
     };
     const failure = () => {
@@ -176,6 +177,7 @@ class DropboxImpl implements ISourceConnector {
   }
 
   refreshAuthentication(): Observable<boolean> {
-    return of(true);
+    this.params.token = '';
+    return of(false);
   }
 }

@@ -5,6 +5,7 @@ import { delay, filter, forkJoin, map, of, Subject, switchMap, take, takeUntil, 
 import { STFTrackingService } from '@flaps/core';
 import { ConnectorDefinition, ConnectorParameters, ISourceConnector, CONNECTOR_ID_KEY, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   selector: 'nde-upload',
@@ -23,14 +24,14 @@ export class UploadComponent implements OnInit, OnDestroy {
 
   constructor(
     private sync: SyncService,
-    private cdr: ChangeDetectorRef,
     private router: Router,
     private tracking: STFTrackingService,
+    private toaster: SisToastService,
   ) {}
 
   ngOnInit() {
     this.sourceId = localStorage.getItem(CONNECTOR_ID_KEY) || '';
-    // useful for dev mode in browser (in Electron, as the page is not reloaded, authneticate is already waiting for an answer)
+    // useful for dev mode in browser (in Electron, as the page is not reloaded, authenticate is already waiting for an answer)
     if (this.sourceId && !this.source) {
       forkJoin([this.sync.getSource(this.sourceId).pipe(take(1)), this.sync.hasCurrentSourceAuth()])
         .pipe(
@@ -41,7 +42,6 @@ export class UploadComponent implements OnInit, OnDestroy {
         .subscribe(() => {
           this.goTo(2);
           localStorage.removeItem(CONNECTOR_ID_KEY);
-          this.sync.setCurrentSourceId('');
         });
     }
     this.sync.showFirstStep.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
@@ -104,8 +104,12 @@ export class UploadComponent implements OnInit, OnDestroy {
               localStorage.setItem(CONNECTOR_ID_KEY, event.connector.id);
               this.sync.setCurrentSourceId(event.name);
               source.goToOAuth(true);
+              return this.sync.authenticateToSource(this.source);
+            } else {
+              this.toaster.error('Missing authentication');
+              this.sync.goToSource(event.connector.id, event.name, true);
+              return of(false);
             }
-            return this.sync.authenticateToSource(this.source);
           }
         }),
         filter((yes) => yes),

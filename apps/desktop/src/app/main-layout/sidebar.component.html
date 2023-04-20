@@ -51,7 +51,7 @@
           <span (click)="goToHistory()">{{ 'history.title' | translate }}</span>
         </li>
         <ul>
-          <li *ngIf="hasActiveUploads | async">
+          <li>
             <span (click)="goToHistory(true)">{{ 'history.active' | translate }}</span>
           </li>
         </ul>

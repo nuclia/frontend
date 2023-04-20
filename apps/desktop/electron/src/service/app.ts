@@ -13,6 +13,10 @@ export const initSyncService = () => {
       origin: '*',
     }),
   );
+  app.use(function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    next();
+  });
   app.use(bodyParser.json());
   app.use('/', router);
 

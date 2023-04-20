@@ -96,3 +96,15 @@ export interface Field {
   required?: boolean;
   canBeRefreshed?: boolean;
 }
+
+export interface LogRow {
+  date: string;
+  from: string;
+  to: string;
+  total: number;
+  kbSlug?: string;
+  progress: number;
+  started: boolean | undefined;
+  completed: boolean | undefined;
+  errors: string;
+}

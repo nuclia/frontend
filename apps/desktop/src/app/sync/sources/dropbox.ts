@@ -41,6 +41,6 @@ class DropboxImpl implements ISourceConnector {
   }
 
   authenticate(): Observable<boolean> {
-    return of(true);
+    return of(!!this.getParametersValues().token);
   }
 }

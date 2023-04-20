@@ -1,6 +1,8 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
 import {
+  getActiveSyncs,
+  getLogs,
   getSource,
   getSourceFiles,
   getSourceFolders,
@@ -13,7 +15,7 @@ import {
 export const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.send('Nuclia desktop service is running!');
+  res.send('"Nuclia desktop service is running!"');
 });
 
 router.get('/status', (req, res) => {
@@ -31,7 +33,6 @@ router.get('/source/:id', async (req, res) => {
 });
 
 router.get('/source/:id/auth', async (req, res) => {
-  console.log('hasAuth', req.params.id, hasAuth(req.params.id));
   res.send(JSON.stringify({ hasAuth: hasAuth(req.params.id) }));
 });
 
@@ -67,7 +68,17 @@ router.get('/source/:id/:type/search', async (req, res) => {
     if (e.message === 'Unauthorized') {
       res.status(401).send('');
     } else {
-      res.status(500).send(`{"message": "${e.message || e}"}`);
+      res.status(500).send(`"${e.message || e}"`);
     }
   }
+});
+
+router.get('/logs', (req, res) => {
+  const logs = getLogs();
+  res.send(JSON.stringify(logs));
+});
+
+router.get('/active-logs', (req, res) => {
+  const logs = getActiveSyncs();
+  res.send(JSON.stringify(logs));
 });
