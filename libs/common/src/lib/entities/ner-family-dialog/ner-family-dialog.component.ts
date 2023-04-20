@@ -38,6 +38,9 @@ export class NerFamilyDialogComponent implements OnInit, OnDestroy {
     return this.entityForm.controls.entities;
   }
 
+  private entitiesBackup?: string;
+  private familyId?: string;
+
   constructor(
     public modal: ModalRef<NerFamily>,
     private entitiesService: EntitiesService,
@@ -46,11 +49,14 @@ export class NerFamilyDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (this.modal.config.data) {
+      const entities = Object.keys(this.modal.config.data.entities).join(',');
       this.entityForm.patchValue({
         title: this.modal.config.data.title,
         color: this.modal.config.data.color,
-        entities: Object.keys(this.modal.config.data.entities).join(','),
+        entities,
       });
+      this.entitiesBackup = entities;
+      this.familyId = this.modal.config.data.key;
       this.mode = 'update';
     }
 
@@ -78,7 +84,7 @@ export class NerFamilyDialogComponent implements OnInit, OnDestroy {
       const request =
         this.mode === 'create'
           ? this.entitiesService.createFamily(formValue)
-          : this.entitiesService.updateFamily(formValue);
+          : this.entitiesService.updateFamily(this.familyId || '', formValue, this.entitiesBackup);
       request.subscribe({
         complete: () => this.modal.close(),
         error: (error) => {

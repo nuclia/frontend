@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService, STFUtils } from '@flaps/core';
-import { Entities, EntitiesGroup, Entity, IKnowledgeBox } from '@nuclia/core';
+import { Entities, EntitiesGroup, Entity, IKnowledgeBox, UpdateEntitiesGroupPayload } from '@nuclia/core';
 
 @Injectable({
   providedIn: 'root',
@@ -39,9 +39,34 @@ export class EntitiesService {
     );
   }
 
-  updateFamily(family: { color: string; entities: string; title: string }): Observable<Entities> {
-    // blocked by https://app.shortcut.com/flaps/story/5117/missing-a-way-to-update-entities-group-title-and-color
-    return throwError(() => new Error('Not possible to updateFamily yet (API not ready)'));
+  updateFamily(
+    groupId: string,
+    family: {
+      color: string;
+      entities: string;
+      title: string;
+    },
+    entitiesBackup: string | undefined,
+  ): Observable<Entities> {
+    const payload: UpdateEntitiesGroupPayload = {
+      title: family.title,
+      color: family.color,
+      add: {},
+      update: {},
+      delete: [],
+    };
+    if (entitiesBackup && family.entities !== entitiesBackup) {
+      const oldEntities = entitiesBackup.split(',').map((entity) => entity.trim());
+      const currentEntities = family.entities.split(',').map((entity) => entity.trim());
+      const newEntities = currentEntities.filter((entity) => !oldEntities.includes(entity));
+      const deletedEntities = oldEntities.filter((entity) => !currentEntities.includes(entity));
+      payload.add = this.formatEntitiesToAdd(newEntities);
+      payload.delete = deletedEntities;
+    }
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) => kb.updateEntitiesGroup(groupId, payload).pipe(switchMap(() => this._refreshEntities(kb)))),
+    );
   }
 
   deleteFamily(groupId: string): Observable<void> {

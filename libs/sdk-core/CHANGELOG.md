@@ -1,3 +1,8 @@
+# 1.3.1 (unreleased)
+
+### Improvements
+- Add `title` and `color` properties to `UpdateEntitiesGroupPayload` model
+
 # 1.3.0 (2023-04-18)
 
 ### Breaking changes

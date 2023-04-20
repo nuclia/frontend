@@ -101,7 +101,11 @@ export class EntitiesComponent {
     if (this.selectedFamily) {
       const updatedFamily = families[this.selectedFamily.key];
       if (updatedFamily) {
-        this.selectedFamily = { ...this.selectedFamily, entities: updatedFamily.entities };
+        this.selectedFamily = {
+          ...this.selectedFamily,
+          title: updatedFamily.title || this.selectedFamily.title,
+          entities: updatedFamily.entities,
+        };
         this.cdr.markForCheck();
       }
     }

@@ -407,7 +407,7 @@
 	"ner-management.add-family": "Familia de entidades",
 	"ner-management.page-description": "Cree su propia lista de entidades con nombre, personalícelas y luego entrénelas. Puede cargarlos desde un archivo CSV para acelerar el proceso o ingresar todas las entidades nombradas manualmente.",
 	"ner-management.page-title": "Gestión de entidades nombradas",
-	"ner-remove-family-dialog.description": "Si elimina esta familia de entidades con nombre, se eliminará de todos los recursos y sugerencias de búsqueda.",
+	"ner-remove-family-dialog.description": "Si elimina una familia de entidades con nombre, ya no podrá anotar recursos con ella. Pero las anotaciones ya realizadas con entidades de esta familia seguirán estando visibles en sus recursos.",
 	"ner-remove-family-dialog.title": "¿Seguro que quieres eliminar \"{{familyName}}\"?",
 	"onboarding.account_creation": "Creación de cuenta…",
 	"onboarding.company": "¿Para qué empresa estás trabajando?",
