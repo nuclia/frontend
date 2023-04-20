@@ -53,7 +53,6 @@
   loading={mediaLoading}
   typeIndicator={previewKind === PreviewKind.AUDIO ? 'audio' : 'video'}
   noResultNavigator={true}
-  withSummary={true}
   on:selectParagraph={onSelectParagraph}
   on:close={() => (expanded = false)}>
   <span slot="thumbnail">

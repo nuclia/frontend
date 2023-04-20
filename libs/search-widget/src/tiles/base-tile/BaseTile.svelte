@@ -47,7 +47,6 @@
   export let result: Search.SmartResult;
   export let previewKind: PreviewKind;
   export let typeIndicator: string;
-  export let withSummary = false;
   export let thumbnailLoaded = false;
   export let loading = false;
   export let noResultNavigator = false;
@@ -72,9 +71,9 @@
   let sidePanelExpanded = false;
   let findInputElement: HTMLElement;
   let findInPlaceholder;
-  let withAllTranscript = false;
+  let isMediaPlayer = false;
   let transcriptsInitialized = false;
-  let showFullTranscripts = false;
+  let sidePanelSectionOpen: 'search' | 'transcripts' | 'summary' = 'search';
   let transcripts: Observable<MediaWidgetParagraph[]> = of([]);
   const paragraphHeights: number[] = [];
 
@@ -84,12 +83,12 @@
   $: switch (previewKind) {
     case PreviewKind.AUDIO:
       findInPlaceholder = `${findInPlaceholderPrefix}audio`;
-      withAllTranscript = true;
+      isMediaPlayer = true;
       break;
     case PreviewKind.VIDEO:
     case PreviewKind.YOUTUBE:
       findInPlaceholder = `${findInPlaceholderPrefix}video`;
-      withAllTranscript = true;
+      isMediaPlayer = true;
       break;
     case PreviewKind.IMAGE:
       findInPlaceholder = `${findInPlaceholderPrefix}image`;
@@ -240,7 +239,7 @@
 
   const findInField = () => {
     const query = viewerSearchQuery.getValue();
-    showFullTranscripts = false;
+    sidePanelSectionOpen = 'search';
     if (query) {
       isSearchingInResource.next(true);
       searchInResource(query, result, { highlight: true })
@@ -280,12 +279,20 @@
     return JSON.stringify(paragraph) === JSON.stringify(selectedParagraph);
   }
 
-  function toggleTranscriptPanel() {
-    showFullTranscripts = !showFullTranscripts;
+  function toggleTranscriptSection() {
+    sidePanelSectionOpen = sidePanelSectionOpen === 'transcripts' ? 'search' : 'transcripts';
 
-    if (showFullTranscripts && withAllTranscript && !transcriptsInitialized) {
+    if (sidePanelSectionOpen === 'transcripts' && isMediaPlayer && !transcriptsInitialized) {
       initTranscript(previewKind as PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE);
     }
+  }
+
+  function toggleSummarySection() {
+    sidePanelSectionOpen = sidePanelSectionOpen === 'summary' ? 'search' : 'summary';
+  }
+
+  function openSearchSection() {
+    sidePanelSectionOpen = 'search';
   }
 </script>
 
@@ -298,7 +305,7 @@
   class="sw-tile"
   class:expanded
   class:side-panel-expanded={sidePanelExpanded}
-  class:with-all-transcript={withAllTranscript}
+  class:media-player={isMediaPlayer}
   style={'--viewer-height:' + viewerHeight + 'px'}>
   <div class="thumbnail-container">
     <div hidden={expanded && !loading}>
@@ -321,15 +328,6 @@
         class:loading>
         <slot name="viewer" />
       </div>
-
-      {#if withSummary}
-        <div
-          bind:clientHeight={summaryHeight}
-          class="summary-container"
-          hidden={!expanded}>
-          {$fieldSummary}
-        </div>
-      {/if}
     {/if}
   </div>
 
@@ -383,7 +381,7 @@
             </div>
           {/if}
 
-          {#if !showFullTranscripts}
+          {#if sidePanelSectionOpen === 'search'}
             <div
               class="search-result-paragraphs"
               tabindex="-1">
@@ -405,42 +403,42 @@
             </div>
           {:else}
             <div
-              class="transcript-expander-header"
+              class="metadata-expander-header"
               tabindex="0"
-              class:expanded={!showFullTranscripts}
-              on:click={toggleTranscriptPanel}
+              class:expanded={sidePanelSectionOpen === 'search'}
+              on:click={openSearchSection}
               on:keyup={(e) => {
-                if (e.key === 'Enter') toggleTranscriptPanel();
+                if (e.key === 'Enter') openSearchSection();
               }}>
               <div
                 tabindex="-1"
-                class="transcript-expander-header-title">
+                class="metadata-expander-header-title">
                 <strong>{$_('tile.search-results', { count: $matchingParagraphs$.length })}</strong>
                 <div class="expander-icon"><Icon name="chevron-right" /></div>
               </div>
             </div>
           {/if}
 
-          {#if withAllTranscript && expanded}
+          {#if isMediaPlayer && expanded}
             <div class="full-transcript-container">
               <div
-                class="transcript-expander-header"
+                class="metadata-expander-header"
                 tabindex="0"
-                class:expanded={showFullTranscripts}
-                on:click={toggleTranscriptPanel}
+                class:expanded={sidePanelSectionOpen === 'transcripts'}
+                on:click={toggleTranscriptSection}
                 on:keyup={(e) => {
-                  if (e.key === 'Enter') toggleTranscriptPanel();
+                  if (e.key === 'Enter') toggleTranscriptSection();
                 }}>
                 <div
                   tabindex="-1"
-                  class="transcript-expander-header-title">
+                  class="metadata-expander-header-title">
                   <strong>{$_('tile.full-transcripts')}</strong>
                   <div class="expander-icon"><Icon name="chevron-right" /></div>
                 </div>
               </div>
 
-              {#if showFullTranscripts}
-                <div class="transcript-container scrollable-area">
+              {#if sidePanelSectionOpen === 'transcripts'}
+                <div class="metadata-content scrollable-area">
                   <ul class="paragraphs-container">
                     {#each $transcripts as paragraph, index}
                       <ParagraphResult
@@ -450,6 +448,34 @@
                         on:open={() => onClickParagraph(paragraph, index)} />
                     {/each}
                   </ul>
+                </div>
+              {/if}
+            </div>
+          {/if}
+
+          {#if expanded}
+            <div class="metadata-container">
+              <div
+                class="metadata-expander-header"
+                tabindex="0"
+                class:expanded={sidePanelSectionOpen === 'summary'}
+                on:click={toggleSummarySection}
+                on:keyup={(e) => {
+                  if (e.key === 'Enter') toggleSummarySection();
+                }}>
+                <div
+                  tabindex="-1"
+                  class="metadata-expander-header-title">
+                  <strong>{$_('tile.summary')}</strong>
+                  <div class="expander-icon"><Icon name="chevron-right" /></div>
+                </div>
+              </div>
+
+              {#if sidePanelSectionOpen === 'summary'}
+                <div class="metadata-content scrollable-area">
+                  <div class="metadata-text-container">
+                    {$fieldSummary}
+                  </div>
                 </div>
               {/if}
             </div>
