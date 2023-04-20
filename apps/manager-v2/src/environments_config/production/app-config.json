@@ -1,0 +1,15 @@
+{
+  "version": "STF_DOCKER_CONFIG_VERSION",
+  "production": true,
+  "backend": {
+    "app": "STF_DOCKER_CONFIG_APP_NAME",
+    "apiPath": "/api",
+    "siteKey": "STF_DOCKER_CONFIG_SITE_KEY",
+    "sentry_environment": "STF_DOCKER_CONFIG_SENTRY_ENV",
+    "sentry_url": "STF_DOCKER_CONFIG_SENTRY_URL",
+    "sentry_backend": "https://nuclia.cloud/api"
+  },
+  "stashify": {
+    "email_domain": "STF_DOCKER_CONFIG_EMAIL_DOMAIN"
+  }
+}
