@@ -241,14 +241,15 @@ export const hasAuthData = (): boolean => {
   return !!nucliaApi.options?.apiKey || !!nucliaApi.auth.getToken();
 };
 
-export const getFileUrls = (paths: string[]): Observable<string[]> => {
+export const getFileUrls = (paths: string[], inline = false): Observable<string[]> => {
   const doesNotNeedToken = paths.length === 0 || !isPrivateKnowledgeBox();
   return (doesNotNeedToken ? of('') : getTempToken()).pipe(
     map((token) =>
       paths.map((path) => {
         if (path.startsWith('/')) {
+          const params = (token ? `eph-token=${token}` : '') + (inline ? `inline=true` : '');
           const fullpath = `${getRegionalBackend()}${path}`;
-          return token ? `${fullpath}?eph-token=${token}` : fullpath;
+          return params ? `${fullpath}?${params}` : fullpath;
         } else {
           return path;
         }
