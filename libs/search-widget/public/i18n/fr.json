@@ -60,5 +60,6 @@
 	"tile.find-in-image": "Rechercher dans l'image",
 	"tile.find-in-video": "Rechercher dans la vidéo",
 	"tile.full-transcripts": "Transcription complète",
-	"tile.search-results": "{{count}} résultats de recherche"
+	"tile.search-results": "{{count}} résultats de recherche",
+	"tile.summary": "Résumé"
 }
