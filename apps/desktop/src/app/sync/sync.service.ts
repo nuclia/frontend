@@ -144,9 +144,14 @@ export class SyncService {
   }
 
   hasCurrentSourceAuth(): Observable<boolean> {
-    return this.http
-      .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/auth`)
-      .pipe(map((res) => res.hasAuth));
+    const current = this.getCurrentSourceId();
+    if (!current) {
+      return of(false);
+    } else {
+      return this.http
+        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/auth`)
+        .pipe(map((res) => res.hasAuth));
+    }
   }
 
   getSources(): Observable<{ [id: string]: Source }> {

@@ -11,7 +11,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
-import { markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages, markForCheck } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nde-connectors',
@@ -22,8 +22,12 @@ import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 export class ConnectorsComponent implements OnDestroy {
   private _type: 'sources' | 'destinations' = 'sources';
   private _connectorIds?: string[];
-  private sources: ConnectorDefinition[] = [];
   private unsubscribeAll = new Subject<void>();
+  validationMessages: { [key: string]: IErrorMessages } = {
+    name: {
+      pattern: 'Use only letters, numbers, dashes and underscores',
+    } as IErrorMessages,
+  };
 
   @Input()
   set type(value: 'sources' | 'destinations') {
@@ -144,7 +148,7 @@ export class ConnectorsComponent implements OnDestroy {
       ),
       permanentSync: [false],
       quickAccess: this.formBuilder.group({
-        name: ['', this.canStoreParams ? [Validators.required] : []],
+        name: ['', this.canStoreParams ? [Validators.required, Validators.pattern('[a-zA-Z-0-9-_]+')] : []],
       }),
     });
     if (this.quickAccessName) {

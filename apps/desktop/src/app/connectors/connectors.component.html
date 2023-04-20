@@ -25,7 +25,9 @@
       formGroupName="quickAccess"
       class="settings">
       <div class="field">
-        <pa-input formControlName="name">
+        <pa-input
+          formControlName="name"
+          [errorMessages]="validationMessages.name">
           {{ 'upload.source.quick_access_name' | translate }}
         </pa-input>
       </div>
