@@ -17,10 +17,15 @@
       *ngIf="customer"
       class="body-m">
       <h2 class="title-s">{{ 'billing.billing_details' | translate }}</h2>
+      <div *ngIf="customer.billing_details.is_company && customer.billing_details.company">
+        {{ customer.billing_details.company }}
+      </div>
+      <div *ngIf="customer.billing_details.is_company && customer.billing_details.vat">
+        {{ customer.billing_details.vat }}
+      </div>
       <div>{{ customer.billing_details.name }}</div>
-      <div>{{ customer.billing_details.company }}</div>
-      <div *ngIf="customer.billing_details.vat">{{ customer.billing_details.vat }}</div>
       <div>{{ customer.billing_details.email }}</div>
+      <div>{{ customer.billing_details.phone }}</div>
       <div>{{ customer.billing_details.address }}</div>
       <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
       <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>

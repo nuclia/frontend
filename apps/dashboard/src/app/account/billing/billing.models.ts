@@ -36,7 +36,9 @@ export interface StripeCustomer {
 export interface BillingDetails {
   name: string;
   email: string;
-  company: string;
+  phone: string;
+  is_company: boolean;
+  company?: string;
   vat?: string;
   address: string;
   country: string;

@@ -32,10 +32,17 @@ h2 {
 }
 
 
-.billing-form {
+.customer-form {
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
+  position: relative;
+
+  .not-company {
+    position: absolute;
+    top: - rhythm(5);
+    right: 0;
+  }
 
   .field-line {
     display: flex;
@@ -44,6 +51,9 @@ h2 {
 
   .field-block {
     width: 33%;
+    &.long {
+      width: 69%;
+    }
   }
 
   label {

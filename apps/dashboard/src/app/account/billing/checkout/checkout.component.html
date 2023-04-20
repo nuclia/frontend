@@ -53,22 +53,15 @@
     <div class="section-body">
       <form
         *ngIf="editCustomer"
-        [formGroup]="billing"
-        class="billing-form">
-        <div class="field-line">
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="name">
-              {{ 'generic.name' | translate }} *
-            </label>
-            <pa-input
-              id="name"
-              formControlName="name"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
+        [formGroup]="customerForm"
+        class="customer-form">
+        <div class="not-company">
+          <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
+        </div>
+        <div
+          class="field-line"
+          *ngIf="isCompany">
+          <div class="field-block long">
             <label
               class="title-s"
               for="company">
@@ -85,6 +78,7 @@
               class="title-s"
               for="vat">
               {{ 'billing.vat_id' | translate }}
+              <span *ngIf="vatRequired">*</span>
             </label>
             <pa-input
               id="vat"
@@ -94,6 +88,18 @@
           </div>
         </div>
         <div class="field-line">
+          <div class="field-block">
+            <label
+              class="title-s"
+              for="name">
+              {{ (isCompany ? 'billing.contact_name' : 'generic.name') | translate }} *
+            </label>
+            <pa-input
+              id="name"
+              formControlName="name"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
+          </div>
           <div class="field-block">
             <label
               class="title-s"
@@ -109,8 +115,23 @@
           <div class="field-block">
             <label
               class="title-s"
+              for="phone">
+              {{ 'billing.phone' | translate }} *
+            </label>
+            <pa-input
+              id="phone"
+              formControlName="phone"
+              [placeholder]="'billing.phone.help' | translate"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
+          </div>
+        </div>
+        <div class="field-line">
+          <div class="field-block long">
+            <label
+              class="title-s"
               for="address">
-              {{ 'billing.address' | translate }} *
+              {{ (isCompany ? 'billing.company_address' : 'billing.address') | translate }} *
             </label>
             <pa-input
               id="address"
@@ -176,7 +197,7 @@
         </div>
         <pa-button
           (click)="saveCustomer()"
-          [disabled]="!billing.valid"
+          [disabled]="!customerForm.valid"
           kind="primary">
           {{ 'billing.save_continue' | translate }}
         </pa-button>
@@ -184,10 +205,15 @@
       <div
         *ngIf="!editCustomer && customer"
         class="body-m">
+        <div *ngIf="customer.billing_details.is_company && customer.billing_details.company">
+          {{ customer.billing_details.company }}
+        </div>
+        <div *ngIf="customer.billing_details.is_company && customer.billing_details.vat">
+          {{ customer.billing_details.vat }}
+        </div>
         <div>{{ customer.billing_details.name }}</div>
-        <div>{{ customer.billing_details.company }}</div>
-        <div *ngIf="customer.billing_details.vat">{{ customer.billing_details.vat }}</div>
         <div>{{ customer.billing_details.email }}</div>
+        <div>{{ customer.billing_details.phone }}</div>
         <div>{{ customer.billing_details.address }}</div>
         <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
         <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
@@ -278,7 +304,11 @@
             type="number"
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
-          <span class="title-m">{{ (currency | async) === 'USD' ? '$' : '€' }}</span>
+          <span
+            *ngIf="currency | async as currency"
+            class="title-m">
+            {{ currency === 'USD' ? '$' : '€' }}
+          </span>
         </div>
         <pa-button
           (click)="subscribe()"

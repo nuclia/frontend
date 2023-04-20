@@ -1,3 +1,5 @@
+export const REQUIRED_VAT_COUNTRIES = ['ES'];
+
 export const COUNTRIES: { [code: string]: string } = {
   AF: 'Afghanistan',
   AL: 'Albania',

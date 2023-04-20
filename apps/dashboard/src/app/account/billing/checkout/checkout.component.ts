@@ -1,14 +1,32 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, from, of, Subject } from 'rxjs';
-import { catchError, delay, filter, distinctUntilChanged, shareReplay, switchMap, take, tap } from 'rxjs/operators';
+import {
+  catchError,
+  delay,
+  filter,
+  distinctUntilChanged,
+  shareReplay,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+} from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
 import { StripeCustomer } from '../billing.models';
-import { COUNTRIES } from '../utils';
+import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
 import { NavigationService } from '@flaps/common';
@@ -20,12 +38,14 @@ import { ReviewComponent } from '../review/review.component';
   styleUrls: ['./checkout.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CheckoutComponent implements OnInit {
-  billing = new FormGroup({
+export class CheckoutComponent implements OnDestroy, OnInit {
+  customerForm = new FormGroup({
+    not_company: new FormControl<boolean>(false, { nonNullable: true }),
     name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     company: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     vat: new FormControl<string>('', { nonNullable: true }),
+    phone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     address: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     country: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     state: new FormControl<string>('', { nonNullable: true }),
@@ -43,6 +63,7 @@ export class CheckoutComponent implements OnInit {
 
   subscribing = false;
   countries = COUNTRIES;
+  requiredVatCountries = REQUIRED_VAT_COUNTRIES;
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -67,6 +88,12 @@ export class CheckoutComponent implements OnInit {
       this.updateCurrency.next(customer.billing_details.country);
     }
   }
+  get isCompany() {
+    return !this.customerForm.value.not_company;
+  }
+  get vatRequired() {
+    return this.customerForm.controls.vat.hasValidator(Validators.required);
+  }
 
   private _stripe: any;
   @ViewChild('card') private cardContainer?: ElementRef;
@@ -75,6 +102,8 @@ export class CheckoutComponent implements OnInit {
   validCard = false;
   editCard = false;
   token?: any;
+
+  unsubscribeAll = new Subject<void>();
 
   constructor(
     private billingService: BillingService,
@@ -94,11 +123,24 @@ export class CheckoutComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.customerForm.controls.not_company.valueChanges
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((not_company) => {
+        this.updateCustomerValidation({ not_company });
+      });
+    this.customerForm.controls.country.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((country) => {
+      this.updateCustomerValidation({ country });
+    });
     this.route.queryParams.pipe(take(1)).subscribe((params) => {
       if (params['type']) {
         this.accountType = params['type'];
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeAll.next();
+    this.unsubscribeAll.complete();
   }
 
   initForms() {
@@ -112,17 +154,17 @@ export class CheckoutComponent implements OnInit {
     ]).subscribe(([customer, country, user]) => {
       if (customer) {
         this.customer = customer;
-        this.billing.patchValue(customer.billing_details);
+        this.updateCustomerForm(customer);
         this.editCustomer = false;
         this.editCard = true;
         this.cdr?.markForCheck();
       } else {
         if (country) {
-          this.billing.patchValue({ country });
+          this.customerForm.patchValue({ country });
           this.updateCurrency.next(country);
         }
         if (user?.email) {
-          this.billing.patchValue({ email: user.email });
+          this.customerForm.patchValue({ email: user.email });
         }
       }
     });
@@ -131,23 +173,37 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  updateCustomerForm(customer: StripeCustomer) {
+    this.customerForm.patchValue({ ...customer.billing_details, not_company: !customer.billing_details.is_company });
+  }
+
+  updateCustomerValidation(newValues: typeof this.customerForm.value) {
+    const values = { ...this.customerForm.value, ...newValues };
+    this.customerForm.controls.company.setValidators(values.not_company ? [] : [Validators.required]);
+    this.customerForm.controls.vat.setValidators(
+      !values.not_company && this.requiredVatCountries.includes(values.country || '') ? [Validators.required] : [],
+    );
+    this.customerForm.controls.company.updateValueAndValidity();
+    this.customerForm.controls.vat.updateValueAndValidity();
+  }
+
   showCustomerForm() {
     this.editCustomer = true;
     this.cdr?.markForCheck();
   }
 
   saveCustomer() {
-    if (this.billing.invalid) return;
+    if (this.customerForm.invalid) return;
+    const { not_company, company, vat, ...data } = { ...this.customerForm.getRawValue() };
+    const payload = { ...data, is_company: !not_company, ...(not_company ? {} : { company, vat }) };
     const observable = this.customer
-      ? this.billingService
-          .modifyCustomer(this.billing.getRawValue())
-          .pipe(switchMap(() => this.billingService.getCustomer()))
-      : this.billingService.createCustomer(this.billing.getRawValue());
+      ? this.billingService.modifyCustomer(payload).pipe(switchMap(() => this.billingService.getCustomer()))
+      : this.billingService.createCustomer(payload);
     observable.subscribe((customer) => {
       if (customer) {
         this.customer = customer;
-        this.billing.reset();
-        this.billing.patchValue(customer.billing_details);
+        this.customerForm.reset();
+        this.updateCustomerForm(customer);
         this.editCustomer = false;
         if (!this.token) {
           this.editCard = true;
