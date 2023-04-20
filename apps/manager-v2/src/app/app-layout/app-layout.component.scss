@@ -1,0 +1,50 @@
+@import 'variables';
+
+$header-height: rhythm(8);
+
+header {
+  align-items: center;
+  background: $color-dark-stronger;
+  color: $color-light-stronger;
+  display: flex;
+  gap: rhythm(3);
+  height: $header-height;
+  justify-content: space-between;
+  padding: 0 rhythm(2);
+
+  nav {
+    flex: 1 0 auto;
+    ul {
+      display: flex;
+      gap: rhythm(2);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        cursor: pointer;
+        padding: rhythm(1) rhythm(2);
+        transition: color $transition-hint;
+
+        &:hover {
+          color: $color-primary-light;
+        }
+
+        &.active {
+          color: $color-primary-regular;
+        }
+      }
+    }
+  }
+
+  pa-avatar ::ng-deep .pa-avatar {
+    cursor: pointer;
+  }
+}
+
+.page-container {
+  margin: rhythm(2) 0;
+  padding: 0 rhythm(2);
+  max-height: calc(100vh - #{$header-height} - #{rhythm(2)}* 2);
+  overflow-y: auto;
+}

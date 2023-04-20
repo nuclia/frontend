@@ -1,0 +1,35 @@
+<header>
+  <img
+    width="128"
+    src="assets/logos/logo-white.svg"
+    alt="Nuclia" />
+  <nav class="title-m">
+    <ul>
+      <li
+        routerLink="accounts"
+        routerLinkActive="active">
+        Accounts
+      </li>
+      <li
+        routerLink="users"
+        routerLinkActive="active">
+        Users
+      </li>
+    </ul>
+  </nav>
+  <pa-avatar
+    size="small"
+    [avatar]="avatar | async"
+    [paPopup]="userMenu"></pa-avatar>
+</header>
+
+<pa-dropdown #userMenu>
+  <pa-option
+    icon="log-out"
+    (click)="logout()">
+    {{ 'generic.logout' | translate }}
+  </pa-option>
+</pa-dropdown>
+<div class="page-container">
+  <router-outlet></router-outlet>
+</div>

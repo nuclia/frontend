@@ -15,6 +15,8 @@ import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { AngularSvgIconModule } from 'angular-svg-icon';
+import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
+import { AppLayoutComponent } from './app-layout/app-layout.component';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -25,7 +27,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
 }
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, AppLayoutComponent],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes, { initialNavigation: 'enabledBlocking' }),
@@ -38,6 +40,9 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
       },
     }),
     AngularSvgIconModule.forRoot(),
+    PaAvatarModule,
+    PaDropdownModule,
+    PaPopupModule,
   ],
   providers: [TranslatePipe],
   bootstrap: [AppComponent],

@@ -6,3 +6,10 @@
 :root {
   --app-background-color: $color-light-stronger;
 }
+
+.user-background {
+  background-image: url('./assets/background_manager.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
