@@ -3,6 +3,7 @@ import { ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { map } from 'rxjs';
 import { Currency, Prices, UsageType } from '../billing.models';
 import { BillingService } from '../billing.service';
+import { AccountTypes } from '@nuclia/core';
 
 @Component({
   selector: 'app-calculator',
@@ -14,17 +15,18 @@ export class CalculatorComponent {
   params: UsageType[] = ['media', 'files', 'searches', 'qa', 'training-hours'];
   prices = this.modal.config.data!.prices;
   currency = this.modal.config.data!.currency;
+  tier: AccountTypes = 'stash-developer';
 
-  values = this.params.reduce((acc, param) => {
-    acc[param] = 0;
-    return acc;
-  }, {} as { [param in UsageType]: number });
+  values = this.params.reduce(
+    (acc, param) => ({ ...acc, [param]: this.prices[this.tier].usage[param].threshold }),
+    {} as { [param in UsageType]: number },
+  );
 
   total = this.calculateTotal();
   isSpain = this.billing.country.pipe(map((country) => country === 'ES'));
 
   constructor(
-    public modal: ModalRef<{ prices: Prices; currency: Currency }>,
+    public modal: ModalRef<{ prices: { [key in AccountTypes]: Prices }; currency: Currency }>,
     private billing: BillingService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -36,11 +38,20 @@ export class CalculatorComponent {
   }
 
   calculatePrice(param: UsageType) {
-    return this.values[param] * this.prices.usage[param].price;
+    return (
+      (this.values[param] - this.prices[this.tier].usage[param].threshold) * this.prices[this.tier].usage[param].price
+    );
   }
 
   calculateTotal() {
     return this.params.reduce((acc, current) => acc + this.calculatePrice(current), 0);
+  }
+
+  changeTier(tier: AccountTypes) {
+    this.tier = tier;
+    Object.keys(this.values).forEach((param) => {
+      this.update(param as UsageType, this.prices[tier].usage[param as UsageType].threshold);
+    });
   }
 
   save() {

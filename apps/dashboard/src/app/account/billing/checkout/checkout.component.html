@@ -1,19 +1,41 @@
 <div class="checkout">
   <div>
     <h2>{{ 'billing.payment_details' | translate }}</h2>
-    <div class="body-m">{{ 'billing.payment_details.description' | translate }}</div>
   </div>
 
   <div>
     <div class="section-header">
       <div class="section-title">
         <pa-icon
-          *ngIf="editCustomer"
-          name="circle-dash"></pa-icon>
-        <pa-icon
-          *ngIf="!editCustomer"
           name="circle-check"
-          color="#f06"></pa-icon>
+          class="done"></pa-icon>
+        {{ 'billing.subscription_tier' | translate }}
+      </div>
+      <pa-button
+        routerLink="../subscriptions"
+        icon="edit"
+        size="small"
+        aspect="basic"></pa-button>
+    </div>
+    <div class="section-body">
+      <div class="body-m">
+        {{ 'account.type.' + accountType | translate }}
+        -
+        <ng-container *ngIf="currency | async as currency">
+          <ng-container *ngIf="prices | async as prices">
+            {{ prices[accountType].recurring.month.price | currency: currency }}/{{ 'billing.month' | translate }}
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="section-header">
+      <div class="section-title">
+        <pa-icon
+          [name]="editCustomer ? 'circle-dash' : 'circle-check'"
+          [class.done]="!editCustomer"></pa-icon>
         {{ 'billing.billing_details' | translate }}
       </div>
       <div *ngIf="!editCustomer">
@@ -27,22 +49,15 @@
     <div class="section-body">
       <form
         *ngIf="editCustomer"
-        [formGroup]="billing"
-        class="billing-form">
-        <div class="field-line">
-          <div class="field-block">
-            <label
-              class="title-s"
-              for="name">
-              {{ 'generic.name' | translate }} *
-            </label>
-            <pa-input
-              id="name"
-              formControlName="name"
-              [errorMessages]="errors"
-              externalLabel></pa-input>
-          </div>
-          <div class="field-block">
+        [formGroup]="customerForm"
+        class="customer-form">
+        <div class="not-company">
+          <pa-checkbox formControlName="not_company">{{ 'billing.not_company' | translate }}</pa-checkbox>
+        </div>
+        <div
+          class="field-line"
+          *ngIf="isCompany">
+          <div class="field-block long">
             <label
               class="title-s"
               for="company">
@@ -59,6 +74,7 @@
               class="title-s"
               for="vat">
               {{ 'billing.vat_id' | translate }}
+              <span *ngIf="vatRequired">*</span>
             </label>
             <pa-input
               id="vat"
@@ -68,11 +84,50 @@
           </div>
         </div>
         <div class="field-line">
+          <div class="field-block">
+            <label
+              class="title-s"
+              for="name">
+              {{ (isCompany ? 'billing.contact_name' : 'generic.name') | translate }} *
+            </label>
+            <pa-input
+              id="name"
+              formControlName="name"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
+          </div>
+          <div class="field-block">
+            <label
+              class="title-s"
+              for="email">
+              {{ 'billing.email' | translate }} *
+            </label>
+            <pa-input
+              id="email"
+              formControlName="email"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
+          </div>
+          <div class="field-block">
+            <label
+              class="title-s"
+              for="phone">
+              {{ 'billing.phone' | translate }} *
+            </label>
+            <pa-input
+              id="phone"
+              formControlName="phone"
+              [placeholder]="'billing.phone.help' | translate"
+              [errorMessages]="errors"
+              externalLabel></pa-input>
+          </div>
+        </div>
+        <div class="field-line">
           <div class="field-block long">
             <label
               class="title-s"
               for="address">
-              {{ 'billing.address' | translate }} *
+              {{ (isCompany ? 'billing.company_address' : 'billing.address') | translate }} *
             </label>
             <pa-input
               id="address"
@@ -138,7 +193,7 @@
         </div>
         <pa-button
           (click)="saveCustomer()"
-          [disabled]="!billing.valid"
+          [disabled]="!customerForm.valid"
           kind="primary">
           {{ 'billing.save_continue' | translate }}
         </pa-button>
@@ -146,9 +201,15 @@
       <div
         *ngIf="!editCustomer && customer"
         class="body-m">
+        <div *ngIf="customer.billing_details.is_company && customer.billing_details.company">
+          {{ customer.billing_details.company }}
+        </div>
+        <div *ngIf="customer.billing_details.is_company && customer.billing_details.vat">
+          {{ customer.billing_details.vat }}
+        </div>
         <div>{{ customer.billing_details.name }}</div>
-        <div>{{ customer.billing_details.company }}</div>
-        <div *ngIf="customer.billing_details.vat">{{ customer.billing_details.vat }}</div>
+        <div>{{ customer.billing_details.email }}</div>
+        <div>{{ customer.billing_details.phone }}</div>
         <div>{{ customer.billing_details.address }}</div>
         <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
         <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
@@ -160,12 +221,8 @@
     <div class="section-header">
       <div class="section-title">
         <pa-icon
-          *ngIf="editCard || !token"
-          name="circle-dash"></pa-icon>
-        <pa-icon
-          *ngIf="!editCard && token"
-          name="circle-check"
-          color="#f06"></pa-icon>
+          [name]="editCard || !token ? 'circle-dash' : 'circle-check'"
+          [class.done]="!editCard && token"></pa-icon>
         {{ 'billing.payment_method' | translate }}
         <div class="powered-by">
           <span class="body-xs">Powered by</span>
@@ -239,14 +296,19 @@
             type="number"
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
-          <span class="title-m">€</span>
+          <span
+            *ngIf="currency | async as currency"
+            class="title-m">
+            {{ currency === 'USD' ? '$' : '€' }}
+          </span>
         </div>
         <pa-button
-          (click)="subscribe()"
+          (click)="doSubscribe()"
           [disabled]="editCustomer || editCard || budget.invalid || subscribing"
           kind="primary">
-          {{ 'Subscribe' | translate }}
+          {{ 'billing.review_confirm' | translate }}
         </pa-button>
+        <nsi-spinner *ngIf="subscribing"></nsi-spinner>
       </div>
     </div>
   </div>

@@ -1,9 +1,20 @@
-<pa-modal-dialog>
+<pa-modal-advanced>
   <pa-modal-title>
     <h2>{{ 'billing.budget_calculator' | translate }}</h2>
   </pa-modal-title>
   <pa-modal-content>
     <form>
+      <div>
+        <div class="title-s">{{ 'billing.subscription_tier' | translate }}</div>
+        <div>{{ 'billing.tier_select.help' | translate }}</div>
+        <pa-radio-group
+          name="radio-tier"
+          [value]="tier"
+          (valueChange)="changeTier($event)">
+          <pa-radio value="stash-developer">Starter/developer</pa-radio>
+          <pa-radio value="stash-business">Business</pa-radio>
+        </pa-radio-group>
+      </div>
       <div class="section">
         <div>
           <div class="title-s">{{ 'billing.ingestion_cost' | translate }}</div>
@@ -15,8 +26,8 @@
           class="field-block"
           *ngFor="let param of params">
           <pa-slider
-            [min]="0"
-            [max]="prices.usage[param].threshold ? prices.usage[param].threshold * 200 : 300"
+            [min]="prices[tier].usage[param].threshold || 0"
+            [max]="2000 / prices[tier].usage[param].price + prices[tier].usage[param].threshold"
             [value]="values[param]"
             (valueChange)="update(param, $event)">
             <span class="title-xxs">{{ 'billing.parameter.' + param | translate }}</span>
@@ -33,7 +44,9 @@
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
           <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>
         </div>
-        <div>{{ 'billing.self_hosted' | translate }}</div>
+        <div
+          class="contact"
+          [innerHTML]="'billing.self_hosted' | translate: { url: 'mailto:billing@nuclia.com' }"></div>
       </div>
     </form>
   </pa-modal-content>
@@ -49,4 +62,4 @@
       {{ 'billing.save_budget' | translate }}
     </pa-button>
   </pa-modal-footer>
-</pa-modal-dialog>
+</pa-modal-advanced>

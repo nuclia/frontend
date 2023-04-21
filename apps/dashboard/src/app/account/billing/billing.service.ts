@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
-import { BillingDetails, Currency, Prices, StripeCustomer, StripeSubscription } from './billing.models';
+import {
+  BillingDetails,
+  Currency,
+  Prices,
+  StripeCustomer,
+  StripeSubscription,
+  StripeSubscriptionCreation,
+} from './billing.models';
 
 @Injectable({ providedIn: 'root' })
 export class BillingService {
@@ -58,10 +65,12 @@ export class BillingService {
     return this.sdk.nuclia.rest.get<{ public_key: string }>(`/billing/stripe/public`);
   }
 
-  createSubscription(data: StripeSubscription) {
+  createSubscription(data: StripeSubscriptionCreation) {
     return this.sdk.currentAccount.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.rest.put<void>(`/billing/account/${account.id}/subscription`, data)),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.put<StripeSubscription>(`/billing/account/${account.id}/subscription`, data),
+      ),
     );
   }
 

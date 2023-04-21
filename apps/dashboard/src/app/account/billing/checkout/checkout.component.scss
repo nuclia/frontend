@@ -25,17 +25,27 @@ h2 {
   font-size: font-size(l);
   font-weight: $font-weight-bold;
   gap: rhythm(1);
+
+  pa-icon.done {
+    color: $color-primary-regular;
+  }
 }
 
 .section-body {
   padding-left: rhythm(4);
 }
 
-
-.billing-form {
+.customer-form {
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
+  position: relative;
+
+  .not-company {
+    position: absolute;
+    top: - rhythm(5);
+    right: 0;
+  }
 
   .field-line {
     display: flex;

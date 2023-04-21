@@ -1,11 +1,15 @@
 @import 'variables';
 
 :host {
-  pa-modal-dialog ::ng-deep dialog {
+  pa-modal-advanced ::ng-deep dialog {
     width: rhythm(90);
   }
   pa-slider ::ng-deep .pa-field .pa-field-control-range[type='range'] {
     width: rhythm(35);
+  }
+  ::ng-deep .contact a {
+    color: currentColor;
+    text-decoration: underline;
   }
 }
 
@@ -13,6 +17,12 @@ form {
   display: flex;
   flex-direction: column;
   gap: rhythm(5);
+}
+
+pa-radio-group {
+  display: flex !important;
+  gap: rhythm(4);
+  margin-top: rhythm(1);
 }
 
 .section {

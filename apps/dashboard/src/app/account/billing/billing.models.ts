@@ -35,7 +35,10 @@ export interface StripeCustomer {
 
 export interface BillingDetails {
   name: string;
-  company: string;
+  email: string;
+  phone: string;
+  is_company: boolean;
+  company?: string;
   vat?: string;
   address: string;
   country: string;
@@ -49,9 +52,18 @@ export enum RecurrentPriceInterval {
   YEARLY = 'yearly',
 }
 
-export interface StripeSubscription {
+export interface StripeSubscriptionCreation {
   payment_method_id: string;
   on_demand_budget: number;
   billing_interval?: RecurrentPriceInterval;
   account_type: AccountTypes;
+}
+
+export interface StripeSubscription {
+  subscription_id: string;
+  payment_method_id: string;
+  status: 'active' | 'incomplete';
+  requires_action: boolean;
+  client_secret: string;
+  error?: { code: string; decline_code: string };
 }

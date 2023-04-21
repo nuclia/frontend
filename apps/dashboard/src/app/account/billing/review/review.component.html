@@ -1,0 +1,50 @@
+<pa-modal-advanced>
+  <pa-modal-title>
+    {{ 'billing.review.title' | translate }}
+  </pa-modal-title>
+  <pa-modal-content>
+    <div>
+      <h2 class="title-s">
+        {{ 'billing.review.subscribe_to' | translate: { account: 'account.type.' + account | translate } }}
+      </h2>
+      <div class="body-m">
+        {{
+          'billing.review.cost' | translate: { cost: cost | currency: currency, budget: budget | currency: currency }
+        }}
+      </div>
+    </div>
+    <div
+      *ngIf="customer"
+      class="body-m">
+      <h2 class="title-s">{{ 'billing.billing_details' | translate }}</h2>
+      <div *ngIf="customer.billing_details.is_company && customer.billing_details.company">
+        {{ customer.billing_details.company }}
+      </div>
+      <div *ngIf="customer.billing_details.is_company && customer.billing_details.vat">
+        {{ customer.billing_details.vat }}
+      </div>
+      <div>{{ customer.billing_details.name }}</div>
+      <div>{{ customer.billing_details.email }}</div>
+      <div>{{ customer.billing_details.phone }}</div>
+      <div>{{ customer.billing_details.address }}</div>
+      <div>{{ customer.billing_details.city }} {{ customer.billing_details.postal_code }}</div>
+      <div>{{ customer.billing_details.state || '' }} {{ countries[customer.billing_details.country] }}</div>
+    </div>
+    <div
+      *ngIf="token"
+      class="body-m">
+      <h2 class="title-s">{{ 'billing.payment_details' | translate }}</h2>
+      <div>{{ token.card.brand }}</div>
+      <div>**** **** **** {{ token.card.last4 }}</div>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <div class="button-container">
+      <pa-button
+        kind="primary"
+        (click)="confirm()">
+        {{ 'billing.review.confirm_subscription' | translate }}
+      </pa-button>
+    </div>
+  </pa-modal-footer>
+</pa-modal-advanced>
