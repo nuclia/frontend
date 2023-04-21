@@ -260,7 +260,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.cdr?.markForCheck();
   }
 
-  subscribe() {
+  doSubscribe() {
     this.openReview()
       .pipe(
         take(1),

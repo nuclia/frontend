@@ -8,7 +8,7 @@
       <div class="section-title">
         <pa-icon
           name="circle-check"
-          color="#f06"></pa-icon>
+          class="done"></pa-icon>
         {{ 'billing.subscription_tier' | translate }}
       </div>
       <pa-button
@@ -34,12 +34,8 @@
     <div class="section-header">
       <div class="section-title">
         <pa-icon
-          *ngIf="editCustomer"
-          name="circle-dash"></pa-icon>
-        <pa-icon
-          *ngIf="!editCustomer"
-          name="circle-check"
-          color="#f06"></pa-icon>
+          [name]="editCustomer ? 'circle-dash' : 'circle-check'"
+          [class.done]="!editCustomer"></pa-icon>
         {{ 'billing.billing_details' | translate }}
       </div>
       <div *ngIf="!editCustomer">
@@ -225,12 +221,8 @@
     <div class="section-header">
       <div class="section-title">
         <pa-icon
-          *ngIf="editCard || !token"
-          name="circle-dash"></pa-icon>
-        <pa-icon
-          *ngIf="!editCard && token"
-          name="circle-check"
-          color="#f06"></pa-icon>
+          [name]="editCard || !token ? 'circle-dash' : 'circle-check'"
+          [class.done]="!editCard && token"></pa-icon>
         {{ 'billing.payment_method' | translate }}
         <div class="powered-by">
           <span class="body-xs">Powered by</span>
@@ -311,7 +303,7 @@
           </span>
         </div>
         <pa-button
-          (click)="subscribe()"
+          (click)="doSubscribe()"
           [disabled]="editCustomer || editCard || budget.invalid || subscribing"
           kind="primary">
           {{ 'billing.review_confirm' | translate }}

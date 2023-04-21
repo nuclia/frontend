@@ -1,7 +1,7 @@
 @import 'variables';
 
 :host {
-  pa-modal-dialog ::ng-deep dialog {
+  pa-modal-advanced ::ng-deep dialog {
     width: rhythm(90);
   }
   pa-slider ::ng-deep .pa-field .pa-field-control-range[type='range'] {

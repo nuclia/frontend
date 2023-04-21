@@ -25,12 +25,15 @@ h2 {
   font-size: font-size(l);
   font-weight: $font-weight-bold;
   gap: rhythm(1);
+
+  pa-icon.done {
+    color: $color-primary-regular;
+  }
 }
 
 .section-body {
   padding-left: rhythm(4);
 }
-
 
 .customer-form {
   display: flex;
