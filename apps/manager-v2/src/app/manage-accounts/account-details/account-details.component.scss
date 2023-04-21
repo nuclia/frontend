@@ -1,0 +1,38 @@
+@import 'variables';
+
+.panel-header {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  padding: 0 rhythm(1);
+}
+
+nav {
+  margin: rhythm(3) 0;
+  ul {
+    flex-direction: column;
+
+    li {
+      transition: background-color $transition-hint, color $transition-hint;
+
+      &:hover {
+        background-color: $color-neutral-light;
+      }
+      &.active {
+        background-color: $color-neutral-light;
+        font-weight: $font-weight-semi-bold;
+      }
+
+      &.child-route {
+        align-items: center;
+        display: flex;
+        gap: rhythm(1);
+        padding-left: rhythm(4);
+
+        pa-icon {
+          display: flex;
+        }
+      }
+    }
+  }
+}

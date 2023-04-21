@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Observable } from 'rxjs';
-import { AccountCreationPayload, AccountPatchPayload, AccountSummary } from './account.models';
-import { Account } from '@nuclia/core';
+import { AccountCreationPayload, AccountPatchPayload, AccountSummary, ExtendedAccount } from './account.models';
 
 const MANAGE_ACCOUNTS_ENDPOINT = '/manage/@accounts';
 const MANAGE_ACCOUNT_ENDPOINT = '/manage/@account';
@@ -17,8 +16,8 @@ export class AccountService {
     return this.sdk.nuclia.rest.get<AccountSummary[]>(MANAGE_ACCOUNTS_ENDPOINT);
   }
 
-  getAccount(id: string): Observable<Account> {
-    return this.sdk.nuclia.rest.get<Account>(`${MANAGE_ACCOUNT_ENDPOINT}/${id}`);
+  getAccount(id: string): Observable<ExtendedAccount> {
+    return this.sdk.nuclia.rest.get<ExtendedAccount>(`${MANAGE_ACCOUNT_ENDPOINT}/${id}`);
   }
 
   createAccount(account: AccountCreationPayload): Observable<unknown> {

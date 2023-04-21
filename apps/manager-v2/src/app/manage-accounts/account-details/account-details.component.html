@@ -1,1 +1,50 @@
-<p>account-details works!</p>
+<div class="pa-main-container">
+  <div class="pa-main-side-panel">
+    <div class="panel-header">
+      <pa-button
+        icon="arrow-left"
+        aspect="basic"
+        routerLink="..">
+        Back
+      </pa-button>
+      <div class="title-l">{{ account?.title }}</div>
+    </div>
+    <nav>
+      <ul>
+        <li
+          routerLink="config"
+          routerLinkActive="active">
+          Configuration
+        </li>
+        <li
+          routerLink="kbs"
+          routerLinkActive="active">
+          Knowledge Boxes
+        </li>
+        <li
+          *ngFor="let kb of account?.stashes?.items"
+          class="child-route"
+          [routerLink]="'kb/' + kb.id"
+          routerLinkActive="active">
+          <pa-icon
+            name="knowledge-box"
+            size="small"></pa-icon>
+          {{ kb.slug }}
+        </li>
+        <li
+          routerLink="limits"
+          routerLinkActive="active">
+          Limits
+        </li>
+        <li
+          routerLink="users"
+          routerLinkActive="active">
+          Users
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="pa-main-container-wide">
+    <router-outlet></router-outlet>
+  </div>
+</div>

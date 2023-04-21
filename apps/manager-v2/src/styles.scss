@@ -2,6 +2,7 @@
 @import 'libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
 @import 'libs/common/src/lib/base/css-variables';
 @import 'libs/sistema/styles/apps-common';
+@import 'variables';
 
 :root {
   --app-background-color: $color-light-stronger;
@@ -12,4 +13,32 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+nav {
+  flex: 1 0 auto;
+  ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      cursor: pointer;
+      line-height: line-height(l);
+      padding: rhythm(1) rhythm(2);
+    }
+  }
+}
+
+.pa-main-container {
+  .pa-main-side-panel {
+    background: $color-neutral-lighter;
+    padding: rhythm(1) 0;
+    height: calc(100vh - #{$header-height});
+  }
+
+  .pa-main-container-wide {
+    padding: rhythm(2) 0;
+  }
 }
