@@ -1,5 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppLayoutComponent } from './app-layout.component';
+import { RouterTestingModule } from '@angular/router/testing';
+import { UserService } from '@flaps/core';
+import { MockModule, MockProvider } from 'ng-mocks';
+import { of } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('AppLayoutComponent', () => {
   let component: AppLayoutComponent;
@@ -7,7 +13,15 @@ describe('AppLayoutComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule,
+        MockModule(TranslateModule),
+        MockModule(PaAvatarModule),
+        MockModule(PaDropdownModule),
+        MockModule(PaPopupModule),
+      ],
       declarations: [AppLayoutComponent],
+      providers: [MockProvider(UserService, { userInfo: of(undefined) })],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppLayoutComponent);

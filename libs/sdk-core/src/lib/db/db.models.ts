@@ -24,22 +24,57 @@ export interface Account {
   max_users: number | null;
   config?: AccountConfig;
   limits: AccountLimits;
+  blocking_state: AccountBlockingState;
+  blocked_features: BlockedFeature[];
 }
 
 export interface AccountConfig {
   g_speech_to_text: boolean;
+  indexer_slow_replicas: number;
+  max_dedicated_processors: number;
 }
 
 export interface AccountLimits {
+  processing?: {
+    monthly_limit_chars_processed: number;
+    monthly_limit_docs_no_media_processed: number;
+    monthly_limit_hosted_answers_generated: number;
+    monthly_limit_hosted_searches_performed: number;
+    monthly_limit_media_seconds_processed: number;
+    monthly_limit_non_media_files_processed: number;
+    monthly_limit_paragraphs_processed: number;
+    monthly_limit_paragraphs_stored: number;
+    monthly_limit_self_hosted_answers_generated: number;
+    monthly_limit_self_hosted_searches_performed: number;
+  };
   upload: {
     upload_limit_max_media_file_size: number;
     upload_limit_max_non_media_file_size: number;
   };
-  processing: {
+  usage: {
     monthly_limit_chars_processed: number;
+    monthly_limit_docs_no_media_processed: number;
+    monthly_limit_hosted_answers_generated: number;
+    monthly_limit_hosted_searches_performed: number;
     monthly_limit_media_seconds_processed: number;
     monthly_limit_non_media_files_processed: number;
+    monthly_limit_paragraphs_processed: number;
+    monthly_limit_paragraphs_stored: number;
+    monthly_limit_self_hosted_answers_generated: number;
+    monthly_limit_self_hosted_searches_performed: number;
   };
+}
+
+export enum AccountBlockingState {
+  UNBLOCKED = 'unblocked',
+  QUOTA = 'quota',
+  MANAGER = 'manager',
+}
+export enum BlockedFeature {
+  UPLOAD = 'upload',
+  PROCESSING = 'processing',
+  SEARCH = 'search',
+  GENERATIVE = 'generative',
 }
 
 export interface AccountCreation {
