@@ -10,8 +10,13 @@
     font-weight: $font-weight-body;
   }
 }
-.account-state {
-  padding: rhythm(3) rhythm(2) 0;
+.account-info {
+  background: $color-neutral-lightest;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  margin: rhythm(1) rhythm(2) rhythm(2);
+  padding: rhythm(1);
 }
 
 nav {

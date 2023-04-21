@@ -11,10 +11,20 @@
         {{ (account | async)?.title }}
       </div>
     </div>
-    <p class="account-state">
-      State:
-      <strong>{{ currentState | async }}</strong>
-    </p>
+    <div class="account-info">
+      <div>
+        State:
+        <strong>{{ currentState | async }}</strong>
+      </div>
+      <div>
+        Type:
+        <strong>{{ (account | async)?.type }}</strong>
+      </div>
+      <div>
+        Max kbs:
+        <strong>{{ (account | async)?.stashes?.max_stashes }}</strong>
+      </div>
+    </div>
     <nav>
       <ul>
         <li

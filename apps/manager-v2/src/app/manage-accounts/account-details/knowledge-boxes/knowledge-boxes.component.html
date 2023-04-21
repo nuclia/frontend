@@ -1,1 +1,22 @@
-<p>knowledge-boxes works!</p>
+<h3>Knowledge boxes</h3>
+<pa-table columns="2fr repeat(2, 1fr) 96px">
+  <pa-table-header>
+    <pa-table-cell header>Id</pa-table-cell>
+    <pa-table-cell header>Slug</pa-table-cell>
+    <pa-table-cell header>Title</pa-table-cell>
+    <pa-table-cell header>Resources</pa-table-cell>
+  </pa-table-header>
+  <pa-table-row
+    *ngFor="let kb of kbList | async"
+    clickable
+    [routerLink]="'../kb/' + kb.id">
+    <pa-table-cell>
+      <small>{{ kb.id }}</small>
+    </pa-table-cell>
+    <pa-table-cell>{{ kb.slug }}</pa-table-cell>
+    <pa-table-cell>{{ kb.title }}</pa-table-cell>
+    <pa-table-cell>
+      <div class="count">{{ counters[kb.id] }}</div>
+    </pa-table-cell>
+  </pa-table-row>
+</pa-table>
