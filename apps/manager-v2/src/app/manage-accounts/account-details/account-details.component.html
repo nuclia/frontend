@@ -7,8 +7,14 @@
         routerLink="..">
         Back
       </pa-button>
-      <div class="title-l">{{ account?.title }}</div>
+      <div class="title-l">
+        {{ (account | async)?.title }}
+      </div>
     </div>
+    <p class="account-state">
+      State:
+      <strong>{{ currentState | async }}</strong>
+    </p>
     <nav>
       <ul>
         <li
@@ -17,12 +23,17 @@
           Configuration
         </li>
         <li
+          routerLink="features"
+          routerLinkActive="active">
+          Blocked features
+        </li>
+        <li
           routerLink="kbs"
           routerLinkActive="active">
           Knowledge Boxes
         </li>
         <li
-          *ngFor="let kb of account?.stashes?.items"
+          *ngFor="let kb of (account | async)?.stashes?.items"
           class="child-route"
           [routerLink]="'kb/' + kb.id"
           routerLinkActive="active">

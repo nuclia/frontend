@@ -32,4 +32,11 @@ header {
 .page-container {
   max-height: calc(100vh - #{$header-height});
   overflow-y: auto;
+
+  .forbidden-message {
+    background: $color-secondary-regular;
+    font-weight: $font-weight-semi-bold;
+    padding: rhythm(2);
+    text-align: center;
+  }
 }

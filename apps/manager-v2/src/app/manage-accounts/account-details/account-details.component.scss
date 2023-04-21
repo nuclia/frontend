@@ -3,8 +3,15 @@
 .panel-header {
   align-items: center;
   display: flex;
-  gap: rhythm(2);
+  gap: rhythm(1);
   padding: 0 rhythm(1);
+
+  .title-l small {
+    font-weight: $font-weight-body;
+  }
+}
+.account-state {
+  padding: rhythm(3) rhythm(2) 0;
 }
 
 nav {

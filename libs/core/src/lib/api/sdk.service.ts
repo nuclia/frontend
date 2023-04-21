@@ -4,7 +4,6 @@ import {
   Counters,
   IKnowledgeBoxItem,
   KnowledgeBox,
-  LearningConfiguration,
   LearningConfigurationSet,
   Nuclia,
   WritableKnowledgeBox,

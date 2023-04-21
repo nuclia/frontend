@@ -1,0 +1,10 @@
+@import 'variables';
+
+:host {
+  form {
+    gap: rhythm(1);
+  }
+  pa-checkbox ::ng-deep .pa-toggle-label {
+    text-transform: capitalize;
+  }
+}

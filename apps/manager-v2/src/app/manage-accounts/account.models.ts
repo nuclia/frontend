@@ -1,5 +1,6 @@
 import { Account, AccountBlockingState, AccountConfig, AccountLimits } from '@nuclia/core';
 import { Language, UserType } from '@flaps/core';
+import { BlockedFeature } from '../../../../manager/src/app/models/account.model';
 
 export interface AccountSummary {
   id: string;
@@ -54,7 +55,7 @@ export interface AccountPatchPayload {
 }
 
 export interface AccountStashes {
-  max_stashes: number | null;
+  max_stashes: number;
   items: Stash[] | null;
 }
 
@@ -85,4 +86,19 @@ export interface Stash {
   created: string;
   modified: string;
   data: unknown;
+}
+
+export interface ZoneSummary {
+  id: string;
+  slug: string;
+  account: string | null;
+  title: string;
+  created: string;
+  modified: string | null;
+  '@id': string;
+}
+
+export interface BlockedFeaturesPayload {
+  blocking_state: AccountBlockingState;
+  blocked_features: BlockedFeature[];
 }

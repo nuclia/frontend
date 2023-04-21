@@ -1,0 +1,14 @@
+<h3>Blocked features</h3>
+<form
+  [formGroup]="blockedFeatures"
+  (ngSubmit)="save()">
+  <pa-checkbox
+    *ngFor="let feature of blockedFeatures.controls | keyvalue"
+    [formControlName]="feature.key"
+    [value]="feature.value">
+    {{ feature.key }}
+  </pa-checkbox>
+  <nma-form-footer
+    [disabled]="blockedFeatures.pristine || isSaving"
+    (cancel)="reset()"></nma-form-footer>
+</form>

@@ -4,16 +4,14 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { appRoutes } from './app.routes';
 import { registerLocaleData } from '@angular/common';
+import localeEn from '@angular/common/locales/en';
+import localeEs from '@angular/common/locales/es';
+import localeCa from '@angular/common/locales/ca';
 import { HttpClient } from '@angular/common/http';
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { environment } from '../environments/environment';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
-
-// Load locales
-import localeEn from '@angular/common/locales/en';
-import localeEs from '@angular/common/locales/es';
-import localeCa from '@angular/common/locales/ca';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { PaAvatarModule, PaDropdownModule, PaPopupModule } from '@guillotinaweb/pastanaga-angular';
 import { AppLayoutComponent } from './app-layout/app-layout.component';

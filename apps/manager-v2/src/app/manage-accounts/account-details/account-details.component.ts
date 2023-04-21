@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { AccountService } from '../account.service';
 import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ExtendedAccount } from '../account.models';
+import { AccountDetailsStore } from './account-details.store';
 
 @Component({
   templateUrl: './account-details.component.html',
@@ -13,9 +13,14 @@ import { ExtendedAccount } from '../account.models';
 export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
-  account?: ExtendedAccount;
+  account = this.accountStore.accountDetails;
+  currentState = this.accountStore.currentState;
 
-  constructor(private route: ActivatedRoute, private accountService: AccountService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private route: ActivatedRoute,
+    private accountService: AccountService,
+    private accountStore: AccountDetailsStore,
+  ) {}
 
   ngOnInit() {
     this.route.params
@@ -24,10 +29,9 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
         switchMap((params) => this.accountService.getAccount(params['id'])),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((account) => {
-        this.account = account;
-        this.cdr.markForCheck();
-      });
+      .subscribe((account) => this.accountStore.setAccountDetails(account));
+
+    this.accountService.getZones().subscribe((zones) => this.accountStore.setZones(zones));
   }
 
   ngOnDestroy() {

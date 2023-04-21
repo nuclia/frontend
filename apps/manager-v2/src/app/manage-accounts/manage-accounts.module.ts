@@ -2,7 +2,13 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ManageAccountsComponent } from './manage-accounts.component';
 import { RouterModule, Routes } from '@angular/router';
-import { PaButtonModule, PaIconModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaTableModule,
+  PaTextFieldModule,
+  PaTogglesModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { AccountListComponent } from './account-list/account-list.component';
 import { ConfigurationComponent } from './account-details/configuration/configuration.component';
@@ -10,6 +16,9 @@ import { KnowledgeBoxesComponent } from './account-details/knowledge-boxes/knowl
 import { LimitsComponent } from './account-details/limits/limits.component';
 import { UsersComponent } from './account-details/users/users.component';
 import { KbDetailsComponent } from './account-details/kb-details/kb-details.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
+import { FormFooterComponent } from './form-footer/form-footer.component';
 
 const ROUTES: Routes = [
   {
@@ -32,6 +41,10 @@ const ROUTES: Routes = [
           {
             path: 'config',
             component: ConfigurationComponent,
+          },
+          {
+            path: 'features',
+            component: BlockedFeaturesComponent,
           },
           {
             path: 'kbs',
@@ -63,6 +76,8 @@ const ROUTES: Routes = [
     PaButtonModule,
     PaTextFieldModule,
     PaIconModule,
+    PaTogglesModule,
+    ReactiveFormsModule,
   ],
   declarations: [
     ManageAccountsComponent,
@@ -73,6 +88,8 @@ const ROUTES: Routes = [
     UsersComponent,
     KnowledgeBoxesComponent,
     KbDetailsComponent,
+    BlockedFeaturesComponent,
+    FormFooterComponent,
   ],
 })
 export class ManageAccountsModule {}

@@ -42,3 +42,16 @@ nav {
     padding: rhythm(2) 0;
   }
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(64);
+
+  footer {
+    display: flex;
+    gap: rhythm(2);
+    padding: rhythm(3) 0;
+  }
+}

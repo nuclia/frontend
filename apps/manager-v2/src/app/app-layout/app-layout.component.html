@@ -4,7 +4,9 @@
     src="assets/logos/logo-white.svg"
     alt="Nuclia Manager" />
 
-  <nav class="title-m">
+  <nav
+    class="title-m"
+    *ngIf="isRoot">
     <ul>
       <li
         routerLink="accounts"
@@ -32,5 +34,11 @@
   </pa-option>
 </pa-dropdown>
 <div class="page-container">
-  <router-outlet></router-outlet>
+  <div
+    *ngIf="!isRoot"
+    class="forbidden-message">
+    You don't have enough permissions to use the manager.
+  </div>
+
+  <router-outlet *ngIf="isRoot"></router-outlet>
 </div>
