@@ -1,6 +1,7 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
 import {
+  deleteSource,
   getActiveSyncs,
   getLogs,
   getSource,
@@ -30,6 +31,11 @@ router.get('/sources', async (req, res) => {
 router.get('/source/:id', async (req, res) => {
   const source = getSource(req.params.id);
   res.send(JSON.stringify(source));
+});
+
+router.delete('/source/:id', async (req, res) => {
+  deleteSource(req.params.id);
+  res.status(201).send();
 });
 
 router.get('/source/:id/auth', async (req, res) => {

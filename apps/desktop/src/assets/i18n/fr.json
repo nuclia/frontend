@@ -34,6 +34,7 @@
 	"upload.server.local-button": "Utiliser le serveur local",
 	"upload.server.title": "Se connecter au serveur de synchronisation",
 	"upload.server.url": "URL du serveur",
+	"upload.source.confirm-delete": "Voulez-vous vraiment supprimer cette source ?",
 	"upload.source.description": "Choisissez la source depuis laquelle télécharger les fichiers",
 	"upload.source.help": "Reportez-vous à la documentation sur la façon d'ajouter des fichiers à partir de {{source}}.",
 	"upload.source.permanent-sync": "Synchronisation permanente",

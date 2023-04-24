@@ -34,6 +34,7 @@
 	"upload.server.local-button": "Use local server",
 	"upload.server.title": "Connect to sync server",
 	"upload.server.url": "Server URL",
+	"upload.source.confirm-delete": "Do you really want to delete this source?",
 	"upload.source.description": "Choose source for uploads",
 	"upload.source.help": "Refer to our documentation on how to add files from {{source}}.",
 	"upload.source.permanent-sync": "Permanent synchronization",

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { OverlayModule } from '@angular/cdk/overlay';
 
@@ -33,6 +33,6 @@ import {
   ],
   exports: [],
   declarations: [MainLayoutComponent, SidebarComponent, TopbarComponent],
-  providers: [],
+  providers: [TranslatePipe],
 })
 export class MainLayoutModule {}

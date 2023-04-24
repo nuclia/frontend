@@ -34,6 +34,7 @@
 	"upload.server.local-button": "Utilitzeu el servidor local",
 	"upload.server.title": "Connecteu-vos al servidor de sincronització",
 	"upload.server.url": "URL del servidor",
+	"upload.source.confirm-delete": "Realment voleu suprimir aquesta font?",
 	"upload.source.description": "Trieu l'origen des del qual voleu pujar tots els fitxers",
 	"upload.source.help": "Consulta la documentació sobre com afegir arxius des de {{source}}.",
 	"upload.source.permanent-sync": "Sincronització permanent",

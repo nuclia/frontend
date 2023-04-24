@@ -21,6 +21,10 @@ export const updateSource = (id: string, source: Source) => {
   SOURCES[id] = source;
 };
 
+export const deleteSource = (id: string) => {
+  delete SOURCES[id];
+};
+
 export const getSource = (sourceId: string) => {
   const sources = getSources();
   return sources[sourceId];

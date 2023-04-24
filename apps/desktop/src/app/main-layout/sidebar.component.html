@@ -33,12 +33,20 @@
                 paEllipsisTooltip>
                 {{ item.name }}
               </span>
-              <pa-button
-                (click)="goToSource(item.connectorId, item.name, true)"
-                size="small"
-                iconSize="small"
-                icon="edit"
-                aspect="basic"></pa-button>
+              <span>
+                <pa-button
+                  (click)="goToSource(item.connectorId, item.name, true)"
+                  size="small"
+                  iconSize="small"
+                  icon="edit"
+                  aspect="basic"></pa-button>
+                <pa-button
+                  (click)="deleteSource(item.name)"
+                  size="small"
+                  iconSize="small"
+                  icon="trash"
+                  aspect="basic"></pa-button>
+              </span>
             </div>
           </div>
         </li>

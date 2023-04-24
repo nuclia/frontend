@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { filter, from, map, switchMap } from 'rxjs';
-import { Source } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
+import { SisModalService } from '@nuclia/sistema';
 
 @Component({
   selector: 'nde-sidebar',
@@ -20,7 +20,7 @@ export class SidebarComponent {
   );
   syncServer = this.sync.syncServer;
 
-  constructor(private sync: SyncService, private router: Router) {}
+  constructor(private sync: SyncService, private router: Router, private modalService: SisModalService) {}
 
   goToStep(step: number) {
     if (step === 0) {
@@ -42,5 +42,17 @@ export class SidebarComponent {
 
   goToHistory(showActive = false) {
     this.router.navigate(['/history'], { queryParams: showActive ? { active: 'true' } : {} });
+  }
+
+  deleteSource(quickAccessName: string) {
+    this.modalService
+      .openConfirm({
+        title: `upload.source.confirm-delete`,
+      })
+      .onClose.pipe(
+        filter((confirm) => !!confirm),
+        switchMap(() => this.sync.deleteSource(quickAccessName)),
+      )
+      .subscribe();
   }
 }

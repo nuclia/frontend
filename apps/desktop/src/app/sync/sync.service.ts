@@ -151,6 +151,16 @@ export class SyncService {
     return this.http.get<Source>(`${this._syncServer.getValue()}/source/${sourceId}`);
   }
 
+  deleteSource(sourceId: string): Observable<void> {
+    return this.http.delete<void>(`${this._syncServer.getValue()}/source/${sourceId}`).pipe(
+      tap(() => {
+        const sources = this._sourcesCache.getValue();
+        delete sources[sourceId];
+        this._sourcesCache.next(sources);
+      }),
+    );
+  }
+
   hasCurrentSourceAuth(): Observable<boolean> {
     const current = this.getCurrentSourceId();
     if (!current) {
