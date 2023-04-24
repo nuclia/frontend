@@ -1,8 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as https from 'https';
+import { getDataPath } from './utils';
 
-const connectorsPath = path.join(process.cwd(), 'remote-connectors');
+const connectorsPath = getDataPath('remote-connectors');
 
 export const importConnector = (url: string) => {
   if (!fs.existsSync(connectorsPath)) {

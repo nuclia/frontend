@@ -22,7 +22,7 @@ export class TopbarComponent {
 
   menuOpen = false;
   account = this.state.account;
-  isServerDown = this.sync.isServerDown();
+  isServerDown = this.sync.isServerDown;
 
   avatar: Observable<AvatarModel> = this.user.userPrefs.pipe(
     map((pref) => ({

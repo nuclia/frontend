@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SyncService } from '../../sync/sync.service';
+import { LOCAL_SYNC_SERVER, SYNC_SERVER_KEY, SyncService } from '../../sync/sync.service';
 
 @Component({
   selector: 'nde-sync-server',
@@ -8,7 +8,8 @@ import { SyncService } from '../../sync/sync.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyncServerComponent {
-  serverUrl = '';
+  serverUrl =
+    localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER ? '' : localStorage.getItem(SYNC_SERVER_KEY) || '';
 
   constructor(private sync: SyncService) {}
 

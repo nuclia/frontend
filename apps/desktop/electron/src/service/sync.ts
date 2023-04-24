@@ -1,10 +1,21 @@
-import { addErrorLog, getLastModified, getSources, addActiveSyncLog, readPersistentData, syncFile, updateSource, incrementActiveSyncLog, addLog, removeActiveSyncLog } from './sources';
-import { importConnector, loadConnectors } from './dynamic-connectors';
+import {
+  addErrorLog,
+  getLastModified,
+  getSources,
+  addActiveSyncLog,
+  readPersistentData,
+  syncFile,
+  updateSource,
+  incrementActiveSyncLog,
+  addLog,
+  removeActiveSyncLog,
+} from './sources';
+// import { importConnector, loadConnectors } from './dynamic-connectors';
 import { concatMap, delay, map, of, switchMap, tap, toArray } from 'rxjs';
 
 export const sync = () => {
-  importConnector('https://nuclia.github.io/status/connectors/youtube.js');
-  loadConnectors();
+  // importConnector('https://nuclia.github.io/status/connectors/youtube.js');
+  // loadConnectors();
   readPersistentData();
   try {
     syncFiles();
@@ -30,7 +41,7 @@ function syncFiles() {
               : of(...arr).pipe(
                   tap(([id, source]) => {
                     console.log(`Syncing ${source.items?.length} items from ${id}`);
-                    addActiveSyncLog(id, source)
+                    addActiveSyncLog(id, source);
                   }),
                   switchMap(([id, source]) => {
                     if (!source.kb || !source.items || source.items.length === 0) {
@@ -62,7 +73,12 @@ function syncFiles() {
                             (item) => !successfullyUploaded.includes(item.originalId),
                           );
                           source.total = (source.total || 0) + successfullyUploaded.length;
-                          addLog(id, source, successfullyUploaded.length, hasFailures ? `${result.length - successfullyUploaded.length} failures` : '');
+                          addLog(
+                            id,
+                            source,
+                            successfullyUploaded.length,
+                            hasFailures ? `${result.length - successfullyUploaded.length} failures` : '',
+                          );
                           if (successfullyUploaded.length > 0) {
                             updateSource(id, source);
                           }
@@ -101,9 +117,7 @@ function collectLastModified() {
                           source.lastSyncGMT = new Date().toISOString();
                           updateSource(id, source);
                         } else {
-                          addErrorLog(
-                            id,
-                            source, results.error);
+                          addErrorLog(id, source, results.error);
                           console.error(results.error);
                         }
                       }),

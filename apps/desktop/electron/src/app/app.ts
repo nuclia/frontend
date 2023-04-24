@@ -164,6 +164,9 @@ export default class App {
     ipcMain.on('debug', () => {
       App.mainWindow?.webContents.openDevTools();
     });
+    ipcMain.on('openExternal', (event, url: string) => {
+      shell.openExternal(url);
+    });
     ipcMain.on('local-server', () => {
       // fork(`${__dirname}/assets/service/apps/desktop/electron/src/service/server.js`);
       // initSyncService();

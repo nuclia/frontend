@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
+  distinctUntilChanged,
   filter,
   forkJoin,
   from,
@@ -10,8 +11,6 @@ import {
   of,
   repeat,
   ReplaySubject,
-  share,
-  shareReplay,
   Subject,
   switchMap,
   take,
@@ -40,8 +39,8 @@ import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
-const LOCAL_SYNC_SERVER = 'http://localhost:5001';
-const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
+export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
+export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
 
 interface Sync {
@@ -90,6 +89,8 @@ export class SyncService {
   showSource = this._showSource.asObservable();
   private _showFirstStep = new Subject<void>();
   showFirstStep = this._showFirstStep.asObservable();
+  private _isServerDown = new BehaviorSubject<boolean>(true);
+  isServerDown = this._isServerDown.asObservable();
   private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
   sourcesCache = this._sourcesCache.asObservable();
   currentSource = this.sourcesCache.pipe(map((sources) => sources[this.getCurrentSourceId()]));
@@ -99,15 +100,22 @@ export class SyncService {
     if (account) {
       this.setAccount();
     }
-    this.fetchDynamicConnectors();
-    this._syncServer
+    // this.fetchDynamicConnectors();
+    of(true)
       .pipe(
-        filter((server) => !!server),
+        filter(() => !!this._syncServer.getValue()),
+        switchMap(() => this.serverStatus(this._syncServer.getValue())),
+        map((res) => !res.running),
+        repeat({ delay: 5000 }),
+      )
+      .subscribe(this._isServerDown);
+    this.isServerDown
+      .pipe(
+        distinctUntilChanged(),
+        filter((isDown) => !isDown),
         switchMap(() => this.getSources()),
       )
-      .subscribe((sources) => {
-        this._sourcesCache.next(sources);
-      });
+      .subscribe(this._sourcesCache);
   }
 
   getConnectors(type: 'sources' | 'destinations'): ConnectorDefinition[] {
@@ -300,16 +308,6 @@ export class SyncService {
 
   serverStatus(server: string): Observable<{ running: boolean }> {
     return this.http.get<{ running: boolean }>(`${server}/status`).pipe(catchError(() => of({ running: false })));
-  }
-
-  isServerDown(): Observable<boolean> {
-    return of(true).pipe(
-      filter(() => !!this._syncServer.getValue()),
-      switchMap(() => this.serverStatus(this._syncServer.getValue())),
-      map((res) => !res.running),
-      share(),
-      repeat({ delay: 5000 }),
-    );
   }
 
   setSyncServer(server: { url?: string; local?: boolean }) {
