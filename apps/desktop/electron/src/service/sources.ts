@@ -224,7 +224,9 @@ export function removeActiveSyncLog(id: string) {
 
 export function readPersistentData() {
   try {
-    const data = fs.readFileSync(getDataPath('connectors-db.json'), 'utf8');
+    const path = getDataPath('connectors-db.json');
+    const data = fs.readFileSync(path, 'utf8');
+    console.log(`Reading from ${path}`);
     SOURCES = JSON.parse(data);
   } catch (err) {
     console.error(`Error reading connectors-db.json file: ${err}`);

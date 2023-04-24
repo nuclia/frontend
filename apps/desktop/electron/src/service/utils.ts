@@ -9,18 +9,19 @@ export const fetch = async (...args: any[]) => {
 };
 
 export function getDataPath(filename: string): string {
+  const home = process.env.ELECTRON_HOME;
   switch (process.platform) {
     case 'darwin': {
-      return path.join(process.env.HOME || '.', 'Library', 'Application Support', 'nuclia', filename);
+      return path.join(home || process.env.HOME || '.', 'Library', 'Application Support', 'nuclia', filename);
     }
     case 'win32': {
-      return path.join(process.env.APPDATA || '.', 'nuclia', filename);
+      return path.join(home || process.env.APPDATA || '.', 'nuclia', filename);
     }
     case 'linux': {
-      return path.join(process.env.HOME || '.', '.nuclia', filename);
+      return path.join(home || process.env.HOME || '.', '.nuclia', filename);
     }
     default: {
-      return '.';
+      return path.join('.', filename);
     }
   }
 }

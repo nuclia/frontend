@@ -175,6 +175,7 @@ export default class App {
       expressAppProcess = spawn(appName, [expressPath], {
         env: {
           ELECTRON_RUN_AS_NODE: '1',
+          ELECTRON_HOME: app.getPath('home'),
         },
       });
       function redirectOutput(x: Readable) {
