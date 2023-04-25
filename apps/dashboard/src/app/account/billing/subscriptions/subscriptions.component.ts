@@ -23,6 +23,7 @@ export class SubscriptionsComponent {
     .sort((a, b) => a.name.localeCompare(b.name));
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
+  accountTypesDefaults = this.billing.getAccountTypes().pipe(shareReplay());
 
   constructor(
     private billing: BillingService,

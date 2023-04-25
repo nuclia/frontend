@@ -13,6 +13,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SisProgressModule } from '@nuclia/sistema';
+import { STFPipesModule } from '@flaps/core';
 import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { CheckoutComponent } from './checkout/checkout.component';
@@ -56,6 +57,7 @@ const routes: Routes = [
     PaSliderModule,
     PaTogglesModule,
     SisProgressModule,
+    STFPipesModule,
   ],
   declarations: [
     BillingComponent,
