@@ -149,21 +149,23 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
   generateSnippet() {
     this.deletePreview();
-    const placeholder = this.hasPlaceholder() ? `placeholder="${this.placeholder}"` : '';
+    const placeholder = this.hasPlaceholder()
+      ? `
+  placeholder="${this.placeholder}"`
+      : '';
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       const zone = this.sdk.nuclia.options.zone;
-      this.snippet = `
-<nuclia-search-bar
+      const baseSnippet = `<nuclia-search-bar
   knowledgebox="${kb.id}"
   zone="${zone}"
-  features="${this.features}"
-  ${placeholder}
-></nuclia-search-bar>
+  features="${this.features}" ${placeholder}></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
 
+      this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
+${baseSnippet}`;
       this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
-        this.snippet.replace(
+        baseSnippet.replace(
           'zone=',
           `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
       lang="${this.translation.currentLang}"
