@@ -140,6 +140,7 @@
             <pa-select
               id="country"
               formControlName="country"
+              [readonly]="!!customer"
               [errorMessages]="errors"
               externalLabel>
               <pa-option
