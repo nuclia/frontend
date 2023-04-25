@@ -22,12 +22,6 @@
 <div *ngIf="currency">
   <div class="header">
     <p class="body-m">{{ 'billing.subscription.help' | translate }}</p>
-    <pa-button
-      (click)="openFeatures()"
-      kind="secondary"
-      aspect="basic">
-      {{ 'billing.subscription.show-features' | translate }}
-    </pa-button>
   </div>
   <table
     class="subscriptions"

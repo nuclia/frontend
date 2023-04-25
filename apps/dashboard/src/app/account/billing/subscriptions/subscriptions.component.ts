@@ -6,7 +6,6 @@ import { SisModalService } from '@nuclia/sistema';
 import { STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
-import { FeaturesComponent } from '../features/features.component';
 import { WINDOW } from '@ng-web-apis/common';
 
 @Component({
@@ -51,10 +50,6 @@ export class SubscriptionsComponent {
         },
       });
     });
-  }
-
-  openFeatures() {
-    this.modalService.openModal(FeaturesComponent);
   }
 
   onSelectCountry(country: string) {
