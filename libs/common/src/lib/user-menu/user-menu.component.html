@@ -11,6 +11,13 @@
   </pa-option>
   <pa-separator></pa-separator>
   <pa-option
+    *ngIf="(isBillingEnabled | async) && (isAccountManager | async)"
+    icon="payment"
+    (click)="goToBilling()">
+    {{ 'billing.subscription.title' | translate }}
+  </pa-option>
+  <pa-separator></pa-separator>
+  <pa-option
     *ngIf="accounts.length > 1"
     icon="reload"
     (click)="switchAccount()">
