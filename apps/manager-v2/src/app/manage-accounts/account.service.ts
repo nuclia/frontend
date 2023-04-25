@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Observable } from 'rxjs';
 import {
-  AccountCreationPayload,
   AccountPatchPayload,
   AccountSummary,
+  AccountUserType,
   BlockedFeature,
   BlockedFeaturesPayload,
   ExtendedAccount,
@@ -31,10 +31,6 @@ export class AccountService {
 
   getAccount(id: string): Observable<ExtendedAccount> {
     return this.sdk.nuclia.rest.get<ExtendedAccount>(`${ACCOUNT_ENDPOINT}/${id}`);
-  }
-
-  createAccount(account: AccountCreationPayload): Observable<unknown> {
-    return this.sdk.nuclia.rest.post(ACCOUNTS_ENDPOINT, account);
   }
 
   updateAccount(id: string, data: AccountPatchPayload): Observable<void> {
@@ -69,6 +65,18 @@ export class AccountService {
       blocked_features: blockedFeatures,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}/blocking_status`, payload);
+  }
+
+  addAccountUser(accountId: string, userId: string): Observable<void> {
+    return this.sdk.nuclia.rest.post(`${ACCOUNT_ENDPOINT}/${accountId}`, { id: userId });
+  }
+
+  updateAccountUserType(accountId: string, userId: string, newType: AccountUserType): Observable<void> {
+    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${userId}`, { type: newType });
+  }
+
+  removeAccountUser(accountId: string, userId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${accountId}/${userId}`);
   }
 
   getKb(accountId: string, kbId: string): Observable<KbSummary> {

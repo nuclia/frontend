@@ -33,6 +33,7 @@ export interface ExtendedAccount extends Account, AccountConfig {
   users: AccountUser[];
   stashes: AccountKbList;
 }
+export type AccountUserType = 'manager' | 'member';
 
 export interface AccountCreationPayload {
   slug: string;
