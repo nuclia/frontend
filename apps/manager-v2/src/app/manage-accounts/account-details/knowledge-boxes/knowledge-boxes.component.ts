@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AccountDetailsStore } from '../account-details.store';
 import { filter, forkJoin, map, Observable, of, switchMap, take } from 'rxjs';
-import { Stash } from '../../account.models';
+import { KnowledgeBox } from '../../account.models';
 import { Counters, Nuclia } from '@nuclia/core';
 import { SDKService } from '@flaps/core';
 import { catchError } from 'rxjs/operators';
@@ -12,15 +12,13 @@ import { catchError } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KnowledgeBoxesComponent implements OnInit {
-  kbList: Observable<Stash[]> = this.accountStore.accountDetails.pipe(
-    map((account) => (account ? account.stashes.items || [] : [])),
-  );
+  kbList: Observable<KnowledgeBox[]> = this.store.getAccount().pipe(map((account) => account.stashes.items || []));
   counters: { [kbId: string]: number } = {};
 
-  constructor(private accountStore: AccountDetailsStore, private sdk: SDKService, private cdr: ChangeDetectorRef) {}
+  constructor(private store: AccountDetailsStore, private sdk: SDKService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
-    this.accountStore.zones
+    this.store.zones
       .pipe(
         filter((zones) => zones.length > 0),
         take(1),

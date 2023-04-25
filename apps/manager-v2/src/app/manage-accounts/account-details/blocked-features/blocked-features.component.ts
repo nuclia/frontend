@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AccountDetailsStore } from '../account-details.store';
-import { filter, map, Subject, switchMap } from 'rxjs';
+import { Subject, switchMap } from 'rxjs';
 import { ExtendedAccount } from '../../account.models';
 import { takeUntil } from 'rxjs/operators';
 import { AccountService } from '../../account.service';
@@ -25,15 +25,12 @@ export class BlockedFeaturesComponent implements OnInit, OnDestroy {
   });
   isSaving = false;
 
-  constructor(private accountStore: AccountDetailsStore, private accountService: AccountService) {}
+  constructor(private store: AccountDetailsStore, private accountService: AccountService) {}
 
   ngOnInit(): void {
-    this.accountStore.accountDetails
-      .pipe(
-        filter((data) => !!data),
-        map((data) => data as ExtendedAccount),
-        takeUntil(this.unsubscribeAll),
-      )
+    this.store
+      .getAccount()
+      .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((accountDetails) => {
         this.accountBackup = { ...accountDetails };
         this.accountId = accountDetails.id;
@@ -53,7 +50,7 @@ export class BlockedFeaturesComponent implements OnInit, OnDestroy {
       this.accountService
         .updateBlockedFeatures(this.accountId, this.blockedFeatures.getRawValue())
         .pipe(switchMap(() => this.accountService.getAccount(this.accountId)))
-        .subscribe((updatedAccount) => this.accountStore.setAccountDetails(updatedAccount));
+        .subscribe((updatedAccount) => this.store.setAccountDetails(updatedAccount));
     }
   }
 

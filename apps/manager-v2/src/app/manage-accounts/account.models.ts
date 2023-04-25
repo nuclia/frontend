@@ -1,6 +1,5 @@
-import { Account, AccountBlockingState, AccountConfig, AccountLimits } from '@nuclia/core';
+import { Account, AccountBlockingState, AccountConfig, AccountLimits, WelcomeUser } from '@nuclia/core';
 import { Language, UserType } from '@flaps/core';
-import { BlockedFeature } from '../../../../manager/src/app/models/account.model';
 
 export interface AccountSummary {
   id: string;
@@ -32,7 +31,7 @@ export interface ExtendedAccount extends Account, AccountConfig {
   managers: string[];
   members: string[];
   users: AccountUser[];
-  stashes: AccountStashes;
+  stashes: AccountKbList;
 }
 
 export interface AccountCreationPayload {
@@ -54,32 +53,36 @@ export interface AccountPatchPayload {
   limits?: AccountLimits;
 }
 
-export interface AccountStashes {
+export interface AccountKbList {
   max_stashes: number;
-  items: Stash[] | null;
+  items: KnowledgeBox[] | null;
 }
 
-export type StashStates = 'PUBLISHED' | 'PRIVATE';
-export type StashRoles = 'SOWNER' | 'SMEMBER' | 'SCONTRIBUTOR';
+export type KbStates = 'PUBLISHED' | 'PRIVATE';
+export type KbRoles = 'SOWNER' | 'SMEMBER' | 'SCONTRIBUTOR';
 
-export interface StashSummary {
+export interface KbUser extends WelcomeUser {
+  id: string;
+}
+
+export interface KbSummary {
   id: string;
   slug: string;
   title: string;
-  members: string[];
-  contributors: string[];
-  owners: string[];
+  members: KbUser[];
+  contributors: KbUser[];
+  owners: KbUser[];
   created: string;
   modified: string;
 }
 
-export interface Stash {
+export interface KnowledgeBox {
   id: string;
   slug: string;
   title: string;
   description?: string;
   avatar?: string;
-  state: StashStates;
+  state: KbStates;
   account: string;
   creator: string;
   zone: string;
@@ -96,6 +99,13 @@ export interface ZoneSummary {
   created: string;
   modified: string | null;
   '@id': string;
+}
+
+export enum BlockedFeature {
+  UPLOAD = 'upload',
+  PROCESSING = 'processing',
+  SEARCH = 'search',
+  GENERATIVE = 'generative',
 }
 
 export interface BlockedFeaturesPayload {

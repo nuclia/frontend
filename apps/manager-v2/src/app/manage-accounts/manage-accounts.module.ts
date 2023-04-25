@@ -4,7 +4,9 @@ import { ManageAccountsComponent } from './manage-accounts.component';
 import { RouterModule, Routes } from '@angular/router';
 import {
   PaButtonModule,
+  PaDropdownModule,
   PaIconModule,
+  PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -16,7 +18,7 @@ import { KnowledgeBoxesComponent } from './account-details/knowledge-boxes/knowl
 import { LimitsComponent } from './account-details/limits/limits.component';
 import { UsersComponent } from './account-details/users/users.component';
 import { KbDetailsComponent } from './account-details/kb-details/kb-details.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
 import { FormFooterComponent } from './form-footer/form-footer.component';
 
@@ -30,7 +32,7 @@ const ROUTES: Routes = [
         component: AccountListComponent,
       },
       {
-        path: ':id',
+        path: ':accountId',
         component: AccountDetailsComponent,
         children: [
           {
@@ -51,7 +53,7 @@ const ROUTES: Routes = [
             component: KnowledgeBoxesComponent,
           },
           {
-            path: 'kb/:id',
+            path: 'kb/:kbId',
             component: KbDetailsComponent,
           },
           {
@@ -78,6 +80,9 @@ const ROUTES: Routes = [
     PaIconModule,
     PaTogglesModule,
     ReactiveFormsModule,
+    FormsModule,
+    PaPopupModule,
+    PaDropdownModule,
   ],
   declarations: [
     ManageAccountsComponent,

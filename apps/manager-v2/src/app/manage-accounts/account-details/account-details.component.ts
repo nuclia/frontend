@@ -25,8 +25,8 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.route.params
       .pipe(
-        filter((params) => !!params['id']),
-        switchMap((params) => this.accountService.getAccount(params['id'])),
+        filter((params) => !!params['accountId']),
+        switchMap((params) => this.accountService.getAccount(params['accountId'])),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe((account) => this.accountStore.setAccountDetails(account));

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { AccountDetailsStore } from '../account-details.store';
 import { AccountTypes } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { filter, map, Subject, switchMap } from 'rxjs';
+import { Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ExtendedAccount } from '../../account.models';
 import { AccountService } from '../../account.service';
@@ -24,23 +24,20 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     indexer_slow_replicas: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
-  zones = this.accountStore.zones;
+  zones = this.store.zones;
   isSaving = false;
 
   constructor(
-    private accountStore: AccountDetailsStore,
+    private store: AccountDetailsStore,
     private accountService: AccountService,
     private toast: SisToastService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.accountStore.accountDetails
-      .pipe(
-        filter((data) => !!data),
-        map((data) => data as ExtendedAccount),
-        takeUntil(this.unsubscribeAll),
-      )
+    this.store
+      .getAccount()
+      .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((accountDetails) => {
         this.accountBackup = { ...accountDetails };
         this.configForm.patchValue(accountDetails);
@@ -62,7 +59,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         .pipe(switchMap(() => this.accountService.getAccount(this.accountId)))
         .subscribe({
           next: (updatedAccount) => {
-            this.accountStore.setAccountDetails(updatedAccount);
+            this.store.setAccountDetails(updatedAccount);
             this.isSaving = false;
             this.configForm.markAsPristine();
             this.cdr.markForCheck();

@@ -5,18 +5,19 @@ import {
   AccountCreationPayload,
   AccountPatchPayload,
   AccountSummary,
-  ExtendedAccount,
-  ZoneSummary,
-} from './account.models';
-import {
-  AccountBlockingState,
   BlockedFeature,
   BlockedFeaturesPayload,
-} from '../../../../manager/src/app/models/account.model';
+  ExtendedAccount,
+  KbRoles,
+  KbSummary,
+  ZoneSummary,
+} from './account.models';
+import { AccountBlockingState } from '@nuclia/core';
 
 const ACCOUNTS_ENDPOINT = '/manage/@accounts';
 const ACCOUNT_ENDPOINT = '/manage/@account';
 const ZONE_ENDPOINT = '/manage/@zones';
+const KB_ENDPOINT = '@stashes';
 
 @Injectable({
   providedIn: 'root',
@@ -68,5 +69,30 @@ export class AccountService {
       blocked_features: blockedFeatures,
     };
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${id}/blocking_status`, payload);
+  }
+
+  getKb(accountId: string, kbId: string): Observable<KbSummary> {
+    return this.sdk.nuclia.rest.get(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}`);
+  }
+
+  updateKb(accountId: string, kbId: string, data: { slug?: string; title?: string }): Observable<void> {
+    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}`, data);
+  }
+
+  updateKbUser(accountId: string, kbId: string, userId: string, newRole: KbRoles): Observable<void> {
+    return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}/${userId}`, {
+      type: newRole,
+    });
+  }
+
+  addKbUser(accountId: string, kbId: string, userId: string): Observable<void> {
+    return this.sdk.nuclia.rest.post(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}`, {
+      user: userId,
+      stash: kbId,
+    });
+  }
+
+  removeKbUser(accountId: string, kbId: string, userId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}/${userId}`);
   }
 }
