@@ -26,8 +26,11 @@ h2 {
   font-weight: $font-weight-bold;
   gap: rhythm(1);
 
-  pa-icon.done {
+  pa-icon {
     color: $color-primary-regular;
+    &.disabled {
+      color: $color-dark-stronger;
+    }
   }
 }
 
