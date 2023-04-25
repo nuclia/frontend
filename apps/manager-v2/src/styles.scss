@@ -36,14 +36,18 @@ nav {
     background: $color-neutral-lighter;
     padding: rhythm(1) 0;
     height: calc(100vh - #{$header-height});
+    overflow: auto;
   }
 
   .pa-main-container-wide {
+    height: calc(100vh - #{$header-height});
+    overflow: auto;
     padding: rhythm(2) 0;
   }
 }
 
-form {
+form,
+form section {
   display: flex;
   flex-direction: column;
   gap: rhythm(2);
@@ -53,5 +57,12 @@ form {
     display: flex;
     gap: rhythm(2);
     padding: rhythm(3) 0;
+  }
+}
+
+form section {
+  margin-bottom: rhythm(3);
+  h3 {
+    margin-bottom: 0;
   }
 }

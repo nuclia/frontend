@@ -14,7 +14,6 @@ import { SisToastService } from '@nuclia/sistema';
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
-  private accountId = '';
   private accountBackup?: ExtendedAccount;
 
   configForm = new FormGroup({
@@ -42,7 +41,6 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         this.accountBackup = { ...accountDetails };
         this.configForm.patchValue(accountDetails);
         this.configForm.controls.kbs.patchValue(accountDetails.stashes.max_stashes);
-        this.accountId = accountDetails.id;
       });
   }
 
@@ -54,9 +52,15 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   save() {
     if (this.configForm.valid) {
       this.isSaving = true;
-      this.accountService
-        .updateAccount(this.accountId, this.configForm.getRawValue())
-        .pipe(switchMap(() => this.accountService.getAccount(this.accountId)))
+      this.store
+        .getAccount()
+        .pipe(
+          switchMap((account) =>
+            this.accountService
+              .updateAccount(account.id, this.configForm.getRawValue())
+              .pipe(switchMap(() => this.accountService.getAccount(account.id))),
+          ),
+        )
         .subscribe({
           next: (updatedAccount) => {
             this.store.setAccountDetails(updatedAccount);
