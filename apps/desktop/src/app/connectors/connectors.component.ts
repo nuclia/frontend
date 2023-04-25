@@ -118,13 +118,8 @@ export class ConnectorsComponent implements OnDestroy {
           take(1),
         )
         .subscribe((fields) => {
-          if (fields.length > 0) {
-            this.sync.setStep(1);
-            this.showFields(connectorId, fields);
-          } else {
-            this.selectedConnector &&
-              this.selectConnector.emit({ name: '', connector: this.selectedConnector, params: {} });
-          }
+          this.sync.setStep(1);
+          this.showFields(connectorId, fields);
         });
     } else {
       this.sync
@@ -175,7 +170,6 @@ export class ConnectorsComponent implements OnDestroy {
 
   validate() {
     if (this.selectedConnector) {
-      // TODO: we need a real id, the name is not good enough, or add restrictions on the name
       this.selectConnector.emit({
         name: this.form?.value.quickAccess.name || '',
         connector: this.selectedConnector,

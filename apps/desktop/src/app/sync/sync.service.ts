@@ -197,7 +197,7 @@ export class SyncService {
     );
   }
 
-  addSync(sync: Sync) {
+  addSync(sync: Sync): Observable<boolean> {
     return this.getSourceData(sync.source)
       .pipe(
         switchMap((source) =>
@@ -231,6 +231,7 @@ export class SyncService {
             items: sync.items,
           }),
         ),
+        map(() => true),
       );
   }
 

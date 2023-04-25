@@ -132,8 +132,11 @@ export class UploadComponent implements OnInit, OnDestroy {
         },
         items: this.selection.selected,
       })
-      .subscribe();
-    this.router.navigate(['/history'], { queryParams: { active: 'true' } });
+      .subscribe((success) => {
+        if (success) {
+          this.router.navigate(['/history'], { queryParams: { active: 'true' } });
+        }
+      });
   }
 
   private reset() {
