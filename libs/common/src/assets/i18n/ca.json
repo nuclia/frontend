@@ -137,6 +137,7 @@
 	"billing.hours": "hores",
 	"billing.ingestion_cost": "Costos d'ingestió",
 	"billing.ingestion_cost.description": "El càlcul dependrà del nombre de paràgrafs dels documents pujats. La calculadora de pressupost us permetrà fer un pressupost mensual en funció dels vostres requisits específics.",
+	"billing.invalid_vat": "VAT ID no vàlid",
 	"billing.month": "Mes",
 	"billing.monthly_estimation": "Cost mensual estimat",
 	"billing.monthly_estimation.description": "El cost estimat proporcionat es basa en els valors definits i està subjecte a canvis si es modifiquen aquests valors.",

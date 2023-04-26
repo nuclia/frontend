@@ -137,6 +137,7 @@
 	"billing.hours": "horas",
 	"billing.ingestion_cost": "Costos de ingestión",
 	"billing.ingestion_cost.description": "El cálculo dependerá del número de párrafos de los documentos subidos. La calculadora de presupuesto te permitirá hacer un presupuesto mensual basado en tus requisitos específicos.",
+	"billing.invalid_vat": "VAT ID no válido",
 	"billing.month": "Mes",
 	"billing.monthly_estimation": "Coste mensual estimado",
 	"billing.monthly_estimation.description": "El coste estimado proporcionado se basa en los valores definidos y está sujeto a cambios si se modifican estos valores.",

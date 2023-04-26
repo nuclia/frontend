@@ -59,7 +59,8 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   errors: IErrorMessages = {
     required: 'validation.required',
     email: 'validation.email',
-  };
+    vat: 'billing.invalid_vat',
+  } as IErrorMessages;
 
   subscribing = false;
   countries = COUNTRIES;
@@ -199,17 +200,27 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     const observable = this.customer
       ? this.billingService.modifyCustomer(payload).pipe(switchMap(() => this.billingService.getCustomer()))
       : this.billingService.createCustomer(payload);
-    observable.subscribe((customer) => {
-      if (customer) {
-        this.customer = customer;
-        this.customerForm.reset();
-        this.updateCustomerForm(customer);
-        this.editCustomer = false;
-        if (!this.token) {
-          this.editCard = true;
+    observable.subscribe({
+      next: (customer) => {
+        if (customer) {
+          this.customer = customer;
+          this.customerForm.reset();
+          this.updateCustomerForm(customer);
+          this.editCustomer = false;
+          if (!this.token) {
+            this.editCard = true;
+          }
+          this.cdr?.markForCheck();
         }
-        this.cdr?.markForCheck();
-      }
+      },
+      error: (error) => {
+        if (error.status === 422) {
+          // TODO: for an unknown reason `error.json()` is not working
+          this.customerForm.controls.vat.setErrors({ vat: true });
+        } else {
+          this.showError();
+        }
+      },
     });
   }
 
@@ -246,7 +257,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       }),
     ).subscribe((data: any) => {
       if (data.error) {
-        this.toaster.error(data.error.message);
+        this.showError(data.error.message);
       } else if (data.token) {
         this.token = data.token;
         this.editCard = false;
@@ -326,13 +337,17 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         error: (error) => {
           this.subscribing = false;
           this.cdr?.markForCheck();
-          this.toaster.error(
-            (error?.message || this.translate.instant('generic.error.oops')) +
-              '<br>' +
-              this.translate.instant('billing.assistance', { url: 'mailto:billing@nuclia.com' }),
-          );
+          this.showError(error.message);
         },
       });
+  }
+
+  showError(message?: string) {
+    this.toaster.error(
+      (message || this.translate.instant('generic.error.oops')) +
+        '<br>' +
+        this.translate.instant('billing.assistance', { url: 'mailto:billing@nuclia.com' }),
+    );
   }
 
   openReview() {

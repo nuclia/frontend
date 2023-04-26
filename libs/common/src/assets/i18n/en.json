@@ -149,6 +149,7 @@
 	"billing.hours": "hours",
 	"billing.ingestion_cost": "Ingestion costs",
 	"billing.ingestion_cost.description": "The calculation will depend on the number of paragraphs of the uploaded documents. The budget calculator will allow you to make a monthly budget based on your specific requirements.",
+	"billing.invalid_vat": "Invalid VAT ID",
 	"billing.month": "Month",
 	"billing.monthly_estimation": "Monthly estimated cost",
 	"billing.monthly_estimation.description": "The estimated cost provided is based on the defined values and is subject to change if these values are modified.",
