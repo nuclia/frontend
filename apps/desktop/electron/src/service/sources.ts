@@ -239,6 +239,7 @@ export function readPersistentData() {
   }
   //do something when app is closing
   process.on('exit', exitHandler);
+  process.on('SIGTERM', exitHandler);
   //catches ctrl+c event
   process.on('SIGINT', exitHandler);
 }
