@@ -330,13 +330,16 @@ export class SyncService {
     if (server.local) {
       this._syncServer.next(LOCAL_SYNC_SERVER);
       localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
-      this.serverStatus(LOCAL_SYNC_SERVER)
-        .pipe(take(1))
-        .subscribe((res) => {
-          if (!res.running && (window as any)['electron']) {
-            (window as any)['electron'].startLocalServer();
-          }
-        });
+      const electron = (window as any)['electron'];
+      if (electron) {
+        this.serverStatus(LOCAL_SYNC_SERVER)
+          .pipe(take(1))
+          .subscribe((res) => {
+            if (!res.running) {
+              electron.startLocalServer();
+            }
+          });
+      }
     } else if (server.url) {
       localStorage.setItem(SYNC_SERVER_KEY, server.url);
       this._syncServer.next(server.url);

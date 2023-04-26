@@ -95,8 +95,10 @@ function syncFiles() {
   }, 5000);
 }
 
+let timer: any;
+let running = false;
+
 function collectLastModified() {
-  let running = false;
   function _collectLastModified() {
     if (!running) {
       running = true;
@@ -130,5 +132,14 @@ function collectLastModified() {
     }
   }
   _collectLastModified();
-  setInterval(() => _collectLastModified(), 60 * 60 * 1000);
+  timer = setInterval(() => _collectLastModified(), 60 * 60 * 1000);
+}
+
+export function restartCollection() {
+  if (!running) {
+    if (timer) {
+      clearInterval(timer);
+    }
+    collectLastModified();
+  }
 }

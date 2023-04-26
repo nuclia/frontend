@@ -56,10 +56,8 @@ export class TopbarComponent {
     window.close();
   }
 
-  setSyncServer(reset: boolean) {
-    if (reset) {
-      this.sync.resetSyncServer();
-    }
+  setSyncServer() {
+    this.sync.resetSyncServer();
     this.router.navigate(['/add-upload']);
   }
 }

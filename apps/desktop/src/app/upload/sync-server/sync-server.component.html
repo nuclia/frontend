@@ -16,7 +16,7 @@
       {{ 'upload.server.url' | translate }}
     </pa-input>
     <pa-button
-      (click)="setLocalServer()"
+      (click)="setExternalServer()"
       kind="primary"
       [disabled]="!serverUrl">
       {{ 'upload.server.external-button' | translate }}

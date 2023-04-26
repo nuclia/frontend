@@ -12,6 +12,7 @@ import {
   hasAuth,
   setSources,
 } from './sources';
+import { restartCollection } from './sync';
 
 export const router = express.Router();
 
@@ -59,6 +60,7 @@ router.patch('/source/:id', (req, res) => {
   const existing = sources[req.params.id];
   const updatedSource = { ...existing, ...getSourceFromBody(req.body, existing.items || []) };
   setSources({ ...sources, [req.params.id]: updatedSource });
+  restartCollection();
   res.send('{ "success": true }');
 });
 

@@ -12,7 +12,7 @@
       size="small"
       kind="destructive"
       aspect="basic"
-      (click)="setSyncServer(true)">
+      (click)="setSyncServer()">
       {{ 'generic.server_down' | translate }}
     </pa-button>
     <pa-button
@@ -20,7 +20,7 @@
       size="small"
       kind="secondary"
       aspect="basic"
-      (click)="setSyncServer(false)">
+      (click)="setSyncServer()">
       {{ 'generic.server_up' | translate }}
     </pa-button>
   </div>
