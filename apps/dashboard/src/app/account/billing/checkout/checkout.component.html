@@ -289,8 +289,7 @@
     </div>
     <div class="section-body">
       <div class="budget-form">
-        <div class="body-m">{{ 'billing.budget_description' | translate }}</div>
-        <div class="note">{{ 'billing.budget_note' | translate }}</div>
+        <div [innerHTML]="'billing.budget_description' | translate"></div>
         <div class="budget-input">
           <pa-input
             type="number"
