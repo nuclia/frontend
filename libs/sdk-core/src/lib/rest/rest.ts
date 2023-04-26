@@ -115,9 +115,16 @@ export class Rest implements IRest {
       path.startsWith('/auth') ||
       path.startsWith('/zones') ||
       path.startsWith('/billing') ||
+      path.startsWith('/configuration') ||
       path.includes('/activity');
     const backend = isGlobal || this.nuclia.options.standalone ? this.nuclia.backend : this.nuclia.regionalBackend;
-    const version = path.startsWith('/auth') || path.startsWith('/export') || path.startsWith('/billing') ? '' : '/v1';
+    const version =
+      path.startsWith('/auth') ||
+      path.startsWith('/export') ||
+      path.startsWith('/billing') ||
+      path.startsWith('/configuration')
+        ? ''
+        : '/v1';
     return `${backend}${version}${path}`;
   }
 

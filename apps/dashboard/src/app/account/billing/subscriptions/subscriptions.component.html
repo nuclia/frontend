@@ -22,14 +22,10 @@
 <div *ngIf="currency">
   <div class="header">
     <p class="body-m">{{ 'billing.subscription.help' | translate }}</p>
-    <pa-button
-      (click)="openFeatures()"
-      kind="secondary"
-      aspect="basic">
-      {{ 'billing.subscription.show-features' | translate }}
-    </pa-button>
   </div>
-  <table class="subscriptions">
+  <table
+    class="subscriptions"
+    *ngIf="accountTypesDefaults | async as defaults">
     <tr>
       <th>{{ 'billing.quotas' | translate }}</th>
       <th class="plan">
@@ -97,47 +93,64 @@
     </tr>
     <tr>
       <td>{{ 'billing.quotas.kbs' | translate }}</td>
-      <td>1</td>
-      <td>1</td>
-      <td>1</td>
+      <td>{{ defaults['stash-trial'].max_kbs }}</td>
+      <td>{{ defaults['stash-developer'].max_kbs }}</td>
+      <td>{{ defaults['stash-business'].max_kbs }}</td>
       <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.files' | translate }}</td>
       <td>
-        <div>70</div>
-        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 5Mb</div>
+        <div>{{ defaults['stash-trial'].monthly_limit_docs_no_media_processed | number }}</div>
+        <div class="unit">
+          {{ 'billing.quotas.up-to' | translate }}
+          {{ defaults['stash-trial'].upload_limit_max_non_media_file_size | size }}
+        </div>
       </td>
       <td>
         <div>{{(prices | async)?.['stash-developer'].usage['files'].threshold | number}}</div>
-        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 5Mb</div>
+        <div class="unit">
+          {{ 'billing.quotas.up-to' | translate }}
+          {{ defaults['stash-developer'].upload_limit_max_non_media_file_size | size }}
+        </div>
       </td>
       <td>
         <div>{{(prices | async)?.['stash-business'].usage['files'].threshold | number}}</div>
-        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 1.5Gb</div>
+        <div class="unit">
+          {{ 'billing.quotas.up-to' | translate }}
+          {{ defaults['stash-business'].upload_limit_max_non_media_file_size | size }}
+        </div>
       </td>
       <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.medias' | translate }}</td>
       <td>
-        <div>1 hour</div>
-        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 600Mb</div>
+        <div>{{ defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 }} {{ 'hours' | translate }}</div>
+        <div class="unit">
+          {{ 'billing.quotas.up-to' | translate }} {{ defaults['stash-trial'].upload_limit_max_media_file_size | size }}
+        </div>
       </td>
       <td>
         <div>{{(prices | async)?.['stash-developer'].usage['media'].threshold }} {{ 'hours' | translate }}</div>
-        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 600Mb</div>
+        <div class="unit">
+          {{ 'billing.quotas.up-to' | translate }}
+          {{ defaults['stash-developer'].upload_limit_max_media_file_size | size }}
+        </div>
       </td>
       <td>
         <div>{{(prices | async)?.['stash-business'].usage['media'].threshold}} {{ 'hours' | translate }}</div>
-        <div class="unit">{{ 'billing.quotas.up-to' | translate }} 1.5Gb</div>
+        <div class="unit">
+          {{ 'billing.quotas.up-to' | translate }}
+          {{ defaults['stash-business'].upload_limit_max_media_file_size | size }}
+        </div>
       </td>
       <td>-</td>
     </tr>
     <tr>
       <td>{{ 'billing.quotas.searches' | translate }}</td>
       <td>
-        <div>{{ 1000 | number }}</div>
+        <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
       </td>
       <td>
         <div>{{(prices | async)?.['stash-developer'].usage['searches'].threshold | number}}</div>
@@ -150,7 +163,7 @@
     <tr>
       <td>{{ 'billing.quotas.answers' | translate }}</td>
       <td>
-        <div>30</div>
+        <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
       </td>
       <td>
         <div>{{(prices | async)?.['stash-developer'].usage['qa'].threshold | number}}</div>

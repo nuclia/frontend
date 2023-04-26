@@ -26,8 +26,11 @@ h2 {
   font-weight: $font-weight-bold;
   gap: rhythm(1);
 
-  pa-icon.done {
+  pa-icon {
     color: $color-primary-regular;
+    &.disabled {
+      color: $color-dark-stronger;
+    }
   }
 }
 
@@ -106,11 +109,16 @@ h2 {
 }
 
 .budget-form {
+
+  .note {
+    color: $color-neutral-regular;
+  }
+
   .budget-input {
     align-items: center;
     display: flex;
     gap: rhythm(1);
-    margin-top: rhythm(2);
+    margin-top: rhythm(3);
   }
 
   pa-input {

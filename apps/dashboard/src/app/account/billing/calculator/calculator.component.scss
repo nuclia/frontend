@@ -1,9 +1,6 @@
 @import 'variables';
 
 :host {
-  pa-modal-advanced ::ng-deep dialog {
-    width: rhythm(90);
-  }
   pa-slider ::ng-deep .pa-field .pa-field-control-range[type='range'] {
     width: rhythm(35);
   }
@@ -17,6 +14,7 @@ form {
   display: flex;
   flex-direction: column;
   gap: rhythm(5);
+  max-width: rhythm(90);
 }
 
 pa-radio-group {

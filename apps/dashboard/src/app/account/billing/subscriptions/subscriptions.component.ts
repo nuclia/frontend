@@ -6,7 +6,6 @@ import { SisModalService } from '@nuclia/sistema';
 import { STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
-import { FeaturesComponent } from '../features/features.component';
 import { WINDOW } from '@ng-web-apis/common';
 
 @Component({
@@ -23,6 +22,7 @@ export class SubscriptionsComponent {
     .sort((a, b) => a.name.localeCompare(b.name));
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
+  accountTypesDefaults = this.billing.getAccountTypes().pipe(shareReplay());
 
   constructor(
     private billing: BillingService,
@@ -50,10 +50,6 @@ export class SubscriptionsComponent {
         },
       });
     });
-  }
-
-  openFeatures() {
-    this.modalService.openModal(FeaturesComponent);
   }
 
   onSelectCountry(country: string) {

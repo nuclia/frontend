@@ -6,9 +6,7 @@
   <div>
     <div class="section-header">
       <div class="section-title">
-        <pa-icon
-          name="circle-check"
-          class="done"></pa-icon>
+        <pa-icon name="circle-check"></pa-icon>
         {{ 'billing.subscription_tier' | translate }}
       </div>
       <pa-button
@@ -33,9 +31,7 @@
   <div>
     <div class="section-header">
       <div class="section-title">
-        <pa-icon
-          [name]="editCustomer ? 'circle-dash' : 'circle-check'"
-          [class.done]="!editCustomer"></pa-icon>
+        <pa-icon [name]="customer && !editCustomer ? 'circle-check' : 'circle-dash'"></pa-icon>
         {{ 'billing.billing_details' | translate }}
       </div>
       <div *ngIf="!editCustomer">
@@ -144,6 +140,7 @@
             <pa-select
               id="country"
               formControlName="country"
+              [readonly]="!!customer"
               [errorMessages]="errors"
               externalLabel>
               <pa-option
@@ -221,8 +218,8 @@
     <div class="section-header">
       <div class="section-title">
         <pa-icon
-          [name]="editCard || !token ? 'circle-dash' : 'circle-check'"
-          [class.done]="!editCard && token"></pa-icon>
+          [name]="token && !editCard ? 'circle-check' : 'circle-dash'"
+          [class.disabled]="!customer"></pa-icon>
         {{ 'billing.payment_method' | translate }}
         <div class="powered-by">
           <span class="body-xs">Powered by</span>
@@ -284,13 +281,16 @@
   <div>
     <div class="section-header">
       <div class="section-title">
-        <pa-icon name="circle-dash"></pa-icon>
+        <pa-icon
+          name="circle-dash"
+          [class.disabled]="!token"></pa-icon>
         {{ 'billing.budget' | translate }}
       </div>
     </div>
     <div class="section-body">
       <div class="budget-form">
-        <div [innerHTML]="'billing.budget_description' | translate"></div>
+        <div class="body-m">{{ 'billing.budget_description' | translate }}</div>
+        <div class="note">{{ 'billing.budget_note' | translate }}</div>
         <div class="budget-input">
           <pa-input
             type="number"
