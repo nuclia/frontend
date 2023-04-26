@@ -8,7 +8,7 @@
     <nsi-back-button link="/history">{{ 'history.back' | translate }}</nsi-back-button>
   </header>
 
-  <pa-table columns="repeat(3, 1fr) 200px 1fr">
+  <pa-table columns="1fr 1fr 300px 1fr 50px">
     <pa-table-header>
       <pa-table-cell header>{{ 'history.date' | translate }}</pa-table-cell>
       <pa-table-cell header>{{ 'history.source' | translate }}</pa-table-cell>
@@ -17,7 +17,11 @@
       <pa-table-cell header>{{ 'history.data' | translate }}</pa-table-cell>
     </pa-table-header>
     <pa-table-row *ngFor="let upload of uploads | async">
-      <pa-table-cell>{{ upload.date }}</pa-table-cell>
+      <pa-table-cell>
+        <pa-datetime
+          [datetime]="upload.date"
+          format="numerical"></pa-datetime>
+      </pa-table-cell>
       <pa-table-cell>{{ upload.from }}</pa-table-cell>
       <pa-table-cell>{{ upload.to }}</pa-table-cell>
       <pa-table-cell>
