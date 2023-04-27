@@ -2,6 +2,8 @@
 
 ### Improvements
 - Add `title` and `color` properties to `UpdateEntitiesGroupPayload` model
+- Update `Account` and `AccountLimits` models
+- Create `AccountBlockingState` and `BlockedFeature` models for the new `blocking_state` and `blocked_features` properties in `Account`
 
 # 1.3.0 (2023-04-18)
 

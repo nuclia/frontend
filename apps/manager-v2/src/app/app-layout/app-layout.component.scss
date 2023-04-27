@@ -1,0 +1,42 @@
+@import 'variables';
+
+header {
+  align-items: center;
+  background: $color-dark-stronger;
+  color: $color-light-stronger;
+  display: flex;
+  gap: rhythm(3);
+  height: $header-height;
+  justify-content: space-between;
+  padding: 0 rhythm(2);
+
+  nav ul {
+    gap: rhythm(2);
+    li {
+      transition: color $transition-hint;
+
+      &:hover {
+        color: $color-primary-light;
+      }
+      &.active {
+        color: $color-primary-regular;
+      }
+    }
+  }
+
+  pa-avatar ::ng-deep .pa-avatar {
+    cursor: pointer;
+  }
+}
+
+.page-container {
+  max-height: calc(100vh - #{$header-height});
+  overflow-y: auto;
+
+  .forbidden-message {
+    background: $color-secondary-regular;
+    font-weight: $font-weight-semi-bold;
+    padding: rhythm(2);
+    text-align: center;
+  }
+}

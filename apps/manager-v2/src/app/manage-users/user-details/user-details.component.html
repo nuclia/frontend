@@ -1,0 +1,55 @@
+<div class="pa-main-container">
+  <div class="pa-main-side-panel">
+    <div class="panel-header">
+      <pa-button
+        icon="arrow-left"
+        aspect="basic"
+        (click)="goBack()">
+        Back
+      </pa-button>
+      <div class="title-l">
+        {{ userEmail }}
+      </div>
+    </div>
+  </div>
+  <div class="pa-main-container-wide">
+    <h3>User details</h3>
+    <form [formGroup]="userForm">
+      <pa-input
+        readonly
+        formControlName="id">
+        Id
+      </pa-input>
+      <pa-input
+        readonly
+        formControlName="email">
+        Email
+      </pa-input>
+      <pa-input
+        readonly
+        formControlName="last_login">
+        Last login
+      </pa-input>
+      <pa-input
+        readonly
+        formControlName="language">
+        Language
+      </pa-input>
+      <pa-input
+        readonly
+        formControlName="providers">
+        Providers
+      </pa-input>
+      <pa-input
+        readonly
+        formControlName="name">
+        Name
+      </pa-input>
+      <pa-input
+        readonly
+        formControlName="type">
+        Type
+      </pa-input>
+    </form>
+  </div>
+</div>

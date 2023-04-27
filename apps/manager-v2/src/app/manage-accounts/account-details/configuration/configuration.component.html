@@ -1,0 +1,40 @@
+<h3>Configuration</h3>
+<form
+  [formGroup]="configForm"
+  (ngSubmit)="save()">
+  <pa-input formControlName="email">Email</pa-input>
+  <pa-select
+    label="Type"
+    formControlName="type">
+    <pa-option value="stash-basic">Basic</pa-option>
+    <pa-option value="stash-team">Teams</pa-option>
+    <pa-option value="stash-enterprise">Enterprise</pa-option>
+    <pa-option value="stash-business">Business</pa-option>
+    <pa-option value="stash-developer">Developer</pa-option>
+    <pa-option value="stash-startup">Startup</pa-option>
+  </pa-select>
+  <pa-input
+    type="number"
+    formControlName="kbs">
+    Available knowledge boxes
+  </pa-input>
+  <pa-input
+    type="number"
+    formControlName="indexer_slow_replicas">
+    Replicas indexer slow
+  </pa-input>
+  <pa-select
+    label="Zone"
+    formControlName="zone"
+    readonly>
+    <pa-option
+      *ngFor="let zone of zones | async"
+      [value]="zone.id">
+      {{ zone.title }}
+    </pa-option>
+  </pa-select>
+
+  <nma-form-footer
+    [disabled]="configForm.pristine || configForm.invalid || isSaving"
+    (cancel)="reset()"></nma-form-footer>
+</form>

@@ -1,0 +1,16 @@
+@import 'variables';
+
+:host {
+  form {
+    margin-bottom: rhythm(4);
+  }
+
+  .add-member {
+    margin-bottom: rhythm(3);
+    max-width: rhythm(40);
+  }
+
+  pa-dropdown ::ng-deep .pa-popup .pa-popup-wrapper {
+    max-width: unset;
+  }
+}

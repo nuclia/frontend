@@ -1,0 +1,119 @@
+@import 'libs/sistema/theme/fonts';
+@import 'libs/pastanaga-angular/projects/pastanaga-angular/src/styles/core';
+@import 'libs/common/src/lib/base/css-variables';
+@import 'libs/sistema/styles/apps-common';
+@import 'variables';
+
+:root {
+  --app-background-color: $color-light-stronger;
+}
+
+.user-background {
+  background-image: url('./assets/background_manager.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+nav {
+  flex: 1 0 auto;
+  ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      cursor: pointer;
+      line-height: line-height(l);
+      padding: rhythm(1) rhythm(2);
+    }
+  }
+}
+
+.pa-main-container {
+  .pa-main-side-panel {
+    background: $color-neutral-lighter;
+    padding: rhythm(1) 0;
+    height: calc(100vh - #{$header-height});
+    overflow: auto;
+
+    .panel-header {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      padding: 0 rhythm(1);
+
+      .title-l small {
+        font-weight: $font-weight-body;
+      }
+    }
+
+    nav {
+      margin: rhythm(3) 0;
+      ul {
+        flex-direction: column;
+
+        li {
+          transition: background-color $transition-hint, color $transition-hint;
+
+          &:hover {
+            background-color: $color-neutral-light;
+          }
+          &.active {
+            background-color: $color-neutral-light;
+            font-weight: $font-weight-semi-bold;
+          }
+
+          &.child-route {
+            align-items: center;
+            display: flex;
+            gap: rhythm(1);
+            padding-left: rhythm(4);
+
+            pa-icon {
+              display: flex;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .pa-main-container-wide {
+    height: calc(100vh - #{$header-height});
+    overflow: auto;
+    padding: rhythm(2) 0;
+  }
+}
+
+.wide-table-container {
+  margin: rhythm(2) 0;
+  padding: 0 rhythm(2);
+}
+
+.filter-container {
+  padding: rhythm(2) 0;
+  max-width: rhythm(40);
+}
+
+form,
+form section {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(64);
+
+  footer {
+    display: flex;
+    gap: rhythm(2);
+    padding: rhythm(3) 0;
+  }
+}
+
+form section {
+  margin-bottom: rhythm(3);
+  h3 {
+    margin-bottom: 0;
+  }
+}

@@ -2,7 +2,9 @@ import { Language, UserType } from '@flaps/core';
 import { Stash } from './stash.model';
 
 export interface AccountPreferences {}
+
 export interface UserPreferences {}
+
 export type AccountUserType = 'manager' | 'member';
 
 export interface Account {
@@ -34,6 +36,7 @@ export enum AccountBlockingState {
   QUOTA = 'quota',
   MANAGER = 'manager',
 }
+
 export enum BlockedFeature {
   UPLOAD = 'upload',
   PROCESSING = 'processing',
