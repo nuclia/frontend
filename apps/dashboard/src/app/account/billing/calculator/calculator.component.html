@@ -28,7 +28,7 @@
           <div class="field-block">
             <pa-slider
               [min]="prices[tier].usage[param].threshold || 0"
-              [max]="1000 / prices[tier].usage[param].price + prices[tier].usage[param].threshold"
+              [max]="600 / prices[tier].usage[param].price + prices[tier].usage[param].threshold"
               [value]="values[param]"
               (valueChange)="update(param, $event)">
               <span class="title-xxs">{{ 'billing.parameter.' + param | translate }}</span>
