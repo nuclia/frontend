@@ -89,7 +89,7 @@ export class AccountService {
 
   updateKbUser(accountId: string, kbId: string, userId: string, newRole: KbRoles): Observable<void> {
     return this.sdk.nuclia.rest.patch(`${ACCOUNT_ENDPOINT}/${accountId}/${KB_ENDPOINT}/${kbId}/${userId}`, {
-      type: newRole,
+      role: newRole,
     });
   }
 

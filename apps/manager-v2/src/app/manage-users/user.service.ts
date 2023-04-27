@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
 import { Observable, of } from 'rxjs';
-import { UserSearch } from './user.models';
+import { User, UserSearch, UserSummary } from './user.models';
 
 const USERS_ENDPOINT = '/manage/@users';
 const USER_ENDPOINT = '/manage/@user';
@@ -13,6 +13,14 @@ const SEARCH_USERS_ACCOUNT_ENDPOINT = '/manage/@search_users_account';
 })
 export class UserService {
   constructor(private sdk: SDKService) {}
+
+  getUsers(): Observable<UserSummary[]> {
+    return this.sdk.nuclia.rest.get(`${USERS_ENDPOINT}`);
+  }
+
+  getUser(userId: string): Observable<User> {
+    return this.sdk.nuclia.rest.get(`${USER_ENDPOINT}/${userId}`);
+  }
 
   searchUser(term: string): Observable<UserSearch[]> {
     if (!term) {
@@ -26,5 +34,9 @@ export class UserService {
       return of([]);
     }
     return this.sdk.nuclia.rest.get(`${SEARCH_USERS_ACCOUNT_ENDPOINT}/${accountId}/${term}`);
+  }
+
+  deleteUser(userId: string): Observable<void> {
+    return this.sdk.nuclia.rest.delete(`${USER_ENDPOINT}/${userId}`);
   }
 }

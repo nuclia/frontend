@@ -37,6 +37,47 @@ nav {
     padding: rhythm(1) 0;
     height: calc(100vh - #{$header-height});
     overflow: auto;
+
+    .panel-header {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      padding: 0 rhythm(1);
+
+      .title-l small {
+        font-weight: $font-weight-body;
+      }
+    }
+
+    nav {
+      margin: rhythm(3) 0;
+      ul {
+        flex-direction: column;
+
+        li {
+          transition: background-color $transition-hint, color $transition-hint;
+
+          &:hover {
+            background-color: $color-neutral-light;
+          }
+          &.active {
+            background-color: $color-neutral-light;
+            font-weight: $font-weight-semi-bold;
+          }
+
+          &.child-route {
+            align-items: center;
+            display: flex;
+            gap: rhythm(1);
+            padding-left: rhythm(4);
+
+            pa-icon {
+              display: flex;
+            }
+          }
+        }
+      }
+    }
   }
 
   .pa-main-container-wide {
@@ -44,6 +85,16 @@ nav {
     overflow: auto;
     padding: rhythm(2) 0;
   }
+}
+
+.wide-table-container {
+  margin: rhythm(2) 0;
+  padding: 0 rhythm(2);
+}
+
+.filter-container {
+  padding: rhythm(2) 0;
+  max-width: rhythm(40);
 }
 
 form,

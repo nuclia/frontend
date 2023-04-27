@@ -1,15 +1,5 @@
 @import 'variables';
 
-.panel-header {
-  align-items: center;
-  display: flex;
-  gap: rhythm(1);
-  padding: 0 rhythm(1);
-
-  .title-l small {
-    font-weight: $font-weight-body;
-  }
-}
 .account-info {
   background: $color-neutral-lightest;
   display: flex;
@@ -17,34 +7,4 @@
   gap: rhythm(1);
   margin: rhythm(1) rhythm(2) rhythm(2);
   padding: rhythm(1);
-}
-
-nav {
-  margin: rhythm(3) 0;
-  ul {
-    flex-direction: column;
-
-    li {
-      transition: background-color $transition-hint, color $transition-hint;
-
-      &:hover {
-        background-color: $color-neutral-light;
-      }
-      &.active {
-        background-color: $color-neutral-light;
-        font-weight: $font-weight-semi-bold;
-      }
-
-      &.child-route {
-        align-items: center;
-        display: flex;
-        gap: rhythm(1);
-        padding-left: rhythm(4);
-
-        pa-icon {
-          display: flex;
-        }
-      }
-    }
-  }
 }

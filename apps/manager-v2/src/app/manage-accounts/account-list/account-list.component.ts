@@ -6,7 +6,6 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './account-list.component.html',
-  styleUrls: ['./account-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountListComponent {
@@ -17,6 +16,7 @@ export class AccountListComponent {
     map(([accounts, filter]) =>
       filter ? accounts.filter((account) => account.title.includes(filter) || account.slug.includes(filter)) : accounts,
     ),
+    map((accounts) => accounts.sort((a, b) => a.title.localeCompare(b.title))),
   );
 
   constructor(
@@ -27,7 +27,9 @@ export class AccountListComponent {
     this.loadAccounts();
   }
 
-  deleteAccount(account: AccountSummary) {
+  deleteAccount(event: MouseEvent, account: AccountSummary) {
+    event.preventDefault();
+    event.stopPropagation();
     this.modalService
       .openConfirm({
         title: `Are you sure you want to delete "${account.slug}"?`,

@@ -7,31 +7,29 @@
     </pa-input>
   </div>
 
-  <pa-table columns="repeat(4, 1fr) 96px">
+  <pa-table columns="repeat(3, 1fr) 96px">
     <pa-table-header>
       <pa-table-cell header>Id</pa-table-cell>
-      <pa-table-cell header>Title</pa-table-cell>
-      <pa-table-cell header>Slug</pa-table-cell>
-      <pa-table-cell header>Type</pa-table-cell>
+      <pa-table-cell header>Name</pa-table-cell>
+      <pa-table-cell header>Email</pa-table-cell>
       <pa-table-cell-menu header></pa-table-cell-menu>
     </pa-table-header>
     <pa-table-row
-      *ngFor="let account of accounts$ | async"
-      [routerLink]="account.id"
+      *ngFor="let user of users$ | async"
+      [routerLink]="user.id"
       clickable>
       <pa-table-cell>
-        <small>{{ account.id }}</small>
+        <small>{{ user.id }}</small>
       </pa-table-cell>
-      <pa-table-cell>{{ account.title }}</pa-table-cell>
-      <pa-table-cell>{{ account.slug }}</pa-table-cell>
-      <pa-table-cell>{{ account.type }}</pa-table-cell>
+      <pa-table-cell>{{ user.name }}</pa-table-cell>
+      <pa-table-cell>{{ user.email }}</pa-table-cell>
       <pa-table-cell-menu>
         <pa-button
           icon="trash"
           aspect="basic"
           size="small"
           kind="destructive"
-          (click)="deleteAccount($event, account)">
+          (click)="deleteUser($event, user)">
           Delete account
         </pa-button>
       </pa-table-cell-menu>
