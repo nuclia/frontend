@@ -6,14 +6,26 @@ $width-configuration: rhythm(56);
 .widget-generator {
   padding: rhythm(6) $padding-side;
 
+  > .warning {
+    margin-bottom: rhythm(4);
+  }
+
+  .snippet .warning {
+    margin-bottom: rhythm(2);
+  }
+
   .warning {
+    align-items: center;
     background: $color-secondary-regular;
     display: flex;
     gap: rhythm(1);
-    margin-bottom: rhythm(4);
     padding: rhythm(1);
 
     .warning-content {
+      flex-direction: column;
+    }
+    .warning-content,
+    .publish-link {
       display: flex;
       gap: rhythm(0.5);
     }

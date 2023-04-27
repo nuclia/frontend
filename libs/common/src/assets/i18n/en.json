@@ -795,6 +795,8 @@
 	"stash.widgets.suggestions.help": "Suggest results while typing search query",
 	"stash.widgets.title": "Search widget generator",
 	"stash.widgets.warning": "In order for the widget to work properly, the <strong>knowledge box must be public</strong>.",
+	"stash.widgets.warning-dangerous-snippet": "Dangerous zone! For this widget to work with a private knowledge box you need to provide an API token.",
+	"stash.widgets.warning-dangerous-snippet-details": "Don't use this snippet on a public website.",
 	"stats.endpoint": "NucliaDB API endpoint",
 	"stats.get_started": "Get started",
 	"stats.processing_time": "Processing time",

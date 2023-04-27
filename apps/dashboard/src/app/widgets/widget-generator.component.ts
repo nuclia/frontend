@@ -156,23 +156,33 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
       const zone = this.sdk.nuclia.options.zone;
+      const apiKey = `apikey="YOUR_API_TOKEN"`;
+      const privateDetails =
+        kb.state === 'PRIVATE'
+          ? `
+  state="${kb.state}"
+  account="${kb.account}"
+  kbslug="${kb.slug}"
+  ${apiKey}`
+          : '';
+
       const baseSnippet = `<nuclia-search-bar
   knowledgebox="${kb.id}"
   zone="${zone}"
-  features="${this.features}" ${placeholder}></nuclia-search-bar>
+  features="${this.features}" ${placeholder}${privateDetails}></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
 ${baseSnippet}`;
       this.snippetPreview = this.sanitized.bypassSecurityTrustHtml(
-        baseSnippet.replace(
-          'zone=',
-          `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
+        baseSnippet
+          .replace(
+            'zone=',
+            `client="dashboard" backend="${this.backendConfig.getAPIURL()}"
       lang="${this.translation.currentLang}"
-      account="${kb.account}"
-      kbslug="${kb.slug}"
-      state="${kb.state}" zone=`,
-        ),
+      zone=`,
+          )
+          .replace(apiKey, ''),
       );
     });
 

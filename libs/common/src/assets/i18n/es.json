@@ -764,6 +764,8 @@
 	"stash.widgets.suggestions.help": "Sugerir resultados mientras escribe la consulta de búsqueda",
 	"stash.widgets.title": "Generador de widgets de búsqueda",
 	"stash.widgets.warning": "Para que el widget funcione correctamente, el cuadro de conocimiento <strong>debe ser público</strong>.",
+	"stash.widgets.warning-dangerous-snippet": "¡Zona peligrosa! Para que este widget funcione con un cuadro de conocimiento privado, debe proporcionar un token de API.",
+	"stash.widgets.warning-dangerous-snippet-details": "No utilice este fragmento en un sitio web público.",
 	"stats.get_started": "Empezar",
 	"stats.total.title": "Recursos",
 	"synonyms.add-form.bidirectional-checkbox": "Bidireccional",

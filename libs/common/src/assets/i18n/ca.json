@@ -764,6 +764,8 @@
 	"stash.widgets.suggestions.help": "Suggereix resultats mentre escriviu la consulta de cerca",
 	"stash.widgets.title": "Generador de widgets de cerca",
 	"stash.widgets.warning": "Perquè el giny funcioni correctament, el quadre de coneixement <strong>ha de ser públic</strong>.",
+	"stash.widgets.warning-dangerous-snippet": "Zona perillosa! Perquè aquest giny funcioni amb una caixa de coneixement privada, cal que proporcioneu un testimoni d'API.",
+	"stash.widgets.warning-dangerous-snippet-details": "No utilitzeu aquest fragment en un lloc web públic.",
 	"stats.get_started": "Començar",
 	"stats.total.title": "Recursos",
 	"synonyms.add-form.bidirectional-checkbox": "Bidireccional",
