@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppLayoutComponent } from './app-layout.component';
 import { RouterTestingModule } from '@angular/router/testing';
-import { UserService } from '@flaps/core';
+import { SDKService, UserService } from '@flaps/core';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { of } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
@@ -21,7 +21,16 @@ describe('AppLayoutComponent', () => {
         MockModule(PaPopupModule),
       ],
       declarations: [AppLayoutComponent],
-      providers: [MockProvider(UserService, { userInfo: of(undefined) })],
+      providers: [
+        MockProvider(SDKService, {
+          nuclia: {
+            auth: {
+              getJWTUser: jest.fn(),
+            },
+          },
+        } as unknown as SDKService),
+        MockProvider(UserService, { userInfo: of(undefined) }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppLayoutComponent);
