@@ -147,6 +147,10 @@
   });
 
   const onClickParagraph = (paragraph: WidgetParagraph, index: number) => {
+    if (expanded) {
+      openParagraph(paragraph, index);
+      return;
+    }
     if (!result.field) return;
     const fullId = {
       field_id: result.field.field_id,
