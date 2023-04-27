@@ -35,7 +35,7 @@ export interface AccountConfig {
 }
 
 export interface AccountLimits {
-  processing?: {
+  processing: {
     monthly_limit_chars_processed: number;
     monthly_limit_docs_no_media_processed: number;
     monthly_limit_hosted_answers_generated: number;
