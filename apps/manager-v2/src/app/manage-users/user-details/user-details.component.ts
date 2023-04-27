@@ -40,10 +40,17 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         map((params) => params['userId'] as string),
         switchMap((userId) => this.userService.getUser(userId)),
       )
-      .subscribe((user) => {
-        this.userEmail = user.email;
-        this.userForm.patchValue({ ...user, providers: user.providers.join(', ') });
-        this.cdr.markForCheck();
+      .subscribe({
+        next: (user) => {
+          this.userEmail = user.email;
+          this.userForm.patchValue({ ...user, providers: user.providers.join(', ') });
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          const message =
+            error.status === 404 ? `This user doesn't exist anymore` : 'An error occurred while loading the user';
+          this.toast.error(message);
+        },
       });
   }
 

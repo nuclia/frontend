@@ -46,7 +46,13 @@ export class UserListComponent {
       )
       .subscribe({
         next: () => this.loadUsers(),
-        error: () => this.toast.error(`User deletion failed`),
+        error: (error) => {
+          const message =
+            error.status === 409
+              ? 'User cannot be deleted, as they are the only owner on some account(s)'
+              : 'User deletion failed';
+          this.toast.error(message);
+        },
       });
   }
 
