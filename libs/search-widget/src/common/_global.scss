@@ -19,6 +19,10 @@ mark.ner[family] {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.highlight {
+  background-color: var(--color-primary-lighter);
+  border-radius: 0;
+}
 .sr-only {
   position: absolute;
   width: 1px;

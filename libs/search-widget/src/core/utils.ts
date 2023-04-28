@@ -263,18 +263,19 @@ export function getFieldType(fieldType: string): FIELD_TYPE {
   return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
 
-export function getExtractedTexts(data: IFieldData | null): string[] {
+export function getExtractedTexts(data: IFieldData | null): { shortId: string; text: string }[] {
   if (!data) {
     return [];
   }
   const text = data.extracted?.text?.text || '';
   const hasUnicodeCharacters =
     text.length > 0 && text.length !== (data.extracted?.metadata?.metadata?.paragraphs || []).pop()?.end;
-  return (data.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) =>
-    hasUnicodeCharacters
+  return (data.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) => ({
+    shortId: `${paragraph.start || 0}-${paragraph.end || 0}`,
+    text: hasUnicodeCharacters
       ? sliceUnicode(text, paragraph.start, paragraph.end).trim()
       : text.slice(paragraph.start, paragraph.end).trim(),
-  );
+  }));
 }
 
 export const NEWLINE_REGEX = /\n/g;
