@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Search, TextField } from '@nuclia/core';
+  import type { FileField, Search, TextField } from '@nuclia/core';
   import type { WidgetParagraph } from '../core/models';
   import { PreviewKind } from '../core/models';
   import TextViewer from './viewers/TextViewer.svelte';
@@ -13,7 +13,15 @@
 
   let selectedParagraph: WidgetParagraph | undefined;
 
-  const isMarkdown = fieldData.pipe(map((data) => (data?.value as TextField)?.format === 'MARKDOWN'));
+  const isMarkdown = fieldData.pipe(
+    map(
+      (data) =>
+        (data?.value as TextField)?.format === 'MARKDOWN' ||
+        (data?.value as FileField).file?.content_type === 'text/markdown' ||
+        ((data?.value as FileField).file?.content_type === 'application/octet-stream' &&
+          (data?.value as FileField).file?.filename?.endsWith('.md')),
+    ),
+  );
 
   function openParagraph(paragraph: WidgetParagraph) {
     selectedParagraph = paragraph;

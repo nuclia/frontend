@@ -1,10 +1,11 @@
 <script lang="ts">
-  import type { Observable } from 'rxjs';
+  import { Observable, of, switchMap } from 'rxjs';
   import { map } from 'rxjs';
   import { fieldData } from '../../core/stores/viewer.store';
   import type { WidgetParagraph } from '../../core/models';
-  import type { TextField } from '@nuclia/core';
+  import type { FileField, TextField } from '@nuclia/core';
   import { getUnMarked } from '../tile.utils';
+  import { getTextFile } from '../../core/api';
 
   export let selectedParagraph: WidgetParagraph | undefined;
 
@@ -13,9 +14,16 @@
 
   $: !!selectedParagraph && bodyElement && highlightSelection();
 
-  // TODO: also support file field containing a .md
-  let body: Observable<string> = fieldData.pipe(map((data) => (data?.value as TextField)?.body));
-
+  let body: Observable<string> = fieldData.pipe(
+    switchMap((data) => {
+      const uri = (data?.value as FileField).file?.uri;
+      if (uri) {
+        return getTextFile(uri);
+      } else {
+        return of((data?.value as TextField).body || '');
+      }
+    }),
+  );
   let markedLoaded = false;
   const onMarkedLoaded = () => {
     markedLoaded = true;

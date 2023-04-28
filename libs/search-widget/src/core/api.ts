@@ -14,7 +14,7 @@ import {
   Search,
   SearchOptions,
 } from '@nuclia/core';
-import type { Observable } from 'rxjs';
+import { Observable, from, switchMap } from 'rxjs';
 import { filter, forkJoin, map, merge, of, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
@@ -260,3 +260,10 @@ export const getFileUrls = (paths: string[], inline = false): Observable<string[
 
 export const getFileUrl = (path?: string): Observable<string> =>
   path ? getFileUrls([path]).pipe(map((urls) => urls[0])) : of('');
+
+export function getTextFile(path: string): Observable<string> {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.rest.get<Response>(path, {}, true).pipe(switchMap((res) => from(res.text())));
+}
