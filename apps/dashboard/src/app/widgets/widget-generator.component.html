@@ -3,18 +3,24 @@
     {{ 'stash.widgets.title' | translate }}
   </h2>
 
-  <ng-container *ngIf="showWarning | async">
-    <div class="warning">
-      <pa-icon name="warning"></pa-icon>
-      <div class="warning-content">
-        <span [innerHTML]="'stash.widgets.warning' | translate"></span>
-        <ng-container *ngIf="showLink | async">
-          <span [innerHTML]="'stash.widgets.publish_kb' | translate"></span>
-          <a [routerLink]="homeUrl | async">{{ 'stash.widgets.publish_kb_link' | translate }}</a>
-        </ng-container>
+  <div
+    class="warning"
+    *ngIf="showWarning | async">
+    <pa-icon
+      name="warning"
+      size="large"></pa-icon>
+    <div class="warning-content">
+      <div
+        class="title-m"
+        [innerHTML]="'stash.widgets.warning' | translate"></div>
+      <div
+        *ngIf="showLink | async"
+        class="publish-link body-m">
+        <span [innerHTML]="'stash.widgets.publish_kb' | translate"></span>
+        <a [routerLink]="homeUrl | async">{{ 'stash.widgets.publish_kb_link' | translate }}</a>
       </div>
     </div>
-  </ng-container>
+  </div>
 
   <div class="widget-preview">
     <h3>{{ 'stash.widgets.preview' | translate }}</h3>
@@ -109,6 +115,18 @@
             Copy snippet
           </pa-button>
         </h3>
+
+        <div
+          class="warning"
+          *ngIf="showWarning | async">
+          <pa-icon name="warning"></pa-icon>
+          <div class="warning-content">
+            <div class="title-xxs">
+              {{ 'stash.widgets.warning-dangerous-snippet' | translate }}
+            </div>
+            <div class="body-m">{{ 'stash.widgets.warning-dangerous-snippet-details' | translate }}</div>
+          </div>
+        </div>
         <pre><code class="highlight">{{ snippet }}</code></pre>
       </section>
     </div>
