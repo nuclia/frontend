@@ -1,13 +1,5 @@
-import {
-  ISourceConnector,
-  SourceConnectorDefinition,
-  SyncItem,
-  SearchResults,
-  ConnectorParameters,
-  FileStatus,
-  Field,
-} from '../models';
-import { Observable, of, from, map, BehaviorSubject, filter, switchMap } from 'rxjs';
+import { ISourceConnector, SourceConnectorDefinition, ConnectorParameters, Field } from '../models';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { getDeeplink } from '../../utils';
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';

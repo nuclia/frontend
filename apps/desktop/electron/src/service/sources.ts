@@ -25,7 +25,7 @@ export const deleteSource = (id: string) => {
   delete SOURCES[id];
 };
 
-export const getSource = (sourceId: string) => {
+export const getSource: (sourceId: string) => Source = (sourceId: string) => {
   const sources = getSources();
   return sources[sourceId];
 };
@@ -120,7 +120,7 @@ export function syncFile(sourceId: string, source: Source, item: SyncItem): Obse
     tap((success) =>
       success
         ? console.log(`Uploaded ${item.originalId} with success`)
-        : console.log(`Failed to upload ${item.originalId}`),
+        : console.warn(`Failed to upload ${item.originalId}`),
     ),
   );
 }
@@ -155,8 +155,7 @@ const getSourceInstance = (sourceId: string) => {
   return connector;
 };
 
-export function getSourceFromBody(data: any, existingFiles: SyncItem[]): Source {
-  const source = data as unknown as Source;
+export function getSourceFromBody(source: Source, existingFiles: SyncItem[]): Source {
   if (source.permanentSync) {
     source.folders = [...(source.items || [])];
     source.items = [...existingFiles];

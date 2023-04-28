@@ -14,6 +14,7 @@ import {
 import { concatMap, delay, map, of, switchMap, tap, toArray } from 'rxjs';
 
 export const sync = () => {
+  // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
   // importConnector('https://nuclia.github.io/status/connectors/youtube.js');
   // loadConnectors();
   readPersistentData();
@@ -26,10 +27,10 @@ export const sync = () => {
 };
 
 function syncFiles() {
-  let running = false;
+  let isSyncing = false;
   setInterval(() => {
-    if (!running) {
-      running = true;
+    if (!isSyncing) {
+      isSyncing = true;
       of(getSources())
         .pipe(
           switchMap((sources) => {
@@ -90,18 +91,18 @@ function syncFiles() {
                 );
           }),
         )
-        .subscribe(() => (running = false));
+        .subscribe(() => (isSyncing = false));
     }
   }, 5000);
 }
 
 let timer: any;
-let running = false;
+let isCollecting = false;
 
 function collectLastModified() {
   function _collectLastModified() {
-    if (!running) {
-      running = true;
+    if (!isCollecting) {
+      isCollecting = true;
       of(getSources())
         .pipe(
           switchMap((sources) => {
@@ -128,7 +129,7 @@ function collectLastModified() {
                 );
           }),
         )
-        .subscribe(() => (running = false));
+        .subscribe(() => (isCollecting = false));
     }
   }
   _collectLastModified();
@@ -136,7 +137,7 @@ function collectLastModified() {
 }
 
 export function restartCollection() {
-  if (!running) {
+  if (!isCollecting) {
     if (timer) {
       clearInterval(timer);
     }

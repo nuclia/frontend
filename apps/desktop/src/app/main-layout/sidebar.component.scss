@@ -43,6 +43,9 @@
     &.clickable {
       cursor: pointer;
     }
+    pa-icon {
+      color: $color-primary-regular;
+    }
   }
 
   .step-number {
@@ -65,7 +68,7 @@
     display: flex;
     justify-content: space-between;
     span {
-      max-width: calc(100%  - rhythm(2));
+      max-width: calc(100% - rhythm(2));
       cursor: pointer;
     }
     pa-button {

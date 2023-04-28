@@ -2,10 +2,9 @@ import { BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
-import { ChildProcessWithoutNullStreams, fork, spawn } from 'child_process';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { format } from 'url';
 import { autoUpdater } from 'electron-updater';
-import { initSyncService } from '../service/app';
 import { Readable } from 'stream';
 
 let expressAppProcess: ChildProcessWithoutNullStreams | undefined;
@@ -168,8 +167,6 @@ export default class App {
       shell.openExternal(url);
     });
     ipcMain.on('local-server', () => {
-      // fork(`${__dirname}/assets/service/apps/desktop/electron/src/service/server.js`);
-      // initSyncService();
       const appName = app.getPath('exe');
       const expressPath = `${__dirname}/assets/service/apps/desktop/electron/src/service/server.js`;
       expressAppProcess = spawn(appName, [expressPath], {

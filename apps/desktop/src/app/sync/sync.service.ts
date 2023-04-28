@@ -100,7 +100,9 @@ export class SyncService {
     if (account) {
       this.setAccount();
     }
+    // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
     // this.fetchDynamicConnectors();
+
     of(true)
       .pipe(
         filter(() => !!this._syncServer.getValue()),
@@ -371,11 +373,7 @@ export class SyncService {
   }
 
   setCurrentSourceId(id: string) {
-    if (id) {
-      localStorage.setItem(SOURCE_NAME_KEY, id);
-    } else {
-      localStorage.removeItem(SOURCE_NAME_KEY);
-    }
+    localStorage.setItem(SOURCE_NAME_KEY, id);
   }
 
   getLogs(): Observable<SyncRow[]> {

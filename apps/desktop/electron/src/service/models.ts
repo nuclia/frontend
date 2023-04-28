@@ -1,4 +1,4 @@
-import type { NucliaOptions } from '../../../../../libs/sdk-core/src';
+import type { NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
 
 export interface Source {

@@ -7,7 +7,7 @@ import {
   FileStatus,
   Link,
 } from '../models';
-import { Observable, of, from, map, filter, switchMap, tap, concatMap, forkJoin } from 'rxjs';
+import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
 
 export const OneDriveConnector: SourceConnectorDefinition = {
   id: 'onedrive',
@@ -15,7 +15,6 @@ export const OneDriveConnector: SourceConnectorDefinition = {
 };
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
-// const SCOPE = 'https://graph.microsoft.com/.default';
 
 class OneDriveImpl implements ISourceConnector {
   isExternal = false;
