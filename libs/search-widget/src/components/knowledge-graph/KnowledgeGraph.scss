@@ -1,0 +1,14 @@
+.sw-knowledge-graph {
+  display: flex;
+  flex: 1 0 auto;
+  gap: var(--rhythm-2);
+
+  .left-panel {
+    flex: 0 0 auto;
+    width: var(--rhythm-22);
+  }
+  .knowledge-graph-container {
+    background: var(--color-light-stronger);
+    flex: 1 0 auto;
+  }
+}

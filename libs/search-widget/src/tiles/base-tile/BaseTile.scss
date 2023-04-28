@@ -132,10 +132,10 @@
     --paragraph-height: var(--rhythm-3);
 
     flex-direction: row;
-    gap: var(--flex-gap);
 
     &:not(.expanded) {
       --width-thumbnail: var(--rhythm-28);
+      gap: var(--flex-gap);
 
       .result-details {
         flex: 1 0 auto;
@@ -228,6 +228,12 @@
       right: calc(var(--side-panel-width) * -1 + var(--side-panel-button-size) + var(--tile-padding-right));
       top: var(--header-height);
       transition: right var(--transition-moderate);
+
+      .side-panel-button-container {
+        display: flex;
+        flex-direction: column;
+        gap: var(--rhythm-1);
+      }
 
       .side-panel-button {
         align-items: center;

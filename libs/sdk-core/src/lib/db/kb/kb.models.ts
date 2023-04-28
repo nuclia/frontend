@@ -239,6 +239,7 @@ export interface WidgetFeatures {
   suggestLabels?: boolean;
   answers?: boolean;
   speech?: boolean;
+  knowledgeGraph?: boolean;
 }
 
 export interface Counters {
