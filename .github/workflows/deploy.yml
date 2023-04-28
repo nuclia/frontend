@@ -278,7 +278,6 @@ jobs:
       - name: Build electron app
         run: |-
           npx nx build desktop-electron --configuration production
-          mv ./dist/apps/desktop-electron/main.preload.ts.js ./dist/apps/desktop-electron/main.preload.js
       - name: Install the Apple certificate
         if: startsWith(matrix.os, 'macos')
         env:
