@@ -13,13 +13,13 @@ import { AccountDetailsStore } from './account-details.store';
 export class AccountDetailsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
-  account = this.accountStore.accountDetails;
-  currentState = this.accountStore.currentState;
+  account = this.store.accountDetails;
+  currentState = this.store.currentState;
 
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
-    private accountStore: AccountDetailsStore,
+    private store: AccountDetailsStore,
   ) {}
 
   ngOnInit() {
@@ -29,13 +29,17 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
         switchMap((params) => this.accountService.getAccount(params['accountId'])),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe((account) => this.accountStore.setAccountDetails(account));
+      .subscribe((account) => this.store.setAccountDetails(account));
 
-    this.accountService.getZones().subscribe((zones) => this.accountStore.setZones(zones));
+    this.accountService.getZones().subscribe((zones) => this.store.setZones(zones));
   }
 
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
+  }
+
+  resetAccount() {
+    this.store.resetAccountDetails();
   }
 }
