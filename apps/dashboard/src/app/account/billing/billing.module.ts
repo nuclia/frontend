@@ -9,6 +9,7 @@ import {
   PaIconModule,
   PaModalModule,
   PaSliderModule,
+  PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
@@ -20,6 +21,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { CalculatorComponent } from './calculator/calculator.component';
 import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
+import { UsageComponent } from './usage/usage.component';
 
 const routes: Routes = [
   {
@@ -39,6 +41,10 @@ const routes: Routes = [
         path: 'checkout',
         component: CheckoutComponent,
       },
+      {
+        path: 'usage',
+        component: UsageComponent,
+      },
     ],
   },
 ];
@@ -55,6 +61,7 @@ const routes: Routes = [
     PaTextFieldModule,
     PaIconModule,
     PaSliderModule,
+    PaTableModule,
     PaTogglesModule,
     SisProgressModule,
     STFPipesModule,
@@ -66,6 +73,7 @@ const routes: Routes = [
     CalculatorComponent,
     ReviewComponent,
     FeaturesComponent,
+    UsageComponent,
   ],
   exports: [],
 })

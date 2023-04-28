@@ -1,0 +1,25 @@
+<div class="usage-container">
+  <header>
+    <h2>{{ 'billing.usage.title' | translate }}</h2>
+    <div></div>
+  </header>
+
+  <pa-table
+    *ngIf="invoiceItems | async as invoiceItems"
+    columns="300px auto auto auto auto">
+    <pa-table-header>
+      <pa-table-cell header>{{ 'billing.usage.consumables' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'billing.usage.tier_included' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'billing.usage.consumption' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'billing.usage.over_consume' | translate }}</pa-table-cell>
+      <pa-table-cell header>{{ 'billing.usage.over_cost' | translate }}</pa-table-cell>
+    </pa-table-header>
+    <pa-table-row *ngFor="let item of invoiceItems">
+      <pa-table-cell>{{ 'billing.parameter.' + item[0] | translate }}</pa-table-cell>
+      <pa-table-cell>{{ item[1].threshold | number }}</pa-table-cell>
+      <pa-table-cell>{{ item[1].current_usage | number }}</pa-table-cell>
+      <pa-table-cell>{{ item[1].over_usage | number }}</pa-table-cell>
+      <pa-table-cell>{{ item[1].over_cost | currency: (usage | async).currency }}</pa-table-cell>
+    </pa-table-row>
+  </pa-table>
+</div>

@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } fro
 import { AccountTypes } from '@nuclia/core';
 import {
   AccountTypeDefaults,
+  AccountUsage,
   BillingDetails,
   Currency,
   Prices,
@@ -103,5 +104,13 @@ export class BillingService {
 
   getAccountTypes(): Observable<{ [key in AccountTypes]: AccountTypeDefaults }> {
     return this.sdk.nuclia.rest.get<{ [key in AccountTypes]: AccountTypeDefaults }>(`/configuration/account_types`);
+  }
+
+  getAccountUsage(): Observable<AccountUsage> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.get<AccountUsage>(`/billing/account/${account.id}/current_usage`)),
+      map((usage) => ({ ...usage, currency: usage.currency.toUpperCase() as Currency })),
+    );
   }
 }

@@ -83,3 +83,19 @@ export interface AccountTypeDefaults {
   upload_limit_max_media_file_size: number;
   upload_limit_max_non_media_file_size: number;
 }
+
+export interface InvoiceItem {
+  threshold: number;
+  current_usage: number;
+  price: number;
+  over_usage: number;
+  over_cost: number;
+}
+
+export interface AccountUsage {
+  budget: number;
+  currency: Currency;
+  invoice_items: { [key in UsageType]: InvoiceItem };
+  start_billing_date: string;
+  end_billing_date: string;
+}
