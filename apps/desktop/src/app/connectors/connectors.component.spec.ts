@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslatePipeMock } from '@flaps/core';
-import { NEVER, of } from 'rxjs';
+import { BehaviorSubject, NEVER, of } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 import { ConnectorComponent } from './connector/connector.component';
 
@@ -12,6 +12,7 @@ import { PaButtonModule, PaCardModule, PaTextFieldModule } from '@guillotinaweb/
 describe('ConnectorsComponent', () => {
   let component: ConnectorsComponent;
   let fixture: ComponentFixture<ConnectorsComponent>;
+  let sync: SyncService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -64,7 +65,10 @@ describe('ConnectorsComponent', () => {
                 description: '',
               },
             ]),
-            step: NEVER,
+            step: new BehaviorSubject<number>(0),
+            setStep: (step: number) => {
+              (sync.step as BehaviorSubject<number>).next(step);
+            },
           },
         },
         {
@@ -79,6 +83,7 @@ describe('ConnectorsComponent', () => {
     fixture = TestBed.createComponent(ConnectorsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    sync = TestBed.inject(SyncService);
   });
 
   describe('sources', () => {
@@ -87,11 +92,11 @@ describe('ConnectorsComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should select a source', () => {
-      jest.spyOn(component.selectConnector, 'emit');
+    it('should go to source form on selection', () => {
+      jest.spyOn(sync, 'setStep');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
-      expect(component.selectConnector.emit).toHaveBeenCalledWith({ connector: { id: 'source1' }, params: {} });
+      expect(sync.setStep).toHaveBeenCalledWith(1);
     });
   });
 

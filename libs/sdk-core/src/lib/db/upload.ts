@@ -101,27 +101,31 @@ export const uploadFile = (
   };
   let retries = 1;
   const slug = metadata?.rslug ? `?rslug=${metadata.rslug}` : '';
-  return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers).pipe(
+  return nuclia.rest.post<Response>(`${path}/upload${slug}`, buffer, headers, true).pipe(
     repeat(),
     filter((res) => retries-- === 0 || res.status !== 503),
     take(1),
     switchMap((res) => {
-      switch (res.status) {
-        case 201: {
-          return from(res.json()).pipe(
-            map((data) => ({
-              resource: data.uuid || '',
-              field: data.field_id || '',
-              completed: true,
-            })),
-          );
+      try {
+        switch (res.status) {
+          case 201: {
+            return from(res.json()).pipe(
+              map((data) => ({
+                resource: data.uuid || '',
+                field: data.field_id || '',
+                completed: true,
+              })),
+            );
+          }
+          case 409: {
+            return of({ conflict: true });
+          }
+          default: {
+            return of({ failed: true });
+          }
         }
-        case 409: {
-          return of({ conflict: true });
-        }
-        default: {
-          return of({ failed: true });
-        }
+      } catch (e) {
+        return of({ failed: true });
       }
     }),
   );

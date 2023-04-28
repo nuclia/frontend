@@ -1,5 +1,5 @@
 import {
-  ISourceConnector,
+  ISourceConnectorOld,
   SourceConnectorDefinition,
   SyncItem,
   Field,
@@ -12,15 +12,15 @@ import { Observable, BehaviorSubject, of, throwError } from 'rxjs';
 type ElectronFile = File & { relativePath: string };
 const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 
-export const FolderConnector: SourceConnectorDefinition = {
-  id: 'folder',
-  title: 'Folder',
-  logo: 'assets/logos/folder.svg',
-  description: 'Upload a folder from your device',
-  factory: () => of(new FolderImpl()),
-};
+// export const FolderConnector: SourceConnectorDefinition = {
+//   id: 'folder',
+//   title: 'Folder',
+//   logo: 'assets/logos/folder.svg',
+//   description: 'Upload a folder from your device',
+//   factory: () => of(new FolderImpl()),
+// };
 
-class FolderImpl implements ISourceConnector {
+class FolderImpl implements ISourceConnectorOld {
   hasServerSideAuth = false;
   isExternal = false;
   resumable = false;

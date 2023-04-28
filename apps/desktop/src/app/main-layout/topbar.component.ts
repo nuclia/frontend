@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SDKService, StateService, UserService } from '@flaps/core';
 import { map, Observable } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
+import { SyncService } from '../sync/sync.service';
 
 @Component({
   selector: 'nde-topbar',
@@ -16,10 +17,12 @@ export class TopbarComponent {
     private user: UserService,
     private state: StateService,
     private sdk: SDKService,
+    private sync: SyncService,
   ) {}
 
   menuOpen = false;
   account = this.state.account;
+  isServerDown = this.sync.isServerDown;
 
   avatar: Observable<AvatarModel> = this.user.userPrefs.pipe(
     map((pref) => ({
@@ -51,5 +54,10 @@ export class TopbarComponent {
   logout() {
     this.sdk.nuclia.auth.logout();
     window.close();
+  }
+
+  setSyncServer() {
+    this.sync.resetSyncServer();
+    this.router.navigate(['/add-upload']);
   }
 }

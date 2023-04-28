@@ -5,7 +5,13 @@ import { ProgressBarModule } from '@flaps/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { HistoryComponent } from './history.component';
-import { PaButtonModule, PaIconModule, PaTableModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaDateTimeModule,
+  PaIconModule,
+  PaTableModule,
+  PaTooltipModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent } from '@nuclia/sistema';
 
 @NgModule({
@@ -19,6 +25,7 @@ import { BackButtonComponent } from '@nuclia/sistema';
     PaIconModule,
     PaTableModule,
     PaTooltipModule,
+    PaDateTimeModule,
   ],
   exports: [],
   declarations: [HistoryComponent],

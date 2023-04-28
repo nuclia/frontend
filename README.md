@@ -66,17 +66,16 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 ## Desktop app
 
-Run in the browser:
+Run the UI in the browser:
 
 ```
 nx serve desktop
 ```
 
-Run in electron:
+Launch the server:
 
 ```
-nx serve desktop
-nx serve desktop-electron
+yarn desktop-server-dev
 ```
 
 Build for stage:

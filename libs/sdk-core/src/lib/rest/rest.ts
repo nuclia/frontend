@@ -1,5 +1,4 @@
-import { from, map, Observable, of, switchMap, throwError } from 'rxjs';
-import { fromFetch } from 'rxjs/fetch';
+import { from, map, Observable, of, switchMap } from 'rxjs';
 import type { INuclia, IRest } from '../models';
 
 export class Rest implements IRest {
@@ -86,24 +85,16 @@ export class Rest implements IRest {
     synchronous = false,
   ): Observable<T> {
     const specialContentType = extraHeaders && extraHeaders['content-type'];
-    return fromFetch(this.getFullUrl(path), {
-      selector: (response) => Promise.resolve(response),
-      headers: this.getHeaders(method, path, extraHeaders, synchronous),
-      method,
-      body: specialContentType ? body : JSON.stringify(body),
-    }).pipe(
-      switchMap((response) => {
-        if (!response.ok) {
-          return throwError(() => response);
+    return from(
+      fetch(this.getFullUrl(path), {
+        method,
+        headers: this.getHeaders(method, path, extraHeaders, synchronous),
+        body: specialContentType ? body : JSON.stringify(body),
+      }).then((res) => {
+        if (!res.ok) {
+          throw new Error(`${res.status}`);
         }
-        return doNotParse
-          ? of(response as unknown as T)
-          : from(
-              response
-                .clone()
-                .json()
-                .catch(() => response.text()),
-            );
+        return doNotParse ? res : res.json();
       }),
     );
   }

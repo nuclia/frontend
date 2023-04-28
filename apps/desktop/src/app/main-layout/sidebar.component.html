@@ -1,59 +1,68 @@
 <div class="sidebar">
-  <div class="upload-menu">
-    <div class="upload-title">{{ 'upload.data' | translate }}:</div>
-    <ul>
-      <li *ngFor="let text of steps; let step = index">
-        <span
-          class="step"
-          [class.pending]="(currentStep | async) < step"
-          [class.active]="(currentStep | async) === step"
-          [class.clickable]="step === 0"
-          (click)="goToStep(step)">
-          <span
-            *ngIf="(currentStep | async) <= step"
-            class="step-number">
-            <pa-icon name="circle-dash"></pa-icon>
-            <span>{{ step + 1 }}</span>
-          </span>
-          <pa-icon
-            *ngIf="(currentStep | async) > step"
-            name="circle-check"
-            color="#f06"></pa-icon>
-          {{ text | translate }}
-        </span>
-        <div
-          *ngIf="step === 0 && (currentStep | async) === 0"
-          class="quick-access-list">
-          <div
-            *ngFor="let item of cache | async"
-            class="quick-access">
-            <span
-              (click)="goToSource(item.connectorId, item.name, false)"
-              paEllipsisTooltip>
-              {{ sources[item.connectorId].definition.title + ' - ' + item.name }}
-            </span>
-            <pa-button
-              (click)="goToSource(item.connectorId, item.name, true)"
-              size="small"
-              iconSize="small"
-              icon="edit"
-              aspect="basic"></pa-button>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
-
-  <div class="history-menu">
-    <ul>
-      <li>
-        <span (click)="goToHistory()">{{ 'history.title' | translate }}</span>
-      </li>
+  <ng-container *ngIf="syncServer | async">
+    <div class="upload-menu">
+      <div class="upload-title">{{ 'upload.data' | translate }}:</div>
       <ul>
-        <li *ngIf="hasActiveUploads | async">
-          <span (click)="goToHistory(true)">{{ 'history.active' | translate }}</span>
+        <li *ngFor="let text of steps; let step = index">
+          <span
+            class="step"
+            [class.pending]="(currentStep | async) < step"
+            [class.active]="(currentStep | async) === step"
+            [class.clickable]="step === 0"
+            (click)="goToStep(step)">
+            <span
+              *ngIf="(currentStep | async) <= step"
+              class="step-number">
+              <pa-icon name="circle-dash"></pa-icon>
+              <span>{{ step + 1 }}</span>
+            </span>
+            <pa-icon
+              *ngIf="(currentStep | async) > step"
+              name="circle-check"></pa-icon>
+            {{ text | translate }}
+          </span>
+          <div
+            *ngIf="step === 0 && (currentStep | async) === 0"
+            class="quick-access-list">
+            <div
+              *ngFor="let item of sources | async"
+              class="quick-access">
+              <span
+                (click)="goToSource(item.connectorId, item.name, false)"
+                paEllipsisTooltip>
+                {{ item.name }}
+              </span>
+              <span>
+                <pa-button
+                  (click)="goToSource(item.connectorId, item.name, true)"
+                  size="small"
+                  iconSize="small"
+                  icon="edit"
+                  aspect="basic"></pa-button>
+                <pa-button
+                  (click)="deleteSource(item.name)"
+                  size="small"
+                  iconSize="small"
+                  icon="trash"
+                  aspect="basic"></pa-button>
+              </span>
+            </div>
+          </div>
         </li>
       </ul>
-    </ul>
-  </div>
+    </div>
+
+    <div class="history-menu">
+      <ul>
+        <li>
+          <span (click)="goToHistory()">{{ 'history.title' | translate }}</span>
+        </li>
+        <ul>
+          <li>
+            <span (click)="goToHistory(true)">{{ 'history.active' | translate }}</span>
+          </li>
+        </ul>
+      </ul>
+    </div>
+  </ng-container>
 </div>

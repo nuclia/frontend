@@ -1,13 +1,5 @@
-import {
-  ISourceConnector,
-  SourceConnectorDefinition,
-  SyncItem,
-  SearchResults,
-  ConnectorParameters,
-  FileStatus,
-  Field,
-} from '../models';
-import { Observable, of, from, map, BehaviorSubject, filter, switchMap } from 'rxjs';
+import { ISourceConnector, SourceConnectorDefinition, ConnectorParameters, Field } from '../models';
+import { Observable, of, BehaviorSubject } from 'rxjs';
 import { getDeeplink } from '../../utils';
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
@@ -22,15 +14,15 @@ export const OneDriveConnector: SourceConnectorDefinition = {
 };
 
 const CLIENT_ID = 'ONEDRIVE_CLIENT_ID';
-const CLIENT_SECRET = 'ONEDRIVE_CLIENT_SECRET';
 const TOKEN = 'ONEDRIVE_TOKEN';
+const REFRESH = 'ONEDRIVE_REFRESH_TOKEN';
+const CODE_VERIFIER = 'ONEDRIVE_CODE_VERIFIER';
 
 class OneDriveImpl implements ISourceConnector {
   hasServerSideAuth = true;
   isExternal = true;
   resumable = false;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  isAuthError = (error: any) => error.code === 'InvalidAuthenticationToken';
 
   getParameters(): Observable<Field[]> {
     return of([
@@ -40,18 +32,19 @@ class OneDriveImpl implements ISourceConnector {
         type: 'text',
         required: true,
       },
-      {
-        id: 'client_secret',
-        label: 'Client secret',
-        type: 'text',
-        required: true,
-      },
     ]);
   }
 
   handleParameters(params: ConnectorParameters) {
     localStorage.setItem(CLIENT_ID, params.client_id);
-    localStorage.setItem(CLIENT_SECRET, params.client_secret);
+  }
+
+  getParametersValues(): ConnectorParameters {
+    return {
+      client_id: localStorage.getItem(CLIENT_ID),
+      token: localStorage.getItem(TOKEN),
+      refresh: localStorage.getItem(REFRESH),
+    };
   }
 
   goToOAuth(reset?: boolean) {
@@ -60,19 +53,22 @@ class OneDriveImpl implements ISourceConnector {
     }
     const token = localStorage.getItem(TOKEN);
     if (!token) {
-      if ((window as any)['electron']) {
-        (window as any)['electron'].openExternal(
-          `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${localStorage.getItem(
-            CLIENT_ID,
-          )}&scope=${SCOPE}
-          &response_type=token&redirect_uri=nuclia-desktop://index.html`,
-        );
-      } else {
-        location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${localStorage.getItem(
-          CLIENT_ID,
-        )}&scope=${SCOPE}
-        &response_type=token&redirect_uri=http://localhost:4200`;
-      }
+      let authorizeEndpoint = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${localStorage.getItem(
+        CLIENT_ID,
+      )}&scope=${SCOPE}&response_type=code&response_mode=query`;
+      generateCodeVerifier()
+        .then((codeVerifier) => {
+          localStorage.setItem(CODE_VERIFIER, codeVerifier);
+          return generateCodeChallenge(codeVerifier);
+        })
+        .then((codeChallenge) => {
+          authorizeEndpoint += `&code_challenge=${codeChallenge}&code_challenge_method=S256`;
+          if ((window as any)['electron']) {
+            (window as any)['electron'].openExternal(`${authorizeEndpoint}&redirect_uri=nuclia-desktop://index.html`);
+          } else {
+            location.href = `${authorizeEndpoint}&redirect_uri=http://localhost:4200`;
+          }
+        });
     } else {
       this.isAuthenticated.next(true);
     }
@@ -84,72 +80,57 @@ class OneDriveImpl implements ISourceConnector {
         const deeplink = getDeeplink();
         if (deeplink && deeplink.includes('?')) {
           const params = new URLSearchParams(deeplink.split('?')[1]);
-          const token = params.get('access_token') || '';
+          const code = params.get('code') || '';
           clearInterval(interval);
-          if (token) {
-            localStorage.setItem(TOKEN, token);
-            this.isAuthenticated.next(true);
+          if (code) {
+            const redirectUri = (window as any)['electron'] ? `nuclia-desktop://index.html` : `http://localhost:4200`;
+            fetch(`https://login.microsoftonline.com/common/oauth2/v2.0/token`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              body: `client_id=${localStorage.getItem(
+                CLIENT_ID,
+              )}&scope=${SCOPE}&code=${code}&redirect_uri=${encodeURIComponent(
+                redirectUri,
+              )}&code_verifier=${localStorage.getItem(CODE_VERIFIER)}&grant_type=authorization_code`,
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                if (res.access_token && res.refresh_token) {
+                  localStorage.setItem(TOKEN, res.access_token);
+                  localStorage.setItem(REFRESH, res.refresh_token);
+                  this.isAuthenticated.next(true);
+                } else {
+                  this.isAuthenticated.next(false);
+                }
+                localStorage.removeItem(CODE_VERIFIER);
+              });
           }
         }
       }, 500);
     }
     return this.isAuthenticated.asObservable();
   }
+}
 
-  getFiles(query?: string, pageSize = 50, nextPage?: string): Observable<SearchResults> {
-    let path = `https://graph.microsoft.com/v1.0/me/drive/root`;
-    if (query) {
-      path += `/search(q='${query}')`;
-    } else {
-      path += `/children`;
-    }
-    path += `?top=${pageSize}&filter=file ne null`;
-    if (nextPage) {
-      path += `&$skiptoken=${nextPage}`;
-    }
-    return this.isAuthenticated.pipe(
-      filter((isAuth) => isAuth),
-      switchMap(() =>
-        from(
-          fetch(path, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem(TOKEN)}`,
-            },
-          }).then((res) => res.json()),
-        ),
-      ),
-      map((res) => {
-        if (res.error) {
-          throw res.error;
-        } else {
-          const nextPage =
-            res['@odata.nextLink'] && res['@odata.nextLink'].includes('&$skiptoken=')
-              ? res?.['@odata.nextLink'].split('&$skiptoken=')[1].split('&')[0]
-              : undefined;
-          return {
-            items: (res.value || []).map((item: any) => this.mapToSyncItem(item)),
-            nextPage,
-          };
-        }
-      }),
-    );
-  }
+async function generateCodeVerifier() {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
 
-  private mapToSyncItem(item: any): SyncItem {
-    return {
-      uuid: item.id,
-      title: item.name,
-      originalId: item.id,
-      metadata: { mimeType: item.file.mimeType, downloadLink: item['@microsoft.graph.downloadUrl'] },
-      status: FileStatus.PENDING,
-    };
-  }
+async function generateCodeChallenge(codeVerifier: string) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
 
-  getLink(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }> {
-    return of({ uri: resource.metadata.downloadLink, extra_headers: {} });
-  }
+  const base64Url = (arrayBuffer: ArrayBuffer) => {
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    return base64.replace('+', '-').replace('/', '_').replace(/=+$/, '');
+  };
 
-  download(resource: SyncItem): Observable<Blob> {
-    throw 'Error';
-  }
+  return base64Url(digest);
 }

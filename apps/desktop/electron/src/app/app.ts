@@ -2,8 +2,12 @@ import { BrowserWindow, shell, screen, ipcMain } from 'electron';
 import { rendererAppName, rendererAppPort } from './constants';
 import { environment } from '../environments/environment';
 import { join } from 'path';
+import { ChildProcessWithoutNullStreams, spawn } from 'child_process';
 import { format } from 'url';
 import { autoUpdater } from 'electron-updater';
+import { Readable } from 'stream';
+
+let expressAppProcess: ChildProcessWithoutNullStreams | undefined;
 
 export default class App {
   // Keep a global reference of the window object, if you don't, the window will
@@ -92,6 +96,7 @@ export default class App {
       // Dereference the window object, usually you would store windows
       // in an array if your app supports multi windows, this is the time
       // when you should delete the corresponding element.
+      expressAppProcess?.kill();
       App.mainWindow = null;
     });
   }
@@ -157,6 +162,36 @@ export default class App {
 
     ipcMain.on('debug', () => {
       App.mainWindow?.webContents.openDevTools();
+    });
+    ipcMain.on('openExternal', (event, url: string) => {
+      shell.openExternal(url);
+    });
+    ipcMain.on('local-server', () => {
+      const appName = app.getPath('exe');
+      const expressPath = `${__dirname}/assets/service/apps/desktop/electron/src/service/server.js`;
+      expressAppProcess = spawn(appName, [expressPath], {
+        env: {
+          ELECTRON_RUN_AS_NODE: '1',
+          ELECTRON_HOME: app.getPath('home'),
+        },
+      });
+      function redirectOutput(x: Readable) {
+        x.on('data', function (data: any) {
+          const log = data.toString();
+          // log on the main process + console
+          console.log(log);
+          data
+            .toString()
+            .split('\n')
+            .forEach((line: string) => {
+              if (line !== '') {
+                App.mainWindow?.webContents.executeJavaScript('console.log(`' + line + '`)');
+              }
+            });
+        });
+      }
+      redirectOutput(expressAppProcess.stdout);
+      redirectOutput(expressAppProcess.stderr);
     });
 
     const gotTheLock = app.requestSingleInstanceLock();

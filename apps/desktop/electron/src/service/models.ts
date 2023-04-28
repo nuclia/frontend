@@ -1,50 +1,50 @@
-import { NucliaOptions } from '@nuclia/core';
+import type { NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
 
-export const CONNECTOR_ID_KEY = 'NUCLIA_CONNECTOR_ID';
-export const CONNECTOR_PARAMS_CACHE = 'CONNECTOR_PARAMS_CACHE';
+export interface Source {
+  connectorId: string;
+  data: ConnectorParameters;
+  kb?: NucliaOptions;
+  folders?: SyncItem[];
+  items?: SyncItem[];
+  permanentSync?: boolean;
+  lastSyncGMT?: string;
+  total?: number;
+  lastBatch?: number;
+}
+
 export interface ConnectorDefinition {
   id: string;
-  title: string;
-  logo: string;
-  description: string;
-  helpUrl?: string;
 }
 
 export interface SourceConnectorDefinition extends ConnectorDefinition {
-  factory: (data?: ConnectorSettings) => Observable<ISourceConnector>;
+  factory: (data?: ConnectorSettings) => ISourceConnector;
 }
 export interface DestinationConnectorDefinition extends ConnectorDefinition {
   factory: (data?: ConnectorSettings) => Observable<IDestinationConnector>;
 }
 
-export interface ISourceConnectorOld {
-  hasServerSideAuth: boolean;
-  isExternal: boolean;
-  getParameters(): Observable<Field[]>;
-  handleParameters?(params: ConnectorParameters): void;
-  goToOAuth(reset?: boolean): void;
-  authenticate(): Observable<boolean>;
-  getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
-  isAuthError?: (message: any) => boolean;
+export interface Link {
+  uri: string;
+  extra_headers: { [key: string]: string };
 }
-
 export interface ISourceConnector {
-  hasServerSideAuth: boolean;
   isExternal: boolean;
-  getParameters(): Observable<Field[]>;
-  handleParameters?(params: ConnectorParameters): void;
-  getParametersValues(): ConnectorParameters;
-  goToOAuth(reset?: boolean): void;
-  authenticate(): Observable<boolean>;
-  getLink?(resource: SyncItem): Observable<{ uri: string; extra_headers: { [key: string]: string } }>;
+  setParameters(params: ConnectorParameters): void;
+  getParameters(): ConnectorParameters;
+  getFolders(query?: string): Observable<SearchResults>;
+  getFiles(query?: string): Observable<SearchResults>;
+  getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]>;
+  download(resource: SyncItem): Observable<Blob | undefined>;
+  getLink(resource: SyncItem): Observable<Link>;
+  hasAuthData(): boolean;
+  refreshAuthentication(): Observable<boolean>;
 }
 
 export enum FileStatus {
   PENDING = 'PENDING',
   PROCESSING = 'PROCESSING',
   UPLOADED = 'UPLOADED',
-  ERROR = 'ERROR',
 }
 
 export interface SyncItem {
@@ -53,7 +53,8 @@ export interface SyncItem {
   originalId: string;
   metadata: { [key: string]: string };
   status: FileStatus;
-  error?: string;
+  modifiedGMT?: string;
+  isFolder?: boolean;
 }
 
 export interface SearchResults {
@@ -96,25 +97,7 @@ export interface Field {
   canBeRefreshed?: boolean;
 }
 
-export interface ConnectorCache {
-  connectorId: string;
-  name: string;
-  params: any;
-  permanentSync?: boolean;
-}
-
-export interface Source {
-  connectorId: string;
-  data: ConnectorParameters;
-  kb?: NucliaOptions;
-  items?: SyncItem[];
-  permanentSync?: boolean;
-  lastSync?: string;
-  total?: number;
-  lastBatch?: number;
-}
-
-export interface SyncRow {
+export interface LogRow {
   date: string;
   from: string;
   to: string;

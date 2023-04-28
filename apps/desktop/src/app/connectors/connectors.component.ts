@@ -11,7 +11,7 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
-import { markForCheck } from '@guillotinaweb/pastanaga-angular';
+import { IErrorMessages, markForCheck } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
   selector: 'nde-connectors',
@@ -22,8 +22,12 @@ import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 export class ConnectorsComponent implements OnDestroy {
   private _type: 'sources' | 'destinations' = 'sources';
   private _connectorIds?: string[];
-  private sources: ConnectorDefinition[] = [];
   private unsubscribeAll = new Subject<void>();
+  validationMessages: { [key: string]: IErrorMessages } = {
+    name: {
+      pattern: 'Use only letters, numbers, dashes and underscores',
+    } as IErrorMessages,
+  };
 
   @Input()
   set type(value: 'sources' | 'destinations') {
@@ -52,7 +56,12 @@ export class ConnectorsComponent implements OnDestroy {
   }
 
   @Output() cancel = new EventEmitter<void>();
-  @Output() selectConnector = new EventEmitter<{ connector: ConnectorDefinition; params: ConnectorParameters }>();
+  @Output() selectConnector = new EventEmitter<{
+    name: string;
+    connector: ConnectorDefinition;
+    params: ConnectorParameters;
+    permanentSync?: boolean;
+  }>();
 
   connectors: ConnectorDefinition[] = [];
   fields?: Field[];
@@ -109,12 +118,8 @@ export class ConnectorsComponent implements OnDestroy {
           take(1),
         )
         .subscribe((fields) => {
-          if (fields.length > 0) {
-            this.sync.setStep(1);
-            this.showFields(connectorId, fields);
-          } else {
-            this.selectedConnector && this.selectConnector.emit({ connector: this.selectedConnector, params: {} });
-          }
+          this.sync.setStep(1);
+          this.showFields(connectorId, fields);
         });
     } else {
       this.sync
@@ -136,15 +141,20 @@ export class ConnectorsComponent implements OnDestroy {
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
       ),
+      permanentSync: [false],
       quickAccess: this.formBuilder.group({
-        enabled: [this.canStoreParams],
-        name: ['', this.canStoreParams ? [Validators.required] : []],
+        name: ['', this.canStoreParams ? [Validators.required, Validators.pattern('[a-zA-Z-0-9-_]+')] : []],
       }),
     });
     if (this.quickAccessName) {
-      const cache = this.sync.getConnectorCache(connectorId, this.quickAccessName);
+      this.sync.setCurrentSourceId(this.quickAccessName);
+      const cache = this.sync.getSourceCache(this.quickAccessName);
       if (cache) {
-        this.form.patchValue({ fields: cache.params, quickAccess: { name: this.quickAccessName } });
+        this.form.patchValue({
+          fields: cache.data,
+          quickAccess: { name: this.quickAccessName },
+          permanentSync: cache.permanentSync,
+        });
       }
     }
     markForCheck(this.cdr);
@@ -160,19 +170,12 @@ export class ConnectorsComponent implements OnDestroy {
 
   validate() {
     if (this.selectedConnector) {
-      if (this.quickAccessName) {
-        if (!this.form?.value.quickAccess.enabled || this.form?.value.quickAccess.name !== this.quickAccessName) {
-          this.sync.removeConnectorCache(this.selectedConnector.id, this.quickAccessName);
-        }
-      }
-      if (this.form?.value.quickAccess.enabled) {
-        this.sync.saveConnectorCache(
-          this.selectedConnector.id,
-          this.form?.value.quickAccess.name,
-          this.form?.value.fields || {},
-        );
-      }
-      this.selectConnector.emit({ connector: this.selectedConnector, params: this.form?.value.fields || {} });
+      this.selectConnector.emit({
+        name: this.form?.value.quickAccess.name || '',
+        connector: this.selectedConnector,
+        params: this.form?.value.fields || {},
+        permanentSync: this.form?.value.permanentSync,
+      });
     }
   }
 

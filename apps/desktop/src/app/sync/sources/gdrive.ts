@@ -1,20 +1,20 @@
-import { FileStatus, ISourceConnector, SourceConnectorDefinition, SyncItem, SearchResults } from '../models';
+import { FileStatus, ISourceConnectorOld, SourceConnectorDefinition, SyncItem, SearchResults } from '../models';
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import { GoogleBaseImpl } from './google.base';
 
 // eslint-disable-next-line
 declare var gapi: any;
 
-export const GDrive: SourceConnectorDefinition = {
-  id: 'gdrive',
-  title: 'Google Drive',
-  logo: 'assets/logos/gdrive.svg',
-  description: 'File storage and synchronization service developed by Google',
-  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
-  factory: () => of(new GDriveImpl()),
-};
+// export const GDrive: SourceConnectorDefinition = {
+//   id: 'gdrive',
+//   title: 'Google Drive',
+//   logo: 'assets/logos/gdrive.svg',
+//   description: 'File storage and synchronization service developed by Google',
+//   helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
+//   factory: () => of(new GDriveImpl()),
+// };
 
-class GDriveImpl extends GoogleBaseImpl implements ISourceConnector {
+class GDriveImpl extends GoogleBaseImpl implements ISourceConnectorOld {
   isExternal = false;
   resumable = true;
   override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];

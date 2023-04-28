@@ -6,6 +6,24 @@
       src="assets/nuclia-desktop-white.svg"
       alt="Nuclia Desktop" />
   </div>
+  <div class="status">
+    <pa-button
+      *ngIf="isServerDown | async"
+      size="small"
+      kind="destructive"
+      aspect="basic"
+      (click)="setSyncServer()">
+      {{ 'generic.server_down' | translate }}
+    </pa-button>
+    <pa-button
+      *ngIf="(isServerDown | async) === false"
+      size="small"
+      kind="secondary"
+      aspect="basic"
+      (click)="setSyncServer()">
+      {{ 'generic.server_up' | translate }}
+    </pa-button>
+  </div>
   <div class="accounts">
     <pa-button
       *ngIf="account | async as account"

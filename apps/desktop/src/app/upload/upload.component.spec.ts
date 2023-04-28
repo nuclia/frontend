@@ -19,6 +19,7 @@ import {
   PaTogglesModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
+import { By } from '@angular/platform-browser';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -45,7 +46,7 @@ describe('UploadComponent', () => {
           useValue: {
             sources: { source1: { definition: { id: 'source1' }, settings: {} } },
             destinations: { destination1: { definition: { id: 'destination1' }, settings: {} } },
-            addSync: jest.fn(),
+            addSync: jest.fn(() => of(false)),
             getConnectors: (type: 'sources' | 'destinations') =>
               type === 'sources'
                 ? [
@@ -94,6 +95,8 @@ describe('UploadComponent', () => {
             setStep: (step: number) => {
               (sync.step as BehaviorSubject<number>).next(step);
             },
+            setSourceData: () => of(),
+            getCurrentSourceId: () => 'sync-1',
           },
         },
         {
@@ -115,14 +118,37 @@ describe('UploadComponent', () => {
   it('should allow to add a new sync', () => {
     jest.spyOn(sync, 'setStep');
     fixture.debugElement.nativeElement.querySelector('.connector').click();
-    expect(sync.setStep).toHaveBeenCalledWith(2);
+    expect(sync.setStep).toHaveBeenCalledWith(1);
+    fixture.detectChanges();
+    let connectors = fixture.debugElement.query(By.css('nde-connectors'));
+    fixture.debugElement.nativeElement.querySelector('pa-input[formcontrolname="name"]').value = 'Sync 1';
+    connectors.triggerEventHandler('selectConnector', {
+      name: 'sync-1',
+      connector: {},
+      params: {},
+      permanentSync: false,
+    });
+    component.source = {
+      hasServerSideAuth: false,
+      isExternal: false,
+      getParameters: () => of([]),
+      getParametersValues: () => ({}),
+      goToOAuth: () => {},
+      authenticate: () => of(true),
+    };
+    sync.setStep(2);
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="next"]').click();
     expect(sync.setStep).toHaveBeenCalledWith(3);
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     fixture.detectChanges();
-    fixture.debugElement.nativeElement.querySelector('[qa="fields-form"]').submit();
+    connectors = fixture.debugElement.query(By.css('nde-connectors'));
+    connectors.triggerEventHandler('selectConnector', {
+      name: 'kb-1',
+      connector: {},
+      params: {},
+    });
     fixture.detectChanges();
     expect(sync.addSync).toHaveBeenCalled();
   });

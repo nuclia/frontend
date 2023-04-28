@@ -11,11 +11,11 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { concat, merge, fromEvent, Observable, Subject, of } from 'rxjs';
-import { tap, filter, takeUntil, auditTime, scan, switchMap, concatMap, share, catchError, map } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults, SOURCE_ID_KEY } from '../../sync/models';
-import { defaultAuthCheck } from '../../utils';
+import { Observable, Subject, of } from 'rxjs';
+import { tap, filter, scan, switchMap, share, catchError, map } from 'rxjs/operators';
+import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
 import { SisToastService } from '@nuclia/sistema';
+import { SyncService } from '../../sync/sync.service';
 
 @Component({
   selector: 'nde-select-files',
@@ -39,68 +39,42 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   nextPage?: Observable<SearchResults>;
   loading = false;
   isSelectingAll = false;
+  currentSource = this.sync.currentSource;
 
   resources: Observable<SyncItem[]> = this.triggerSearch.pipe(
     filter(() => !!this.source),
     tap(() => {
       this.loading = true;
     }),
-    switchMap(() =>
-      concat(
-        (this.source as ISourceConnector).getFiles(this.query).pipe(
+    switchMap(() => this.currentSource),
+    switchMap((source) =>
+      (source.permanentSync ? this.sync.getFolders(this.query) : this.sync.getFiles(this.query))
+        .pipe(
           catchError((error) => {
-            if (this.source && (this.source.isAuthError || defaultAuthCheck(error))) {
-              localStorage.setItem(SOURCE_ID_KEY, this.sourceId || '');
-              if (this.source.hasServerSideAuth) {
-                this.source.goToOAuth(true);
-              }
-              this.toaster.error('You cannot access this source. Please check your credentials.');
-              return this.source.authenticate().pipe(map(() => ({ items: [], nextPage: undefined } as SearchResults)));
-            } else {
-              this.toaster.error(typeof error === 'string' ? error : error?.message || 'An error occurred');
-              return of({ items: [], nextPage: undefined });
-            }
+            this.toaster.error(
+              typeof error === 'string'
+                ? error
+                : error?.error?.message || error?.error || error?.message || 'An error occurred',
+            );
+            return of({ items: [], nextPage: undefined });
           }),
-        ),
-        this.triggerNextPage.pipe(
-          filter(() => !this.loading),
+        )
+        .pipe(
           tap(() => {
-            this.loading = true;
+            this.loading = false;
           }),
-          concatMap(() => (this.nextPage ? this.nextPage : of({ items: [], nextPage: undefined } as SearchResults))),
+          scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
         ),
-      ).pipe(
-        tap((res) => {
-          this.nextPage = res.nextPage;
-          this.loading = false;
-        }),
-        scan((acc, current) => acc.concat(current.items), [] as SyncItem[]),
-      ),
     ),
     share(),
   );
 
-  constructor(private cdr: ChangeDetectorRef, private toaster: SisToastService) {}
+  constructor(private cdr: ChangeDetectorRef, private toaster: SisToastService, private sync: SyncService) {}
 
   ngAfterViewInit() {
     setTimeout(() => {
       this.triggerSearch.next();
     }, 200);
-
-    // Infinite scroll
-    const container = this.scroll?.nativeElement;
-    if (container) {
-      merge(fromEvent(container, 'scroll'), this.resources)
-        .pipe(
-          auditTime(300),
-          filter(() => !!this.nextPage && !this.loading),
-          filter(() => container.scrollTop > container.scrollHeight - container.clientHeight - 400),
-          takeUntil(this.unsubscribeAll),
-        )
-        .subscribe(() => {
-          this.triggerNextPage.next();
-        });
-    }
   }
 
   ngOnDestroy() {
@@ -138,18 +112,6 @@ export class SelectFilesComponent implements AfterViewInit, OnDestroy {
   }
 
   getAllFiles(): Observable<SyncItem[]> {
-    return (this.source as ISourceConnector).getFiles().pipe(
-      concatMap((res) => this._getAllFiles(res)),
-      map((res) => res.items),
-    );
-  }
-
-  private _getAllFiles(currentResults?: SearchResults): Observable<SearchResults> {
-    return currentResults && currentResults.nextPage
-      ? currentResults.nextPage.pipe(
-          map((res) => ({ ...res, items: [...currentResults.items, ...res.items] })),
-          concatMap((res) => this._getAllFiles(res)),
-        )
-      : of(currentResults || { items: [] });
+    return this.sync.getFiles().pipe(map((res) => res.items));
   }
 }

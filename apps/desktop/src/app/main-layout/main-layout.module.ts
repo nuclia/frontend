@@ -33,6 +33,5 @@ import {
   ],
   exports: [],
   declarations: [MainLayoutComponent, SidebarComponent, TopbarComponent],
-  providers: [],
 })
 export class MainLayoutModule {}

@@ -2,16 +2,14 @@ import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
-  combineLatest,
-  concatMap,
-  delay,
+  distinctUntilChanged,
   filter,
   forkJoin,
   from,
   map,
   Observable,
   of,
-  repeatWhen,
+  repeat,
   ReplaySubject,
   Subject,
   switchMap,
@@ -19,35 +17,31 @@ import {
   tap,
 } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { GDrive } from './sources/gdrive';
 import {
-  CONNECTOR_PARAMS_CACHE,
-  ConnectorCache,
   ConnectorDefinition,
   ConnectorParameters,
   ConnectorSettings,
   DestinationConnectorDefinition,
-  FileStatus,
   IDestinationConnector,
   ISourceConnector,
+  SearchResults,
   SourceConnectorDefinition,
   SyncItem,
+  Source,
+  SyncRow,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
-import { Algolia } from './destinations/algolia';
-import { injectScript, md5, SDKService, UserService } from '@flaps/core';
+import { injectScript, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
-import { FolderConnector } from './sources/folder';
-import { S3Connector } from './sources/s3';
-import { ProcessingPullResponse } from '@nuclia/core';
-import { convertDataURIToBinary, NucliaProtobufConverter } from './protobuf';
-import { GCSConnector } from './sources/gcs';
+import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { OneDriveConnector } from './sources/onedrive';
-import { BrightcoveConnector } from './sources/brightcove';
 import { DynamicConnectorWrapper } from './dynamic-connector';
+import { HttpClient } from '@angular/common/http';
 
 const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
-const QUEUE_KEY = 'NUCLIA_QUEUE';
+export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
+export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
+const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
 
 interface Sync {
   date: string;
@@ -56,8 +50,7 @@ interface Sync {
     id: string;
     params: ConnectorParameters;
   };
-  files: SyncItem[];
-  fileUUIDs: string[];
+  items: SyncItem[];
   started?: boolean;
   completed?: boolean;
   resumable?: boolean;
@@ -72,30 +65,23 @@ export class SyncService {
       instance?: ReplaySubject<ISourceConnector>;
     };
   } = {
-    gdrive: { definition: GDrive, settings: {} },
+    // gdrive: { definition: GDrive, settings: {} },
     onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
-    folder: { definition: FolderConnector, settings: {} },
-    s3: { definition: S3Connector, settings: {} },
-    gcs: { definition: GCSConnector, settings: {} },
-    brightcove: { definition: BrightcoveConnector, settings: {} },
+    // folder: { definition: FolderConnector, settings: {} },
+    // s3: { definition: S3Connector, settings: {} },
+    // gcs: { definition: GCSConnector, settings: {} },
+    // brightcove: { definition: BrightcoveConnector, settings: {} },
   };
   destinations: { [id: string]: { definition: DestinationConnectorDefinition; settings: ConnectorSettings } } = {
     nucliacloud: {
       definition: NucliaCloudKB,
       settings: environment.connectors.nucliacloud,
     },
-    // Disable algolia for now
-    // algolia: {
-    //   definition: Algolia,
-    //   settings: {},
-    // },
   };
   sourceObs = new BehaviorSubject(Object.values(this.sources).map((obj) => obj.definition));
-
-  private _queue: Sync[] = [];
-  queue = new ReplaySubject<Sync[]>(1);
-  ready = new Subject<void>();
+  private _syncServer = new BehaviorSubject<string>(localStorage.getItem(SYNC_SERVER_KEY) || '');
+  syncServer = this._syncServer.asObservable();
 
   private _step = new BehaviorSubject<number>(0);
   step = this._step.asObservable();
@@ -103,25 +89,40 @@ export class SyncService {
   showSource = this._showSource.asObservable();
   private _showFirstStep = new Subject<void>();
   showFirstStep = this._showFirstStep.asObservable();
+  private _isServerDown = new BehaviorSubject<boolean>(true);
+  isServerDown = this._isServerDown.asObservable();
+  private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
+  sourcesCache = this._sourcesCache.asObservable();
+  currentSource = this.sourcesCache.pipe(map((sources) => sources[this.getCurrentSourceId()]));
 
-  constructor(private sdk: SDKService, private user: UserService) {
-    this.ready.subscribe(() => {
-      this.watchProcessing();
-      this.start();
-    });
+  constructor(private sdk: SDKService, private user: UserService, private http: HttpClient) {
     const account = this.getAccountId();
     if (account) {
       this.setAccount();
     }
-    const queue: Sync[] = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
-    Object.values(queue).forEach((sync) => {
-      if (!sync.completed) {
-        sync.started = false;
-      }
-    });
-    this._queue = queue;
-    this.onQueueUpdate();
-    this.fetchDynamicConnectors();
+    // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
+    // this.fetchDynamicConnectors();
+
+    of(true)
+      .pipe(
+        filter(() => !!this._syncServer.getValue()),
+        switchMap(() => this.serverStatus(this._syncServer.getValue())),
+        map((res) => !res.running),
+        repeat({ delay: 5000 }),
+      )
+      .subscribe(this._isServerDown);
+    this.isServerDown
+      .pipe(
+        distinctUntilChanged(),
+        filter((isDown) => !isDown),
+        switchMap(() => this.getSources()),
+      )
+      .subscribe(this._sourcesCache);
+
+    // if we were using local server, let's just start it automatically when we start the app
+    if (localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER) {
+      this.setSyncServer({ url: '', local: true });
+    }
   }
 
   getConnectors(type: 'sources' | 'destinations'): ConnectorDefinition[] {
@@ -143,154 +144,97 @@ export class SyncService {
     return this.destinations[id].definition.factory(this.destinations[id].settings);
   }
 
-  private start() {
-    combineLatest(
-      this._queue
-        .filter((sync) => !sync.started && !sync.completed)
-        .map((sync) => {
-          return combineLatest([
-            this.getSource(sync.source).pipe(take(1)),
-            this.getDestination(sync.destination.id).pipe(take(1)),
-          ]).pipe(
-            concatMap(([sourceInstance, destinationInstance]) => {
-              sync.started = true;
-              // TODO: go 6 by 6 maximum
-              return forkJoin(
-                sync.files
-                  .filter((f) => f.status === FileStatus.PENDING)
-                  .map((f) => {
-                    if (sourceInstance.isExternal) {
-                      return (
-                        sourceInstance.getLink &&
-                        sourceInstance.getLink(f).pipe(
-                          catchError((error) => {
-                            this.handle403(sourceInstance, error);
-                            throw error;
-                          }),
-                          filter((link) => !!link.uri),
-                          concatMap((link) =>
-                            destinationInstance.uploadLink!(f.title, sync.destination.params, link).pipe(
-                              tap(() => {
-                                f.status = FileStatus.UPLOADED;
-                                this.onQueueUpdate();
-                              }),
-                            ),
-                          ),
-                          take(1),
-                        )
-                      );
-                    } else {
-                      return sourceInstance.download(f).pipe(
-                        catchError((error) => {
-                          this.handle403(sourceInstance, error);
-                          throw error;
-                        }),
-                        concatMap((blob) => {
-                          if (sync.destination.id === 'nucliacloud') {
-                            return destinationInstance
-                              .upload(f.originalId, f.title, sync.destination.params, { blob })
-                              .pipe(
-                                catchError((error) => {
-                                  f.status = FileStatus.ERROR;
-                                  f.error = error.toString();
-                                  this.onQueueUpdate();
-                                  return of(undefined);
-                                }),
-                                tap(() => {
-                                  f.status = FileStatus.ERROR ? FileStatus.ERROR : FileStatus.UPLOADED;
-                                  this.onQueueUpdate();
-                                }),
-                              );
-                          } else {
-                            return md5(new File([blob], f.title)).pipe(
-                              concatMap((file) => this.sdk.nuclia.db.upload(file)),
-                              tap((response) => {
-                                f.status = FileStatus.PROCESSING;
-                                f.uuid = response.uuid;
-                                sync.fileUUIDs.push(response.uuid);
-                                this.onQueueUpdate();
-                              }),
-                            );
-                          }
-                        }),
-                        take(1),
-                      );
-                    }
-                  }),
-              );
-            }),
-            tap(() => {
-              sync.completed = true;
-              this.onQueueUpdate();
-            }),
-          );
-        }),
-    ).subscribe();
+  setSourceData(sourceId: string, source: Source): Observable<void> {
+    return this.http.post<void>(`${this._syncServer.getValue()}/source`, { [sourceId]: source }).pipe(
+      tap(() => {
+        const existing = this._sourcesCache.getValue()[sourceId];
+        const value = existing ? { ...existing, ...source } : source;
+        this._sourcesCache.next({ ...this._sourcesCache.getValue(), [sourceId]: value });
+      }),
+    );
   }
 
-  addSync(sync: Sync) {
-    this._queue.push(sync);
-    this.onQueueUpdate();
-    this.start();
+  getSourceData(sourceId: string): Observable<Source> {
+    return this.http.get<Source>(`${this._syncServer.getValue()}/source/${sourceId}`);
   }
 
-  clearCompleted() {
-    this._queue = this._queue.filter((sync) => !sync.completed);
-    this.onQueueUpdate();
+  deleteSource(sourceId: string): Observable<void> {
+    return this.http.delete<void>(`${this._syncServer.getValue()}/source/${sourceId}`).pipe(
+      tap(() => {
+        const sources = this._sourcesCache.getValue();
+        delete sources[sourceId];
+        this._sourcesCache.next(sources);
+      }),
+    );
   }
 
-  private watchProcessing() {
-    return this.sdk.nuclia.db
-      .pull()
-      .pipe(
-        repeatWhen((obs) => obs.pipe(delay(10000))),
-        filter((res: ProcessingPullResponse) => res.status !== 'empty' && !!res.payload),
-        map((res) => res.payload as string),
-        switchMap((base64) => NucliaProtobufConverter(convertDataURIToBinary(base64))),
-        map((data: any) => ({ data, sync: this._queue.find((sync) => sync.fileUUIDs.includes(data.uuid)) })),
-        filter(({ sync }) => !!sync),
-        map(({ data, sync }) => ({ data, sync, item: (sync as Sync).files.find((file) => file.uuid === data.uuid) })),
-        filter(({ data, sync, item }) => !!item),
-        map(
-          ({ data, sync, item }) =>
-            ({ data, sync, item } as {
-              data: any;
-              sync: Sync;
-              item: SyncItem;
-            }),
-        ),
-        switchMap(({ data, sync, item }) => {
-          return this.getDestination(sync.destination.id).pipe(
-            switchMap((dest) =>
-              dest.upload(item.originalId, item.title, sync.destination.params, {
-                metadata: data,
-              }),
-            ),
-            tap(() => {
-              item.status = FileStatus.UPLOADED;
-              sync.completed = sync.files.every((file: SyncItem) => file.status === FileStatus.UPLOADED);
-              this.onQueueUpdate();
-            }),
-          );
-        }),
-      )
-      .subscribe();
-  }
-
-  private handle403(source: ISourceConnector, error: any) {
-    if (error.status === 403) {
-      if (source.hasServerSideAuth) {
-        source.goToOAuth(true);
-      }
+  hasCurrentSourceAuth(): Observable<boolean> {
+    const current = this.getCurrentSourceId();
+    if (!current) {
+      return of(false);
+    } else {
+      return this.http
+        .get<{ hasAuth: boolean }>(`${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/auth`)
+        .pipe(map((res) => res.hasAuth));
     }
   }
 
-  onQueueUpdate() {
-    this.queue.next(this._queue);
-    localStorage.setItem(
-      QUEUE_KEY,
-      JSON.stringify(this._queue.filter((sync) => !(!sync.resumable && !sync.completed))),
+  getSources(): Observable<{ [id: string]: Source }> {
+    return this.http.get<{ [id: string]: Source }>(`${this._syncServer.getValue()}/sources`);
+  }
+
+  getFiles(query?: string): Observable<SearchResults> {
+    return this.http.get<SearchResults>(
+      `${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/files/search${
+        query ? `?query=${query}` : ''
+      }`,
     );
+  }
+
+  getFolders(query?: string): Observable<SearchResults> {
+    return this.http.get<SearchResults>(
+      `${this._syncServer.getValue()}/source/${this.getCurrentSourceId()}/folders/search${
+        query ? `?query=${query}` : ''
+      }`,
+    );
+  }
+
+  addSync(sync: Sync): Observable<boolean> {
+    return this.getSourceData(sync.source)
+      .pipe(
+        switchMap((source) =>
+          sync.destination.id === 'nucliacloud'
+            ? this.getKb(sync.destination.params.kb).pipe(
+                switchMap((kb) => {
+                  if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+                    return of(source);
+                  } else {
+                    return this.getNucliaKey(kb).pipe(
+                      map((data) => ({
+                        ...source,
+                        kb: {
+                          zone: this.sdk.nuclia.options.zone,
+                          backend: this.sdk.nuclia.options.backend,
+                          knowledgeBox: data.kbid,
+                          apiKey: data.token,
+                        } as NucliaOptions,
+                      })),
+                    );
+                  }
+                }),
+              )
+            : of(source),
+        ),
+      )
+      .pipe(
+        switchMap((source) =>
+          this.http.patch<void>(`${this._syncServer.getValue()}/source/${sync.source}`, {
+            ...source,
+            items: sync.items,
+          }),
+        ),
+        map(() => true),
+      );
   }
 
   getAccountId(): string {
@@ -308,22 +252,6 @@ export class SyncService {
       .pipe(
         take(1),
         switchMap(() =>
-          !this.sdk.nuclia.db.hasNUAClient()
-            ? this.user.userPrefs.pipe(
-                switchMap((prefs) => {
-                  const client_id = (window as any)['electron']
-                    ? (window as any)['electron'].getMachineId()
-                    : this.sdk.nuclia.auth.getJWTUser()?.sub || '';
-                  return this.sdk.nuclia.db.createNUAClient(this.getAccountId(), {
-                    client_id,
-                    contact: prefs?.email || '',
-                    title: 'NDA NUA key',
-                  });
-                }),
-              )
-            : of(true),
-        ),
-        switchMap(() =>
           this.sdk.nuclia.db.getAccount(this.getAccountId()).pipe(
             tap((account) => (this.sdk.nuclia.options.accountType = account.type)),
             switchMap((account) => this.sdk.nuclia.rest.getZoneSlug(account.zone)),
@@ -331,7 +259,7 @@ export class SyncService {
           ),
         ),
       )
-      .subscribe(() => this.ready.next());
+      .subscribe();
   }
 
   setStep(step: number) {
@@ -343,34 +271,12 @@ export class SyncService {
   }
 
   goToSource(connectorId: string, quickAccessName: string, edit: boolean) {
+    this.setCurrentSourceId(quickAccessName);
     this._showSource.next({ connectorId, quickAccessName, edit });
   }
 
-  getConnectorsCache(): { [key: string]: ConnectorCache } {
-    try {
-      const cache = localStorage.getItem(CONNECTOR_PARAMS_CACHE) || '{}';
-      return JSON.parse(cache);
-    } catch (error) {
-      return {};
-    }
-  }
-
-  getConnectorCache(connectorId: string, name: string): ConnectorCache {
-    return this.getConnectorsCache()[`${connectorId}-${name}`];
-  }
-
-  saveConnectorCache(connectorId: string, name: string, params: any) {
-    const cache = this.getConnectorsCache();
-    localStorage.setItem(
-      CONNECTOR_PARAMS_CACHE,
-      JSON.stringify({ ...cache, [`${connectorId}-${name}`]: { connectorId, name, params } }),
-    );
-  }
-
-  removeConnectorCache(connectorId: string, name: string) {
-    const cache = this.getConnectorsCache();
-    delete cache[`${connectorId}-${name}`];
-    localStorage.setItem(CONNECTOR_PARAMS_CACHE, JSON.stringify(cache));
+  getSourceCache(name: string): Source {
+    return this._sourcesCache.getValue()[name];
   }
 
   private fetchDynamicConnectors() {
@@ -391,5 +297,92 @@ export class SyncService {
     )
       .pipe(switchMap((urls: string[]) => forkJoin(urls.map((url) => injectScript(url)))))
       .subscribe();
+  }
+
+  getKb(slug: string): Observable<WritableKnowledgeBox> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, slug)),
+    );
+  }
+
+  getNucliaKey(kb: WritableKnowledgeBox): Observable<{ token: string; kbid: string }> {
+    return kb
+      .createKeyForService(
+        {
+          title: 'Desktop',
+          role: 'SCONTRIBUTOR',
+        },
+        this.getExpirationDate(),
+      )
+      .pipe(map((token) => ({ ...token, kbid: kb.id })));
+  }
+
+  private getExpirationDate(): string {
+    const date = new Date();
+    date.setFullYear(date.getFullYear() + 1);
+    return Math.floor(date.getTime() / 1000).toString();
+  }
+
+  serverStatus(server: string): Observable<{ running: boolean }> {
+    return this.http.get<{ running: boolean }>(`${server}/status`).pipe(catchError(() => of({ running: false })));
+  }
+
+  setSyncServer(server: { url?: string; local?: boolean }) {
+    if (server.local) {
+      this._syncServer.next(LOCAL_SYNC_SERVER);
+      localStorage.setItem(SYNC_SERVER_KEY, LOCAL_SYNC_SERVER);
+      const electron = (window as any)['electron'];
+      if (electron) {
+        this.serverStatus(LOCAL_SYNC_SERVER)
+          .pipe(take(1))
+          .subscribe((res) => {
+            if (!res.running) {
+              electron.startLocalServer();
+            }
+          });
+      }
+    } else if (server.url) {
+      localStorage.setItem(SYNC_SERVER_KEY, server.url);
+      this._syncServer.next(server.url);
+    }
+  }
+
+  resetSyncServer() {
+    this._syncServer.next('');
+  }
+
+  authenticateToSource(source: ISourceConnector): Observable<boolean> {
+    return source.authenticate().pipe(
+      filter((authenticated) => authenticated),
+      take(1),
+      switchMap(() => {
+        return this.currentSource.pipe(
+          take(1),
+          switchMap((currentSource) =>
+            this.setSourceData(this.getCurrentSourceId(), { ...currentSource, data: source.getParametersValues() }),
+          ),
+          map(() => true),
+        );
+      }),
+    );
+  }
+
+  getCurrentSourceId(): string {
+    return localStorage.getItem(SOURCE_NAME_KEY) || '';
+  }
+
+  setCurrentSourceId(id: string) {
+    localStorage.setItem(SOURCE_NAME_KEY, id);
+  }
+
+  getLogs(): Observable<SyncRow[]> {
+    return this.http.get<SyncRow[]>(`${this._syncServer.getValue()}/logs`).pipe(map((logs) => logs.reverse()));
+  }
+
+  getActiveLogs(): Observable<SyncRow[]> {
+    return this.http
+      .get<{ [id: string]: SyncRow }>(`${this._syncServer.getValue()}/active-logs`)
+      .pipe(map((logs) => Object.values(logs)));
   }
 }

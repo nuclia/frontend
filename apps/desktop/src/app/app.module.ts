@@ -5,7 +5,7 @@ import { AppComponent } from './app.component';
 import { STFConfigModule } from '@flaps/core';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
 
@@ -52,6 +52,7 @@ registerLocaleData(localeCa);
     AccountModule,
     LoginModule,
   ],
+  providers: [TranslatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

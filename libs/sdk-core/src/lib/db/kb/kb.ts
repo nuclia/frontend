@@ -358,6 +358,23 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.post(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/keys`, { expires });
   }
 
+  createKeyForService(data: ServiceAccountCreation, expires: string): Observable<{ token: string }> {
+    return this.getServiceAccounts().pipe(
+      switchMap((services) => {
+        const existing = services.find((service) => service.title === data.title && service.role === data.role);
+        return existing
+          ? of(existing)
+          : this.createServiceAccount(data).pipe(
+              switchMap(() => this.getServiceAccounts()),
+              map((updatedServices) =>
+                updatedServices.find((service) => service.title === data.title && service.role === data.role),
+              ),
+            );
+      }),
+      switchMap((service) => (service ? this.createKey(service.id, expires) : of({ token: '' }))),
+    );
+  }
+
   deleteKey(saId: string, saKeyId: string): Observable<void> {
     return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/key/${saKeyId}`);
   }
