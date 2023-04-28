@@ -1,7 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnDestroy, OnInit, Inject } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs';
-import { SDKService } from '@flaps/core';
+import { injectScript, SDKService } from '@flaps/core';
+import { WINDOW } from '@ng-web-apis/common';
 
 @Component({
   selector: 'app-billing',
@@ -9,7 +10,7 @@ import { SDKService } from '@flaps/core';
   styleUrls: ['./billing.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BillingComponent {
+export class BillingComponent implements OnInit, OnDestroy {
   isSubscribed = this.sdk.currentAccount.pipe(
     map((account) => account.type !== 'stash-basic' && account.type !== 'stash-trial'),
   );
@@ -18,5 +19,18 @@ export class BillingComponent {
     map(() => this.router.url.includes('checkout')),
   );
 
-  constructor(private router: Router, private sdk: SDKService) {}
+  constructor(private router: Router, private sdk: SDKService, @Inject(WINDOW) private window: Window) {}
+
+  ngOnInit() {
+    const tidioApi = (this.window as any)?.tidioChatApi;
+    if (tidioApi) {
+      tidioApi.show();
+    } else {
+      injectScript('//code.tidio.co/kynayco5sfwolxr9cjmy639y9ez12wrs.js').subscribe();
+    }
+  }
+
+  ngOnDestroy() {
+    (this.window as any)?.tidioChatApi?.hide();
+  }
 }
