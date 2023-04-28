@@ -4,6 +4,7 @@ import { map } from 'rxjs/operators';
 import { SDKService, SimpleAccount } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb/select-account-kb.service';
 import { NavigationService } from '../services';
+import { catchError, of } from 'rxjs';
 
 export const selectAccountKbGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
@@ -48,6 +49,9 @@ export const selectAccountKbGuard = (route: ActivatedRouteSnapshot) => {
         return router.createUrlTree(['/select']);
       }
       return true;
+    }),
+    catchError(() => {
+      return of(router.createUrlTree(['/user/logout']));
     }),
   );
 };
