@@ -22,6 +22,7 @@ import { CalculatorComponent } from './calculator/calculator.component';
 import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
 import { UsageComponent } from './usage/usage.component';
+import { RedirectComponent } from './redirect.component';
 
 const routes: Routes = [
   {
@@ -30,8 +31,8 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'subscriptions',
         pathMatch: 'full',
+        component: RedirectComponent,
       },
       {
         path: 'subscriptions',
@@ -73,6 +74,7 @@ const routes: Routes = [
     CalculatorComponent,
     ReviewComponent,
     FeaturesComponent,
+    RedirectComponent,
     UsageComponent,
   ],
   exports: [],
