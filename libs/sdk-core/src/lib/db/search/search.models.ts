@@ -17,19 +17,9 @@ export interface SortOption {
   order?: SortOrder;
 }
 
-export interface SearchOptions {
-  // non API-official options
-  inTitleOnly?: boolean;
-  isAdvanced?: boolean;
-
-  // API options
-  highlight?: boolean;
-  faceted?: string[];
-  filters?: string[];
+export interface BaseSearchOptions {
   fields?: string[];
-  sort?: SortOption;
-  page_number?: number;
-  page_size?: number;
+  filters?: string[];
   min_score?: number;
   range_creation_start?: string;
   range_creation_end?: string;
@@ -37,8 +27,21 @@ export interface SearchOptions {
   range_modification_end?: string;
   show?: ResourceProperties[];
   extracted?: ExtractedDataTypes[];
-  field_type?: FIELD_TYPE[];
+  field_type_filter?: FIELD_TYPE[];
   shards?: string[];
+}
+
+export interface SearchOptions extends BaseSearchOptions {
+  // non API-official options
+  inTitleOnly?: boolean;
+  isAdvanced?: boolean;
+
+  // API options
+  highlight?: boolean;
+  faceted?: string[];
+  sort?: SortOption;
+  page_number?: number;
+  page_size?: number;
   with_status?: ResourceStatus;
   with_duplicates?: boolean;
   with_synonyms?: boolean;

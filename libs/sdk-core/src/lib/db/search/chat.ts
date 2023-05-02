@@ -1,7 +1,7 @@
 import { map, Observable } from 'rxjs';
 import type { INuclia } from '../../models';
 import { Chat } from './chat.models';
-import type { Search } from './search.models';
+import type { BaseSearchOptions, Search } from './search.models';
 import { ResourceProperties } from '../kb';
 
 const END_OF_STREAM = '_END_';
@@ -12,6 +12,7 @@ export function chat(
   query: string,
   context: Chat.ContextEntry[] = [],
   features: Chat.Features[] = [Chat.Features.PARAGRAPHS],
+  options: BaseSearchOptions = {},
 ): Observable<Chat.Answer> {
   let sourcesLength = 0;
   let sources: Search.FindResults | undefined;
@@ -22,6 +23,7 @@ export function chat(
       context,
       show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
       features: features.length > 0 ? features : undefined,
+      ...options,
     })
     .pipe(
       map(({ data, incomplete, headers }) => {

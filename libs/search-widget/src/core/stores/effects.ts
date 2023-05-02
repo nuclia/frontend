@@ -100,7 +100,14 @@ export function initAnswer() {
           chat.pipe(
             take(1),
             map((chat) => chat.filter((chat) => !chat.answer.incomplete)),
-            switchMap((chat) => getAnswer(question, chat).pipe(map((answer) => ({ question, answer })))),
+            switchMap((chat) =>
+              searchFilters.pipe(
+                take(1),
+                switchMap((filters) =>
+                  getAnswer(question, chat, filters).pipe(map((answer) => ({ question, answer }))),
+                ),
+              ),
+            ),
           ),
         ),
       )
