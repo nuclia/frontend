@@ -12,13 +12,13 @@ export const find = (
   useGet?: boolean,
 ): Observable<Search.FindResults | IErrorResponse> => {
   const params: { [key: string]: string | string[] } = {};
-  if (options?.isAdvanced) {
+  const { inTitleOnly, isAdvanced, ...others } = options || {};
+  if (isAdvanced) {
     params['advanced_query'] = query || '';
   } else {
     params['query'] = query || '';
   }
   params['features'] = features;
-  const { inTitleOnly, ...others } = options || {};
   if (inTitleOnly) {
     params['fields'] = ['a/title'];
   }
@@ -48,9 +48,13 @@ export const search = (
   useGet?: boolean,
 ): Observable<Search.Results | IErrorResponse> => {
   const params: { [key: string]: string | string[] } = {};
-  params['query'] = query || '';
+  const { inTitleOnly, isAdvanced, ...others } = options || {};
+  if (isAdvanced) {
+    params['advanced_query'] = query || '';
+  } else {
+    params['query'] = query || '';
+  }
   params['features'] = features;
-  const { inTitleOnly, ...others } = options || {};
   if (inTitleOnly) {
     params['fields'] = ['a/title'];
   }

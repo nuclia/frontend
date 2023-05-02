@@ -94,7 +94,15 @@ export class Rest implements IRest {
         if (!res.ok) {
           throw new Error(`${res.status}`);
         }
-        return doNotParse ? res : res.json();
+        return doNotParse
+          ? res
+          : res.json().then(
+              (json) => json,
+              () => {
+                console.warn(`${path} did not return a valid JSON`);
+                return undefined;
+              },
+            );
       }),
     );
   }
@@ -114,7 +122,7 @@ export class Rest implements IRest {
       path.startsWith('/auth') ||
       path.startsWith('/export') ||
       path.startsWith('/billing') ||
-      path.startsWith('/configuration')||
+      path.startsWith('/configuration') ||
       path.startsWith('/manage')
         ? ''
         : '/v1';
