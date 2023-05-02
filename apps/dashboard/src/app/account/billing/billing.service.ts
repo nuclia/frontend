@@ -7,6 +7,7 @@ import {
   AccountUsage,
   BillingDetails,
   Currency,
+  PaymentMethod,
   Prices,
   StripeCustomer,
   StripeSubscription,
@@ -66,6 +67,15 @@ export class BillingService {
 
   getStripePublicKey() {
     return this.sdk.nuclia.rest.get<{ public_key: string }>(`/billing/stripe/public`);
+  }
+
+  createPaymentMethod(data: { token: string }) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.post<PaymentMethod>(`/billing/account/${account.id}/payment_methods`, data),
+      ),
+    );
   }
 
   createSubscription(data: StripeSubscriptionCreation) {

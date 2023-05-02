@@ -15,6 +15,7 @@ import {
   delay,
   filter,
   distinctUntilChanged,
+  map,
   shareReplay,
   switchMap,
   take,
@@ -25,7 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
-import { StripeCustomer } from '../billing.models';
+import { StripeCustomer, SubsciptionError } from '../billing.models';
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
@@ -62,7 +63,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     vat: 'billing.invalid_vat',
   } as IErrorMessages;
 
-  subscribing = false;
+  loading = false;
   countries = COUNTRIES;
   requiredVatCountries = REQUIRED_VAT_COUNTRIES;
   countryList = Object.entries(COUNTRIES)
@@ -103,6 +104,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   validCard = false;
   editCard = false;
   token?: any;
+  paymentMethodId?: string;
 
   unsubscribeAll = new Subject<void>();
 
@@ -214,9 +216,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         }
       },
       error: (error) => {
-        if (error.status === 422) {
-          // TODO: for an unknown reason `error.json()` is not working
+        if (error.status === 422 && error.body?.detail?.[0]?.loc?.includes('vat')) {
           this.customerForm.controls.vat.setErrors({ vat: true });
+          this.customerForm.controls.vat.markAsDirty();
+          this.showError('billing.invalid_vat');
         } else {
           this.showError();
         }
@@ -248,22 +251,44 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     });
   }
 
-  getToken() {
+  createPaymentMethod() {
+    this.loading = true;
     from(
       this._stripe.createToken(this.card, {
         name: this.cardName.value,
         address_country: this.customer?.billing_details.country,
         address_zip: this.customer?.billing_details.postal_code,
       }),
-    ).subscribe((data: any) => {
-      if (data.error) {
-        this.showError(data.error.message);
-      } else if (data.token) {
-        this.token = data.token;
-        this.editCard = false;
-        this.cdr.markForCheck();
-      }
-    });
+    )
+      .pipe(
+        tap((data: any) => {
+          if (data.error) {
+            throw new Error(data.error.message);
+          }
+        }),
+        switchMap((data: any) =>
+          this.billingService.createPaymentMethod({ token: data.token.id }).pipe(
+            catchError(() => {
+              throw new Error('billing.invalid_card');
+            }),
+            map((result) => [result, data.token]),
+          ),
+        ),
+      )
+      .subscribe({
+        next: ([result, token]) => {
+          this.token = token;
+          this.paymentMethodId = result.payment_method_id;
+          this.editCard = false;
+          this.loading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.loading = false;
+          this.showError(error.message);
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   showCardForm() {
@@ -277,23 +302,28 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         take(1),
         filter((result) => !!result),
         tap(() => {
-          this.subscribing = true;
+          this.loading = true;
           this.cdr?.markForCheck();
         }),
         switchMap(() =>
           this.billingService
             .createSubscription({
-              payment_method_id: this.token.id,
+              payment_method_id: this.paymentMethodId!,
               on_demand_budget: parseInt(this.budget.value),
               account_type: this.accountType!,
             })
             .pipe(
               catchError((error) => {
-                if (error.status === 400) {
-                  // Error with the card
-                  throw new Error('billing.card_error');
+                if (error.body?.error_code === SubsciptionError.PAYMENT_METHOD_NOT_ATTACHED) {
+                  this.editCard = true;
+                  this.token = undefined;
+                  this.paymentMethodId = undefined;
+                  throw new Error('billing.invalid_card');
+                } else if (error.body?.error_code === SubsciptionError.INVALID_ADDRESS) {
+                  this.editCustomer = true;
+                  throw new Error('billing.invalid_address');
                 }
-                throw error;
+                throw new Error();
               }),
             ),
         ),
@@ -316,7 +346,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
               }),
             );
           } else {
-            // Other card errors
+            // Other errors
             throw new Error();
           }
         }),
@@ -335,7 +365,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.router.navigateByUrl(`${this.navigation.getAccountUrl(newAccount.slug)}/manage/home`);
         },
         error: (error) => {
-          this.subscribing = false;
+          this.loading = false;
           this.cdr?.markForCheck();
           this.showError(error.message);
         },
@@ -344,9 +374,11 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   showError(message?: string) {
     this.toaster.error(
-      (message || this.translate.instant('generic.error.oops')) +
-        '<br>' +
-        this.translate.instant('billing.assistance', { url: 'mailto:billing@nuclia.com' }),
+      message
+        ? this.translate.instant(message)
+        : this.translate.instant('generic.error.oops') +
+            '<br>' +
+            this.translate.instant('billing.assistance', { url: 'mailto:billing@nuclia.com' }),
     );
   }
 

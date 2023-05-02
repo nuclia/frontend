@@ -262,8 +262,8 @@
           <div class="card-error">{{ cardError }}</div>
         </div>
         <pa-button
-          (click)="getToken()"
-          [disabled]="cardName.invalid || !validCard"
+          (click)="createPaymentMethod()"
+          [disabled]="cardName.invalid || !validCard || loading"
           kind="primary">
           {{ 'billing.save_continue' | translate }}
         </pa-button>
@@ -304,11 +304,11 @@
         </div>
         <pa-button
           (click)="doSubscribe()"
-          [disabled]="editCustomer || editCard || budget.invalid || subscribing"
+          [disabled]="editCustomer || editCard || budget.invalid || loading"
           kind="primary">
           {{ 'billing.review_confirm' | translate }}
         </pa-button>
-        <nsi-spinner *ngIf="subscribing"></nsi-spinner>
+        <nsi-spinner *ngIf="loading"></nsi-spinner>
       </div>
     </div>
   </div>

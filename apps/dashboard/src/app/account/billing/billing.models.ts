@@ -52,6 +52,11 @@ export enum RecurrentPriceInterval {
   YEARLY = 'yearly',
 }
 
+export interface PaymentMethod {
+  payment_method_id: string;
+  payment_method_type: string;
+}
+
 export interface StripeSubscriptionCreation {
   payment_method_id: string;
   on_demand_budget: number;
@@ -66,6 +71,11 @@ export interface StripeSubscription {
   requires_action: boolean;
   client_secret: string;
   error?: { code: string; decline_code: string };
+}
+
+export enum SubsciptionError {
+  INVALID_ADDRESS = 'customer_tax_location_invalid',
+  PAYMENT_METHOD_NOT_ATTACHED = 'payment_method_not_attached',
 }
 
 export interface AccountTypeDefaults {
