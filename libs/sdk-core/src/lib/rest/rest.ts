@@ -92,7 +92,14 @@ export class Rest implements IRest {
         body: specialContentType ? body : JSON.stringify(body),
       }).then((res) => {
         if (!res.ok) {
-          throw new Error(`${res.status}`);
+          return res.json().then(
+            (body) => {
+              throw { status: res.status, body };
+            },
+            () => {
+              throw { status: res.status };
+            },
+          );
         }
         return doNotParse
           ? res
