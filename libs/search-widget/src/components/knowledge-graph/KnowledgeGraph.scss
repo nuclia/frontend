@@ -6,9 +6,37 @@
   .left-panel {
     flex: 0 0 auto;
     width: var(--rhythm-22);
+
+    .ner-families-container {
+      background: var(--color-light-stronger);
+
+      .title-s,
+      li {
+        align-items: center;
+        display: flex;
+        height: var(--rhythm-5);
+      }
+
+      ul.ner-families {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          box-shadow: inset 0 1px 0 var(--color-neutral-light);
+          gap: var(--rhythm-2);
+          text-transform: capitalize;
+
+          .family-color {
+            height: 100%;
+            width: var(--rhythm-1);
+          }
+        }
+      }
+    }
   }
   .knowledge-graph-container {
     background: var(--color-light-stronger);
-    flex: 1 0 auto;
+    flex: 1 1 auto;
   }
 }

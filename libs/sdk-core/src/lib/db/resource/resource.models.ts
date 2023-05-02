@@ -246,10 +246,16 @@ export interface FieldMetadata {
   language?: string;
   summary?: string;
   positions?: EntityPositions;
+  relations?: Relation[];
 }
 
 export interface EntityPositions {
-  [entityId: string]: { entity: string; position: { start: number; end: number }[] };
+  [entityId: string]: EntityPosition;
+}
+
+export interface EntityPosition {
+  entity: string;
+  position: { start: number; end: number }[];
 }
 
 export interface UserFieldMetadata {
