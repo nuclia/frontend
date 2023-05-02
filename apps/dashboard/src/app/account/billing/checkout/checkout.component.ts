@@ -219,6 +219,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         if (error.status === 422 && error.body?.detail?.[0]?.loc?.includes('vat')) {
           this.customerForm.controls.vat.setErrors({ vat: true });
           this.customerForm.controls.vat.markAsDirty();
+          this.cdr?.markForCheck();
           this.showError('billing.invalid_vat');
         } else {
           this.showError();
