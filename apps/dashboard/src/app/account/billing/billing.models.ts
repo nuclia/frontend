@@ -52,6 +52,11 @@ export enum RecurrentPriceInterval {
   YEARLY = 'yearly',
 }
 
+export interface PaymentMethod {
+  payment_method_id: string;
+  payment_method_type: string;
+}
+
 export interface StripeSubscriptionCreation {
   payment_method_id: string;
   on_demand_budget: number;
@@ -68,6 +73,11 @@ export interface StripeSubscription {
   error?: { code: string; decline_code: string };
 }
 
+export enum SubsciptionError {
+  INVALID_ADDRESS = 'customer_tax_location_invalid',
+  PAYMENT_METHOD_NOT_ATTACHED = 'payment_method_not_attached',
+}
+
 export interface AccountTypeDefaults {
   max_kbs: number;
   max_dedicated_processors: number;
@@ -82,4 +92,20 @@ export interface AccountTypeDefaults {
   monthly_limit_self_hosted_answers_generated: number;
   upload_limit_max_media_file_size: number;
   upload_limit_max_non_media_file_size: number;
+}
+
+export interface InvoiceItem {
+  threshold: number;
+  current_usage: number;
+  price: number;
+  over_usage: number;
+  over_cost: number;
+}
+
+export interface AccountUsage {
+  budget: number;
+  currency: Currency;
+  invoice_items: { [key in UsageType]: InvoiceItem };
+  start_billing_date: string;
+  end_billing_date: string;
 }

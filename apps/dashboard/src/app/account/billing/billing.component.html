@@ -18,6 +18,13 @@
           {{ 'billing.payment_details' | translate }}
         </a>
       </li>
+      <li *ngIf="isSubscribed | async">
+        <a
+          [routerLink]="'./usage'"
+          routerLinkActive="active">
+          {{ 'billing.usage.consumption' | translate }}
+        </a>
+      </li>
     </ul>
     <div></div>
   </div>

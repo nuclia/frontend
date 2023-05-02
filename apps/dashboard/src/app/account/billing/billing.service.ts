@@ -4,8 +4,10 @@ import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } fro
 import { AccountTypes } from '@nuclia/core';
 import {
   AccountTypeDefaults,
+  AccountUsage,
   BillingDetails,
   Currency,
+  PaymentMethod,
   Prices,
   StripeCustomer,
   StripeSubscription,
@@ -15,6 +17,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
+  isSubscribed = this.type.pipe(map((type) => type !== 'stash-basic' && type !== 'stash-trial'));
 
   private _country = new BehaviorSubject<string | null>(null);
   country = this._country.asObservable();
@@ -66,6 +69,15 @@ export class BillingService {
     return this.sdk.nuclia.rest.get<{ public_key: string }>(`/billing/stripe/public`);
   }
 
+  createPaymentMethod(data: { token: string }) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.post<PaymentMethod>(`/billing/account/${account.id}/payment_methods`, data),
+      ),
+    );
+  }
+
   createSubscription(data: StripeSubscriptionCreation) {
     return this.sdk.currentAccount.pipe(
       take(1),
@@ -103,5 +115,13 @@ export class BillingService {
 
   getAccountTypes(): Observable<{ [key in AccountTypes]: AccountTypeDefaults }> {
     return this.sdk.nuclia.rest.get<{ [key in AccountTypes]: AccountTypeDefaults }>(`/configuration/account_types`);
+  }
+
+  getAccountUsage(): Observable<AccountUsage> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.get<AccountUsage>(`/billing/account/${account.id}/current_usage`)),
+      map((usage) => ({ ...usage, currency: usage.currency.toUpperCase() as Currency })),
+    );
   }
 }

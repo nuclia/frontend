@@ -126,20 +126,26 @@
     <tr>
       <td>{{ 'billing.quotas.medias' | translate }}</td>
       <td>
-        <div>{{ defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 }} {{ 'hours' | translate }}</div>
+        <div *ngIf="defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 as hours">
+          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
+        </div>
         <div class="unit">
           {{ 'billing.quotas.up-to' | translate }} {{ defaults['stash-trial'].upload_limit_max_media_file_size | size }}
         </div>
       </td>
       <td>
-        <div>{{(prices | async)?.['stash-developer'].usage['media'].threshold }} {{ 'hours' | translate }}</div>
+        <div *ngIf="(prices | async)?.['stash-developer'].usage['media'].threshold as hours">
+          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
+        </div>
         <div class="unit">
           {{ 'billing.quotas.up-to' | translate }}
           {{ defaults['stash-developer'].upload_limit_max_media_file_size | size }}
         </div>
       </td>
       <td>
-        <div>{{(prices | async)?.['stash-business'].usage['media'].threshold}} {{ 'hours' | translate }}</div>
+        <div *ngIf="(prices | async)?.['stash-business'].usage['media'].threshold as hours">
+          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
+        </div>
         <div class="unit">
           {{ 'billing.quotas.up-to' | translate }}
           {{ defaults['stash-business'].upload_limit_max_media_file_size | size }}
