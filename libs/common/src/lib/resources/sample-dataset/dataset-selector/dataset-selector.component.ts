@@ -54,7 +54,8 @@ export class DatasetSelectorComponent {
         loadingModal.close();
         this.imported.emit(true);
       },
-      error: () => {
+      error: (err) => {
+        console.log(err);
         this.toaster.error('onboarding.dataset.import_failed');
         this.importing = false;
         loadingModal.close();
