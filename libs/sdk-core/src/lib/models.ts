@@ -13,6 +13,7 @@ import type {
   LearningConfigurations,
   NUAClient,
   NUAClientPayload,
+  PredictedToken,
   ProcessingPullResponse,
   ProcessingPushResponse,
   ProcessingStat,
@@ -118,12 +119,14 @@ export interface IDb {
   hasNUAClient(): boolean;
   getNUAActivity(accountSlug: string, client_id: string, pageIndex?: number): Observable<EventList>;
   getLearningConfigurations(): Observable<LearningConfigurations>;
+  predictTokens(text: string): Observable<PredictedToken[]>;
 }
 
 export interface NucliaOptions {
   backend: string;
   zone?: string;
   apiKey?: string;
+  nuaKey?: string;
   account?: string;
   accountType?: AccountTypes;
   knowledgeBox?: string;

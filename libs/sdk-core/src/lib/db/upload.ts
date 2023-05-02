@@ -15,7 +15,6 @@ import {
   take,
 } from 'rxjs';
 import type { INuclia } from '../models';
-import { NUA_KEY } from './db.models';
 import type { ICreateResource } from './resource';
 
 const CHUNK_SIZE = 512 * 1024; // minimum size accepted by GCS
@@ -282,9 +281,14 @@ export const batchUpload = (
   );
 };
 
-export const uploadToProcess = (nuclia: INuclia, file: File, metadata?: FileMetadata): Observable<string> => {
+export const uploadToProcess = (
+  nuclia: INuclia,
+  nuaKey: string,
+  file: File,
+  metadata?: FileMetadata,
+): Observable<string> => {
   const headers = {
-    'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+    'x-stf-nuakey': `Bearer ${nuaKey}`,
     'content-type': metadata?.contentType || 'application/octet-stream',
     ...getFileMetadata(metadata),
   };

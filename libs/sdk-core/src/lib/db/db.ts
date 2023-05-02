@@ -1,11 +1,10 @@
 import { catchError, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IDb, INuclia } from '../models';
-import type { LearningConfigurations } from './db.models';
+import type { LearningConfigurations, PredictedToken } from './db.models';
 import {
   Account,
   AccountCreation,
   AccountStatus,
-  NUA_CLIENT,
   NUA_KEY,
   NUAClient,
   NUAClientPayload,
@@ -142,7 +141,7 @@ export class Db implements IDb {
     if (!this.hasNUAClient()) {
       throw new Error('NUA key is needed to be able to call /process');
     }
-    return uploadToProcess(this.nuclia, file, { md5: file.md5 }).pipe(
+    return uploadToProcess(this.nuclia, this.getNUAKey(), file, { md5: file.md5 }).pipe(
       switchMap((token) =>
         this.nuclia.rest.post<ProcessingPushResponse>(
           '/processing/push',
@@ -204,12 +203,16 @@ export class Db implements IDb {
   }
 
   hasNUAClient(): boolean {
-    return !!localStorage.getItem(NUA_CLIENT) && !!localStorage.getItem(NUA_KEY);
+    return !!this.getNUAKey();
+  }
+
+  getNUAKey(): string {
+    return this.nuclia.options.nuaKey || '';
   }
 
   getNUAHeader(): { 'x-stf-nuakey': string } {
     return {
-      'x-stf-nuakey': `Bearer ${localStorage.getItem(NUA_KEY)}`,
+      'x-stf-nuakey': `Bearer ${this.getNUAKey()}`,
     };
   }
 
@@ -229,8 +232,8 @@ export class Db implements IDb {
       }),
       tap((key) => {
         if (this.nuclia.options.client === 'desktop') {
+          this.nuclia.options.nuaKey = key.token;
           localStorage.setItem(NUA_KEY, key.token);
-          localStorage.setItem(NUA_CLIENT, key.client_id);
         }
       }),
     );
@@ -249,5 +252,17 @@ export class Db implements IDb {
 
   getLearningConfigurations(): Observable<LearningConfigurations> {
     return this.nuclia.rest.get<LearningConfigurations>('/learning/configuration/schema');
+  }
+
+  predictTokens(text: string): Observable<PredictedToken[]> {
+    if (!this.hasNUAClient()) {
+      throw new Error('NUA key is needed to be able to call /predict');
+    }
+    return this.nuclia.rest
+      .get<{
+        tokens: PredictedToken[];
+        time: number;
+      }>(`/predict/tokens?text=${encodeURIComponent(text)}`, this.getNUAHeader())
+      .pipe(map((response) => response.tokens));
   }
 }
