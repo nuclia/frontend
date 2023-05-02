@@ -70,7 +70,7 @@ jobs:
           (test -d dist/libs/search-widget && echo "deploy-widget=yes" >> $GITHUB_OUTPUT) || echo "Widget unchanged"
           (test -d dist/apps/dashboard && echo "deploy-app=yes" >> $GITHUB_OUTPUT) || echo "Dashboard unchanged"
           (test -d dist/apps/contributor && echo "deploy-contributor=yes" >> $GITHUB_OUTPUT) || echo "Contributor unchanged"
-          (test -d dist/apps/manager && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
+          (test -d dist/apps/manager-v2 && echo "deploy-manager=yes" >> $GITHUB_OUTPUT) || echo "Manager unchanged"
           ((test -d dist/apps/desktop || test -d dist/apps/desktop-electron) && echo "deploy-desktop=yes" >> $GITHUB_OUTPUT) || echo "Desktop unchanged"
           (test -d dist/apps/sistema-demo && echo "deploy-sistema=yes" >> $GITHUB_OUTPUT) || echo "Sistema demo unchanged"
           (test -d dist/sdk-core && echo "deploy-sdk=yes" >> $GITHUB_OUTPUT) || echo "SDK unchanged"
@@ -128,7 +128,7 @@ jobs:
       - name: Build manager image
         if: steps.check-deploy.outputs.deploy-manager == 'yes'
         run: |-
-          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager .
+          docker build -t $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} -f docker/Dockerfile  --build-arg appId=manager --build-arg appFolder=manager-v2 .
           docker tag $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA} $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:${SHORT_SHA}
           docker push $CONTAINER_REGISTRY/$MANAGER_IMAGE_NAME:main
