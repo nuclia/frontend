@@ -27,7 +27,7 @@ import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from
 import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
-import type { Chat } from '../search';
+import type { BaseSearchOptions, Chat } from '../search';
 import { catalog, chat, find, Search, search, SearchOptions } from '../search';
 import { Training } from '../training';
 
@@ -150,8 +150,13 @@ export class KnowledgeBox implements IKnowledgeBox {
     return new Resource(this.nuclia, this.id, data);
   }
 
-  chat(query: string, context?: Chat.ContextEntry[], features?: Chat.Features[]): Observable<Chat.Answer> {
-    return chat(this.nuclia, this.path, query, context, features);
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+    options?: BaseSearchOptions,
+  ): Observable<Chat.Answer> {
+    return chat(this.nuclia, this.path, query, context, features, options);
   }
 
   find(

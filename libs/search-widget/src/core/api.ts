@@ -72,7 +72,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
   );
 };
 
-export const getAnswer = (query: string, chat?: Chat.Entry[]) => {
+export const getAnswer = (query: string, chat?: Chat.Entry[], filters?: string[]) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -82,7 +82,7 @@ export const getAnswer = (query: string, chat?: Chat.Entry[]) => {
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  return nucliaApi.knowledgeBox.chat(query, context);
+  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], { filters });
 };
 
 export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {
