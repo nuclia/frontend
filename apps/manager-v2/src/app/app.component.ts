@@ -14,9 +14,9 @@ const userLocaleKey = 'NUCLIA_USER_LOCALE';
 })
 export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
-  version?: string;
 
   private unsubscribeAll: Subject<void> = new Subject<void>();
+  version?: string;
 
   constructor(
     private config: BackendConfigurationService,
