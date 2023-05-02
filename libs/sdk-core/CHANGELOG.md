@@ -1,14 +1,17 @@
-# 1.3.1 (unreleased)
+# 1.3.1 (2023-05-02)
 
 ### Improvements
+
 - Add `title` and `color` properties to `UpdateEntitiesGroupPayload` model
 - Update `Account` and `AccountLimits` models
 - Create `AccountBlockingState` and `BlockedFeature` models for the new `blocking_state` and `blocked_features` properties in `Account`
+- Support `predict/tokens` endpoint
 
 # 1.3.0 (2023-04-18)
 
 ### Breaking changes
-- Rename `setEntitiesGroup` into `createEntitiesGroup` and call the new POST `/kb/{kbid}/entitiesgroups` endpoint replacing deprecated POST to `/kb/{kbid}/entitiesgroups/{group}` 
+
+- Rename `setEntitiesGroup` into `createEntitiesGroup` and call the new POST `/kb/{kbid}/entitiesgroups` endpoint replacing deprecated POST to `/kb/{kbid}/entitiesgroups/{group}`
 - Add method `updateEntitiesGroup` allowing to PATCH existing entity groups using the new `UpdateEntitiesGroupPayload` payload.
 
 ### Improvements
@@ -22,7 +25,7 @@
 
 - Support Kb configuration endpoints
 - Add `error` property in `IFieldData` and corresponding `IError` interface
-- catch error and return an empty label set on `kb.getLabels` method 
+- catch error and return an empty label set on `kb.getLabels` method
 - Add common `IErrorResponse` interface
 - Better error management for search, find, catalog and suggest endpoints
 

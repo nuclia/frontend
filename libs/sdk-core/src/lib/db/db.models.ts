@@ -8,7 +8,6 @@ export type AccountTypes =
   | 'stash-enterprise';
 
 export const NUA_KEY = 'NUCLIA_NUA_KEY';
-export const NUA_CLIENT = 'NUCLIA_NUA_CLIENT';
 
 export interface Account {
   id: string;
@@ -184,3 +183,10 @@ export interface LearningConfiguration {
 }
 
 export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];
+
+export interface PredictedToken {
+  text: string;
+  ner: string;
+  start: number;
+  end: number;
+}
