@@ -278,6 +278,8 @@ jobs:
       - name: Build electron app
         run: |-
           npx nx build desktop-electron --configuration production
+          npx tsc -p apps/desktop/electron/tsconfig.server.json
+          cp -r dist/service ./dist/apps/desktop-electron/assets
       - name: Install the Apple certificate
         if: startsWith(matrix.os, 'macos')
         env:
