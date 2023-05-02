@@ -32,7 +32,7 @@ export class NucliaCloud {
         switchMap((kb) =>
           kb.getResourceBySlug(slug, [], []).pipe(
             catchError((error) => {
-              if (error.message === '404') {
+              if (error.status === '404') {
                 return kb
                   .createResource({ slug, title: filename }, true)
                   .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
