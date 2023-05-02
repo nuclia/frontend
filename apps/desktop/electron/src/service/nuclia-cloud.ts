@@ -32,12 +32,12 @@ export class NucliaCloud {
         switchMap((kb) =>
           kb.getResourceBySlug(slug, [], []).pipe(
             catchError((error) => {
-              if (error.status === '404') {
+              if (error.status === 404) {
                 return kb
                   .createResource({ slug, title: filename }, true)
                   .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
               } else {
-                console.error(`Problem creating ${slug}, status ${error.message}`);
+                console.error(`Problem creating ${slug}, status ${error.status}`);
                 return of(undefined);
               }
             }),
