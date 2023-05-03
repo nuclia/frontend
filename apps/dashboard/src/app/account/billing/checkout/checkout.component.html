@@ -3,7 +3,7 @@
     <h2>{{ 'billing.payment_details' | translate }}</h2>
   </div>
 
-  <div>
+  <div *ngIf="subscribeMode">
     <div class="section-header">
       <div class="section-title">
         <pa-icon name="circle-check"></pa-icon>
@@ -137,7 +137,7 @@
               for="country">
               {{ 'billing.country' | translate }} *
             </label>
-            <pa-select
+            <pa-typeahead-select
               id="country"
               formControlName="country"
               [readonly]="!!customer"
@@ -148,7 +148,7 @@
                 [value]="country.code">
                 {{ country.name }}
               </pa-option>
-            </pa-select>
+            </pa-typeahead-select>
           </div>
         </div>
         <div class="field-line">
@@ -192,7 +192,7 @@
           (click)="saveCustomer()"
           [disabled]="!customerForm.valid"
           kind="primary">
-          {{ 'billing.save_continue' | translate }}
+          {{ (subscribeMode ? 'billing.save_continue' : 'generic.save') | translate }}
         </pa-button>
       </form>
       <div
@@ -214,7 +214,7 @@
     </div>
   </div>
 
-  <div>
+  <div *ngIf="subscribeMode">
     <div class="section-header">
       <div class="section-title">
         <pa-icon
@@ -303,10 +303,18 @@
           </span>
         </div>
         <pa-button
+          *ngIf="subscribeMode"
           (click)="doSubscribe()"
           [disabled]="editCustomer || editCard || budget.invalid || loading"
           kind="primary">
           {{ 'billing.review_confirm' | translate }}
+        </pa-button>
+        <pa-button
+          *ngIf="!subscribeMode"
+          (click)="saveBudget()"
+          [disabled]="loading"
+          kind="primary">
+          {{ 'generic.save' | translate }}
         </pa-button>
         <nsi-spinner *ngIf="loading"></nsi-spinner>
       </div>

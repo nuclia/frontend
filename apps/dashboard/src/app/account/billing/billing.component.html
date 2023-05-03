@@ -11,7 +11,7 @@
       </li>
       <li>
         <a
-          [routerLink]="(isCheckoutActive | async) ? './checkout' : undefined"
+          [routerLink]="(isCheckoutActive | async) || (isSubscribed | async) ? './checkout' : undefined"
           class="link"
           routerLinkActive="active"
           queryParamsHandling="preserve">

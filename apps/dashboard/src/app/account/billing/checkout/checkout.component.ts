@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, from, of, Subject } from 'rxjs';
+import { combineLatest, forkJoin, from, of, Subject } from 'rxjs';
 import {
   catchError,
   delay,
@@ -70,7 +70,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  accountType: AccountTypes = 'stash-developer';
+  accountType?: AccountTypes;
+  get subscribeMode() {
+    return !!this.accountType;
+  }
   prices = this.billingService.getPrices().pipe(shareReplay());
   updateCurrency = new Subject<string>();
   currency = this.updateCurrency.pipe(
@@ -122,7 +125,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     private translate: TranslateService,
   ) {
     this.initForms();
-    this.initStripe();
   }
 
   ngOnInit() {
@@ -134,11 +136,17 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.customerForm.controls.country.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((country) => {
       this.updateCustomerValidation({ country });
     });
-    this.route.queryParams.pipe(take(1)).subscribe((params) => {
-      if (params['type']) {
-        this.accountType = params['type'];
-      }
-    });
+    combineLatest([
+      this.sdk.currentAccount.pipe(map((account) => account.type)),
+      this.route.queryParams.pipe(map((params) => params['type'])),
+    ])
+      .pipe(take(1))
+      .subscribe(([currentType, nextType]) => {
+        if (nextType && currentType !== nextType) {
+          this.accountType = nextType;
+          this.initStripe();
+        }
+      });
   }
 
   ngOnDestroy() {
@@ -220,7 +228,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.customerForm.controls.vat.setErrors({ vat: true });
           this.customerForm.controls.vat.markAsDirty();
           this.cdr?.markForCheck();
-          this.showError('billing.invalid_vat');
         } else {
           this.showError();
         }
@@ -272,12 +279,12 @@ export class CheckoutComponent implements OnDestroy, OnInit {
             catchError(() => {
               throw new Error('billing.invalid_card');
             }),
-            map((result) => [result, data.token]),
+            map((result) => ({ result, token: data.token })),
           ),
         ),
       )
       .subscribe({
-        next: ([result, token]) => {
+        next: ({ result, token }) => {
           this.token = token;
           this.paymentMethodId = result.payment_method_id;
           this.editCard = false;
@@ -298,6 +305,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   doSubscribe() {
+    if (!this.accountType) return;
     this.openReview()
       .pipe(
         take(1),
@@ -390,15 +398,19 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.modalService.openModal(ReviewComponent, {
             dismissable: true,
             data: {
-              account: this.accountType,
+              account: this.accountType!,
               customer: this.customer,
               token: this.token,
-              prices: prices[this.accountType],
+              prices: prices[this.accountType!],
               budget: this.budget.value,
               currency,
             },
           }).onClose,
       ),
     );
+  }
+
+  saveBudget() {
+    // TODO: save budget
   }
 }
