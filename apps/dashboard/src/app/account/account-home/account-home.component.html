@@ -1,6 +1,13 @@
 <div class="account-home">
   <div class="container-row">
-    <div class="processing-stats">
+    <div
+      class="container-table"
+      *ngIf="hasUsageData | async">
+      <app-usage-table [usage]="usage | async"></app-usage-table>
+    </div>
+    <div
+      class="processing-stats"
+      *ngIf="!(hasUsageData | async)">
       <pa-tabs
         noSlider
         notFullWidth>
