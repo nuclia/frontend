@@ -709,6 +709,7 @@
 	"stash.settings.processes.training.agreement": "Acepto los cargos incurridos al seleccionar esta opción",
 	"stash.settings.processes.training.consult-history": "Consulta todos los datos y el estado de los entrenamientos realizados o en curso",
 	"stash.settings.processes.training.last_run": "Última ejecución: {{ runDate }}",
+	"stash.settings.processes.training.ner.contact": "Dependiendo de su conjunto de datos, esta capacitación podría no ser efectiva. Para evaluar si la formación de NER es relevante en su caso, <a href=\"mailto:{{email}}\">póngase en contacto con nosotros</a>.",
 	"stash.settings.processes.training.no-resources": "Los entrenamientos no están disponibles en cajas de conocimiento vacías.",
 	"stash.settings.processes.training.not-allowed": "Los entrenamientos no están disponibles en las cuentas básicas.",
 	"stash.settings.processes.training.select-entities": "Escoger grupo de entidades",
