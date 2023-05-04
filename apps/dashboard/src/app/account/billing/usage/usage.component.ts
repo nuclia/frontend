@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { map } from 'rxjs';
+import { FormControl, Validators } from '@angular/forms';
+import { shareReplay, take } from 'rxjs';
 import { BillingService } from '../billing.service';
-import { shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-usage',
@@ -10,15 +10,16 @@ import { shareReplay } from 'rxjs/operators';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsageComponent {
-  paramsToShow = ['media', 'paragraphs', 'searches', 'qa', 'training-hours'];
   usage = this.billing.getAccountUsage().pipe(shareReplay());
-  invoiceItems = this.usage.pipe(
-    map((usage) =>
-      Object.entries(usage.invoice_items)
-        .filter(([type]) => this.paramsToShow.includes(type))
-        .sort(([type1], [type2]) => this.paramsToShow.indexOf(type1) - this.paramsToShow.indexOf(type2)),
-    ),
-  );
+  budget = new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
 
-  constructor(private billing: BillingService) {}
+  constructor(private billing: BillingService) {
+    this.usage.pipe(take(1)).subscribe((usage) => {
+      this.budget.setValue(usage.budget);
+    });
+  }
+
+  save() {
+    // TODO: save budget
+  }
 }

@@ -22,6 +22,7 @@ import { CalculatorComponent } from './calculator/calculator.component';
 import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
 import { UsageComponent } from './usage/usage.component';
+import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
 
 const routes: Routes = [
@@ -76,7 +77,8 @@ const routes: Routes = [
     FeaturesComponent,
     RedirectComponent,
     UsageComponent,
+    UsageTableComponent,
   ],
-  exports: [],
+  exports: [UsageTableComponent],
 })
 export class BillingModule {}
