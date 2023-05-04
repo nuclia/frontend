@@ -23,6 +23,7 @@ export class SubscriptionsComponent {
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
   accountTypesDefaults = this.billing.getAccountTypes().pipe(shareReplay());
+  isSubscribed = this.billing.isSubscribed;
 
   constructor(
     private billing: BillingService,

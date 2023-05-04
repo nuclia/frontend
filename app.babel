@@ -2300,6 +2300,66 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.cancel_subscription</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.cancel_subscription.description</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.cancel_subscription.title</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.card_details</name>
 						<description/>
 						<comment/>
@@ -2440,7 +2500,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.cost_per_usage</name>
+						<name>billing.cost_over_limits</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2460,7 +2520,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.cost_per_usage.description</name>
+						<name>billing.cost_over_limits.description</name>
 						<description/>
 						<comment/>
 						<default_text/>

@@ -1,5 +1,9 @@
 @import 'variables';
 
+h2 {
+  margin-bottom: 0;
+}
+
 .header {
   display: flex;
   align-items: baseline;
@@ -63,5 +67,15 @@
   }
 }
 .calculator {
-  margin-top: rhythm(1);
+  margin-top: rhythm(2);
+}
+
+.cancel-subscription {
+  background-color: $color-secondary-lightest;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  padding: rhythm(3);
+  margin-top: rhythm(6);
+  max-width: rhythm(60);
 }
