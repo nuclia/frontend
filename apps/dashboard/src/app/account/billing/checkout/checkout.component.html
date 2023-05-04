@@ -3,7 +3,7 @@
     <h2>{{ 'billing.payment_details' | translate }}</h2>
   </div>
 
-  <div *ngIf="subscribeMode">
+  <div *ngIf="subscribeMode | async">
     <div class="section-header">
       <div class="section-title">
         <pa-icon name="circle-check"></pa-icon>
@@ -17,11 +17,13 @@
     </div>
     <div class="section-body">
       <div class="body-m">
-        {{ 'account.type.' + accountType | translate }}
+        {{ 'account.type.' + (accountType | async) | translate }}
         -
         <ng-container *ngIf="currency | async as currency">
           <ng-container *ngIf="prices | async as prices">
-            {{ prices[accountType].recurring.month.price | currency: currency }}/{{ 'billing.month' | translate }}
+            {{ prices[accountType | async].recurring.month.price | currency: currency }}/{{
+              'billing.month' | translate
+            }}
           </ng-container>
         </ng-container>
       </div>
@@ -192,7 +194,7 @@
           (click)="saveCustomer()"
           [disabled]="!customerForm.valid"
           kind="primary">
-          {{ (subscribeMode ? 'billing.save_continue' : 'generic.save') | translate }}
+          {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
         </pa-button>
       </form>
       <div
@@ -214,7 +216,7 @@
     </div>
   </div>
 
-  <div *ngIf="subscribeMode">
+  <div *ngIf="subscribeMode | async">
     <div class="section-header">
       <div class="section-title">
         <pa-icon
@@ -303,16 +305,16 @@
           </span>
         </div>
         <pa-button
-          *ngIf="subscribeMode"
+          *ngIf="subscribeMode | async"
           (click)="doSubscribe()"
           [disabled]="editCustomer || editCard || budget.invalid || loading"
           kind="primary">
           {{ 'billing.review_confirm' | translate }}
         </pa-button>
         <pa-button
-          *ngIf="!subscribeMode"
+          *ngIf="!(subscribeMode | async)"
           (click)="saveBudget()"
-          [disabled]="loading"
+          [disabled]="budget.pristine || loading"
           kind="primary">
           {{ 'generic.save' | translate }}
         </pa-button>

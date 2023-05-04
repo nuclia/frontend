@@ -70,10 +70,15 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  accountType?: AccountTypes;
-  get subscribeMode() {
-    return !!this.accountType;
-  }
+  accountType = combineLatest([
+    this.sdk.currentAccount.pipe(map((account) => account.type)),
+    this.route.queryParams.pipe(map((params) => params['type'])),
+  ]).pipe(
+    map(([currentType, nextType]) => (nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined)),
+    shareReplay(),
+  );
+  subscribeMode = this.accountType.pipe(map((type) => !!type));
+
   prices = this.billingService.getPrices().pipe(shareReplay());
   updateCurrency = new Subject<string>();
   currency = this.updateCurrency.pipe(
@@ -124,7 +129,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     private modalService: SisModalService,
     private translate: TranslateService,
   ) {
-    this.initForms();
+    this.initCustomer();
+    this.initStripe();
+    this.initBudget();
   }
 
   ngOnInit() {
@@ -136,17 +143,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.customerForm.controls.country.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((country) => {
       this.updateCustomerValidation({ country });
     });
-    combineLatest([
-      this.sdk.currentAccount.pipe(map((account) => account.type)),
-      this.route.queryParams.pipe(map((params) => params['type'])),
-    ])
-      .pipe(take(1))
-      .subscribe(([currentType, nextType]) => {
-        if (nextType && currentType !== nextType) {
-          this.accountType = nextType;
-          this.initStripe();
-        }
-      });
   }
 
   ngOnDestroy() {
@@ -154,7 +150,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.unsubscribeAll.complete();
   }
 
-  initForms() {
+  initCustomer() {
     forkJoin([
       this.billingService.getCustomer(),
       this.billingService.country.pipe(take(1)),
@@ -179,9 +175,20 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         }
       }
     });
-    this.billingService.budgetEstimation.pipe(take(1)).subscribe((budget) => {
-      this.budget.setValue(budget.toString());
-    });
+  }
+
+  initBudget() {
+    this.subscribeMode
+      .pipe(
+        switchMap((subscribeMode) => {
+          return subscribeMode
+            ? this.billingService.budgetEstimation.pipe(take(1))
+            : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
+        }),
+      )
+      .subscribe((budget) => {
+        this.budget.setValue(budget.toString());
+      });
   }
 
   updateCustomerForm(customer: StripeCustomer) {
@@ -236,8 +243,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   initStripe() {
-    injectScript('https://js.stripe.com/v3/')
+    this.subscribeMode
       .pipe(
+        filter((value) => value),
+        switchMap(() => injectScript('https://js.stripe.com/v3/')),
         take(1),
         filter((result) => !!result),
         switchMap(() => this.billingService.getStripePublicKey()),
@@ -305,7 +314,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   doSubscribe() {
-    if (!this.accountType) return;
     this.openReview()
       .pipe(
         take(1),
@@ -314,12 +322,13 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.loading = true;
           this.cdr?.markForCheck();
         }),
-        switchMap(() =>
+        switchMap(() => this.accountType.pipe(take(1))),
+        switchMap((accountType) =>
           this.billingService
             .createSubscription({
               payment_method_id: this.paymentMethodId!,
               on_demand_budget: parseInt(this.budget.value),
-              account_type: this.accountType!,
+              account_type: accountType!,
             })
             .pipe(
               catchError((error) => {
@@ -392,16 +401,16 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   openReview() {
-    return forkJoin([this.prices.pipe(take(1)), this.currency.pipe(take(1))]).pipe(
+    return forkJoin([this.prices.pipe(take(1)), this.currency.pipe(take(1)), this.accountType.pipe(take(1))]).pipe(
       switchMap(
-        ([prices, currency]) =>
+        ([prices, currency, accountType]) =>
           this.modalService.openModal(ReviewComponent, {
             dismissable: true,
             data: {
-              account: this.accountType!,
+              account: accountType!,
               customer: this.customer,
               token: this.token,
-              prices: prices[this.accountType!],
+              prices: prices[accountType!],
               budget: this.budget.value,
               currency,
             },
