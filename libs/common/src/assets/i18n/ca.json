@@ -709,6 +709,7 @@
 	"stash.settings.processes.training.agreement": "Accepto els càrrecs incorreguts en seleccionar aquesta opció",
 	"stash.settings.processes.training.consult-history": "Consulta totes les dades i l'estat dels entrenaments realitzats o en curs",
 	"stash.settings.processes.training.last_run": "Última execució: {{ runDate }}",
+	"stash.settings.processes.training.ner.contact": "Depenent del vostre conjunt de dades, pot ser que aquesta formació no sigui efectiva. Per avaluar si la formació en NER és rellevant en el vostre cas, <a href=\"mailto:{{email}}\">poseu-vos en contacte amb nosaltres</a>.",
 	"stash.settings.processes.training.no-resources": "Els entrenaments no estan disponibles en les caixes de coneixement buides.",
 	"stash.settings.processes.training.not-allowed": "Els entrenaments no estan disponibles en els comptes bàsics.",
 	"stash.settings.processes.training.select-entities": "Triar grups d'entitats",

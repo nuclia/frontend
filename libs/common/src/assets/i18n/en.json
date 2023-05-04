@@ -739,6 +739,7 @@
 	"stash.settings.processes.training.agreement": "I accept the charges incurred by selecting this option",
 	"stash.settings.processes.training.consult-history": "Consult all the data and the status of the trainings completed or in progress",
 	"stash.settings.processes.training.last_run": "Last run: {{ runDate }}",
+	"stash.settings.processes.training.ner.contact": "Depending on your dataset, this training might not be effective. In order to assess if NEr training is relevant in your case, please <a href=\"mailto:{{email}}\">contact us</a>.",
 	"stash.settings.processes.training.no-resources": "The training feature is not available on empty knowledge boxes.",
 	"stash.settings.processes.training.not-allowed": "The training feature is not available on basic accounts.",
 	"stash.settings.processes.training.select-entities": "Choose entity groups",
