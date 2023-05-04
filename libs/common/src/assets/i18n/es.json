@@ -31,6 +31,7 @@
 	"account.delete_user_confirm": "Quieres eliminar tu usuario y el acceso a Nuclia ?",
 	"account.delete_user_warning": "¿Seguro que quieres eliminar el usuario {{ username }}?",
 	"account.enhanced_model": "Modelo mejorado",
+	"account.free_trial": "Prueba gratis",
 	"account.full_name": "Nombre y Apellidos",
 	"account.generate_key": "Generar un nuevo código",
 	"account.home": "Panel de cuenta",

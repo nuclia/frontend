@@ -39,7 +39,10 @@ export class AccountHomeComponent {
     map((type) => type !== 'stash-basic' && type !== 'stash-trial' && type !== 'stash-team'),
   );
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
-  usage = this.billingService.getAccountUsage().pipe(shareReplay());
+  usage = this.hasUsageData.pipe(
+    switchMap((hasUsageData) => (hasUsageData ? this.billingService.getAccountUsage() : of(undefined))),
+    shareReplay(),
+  );
 
   processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
   processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(

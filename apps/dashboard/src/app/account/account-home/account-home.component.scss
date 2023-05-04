@@ -66,22 +66,7 @@
     flex-direction: column;
     flex-shrink: 0;
     gap: rhythm(3);
-    margin-top: rhythm(6);
     width: rhythm(35);
-
-    .plan-name {
-      display: flex;
-      gap: rhythm(1);
-    }
-    .plan {
-      align-items: center;
-      display: flex;
-      justify-content: space-between;
-
-      &.billing-enabled {
-        cursor: pointer;
-      }
-    }
 
     .kb-state {
       cursor: pointer;

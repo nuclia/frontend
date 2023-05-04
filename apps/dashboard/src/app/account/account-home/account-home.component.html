@@ -129,17 +129,8 @@
     </div>
 
     <div class="right-column">
-      <div
-        class="container plan"
-        [class.billing-enabled]="isBillingEnabled"
-        [routerLink]="(isBillingEnabled | async) ? '../billing' : null">
-        <div class="plan-name">
-          <strong>{{ 'account.type.label' | translate }}:</strong>
-          <span>{{ 'account.type.' + (accountType | async) | translate }}</span>
-        </div>
-        <pa-icon
-          *ngIf="(accountType | async) === 'stash-team'"
-          name="shield-check"></pa-icon>
+      <div>
+        <app-account-status [usage]="usage | async"></app-account-status>
       </div>
       <div
         class="container kb-state"

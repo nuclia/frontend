@@ -48,6 +48,9 @@
     <div
       *ngIf="isKbAdmin | async"
       class="right-column">
+      <div class="account-status">
+        <app-account-status></app-account-status>
+      </div>
       <div class="container resource-stats">
         <div *ngIf="locale | async as loc">
           <dl class="total-resources">

@@ -1,0 +1,18 @@
+<div class="account-status">
+  <div class="title-s type">
+    <span *ngIf="trialAccount | async">{{ 'account.free_trial' | translate }}</span>
+    <span *ngIf="!(trialAccount | async)">{{ 'account.type.' + (accountType | async) | translate }}</span>
+  </div>
+  <div
+    class="title-l price"
+    *ngIf="price | async as price">
+    <span>{{ price | currency: (getCurrency() | async):'symbol':'1.0-0' }}</span>
+    <span class="body-s unit">/{{ 'billing.month' | translate }}</span>
+  </div>
+  <pa-button
+    *ngIf="isBillingEnabled | async"
+    kind="primary"
+    [routerLink]="upgradeUrl | async">
+    {{ 'billing.upgrade' | translate }}
+  </pa-button>
+</div>

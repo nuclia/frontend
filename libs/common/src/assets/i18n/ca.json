@@ -31,6 +31,7 @@
 	"account.delete_user_confirm": "Vols eliminar el teu usuari i l'accés a Nuclia ?",
 	"account.delete_user_warning": "Segur que vols eliminar l'usuari {{ username }}?",
 	"account.enhanced_model": "Model millorat",
+	"account.free_trial": "Prova gratuïta",
 	"account.full_name": "Nom i Cognoms",
 	"account.generate_key": "Generar un nou codi",
 	"account.home": "Tauler de control del compte",
