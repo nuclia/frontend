@@ -1,31 +1,28 @@
 <script lang="ts">
-  import { forceSimulation } from 'd3';
+  import { forceSimulation, rgb } from 'd3';
+  import { NerLink } from './knowledge-graph.models';
 
   // utility function for translating elements
   const move = (x, y) => `transform: translate(${x}px, ${y}px)`;
 
-  const maxRadius = 72;
-  const minRadius = 6;
-
   export let height;
   export let width;
   // an array of our particles
-  export let dots = [];
+  export let nodes = [];
   // an array of [name, force] pairs
   export let forces = [];
   export let links = [];
 
   let usedForceNames = [];
   let renderedDots = [];
-  let renderedLinks = [];
-
-  $: console.log(dots);
+  let renderedLinks: NerLink[] = [];
 
   $: simulation = forceSimulation()
-    .nodes(dots)
+    .nodes(nodes)
     .on('tick', () => {
-      // update the renderedDots references to trigger an update
-      renderedDots = [...dots];
+      // update the renderedDots and renderedLinks references to trigger an update
+      renderedDots = [...nodes];
+      renderedLinks = [...links];
     });
 
   $: {
@@ -34,7 +31,7 @@
       simulation.force(name, force);
     });
 
-    // Update force link
+    // Update force link with our array of links
     if (links.length > 0) {
       simulation.force('link').links(links);
     }
@@ -55,30 +52,23 @@
   function getTextDx(text: string): number {
     return text.length <= 3 ? text.length * -5 : text.length * -4.5;
   }
+
+  /**
+   * Return black for bright color, and white for dark color
+   * @param hexa: hexadecimal color
+   */
+  function getFontColor(hexa: string): string {
+    const color = rgb(hexa);
+    // Counting the perceptive luminance - human eye favors green color...
+    const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
+    return luminance > 0.5 ? '#000' : '#fff';
+  }
 </script>
 
-<figure class="c">
+<figure class="sw-graph">
   <svg
     width={Number.isNaN(width) ? 0 : width}
     height={Number.isNaN(height) ? 0 : height}>
-    {#each renderedDots as dot, i}
-      <g>
-        <circle
-          style={move(dot.x, dot.y)}
-          fill={dots[i].color}
-          stroke="#00000050"
-          r={Math.max(Math.min(dot.radius, maxRadius || 0), minRadius)} />
-        {#if dots[i].radius > 20}
-          <text
-            x={dot.x}
-            y={dot.y}
-            dx={getTextDx(dot.ner)}
-            dy="5">
-            {dot.ner}
-          </text>
-        {/if}
-      </g>
-    {/each}
     {#each renderedLinks as link}
       <line
         x1={link.source.x}
@@ -86,16 +76,29 @@
         x2={link.target.x}
         y2={link.target.y}
         stroke="#00000050" />
-      <!--      <path d={`M${link.source.x},${link.source.y}A75,75 0 0,1 ${link.target.x},${link.target.y}`} />-->
+    {/each}
+    {#each renderedDots as dot, i}
+      <g class="node">
+        <circle
+          style={move(dot.x, dot.y)}
+          fill={nodes[i].color}
+          stroke="#00000050"
+          r={dot.radius} />
+        {#if nodes[i].radius > 20}
+          <text
+            x={dot.x}
+            y={dot.y}
+            dx={getTextDx(dot.ner)}
+            dy="5"
+            stroke={getFontColor(nodes[i].color)}>
+            {dot.ner}
+          </text>
+        {/if}
+      </g>
     {/each}
   </svg>
 </figure>
 
-<style>
-  figure {
-    margin: 0;
-  }
-  svg {
-    overflow: visible;
-  }
-</style>
+<style
+  lang="scss"
+  src="./Graph.scss"></style>

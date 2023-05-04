@@ -1,10 +1,10 @@
 <script lang="ts">
   import { fieldData } from '../../core/stores/viewer.store';
   import Expander from '../../common/expander/Expander.svelte';
-  import { _, translateInstant } from '../../core/i18n';
+  import { translateInstant } from '../../core/i18n';
   import { generatedEntitiesColor } from '../../core/utils';
-  import Force from './Force.svelte';
-  import { forceCenter, forceCollide, forceLink, forceManyBody, forceX, forceY } from 'd3';
+  import Graph from './Graph.svelte';
+  import { forceLink, forceManyBody, forceX, forceY, SimulationLinkDatum } from 'd3';
   import { onDestroy, onMount } from 'svelte';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
@@ -16,14 +16,15 @@
     PositionWithRelevance,
     RelationWithRelevance,
   } from './knowledge-graph.models';
-
   const unsubscribeAll: Subject<void> = new Subject();
   const defaultFamilyColor = '#c6c6c6';
+  const maxRadius = 64;
+  const minRadius = 6;
 
   let families: NerFamily[] = [];
   let innerHeight: number;
   let innerWidth: number;
-  let dots;
+  let nodes: NerNode[];
   let links: NerLink[];
   $: graphWidth = innerWidth - 248;
   $: graphHeight = innerHeight - 80;
@@ -38,10 +39,14 @@
       'link',
       forceLink()
         .id((d) => (d as NerNode).id)
-        .distance(100),
+        .distance((link: SimulationLinkDatum<any>) => {
+          const source: NerNode = link.source;
+          const target: NerNode = link.target;
+          const radiusSum = source.radius + target.radius;
+          return radiusSum + radiusSum / 2;
+        }),
     ],
     ['charge', forceManyBody().strength(-80)],
-    ['center', forceCenter(graphWidth / 2, graphHeight / 2)],
   ].filter((d) => d);
 
   onMount(() => {
@@ -54,15 +59,9 @@
       )
       .subscribe((metadata) => {
         const { relations, positions } = getRelevanceLists(metadata);
-        const nodes = getNodes(positions);
         links = getLinks(relations, positions);
-
+        nodes = getNodes(positions);
         setFamilies(nodes);
-        dots = nodes.map((node) => ({
-          ...node,
-          color: generatedEntitiesColor[node.family] || defaultFamilyColor,
-          radius: node.relevance,
-        }));
       });
   });
 
@@ -76,16 +75,21 @@
       Object.keys(positions)
         .reduce((list, id) => {
           const [family, ner] = id.split('/');
+          const relevance = positions[id].relevance || 0;
           list.push({
             id,
             ner,
             family,
-            relevance: positions[id].relevance || 0,
+            relevance,
+            color: generatedEntitiesColor[family] || defaultFamilyColor,
+            radius: Math.max(Math.min(relevance, maxRadius || 0), minRadius),
           });
           return list;
         }, [] as NerNode[])
-        // keep only relevant nodes
-        .filter((node) => node.relevance > 0)
+        // keep only relevant nodes which are in a link
+        .filter(
+          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id),
+        )
     );
   }
 
@@ -93,15 +97,15 @@
     return relations
       .filter(
         (relation) =>
-          !!relation['from_'] &&
-          positions[`${relation['from_'].group}/${relation['from_'].value}`] &&
+          !!relation.from &&
+          positions[`${relation.from.group}/${relation.from.value}`] &&
           !!relation.to &&
           positions[`${relation.to.group}/${relation.to.value}`],
       )
       .map((relation) => ({
-        source: `${relation['from_']?.group}/${relation['from_']?.value}`,
+        source: `${relation.from?.group}/${relation.from?.value}`,
         target: `${relation.to.group}/${relation.to.value}`,
-        fromGroup: relation['from_']?.group,
+        fromGroup: relation.from?.group,
         toGroup: relation.to.group,
         relevance: relation.relevance || 0,
         label: relation.label,
@@ -122,8 +126,8 @@
     const relations = metadata.relations || [];
     const positions = JSON.parse(JSON.stringify(metadata.positions || {}));
     relations.forEach((relation) => {
-      if (relation['from_']) {
-        const from: PositionWithRelevance = positions[`${relation['from_'].group}/${relation['from_'].value}`];
+      if (relation.from) {
+        const from: PositionWithRelevance = positions[`${relation.from.group}/${relation.from.value}`];
         if (from) {
           from.relevance = (from.relevance || 0) + 1;
         }
@@ -135,8 +139,8 @@
     });
     return {
       relations: relations.map((relation) => {
-        const from: PositionWithRelevance | undefined = relation['from_']
-          ? positions[`${relation['from_'].group}/${relation['from_'].value}`]
+        const from: PositionWithRelevance | undefined = relation.from
+          ? positions[`${relation.from.group}/${relation.from.value}`]
           : undefined;
         const to: PositionWithRelevance = positions[`${relation.to.group}/${relation.to.value}`];
         const relevance = Math.min(from?.relevance || 0, to?.relevance || 0);
@@ -198,8 +202,8 @@
     </div>
   </div>
   <div class="knowledge-graph-container">
-    <Force
-      {dots}
+    <Graph
+      {nodes}
       {forces}
       {links}
       height={graphHeight}

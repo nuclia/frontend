@@ -18,12 +18,23 @@ export interface NerNode {
   ner: string;
   family: string;
   relevance: number;
+  radius: number;
+  color: string;
 }
 
-export interface NerLink {
-  source?: string;
-  target?: string;
+interface BaseLink {
   fromGroup?: string;
+  toGroup?: string;
   relevance: number;
   label?: string;
+}
+
+export interface NerLink extends BaseLink {
+  source?: string;
+  target?: string;
+}
+
+export interface ForceLink extends BaseLink {
+  source: NerNode;
+  target: NerNode;
 }
