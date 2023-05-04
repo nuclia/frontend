@@ -1,2 +1,28 @@
 .sw-knowledge-graph-panel {
+  background: var(--color-light-stronger);
+  height: calc(var(--viewer-height) - var(--find-input-height) - var(--find-input-margin) * 2);
+  overflow: auto;
+
+  section {
+    padding: var(--rhythm-2);
+
+    > * {
+      margin-top: 0;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .family-dot {
+      display: inline-block;
+      border-radius: 50%;
+      height: var(--rhythm-1);
+      margin-bottom: 1px;
+      margin-right: var(--rhythm-0_25);
+      width: var(--rhythm-1);
+    }
+  }
 }

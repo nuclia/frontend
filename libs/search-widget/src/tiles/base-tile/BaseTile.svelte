@@ -45,6 +45,7 @@
   import { _ } from '../../core/i18n';
   import KnowledgeGraphPanel from '../../components/knowledge-graph/KnowledgeGraphPanel.svelte';
   import KnowledgeGraph from '../../components/knowledge-graph/KnowledgeGraph.svelte';
+  import { graphQuery } from '../../core/stores/graph.store';
 
   export let result: Search.SmartResult;
   export let previewKind: PreviewKind;
@@ -233,14 +234,16 @@
   const toggleSidePanel = () => {
     sidePanelExpanded = !sidePanelExpanded;
     resultNavigatorDisabled = sidePanelExpanded;
-    if (sidePanelExpanded) {
-      // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
-      setTimeout(() => findInputElement.focus(), Duration.MODERATE);
-    } else if (isSearchingInResource.value) {
-      selectParagraph(undefined);
-      resultIndex = -1;
-      isSearchingInResource.next(false);
-      viewerSearchQuery.set(searchQuery.getValue());
+    if (!showKnowledgeGraph) {
+      if (sidePanelExpanded) {
+        // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
+        setTimeout(() => findInputElement.focus(), Duration.MODERATE);
+      } else if (isSearchingInResource.value) {
+        selectParagraph(undefined);
+        resultIndex = -1;
+        isSearchingInResource.next(false);
+        viewerSearchQuery.set(searchQuery.getValue());
+      }
     }
   };
 
@@ -305,6 +308,12 @@
 
   function toggleKnowledgeGraph() {
     showKnowledgeGraph = !showKnowledgeGraph;
+  }
+
+  function findInGraph() {
+    //TODO
+    const query = graphQuery.getValue();
+    console.log(`Todo: find ${query} in graph`);
   }
 </script>
 
@@ -395,6 +404,21 @@
 
         <div class:side-panel-content={expanded}>
           {#if showKnowledgeGraph}
+            {#if !isMobile}
+              <div
+                class="find-bar-container"
+                tabindex="0"
+                hidden={!expanded}>
+                <Icon name="search" />
+                <input
+                  class="find-input"
+                  type="text"
+                  autocomplete="off"
+                  tabindex="-1"
+                  bind:value={$graphQuery}
+                  on:change={findInGraph} />
+              </div>
+            {/if}
             <KnowledgeGraphPanel />
           {:else}
             {#if !isMobile}
@@ -528,7 +552,9 @@
   {/if}
 
   {#if showKnowledgeGraph}
-    <KnowledgeGraph />
+    <KnowledgeGraph
+      rightPanelOpen={sidePanelExpanded}
+      on:openRightPanel={toggleSidePanel} />
   {/if}
 </div>
 

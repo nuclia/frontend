@@ -5,7 +5,7 @@
   import { generatedEntitiesColor } from '../../core/utils';
   import Graph from './Graph.svelte';
   import { forceLink, forceManyBody, forceX, forceY, SimulationLinkDatum } from 'd3';
-  import { onDestroy, onMount } from 'svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
   import { FieldMetadata } from '@nuclia/core';
@@ -15,8 +15,14 @@
     NerNode,
     PositionWithRelevance,
     RelationWithRelevance,
-  } from './knowledge-graph.models';
+  } from '../../core/knowledge-graph.models';
+
+  export let rightPanelOpen = false;
+
+  const dispatch = createEventDispatcher();
   const unsubscribeAll: Subject<void> = new Subject();
+  const leftPanelWidth = 248;
+  const rightPanelWidth = 368;
   const defaultFamilyColor = '#c6c6c6';
   const maxRadius = 64;
   const minRadius = 6;
@@ -26,7 +32,8 @@
   let innerWidth: number;
   let nodes: NerNode[];
   let links: NerLink[];
-  $: graphWidth = innerWidth - 248;
+
+  $: graphWidth = rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth;
   $: graphHeight = innerHeight - 80;
 
   $: centerPosition = [graphWidth / 2, graphHeight / 2];
@@ -171,13 +178,21 @@
       })
       .sort((a, b) => a.label.localeCompare(b.label));
   }
+
+  function selectNode(node: NerNode | null) {
+    if (!!node && !rightPanelOpen) {
+      dispatch('openRightPanel');
+    }
+  }
 </script>
 
 <svelte:window
   bind:innerWidth
   bind:innerHeight />
 
-<div class="sw-knowledge-graph">
+<div
+  class="sw-knowledge-graph"
+  class:with-right-panel={rightPanelOpen}>
   <div class="left-panel">
     <div class="ner-families-container">
       <Expander
@@ -207,7 +222,8 @@
       {forces}
       {links}
       height={graphHeight}
-      width={graphWidth} />
+      width={graphWidth}
+      on:nodeSelection={(event) => selectNode(event.detail)} />
   </div>
 </div>
 

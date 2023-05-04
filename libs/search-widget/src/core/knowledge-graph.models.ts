@@ -34,7 +34,7 @@ export interface NerLink extends BaseLink {
   target?: string;
 }
 
-export interface ForceLink extends BaseLink {
+export interface NerLinkHydrated extends BaseLink {
   source: NerNode;
   target: NerNode;
 }
