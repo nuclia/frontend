@@ -67,7 +67,6 @@
         <p>{$_('error.feature-blocked')}</p>
       {:else}
         <strong>{$_('error.search')}</strong>
-        <span>{$_('error.search-beta')}</span>
       {/if}
     </div>
   {:else}
