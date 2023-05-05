@@ -4,7 +4,7 @@
   import { translateInstant } from '../../core/i18n';
   import { generatedEntitiesColor } from '../../core/utils';
   import Graph from './Graph.svelte';
-  import { forceLink, forceManyBody, forceX, forceY, SimulationLinkDatum } from 'd3';
+  import { extent, forceLink, forceManyBody, forceX, forceY, SimulationLinkDatum } from 'd3';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { map, Subject, takeUntil } from 'rxjs';
   import { filter } from 'rxjs/operators';
@@ -16,6 +16,7 @@
     PositionWithRelevance,
     RelationWithRelevance,
   } from '../../core/knowledge-graph.models';
+  import { graphState } from '../../core/stores/graph.store';
 
   export let rightPanelOpen = false;
 
@@ -36,6 +37,7 @@
   $: graphWidth = rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth;
   $: graphHeight = innerHeight - 80;
 
+  $: chargeStrength = !nodes || nodes.length > 100 ? -80 : -160;
   $: centerPosition = [graphWidth / 2, graphHeight / 2];
   $: activeForceX = forceX().x(centerPosition[0]);
   $: activeForceY = forceY().y(centerPosition[1]);
@@ -53,7 +55,7 @@
           return radiusSum + radiusSum / 2;
         }),
     ],
-    ['charge', forceManyBody().strength(-80)],
+    ['charge', forceManyBody().strength(chargeStrength)],
   ].filter((d) => d);
 
   onMount(() => {
@@ -75,9 +77,15 @@
   onDestroy(() => {
     unsubscribeAll.next();
     unsubscribeAll.complete();
+    graphState.reset();
   });
 
   function getNodes(positions: PositionWithRelevance): NerNode[] {
+    const relevanceList = Object.values(positions)
+      .map((position) => position.relevance)
+      .filter((value) => value);
+    const [, maxRelevance] = extent(relevanceList);
+    const radiusRatio = Math.max(1, maxRadius / maxRelevance);
     return (
       Object.keys(positions)
         .reduce((list, id) => {
@@ -89,7 +97,7 @@
             family,
             relevance,
             color: generatedEntitiesColor[family] || defaultFamilyColor,
-            radius: Math.max(Math.min(relevance, maxRadius || 0), minRadius),
+            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius),
           });
           return list;
         }, [] as NerNode[])

@@ -87,14 +87,6 @@
   }
 
   /**
-   * Get delta x to apply on node text to have it as centered as possible
-   * @param text
-   */
-  function getTextDx(text: string): number {
-    return text.length <= 3 ? text.length * -5 : text.length * -4.5;
-  }
-
-  /**
    * Return black for bright color, and white for dark color
    * @param hexa: hexadecimal color
    */
@@ -138,16 +130,20 @@
             ? nodes[i].color
             : '#C4C4C499'}
           stroke={selectedNode === nodes[i] ? '#000' : '#00000025'}
-          r={dot.radius} />
+          r={dot.radius}>
+          <title>{dot.ner}</title>
+        </circle>
         {#if nodes[i].radius > 20}
           <text
             x={dot.x}
             y={dot.y}
-            dx={getTextDx(dot.ner)}
+            text-anchor="middle"
             dy="5"
             fill={!selectedNode || selectedNode === nodes[i] || selectedNodeRelationIds.includes(nodes[i].id)
               ? getFontColor(nodes[i].color)
-              : '#fff'}>
+              : '#fff'}
+            stroke="#00000050"
+            stroke-width="0.5">
             {dot.ner}
           </text>
         {/if}
