@@ -332,10 +332,17 @@ export const facetByClause = (): Observable<Search.FacetsResult> => {
   }
 
   return nucliaApi.knowledgeBox
-    .search('', [Search.Features.PARAGRAPH], {
+    .search('', SEARCH_MODE, {
       page_size: 0,
       show: [],
       faceted: ['/l/fake'],
     })
     .pipe(map((results) => (results as Search.Results).paragraphs?.facets || {}));
 };
+
+export function getLabelledClause(label: string) {
+  return search('', {
+    filters: [label],
+    show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
+  });
+}

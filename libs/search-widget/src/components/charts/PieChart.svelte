@@ -80,15 +80,14 @@ function init() {
         .style("stroke-width", "2px")
         .style("opacity", 0.7)
         .style("cursor", "pointer")
+        .on('click', (d, i) => {
+          dispatch('click', i.data);
+        })
     },
     () => {},
     function(exit) {
       return exit.remove();
     });
-
-    slices.on('click', (d, i) => {
-          dispatch('click', i.data);
-        })
     
   // Add the polylines between chart and labels:
   svg

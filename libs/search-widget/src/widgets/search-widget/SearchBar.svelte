@@ -2,7 +2,7 @@
 
 <script lang="ts">
   import type { KBStates, Search } from '@nuclia/core';
-  import { clauseSearch, facetByClause, initNuclia, resetNuclia } from '../../core/api';
+  import { clauseSearch, facetByClause, getLabelledClause, initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
@@ -154,6 +154,7 @@
   });
 
   function displayResults(id: string) {
+    console.log('click', id);
     if (data[id]) {
       triggerSearch.next();
       const results = data[id].results;
@@ -173,6 +174,11 @@
           console.log(data);
         });
       }
+    }
+    if (id.startsWith('/l/fake')) {
+      getLabelledClause(id).subscribe((results) => {
+        searchResults.set({ results, append: false });
+      });
     }
   }
 </script>
