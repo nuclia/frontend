@@ -16,8 +16,9 @@
       </span>
     </div>
     <pa-button
-      [disabled]="budget.pristine"
-      (click)="save()">
+      kind="primary"
+      [disabled]="budget.pristine || budget.invalid"
+      (click)="saveBudget()">
       {{ 'generic.save' | translate }}
     </pa-button>
   </div>

@@ -314,7 +314,7 @@
         <pa-button
           *ngIf="!(subscribeMode | async)"
           (click)="saveBudget()"
-          [disabled]="budget.pristine || loading"
+          [disabled]="budget.pristine || budget.invalid"
           kind="primary">
           {{ 'generic.save' | translate }}
         </pa-button>

@@ -420,6 +420,13 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   saveBudget() {
-    // TODO: save budget
+    this.billingService
+      .modifySubscription({ on_demand_budget: parseInt(this.budget.value) })
+      .pipe(switchMap(() => this.billingService.getAccountUsage()))
+      .subscribe((usage) => {
+        this.budget.setValue(usage.budget.toString());
+        this.budget.markAsPristine();
+        this.cdr?.markForCheck();
+      });
   }
 }

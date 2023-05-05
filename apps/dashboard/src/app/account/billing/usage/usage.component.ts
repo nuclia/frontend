@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { shareReplay, take } from 'rxjs';
+import { shareReplay, switchMap, take } from 'rxjs';
 import { BillingService } from '../billing.service';
 
 @Component({
@@ -11,15 +11,22 @@ import { BillingService } from '../billing.service';
 })
 export class UsageComponent {
   usage = this.billing.getAccountUsage().pipe(shareReplay());
-  budget = new FormControl<number>(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
+  budget = new FormControl<string>('0', { nonNullable: true, validators: [Validators.required, Validators.min(0)] });
 
-  constructor(private billing: BillingService) {
+  constructor(private billing: BillingService, private cdr: ChangeDetectorRef) {
     this.usage.pipe(take(1)).subscribe((usage) => {
-      this.budget.setValue(usage.budget);
+      this.budget.setValue(usage.budget.toString());
     });
   }
 
-  save() {
-    // TODO: save budget
+  saveBudget() {
+    this.billing
+      .modifySubscription({ on_demand_budget: parseInt(this.budget.value) })
+      .pipe(switchMap(() => this.billing.getAccountUsage()))
+      .subscribe((usage) => {
+        this.budget.setValue(usage.budget.toString());
+        this.budget.markAsPristine();
+        this.cdr?.markForCheck();
+      });
   }
 }
