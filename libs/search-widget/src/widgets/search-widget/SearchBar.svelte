@@ -1,8 +1,8 @@
 <svelte:options tag="nuclia-search-bar" />
 
 <script lang="ts">
-  import type { KBStates } from '@nuclia/core';
-  import { initNuclia, resetNuclia } from '../../core/api';
+  import type { KBStates, Search } from '@nuclia/core';
+  import { clauseSearch, facetByClause, initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
@@ -20,8 +20,10 @@
     loadFieldData,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
-  import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
+  import { searchQuery, searchResults, searchState, triggerSearch } from '../../core/stores/search.store';
   import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
+  import PieChart from '../../components/charts/PieChart.svelte';
+  import { forkJoin, take } from 'rxjs';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -63,6 +65,9 @@
 
   let svgSprite;
   let ready = false;
+
+  const TOPIC = 'terrorism';
+  let data: { [key: string]: { id: string; label: string; value: number; results?: Search.FindResults } };
 
   onMount(() => {
     if (cdn) {
@@ -120,6 +125,25 @@
 
     ready = true;
 
+    forkJoin([clauseSearch(TOPIC), clauseSearch(`policy -${TOPIC}`, { isAdvanced: true })])
+      .pipe(take(1))
+      .subscribe(([withClause, withoutClause]) => {
+        data = {
+          with: {
+            id: 'with',
+            label: `With ${TOPIC} clause`,
+            results: withClause,
+            value: withClause.total,
+          },
+          without: {
+            id: 'without',
+            label: `Without ${TOPIC} clause`,
+            results: withoutClause,
+            value: withoutClause.total,
+          },
+        };
+      });
+
     return () => {
       searchState.reset();
       suggestionState.reset();
@@ -128,6 +152,29 @@
       unsubscribeTriggerSearch();
     };
   });
+
+  function displayResults(id: string) {
+    if (data[id]) {
+      triggerSearch.next();
+      const results = data[id].results;
+      if (results) {
+        searchResults.set({ results, append: false });
+      }
+      if (id === 'with') {
+        facetByClause().subscribe((facets) => {
+          data = Object.entries(facets['/l/fake']).reduce((acc, [key, value]) => {
+            acc[key] = {
+              id: key,
+              label: key.split('/').pop() || 'N/A',
+              value,
+            };
+            return acc;
+          }, {} as { [key: string]: { id: string; label: string; value: number } });
+          console.log(data);
+        });
+      }
+    }
+  }
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
@@ -142,6 +189,11 @@
     hidden>
     {@html svgSprite}
   </div>
+  {#if data}
+    <PieChart
+      {data}
+      on:click={(e) => displayResults(e.detail.id)} />
+  {/if}
 </div>
 
 <style

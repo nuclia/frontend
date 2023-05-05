@@ -29,6 +29,9 @@ let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 
+const NUA_KEY =
+  'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im51YSJ9.eyJpc3MiOiJodHRwczovL251Y2xpYS5jbG91ZC8iLCJleHAiOjI1MzM3MDc2NDgwMCwiaWF0IjoxNjgzMTAzMzEzLCJzdWIiOiJjNDQzNmEyNC04MzU4LTQ1NzItOTQzZi02NDg5YzQwNjBlYTciLCJqdGkiOiIyM2FmNGM1MS1iOWJlLTQyNGMtOGY0Zi1jYzA3MTRlZjhkZjAiLCJrZXkiOiIxMTViZDkzMi00Mjc5LTRhYWItOWNmOS1lZDBlN2NkNzAyYTIifQ.OLdhOXZE1fwwfyTEQHvlbe3RTd7HsRpXapXmJyBczTIKe7J-sRpcoTQB-hcBcX-ijVLCNNrhE5wtW9vx_mWGDHOPrwyBOb_mI1y8DWWnK6JeeuuFUPT7avtrO-SVnPCsh99VaJ9axH-RMCuQO1S7nHTugX8kHyGgfwIQGbDKhi-ODQNSik1ZOZaLh1NzncitTHMBUpaC4TYAus5bBEEncoqXRfzkgYHgMQ9utEPF4lrnPX2ToTlJFKgQkT2MG1CV4J1frNd-T7KoRw-gP7J2OgWTm0-KTAo-MZD6uWXpwVhWubrK80bFLDsfn3EcsGYnor3I2Yk4QcjtO0TUoCSa2nXQ2o6NV-8h2wDof5xrIpDno3w3EZ-tFNwCc3KSR0nuwUz3wdEepPXiK3-Jxtcau1TiJg6mvpUKjRkxu0WhLsCE3e2WiXcpjMWyxENIk8A5wxSGy2Yg8cGTxyIE2EKhdNkEkwQSwvg6ko_IR7DwgWGdtvaIGSgTfbXV15MbZq__RCc6Jq-BdHa_7RCtzQcJ5dQD7UPqRP3vFfJAIdJ8B5tyJ4BGSQ-3QzFez-okzxt0sZjTNk3ILqygOr59M1pUHWHqCOrPjBtB4VyRVxA6qDJ5mAolJgk6-Lov-Bhrni4ZZSsf_UD2V12vvHbtr8dHk5mQJJq9nmytU5w92ng6RGY';
+
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
@@ -61,7 +64,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     throw new Error('Nuclia API not initialized');
   }
 
-  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, options).pipe(
+  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { page_size: 100, ...options }).pipe(
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
@@ -267,3 +270,72 @@ export function getTextFile(path: string): Observable<string> {
   }
   return nucliaApi.rest.get<Response>(path, {}, true).pipe(switchMap((res) => from(res.text())));
 }
+
+// CUSTOM BRITINSURANCE
+
+export const clauseSearch = (query: string, options?: SearchOptions): Observable<Search.FindResults> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+
+  return nucliaApi.knowledgeBox
+    .search(query, [Search.Features.DOCUMENT], {
+      page_size: 100,
+      show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
+      ...(options || {}),
+    })
+    .pipe(
+      map((results) => {
+        const res = results as Search.Results;
+        return {
+          ...res,
+          type: 'findResults',
+          next_page: false,
+          total: res.fulltext?.results.length || 0,
+          page_number: 0,
+          page_size: 100,
+          query,
+          resources: Object.entries(res.resources || {}).reduce((acc, [id, resource]) => {
+            acc[id] = {
+              ...resource,
+              fields: Object.keys(resource.data?.files || {}).reduce((acc, fieldId) => {
+                acc[fieldId] = {
+                  paragraphs: {
+                    '0': {
+                      order: 0,
+                      score: 1,
+                      score_type: Search.FindScoreType.BOTH,
+                      text: 'N/A',
+                      id: '0',
+                      labels: [],
+                      position: {
+                        index: 0,
+                        start: 0,
+                        end: 0,
+                      },
+                    },
+                  },
+                };
+                return acc;
+              }, {} as { [id: string]: Search.FindField }),
+            };
+            return acc;
+          }, {} as { [id: string]: Search.FindResource }),
+        };
+      }),
+    );
+};
+
+export const facetByClause = (): Observable<Search.FacetsResult> => {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+
+  return nucliaApi.knowledgeBox
+    .search('', [Search.Features.PARAGRAPH], {
+      page_size: 0,
+      show: [],
+      faceted: ['/l/fake'],
+    })
+    .pipe(map((results) => (results as Search.Results).paragraphs?.facets || {}));
+};

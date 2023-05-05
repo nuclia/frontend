@@ -1,5 +1,5 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { search } from './api';
+import { clauseSearch, search } from './api';
 import type { Search, SearchOptions } from '@nuclia/core';
 import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
@@ -12,6 +12,7 @@ import {
   searchOptions,
   searchQuery,
   searchResults,
+  smartResults,
   triggerSearch,
 } from './stores/search.store';
 import { ask } from './stores/effects';
@@ -74,4 +75,13 @@ export const setupTriggerSearch = (
         triggerSearch.next({ more: true });
       }),
   );
+
+  // const TOPIC = 'terrorism';
+  // const withClause = clauseSearch(TOPIC);
+  // withClause.pipe(take(1)).subscribe((results) => {
+  //   triggerSearch.next();
+  //   searchResults.set({ results, append: false });
+  // });
+
+  // smartResults.subscribe((smart) => console.log('SMART', smart));
 };

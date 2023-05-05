@@ -11,7 +11,6 @@
   import {
     entityRelations,
     hasSearchError,
-    isEmptySearchQuery,
     pendingResults,
     smartResults,
     triggerSearch,
@@ -65,7 +64,7 @@
 <div
   class="nuclia-widget sw-video-results"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if $showResults && !$isEmptySearchQuery}
+  {#if $showResults}
     {#if $hasSearchError}
       <div class="error">
         {#if $searchError.status === 402}
@@ -85,6 +84,7 @@
           {#if $isAnswerEnabled}
             <InitialAnswer />
           {/if}
+          <h3>Total: {$smartResults.length}</h3>
           {#each $smartResults as result, i (result.id + result.field?.field_type + result.field?.field_id)}
             <Tile {result} />
             {#if i === $smartResults.length - 10}
