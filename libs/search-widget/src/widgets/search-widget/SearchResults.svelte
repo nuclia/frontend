@@ -72,7 +72,6 @@
           <strong>{$_('error.feature-blocked')}</strong>
         {:else}
           <strong>{$_('error.search')}</strong>
-          <span>{$_('error.search-beta')}</span>
         {/if}
       </div>
     {:else if !$pendingResults && $smartResults.length === 0}
