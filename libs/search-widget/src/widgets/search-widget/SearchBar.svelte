@@ -18,6 +18,7 @@
     initAnswer,
     initLabelStore,
     loadFieldData,
+    setupTriggerGraphNerSearch,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
@@ -116,6 +117,9 @@
     loadFieldData();
     if (_features.permalink) {
       activatePermalinks();
+    }
+    if (_features.knowledgeGraph) {
+      setupTriggerGraphNerSearch();
     }
 
     ready = true;

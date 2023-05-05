@@ -14,8 +14,7 @@ import {
   Search,
   SearchOptions,
 } from '@nuclia/core';
-import { Observable, from, switchMap } from 'rxjs';
-import { filter, forkJoin, map, merge, of, take, tap } from 'rxjs';
+import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
@@ -101,9 +100,8 @@ export const searchInResource = (
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  if (!query) {
-    options.inTitleOnly = true;
-  }
+  options.inTitleOnly = !query && (!options.filters || options.filters.length === 0);
+
   return nucliaApi.knowledgeBox
     .getResourceFromData(resource)
     .search(query, features, options)

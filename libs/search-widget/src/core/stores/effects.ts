@@ -1,4 +1,4 @@
-import { getAnswer, getLabelSets, getResourceField, predict, suggest } from '../api';
+import { getAnswer, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -21,7 +21,7 @@ import {
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import type { Chat, Classification, IErrorResponse, Search } from '@nuclia/core';
+import type { Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, labelFilters, searchFilters, searchQuery, triggerSearch } from './search.store';
@@ -29,6 +29,8 @@ import { fieldData, fieldFullId } from './viewer.store';
 import { chat, currentAnswer, currentQuestion, isSpeechOn, lastSpeakableFullAnswer } from './answers.store';
 import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
 import { isTitleOnly } from '../../common/label/label.utils';
+import { graphSearchResults, graphSelection } from './graph.store';
+import type { NerNode } from '../knowledge-graph.models';
 
 const subscriptions: Subscription[] = [];
 
@@ -276,4 +278,29 @@ export function loadFieldData() {
     )
     .subscribe();
   subscriptions.push(subscription);
+}
+
+export function setupTriggerGraphNerSearch() {
+  subscriptions.push(
+    combineLatest([
+      graphSelection.pipe(
+        distinctUntilChanged(),
+        filter((node) => !!node),
+        map((node) => node as NerNode),
+      ),
+      fieldFullId.pipe(
+        distinctUntilChanged(),
+        filter((id) => !!id),
+        map((id) => id as FieldFullId),
+      ),
+    ])
+      .pipe(
+        switchMap(
+          ([node, fullId]) => searchInResource(`"${node.ner}"`, { id: fullId.resourceId }, {}),
+          // FIXME: here's the proper call once the following bug is fixed: https://app.shortcut.com/flaps/story/5365/searching-on-resource-using-filtering-on-entity-always-returns-the-same-results
+          // searchInResource('', { id: fullId.resourceId }, { filters: [`/e/${node.family}/${node.ner}`] }),
+        ),
+      )
+      .subscribe((results) => graphSearchResults.set(results)),
+  );
 }

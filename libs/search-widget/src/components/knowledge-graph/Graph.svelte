@@ -2,7 +2,7 @@
   import { forceSimulation, rgb } from 'd3';
   import { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { createEventDispatcher } from 'svelte';
-  import { graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
+  import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
 
   const dispatch = createEventDispatcher();
   // utility function for translating elements
@@ -80,6 +80,9 @@
       graphSelectionRelations.set(selectedLinks);
     }
     graphSelection.set(selectedNode);
+    if (!selectedNode) {
+      graphSearchResults.set(undefined);
+    }
     dispatch('nodeSelection', selectedNode);
   }
 
@@ -121,7 +124,7 @@
         stroke={!!selectedNode && (link.source.id === selectedNode.id || link.target.id === selectedNode.id)
           ? '#000'
           : !!selectedNode
-          ? '#C4C4C4'
+          ? '#C4C4C450'
           : '#00000050'} />
     {/each}
     {#each renderedDots as dot, i}
@@ -133,7 +136,7 @@
           style={move(dot.x, dot.y)}
           fill={!selectedNode || selectedNode === nodes[i] || selectedNodeRelationIds.includes(nodes[i].id)
             ? nodes[i].color
-            : '#C4C4C4'}
+            : '#C4C4C499'}
           stroke={selectedNode === nodes[i] ? '#000' : '#00000025'}
           r={dot.radius} />
         {#if nodes[i].radius > 20}

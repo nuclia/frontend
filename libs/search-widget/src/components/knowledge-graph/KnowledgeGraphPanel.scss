@@ -1,10 +1,20 @@
 .sw-knowledge-graph-panel {
   background: var(--color-light-stronger);
   height: calc(var(--viewer-height) - var(--find-input-height) - var(--find-input-margin) * 2);
+  opacity: 0;
   overflow: auto;
+  transition: opacity var(--transition-superfast);
+
+  &.visible {
+    opacity: 1;
+  }
 
   section {
     padding: var(--rhythm-2);
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid var(--color-neutral-light);
+    }
 
     > * {
       margin-top: 0;
@@ -23,6 +33,19 @@
       margin-bottom: 1px;
       margin-right: var(--rhythm-0_25);
       width: var(--rhythm-1);
+    }
+
+    .show-more-container {
+      margin: var(--rhythm-1) 0 calc(var(--rhythm-1_5) * -1);
+      text-align: center;
+    }
+
+    &.results-section {
+      padding: var(--rhythm-2) 0;
+
+      p {
+        padding: 0 var(--rhythm-2);
+      }
     }
   }
 }
