@@ -1,5 +1,6 @@
 import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { UserAvatarModule } from '@flaps/components';
 import { TranslateModule } from '@ngx-translate/core';
@@ -31,6 +32,7 @@ import { DropdownButtonComponent } from '@nuclia/sistema';
     PaPopupModule,
     PaTooltipModule,
     DropdownButtonComponent,
+    RouterModule,
   ],
   exports: [TopbarComponent],
   declarations: [TopbarComponent, KbSwitchComponent],
