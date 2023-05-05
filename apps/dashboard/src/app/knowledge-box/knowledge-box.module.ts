@@ -14,6 +14,7 @@ import { KnowledgeBoxProfileComponent } from './knowledge-box-profile/knowledge-
 import { KnowledgeBoxUsersComponent, UsersManageModule } from './knowledge-box-users';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
+import { AccountStatusComponent } from '../account/account-status/account-status.component';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -60,6 +61,7 @@ import {
     DropdownButtonComponent,
     PaTranslateModule,
     UploadModule,
+    AccountStatusComponent,
   ],
   declarations: [
     KnowledgeBoxComponent,

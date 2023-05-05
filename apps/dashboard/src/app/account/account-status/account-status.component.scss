@@ -1,0 +1,14 @@
+@import 'variables';
+
+.type {
+  margin-bottom: rhythm(0.5);
+}
+
+.price {
+  color: $color-primary-regular;
+  margin-bottom: rhythm(1);
+}
+
+.unit {
+  color: $color-neutral-regular;
+}

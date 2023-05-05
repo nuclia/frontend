@@ -87,6 +87,13 @@ export class BillingService {
     );
   }
 
+  modifySubscription(data: { on_demand_budget: number }) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) => this.sdk.nuclia.rest.patch<void>(`/billing/account/${account.id}/subscription`, data)),
+    );
+  }
+
   getCurrency(country: string): Observable<Currency> {
     return this.sdk.nuclia.rest
       .get<{ currency: string }>(`/billing/currencies?country=${country}`)

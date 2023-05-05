@@ -199,9 +199,9 @@
   </table>
 
   <div>
-    <div class="title-s">{{ 'billing.cost_per_usage' | translate }}</div>
+    <h2>{{ 'billing.cost_over_limits' | translate }}</h2>
     <div class="body-s">
-      {{ 'billing.cost_per_usage.description' | translate }}
+      {{ 'billing.cost_over_limits.description' | translate }}
     </div>
     <div class="calculator">
       <pa-button
@@ -212,5 +212,15 @@
         {{ 'billing.estimate_cost' | translate }}
       </pa-button>
     </div>
+  </div>
+
+  <div
+    *ngIf="isSubscribed | async"
+    class="cancel-subscription">
+    <div>
+      <h2>{{ 'billing.cancel_subscription.title' | translate }}</h2>
+      <div>{{ 'billing.cancel_subscription.description' | translate }}</div>
+    </div>
+    <pa-button kind="destructive">{{ 'billing.cancel_subscription' | translate }}</pa-button>
   </div>
 </div>

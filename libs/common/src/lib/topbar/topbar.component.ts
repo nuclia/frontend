@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService, UserService } from '@flaps/core';
-import { take } from 'rxjs';
+import { SDKService, STFTrackingService, UserService } from '@flaps/core';
+import { map, shareReplay, take } from 'rxjs';
 import { NavigationService } from '../services';
 
 @Component({
@@ -14,12 +14,19 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
+  standalone = this.sdk.nuclia.options.standalone;
+  accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  billingUrl = this.sdk.currentAccount.pipe(
+    map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
+  );
 
   constructor(
     private router: Router,
     private userService: UserService,
     private navigationService: NavigationService,
     private sdk: SDKService,
+    private tracking: STFTrackingService,
   ) {}
 
   goToHome(): void {

@@ -1,23 +1,26 @@
 @import 'variables';
 
 .usage-container {
-  width: calc(rhythm(90) + rhythm(12));
+  max-width: calc(rhythm(90) + rhythm(6));
 }
 
-.header {
-  align-items: baseline;
+.budget-form {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: rhythm(4);
-}
+  flex-direction: column;
+  gap: rhythm(3);
+  margin-top: rhythm(6);
 
-// pa-table hacks
-.usage-container ::ng-deep .pa-table-grid--cell {
-  font-size: $font-size-body-s;
-  line-height: $line-height-body-s;
-  min-height: rhythm(5);
-}
-.usage-container ::ng-deep .pa-table-grid--head .pa-table-grid--header {
-  font-size: $font-size-body-xs;
-  line-height: $line-height-body-xs;
+  h2 {
+    margin: 0;
+  }
+
+  .budget-input {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
+    pa-input {
+      display: block;
+      width: rhythm(14);
+    }
+  }
 }

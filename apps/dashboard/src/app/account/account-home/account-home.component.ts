@@ -17,6 +17,7 @@ import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth 
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { AppService, TickOptions } from '@flaps/common';
+import { BillingService } from '../billing/billing.service';
 
 type ProcessedViewType = StatsType.CHARS | StatsType.MEDIA_SECONDS | StatsType.DOCS_NO_MEDIA;
 
@@ -33,8 +34,15 @@ export class AccountHomeComponent {
 
   account = this.stateService.account.pipe(filter((account) => !!account));
   accountType = this.account.pipe(map((account) => account?.type));
-  isFreeAccount = this.accountType.pipe(map((type) => type === 'stash-basic'));
+  isFreeAccount = this.accountType.pipe(map((type) => type === 'stash-basic' || type === 'stash-trial'));
+  hasUsageData = this.accountType.pipe(
+    map((type) => type !== 'stash-basic' && type !== 'stash-trial' && type !== 'stash-team'),
+  );
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  usage = this.hasUsageData.pipe(
+    switchMap((hasUsageData) => (hasUsageData ? this.billingService.getAccountUsage() : of(undefined))),
+    shareReplay(),
+  );
 
   processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
   processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(
@@ -147,5 +155,6 @@ export class AccountHomeComponent {
     private toastService: SisToastService,
     private translate: TranslateService,
     private tracking: STFTrackingService,
+    private billingService: BillingService,
   ) {}
 }

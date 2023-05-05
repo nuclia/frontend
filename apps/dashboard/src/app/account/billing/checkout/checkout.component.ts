@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { forkJoin, from, of, Subject } from 'rxjs';
+import { combineLatest, forkJoin, from, of, Subject } from 'rxjs';
 import {
   catchError,
   delay,
@@ -70,7 +70,15 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  accountType: AccountTypes = 'stash-developer';
+  accountType = combineLatest([
+    this.sdk.currentAccount.pipe(map((account) => account.type)),
+    this.route.queryParams.pipe(map((params) => params['type'])),
+  ]).pipe(
+    map(([currentType, nextType]) => (nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined)),
+    shareReplay(),
+  );
+  subscribeMode = this.accountType.pipe(map((type) => !!type));
+
   prices = this.billingService.getPrices().pipe(shareReplay());
   updateCurrency = new Subject<string>();
   currency = this.updateCurrency.pipe(
@@ -121,8 +129,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     private modalService: SisModalService,
     private translate: TranslateService,
   ) {
-    this.initForms();
+    this.initCustomer();
     this.initStripe();
+    this.initBudget();
   }
 
   ngOnInit() {
@@ -134,11 +143,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.customerForm.controls.country.valueChanges.pipe(takeUntil(this.unsubscribeAll)).subscribe((country) => {
       this.updateCustomerValidation({ country });
     });
-    this.route.queryParams.pipe(take(1)).subscribe((params) => {
-      if (params['type']) {
-        this.accountType = params['type'];
-      }
-    });
   }
 
   ngOnDestroy() {
@@ -146,7 +150,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     this.unsubscribeAll.complete();
   }
 
-  initForms() {
+  initCustomer() {
     forkJoin([
       this.billingService.getCustomer(),
       this.billingService.country.pipe(take(1)),
@@ -171,9 +175,20 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         }
       }
     });
-    this.billingService.budgetEstimation.pipe(take(1)).subscribe((budget) => {
-      this.budget.setValue(budget.toString());
-    });
+  }
+
+  initBudget() {
+    this.subscribeMode
+      .pipe(
+        switchMap((subscribeMode) => {
+          return subscribeMode
+            ? this.billingService.budgetEstimation.pipe(take(1))
+            : this.billingService.getAccountUsage().pipe(map((usage) => usage.budget));
+        }),
+      )
+      .subscribe((budget) => {
+        this.budget.setValue(budget.toString());
+      });
   }
 
   updateCustomerForm(customer: StripeCustomer) {
@@ -220,7 +235,6 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.customerForm.controls.vat.setErrors({ vat: true });
           this.customerForm.controls.vat.markAsDirty();
           this.cdr?.markForCheck();
-          this.showError('billing.invalid_vat');
         } else {
           this.showError();
         }
@@ -229,8 +243,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   initStripe() {
-    injectScript('https://js.stripe.com/v3/')
+    this.subscribeMode
       .pipe(
+        filter((value) => value),
+        switchMap(() => injectScript('https://js.stripe.com/v3/')),
         take(1),
         filter((result) => !!result),
         switchMap(() => this.billingService.getStripePublicKey()),
@@ -272,12 +288,12 @@ export class CheckoutComponent implements OnDestroy, OnInit {
             catchError(() => {
               throw new Error('billing.invalid_card');
             }),
-            map((result) => [result, data.token]),
+            map((result) => ({ result, token: data.token })),
           ),
         ),
       )
       .subscribe({
-        next: ([result, token]) => {
+        next: ({ result, token }) => {
           this.token = token;
           this.paymentMethodId = result.payment_method_id;
           this.editCard = false;
@@ -307,11 +323,18 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.cdr?.markForCheck();
         }),
         switchMap(() =>
+          this.accountType.pipe(
+            take(1),
+            filter((accountType) => !!accountType),
+            map((accountType) => accountType as AccountTypes),
+          ),
+        ),
+        switchMap((accountType) =>
           this.billingService
             .createSubscription({
-              payment_method_id: this.paymentMethodId!,
+              payment_method_id: this.paymentMethodId || '',
               on_demand_budget: parseInt(this.budget.value),
-              account_type: this.accountType!,
+              account_type: accountType,
             })
             .pipe(
               catchError((error) => {
@@ -384,21 +407,40 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   openReview() {
-    return forkJoin([this.prices.pipe(take(1)), this.currency.pipe(take(1))]).pipe(
+    return forkJoin([
+      this.prices.pipe(take(1)),
+      this.currency.pipe(take(1)),
+      this.accountType.pipe(
+        take(1),
+        filter((accountType) => !!accountType),
+        map((accountType) => accountType as AccountTypes),
+      ),
+    ]).pipe(
       switchMap(
-        ([prices, currency]) =>
+        ([prices, currency, accountType]) =>
           this.modalService.openModal(ReviewComponent, {
             dismissable: true,
             data: {
-              account: this.accountType,
+              account: accountType,
               customer: this.customer,
               token: this.token,
-              prices: prices[this.accountType],
+              prices: prices[accountType],
               budget: this.budget.value,
               currency,
             },
           }).onClose,
       ),
     );
+  }
+
+  saveBudget() {
+    this.billingService
+      .modifySubscription({ on_demand_budget: parseInt(this.budget.value) })
+      .pipe(switchMap(() => this.billingService.getAccountUsage()))
+      .subscribe((usage) => {
+        this.budget.setValue(usage.budget.toString());
+        this.budget.markAsPristine();
+        this.cdr?.markForCheck();
+      });
   }
 }

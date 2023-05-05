@@ -1,6 +1,13 @@
 <div class="account-home">
   <div class="container-row">
-    <div class="processing-stats">
+    <div
+      class="container-table"
+      *ngIf="hasUsageData | async">
+      <app-usage-table [usage]="usage | async"></app-usage-table>
+    </div>
+    <div
+      class="processing-stats"
+      *ngIf="!(hasUsageData | async)">
       <pa-tabs
         noSlider
         notFullWidth>
@@ -122,17 +129,8 @@
     </div>
 
     <div class="right-column">
-      <div
-        class="container plan"
-        [class.billing-enabled]="isBillingEnabled"
-        [routerLink]="(isBillingEnabled | async) ? '../billing' : null">
-        <div class="plan-name">
-          <strong>{{ 'account.type.label' | translate }}:</strong>
-          <span>{{ 'account.type.' + (accountType | async) | translate }}</span>
-        </div>
-        <pa-icon
-          *ngIf="(accountType | async) === 'stash-team'"
-          name="shield-check"></pa-icon>
+      <div>
+        <app-account-status [usage]="usage | async"></app-account-status>
       </div>
       <div
         class="container kb-state"

@@ -3,7 +3,7 @@
     class="topbar-logo"
     (click)="goToHome()">
     <svg-icon
-      src="assets/logos/logo-beta.svg"
+      src="assets/logos/logo.svg"
       class="topbar-logo-expanded"></svg-icon>
     <svg-icon
       *ngIf="isStage"
@@ -15,6 +15,15 @@
   </button>
 
   <div class="topbar-actions">
+    <pa-button
+      *ngIf="!standalone && (isBillingEnabled | async)"
+      kind="primary"
+      aspect="basic"
+      size="small"
+      [routerLink]="billingUrl | async">
+      {{ 'account.type.' + (accountType | async) | translate }}
+    </pa-button>
+
     <div
       *ngIf="((userInfo | async)?.accounts?.length || 0) > 1"
       class="topbar-account">

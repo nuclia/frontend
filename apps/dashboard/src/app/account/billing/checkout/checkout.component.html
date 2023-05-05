@@ -3,7 +3,7 @@
     <h2>{{ 'billing.payment_details' | translate }}</h2>
   </div>
 
-  <div>
+  <div *ngIf="subscribeMode | async">
     <div class="section-header">
       <div class="section-title">
         <pa-icon name="circle-check"></pa-icon>
@@ -17,11 +17,13 @@
     </div>
     <div class="section-body">
       <div class="body-m">
-        {{ 'account.type.' + accountType | translate }}
+        {{ 'account.type.' + (accountType | async) | translate }}
         -
         <ng-container *ngIf="currency | async as currency">
           <ng-container *ngIf="prices | async as prices">
-            {{ prices[accountType].recurring.month.price | currency: currency }}/{{ 'billing.month' | translate }}
+            {{ prices[accountType | async].recurring.month.price | currency: currency }}/{{
+              'billing.month' | translate
+            }}
           </ng-container>
         </ng-container>
       </div>
@@ -137,7 +139,7 @@
               for="country">
               {{ 'billing.country' | translate }} *
             </label>
-            <pa-select
+            <pa-typeahead-select
               id="country"
               formControlName="country"
               [readonly]="!!customer"
@@ -148,7 +150,7 @@
                 [value]="country.code">
                 {{ country.name }}
               </pa-option>
-            </pa-select>
+            </pa-typeahead-select>
           </div>
         </div>
         <div class="field-line">
@@ -192,7 +194,7 @@
           (click)="saveCustomer()"
           [disabled]="!customerForm.valid"
           kind="primary">
-          {{ 'billing.save_continue' | translate }}
+          {{ ((subscribeMode | async) ? 'billing.save_continue' : 'generic.save') | translate }}
         </pa-button>
       </form>
       <div
@@ -214,7 +216,7 @@
     </div>
   </div>
 
-  <div>
+  <div *ngIf="subscribeMode | async">
     <div class="section-header">
       <div class="section-title">
         <pa-icon
@@ -303,10 +305,18 @@
           </span>
         </div>
         <pa-button
+          *ngIf="subscribeMode | async"
           (click)="doSubscribe()"
           [disabled]="editCustomer || editCard || budget.invalid || loading"
           kind="primary">
           {{ 'billing.review_confirm' | translate }}
+        </pa-button>
+        <pa-button
+          *ngIf="!(subscribeMode | async)"
+          (click)="saveBudget()"
+          [disabled]="budget.pristine || budget.invalid"
+          kind="primary">
+          {{ 'generic.save' | translate }}
         </pa-button>
         <nsi-spinner *ngIf="loading"></nsi-spinner>
       </div>
