@@ -24,7 +24,7 @@ export class UsageTableComponent {
   get usage() {
     return this._usage;
   }
-  _usage?: AccountUsage;
+  private _usage?: AccountUsage;
   total = 0;
   invoiceItems: [string, InvoiceItem][] = [];
 

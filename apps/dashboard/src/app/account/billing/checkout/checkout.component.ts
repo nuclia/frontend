@@ -322,13 +322,19 @@ export class CheckoutComponent implements OnDestroy, OnInit {
           this.loading = true;
           this.cdr?.markForCheck();
         }),
-        switchMap(() => this.accountType.pipe(take(1))),
+        switchMap(() =>
+          this.accountType.pipe(
+            take(1),
+            filter((accountType) => !!accountType),
+            map((accountType) => accountType as AccountTypes),
+          ),
+        ),
         switchMap((accountType) =>
           this.billingService
             .createSubscription({
-              payment_method_id: this.paymentMethodId!,
+              payment_method_id: this.paymentMethodId || '',
               on_demand_budget: parseInt(this.budget.value),
-              account_type: accountType!,
+              account_type: accountType,
             })
             .pipe(
               catchError((error) => {
@@ -401,16 +407,24 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   }
 
   openReview() {
-    return forkJoin([this.prices.pipe(take(1)), this.currency.pipe(take(1)), this.accountType.pipe(take(1))]).pipe(
+    return forkJoin([
+      this.prices.pipe(take(1)),
+      this.currency.pipe(take(1)),
+      this.accountType.pipe(
+        take(1),
+        filter((accountType) => !!accountType),
+        map((accountType) => accountType as AccountTypes),
+      ),
+    ]).pipe(
       switchMap(
         ([prices, currency, accountType]) =>
           this.modalService.openModal(ReviewComponent, {
             dismissable: true,
             data: {
-              account: accountType!,
+              account: accountType,
               customer: this.customer,
               token: this.token,
-              prices: prices[accountType!],
+              prices: prices[accountType],
               budget: this.budget.value,
               currency,
             },
