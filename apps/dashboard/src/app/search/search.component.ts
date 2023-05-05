@@ -25,7 +25,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     tap(() => {
       document.getElementById(searchWidgetId)?.remove();
     }),
-    switchMap(([toggle, kb]) =>
+    switchMap(([toggleAnswerEnabled, kb]) =>
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
@@ -35,7 +35,7 @@ export class SearchComponent implements OnDestroy, OnInit {
           kb,
           hasLabels,
           hasClassifier,
-          isChatEnabled: isChatEnabled && toggle,
+          isChatEnabled: isChatEnabled && toggleAnswerEnabled,
         })),
       ),
     ),
