@@ -2,6 +2,14 @@
   <div
     class="search-bar-container"
     [innerHtml]="searchWidget | async"></div>
+  <div class="answer-toggle">
+    <pa-toggle
+      [value]="enabledAnswer"
+      (valueChange)="toggleAnswer($event)"
+      labelOnRight>
+      {{ 'stash.search.toggle-answer' | translate }}
+    </pa-toggle>
+  </div>
 
   <div [innerHTML]="searchResults"></div>
 </div>

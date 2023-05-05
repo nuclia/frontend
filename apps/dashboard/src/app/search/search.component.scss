@@ -6,6 +6,9 @@
   .search-bar-container {
     display: flex;
     justify-content: center;
-    margin-bottom: rhythm(5);
+    margin-bottom: rhythm(1);
+  }
+  .answer-toggle {
+    margin-bottom: rhythm(4);
   }
 }
