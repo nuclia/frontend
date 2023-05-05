@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SearchComponent } from './search.component';
-import { MockProvider } from 'ng-mocks';
+import { MockModule, MockProvider } from 'ng-mocks';
 import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
-import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { ResourceViewerService } from '../../../../../libs/common/src/lib/resources/resource-viewer.service';
+import { PaTogglesModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
+import { ResourceViewerService } from '@flaps/common';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;
@@ -15,6 +16,7 @@ describe('SearchComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [SearchComponent],
+      imports: [MockModule(PaTranslateModule), MockModule(PaTogglesModule)],
       providers: [
         MockProvider(SDKService, {
           currentKb: of({
