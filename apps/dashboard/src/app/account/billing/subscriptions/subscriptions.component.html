@@ -29,7 +29,9 @@
     <tr>
       <th>{{ 'billing.quotas' | translate }}</th>
       <th class="plan">
-        <div class="plan-name">{{ 'billing.trial.title' | translate }}</div>
+        <div class="plan-name">
+          {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
+        </div>
         <div class="price">{{ 'billing.free' | translate }}</div>
       </th>
       <th class="plan">
