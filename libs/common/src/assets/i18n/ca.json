@@ -102,6 +102,7 @@
 	"billing.billing_details": "Dades de facturació",
 	"billing.budget_calculator": "Calculadora de pressupost",
 	"billing.budget_description": "Per evitar despeses excessives en els consums mensuals, us recomanem establir un límit mensual. Si no s'estableix un límit, es poden generar càrrecs inesperats pels consums que superin la quantitat assignada.",
+	"billing.budget_warning": "El sobreconsum actual es facturarà aquest mes.<br>\nLa modificació del pressupost entrará en vigor el mes següent.",
 	"billing.cancel_subscription": "Cancel·la subscripció",
 	"billing.cancel_subscription.title": "Cancel·la la teva subscripció",
 	"billing.card_details": "Detalls de la targeta",

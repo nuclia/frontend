@@ -102,6 +102,7 @@
 	"billing.billing_details": "Datos de facturación",
 	"billing.budget_calculator": "Calculadora de presupuesto",
 	"billing.budget_description": "Para evitar gastos excesivos en los consumos mensuales, recomendamos establecer un límite mensual.<br> Si no se establece un límite, se pueden generar cargos inesperados por los consumos que excedan la cantidad asignada.",
+	"billing.budget_warning": "El sobreconsumo actual se facturará este mes.<br>\nEl cambio de presupuesto entrará en vigencia el próximo mes.",
 	"billing.cancel_subscription": "Cancela suscripción",
 	"billing.cancel_subscription.title": "Cancela tu suscripción",
 	"billing.card_details": "Detalles de la tarjeta",

@@ -440,6 +440,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       .subscribe((usage) => {
         this.budget.setValue(usage.budget.toString());
         this.budget.markAsPristine();
+        if (usage.budget < Object.values(usage.invoice_items).reduce((acc, curr) => acc + curr.over_cost, 0)) {
+          this.toaster.warning('billing.budget_warning');
+        }
         this.cdr?.markForCheck();
       });
   }
