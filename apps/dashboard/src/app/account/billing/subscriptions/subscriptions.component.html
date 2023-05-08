@@ -61,11 +61,10 @@
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
         <pa-button
-          *ngIf="(accountType | async) === 'stash-basic' || (accountType | async) === 'stash-trial'"
+          *ngIf="(accountType | async) !== 'stash-business'"
           kind="primary"
-          routerLink="../checkout"
-          [queryParams]="{ type: 'stash-business' }">
-          {{ 'billing.upgrade' | translate }}
+          (click)="contact()">
+          {{ 'billing.contact' | translate }}
         </pa-button>
         <div
           *ngIf="(accountType | async) === 'stash-business'"
@@ -223,6 +222,10 @@
       <h2>{{ 'billing.cancel_subscription.title' | translate }}</h2>
       <div>{{ 'billing.cancel_subscription.description' | translate }}</div>
     </div>
-    <pa-button kind="destructive">{{ 'billing.cancel_subscription' | translate }}</pa-button>
+    <pa-button
+      (click)="cancel()"
+      kind="destructive">
+      {{ 'billing.cancel_subscription' | translate }}
+    </pa-button>
   </div>
 </div>
