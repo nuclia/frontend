@@ -88,7 +88,7 @@
             },
             {
               "glob": "**/*",
-              "input": "apps/manager-v2/src/environments_config/local-stage",
+              "input": "apps/manager-v2/src/environments_config/production",
               "output": "assets/deployment"
             },
             {
