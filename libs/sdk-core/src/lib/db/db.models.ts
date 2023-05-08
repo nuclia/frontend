@@ -25,6 +25,7 @@ export interface Account {
   limits: AccountLimits;
   blocking_state: AccountBlockingState;
   blocked_features: BlockedFeature[];
+  trial_expiration_date?: string;
 }
 
 export interface AccountConfig {
