@@ -71,12 +71,15 @@
           filteredNodes.some((node) => node.id === link.source.id) &&
           filteredNodes.some((node) => node.id === link.target.id),
       );
-      // remove orphan nodes
-      filteredNodes = filteredNodes.filter(
-        (node) =>
-          filteredLinks.some((link) => node.id === link.source.id) ||
-          filteredLinks.some((link) => node.id === link.target.id),
-      );
+      if (filteredLinks.length > 0) {
+        // remove orphan nodes
+        filteredNodes = filteredNodes.filter(
+          (node) =>
+            filteredLinks.some((link) => node.id === link.source.id) ||
+            filteredLinks.some((link) => node.id === link.target.id),
+        );
+      }
+
       renderedDots = [...filteredNodes];
       renderedLinks = [...filteredLinks];
     }
