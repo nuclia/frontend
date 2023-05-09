@@ -14,7 +14,7 @@ export class AppLayoutComponent implements OnInit {
   avatar: Observable<AvatarModel> = this.userInfo.pipe(
     filter((userInfo) => !!userInfo),
     map((userInfo) => ({
-      userName: userInfo?.preferences.name,
+      userName: userInfo?.preferences.name || '–',
       userId: userInfo?.preferences.email,
     })),
   );
