@@ -65,3 +65,7 @@ export const _: Observable<(key: string, args?: { [key: string]: string | number
         translate(lang, translations, key, args),
   ),
 );
+
+export function translateInstant(key: string, args?: { [key: string]: string | number }): string {
+  return translate(currentLanguage.getValue(), locales.getValue(), key, args);
+}
