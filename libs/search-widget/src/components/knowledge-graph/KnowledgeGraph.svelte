@@ -17,6 +17,7 @@
     RelationWithRelevance,
   } from '../../core/knowledge-graph.models';
   import { graphState } from '../../core/stores/graph.store';
+  import Checkbox from '../../common/checkbox/Checkbox.svelte';
 
   export let rightPanelOpen = false;
 
@@ -33,6 +34,8 @@
   let innerWidth: number;
   let nodes: NerNode[];
   let links: NerLink[];
+
+  let visibleFamilies: string[];
 
   $: graphWidth = rightPanelOpen ? innerWidth - leftPanelWidth - rightPanelWidth : innerWidth - leftPanelWidth;
   $: graphHeight = innerHeight - 80;
@@ -169,19 +172,20 @@
   }
 
   function setFamilies(nodes: NerNode[]) {
-    const familyIds = nodes.reduce((families, node) => {
+    visibleFamilies = nodes.reduce((families, node) => {
       if (!families.includes(node.family)) {
         families.push(node.family);
       }
       return families;
     }, []);
-    families = familyIds
+    families = visibleFamilies
       .map((id) => {
-        const color = generatedEntitiesColor[id] || defaultFamilyColor;
+        const generatedEntityColor = generatedEntitiesColor[id];
+        const color = generatedEntityColor || defaultFamilyColor;
         return {
           id,
           color,
-          label: !!color ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase(),
+          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase(),
         };
       })
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -190,6 +194,14 @@
   function selectNode(node: NerNode | null) {
     if (!!node && !rightPanelOpen) {
       dispatch('openRightPanel');
+    }
+  }
+
+  function toggleFamily(family: NerFamily, selected: boolean) {
+    if (selected) {
+      visibleFamilies = visibleFamilies.concat([family.id]);
+    } else {
+      visibleFamilies = visibleFamilies.filter((id) => family.id !== id);
     }
   }
 </script>
@@ -217,7 +229,11 @@
               <div
                 class="family-color"
                 style:background={family.color} />
-              {family.label}
+              <Checkbox
+                checked={visibleFamilies.includes(family.id)}
+                on:change={(event) => toggleFamily(family, event.detail)}>
+                {family.label}
+              </Checkbox>
             </li>
           {/each}
         </ul>
@@ -229,6 +245,7 @@
       {nodes}
       {forces}
       {links}
+      {visibleFamilies}
       height={graphHeight}
       width={graphWidth}
       on:nodeSelection={(event) => selectNode(event.detail)} />

@@ -17,6 +17,8 @@
   export let forces = [];
   // an array NerLink to display as edges and apply as force.links
   export let links = [];
+  // array of visible family ids
+  export let visibleFamilies;
 
   let usedForceNames = [];
   let renderedDots = [];
@@ -25,12 +27,15 @@
   let selectedNode: NerNode | null = null;
   let selectedNodeRelationIds: string[] = [];
 
+  let filteredNodes;
+  let filteredLinks;
+
   $: simulation = forceSimulation()
     .nodes(nodes)
     .on('tick', () => {
       // update the renderedDots and renderedLinks references to trigger an update
-      renderedDots = [...nodes];
-      renderedLinks = [...links];
+      renderedDots = [...(filteredNodes || nodes)];
+      renderedLinks = filteredLinks && filteredLinks.length > 0 ? [...filteredLinks] : [...links];
     });
 
   $: {
@@ -55,6 +60,26 @@
     // kick our simulation into high gear
     simulation.alpha(1);
     simulation.restart();
+  }
+
+  $: {
+    // Filter nodes and edges depending on families selected on the left panel
+    if (visibleFamilies) {
+      filteredNodes = nodes.filter((node) => visibleFamilies.includes(node.family));
+      filteredLinks = links.filter(
+        (link) =>
+          filteredNodes.some((node) => node.id === link.source.id) &&
+          filteredNodes.some((node) => node.id === link.target.id),
+      );
+      // remove orphan nodes
+      filteredNodes = filteredNodes.filter(
+        (node) =>
+          filteredLinks.some((link) => node.id === link.source.id) ||
+          filteredLinks.some((link) => node.id === link.target.id),
+      );
+      renderedDots = [...filteredNodes];
+      renderedLinks = [...filteredLinks];
+    }
   }
 
   function selectNode(node: NerNode | null, event?: MouseEvent) {
@@ -119,28 +144,32 @@
           ? '#C4C4C450'
           : '#00000050'} />
     {/each}
-    {#each renderedDots as dot, i}
+    {#each renderedDots as dot, i (dot.id)}
       <g
         class="node"
-        class:selected={selectedNode === nodes[i]}
-        on:click={(event) => selectNode(nodes[i], event)}>
+        class:selected={selectedNode === filteredNodes[i]}
+        on:click={(event) => selectNode(filteredNodes[i], event)}>
         <circle
           style={move(dot.x, dot.y)}
-          fill={!selectedNode || selectedNode === nodes[i] || selectedNodeRelationIds.includes(nodes[i].id)
-            ? nodes[i].color
+          fill={!selectedNode ||
+          selectedNode === filteredNodes[i] ||
+          selectedNodeRelationIds.includes(filteredNodes[i].id)
+            ? filteredNodes[i].color
             : '#C4C4C499'}
-          stroke={selectedNode === nodes[i] ? '#000' : '#00000025'}
+          stroke={selectedNode === filteredNodes[i] ? '#000' : '#00000025'}
           r={dot.radius}>
           <title>{dot.ner}</title>
         </circle>
-        {#if nodes[i].radius > 20}
+        {#if filteredNodes[i].radius > 20}
           <text
             x={dot.x}
             y={dot.y}
             text-anchor="middle"
             dy="5"
-            fill={!selectedNode || selectedNode === nodes[i] || selectedNodeRelationIds.includes(nodes[i].id)
-              ? getFontColor(nodes[i].color)
+            fill={!selectedNode ||
+            selectedNode === filteredNodes[i] ||
+            selectedNodeRelationIds.includes(filteredNodes[i].id)
+              ? getFontColor(filteredNodes[i].color)
               : '#fff'}
             stroke="#00000050"
             stroke-width="0.5">
