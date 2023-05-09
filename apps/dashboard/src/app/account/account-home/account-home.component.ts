@@ -12,6 +12,7 @@ import {
   share,
   shareReplay,
   switchMap,
+  take,
 } from 'rxjs';
 import { eachDayOfInterval, format, getDaysInMonth, isThisMonth, lastDayOfMonth } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,6 +41,7 @@ export class AccountHomeComponent {
   );
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
   usage = this.hasUsageData.pipe(
+    take(1),
     switchMap((hasUsageData) => (hasUsageData ? this.billingService.getAccountUsage() : of(undefined))),
     shareReplay(),
   );

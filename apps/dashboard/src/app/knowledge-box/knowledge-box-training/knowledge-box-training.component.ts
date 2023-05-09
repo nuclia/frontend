@@ -30,7 +30,9 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
   private unsubscribeAll: Subject<void> = new Subject();
 
   hasResources = this.sdk.counters.pipe(map((counters) => counters.resources > 0));
-  cannotTrain = this.stateService.account.pipe(map((account) => !!account && account.type === 'stash-basic'));
+  cannotTrain = this.stateService.account.pipe(
+    map((account) => !!account && (account.type === 'stash-basic' || account.type === 'stash-trial')),
+  );
   trainingTypes = TrainingType;
   labelSets: Observable<TrainingOption[]> = this.sdk.currentKb.pipe(
     switchMap((kb) => kb.getLabels()),
