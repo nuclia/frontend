@@ -380,6 +380,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         this.hasMore = !!results.fulltext?.next_page;
 
         this.setLoading(false);
+        this.emptyKb = this.data.length === 0;
         return results;
       }),
     );
