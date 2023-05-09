@@ -3,7 +3,6 @@
   import { createEventDispatcher } from 'svelte';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
 
-  const dispatch = createEventDispatcher();
   // utility function for translating elements
   const move = (x, y) => `transform: translate(${x}px, ${y}px)`;
 
@@ -19,6 +18,7 @@
   // array of visible family ids
   export let visibleFamilies;
 
+  const dispatch = createEventDispatcher();
   let usedForceNames = [];
   let renderedDots = [];
   let renderedLinks: NerLink[] = [];
