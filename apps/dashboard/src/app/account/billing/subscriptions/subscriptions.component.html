@@ -57,8 +57,7 @@
       <th class="plan">
         <div class="plan-name">Business</div>
         <div class="price">
-          {{ (prices | async)?.['stash-business'].recurring.month.price | currency: currency}}
-          <span class="unit">/{{ 'billing.month' | translate }}</span>
+          <span class="unit">{{ 'billing.enterprise_ready' | translate }}</span>
         </div>
         <pa-button
           *ngIf="(accountType | async) !== 'stash-business'"
