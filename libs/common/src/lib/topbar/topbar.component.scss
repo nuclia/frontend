@@ -25,17 +25,17 @@
     @include reset-button();
     cursor: pointer;
 
-    &-expanded svg {
+    .topbar-logo-expanded {
       display: block;
-      width: 104px;
+      width: rhythm(13);
       height: auto;
       @include media-breakpoint('lt-md') {
         display: none;
       }
     }
-    &-collapsed svg {
+    .topbar-logo-collapsed {
       display: block;
-      width: 33px;
+      width: rhythm(4);
       height: auto;
       @include media-breakpoint('gt-sm') {
         display: none;

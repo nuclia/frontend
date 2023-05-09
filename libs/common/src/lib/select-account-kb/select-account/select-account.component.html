@@ -4,8 +4,8 @@
   <div class="select-container">
     <div class="logo">
       <img
-        src="assets/logos/logo_text.svg"
-        alt="Nuclia" />
+        [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
+        [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
     </div>
     <div
       class="select-content"

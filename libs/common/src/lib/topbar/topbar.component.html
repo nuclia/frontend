@@ -2,16 +2,19 @@
   <button
     class="topbar-logo"
     (click)="goToHome()">
-    <svg-icon
-      src="assets/logos/logo.svg"
-      class="topbar-logo-expanded"></svg-icon>
-    <svg-icon
+    <img
+      [src]="!standalone ? 'assets/logos/logo.svg' : 'assets/logos/nucliadb.svg'"
+      class="topbar-logo-expanded"
+      [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
+    <img
       *ngIf="isStage"
-      src="assets/icons/experimenting.svg"
-      class="is-stage"></svg-icon>
-    <svg-icon
+      src="assets/logos/stage-icon.svg"
+      class="is-stage"
+      alt="Stage" />
+    <img
       src="assets/logos/symbol.svg"
-      class="topbar-logo-collapsed"></svg-icon>
+      class="topbar-logo-collapsed"
+      alt="Nuclia" />
   </button>
 
   <div class="topbar-actions">
@@ -32,6 +35,8 @@
 
     <app-kb-switch class="topbar-kb"></app-kb-switch>
 
-    <app-user-menu [userInfo]="userInfo | async"></app-user-menu>
+    <app-user-menu
+      *ngIf="!standalone"
+      [userInfo]="userInfo | async"></app-user-menu>
   </div>
 </div>
