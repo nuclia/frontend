@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { combineLatest, map, of, shareReplay } from 'rxjs';
+import { combineLatest, filter, map, of, shareReplay } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 import { BillingService } from '../billing/billing.service';
@@ -7,6 +7,8 @@ import { AccountUsage } from '../billing/billing.models';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
+import { differenceInDays } from 'date-fns';
+import { AccountBlockingState } from '@nuclia/core';
 
 @Component({
   selector: 'app-account-status',
@@ -28,7 +30,16 @@ export class AccountStatusComponent {
   upgradeUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigation.getAccountManageUrl(account.slug) + '/billing/subscriptions'),
   );
+  blocked = this.sdk.currentAccount.pipe(map((account) => account.blocking_state === AccountBlockingState.QUOTA));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  daysLeft = this.sdk.currentAccount.pipe(
+    filter((account) => !!account.trial_expiration_date),
+    map((account) => {
+      const expiration = new Date(`${account.trial_expiration_date}+00:00`);
+      const now = new Date();
+      return differenceInDays(expiration, now);
+    }),
+  );
 
   constructor(
     private sdk: SDKService,

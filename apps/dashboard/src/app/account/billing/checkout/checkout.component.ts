@@ -71,7 +71,10 @@ export class CheckoutComponent implements OnDestroy, OnInit {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   accountType = combineLatest([
-    this.sdk.currentAccount.pipe(map((account) => account.type)),
+    this.sdk.currentAccount.pipe(
+      take(1),
+      map((account) => account.type),
+    ),
     this.route.queryParams.pipe(map((params) => params['type'])),
   ]).pipe(
     map(([currentType, nextType]) => (nextType && currentType !== nextType ? (nextType as AccountTypes) : undefined)),
@@ -440,6 +443,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
       .subscribe((usage) => {
         this.budget.setValue(usage.budget.toString());
         this.budget.markAsPristine();
+        if (usage.budget < Object.values(usage.invoice_items).reduce((acc, curr) => acc + curr.over_cost, 0)) {
+          this.toaster.warning('billing.budget_warning');
+        }
         this.cdr?.markForCheck();
       });
   }

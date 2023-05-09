@@ -64,4 +64,8 @@ export class SubscriptionsComponent {
   contact() {
     this.window.location.href = 'mailto:billing@nuclia.com';
   }
+
+  cancel() {
+    this.window.open('https://tr1ow02y4vw.typeform.com/to/zOiVFwJU', '_blank', 'noreferrer,noopener');
+  }
 }

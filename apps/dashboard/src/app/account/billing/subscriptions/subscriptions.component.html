@@ -29,7 +29,9 @@
     <tr>
       <th>{{ 'billing.quotas' | translate }}</th>
       <th class="plan">
-        <div class="plan-name">{{ 'billing.trial.title' | translate }}</div>
+        <div class="plan-name">
+          {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
+        </div>
         <div class="price">{{ 'billing.free' | translate }}</div>
       </th>
       <th class="plan">
@@ -59,11 +61,10 @@
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
         <pa-button
-          *ngIf="(accountType | async) === 'stash-basic' || (accountType | async) === 'stash-trial'"
+          *ngIf="(accountType | async) !== 'stash-business'"
           kind="primary"
-          routerLink="../checkout"
-          [queryParams]="{ type: 'stash-business' }">
-          {{ 'billing.upgrade' | translate }}
+          (click)="contact()">
+          {{ 'billing.contact' | translate }}
         </pa-button>
         <div
           *ngIf="(accountType | async) === 'stash-business'"
@@ -221,6 +222,10 @@
       <h2>{{ 'billing.cancel_subscription.title' | translate }}</h2>
       <div>{{ 'billing.cancel_subscription.description' | translate }}</div>
     </div>
-    <pa-button kind="destructive">{{ 'billing.cancel_subscription' | translate }}</pa-button>
+    <pa-button
+      (click)="cancel()"
+      kind="destructive">
+      {{ 'billing.cancel_subscription' | translate }}
+    </pa-button>
   </div>
 </div>

@@ -1,3 +1,9 @@
+# 1.3.2 (unreleased)
+
+### Improvements
+
+- Add `trial_expiration_date` property to `Account` model
+
 # 1.3.1 (2023-05-02)
 
 ### Improvements
