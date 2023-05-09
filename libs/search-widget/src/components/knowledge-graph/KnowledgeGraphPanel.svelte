@@ -5,7 +5,9 @@
   import { BehaviorSubject, combineLatest, map } from 'rxjs';
   import { Button } from '../../common';
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
+  import { createEventDispatcher } from 'svelte';
 
+  const dispatch = createEventDispatcher();
   const showMoreRelations: BehaviorSubject<boolean> = new BehaviorSubject(false);
   let relations: Observable<NerLinkHydrated[]> = combineLatest([graphSelectionRelations, showMoreRelations]).pipe(
     map(([selectionRelations, showMore]) =>
@@ -13,8 +15,8 @@
     ),
   );
 
-  function onClickParagraph(paragraph, index) {
-    console.log(`TODO manage click on paragraph`, paragraph, index);
+  function onClickParagraph(paragraph) {
+    dispatch('selectParagraph', paragraph);
   }
 </script>
 
@@ -50,12 +52,11 @@
     {#if $graphSelectionParagraphs.length > 0}
       <section class="results-section">
         <ul>
-          {#each $graphSelectionParagraphs as paragraph, index}
-            <!--            <li>{paragraph.text}</li>-->
+          {#each $graphSelectionParagraphs as paragraph}
             <ParagraphResult
               {paragraph}
               stack={true}
-              on:open={() => onClickParagraph(paragraph, index)} />
+              on:open={() => onClickParagraph(paragraph)} />
           {/each}
         </ul>
       </section>

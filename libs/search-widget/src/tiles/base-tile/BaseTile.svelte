@@ -316,6 +316,12 @@
     const query = graphQuery.getValue();
     console.log(`Todo: find ${query} in graph`);
   }
+
+  function selectParagraphFromGraph(event) {
+    toggleKnowledgeGraph();
+    toggleSidePanel();
+    openParagraph(event.detail, -1);
+  }
 </script>
 
 <svelte:window
@@ -420,7 +426,7 @@
                   on:change={findInGraph} />
               </div>
             {/if}
-            <KnowledgeGraphPanel />
+            <KnowledgeGraphPanel on:selectParagraph={selectParagraphFromGraph} />
           {:else}
             {#if !isMobile}
               <div
