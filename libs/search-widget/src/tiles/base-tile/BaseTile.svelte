@@ -46,6 +46,7 @@
   import KnowledgeGraphPanel from '../../components/knowledge-graph/KnowledgeGraphPanel.svelte';
   import KnowledgeGraph from '../../components/knowledge-graph/KnowledgeGraph.svelte';
   import { graphQuery } from '../../core/stores/graph.store';
+  import D3Loader from '../../components/knowledge-graph/D3Loader.svelte';
 
   export let result: Search.SmartResult;
   export let previewKind: PreviewKind;
@@ -552,7 +553,7 @@
   {/if}
 
   {#if showKnowledgeGraph}
-    <KnowledgeGraph
+    <D3Loader
       rightPanelOpen={sidePanelExpanded}
       on:openRightPanel={toggleSidePanel} />
   {/if}

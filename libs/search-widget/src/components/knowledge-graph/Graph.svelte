@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { forceSimulation, rgb } from 'd3';
   import { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { createEventDispatcher } from 'svelte';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
@@ -30,7 +29,8 @@
   let filteredNodes;
   let filteredLinks;
 
-  $: simulation = forceSimulation()
+  $: simulation = d3
+    .forceSimulation()
     .nodes(nodes)
     .on('tick', () => {
       // update the renderedDots and renderedLinks references to trigger an update
@@ -119,7 +119,7 @@
    * @param hexa: hexadecimal color
    */
   function getFontColor(hexa: string): string {
-    const color = rgb(hexa);
+    const color = d3.rgb(hexa);
     // Counting the perceptive luminance - human eye favors green color...
     const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
     return luminance > 0.5 ? '#000' : '#fff';
@@ -147,6 +147,7 @@
           ? '#C4C4C450'
           : '#00000050'} />
     {/each}
+
     {#each renderedDots as dot, i (dot.id)}
       <g
         class="node"
