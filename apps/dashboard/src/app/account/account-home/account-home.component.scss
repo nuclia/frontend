@@ -66,12 +66,17 @@
     flex-direction: column;
     flex-shrink: 0;
     gap: rhythm(3);
-    width: rhythm(35);
+    width: rhythm(41);
 
     .kb-state {
       cursor: pointer;
       display: flex;
       justify-content: space-between;
+
+      .kb-count {
+        display: flex;
+        gap: rhythm(1);
+      }
     }
 
     .total-queries {

@@ -1,7 +1,7 @@
 @import 'variables';
 
 .knowledge-box-home {
-  padding: 4.5vw var(--app-layout-margin-right);
+  padding: rhythm(6) var(--app-layout-margin-right);
 
   $flex-gap: rhythm(4);
   $width-right-column: rhythm(40) + rhythm(6);
@@ -73,20 +73,15 @@
   }
 
   .endpoint-container {
-    align-items: center;
-    display: flex;
-    flex: 1 1 auto;
-    gap: rhythm(2);
-    margin-bottom: rhythm(2);
+    margin-bottom: rhythm(4);
 
     .endpoint-text {
-      align-items: baseline;
+      align-items: center;
       display: flex;
       gap: rhythm(2);
     }
 
     .endpoint {
-      display: inline-block;
       font-family: $font-family-monospace;
       font-size: font-size(s);
       white-space: nowrap;

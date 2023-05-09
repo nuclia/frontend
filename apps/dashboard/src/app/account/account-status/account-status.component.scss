@@ -1,12 +1,18 @@
 @import 'variables';
 
+.account-status {
+  align-items: center;
+  display: flex;
+  gap: rhythm(3);
+  justify-content: space-between;
+}
+
 .type {
-  margin-bottom: rhythm(0.5);
+  font-weight: $font-weight-semi-bold;
 }
 
 .price {
   color: $color-primary-regular;
-  margin-bottom: rhythm(1);
 }
 
 .unit {
