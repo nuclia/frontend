@@ -19,12 +19,20 @@ export class AccountListComponent {
     map((accounts) => accounts.sort((a, b) => a.title.localeCompare(b.title))),
   );
 
+  lastIndex = 100;
+
   constructor(
     private accountService: AccountService,
     private modalService: SisModalService,
     private toast: SisToastService,
   ) {
     this.loadAccounts();
+  }
+
+  onReachAnchor() {
+    if (this.lastIndex < this._allAccounts.getValue().length) {
+      this.lastIndex = this.lastIndex + 100;
+    }
   }
 
   deleteAccount(event: MouseEvent, account: AccountSummary) {

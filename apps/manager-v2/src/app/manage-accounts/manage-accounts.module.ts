@@ -7,6 +7,7 @@ import {
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
+  PaScrollModule,
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
@@ -83,6 +84,7 @@ const ROUTES: Routes = [
     FormsModule,
     PaPopupModule,
     PaDropdownModule,
+    PaScrollModule,
   ],
   declarations: [
     ManageAccountsComponent,

@@ -19,8 +19,10 @@ export class UserListComponent {
         ? users.filter((user) => (user.name || user.email).includes(filter) || user.email.includes(filter))
         : users,
     ),
-    map((accounts) => accounts.slice(0, 500).sort((a, b) => (a.name || '').localeCompare(b.name || ''))),
+    map((accounts) => accounts.sort((a, b) => (a.name || '').localeCompare(b.name || ''))),
   );
+
+  lastIndex = 100;
 
   constructor(
     private router: Router,
@@ -29,6 +31,12 @@ export class UserListComponent {
     private toast: SisToastService,
   ) {
     this.loadUsers();
+  }
+
+  onReachAnchor() {
+    if (this.lastIndex < this._allUsers.getValue().length) {
+      this.lastIndex = this.lastIndex + 100;
+    }
   }
 
   deleteUser(event: MouseEvent, user: UserSummary) {
