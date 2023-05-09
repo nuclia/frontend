@@ -9,11 +9,16 @@
       <span class="body-s unit">/{{ 'billing.month' | translate }}</span>
     </ng-container>
     <ng-container *ngIf="trialAccount | async">
-      {{
-        (daysLeft | async) >= 0
-          ? ('account.days_left' | translate: { days: (daysLeft | async) })
-          : ('account.expired' | translate)
-      }}
+      <div *ngIf="!(blocked | async)">
+        {{
+          (daysLeft | async) >= 0
+            ? ('account.days_left' | translate: { days: (daysLeft | async) + 1 })
+            : ('account.expired' | translate)
+        }}
+      </div>
+      <div *ngIf="blocked | async">
+        {{ 'account.quota_exhausted' | translate }}
+      </div>
     </ng-container>
   </div>
   <pa-button

@@ -63,6 +63,7 @@
 	"account.nua_webhook": "Webhook URL",
 	"account.nua_webhook.help": "Once your data is processed, the result is posted to this URL",
 	"account.public": "Public",
+	"account.quota_exhausted": "Quota exhausted",
 	"account.related_kbs": "Account’s Knowledge Boxes",
 	"account.renewal": "Processing consumption renews monthly",
 	"account.replace_config": "Replace settings",

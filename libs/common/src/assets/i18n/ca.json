@@ -55,6 +55,7 @@
 	"account.nua_webhook": "Webhook URL",
 	"account.nua_webhook.help": "Un cop processades les teves dades, el resultat es publica a aquest URL",
 	"account.public": "Públic",
+	"account.quota_exhausted": "Quota exhaurida",
 	"account.related_kbs": "Knowledge Box relacionats amb l’Account",
 	"account.replace_config": "Reemplaçar configuració",
 	"account.settings": "Preferències de l’Account",
