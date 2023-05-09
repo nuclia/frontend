@@ -4,7 +4,13 @@ import { ManageUsersComponent } from './manage-users.component';
 import { RouterModule, Routes } from '@angular/router';
 import { UserListComponent } from './user-list/user-list.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
-import { PaButtonModule, PaIconModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaScrollModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 import { ReactiveFormsModule } from '@angular/forms';
 
 const ROUTES: Routes = [
@@ -33,6 +39,7 @@ const ROUTES: Routes = [
     PaTextFieldModule,
     PaIconModule,
     ReactiveFormsModule,
+    PaScrollModule,
   ],
   declarations: [ManageUsersComponent, UserListComponent, UserDetailsComponent],
 })
