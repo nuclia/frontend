@@ -136,14 +136,16 @@
         class="container kb-state"
         routerLink="../kbs">
         <strong>{{ 'stash.state' | translate }}:</strong>
-        <span>
-          <strong>{{ (kbsTotal | async) || 0 }}</strong>
-          {{ 'account.knowledgeboxes' | translate }}
-        </span>
-        <div class="separator"></div>
-        <span>
-          <strong>{{ (kbsPublic | async) || 0 }}</strong>
-          {{ 'account.public' | translate }}
+        <span class="kb-count">
+          <span>
+            <strong>{{ (kbsTotal | async) || 0 }}</strong>
+            {{ 'account.knowledgeboxes' | translate }}
+          </span>
+          <div class="separator"></div>
+          <span>
+            <strong>{{ (kbsPublic | async) || 0 }}</strong>
+            {{ 'account.public' | translate }}
+          </span>
         </span>
       </div>
       <div class="container">
