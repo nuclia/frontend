@@ -782,6 +782,8 @@
 	"stash.widgets.suggestLabels.help": "Quan s'ha realitzat l'entrenament de la intenció de cerca d'etiquetes, es mostren les etiquetes suggerides en funció de la consulta",
 	"stash.widgets.suggestions": "Suggeriments",
 	"stash.widgets.suggestions.help": "Suggereix resultats mentre escriviu la consulta de cerca",
+	"stash.widgets.synonyms": "Coincidir amb sinònims",
+	"stash.widgets.synonyms.help": "Relaciona sinònims a la cerca difusa. No es pot utilitzar amb l'opció de relació.",
 	"stash.widgets.title": "Generador de widgets de cerca",
 	"stash.widgets.warning": "Perquè el giny funcioni correctament, el quadre de coneixement <strong>ha de ser públic</strong>.",
 	"stash.widgets.warning-dangerous-snippet": "Zona perillosa! Perquè aquest giny funcioni amb una caixa de coneixement privada, cal que proporcioneu un testimoni d'API.",

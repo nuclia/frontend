@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
-import { map, Subject, switchMap, take, takeUntil } from 'rxjs';
+import { BackendConfigurationService, SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { combineLatest, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
-import { debounceTime, shareReplay } from 'rxjs/operators';
+import { debounceTime, filter, shareReplay } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -45,6 +45,13 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   copyIcon = 'copy';
   isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
   areAnswersEnabled = this.tracking.isFeatureEnabled('answers').pipe(shareReplay(1));
+  areSynonymsEnabled = combineLatest([
+    this.tracking.isFeatureEnabled('manage-synonyms').pipe(shareReplay(1)),
+    this.stateService.account.pipe(
+      filter((account) => !!account),
+      map((account) => account?.type),
+    ),
+  ]).pipe(map(([featureEnabled, accountType]) => featureEnabled && accountType === 'stash-business'));
 
   debouncePlaceholder = new Subject<string>();
 
@@ -73,6 +80,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private sdk: SDKService,
     private navigation: NavigationService,
+    private stateService: StateService,
   ) {
     const config = this.localStorage.getItem(WIDGETS_CONFIGURATION);
     if (config) {
@@ -105,6 +113,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               relations: [config.features.includes('relations')],
               suggestLabels: [config.features.includes('suggestLabels')],
               suggestions: [config.features.includes('suggestions')],
+              useSynonyms: [config.features.includes('useSynonyms')],
             }),
           });
           setTimeout(() => this.generateSnippet(), 100);

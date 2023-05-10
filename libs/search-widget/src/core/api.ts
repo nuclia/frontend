@@ -27,13 +27,20 @@ let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
+const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
-  if (widgetOptions.fuzzyOnly) {
+  if (widgetOptions.features?.useSynonyms && widgetOptions.features?.relations) {
+    throw new Error('Cannot use synonyms and relations at the same time');
+  }
+  if (widgetOptions.fuzzyOnly || widgetOptions.features?.useSynonyms) {
     SEARCH_MODE = [Search.Features.PARAGRAPH];
+  }
+  if (widgetOptions.features?.useSynonyms) {
+    DEFAULT_SEARCH_OPTIONS.with_synonyms = true;
   }
   nucliaApi = new Nuclia(options);
   searchOptions.set({ inTitleOnly: false, highlight: widgetOptions.highlight });
@@ -60,7 +67,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     throw new Error('Nuclia API not initialized');
   }
 
-  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, options).pipe(
+  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...options, ...DEFAULT_SEARCH_OPTIONS }).pipe(
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
@@ -104,7 +111,7 @@ export const searchInResource = (
 
   return nucliaApi.knowledgeBox
     .getResourceFromData(resource)
-    .search(query, features, options)
+    .search(query, features, { ...options, ...DEFAULT_SEARCH_OPTIONS })
     .pipe(
       filter((res) => {
         if (res.type === 'error') {
