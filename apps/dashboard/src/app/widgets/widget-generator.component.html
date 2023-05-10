@@ -94,6 +94,13 @@
             formControlName="permalink">
             {{ 'stash.widgets.permalink' | translate }}
           </pa-toggle>
+          <pa-toggle
+            *ngIf="areSynonymsEnabled | async"
+            labelOnRight
+            help="stash.widgets.synonyms.help"
+            formControlName="useSynonyms">
+            {{ 'stash.widgets.synonyms' | translate }}
+          </pa-toggle>
         </div>
       </section>
       <section class="snippet">

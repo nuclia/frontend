@@ -814,6 +814,8 @@
 	"stash.widgets.suggestLabels.help": "When label search intent training has been done, displays labels suggested based on the query",
 	"stash.widgets.suggestions": "Suggestions",
 	"stash.widgets.suggestions.help": "Suggest results while typing search query",
+	"stash.widgets.synonyms": "Match synomyms",
+	"stash.widgets.synonyms.help": "Match synonyms in fuzzy search. It cannot be used with the relation option.",
 	"stash.widgets.title": "Search widget generator",
 	"stash.widgets.warning": "In order for the widget to work properly, the <strong>knowledge box must be public</strong>.",
 	"stash.widgets.warning-dangerous-snippet": "Dangerous zone! For this widget to work with a private knowledge box you need to provide an API token.",

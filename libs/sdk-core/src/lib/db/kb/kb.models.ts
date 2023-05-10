@@ -240,6 +240,7 @@ export interface WidgetFeatures {
   answers?: boolean;
   speech?: boolean;
   knowledgeGraph?: boolean;
+  useSynonyms?: boolean;
 }
 
 export interface Counters {
