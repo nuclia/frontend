@@ -14,7 +14,7 @@ export const RELEASE_URL = 'https://github.com/nuclia/frontend/releases/latest';
 const RELEASE_API_URL = 'https://api.github.com/repos/nuclia/frontend/releases/latest';
 
 const APP_FILENAMES = {
-  mac: /.*-universal-mac\.zip$/,
+  mac: /.*-universal\.dmg$/,
   win: /.*\.exe$/,
   linux: /.*\.snap$/,
 };
