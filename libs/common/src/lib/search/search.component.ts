@@ -7,6 +7,7 @@ import { BackendConfigurationService, SDKService, STFTrackingService } from '@fl
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../resources';
+import { StandaloneService } from '../services';
 
 const searchWidgetId = 'search-bar';
 const searchResultsId = 'search-results';
@@ -74,6 +75,9 @@ export class SearchComponent implements OnInit, OnDestroy {
     `<nuclia-search-results id="${searchResultsId}"></nuclia-search-results>`,
   );
 
+  standalone = this.standaloneService.standalone;
+  hasValidKey = this.standaloneService.hasValidKey.pipe(tap(console.log));
+
   constructor(
     private sdk: SDKService,
     private sanitized: DomSanitizer,
@@ -81,6 +85,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     private translation: TranslateService,
     private viewerService: ResourceViewerService,
     private tracking: STFTrackingService,
+    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit() {

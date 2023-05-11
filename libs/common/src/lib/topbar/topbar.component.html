@@ -33,10 +33,21 @@
       <strong>{{ (kb | async)?.account }}</strong>
     </div>
 
-    <app-kb-switch class="topbar-kb"></app-kb-switch>
+    <app-kb-switch></app-kb-switch>
 
     <app-user-menu
       *ngIf="!standalone"
       [userInfo]="userInfo | async"></app-user-menu>
+
+    <ng-container *ngIf="standalone">
+      <div
+        class="standalone-config"
+        [paTooltip]="(errorMessage | async) || ''">
+        <pa-icon
+          [name]="(hasValidKey | async) === true ? 'circle-check' : 'circle-cross'"
+          [class]="(hasValidKey | async) === true ? 'valid' : 'invalid'"></pa-icon>
+        <div class="title-xs">nuclia.cloud</div>
+      </div>
+    </ng-container>
   </div>
 </div>

@@ -1,6 +1,7 @@
 <div class="home-container">
   <p>
-    By using a NUA API Key you can utilize
+    {{ (this.hasValidKey | async) ? 'As you are using' : 'By using' }}
+    a NUA API Key you can utilize
     <a
       href="https://nuclia.cloud"
       target="_blank">
@@ -8,10 +9,15 @@
     </a>
     .
     <br />
-    Your data would remain stored locally, but you would have access to a dashboard for following your metrics and more.
+    {{
+      (this.hasValidKey | async)
+        ? 'Your data remains stored locally, but you have access to a dashboard for following your metrics and more.'
+        : 'Your data would remain stored locally, but you would have access to a dashboard for following your metrics and more.'
+    }}
+
     <br />
   </p>
-  <p>
+  <p *ngIf="(hasValidKey | async) === false">
     To configure your NUA API Key for the server, use the environment variable
     <code>NUA_API_KEY</code>
     or the

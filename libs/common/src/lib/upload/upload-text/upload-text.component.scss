@@ -41,3 +41,9 @@ app-csv-select {
   gap: rhythm(1);
   margin-top: rhythm(4);
 }
+
+.warning {
+  background-color: $color-secondary-regular;
+  padding: rhythm(1);
+  margin-bottom: rhythm(3);
+}

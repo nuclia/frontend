@@ -1,7 +1,17 @@
 <div class="search-page">
-  <div
-    class="search-bar-container"
-    [innerHtml]="searchWidget | async"></div>
+  <div class="search-bar-section">
+    <div
+      class="search-bar-container"
+      [innerHtml]="searchWidget | async"></div>
+    <ng-container *ngIf="standalone">
+      <div
+        *ngIf="(hasValidKey | async) === false"
+        class="nua-key-warning">
+        <pa-icon name="info"></pa-icon>
+        {{ 'standalone.search-no-nua-key' | translate }}
+      </div>
+    </ng-container>
+  </div>
   <div class="answer-toggle">
     <pa-toggle
       [value]="enabledAnswer"

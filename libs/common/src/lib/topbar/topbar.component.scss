@@ -56,7 +56,17 @@
     width: 1px;
   }
 
-  .topbar-kb {
-    margin-right: rhythm(2);
+  .standalone-config {
+    align-items: center;
+    cursor: default;
+    display: flex;
+    gap: rhythm(1);
+
+    .valid {
+      color: $color-primary-regular;
+    }
+    .invalid {
+      color: $color-secondary-strong;
+    }
   }
 }

@@ -4,6 +4,7 @@ import { DroppedFile, SDKService, StateService, STFTrackingService, STFUtils } f
 import { Account, Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, PATTERNS_TO_IGNORE, UploadService } from '../upload.service';
 import * as mime from 'mime';
+import { StandaloneService } from '../../services';
 
 const GENERAL_LABELSET = 'General';
 
@@ -25,7 +26,10 @@ export class UploadFilesComponent {
   maxFileSize = 0;
   maxMediaFileSize = 0;
   useFoldersAsLabels = false;
-  noLimit = this.sdk.nuclia.options.standalone;
+
+  standalone = this.standaloneService.standalone;
+  noLimit = this.standalone;
+  hasValidKey = this.standaloneService.hasValidKey;
 
   get allowedFiles(): File[] {
     return this.noLimit
@@ -39,6 +43,7 @@ export class UploadFilesComponent {
     private tracking: STFTrackingService,
     private stateService: StateService,
     private sdk: SDKService,
+    private standaloneService: StandaloneService,
   ) {
     this.stateService.account
       .pipe(

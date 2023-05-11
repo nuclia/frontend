@@ -3,10 +3,18 @@
 .search-page {
   padding: rhythm(5) var(--app-layout-margin-right) rhythm(8) 5%;
 
+  .search-bar-section {
+    display: flex;
+    gap: rhythm(8);
+    margin-bottom: rhythm(1);
+
+    .nua-key-warning {
+      display: flex;
+      gap: rhythm(1);
+    }
+  }
   .search-bar-container {
     display: flex;
-    justify-content: center;
-    margin-bottom: rhythm(1);
   }
   .answer-toggle {
     margin-bottom: rhythm(4);
