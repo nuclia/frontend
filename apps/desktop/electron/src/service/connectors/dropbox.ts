@@ -31,7 +31,15 @@ class DropboxImpl implements ISourceConnector {
   }
 
   getFolders(query?: string): Observable<SearchResults> {
-    return this._getFiles(query, true);
+    return this._getFiles(query, true).pipe(
+      map((result) => ({
+        ...result,
+        items: [
+          { title: '/', originalId: '', isFolder: true, metadata: {}, status: FileStatus.PENDING, uuid: '' },
+          ...result.items,
+        ],
+      })),
+    );
   }
 
   getFiles(query?: string): Observable<SearchResults> {
@@ -40,7 +48,7 @@ class DropboxImpl implements ISourceConnector {
 
   getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]> {
     try {
-      return forkJoin((folders || []).map((folder) => this._getFiles('', false, folder.uuid))).pipe(
+      return forkJoin((folders || []).map((folder) => this._getFiles('', false, folder.originalId))).pipe(
         map((results) =>
           results.reduce(
             (acc, result) => acc.concat(result.items.filter((item) => item.modifiedGMT && item.modifiedGMT > since)),

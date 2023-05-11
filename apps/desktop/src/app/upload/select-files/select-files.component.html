@@ -3,6 +3,7 @@
   <div>{{ 'upload.select.description' | translate }}</div>
   <div class="header">
     <pa-checkbox
+      *ngIf="!(currentSource | async).permanentSync"
       [value]="isSelectingAll"
       (valueChange)="toggleSelectAll($event)">
       {{ 'upload.select.all' | translate }}
