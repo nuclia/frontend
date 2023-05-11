@@ -86,6 +86,7 @@
       name="info"></pa-icon>
     <a
       [href]="selectedConnector.helpUrl"
+      (click)="goToDocumentation($event, selectedConnector.helpUrl)"
       target="_blank"
       rel="noopener noreferrer">
       {{ 'upload.source.help' | translate: { source: selectedConnector.title } }}

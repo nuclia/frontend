@@ -194,4 +194,11 @@ export class ConnectorsComponent implements OnDestroy {
         });
     }
   }
+
+  goToDocumentation(event: MouseEvent, url: string) {
+    if ((window as any)['electron']) {
+      event.preventDefault();
+      (window as any)['electron'].openExternal(url);
+    }
+  }
 }
