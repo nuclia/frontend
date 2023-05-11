@@ -119,8 +119,8 @@ export class SyncService {
       )
       .subscribe(this._sourcesCache);
 
-    // if we were using local server, let's just start it automatically when we start the app
-    if (localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER) {
+    // use local server by default and start it automatically when we start the app
+    if (!localStorage.getItem(SYNC_SERVER_KEY) || localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER) {
       this.setSyncServer({ url: '', local: true });
     }
   }
