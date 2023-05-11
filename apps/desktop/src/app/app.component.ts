@@ -3,8 +3,11 @@ import { Router } from '@angular/router';
 import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
 import { STFUtils, STFTrackingService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
+import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { CONNECTOR_ID_KEY } from './sync/models';
 import { getDeeplink } from './utils';
+import pkg from '../../../../package.json';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'nde-root',
@@ -16,7 +19,8 @@ export class AppComponent implements OnInit {
   version = '';
   constructor(
     private config: BackendConfigurationService,
-    private translate: TranslateService,
+    private ngxTranslate: TranslateService,
+    private paTranslate: PaTranslateService,
     private user: UserService,
     private sdk: SDKService,
     private router: Router,
@@ -35,21 +39,25 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.config.getVersion()) {
-      this.version = this.config.getVersion();
+      this.version = `${pkg['version']} - ${this.config.getVersion()}`;
     }
   }
 
   initTranslate(userLocale?: string) {
-    this.translate.setDefaultLang('en');
-    const browserLang = this.translate.getBrowserLang();
+    this.ngxTranslate.setDefaultLang('en');
+    const browserLang = this.ngxTranslate.getBrowserLang();
 
     if (userLocale && userLocale !== '') {
-      this.translate.use(userLocale);
+      this.ngxTranslate.use(userLocale);
     } else if (browserLang && STFUtils.supportedLanguages().indexOf(browserLang) > -1) {
-      this.translate.use(browserLang);
+      this.ngxTranslate.use(browserLang);
     } else {
-      this.translate.use('en');
+      this.ngxTranslate.use('en');
     }
+
+    this.ngxTranslate.onLangChange.subscribe((event) =>
+      this.paTranslate.initTranslationsAndUse(event.lang, event.translations),
+    );
   }
 
   authenticate() {
