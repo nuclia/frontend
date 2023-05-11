@@ -12,9 +12,9 @@
       class="is-stage"
       alt="Stage" />
     <img
-      src="assets/logos/symbol.svg"
+      [src]="!standalone ? 'assets/logos/nuclia-symbol.svg' : 'assets/logos/nucliadb-symbol.svg'"
       class="topbar-logo-collapsed"
-      alt="Nuclia" />
+      [alt]="!standalone ? 'Nuclia' : 'NucliaDB'" />
   </button>
 
   <div class="topbar-actions">
