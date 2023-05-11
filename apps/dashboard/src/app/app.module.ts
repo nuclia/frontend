@@ -26,7 +26,6 @@ import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
-import { SearchModule } from './search/search.module';
 import {
   AuthInterceptor,
   BaseModule,
@@ -60,7 +59,6 @@ const appModules = [
   LabelSetsModule,
   UploadModule,
   RedirectModule,
-  SearchModule,
 ];
 
 @NgModule({

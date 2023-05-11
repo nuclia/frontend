@@ -66,6 +66,12 @@ export const routes: Routes = [
                   // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },
+              {
+                path: 'widget-generator',
+                loadChildren: () =>
+                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
+              },
             ],
           },
         ],

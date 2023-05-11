@@ -10,6 +10,7 @@ import {
   PageNotFoundComponent,
   PageNotFoundModule,
   rootGuard,
+  SearchComponent,
   SelectAccountComponent,
   selectAccountKbGuard,
   SelectKbComponent,
@@ -24,7 +25,6 @@ import { RedirectComponent } from './redirect/redirect.component';
 import { AccountNUAComponent } from './account/account-nua/account-nua.component';
 import { NuaActivityComponent } from './account/account-nua/nua-activity/nua-activity.component';
 import { AccountUsersComponent } from './account/account-users/account-users.component';
-import { SearchComponent } from './search/search.component';
 import {
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
@@ -164,7 +164,8 @@ const routes: Routes = [
               },
               {
                 path: 'widget-generator',
-                loadChildren: () => import('./widgets/widgets.module').then((m) => m.WidgetsModule),
+                loadChildren: () =>
+                  import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
               },
             ],
           },
