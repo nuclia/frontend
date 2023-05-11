@@ -6,6 +6,7 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
   rootGuard,
@@ -28,7 +29,6 @@ import {
   KnowledgeBoxComponent,
   KnowledgeBoxHomeComponent,
   KnowledgeBoxKeysComponent,
-  KnowledgeBoxProfileComponent,
   KnowledgeBoxUsersComponent,
 } from './knowledge-box';
 import { inviteGuard } from './invite/invite.guard';
@@ -143,7 +143,7 @@ const routes: Routes = [
               },
               {
                 path: 'manage',
-                component: KnowledgeBoxProfileComponent,
+                component: KnowledgeBoxSettingsComponent,
               },
               {
                 path: 'training',

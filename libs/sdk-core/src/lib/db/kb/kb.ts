@@ -247,7 +247,8 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
   }
 
   modify(data: Partial<IKnowledgeBox>): Observable<void> {
-    return this.nuclia.rest.patch<void>(`/account/${this.account}/kb/${this.slug}`, data);
+    const endpoint = this.account === 'local' ? `/kb/${this.id}` : `/account/${this.account}/kb/${this.slug}`;
+    return this.nuclia.rest.patch<void>(endpoint, data);
   }
 
   publish(published: boolean): Observable<void> {

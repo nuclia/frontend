@@ -33,7 +33,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   kbUrl: string = '';
 
   isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
-  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
+  isAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || kb.account === 'local'));
   account = this.stateService.account.pipe(filter((account) => !!account));
   kb = this.sdk.currentKb;
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));

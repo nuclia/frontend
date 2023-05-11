@@ -6,6 +6,7 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   rootGuard,
   SelectAccountComponent,
@@ -46,6 +47,10 @@ export const routes: Routes = [
                 loadChildren: () =>
                   // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+              },
+              {
+                path: 'manage',
+                component: KnowledgeBoxSettingsComponent,
               },
               {
                 path: 'label-sets',

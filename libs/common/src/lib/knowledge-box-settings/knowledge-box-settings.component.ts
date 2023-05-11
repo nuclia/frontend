@@ -1,19 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { filter, of, Subject } from 'rxjs';
+import { catchError, filter, of, Subject } from 'rxjs';
 import { concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { SDKService, StateService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
-import { Sluggable } from '@flaps/common';
+import { Sluggable } from '../validators';
 
 @Component({
-  selector: 'app-knowledge-box-profile',
-  templateUrl: './knowledge-box-profile.component.html',
-  styleUrls: ['./knowledge-box-profile.component.scss'],
+  templateUrl: './knowledge-box-settings.component.html',
+  styleUrls: ['./knowledge-box-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
+export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   kb: KnowledgeBox | undefined;
   account: Account | undefined;
 
@@ -49,9 +48,11 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
         tap((data) => (this.kb = data || undefined)),
         switchMap(() => this.stateService.account.pipe(takeUntil(this.unsubscribeAll))),
         tap((data) => (this.account = data || undefined)),
-        switchMap(() => (this.kb?.getConfiguration() || of({})).pipe(take(1))),
+        switchMap(() => (this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})).pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
-        switchMap(() => this.sdk.getVisibleLearningConfiguration(false)),
+        switchMap(() =>
+          this.sdk.getVisibleLearningConfiguration(false).pipe(catchError(() => of({ display: [], full: [] }))),
+        ),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ display, full }) => {
@@ -108,9 +109,11 @@ export class KnowledgeBoxProfileComponent implements OnInit, OnDestroy {
             acc[entry.id] = this.kbForm?.value.config[entry.id];
             return acc;
           }, current);
-          return kb.setConfiguration(conf);
+          return JSON.stringify(current) !== JSON.stringify(conf) ? kb.setConfiguration(conf) : of(null);
         }),
-        concatMap(() => this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, newSlug)),
+        concatMap(() =>
+          this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),
+        ),
       )
       .subscribe((kb) => {
         this.kbForm?.markAsPristine();

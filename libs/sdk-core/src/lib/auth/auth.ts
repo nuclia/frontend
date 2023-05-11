@@ -49,7 +49,7 @@ export class Authentication implements IAuthentication {
       default:
         nucliaDbRole = 'READER';
     }
-    if (path === '/kbs') {
+    if (path === '/kbs' || (method === 'PATCH' && path?.startsWith('/kb') && path?.split('/').length === 3)) {
       nucliaDbRole = 'MANAGER';
     } else if (path?.endsWith('/search') || path?.endsWith('/find') || path?.endsWith('/catalog')) {
       nucliaDbRole = 'READER';

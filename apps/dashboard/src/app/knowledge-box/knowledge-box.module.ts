@@ -10,7 +10,6 @@ import { STFExpanderModule } from '@flaps/pastanaga';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
-import { KnowledgeBoxProfileComponent } from './knowledge-box-profile/knowledge-box-profile.component';
 import { KnowledgeBoxUsersComponent, UsersManageModule } from './knowledge-box-users';
 import { KnowledgeBoxKeysComponent } from './knowledge-box-keys/knowledge-box-keys.component';
 import { ServiceAccessComponent } from './service-access/service-access.component';
@@ -66,7 +65,6 @@ import {
   declarations: [
     KnowledgeBoxComponent,
     KnowledgeBoxHomeComponent,
-    KnowledgeBoxProfileComponent,
     KnowledgeBoxUsersComponent,
     KnowledgeBoxKeysComponent,
     ServiceAccessComponent,
@@ -74,7 +72,6 @@ import {
   exports: [
     KnowledgeBoxComponent,
     KnowledgeBoxHomeComponent,
-    KnowledgeBoxProfileComponent,
     KnowledgeBoxUsersComponent,
     KnowledgeBoxKeysComponent,
     ServiceAccessComponent,
