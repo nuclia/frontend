@@ -81,6 +81,9 @@ describe('UploadComponent', () => {
                 authenticate: () => of(true),
                 getParameters: () => of([]),
               }),
+            currentSource: of({
+              permanentSync: false,
+            }),
             sourceObs: of([
               {
                 id: 'source1',

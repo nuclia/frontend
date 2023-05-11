@@ -85,7 +85,10 @@ export class UploadComponent implements OnInit, OnDestroy {
             data: event.params || {},
             permanentSync: !!event.permanentSync,
           })
-          .pipe(map(() => true))
+          .pipe(
+            delay(500), // let the data be stored before querying it
+            map(() => true),
+          )
       : of(true)
     )
       .pipe(
