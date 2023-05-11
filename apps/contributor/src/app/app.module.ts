@@ -6,7 +6,7 @@ import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { registerLocaleData } from '@angular/common';
+import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { environment } from '../environments/environment';
@@ -47,7 +47,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
     RouterModule.forRoot(routes, routerOptions),
     UploadModule,
   ],
-  providers: [TranslatePipe],
+  providers: [TranslatePipe, { provide: APP_BASE_HREF, useValue: '/contributor' }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

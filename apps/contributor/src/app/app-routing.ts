@@ -9,6 +9,7 @@ import {
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   rootGuard,
+  SearchComponent,
   SelectAccountComponent,
   SelectKbComponent,
 } from '@flaps/common';
@@ -47,6 +48,10 @@ export const routes: Routes = [
                 loadChildren: () =>
                   // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
+              },
+              {
+                path: 'search',
+                component: SearchComponent,
               },
               {
                 path: 'manage',
