@@ -59,6 +59,11 @@
   });
 
   const onLoadMore = () => loadMore.set();
+  const getResultKey = (result: Search.SmartResult) =>
+    result.id +
+    result.field?.field_type +
+    result.field?.field_id +
+    (result.paragraphs || []).reduce((acc, curr) => acc + curr.id, '');
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
@@ -84,7 +89,7 @@
           {#if $isAnswerEnabled}
             <InitialAnswer />
           {/if}
-          {#each $smartResults as result, i (result.id + result.field?.field_type + result.field?.field_id)}
+          {#each $smartResults as result, i (getResultKey(result))}
             <Tile {result} />
             {#if i === $smartResults.length - 10}
               <InfiniteScroll
