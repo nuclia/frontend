@@ -23,13 +23,13 @@ import { ResourcesComponent } from './resources.component';
 import {
   BackButtonComponent,
   DropdownButtonComponent,
+  SisIconsModule,
   SisLabelModule,
   SisProgressModule,
   SisStatusComponent,
 } from '@nuclia/sistema';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
 import { UploadButtonComponent } from './upload-button';
-import { STFIconsModule } from '@flaps/pastanaga';
 import { PaginationModule } from '../pagination';
 import { PipesModule } from '../pipes';
 import { LabelModule } from '../label';
@@ -148,10 +148,10 @@ const ROUTES: Routes = [
     PaTooltipModule,
 
     // FIXME: move what we need from old pastanaga to sistema
-    STFIconsModule,
     STFPipesModule,
 
     // Sistema
+    SisIconsModule,
     SisLabelModule,
     SisProgressModule,
     SisStatusComponent,

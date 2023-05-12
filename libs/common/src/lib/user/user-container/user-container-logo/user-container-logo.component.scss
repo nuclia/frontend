@@ -1,8 +1,7 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
-
 .user_container_logo {
   padding: 34px 30px 36px;
-  @include media-breakpoint('gt-xs') {
+  // this was based on Material. TODO: review this whole scss file using pastanaga-angular variables
+  @media screen and (min-width: 600px) {
     padding: 55px 50px 55px;
   }
 
@@ -12,7 +11,7 @@
     img {
       width: 180px;
       height: auto;
-      @include media-breakpoint('gt-xs') {
+      @media screen and (min-width: 600px) {
         width: 218px;
       }
     }

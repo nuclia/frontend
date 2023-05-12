@@ -6,7 +6,6 @@ import { SisToastService } from '@nuclia/sistema';
 import { SDKService } from '@flaps/core';
 import { WritableKnowledgeBox } from '@nuclia/core';
 import { of, skip, take } from 'rxjs';
-import { expect } from '@angular/flex-layout/_private-utils/testing';
 
 describe('SynonymsService', () => {
   let service: SynonymsService;

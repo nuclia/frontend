@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { combineLatest, map, Observable, take } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Account, IKnowledgeBoxItem } from '@nuclia/core';
-import { stfAnimations } from '@flaps/pastanaga';
 import { NavigationService } from '../../services';
 
 @Component({
@@ -11,7 +10,6 @@ import { NavigationService } from '../../services';
   templateUrl: './kb-switch.component.html',
   styleUrls: ['./kb-switch.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: stfAnimations,
 })
 export class KbSwitchComponent {
   @Output() close = new EventEmitter<void>();

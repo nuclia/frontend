@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { authGuard } from '@flaps/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
-import { UserAvatarModule } from '@flaps/components';
 import { NgxCaptchaModule } from 'ngx-captcha';
 
 import { LoginComponent } from './login/login.component';
@@ -94,7 +93,6 @@ export const userRoutes: Routes = [
     ReactiveFormsModule,
     NgxCaptchaModule,
     AngularSvgIconModule,
-    UserAvatarModule,
     RouterModule.forChild(userRoutes),
     TranslateModule.forChild(),
     PaButtonModule,

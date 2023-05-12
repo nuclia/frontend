@@ -29,21 +29,21 @@ describe('SsoButtonComponent', () => {
   });
 
   it('should display the icon and capitalized text corresponding to the provider', () => {
-    expect(component.icon).toBe(`assets/icons/google.svg`);
+    expect(component.icon).toBe(`assets/sso-icons/google.svg`);
     expect(component.providerName).toBe(`Google`);
 
     component.provider = 'github';
-    expect(component.icon).toBe(`assets/icons/github.svg`);
+    expect(component.icon).toBe(`assets/sso-icons/github.svg`);
     expect(component.providerName).toBe(`Github`);
   });
 
   it('should translate google workspace on signup', () => {
     component.signup = true;
-    expect(component.icon).toBe(`assets/icons/google.svg`);
+    expect(component.icon).toBe(`assets/sso-icons/google.svg`);
     expect(component.providerName).toBe(`translate--login.google-workspace`);
 
     component.provider = 'github';
-    expect(component.icon).toBe(`assets/icons/github.svg`);
+    expect(component.icon).toBe(`assets/sso-icons/github.svg`);
     expect(component.providerName).toBe(`Github`);
   });
 

@@ -5,9 +5,6 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-import { UserAvatarModule } from '@flaps/components';
-import { STFExpanderModule } from '@flaps/pastanaga';
-
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
 import { KnowledgeBoxHomeComponent } from './knowledge-box-home/knowledge-box-home.component';
 import { KnowledgeBoxUsersComponent, UsersManageModule } from './knowledge-box-users';
@@ -43,8 +40,6 @@ import {
     FormsModule,
     RouterModule,
     ProgressBarModule,
-    UserAvatarModule,
-    STFExpanderModule,
     TokenDialogModule,
     ChartsModule,
     PipesModule,

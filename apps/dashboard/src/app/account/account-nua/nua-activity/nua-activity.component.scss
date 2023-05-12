@@ -12,22 +12,22 @@
   justify-content: space-between;
 
   small {
-    color: $gray-contrast;
+    color: $color-neutral-regular;
     font-style: italic;
   }
 }
 
 .activity-container {
-  background: $white;
+  background: $color-light-stronger;
 }
 
 table {
   border-spacing: 0;
-  padding: 8px rythm(2);
+  padding: rhythm(1) rhythm(3);
   width: 100%;
 
   .cdk-header-cell {
-    border-bottom: 1px solid $gray-black;
+    border-bottom: 1px solid $color-neutral-regular;
   }
 
   .cdk-column-file {
@@ -35,12 +35,12 @@ table {
   }
 
   .cdk-cell {
-    padding: 8px;
+    padding: rhythm(1);
   }
 }
 
 .load-more {
   display: flex;
   justify-content: center;
-  padding: rythm(1);
+  padding: rhythm(1);
 }
