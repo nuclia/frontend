@@ -20,6 +20,9 @@ spec:
         regex: ^/.{0,2}
     - uri:
         regex: ^/([^a]|a[^p]|ap[^i]|api[^/]).*
+    retries:
+      attempts: 3
+      retryOn: connect-failure
     route:
     - destination:
         host: "{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local"
