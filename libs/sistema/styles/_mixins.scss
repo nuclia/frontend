@@ -4,3 +4,57 @@
   background-color: $color-dark-stronger;
   color: $color-light-stronger;
 }
+
+@mixin reset-button() {
+  -webkit-appearance: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+// TODO: to be replaced by pa-ellipsis everywhere it is used
+@mixin text-truncate() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// TODO: to be reviewed to be properly base 8
+@mixin scrollbar-style(
+  $size,
+  $background-color,
+  $background-hover-color,
+  $thumb-color,
+  $thumb-active-color,
+  $border-radius: $size,
+  $border: 2px
+) {
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+    background-color: $background-color;
+  }
+
+  &::-webkit-scrollbar:hover {
+    background-color: $background-hover-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: $border solid transparent;
+    box-shadow: inset 0 0 0 $size $thumb-color;
+    border-radius: $border-radius;
+  }
+
+  &::-webkit-scrollbar-thumb:active {
+    box-shadow: inset 0 0 0 $size $thumb-active-color;
+    border-radius: $border-radius;
+  }
+}
+
+@mixin scrollbar-black($background-color: #fff) {
+  @include scrollbar-style(6px, $background-color, $background-color, #000, #000, 0, 0);
+}

@@ -29,7 +29,8 @@
       display: block;
       width: rhythm(13);
       height: auto;
-      @include media-breakpoint('lt-md') {
+      // this was based on Material. TODO: review breakpoints using pastanaga-angular variables
+      @media screen and (max-width: 959px) {
         display: none;
       }
     }
@@ -37,7 +38,7 @@
       display: block;
       width: rhythm(4);
       height: auto;
-      @include media-breakpoint('gt-sm') {
+      @media screen and (min-width: 960px) {
         display: none;
       }
     }

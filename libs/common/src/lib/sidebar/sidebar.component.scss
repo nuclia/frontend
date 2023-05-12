@@ -1,5 +1,3 @@
-@import 'libs/pastanaga/src/lib/styles/stf';
-
 stf-sidebar {
   display: flex;
   flex-direction: column;
@@ -14,7 +12,8 @@ stf-sidebar {
   max-width: 280px;
   z-index: 800;
 
-  @include media-breakpoint('xs') {
+  // this was based on Material. TODO: review this whole scss file using pastanaga-angular variables
+  @media screen and (max-width: 599px) {
     min-width: 0 !important;
     max-width: 80vw !important;
     width: 80vw !important;
