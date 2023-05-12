@@ -1,3 +1,6 @@
+import { EntitiesGroup } from '@nuclia/core';
+import { TranslateService } from '@ngx-translate/core';
+
 export const generatedEntitiesColor: { [key: string]: string } = {
   DATE: '#FF8989',
   EVENT: '#CBA2DA',
@@ -30,4 +33,10 @@ export interface NerFamily {
   color?: string;
   entities: { [entityName: string]: Entity };
   custom?: boolean;
+}
+
+export function getNerFamilyTitle(familyId: string, family: EntitiesGroup, translate: TranslateService): string {
+  return generatedEntitiesColor[familyId]
+    ? translate.instant(`resource.entities.${familyId.toLowerCase()}`)
+    : family.title || familyId.toLowerCase();
 }

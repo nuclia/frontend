@@ -4,6 +4,8 @@ import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { LabelSetKind, TrainingStatus, TrainingType } from '@nuclia/core';
 import { forkJoin, Observable, shareReplay, Subject, take, tap } from 'rxjs';
+import { getNerFamilyTitle } from '@flaps/common';
+import { TranslateService } from '@ngx-translate/core';
 
 interface TrainingState {
   agreement: boolean;
@@ -53,7 +55,7 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([id, entity]) => ({
           value: id,
-          title: entity.title || 'resource.entities.' + id.toLowerCase(),
+          title: getNerFamilyTitle(id, entity, this.translate),
         })),
     ),
     shareReplay(),
@@ -101,6 +103,7 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit() {

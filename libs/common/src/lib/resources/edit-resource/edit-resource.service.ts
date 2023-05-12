@@ -45,7 +45,7 @@ import {
   ParagraphWithTextAndAnnotations,
   ParagraphWithTextAndClassifications,
 } from './edit-resource.helpers';
-import { generatedEntitiesColor } from '../../entities/model';
+import { generatedEntitiesColor, getNerFamilyTitle } from '../../entities/model';
 import { NavigationService } from '../../services';
 
 @Injectable({
@@ -107,10 +107,9 @@ export class EditResourceService {
         const allGroups: EntityGroup[] = Object.entries(allEntities)
           .map(([groupId, group]) => {
             const generatedColor = generatedEntitiesColor[groupId];
-            const title = group.title || (generatedColor ? `resource.entities.${groupId.toLowerCase()}` : groupId);
             return {
               id: groupId,
-              title: this.translate.instant(title),
+              title: getNerFamilyTitle(groupId, group, this.translate),
               color: group.color || generatedColor,
               entities: [],
               custom: group.custom,
