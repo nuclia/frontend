@@ -42,7 +42,7 @@ export class SsoButtonComponent {
   }
 
   get icon() {
-    return `assets/icons/${this.provider}.svg`;
+    return `assets/sso-icons/${this.provider}.svg`;
   }
 
   private _provider: Provider = 'google';
