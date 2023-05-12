@@ -1,45 +1,47 @@
-<pa-modal-advanced>
+<pa-modal-advanced fitContent>
   <pa-modal-title>{{ 'upload.progress-dialog-title' | translate }}</pa-modal-title>
   <pa-modal-content>
-    <p>
-      <strong>{{ 'upload.takes_time' | translate }}</strong>
-    </p>
-    <p>{{ 'upload.once_uploaded' | translate }}</p>
-    <div
-      class="upload-list"
-      *ngIf="(files | async)?.length || 0 > 0">
+    <div class="upload-progress-container">
+      <p>
+        <strong>{{ 'upload.takes_time' | translate }}</strong>
+      </p>
+      <p>{{ 'upload.once_uploaded' | translate }}</p>
       <div
-        class="upload-row"
-        *ngFor="let file of files | async">
+        class="upload-list"
+        *ngIf="(files | async)?.length || 0 > 0">
         <div
-          class="file body-s"
-          [class.failed]="file.failed">
-          <span class="file-name">{{ file.file.name }}</span>
-          <span class="file-size body-xs">– {{ file.file.size | size }}</span>
-        </div>
-        <div class="status">
-          <pa-icon
-            *ngIf="file.uploaded"
-            name="check"></pa-icon>
-
+          class="upload-row"
+          *ngFor="let file of files | async">
           <div
-            class="error body-xs"
-            *ngIf="file.conflicts">
-            <pa-icon name="warning"></pa-icon>
-            {{ 'upload.conflict' | translate }}
+            class="file body-s"
+            [class.failed]="file.failed">
+            <span class="file-name">{{ file.file.name }}</span>
+            <span class="file-size body-xs">– {{ file.file.size | size }}</span>
           </div>
+          <div class="status">
+            <pa-icon
+              *ngIf="file.uploaded"
+              name="check"></pa-icon>
 
-          <div
-            class="error body-xs"
-            *ngIf="file.failed && !file.conflicts">
-            <pa-icon name="circle-cross"></pa-icon>
-            {{ 'upload.error' | translate }}
-          </div>
+            <div
+              class="error body-xs"
+              *ngIf="file.conflicts">
+              <pa-icon name="warning"></pa-icon>
+              {{ 'upload.conflict' | translate }}
+            </div>
 
-          <div
-            class="progress-bar"
-            *ngIf="file.progress !== 100">
-            <div [style.width.%]="file.progress"></div>
+            <div
+              class="error body-xs"
+              *ngIf="file.failed && !file.conflicts">
+              <pa-icon name="circle-cross"></pa-icon>
+              {{ 'upload.error' | translate }}
+            </div>
+
+            <div
+              class="progress-bar"
+              *ngIf="file.progress !== 100">
+              <div [style.width.%]="file.progress"></div>
+            </div>
           </div>
         </div>
       </div>
