@@ -6,7 +6,7 @@
   padding: rhythm(6) rhythm(12);
 
   section {
-    padding: rythm(4) 0;
+    padding: rhythm(6) 0;
   }
 }
 
@@ -47,9 +47,9 @@ h2 {
 .cta-container {
   align-items: center;
   display: flex;
-  margin-top: rythm(2);
+  margin-top: rhythm(3);
 
   .active-training {
-    margin-left: rythm(1.5);
+    margin-left: rhythm(2);
   }
 }
