@@ -23,7 +23,7 @@ import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
 import type { Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
-import { formatQueryKey, updateQueryParams } from '../utils';
+import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, labelFilters, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
 import { chat, currentAnswer, currentQuestion, isSpeechOn, lastSpeakableFullAnswer } from './answers.store';
@@ -169,7 +169,7 @@ export function activatePermalinks() {
         switchMap(() => combineLatest([searchQuery, searchFilters, labelFilters]).pipe(take(1))),
       )
       .subscribe(([query, filters, labelFilters]) => {
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = getUrlParams();
         urlParams.set(queryKey, query);
         urlParams.delete(filterKey);
         urlParams.delete(titleOnlyKey);
@@ -190,7 +190,7 @@ export function activatePermalinks() {
         filter((isEmpty) => isEmpty),
       ),
     ).subscribe(() => {
-      const urlParams = new URLSearchParams(window.location.search);
+      const urlParams = getUrlParams();
       urlParams.delete(queryKey);
       urlParams.delete(filterKey);
       urlParams.delete(titleOnlyKey);
@@ -204,7 +204,7 @@ export function activatePermalinks() {
       )
       .subscribe((fullId) => {
         const previewId = `${fullId?.resourceId}|${fullId?.field_type}|${fullId?.field_id}`;
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = getUrlParams();
         urlParams.set(previewKey, previewId);
         updateQueryParams(urlParams);
       }),
@@ -215,7 +215,7 @@ export function activatePermalinks() {
         filter((fullId) => !fullId),
       )
       .subscribe(() => {
-        const urlParams = new URLSearchParams(window.location.search);
+        const urlParams = getUrlParams();
         urlParams.delete(previewKey);
         updateQueryParams(urlParams);
       }),
@@ -228,7 +228,7 @@ export function activatePermalinks() {
  * Check URL params and set store from them
  */
 function initStoreFromUrlParams() {
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = getUrlParams();
   // Search store
   const query = urlParams.get(queryKey);
   const titleOnly = urlParams.get(titleOnlyKey) === 'true';

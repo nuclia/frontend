@@ -74,9 +74,18 @@ export const formatQueryKey = (key: string): string => {
 
 export const updateQueryParams = (urlParams: URLSearchParams) => {
   const params = urlParams.toString();
-  const url = params ? `${location.pathname}?${params}` : location.pathname;
+  const baseUrl = `${location.pathname}${location.hash.split('?')[0]}`;
+  const url = params ? `${baseUrl}?${params}` : baseUrl;
   history.replaceState(null, '', url);
 };
+
+export function getUrlParams(): URLSearchParams {
+  const params =
+    window.location.hash && window.location.hash.includes('?')
+      ? window.location.hash.slice(window.location.hash.indexOf('?'))
+      : window.location.search;
+  return new URLSearchParams(params);
+}
 
 /**
  * Coerces a value (usually a string coming from a prop) to a boolean.
