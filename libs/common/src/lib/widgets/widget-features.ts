@@ -11,7 +11,6 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   answers: false,
 };
 
-export const DEFAULT_FEATURES_LIST = Object.entries(DEFAULT_FEATURES)
+export const DEFAULT_FEATURES_LIST: string[] = Object.entries(DEFAULT_FEATURES)
   .filter(([, value]) => value)
-  .map(([key]) => key)
-  .join(',');
+  .map(([key]) => key);

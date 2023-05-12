@@ -7,17 +7,15 @@
   max-height: 85vh;
 }
 
-.size-warning {
-  align-items: center;
+.warning {
   background-color: $color-secondary-regular;
-  display: flex;
   padding: rhythm(1);
   margin-bottom: rhythm(3);
-  strong {
-    font-weight: var(--stf-font-weight-semibold);
-  }
-  pa-icon {
-    margin-right: rhythm(1);
+
+  &.size {
+    align-items: center;
+    display: flex;
+    gap: rhythm(1);
   }
 }
 

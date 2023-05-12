@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SDKService, STFTrackingService, UserService } from '@flaps/core';
 import { map, shareReplay, take } from 'rxjs';
 import { NavigationService } from '../services';
+import { StandaloneService } from '../services/standalone.service';
 
 @Component({
   selector: 'app-topbar',
@@ -14,12 +15,15 @@ export class TopbarComponent {
   userInfo = this.userService.userInfo;
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
-  standalone = this.sdk.nuclia.options.standalone;
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
   billingUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
   );
+
+  standalone = this.standaloneService.standalone;
+  hasValidKey = this.standaloneService.hasValidKey;
+  errorMessage = this.standaloneService.errorMessage;
 
   constructor(
     private router: Router,
@@ -27,6 +31,7 @@ export class TopbarComponent {
     private navigationService: NavigationService,
     private sdk: SDKService,
     private tracking: STFTrackingService,
+    private standaloneService: StandaloneService,
   ) {}
 
   goToHome(): void {

@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { StandaloneService } from '@flaps/common';
 
 @Component({
   selector: 'nco-home-page',
@@ -6,8 +7,8 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   styleUrls: ['./home-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomePageComponent implements OnInit {
-  constructor() {}
+export class HomePageComponent {
+  hasValidKey = this.standaloneService.hasValidKey;
 
-  ngOnInit(): void {}
+  constructor(private standaloneService: StandaloneService) {}
 }

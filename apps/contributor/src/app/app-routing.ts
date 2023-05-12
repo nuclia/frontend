@@ -6,8 +6,10 @@ import {
   BaseComponent,
   DashboardLayoutComponent,
   EmptyComponent,
+  KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   rootGuard,
+  SearchComponent,
   SelectAccountComponent,
   SelectKbComponent,
 } from '@flaps/common';
@@ -48,6 +50,14 @@ export const routes: Routes = [
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
               },
               {
+                path: 'search',
+                component: SearchComponent,
+              },
+              {
+                path: 'manage',
+                component: KnowledgeBoxSettingsComponent,
+              },
+              {
                 path: 'label-sets',
                 loadChildren: () =>
                   // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
@@ -60,6 +70,12 @@ export const routes: Routes = [
                 loadChildren: () =>
                   // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
+              },
+              {
+                path: 'widget-generator',
+                loadChildren: () =>
+                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
               },
             ],
           },

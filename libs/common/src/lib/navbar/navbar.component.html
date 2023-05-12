@@ -22,7 +22,6 @@
           <a
             class="nav-link"
             routerLinkActive="active"
-            [class.disabled]="standalone"
             [routerLink]="kbUrl + '/search'">
             <pa-icon name="search"></pa-icon>
             <span class="nav-link-title">{{ 'stash.search' | translate }}</span>
@@ -34,15 +33,18 @@
             <pa-icon name="list"></pa-icon>
             <span class="nav-link-title">{{ 'stash.side.list' | translate }}</span>
           </a>
-          <a
-            *ngIf="isActivityEnabled | async"
-            [routerLink]="kbUrl + '/activity'"
-            routerLinkActive="active"
-            class="nav-link"
-            [class.disabled]="!(isAdminOrContrib | async)">
-            <pa-icon name="activity-log"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
-          </a>
+          <ng-container *ngIf="!standalone">
+            <a
+              *ngIf="isActivityEnabled | async"
+              [routerLink]="kbUrl + '/activity'"
+              routerLinkActive="active"
+              class="nav-link"
+              [class.disabled]="!(isAdminOrContrib | async)">
+              <pa-icon name="activity-log"></pa-icon>
+              <span class="nav-link-title">{{ 'stash.side.activity' | translate }}</span>
+            </a>
+          </ng-container>
+
           <a
             [routerLink]="kbUrl + '/label-sets'"
             routerLinkActive="active"
@@ -58,14 +60,16 @@
             <pa-icon name="form"></pa-icon>
             <span class="nav-link-title">{{ 'generic.named-entities' | translate }}</span>
           </a>
-          <a
-            *ngIf="isSynonymsEnabled | async"
-            [routerLink]="[kbUrl + '/synonyms']"
-            routerLinkActive="active"
-            class="nav-link">
-            <pa-icon name="synonyms"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.synonyms' | translate }}</span>
-          </a>
+          <ng-container *ngIf="!standalone">
+            <a
+              *ngIf="isSynonymsEnabled | async"
+              [routerLink]="[kbUrl + '/synonyms']"
+              routerLinkActive="active"
+              class="nav-link">
+              <pa-icon name="synonyms"></pa-icon>
+              <span class="nav-link-title">{{ 'stash.side.synonyms' | translate }}</span>
+            </a>
+          </ng-container>
         </div>
       </div>
 
@@ -80,31 +84,45 @@
             <span class="nav-link-title">{{ 'stash.side.settings' | translate }}</span>
           </a>
         </div>
-        <div
-          *ngIf="isTrainingEnabled | async"
-          class="group-items">
-          <a
-            [routerLink]="kbUrl + '/training'"
-            routerLinkActive="active"
-            class="nav-link"
-            [class.disabled]="!(isAdmin | async)">
-            <pa-icon name="submenu"></pa-icon>
-            <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
-          </a>
-        </div>
-        <ng-container *ngIf="isAdmin | async">
+        <ng-container *ngIf="!standalone">
           <div
-            *ngIf="isUsersEnabled | async"
+            *ngIf="isTrainingEnabled | async"
             class="group-items">
             <a
-              [routerLink]="kbUrl + '/users'"
+              [routerLink]="kbUrl + '/training'"
               routerLinkActive="active"
-              class="nav-link">
-              <pa-icon name="users"></pa-icon>
-              <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
+              class="nav-link"
+              [class.disabled]="!(isAdmin | async)">
+              <pa-icon name="submenu"></pa-icon>
+              <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
             </a>
           </div>
+          <ng-container *ngIf="isAdmin | async">
+            <div
+              *ngIf="isUsersEnabled | async"
+              class="group-items">
+              <a
+                [routerLink]="kbUrl + '/users'"
+                routerLinkActive="active"
+                class="nav-link">
+                <pa-icon name="users"></pa-icon>
+                <span class="nav-link-title">{{ 'stash.side.users' | translate }}</span>
+              </a>
+            </div>
+            <div
+              *ngIf="isAPIKeysEnabled | async"
+              class="group-items">
+              <a
+                [routerLink]="kbUrl + '/keys'"
+                routerLinkActive="active"
+                class="nav-link">
+                <pa-icon name="lock-off"></pa-icon>
+                <span class="nav-link-title">{{ 'stash.side.api_keys' | translate }}</span>
+              </a>
+            </div>
+          </ng-container>
         </ng-container>
+
         <div
           *ngIf="isWidgetsEnabled | async"
           class="group-items">
@@ -117,21 +135,10 @@
             <span class="nav-link-title">{{ 'stash.side.widgets' | translate }}</span>
           </a>
         </div>
-        <ng-container *ngIf="isAdmin | async">
-          <div
-            *ngIf="isAPIKeysEnabled | async"
-            class="group-items">
-            <a
-              [routerLink]="kbUrl + '/keys'"
-              routerLinkActive="active"
-              class="nav-link">
-              <pa-icon name="lock-off"></pa-icon>
-              <span class="nav-link-title">{{ 'stash.side.api_keys' | translate }}</span>
-            </a>
-          </div>
-        </ng-container>
       </div>
-      <div class="nav-group">
+      <div
+        class="nav-group"
+        *ngIf="!standalone">
         <div class="group-items">
           <a
             [routerLink]="(accountUrl | async) + '/home'"

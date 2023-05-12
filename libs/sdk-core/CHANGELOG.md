@@ -3,6 +3,11 @@
 ### Improvements
 
 - Add `trial_expiration_date` property to `Account` model
+- Update `modifyKb` to also work on standalone mode
+
+### Bugfix
+
+- Fix `knowledgeBox` getter on `Nuclia` object to work without zone when on standalone mode. 
 
 # 1.3.1 (2023-05-02)
 

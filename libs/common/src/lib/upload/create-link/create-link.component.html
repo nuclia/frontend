@@ -11,6 +11,12 @@
     </div>
   </pa-modal-title>
   <pa-modal-content>
+    <ng-container *ngIf="standalone">
+      <div
+        *ngIf="(hasValidKey | async) === false"
+        class="warning body-s"
+        [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
+    </ng-container>
     <form
       id="link-form"
       [formGroup]="linkForm"

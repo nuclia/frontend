@@ -1,4 +1,5 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, ViewEncapsulation } from '@angular/core';
+import { APP_BASE_HREF } from '@angular/common';
 
 @Component({
   selector: 'app-page-not-found',
@@ -6,8 +7,10 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
   styleUrls: ['./page-not-found.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class PageNotFoundComponent implements OnInit {
-  constructor() {}
+export class PageNotFoundComponent {
+  baseHref = inject(APP_BASE_HREF, { optional: true }) || '/';
 
-  ngOnInit() {}
+  constructor() {
+    console.log(this.baseHref);
+  }
 }

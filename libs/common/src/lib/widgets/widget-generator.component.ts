@@ -58,7 +58,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   widgetConfigurations: { [kbId: string]: typeof DEFAULT_WIDGET_CONFIG };
 
   get mainFormFeatures() {
-    return this.mainForm?.controls.features.value || {};
+    return this.mainForm?.controls['features'].value || {};
   }
 
   get features(): string {
@@ -164,7 +164,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       : '';
 
     this.sdk.currentKb.pipe(take(1)).subscribe((kb) => {
-      const zone = this.sdk.nuclia.options.zone;
+      const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
       const apiKey = `apikey="YOUR_API_TOKEN"`;
       const privateDetails =
         kb.state === 'PRIVATE'
@@ -174,11 +174,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   kbslug="${kb.slug}"
   ${apiKey}`
           : '';
-
+      const backend = this.sdk.nuclia.options.standalone
+        ? `
+  backend="${this.backendConfig.getAPIURL()}"`
+        : '';
       const baseSnippet = `<nuclia-search-bar
   knowledgebox="${kb.id}"
-  zone="${zone}"
-  features="${this.features}" ${placeholder}${privateDetails}></nuclia-search-bar>
+  ${zone}
+  features="${this.features}" ${placeholder}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
@@ -191,6 +194,7 @@ ${baseSnippet}`;
       lang="${this.translation.currentLang}"
       zone=`,
           )
+          .replace('standalone=', 'client="dashboard" standalone=')
           .replace(apiKey, ''),
       );
     });

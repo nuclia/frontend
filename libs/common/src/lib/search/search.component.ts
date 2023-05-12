@@ -1,11 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
-import { BehaviorSubject, Subject, combineLatest, distinctUntilKeyChanged, forkJoin, map, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map, switchMap } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { TrainingType } from '@nuclia/core';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
+import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { TrainingType } from '@nuclia/core';
-import { ResourceViewerService } from '@flaps/common';
+import { ResourceViewerService } from '../resources';
+import { StandaloneService } from '../services';
 
 const searchWidgetId = 'search-bar';
 const searchResultsId = 'search-results';
@@ -17,7 +19,7 @@ const ENABLE_GENERATIVE_ANSWER = 'NUCLIA_ENABLE_GENERATIVE_ANSWER';
   styleUrls: ['./search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent implements OnDestroy, OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
   enabledAnswer =
     !localStorage.getItem(ENABLE_GENERATIVE_ANSWER) || localStorage.getItem(ENABLE_GENERATIVE_ANSWER) === 'true';
   private _answerToggle = new BehaviorSubject<boolean>(this.enabledAnswer);
@@ -40,34 +42,41 @@ export class SearchComponent implements OnDestroy, OnInit {
       ),
     ),
     map(({ kb, hasLabels, hasClassifier, isChatEnabled }) => {
-      let features = !hasLabels
-        ? DEFAULT_FEATURES_LIST.split(',')
-            .filter((feature) => feature !== 'filter')
-            .join(',')
+      let featureList = !hasLabels
+        ? DEFAULT_FEATURES_LIST.filter((feature) => feature !== 'filter')
         : DEFAULT_FEATURES_LIST;
+      if (this.sdk.nuclia.options.standalone) {
+        featureList = featureList.filter((feature) => feature !== 'permalink');
+      }
+
+      let features = featureList.join(',');
       if (hasClassifier) {
         features += ',suggestLabels';
       }
       if (isChatEnabled) {
         features += ',answers';
       }
+      const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar id="${searchWidgetId}"
-  knowledgebox="${kb.id}"
-  zone="${this.sdk.nuclia.options.zone}"
-  client="dashboard"
-  cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
-  backend="${this.backendConfig.getAPIURL()}"
-  state="${kb.state || ''}"
-  kbslug="${kb.slug || ''}"
-  account="${kb.account || ''}"
-  lang="${this.translation.currentLang}"
-  features="${features}"
-></nuclia-search-bar>`);
+    knowledgebox="${kb.id}"
+    ${zone}
+    client="dashboard"
+    cdn="${this.backendConfig.getCDN() ? this.backendConfig.getCDN() + '/' : ''}"
+    backend="${this.backendConfig.getAPIURL()}"
+    state="${kb.state || ''}"
+    kbslug="${kb.slug || ''}"
+    account="${kb.account || ''}"
+    lang="${this.translation.currentLang}"
+    features="${features}"
+  ></nuclia-search-bar>`);
     }),
   );
   searchResults = this.sanitized.bypassSecurityTrustHtml(
     `<nuclia-search-results id="${searchResultsId}"></nuclia-search-results>`,
   );
+
+  standalone = this.standaloneService.standalone;
+  hasValidKey = this.standaloneService.hasValidKey.pipe(tap(console.log));
 
   constructor(
     private sdk: SDKService,
@@ -76,6 +85,7 @@ export class SearchComponent implements OnDestroy, OnInit {
     private translation: TranslateService,
     private viewerService: ResourceViewerService,
     private tracking: STFTrackingService,
+    private standaloneService: StandaloneService,
   ) {}
 
   ngOnInit() {

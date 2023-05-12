@@ -3,8 +3,14 @@
     {{ (folderMode ? 'modal.upload_folder' : 'modal.upload.title') | translate }}
   </pa-modal-title>
   <pa-modal-content>
+    <ng-container *ngIf="standalone">
+      <div
+        *ngIf="(hasValidKey | async) === false"
+        class="warning body-s"
+        [innerHTML]="'standalone.upload-no-nua-key' | translate"></div>
+    </ng-container>
     <div
-      class="size-warning"
+      class="size warning body-s"
       *ngIf="limitsExceeded">
       <pa-icon name="warning"></pa-icon>
       <div>

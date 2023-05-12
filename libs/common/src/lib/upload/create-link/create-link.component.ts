@@ -7,6 +7,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../utils';
+import { StandaloneService } from '../../services';
 
 interface Row {
   link: string;
@@ -35,6 +36,9 @@ export class CreateLinkComponent {
   selectedLabels: Classification[] = [];
   csv: Row[] = [];
 
+  standalone = this.standaloneService.standalone;
+  hasValidKey = this.standaloneService.hasValidKey;
+
   constructor(
     public modal: ModalRef,
     private uploadService: UploadService,
@@ -42,6 +46,7 @@ export class CreateLinkComponent {
     private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
+    private standaloneService: StandaloneService,
   ) {}
 
   add() {

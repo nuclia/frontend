@@ -21,13 +21,13 @@ export class Nuclia implements INuclia {
   }
 
   get knowledgeBox(): KnowledgeBox {
-    if (!this.options.knowledgeBox || !this.options.zone) {
+    if (!this.options.knowledgeBox || (!this.options.zone && !this.options.standalone)) {
       throw new Error('zone and knowledge box id must be defined in the Nuclia options');
     }
     if (!this.readKb) {
       this.readKb = new KnowledgeBox(this, '', {
         id: this.options.knowledgeBox,
-        zone: this.options.zone,
+        zone: this.options.zone || '',
       });
     }
     return this.readKb;

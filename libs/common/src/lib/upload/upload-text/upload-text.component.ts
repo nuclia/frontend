@@ -6,6 +6,7 @@ import { forkJoin, switchMap } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../utils';
+import { StandaloneService } from '../../services';
 
 const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
 
@@ -26,6 +27,9 @@ export class UploadTextComponent {
   isUploading = false;
   csv: Row[] = [];
 
+  standalone = this.standaloneService.standalone;
+  hasValidKey = this.standaloneService.hasValidKey;
+
   constructor(
     public modal: ModalRef,
     private sdk: SDKService,
@@ -33,6 +37,7 @@ export class UploadTextComponent {
     private tracking: STFTrackingService,
     private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
+    private standaloneService: StandaloneService,
   ) {}
 
   close(): void {
