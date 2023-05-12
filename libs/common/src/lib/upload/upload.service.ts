@@ -6,6 +6,7 @@ import {
   ICreateResource,
   LabelSet,
   LabelSetKind,
+  Search,
   TextFieldFormat,
   UploadStatus,
 } from '@nuclia/core';
@@ -14,6 +15,7 @@ import {
   BehaviorSubject,
   combineLatest,
   concatMap,
+  filter,
   forkJoin,
   map,
   Observable,
@@ -22,8 +24,10 @@ import {
   startWith,
   switchMap,
   take,
-  tap,
+  timer,
 } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { SisToastService } from '@nuclia/sistema';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];
@@ -32,12 +36,17 @@ const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?yo
 @Injectable({ providedIn: 'root' })
 export class UploadService {
   private _progress = new ReplaySubject<UploadStatus>();
-  progress = this._progress.asObservable();
-
   private _barDisabled = new BehaviorSubject<boolean>(false);
-  barDisabled = this._barDisabled.asObservable();
+  private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
+    pending: 0,
+    error: 0,
+  });
 
-  constructor(private sdk: SDKService, private labelsService: LabelsService) {}
+  progress = this._progress.asObservable();
+  barDisabled = this._barDisabled.asObservable();
+  statusCount = this._statusCount.asObservable();
+
+  constructor(private sdk: SDKService, private labelsService: LabelsService, private toaster: SisToastService) {}
 
   uploadFiles(files: FileWithMetadata[]) {
     const labels = files
@@ -53,12 +62,12 @@ export class UploadService {
             switchMap((kb) => kb.batchUpload(filelist)),
           ),
         ),
-        startWith({ files: [], progress: 0, completed: false, uploaded: 0, failed: 0, conflicts: 0 }),
         tap((progress) => {
           if (progress.completed) {
-            this.sdk.refreshCounter();
+            this.onUploadSuccess();
           }
         }),
+        startWith({ files: [], progress: 0, completed: false, uploaded: 0, failed: 0, conflicts: 0 }),
       )
       .subscribe((progress) => {
         this._progress.next(progress);
@@ -139,6 +148,7 @@ export class UploadService {
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
         ),
       ),
+      tap(() => this.onUploadSuccess()),
     );
   }
 
@@ -157,6 +167,40 @@ export class UploadService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) => kb.createResource(resource)),
+      // onUploadSuccess is called only once for all by the parent
     );
+  }
+
+  updateStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
+    const statusFacet = '/n/s';
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.catalog('', {
+          faceted: [statusFacet],
+        }),
+      ),
+      filter((results) => results.type !== 'error' && !!results.fulltext?.facets),
+      map((results) => results as Search.Results),
+      map((results: Search.Results) => ({
+        pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
+        error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
+        processed: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PROCESSED`] || 0,
+      })),
+      tap((count) => {
+        this._statusCount.next({ pending: count.pending, error: count.error });
+      }),
+    );
+  }
+
+  initStatusCount() {
+    this.updateStatusCount().subscribe();
+  }
+
+  onUploadSuccess() {
+    this.toaster.success('upload.toast.successful');
+    timer(1000)
+      .pipe(switchMap(() => this.updateStatusCount()))
+      .subscribe();
   }
 }
