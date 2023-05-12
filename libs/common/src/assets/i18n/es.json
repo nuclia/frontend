@@ -101,6 +101,7 @@
 	"autocomplete.section.next_words": "Palabras sugeridas",
 	"autocomplete.section.paragraph": "Párrafo sugerido",
 	"billing.address": "Dirección",
+	"billing.already_available": "Ya disponible",
 	"billing.assistance": "Por favor, <a href=\"{{url}}\">contacta con nosotros</a> para obtener ayuda.",
 	"billing.billing_details": "Datos de facturación",
 	"billing.budget_calculator": "Calculadora de presupuesto",

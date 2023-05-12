@@ -112,6 +112,7 @@
 	"autocomplete.section.next_words": "Suggested words",
 	"autocomplete.section.paragraph": "Suggested paragraph",
 	"billing.address": "Address",
+	"billing.already_available": "Already available",
 	"billing.assistance": "Please, <a href=\"{{url}}\">contact us</a> for assistance.",
 	"billing.billing_details": "Billing details",
 	"billing.budget": "On-demand budget",

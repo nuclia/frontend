@@ -101,6 +101,7 @@
 	"autocomplete.section.next_words": "Paraules suggerides",
 	"autocomplete.section.paragraph": "Paràgraf suggerit",
 	"billing.address": "Adreça",
+	"billing.already_available": "Ja disponible",
 	"billing.assistance": "Si us plau, <a href=\"{{url}}\"contacta amb nosaltres</a> per obtenir ajuda",
 	"billing.billing_details": "Dades de facturació",
 	"billing.budget_calculator": "Calculadora de pressupost",
