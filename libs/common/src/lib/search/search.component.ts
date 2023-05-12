@@ -45,9 +45,6 @@ export class SearchComponent implements OnInit, OnDestroy {
       let featureList = !hasLabels
         ? DEFAULT_FEATURES_LIST.filter((feature) => feature !== 'filter')
         : DEFAULT_FEATURES_LIST;
-      if (this.sdk.nuclia.options.standalone) {
-        featureList = featureList.filter((feature) => feature !== 'permalink');
-      }
 
       let features = featureList.join(',');
       if (hasClassifier) {
