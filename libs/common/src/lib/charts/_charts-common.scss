@@ -25,7 +25,7 @@ $chart-font-size: font-size(xs);
   .tooltip {
     background-color: $color-dark-stronger;
     color: $color-light-stronger;
-    padding: rythm(0.5);
+    padding: rhythm(1);
     position: absolute;
     font-size: $chart-font-size;
     transform: translateX(-50%);

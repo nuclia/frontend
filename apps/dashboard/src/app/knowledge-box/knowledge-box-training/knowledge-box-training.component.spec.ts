@@ -4,7 +4,7 @@ import { TrainingStatus } from '@nuclia/core';
 import { of } from 'rxjs';
 
 import { KnowledgeBoxTrainingComponent } from './knowledge-box-training.component';
-import { MockModule } from 'ng-mocks';
+import { MockModule, MockProvider } from 'ng-mocks';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -15,6 +15,7 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import { SvgIconRegistryService } from 'angular-svg-icon';
+import { TranslateService } from '@ngx-translate/core';
 
 describe('KnowledgeBoxTrainingComponent', () => {
   let component: KnowledgeBoxTrainingComponent;
@@ -47,6 +48,7 @@ describe('KnowledgeBoxTrainingComponent', () => {
           },
         },
         { provide: SvgIconRegistryService, useValue: { loadSvg: () => {} } },
+        MockProvider(TranslateService),
       ],
     }).compileComponents();
   });

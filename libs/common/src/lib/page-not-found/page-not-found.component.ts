@@ -9,8 +9,4 @@ import { APP_BASE_HREF } from '@angular/common';
 })
 export class PageNotFoundComponent {
   baseHref = inject(APP_BASE_HREF, { optional: true }) || '/';
-
-  constructor() {
-    console.log(this.baseHref);
-  }
 }

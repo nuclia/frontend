@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Observable, switchMap, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Entities } from '@nuclia/core';
-import { generatedEntitiesColor, NerFamily } from './model';
+import { generatedEntitiesColor, getNerFamilyTitle, NerFamily } from './model';
 import { EntitiesService } from './entities.service';
 import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
 import { ModalConfig, ModalService } from '@guillotinaweb/pastanaga-angular';
@@ -25,7 +25,7 @@ export class EntitiesComponent {
         .map(([familyKey, family]) => ({
           ...family,
           key: familyKey,
-          title: family.title || this.translate.instant(`resource.entities.${familyKey.toLowerCase()}`),
+          title: getNerFamilyTitle(familyKey, family, this.translate),
         }))
         .sort((a, b) => (a.title || '').localeCompare(b.title || '')),
     ),

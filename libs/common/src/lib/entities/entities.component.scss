@@ -64,6 +64,7 @@ $gap-family-selection: rhythm(7);
         justify-content: space-between;
         line-height: rhythm(5);
         padding-right: rhythm(1);
+        text-transform: capitalize;
         transition: background $transition-hint;
 
         &:not(:last-of-type) {
