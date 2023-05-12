@@ -1,5 +1,6 @@
 export * from './lib/back-button';
 export * from './lib/dropdown-button';
+export * from './lib/icons';
 export * from './lib/label';
 export * from './lib/password-input';
 export * from './lib/progress';

@@ -65,36 +65,34 @@
             </div>
           </div>
 
-          <stf-expander
-            [expanded]="isExpanded(sa.id)"
-            *ngIf="sa.keys && sa.keys.length > 0">
-            <stf-expander-content>
-              <div class="service-access-keys">
-                <div
-                  class="service-access-key"
-                  *ngFor="let key of sa.keys">
-                  <div class="service-access-key-id">
-                    {{ key.id }}
-                  </div>
-                  <div>
-                    {{ key.expires | formatDate }}
-                  </div>
-                  <div class="service-access-key-actions">
-                    <pa-button
-                      (click)="deleteKey(sa, key)"
-                      class="delete-key"
-                      aspect="basic"
-                      icon="trash"
-                      size="small"
-                      iconSize="small"
-                      paTooltip="generic.delete">
-                      {{ 'generic.delete' | translate }}
-                    </pa-button>
-                  </div>
+          <ng-container *ngIf="sa.keys && sa.keys.length > 0">
+            <div
+              class="service-access-keys"
+              [class.expanded]="isExpanded(sa.id)">
+              <div
+                class="service-access-key"
+                *ngFor="let key of sa.keys">
+                <div class="service-access-key-id">
+                  {{ key.id }}
+                </div>
+                <div>
+                  {{ key.expires | formatDate }}
+                </div>
+                <div class="service-access-key-actions">
+                  <pa-button
+                    (click)="deleteKey(sa, key)"
+                    class="delete-key"
+                    aspect="basic"
+                    icon="trash"
+                    size="small"
+                    iconSize="small"
+                    paTooltip="generic.delete">
+                    {{ 'generic.delete' | translate }}
+                  </pa-button>
                 </div>
               </div>
-            </stf-expander-content>
-          </stf-expander>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>

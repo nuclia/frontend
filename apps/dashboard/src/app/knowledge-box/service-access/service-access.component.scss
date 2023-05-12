@@ -60,7 +60,12 @@
     }
 
     .service-access-keys {
+      display: none;
       padding: 0 0 rhythm(1.5) rhythm(2);
+
+      &.expanded {
+        display: block;
+      }
     }
     .service-access-key {
       align-items: center;
