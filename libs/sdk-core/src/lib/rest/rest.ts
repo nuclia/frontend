@@ -130,7 +130,6 @@ export class Rest implements IRest {
       path.startsWith('/export') ||
       path.startsWith('/billing') ||
       path.startsWith('/configuration') ||
-      path.startsWith('/config-check') ||
       path.startsWith('/manage')
         ? ''
         : '/v1';
