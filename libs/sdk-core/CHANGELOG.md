@@ -4,6 +4,7 @@
 
 - Add `trial_expiration_date` property to `Account` model
 - Update `modifyKb` to also work on standalone mode
+- Add `onlyAnswers` property to `WidgetFeatures` interface
 
 ### Bugfix
 

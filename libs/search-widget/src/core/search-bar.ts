@@ -16,6 +16,7 @@ import {
 } from './stores/search.store';
 import { ask } from './stores/effects';
 import { isTitleOnly } from '../common/label/label.utils';
+import { onlyAnswers } from '../core/stores/widget.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -29,13 +30,20 @@ export const setupTriggerSearch = (
   subscriptions.push(
     triggerSearch
       .pipe(
-        tap(() => pendingResults.set(true)),
         switchMap((trigger) =>
           isEmptySearchQuery.pipe(
             take(1),
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
+            tap((query) => ask.next({ question: query, reset: true })),
+            switchMap((query) =>
+              onlyAnswers.pipe(
+                filter((onlyAnwsers) => !onlyAnwsers),
+                map(() => query),
+              ),
+            ),
+            tap(() => pendingResults.set(true)),
             switchMap((query) =>
               forkJoin([searchOptions.pipe(take(1)), searchFilters.pipe(take(1)), labelFilters.pipe(take(1))]).pipe(
                 map(([options, filters, labelFilters]) => {
@@ -50,7 +58,6 @@ export const setupTriggerSearch = (
                 }),
               ),
             ),
-            tap(({ query }) => ask.next({ question: query, reset: true })),
             switchMap(({ query, options }) =>
               search(query, options).pipe(map((results) => ({ results, append: !!trigger?.more }))),
             ),

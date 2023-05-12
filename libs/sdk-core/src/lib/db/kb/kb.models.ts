@@ -238,6 +238,7 @@ export interface WidgetFeatures {
   suggestions?: boolean;
   suggestLabels?: boolean;
   answers?: boolean;
+  onlyAnswers?: boolean;
   speech?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;

@@ -805,6 +805,8 @@
 	"stash.widgets.navigateToFile.help": "When using Nuclia to search web pages, clicking on a result will open the original file rather than rendering it in the viewer",
 	"stash.widgets.navigateToLink": "Navigate to links",
 	"stash.widgets.navigateToLink.help": "When using Nuclia to search web pages, clicking on a result will open the original page rather than rendering it in the viewer",
+	"stash.widgets.onlyAnswers": "Only answers",
+	"stash.widgets.onlyAnswers.help": "Displays answers but not search results. This option only has effect if answer generation is enabled",
 	"stash.widgets.permalink": "Permalinks",
 	"stash.widgets.permalink.help": "Add extra parameters in URL allowing direct opening of a resource or search results",
 	"stash.widgets.placeholder": "Search bar placeholder",
