@@ -5,8 +5,6 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { OverlayModule } from '@angular/cdk/overlay';
-
-import { UserAvatarModule } from '@flaps/components';
 import {
   ChartsModule,
   HintModule,
@@ -63,7 +61,6 @@ const Components = [
     FormsModule,
     RouterModule,
     OverlayModule,
-    UserAvatarModule,
     PipesModule,
     TokenDialogModule,
     ChartsModule,

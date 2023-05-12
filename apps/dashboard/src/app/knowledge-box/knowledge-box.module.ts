@@ -4,8 +4,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
-import { UserAvatarModule } from '@flaps/components';
 import { STFExpanderModule } from '@flaps/pastanaga';
 
 import { KnowledgeBoxComponent } from './knowledge-box/knowledge-box.component';
@@ -43,7 +41,6 @@ import {
     FormsModule,
     RouterModule,
     ProgressBarModule,
-    UserAvatarModule,
     STFExpanderModule,
     TokenDialogModule,
     ChartsModule,
