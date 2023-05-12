@@ -5,7 +5,6 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { OverlayModule } from '@angular/cdk/overlay';
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table';
 
 import { UserAvatarModule } from '@flaps/components';
 import {
@@ -64,7 +63,6 @@ const Components = [
     FormsModule,
     RouterModule,
     OverlayModule,
-    MatTableModule,
     UserAvatarModule,
     PipesModule,
     TokenDialogModule,
