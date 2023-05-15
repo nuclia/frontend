@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { PaTogglesModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
-import { ResourceViewerService } from '@flaps/common';
+import { ResourceViewerService } from '../resources/resource-viewer.service';
 
 describe('SearchComponent', () => {
   let component: SearchComponent;

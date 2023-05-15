@@ -42,6 +42,7 @@ import {
   MenuAction,
   ResourceWithLabels,
 } from './resource-list.model';
+import { UploadService } from '../../upload/upload.service';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -67,11 +68,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   refreshing = true;
 
-  private _statusCount: BehaviorSubject<{ pending: number; error: number }> = new BehaviorSubject({
-    pending: 0,
-    error: 0,
-  });
-  statusCount = this._statusCount.asObservable().pipe(
+  statusCount = this.uploadService.statusCount.pipe(
     tap((count) => {
       if (this.localStorage.getItem(POPOVER_DISPLAYED) !== 'done' && (count.error > 0 || count.pending > 0)) {
         // we cannot open the two popovers at the same time, so error takes priority
@@ -145,14 +142,15 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private sanitized: DomSanitizer,
     private backendConfig: BackendConfigurationService,
     private labelService: LabelsService,
+    private uploadService: UploadService,
   ) {}
 
   ngOnInit(): void {
+    this.uploadService.initStatusCount();
     this.getResources().subscribe(() => {
       this.emptyKb = this.data?.length === 0;
       this.cdr.markForCheck();
     });
-    this.getResourceStatusCount().subscribe();
     this.sdk.refreshing
       .pipe(
         takeUntil(this.unsubscribeAll),
@@ -174,10 +172,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
-  }
-
-  onUpload() {
-    this.getResourceStatusCount().subscribe();
   }
 
   search() {
@@ -218,7 +212,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         mergeMap((obs) => obs, 6),
         toArray(),
         delay(1000),
-        switchMap(() => this.getResourceStatusCount()),
+        switchMap(() => this.uploadService.updateStatusCount()),
         switchMap(() => this._getResources(true)),
       )
       .subscribe(() => {
@@ -243,7 +237,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         mergeMap((obs) => obs, 6),
         toArray(),
         delay(wait),
-        switchMap(() => this.getResourceStatusCount()),
+        switchMap(() => this.uploadService.updateStatusCount()),
         switchMap(() => this._getResources(true)),
       )
       .subscribe(() => this.manageBulkActionResults('reprocessing'));
@@ -287,7 +281,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       .pipe(
         delay(1000), // wait for reprocess to be effective
         switchMap(() => this._getResources(true)),
-        switchMap(() => this.getResourceStatusCount()),
+        switchMap(() => this.uploadService.updateStatusCount()),
       )
       .subscribe();
   }
@@ -623,36 +617,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.searchForm.patchValue({ searchIn: 'title', query: '' });
     this.statusDisplayed.next(status);
     this.getResources()
-      .pipe(switchMap(() => this.getResourceStatusCount()))
+      .pipe(switchMap(() => this.uploadService.updateStatusCount()))
       .subscribe();
-  }
-
-  private getResourceStatusCount(): Observable<{ pending: number; error: number; processed: number }> {
-    const statusFacet = '/n/s';
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) =>
-        kb.catalog('', {
-          faceted: [statusFacet],
-        }),
-      ),
-      filter((results) => results.type !== 'error' && !!results.fulltext?.facets),
-      map((results) => results as Search.Results),
-      map((results: Search.Results) => ({
-        pending: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PENDING`] || 0,
-        error: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/ERROR`] || 0,
-        processed: results.fulltext?.facets?.[statusFacet]?.[`${statusFacet}/PROCESSED`] || 0,
-      })),
-      tap((count) => {
-        this._statusCount.next({ pending: count.pending, error: count.error });
-      }),
-    );
   }
 
   onDatasetImport(success: boolean) {
     if (success) {
       this.getResources()
-        .pipe(switchMap(() => this.getResourceStatusCount()))
+        .pipe(switchMap(() => this.uploadService.updateStatusCount()))
         .subscribe();
     }
   }

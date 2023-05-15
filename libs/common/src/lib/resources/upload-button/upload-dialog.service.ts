@@ -11,7 +11,7 @@ export type UploadType = 'files' | 'folder' | 'link' | 'csv';
 export class UploadDialogService {
   constructor(private modal: SisModalService) {}
 
-  upload(type: 'files' | 'folder' | 'link' | 'csv'): ModalRef {
+  upload(type: UploadType): ModalRef {
     switch (type) {
       case 'folder':
       case 'files':

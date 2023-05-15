@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { forkJoin, switchMap } from 'rxjs';
+import { forkJoin, switchMap, tap } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../utils';
@@ -72,6 +72,7 @@ export class UploadTextComponent {
             this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
           ),
         ),
+        tap(() => this.uploadService.onUploadSuccess()),
       )
       .subscribe(() => this.modal.close());
   }
