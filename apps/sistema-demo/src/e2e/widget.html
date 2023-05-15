@@ -3,13 +3,14 @@
   <head>
     <title>My search widget</title>
   </head>
-  <body>
+  <body style="padding: 32px">
     <script src="https://cdn.stashify.cloud/nuclia-video-widget.umd.js"></script>
     <nuclia-search-bar
+      style="display: block; margin-bottom: 16px"
       knowledgebox="096d9070-f7be-40c8-a24c-19c89072e3ff"
       backend="https://stashify.cloud/api"
       zone="europe-1"
-      features="permalink"></nuclia-search-bar>
+      features="permalink,answers"></nuclia-search-bar>
     <nuclia-search-results></nuclia-search-results>
   </body>
 </html>
