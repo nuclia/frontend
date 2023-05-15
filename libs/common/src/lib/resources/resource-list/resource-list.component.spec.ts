@@ -21,6 +21,7 @@ import { ProcessedResourceTableComponent } from './processed-resource-table/proc
 import { ErrorResourcesTableComponent } from './error-resources-table/error-resources-table.component';
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
+import { UploadService } from '../../upload/upload.service';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -78,6 +79,12 @@ describe('ResourceListComponent', () => {
         MockProvider(TranslateService),
         MockProvider(LabelsService, {
           getLabelsByKind: jest.fn(() => of({})),
+        }),
+        MockProvider(UploadService, {
+          statusCount: of({
+            pending: 0,
+            error: 0,
+          }),
         }),
       ],
     }).compileComponents();

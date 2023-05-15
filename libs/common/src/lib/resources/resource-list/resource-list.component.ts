@@ -42,7 +42,7 @@ import {
   MenuAction,
   ResourceWithLabels,
 } from './resource-list.model';
-import { UploadService } from '../../upload';
+import { UploadService } from '../../upload/upload.service';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
