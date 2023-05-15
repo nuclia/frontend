@@ -9,8 +9,7 @@ import {
 } from '../models';
 import { lookup } from 'mime-types';
 import { sha256 } from '../../utils';
-
-const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
+import { ACCOUNT_KEY } from '../sync.service';
 
 export const NucliaCloudKB: DestinationConnectorDefinition = {
   id: 'nucliacloud',

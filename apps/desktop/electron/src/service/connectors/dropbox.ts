@@ -35,7 +35,7 @@ class DropboxImpl implements ISourceConnector {
       map((result) => ({
         ...result,
         items: [
-          { title: '/', originalId: '', isFolder: true, metadata: {}, status: FileStatus.PENDING, uuid: '' },
+          { title: '/', originalId: '', isFolder: true, metadata: {}, status: FileStatus.PENDING },
           ...result.items,
         ],
       })),

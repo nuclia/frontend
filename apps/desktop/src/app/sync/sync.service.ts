@@ -37,8 +37,9 @@ import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { OneDriveConnector } from './sources/onedrive';
 import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
+import { FolderConnector } from './sources/folder';
 
-const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
+export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
 const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
@@ -68,7 +69,7 @@ export class SyncService {
     // gdrive: { definition: GDrive, settings: {} },
     onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
-    // folder: { definition: FolderConnector, settings: {} },
+    folder: { definition: FolderConnector, settings: {} },
     // s3: { definition: S3Connector, settings: {} },
     // gcs: { definition: GCSConnector, settings: {} },
     // brightcove: { definition: BrightcoveConnector, settings: {} },
@@ -384,5 +385,10 @@ export class SyncService {
     return this.http
       .get<{ [id: string]: SyncRow }>(`${this._syncServer.getValue()}/active-logs`)
       .pipe(map((logs) => Object.values(logs)));
+  }
+
+  logout() {
+    localStorage.removeItem(ACCOUNT_KEY);
+    this.sdk.nuclia.auth.logout();
   }
 }

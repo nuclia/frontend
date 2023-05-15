@@ -48,7 +48,7 @@ export enum FileStatus {
 }
 
 export interface SyncItem {
-  uuid: string;
+  uuid?: string;
   title: string;
   originalId: string;
   metadata: { [key: string]: string };

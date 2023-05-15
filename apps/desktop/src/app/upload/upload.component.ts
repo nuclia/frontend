@@ -1,9 +1,16 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { delay, filter, forkJoin, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
-import { ConnectorDefinition, ConnectorParameters, ISourceConnector, CONNECTOR_ID_KEY, SyncItem } from '../sync/models';
+import {
+  ConnectorDefinition,
+  ConnectorParameters,
+  ISourceConnector,
+  CONNECTOR_ID_KEY,
+  SyncItem,
+  FileStatus,
+} from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -77,6 +84,7 @@ export class UploadComponent implements OnInit, OnDestroy {
       throw new Error('Name is mandatory');
     }
     this.sourceId = event.connector.id;
+    this.sync.setCurrentSourceId(event.name);
     this.tracking.logEvent('desktop:select_source', { sourceId: this.sourceId });
     (update
       ? this.sync
@@ -105,7 +113,6 @@ export class UploadComponent implements OnInit, OnDestroy {
           } else {
             if (source.hasServerSideAuth) {
               localStorage.setItem(CONNECTOR_ID_KEY, event.connector.id);
-              this.sync.setCurrentSourceId(event.name);
               source.goToOAuth(true);
               return this.sync.authenticateToSource(this.source);
             } else {
@@ -119,7 +126,22 @@ export class UploadComponent implements OnInit, OnDestroy {
         delay(500), // wait for source data to be stored
       )
       .subscribe(() => {
-        this.goTo(2);
+        const cache = this.sync.getSourceCache(event.name);
+        if (event.connector.id === 'folder' && cache.permanentSync) {
+          const data = this.source?.getParametersValues();
+          if (data) {
+            this.selection.setSelection({
+              uuid: '',
+              title: data.path,
+              originalId: data.path,
+              metadata: {},
+              status: FileStatus.PENDING,
+            });
+            this.goTo(3);
+          }
+        } else {
+          this.goTo(2);
+        }
       });
   }
 
