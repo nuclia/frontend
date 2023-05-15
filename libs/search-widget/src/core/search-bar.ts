@@ -36,7 +36,7 @@ export const setupTriggerSearch = (
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
-            tap((query) => ask.next({ question: query, reset: true })),
+            tap((query) => (!trigger?.more ? ask.next({ question: query, reset: true }) : undefined)),
             switchMap((query) =>
               onlyAnswers.pipe(
                 filter((onlyAnwsers) => !onlyAnwsers),
