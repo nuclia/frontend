@@ -24,7 +24,7 @@
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
-  import { isAnswerEnabled, setWidgetActions } from '../../core/stores/widget.store';
+  import { isAnswerEnabled, onlyAnswers, setWidgetActions } from '../../core/stores/widget.store';
   import { onClosePreview } from '../../tiles/tile.utils';
   import InfoCard from '../../components/info-card/InfoCard.svelte';
   import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
@@ -79,7 +79,7 @@
           <strong>{$_('error.search')}</strong>
         {/if}
       </div>
-    {:else if !$pendingResults && $smartResults.length === 0}
+    {:else if !$pendingResults && $smartResults.length === 0 && !$onlyAnswers}
       <strong>{$_('results.empty')}</strong>
     {:else}
       <div class="results-container">

@@ -9,6 +9,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   suggestions: true,
   notPublic: true,
   answers: false,
+  onlyAnswers: false,
 };
 
 export const DEFAULT_FEATURES_LIST: string[] = Object.entries(DEFAULT_FEATURES)

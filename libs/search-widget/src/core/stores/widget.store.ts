@@ -1,5 +1,5 @@
 import { writableSubject } from '../state-lib';
-import { map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import type { WidgetAction } from '../models';
 import type { WidgetFeatures } from '@nuclia/core';
 
@@ -24,3 +24,7 @@ export const hasFilterButton = widgetFeatures.pipe(map((features) => !!features?
 export const isAnswerEnabled = widgetFeatures.pipe(map((features) => !!features?.answers));
 export const isSpeechEnabled = widgetFeatures.pipe(map((features) => !!features?.speech));
 export const isKnowledgeGraphEnabled = widgetFeatures.pipe(map((features) => !!features?.knowledgeGraph));
+export const onlyAnswers = combineLatest([
+  isAnswerEnabled,
+  widgetFeatures.pipe(map((features) => !!features?.onlyAnswers)),
+]).pipe(map(([answers, onlyAnswers]) => answers && onlyAnswers));
