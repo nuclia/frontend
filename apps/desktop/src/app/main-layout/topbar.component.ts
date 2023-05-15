@@ -52,7 +52,7 @@ export class TopbarComponent {
   }
 
   logout() {
-    this.sdk.nuclia.auth.logout();
+    this.sync.logout();
     window.close();
   }
 

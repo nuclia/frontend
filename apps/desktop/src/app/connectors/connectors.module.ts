@@ -14,7 +14,6 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { FolderUploadModule } from './folder-upload/folder-upload.module';
 
 @NgModule({
   imports: [
@@ -24,7 +23,6 @@ import { FolderUploadModule } from './folder-upload/folder-upload.module';
     FormsModule,
     PaTextFieldModule,
     PaButtonModule,
-    FolderUploadModule,
     TranslateModule,
     PaCardModule,
     PaTooltipModule,

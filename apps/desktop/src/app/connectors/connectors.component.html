@@ -40,6 +40,7 @@
     <pa-input
       *ngIf="field.type === 'text'"
       [help]="field.help | translate"
+      [placeholder]="field.placeholder"
       [formControlName]="field.id">
       {{ field.label | translate }}
     </pa-input>
@@ -73,10 +74,6 @@
         {{ 'upload.refresh' | translate: { field: field.label } }}
       </pa-button>
     </div>
-
-    <nde-folder-upload
-      *ngIf="field.type === 'folder'"
-      [formControlName]="field.id"></nde-folder-upload>
   </div>
   <div
     *ngIf="selectedConnector.helpUrl"

@@ -90,6 +90,7 @@ export interface Field {
   id: string;
   label: string;
   help?: string;
+  placeholder?: string;
   type: 'text' | 'select' | 'folder' | 'textarea';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
