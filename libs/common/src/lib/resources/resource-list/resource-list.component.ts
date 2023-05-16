@@ -332,7 +332,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   private _getResources(replaceData = false, filters: string[] = []): Observable<Search.Results> {
-    const query = (this.searchForm.value.query || '').trim();
+    const query = (this.searchForm.value.query || '').trim().replace('.', '\\.');
     const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
     if (replaceData) {
