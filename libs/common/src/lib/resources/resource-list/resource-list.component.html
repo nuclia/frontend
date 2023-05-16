@@ -147,7 +147,7 @@
     </ng-container>
 
     <div
-      *ngIf="isMainView && emptyKb && !standalone"
+      *ngIf="isMainView && emptyKb && !query && !standalone"
       class="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
