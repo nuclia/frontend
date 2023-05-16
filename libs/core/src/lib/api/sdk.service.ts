@@ -97,7 +97,7 @@ export class SDKService {
   setCurrentKnowledgeBox(accountSlug: string, kbSlug: string, force = false): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
     const currentKb = this.stateService.getStash();
-    if (currentKb && currentKb.slug === kbSlug && !force) {
+    if (!force && currentKb && currentKb.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
     } else if (kbSlug === this.DEMO_SLUG) {
       return this.getDemoKb().pipe(
@@ -110,6 +110,7 @@ export class SDKService {
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
         map((kb) => {
           this.stateService.setStash(kb);
+          this._currentKB.next(kb);
           return kb;
         }),
       );
