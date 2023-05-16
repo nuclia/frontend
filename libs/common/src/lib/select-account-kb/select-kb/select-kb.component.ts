@@ -113,8 +113,8 @@ export class SelectKbComponent implements OnInit, OnDestroy {
       zone: this.account!.zone,
       title: this.kbName.value,
     };
-    this.sdk.nuclia.db.createKnowledgeBox(this.account!.slug, kbData).subscribe(() => {
-      this.router.navigate([this.navigation.getKbUrl(this.account!.slug, kbSlug)]);
+    this.sdk.nuclia.db.createKnowledgeBox(this.account!.slug, kbData).subscribe((kb) => {
+      this.router.navigate([this.navigation.getKbUrl(this.account!.slug, this.standalone ? kb.id : kbSlug)]);
     });
   }
 

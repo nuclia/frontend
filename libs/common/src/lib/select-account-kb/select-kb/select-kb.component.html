@@ -46,11 +46,7 @@
       class="select-kb-empty"
       *ngIf="kbs.length === 0 && !addKb">
       <div class="select-kb-empty-message">{{ 'stash.no_knowledge_boxes' | translate }}</div>
-      <pa-button
-        *ngIf="(canAddKb | async) === true"
-        (click)="toggleForm()">
-        {{ 'stash.create' | translate }}
-      </pa-button>
+
       <div
         *ngIf="(canAddKb | async) === false"
         class="select-kb-empty-message">
@@ -71,6 +67,12 @@
   </div>
 
   <div class="select-kb-footer">
+    <pa-button
+      *ngIf="(standalone && !addKb) || (canAddKb | async) === true"
+      (click)="toggleForm()">
+      {{ 'stash.create' | translate }}
+    </pa-button>
+
     <pa-button
       *ngIf="!addKb && !standalone"
       kind="inverted"
