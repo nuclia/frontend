@@ -89,14 +89,16 @@
           {#if $isAnswerEnabled}
             <InitialAnswer />
           {/if}
-          {#each $smartResults as result, i (getResultKey(result))}
-            <Tile {result} />
-            {#if i === $smartResults.length - 10}
-              <InfiniteScroll
-                hasMore={$hasMore}
-                on:loadMore={onLoadMore} />
-            {/if}
-          {/each}
+          <div class="search-results">
+            {#each $smartResults as result, i (getResultKey(result))}
+              <Tile {result} />
+              {#if i === $smartResults.length - 10}
+                <InfiniteScroll
+                  hasMore={$hasMore}
+                  on:loadMore={onLoadMore} />
+              {/if}
+            {/each}
+          </div>
         </div>
         {#if $entityRelations.length > 0}
           <InfoCard entityRelations={$entityRelations} />
