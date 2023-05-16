@@ -107,14 +107,17 @@ export class Db implements IDb {
   }
 
   createKnowledgeBox(account: string, knowledgeBox: KnowledgeBoxCreation): Observable<WritableKnowledgeBox> {
-    return this.nuclia.rest.post<IKnowledgeBox>(`/account/${account}/kbs`, knowledgeBox).pipe(
-      tap((res) => {
-        if (!res.id) {
-          throw 'KnowledgeBox creation failed';
-        }
-      }),
-      switchMap(() => this.getKnowledgeBox(account, knowledgeBox.slug)),
-    );
+    return this.nuclia.rest
+      .post<IKnowledgeBox>(this.nuclia.options.standalone ? '/kbs' : `/account/${account}/kbs`, knowledgeBox)
+      .pipe(
+        switchMap((res) => {
+          const id = res.id || res.uuid;
+          if (!id) {
+            throw 'KnowledgeBox creation failed';
+          }
+          return this.getKnowledgeBox(account, this.nuclia.options.standalone ? id : knowledgeBox.slug);
+        }),
+      );
   }
 
   getStats(
