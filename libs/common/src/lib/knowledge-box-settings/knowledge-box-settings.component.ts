@@ -105,11 +105,15 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             }
             return acc;
           }, {} as { [key: string]: string });
+          let hasChange = false;
           const conf = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
+            if (current[entry.id] !== this.kbForm?.value.config[entry.id]) {
+              hasChange = true;
+            }
             acc[entry.id] = this.kbForm?.value.config[entry.id];
             return acc;
           }, current);
-          return JSON.stringify(current) !== JSON.stringify(conf) ? kb.setConfiguration(conf) : of(null);
+          return hasChange ? kb.setConfiguration(conf) : of(null);
         }),
         concatMap(() =>
           this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),
