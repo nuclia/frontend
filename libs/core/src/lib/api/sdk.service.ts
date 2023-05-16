@@ -110,7 +110,6 @@ export class SDKService {
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
         map((kb) => {
           this.stateService.setStash(kb);
-          this._currentKB.next(kb);
           return kb;
         }),
       );

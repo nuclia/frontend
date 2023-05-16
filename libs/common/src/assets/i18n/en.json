@@ -649,6 +649,7 @@
 	"resource.tooltip.annotation": "Annotation",
 	"resource.tooltip.classification": "Classification",
 	"resource.tooltip.edition": "Edition",
+	"resource.tooltip.preview": "Preview",
 	"resource.visible_columns_dropdown": "Displayed columns",
 	"search.more_results": "show more results",
 	"search.sort_by": "Sort by",

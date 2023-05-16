@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../utils';
-import { AppService } from '../../../../../../libs/common/src/lib/services';
+import { AppService } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -105,11 +105,7 @@ export class KnowledgeBoxHomeComponent {
         ),
         filter((confirm) => !!confirm),
         switchMap(() => this.sdk.currentKb),
-        switchMap((kb) =>
-          kb
-            .publish(state === 'PUBLISHED')
-            .pipe(switchMap(() => this.sdk.setCurrentKnowledgeBox(kb.account, kb.slug || '', true))),
-        ),
+        switchMap((kb) => kb.publish(state === 'PUBLISHED').pipe(tap(() => this.sdk.refreshKbList(true)))),
         take(1),
       )
       .subscribe({

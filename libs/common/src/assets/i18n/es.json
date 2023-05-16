@@ -628,6 +628,7 @@
 	"resource.tooltip.annotation": "Anotación",
 	"resource.tooltip.classification": "Clasificación",
 	"resource.tooltip.edition": "Edición",
+	"resource.tooltip.preview": "Avance",
 	"resource.visible_columns_dropdown": "Columnas mostradas",
 	"search.more_results": "mostrar más resultados",
 	"search.sort_by": "Ordenar por",
