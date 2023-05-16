@@ -51,7 +51,12 @@ export class Authentication implements IAuthentication {
     }
     if (path === '/kbs' || (method === 'PATCH' && path?.startsWith('/kb') && path?.split('/').length === 3)) {
       nucliaDbRole = 'MANAGER';
-    } else if (path?.endsWith('/search') || path?.endsWith('/find') || path?.endsWith('/catalog')) {
+    } else if (
+      path?.endsWith('/search') ||
+      path?.endsWith('/find') ||
+      path?.endsWith('/catalog') ||
+      path?.endsWith('/chat')
+    ) {
       nucliaDbRole = 'READER';
     }
     return nucliaDbRole;
