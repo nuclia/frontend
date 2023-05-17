@@ -76,7 +76,10 @@ describe('ResourceListComponent', () => {
           },
         },
         MockProvider(BackendConfigurationService),
-        MockProvider(TranslateService),
+        MockProvider(TranslateService, {
+          instant: jest.fn(() => ''),
+          stream: jest.fn(() => of('')),
+        }),
         MockProvider(LabelsService, {
           getLabelsByKind: jest.fn(() => of({})),
         }),
