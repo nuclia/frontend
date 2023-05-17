@@ -2,14 +2,45 @@
 
 # Nuclia frontend apps and libraries
 
-## Table of content
-
+- [Before Installation](#before-installation)
 - [Installation](#installation)
 - [Dashboard](#dashboard)
 - [Widget](#widget)
 - [SDK](#sdk)
 - [Desktop app](#desktop-app)
 - [Sistema](#sistema)
+
+----
+## Before Installation
+
+First you need to have NVM, NODE and YARN installed.
+
+To install [nvm](https://github.com/nvm-sh/nvm#installing-and-updating), run:
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+```
+or
+```
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+```
+
+To check if it was installed properly, close and reopen the terminal and run "```command -v mvn```" and shouls return "```mvn```". In case there is something else goining on, trobleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "```nvm```".
+
+
+To install the lates vertion of [node](https://nodejs.org/en), run:
+```
+nvm install node
+```
+
+To check if node and npm is properly installed, run: "```node --version```" and "```npm --version```". <sub>Any problems should be resolved with the [mvn documentation](https://github.com/nvm-sh/nvm#readme).</sub>
+
+To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable), run:
+```
+npm install --global yarn
+```
+Check if Yarn is installed by running: "```yard --version```"
+
+
 
 ## Installation
 
