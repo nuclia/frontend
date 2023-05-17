@@ -346,3 +346,33 @@ export function getLabelledClause(label: string) {
     show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   });
 }
+
+const CLEANUP = new RegExp(/[^a-zA-Z0-9\s]+/g);
+const TRIM = new RegExp(/\s\s+/g);
+
+export function getMatchingClause(clause: string) {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  clause = clause.replace(CLEANUP, ' ').replace(TRIM, ' ').trim();
+  console.log('getMatchingClause', clause);
+  const approxWordCount = clause.split(' ').length;
+  const exactMatchScore = approxWordCount * 1.2;
+
+  return forkJoin([
+    nucliaApi.knowledgeBox.search(clause, [Search.Features.DOCUMENT], {}),
+    nucliaApi.knowledgeBox.search(clause, [Search.Features.VECTOR], {}),
+  ]).pipe(
+    map(([bm25, vector]) => {
+      const bm25results = bm25 as Search.Results;
+      const exact = bm25results.fulltext?.results.filter((p) => p.score >= exactMatchScore) || [];
+      const close = bm25results.fulltext?.results.filter((p) => p.score < exactMatchScore) || [];
+      const modified = (vector as Search.Results).sentences?.results || [];
+      return { exact, close, modified };
+    }),
+  );
+}
+
+export const CLAUSES: { [ref: string]: string } = {
+  NMA464: `Notwithstanding anything to the contrary contained herein this Certificate does not cover Loss or Damage directly or indirectly occasioned by, happening through or in consequence of war, invasion, acts of foreign enemies, hostilities (whether war be declared or not), civil war, rebellion, revolution, insurrection, military or usurped power or confiscation or nationalisation or requisition or destruction of or damage to property by or under the order of any government or public or local authority`,
+};

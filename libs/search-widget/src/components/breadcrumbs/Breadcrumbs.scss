@@ -1,0 +1,9 @@
+ul li {
+  display: inline-block;
+  cursor: pointer;
+  font-size: var(--font-size-small);
+  span {
+    color: var(--color-neutral-regular);
+    padding: var(--rhythm-1);
+  }
+}

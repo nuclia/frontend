@@ -32,6 +32,9 @@
       knowledgebox={kb}
       apikey={apiKey}
       lang="en"
+      state="PRIVATE"
+      account="eric-brehault_1"
+      kbslug="britinsurance"
       placeholder="Search"
       features="filter,suggestions,permalink,relations,zanswers,zspeech" />
     <NucliaSearchResults bind:this={resultsWidget} />

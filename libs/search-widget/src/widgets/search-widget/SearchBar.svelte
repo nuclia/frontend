@@ -2,7 +2,15 @@
 
 <script lang="ts">
   import type { KBStates, Search } from '@nuclia/core';
-  import { clauseSearch, facetByClause, getLabelledClause, initNuclia, resetNuclia } from '../../core/api';
+  import {
+    CLAUSES,
+    clauseSearch,
+    facetByClause,
+    getLabelledClause,
+    getMatchingClause,
+    initNuclia,
+    resetNuclia,
+  } from '../../core/api';
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
   import { setLang } from '../../core/i18n';
@@ -24,6 +32,8 @@
   import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
   import PieChart from '../../components/charts/PieChart.svelte';
   import { forkJoin, take } from 'rxjs';
+  import Button from '../../common/button/Button.svelte';
+  import Breadcrumbs from '../../components/breadcrumbs/Breadcrumbs.svelte';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -40,6 +50,8 @@
   export let standalone = false;
 
   let _features: WidgetFeatures = {};
+  const ROOT = { id: 'root', label: 'All' };
+  let breadcrumbs: { id: string; label: string }[] = [ROOT];
 
   export function search(query: string) {
     searchQuery.set(query);
@@ -65,6 +77,9 @@
 
   let svgSprite;
   let ready = false;
+  let showCanonicalClause = false;
+  let clause = '';
+  let clauseId = '';
 
   const TOPIC = 'terrorism';
   let data: { [key: string]: { id: string; label: string; value: number; results?: Search.FindResults } };
@@ -124,25 +139,7 @@
     }
 
     ready = true;
-
-    forkJoin([clauseSearch(TOPIC), clauseSearch(`policy -${TOPIC}`, { isAdvanced: true })])
-      .pipe(take(1))
-      .subscribe(([withClause, withoutClause]) => {
-        data = {
-          with: {
-            id: 'with',
-            label: `With ${TOPIC} clause`,
-            results: withClause,
-            value: withClause.total,
-          },
-          without: {
-            id: 'without',
-            label: `Without ${TOPIC} clause`,
-            results: withoutClause,
-            value: withoutClause.total,
-          },
-        };
-      });
+    displayResults('root');
 
     return () => {
       searchState.reset();
@@ -154,32 +151,72 @@
   });
 
   function displayResults(id: string) {
-    console.log('click', id);
-    if (data[id]) {
+    if (id === 'root') {
+      forkJoin([clauseSearch(TOPIC), clauseSearch(`policy -${TOPIC}`, { isAdvanced: true })])
+        .pipe(take(1))
+        .subscribe(([withClause, withoutClause]) => {
+          data = {
+            with: {
+              id: 'with',
+              label: `With ${TOPIC} clause`,
+              results: withClause,
+              value: withClause.total,
+            },
+            without: {
+              id: 'without',
+              label: `Without ${TOPIC} clause`,
+              results: withoutClause,
+              value: withoutClause.total,
+            },
+          };
+          breadcrumbs = [ROOT];
+        });
+    }
+    if (data && data[id]) {
       triggerSearch.next();
       const results = data[id].results;
       if (results) {
         searchResults.set({ results, append: false });
       }
-      if (id === 'with') {
-        facetByClause().subscribe((facets) => {
-          data = Object.entries(facets['/l/fake']).reduce((acc, [key, value]) => {
-            acc[key] = {
-              id: key,
-              label: key.split('/').pop() || 'N/A',
-              value,
-            };
-            return acc;
-          }, {} as { [key: string]: { id: string; label: string; value: number } });
-          console.log(data);
-        });
-      }
     }
+    if (id === 'with') {
+      facetByClause().subscribe((facets) => {
+        data = Object.entries(facets['/l/fake']).reduce((acc, [key, value]) => {
+          acc[key] = {
+            id: key,
+            label: key.split('/').pop() || 'N/A',
+            value,
+          };
+          return acc;
+        }, {} as { [key: string]: { id: string; label: string; value: number } });
+        breadcrumbs = [ROOT, { id, label: 'With clause' }];
+        console.log(`breadcrumbs`, breadcrumbs);
+      });
+    }
+
     if (id.startsWith('/l/fake')) {
       getLabelledClause(id).subscribe((results) => {
         searchResults.set({ results, append: false });
       });
+      clause = CLAUSES['NMA464'];
+      clauseId = 'NMA464';
+      searchClause();
+      showCanonicalClause = true;
     }
+  }
+
+  function searchClause() {
+    getMatchingClause(clause).subscribe((res) => {
+      data = Object.entries(res).reduce((acc, [key, value]) => {
+        acc[key] = {
+          id: key,
+          label: key,
+          value: value.length,
+        };
+        return acc;
+      }, {} as { [key: string]: { id: string; label: string; value: number } });
+      breadcrumbs = [ROOT, { id: 'with', label: 'With clause' }, { id: clauseId, label: clauseId }];
+    });
   }
 </script>
 
@@ -195,10 +232,24 @@
     hidden>
     {@html svgSprite}
   </div>
+  <Breadcrumbs
+    items={breadcrumbs}
+    on:click={(e) => displayResults(e.detail)} />
   {#if data}
-    <PieChart
-      {data}
-      on:click={(e) => displayResults(e.detail.id)} />
+    <div class="clause">
+      <div class="chart">
+        <PieChart
+          {data}
+          on:click={(e) => displayResults(e.detail.id)} />
+      </div>
+      {#if showCanonicalClause}
+        <div class="text">
+          <h3>NMA464 canonical text</h3>
+          <textarea bind:value={clause} />
+          <Button on:click={() => searchClause()}>Search clause</Button>
+        </div>
+      {/if}
+    </div>
   {/if}
 </div>
 

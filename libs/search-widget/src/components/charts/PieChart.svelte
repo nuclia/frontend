@@ -21,12 +21,14 @@
 
   $: {
     if (isInit) {
-      render(data);
+      d3.select("#chart").selectAll("*").remove();
+      init(data);
     }
   }
   function key(d) {
-      return d.data.id;
-    }
+    const key = `${d.data.id}-${ratio(d)}`;
+    return key;
+  }
 
 function init() {  
   // append the svg object to the div called 'chart'
@@ -42,6 +44,7 @@ function init() {
     }
     
     function render(data) {
+      total = Object.values(data).reduce((acc, current) => acc + current.value, 0);
   // set the color scale
   color = d3.scaleOrdinal()
     .domain(Object.values(data).map(d => d.label))
@@ -63,7 +66,7 @@ function init() {
    outerArc = d3.arc()
    .innerRadius(radius * 0.9)
    .outerRadius(radius * 0.9)
-  total = Object.values(data).reduce((acc, current) => acc + current.value, 0);
+  
   const data_ready = pie(Object.values(data));
   
   // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
@@ -121,8 +124,7 @@ function init() {
       return enter.append('text')
         .attr('class', 'label')
         .text(d => {
-          const ratio = Math.round(100*d.data.value / total);
-          return `${d.data.label} ${ratio}%`;
+          return `${d.data.label} ${ratio(d)}%`;
         })
         .attr('transform', function(d) {
             const pos = outerArc.centroid(d);
@@ -143,6 +145,10 @@ function init() {
       function(exit) {
         return exit.remove();
       })
+    }
+
+    function ratio(d) {
+      return Math.round(100*d.data.value / total)
     }
   </script>
 
