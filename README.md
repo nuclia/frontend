@@ -2,6 +2,7 @@
 
 # Nuclia frontend apps and libraries
 
+## Table of content
 - [Before Installation](#before-installation)
 - [Installation](#installation)
 - [Dashboard](#dashboard)
@@ -24,10 +25,10 @@ or
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
 
-To check if it was installed properly, close and reopen the terminal and run "```command -v mvn```" and shouls return "```mvn```". In case there is something else goining on, trobleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "```nvm```".
+To check if it was installed properly, close and reopen the terminal and run "```command -v mvn```" and should return "```mvn```". In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "```nvm```".
 
 
-To install the lates vertion of [node](https://nodejs.org/en), run:
+To install the latest version of [node](https://nodejs.org/en), run:
 ```
 nvm install node
 ```
