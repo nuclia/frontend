@@ -207,7 +207,10 @@ export const TUSuploadFile = (
                             };
                           }
                         }),
-                        catchError(() => of({ failed: true })),
+                        catchError(() => {
+                          failed = true;
+                          return of({ failed: true });
+                        }),
                       );
               }),
             ),

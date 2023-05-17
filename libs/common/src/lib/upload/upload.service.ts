@@ -26,7 +26,7 @@ import {
   take,
   timer,
 } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { SisToastService } from '@nuclia/sistema';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
@@ -49,6 +49,7 @@ export class UploadService {
   constructor(private sdk: SDKService, private labelsService: LabelsService, private toaster: SisToastService) {}
 
   uploadFiles(files: FileWithMetadata[]) {
+    let hasNotifiedError = false;
     const labels = files
       .filter((file) => !!file.payload && !!file.payload.usermetadata && !!file.payload.usermetadata.classifications)
       .map((file) => file?.payload?.usermetadata?.classifications as Classification[])
@@ -64,7 +65,12 @@ export class UploadService {
         ),
         tap((progress) => {
           if (progress.completed) {
-            this.onUploadSuccess();
+            if (progress.failed === 0) {
+              this.onUploadComplete(true);
+            } else if (!hasNotifiedError) {
+              hasNotifiedError = true;
+              this.onUploadComplete(false);
+            }
           }
         }),
         startWith({ files: [], progress: 0, completed: false, uploaded: 0, failed: 0, conflicts: 0 }),
@@ -148,7 +154,7 @@ export class UploadService {
           REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
         ),
       ),
-      tap(() => this.onUploadSuccess()),
+      tap(() => this.onUploadComplete(true)),
     );
   }
 
@@ -197,8 +203,12 @@ export class UploadService {
     this.updateStatusCount().subscribe();
   }
 
-  onUploadSuccess() {
-    this.toaster.success('upload.toast.successful');
+  onUploadComplete(success: boolean) {
+    if (success) {
+      this.toaster.success('upload.toast.successful');
+    } else {
+      this.toaster.warning('upload.toast.failed');
+    }
     timer(1000)
       .pipe(switchMap(() => this.updateStatusCount()))
       .subscribe();

@@ -72,7 +72,7 @@ export class UploadTextComponent {
             this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
           ),
         ),
-        tap(() => this.uploadService.onUploadSuccess()),
+        tap(() => this.uploadService.onUploadComplete(true)),
       )
       .subscribe(() => this.modal.close());
   }
