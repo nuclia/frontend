@@ -27,8 +27,11 @@
   border: 2px dashed #ccc;
   color: rgba(0, 0, 0, 0.5);
   min-height: rhythm(12);
-  cursor: pointer;
   transition: border-color 0.15s;
+  cursor: pointer;
+  &.folder {
+    cursor: copy;
+  }
   span {
     transition: opacity 0.15s;
   }

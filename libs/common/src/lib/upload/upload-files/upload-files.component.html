@@ -34,7 +34,8 @@
       (fileOver)="fileOverBase($event)"
       (atFileDrop)="addFiles($event)"
       (click)="chooseFiles($event)"
-      class="dropzone">
+      class="dropzone"
+      [class.folder]="folderMode">
       <span>{{ (folderMode ? 'modal.upload.drop_folder' : 'modal.upload.drop') | translate }}</span>
     </div>
     <input

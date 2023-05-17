@@ -133,6 +133,10 @@ export class ResourcesTableDirective {
     }
   }
 
+  trackById(index: number, resource: ResourceWithLabels) {
+    return resource.resource.id;
+  }
+
   triggerAction(resource: Resource, action: MenuAction) {
     this.menuAction.emit({ resource, action });
   }

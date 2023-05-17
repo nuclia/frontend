@@ -9,7 +9,18 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  forkJoin,
+  from,
+  mergeMap,
+  Observable,
+  of,
+  Subject,
+  take,
+} from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -27,12 +38,11 @@ import {
   SortOption,
   UserClassification,
 } from '@nuclia/core';
-import { BackendConfigurationService, SDKService, StateService } from '@flaps/core';
+import { SDKService, StateService } from '@flaps/core';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { DomSanitizer } from '@angular/platform-browser';
 import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
 import { LabelsService } from '../../label/labels.service';
-import { PopoverDirective, TRANSITION_DURATION } from '@guillotinaweb/pastanaga-angular';
+import { OptionModel, PopoverDirective, TRANSITION_DURATION } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { getClassificationsPayload } from '../edit-resource';
 import {
@@ -67,6 +77,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   isLoading = true;
   unsubscribeAll = new Subject<void>();
   refreshing = true;
+  searchOptions: OptionModel[] = [];
 
   statusCount = this.uploadService.statusCount.pipe(
     tap((count) => {
@@ -139,8 +150,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private modalService: SisModalService,
     private stateService: StateService,
     private toaster: SisToastService,
-    private sanitized: DomSanitizer,
-    private backendConfig: BackendConfigurationService,
     private labelService: LabelsService,
     private uploadService: UploadService,
   ) {}
@@ -167,6 +176,23 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => this.search());
+
+    // we need to wait for the translations to be loaded before setting the search options
+    // because the default value (=title) is used to fill in the select input and this value is not refreshed
+    // when the options are provided as ngContent
+    this.translate
+      .stream(['resource.search.in-title', 'resource.search.in-resource'])
+      .pipe(takeUntil(this.unsubscribeAll))
+      .subscribe((trans) => {
+        this.searchOptions = [
+          new OptionModel({ id: 'title', label: trans['resource.search.in-title'], value: 'title' }),
+          new OptionModel({
+            id: 'resource',
+            label: trans['resource.search.in-resource'],
+            value: 'resource',
+          }),
+        ];
+      });
   }
 
   ngOnDestroy() {

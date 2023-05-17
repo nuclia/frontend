@@ -138,6 +138,7 @@ export const TUSuploadFile = (
   creationPayload?: ICreateResource,
 ): Observable<UploadResponse> => {
   let i = 0;
+  let count = 0;
   let failed = false;
   const totalLength = buffer.byteLength;
   const loops = Math.ceil(totalLength / CHUNK_SIZE);
@@ -179,6 +180,7 @@ export const TUSuploadFile = (
             range(0, loops).pipe(
               concatMap(() => {
                 const chunk = buffer.slice(i, i + CHUNK_SIZE);
+                count += 1;
                 return failed
                   ? of({ failed })
                   : nuclia.rest
@@ -200,12 +202,15 @@ export const TUSuploadFile = (
                           } else {
                             i += CHUNK_SIZE;
                             return {
-                              completed: i >= totalLength,
+                              completed: count === loops,
                               progress: i >= totalLength ? 100 : Math.min(Math.floor((i / totalLength) * 100), 100),
                             };
                           }
                         }),
-                        catchError(() => of({ failed: true })),
+                        catchError(() => {
+                          failed = true;
+                          return of({ failed: true });
+                        }),
                       );
               }),
             ),
@@ -272,7 +277,7 @@ export const batchUpload = (
       const failed = filesStatus.filter((item) => item.failed).length;
       const conflicts = filesStatus.filter((item) => item.conflicts).length;
       const uploaded = filesStatus.filter((item) => item.uploaded).length;
-      const completed = uploaded + failed === filesStatus.length;
+      const completed = filesStatus.filter((item) => !item.failed && !item.uploaded).length === 0;
       const progress = Math.round(
         (filesStatus.reduce((acc, status) => acc + (status.file.size * status.progress) / 100, 0) / totalSize) * 100,
       );
