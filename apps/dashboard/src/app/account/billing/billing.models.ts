@@ -109,3 +109,24 @@ export interface AccountUsage {
   start_billing_date: string;
   end_billing_date: string;
 }
+
+export interface InvoicesListPagination {
+  starting_after?: string;
+  limit?: number;
+  has_more: boolean;
+}
+
+export interface Invoice {
+  id: string;
+  period_start: string;
+  period_end: string;
+  order_number: string;
+  account_type: AccountTypes;
+  amount: number;
+  pdf: string;
+}
+
+export interface InvoicesList {
+  items: Invoice[];
+  pagination: InvoicesListPagination;
+}

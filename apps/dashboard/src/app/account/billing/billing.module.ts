@@ -21,6 +21,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { CalculatorComponent } from './calculator/calculator.component';
 import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
+import { HistoryComponent } from './history/history.component';
 import { UsageComponent } from './usage/usage.component';
 import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
@@ -46,6 +47,10 @@ const routes: Routes = [
       {
         path: 'usage',
         component: UsageComponent,
+      },
+      {
+        path: 'history',
+        component: HistoryComponent,
       },
     ],
   },
@@ -75,6 +80,7 @@ const routes: Routes = [
     CalculatorComponent,
     ReviewComponent,
     FeaturesComponent,
+    HistoryComponent,
     RedirectComponent,
     UsageComponent,
     UsageTableComponent,
