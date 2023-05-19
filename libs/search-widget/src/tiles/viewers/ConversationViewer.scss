@@ -1,0 +1,40 @@
+.sw-conversation-viewer {
+  --text-width: calc(var(--rhythm-64) + var(--rhythm-40));
+  --metadata-width: var(--rhythm-20);
+
+  background-color: var(--color-light-stronger);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--rhythm-4);
+  padding: var(--rhythm-3);
+  width: 100%;
+
+  .metadata {
+    margin-bottom: var(--rhythm-1);
+  }
+
+  .date {
+    font-size: var(--font-size-small);
+    line-height: var(--line-height-title-xxs);
+  }
+
+  @media (min-width: 648px) {
+    .message {
+      display: flex;
+      gap: var(--rhythm-2);
+      justify-content: flex-start;
+      margin: 0 auto;
+      max-width: 100%;
+      width: calc(var(--metadata-width) + var(--text-width))
+    }
+    .metadata {
+      flex-shrink: 0;
+      text-align: right;
+      width: var(--metadata-width);
+    }
+    .text {
+      max-width: var(--text-width);
+    }
+  }
+}

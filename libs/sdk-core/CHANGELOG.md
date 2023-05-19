@@ -6,6 +6,7 @@
 - Update `modifyKb` to also work on standalone mode
 - Add `onlyAnswers` property to `WidgetFeatures` interface
 - Add `generic` field type
+- Add models for conversations fields
 
 ### Bugfix
 
