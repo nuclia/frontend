@@ -42,6 +42,8 @@
 	"account.expired": "Expired",
 	"account.extend_trial": "Extend the free trial",
 	"account.free_trial": "Free trial",
+	"account.free_trial_ended.description": "The 15-day trial has transpired and your account has been blocked. You can either subscribe to one of our plans or contact us for an extension of the trial.",
+	"account.free_trial_ended.title": "Oh! Your free trial has ended",
 	"account.full_name": "Name and surname",
 	"account.generate_key": "Generate a new key",
 	"account.home": "Account dashboard",

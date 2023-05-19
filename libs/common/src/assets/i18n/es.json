@@ -35,6 +35,8 @@
 	"account.expired": "Expirada",
 	"account.extend_trial": "Ampliar Prueba gratis",
 	"account.free_trial": "Prueba gratis",
+	"account.free_trial_ended.description": "La prueba de 15 días ha finalizado y tu cuenta ha sido bloqueada. Puedes suscribirte a uno de nuestros planes o contactar con nosotros para ampliar el período de prueba.",
+	"account.free_trial_ended.title": "¡Oh! Tu prueba gratuita ha finalizado",
 	"account.full_name": "Nombre y Apellidos",
 	"account.generate_key": "Generar un nuevo código",
 	"account.home": "Panel de cuenta",

@@ -12,9 +12,9 @@
       <ng-container *ngIf="trialAccount | async">
         <div *ngIf="!(blocked | async)">
           {{
-            (daysLeft | async) >= 0
-              ? ('account.days_left' | translate: { days: (daysLeft | async) + 1 })
-              : ('account.expired' | translate)
+            (trialExpired | async)
+              ? ('account.expired' | translate)
+              : ('account.days_left' | translate: { days: (daysLeft | async) + 1 })
           }}
         </div>
         <div *ngIf="blocked | async">

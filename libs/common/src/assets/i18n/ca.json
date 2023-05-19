@@ -35,6 +35,8 @@
 	"account.expired": "Expirada",
 	"account.extend_trial": "Ampliar prova gratuïta",
 	"account.free_trial": "Prova gratuïta",
+	"account.free_trial_ended.description": "La prova de 15 dies ha finalitzat i el teu compte ha quedat bloquejat. Pots subscriure't a un dels nostres plans o contactar amb nosaltres per ampliar el període de prova.",
+	"account.free_trial_ended.title": "Oh! La teva prova gratuïta ha finalitzat",
 	"account.full_name": "Nom i Cognoms",
 	"account.generate_key": "Generar un nou codi",
 	"account.home": "Tauler de control del compte",

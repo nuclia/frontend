@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
-import { combineLatest, filter, map, of, shareReplay } from 'rxjs';
+import { combineLatest, filter, map, of, switchMap, shareReplay, take } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 import { BillingService } from '../billing/billing.service';
 import { AccountUsage } from '../billing/billing.models';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PaButtonModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { differenceInDays } from 'date-fns';
 import { AccountBlockingState } from '@nuclia/core';
+import { SisModalService } from '@nuclia/sistema';
 import { WINDOW } from '@ng-web-apis/common';
+
+const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
 
 @Component({
   selector: 'app-account-status',
@@ -44,14 +47,21 @@ export class AccountStatusComponent {
   canExtendTrial = combineLatest([this.daysLeft, this.trialAccount]).pipe(
     map(([daysLeft, isTrial]) => isTrial && daysLeft <= 5),
   );
+  trialExpired = combineLatest([this.daysLeft, this.trialAccount]).pipe(
+    map(([daysLeft, isTrial]) => isTrial && daysLeft < 0),
+  );
 
   constructor(
     private sdk: SDKService,
     private billingService: BillingService,
     private navigation: NavigationService,
     private tracking: STFTrackingService,
+    private modalService: SisModalService,
+    private router: Router,
     @Inject(WINDOW) private window: Window,
-  ) {}
+  ) {
+    this.checkIfTrialExpired();
+  }
 
   getCurrency() {
     return this.usage ? of(this.usage.currency) : this.currency;
@@ -59,5 +69,47 @@ export class AccountStatusComponent {
 
   contact() {
     this.window.location.href = 'mailto:eudald@nuclia.com';
+  }
+
+  checkIfTrialExpired() {
+    this.trialExpired
+      .pipe(
+        take(1),
+        filter((isExpired) => isExpired),
+        switchMap(() => this.sdk.currentAccount.pipe(take(1))),
+      )
+      .subscribe((account) => {
+        const ids = localStorage.getItem(TRIAL_ALERT) || '';
+        if (!ids.split(',').includes(account.id)) {
+          this.showEndOfTrialAlert();
+          localStorage.setItem(TRIAL_ALERT, !ids ? account.id : `${ids},${account.id}`);
+        }
+      });
+  }
+
+  showEndOfTrialAlert() {
+    this.modalService
+      .openConfirm({
+        title: 'account.free_trial_ended.title',
+        description: 'account.free_trial_ended.description',
+        cancelLabel: 'billing.contact',
+        confirmLabel: 'billing.upgrade',
+      })
+      .onClose.pipe(
+        take(1),
+        switchMap((result) =>
+          this.upgradeUrl.pipe(
+            take(1),
+            map((upgradeUrl) => ({ result, upgradeUrl })),
+          ),
+        ),
+      )
+      .subscribe(({ result, upgradeUrl }) => {
+        if (result === true) {
+          this.router.navigate([upgradeUrl]);
+        } else if (result === false) {
+          this.contact();
+        }
+      });
   }
 }
