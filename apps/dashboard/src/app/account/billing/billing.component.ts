@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, OnDestroy, OnInit, Inject } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter, map } from 'rxjs';
-import { injectScript } from '@flaps/core';
+import { filter, map, shareReplay } from 'rxjs';
+import { injectScript, STFTrackingService } from '@flaps/core';
 import { WINDOW } from '@ng-web-apis/common';
 import { BillingService } from './billing.service';
 
@@ -12,13 +12,19 @@ import { BillingService } from './billing.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BillingComponent implements OnInit, OnDestroy {
+  areInvoicesEnabled = this.tracking.isFeatureEnabled('invoices').pipe(shareReplay());
   isSubscribed = this.billingService.isSubscribed;
   isCheckoutActive = this.router.events.pipe(
     filter((event) => event instanceof NavigationEnd),
     map(() => this.router.url.includes('checkout')),
   );
 
-  constructor(private router: Router, private billingService: BillingService, @Inject(WINDOW) private window: Window) {}
+  constructor(
+    private router: Router,
+    private billingService: BillingService,
+    private tracking: STFTrackingService,
+    @Inject(WINDOW) private window: Window,
+  ) {}
 
   ngOnInit() {
     const tidioApi = (this.window as any)?.tidioChatApi;
