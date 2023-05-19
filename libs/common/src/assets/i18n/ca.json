@@ -33,6 +33,7 @@
 	"account.delete_user_warning": "Segur que vols eliminar l'usuari {{ username }}?",
 	"account.enhanced_model": "Model millorat",
 	"account.expired": "Expirada",
+	"account.extend_trial": "Ampliar prova gratuïta",
 	"account.free_trial": "Prova gratuïta",
 	"account.full_name": "Nom i Cognoms",
 	"account.generate_key": "Generar un nou codi",

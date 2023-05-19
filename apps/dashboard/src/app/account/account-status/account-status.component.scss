@@ -18,3 +18,10 @@
 .unit {
   color: $color-neutral-regular;
 }
+
+.buttons{
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+}

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
 import { combineLatest, filter, map, of, shareReplay } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
@@ -9,6 +9,7 @@ import { RouterModule } from '@angular/router';
 import { PaButtonModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
 import { differenceInDays } from 'date-fns';
 import { AccountBlockingState } from '@nuclia/core';
+import { WINDOW } from '@ng-web-apis/common';
 
 @Component({
   selector: 'app-account-status',
@@ -40,15 +41,23 @@ export class AccountStatusComponent {
       return differenceInDays(expiration, now);
     }),
   );
+  canExtendTrial = combineLatest([this.daysLeft, this.trialAccount]).pipe(
+    map(([daysLeft, isTrial]) => isTrial && daysLeft <= 5),
+  );
 
   constructor(
     private sdk: SDKService,
     private billingService: BillingService,
     private navigation: NavigationService,
     private tracking: STFTrackingService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   getCurrency() {
     return this.usage ? of(this.usage.currency) : this.currency;
+  }
+
+  contact() {
+    this.window.location.href = 'mailto:eudald@nuclia.com';
   }
 }
