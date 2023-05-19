@@ -170,7 +170,7 @@
 	"billing.parameter.paragraphs": "How many extracted paragraphs?",
 	"billing.parameter.qa": "How many generative answers?",
 	"billing.parameter.searches": "How many searches?",
-	"billing.parameter.training-hours": "How many hours of training?",
+	"billing.parameter.training": "How many hours of training?",
 	"billing.payment_details": "Payment details",
 	"billing.payment_method": "Payment method",
 	"billing.phone": "Phone number",

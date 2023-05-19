@@ -112,6 +112,16 @@ export class BillingService {
                 price: res[key as AccountTypes].usage.paragraphs.price * 140,
                 threshold: Math.floor(res[key as AccountTypes].usage.paragraphs.threshold / 140),
               },
+              media: {
+                price: res[key as AccountTypes].usage.media.price * 60,
+                threshold: Math.floor(res[key as AccountTypes].usage.media.threshold / 60),
+              },
+              training: res[key as AccountTypes].usage.training
+                ? {
+                    price: res[key as AccountTypes].usage.training.price * 60,
+                    threshold: Math.floor(res[key as AccountTypes].usage.training.threshold / 60),
+                  }
+                : { ...res[key as AccountTypes].usage['training-hours'] },
             },
           };
           return acc;

@@ -37,7 +37,7 @@
           </div>
           <div class="unit-price body-xs">
             {{ prices[tier].usage[param].price | currency: currency:'symbol':'1.2-6' }} /
-            {{ (['media', 'training-hours'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
+            {{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
           </div>
         </div>
       </div>

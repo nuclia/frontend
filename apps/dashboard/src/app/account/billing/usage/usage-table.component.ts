@@ -8,7 +8,7 @@ import { AccountUsage, InvoiceItem } from '../billing.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsageTableComponent {
-  paramsToShow = ['media', 'paragraphs', 'searches', 'qa', 'training-hours'];
+  paramsToShow = ['media', 'paragraphs', 'searches', 'qa', 'training'];
 
   @Input()
   set usage(value: AccountUsage | undefined) {
