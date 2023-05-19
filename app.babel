@@ -3440,7 +3440,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>billing.parameter.training-hours</name>
+						<name>billing.parameter.training</name>
 						<description/>
 						<comment/>
 						<default_text/>

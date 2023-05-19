@@ -9,7 +9,8 @@ export type UsageType =
   | 'self-hosted-predict'
   | 'self-hosted-processed-paragraphs'
   | 'self-hosted-processed-documents'
-  | 'training-hours'
+  | 'training-hours' // TODO: remove once removed from backend response
+  | 'training'
   | 'paragraphs'
   | 'files'; // this last one does not existing in the backend response, we calculate it from paragraphs
 

@@ -12,7 +12,7 @@ import { AccountTypes } from '@nuclia/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent {
-  params: UsageType[] = ['media', 'files', 'searches', 'qa', 'training-hours'];
+  params: UsageType[] = ['media', 'files', 'searches', 'qa', 'training'];
   prices = this.modal.config.data!.prices;
   currency = this.modal.config.data!.currency;
   tier: AccountTypes = 'stash-developer';

@@ -157,7 +157,7 @@
 	"billing.parameter.paragraphs": "Quants paràgrafs extrets?",
 	"billing.parameter.qa": "Quantes respostes generatives?",
 	"billing.parameter.searches": "Quantes cerques?",
-	"billing.parameter.training-hours": "Quantes hores d'entrenament?",
+	"billing.parameter.training": "Quantes hores d'entrenament?",
 	"billing.payment_details": "Dades de pagament",
 	"billing.payment_method": "Mètode de pagament",
 	"billing.phone": "Número de telèfon",
