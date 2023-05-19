@@ -121,7 +121,7 @@ export class BillingService {
                     price: res[key as AccountTypes].usage.training.price * 60,
                     threshold: Math.floor(res[key as AccountTypes].usage.training.threshold / 60),
                   }
-                : { ...res[key as AccountTypes].usage['training-hours'] },
+                : res[key as AccountTypes].usage['training-hours'],
             },
           };
           return acc;
@@ -138,7 +138,27 @@ export class BillingService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) => this.sdk.nuclia.rest.get<AccountUsage>(`/billing/account/${account.id}/current_usage`)),
-      map((usage) => ({ ...usage, currency: usage.currency.toUpperCase() as Currency })),
+      map((usage) => ({
+        ...usage,
+        currency: usage.currency.toUpperCase() as Currency,
+        invoice_items: {
+          ...usage.invoice_items,
+          media: {
+            ...usage.invoice_items.media,
+            threshold: Math.floor(usage.invoice_items.media.threshold / 60),
+            current_usage: Math.ceil((usage.invoice_items.media.current_usage / 60) * 10) / 10,
+            over_usage: Math.ceil((usage.invoice_items.media.over_usage / 60) * 10) / 10,
+          },
+          training: usage.invoice_items.training
+            ? {
+                ...usage.invoice_items.training,
+                threshold: Math.floor(usage.invoice_items.training.threshold / 60),
+                current_usage: Math.ceil((usage.invoice_items.training.current_usage / 60) * 10) / 10,
+                over_usage: Math.ceil((usage.invoice_items.training.over_usage / 60) * 10) / 10,
+              }
+            : usage.invoice_items['training-hours'],
+        },
+      })),
     );
   }
 }
