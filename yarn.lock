@@ -16220,7 +16220,7 @@ __metadata:
     postcss-import: 15.0.0
     postcss-preset-env: 7.8.0
     postcss-url: 10.1.3
-    posthog-js: ^1.17.9
+    posthog-js: ^1.57.2
     prettier: 2.7.1
     prettier-plugin-svelte: 2.9.0
     protobufjs: ^6.11.3
@@ -17810,13 +17810,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:^1.17.9":
-  version: 1.51.5
-  resolution: "posthog-js@npm:1.51.5"
+"posthog-js@npm:^1.57.2":
+  version: 1.57.2
+  resolution: "posthog-js@npm:1.57.2"
   dependencies:
     fflate: ^0.4.1
     rrweb-snapshot: ^1.1.14
-  checksum: bdeca558f054ec736da6bb400035ff1ff6520b55e547ebd9637a130513fe5991eac7fbfeeac209f22d3d83c77a5a7c89c0309b9dfe87ee9165da41c4f399844e
+  checksum: f1c6d90729faa36bcf29e7e47384421fa717a7a4778084f207eaac13f82cb393a4235a6dbe2a51d227e12261f7240e644d988960fd22df00d5648fd7f77fbfd9
   languageName: node
   linkType: hard
 

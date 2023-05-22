@@ -69,7 +69,7 @@
     "ngx-captcha": "^12.0.2",
     "node-fetch": "^3.3.1",
     "perfect-scrollbar": "^1.5.0",
-    "posthog-js": "^1.17.9",
+    "posthog-js": "^1.57.2",
     "prettier-plugin-svelte": "2.9.0",
     "protobufjs": "^6.11.3",
     "run-script-os": "^1.1.6",
