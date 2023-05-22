@@ -7,6 +7,7 @@ import {
   AccountUsage,
   BillingDetails,
   Currency,
+  InvoicesList,
   PaymentMethod,
   Prices,
   StripeCustomer,
@@ -159,6 +160,17 @@ export class BillingService {
             : usage.invoice_items['training-hours'],
         },
       })),
+    );
+  }
+
+  getInvoices(limit = 50, lastId?: string): Observable<InvoicesList> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.get<InvoicesList>(
+          `/billing/account/${account.id}/invoices?limit=${limit}` + (lastId ? `&starting_after=${lastId}` : ''),
+        ),
+      ),
     );
   }
 }
