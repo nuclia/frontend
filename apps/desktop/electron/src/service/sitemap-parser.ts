@@ -1,13 +1,10 @@
-const axios = require('axios');
-const cheerio = require('cheerio');
+import axios from 'axios';
+import cheerio from 'cheerio';
 
-function fetchSitemap(url) {
+export async function fetchSitemap(url: string): Promise<string> {
+  const response = await axios.get(url);
   // todo: control wether it is zipped or plain
-  return axios.get(url)
-    .then((response) => {
-      // console.log(`response.data`, JSON.stringify(response.data));
-      return response.data;
-    })
+  return response.data;
 }
 
 function parseSitemap(sitemapContent) {

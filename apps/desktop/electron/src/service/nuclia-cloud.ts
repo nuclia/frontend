@@ -6,7 +6,7 @@ import {
   UploadResponse,
   WritableKnowledgeBox,
 } from '../../../../../libs/sdk-core/src';
-import { catchError, delay, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, delay, map, Observable, of, switchMap, throwError } from 'rxjs';
 import { lookup } from 'mime-types';
 import { createHash } from 'node:crypto';
 import { Link } from './models';
@@ -89,7 +89,14 @@ export class NucliaCloud {
 
   uploadLink(filename: string, data: Link): Observable<void> {
     return this.getKb().pipe(
-      switchMap((kb) => kb.createResource({ title: filename, files: { [filename]: { file: data } } })),
+      switchMap((kb) =>
+        kb.createResource({ title: filename, files: { 'remote-file': { file: data } } }).pipe(
+          catchError((error) => {
+            console.log(`createResource – error:`, JSON.stringify(error));
+            return throwError(() => new Error('Resource creation failed'));
+          }),
+        ),
+      ),
       map(() => undefined),
     );
   }

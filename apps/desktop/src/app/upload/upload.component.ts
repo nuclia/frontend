@@ -4,12 +4,12 @@ import { Router } from '@angular/router';
 import { delay, filter, forkJoin, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
 import {
+  CONNECTOR_ID_KEY,
   ConnectorDefinition,
   ConnectorParameters,
-  ISourceConnector,
-  CONNECTOR_ID_KEY,
-  SyncItem,
   FileStatus,
+  ISourceConnector,
+  SyncItem,
 } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
