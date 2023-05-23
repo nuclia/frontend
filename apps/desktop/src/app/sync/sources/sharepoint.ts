@@ -14,6 +14,7 @@ export const SharepointConnector: SourceConnectorDefinition = {
 };
 
 const CLIENT_ID = 'SHAREPOINT_CLIENT_ID';
+const SITE_NAME = 'SHAREPOINT_SITE_NAME';
 const TOKEN = 'SHAREPOINT_TOKEN';
 const REFRESH = 'SHAREPOINT_REFRESH_TOKEN';
 const CODE_VERIFIER = 'SHAREPOINT_CODE_VERIFIER';
@@ -32,16 +33,24 @@ class SharepointImpl implements ISourceConnector {
         type: 'text',
         required: true,
       },
+      {
+        id: 'site_name',
+        label: 'Site name',
+        type: 'text',
+        required: true,
+      },
     ]);
   }
 
   handleParameters(params: ConnectorParameters) {
     localStorage.setItem(CLIENT_ID, params.client_id);
+    localStorage.setItem(SITE_NAME, params.site_name);
   }
 
   getParametersValues(): ConnectorParameters {
     return {
       client_id: localStorage.getItem(CLIENT_ID),
+      site_name: localStorage.getItem(SITE_NAME),
       token: localStorage.getItem(TOKEN),
       refresh: localStorage.getItem(REFRESH),
     };
