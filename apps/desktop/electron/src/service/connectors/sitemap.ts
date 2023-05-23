@@ -8,6 +8,7 @@ import {
   SourceConnectorDefinition,
   SyncItem,
 } from '../models';
+import { getSiteMap } from '../sitemap-parser';
 
 export const SitemapConnector: SourceConnectorDefinition = {
   id: 'sitemap',
@@ -36,17 +37,32 @@ class SitemapImpl implements ISourceConnector {
 
   getFiles(query?: string | undefined): Observable<SearchResults> {
     const sitemapUrl = this.params['sitemap'];
-    return of({
-      items: [
-        {
-          title: sitemapUrl,
+    // return of({
+    //   items: [
+    //     {
+    //       title: sitemapUrl,
+    //       status: FileStatus.PENDING,
+    //       uuid: `${new Date().getTime()}`,
+    //       originalId: sitemapUrl,
+    //       metadata: { uri: sitemapUrl },
+    //     },
+    //   ],
+    // });
+
+    return getSiteMap(sitemapUrl).pipe(
+      map((parsedUrls) => ({
+        items: parsedUrls.map((parsedUrl) => ({
+          title: parsedUrl.loc,
           status: FileStatus.PENDING,
           uuid: `${new Date().getTime()}`,
-          originalId: sitemapUrl,
-          metadata: { uri: sitemapUrl },
-        },
-      ],
-    });
+          originalId: parsedUrl.loc,
+          metadata: {
+            uri: parsedUrl.loc,
+            lastModified: parsedUrl.lastmod,
+          },
+        })),
+      })),
+    );
   }
 
   getLastModified(since: string, folders?: SyncItem[] | undefined): Observable<SyncItem[]> {
