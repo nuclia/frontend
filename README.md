@@ -46,7 +46,13 @@ To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable),
 npm install --global yarn
 ```
 
-Check if Yarn is installed by running: "`yard --version`"
+Check if Yarn is installed by running: "`yarn --version`"
+
+Install `nx` globally:
+
+```
+npm install -g nx
+```
 
 ## Installation
 
@@ -57,7 +63,14 @@ yarn
 Pastanaga-angular installation must be done through [missdev](https://github.com/collective/mrs-developer) so `sistema-demo` can run:
 
 ```
-missdev --output=../libs
+yarn missdev
+```
+
+If it fails for any reason, you can try to clone Pastanaga manually:
+
+```
+cd libs
+git clone git@github.com:plone/pastanaga-angular.git
 ```
 
 ## Dashboard
