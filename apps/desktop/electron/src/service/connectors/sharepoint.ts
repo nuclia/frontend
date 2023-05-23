@@ -59,27 +59,26 @@ class SharepointImpl implements ISourceConnector {
     query = '',
     folder = '',
     foldersOnly = false,
+    siteId?: string,
     nextPage?: string,
     previous?: SearchResults,
   ): Observable<SearchResults> {
-    let path = `https://graph.microsoft.com/v1.0/sites/TestSiteNuclia/drive/${folder ? `items/${folder}` : 'root'}`;
-    if (query) {
-      path += `/search(q='${query}')`;
-    } else {
-      path += `/children`;
-    }
-    path += `?top=100&filter=${foldersOnly ? 'folder' : 'file'} ne null`;
-    if (nextPage) {
-      path += `&$skiptoken=${nextPage}`;
-    }
-
-    return from(
-      fetch(path, {
-        headers: {
-          Authorization: `Bearer ${this.params.token || ''}`,
-        },
-      }).then((res) => res.json()),
-    ).pipe(
+    return (siteId ? of(siteId) : this.getSiteId()).pipe(
+      concatMap((_siteId) => {
+        siteId = _siteId;
+        let path = `https://graph.microsoft.com/v1.0/sites/${siteId}/drive/${folder ? `items/${folder}` : 'root'}`;
+        if (query) {
+          path += `/search(q='${query}')`;
+        } else {
+          path += `/children`;
+        }
+        if (nextPage) {
+          path += `&$skiptoken=${nextPage}`;
+        }
+        return from(
+          fetch(path, { headers: { Authorization: `Bearer ${this.params.token}` } }).then((res) => res.json()),
+        );
+      }),
       concatMap((res) => {
         console.log(res);
         if (res.error) {
@@ -93,14 +92,14 @@ class SharepointImpl implements ISourceConnector {
             res['@odata.nextLink'] && res['@odata.nextLink'].includes('&$skiptoken=')
               ? res?.['@odata.nextLink'].split('&$skiptoken=')[1].split('&')[0]
               : undefined;
-          const items = (res.value || []).map((item: any) =>
-            foldersOnly ? this.mapToSyncItemFolder(item) : this.mapToSyncItem(item),
-          );
+          const items = (res.value || [])
+            .filter((item: any) => (foldersOnly ? !!item.folder : !!item.file))
+            .map((item: any) => (foldersOnly ? this.mapToSyncItemFolder(item) : this.mapToSyncItem(item)));
           const results = {
             items: [...(previous?.items || []), ...items],
             nextPage,
           };
-          return nextPage ? this._getItems(query, folder, foldersOnly, nextPage, results) : of(results);
+          return nextPage ? this._getItems(query, folder, foldersOnly, siteId, nextPage, results) : of(results);
         }
       }),
     );
@@ -112,7 +111,7 @@ class SharepointImpl implements ISourceConnector {
       title: item.name,
       originalId: item.id,
       modifiedGMT: item.lastModifiedDateTime,
-      metadata: { mimeType: item.file.mimeType, downloadLink: item['@microsoft.graph.downloadUrl'] },
+      metadata: { downloadLink: item['@microsoft.graph.downloadUrl'] },
       status: FileStatus.PENDING,
     };
   }
@@ -163,5 +162,16 @@ class SharepointImpl implements ISourceConnector {
         }
       }),
     );
+  }
+
+  private getSiteId(): Observable<string> {
+    const path = `https://graph.microsoft.com/v1.0/sites?search=${this.params.site_name}}`;
+    return from(
+      fetch(path, {
+        headers: {
+          Authorization: `Bearer ${this.params.token || ''}`,
+        },
+      }).then((res) => res.json()),
+    ).pipe(map((res) => res.value[0]?.id || ''));
   }
 }
