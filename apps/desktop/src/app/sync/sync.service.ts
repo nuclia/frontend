@@ -33,6 +33,7 @@ import {
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { injectScript, SDKService, UserService } from '@flaps/core';
 import { DropboxConnector } from './sources/dropbox';
+import { SitemapConnector } from './sources/sitemap';
 import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { OneDriveConnector } from './sources/onedrive';
 import { DynamicConnectorWrapper } from './dynamic-connector';
@@ -70,6 +71,7 @@ export class SyncService {
     onedrive: { definition: OneDriveConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
     folder: { definition: FolderConnector, settings: {} },
+    sitemap: { definition: SitemapConnector, settings: {} },
     // s3: { definition: S3Connector, settings: {} },
     // gcs: { definition: GCSConnector, settings: {} },
     // brightcove: { definition: BrightcoveConnector, settings: {} },
