@@ -1,10 +1,14 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
+import { from, Observable } from 'rxjs';
 
-export async function fetchSitemap(url: string): Promise<string> {
-  const response = await axios.get(url);
-  // todo: control wether it is zipped or plain
-  return response.data;
+export function fetchSitemap(url: string): Observable<string> {
+  //TODO control wether it is zipped or plain
+  return from(
+    axios.get(url).then((response) => {
+      return response.data;
+    }),
+  );
 }
 
 export function parseSitemap(sitemapContent: string): [string, string][] {
@@ -19,22 +23,3 @@ export function parseSitemap(sitemapContent: string): [string, string][] {
 
   return urls;
 }
-
-//const sitemapUrl = 'https://nuclia.com/sitemap.xml';
-/*export async function(sitemapUrl) {
-  try {
-    const sitemapContent = await fetchSitemap(sitemapUrl);
-    const parsedUrls = parseSitemap(sitemapContent);
-
-    return parsedUrls;
-    console.log('Parsed URLs:');
-    for (const [url, lastmod] of parsedUrls) {
-      console.log('URL:', url);
-      console.log('Last Modified:', lastmod);
-      console.log();
-    }
-  } catch (error) {
-    console.error('Error retrieving or parsing the sitemap:', error);
-  }
-}
-*/
