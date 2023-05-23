@@ -1,25 +1,48 @@
-import axios from 'axios';
-import cheerio from 'cheerio';
-import { from, Observable } from 'rxjs';
+const axios = require('axios');
+const cheerio = require('cheerio');
 
-export function fetchSitemap(url: string): Observable<string> {
-  //TODO control wether it is zipped or plain
-  return from(
-    axios.get(url).then((response) => {
+function fetchSitemap(url) {
+  // todo: control wether it is zipped or plain
+  return axios.get(url)
+    .then((response) => {
+      // console.log(`response.data`, JSON.stringify(response.data));
       return response.data;
-    }),
-  );
+    })
 }
 
-export function parseSitemap(sitemapContent: string): [string, string][] {
-  const urls: [string, string][] = [];
-  const $ = cheerio.load(sitemapContent, { xmlMode: true });
+function parseSitemap(sitemapContent) {
+  return new Promise((resolve, reject) => {
+    let urls = [];
+    const $ = cheerio.load(sitemapContent, { xml: true });
 
-  $('url').each((_, element) => {
-    const loc = $(element).find('loc').text();
-    const lastmod = $(element).find('lastmod').text();
-    urls.push([loc, lastmod]);
-  });
+    $('url').each((_, element) => {
+      const loc = $(element).find('loc').text();
+      const lastmod = $(element).find('lastmod').text();
+      urls.push({loc, lastmod});
+    });
 
-  return urls;
+    let sitemaps = $('sitemap').map((_, element) => {
+      const url = $(element).find('loc').text()
+      return fetchSitemap(url).then(parseSitemap)
+    })
+
+    Promise.all(sitemaps).then((sitemaps) => {
+      resolve([...urls, ...sitemaps.flat()])
+    })
+  })
+
 }
+
+const sitemapUrl = 'https://nuclia.com/sitemap.xml';
+(async () => {
+  try {
+    let sitemapContent = await fetchSitemap(sitemapUrl)
+    console.log(sitemapContent)
+    let parsedUrls = await parseSitemap(sitemapContent);
+
+    console.log('parsedUrls', parsedUrls)
+  } catch (error) {
+    console.error('Error retrieving or parsing the sitemap:', error);
+  }
+})();
+
