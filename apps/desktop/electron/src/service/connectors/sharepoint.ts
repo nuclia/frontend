@@ -62,7 +62,7 @@ class SharepointImpl implements ISourceConnector {
     nextPage?: string,
     previous?: SearchResults,
   ): Observable<SearchResults> {
-    let path = `https://graph.microsoft.com/v1.0/me/drive/${folder ? `items/${folder}` : 'root'}`;
+    let path = `https://graph.microsoft.com/v1.0/sites/TestSiteNuclia/drive/${folder ? `items/${folder}` : 'root'}`;
     if (query) {
       path += `/search(q='${query}')`;
     } else {
@@ -81,6 +81,7 @@ class SharepointImpl implements ISourceConnector {
       }).then((res) => res.json()),
     ).pipe(
       concatMap((res) => {
+        console.log(res);
         if (res.error) {
           if (res.error.code === 'InvalidAuthenticationToken') {
             throw new Error('Unauthorized');

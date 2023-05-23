@@ -2,7 +2,7 @@ import { ISourceConnector, SourceConnectorDefinition, ConnectorParameters, Field
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { getDeeplink } from '../../utils';
 
-const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
+const SCOPE = 'https://graph.microsoft.com/Sites.Read.All offline_access';
 
 export const SharepointConnector: SourceConnectorDefinition = {
   id: 'sharepoint',
