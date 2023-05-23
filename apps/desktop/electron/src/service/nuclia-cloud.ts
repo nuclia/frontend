@@ -88,6 +88,7 @@ export class NucliaCloud {
   }
 
   uploadLink(filename: string, data: Link): Observable<void> {
+    console.log(`Uploading ${filename}`);
     return this.getKb().pipe(
       switchMap((kb) =>
         kb.createResource({ title: filename, files: { 'remote-file': { file: data } } }).pipe(
