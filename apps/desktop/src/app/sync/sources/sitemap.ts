@@ -11,7 +11,7 @@ export const SitemapConnector: SourceConnectorDefinition = {
 
 class SitemapImpl implements ISourceConnector {
   hasServerSideAuth = false;
-  isExternal = false;
+  isExternal = true;
   url = '';
 
   getParameters(): Observable<Field[]> {
