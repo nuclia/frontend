@@ -1,14 +1,13 @@
-import { map, Observable, of } from 'rxjs';
+import { map, Observable, of, tap } from 'rxjs';
 import {
   ConnectorParameters,
+  FileStatus,
   ISourceConnector,
   Link,
   SearchResults,
   SourceConnectorDefinition,
   SyncItem,
-  FileStatus,
 } from '../models';
-import { fetchSitemap, parseSitemap } from '../sitemap-parser';
 
 export const SitemapConnector: SourceConnectorDefinition = {
   id: 'sitemap',
@@ -32,43 +31,41 @@ class SitemapImpl implements ISourceConnector {
   }
 
   getFolders(query?: string | undefined): Observable<SearchResults> {
-    throw new Error('Method getFolders not implemented.');
+    throw new Error('Method "getFolders" not implemented.');
   }
 
   getFiles(query?: string | undefined): Observable<SearchResults> {
-    return fetchSitemap(this.params['sitemap']).pipe(
-      map((sitemapContent) => {
-        const parsedUrls = parseSitemap(sitemapContent);
-        console.log('Parsed URLs:', parsedUrls);
-        const searchResults:SearchResults = { items: parsedUrls.map(([url, lastmod]) => {
-            console.log('URL:', url);
-            console.log('Last Modified:', lastmod);
-            const syncItem:SyncItem = {title: url, originalId: url, metadata: {uri: url, modifiedGMT: new Date(lastmod).toISOString()}, status: FileStatus.PENDING};
-            return syncItem;
-        })};
-        // return searchResults;
-        return {items: []};
-
-      }),
-    );
+    const sitemapUrl = this.params['sitemap'];
+    return of({
+      items: [
+        {
+          title: sitemapUrl,
+          status: FileStatus.PENDING,
+          uuid: `${new Date().getTime()}`,
+          originalId: sitemapUrl,
+          metadata: { uri: sitemapUrl },
+        },
+      ],
+    });
   }
 
   getLastModified(since: string, folders?: SyncItem[] | undefined): Observable<SyncItem[]> {
     return this.getFiles().pipe(
+      tap((searchResults) => console.log(since, searchResults)),
       map((searchResults) => {
-        return searchResults.items.filter((item) => item.modifiedGMT && item.modifiedGMT > since);
+        // TODO: filter out items to get only last modified ones
+        //  .filter((item) => item.modifiedGMT && item.modifiedGMT > since);
+        return searchResults.items;
       }),
     );
   }
 
   download(resource: SyncItem): Observable<Blob | undefined> {
-    throw new Error('Method download not implemented.');
+    throw new Error('Method "download" not implemented.');
   }
 
   getLink(resource: SyncItem): Observable<Link> {
-    console.log('Im in getLink');
     const newLink: Link = { uri: resource.metadata['uri'], extra_headers: {} };
-
     return of(newLink);
   }
 
