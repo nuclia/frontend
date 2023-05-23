@@ -139,6 +139,19 @@ export class UploadComponent implements OnInit, OnDestroy {
             });
             this.goTo(3);
           }
+          // TODO: do not hardcode this condition
+        } else if (event.connector.id === 'sitemap') {
+          const data = this.source?.getParametersValues();
+          if (data) {
+            this.selection.setSelection({
+              uuid: '',
+              title: data.url,
+              originalId: data.url,
+              metadata: {},
+              status: FileStatus.PENDING,
+            });
+            this.goTo(3);
+          }
         } else {
           this.goTo(2);
         }
