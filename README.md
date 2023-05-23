@@ -3,6 +3,7 @@
 # Nuclia frontend apps and libraries
 
 ## Table of content
+
 - [Before Installation](#before-installation)
 - [Installation](#installation)
 - [Dashboard](#dashboard)
@@ -11,37 +12,41 @@
 - [Desktop app](#desktop-app)
 - [Sistema](#sistema)
 
-----
+---
+
 ## Before Installation
 
 First you need to have NVM, NODE and YARN installed.
 
 To install [nvm](https://github.com/nvm-sh/nvm#installing-and-updating), run:
+
 ```
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
+
 or
+
 ```
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
 
-To check if it was installed properly, close and reopen the terminal and run "```command -v mvn```" and should return "```mvn```". In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "```nvm```".
-
+To check if it was installed properly, close and reopen the terminal and run "`command -v nvm`" and should return "`nvm`". In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "`nvm`".
 
 To install the latest version of [node](https://nodejs.org/en), run:
+
 ```
 nvm install node
 ```
 
-To check if node and npm is properly installed, run: "```node --version```" and "```npm --version```". <sub>Any problems should be resolved with the [mvn documentation](https://github.com/nvm-sh/nvm#readme).</sub>
+To check if node and npm is properly installed, run: "`node --version`" and "`npm --version`". <sub>Any problems should be resolved with the [mvn documentation](https://github.com/nvm-sh/nvm#readme).</sub>
 
 To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable), run:
+
 ```
 npm install --global yarn
 ```
-Check if Yarn is installed by running: "```yard --version```"
 
-
+Check if Yarn is installed by running: "`yard --version`"
 
 ## Installation
 
@@ -98,6 +103,8 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 ## Desktop app
 
+### Run & Build
+
 Run the UI in the browser:
 
 ```
@@ -110,11 +117,36 @@ Launch the server:
 yarn desktop-server-dev
 ```
 
+Note: the server can be used appart from the UI. It persists all its data in `~/Library/Application\ Support/nuclia/connectors-db.json`.
+
 Build for stage:
 
 ```
 ./tools/build-desktop.sh
 ```
+
+### How to add a connector
+
+The desktop app is composed of 2 parts:
+
+- the frontend, which is a web app built with Angular and wrapped in Electron
+- the backend, which is a NodeJS server
+
+When adding a new connector, you need to add it to both parts.
+
+The frontend part is in charge to declare the parameters the user will have to provide when configuring the connector, and will manage the OAuth flow (if any).
+
+The backend part is in charge to implement the connector logic, i.e. the code that will fetch the data from the source.
+
+In both cases, you have to implement a class in TypeScript that extends a given base class (be careful, the base classes have the same name in the 2 cases but they are different) and declare it in a constant.
+
+In the frontend, you need to create a new file in `apps/desktop/src/app/sync/sources`, and implement a class extending `ISourceConnector`.
+This class is a pure TypeScript classes, it is not Angular based (which is good, so people not knowing about Angular can contribute to the desktop app, but it also means it can not inject Angular services, anyway, that should not be needed).
+Then the class plus the connector metadata (title, logo, etc.) must be declared in a `SourceConnectorDefinition` constant, and this constant must be imported in `apps/desktop/src/app/sync/sync.service.ts` and added to the `sources` property.
+
+In the backend, you need to create a new file in `apps/desktop/electron/src/service/connectors`, and implement a class extending `ISourceConnector` (same name as the frontend one, but different methods and properties). It must be declared in a `SourceConnectorDefinition` constant, and this constant must be imported in `apps/desktop/electron/src/service/connectors.ts` and added to the `connectors` constant.
+
+The OneDrive connector is a typical use case, it can be used as an example.
 
 ## Sistema
 
