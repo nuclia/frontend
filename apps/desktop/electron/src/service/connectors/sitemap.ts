@@ -7,6 +7,10 @@ import {
   ConnectorParameters,
   Link,
 } from '../models';
+import {
+    fetchSitemap,
+    parseSitemap
+} from '../sitemap-parser';
 
 export const SitemapConnector: SourceConnectorDefinition = {
     id: 'sitemap',
@@ -34,8 +38,26 @@ class SitemapImpl implements ISourceConnector {
     }
 
     getFiles(query?: string | undefined): Observable<SearchResults> {
-        // TODO read sitemap and retrieve the link
-        throw new Error("Method not implemented.");   
+        let url = this.getParameters();
+        console.log('URL:', url);
+        return fetchSitemap(url).then((sitemapContent) => {
+            console.log('Sitemap Content:', sitemapContent);
+            let parsedUrls = parseSitemap(sitemapContent)
+            let searchResults = new SearchResults();
+            searchResults.items = parsedUrls.map(([url, lastmod]) => {
+                console.log('URL:', url);
+                console.log('Last Modified:', lastmod);
+
+                let syncItem = new SyncItem();
+                syncItem.title = url;
+                syncItem.originalId = url;
+                syncItem.metadata = {
+                    'uri': url,
+                    'modifiedGMT': new Date(lastmod).toISOString()
+                };
+                return syncItem;
+            });
+        });
     }
 
     getLastModified(since: string, folders?: SyncItem[] | undefined): Observable<SyncItem[]> {
