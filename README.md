@@ -30,7 +30,7 @@ or
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
 
-To check if it was installed properly, close and reopen the terminal and run "`command -v mvn`" and should return "`mvn`". In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "`nvm`".
+To check if it was installed properly, close and reopen the terminal and run "`command -v nvm`" and should return "`nvm`". In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "`nvm`".
 
 To install the latest version of [node](https://nodejs.org/en), run:
 
