@@ -311,7 +311,7 @@ export function fullLoad(): Observable<any> {
   //   );
 }
 
-export function mapResourceListToFindResults(data: Resource[]): Search.FindResults {
+export function mapResourceListToFindResults(data: Resource[], clauseIds?: string[]): Search.FindResults {
   const findResults: Search.FindResults = {
     query: '',
     type: 'findResults',
@@ -326,23 +326,25 @@ export function mapResourceListToFindResults(data: Resource[]): Search.FindResul
       const fileFieldId = `/f/${Object.keys(resource.data.files)[0]}`;
       fields[fileFieldId] = {
         paragraphs: resource.data?.texts
-          ? Object.entries(resource.data.texts).reduce((paragraphs, [labelId, paragraph]) => {
-              const paragraphId = `${resource.id}${fileFieldId}/0-0`;
-              paragraphs[paragraphId] = {
-                order: 1,
-                id: paragraphId,
-                labels: [labelId],
-                text: paragraph.extracted?.text?.text || '',
-                score: 1,
-                score_type: FindScoreType.BOTH,
-                position: {
-                  index: 0,
-                  start: 0,
-                  end: 0,
-                },
-              };
-              return paragraphs;
-            }, {} as { [id: string]: Search.FindParagraph })
+          ? Object.entries(resource.data.texts)
+              .filter((entry) => !clauseIds || clauseIds.includes(entry[0]))
+              .reduce((paragraphs, [labelId, paragraph], index) => {
+                const paragraphId = `${resource.id}${fileFieldId}/0-${index}`;
+                paragraphs[paragraphId] = {
+                  order: 1,
+                  id: paragraphId,
+                  labels: [labelId],
+                  text: paragraph.extracted?.text?.text || '',
+                  score: 1,
+                  score_type: FindScoreType.BOTH,
+                  position: {
+                    index: 0,
+                    start: 0,
+                    end: 0,
+                  },
+                };
+                return paragraphs;
+              }, {} as { [id: string]: Search.FindParagraph })
           : {},
       };
     }
@@ -474,5 +476,5 @@ export function findClauses(data: Resource[], clauses: string[], without = false
       ? !resourceClauses.some((clause) => clauses.includes(clause))
       : resourceClauses.some((clause) => clauses.includes(clause));
   });
-  return mapResourceListToFindResults(res);
+  return mapResourceListToFindResults(res, without ? undefined : clauses);
 }
