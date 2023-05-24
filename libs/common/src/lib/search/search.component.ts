@@ -3,7 +3,7 @@ import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map,
 import { tap } from 'rxjs/operators';
 import { TrainingType } from '@nuclia/core';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
-import { BackendConfigurationService, SDKService, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, FeatureFlagService, SDKService, STFTrackingService } from '@flaps/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { ResourceViewerService } from '../resources';
@@ -31,17 +31,19 @@ export class SearchComponent implements OnInit, OnDestroy {
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
-        this.tracking.isFeatureEnabled('answers'),
+        this.featureFlag.isFeatureEnabled('answers'),
+        this.featureFlag.isFeatureEnabled('knowledge-graph'),
       ]).pipe(
-        map(([hasLabels, hasClassifier, isChatEnabled]) => ({
+        map(([hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled]) => ({
           kb,
           hasLabels,
           hasClassifier,
           isChatEnabled: isChatEnabled && toggleAnswerEnabled,
+          isKnowledgeGraphEnabled,
         })),
       ),
     ),
-    map(({ kb, hasLabels, hasClassifier, isChatEnabled }) => {
+    map(({ kb, hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled }) => {
       let featureList = !hasLabels
         ? DEFAULT_FEATURES_LIST.filter((feature) => feature !== 'filter')
         : DEFAULT_FEATURES_LIST;
@@ -52,6 +54,9 @@ export class SearchComponent implements OnInit, OnDestroy {
       }
       if (isChatEnabled) {
         features += ',answers';
+      }
+      if (isKnowledgeGraphEnabled) {
+        features += ',knowledgeGraph';
       }
       const zone = this.sdk.nuclia.options.standalone ? `standalone="true"` : `zone="${this.sdk.nuclia.options.zone}"`;
       return this.sanitized.bypassSecurityTrustHtml(`<nuclia-search-bar id="${searchWidgetId}"
@@ -82,6 +87,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     private translation: TranslateService,
     private viewerService: ResourceViewerService,
     private tracking: STFTrackingService,
+    private featureFlag: FeatureFlagService,
     private standaloneService: StandaloneService,
   ) {}
 
