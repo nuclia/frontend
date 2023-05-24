@@ -2,6 +2,7 @@ import {
   Chat,
   Classification,
   FieldFullId,
+  IErrorResponse,
   IResource,
   KBStates,
   LabelSets,
@@ -291,6 +292,27 @@ export function getTextFile(path: string): Observable<string> {
 }
 
 // CUSTOM BRITINSURANCE
+export function fullLoad(): Observable<any> {
+  return from(fetch('/full-data.json').then((res) => res.json()));
+  // if (!nucliaApi) {
+  //   throw new Error('Nuclia API not initialized');
+  // }
+  // return nucliaApi.knowledgeBox
+  //   .catalog('', {
+  //     page_size: 100,
+  //     show: [ResourceProperties.BASIC, ResourceProperties.VALUES],
+  //   })
+  //   .pipe(
+  //     map((res) => Object.keys((res as Search.Results)?.resources || {})),
+  //     switchMap((res) =>
+  //       forkJoin(
+  //         res.map((uid) =>
+  //           (nucliaApi!.knowledgeBox as any).getRawResource(uid, [ResourceProperties.BASIC, ResourceProperties.VALUES]),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+}
 
 export const clauseSearch = (query: string, options?: SearchOptions): Observable<Search.FindResults> => {
   if (!nucliaApi) {

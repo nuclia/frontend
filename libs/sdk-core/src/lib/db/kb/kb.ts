@@ -118,6 +118,28 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this._getResource(undefined, slug, show, extracted);
   }
 
+  private getRawResource(
+    uuid?: string,
+    slug?: string,
+    show: ResourceProperties[] = [
+      ResourceProperties.BASIC,
+      ResourceProperties.ORIGIN,
+      ResourceProperties.RELATIONS,
+      ResourceProperties.VALUES,
+      ResourceProperties.EXTRACTED,
+      ResourceProperties.ERRORS,
+    ],
+    extracted: ExtractedDataTypes[] = [
+      ExtractedDataTypes.TEXT,
+      ExtractedDataTypes.METADATA,
+      ExtractedDataTypes.LINK,
+      ExtractedDataTypes.FILE,
+    ],
+  ): Observable<any> {
+    const params = [...show.map((s) => `show=${s}`), ...extracted.map((e) => `extracted=${e}`)];
+    return this.nuclia.rest.get<IResource>(`${this._getPath(uuid, slug)}?${params.join('&')}`);
+  }
+
   private _getResource(
     uuid?: string,
     slug?: string,

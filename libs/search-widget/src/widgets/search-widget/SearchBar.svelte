@@ -1,11 +1,12 @@
 <svelte:options tag="nuclia-search-bar" />
 
 <script lang="ts">
-  import type { KBStates, Search } from '@nuclia/core';
+  import type { KBStates, Resource, Search } from '@nuclia/core';
   import {
     CLAUSES,
     clauseSearch,
     facetByClause,
+    fullLoad,
     getLabelledClause,
     getMatchingClause,
     initNuclia,
@@ -82,12 +83,17 @@
   let clauseId = '';
 
   const TOPIC = 'terrorist';
+  let FULLDATA: Resource[] = [];
   let data: { [key: string]: { id: string; label: string; value: number; results?: Search.FindResults } };
 
   onMount(() => {
     if (cdn) {
       setCDN(cdn);
     }
+    fullLoad().subscribe((res: any) => {
+      FULLDATA = res;
+      displayResults('root');
+    });
     _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
       (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
       {},
@@ -139,7 +145,6 @@
     }
 
     ready = true;
-    displayResults('root');
 
     return () => {
       searchState.reset();
