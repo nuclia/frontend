@@ -2,7 +2,6 @@ import {
   Chat,
   Classification,
   FieldFullId,
-  IErrorResponse,
   IResource,
   KBStates,
   LabelSets,
@@ -15,8 +14,7 @@ import {
   Search,
   SearchOptions,
 } from '@nuclia/core';
-import { Observable, from, switchMap } from 'rxjs';
-import { filter, forkJoin, map, merge, of, take, tap } from 'rxjs';
+import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
 import { generatedEntitiesColor, getCDN } from './utils';
 import { _ } from './i18n';
@@ -24,6 +22,7 @@ import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
+import FindScoreType = Search.FindScoreType;
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -312,6 +311,45 @@ export function fullLoad(): Observable<any> {
   //       ),
   //     ),
   //   );
+}
+
+export function mapResourceListToFindResults(data: Resource[]): Search.FindResults {
+  const findResults: Search.FindResults = {
+    query: '',
+    type: 'findResults',
+    next_page: false,
+    total: data.length,
+    page_size: data.length,
+    page_number: 1,
+  };
+  findResults.resources = data.reduce((resources, resource, currentIndex) => {
+    resources[resource.id] = {
+      ...resource,
+      fields: Object.entries(resource.data).reduce((fields, [fieldId, field]) => {
+        fields[fieldId] = {
+          paragraphs: Object.entries(field).reduce((paragraphs, [paragraphId, paragraph]) => {
+            paragraphs[paragraphId] = {
+              order: 1,
+              id: paragraphId,
+              labels: [paragraphId],
+              text: paragraph.extracted?.text?.text || '',
+              score: 1,
+              score_type: FindScoreType.BOTH,
+              position: {
+                index: 0,
+                start: 0,
+                end: 0,
+              },
+            };
+            return paragraphs;
+          }, {} as { [id: string]: Search.FindParagraph }),
+        };
+        return fields;
+      }, {} as { [id: string]: Search.FindField }),
+    };
+    return resources;
+  }, {} as { [id: string]: Search.FindResource });
+  return findResults;
 }
 
 export const clauseSearch = (query: string, options?: SearchOptions): Observable<Search.FindResults> => {
