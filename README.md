@@ -14,7 +14,7 @@
 
 ---
 
-## Before Installation
+## Prerequisites
 
 First you need to have NVM, NODE and YARN installed.
 
@@ -47,13 +47,20 @@ To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable),
 npm install --global yarn
 ```
 
+
 Check if Yarn is installed by running: `yarn --version`.
 
 #### Note
 
 In the rest of this documentation, we use commands like `nx` and `missdev`. Those can be find in `node_modules/.bin` folder. To use them directly you can add `node_modules/.bin` folder to your command line path. 
+You can also install `nx` globally:
 
-## Installation
+```
+npm install -g nx
+```
+
+
+## Dependencies installation
 
 ```
 yarn
@@ -62,7 +69,14 @@ yarn
 Pastanaga-angular installation must be done through [missdev](https://github.com/collective/mrs-developer) so `sistema-demo` can run:
 
 ```
-missdev --output=../libs
+yarn missdev
+```
+
+If it fails for any reason, you can try to clone Pastanaga manually:
+
+```
+cd libs
+git clone git@github.com:plone/pastanaga-angular.git
 ```
 
 ## Dashboard
