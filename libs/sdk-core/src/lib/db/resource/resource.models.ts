@@ -54,6 +54,7 @@ export enum FIELD_TYPE {
   conversation = 'conversation',
   keywordset = 'keywordset',
   datetime = 'datetime',
+  generic = 'generic',
 }
 
 export enum RESOURCE_STATUS {
