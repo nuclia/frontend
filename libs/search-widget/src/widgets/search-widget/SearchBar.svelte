@@ -81,7 +81,7 @@
   let clause = '';
   let clauseId = '';
 
-  const TOPIC = 'terrorism';
+  const TOPIC = 'terrorist';
   let data: { [key: string]: { id: string; label: string; value: number; results?: Search.FindResults } };
 
   onMount(() => {
