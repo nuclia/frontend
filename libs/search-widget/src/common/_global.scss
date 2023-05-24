@@ -50,6 +50,9 @@ mark.ner[family] {
 .sw-dropdown ul {
   list-style: none;
   margin: 0;
+  max-height: var(--rhythm-32);
+  overflow-x: hidden;
+  overflow-y: auto;
   padding-left: 0;
 }
 
