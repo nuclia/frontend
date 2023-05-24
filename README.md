@@ -14,7 +14,7 @@
 
 ---
 
-## Before Installation
+## Prerequisites
 
 First you need to have NVM, NODE and YARN installed.
 
@@ -30,7 +30,7 @@ or
 wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 ```
 
-To check if it was installed properly, close and reopen the terminal and run "`command -v nvm`" and should return "`nvm`". In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run "`nvm`".
+To check if it was installed properly, close and reopen the terminal and run `command -v nvm` and should return `nvm`. In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run `nvm`.
 
 To install the latest version of [node](https://nodejs.org/en), run:
 
@@ -38,7 +38,8 @@ To install the latest version of [node](https://nodejs.org/en), run:
 nvm install node
 ```
 
-To check if node and npm is properly installed, run: "`node --version`" and "`npm --version`". <sub>Any problems should be resolved with the [mvn documentation](https://github.com/nvm-sh/nvm#readme).</sub>
+To check if node and npm is properly installed, run: `node --version` and `npm --version`. 
+<sub>Any problems should be resolved with the [nvm documentation](https://github.com/nvm-sh/nvm#readme).</sub>
 
 To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable), run:
 
@@ -46,15 +47,20 @@ To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable),
 npm install --global yarn
 ```
 
-Check if Yarn is installed by running: "`yarn --version`"
 
-Install `nx` globally:
+Check if Yarn is installed by running: `yarn --version`.
+
+#### Note
+
+In the rest of this documentation, we use commands like `nx` and `missdev`. Those can be find in `node_modules/.bin` folder. To use them directly you can add `node_modules/.bin` folder to your command line path. 
+You can also install `nx` globally:
 
 ```
 npm install -g nx
 ```
 
-## Installation
+
+## Dependencies installation
 
 ```
 yarn
@@ -115,6 +121,12 @@ When you have some local changes to the widget you'd like to test on the dashboa
 [Documentation](https://docs.nuclia.dev/docs/sdk)
 
 ## Desktop app
+
+### Configuration
+
+Desktop application needs two configuration files to run:
+ - in `apps/desktop/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
+ - in `apps/desktop/src/environments`, create a file `environment.dev.ts`
 
 ### Run & Build
 
