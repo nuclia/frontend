@@ -11,7 +11,7 @@
   export let ellipsis = false;
   export let selected = false;
   export let minimized = false;
-  export let hideIndicator = false;
+  export let hideIndicator = true;
   export let disabled = false;
 
   let hovering = false;
