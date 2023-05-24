@@ -158,47 +158,49 @@
   });
 
   function displayResults(id: string) {
+    if (data && data[id]) {
+      triggerSearch.next();
+      const results = data[id].results;
+      if (results) {
+        searchResults.set({ results, append: false });
+      }
+    }
     if (id === 'root') {
       const withClause = findClauses(FULLDATA, TERRORISM_CLAUSES);
-      console.log('with', withClause);
       const withoutClause = findClauses(FULLDATA, TERRORISM_CLAUSES, true);
-      console.log('withoutClause', withoutClause);
       data = {
         with: {
           id: 'with',
           label: `With terrorism clause`,
-          results: [],
-          value: withClause.length,
+          results: withClause,
+          value: withClause.total,
         },
         without: {
           id: 'without',
           label: `Without terrorism clause`,
-          results: [],
-          value: withoutClause.length,
+          results: withoutClause,
+          value: withoutClause.total,
         },
       };
       breadcrumbs = [ROOT];
     } else if (id === 'with') {
       data = TERRORISM_CLAUSES.reduce((acc, clauseID) => {
-        const total = findClauses(FULLDATA, [clauseID]).length;
+        const res = findClauses(FULLDATA, [clauseID]);
+        const total = res.total;
         if (total > 0) {
           acc[clauseID] = {
             id: clauseID,
             label: clauseID,
             value: total,
+            results: res,
           };
         }
         return acc;
-      }, {} as { [key: string]: { id: string; label: string; value: number } });
+      }, {} as { [key: string]: { id: string; label: string; value: number; results: Search.FindResults } });
       breadcrumbs = [ROOT, { id, label: 'With clause' }];
     } else if (id === 'without') {
       breadcrumbs = [ROOT, { id, label: 'Without clause' }];
     } else {
-      // triggerSearch.next();
-      // const results = data[id].results;
-      // if (results) {
-      //   searchResults.set({ results, append: false });
-      // }
     }
 
     if (id.startsWith('/l/fake')) {

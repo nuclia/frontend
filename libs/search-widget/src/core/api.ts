@@ -458,11 +458,12 @@ function mapSearch2Find(res: Search.Results): Search.FindResults {
   };
 }
 
-export function findClauses(data: Resource[], clauses: string[], without = false): Resource[] {
-  return data.filter((resource) => {
+export function findClauses(data: Resource[], clauses: string[], without = false): Search.FindResults {
+  const res = data.filter((resource) => {
     const resourceClauses = Object.keys(resource.data?.texts || {});
     return without
       ? !resourceClauses.some((clause) => clauses.includes(clause))
       : resourceClauses.some((clause) => clauses.includes(clause));
   });
+  return mapResourceListToFindResults(res);
 }
