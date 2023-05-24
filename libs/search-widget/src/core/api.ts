@@ -320,30 +320,35 @@ export function mapResourceListToFindResults(data: Resource[]): Search.FindResul
     page_size: data.length,
     page_number: 1,
   };
-  findResults.resources = data.reduce((resources, resource, currentIndex) => {
+  findResults.resources = data.reduce((resources, resource) => {
+    const fields: { [id: string]: Search.FindField } = {};
+    if (resource.data.files) {
+      const fileFieldId = `/f/${Object.keys(resource.data.files)[0]}`;
+      fields[fileFieldId] = {
+        paragraphs: resource.data?.texts
+          ? Object.entries(resource.data.texts).reduce((paragraphs, [labelId, paragraph]) => {
+              const paragraphId = `${resource.id}${fileFieldId}/0-0`;
+              paragraphs[paragraphId] = {
+                order: 1,
+                id: paragraphId,
+                labels: [labelId],
+                text: paragraph.extracted?.text?.text || '',
+                score: 1,
+                score_type: FindScoreType.BOTH,
+                position: {
+                  index: 0,
+                  start: 0,
+                  end: 0,
+                },
+              };
+              return paragraphs;
+            }, {} as { [id: string]: Search.FindParagraph })
+          : {},
+      };
+    }
     resources[resource.id] = {
       ...resource,
-      fields: Object.entries(resource.data).reduce((fields, [fieldId, field]) => {
-        fields[fieldId] = {
-          paragraphs: Object.entries(field).reduce((paragraphs, [paragraphId, paragraph]) => {
-            paragraphs[paragraphId] = {
-              order: 1,
-              id: paragraphId,
-              labels: [paragraphId],
-              text: paragraph.extracted?.text?.text || '',
-              score: 1,
-              score_type: FindScoreType.BOTH,
-              position: {
-                index: 0,
-                start: 0,
-                end: 0,
-              },
-            };
-            return paragraphs;
-          }, {} as { [id: string]: Search.FindParagraph }),
-        };
-        return fields;
-      }, {} as { [id: string]: Search.FindField }),
+      fields,
     };
     return resources;
   }, {} as { [id: string]: Search.FindResource });
