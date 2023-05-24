@@ -200,15 +200,9 @@
       breadcrumbs = [ROOT, { id, label: 'With clause' }];
     } else if (id === 'without') {
       breadcrumbs = [ROOT, { id, label: 'Without clause' }];
-    } else {
-    }
-
-    if (id.startsWith('/l/fake')) {
-      getLabelledClause(id).subscribe((results) => {
-        searchResults.set({ results, append: false });
-      });
-      clause = CLAUSES['NMA464'];
-      clauseId = 'NMA464';
+    } else if (TERRORISM_CLAUSES.includes(id)) {
+      clause = CLAUSES[id] || '';
+      clauseId = id;
       searchClause();
       showCanonicalClause = true;
     }

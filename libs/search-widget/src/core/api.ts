@@ -422,7 +422,7 @@ export function getMatchingClause(clause: string) {
 }
 
 export const CLAUSES: { [ref: string]: string } = {
-  NMA464: `Notwithstanding anything to the contrary contained herein this Certificate does not cover Loss or Damage directly or indirectly occasioned by, happening through or in consequence of war, invasion, acts of foreign enemies, hostilities (whether war be declared or not), civil war, rebellion, revolution, insurrection, military or usurped power or confiscation or nationalisation or requisition or destruction of or damage to property by or under the order of any government or public or local authority`,
+  NMA0464: `Notwithstanding anything to the contrary contained herein this Certificate does not cover Loss or Damage directly or indirectly occasioned by, happening through or in consequence of war, invasion, acts of foreign enemies, hostilities (whether war be declared or not), civil war, rebellion, revolution, insurrection, military or usurped power or confiscation or nationalisation or requisition or destruction of or damage to property by or under the order of any government or public or local authority`,
 };
 
 function mapSearch2Find(res: Search.Results): Search.FindResults {
@@ -464,6 +464,10 @@ function mapSearch2Find(res: Search.Results): Search.FindResults {
 }
 
 export function findClauses(data: Resource[], clauses: string[], without = false): Search.FindResults {
+  console.log(
+    'noField',
+    data.filter((res) => !res.data?.texts),
+  );
   const res = data.filter((resource) => {
     const resourceClauses = Object.keys(resource.data?.texts || {});
     return without
