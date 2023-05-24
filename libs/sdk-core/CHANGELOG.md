@@ -1,10 +1,11 @@
-# 1.3.2 (unreleased)
+# 1.3.2 (2023-05-24)
 
 ### Improvements
 
 - Add `trial_expiration_date` property to `Account` model
 - Update `modifyKb` to also work on standalone mode
 - Add `onlyAnswers` property to `WidgetFeatures` interface
+- Add `generic` field type
 
 ### Bugfix
 

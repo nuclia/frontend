@@ -35,11 +35,13 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   resource: Observable<Resource | null> = this.editResource.resource;
   fields: Observable<ResourceFieldWithIcon[]> = this.editResource.fields.pipe(
     map((fields) =>
-      fields.map((field) => ({
-        ...field,
-        icon: field.field_type === FIELD_TYPE.text ? 'file' : field.field_type,
-        hasError: !!field.error,
-      })),
+      fields
+        .filter((field) => field.field_type !== FIELD_TYPE.generic)
+        .map((field) => ({
+          ...field,
+          icon: field.field_type === FIELD_TYPE.text ? 'file' : field.field_type,
+          hasError: !!field.error,
+        })),
     ),
   );
 
