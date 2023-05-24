@@ -2,7 +2,7 @@
 
 /private_keys
 .env
-libs/search-widget/public/full-data.json
+libs/search-widget/public/full-data*.json
 
 # compiled output
 /dist

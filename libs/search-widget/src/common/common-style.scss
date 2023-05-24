@@ -158,6 +158,9 @@
   }
 }
 
-.terrorism-clauses span {
-  padding: 0 var(--rhythm-0_5);
+.terrorism-clauses {
+  margin-bottom: var(--rhythm-1);
+  span {
+    padding: 0 var(--rhythm-0_5);
+  }
 }

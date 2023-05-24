@@ -290,7 +290,7 @@ export function getTextFile(path: string): Observable<string> {
 
 // CUSTOM BRITINSURANCE
 export function fullLoad(): Observable<any> {
-  return from(fetch('/full-data.json').then((res) => res.json()));
+  return from(fetch('/full-data.3.json').then((res) => res.json()));
   // if (!nucliaApi) {
   //   throw new Error('Nuclia API not initialized');
   // }
@@ -400,31 +400,72 @@ export function getLabelledClause(label: string) {
 const CLEANUP = new RegExp(/[^a-zA-Z0-9\s]+/g);
 const TRIM = new RegExp(/\s\s+/g);
 
-export function getMatchingClause(clause: string) {
+export function getMatchingClause(clauseId: string, clause: string) {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
   clause = clause.replace(CLEANUP, ' ').replace(TRIM, ' ').trim();
-  console.log('getMatchingClause', clause);
   const approxWordCount = clause.split(' ').length;
-  const exactMatchScore = approxWordCount * 1.2;
+  const exactMatchScore = approxWordCount;
+  const closeMatchScore = exactMatchScore * 0.9;
 
   return forkJoin([
-    nucliaApi.knowledgeBox.search(clause, [Search.Features.DOCUMENT], {}),
-    nucliaApi.knowledgeBox.search(clause, [Search.Features.VECTOR], {}),
+    nucliaApi.knowledgeBox.search(clause, [Search.Features.PARAGRAPH], {
+      filters: [`/l/clauses/${clauseId}`],
+      fields: ['t'],
+      page_size: 100,
+    }),
+    nucliaApi.knowledgeBox.search('', [Search.Features.PARAGRAPH], {
+      filters: [`/l/clauses/${clauseId}`],
+      fields: ['t'],
+      page_size: 100,
+    }),
   ]).pipe(
-    map(([bm25, vector]) => {
+    map(([bm25, all]) => {
       const bm25results = bm25 as Search.Results;
-      const exact = bm25results.fulltext?.results.filter((p) => p.score >= exactMatchScore) || [];
-      const close = bm25results.fulltext?.results.filter((p) => p.score < exactMatchScore) || [];
-      const modified = (vector as Search.Results).sentences?.results || [];
-      return { exact, close, modified };
+      const maxScore = bm25results.paragraphs?.results.reduce((max, p) => Math.max(max, p.score), 0) || 0;
+      const exactMatchThreshold = Math.max(exactMatchScore, maxScore * 0.97);
+      console.log('exactMatchThreshold', exactMatchThreshold);
+      const exact = bm25results.paragraphs?.results.filter((p) => p.score >= exactMatchThreshold) || [];
+      const closeMatchThreshold = Math.max(closeMatchScore, maxScore * 0.9);
+      const close =
+        bm25results.paragraphs?.results.filter(
+          (p) => p.score < exactMatchThreshold && p.score >= closeMatchThreshold,
+        ) || [];
+      const modified = bm25results.paragraphs?.results.filter((p) => p.score < closeMatchThreshold) || [];
+      const bm25matches = bm25results.paragraphs?.results.map((p) => p.rid) || [];
+      const notMatching =
+        (all as Search.Results).sentences?.results.filter((item) => !bm25matches.includes(item.rid)) || [];
+      return { exact, close, modified: [...modified, ...notMatching] };
     }),
   );
 }
 
 export const CLAUSES: { [ref: string]: string } = {
+  LMA5219: `It is agreed that in the event of the failure of the Underwriters hereon to pay any amount claimed to be due hereunder, the Underwriters hereon, at the request of the Insured (or Reinsured), will submit to the jurisdiction of a Court of competent jurisdiction within the United States. Nothing in this Clause constitutes or should be understood to constitute a waiver of Underwriters' rights to commence an action in any Court of competent jurisdiction in the United States, to remove an action to a United States District Court, or to seek a transfer of a case to another Court as permitted by the laws of the United States or of any State in the United States.`,
   NMA0464: `Notwithstanding anything to the contrary contained herein this Certificate does not cover Loss or Damage directly or indirectly occasioned by, happening through or in consequence of war, invasion, acts of foreign enemies, hostilities (whether war be declared or not), civil war, rebellion, revolution, insurrection, military or usurped power or confiscation or nationalisation or requisition or destruction of or damage to property by or under the order of any government or public or local authority`,
+  LMA5390: `It is hereby noted that the Underwriters have made available coverage for “insured losses” directly resulting from an "act of terrorism" as defined in the "U.S. Terrorism Risk Insurance Act of 2002", as amended (“TRIA”) and the Insured has declined or not confirmed to purchase this coverage. This Insurance therefore affords no coverage for losses directly resulting from any "act of terrorism" as defined in TRIA except to the extent, if any, otherwise provided by this policy. All other terms, conditions, insured coverage and exclusions of this Insurance including applicable limits and deductibles remain unchanged and apply in full force and effect to the coverage provided by this Insurance.`,
+  LMA9184: `You are hereby notified that under the Terrorism Risk Insurance Act of 2002, as amended ("TRIA"), that you now have a right to purchase insurance coverage for losses arising out of acts of terrorism, as defined in Section 102(1) of the Act, as amended: The term “act of terrorism” means any act that is certified by the Secretary of the Treasury, in consultation with the Secretary of Homeland Security and the Attorney General of the United States, to be an act of terrorism; to be a violent act or an act that is dangerous to human life, property, or infrastructure; to have resulted in damage within the United States, or outside the United States in the case of an air carrier or vessel or the premises of a United States mission; and to have been committed by an individual or individuals, as part of an effort to coerce the civilian population of the United States or to influence the policy or affect the conduct of the United States Government by coercion. Any coverage you purchase for "acts of terrorism" shall expire at 12:00 midnight December 31, 2027, the date on which the TRIA Program is scheduled to terminate, or the expiry date of the policy whichever occurs first, and shall not cover any losses or events which arise after the earlier of these dates.`,
+  NMA2918: `Notwithstanding any provision to the contrary within this insurance or any endorsement thereto it is agreed that this insurance excludes loss, damage, cost or expense of whatsoever nature directly or indirectly caused by, resulting from or in connection with any of the following regardless of any other cause or event contributing concurrently or in any other sequence to the loss;
+  1. war, invasion, acts of foreign enemies, hostilities or warlike operations (whether war be declared or
+  not), civil war, rebellion, revolution, insurrection, civil commotion assuming the proportions of or
+  amounting to an uprising, military or usurped power; or
+  2. any act of terrorism.
+  For the purpose of this endorsement an act of terrorism means an act, including but not limited to the
+  use of force or violence and/or the threat thereof, of any person or group(s) of persons, whether acting
+  alone or on behalf of or in connection with any organisation(s) or government(s), committed for political,
+  religious, ideological or similar purposes including the intention to influence any government and/or to
+  put the public, or any section of the public, in fear.`,
+  NMA2919: `It is hereby noted that the Underwriters have made available coverage for “insured losses”
+  directly resulting from an "act of terrorism" as defined in the "U.S. Terrorism Risk Insurance Act
+  of 2002", as amended (“TRIA”) and the Insured has declined or not confirmed to purchase this
+  coverage.
+  This Insurance therefore affords no coverage for losses directly resulting from any "act of
+  terrorism" as defined in TRIA except to the extent, if any, otherwise provided by this policy.
+  All other terms, conditions, insured coverage and exclusions of this Insurance including
+  applicable limits and deductibles remain unchanged and apply in full force and effect to the
+  coverage provided by this Insurance`,
+  NMA2920: `Notwithstanding any provision to the contrary within this insurance or any endorsement thereto it is agreed that this insurance excludes loss, damage, cost or expense of whatsoever nature directly or indirectly caused by, resulting from or in connection with any act of terrorism regardless of any other cause or event contributing concurrently or in any other sequence to the loss. For the purpose of this endorsement an act of terrorism means an act, including but not limited to the use of force or violence and/or the threat thereof, of any person or group(s) of persons, whether acting alone or on behalf of or in connection with any organisation(s) or government(s), committed for political, religious, ideological or similar purposes including the intention to influence any government and/or to put the public, or any section of the public, in fear. This endorsement also excludes loss, damage, cost or expense of whatsoever nature directly or indirectly caused by, resulting from or in connection with any action taken in controlling, preventing, suppressing or in any way relating to any act of terrorism. If the Underwriters allege that by reason of this exclusion, any loss, damage, cost or expense is not covered by this insurance the burden of proving the contrary shall be upon the Assured. In the event any portion of this endorsement is found to be invalid or unenforceable, the remainder shall remain in full force and effect.`,
 };
 
 function mapSearch2Find(res: Search.Results): Search.FindResults {
@@ -468,7 +509,7 @@ function mapSearch2Find(res: Search.Results): Search.FindResults {
 export function findClauses(data: Resource[], clauses: string[], without = false): Search.FindResults {
   console.log(
     'noField',
-    data.filter((res) => !res.data?.texts),
+    data.filter((res) => !res.data?.texts).map((res) => res.id),
   );
   const res = data.filter((resource) => {
     const resourceClauses = Object.keys(resource.data?.texts || {});

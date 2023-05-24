@@ -92,10 +92,6 @@
     if (cdn) {
       setCDN(cdn);
     }
-    fullLoad().subscribe((res: any) => {
-      FULLDATA = res;
-      displayResults('root');
-    });
     _features = (features ? features.split(',').filter((feature) => !!feature) : []).reduce(
       (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
       {},
@@ -117,6 +113,11 @@
         features: _features,
       },
     );
+    fullLoad().subscribe((res: any) => {
+      FULLDATA = res;
+      // clause = JSON.stringify(res);
+      displayResults('root');
+    });
 
     // Setup widget in the store
     widgetMode.set('embedded');
@@ -209,12 +210,12 @@
   }
 
   function searchClause() {
-    getMatchingClause(clause).subscribe((res) => {
+    getMatchingClause(clauseId, clause).subscribe((res) => {
       data = Object.entries(res).reduce((acc, [key, value]) => {
         acc[key] = {
           id: key,
           label: key,
-          value: value.length,
+          value: value?.length || 0,
         };
         return acc;
       }, {} as { [key: string]: { id: string; label: string; value: number } });
@@ -227,6 +228,9 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
+  <div class="terrorism-clauses">
+    Terrorism clauses: {#each TERRORISM_CLAUSES as clauseID}<span>{clauseID}</span> {/each}
+  </div>
   {#if ready && !!svgSprite}
     <SearchInput searchBarWidget={true} />
   {/if}
@@ -238,9 +242,6 @@
   <Breadcrumbs
     items={breadcrumbs}
     on:click={(e) => displayResults(e.detail)} />
-  <div class="terrorism-clauses">
-    Terrorism clauses: {#each TERRORISM_CLAUSES as clauseID}<span>{clauseID}</span> {/each}
-  </div>
   {#if data}
     <div class="clause">
       <div class="chart">
@@ -250,7 +251,7 @@
       </div>
       {#if showCanonicalClause}
         <div class="text">
-          <h3>NMA464 canonical text</h3>
+          <h3>{clauseId} canonical text</h3>
           <textarea bind:value={clause} />
           <Button on:click={() => searchClause()}>Search clause</Button>
         </div>
