@@ -6,6 +6,7 @@
     CLAUSES,
     clauseSearch,
     facetByClause,
+    findClauses,
     fullLoad,
     getLabelledClause,
     getMatchingClause,
@@ -82,7 +83,8 @@
   let clause = '';
   let clauseId = '';
 
-  const TOPIC = 'terrorist';
+  const TERRORISM_CLAUSES = ['LMA5219', 'LMA5390', 'LMA9184', 'NMA2918', 'NMA2919', 'NMA2920', 'NMA464', 'NMA0464'];
+
   let FULLDATA: Resource[] = [];
   let data: { [key: string]: { id: string; label: string; value: number; results?: Search.FindResults } };
 
@@ -157,46 +159,46 @@
 
   function displayResults(id: string) {
     if (id === 'root') {
-      forkJoin([clauseSearch(TOPIC), clauseSearch(`policy -${TOPIC}`, { isAdvanced: true })])
-        .pipe(take(1))
-        .subscribe(([withClause, withoutClause]) => {
-          data = {
-            with: {
-              id: 'with',
-              label: `With ${TOPIC} clause`,
-              results: withClause,
-              value: withClause.total,
-            },
-            without: {
-              id: 'without',
-              label: `Without ${TOPIC} clause`,
-              results: withoutClause,
-              value: withoutClause.total,
-            },
+      const withClause = findClauses(FULLDATA, TERRORISM_CLAUSES);
+      console.log('with', withClause);
+      const withoutClause = findClauses(FULLDATA, TERRORISM_CLAUSES, true);
+      console.log('withoutClause', withoutClause);
+      data = {
+        with: {
+          id: 'with',
+          label: `With terrorism clause`,
+          results: [],
+          value: withClause.length,
+        },
+        without: {
+          id: 'without',
+          label: `Without terrorism clause`,
+          results: [],
+          value: withoutClause.length,
+        },
+      };
+      breadcrumbs = [ROOT];
+    } else if (id === 'with') {
+      data = TERRORISM_CLAUSES.reduce((acc, clauseID) => {
+        const total = findClauses(FULLDATA, [clauseID]).length;
+        if (total > 0) {
+          acc[clauseID] = {
+            id: clauseID,
+            label: clauseID,
+            value: total,
           };
-          breadcrumbs = [ROOT];
-        });
-    }
-    if (data && data[id]) {
-      triggerSearch.next();
-      const results = data[id].results;
-      if (results) {
-        searchResults.set({ results, append: false });
-      }
-    }
-    if (id === 'with') {
-      facetByClause().subscribe((facets) => {
-        data = Object.entries(facets['/l/fake']).reduce((acc, [key, value]) => {
-          acc[key] = {
-            id: key,
-            label: key.split('/').pop() || 'N/A',
-            value,
-          };
-          return acc;
-        }, {} as { [key: string]: { id: string; label: string; value: number } });
-        breadcrumbs = [ROOT, { id, label: 'With clause' }];
-        console.log(`breadcrumbs`, breadcrumbs);
-      });
+        }
+        return acc;
+      }, {} as { [key: string]: { id: string; label: string; value: number } });
+      breadcrumbs = [ROOT, { id, label: 'With clause' }];
+    } else if (id === 'without') {
+      breadcrumbs = [ROOT, { id, label: 'Without clause' }];
+    } else {
+      // triggerSearch.next();
+      // const results = data[id].results;
+      // if (results) {
+      //   searchResults.set({ results, append: false });
+      // }
     }
 
     if (id.startsWith('/l/fake')) {
@@ -240,6 +242,9 @@
   <Breadcrumbs
     items={breadcrumbs}
     on:click={(e) => displayResults(e.detail)} />
+  <div class="terrorism-clauses">
+    Terrorism clauses: {#each TERRORISM_CLAUSES as clauseID}<span>{clauseID}</span> {/each}
+  </div>
   {#if data}
     <div class="clause">
       <div class="chart">

@@ -32,8 +32,6 @@ let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const NUA_KEY =
   'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im51YSJ9.eyJpc3MiOiJodHRwczovL251Y2xpYS5jbG91ZC8iLCJleHAiOjI1MzM3MDc2NDgwMCwiaWF0IjoxNjgzMTAzMzEzLCJzdWIiOiJjNDQzNmEyNC04MzU4LTQ1NzItOTQzZi02NDg5YzQwNjBlYTciLCJqdGkiOiIyM2FmNGM1MS1iOWJlLTQyNGMtOGY0Zi1jYzA3MTRlZjhkZjAiLCJrZXkiOiIxMTViZDkzMi00Mjc5LTRhYWItOWNmOS1lZDBlN2NkNzAyYTIifQ.OLdhOXZE1fwwfyTEQHvlbe3RTd7HsRpXapXmJyBczTIKe7J-sRpcoTQB-hcBcX-ijVLCNNrhE5wtW9vx_mWGDHOPrwyBOb_mI1y8DWWnK6JeeuuFUPT7avtrO-SVnPCsh99VaJ9axH-RMCuQO1S7nHTugX8kHyGgfwIQGbDKhi-ODQNSik1ZOZaLh1NzncitTHMBUpaC4TYAus5bBEEncoqXRfzkgYHgMQ9utEPF4lrnPX2ToTlJFKgQkT2MG1CV4J1frNd-T7KoRw-gP7J2OgWTm0-KTAo-MZD6uWXpwVhWubrK80bFLDsfn3EcsGYnor3I2Yk4QcjtO0TUoCSa2nXQ2o6NV-8h2wDof5xrIpDno3w3EZ-tFNwCc3KSR0nuwUz3wdEepPXiK3-Jxtcau1TiJg6mvpUKjRkxu0WhLsCE3e2WiXcpjMWyxENIk8A5wxSGy2Yg8cGTxyIE2EKhdNkEkwQSwvg6ko_IR7DwgWGdtvaIGSgTfbXV15MbZq__RCc6Jq-BdHa_7RCtzQcJ5dQD7UPqRP3vFfJAIdJ8B5tyJ4BGSQ-3QzFez-okzxt0sZjTNk3ILqygOr59M1pUHWHqCOrPjBtB4VyRVxA6qDJ5mAolJgk6-Lov-Bhrni4ZZSsf_UD2V12vvHbtr8dHk5mQJJq9nmytU5w92ng6RGY';
 
-export const TERRORISM_CLAUSES = ['LMA5219', 'LMA5390', 'LMA9184', 'NMA2918', 'NMA2919', 'NMA2920', 'NMA464'];
-
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
@@ -458,4 +456,13 @@ function mapSearch2Find(res: Search.Results): Search.FindResults {
       return acc;
     }, {} as { [id: string]: Search.FindResource }),
   };
+}
+
+export function findClauses(data: Resource[], clauses: string[], without = false): Resource[] {
+  return data.filter((resource) => {
+    const resourceClauses = Object.keys(resource.data?.texts || {});
+    return without
+      ? !resourceClauses.some((clause) => clauses.includes(clause))
+      : resourceClauses.some((clause) => clauses.includes(clause));
+  });
 }
