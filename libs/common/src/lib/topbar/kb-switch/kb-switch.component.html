@@ -11,7 +11,7 @@
 <pa-dropdown #kbSwitch>
   <ng-container *ngFor="let kb of knowledgeBoxes | async; let last = last">
     <pa-option
-      [disabled]="!kb.role_on_kb"
+      [disabled]="!kb.role_on_kb && !standalone"
       iconOnRight
       [paTooltip]="kb.title || ''"
       [icon]="kb.state === 'PUBLISHED' ? '' : 'lock'"
