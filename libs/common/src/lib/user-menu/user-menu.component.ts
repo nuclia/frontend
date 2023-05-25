@@ -41,6 +41,7 @@ export class UserMenuComponent implements OnDestroy {
   isAccountManager = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
   hasOwnAccount = this.userService.hasOwnAccount;
+  standalone = this.sdk.nuclia.options.standalone;
 
   private unsubscribeAll = new Subject<void>();
 

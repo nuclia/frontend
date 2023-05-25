@@ -17,11 +17,14 @@ export class KbSwitchComponent {
   kb = this.sdk.currentKb;
   account: Observable<Account> = this.sdk.currentAccount;
 
+  standalone: boolean = this.sdk.nuclia.options.standalone || false;
   knowledgeBoxes: Observable<IKnowledgeBoxItem[]> = this.sdk.kbList;
-  showDemo = this.tracking.isFeatureEnabled('show-demo-kb');
+  showDemo = this.tracking
+    .isFeatureEnabled('show-demo-kb')
+    .pipe(map((isDemoFeatureEnabled) => isDemoFeatureEnabled && !this.standalone));
 
   showKbSelector: Observable<boolean> = combineLatest([this.knowledgeBoxes, this.showDemo]).pipe(
-    map(([kbs, demo]) => kbs.length > 1 || demo),
+    map(([kbs, demo]) => kbs.length > 1 || demo || this.standalone),
   );
 
   constructor(
@@ -33,7 +36,7 @@ export class KbSwitchComponent {
 
   goToKb(kb: IKnowledgeBoxItem) {
     this.account.pipe(take(1)).subscribe((account) => {
-      this.router.navigate([this.navigation.getKbUrl(account.slug, kb.slug || kb.id)]);
+      this.router.navigate([this.navigation.getKbUrl(account.slug, this.standalone ? kb.id : kb.slug || kb.id)]);
       this.close.emit();
     });
   }
