@@ -62,7 +62,7 @@ export enum SearchOrder {
 interface BaseWidgetParagraph {
   fieldType: SHORT_FIELD_TYPE | FIELD_TYPE;
   fieldId: string;
-  paragraph: Paragraph;
+  paragraph: Search.FindParagraph;
   text: string;
   preview: PreviewKind;
   start: number;
