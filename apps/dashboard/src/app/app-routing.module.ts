@@ -5,7 +5,7 @@ import {
   accountOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
-  EmptyComponent,
+  EmptyComponent, knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
@@ -13,7 +13,7 @@ import {
   SearchComponent,
   SelectAccountComponent,
   selectAccountKbGuard,
-  SelectKbComponent,
+  SelectKbComponent
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
@@ -160,7 +160,7 @@ const routes: Routes = [
               {
                 path: 'keys',
                 component: KnowledgeBoxKeysComponent,
-                canActivate: [accountOwnerGuard],
+                canActivate: [knowledgeBoxOwnerGuard],
               },
               {
                 path: 'widget-generator',
