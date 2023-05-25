@@ -8,7 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { SDKService, StateService, STFTrackingService } from '@flaps/core';
+import { SDKService, StateService, STFTrackingService, UserService } from '@flaps/core';
 import { Account, Welcome } from '@nuclia/core';
 import { map, shareReplay, Subject, takeUntil } from 'rxjs';
 import { AvatarModel } from '@guillotinaweb/pastanaga-angular';
@@ -40,12 +40,15 @@ export class UserMenuComponent implements OnDestroy {
   account: Account | null = null;
   isAccountManager = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  hasOwnAccount = this.userService.hasOwnAccount;
+
   private unsubscribeAll = new Subject<void>();
 
   constructor(
     private router: Router,
     private stateService: StateService,
     private navigation: NavigationService,
+    private userService: UserService,
     private sdk: SDKService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
@@ -84,5 +87,10 @@ export class UserMenuComponent implements OnDestroy {
 
   goToSupport() {
     window.open('https://github.com/nuclia/support', '_blank', 'noopener,noreferrer');
+  }
+
+  createAccount() {
+    this.close.emit();
+    this.router.navigate(['/user/onboarding']);
   }
 }
