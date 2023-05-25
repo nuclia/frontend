@@ -320,6 +320,7 @@ export function mapResourceListToFindResults(data: Resource[], clauseIds?: strin
     page_size: data.length,
     page_number: 1,
   };
+  console.log(clauseIds);
   findResults.resources = data.reduce((resources, resource) => {
     const fields: { [id: string]: Search.FindField } = {};
     if (resource.data.files) {
@@ -327,7 +328,7 @@ export function mapResourceListToFindResults(data: Resource[], clauseIds?: strin
       fields[fileFieldId] = {
         paragraphs: resource.data?.texts
           ? Object.entries(resource.data.texts)
-              .filter((entry) => !clauseIds || clauseIds.includes(entry[0]))
+              .filter((entry) => !clauseIds || clauseIds.length === 0 || clauseIds.includes(entry[0]))
               .reduce((paragraphs, [labelId, paragraph], index) => {
                 const paragraphId = `${resource.id}${fileFieldId}/0-${index}`;
                 paragraphs[paragraphId] = {

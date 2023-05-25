@@ -11,6 +11,7 @@
     getLabelledClause,
     getMatchingClause,
     initNuclia,
+    mapResourceListToFindResults,
     resetNuclia,
   } from '../../core/api';
   import { onMount } from 'svelte';
@@ -158,15 +159,19 @@
     };
   });
 
+  function renderResults(results: Search.FindResults | undefined) {
+    triggerSearch.next();
+    if (results) {
+      searchResults.set({ results, append: false });
+    }
+  }
+
   function displayResults(id: string) {
     if (data && data[id]) {
-      triggerSearch.next();
-      const results = data[id].results;
-      if (results) {
-        searchResults.set({ results, append: false });
-      }
+      renderResults(data[id].results);
     }
     if (id === 'root') {
+      // renderResults(mapResourceListToFindResults(FULLDATA));
       const withClause = findClauses(FULLDATA, TERRORISM_CLAUSES);
       const withoutClause = findClauses(FULLDATA, TERRORISM_CLAUSES, true);
       data = {
