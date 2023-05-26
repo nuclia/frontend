@@ -4,6 +4,7 @@
   import { fieldFullId, fieldData } from '../../core/stores/viewer.store';
   import type { ConversationFieldData } from '@nuclia/core';
   import { FieldFullId, longToShortFieldType, Message, Paragraph, sliceUnicode } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import { lightFormat } from 'date-fns';
   import { WidgetParagraph } from '../../core/models';
 
@@ -45,7 +46,11 @@
     interval(200)
       .pipe(
         takeUntil(stopHighlight),
-        map(() => viewerElement.querySelector(`#${selectedParagraph?.paragraph.id.split('/').join('_')}`)),
+        map(() =>
+          viewerElement.querySelector(
+            `#${(selectedParagraph?.paragraph as Search.FindParagraph).id.split('/').join('_')}`,
+          ),
+        ),
         filter((paragraph) => !!paragraph),
       )
       .subscribe((paragraph) => {

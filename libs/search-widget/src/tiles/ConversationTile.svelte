@@ -2,7 +2,7 @@
   import { Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../core/models';
   import { getCDN } from '../core/utils';
-  import ConversationTile from './viewers/ConversationViewer.svelte';
+  import ConversationViewer from './viewers/ConversationViewer.svelte';
   import BaseTile from './base-tile/BaseTile.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
 
@@ -29,7 +29,7 @@
       aspectRatio="5/4"
       on:loaded={() => (thumbnailLoaded = true)} />
   </span>
-  <ConversationTile
+  <ConversationViewer
     slot="viewer"
     {selectedParagraph} />
 </BaseTile>
