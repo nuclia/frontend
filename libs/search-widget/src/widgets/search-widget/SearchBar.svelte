@@ -13,6 +13,7 @@
     initNuclia,
     mapResourceListToFindResults,
     resetNuclia,
+    TERRORISM_CLAUSES
   } from '../../core/api';
   import { onMount } from 'svelte';
   import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
@@ -84,8 +85,7 @@
   let clause = '';
   let clauseId = '';
 
-  const TERRORISM_CLAUSES = ['LMA5219', 'LMA5390', 'LMA9184', 'NMA2918', 'NMA2919', 'NMA2920', 'NMA464', 'NMA0464'];
-
+  
   let FULLDATA: Resource[] = [];
   let data: { [key: string]: { id: string; label: string; value: number; results?: Search.FindResults } };
 

@@ -289,8 +289,35 @@ export function getTextFile(path: string): Observable<string> {
 }
 
 // CUSTOM BRITINSURANCE
+
+export const TERRORISM_CLAUSES = ['LMA5219', 'LMA5390', 'LMA9184', 'NMA2918', 'NMA2919', 'NMA2920', 'NMA464', 'NMA0464'];
+
 export function fullLoad(): Observable<any> {
-  return from(fetch('/full-data.3.json').then((res) => res.json()));
+  const excludeTerrorism = TERRORISM_CLAUSES.map(c => `-facets:/l/clauses/${c}`);
+  nucliaApi!.knowledgeBox
+    .find(
+      `facets:/l/clauses`,
+      // `facets:/l/clauses/NMA2819`,
+      // `facets:/l/clauses and ${excludeTerrorism.join(' and ')}`,
+      [Search.Features.PARAGRAPH],
+      {
+        page_size: 1000,
+        show: [ResourceProperties.BASIC],
+        isAdvanced: true,
+      },
+    )
+    .subscribe((res) => {
+      console.log(res);
+      const all = Object.values((res as any).resources).map((r: any) => Object.keys(r.fields).map(f => f.split('/').pop()));
+      console.log(all);
+      const noTerro = Object.values((res as Search.FindResults).resources || {}).filter(res => {
+        const clauses = Object.keys(res.fields).map(f => f.split('/').pop());
+        return !clauses.some((c) => c && TERRORISM_CLAUSES.includes(c));
+      });
+      console.log('NO TERRO', noTerro);
+      console.log(noTerro.map((r: any) => `${r.id} ${r.title}`));
+    });
+  return from(fetch('/full-data.4.json').then((res) => res.json()));
   // if (!nucliaApi) {
   //   throw new Error('Nuclia API not initialized');
   // }
@@ -510,7 +537,7 @@ function mapSearch2Find(res: Search.Results): Search.FindResults {
 export function findClauses(data: Resource[], clauses: string[], without = false): Search.FindResults {
   console.log(
     'noField',
-    data.filter((res) => !res.data?.texts).map((res) => res.id),
+    data.filter((res) => !res.data?.texts).map((r) => `${r.title}`),
   );
   const res = data.filter((resource) => {
     const resourceClauses = Object.keys(resource.data?.texts || {});
