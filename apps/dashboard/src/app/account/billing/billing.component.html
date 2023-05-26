@@ -25,7 +25,7 @@
           {{ 'billing.usage.consumption' | translate }}
         </a>
       </li>
-      <li *ngIf="(isSubscribed | async) && (areInvoicesEnabled | async)">
+      <li *ngIf="isSubscribed | async">
         <a
           [routerLink]="'./history'"
           routerLinkActive="active">
