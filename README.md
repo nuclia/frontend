@@ -32,10 +32,10 @@ wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 
 To check if it was installed properly, close and reopen the terminal and run `command -v nvm` and should return `nvm`. In case there is something else going on, troubleshoot with [this documentation](https://github.com/nvm-sh/nvm#troubleshooting-on-macos). To see all the commands, simply run `nvm`.
 
-To install the latest version of [node](https://nodejs.org/en), run:
+To install the latest stable version of [node](https://nodejs.org/en), run:
 
 ```
-nvm install node
+nvm install --lts
 ```
 
 To check if node and npm is properly installed, run: `node --version` and `npm --version`. 
@@ -83,7 +83,7 @@ git clone git@github.com:plone/pastanaga-angular.git
 
 Start by creating an account with an email and password (as SSO doesn't work locally).
 
-In `apps/dashboard/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
+In `apps/dashboard/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration. <sub> You will have to speak to a supervirsor so they can give the proper cofiguration</sub>
 
 Then you can run the dashboard locally and use the credential created previously to log in:
 
