@@ -75,6 +75,7 @@ export class STFSplashScreenService {
       .create(this.splashScreenEl);
 
     setTimeout(() => {
+      this.player?.onStart(() => (this.splashScreenEl.style.display = 'block'));
       this.player?.play();
     }, 0);
   }
@@ -98,6 +99,7 @@ export class STFSplashScreenService {
       .create(this.splashScreenEl);
 
     setTimeout(() => {
+      this.player?.onDone(() => (this.splashScreenEl.style.display = 'none'));
       this.player?.play();
     }, 0);
   }
