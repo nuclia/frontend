@@ -9,6 +9,7 @@ export interface ConnectorDefinition {
   logo: string;
   description: string;
   helpUrl?: string;
+  permanentSyncOnly?: boolean;
 }
 
 export interface SourceConnectorDefinition extends ConnectorDefinition {

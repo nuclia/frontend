@@ -92,7 +92,7 @@
 
   <div
     class="settings"
-    *ngIf="type === 'sources'">
+    *ngIf="type === 'sources' && !selectedConnector?.permanentSyncOnly">
     <div class="field">
       <pa-checkbox formControlName="permanentSync">
         {{ 'upload.source.permanent-sync' | translate }}

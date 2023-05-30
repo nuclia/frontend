@@ -141,7 +141,7 @@ export class ConnectorsComponent implements OnDestroy {
       fields: this.formBuilder.group(
         fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
       ),
-      permanentSync: [false],
+      permanentSync: [!!this.selectedConnector?.permanentSyncOnly],
       quickAccess: this.formBuilder.group({
         name: ['', this.canStoreParams ? [Validators.required, Validators.pattern('[a-zA-Z-0-9-_]+')] : []],
       }),
