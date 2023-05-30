@@ -37,16 +37,3 @@ function parseSitemap(sitemapContent: string): Promise<SiteMapModel[]> {
 export function getSiteMap(url: string): Observable<SiteMapModel[]> {
   return from(fetchSitemap(url)).pipe(switchMap((content) => from(parseSitemap(content))));
 }
-
-// const sitemapUrl = 'https://nuclia.com/sitemap.xml';
-// (async () => {
-//   try {
-//     let sitemapContent = await fetchSitemap(sitemapUrl)
-//     console.log(sitemapContent)
-//     let parsedUrls = await parseSitemap(sitemapContent);
-//
-//     console.log('parsedUrls', parsedUrls)
-//   } catch (error) {
-//     console.error('Error retrieving or parsing the sitemap:', error);
-//   }
-// })();
