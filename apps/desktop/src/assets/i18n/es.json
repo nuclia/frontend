@@ -45,7 +45,7 @@
 	"upload.source.description": "Elige el origen desde la que quieres subir todos los archivos",
 	"upload.source.help": "Consulte la documentación sobre cómo añadir archivos desde {{source}}.",
 	"upload.source.permanent-sync": "Sincronización permanente",
-	"upload.source.quick_access_name": "Nombra tu fuente",
+	"upload.source.quick_access_name": "Nombra tu conector",
 	"upload.source.title": "Origen",
 	"upload.steps.configure": "Configurar",
 	"upload.steps.data": "Elegir datos",

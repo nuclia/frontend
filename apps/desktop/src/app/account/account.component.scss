@@ -1,26 +1,48 @@
 @import 'variables';
+
 .container {
   position: relative;
   top: 10vh;
   width: 600px;
   height: 80vh;
   margin: 0 auto;
-  padding: 62px 100px;
-  border-radius: 8px;
-  background-color: $color-light-stronger;
+  padding: rhythm(8) rhythm(12);
   display: flex;
   flex-direction: column;
 }
 
 ul {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
   margin-top: rhythm(6);
   padding: 0;
 }
 li {
-  display: block;
-  margin: rhythm(0.5) 0;
-  text-align: center;
-  padding: rhythm(1.5) 0;
-  background-color: var(--stf-gray-background);
+  align-items: center;
+  background-color: $color-neutral-lighter;
   cursor: pointer;
+  display: flex;
+  font-weight: $font-weight-semi-bold;
+  height: rhythm(5);
+  justify-content: center;
+  position: relative;
+  transition: background-color $transition-hint, color $transition-hint;
+
+  pa-icon {
+    position: absolute;
+    top: 50%;
+    right: rhythm(2);
+    transform: translateY(-50%);
+  }
+
+  &:focus,
+  &:hover {
+    outline: 0;
+    background-color: $color-dark-stronger;
+    color: $color-light-stronger;
+    pa-icon {
+      color: $color-light-stronger;
+    }
+  }
 }

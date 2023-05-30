@@ -44,6 +44,7 @@ export class TopbarComponent {
   );
 
   goHome() {
+    console.log(`go home`);
     this.router.navigate(['/']);
   }
 

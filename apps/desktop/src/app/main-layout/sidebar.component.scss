@@ -11,6 +11,10 @@
   .upload-menu {
     padding: rhythm(6) rhythm(2) rhythm(4) rhythm(4);
     border-bottom: 1px solid $color-neutral-light;
+
+    ul {
+      gap: rhythm(1.5);
+    }
   }
 
   .upload-title {
@@ -21,7 +25,6 @@
   ul {
     display: flex;
     flex-direction: column;
-    gap: rhythm(1.5);
     list-style: none;
     margin: 0;
     padding: 0;
@@ -29,6 +32,7 @@
 
   .step {
     align-items: center;
+    cursor: default;
     display: flex;
     gap: rhythm(1.5);
 
@@ -38,12 +42,16 @@
 
     &.pending {
       opacity: 0.3;
+      pa-icon {
+        color: $color-neutral-light;
+      }
     }
 
     &.clickable {
       cursor: pointer;
     }
-    pa-icon {
+
+    pa-icon.checked {
       color: $color-primary-regular;
     }
   }
@@ -67,9 +75,12 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    span {
-      max-width: calc(100% - rhythm(2));
+    .source-title {
       cursor: pointer;
+      max-width: calc(100% - #{rhythm(2)} - #{rhythm(4)}* 2);
+    }
+    .action-container {
+      flex: 0 0 auto;
     }
     pa-button {
       visibility: hidden;
@@ -80,18 +91,37 @@
   }
 
   .history-menu {
-    padding: rhythm(2) rhythm(4);
-
-    ul > ul {
-      padding-left: rhythm(3);
-    }
+    padding: rhythm(2) 0;
 
     li {
-      font-weight: $font-weight-semi-bold;
-    }
-
-    span {
+      align-items: center;
       cursor: pointer;
+      display: flex;
+      font-weight: $font-weight-semi-bold;
+      padding: 0 rhythm(4);
+      position: relative;
+      height: rhythm(5);
+      transition: background-color $transition-hint, color $transition-hint;
+
+      &:focus,
+      &:hover {
+        outline: 0;
+        background-color: $color-dark-stronger;
+        color: $color-light-stronger;
+
+        pa-icon {
+          visibility: visible;
+        }
+      }
+
+      pa-icon {
+        color: $color-light-stronger;
+        position: absolute;
+        top: 50%;
+        right: rhythm(2);
+        transform: translateY(-50%);
+        visibility: hidden;
+      }
     }
   }
 }

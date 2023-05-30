@@ -9,6 +9,7 @@ export interface ConnectorDefinition {
   logo: string;
   description: string;
   helpUrl?: string;
+  permanentSyncOnly?: boolean;
 }
 
 export interface SourceConnectorDefinition extends ConnectorDefinition {
@@ -112,7 +113,6 @@ export interface Source {
   permanentSync?: boolean;
   lastSync?: string;
   total?: number;
-  lastBatch?: number;
 }
 
 export interface SyncRow {

@@ -4,12 +4,12 @@ import { Router } from '@angular/router';
 import { delay, filter, forkJoin, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
 import {
+  CONNECTOR_ID_KEY,
   ConnectorDefinition,
   ConnectorParameters,
-  ISourceConnector,
-  CONNECTOR_ID_KEY,
-  SyncItem,
   FileStatus,
+  ISourceConnector,
+  SyncItem,
 } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
@@ -139,6 +139,19 @@ export class UploadComponent implements OnInit, OnDestroy {
             });
             this.goTo(3);
           }
+          // TODO: do not hardcode this condition
+        } else if (event.connector.id === 'sitemap') {
+          const data = this.source?.getParametersValues();
+          if (data) {
+            this.selection.setSelection({
+              uuid: '',
+              title: data.url,
+              originalId: data.url,
+              metadata: {},
+              status: FileStatus.PENDING,
+            });
+            this.goTo(3);
+          }
         } else {
           this.goTo(2);
         }
@@ -165,6 +178,10 @@ export class UploadComponent implements OnInit, OnDestroy {
   }
 
   private reset() {
+    const sourceId = this.sync.getCurrentSourceId();
+    if (sourceId) {
+      this.sync.deleteSource(sourceId).subscribe();
+    }
     localStorage.removeItem(CONNECTOR_ID_KEY);
     this.sourceId = '';
     this.source = undefined;
