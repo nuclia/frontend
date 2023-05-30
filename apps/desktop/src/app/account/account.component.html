@@ -1,10 +1,16 @@
 <div class="container">
-  <img src="assets/logos/nuclia-desktop.svg" />
+  <img
+    src="assets/logos/nuclia-desktop.svg"
+    alt="Nuclia Desktop" />
   <ul>
     <li
       *ngFor="let account of accounts | async"
       (click)="selectAccount(account.slug)">
       {{ account.title }}
+      <pa-icon
+        class="account-arrow"
+        name="chevron-right"
+        size="small"></pa-icon>
     </li>
   </ul>
 </div>

@@ -45,7 +45,7 @@
 	"upload.source.description": "Trieu l'origen des del qual voleu pujar tots els fitxers",
 	"upload.source.help": "Consulta la documentació sobre com afegir arxius des de {{source}}.",
 	"upload.source.permanent-sync": "Sincronització permanent",
-	"upload.source.quick_access_name": "Anomena la teva font",
+	"upload.source.quick_access_name": "Anomena el teu connector",
 	"upload.source.title": "Origen",
 	"upload.steps.configure": "Configurar",
 	"upload.steps.data": "Escollir dades",

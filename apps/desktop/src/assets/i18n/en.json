@@ -45,7 +45,7 @@
 	"upload.source.description": "Choose source for uploads",
 	"upload.source.help": "Refer to our documentation on how to add files from {{source}}.",
 	"upload.source.permanent-sync": "Permanent synchronization",
-	"upload.source.quick_access_name": "Name your source",
+	"upload.source.quick_access_name": "Name your connector",
 	"upload.source.title": "Source integration",
 	"upload.steps.configure": "Configure",
 	"upload.steps.data": "Choose data",
