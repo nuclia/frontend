@@ -178,6 +178,10 @@ export class UploadComponent implements OnInit, OnDestroy {
   }
 
   private reset() {
+    const sourceId = this.sync.getCurrentSourceId();
+    if (sourceId) {
+      this.sync.deleteSource(sourceId).subscribe();
+    }
     localStorage.removeItem(CONNECTOR_ID_KEY);
     this.sourceId = '';
     this.source = undefined;
