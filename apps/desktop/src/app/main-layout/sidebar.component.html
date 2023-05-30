@@ -18,6 +18,7 @@
             </span>
             <pa-icon
               *ngIf="(currentStep | async) > step"
+              class="checked"
               name="circle-check"></pa-icon>
             {{ text | translate }}
           </span>
@@ -27,12 +28,13 @@
             <div
               *ngFor="let item of sources | async"
               class="quick-access">
-              <span
+              <div
+                class="source-title"
                 (click)="goToSource(item.connectorId, item.name, false)"
                 paEllipsisTooltip>
                 {{ item.name }}
-              </span>
-              <span>
+              </div>
+              <div class="action-container">
                 <pa-button
                   (click)="goToSource(item.connectorId, item.name, true)"
                   size="small"
@@ -45,7 +47,7 @@
                   iconSize="small"
                   icon="trash"
                   aspect="basic"></pa-button>
-              </span>
+              </div>
             </div>
           </div>
         </li>

@@ -29,6 +29,7 @@
 
   .step {
     align-items: center;
+    cursor: default;
     display: flex;
     gap: rhythm(1.5);
 
@@ -38,12 +39,16 @@
 
     &.pending {
       opacity: 0.3;
+      pa-icon {
+        color: $color-neutral-light;
+      }
     }
 
     &.clickable {
       cursor: pointer;
     }
-    pa-icon {
+
+    pa-icon.checked {
       color: $color-primary-regular;
     }
   }
@@ -67,9 +72,12 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    span {
-      max-width: calc(100% - rhythm(2));
+    .source-title {
       cursor: pointer;
+      max-width: calc(100% - #{rhythm(2)} - #{rhythm(4)}* 2);
+    }
+    .action-container {
+      flex: 0 0 auto;
     }
     pa-button {
       visibility: hidden;
