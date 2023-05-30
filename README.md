@@ -83,7 +83,7 @@ git clone git@github.com:plone/pastanaga-angular.git
 
 Start by creating an account with an email and password (as SSO doesn't work locally).
 
-In `apps/dashboard/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration. <sub> You will have to speak to a supervirsor so they can give the proper cofiguration</sub>
+In `apps/dashboard/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration. <sub>Ask a supervisor to get a proper configuration.</sub>
 
 Then you can run the dashboard locally and use the credential created previously to log in:
 
