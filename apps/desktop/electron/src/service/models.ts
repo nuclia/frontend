@@ -10,7 +10,6 @@ export interface Source {
   permanentSync?: boolean;
   lastSyncGMT?: string;
   total?: number;
-  lastBatch?: number;
 }
 
 export interface ConnectorDefinition {

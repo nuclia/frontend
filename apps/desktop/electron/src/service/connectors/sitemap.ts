@@ -1,4 +1,4 @@
-import { map, Observable, of, tap } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import {
   ConnectorParameters,
   FileStatus,
@@ -37,17 +37,6 @@ class SitemapImpl implements ISourceConnector {
 
   getFiles(query?: string | undefined): Observable<SearchResults> {
     const sitemapUrl = this.params['sitemap'];
-    // return of({
-    //   items: [
-    //     {
-    //       title: sitemapUrl,
-    //       status: FileStatus.PENDING,
-    //       uuid: `${new Date().getTime()}`,
-    //       originalId: sitemapUrl,
-    //       metadata: { uri: sitemapUrl },
-    //     },
-    //   ],
-    // });
 
     return getSiteMap(sitemapUrl).pipe(
       map((parsedUrls) => ({
@@ -67,11 +56,10 @@ class SitemapImpl implements ISourceConnector {
 
   getLastModified(since: string, folders?: SyncItem[] | undefined): Observable<SyncItem[]> {
     return this.getFiles().pipe(
-      tap((searchResults) => console.log(since, searchResults)),
       map((searchResults) => {
-        // TODO: filter out items to get only last modified ones
-        //  .filter((item) => item.modifiedGMT && item.modifiedGMT > since);
-        return searchResults.items;
+        return searchResults.items.filter(
+          (item) => item.metadata['lastModified'] && item.metadata['lastModified'] > since,
+        );
       }),
     );
   }

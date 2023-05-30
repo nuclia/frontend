@@ -1,17 +1,17 @@
 import {
+  addActiveSyncLog,
   addErrorLog,
+  addLog,
   getLastModified,
   getSources,
-  addActiveSyncLog,
+  incrementActiveSyncLog,
   readPersistentData,
+  removeActiveSyncLog,
   syncFile,
   updateSource,
-  incrementActiveSyncLog,
-  addLog,
-  removeActiveSyncLog,
 } from './sources';
 // import { importConnector, loadConnectors } from './dynamic-connectors';
-import { concatMap, delay, map, of, switchMap, tap, toArray } from 'rxjs';
+import { delay, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 
 export const sync = () => {
   // UNCOMMENT TO ENABLE DYNAMIC CONNECTORS
@@ -35,59 +35,64 @@ function syncFiles() {
         .pipe(
           switchMap((sources) => {
             const arr = Object.entries(sources).filter(
-              ([id, source]) => source.items && source.items.length > 0 && source.kb,
+              ([, source]) => source.items && source.items.length > 0 && source.kb,
             );
+
             return arr.length === 0
               ? of(undefined)
-              : of(...arr).pipe(
-                  tap(([id, source]) => {
-                    console.log(`Syncing ${source.items?.length} items from ${id}`);
-                    addActiveSyncLog(id, source);
-                  }),
-                  switchMap(([id, source]) => {
-                    if (!source.kb || !source.items || source.items.length === 0) {
-                      return of(undefined);
-                    }
-                    if (source.items.length !== source.lastBatch) {
-                      updateSource(id, { ...source, lastBatch: source.items.length });
-                    }
-                    const batch = source.items.slice(0, 10);
-                    return of(...batch).pipe(
-                      concatMap((item) =>
-                        syncFile(id, source, item).pipe(
-                          tap((success) => {
-                            if (success) {
-                              incrementActiveSyncLog(id);
+              : forkJoin(
+                  arr.map((idAndSource) =>
+                    of(idAndSource).pipe(
+                      tap(([id, source]) => {
+                        console.log(`Syncing ${source.items?.length} items from ${id}`);
+                        addActiveSyncLog(id, source);
+                      }),
+                      switchMap(([id, source]) => {
+                        if (!source.kb || !source.items || source.items.length === 0) {
+                          return of(undefined);
+                        }
+
+                        const batch: Observable<string | undefined>[] = source.items.slice(0, 10).map((item) =>
+                          of(item).pipe(
+                            switchMap((item) =>
+                              syncFile(id, source, item).pipe(
+                                tap((success) => {
+                                  if (success) {
+                                    incrementActiveSyncLog(id);
+                                  }
+                                }),
+                                map((success) => (success ? item.originalId : undefined)),
+                                // do not overwhelm the source
+                                delay(500),
+                              ),
+                            ),
+                          ),
+                        );
+                        return forkJoin(batch).pipe(
+                          tap((result) => {
+                            if (result) {
+                              const successfullyUploaded = result.filter((originalId) => !!originalId);
+                              const hasFailures = successfullyUploaded.length !== result.length;
+                              source.items = (source.items || []).filter(
+                                (item) => !successfullyUploaded.includes(item.originalId),
+                              );
+                              source.total = (source.total || 0) + successfullyUploaded.length;
+                              addLog(
+                                id,
+                                source,
+                                successfullyUploaded.length,
+                                hasFailures ? `${result.length - successfullyUploaded.length} failures` : '',
+                              );
+                              if (successfullyUploaded.length > 0) {
+                                updateSource(id, source);
+                              }
+                              removeActiveSyncLog(id);
                             }
                           }),
-                          map((success) => (success ? item.originalId : undefined)),
-                          // do not overwhelm the source
-                          delay(500),
-                          toArray(),
-                        ),
-                      ),
-                      tap((result) => {
-                        if (result) {
-                          const successfullyUploaded = result.filter((originalId) => !!originalId);
-                          const hasFailures = successfullyUploaded.length !== result.length;
-                          source.items = (source.items || []).filter(
-                            (item) => !successfullyUploaded.includes(item.originalId),
-                          );
-                          source.total = (source.total || 0) + successfullyUploaded.length;
-                          addLog(
-                            id,
-                            source,
-                            successfullyUploaded.length,
-                            hasFailures ? `${result.length - successfullyUploaded.length} failures` : '',
-                          );
-                          if (successfullyUploaded.length > 0) {
-                            updateSource(id, source);
-                          }
-                          removeActiveSyncLog(id);
-                        }
+                        );
                       }),
-                    );
-                  }),
+                    ),
+                  ),
                 );
           }),
         )
@@ -106,7 +111,7 @@ function collectLastModified() {
       of(getSources())
         .pipe(
           switchMap((sources) => {
-            const arr = Object.entries(sources).filter(([id, source]) => source.permanentSync);
+            const arr = Object.entries(sources).filter(([, source]) => source.permanentSync);
             return arr.length === 0
               ? of(undefined)
               : of(...arr).pipe(

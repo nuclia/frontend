@@ -112,7 +112,6 @@ export interface Source {
   permanentSync?: boolean;
   lastSync?: string;
   total?: number;
-  lastBatch?: number;
 }
 
 export interface SyncRow {
