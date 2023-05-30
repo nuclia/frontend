@@ -56,14 +56,18 @@
 
     <div class="history-menu">
       <ul>
-        <li>
-          <span (click)="goToHistory()">{{ 'history.title' | translate }}</span>
+        <li (click)="goToHistory()">
+          {{ 'history.title' | translate }}
+          <pa-icon
+            name="chevron-right"
+            size="small"></pa-icon>
         </li>
-        <ul>
-          <li>
-            <span (click)="goToHistory(true)">{{ 'history.active' | translate }}</span>
-          </li>
-        </ul>
+        <li (click)="goToHistory(true)">
+          {{ 'history.active' | translate }}
+          <pa-icon
+            name="chevron-right"
+            size="small"></pa-icon>
+        </li>
       </ul>
     </div>
   </ng-container>
