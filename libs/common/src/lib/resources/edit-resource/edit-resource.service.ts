@@ -59,6 +59,17 @@ export class EditResourceService {
   currentView: Observable<EditResourceView | null> = this._currentView.asObservable();
   currentField: Observable<FieldId | 'resource'> = this._currentField.asObservable();
   resource: Observable<Resource | null> = this._resource.asObservable();
+  currentFieldData = this.resource.pipe(
+    switchMap((resource) =>
+      this.currentField.pipe(
+        map((field) =>
+          field === 'resource'
+            ? undefined
+            : resource?.getFieldData(`${field.field_type}s` as keyof ResourceData, field.field_id),
+        ),
+      ),
+    ),
+  );
   fields: Observable<ResourceField[]> = this.resource.pipe(
     map((resource) =>
       Object.entries(resource?.data || {}).reduce((list, [type, dict]) => {
