@@ -1,71 +1,35 @@
 <div class="account-home">
   <div class="container-row">
-    <div
-      class="container-table"
-      *ngIf="hasUsageData | async">
-      <app-usage-table [usage]="usage | async"></app-usage-table>
+    <div class="processing-stats">
+      <div>
+        <h2>{{ 'account.monthly_consumibles' | translate }}</h2>
+        <div>{{ 'account.accumulated_consumption' | translate }}</div>
+      </div>
+      <div
+        class="chart-container"
+        *ngFor="let statType of statsTypes">
+        <div class="chart-header">
+          <div class="title-m">{{ 'account.chart_' + statType | translate }}</div>
+          <div class="chart-legend">
+            <div class="line"></div>
+            <div class="body-xs">{{ 'account.threshold' | translate }}</div>
+          </div>
+        </div>
+        <app-line-chart
+          *ngIf="charts[statType] | async as chart"
+          [data]="chart.data"
+          [xDomain]="chart.domain"
+          [yDomain]="{ min: 0 }"
+          [threshold]="chart.threshold"
+          [height]="260"
+          [area]="true"></app-line-chart>
+      </div>
     </div>
+
     <div
       class="processing-stats"
-      *ngIf="!(hasUsageData | async)">
-      <pa-tabs
-        noSlider
-        notFullWidth>
-        <pa-tab
-          [active]="selectedTab.value === 'completed'"
-          (click)="selectedTab.next('completed')">
-          {{ 'account.chart_title_processed' | translate }}
-        </pa-tab>
-        <pa-tab
-          *ngIf="(isFreeAccount | async) === false"
-          [active]="selectedTab.value === 'pending'"
-          (click)="selectedTab.next('pending')">
-          {{ 'account.chart_title_pending_resources' | translate }}
-        </pa-tab>
-      </pa-tabs>
-
-      <section
-        *ngIf="selectedTab.value === 'completed'"
-        class="container chart-container">
-        <div class="chart-header">
-          <div class="chart-type-container">
-            <span
-              class="chart-type"
-              [class.selected]="processedView.value === statsType.CHARS"
-              (click)="processedView.next(statsType.CHARS)">
-              {{ 'account.chart_ML_characters' | translate }}
-            </span>
-            <div class="separator"></div>
-            <span
-              class="chart-type"
-              [class.selected]="processedView.value === statsType.MEDIA_SECONDS"
-              (click)="processedView.next(statsType.MEDIA_SECONDS)">
-              {{ 'account.chart_media_hours' | translate }}
-            </span>
-            <div class="separator"></div>
-            <span
-              class="chart-type"
-              [class.selected]="processedView.value === statsType.DOCS_NO_MEDIA"
-              (click)="processedView.next(statsType.DOCS_NO_MEDIA)">
-              {{ 'account.chart_documents' | translate }}
-            </span>
-          </div>
-          <span class="chart-message">{{ 'account.renewal' | translate }}</span>
-        </div>
-        <app-empty-chart
-          *ngIf="(processing | async) === null"
-          [numLines]="3"></app-empty-chart>
-        <app-bar-chart
-          [data]="(processing | async) || []"
-          [threshold]="processedThreshold | async"
-          [axisYMultiplier]="1"
-          [height]="320"
-          [locale]="locale | async"
-          [tooltipsEnabled]="true"></app-bar-chart>
-      </section>
-      <section
-        *ngIf="selectedTab.value === 'pending'"
-        class="container">
+      *ngIf="showPending">
+      <section class="chart-container">
         <div class="chart-header">
           <div class="range-container">
             <nsi-dropdown-button
@@ -130,7 +94,7 @@
 
     <div class="right-column">
       <div>
-        <app-account-status [usage]="usage | async"></app-account-status>
+        <app-account-status></app-account-status>
       </div>
       <div
         class="container kb-state"

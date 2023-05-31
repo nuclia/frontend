@@ -12,52 +12,42 @@
     gap: rhythm(5);
   }
 
-  .container.chart-container {
-    border-top-left-radius: 0;
-  }
-  .container {
-    background-color: $color-neutral-lightest;
-    border-radius: rhythm(0.5);
-    padding: rhythm(2);
-  }
-
   .processing-stats {
+    display: flex;
     flex: 1 0 auto;
-
-    .container {
-      padding: rhythm(3);
+    flex-direction: column;
+    gap: rhythm(3);
+    h2 {
+      margin-bottom: 0;
     }
   }
 
-  .chart-header {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: rhythm(3);
+  .chart-container {
+    background-color: $color-neutral-lightest;
+    padding: rhythm(3);
+
+    .chart-header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: rhythm(3);
+    }
+
+    .chart-legend {
+      align-items: center;
+      display: flex;
+      gap: rhythm(1);
+      .line {
+        border-top: 2px dashed $color-tertiary-regular;
+        height: 2px;
+        width: rhythm(3);
+      }
+    }
 
     .chart-message {
       color: $color-neutral-regular;
       font-size: font-size(xs);
       font-style: italic;
-    }
-  }
-
-  .chart-type-container {
-    align-items: center;
-    color: $color-neutral-regular;
-    display: flex;
-    gap: rhythm(1);
-
-    .chart-type {
-      cursor: pointer;
-    }
-    .selected {
-      color: $color-dark-stronger;
-      font-weight: $font-weight-semi-bold;
-    }
-    .separator {
-      height: rhythm(2);
-      width: 1px;
     }
   }
 
@@ -67,6 +57,12 @@
     flex-shrink: 0;
     gap: rhythm(3);
     width: rhythm(41);
+
+    .container {
+      background-color: $color-neutral-lightest;
+      border-radius: rhythm(0.5);
+      padding: rhythm(2);
+    }
 
     .kb-state {
       cursor: pointer;
@@ -90,11 +86,5 @@
     background-color: $color-neutral-light;
     height: 100%;
     width: 1px;
-  }
-
-  .container-table {
-    background-color: $color-neutral-lightest;
-    flex: 1 0 auto;
-    padding: rhythm(3);
   }
 }

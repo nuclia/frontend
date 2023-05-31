@@ -22,6 +22,10 @@ $chart-font-size: font-size(xs);
     stroke: $chart-line-color;
   }
 
+  .threshold {
+    stroke: $color-tertiary-regular;
+  }
+
   .tooltip {
     background-color: $color-dark-stronger;
     color: $color-light-stronger;

@@ -40,6 +40,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>account.accumulated_consumption</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>account.active_config</name>
 						<description/>
 						<comment/>
@@ -160,66 +180,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.chart_documents</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>account.chart_error_chars</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>account.chart_error_docs_no_media</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>account.chart_error_media_seconds</name>
 						<description/>
 						<comment/>
@@ -260,7 +220,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.chart_media_hours</name>
+						<name>account.chart_error_searches</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -280,7 +240,27 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.chart_ML_characters</name>
+						<name>account.chart_error_train_seconds</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>account.chart_media_seconds</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -340,7 +320,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.chart_title_pending_resources</name>
+						<name>account.chart_searches</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -360,7 +340,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.chart_title_processed</name>
+						<name>account.chart_train_seconds</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -1140,6 +1120,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>account.monthly_consumibles</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>account.new_token</name>
 						<description/>
 						<comment/>
@@ -1641,6 +1641,26 @@
 					</concept_node>
 					<concept_node>
 						<name>account.stash.users</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>account.threshold</name>
 						<description/>
 						<comment/>
 						<default_text/>

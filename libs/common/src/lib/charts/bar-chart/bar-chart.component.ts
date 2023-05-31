@@ -12,7 +12,7 @@ import {
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
-import { createYAxis } from '../chart-utils';
+import { createYAxis, drawThreshold } from '../chart-utils';
 import { getDate } from 'date-fns';
 
 let nextUniqueId = 0;
@@ -94,7 +94,7 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
     const y = createYAxis(svg, [minValue, maxValue * this.axisYMultiplier], NUM_TICKS, width, height, margin);
     const x = this.createXAxis(svg, width, height);
     if (this.threshold) {
-      this.drawThreshold(svg, this.threshold, width, y);
+      drawThreshold(svg, this.threshold, width, y);
     }
 
     // Tooltip event handlers
@@ -162,24 +162,5 @@ export class BarChartComponent implements AfterViewInit, OnDestroy {
 
   private removeExistingChartFromParent(): void {
     d3.select(this.container?.nativeElement).select('svg').remove();
-  }
-
-  private drawThreshold(
-    svg: d3.Selection<any, any, any, any>,
-    threshold: number,
-    width: number,
-    y: d3.ScaleLinear<number, number>,
-  ) {
-    const t = y(threshold);
-    if (typeof t === 'number') {
-      svg
-        .append('line')
-        .style('stroke', 'var(--stf-primary)')
-        .attr('class', 'threshold')
-        .attr('x1', 0)
-        .attr('y1', t)
-        .attr('x2', width)
-        .attr('y2', t);
-    }
   }
 }
