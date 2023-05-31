@@ -3,11 +3,12 @@ import { SelectFirstFieldDirective } from '../select-first-field/select-first-fi
 import { combineLatest, distinctUntilKeyChanged, filter, forkJoin, map, Observable, switchMap, take, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ParagraphService } from '../paragraph.service';
-import { IError, Paragraph } from '@nuclia/core';
+import { IError, Paragraph, TextField } from '@nuclia/core';
 import { getErrors, getParagraphs, ParagraphWithText } from '../edit-resource.helpers';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
+import { EditResourceService } from '../edit-resource.service';
 
 const viewerId = 'viewer-widget';
 
@@ -18,6 +19,10 @@ const viewerId = 'viewer-widget';
 })
 export class PreviewComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithText[]> = this.paragraphService.paragraphList;
+  jsonTextField = this.editResourceService.currentFieldData.pipe(
+    filter((field) => !!field && !!field.value && (field.value as TextField).format === 'JSON'),
+    map((field) => JSON.stringify(JSON.parse((field!.value as TextField).body), null, 2)),
+  );
 
   viewerWidget: Observable<SafeHtml> = this.sdk.currentKb.pipe(
     distinctUntilKeyChanged('id'),
@@ -44,6 +49,7 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
 
   constructor(
     private paragraphService: ParagraphService,
+    private editResourceService: EditResourceService,
     private sdk: SDKService,
     private sanitizer: DomSanitizer,
     private backendConfig: BackendConfigurationService,

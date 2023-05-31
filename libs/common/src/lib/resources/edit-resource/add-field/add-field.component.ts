@@ -11,7 +11,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddFieldComponent implements OnInit, OnDestroy {
-  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN'];
+  availableFormats: TextFieldFormat[] = ['PLAIN', 'HTML', 'RST', 'MARKDOWN', 'JSON'];
   availableTypes: FIELD_TYPE[] = [FIELD_TYPE.file, FIELD_TYPE.link, FIELD_TYPE.text];
 
   unsubscribeAll = new Subject<void>();

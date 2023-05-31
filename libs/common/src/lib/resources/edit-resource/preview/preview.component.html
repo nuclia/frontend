@@ -16,9 +16,14 @@
       <p>{{ paragraph.text }}</p>
     </div>
     <div
-      *ngIf="(paragraphs | async)?.length === 0"
+      *ngIf="(paragraphs | async)?.length === 0 && !(jsonTextField | async)"
       class="paragraph-container">
       <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+    </div>
+    <div
+      *ngIf="jsonTextField | async"
+      class="paragraph-container">
+      <pre><code>{{ jsonTextField | async }}</code></pre>
     </div>
   </div>
   <div class="viewer-button-container">
