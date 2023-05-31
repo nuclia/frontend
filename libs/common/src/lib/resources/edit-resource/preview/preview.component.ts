@@ -20,8 +20,11 @@ const viewerId = 'viewer-widget';
 export class PreviewComponent extends SelectFirstFieldDirective implements OnInit, OnDestroy {
   paragraphs: Observable<ParagraphWithText[]> = this.paragraphService.paragraphList;
   jsonTextField = this.editResourceService.currentFieldData.pipe(
-    filter((field) => !!field && !!field.value && (field.value as TextField).format === 'JSON'),
-    map((field) => JSON.stringify(JSON.parse((field!.value as TextField).body), null, 2)),
+    map((field) =>
+      !!field && !!field.value && (field.value as TextField).format === 'JSON'
+        ? JSON.stringify(JSON.parse((field!.value as TextField).body), null, 2)
+        : '',
+    ),
   );
 
   viewerWidget: Observable<SafeHtml> = this.sdk.currentKb.pipe(
