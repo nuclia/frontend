@@ -8,11 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
-
-export function createTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
-}
-
 // Load locales
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
@@ -26,6 +21,11 @@ import { ConnectorsModule } from './connectors/connectors.module';
 import { AccountModule } from './account/account.module';
 import { LoginModule } from './login/login.module';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
+import { ServerSelectionModule } from './server-selection/server-selection.module';
+
+export function createTranslateLoader(http: HttpClient) {
+  return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
+}
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
@@ -51,6 +51,7 @@ registerLocaleData(localeCa);
     ConnectorsModule,
     AccountModule,
     LoginModule,
+    ServerSelectionModule,
   ],
   providers: [TranslatePipe],
   bootstrap: [AppComponent],

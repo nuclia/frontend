@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { filter, from, map, switchMap } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { BehaviorSubject, filter, from, map, switchMap } from 'rxjs';
 import { SyncService } from '../sync/sync.service';
 import { SisModalService } from '@nuclia/sistema';
 
@@ -18,9 +18,17 @@ export class SidebarComponent {
     switchMap(() => this.sync.sourcesCache),
     map((s) => Object.entries(s).map(([id, source]) => ({ name: id, connectorId: source.connectorId }))),
   );
-  syncServer = this.sync.syncServer;
 
-  constructor(private sync: SyncService, private router: Router, private modalService: SisModalService) {}
+  isServerPage = new BehaviorSubject(false);
+
+  constructor(private sync: SyncService, private router: Router, private modalService: SisModalService) {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map((event: NavigationEnd) => event.url === '/server'),
+      )
+      .subscribe((isServer) => this.isServerPage.next(isServer));
+  }
 
   goToStep(step: number) {
     if (step === 0) {

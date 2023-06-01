@@ -1,5 +1,5 @@
 <div class="sidebar">
-  <ng-container *ngIf="syncServer | async">
+  <ng-container *ngIf="(isServerPage | async) === false">
     <div class="upload-menu">
       <div class="upload-title">{{ 'upload.data' | translate }}:</div>
       <ul>
