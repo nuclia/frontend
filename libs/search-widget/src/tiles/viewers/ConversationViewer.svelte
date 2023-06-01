@@ -47,9 +47,7 @@
       .pipe(
         takeUntil(stopHighlight),
         map(() =>
-          viewerElement.querySelector(
-            `#${(selectedParagraph?.paragraph as Search.FindParagraph).id.split('/').join('_')}`,
-          ),
+          viewerElement.querySelector(`#${formatValidId((selectedParagraph?.paragraph as Search.FindParagraph).id)}`),
         ),
         filter((paragraph) => !!paragraph),
       )
@@ -57,6 +55,10 @@
         paragraph.scrollIntoView({ behavior: 'smooth' });
         stopHighlight.next();
       });
+  }
+
+  function formatValidId(id: string) {
+    return `id_${id.split('/').join('_')}`;
   }
 
   onDestroy(() => {
@@ -86,7 +88,7 @@
         <div class="text body-m">
           {#each message.paragraphs as paragraph}
             <div
-              id={paragraph.id.split('/').join('_')}
+              id={formatValidId(paragraph.id)}
               class:highlight={paragraph.id === selectedParagraph?.paragraph.id}>
               {paragraph.text}
             </div>

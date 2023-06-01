@@ -26,6 +26,7 @@
   // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // multiple types
   let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
   // let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
+  // let kb = 'dba8dfe3-cbde-4aa6-9b90-57fdd2503672'; // conversations
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
