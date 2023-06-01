@@ -44,6 +44,7 @@ export interface ICreateResource {
   links?: { [key: string]: LinkField };
   texts?: { [key: string]: TextField };
   keywordsets?: { [key: string]: KeywordSetField };
+  conversations?: { [key: string]: ConversationField };
 }
 
 export enum FIELD_TYPE {
@@ -109,7 +110,7 @@ export interface IError {
 }
 
 export interface IFieldData {
-  value?: TextField | FileField | LinkField | KeywordSetField;
+  value?: TextField | FileField | LinkField | KeywordSetField | ConversationField;
   extracted?: ExtractedData;
   error?: IError;
 }
@@ -232,6 +233,8 @@ export interface ExtractedText {
 
 export interface FieldComputedMetadata {
   metadata: FieldMetadata;
+  split_metadata?: { [id: string]: FieldMetadata };
+  deleted_splits?: string[];
 }
 
 export interface FieldMetadata {
@@ -367,4 +370,35 @@ export interface ComputedMetadata {
 export interface FieldClassification {
   field: FieldId;
   classifications: Classification[];
+}
+
+export class ConversationFieldData implements IFieldData {
+  value?: ConversationField;
+  extracted?: ExtractedData;
+  error?: IError;
+}
+
+export interface ConversationField {
+  messages: Message[];
+}
+
+export interface Message {
+  ident: string;
+  content: MessageContent;
+  timestamp?: string;
+  who?: string;
+  to?: string[];
+}
+
+export interface MessageContent {
+  text: string;
+  format?: 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
+  attachments?: MessageAttachment[];
+}
+
+export interface MessageAttachment {
+  filename: string;
+  content_type?: string;
+  payload: string;
+  md5: string;
 }

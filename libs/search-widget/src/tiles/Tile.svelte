@@ -5,6 +5,7 @@
   import AudioTile from './AudioTile.svelte';
   import ImageTile from './ImageTile.svelte';
   import SpreadsheetTile from './SpreadsheetTile.svelte';
+  import ConversationTile from './ConversationTile.svelte';
   import TextTile from './TextTile.svelte';
   import type { FileFieldData, LinkFieldData } from '@nuclia/core';
   import { FIELD_TYPE } from '@nuclia/core';
@@ -18,11 +19,13 @@
     'application/vnd.oasis.opendocument.spreadsheet',
   ];
 
-  let tileType: 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'text';
+  let tileType: 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'conversation' | 'text';
   $: {
     if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
       const url = (result.fieldData as LinkFieldData).value?.uri;
       tileType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+    } else if (result?.field?.field_type === FIELD_TYPE.conversation) {
+      tileType = 'conversation';
     } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
       const file = (result.fieldData as FileFieldData).value?.file;
       // for audio, video, image or text, we have a corresponding tile
@@ -64,6 +67,8 @@
     <ImageTile {result} />
   {:else if tileType === 'spreadsheet'}
     <SpreadsheetTile {result} />
+  {:else if tileType === 'conversation'}
+    <ConversationTile {result} />
   {:else}
     <TextTile {result} />
   {/if}
