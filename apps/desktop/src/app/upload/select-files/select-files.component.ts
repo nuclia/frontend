@@ -1,19 +1,19 @@
 import {
-  Component,
   AfterViewInit,
-  OnDestroy,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  ElementRef,
-  ChangeDetectorRef,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  Output,
+  ViewChild,
 } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Observable, Subject, of } from 'rxjs';
-import { tap, filter, scan, switchMap, share, catchError, map } from 'rxjs/operators';
-import { SyncItem, ISourceConnector, SearchResults } from '../../sync/models';
+import { Observable, of, Subject } from 'rxjs';
+import { catchError, filter, map, scan, share, switchMap, tap } from 'rxjs/operators';
+import { ISourceConnector, SearchResults, SyncItem } from '../../sync/models';
 import { SisToastService } from '@nuclia/sistema';
 import { SyncService } from '../../sync/sync.service';
 

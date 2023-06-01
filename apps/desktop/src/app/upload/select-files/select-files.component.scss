@@ -10,8 +10,10 @@ h2 {
   margin: 0;
 }
 .header {
+  align-items: center;
   flex: 0 0 auto;
   display: flex;
+  height: rhythm(6);
   margin-top: rhythm(3);
 }
 
@@ -30,6 +32,7 @@ h2 {
   width: 100%;
   justify-content: flex-end;
   margin-bottom: rhythm(1);
+  padding-right: rhythm(2);
 
   pa-input ::ng-deep .pa-field-control {
     height: rhythm(4);
@@ -41,12 +44,21 @@ h2 {
 }
 
 table {
-  width: calc(100% - #{rhythm(2)});
   border-spacing: 0;
   border-top: 2px solid $color-neutral-regular;
+  margin-top: rhythm(1);
+  width: calc(100% - #{rhythm(2)});
 }
 
 td {
-  height: rhythm(3);
+  align-items: center;
   border-bottom: 1px solid $color-neutral-regular;
+  display: flex;
+  height: rhythm(4);
+  transition: color $transition-hint;
+
+  .disabled {
+    color: $color-text-disabled;
+    padding-left: rhythm(3.5);
+  }
 }

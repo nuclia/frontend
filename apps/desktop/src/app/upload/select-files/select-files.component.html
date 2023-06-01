@@ -25,17 +25,22 @@
     </form>
   </div>
   <div
-    *ngIf="!isSelectingAll"
     class="body"
     #scroll>
     <table>
       <tr *ngFor="let resource of resources | async">
         <td>
           <pa-checkbox
+            *ngIf="!isSelectingAll"
             [value]="selection.isSelected(resource)"
             (valueChange)="toggle(resource)">
             {{ resource.title }}
           </pa-checkbox>
+          <span
+            *ngIf="isSelectingAll"
+            class="body-m disabled">
+            {{ resource.title }}
+          </span>
         </td>
       </tr>
     </table>
