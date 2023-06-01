@@ -20,7 +20,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     type: new FormControl<AccountTypes>('stash-trial', { nonNullable: true, validators: [Validators.required] }),
     kbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
-    indexer_slow_replicas: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    max_dedicated_processors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
   zones = this.store.zones;

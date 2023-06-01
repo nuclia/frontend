@@ -48,7 +48,7 @@ export interface AccountPatchPayload {
   creator?: string;
   type?: string;
   kbs?: number;
-  indexer_slow_replicas?: number;
+  max_dedicated_processors?: number;
   data?: object;
   blocking_state?: AccountBlockingState;
   limits?: AccountLimits;

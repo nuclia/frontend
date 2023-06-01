@@ -30,7 +30,7 @@ export interface Account {
 
 export interface AccountConfig {
   g_speech_to_text: boolean;
-  indexer_slow_replicas: number;
+  indexer_slow_replicas: number; // Deprecated, use max_dedicated_processors instead
   max_dedicated_processors: number;
 }
 
