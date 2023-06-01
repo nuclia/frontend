@@ -1,11 +1,12 @@
-<div
-  class="upload-history"
-  [class.show-active]="showActive | async">
-  <header *ngIf="(showActive | async) === false">
+<div class="upload-history">
+  <header>
     <h2>{{ 'history.title' | translate }}</h2>
-  </header>
-  <header *ngIf="showActive | async">
-    <nsi-back-button link="/history">{{ 'history.back' | translate }}</nsi-back-button>
+    <pa-button
+      aspect="basic"
+      kind="destructive"
+      (click)="cleanHistory()">
+      {{ 'history.clear' | translate }}
+    </pa-button>
   </header>
 
   <pa-table columns="1fr 1fr 304px 1fr 48px">
@@ -16,26 +17,51 @@
       <pa-table-cell header></pa-table-cell>
       <pa-table-cell header>{{ 'history.data' | translate }}</pa-table-cell>
     </pa-table-header>
+    <pa-table-row *ngFor="let active of activeLogs | async">
+      <pa-table-cell>
+        <pa-datetime
+          [datetime]="active.date"
+          dateOnly
+          format="human"></pa-datetime>
+      </pa-table-cell>
+      <pa-table-cell>{{ active.from }}</pa-table-cell>
+      <pa-table-cell>{{ active.to }}</pa-table-cell>
+      <pa-table-cell>
+        <!-- progress null allows to display indeterminate progress bar until we find a way to display progress properly -->
+        <stf-progress-bar
+          *ngIf="!active.completed"
+          [progress]="null"></stf-progress-bar>
+        <pa-icon
+          *ngIf="active.completed && !active.errors"
+          name="check"
+          class="success"></pa-icon>
+        <pa-icon
+          *ngIf="active.completed && active.errors"
+          name="circle-cross"
+          class="error"
+          [paTooltip]="active.errors"></pa-icon>
+      </pa-table-cell>
+      <pa-table-cell>{{ active.total }}</pa-table-cell>
+    </pa-table-row>
+
     <pa-table-row *ngFor="let upload of uploads | async">
       <pa-table-cell>
         <pa-datetime
           [datetime]="upload.date"
-          format="numerical"></pa-datetime>
+          dateOnly
+          format="human"></pa-datetime>
       </pa-table-cell>
       <pa-table-cell>{{ upload.from }}</pa-table-cell>
       <pa-table-cell>{{ upload.to }}</pa-table-cell>
       <pa-table-cell>
-        <stf-progress-bar
-          *ngIf="!upload.completed"
-          [progress]="upload.progress"></stf-progress-bar>
         <pa-icon
           *ngIf="upload.completed && !upload.errors"
           name="check"
-          color="#f06"></pa-icon>
+          class="success"></pa-icon>
         <pa-icon
           *ngIf="upload.completed && upload.errors"
           name="circle-cross"
-          color="#f06"
+          class="error"
           [paTooltip]="upload.errors"></pa-icon>
       </pa-table-cell>
       <pa-table-cell>{{ upload.total }}</pa-table-cell>

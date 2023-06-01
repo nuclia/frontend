@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { LOCAL_SYNC_SERVER, SYNC_SERVER_KEY, SyncService } from '../../sync/sync.service';
+import { LOCAL_SYNC_SERVER, SYNC_SERVER_KEY, SyncService } from '../sync/sync.service';
 
 @Component({
-  selector: 'nde-sync-server',
-  templateUrl: 'sync-server.component.html',
-  styleUrls: ['sync-server.component.scss'],
+  selector: 'nde-server-selection',
+  templateUrl: './server-selection.component.html',
+  styleUrls: ['./server-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SyncServerComponent {
+export class ServerSelectionComponent {
   serverUrl =
     localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER ? '' : localStorage.getItem(SYNC_SERVER_KEY) || '';
 

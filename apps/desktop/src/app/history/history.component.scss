@@ -1,11 +1,7 @@
 @import 'variables';
 
 .upload-history {
-  max-width: calc(rhythm(90) + rhythm(12));
-
-  &.show-active {
-    max-width: calc(rhythm(90) + rhythm(32));
-  }
+  max-width: calc(#{rhythm(90)} + #{rhythm(12)});
 
   header {
     align-items: center;
@@ -26,5 +22,12 @@
   ::ng-deep .pa-table-grid--head .pa-table-grid--header {
     font-size: $font-size-body-xs;
     line-height: $line-height-body-xs;
+  }
+
+  .success {
+    color: $color-primary-regular;
+  }
+  .error {
+    color: $color-secondary-strong;
   }
 }

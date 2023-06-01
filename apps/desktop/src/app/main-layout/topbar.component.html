@@ -1,18 +1,19 @@
 <div class="top-bar">
-  <div
-    class="logo"
-    (click)="goHome()">
-    <img
-      src="assets/nuclia-desktop-white.svg"
-      alt="Nuclia Desktop" />
+  <div class="logo">
+    <a routerLink="/">
+      <img
+        src="assets/nuclia-desktop-white.svg"
+        alt="Nuclia Desktop" />
+    </a>
   </div>
   <div class="status">
     <pa-button
       size="small"
       [kind]="(isServerDown | async) ? 'destructive' : 'inverted'"
-      aspect="basic"
-      (click)="setSyncServer()">
-      {{ ((isServerDown | async) ? 'generic.server_down' : 'generic.server_up') | translate }}
+      aspect="basic">
+      <a routerLink="/server">
+        {{ ((isServerDown | async) ? 'generic.server_down' : 'generic.server_up') | translate }}
+      </a>
     </pa-button>
   </div>
   <div class="accounts">

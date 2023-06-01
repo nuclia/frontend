@@ -91,7 +91,7 @@
   }
 
   .history-menu {
-    padding: rhythm(2) 0;
+    padding: 0;
 
     li {
       align-items: center;
@@ -106,8 +106,7 @@
       &:focus,
       &:hover {
         outline: 0;
-        background-color: $color-dark-stronger;
-        color: $color-light-stronger;
+        background-color: $color-neutral-lighter;
 
         pa-icon {
           visibility: visible;
@@ -115,12 +114,20 @@
       }
 
       pa-icon {
-        color: $color-light-stronger;
         position: absolute;
         top: 50%;
         right: rhythm(2);
         transform: translateY(-50%);
         visibility: hidden;
+      }
+
+      &.active {
+        background-color: $color-dark-stronger;
+        color: $color-light-stronger;
+
+        pa-icon {
+          visibility: visible;
+        }
       }
     }
   }

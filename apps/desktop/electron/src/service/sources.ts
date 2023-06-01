@@ -163,8 +163,12 @@ export function getSourceFromBody(source: Source, existingFiles: SyncItem[]): So
   return source;
 }
 
-export function getLogs(): LogRow[] {
-  return LOG;
+export function getLogs(since?: string): LogRow[] {
+  return since ? LOG.filter((log) => log.date > since) : LOG;
+}
+
+export function clearLogs() {
+  LOG = [];
 }
 
 export function addLog(id: string, source: Source, count: number, errors: string) {
@@ -213,7 +217,7 @@ export function addActiveSyncLog(id: string, source: Source) {
 export function incrementActiveSyncLog(id: string) {
   const existing = ACTIVE_SYNC[id];
   if (existing) {
-    ACTIVE_SYNC[id] = { ...existing, progress: Math.round(((existing.progress + 1) / (existing.total || 1)) * 100) };
+    ACTIVE_SYNC[id] = { ...existing, progress: existing.progress + 1 };
   }
 }
 

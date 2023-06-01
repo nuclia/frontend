@@ -1,33 +1,28 @@
 <div class="container">
-  <ng-container *ngIf="(syncServer | async) !== ''; else noServer">
-    <ng-container *ngIf="(step | async) === 0 || (step | async) === 1">
-      <h2>{{ 'upload.source.title' | translate }}</h2>
-      <p>{{ 'upload.source.description' | translate }}</p>
-      <nde-connectors
-        type="sources"
-        [quickAccess]="quickAccess"
-        (selectConnector)="selectSource($event)"
-        (cancel)="cancel()"></nde-connectors>
-    </ng-container>
-    <ng-container *ngIf="(step | async) === 2">
-      <nde-select-files
-        [source]="source"
-        [sourceId]="sourceId"
-        (next)="goTo(3)"
-        [(selection)]="selection"
-        (cancel)="cancel()"></nde-select-files>
-    </ng-container>
-    <ng-container *ngIf="(step | async) === 3">
-      <h2>{{ 'upload.destination.title' | translate }}</h2>
-      <p>{{ 'upload.destination.description' | translate }}</p>
-      <nde-connectors
-        type="destinations"
-        [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
-        (selectConnector)="selectDestination($event)"
-        (cancel)="cancel()"></nde-connectors>
-    </ng-container>
+  <ng-container *ngIf="(step | async) === 0 || (step | async) === 1">
+    <h2>{{ 'upload.source.title' | translate }}</h2>
+    <p>{{ 'upload.source.description' | translate }}</p>
+    <nde-connectors
+      type="sources"
+      [quickAccess]="quickAccess"
+      (selectConnector)="selectSource($event)"
+      (cancel)="cancel()"></nde-connectors>
   </ng-container>
-  <ng-template #noServer>
-    <nde-sync-server></nde-sync-server>
-  </ng-template>
+  <ng-container *ngIf="(step | async) === 2">
+    <nde-select-files
+      [source]="source"
+      [sourceId]="sourceId"
+      (next)="goTo(3)"
+      [(selection)]="selection"
+      (cancel)="cancel()"></nde-select-files>
+  </ng-container>
+  <ng-container *ngIf="(step | async) === 3">
+    <h2>{{ 'upload.destination.title' | translate }}</h2>
+    <p>{{ 'upload.destination.description' | translate }}</p>
+    <nde-connectors
+      type="destinations"
+      [connectorIds]="source.isExternal ? ['nucliacloud'] : undefined"
+      (selectConnector)="selectDestination($event)"
+      (cancel)="cancel()"></nde-connectors>
+  </ng-container>
 </div>

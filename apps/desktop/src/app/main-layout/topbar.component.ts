@@ -43,11 +43,6 @@ export class TopbarComponent {
     ),
   );
 
-  goHome() {
-    console.log(`go home`);
-    this.router.navigate(['/']);
-  }
-
   goSelect() {
     this.router.navigate(['/select']);
   }
@@ -55,10 +50,5 @@ export class TopbarComponent {
   logout() {
     this.sync.logout();
     window.close();
-  }
-
-  setSyncServer() {
-    this.sync.resetSyncServer();
-    this.router.navigate(['/add-upload']);
   }
 }

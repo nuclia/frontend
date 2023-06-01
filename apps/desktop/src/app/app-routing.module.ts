@@ -4,6 +4,7 @@ import { SelectAccountComponent } from './account/account.component';
 import { HistoryComponent } from './history/history.component';
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { UploadComponent } from './upload/upload.component';
+import { ServerSelectionComponent } from './server-selection/server-selection.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,10 @@ const routes: Routes = [
         path: '',
         redirectTo: 'add-upload',
         pathMatch: 'full',
+      },
+      {
+        path: 'server',
+        component: ServerSelectionComponent,
       },
       {
         path: 'add-upload',
