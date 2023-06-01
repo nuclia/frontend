@@ -16,7 +16,6 @@ export class LimitsComponent implements OnInit, OnDestroy {
   private unsubscribeAll = new Subject<void>();
 
   limitsForm = new FormGroup({
-    processing: new FormGroup({}),
     upload: new FormGroup({}),
     usage: new FormGroup({}),
   });
@@ -34,12 +33,6 @@ export class LimitsComponent implements OnInit, OnDestroy {
       .getAccount()
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe((accountDetails) => {
-        Object.entries(accountDetails.limits.processing || {}).forEach(([key, limit]) => {
-          this.limitsForm.controls.processing.addControl(
-            key,
-            new FormControl<number>(limit, { nonNullable: true, validators: [Validators.required] }),
-          );
-        });
         Object.entries(accountDetails.limits.upload || {}).forEach(([key, limit]) => {
           this.limitsForm.controls.upload.addControl(
             key,
@@ -79,9 +72,6 @@ export class LimitsComponent implements OnInit, OnDestroy {
             this.isSaving = false;
             this.limitsForm.controls.upload.patchValue(updatedAccount.limits.upload);
             this.limitsForm.controls.usage.patchValue(updatedAccount.limits.usage);
-            if (updatedAccount.limits.processing) {
-              this.limitsForm.controls.processing.patchValue(updatedAccount.limits.processing);
-            }
             this.limitsForm.markAsPristine();
             this.cdr.markForCheck();
           },

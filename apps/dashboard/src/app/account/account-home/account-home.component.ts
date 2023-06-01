@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
-import { Account, StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
+import { StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
 import {
   BehaviorSubject,
   catchError,
@@ -47,20 +47,7 @@ export class AccountHomeComponent {
   );
 
   processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
-  processedThreshold: Observable<number> = combineLatest([this.account, this.processedView]).pipe(
-    filter(([account]) => !!account),
-    map(([account, statsType]) => {
-      const limits = (account as Account).limits.processing;
-      switch (statsType) {
-        case StatsType.CHARS:
-          return limits.monthly_limit_chars_processed;
-        case StatsType.MEDIA_SECONDS:
-          return limits.monthly_limit_media_seconds_processed;
-        case StatsType.DOCS_NO_MEDIA:
-          return limits.monthly_limit_non_media_files_processed;
-      }
-    }),
-  );
+  processedThreshold: Observable<number> = of(0);
 
   kb = this.sdk.currentKb;
   kbs = this.sdk.kbList;

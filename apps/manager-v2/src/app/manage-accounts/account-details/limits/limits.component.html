@@ -2,18 +2,6 @@
   [formGroup]="limitsForm"
   (ngSubmit)="save()">
   <section
-    formGroupName="processing"
-    *ngIf="(limitsForm.controls.processing.controls | keyvalue).length > 0">
-    <h3>Processing limits</h3>
-    <pa-input
-      type="number"
-      *ngFor="let limit of limitsForm.controls.processing.controls | keyvalue"
-      [formControlName]="limit.key">
-      {{ limit.key }}
-    </pa-input>
-  </section>
-
-  <section
     formGroupName="upload"
     *ngIf="(limitsForm.controls.upload.controls | keyvalue).length > 0">
     <h3>Upload limits</h3>
