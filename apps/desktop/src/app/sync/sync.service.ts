@@ -25,9 +25,9 @@ import {
   IDestinationConnector,
   ISourceConnector,
   SearchResults,
+  Source,
   SourceConnectorDefinition,
   SyncItem,
-  Source,
   SyncRow,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
@@ -379,14 +379,20 @@ export class SyncService {
     localStorage.setItem(SOURCE_NAME_KEY, id);
   }
 
-  getLogs(): Observable<SyncRow[]> {
-    return this.http.get<SyncRow[]>(`${this._syncServer.getValue()}/logs`).pipe(map((logs) => logs.reverse()));
+  getLogs(since?: string): Observable<SyncRow[]> {
+    return this.http
+      .get<SyncRow[]>(`${this._syncServer.getValue()}/logs${since ? '/' + since : ''}`)
+      .pipe(map((logs) => logs.reverse()));
   }
 
   getActiveLogs(): Observable<SyncRow[]> {
     return this.http
       .get<{ [id: string]: SyncRow }>(`${this._syncServer.getValue()}/active-logs`)
       .pipe(map((logs) => Object.values(logs)));
+  }
+
+  clearLogs(): Observable<void> {
+    return this.http.delete<void>(`${this._syncServer.getValue()}/logs`);
   }
 
   logout() {

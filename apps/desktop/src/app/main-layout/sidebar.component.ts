@@ -40,10 +40,6 @@ export class SidebarComponent {
     });
   }
 
-  goToHistory(showActive = false) {
-    this.router.navigate(['/history'], { queryParams: showActive ? { active: 'true' } : {} });
-  }
-
   deleteSource(quickAccessName: string) {
     this.modalService
       .openConfirm({

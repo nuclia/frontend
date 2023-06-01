@@ -56,14 +56,10 @@
 
     <div class="history-menu">
       <ul>
-        <li (click)="goToHistory()">
+        <li
+          routerLink="/history"
+          routerLinkActive="active">
           {{ 'history.title' | translate }}
-          <pa-icon
-            name="chevron-right"
-            size="small"></pa-icon>
-        </li>
-        <li (click)="goToHistory(true)">
-          {{ 'history.active' | translate }}
           <pa-icon
             name="chevron-right"
             size="small"></pa-icon>

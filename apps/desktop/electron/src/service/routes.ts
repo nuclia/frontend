@@ -1,6 +1,7 @@
 import express from 'express';
 import { firstValueFrom } from 'rxjs';
 import {
+  clearLogs,
   deleteSource,
   getActiveSyncs,
   getLogs,
@@ -85,8 +86,17 @@ router.get('/logs', (req, res) => {
   const logs = getLogs();
   res.send(JSON.stringify(logs));
 });
+router.get('/logs/:since', (req, res) => {
+  const logs = getLogs(req.params.since);
+  res.send(JSON.stringify(logs));
+});
 
 router.get('/active-logs', (req, res) => {
   const logs = getActiveSyncs();
   res.send(JSON.stringify(logs));
+});
+
+router.delete('/logs', (req, res) => {
+  clearLogs();
+  res.send();
 });

@@ -38,16 +38,6 @@ $gap-upload-row: rhythm(1);
   padding-left: rhythm(1);
 }
 
-.progress-bar {
-  height: rhythm(0.5);
-  background-color: $color-light-stronger;
-  div {
-    height: 100%;
-    background-color: $color-primary-regular;
-    transition: width $duration-superfast linear;
-  }
-}
-
 .status {
   width: $width-status;
 }

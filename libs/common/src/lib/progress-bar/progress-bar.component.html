@@ -1,5 +1,8 @@
-<div [class]="'progress-bar progress-bar-' + track">
+<div
+  class="progress-bar"
+  [class]="'progress-bar-' + track">
   <div
     class="progress"
+    [class.indeterminate]="isIndeterminate"
     [style.width.%]="progress"></div>
 </div>

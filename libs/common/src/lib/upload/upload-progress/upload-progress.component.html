@@ -37,11 +37,10 @@
               {{ 'upload.error' | translate }}
             </div>
 
-            <div
-              class="progress-bar"
-              *ngIf="file.progress !== 100">
-              <div [style.width.%]="file.progress"></div>
-            </div>
+            <stf-progress-bar
+              *ngIf="file.progress !== 100"
+              track="white"
+              [progress]="file.progress"></stf-progress-bar>
           </div>
         </div>
       </div>

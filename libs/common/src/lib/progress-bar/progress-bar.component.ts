@@ -9,8 +9,12 @@ type ProgressBarTrackColor = 'white' | 'gray';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressBarComponent {
-  @Input() progress: number | null = 0;
+  @Input() progress: number | null | undefined = 0;
   @Input() track: ProgressBarTrackColor = 'gray';
+
+  get isIndeterminate() {
+    return this.progress === null || this.progress === undefined;
+  }
 
   constructor() {}
 }
