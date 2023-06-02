@@ -1,6 +1,6 @@
 import type { MediaWidgetParagraph, PreviewKind } from '../models';
 import { SvelteState } from '../state-lib';
-import type { FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
+import type { CloudLink, FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
@@ -127,9 +127,13 @@ export function getMediaTranscripts(
   );
 }
 
-export function getFileFieldContentType(): Observable<string> {
+export function getPlayableVideo(): Observable<CloudLink | undefined> {
   return viewerState.store.pipe(
-    filter((state) => !!state.fieldFullId && state.fieldFullId.field_type === FIELD_TYPE.file && !!state.fieldData),
-    map((state) => (state.fieldData as FileFieldData).value?.file?.content_type || ''),
+    filter((state) => !!state.fieldData?.extracted),
+    map(
+      (state) =>
+        (state.fieldData as FileFieldData)?.extracted?.file?.file_generated?.['video.mpd'] ||
+        (state.fieldData as FileFieldData)?.value?.file,
+    ),
   );
 }

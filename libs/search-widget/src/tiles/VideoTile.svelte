@@ -1,39 +1,38 @@
 <script lang="ts">
-  import { filter, Observable, tap } from 'rxjs';
+  import { map, Observable, of, switchMap, tap } from 'rxjs';
   import type { Search } from '@nuclia/core';
-  import { switchMap, take } from 'rxjs/operators';
   import Youtube from '../components/previewers/Youtube.svelte';
   import { PreviewKind } from '../core/models';
   import Player from '../components/previewers/Player.svelte';
-  import { fieldData, getFieldUrl, getFileFieldContentType, isLinkField } from '../core/stores/viewer.store';
+  import { getFieldUrl, getPlayableVideo, isLinkField } from '../core/stores/viewer.store';
+  import { getFileUrls } from '../core/api';
   import MediaTile from './base-tile/MediaTile.svelte';
 
   export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
 
   let mediaLoading = true;
   let mediaTime = 0;
-  let mediaContentType: string | undefined;
 
   let mediaUrl: Observable<string>;
+  let mediaContentType: Observable<string>;
   let summary: Observable<string>;
   let isYoutube = false;
 
   const playFrom = (time: number) => {
     mediaTime = time;
     if (!mediaUrl && result.field) {
-      mediaUrl = getFieldUrl();
-
-      fieldData
-        .pipe(
-          filter((data) => !!data),
-          take(1),
-          switchMap(() => isLinkField()),
-          tap((isLink: boolean) => (isYoutube = isLink)),
-          switchMap(() => getFileFieldContentType()),
-        )
-        .subscribe((contentType) => {
-          mediaContentType = contentType;
-        });
+      mediaUrl = isLinkField().pipe(
+        tap((isLink: boolean) => (isYoutube = isLink)),
+        switchMap((isYoutube) =>
+          isYoutube
+            ? getFieldUrl()
+            : getPlayableVideo().pipe(
+                switchMap((video) => (video?.uri ? getFileUrls([video.uri]) : of(['']))),
+                map((urls) => urls[0]),
+              ),
+        ),
+      );
+      mediaContentType = getPlayableVideo().pipe(map((file) => file?.content_type || ''));
     }
   };
 
@@ -53,11 +52,11 @@
         time={mediaTime}
         uri={$mediaUrl}
         on:videoReady={onVideoReady} />
-    {:else if !!mediaContentType}
+    {:else if !!$mediaContentType}
       <Player
         time={mediaTime}
         src={$mediaUrl}
-        type={mediaContentType}
+        type={$mediaContentType}
         on:videoReady={onVideoReady} />
     {/if}
   {/if}
