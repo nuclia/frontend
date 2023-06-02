@@ -22,9 +22,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     kbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     max_dedicated_processors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    trial_expiration_date: new FormControl<string>(''),
   });
   zones = this.store.zones;
   isSaving = false;
+
+  get isTrial() {
+    return this.configForm.controls.type.value === 'stash-trial';
+  }
 
   constructor(
     private store: AccountDetailsStore,

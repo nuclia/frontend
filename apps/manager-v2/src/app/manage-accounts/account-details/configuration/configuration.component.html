@@ -14,6 +14,11 @@
     <pa-option value="stash-developer">Developer</pa-option>
     <pa-option value="stash-startup">Startup</pa-option>
   </pa-select>
+
+  <pa-date-picker
+    *ngIf="isTrial"
+    label="Trial expiration date"
+    formControlName="trial_expiration_date"></pa-date-picker>
   <pa-input
     type="number"
     formControlName="kbs">
