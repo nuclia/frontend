@@ -7,6 +7,7 @@ import {
   isEmptySearchQuery,
   labelFilters,
   loadMore,
+  pageNumber,
   pendingResults,
   searchFilters,
   searchOptions,
@@ -37,6 +38,7 @@ export const setupTriggerSearch = (
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
             tap((query) => (!trigger?.more ? ask.next({ question: query, reset: true }) : undefined)),
+            tap(() => (!trigger?.more ? pageNumber.set(0) : undefined)),
             switchMap((query) =>
               onlyAnswers.pipe(
                 filter((onlyAnwsers) => !onlyAnwsers),

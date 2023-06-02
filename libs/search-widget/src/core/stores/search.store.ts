@@ -138,6 +138,14 @@ export const loadMore = searchState.writer<number, void>(
   }),
 );
 
+export const pageNumber = searchState.writer<number>(
+  (state) => state.options.page_number || 0,
+  (state, pageNumber) => ({
+    ...state,
+    options: { ...state.options, page_number: pageNumber },
+  }),
+);
+
 export const pendingResults = searchState.writer<boolean>(
   (state) => state.pending,
   (state, pending) => ({ ...state, pending }),
