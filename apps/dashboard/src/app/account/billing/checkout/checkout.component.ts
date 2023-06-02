@@ -3,8 +3,8 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  OnInit,
   OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -13,8 +13,8 @@ import { combineLatest, forkJoin, from, of, Subject } from 'rxjs';
 import {
   catchError,
   delay,
-  filter,
   distinctUntilChanged,
+  filter,
   map,
   shareReplay,
   switchMap,
@@ -26,7 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { injectScript, SDKService, StateService, UserService } from '@flaps/core';
 import { BillingService } from '../billing.service';
-import { StripeCustomer, SubsciptionError } from '../billing.models';
+import { StripeCustomer, SubscriptionError } from '../billing.models';
 import { COUNTRIES, REQUIRED_VAT_COUNTRIES } from '../utils';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { AccountTypes } from '@nuclia/core';
@@ -341,12 +341,12 @@ export class CheckoutComponent implements OnDestroy, OnInit {
             })
             .pipe(
               catchError((error) => {
-                if (error.body?.error_code === SubsciptionError.PAYMENT_METHOD_NOT_ATTACHED) {
+                if (error.body?.error_code === SubscriptionError.PAYMENT_METHOD_NOT_ATTACHED) {
                   this.editCard = true;
                   this.token = undefined;
                   this.paymentMethodId = undefined;
                   throw new Error('billing.invalid_card');
-                } else if (error.body?.error_code === SubsciptionError.INVALID_ADDRESS) {
+                } else if (error.body?.error_code === SubscriptionError.INVALID_ADDRESS) {
                   this.editCustomer = true;
                   throw new Error('billing.invalid_address');
                 }

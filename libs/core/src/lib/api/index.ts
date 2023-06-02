@@ -1,3 +1,4 @@
+export * from './account.service';
 export * from './deprecated-api.service';
 export * from './sdk.service';
 export * from './sso.service';

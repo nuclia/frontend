@@ -11,6 +11,7 @@ import {
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { AccountListComponent } from './account-list/account-list.component';
@@ -85,6 +86,7 @@ const ROUTES: Routes = [
     PaPopupModule,
     PaDropdownModule,
     PaScrollModule,
+    PaTooltipModule,
   ],
   declarations: [
     ManageAccountsComponent,

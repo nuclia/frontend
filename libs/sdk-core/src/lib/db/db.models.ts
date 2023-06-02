@@ -40,16 +40,30 @@ export interface AccountLimits {
     upload_limit_max_non_media_file_size: number;
   };
   usage: {
-    monthly_limit_chars_processed: number;
     monthly_limit_docs_no_media_processed: number;
     monthly_limit_hosted_answers_generated: number;
     monthly_limit_hosted_searches_performed: number;
     monthly_limit_media_seconds_processed: number;
-    monthly_limit_non_media_files_processed: number;
     monthly_limit_paragraphs_processed: number;
     monthly_limit_paragraphs_stored: number;
     monthly_limit_self_hosted_answers_generated: number;
     monthly_limit_self_hosted_searches_performed: number;
+  };
+}
+export interface AccountLimitsPatchPayload {
+  upload: {
+    upload_limit_max_media_file_size: number | null;
+    upload_limit_max_non_media_file_size: number | null;
+  };
+  usage: {
+    monthly_limit_docs_no_media_processed: number | null;
+    monthly_limit_hosted_answers_generated: number | null;
+    monthly_limit_hosted_searches_performed: number | null;
+    monthly_limit_media_seconds_processed: number | null;
+    monthly_limit_paragraphs_processed: number | null;
+    monthly_limit_paragraphs_stored: number | null;
+    monthly_limit_self_hosted_answers_generated: number | null;
+    monthly_limit_self_hosted_searches_performed: number | null;
   };
 }
 

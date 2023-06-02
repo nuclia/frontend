@@ -1,3 +1,8 @@
+# 1.3.3 (unreleased)
+
+### Improvements
+- Update `AccountLimits` model and create `AccountLimitsPatchPayload` model
+
 # 1.3.2 (2023-05-24)
 
 ### Improvements
