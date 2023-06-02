@@ -87,13 +87,14 @@ export class NucliaCloud {
     }
   }
 
-  uploadLink(filename: string, data: Link): Observable<void> {
+  uploadLink(originalId: string, filename: string, data: Link): Observable<void> {
+    const slug = sha256(originalId);
     return this.getKb().pipe(
       switchMap((kb) =>
-        kb.createResource({ title: filename, files: { 'remote-file': { file: data } } }).pipe(
+        kb.createOrUpdateResource({ title: filename, slug, files: { 'remote-file': { file: data } } }).pipe(
           catchError((error) => {
-            console.log(`createResource – error:`, JSON.stringify(error));
-            return throwError(() => new Error('Resource creation failed'));
+            console.log(`createOrUpdateResource – error:`, JSON.stringify(error));
+            return throwError(() => new Error('Resource creation/modification failed'));
           }),
         ),
       ),

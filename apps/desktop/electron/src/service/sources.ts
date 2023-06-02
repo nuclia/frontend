@@ -112,7 +112,7 @@ export function syncFile(sourceId: string, source: Source, item: SyncItem): Obse
           }),
         );
       } else if (data.type === 'link' && data.link) {
-        return nucliaConnector.uploadLink(item.title, data.link).pipe(map(() => true));
+        return nucliaConnector.uploadLink(item.originalId, item.title, data.link).pipe(map(() => true));
       } else {
         return of(false);
       }
