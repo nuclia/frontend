@@ -16,7 +16,6 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 export class AccountUsersComponent implements OnDestroy, OnInit {
   account?: Account;
   users?: AccountUser[];
-  columns = ['user', 'role', 'actions'];
   email = new UntypedFormControl([''], [Validators.required, Validators.email]);
 
   roleTranslations: { [role: string]: string } = {
