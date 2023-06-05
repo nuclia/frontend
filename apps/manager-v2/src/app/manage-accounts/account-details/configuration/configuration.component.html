@@ -14,21 +14,6 @@
     <pa-option value="stash-developer">Developer</pa-option>
     <pa-option value="stash-startup">Startup</pa-option>
   </pa-select>
-
-  <pa-date-picker
-    *ngIf="isTrial"
-    label="Trial expiration date"
-    formControlName="trial_expiration_date"></pa-date-picker>
-  <pa-input
-    type="number"
-    formControlName="kbs">
-    Available knowledge boxes
-  </pa-input>
-  <pa-input
-    type="number"
-    formControlName="max_dedicated_processors">
-    Max dedicated processors
-  </pa-input>
   <pa-select
     label="Zone"
     formControlName="zone"
@@ -39,7 +24,49 @@
       {{ zone.title }}
     </pa-option>
   </pa-select>
+  <pa-date-picker
+    *ngIf="isTrial"
+    label="Trial expiration date"
+    formControlName="trial_expiration_date"></pa-date-picker>
+  <pa-input
+    type="number"
+    formControlName="max_dedicated_processors">
+    Max dedicated processors
+  </pa-input>
 
+  <div>
+    <label
+      class="title-xxs"
+      for="max-kbs">
+      Max knowledge boxes available
+    </label>
+    <div
+      class="radio-limit-container"
+      formGroupName="kbs">
+      <pa-radio-group
+        id="max-kbs"
+        formControlName="kbs_radio">
+        <pa-radio value="unlimited">Unlimited</pa-radio>
+        <pa-radio value="limit">Limit</pa-radio>
+      </pa-radio-group>
+      <div
+        *ngIf="configForm.controls.kbs.controls.kbs_radio.value === 'limit'"
+        class="limit-container">
+        <pa-input
+          type="number"
+          externalLabel
+          formControlName="max_kbs"></pa-input>
+        <pa-button
+          size="small"
+          icon="reload"
+          paTooltip="Reset to default"
+          aspect="basic"
+          (click)="resetMaxKbsToDefault()">
+          Reset to default
+        </pa-button>
+      </div>
+    </div>
+  </div>
   <nma-form-footer
     [disabled]="configForm.pristine || configForm.invalid || isSaving"
     (cancel)="reset()"></nma-form-footer>

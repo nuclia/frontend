@@ -2,11 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { AccountDetailsStore } from '../account-details.store';
 import { AccountTypes } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subject, switchMap } from 'rxjs';
+import { Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ExtendedAccount } from '../../account.models';
+import { AccountPatchPayload, ExtendedAccount } from '../../account.models';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
+import { AccountTypeDefaults } from '@flaps/core';
 
 @Component({
   templateUrl: './configuration.component.html',
@@ -19,13 +20,21 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   configForm = new FormGroup({
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     type: new FormControl<AccountTypes>('stash-trial', { nonNullable: true, validators: [Validators.required] }),
-    kbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    kbs: new FormGroup({
+      kbs_radio: new FormControl<'limit' | 'unlimited'>('limit', {
+        nonNullable: true,
+        validators: [Validators.required],
+      }),
+      max_kbs: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
+    }),
     max_dedicated_processors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     trial_expiration_date: new FormControl<string>(''),
   });
   zones = this.store.zones;
   isSaving = false;
+
+  defaultLimits?: AccountTypeDefaults;
 
   get isTrial() {
     return this.configForm.controls.type.value === 'stash-trial';
@@ -41,12 +50,15 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.store
       .getAccount()
-      .pipe(takeUntil(this.unsubscribeAll))
-      .subscribe((accountDetails) => {
-        this.accountBackup = { ...accountDetails };
-        this.configForm.patchValue(accountDetails);
-        this.configForm.controls.kbs.patchValue(accountDetails.stashes.max_stashes);
-      });
+      .pipe(
+        tap((accountDetails) => {
+          this.accountBackup = { ...accountDetails };
+          this.patchConfigForm(accountDetails);
+        }),
+        switchMap((accountDetails) => this.accountService.getDefaultLimits(accountDetails.type)),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((defaultLimits) => (this.defaultLimits = defaultLimits));
   }
 
   ngOnDestroy() {
@@ -60,11 +72,16 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       this.store
         .getAccount()
         .pipe(
-          switchMap((account) =>
-            this.accountService
-              .updateAccount(account.id, this.configForm.getRawValue())
-              .pipe(switchMap(() => this.accountService.getAccount(account.id))),
-          ),
+          switchMap((account) => {
+            const rawValue = this.configForm.getRawValue();
+            const payload: AccountPatchPayload = {
+              ...rawValue,
+              kbs: rawValue.kbs.kbs_radio === 'limit' ? rawValue.kbs.max_kbs : -1,
+            };
+            return this.accountService
+              .updateAccount(account.id, payload)
+              .pipe(switchMap(() => this.accountService.getAccount(account.id)));
+          }),
         )
         .subscribe({
           next: (updatedAccount) => {
@@ -84,9 +101,23 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
 
   reset() {
     if (this.accountBackup) {
-      this.configForm.patchValue(this.accountBackup);
-      this.configForm.controls.kbs.patchValue(this.accountBackup.stashes.max_stashes);
+      this.patchConfigForm(this.accountBackup);
       this.configForm.markAsPristine();
     }
+  }
+
+  resetMaxKbsToDefault() {
+    if (!this.defaultLimits) {
+      return;
+    }
+    this.configForm.controls.kbs.controls.max_kbs.patchValue(this.defaultLimits.max_kbs);
+  }
+
+  private patchConfigForm(accountDetails: ExtendedAccount) {
+    this.configForm.patchValue(accountDetails);
+    this.configForm.controls.kbs.controls.kbs_radio.patchValue(
+      accountDetails.stashes.max_stashes === -1 ? 'unlimited' : 'limit',
+    );
+    this.configForm.controls.kbs.controls.max_kbs.patchValue(accountDetails.stashes.max_stashes);
   }
 }
