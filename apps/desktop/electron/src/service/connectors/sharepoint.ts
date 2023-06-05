@@ -34,13 +34,8 @@ class SharepointImpl implements ISourceConnector {
 
   getLastModified(since: string, folders?: SyncItem[] | undefined): Observable<SyncItem[]> {
     try {
-      return forkJoin((folders || []).map((folder) => this._getItems('', folder.uuid))).pipe(
-        map((results) => {
-          return results.reduce(
-            (acc, result) => acc.concat(result.items.filter((item) => item.modifiedGMT && item.modifiedGMT > since)),
-            [] as SyncItem[],
-          );
-        }),
+      return forkJoin((folders || []).map((folder) => this._getItems(folder.uuid, false, since))).pipe(
+        map((results) => results.reduce((acc, result) => acc.concat(result.items), [] as SyncItem[])),
       );
     } catch (err) {
       return of([]);
@@ -48,17 +43,17 @@ class SharepointImpl implements ISourceConnector {
   }
 
   getFolders(query?: string | undefined): Observable<SearchResults> {
-    return this._getItems(query, '', true);
+    return this._getItems('', true);
   }
 
   getFiles(query?: string): Observable<SearchResults> {
-    return this._getItems(query);
+    return this._getItems();
   }
 
   private _getItems(
-    query = '',
     folder = '',
     foldersOnly = false,
+    since?: string,
     siteId?: string,
     nextPage?: string,
     previous?: SearchResults,
@@ -66,21 +61,30 @@ class SharepointImpl implements ISourceConnector {
     return (siteId ? of(siteId) : this.getSiteId()).pipe(
       concatMap((_siteId) => {
         siteId = _siteId;
-        let path = `https://graph.microsoft.com/v1.0/sites/${siteId}/drive/${folder ? `items/${folder}` : 'root'}`;
-        if (query) {
-          path += `/search(q='${query}')`;
+        let path = '';
+        if (foldersOnly) {
+          path = `https://graph.microsoft.com/v1.0/sites/${siteId}/lists`;
+        } else if (folder) {
+          path = `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${folder}/items?expand=fields`;
+          if (since) {
+            path += `&$filter=fields/Modified gt '${since}'`;
+          }
         } else {
-          path += `/children`;
+          throw new Error('One-shot import not implemented for Sharepoint.');
         }
         if (nextPage) {
           path += `&$skiptoken=${nextPage}`;
         }
         return from(
-          fetch(path, { headers: { Authorization: `Bearer ${this.params.token}` } }).then((res) => res.json()),
+          fetch(path, {
+            headers: {
+              Authorization: `Bearer ${this.params.token}`,
+              Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly',
+            },
+          }).then((res) => res.json()),
         );
       }),
       concatMap((res) => {
-        console.log(res);
         if (res.error) {
           if (res.error.code === 'InvalidAuthenticationToken') {
             throw new Error('Unauthorized');
@@ -93,25 +97,29 @@ class SharepointImpl implements ISourceConnector {
               ? res?.['@odata.nextLink'].split('&$skiptoken=')[1].split('&')[0]
               : undefined;
           const items = (res.value || [])
-            .filter((item: any) => (foldersOnly ? !!item.folder : !!item.file))
-            .map((item: any) => (foldersOnly ? this.mapToSyncItemFolder(item) : this.mapToSyncItem(item)));
+            .filter((item: any) => foldersOnly || item.fields?.ContentType === 'Document')
+            .map((item: any) =>
+              foldersOnly ? this.mapToSyncItemFolder(item) : this.mapToSyncItem(item, siteId || '', folder),
+            );
           const results = {
             items: [...(previous?.items || []), ...items],
             nextPage,
           };
-          return nextPage ? this._getItems(query, folder, foldersOnly, siteId, nextPage, results) : of(results);
+          return nextPage ? this._getItems(folder, foldersOnly, since, siteId, nextPage, results) : of(results);
         }
       }),
     );
   }
 
-  private mapToSyncItem(item: any): SyncItem {
+  private mapToSyncItem(item: any, siteId: string, listId: string): SyncItem {
     return {
-      uuid: item.id,
-      title: item.name,
-      originalId: item.id,
+      uuid: item.webUrl,
+      title: item.fields?.FileLeafRef || item.webUrl,
+      originalId: item.webUrl,
       modifiedGMT: item.lastModifiedDateTime,
-      metadata: { downloadLink: item['@microsoft.graph.downloadUrl'] },
+      metadata: {
+        downloadLink: `https://graph.microsoft.com/v1.0/sites/${siteId}/lists/${listId}/items/${item.id}/driveitem/content`,
+      },
       status: FileStatus.PENDING,
     };
   }
