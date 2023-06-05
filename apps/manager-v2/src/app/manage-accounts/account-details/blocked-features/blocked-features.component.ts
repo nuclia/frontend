@@ -22,6 +22,11 @@ export class BlockedFeaturesComponent implements OnInit, OnDestroy {
     processing: new FormControl<boolean>(false, { nonNullable: true }),
     search: new FormControl<boolean>(false, { nonNullable: true }),
     generative: new FormControl<boolean>(false, { nonNullable: true }),
+    training: new FormControl<boolean>(false, { nonNullable: true }),
+    public_upload: new FormControl<boolean>(false, { nonNullable: true }),
+    public_processing: new FormControl<boolean>(false, { nonNullable: true }),
+    public_search: new FormControl<boolean>(false, { nonNullable: true }),
+    public_generative: new FormControl<boolean>(false, { nonNullable: true }),
   });
   isSaving = false;
 

@@ -6,7 +6,7 @@
     *ngFor="let feature of blockedFeatures.controls | keyvalue"
     [formControlName]="feature.key"
     [value]="feature.value">
-    {{ feature.key }}
+    {{ feature.key | featureName }}
   </pa-checkbox>
   <nma-form-footer
     [disabled]="blockedFeatures.pristine || isSaving"

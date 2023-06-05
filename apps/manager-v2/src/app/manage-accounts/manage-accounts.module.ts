@@ -24,6 +24,7 @@ import { KbDetailsComponent } from './account-details/kb-details/kb-details.comp
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
 import { FormFooterComponent } from './form-footer/form-footer.component';
+import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
 
 const ROUTES: Routes = [
   {
@@ -101,6 +102,7 @@ const ROUTES: Routes = [
     KbDetailsComponent,
     BlockedFeaturesComponent,
     FormFooterComponent,
+    FeatureNamePipe,
   ],
 })
 export class ManageAccountsModule {}
