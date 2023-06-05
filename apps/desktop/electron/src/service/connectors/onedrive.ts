@@ -17,8 +17,8 @@ export const OneDriveConnector: SourceConnectorDefinition = {
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
 
 class OneDriveImpl implements ISourceConnector {
-  isExternal = false;
   params: ConnectorParameters = {};
+  isExternal = false;
 
   hasAuthData() {
     return !!this.params.token;

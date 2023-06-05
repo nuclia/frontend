@@ -15,8 +15,8 @@ import { takeUntil } from 'rxjs';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  isAuthenticated = true;
   version = '';
+  isAuthenticated = true;
   constructor(
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
