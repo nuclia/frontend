@@ -151,6 +151,9 @@ export default class App {
     autoUpdater.on('update-available', () => {
       App.mainWindow?.webContents.executeJavaScript(`alert('A new update is available. Downloading now…')`);
     });
+    autoUpdater.on('error', (err) => {
+      App.mainWindow?.webContents.executeJavaScript(`console.log('Error in auto-updater. ${err}')`);
+    });
     autoUpdater.on('update-downloaded', () => {
       App.mainWindow?.webContents.executeJavaScript(
         `if(confirm('The update is downloaded. Do you want to update now?')){window['electron'].quitAndReInstall()}`,

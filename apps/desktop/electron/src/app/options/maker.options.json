@@ -1,7 +1,7 @@
 {
   "$schema": "../../../../../../node_modules/nx-electron/src/validation/maker.schema.json",
   "appId": "cloud.nuclia.desktop",
-  "productName": "Nuclia Desktop",
+  "productName": "NucliaDesktop",
   "copyright": "Copyright 2022 BOSUTECH XXI SL",
   "npmRebuild": false,
   "electronCompile": false,
@@ -55,5 +55,5 @@
       "to": "electron"
     }
   ],
-  "protocols": [{ "name": "Nuclia Desktop", "schemes": ["nuclia-desktop"] }]
+  "protocols": [{ "name": "NucliaDesktop", "schemes": ["nuclia-desktop"] }]
 }

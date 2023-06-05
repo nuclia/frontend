@@ -39,6 +39,7 @@ import { OneDriveConnector } from './sources/onedrive';
 import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
+import { SharepointConnector } from './sources/sharepoint';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
@@ -69,6 +70,7 @@ export class SyncService {
   } = {
     // gdrive: { definition: GDrive, settings: {} },
     onedrive: { definition: OneDriveConnector, settings: {} },
+    sharepoint: { definition: SharepointConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
