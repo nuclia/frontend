@@ -4,17 +4,6 @@
   (ngSubmit)="save()">
   <pa-input formControlName="email">Email</pa-input>
   <pa-select
-    label="Type"
-    formControlName="type">
-    <pa-option value="stash-trial">Trial</pa-option>
-    <pa-option value="stash-basic">Basic</pa-option>
-    <pa-option value="stash-team">Teams</pa-option>
-    <pa-option value="stash-enterprise">Enterprise</pa-option>
-    <pa-option value="stash-business">Business</pa-option>
-    <pa-option value="stash-developer">Developer</pa-option>
-    <pa-option value="stash-startup">Startup</pa-option>
-  </pa-select>
-  <pa-select
     label="Zone"
     formControlName="zone"
     readonly>
@@ -24,6 +13,28 @@
       {{ zone.title }}
     </pa-option>
   </pa-select>
+  <div class="account-type-container">
+    <pa-select
+      readonly
+      label="Account type"
+      help="ALL testing account MUST be Trial"
+      formControlName="type">
+      <pa-option value="stash-trial">Trial</pa-option>
+      <pa-option value="stash-basic">Basic</pa-option>
+      <pa-option value="stash-team">Teams</pa-option>
+      <pa-option value="stash-enterprise">Enterprise</pa-option>
+      <pa-option value="stash-business">Business</pa-option>
+      <pa-option value="stash-developer">Developer</pa-option>
+      <pa-option value="stash-startup">Startup</pa-option>
+    </pa-select>
+
+    <pa-button
+      *ngIf="configForm.controls.type.value === 'stash-trial' || configForm.controls.type.value === 'stash-enterprise'"
+      (click)="toggleAccountType()">
+      {{ configForm.controls.type.value === 'stash-trial' ? 'Upgrade to Enterprise' : 'Downgrade to Trial' }}
+    </pa-button>
+  </div>
+
   <pa-date-picker
     *ngIf="isTrial"
     label="Trial expiration date"

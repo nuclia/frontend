@@ -52,6 +52,7 @@ export interface AccountPatchPayload {
   data?: object;
   blocking_state?: AccountBlockingState;
   limits?: AccountLimitsPatchPayload;
+  trial_expiration_date?: string | null;
 }
 
 export interface AccountKbList {

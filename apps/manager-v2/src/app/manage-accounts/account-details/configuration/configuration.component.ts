@@ -11,6 +11,7 @@ import { AccountTypeDefaults } from '@flaps/core';
 
 @Component({
   templateUrl: './configuration.component.html',
+  styleUrls: ['configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfigurationComponent implements OnInit, OnDestroy {
@@ -76,6 +77,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
             const rawValue = this.configForm.getRawValue();
             const payload: AccountPatchPayload = {
               ...rawValue,
+              trial_expiration_date: rawValue.trial_expiration_date ? rawValue.trial_expiration_date : null,
               kbs: rawValue.kbs.kbs_radio === 'limit' ? rawValue.kbs.max_kbs : -1,
             };
             return this.accountService
@@ -86,6 +88,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (updatedAccount) => {
             this.store.setAccountDetails(updatedAccount);
+            this.accountBackup = { ...updatedAccount };
             this.isSaving = false;
             this.configForm.markAsPristine();
             this.cdr.markForCheck();
@@ -111,6 +114,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
       return;
     }
     this.configForm.controls.kbs.controls.max_kbs.patchValue(this.defaultLimits.max_kbs);
+    this.configForm.controls.kbs.markAsDirty();
+  }
+
+  toggleAccountType() {
+    this.configForm.controls.type.patchValue(
+      this.configForm.controls.type.value === 'stash-trial' ? 'stash-enterprise' : 'stash-trial',
+    );
+    this.configForm.controls.type.markAsDirty();
   }
 
   private patchConfigForm(accountDetails: ExtendedAccount) {
