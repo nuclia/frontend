@@ -27,6 +27,7 @@ import { CdkTableModule } from '@angular/cdk/table';
 import { UsersManageModule } from '../knowledge-box';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
   PaModalModule,
@@ -83,6 +84,7 @@ const Components = [
     PaTabsModule,
     BillingModule,
     AccountStatusComponent,
+    PaDateTimeModule,
   ],
   declarations: [...Components, NuaActivityComponent],
   exports: [AccountHomeComponent, AccountManageComponent],

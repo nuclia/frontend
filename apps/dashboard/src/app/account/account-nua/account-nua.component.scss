@@ -5,56 +5,52 @@
 }
 
 h2 {
-  margin: 0 0 rhythm(0.25) 0;
+  margin: 0 0 rhythm(1) 0;
 }
 
 .warning {
-  font-style: italic;
-  margin-bottom: rhythm(3);
+  color: $color-secondary-stronger;
+  display: flex;
+  gap: rhythm(1);
 }
 
-h3 {
+.create-nua-button {
+  margin: rhythm(3) 0 rhythm(6);
+}
+
+h4 {
   margin: 0 0 rhythm(0.5) 0;
-  font-size: var(--stf-font-size-medium);
-  font-weight: var(--stf-font-weight-semibold);
 }
 
 .container {
   max-width: 1024px;
   padding: rhythm(1) rhythm(2) rhythm(2);
-  background-color: $color-light-stronger;
 }
 
-.client {
-  height: 50px;
-  display: flex;
+.client-row {
   align-items: center;
-  border-bottom: 1px solid $color-neutral-light;
+  border-bottom: 1px solid $color-neutral-lighter;
+  display: flex;
+  gap: rhythm(1);
+  height: rhythm(6);
+
   &:first-of-type {
     border-top: 1px solid $color-dark-stronger;
   }
-}
 
-.title {
-  flex: 1 1 0;
-  @include text-truncate();
-  padding-right: rhythm(1);
-}
+  .title {
+    flex: 1 1 0;
+  }
 
-.date {
-  width: 140px;
-}
+  .date {
+    width: rhythm(20);
+  }
 
-.email {
-  width: 33%;
-  @include text-truncate();
-  padding-right: rhythm(1);
-}
+  .email {
+    width: 33%;
+  }
 
-.buttons {
-  display: flex;
-}
-
-.add {
-  margin-top: rhythm(2);
+  .buttons {
+    display: flex;
+  }
 }
