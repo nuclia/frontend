@@ -27,6 +27,7 @@ import {
   Resource,
   ResourceData,
   ResourceField,
+  ResourceProperties,
   TextField,
   UserClassification,
   UserFieldMetadata,
@@ -97,7 +98,17 @@ export class EditResourceService {
   private _loadResource(resourceId: string): Observable<Resource> {
     return this.sdk.currentKb.pipe(
       take(1),
-      switchMap((kb) => kb.getResource(resourceId)),
+      switchMap((kb) =>
+        kb.getResource(resourceId, [
+          ResourceProperties.BASIC,
+          ResourceProperties.ORIGIN,
+          ResourceProperties.RELATIONS,
+          ResourceProperties.VALUES,
+          ResourceProperties.EXTRACTED,
+          ResourceProperties.ERRORS,
+          ResourceProperties.EXTRA,
+        ]),
+      ),
       tap((resource) => this._resource.next(resource)),
     );
   }

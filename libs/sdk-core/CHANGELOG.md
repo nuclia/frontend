@@ -1,7 +1,9 @@
-# 1.3.3 (unreleased)
+# 1.3.3 (2023-06-06)
 
 ### Improvements
 - Update `AccountLimits` model and create `AccountLimitsPatchPayload` model
+- Add `extra` metadata property in Resource model
+- Add `EXTRA` value in `ResourceProperties` enum, allowing to get extra property when loading resource 
 
 # 1.3.2 (2023-05-24)
 

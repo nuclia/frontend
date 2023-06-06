@@ -14,6 +14,7 @@ export enum ResourceProperties {
   VALUES = 'values',
   EXTRACTED = 'extracted',
   ERRORS = 'errors',
+  EXTRA = 'extra',
 }
 
 export enum ResourceFieldProperties {
