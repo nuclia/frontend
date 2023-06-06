@@ -243,6 +243,7 @@ export interface WidgetFeatures {
   speech?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
+  autofilter?: boolean;
 }
 
 export interface Counters {

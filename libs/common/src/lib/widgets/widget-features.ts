@@ -10,6 +10,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   notPublic: true,
   answers: false,
   onlyAnswers: false,
+  autofilter: false,
 };
 
 export const DEFAULT_FEATURES_LIST: string[] = Object.entries(DEFAULT_FEATURES)

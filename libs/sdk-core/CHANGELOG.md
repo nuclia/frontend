@@ -1,3 +1,8 @@
+# 1.3.4 (unreleased)
+
+### Improvements
+- Add `autofilter` property to `BaseSearchOptions` and `WidgetFeatures` models
+
 # 1.3.3 (2023-06-06)
 
 ### Improvements

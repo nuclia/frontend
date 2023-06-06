@@ -29,6 +29,7 @@ export interface BaseSearchOptions {
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
   shards?: string[];
+  autofilter?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {

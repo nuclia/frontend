@@ -42,6 +42,9 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   if (widgetOptions.features?.useSynonyms) {
     DEFAULT_SEARCH_OPTIONS.with_synonyms = true;
   }
+  if (widgetOptions.features?.autofilter) {
+    DEFAULT_SEARCH_OPTIONS.autofilter = true;
+  }
   nucliaApi = new Nuclia(options);
   searchOptions.set({ inTitleOnly: false, highlight: widgetOptions.highlight });
   if (widgetOptions.features?.suggestLabels) {

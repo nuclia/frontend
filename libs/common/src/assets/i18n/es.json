@@ -781,6 +781,8 @@
 	"stash.widgets": "Widgets",
 	"stash.widgets.answers": "Generación de respuesta",
 	"stash.widgets.answers.help": "Generar respuesta a las preguntas de los usuarios y permitir chatear con el sistema",
+	"stash.widgets.autofilter": "Filtrado automático",
+	"stash.widgets.autofilter.help": "Detacta las entidades mencionadas en la consulta del usuario y las convierte automáticamente en filtros",
 	"stash.widgets.configuration": "Configuracion de Widget",
 	"stash.widgets.editLabels": "Editar etiquetas",
 	"stash.widgets.editLabels.help": "Permite agregar/eliminar etiquetas desde la vista de recursos",
