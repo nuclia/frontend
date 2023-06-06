@@ -105,6 +105,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
           this.placeholder = config.placeholder;
           this.mainForm = this.fb.group({
             features: this.fb.group({
+              autofilter: [config.features.includes('autofilter')],
               answers: [config.features.includes('answers')],
               filter: [config.features.includes('filter')],
               navigateToFile: [config.features.includes('navigateToFile')],
