@@ -15,7 +15,7 @@ import {
   ResourceTextComponent,
   SelectFirstFieldDirective,
 } from './';
-import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
+import { DropdownButtonComponent, JsonViewerComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaChipsModule,
@@ -24,6 +24,7 @@ import {
   PaExpanderModule,
   PaIconModule,
   PaScrollModule,
+  PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
@@ -61,6 +62,8 @@ import { HintModule } from '../../hint';
     STFPipesModule,
     PaTooltipModule,
     PaDatePickerModule,
+    PaTableModule,
+    JsonViewerComponent,
   ],
   declarations: [
     AddFieldComponent,

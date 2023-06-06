@@ -73,6 +73,8 @@ export class ResourceProfileComponent implements OnInit {
 
   isUploading = false;
   isSaving = false;
+  extraMetadata: any;
+  editExtraMetadata = false;
 
   constructor(
     private editResource: EditResourceService,
@@ -107,8 +109,9 @@ export class ResourceProfileComponent implements OnInit {
         modified: data.origin?.modified,
         related: (data.origin?.related || []).join('\n'),
       },
-      extra: JSON.stringify(data.extra?.metadata),
+      extra: JSON.stringify(data.extra?.metadata, null, 2),
     });
+    this.extraMetadata = data.extra?.metadata;
     this.form.enable();
     this.cdr?.markForCheck();
   }
@@ -118,7 +121,9 @@ export class ResourceProfileComponent implements OnInit {
     const data: Partial<Resource> = this.getValue();
     this.editResource.savePartialResource(data).subscribe(() => {
       this.form.markAsPristine();
+      this.extraMetadata = data.extra?.metadata;
       this.isSaving = false;
+      this.editExtraMetadata = false;
       this.cdr.markForCheck();
     });
   }
