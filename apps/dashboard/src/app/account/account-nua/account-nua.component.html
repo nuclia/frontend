@@ -1,18 +1,36 @@
 <div class="account-nua">
   <h2>{{ 'account.nua_keys' | translate }}</h2>
-  <div class="warning">{{ 'stash.service_access_description' | translate }}</div>
+  <div class="warning">
+    <pa-icon name="warning"></pa-icon>
+    {{ 'stash.service_access_description' | translate }}
+  </div>
+
+  <pa-button
+    class="create-nua-button"
+    (click)="openDialog()">
+    {{ 'account.create_nua_key' | translate }}
+  </pa-button>
+
   <div
     *ngIf="clients | async as clients"
     class="container">
-    <h3>{{ 'account.existing_keys' | translate }}</h3>
+    <h4>{{ 'account.existing_keys' | translate }}</h4>
     <div
-      class="client"
+      class="client-row"
       *ngFor="let client of clients">
-      <div class="title">
+      <div
+        class="title"
+        paEllipsisTooltip>
         {{ client.title }}
       </div>
-      <div class="date">{{ client.created | formatDate }}</div>
-      <div class="email">{{ client.contact }}</div>
+      <div class="date">
+        <pa-datetime [datetime]="client.created"></pa-datetime>
+      </div>
+      <div
+        class="email"
+        paEllipsisTooltip>
+        {{ client.contact }}
+      </div>
       <div class="buttons">
         <pa-button
           *ngIf="isNuaActivityEnabled | async"
@@ -36,15 +54,11 @@
           aspect="basic"
           icon="trash"
           size="small"
+          kind="destructive"
           paTooltip="generic.delete">
           {{ 'account.delete' | translate }}
         </pa-button>
       </div>
     </div>
-  </div>
-  <div class="add">
-    <pa-button (click)="openDialog()">
-      {{ 'account.create_nua_key' | translate }}
-    </pa-button>
   </div>
 </div>

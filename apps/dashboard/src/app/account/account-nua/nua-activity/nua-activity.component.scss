@@ -6,10 +6,20 @@
   min-height: 200px;
 }
 
+.title-and-back {
+  align-items: center;
+  display: flex;
+  gap: rhythm(1);
+
+  h1 {
+    margin-bottom: 0;
+  }
+}
 .nua-activity-title {
   align-items: center;
   display: flex;
   justify-content: space-between;
+  margin-bottom: rhythm(3);
 
   small {
     color: $color-neutral-regular;
