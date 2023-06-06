@@ -1,4 +1,4 @@
-import { Account, AccountBlockingState, AccountConfig, AccountLimits, WelcomeUser } from '@nuclia/core';
+import { Account, AccountBlockingState, AccountConfig, AccountLimitsPatchPayload, WelcomeUser } from '@nuclia/core';
 import { Language, UserType } from '@flaps/core';
 
 export interface AccountSummary {
@@ -48,10 +48,11 @@ export interface AccountPatchPayload {
   creator?: string;
   type?: string;
   kbs?: number;
-  indexer_slow_replicas?: number;
+  max_dedicated_processors?: number;
   data?: object;
   blocking_state?: AccountBlockingState;
-  limits?: AccountLimits;
+  limits?: AccountLimitsPatchPayload;
+  trial_expiration_date?: string | null;
 }
 
 export interface AccountKbList {

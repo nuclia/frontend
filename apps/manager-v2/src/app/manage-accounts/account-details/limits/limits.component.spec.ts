@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { ExtendedAccount } from '../../account.models';
 import { FormFooterComponent } from '../../form-footer/form-footer.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaTextFieldModule, PaTogglesModule } from '@guillotinaweb/pastanaga-angular';
 
 describe('LimitsComponent', () => {
   let component: LimitsComponent;
@@ -16,7 +16,12 @@ describe('LimitsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockModule(PaTextFieldModule), MockModule(ReactiveFormsModule)],
+      imports: [
+        MockModule(PaButtonModule),
+        MockModule(ReactiveFormsModule),
+        MockModule(PaTextFieldModule),
+        MockModule(PaTogglesModule),
+      ],
       declarations: [LimitsComponent, MockComponent(FormFooterComponent)],
       providers: [
         MockProvider(AccountDetailsStore, {

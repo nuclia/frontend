@@ -27,6 +27,10 @@
         Type:
         <strong>{{ (account | async)?.type }}</strong>
       </div>
+      <div *ngIf="(account | async)?.type === 'stash-trial' && !!(account | async)?.trial_expiration_date">
+        Trial expiration date:
+        <strong>{{ (account | async)?.trial_expiration_date | date: 'yyyy-MM-dd' }}</strong>
+      </div>
       <div>
         Max kbs:
         <strong>{{ (account | async)?.stashes?.max_stashes }}</strong>

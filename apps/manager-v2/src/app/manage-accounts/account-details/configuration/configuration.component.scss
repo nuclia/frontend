@@ -1,0 +1,18 @@
+@import 'variables';
+
+form {
+  gap: rhythm(3);
+}
+
+.account-type-container {
+  display: flex;
+  gap: rhythm(1);
+
+  pa-select {
+    flex: 1 0 auto;
+  }
+
+  pa-button {
+    margin-top: rhythm(0.5);
+  }
+}

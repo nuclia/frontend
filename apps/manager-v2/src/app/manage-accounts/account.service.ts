@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
-import { Observable } from 'rxjs';
+import { AccountService as GlobalAccountService, AccountTypeDefaults, SDKService } from '@flaps/core';
+import { map, Observable } from 'rxjs';
 import {
   AccountPatchPayload,
   AccountSummary,
@@ -12,7 +12,7 @@ import {
   KbSummary,
   ZoneSummary,
 } from './account.models';
-import { AccountBlockingState } from '@nuclia/core';
+import { AccountBlockingState, AccountTypes } from '@nuclia/core';
 
 const ACCOUNTS_ENDPOINT = '/manage/@accounts';
 const ACCOUNT_ENDPOINT = '/manage/@account';
@@ -23,7 +23,13 @@ const KB_ENDPOINT = '@stashes';
   providedIn: 'root',
 })
 export class AccountService {
-  constructor(private sdk: SDKService) {}
+  private _accountTypes = this.globalAccount.getAccountTypes();
+
+  constructor(private sdk: SDKService, private globalAccount: GlobalAccountService) {}
+
+  getDefaultLimits(accountType: AccountTypes): Observable<AccountTypeDefaults> {
+    return this._accountTypes.pipe(map((accountTypes) => accountTypes[accountType]));
+  }
 
   getAccounts(): Observable<AccountSummary[]> {
     return this.sdk.nuclia.rest.get<AccountSummary[]>(ACCOUNTS_ENDPOINT);

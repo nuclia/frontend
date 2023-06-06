@@ -3,7 +3,7 @@ import { BillingService } from '../billing.service';
 import { CalculatorComponent } from '../calculator/calculator.component';
 import { forkJoin, shareReplay, take, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { STFTrackingService } from '@flaps/core';
+import { AccountService, STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
@@ -22,7 +22,7 @@ export class SubscriptionsComponent {
     .sort((a, b) => a.name.localeCompare(b.name));
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
-  accountTypesDefaults = this.billing.getAccountTypes().pipe(shareReplay());
+  accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
   isSubscribed = this.billing.isSubscribed;
 
   constructor(
@@ -30,6 +30,7 @@ export class SubscriptionsComponent {
     private modalService: SisModalService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
+    private accountService: AccountService,
     @Inject(WINDOW) private window: Window,
   ) {
     forkJoin([this.billing.getCustomer(), this.billing.country.pipe(take(1))]).subscribe(([customer, country]) => {

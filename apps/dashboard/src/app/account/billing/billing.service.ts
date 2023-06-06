@@ -3,7 +3,6 @@ import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
-  AccountTypeDefaults,
   AccountUsage,
   BillingDetails,
   Currency,
@@ -129,10 +128,6 @@ export class BillingService {
         }, {} as { [key in AccountTypes]: Prices });
       }),
     );
-  }
-
-  getAccountTypes(): Observable<{ [key in AccountTypes]: AccountTypeDefaults }> {
-    return this.sdk.nuclia.rest.get<{ [key in AccountTypes]: AccountTypeDefaults }>(`/configuration/account_types`);
   }
 
   getAccountUsage(): Observable<AccountUsage> {

@@ -74,25 +74,9 @@ export interface StripeSubscription {
   error?: { code: string; decline_code: string };
 }
 
-export enum SubsciptionError {
+export enum SubscriptionError {
   INVALID_ADDRESS = 'customer_tax_location_invalid',
   PAYMENT_METHOD_NOT_ATTACHED = 'payment_method_not_attached',
-}
-
-export interface AccountTypeDefaults {
-  max_kbs: number;
-  max_dedicated_processors: number;
-  max_trial_days: number;
-  monthly_limit_paragraphs_processed: number;
-  monthly_limit_docs_no_media_processed: number;
-  monthly_limit_media_seconds_processed: number;
-  monthly_limit_paragraphs_stored: number;
-  monthly_limit_hosted_searches_performed: number;
-  monthly_limit_hosted_answers_generated: number;
-  monthly_limit_self_hosted_searches_performed: number;
-  monthly_limit_self_hosted_answers_generated: number;
-  upload_limit_max_media_file_size: number;
-  upload_limit_max_non_media_file_size: number;
 }
 
 export interface InvoiceItem {

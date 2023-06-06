@@ -1,0 +1,12 @@
+@import 'variables';
+
+.limit-form {
+  position: relative;
+
+  .reset-actions {
+    display: flex;
+    gap: rhythm(1);
+    left: rhythm(64);
+    position: absolute;
+  }
+}

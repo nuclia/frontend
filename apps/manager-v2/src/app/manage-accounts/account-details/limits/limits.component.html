@@ -1,41 +1,68 @@
-<form
-  [formGroup]="limitsForm"
-  (ngSubmit)="save()">
-  <section
-    formGroupName="processing"
-    *ngIf="(limitsForm.controls.processing.controls | keyvalue).length > 0">
-    <h3>Processing limits</h3>
-    <pa-input
-      type="number"
-      *ngFor="let limit of limitsForm.controls.processing.controls | keyvalue"
-      [formControlName]="limit.key">
-      {{ limit.key }}
-    </pa-input>
-  </section>
+<div class="limit-form">
+  <div class="reset-actions">
+    <pa-button
+      aspect="basic"
+      kind="primary"
+      [disabled]="isSaving"
+      (click)="resetAllToDefault()">
+      Reset all to default
+    </pa-button>
+    <pa-button
+      aspect="basic"
+      kind="destructive"
+      [disabled]="isSaving"
+      (click)="removeLimits()">
+      Remove limits
+    </pa-button>
+  </div>
 
-  <section
-    formGroupName="upload"
-    *ngIf="(limitsForm.controls.upload.controls | keyvalue).length > 0">
-    <h3>Upload limits</h3>
-    <pa-input
-      type="number"
-      *ngFor="let limit of limitsForm.controls.upload.controls | keyvalue"
-      [formControlName]="limit.key">
-      {{ limit.key }}
-    </pa-input>
-  </section>
-  <section
-    formGroupName="usage"
-    *ngIf="(limitsForm.controls.usage.controls | keyvalue).length > 0">
-    <h3>Usage limits</h3>
-    <pa-input
-      type="number"
-      *ngFor="let limit of limitsForm.controls.usage.controls | keyvalue"
-      [formControlName]="limit.key">
-      {{ limit.key }}
-    </pa-input>
-  </section>
-  <nma-form-footer
-    [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving"
-    (cancel)="reset()"></nma-form-footer>
-</form>
+  <form
+    [formGroup]="limitsForm"
+    (ngSubmit)="save()">
+    <ng-container *ngFor="let group of limitsForm.controls | keyvalue">
+      <section
+        [formGroupName]="group.key"
+        *ngIf="(group.value.controls | keyvalue).length > 0">
+        <h3 style="text-transform: capitalize">{{ group.key }} limits</h3>
+        <div
+          *ngFor="let limit of group.value.controls | keyvalue"
+          [formGroupName]="limit.key">
+          <label
+            class="title-xxs"
+            [for]="'limit-group-' + limit.key">
+            {{ limit.key }}
+          </label>
+
+          <div class="radio-limit-container">
+            <pa-radio-group
+              [id]="'limit-group-' + limit.key"
+              [formControlName]="limit.key + '-radio'">
+              <pa-radio value="unlimited">Unlimited</pa-radio>
+              <pa-radio value="limit">Limit</pa-radio>
+            </pa-radio-group>
+            <div
+              *ngIf="getRadioValue(group.key, limit.key) === 'limit'"
+              class="limit-container">
+              <pa-input
+                type="number"
+                externalLabel
+                formControlName="limit"></pa-input>
+              <pa-button
+                size="small"
+                icon="reload"
+                paTooltip="Reset to default"
+                aspect="basic"
+                (click)="reset(group.key, limit.key)">
+                Reset to default
+              </pa-button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </ng-container>
+
+    <nma-form-footer
+      [disabled]="limitsForm.pristine || limitsForm.invalid || isSaving"
+      (cancel)="cancel()"></nma-form-footer>
+  </form>
+</div>

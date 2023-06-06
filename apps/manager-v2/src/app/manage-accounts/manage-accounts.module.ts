@@ -4,6 +4,7 @@ import { ManageAccountsComponent } from './manage-accounts.component';
 import { RouterModule, Routes } from '@angular/router';
 import {
   PaButtonModule,
+  PaDatePickerModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -11,6 +12,7 @@ import {
   PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
+  PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { AccountDetailsComponent } from './account-details/account-details.component';
 import { AccountListComponent } from './account-list/account-list.component';
@@ -22,6 +24,7 @@ import { KbDetailsComponent } from './account-details/kb-details/kb-details.comp
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BlockedFeaturesComponent } from './account-details/blocked-features/blocked-features.component';
 import { FormFooterComponent } from './form-footer/form-footer.component';
+import { FeatureNamePipe } from './account-details/blocked-features/feature-name.pipe';
 
 const ROUTES: Routes = [
   {
@@ -85,6 +88,8 @@ const ROUTES: Routes = [
     PaPopupModule,
     PaDropdownModule,
     PaScrollModule,
+    PaTooltipModule,
+    PaDatePickerModule,
   ],
   declarations: [
     ManageAccountsComponent,
@@ -97,6 +102,7 @@ const ROUTES: Routes = [
     KbDetailsComponent,
     BlockedFeaturesComponent,
     FormFooterComponent,
+    FeatureNamePipe,
   ],
 })
 export class ManageAccountsModule {}
