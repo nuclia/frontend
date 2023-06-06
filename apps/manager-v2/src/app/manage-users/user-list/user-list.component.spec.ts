@@ -5,7 +5,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { UserService } from '../user.service';
 import { of } from 'rxjs';
-import { PaButtonModule, PaIconModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import {
+  PaButtonModule,
+  PaIconModule,
+  PaScrollModule,
+  PaTableModule,
+  PaTextFieldModule,
+} from '@guillotinaweb/pastanaga-angular';
 
 describe('UserListComponent', () => {
   let component: UserListComponent;
@@ -17,6 +23,7 @@ describe('UserListComponent', () => {
         RouterTestingModule,
         MockModule(PaButtonModule),
         MockModule(PaIconModule),
+        MockModule(PaScrollModule),
         MockModule(PaTableModule),
         MockModule(PaTextFieldModule),
       ],
