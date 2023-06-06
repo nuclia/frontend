@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { SDKService, StateService } from '@flaps/core';
+import { AccountService, SDKService, StateService } from '@flaps/core';
 import { Account, StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
 import {
   BehaviorSubject,
@@ -38,7 +38,7 @@ export class AccountHomeComponent {
   );
   statsTypes = [StatsType.MEDIA_SECONDS, StatsType.SEARCHES, StatsType.TRAIN_SECONDS];
   isTrial = this.account.pipe(map((account) => account.type === 'stash-trial'));
-  trialPeriod = combineLatest([this.account, this.billingService.getAccountTypes()]).pipe(
+  trialPeriod = combineLatest([this.account, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {
       const expiration = account.trial_expiration_date ? new Date(`${account.trial_expiration_date}+00:00`) : undefined;
       return expiration
@@ -64,15 +64,10 @@ export class AccountHomeComponent {
     [StatsType.TRAIN_SECONDS]: (value) => value / 3600,
   };
 
-<<<<<<< HEAD
-  processedView: BehaviorSubject<ProcessedViewType> = new BehaviorSubject<ProcessedViewType>(StatsType.CHARS);
-  processedThreshold: Observable<number> = of(0);
-=======
   charts = this.statsTypes.reduce(
     (acc, current) => ({ ...acc, [current]: this.getChartData(current).pipe(shareReplay()) }),
     {} as { [type in StatsType]: ChartData },
   );
->>>>>>> [sc-5691] Implement consumption charts
 
   kb = this.sdk.currentKb;
   kbs = this.sdk.kbList;
@@ -135,6 +130,7 @@ export class AccountHomeComponent {
     private toastService: SisToastService,
     private translate: TranslateService,
     private billingService: BillingService,
+    private accountService: AccountService,
   ) {}
 
   getChartData(statsType: StatsType): Observable<ChartData> {
