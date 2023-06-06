@@ -81,8 +81,14 @@ export class UploadFilesComponent {
 
     this.files = [
       ...this.files,
-      ...mediaFiles.map((file) => ({ file, aboveLimit: !this.noLimit && file.size > this.maxMediaFileSize })),
-      ...nonMediaFiles.map((file) => ({ file, aboveLimit: !this.noLimit && file.size > this.maxFileSize })),
+      ...mediaFiles.map((file) => ({
+        file,
+        aboveLimit: !this.noLimit && this.maxMediaFileSize !== -1 && file.size > this.maxMediaFileSize,
+      })),
+      ...nonMediaFiles.map((file) => ({
+        file,
+        aboveLimit: !this.noLimit && this.maxFileSize !== -1 && file.size > this.maxFileSize,
+      })),
     ];
     this.checkLimits();
   }
