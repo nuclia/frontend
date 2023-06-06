@@ -8,6 +8,7 @@ export interface IResource {
   usermetadata?: UserMetadata;
   fieldmetadata?: UserFieldMetadata[];
   computedmetadata?: ComputedMetadata;
+  extra?: ExtraMetadata;
   origin?: Origin;
   created?: string;
   modified?: string;
@@ -73,6 +74,10 @@ export interface Metadata {
 export interface UserMetadata {
   classifications?: UserClassification[];
   relations?: Relation[];
+}
+
+export interface ExtraMetadata {
+  metadata: object;
 }
 
 export type RelationType = 'ABOUT' | 'CHILD' | 'COLAB' | 'ENTITY' | 'OTHER' | 'SYNONYM';

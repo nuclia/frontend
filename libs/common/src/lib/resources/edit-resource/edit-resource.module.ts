@@ -19,6 +19,7 @@ import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import {
   PaButtonModule,
   PaChipsModule,
+  PaDatePickerModule,
   PaDropdownModule,
   PaExpanderModule,
   PaIconModule,
@@ -59,6 +60,7 @@ import { HintModule } from '../../hint';
 
     STFPipesModule,
     PaTooltipModule,
+    PaDatePickerModule,
   ],
   declarations: [
     AddFieldComponent,

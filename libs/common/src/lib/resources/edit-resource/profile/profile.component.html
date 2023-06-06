@@ -101,10 +101,10 @@
             for="created">
             {{ 'resource.origin.created' | translate }}
           </label>
-          <pa-input
+          <pa-date-picker
             id="created"
             externalLabel
-            formControlName="created"></pa-input>
+            formControlName="created"></pa-date-picker>
         </div>
         <div>
           <label
@@ -112,10 +112,10 @@
             for="modified">
             {{ 'resource.origin.modified' | translate }}
           </label>
-          <pa-input
+          <pa-date-picker
             id="modified"
             externalLabel
-            formControlName="modified"></pa-input>
+            formControlName="modified"></pa-date-picker>
         </div>
         <div>
           <label
@@ -151,6 +151,18 @@
             formControlName="related"
             [rows]="3"></pa-textarea>
         </div>
+      </section>
+      <section>
+        <label
+          class="title-s"
+          for="extra">
+          {{ 'resource.extra-metadata' | translate }}
+        </label>
+        <pa-textarea
+          id="extra"
+          formControlName="extra"
+          externalLabel
+          [rows]="5"></pa-textarea>
       </section>
     </form>
   </div>

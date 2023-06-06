@@ -7,6 +7,7 @@ import { filter, forkJoin, map, Observable, Subject, switchMap, tap, timer } fro
 import { SisToastService } from '@nuclia/sistema';
 import { takeUntil } from 'rxjs/operators';
 import { EditResourceService } from '../edit-resource.service';
+import { JsonValidator } from '../../../validators';
 
 type Thumbnail = { uri: string; blob: SafeUrl };
 
@@ -40,6 +41,10 @@ export class ResourceProfileComponent implements OnInit {
       created: new FormControl<string>('', { nonNullable: true }),
       modified: new FormControl<string>('', { nonNullable: true }),
       related: new FormControl<string>('', { nonNullable: true }),
+    }),
+    extra: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [JsonValidator()],
     }),
   });
   thumbnails: Observable<Thumbnail[]> = this.resource.pipe(
@@ -102,6 +107,7 @@ export class ResourceProfileComponent implements OnInit {
         modified: data.origin?.modified,
         related: (data.origin?.related || []).join('\n'),
       },
+      extra: JSON.stringify(data.extra?.metadata),
     });
     this.form.enable();
     this.cdr?.markForCheck();
@@ -136,10 +142,11 @@ export class ResourceProfileComponent implements OnInit {
             collaborators: value.origin.collaborators.split(',').map((s) => s.trim()),
             url: value.origin.url,
             filename: value.origin.filename,
-            created: value.origin.created ? new Date(value.origin.created).toISOString() : undefined,
-            modified: value.origin.modified ? new Date(value.origin.modified).toISOString() : undefined,
+            created: value.origin.created || undefined,
+            modified: value.origin.modified || undefined,
             related: value.origin.related.split('\n').map((s) => s.trim()),
           },
+          extra: value.extra ? { metadata: JSON.parse(value.extra) } : undefined,
         }
       : {};
   }

@@ -15,3 +15,19 @@ export function Sluggable(): ValidatorFn {
     return validSlug ? null : { sluggable: true };
   };
 }
+
+export function JsonValidator(): ValidatorFn {
+  return (control: AbstractControl) => {
+    if (control.value) {
+      try {
+        JSON.parse(control.value);
+        return null;
+      } catch (e) {
+        return {
+          invalidFormat: 'resource.extra-metadata.invalid-json',
+        };
+      }
+    }
+    return null;
+  };
+}
