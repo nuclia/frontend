@@ -29,7 +29,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   );
   canManage = this.accountData.pipe(map((account) => account.can_manage_account));
   canAddKb = this.accountData.pipe(
-    map((account) => account.can_manage_account && account.max_kbs > account.current_kbs),
+    map((account) => account.can_manage_account && (account.max_kbs > account.current_kbs || account.max_kbs === -1)),
   );
   kbName = new FormControl<string>('', [Sluggable()]);
   unsubscribeAll = new Subject<void>();

@@ -81,13 +81,13 @@
     class="add-kb-container">
     <div
       class="account-kbs-counter"
-      *ngIf="knowledgeBoxes.length > 0">
+      *ngIf="knowledgeBoxes.length > 0 && maxKnowledgeBoxes !== -1">
       {{ knowledgeBoxes.length }} {{ 'generic.of' | translate }} {{ maxKnowledgeBoxes }}
     </div>
 
     <pa-button
       size="small"
-      [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes"
+      [disabled]="knowledgeBoxes.length >= maxKnowledgeBoxes && maxKnowledgeBoxes !== -1"
       (click)="addKb(zones, account)">
       {{ 'account.stash.add' | translate }}
     </pa-button>
