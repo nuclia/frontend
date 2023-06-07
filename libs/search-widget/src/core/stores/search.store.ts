@@ -14,7 +14,7 @@ import {
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
-import { combineLatest, map, Subject } from 'rxjs';
+import { Subject, combineLatest, filter, map, switchMap } from 'rxjs';
 import type { LabelFilter } from '../../common/label/label.utils';
 
 interface SearchFilters {
@@ -39,6 +39,11 @@ interface SearchState {
   pending: boolean;
   autofilerDisabled?: boolean;
   showResults: boolean;
+  tracking: {
+    startTime: number;
+    resultsReceived: boolean;
+    searchId: string;
+  };
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -49,6 +54,11 @@ export const searchState = new SvelteState<SearchState>({
   displayedResource: null,
   pending: false,
   showResults: false,
+  tracking: {
+    startTime: 0,
+    resultsReceived: false,
+    searchId: '',
+  },
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -226,6 +236,36 @@ export const pageNumber = searchState.writer<number>(
 export const pendingResults = searchState.writer<boolean>(
   (state) => state.pending,
   (state, pending) => ({ ...state, pending }),
+);
+
+export const trackingStartTime = searchState.writer<number>(
+  (state) => state.tracking.startTime,
+  (state, startTime) => ({ ...state, tracking: { startTime, resultsReceived: false, searchId: '' } }),
+);
+
+export const trackingSearchId = searchState.writer<string>(
+  (state) => state.tracking.searchId,
+  (state, searchId) => ({ ...state, tracking: { ...state.tracking, searchId } }),
+);
+
+export const trackingResultsReceived = searchState.writer<boolean>(
+  (state) => state.tracking.resultsReceived,
+  (state, resultsReceived) => ({ ...state, tracking: { ...state.tracking, resultsReceived } }),
+);
+
+export const trackingReset = searchState.writer<undefined>(
+  () => undefined,
+  (state) => ({ ...state, tracking: { ...state.tracking, startTime: 0, resultsReceived: false } }),
+);
+
+// emits the tracking data only after corresponding results are received
+export const getTrackingDataAfterResultsReceived = combineLatest([
+  trackingResultsReceived,
+  trackingStartTime,
+  trackingSearchId,
+]).pipe(
+  filter(([resultsReceived, startTime]) => resultsReceived && startTime > 0),
+  map(([, startTime, searchId]) => ({ startTime, searchId })),
 );
 
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {

@@ -24,6 +24,10 @@
   width: 100%;
 }
 
+.results-end {
+  display: none;
+}
+
 @media (min-width: 1200px) {
   .results-container {
     flex-direction: row;

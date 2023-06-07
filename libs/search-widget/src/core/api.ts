@@ -24,6 +24,7 @@ import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
 import { chatError } from './stores/answers.store';
+import { initTracking } from './tracking';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -32,6 +33,7 @@ let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions): Nuclia => {
+  initTracking();
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
