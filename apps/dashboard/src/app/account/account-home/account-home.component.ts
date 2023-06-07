@@ -5,7 +5,6 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
-  filter,
   iif,
   map,
   Observable,
@@ -14,7 +13,7 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { addDays, format, isWithinInterval, lastDayOfMonth, subDays } from 'date-fns';
+import { addDays, format, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { NavigationService, TickOptions } from '@flaps/common';
@@ -37,6 +36,7 @@ export class AccountHomeComponent {
   kbs = this.sdk.kbList;
   statsTypes = [StatsType.MEDIA_SECONDS, StatsType.SEARCHES, StatsType.TRAIN_SECONDS];
   isTrial = this.account.pipe(map((account) => account.type === 'stash-trial'));
+  isSubscribed = this.billingService.isSubscribed;
   trialPeriod = combineLatest([this.account, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {
       const expiration = account.trial_expiration_date ? new Date(`${account.trial_expiration_date}+00:00`) : undefined;
@@ -52,9 +52,18 @@ export class AccountHomeComponent {
     })),
     catchError(() => of(undefined)),
   );
-  period = this.isTrial.pipe(
-    switchMap((isTrial) => iif(() => isTrial, this.trialPeriod, this.subscriptionPeriod)),
-    map((period) => period || { start: new Date().setDate(1), end: lastDayOfMonth(new Date()) }),
+  currentMonth = { start: setDate(new Date(), 1), end: lastDayOfMonth(new Date()) };
+  period = combineLatest([this.isTrial, this.isSubscribed]).pipe(
+    switchMap(([isTrial, isSubscribed]) => {
+      if (isTrial) {
+        return this.trialPeriod;
+      } else if (isSubscribed) {
+        return this.subscriptionPeriod;
+      } else {
+        return of(this.currentMonth);
+      }
+    }),
+    map((period) => period || this.currentMonth),
     shareReplay(),
   );
   prices = this.billingService.getPrices().pipe(shareReplay());
@@ -128,7 +137,13 @@ export class AccountHomeComponent {
   ) {}
 
   getChartData(statsType: StatsType): Observable<ChartData> {
-    return combineLatest([this.getStats(statsType), this.getThreshold(statsType), this.period]).pipe(
+    return combineLatest([
+      this.getStats(statsType),
+      this.isSubscribed.pipe(
+        switchMap((isSubscribed) => (isSubscribed ? this.getThreshold(statsType) : this.getLimit(statsType))),
+      ),
+      this.period,
+    ]).pipe(
       map(([stats, threshold, period]) => ({
         data: stats
           .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
@@ -166,32 +181,39 @@ export class AccountHomeComponent {
     );
   }
 
+  getLimit(statsType: StatsType): Observable<number | undefined> {
+    return this.account.pipe(
+      map((account) => {
+        const limits = account.limits.usage;
+        let limit;
+        let processedLimit;
+        switch (statsType) {
+          case StatsType.MEDIA_SECONDS:
+            limit = limits.monthly_limit_media_seconds_processed;
+            processedLimit = limits.monthly_limit_media_seconds_processed / 3600;
+            break;
+          case StatsType.SEARCHES:
+            limit = limits.monthly_limit_hosted_searches_performed;
+            break;
+        }
+        return limit === -1 ? undefined : processedLimit || limit;
+      }),
+    );
+  }
+
   getThreshold(statsType: StatsType): Observable<number | undefined> {
-    return combineLatest([this.isTrial, this.account, this.prices]).pipe(
-      map(([isTrial, account, prices]) => {
-        if (isTrial) {
-          // Trial accounts have limits instead of thresholds
-          const limits = account.limits.usage;
-          switch (statsType) {
-            case StatsType.MEDIA_SECONDS:
-              return limits.monthly_limit_media_seconds_processed / 3600;
-            case StatsType.SEARCHES:
-              return limits.monthly_limit_hosted_searches_performed;
-            default:
-              return undefined;
-          }
-        } else {
-          const usage = prices[account.type].usage;
-          switch (statsType) {
-            case StatsType.MEDIA_SECONDS:
-              return usage.media.threshold;
-            case StatsType.SEARCHES:
-              return usage.searches.threshold;
-            case StatsType.TRAIN_SECONDS:
-              return usage.training.threshold;
-            default:
-              return undefined;
-          }
+    return combineLatest([this.account, this.prices]).pipe(
+      map(([account, prices]) => {
+        const usage = prices[account.type].usage;
+        switch (statsType) {
+          case StatsType.MEDIA_SECONDS:
+            return usage.media.threshold;
+          case StatsType.SEARCHES:
+            return usage.searches.threshold;
+          case StatsType.TRAIN_SECONDS:
+            return usage.training.threshold;
+          default:
+            return undefined;
         }
       }),
     );
