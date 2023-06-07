@@ -41,6 +41,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     return this.configForm.controls.type.value === 'stash-trial';
   }
 
+  get canModifyTrialExpiration() {
+    return this.isTrial && this.accountBackup?.type !== 'stash-enterprise';
+  }
+
   constructor(
     private store: AccountDetailsStore,
     private accountService: AccountService,
@@ -74,12 +78,14 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
         .getAccount()
         .pipe(
           switchMap((account) => {
-            const rawValue = this.configForm.getRawValue();
+            const { trial_expiration_date, ...rawValue } = this.configForm.getRawValue();
             const payload: AccountPatchPayload = {
               ...rawValue,
-              trial_expiration_date: rawValue.trial_expiration_date ? rawValue.trial_expiration_date : null,
               kbs: rawValue.kbs.kbs_radio === 'limit' ? rawValue.kbs.max_kbs : -1,
             };
+            if (this.canModifyTrialExpiration) {
+              payload.trial_expiration_date = trial_expiration_date ? trial_expiration_date : null;
+            }
             return this.accountService
               .updateAccount(account.id, payload)
               .pipe(switchMap(() => this.accountService.getAccount(account.id)));
