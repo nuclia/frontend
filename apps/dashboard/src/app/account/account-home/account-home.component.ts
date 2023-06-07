@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { AccountService, SDKService, StateService } from '@flaps/core';
-import { Account, StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { AccountService, SDKService } from '@flaps/core';
+import { StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
 import {
   BehaviorSubject,
   catchError,
@@ -12,11 +12,12 @@ import {
   of,
   shareReplay,
   switchMap,
+  take,
 } from 'rxjs';
 import { addDays, format, isWithinInterval, lastDayOfMonth, subDays } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
-import { AppService, TickOptions } from '@flaps/common';
+import { NavigationService, TickOptions } from '@flaps/common';
 import { BillingService } from '../billing/billing.service';
 
 type ChartData = {
@@ -32,10 +33,8 @@ type ChartData = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountHomeComponent {
-  account = this.stateService.account.pipe(
-    filter((account) => !!account),
-    map((account) => account as Account),
-  );
+  account = this.sdk.currentAccount;
+  kbs = this.sdk.kbList;
   statsTypes = [StatsType.MEDIA_SECONDS, StatsType.SEARCHES, StatsType.TRAIN_SECONDS];
   isTrial = this.account.pipe(map((account) => account.type === 'stash-trial'));
   trialPeriod = combineLatest([this.account, this.accountService.getAccountTypes()]).pipe(
@@ -64,15 +63,11 @@ export class AccountHomeComponent {
     [StatsType.TRAIN_SECONDS]: (value) => value / 3600,
   };
 
+  allCharts = false;
   charts = this.statsTypes.reduce(
-    (acc, current) => ({ ...acc, [current]: this.getChartData(current).pipe(shareReplay()) }),
+    (acc, current) => ({ ...acc, [current]: this.getChartData(current).pipe(take(1), shareReplay()) }),
     {} as { [type in StatsType]: ChartData },
   );
-
-  kb = this.sdk.currentKb;
-  kbs = this.sdk.kbList;
-  kbsTotal = this.kbs.pipe(map((kbs) => kbs.length));
-  kbsPublic = this.kbs.pipe(map((kbs) => kbs.filter((kb) => kb.state === 'PUBLISHED').length));
 
   statsRange = StatsRange;
   showPending = false;
@@ -121,16 +116,15 @@ export class AccountHomeComponent {
     switchMap((account) => this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR)),
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
   );
-  locale = this.appService.currentLocale;
 
   constructor(
     private sdk: SDKService,
-    private stateService: StateService,
-    private appService: AppService,
     private toastService: SisToastService,
     private translate: TranslateService,
     private billingService: BillingService,
     private accountService: AccountService,
+    private cdr: ChangeDetectorRef,
+    private navigation: NavigationService,
   ) {}
 
   getChartData(statsType: StatsType): Observable<ChartData> {
@@ -201,5 +195,14 @@ export class AccountHomeComponent {
         }
       }),
     );
+  }
+
+  toggleCharts() {
+    this.allCharts = !this.allCharts;
+    this.cdr.markForCheck();
+  }
+
+  getKbUrl(account: string, kb: string) {
+    return this.navigation.getKbUrl(account, kb);
   }
 }

@@ -1,9 +1,6 @@
 @import 'variables';
 
 .account-home {
-  display: flex;
-  flex-direction: column;
-  gap: rhythm(3);
   max-width: calc(rhythm(90) * 2);
   padding: 4.5vw var(--app-layout-margin-right);
 
@@ -14,12 +11,18 @@
 
   .processing-stats {
     display: flex;
-    flex: 1 0 auto;
+    flex: 1 1 auto;
     flex-direction: column;
     gap: rhythm(3);
     h2 {
       margin-bottom: 0;
     }
+  }
+
+  .consumption-header {
+    align-items: flex-end;
+    display: flex;
+    justify-content: space-between;
   }
 
   .chart-container {
@@ -55,36 +58,23 @@
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
-    gap: rhythm(3);
+    gap: rhythm(4);
     width: rhythm(41);
 
-    .container {
-      background-color: $color-neutral-lightest;
-      border-radius: rhythm(0.5);
-      padding: rhythm(2);
-    }
-
-    .kb-state {
-      cursor: pointer;
+    .kb-list {
+      align-items: flex-start;
       display: flex;
-      justify-content: space-between;
-
-      .kb-count {
-        display: flex;
-        gap: rhythm(1);
-      }
+      flex-direction: column;
+      gap: rhythm(1);
+      margin-top: rhythm(1.5);
     }
 
-    .total-queries {
-      font-size: rhythm(5);
-      font-weight: $font-weight-bold;
-      line-height: rhythm(7);
+    .kb-item {
+      align-items: center;
+      color: inherit;
+      display:flex;
+      gap: rhythm(1);
+      text-decoration: none;
     }
-  }
-
-  .separator {
-    background-color: $color-neutral-light;
-    height: 100%;
-    width: 1px;
   }
 }

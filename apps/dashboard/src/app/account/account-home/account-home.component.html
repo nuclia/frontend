@@ -1,13 +1,19 @@
 <div class="account-home">
   <div class="container-row">
     <div class="processing-stats">
-      <div>
-        <h2>{{ 'account.monthly_consumibles' | translate }}</h2>
-        <div>{{ 'account.accumulated_consumption' | translate }}</div>
+      <div class="consumption-header">
+        <div>
+          <h2>{{ 'account.monthly_consumibles' | translate }}</h2>
+          <div>{{ 'account.accumulated_consumption' | translate }}</div>
+        </div>
+        <pa-button
+          (click)="toggleCharts()"
+          [icon]="allCharts ? 'chevron-up' : 'chevron-down'"
+          aspect="basic"></pa-button>
       </div>
       <div
         class="chart-container"
-        *ngFor="let statType of statsTypes">
+        *ngFor="let statType of allCharts ? statsTypes : [statsTypes[0]]">
         <div class="chart-header">
           <div class="title-m">{{ 'account.chart_' + statType | translate }}</div>
           <div class="chart-legend">
@@ -96,29 +102,23 @@
       <div>
         <app-account-status></app-account-status>
       </div>
-      <div
-        class="container kb-state"
-        routerLink="../kbs">
-        <strong>{{ 'stash.state' | translate }}:</strong>
-        <span class="kb-count">
-          <span>
-            <strong>{{ (kbsTotal | async) || 0 }}</strong>
-            {{ 'account.knowledgeboxes' | translate }}
-          </span>
-          <div class="separator"></div>
-          <span>
-            <strong>{{ (kbsPublic | async) || 0 }}</strong>
-            {{ 'account.public' | translate }}
-          </span>
-        </span>
-      </div>
-      <div class="container">
-        <strong>{{ 'account.total_queries' | translate }}</strong>
+      <div>
+        <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
         <div
-          class="total-queries"
-          *ngIf="locale | async as locale">
-          {{ totalQueries | async | number: '1.0-0':locale }}
+          class="kb-list"
+          *ngIf="account | async as account">
+          <a
+            class="kb-item"
+            *ngFor="let kb of kbs | async"
+            [href]="getKbUrl(account.slug, kb.slug)">
+            <pa-icon [name]="kb.state === 'PUBLISHED' ? 'unlock' : 'lock'"></pa-icon>
+            {{ kb.title }}
+          </a>
         </div>
+      </div>
+      <div>
+        <div class="title-s">{{ 'account.total_queries' | translate }}</div>
+        <div class="display-m">{{ totalQueries | async | number }}</div>
       </div>
     </div>
   </div>
