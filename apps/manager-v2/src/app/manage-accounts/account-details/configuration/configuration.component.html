@@ -36,7 +36,7 @@
   </div>
 
   <pa-date-picker
-    *ngIf="isTrial"
+    *ngIf="canModifyTrialExpiration"
     label="Trial expiration date"
     formControlName="trial_expiration_date"></pa-date-picker>
   <pa-input
