@@ -6621,6 +6621,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/papaparse@npm:^5.3.7":
+  version: 5.3.7
+  resolution: "@types/papaparse@npm:5.3.7"
+  dependencies:
+    "@types/node": "*"
+  checksum: 5ffa6fc81c0f41cd18c9c015599b3690f2a19ee553dec85e92c17bd1ef4a045e0ba4973d8bd49aed9f83fcba3b0ec280ebbe0a0def66701c0b4860c691444694
+  languageName: node
+  linkType: hard
+
 "@types/parse-json@npm:^4.0.0":
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
@@ -16268,6 +16277,7 @@ __metadata:
     "@types/lru-cache": ^5.1.0
     "@types/mime-types": ^2.1.1
     "@types/node": 18.7.1
+    "@types/papaparse": ^5.3.7
     "@types/perfect-scrollbar": ^1.3.0
     "@types/spark-md5": ^3.0.2
     "@types/uuid": ^8.3.0
@@ -16320,6 +16330,7 @@ __metadata:
     nodemon: ^2.0.22
     nx: 15.9.2
     nx-electron: 15.0.0-alpha.0
+    papaparse: ^5.4.1
     perfect-scrollbar: ^1.5.0
     postcss: ^8.4.16
     postcss-import: 15.0.0
@@ -16827,6 +16838,13 @@ __metadata:
   version: 1.0.11
   resolution: "pako@npm:1.0.11"
   checksum: 1be2bfa1f807608c7538afa15d6f25baa523c30ec870a3228a89579e474a4d992f4293859524e46d5d87fd30fa17c5edf34dbef0671251d9749820b488660b16
+  languageName: node
+  linkType: hard
+
+"papaparse@npm:^5.4.1":
+  version: 5.4.1
+  resolution: "papaparse@npm:5.4.1"
+  checksum: fc9e52f7158dca3517c229e3309065b1ab5da6c7194572fba4f31ff138bc43e3c91182cc40365cc828f97fe10d0aca416068fd731661058bea0f69ddb84a411a
   languageName: node
   linkType: hard
 

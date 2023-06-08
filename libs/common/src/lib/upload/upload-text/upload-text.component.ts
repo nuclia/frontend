@@ -5,7 +5,7 @@ import { SisToastService } from '@nuclia/sistema';
 import { forkJoin, switchMap, tap } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
-import { parseCsvLabels } from '../utils';
+import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
 
 const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];

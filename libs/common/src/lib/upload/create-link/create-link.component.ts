@@ -6,7 +6,7 @@ import { Observable, of, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
-import { parseCsvLabels } from '../utils';
+import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
 
 interface Row {
