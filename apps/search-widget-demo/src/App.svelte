@@ -24,9 +24,10 @@
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
   // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // multiple types
-  let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
+  // let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
   // let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
   // let kb = 'dba8dfe3-cbde-4aa6-9b90-57fdd2503672'; // conversations
+  let kb = '02701e7d-2e67-4671-9b63-6634328ba0d6'; // Q&A Nuclia
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';

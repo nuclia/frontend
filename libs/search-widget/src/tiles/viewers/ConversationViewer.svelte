@@ -26,7 +26,9 @@
         paragraphs:
           field.extracted?.metadata?.split_metadata?.[message.ident].paragraphs.map((paragraph) => ({
             id: getParagraphId(fieldId, message.ident, paragraph),
-            text: sliceUnicode(field.extracted?.text.split_text?.[message.ident], paragraph.start, paragraph.end),
+            text: sliceUnicode(field.extracted?.text.split_text?.[message.ident], paragraph.start, paragraph.end)
+              .trim()
+              .replace(/\n/g, '<br>'),
           })) || [],
       }));
     }),
@@ -78,9 +80,8 @@
               <div class="title-xxs">{message.who}</div>
             {/if}
             {#if message.timestamp}
-              <div class="date">
-                <span>{lightFormat(new Date(message.timestamp), 'yyyy/MM/dd')}</span>
-                <span>{lightFormat(new Date(message.timestamp), 'HH:mm')}</span>
+              <div class="body-xs">
+                {lightFormat(new Date(message.timestamp), 'yyyy-MM-dd HH:mm')}
               </div>
             {/if}
           </div>
@@ -90,7 +91,7 @@
             <div
               id={formatValidId(paragraph.id)}
               class:highlight={paragraph.id === selectedParagraph?.paragraph.id}>
-              {paragraph.text}
+              {@html paragraph.text}
             </div>
           {/each}
         </div>

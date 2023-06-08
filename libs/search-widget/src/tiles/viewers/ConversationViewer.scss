@@ -10,15 +10,6 @@
   padding: var(--rhythm-3);
   width: 100%;
 
-  .metadata {
-    margin-bottom: var(--rhythm-1);
-  }
-
-  .date {
-    font-size: var(--font-size-small);
-    line-height: var(--line-height-title-xxs);
-  }
-
   .highlight {
     background-color: var(--color-primary-lightest);
   }
@@ -30,7 +21,7 @@
       justify-content: flex-start;
       margin: 0 auto;
       max-width: 100%;
-      width: calc(var(--metadata-width) + var(--text-width))
+      width: calc(var(--metadata-width) + var(--text-width));
     }
     .metadata {
       flex-shrink: 0;
