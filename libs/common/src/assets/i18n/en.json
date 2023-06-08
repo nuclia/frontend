@@ -241,6 +241,7 @@
 	"generic.all": "All",
 	"generic.allow": "Allow",
 	"generic.announce": "User information",
+	"generic.authentication_token": "Authentication token",
 	"generic.back": "Back",
 	"generic.back_to_accounts": "Back to Accounts",
 	"generic.back_to_home": "Back to Home Page",

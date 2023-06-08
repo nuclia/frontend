@@ -1,0 +1,12 @@
+<div class="redirect">
+  <div *ngIf="displayToken | async; else redirect">
+    <h2>{{ 'Authentication token' | translate }}</h2>
+    <code>{{ token }}</code>
+    <pa-button (click)="copy()">
+      {{ 'generic.copy' | translate }}
+    </pa-button>
+  </div>
+  <ng-template #redirect>
+    {{ fromChromeExtension ? 'Redirecting to Nuclia Chrome extension…' : 'Redirecting to Nuclia Desktop…' }}
+  </ng-template>
+</div>
