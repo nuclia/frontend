@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { STFTrackingService } from '@flaps/core';
-import { Classification, TextFieldFormat } from '@nuclia/core';
+import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
 import { forkJoin, switchMap, tap } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
@@ -8,7 +8,7 @@ import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
 import { StandaloneService } from '../../services';
 
-const FORMATS = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
+const FORMATS: TextFormat[] = ['PLAIN', 'MARKDOWN', 'HTML', 'RST'];
 
 interface Row {
   title: string;
@@ -47,7 +47,7 @@ export class UploadTextComponent {
     const csv = data.map((row) => ({
       title: row[0],
       body: row[1],
-      format: row[2] as TextFieldFormat,
+      format: row[2] as TextFormat,
       labels: parseCsvLabels(row[3]),
     }));
     if (csv.every((row) => FORMATS.includes(row.format) && !!row.labels)) {

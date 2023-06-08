@@ -5,6 +5,7 @@ import { UploadService } from '../upload.service';
 import { STFTrackingService } from '@flaps/core';
 import { FormControl, Validators } from '@angular/forms';
 import { SisToastService } from '@nuclia/sistema';
+import { TextFormat } from '@nuclia/core';
 
 @Component({
   selector: 'nuclia-upload-qna',
@@ -21,6 +22,7 @@ export class UploadQnaComponent {
     nonNullable: true,
     validators: [Validators.required],
   });
+  qnaFormat = new FormControl<TextFormat>('PLAIN', { nonNullable: true });
   qna: string[][] = [];
 
   constructor(
@@ -41,17 +43,19 @@ export class UploadQnaComponent {
     this.cdr.markForCheck();
   }
 
-  upload() {
+  upload(title: string, qna: string[][]) {
     if (this.resourceTitle.valid && this.qna.length > 0) {
       this.tracking.logEvent('upload_q_and_a_from_csv');
       this.isUploading = true;
-      this.uploadService.uploadQnaResource(this.resourceTitle.getRawValue(), this.qna).subscribe({
-        next: () => this.modal.close(),
-        error: () => {
-          this.isUploading = false;
-          this.cdr.markForCheck();
-        },
-      });
+      this.uploadService
+        .uploadQnaResource(this.resourceTitle.getRawValue(), this.qna, this.qnaFormat.getRawValue())
+        .subscribe({
+          next: () => this.modal.close(),
+          error: () => {
+            this.isUploading = false;
+            this.cdr.markForCheck();
+          },
+        });
     }
   }
 }

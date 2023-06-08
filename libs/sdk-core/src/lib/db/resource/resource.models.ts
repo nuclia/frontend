@@ -219,7 +219,9 @@ export class TextFieldData implements IFieldData {
   error?: IError;
 }
 
-export type TextFieldFormat = 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST' | 'JSON';
+export type TextFormat = 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
+
+export type TextFieldFormat = TextFormat | 'JSON';
 
 export interface TextField {
   body: string;
@@ -397,7 +399,7 @@ export interface Message {
 
 export interface MessageContent {
   text: string;
-  format?: 'PLAIN' | 'MARKDOWN' | 'HTML' | 'RST';
+  format?: TextFormat;
   attachments?: MessageAttachment[];
 }
 

@@ -861,6 +861,7 @@
 	"upload.qna_csv_description": "Creeu un recurs de preguntes i respostes seleccionant un fitxer CSV amb 2 columnes: <code>Pregunta, resposta</code>",
 	"upload.qna_csv_preview.answer": "Resposta",
 	"upload.qna_csv_preview.question": "Pregunta",
+	"upload.qna_format": "Format de resposta",
 	"upload.select_csv": "Seleccionar CSV",
 	"upload.select_file": "Arrossegueu els fitxers o feu clic aquí",
 	"upload.size_warning_1": "Els fitxers multimèdia no poden superar {{ maxMedia }} i els fitxers no multimèdia {{ max }}.",

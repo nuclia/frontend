@@ -10,6 +10,7 @@ import {
   Message,
   Search,
   TextFieldFormat,
+  TextFormat,
   UploadStatus,
 } from '@nuclia/core';
 import { LabelsService } from '../label/labels.service';
@@ -179,7 +180,7 @@ export class UploadService {
     );
   }
 
-  uploadQnaResource(title: string, qna: string[][]): Observable<{ uuid: string }> {
+  uploadQnaResource(title: string, qna: string[][], format: TextFormat): Observable<{ uuid: string }> {
     const conversations: { qna: ConversationField } = {
       qna: {
         messages: qna.reduce((messages, row, currentIndex) => {
@@ -193,7 +194,7 @@ export class UploadService {
               },
               {
                 ident: `answer${currentIndex}`,
-                content: { text: row[1] },
+                content: { text: row[1], format },
                 who: 'Answer',
                 to: ['Question'],
               },
