@@ -322,6 +322,7 @@ export interface Paragraph {
   classifications?: Classification[];
   sentences?: Sentence[];
   key?: string;
+  order?: number;
 }
 
 export interface Sentence {
