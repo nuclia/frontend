@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { coerceNumberProperty } from '@angular/cdk/coercion';
-import { parseCsv } from '../utils';
+import { parseCsv } from '../csv-parser';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ConfirmationData, Kind } from '@guillotinaweb/pastanaga-angular';
 import { filter } from 'rxjs/operators';

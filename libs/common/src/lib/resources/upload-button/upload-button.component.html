@@ -27,4 +27,10 @@
     (selectOption)="upload('csv')">
     {{ 'upload.upload_from_csv' | translate }}
   </pa-option>
+  <pa-option
+    *ngIf="isQnAEnabled | async"
+    icon="chat"
+    (selectOption)="upload('qna')">
+    {{ 'upload.q_and_a' | translate }}
+  </pa-option>
 </pa-dropdown>

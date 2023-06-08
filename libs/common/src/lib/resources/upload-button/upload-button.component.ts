@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { UploadDialogService } from './upload-dialog.service';
+import { UploadDialogService, UploadType } from './upload-dialog.service';
+import { FeatureFlagService } from '@flaps/core';
+import { shareReplay } from 'rxjs/operators';
 
 @Component({
   selector: 'stf-upload-button',
@@ -7,11 +9,13 @@ import { UploadDialogService } from './upload-dialog.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadButtonComponent implements OnInit {
-  constructor(private uploadService: UploadDialogService) {}
+  isQnAEnabled = this.feature.isFeatureEnabled('upload-q-and-a').pipe(shareReplay(1));
+
+  constructor(private uploadService: UploadDialogService, private feature: FeatureFlagService) {}
 
   ngOnInit(): void {}
 
-  upload(type: 'files' | 'folder' | 'link' | 'csv') {
+  upload(type: UploadType) {
     this.uploadService.upload(type);
   }
 }
