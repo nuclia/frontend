@@ -1,0 +1,7 @@
+@import 'apps/dashboard/src/variables';
+
+.upload-qna-content {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+}

@@ -17,6 +17,7 @@ import {
   PaButtonModule,
   PaIconModule,
   PaModalModule,
+  PaTableModule,
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
@@ -26,6 +27,7 @@ import { HintModule } from '../hint';
 import { LabelModule } from '../label';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { ProgressBarModule } from '../progress-bar';
+import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 
 @NgModule({
   imports: [
@@ -46,6 +48,7 @@ import { ProgressBarModule } from '../progress-bar';
     SisProgressModule,
     ProgressBarModule,
     PaModalModule,
+    PaTableModule,
   ],
   declarations: [
     CreateLinkComponent,
@@ -56,6 +59,7 @@ import { ProgressBarModule } from '../progress-bar';
     UploadProgressComponent,
     UploadProgressDialogComponent,
     UploadTextComponent,
+    UploadQnaComponent,
   ],
   exports: [UploadBarComponent, CsvSelectComponent],
 })

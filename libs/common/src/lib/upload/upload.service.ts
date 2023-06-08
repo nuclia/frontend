@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { md5, SDKService } from '@flaps/core';
 import {
   Classification,
+  ConversationField,
   FileWithMetadata,
   ICreateResource,
   LabelSet,
   LabelSetKind,
+  Message,
   Search,
   TextFieldFormat,
   UploadStatus,
@@ -26,7 +28,7 @@ import {
   take,
   timer,
 } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { SisToastService } from '@nuclia/sistema';
 
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
@@ -174,6 +176,45 @@ export class UploadService {
       take(1),
       switchMap((kb) => kb.createResource(resource)),
       // onUploadSuccess is called only once for all by the parent
+    );
+  }
+
+  uploadQnaResource(title: string, qna: string[][]): Observable<{ uuid: string }> {
+    const conversations: { qna: ConversationField } = {
+      qna: {
+        messages: qna.reduce((messages, row, currentIndex) => {
+          if (row.length === 2) {
+            messages = messages.concat([
+              {
+                ident: `question${currentIndex}`,
+                content: { text: row[0] },
+                who: 'Question',
+                to: ['Answer'],
+              },
+              {
+                ident: `answer${currentIndex}`,
+                content: { text: row[1] },
+                who: 'Answer',
+                to: ['Question'],
+              },
+            ]);
+          } else {
+            console.warn(`Unexpected row length while uploading Q&A "${title}":`, row);
+          }
+
+          return messages;
+        }, [] as Message[]),
+      },
+    };
+    return this.sdk.currentKb.pipe(
+      take(1),
+      switchMap((kb) =>
+        kb.createResource({
+          title,
+          conversations,
+        }),
+      ),
+      tap(() => this.onUploadComplete(true)),
     );
   }
 
