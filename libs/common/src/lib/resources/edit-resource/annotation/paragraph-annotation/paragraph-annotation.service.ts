@@ -123,7 +123,7 @@ export class ParagraphAnnotationService extends ParagraphService {
     const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
     return paragraphs.map((paragraph) => {
       const paragraphId = this.editResource.getParagraphId(fieldId, paragraph);
-      const allParagraphAnnotations = getParagraphAnnotations(allAnnotations, paragraph);
+      const allParagraphAnnotations = getParagraphAnnotations(allAnnotations, paragraph, families);
       const highlightedAnnotation = getHighlightedAnnotations(allParagraphAnnotations);
       const paragraphText = resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph);
       const enhancedParagraph: ParagraphWithTextAndAnnotations = {

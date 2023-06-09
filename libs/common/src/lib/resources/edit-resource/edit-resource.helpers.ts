@@ -206,9 +206,18 @@ export function isSameAnnotation(a: EntityAnnotation, b: EntityAnnotation) {
   return a.end === b.end && a.start === b.start && a.family === b.family && a.klass === b.klass && a.token === b.token;
 }
 
-export function getParagraphAnnotations(allAnnotations: EntityAnnotation[], paragraph: Paragraph) {
+export function getParagraphAnnotations(
+  allAnnotations: EntityAnnotation[],
+  paragraph: Paragraph,
+  families: EntityGroup[],
+) {
   const annotations: EntityAnnotation[] = allAnnotations
-    .filter((annotation) => annotation.start >= (paragraph.start || 0) && annotation.end <= (paragraph.end || 0))
+    .filter(
+      (annotation) =>
+        families.find((family) => family.id === annotation.klass) &&
+        annotation.start >= (paragraph.start || 0) &&
+        annotation.end <= (paragraph.end || 0),
+    )
     .map((annotation) => ({
       ...annotation,
       start: annotation.start - (paragraph.start || 0),
