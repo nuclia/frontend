@@ -14,10 +14,8 @@
 
   $: !!selectedParagraph && viewerElement && highlightSelection();
 
-  const messages: Observable<(Message & { paragraphs: { id: string; paragraphs: Paragraph[] } })[]> = combineLatest([
-    fieldFullId,
-    fieldData,
-  ]).pipe(
+  type MessageWithParagraphs = Message & { paragraphs: { id: string; text: string }[] };
+  const messages: Observable<MessageWithParagraphs[]> = combineLatest([fieldFullId, fieldData]).pipe(
     filter(([fieldId, field]) => !!fieldId && !!field),
     map(([fieldId, field]) => [fieldId, field] as [string, ConversationFieldData]),
     map(([fieldId, field]) => {
@@ -63,6 +61,12 @@
     return `id_${id.split('/').join('_')}`;
   }
 
+  function isMessageSelected(message: MessageWithParagraphs): boolean {
+    return message.paragraphs.some(
+      (paragraph) => paragraph.id === (selectedParagraph?.paragraph as Search.FindParagraph).id,
+    );
+  }
+
   onDestroy(() => {
     stopHighlight.next();
   });
@@ -73,7 +77,9 @@
   bind:this={viewerElement}>
   {#if $messages}
     {#each $messages as message}
-      <div class="message">
+      <div
+        class="message"
+        class:highlight={isMessageSelected(message)}>
         {#if $hasMetadata}
           <div class="metadata">
             {#if message.who}
@@ -88,9 +94,7 @@
         {/if}
         <div class="text body-m">
           {#each message.paragraphs as paragraph}
-            <div
-              id={formatValidId(paragraph.id)}
-              class:highlight={paragraph.id === selectedParagraph?.paragraph.id}>
+            <div id={formatValidId(paragraph.id)}>
               {@html paragraph.text}
             </div>
           {/each}
