@@ -90,6 +90,24 @@ ul.sw-dropdown-options {
   }
 }
 
+.sw-conversation-viewer .html-content {
+  p {
+    margin-top: 0;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  h1:first-child,
+  h2:first-child,
+  h3:first-child,
+  h4:first-child,
+  h5:first-child,
+  h6:first-child {
+    margin-top: 0;
+  }
+}
+
 .title-m {
   font-size: var(--font-size-title-m);
   font-weight: var(--font-weight-title-m);

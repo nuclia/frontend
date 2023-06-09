@@ -7,6 +7,10 @@
   import type { Search } from '@nuclia/core';
   import { lightFormat } from 'date-fns';
   import { WidgetParagraph } from '../../core/models';
+  import PlainTextRenderer from './renderer/PlainTextRenderer.svelte';
+  import MarkdownRenderer from './renderer/MarkdownRenderer.svelte';
+  import HtmlRenderer from './renderer/HtmlRenderer.svelte';
+  import RstRenderer from './renderer/RstRenderer.svelte';
 
   export let selectedParagraph: WidgetParagraph | undefined;
   let viewerElement: HTMLElement;
@@ -14,20 +18,17 @@
 
   $: !!selectedParagraph && viewerElement && highlightSelection();
 
-  type MessageWithParagraphs = Message & { paragraphs: { id: string; text: string }[] };
+  type MessageWithParagraphs = Message & { paragraphIds: string[] };
   const messages: Observable<MessageWithParagraphs[]> = combineLatest([fieldFullId, fieldData]).pipe(
     filter(([fieldId, field]) => !!fieldId && !!field),
     map(([fieldId, field]) => [fieldId, field] as [string, ConversationFieldData]),
     map(([fieldId, field]) => {
       return field.value.messages.map((message) => ({
         ...message,
-        paragraphs:
-          field.extracted?.metadata?.split_metadata?.[message.ident].paragraphs.map((paragraph) => ({
-            id: getParagraphId(fieldId, message.ident, paragraph),
-            text: sliceUnicode(field.extracted?.text.split_text?.[message.ident], paragraph.start, paragraph.end)
-              .trim()
-              .replace(/\n/g, '<br>'),
-          })) || [],
+        paragraphIds:
+          field.extracted?.metadata?.split_metadata?.[message.ident].paragraphs.map((paragraph) =>
+            getParagraphId(fieldId, message.ident, paragraph),
+          ) || [],
       }));
     }),
   );
@@ -62,9 +63,7 @@
   }
 
   function isMessageSelected(message: MessageWithParagraphs): boolean {
-    return message.paragraphs.some(
-      (paragraph) => paragraph.id === (selectedParagraph?.paragraph as Search.FindParagraph).id,
-    );
+    return message.paragraphIds.some((id) => id === (selectedParagraph?.paragraph as Search.FindParagraph).id);
   }
 
   onDestroy(() => {
@@ -79,6 +78,7 @@
     {#each $messages as message}
       <div
         class="message"
+        id={formatValidId(message.paragraphIds[0] || '')}
         class:highlight={isMessageSelected(message)}>
         {#if $hasMetadata}
           <div class="metadata">
@@ -92,12 +92,16 @@
             {/if}
           </div>
         {/if}
-        <div class="text body-m">
-          {#each message.paragraphs as paragraph}
-            <div id={formatValidId(paragraph.id)}>
-              {@html paragraph.text}
-            </div>
-          {/each}
+        <div class="text body-m html-content">
+          {#if !message.content.format || message.content.format === 'PLAIN'}
+            <PlainTextRenderer text={message.content.text} />
+          {:else if message.content.format === 'MARKDOWN'}
+            <MarkdownRenderer text={message.content.text} />
+          {:else if message.content.format === 'HTML'}
+            <HtmlRenderer text={message.content.text} />
+          {:else if message.content.format === 'RST'}
+            <RstRenderer text={message.content.text} />
+          {/if}
         </div>
       </div>
     {/each}

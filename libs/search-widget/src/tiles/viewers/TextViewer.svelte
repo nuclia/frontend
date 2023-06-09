@@ -5,8 +5,11 @@
   import { fieldData } from '../../core/stores/viewer.store';
   import type { WidgetParagraph } from '../../core/models';
   import type { Search } from '@nuclia/core';
+  import PlainTextRenderer from './renderer/PlainTextRenderer.svelte';
+  import RstRenderer from './renderer/RstRenderer.svelte';
 
   export let selectedParagraph: WidgetParagraph | undefined;
+  export let isRst = false;
 
   let textViewerElement: HTMLElement;
   let selected = '';
@@ -38,7 +41,11 @@
       <p
         id="paragraph{paragraph.shortId}"
         class:highlight={paragraph.shortId === selected}>
-        {paragraph.text}
+        {#if isRst}
+          <RstRenderer text={paragraph.text} />
+        {:else}
+          <PlainTextRenderer text={paragraph.text} />
+        {/if}
       </p>
     {/each}
   {/if}
