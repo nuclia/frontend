@@ -51,6 +51,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./TextViewer.scss"></style>
+<!-- Style is the same for both TextContentViewer and ExtractedTextViewer, so the class is defined in _global.scss -->

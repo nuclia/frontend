@@ -90,6 +90,13 @@ ul.sw-dropdown-options {
   }
 }
 
+.sw-text-viewer {
+  background: var(--color-light-stronger);
+  margin: 0 auto;
+  max-width: 800px;
+  padding: var(--rhythm-3) var(--rhythm-4);
+}
+
 .sw-conversation-viewer .html-content {
   p {
     margin-top: 0;

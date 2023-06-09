@@ -55,7 +55,7 @@
   }
 </script>
 
-<div class="sw-markdown-viewer">
+<div class="sw-text-viewer">
   {#if isHtml}
     <HtmlRenderer
       text={$body}
@@ -67,6 +67,4 @@
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./MarkdownViewer.scss"></style>
+<!-- Style is the same for both TextContentViewer and ExtractedTextViewer, so the class is defined in _global.scss -->
