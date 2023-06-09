@@ -4,7 +4,6 @@ import { StandaloneService } from '../../services';
 import { UploadService } from '../upload.service';
 import { STFTrackingService } from '@flaps/core';
 import { FormControl, Validators } from '@angular/forms';
-import { SisToastService } from '@nuclia/sistema';
 import { TextFormat } from '@nuclia/core';
 
 @Component({
@@ -31,7 +30,6 @@ export class UploadQnaComponent {
     private standaloneService: StandaloneService,
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
-    private toaster: SisToastService,
   ) {}
 
   close(): void {
@@ -43,7 +41,7 @@ export class UploadQnaComponent {
     this.cdr.markForCheck();
   }
 
-  upload(title: string, qna: string[][]) {
+  upload() {
     if (this.resourceTitle.valid && this.qna.length > 0) {
       this.tracking.logEvent('upload_q_and_a_from_csv');
       this.isUploading = true;
