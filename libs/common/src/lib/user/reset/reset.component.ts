@@ -57,9 +57,14 @@ export class ResetComponent {
   submit() {
     if (!this.resetForm.valid) return;
     this.resetting = true;
-    this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'reset', (token) => {
-      this.reset(token);
-    });
+    const recaptchaKey = this.config.getRecaptchaKey();
+    if (recaptchaKey) {
+      this.reCaptchaV3Service.execute(recaptchaKey, 'reset', (token) => {
+        this.reset(token);
+      });
+    } else {
+      throw new Error('Recaptcha key not found');
+    }
   }
 
   reset(token: string) {

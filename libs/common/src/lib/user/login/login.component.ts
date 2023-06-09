@@ -69,8 +69,9 @@ export class LoginComponent {
 
   login() {
     if (!this.loginForm.valid) return;
-    if (this.config.getRecaptchaKey() !== undefined) {
-      this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'login', (token) => {
+    const recaptchaKey = this.config.getRecaptchaKey();
+    if (recaptchaKey) {
+      this.reCaptchaV3Service.execute(recaptchaKey, 'login', (token) => {
         this.doLogin(token);
       });
     } else {
