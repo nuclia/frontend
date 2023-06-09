@@ -46,7 +46,9 @@ describe('SignupComponent', () => {
         MockProvider(LoginService, {
           signup: jest.fn(() => signupResponse.asObservable()),
         }),
-        MockProvider(BackendConfigurationService),
+        MockProvider(BackendConfigurationService, {
+          getRecaptchaKey: () => 'fake',
+        }),
       ],
     }).compileComponents();
 
