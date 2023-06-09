@@ -1,0 +1,12 @@
+@import 'variables';
+
+:host {
+  display: block;
+  padding: rhythm(4) rhythm(8);
+}
+
+code {
+  display: block;
+  margin-bottom: rhythm(3);
+  word-break: break-all;
+}
