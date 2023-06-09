@@ -1,13 +1,15 @@
 <script lang="ts">
   import { Observable, of, switchMap } from 'rxjs';
-  import { map } from 'rxjs';
   import { fieldData } from '../../core/stores/viewer.store';
   import type { WidgetParagraph } from '../../core/models';
   import type { FileField, TextField } from '@nuclia/core';
   import { getUnMarked } from '../tile.utils';
   import { getTextFile } from '../../core/api';
+  import MarkdownRenderer from './renderer/MarkdownRenderer.svelte';
+  import HtmlRenderer from './renderer/HtmlRenderer.svelte';
 
   export let selectedParagraph: WidgetParagraph | undefined;
+  export let isHtml: boolean;
 
   let bodyElement: HTMLElement;
   const nonWords = new RegExp(/\W/g);
@@ -24,10 +26,10 @@
       }
     }),
   );
-  let markedLoaded = false;
-  const onMarkedLoaded = () => {
-    markedLoaded = true;
-  };
+
+  function setElement(element) {
+    bodyElement = element;
+  }
 
   function highlightSelection() {
     if (!selectedParagraph) {
@@ -53,20 +55,16 @@
   }
 </script>
 
-<svelte:head>
-  <script
-    src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
-    on:load={onMarkedLoaded}></script>
-</svelte:head>
-
-<div class="sw-markdown-viewer">
-  {#if markedLoaded}
-    {#if $body}
-      <div bind:this={bodyElement}>{@html marked.parse($body)}</div>
-    {/if}
+<div class="sw-text-viewer">
+  {#if isHtml}
+    <HtmlRenderer
+      text={$body}
+      on:setElement={(event) => setElement(event.detail)} />
+  {:else}
+    <MarkdownRenderer
+      text={$body}
+      on:setElement={(event) => setElement(event.detail)} />
   {/if}
 </div>
 
-<style
-  lang="scss"
-  src="./MarkdownViewer.scss"></style>
+<!-- Style is the same for both TextContentViewer and ExtractedTextViewer, so the class is defined in _global.scss -->

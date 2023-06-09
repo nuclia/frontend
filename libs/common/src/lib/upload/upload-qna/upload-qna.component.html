@@ -17,6 +17,15 @@
 
       <pa-input [formControl]="resourceTitle">Resource title</pa-input>
 
+      <pa-select
+        [formControl]="qnaFormat"
+        [label]="'upload.qna_format' | translate">
+        <pa-option value="PLAIN">PLAIN</pa-option>
+        <pa-option value="MARKDOWN">MARKDOWN</pa-option>
+        <pa-option value="HTML">HTML</pa-option>
+        <pa-option value="RST">RST</pa-option>
+      </pa-select>
+
       <app-csv-select
         [buttonKind]="qna.length === 0 ? 'primary' : 'secondary'"
         [fields]="2"

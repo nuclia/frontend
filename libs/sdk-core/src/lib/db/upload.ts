@@ -68,7 +68,7 @@ export const upload = (
   metadata: FileMetadata = {},
 ): Observable<UploadResponse> => {
   if (!metadata.contentType && !(data instanceof ArrayBuffer)) {
-    metadata.contentType = data?.type;
+    metadata.contentType = data?.type !== 'null' ? data?.type : undefined;
   }
   if (!metadata.filename && !(data instanceof ArrayBuffer)) {
     metadata.filename = data?.name;

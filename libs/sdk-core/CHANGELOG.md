@@ -3,6 +3,9 @@
 ### Improvements
 - Add `autofilter` property to `BaseSearchOptions` and `WidgetFeatures` models
 
+### Bugfix
+- Prevent content-type to be set to "null" during upload 
+
 # 1.3.3 (2023-06-06)
 
 ### Improvements

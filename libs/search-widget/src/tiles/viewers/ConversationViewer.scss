@@ -6,12 +6,14 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: var(--rhythm-4);
-  padding: var(--rhythm-3);
+  padding: var(--rhythm-3) 0;
   width: 100%;
 
   .highlight {
     background-color: var(--color-primary-lightest);
+  }
+  .message {
+    padding: var(--rhythm-2);
   }
 
   @media (min-width: 648px) {
