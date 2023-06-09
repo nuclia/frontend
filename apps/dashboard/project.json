@@ -133,6 +133,40 @@
               "output": "assets"
             }
           ]
+        },
+        "local-prod": {
+          "aot": false,
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true,
+          "assets": [
+            "apps/dashboard/src/favicon.ico",
+            "apps/dashboard/src/assets",
+            "apps/dashboard/src/manifest.webmanifest",
+            {
+              "glob": "**/*",
+              "input": "libs/pastanaga/src/assets",
+              "output": "assets"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/common/src/assets/i18n",
+              "output": "assets/i18n"
+            },
+            {
+              "glob": "**/*",
+              "input": "apps/dashboard/src/environments_config/local-prod",
+              "output": "assets/deployment"
+            },
+            {
+              "glob": "**/*",
+              "input": "libs/sistema/assets",
+              "output": "assets"
+            }
+          ]
         }
       },
       "defaultConfiguration": "production",
@@ -149,6 +183,9 @@
         },
         "local-stage": {
           "browserTarget": "dashboard:build:local-stage"
+        },
+        "local-prod": {
+          "browserTarget": "dashboard:build:local-prod"
         }
       },
       "defaultConfiguration": "local-stage"

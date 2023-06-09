@@ -38,7 +38,7 @@ To install the latest stable version of [node](https://nodejs.org/en), run:
 nvm install --lts
 ```
 
-To check if node and npm is properly installed, run: `node --version` and `npm --version`. 
+To check if node and npm is properly installed, run: `node --version` and `npm --version`.
 <sub>Any problems should be resolved with the [nvm documentation](https://github.com/nvm-sh/nvm#readme).</sub>
 
 To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable), run:
@@ -47,18 +47,16 @@ To install [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable),
 npm install --global yarn
 ```
 
-
 Check if Yarn is installed by running: `yarn --version`.
 
 #### Note
 
-In the rest of this documentation, we use commands like `nx` and `missdev`. Those can be find in `node_modules/.bin` folder. To use them directly you can add `node_modules/.bin` folder to your command line path. 
+In the rest of this documentation, we use commands like `nx` and `missdev`. Those can be find in `node_modules/.bin` folder. To use them directly you can add `node_modules/.bin` folder to your command line path.
 You can also install `nx` globally:
 
 ```
 npm install -g nx
 ```
-
 
 ## Dependencies installation
 
@@ -83,13 +81,25 @@ git clone git@github.com:plone/pastanaga-angular.git
 
 Start by creating an account with an email and password (as SSO doesn't work locally).
 
-In `apps/dashboard/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration. <sub>Ask a supervisor to get a proper configuration.</sub>
+- for Nuclia employees:
 
-Then you can run the dashboard locally and use the credential created previously to log in:
+  In `apps/dashboard/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration to use the stage server. <sub>Ask a supervisor to get a proper configuration.</sub>
 
-```
-nx serve dashboard
-```
+  Then you can run the dashboard locally and use the credential created previously to log in:
+
+  ```
+  nx serve dashboard
+  ```
+
+- for external developers:
+
+  You can use the production server with your real account by running:
+
+  ```
+  nx serve dashboard -c local-prod
+  ```
+
+  Note: the login page will automatically redirect you to the https://nuclia.cloud so you can login and will redirect back to http://localhost:4200 with the auth token.
 
 ## Widget
 
@@ -125,8 +135,9 @@ When you have some local changes to the widget you'd like to test on the dashboa
 ### Configuration
 
 Desktop application needs two configuration files to run:
- - in `apps/desktop/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
- - in `apps/desktop/src/environments`, create a file `environment.dev.ts`
+
+- in `apps/desktop/src/environments_config`, create a file `local-stage/app-config.json` with the correct configuration.
+- in `apps/desktop/src/environments`, create a file `environment.dev.ts`
 
 ### Run & Build
 

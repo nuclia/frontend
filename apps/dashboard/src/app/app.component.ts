@@ -56,6 +56,10 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.state.cleanAccount();
       this.state.cleanStash();
     });
+
+    if (this.config.useRemoteLogin()) {
+      this.remoteLogin();
+    }
   }
 
   ngOnInit() {
@@ -170,5 +174,19 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private cleanUpEventListener() {
     window.removeEventListener('dragover', this.preventDefault);
     window.removeEventListener('drop', this.preventDefault);
+  }
+
+  private remoteLogin() {
+    const params = location.search;
+    if (params.includes('access_token')) {
+      const querystring = new URLSearchParams(params.split('?')[1]);
+      const access_token = querystring.get('access_token');
+      if (access_token) {
+        this.sdk.nuclia.auth.authenticate({
+          access_token,
+          refresh_token: querystring.get('refresh_token') || '',
+        });
+      }
+    }
   }
 }

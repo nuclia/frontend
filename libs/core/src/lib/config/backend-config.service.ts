@@ -33,6 +33,10 @@ export class BackendConfigurationService {
     return this.config.backend.api;
   }
 
+  getAPIOrigin(): string {
+    return this.config.backend.apiOrigin || '';
+  }
+
   getAppName(): string {
     return this.config.backend.app;
   }
@@ -71,5 +75,13 @@ export class BackendConfigurationService {
 
   getCDN(): string | undefined {
     return this.config.backend?.cdn;
+  }
+
+  useRemoteLogin(): boolean {
+    return this.config.remoteLogin || false;
+  }
+
+  hasPosthog(): boolean {
+    return this.isBrowser && !!this.config.backend.posthog_key && !!this.config.backend.posthog_host;
   }
 }

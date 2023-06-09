@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 
-import { BackendConfigurationService, OAuthService, SAMLService, SDKService, SsoService } from '@flaps/core';
+import { BackendConfigurationService, OAuthService, SDKService } from '@flaps/core';
 import { InputComponent } from '@guillotinaweb/pastanaga-angular';
 import { PasswordInputComponent } from '@nuclia/sistema';
 
@@ -39,15 +39,16 @@ export class LoginComponent {
   });
 
   constructor(
-    private samlService: SAMLService,
     private oAuthService: OAuthService,
-    private ssoService: SsoService,
     private router: Router,
     private route: ActivatedRoute,
     private reCaptchaV3Service: ReCaptchaV3Service,
     public config: BackendConfigurationService,
     private sdk: SDKService,
   ) {
+    if (this.config.useRemoteLogin()) {
+      this.remoteLogin();
+    }
     this.route.queryParams.subscribe((params) => {
       this.message = params['message'];
       this.loginChallenge = params['login_challenge'];
@@ -103,5 +104,9 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.form?.nativeElement.submit();
     }
+  }
+
+  private remoteLogin() {
+    location.href = `${this.config.getAPIOrigin()}/redirect?redirect=http://localhost:4200`;
   }
 }

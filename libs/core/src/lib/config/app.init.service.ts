@@ -6,9 +6,11 @@ import { Integrations } from '@sentry/tracing';
 
 export type EnvironmentConfiguration = {
   version: string;
+  remoteLogin?: boolean;
   backend: {
     app: string;
     api: string;
+    apiOrigin?: string;
     siteKey?: string;
     sentry_environment?: string;
     sentry_url?: string;
