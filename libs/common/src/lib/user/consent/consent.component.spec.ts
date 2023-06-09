@@ -26,7 +26,6 @@ describe('ConsentComponent', () => {
           useValue: {
             getAPIURL: () => 'key',
             getRecaptchaKey: () => 'key',
-            getSAMLLogin: () => {},
             getSocialLogin: () => {},
             getOAuthLogin: () => {},
           },

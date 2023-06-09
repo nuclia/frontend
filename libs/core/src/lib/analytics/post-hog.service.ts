@@ -10,19 +10,19 @@ export class PostHogService {
   constructor(private config: BackendConfigurationService) {}
 
   init(email: string) {
-    if (!this.config.isBrowser) return;
+    if (!this.config.hasPosthog()) return;
     posthog.identify(email);
     // Set email or any other data
     posthog.people.set({ email });
   }
 
   reset() {
-    if (!this.config.isBrowser) return;
+    if (!this.config.hasPosthog()) return;
     posthog.reset(true);
   }
 
   logEvent(event: string, properties?: { [key: string]: string }) {
-    if (!this.config.isBrowser) return;
+    if (!this.config.hasPosthog()) return;
     posthog.capture(event, properties);
   }
 }

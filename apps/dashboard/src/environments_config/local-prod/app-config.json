@@ -1,0 +1,10 @@
+{
+  "version": "local-prod",
+  "production": false,
+  "remoteLogin": true,
+  "backend": {
+    "app": "app",
+    "apiOrigin": "https://nuclia.cloud",
+    "apiPath": "/api"
+  }
+}

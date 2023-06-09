@@ -40,9 +40,14 @@ export class RecoverComponent {
 
   submit() {
     if (!this.recoverForm.valid) return;
-    this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'recover', (token) => {
-      this.recover(token);
-    });
+    const recaptchaKey = this.config.getRecaptchaKey();
+    if (recaptchaKey) {
+      this.reCaptchaV3Service.execute(recaptchaKey, 'recover', (token) => {
+        this.recover(token);
+      });
+    } else {
+      throw new Error('Recaptcha key not found');
+    }
   }
 
   recover(token: string) {

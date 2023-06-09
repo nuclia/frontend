@@ -65,9 +65,14 @@ export class SignupComponent implements OnInit {
   submitForm() {
     if (!this.signupForm.valid) return;
 
-    this.reCaptchaV3Service.execute(this.config.getRecaptchaKey(), 'login', (token) => {
-      this.signupFromForm(token);
-    });
+    const recaptchaKey = this.config.getRecaptchaKey();
+    if (recaptchaKey) {
+      this.reCaptchaV3Service.execute(recaptchaKey, 'login', (token) => {
+        this.signupFromForm(token);
+      });
+    } else {
+      throw new Error('Recaptcha key not found');
+    }
   }
 
   private signupFromForm(token: string) {

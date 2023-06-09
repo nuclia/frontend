@@ -33,24 +33,16 @@ export class BackendConfigurationService {
     return this.config.backend.api;
   }
 
+  getAPIOrigin(): string {
+    return this.config.backend.apiOrigin || '';
+  }
+
   getAppName(): string {
     return this.config.backend.app;
   }
 
-  getRecaptchaKey(): string {
+  getRecaptchaKey(): string | undefined {
     return this.config.backend.siteKey;
-  }
-
-  getEnvironment(): string {
-    return this.config.backend.sentry_environment;
-  }
-
-  getEditorUrl(): string {
-    return this.config.stashify?.editor;
-  }
-
-  getEmailDomain(): string {
-    return this.config.stashify?.email_domain;
   }
 
   getSocialLogin(): boolean {
@@ -73,10 +65,6 @@ export class BackendConfigurationService {
     return !!this.staticConf.backend.oauth_login;
   }
 
-  getSAMLLogin(): boolean {
-    return !!this.config.backend.saml_login;
-  }
-
   getLocales(): string[] {
     return this.staticConf.locales || [];
   }
@@ -87,5 +75,13 @@ export class BackendConfigurationService {
 
   getCDN(): string | undefined {
     return this.config.backend?.cdn;
+  }
+
+  useRemoteLogin(): boolean {
+    return this.config.remoteLogin || false;
+  }
+
+  hasPosthog(): boolean {
+    return this.isBrowser && !!this.config.backend.posthog_key && !!this.config.backend.posthog_host;
   }
 }

@@ -6,24 +6,20 @@ import { Integrations } from '@sentry/tracing';
 
 export type EnvironmentConfiguration = {
   version: string;
+  remoteLogin?: boolean;
   backend: {
     app: string;
     api: string;
-    siteKey: string;
-    sentry_environment: string;
-    sentry_url: string;
-    sentry_backend: string;
-    posthog_key: string;
-    posthog_host: string;
+    apiOrigin?: string;
+    siteKey?: string;
+    sentry_environment?: string;
+    sentry_url?: string;
+    sentry_backend?: string;
+    posthog_key?: string;
+    posthog_host?: string;
     cdn?: string;
-    saml_login?: boolean;
     allowed_hosts_redirect?: string[];
   };
-  stashify: {
-    editor: string;
-    email_domain: string;
-  };
-  graphql: string | undefined;
 };
 
 export type StaticEnvironmentConfiguration = {
