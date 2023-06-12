@@ -4,6 +4,7 @@ import { getConnector } from './connectors';
 import { LogRow, SearchResults, Source, SyncItem } from './models';
 import { NucliaCloud } from './nuclia-cloud';
 import { getDataPath } from './utils';
+import { TextField } from '@nuclia/core';
 
 let SOURCES: { [id: string]: Source } = {};
 let LOG: LogRow[] = [];
@@ -84,12 +85,14 @@ export function getSourceFolders(sourceId: string, query?: string): Observable<S
 function downloadFileOrLink(
   sourceId: string,
   item: SyncItem,
-): Observable<{ type: 'blob' | 'link'; blob?: Blob; link?: any }> {
+): Observable<{ type: 'blob' | 'link' | 'text'; blob?: Blob; link?: any; text?: TextField }> {
   const connector = getSourceInstance(sourceId);
   if (connector.isExternal) {
     return connector.getLink(item).pipe(map((link) => ({ type: 'link', link })));
   } else {
-    return connector.download(item).pipe(map((blob) => ({ type: 'blob', blob })));
+    return connector
+      .download(item)
+      .pipe(map((res) => (res instanceof Blob ? { type: 'blob', blob: res } : { type: 'text', text: res })));
   }
 }
 
@@ -111,6 +114,8 @@ export function syncFile(sourceId: string, source: Source, item: SyncItem): Obse
             }
           }),
         );
+      } else if (data.type === 'text' && data.text) {
+        return nucliaConnector.upload(item.originalId, item.title, { text: data.text }).pipe(map(() => true));
       } else if (data.type === 'link' && data.link) {
         return nucliaConnector.uploadLink(item.originalId, item.title, data.link).pipe(map(() => true));
       } else {
@@ -150,6 +155,9 @@ const getSourceInstance = (sourceId: string) => {
     throw new Error('Source not found');
   }
   const connectorDefinition = getConnector(source.connectorId);
+  if (!connectorDefinition) {
+    throw new Error(`Connector ${source.connectorId} not defined`);
+  }
   const connector = connectorDefinition.factory();
   connector.setParameters(source.data);
   return connector;

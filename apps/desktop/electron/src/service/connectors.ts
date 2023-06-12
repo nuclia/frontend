@@ -4,6 +4,7 @@ import { OneDriveConnector } from './connectors/onedrive';
 import { SitemapConnector } from './connectors/sitemap';
 import { SharepointConnector } from './connectors/sharepoint';
 import { SourceConnectorDefinition } from './models';
+import { ConfluenceConnector } from './connectors/confluence';
 
 const connectors: { [id: string]: SourceConnectorDefinition } = {
   dropbox: DropboxConnector,
@@ -11,6 +12,7 @@ const connectors: { [id: string]: SourceConnectorDefinition } = {
   folder: FolderConnector,
   sitemap: SitemapConnector,
   sharepoint: SharepointConnector,
+  confluence: ConfluenceConnector,
 };
 
 // TODO: add the dynamic connectors

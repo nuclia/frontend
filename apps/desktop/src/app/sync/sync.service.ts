@@ -40,6 +40,7 @@ import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
 import { SharepointConnector } from './sources/sharepoint';
+import { ConfluenceConnector } from './sources/confluence';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
@@ -74,6 +75,7 @@ export class SyncService {
     dropbox: { definition: DropboxConnector, settings: {} },
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
+    confluence: { definition: ConfluenceConnector, settings: {} },
     // s3: { definition: S3Connector, settings: {} },
     // gcs: { definition: GCSConnector, settings: {} },
     // brightcove: { definition: BrightcoveConnector, settings: {} },

@@ -34,7 +34,8 @@ export interface ISourceConnector {
   getFolders(query?: string): Observable<SearchResults>;
   getFiles(query?: string): Observable<SearchResults>;
   getLastModified(since: string, folders?: SyncItem[]): Observable<SyncItem[]>;
-  download(resource: SyncItem): Observable<Blob | undefined>;
+  // we cannot use the TextField from the SDK because we want to keep connectors independant
+  download(resource: SyncItem): Observable<Blob | { body: string; format?: 'PLAIN' | 'MARKDOWN' | 'HTML' } | undefined>;
   getLink(resource: SyncItem): Observable<Link>;
   hasAuthData(): boolean;
   refreshAuthentication(): Observable<boolean>;
