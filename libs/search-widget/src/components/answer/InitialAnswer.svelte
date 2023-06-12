@@ -23,7 +23,6 @@
 
 {#if $firstAnswer.text}
   <div class="sw-initial-answer">
-    <h3 class="title-s">{$_('answer.title')}</h3>
     <div class="container">
       <div class="answer">
         <Answer
