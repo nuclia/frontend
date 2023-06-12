@@ -1,16 +1,15 @@
 <svelte:options tag="nuclia-search-bar" />
 
 <script lang="ts">
-  import type { KBStates } from '@nuclia/core';
+  import type { KBStates, WidgetFeatures } from '@nuclia/core';
   import { initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, loadFonts, loadSvgSprite } from '../../core/utils';
+  import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
   import { setupTriggerSearch, unsubscribeTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import { get_current_component } from 'svelte/internal';
-  import type { WidgetFeatures } from '@nuclia/core';
   import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
@@ -113,7 +112,7 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
-    setupTriggerSearch(dispatchCustomEvent);
+    setupTriggerSearch(dispatchCustomEvent, _features.answers);
     loadFieldData();
     if (_features.permalink) {
       activatePermalinks();

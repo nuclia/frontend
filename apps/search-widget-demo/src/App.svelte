@@ -1,6 +1,6 @@
 <script lang="ts">
   import { setLang } from 'libs/search-widget/src/core/i18n';
-  import { Button, IconButton, Label } from '../../../libs/search-widget/src/common';
+  import { Button, Expander, IconButton, Label } from '../../../libs/search-widget/src/common';
   import { NucliaViewerWidget } from '../../../libs/search-widget/src/widgets/viewer-widget';
   import { NucliaSearchBar, NucliaSearchResults } from '../../../libs/search-widget/src/widgets/search-widget';
   import type { FieldFullId } from '@nuclia/core';
@@ -20,14 +20,13 @@
   // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
   // let kb = '5fad8445-ff08-4428-85a4-3c6eeb9d2ece'; // chat
   // let kb = '0b8017a4-083a-4c11-b400-5234fb0530cf'; // carmen
-  // let kb = '6b9f8f55-a57f-4ed4-b60e-759da54281fd'; // Robin Hobb
+  let kb = '6b9f8f55-a57f-4ed4-b60e-759da54281fd'; // Robin Hobb
   // let kb = '5c2bc432-a579-48cd-b408-4271e5e7a43c'; // medias
   // let kb = 'f5d0ec7f-9ac3-46a3-b284-a38d5333d9e6'; // le petit prince
-  // let kb = '89ffdada-58ee-4199-8303-ad1450de1cbe'; // multiple types
   // let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
   // let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
   // let kb = 'dba8dfe3-cbde-4aa6-9b90-57fdd2503672'; // conversations
-  let kb = '02701e7d-2e67-4671-9b63-6634328ba0d6'; // Q&A Nuclia
+  // let kb = '02701e7d-2e67-4671-9b63-6634328ba0d6'; // Q&A Nuclia
 
   const backend = 'https://stashify.cloud/api';
   // const backend = 'https://nuclia.cloud/api';
@@ -105,7 +104,7 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink,relations,knowledgeGraph,answers,zspeech" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,answers,zonlyAnswers,zspeech" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
@@ -141,141 +140,147 @@
     </div>
   {/if}
 
-  <h2>Sistema in Svelte</h2>
-  <div class="nuclia-widget">
-    <h3>Buttons</h3>
-    <h4 class="section-title">Primary</h4>
-    <div>
-      <div class="demo-container">
-        <div class="buttons-block">
-          <Button
-            kind="primary"
-            aspect="solid">
-            Solid
-          </Button>
-          <IconButton
-            icon="search"
-            kind="primary"
-            aspect="solid">
-            Solid
-          </IconButton>
-        </div>
+<div class="nuclia-widget">
+  <Expander>
+    <h3 slot="header">Sistema in Svelte</h3>
+    <div class="nuclia-widget">
+      <h4>Buttons</h4>
+      <h5 class="section-title">Primary</h5>
+      <div>
+        <div class="demo-container">
+          <div class="buttons-block">
+            <Button
+              kind="primary"
+              aspect="solid">
+              Solid
+            </Button>
+            <IconButton
+              icon="search"
+              kind="primary"
+              aspect="solid">
+              Solid
+            </IconButton>
+          </div>
 
-        <div class="buttons-block">
-          <Button
-            kind="primary"
-            aspect="basic">
-            Basic
-          </Button>
-          <IconButton
-            icon="search"
-            kind="primary"
-            aspect="basic">
-            Basic
-          </IconButton>
+          <div class="buttons-block">
+            <Button
+              kind="primary"
+              aspect="basic">
+              Basic
+            </Button>
+            <IconButton
+              icon="search"
+              kind="primary"
+              aspect="basic">
+              Basic
+            </IconButton>
+          </div>
         </div>
       </div>
-    </div>
 
-    <h4 class="section-title">Secondary</h4>
-    <div>
-      <div class="demo-container">
-        <div class="buttons-block">
-          <Button
-            kind="secondary"
-            aspect="solid">
-            Solid
-          </Button>
-          <IconButton
-            icon="search"
-            kind="secondary"
-            aspect="solid">
-            Solid
-          </IconButton>
-        </div>
-        <div class="buttons-block">
-          <Button
-            kind="secondary"
-            aspect="basic">
-            Basic
-          </Button>
-          <IconButton
-            icon="search"
-            kind="secondary"
-            aspect="basic">
-            Basic
-          </IconButton>
+      <h5 class="section-title">Secondary</h5>
+      <div>
+        <div class="demo-container">
+          <div class="buttons-block">
+            <Button
+              kind="secondary"
+              aspect="solid">
+              Solid
+            </Button>
+            <IconButton
+              icon="search"
+              kind="secondary"
+              aspect="solid">
+              Solid
+            </IconButton>
+          </div>
+          <div class="buttons-block">
+            <Button
+              kind="secondary"
+              aspect="basic">
+              Basic
+            </Button>
+            <IconButton
+              icon="search"
+              kind="secondary"
+              aspect="basic">
+              Basic
+            </IconButton>
+          </div>
         </div>
       </div>
-    </div>
 
-    <h4 class="section-title">Inverted</h4>
-    <div class="inverted">
-      <div class="demo-container">
-        <div class="buttons-block">
-          <Button
-            kind="inverted"
-            aspect="solid">
-            Solid
-          </Button>
-          <IconButton
-            icon="search"
-            kind="inverted"
-            aspect="solid">
-            Solid
-          </IconButton>
-        </div>
-        <div class="buttons-block">
-          <Button
-            kind="inverted"
-            aspect="basic">
-            Basic
-          </Button>
-          <IconButton
-            icon="search"
-            kind="inverted"
-            aspect="basic">
-            Basic
-          </IconButton>
+      <h5 class="section-title">Inverted</h5>
+      <div class="inverted">
+        <div class="demo-container">
+          <div class="buttons-block">
+            <Button
+              kind="inverted"
+              aspect="solid">
+              Solid
+            </Button>
+            <IconButton
+              icon="search"
+              kind="inverted"
+              aspect="solid">
+              Solid
+            </IconButton>
+          </div>
+          <div class="buttons-block">
+            <Button
+              kind="inverted"
+              aspect="basic">
+              Basic
+            </Button>
+            <IconButton
+              icon="search"
+              kind="inverted"
+              aspect="basic">
+              Basic
+            </IconButton>
+          </div>
         </div>
       </div>
-    </div>
 
-    <h3>Labels</h3>
-    <p>
-      Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
-    </p>
-    <p><strong>Default: not removable, not clickable</strong></p>
-    <div class="demo-container">
-      <Label label={{ labelset: 'artist', label: 'Queen' }} />
-      <Label label={{ labelset: 'sentiment', label: 'positive' }} />
-      <Label label={{ labelset: 'genre', label: 'Rock' }} />
+      <h4>Labels</h4>
+      <p>
+        Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
+      </p>
+      <p><strong>Default: not removable, not clickable</strong></p>
+      <div class="demo-container">
+        <Label label={{ labelset: 'artist', label: 'Queen' }} />
+        <Label label={{ labelset: 'sentiment', label: 'positive' }} />
+        <Label label={{ labelset: 'genre', label: 'Rock' }} />
+      </div>
+      <p><strong>Clickable</strong></p>
+      <div class="demo-container">
+        <Label
+          clickable
+          label={{ labelset: 'artist', label: 'Queen' }} />
+        <Label
+          clickable
+          label={{ labelset: 'sentiment', label: 'positive' }} />
+        <Label
+          clickable
+          label={{ labelset: 'genre', label: 'Rock' }} />
+      </div>
+      <p><strong>Removable</strong></p>
+      <div class="demo-container">
+        <Label
+          removable
+          label={{ labelset: 'artist', label: 'Queen' }} />
+        <Label
+          removable
+          label={{ labelset: 'sentiment', label: 'positive' }} />
+        <Label
+          removable
+          label={{ labelset: 'genre', label: 'Rock' }} />
+      </div>
     </div>
-    <p><strong>Clickable</strong></p>
-    <div class="demo-container">
-      <Label
-        clickable
-        label={{ labelset: 'artist', label: 'Queen' }} />
-      <Label
-        clickable
-        label={{ labelset: 'sentiment', label: 'positive' }} />
-      <Label
-        clickable
-        label={{ labelset: 'genre', label: 'Rock' }} />
-    </div>
-    <p><strong>Removable</strong></p>
-    <div class="demo-container">
-      <Label
-        removable
-        label={{ labelset: 'artist', label: 'Queen' }} />
-      <Label
-        removable
-        label={{ labelset: 'sentiment', label: 'positive' }} />
-      <Label
-        removable
-        label={{ labelset: 'genre', label: 'Rock' }} />
-    </div>
-  </div>
+  </Expander>
+</div>
+
+
 </main>
 
 <style lang="scss">

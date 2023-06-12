@@ -10,14 +10,14 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     entityRelations,
+    hasMore,
     hasSearchError,
     isEmptySearchQuery,
+    loadMore,
     pendingResults,
+    searchError,
     smartResults,
     triggerSearch,
-    hasMore,
-    loadMore,
-    searchError,
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
@@ -92,12 +92,12 @@
           <div class="search-results">
             {#each $smartResults as result, i (getResultKey(result))}
               <Tile {result} />
-              {#if i === $smartResults.length - 10}
-                <InfiniteScroll
-                  hasMore={$hasMore}
-                  on:loadMore={onLoadMore} />
-              {/if}
             {/each}
+            {#if $hasMore}
+              <InfiniteScroll
+                hasMore={$hasMore}
+                on:loadMore={onLoadMore} />
+            {/if}
           </div>
         </div>
         {#if $entityRelations.length > 0}
