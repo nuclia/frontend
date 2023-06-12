@@ -150,8 +150,10 @@
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
       </p>
-      <p>{{ 'resource.empty.import' | translate }}</p>
-      <stf-dataset-selector (imported)="onDatasetImport($event)"></stf-dataset-selector>
+      <ng-container *ngIf="neverGotData | async">
+        <p>{{ 'resource.empty.import' | translate }}</p>
+        <stf-dataset-selector (imported)="onDatasetImport($event)"></stf-dataset-selector>
+      </ng-container>
     </div>
   </div>
 </div>

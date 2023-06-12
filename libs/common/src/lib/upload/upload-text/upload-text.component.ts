@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { STFTrackingService } from '@flaps/core';
+import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification, TextFieldFormat, TextFormat } from '@nuclia/core';
 import { SisToastService } from '@nuclia/sistema';
-import { forkJoin, switchMap, tap } from 'rxjs';
+import { forkJoin, switchMap, take, tap } from 'rxjs';
 import { markForCheck, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
 import { parseCsvLabels } from '../csv-parser';
@@ -32,6 +32,7 @@ export class UploadTextComponent {
 
   constructor(
     public modal: ModalRef,
+    private sdk: SDKService,
     private uploadService: UploadService,
     private tracking: STFTrackingService,
     private toaster: SisToastService,
@@ -71,7 +72,8 @@ export class UploadTextComponent {
             this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
           ),
         ),
-        tap(() => this.uploadService.onUploadComplete(true)),
+        switchMap(() => this.sdk.currentKb.pipe(take(1))),
+        tap((kb) => this.uploadService.onUploadComplete(true, kb.id)),
       )
       .subscribe(() => this.modal.close());
   }
