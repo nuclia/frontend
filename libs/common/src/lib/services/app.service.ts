@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { LangChangeEvent, TranslateService } from '@ngx-translate/core';
 import { BackendConfigurationService, SDKService } from '@flaps/core';
+import { UploadService } from '../upload/upload.service';
 
 const EMPTY_KB_ALERT = 'NUCLIA_EMPTY_KB_ALERT';
 
@@ -16,6 +17,7 @@ export class AppService {
     private config: BackendConfigurationService,
     private translateService: TranslateService,
     private sdk: SDKService,
+    private uploadService: UploadService,
   ) {
     this.listenLanguageChange();
   }
@@ -53,7 +55,9 @@ export class AppService {
         } else {
           const timestamp = emptyKbs[currentKb.id];
           const prevDate = new Date(parseInt(timestamp, 10));
-          isStillEmptyAfterFirstDay = prevDate.getDay() !== new Date().getDay();
+          const oneDayInMs = 3600 * 24 * 1000;
+          isStillEmptyAfterFirstDay =
+            !this.uploadService.hasKbGotData(currentKb.id) && new Date().getTime() - prevDate.getTime() > oneDayInMs;
         }
         localStorage.setItem(EMPTY_KB_ALERT, JSON.stringify(emptyKbs));
 

@@ -32,6 +32,7 @@ import {
 import { tap } from 'rxjs/operators';
 import { SisToastService } from '@nuclia/sistema';
 
+export const UPLOAD_DONE_KEY = 'NUCLIA_UPLOAD_DONE';
 export const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const PATTERNS_TO_IGNORE = [/^~.+/, /.+\.tmp$/];
 const REGEX_YOUTUBE_URL = /^(?:https?:)?(?:\/\/)?(?:youtu\.be\/|(?:www\.|m\.)?youtube\.com\/)/;
@@ -63,19 +64,22 @@ export class UploadService {
         switchMap((filelist) =>
           this.sdk.currentKb.pipe(
             take(1),
-            switchMap((kb) => kb.batchUpload(filelist)),
+            switchMap((kb) =>
+              kb.batchUpload(filelist).pipe(
+                tap((progress) => {
+                  if (progress.completed) {
+                    if (progress.failed === 0) {
+                      this.onUploadComplete(true, kb.id);
+                    } else if (!hasNotifiedError) {
+                      hasNotifiedError = true;
+                      this.onUploadComplete(false, kb.id);
+                    }
+                  }
+                }),
+              ),
+            ),
           ),
         ),
-        tap((progress) => {
-          if (progress.completed) {
-            if (progress.failed === 0) {
-              this.onUploadComplete(true);
-            } else if (!hasNotifiedError) {
-              hasNotifiedError = true;
-              this.onUploadComplete(false);
-            }
-          }
-        }),
         startWith({ files: [], progress: 0, completed: false, uploaded: 0, failed: 0, conflicts: 0 }),
       )
       .subscribe((progress) => {
@@ -150,14 +154,15 @@ export class UploadService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.createLinkResource(
-          { uri },
-          { classifications },
-          true,
-          REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
-        ),
+        kb
+          .createLinkResource(
+            { uri },
+            { classifications },
+            true,
+            REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
+          )
+          .pipe(tap(() => this.onUploadComplete(true, kb.id))),
       ),
-      tap(() => this.onUploadComplete(true)),
     );
   }
 
@@ -210,12 +215,13 @@ export class UploadService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb.createResource({
-          title,
-          conversations,
-        }),
+        kb
+          .createResource({
+            title,
+            conversations,
+          })
+          .pipe(tap(() => this.onUploadComplete(true, kb.id))),
       ),
-      tap(() => this.onUploadComplete(true)),
     );
   }
 
@@ -245,14 +251,25 @@ export class UploadService {
     this.updateStatusCount().subscribe();
   }
 
-  onUploadComplete(success: boolean) {
+  onUploadComplete(success: boolean, kbId: string) {
     if (success) {
       this.toaster.success('upload.toast.successful');
+      this.setUploadDone(kbId);
     } else {
       this.toaster.warning('upload.toast.failed');
     }
     timer(1000)
       .pipe(switchMap(() => this.updateStatusCount()))
       .subscribe();
+  }
+
+  hasKbGotData(kbId: string) {
+    return JSON.parse(localStorage.getItem(UPLOAD_DONE_KEY) || '{}')[kbId] === 'true';
+  }
+
+  private setUploadDone(kbId: string) {
+    const currentState = JSON.parse(localStorage.getItem(UPLOAD_DONE_KEY) || '{}');
+    currentState[kbId] = 'true';
+    localStorage.setItem(UPLOAD_DONE_KEY, JSON.stringify(currentState));
   }
 }

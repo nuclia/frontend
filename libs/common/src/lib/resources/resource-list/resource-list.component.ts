@@ -9,18 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  forkJoin,
-  from,
-  mergeMap,
-  Observable,
-  of,
-  Subject,
-  take,
-} from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -140,6 +129,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = false;
+  neverGotData = this.currentKb.pipe(map((kb) => !this.uploadService.hasKbGotData(kb.id)));
 
   constructor(
     private sdk: SDKService,
