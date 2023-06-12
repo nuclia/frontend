@@ -1,18 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { AccountService, SDKService } from '@flaps/core';
 import { StatsPeriod, StatsRange, StatsType } from '@nuclia/core';
-import {
-  BehaviorSubject,
-  catchError,
-  combineLatest,
-  iif,
-  map,
-  Observable,
-  of,
-  shareReplay,
-  switchMap,
-  take,
-} from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { addDays, format, isWithinInterval, lastDayOfMonth, setDate, subDays } from 'date-fns';
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
@@ -37,6 +26,7 @@ export class AccountHomeComponent {
   statsTypes = [StatsType.MEDIA_SECONDS, StatsType.SEARCHES, StatsType.TRAIN_SECONDS];
   isTrial = this.account.pipe(map((account) => account.type === 'stash-trial'));
   isSubscribed = this.billingService.isSubscribed;
+  usage = this.billingService.getAccountUsage().pipe(shareReplay());
   trialPeriod = combineLatest([this.account, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {
       const expiration = account.trial_expiration_date ? new Date(`${account.trial_expiration_date}+00:00`) : undefined;
@@ -45,7 +35,7 @@ export class AccountHomeComponent {
         : undefined;
     }),
   );
-  subscriptionPeriod = this.billingService.getAccountUsage().pipe(
+  subscriptionPeriod = this.usage.pipe(
     map((usage) => ({
       start: new Date(`${usage.start_billing_date}+00:00`),
       end: new Date(`${usage.end_billing_date}+00:00`),
@@ -72,7 +62,7 @@ export class AccountHomeComponent {
     [StatsType.TRAIN_SECONDS]: (value) => value / 3600,
   };
 
-  allCharts = false;
+  allCharts = true;
   charts = this.statsTypes.reduce(
     (acc, current) => ({ ...acc, [current]: this.getChartData(current).pipe(take(1), shareReplay()) }),
     {} as { [type in StatsType]: ChartData },
