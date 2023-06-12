@@ -11,11 +11,11 @@ import {
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
 import * as d3 from 'd3';
-import { createYAxis, TickOptions } from '../chart-utils';
+import { createYAxis, drawThreshold, TickOptions } from '../chart-utils';
+import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
 
 let nextUniqueId = 0;
 const NUM_TICKS = 7;
-const CHART_HEIGHT = 332;
 
 @Component({
   selector: 'app-line-chart',
@@ -33,11 +33,45 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   @Input() tooltipsEnabled = false;
 
   @Input()
+  set area(value: any) {
+    this._area = coerceBooleanProperty(value);
+  }
+  get area() {
+    return this._area;
+  }
+  private _area: boolean = false;
+
+  @Input()
+  set height(value: any) {
+    if (typeof value === 'number' || typeof value === 'string') {
+      this._height = coerceNumberProperty(value);
+    }
+  }
+  get height() {
+    return this._height;
+  }
+  private _height: number = 332;
+
+  @Input()
+  set threshold(value: any) {
+    if (typeof value === 'number' || typeof value === 'string') {
+      this._threshold = coerceNumberProperty(value);
+    }
+  }
+  get threshold() {
+    return this._threshold;
+  }
+  private _threshold?: number;
+
+  @Input()
   set data(values: [string, number][]) {
     this._data = values;
     this.draw();
   }
   private _data: [string, number][] = [];
+
+  @Input() xDomain?: string[];
+  @Input() yDomain?: { min?: number; max?: number };
 
   showTooltip = false;
   tooltipContent?: [string, number];
@@ -66,8 +100,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   }
 
   draw() {
-    const minValue = Math.min(...this._data.map((item) => item[1]));
-    let maxValue = Math.max(...this._data.map((item) => item[1]));
+    const minValue =
+      typeof this.yDomain?.min === 'number' ? this.yDomain.min : Math.min(...this._data.map((item) => item[1]));
+    let maxValue = this.yDomain?.max || Math.max(...this._data.map((item) => item[1]), this.threshold || 0);
     if (maxValue === 0) {
       maxValue = 10;
     }
@@ -77,7 +112,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
 
     const margin = { top: 0, right: 50, bottom: 30, left: 15 },
       width = availableWidth - margin.left - margin.right,
-      height = CHART_HEIGHT - margin.top - margin.bottom;
+      height = this.height - margin.top - margin.bottom;
 
     // Tooltip event handlers
     const mousemove = (event: MouseEvent) => {
@@ -115,6 +150,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
     // Create axis
     const y = createYAxis(svg, [minValue, maxValue * 1.5], NUM_TICKS, width, height, margin);
     const x = this.createXAxis(svg, width, height);
+    if (this.threshold !== undefined) {
+      drawThreshold(svg, this.threshold, width, y);
+    }
 
     // Add the line
     const line = d3
@@ -126,15 +164,26 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
       .append('path')
       .datum(this._data)
       .attr('fill', 'none')
-      .attr('stroke-width', 1)
+      .attr('stroke-width', 2)
       .attr('class', 'data-line')
       .attr('d', line);
+
+    // Add area
+    if (this.area) {
+      const area = d3
+        .area<[string, number]>()
+        .x((d) => x(d[0])!)
+        .y0(y(minValue))
+        .y1((d) => y(d[1])!);
+
+      svg.insert('path', ':first-child').datum(this._data).attr('class', 'data-area').attr('d', area);
+    }
   }
 
   private createXAxis(svg: d3.Selection<any, any, any, any>, width: number, height: number) {
     const scale = d3
       .scalePoint()
-      .domain(this._data.map((item) => item[0]))
+      .domain(this.xDomain || this._data.map((item) => item[0]))
       .range([0, width]);
     const xAxis = d3
       .axisBottom(scale)

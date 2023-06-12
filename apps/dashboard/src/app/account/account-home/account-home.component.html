@@ -1,71 +1,48 @@
 <div class="account-home">
   <div class="container-row">
     <div
-      class="container-table"
-      *ngIf="hasUsageData | async">
+      class="processing-stats"
+      *ngIf="isSubscribed | async">
       <app-usage-table [usage]="usage | async"></app-usage-table>
     </div>
     <div
       class="processing-stats"
-      *ngIf="!(hasUsageData | async)">
-      <pa-tabs
-        noSlider
-        notFullWidth>
-        <pa-tab
-          [active]="selectedTab.value === 'completed'"
-          (click)="selectedTab.next('completed')">
-          {{ 'account.chart_title_processed' | translate }}
-        </pa-tab>
-        <pa-tab
-          *ngIf="(isFreeAccount | async) === false"
-          [active]="selectedTab.value === 'pending'"
-          (click)="selectedTab.next('pending')">
-          {{ 'account.chart_title_pending_resources' | translate }}
-        </pa-tab>
-      </pa-tabs>
-
-      <section
-        *ngIf="selectedTab.value === 'completed'"
-        class="container chart-container">
-        <div class="chart-header">
-          <div class="chart-type-container">
-            <span
-              class="chart-type"
-              [class.selected]="processedView.value === statsType.CHARS"
-              (click)="processedView.next(statsType.CHARS)">
-              {{ 'account.chart_ML_characters' | translate }}
-            </span>
-            <div class="separator"></div>
-            <span
-              class="chart-type"
-              [class.selected]="processedView.value === statsType.MEDIA_SECONDS"
-              (click)="processedView.next(statsType.MEDIA_SECONDS)">
-              {{ 'account.chart_media_hours' | translate }}
-            </span>
-            <div class="separator"></div>
-            <span
-              class="chart-type"
-              [class.selected]="processedView.value === statsType.DOCS_NO_MEDIA"
-              (click)="processedView.next(statsType.DOCS_NO_MEDIA)">
-              {{ 'account.chart_documents' | translate }}
-            </span>
-          </div>
-          <span class="chart-message">{{ 'account.renewal' | translate }}</span>
+      *ngIf="!(isSubscribed | async)">
+      <div class="consumption-header">
+        <div>
+          <h2>{{ 'account.monthly_consumibles' | translate }}</h2>
+          <div>{{ 'account.accumulated_consumption' | translate }}</div>
         </div>
-        <app-empty-chart
-          *ngIf="(processing | async) === null"
-          [numLines]="3"></app-empty-chart>
-        <app-bar-chart
-          [data]="(processing | async) || []"
-          [threshold]="processedThreshold | async"
-          [axisYMultiplier]="1"
-          [height]="320"
-          [locale]="locale | async"
-          [tooltipsEnabled]="true"></app-bar-chart>
-      </section>
-      <section
-        *ngIf="selectedTab.value === 'pending'"
-        class="container">
+        <pa-button
+          (click)="toggleCharts()"
+          [icon]="allCharts ? 'chevron-up' : 'chevron-down'"
+          aspect="basic"></pa-button>
+      </div>
+      <div
+        class="chart-container"
+        *ngFor="let statType of allCharts ? statsTypes : [statsTypes[0]]">
+        <div class="chart-header">
+          <div class="title-m">{{ 'account.chart_' + statType | translate }}</div>
+          <div class="chart-legend">
+            <div class="line"></div>
+            <div class="body-xs">{{ 'account.threshold' | translate }}</div>
+          </div>
+        </div>
+        <app-line-chart
+          *ngIf="charts[statType] | async as chart"
+          [data]="chart.data"
+          [xDomain]="chart.domain"
+          [yDomain]="{ min: 0 }"
+          [threshold]="chart.threshold"
+          [height]="260"
+          [area]="true"></app-line-chart>
+      </div>
+    </div>
+
+    <div
+      class="processing-stats"
+      *ngIf="showPending">
+      <section class="chart-container">
         <div class="chart-header">
           <div class="range-container">
             <nsi-dropdown-button
@@ -130,31 +107,25 @@
 
     <div class="right-column">
       <div>
-        <app-account-status [usage]="usage | async"></app-account-status>
+        <app-account-status></app-account-status>
       </div>
-      <div
-        class="container kb-state"
-        routerLink="../kbs">
-        <strong>{{ 'stash.state' | translate }}:</strong>
-        <span class="kb-count">
-          <span>
-            <strong>{{ (kbsTotal | async) || 0 }}</strong>
-            {{ 'account.knowledgeboxes' | translate }}
-          </span>
-          <div class="separator"></div>
-          <span>
-            <strong>{{ (kbsPublic | async) || 0 }}</strong>
-            {{ 'account.public' | translate }}
-          </span>
-        </span>
-      </div>
-      <div class="container">
-        <strong>{{ 'account.total_queries' | translate }}</strong>
+      <div>
+        <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
         <div
-          class="total-queries"
-          *ngIf="locale | async as locale">
-          {{ totalQueries | async | number: '1.0-0':locale }}
+          class="kb-list"
+          *ngIf="account | async as account">
+          <a
+            class="kb-item"
+            *ngFor="let kb of kbs | async"
+            [href]="getKbUrl(account.slug, kb.slug)">
+            <pa-icon [name]="kb.state === 'PUBLISHED' ? 'unlock' : 'lock'"></pa-icon>
+            {{ kb.title }}
+          </a>
         </div>
+      </div>
+      <div>
+        <div class="title-s">{{ 'account.total_queries' | translate }}</div>
+        <div class="display-m">{{ totalQueries | async | number }}</div>
       </div>
     </div>
   </div>

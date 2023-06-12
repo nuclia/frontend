@@ -37,3 +37,23 @@ export function createYAxis(
 
   return y;
 }
+
+export function drawThreshold(
+  svg: d3.Selection<any, any, any, any>,
+  threshold: number,
+  width: number,
+  y: d3.ScaleLinear<number, number>,
+) {
+  const t = y(threshold);
+  if (typeof t === 'number') {
+    svg
+      .append('line')
+      .style('stroke-dasharray', '5')
+      .style('stroke-width', '2')
+      .attr('class', 'threshold')
+      .attr('x1', 0)
+      .attr('y1', t)
+      .attr('x2', width)
+      .attr('y2', t);
+  }
+}

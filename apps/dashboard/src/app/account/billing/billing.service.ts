@@ -17,7 +17,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isSubscribed = this.type.pipe(map((type) => type !== 'stash-basic' && type !== 'stash-trial'));
+  isSubscribed = this.type.pipe(map((type) => type === 'stash-developer' || type === 'stash-business'));
 
   private _country = new BehaviorSubject<string | null>(null);
   country = this._country.asObservable();
