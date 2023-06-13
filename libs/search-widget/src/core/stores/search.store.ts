@@ -64,6 +64,7 @@ export const searchResults = searchState.writer<Search.FindResults, { results: S
 );
 
 export const hasSearchError = searchState.reader<boolean>((state) => !!state.error);
+export const hasPartialResults = searchState.reader<boolean>((state) => !!state.error && state.error.status === 206);
 export const searchError = searchState.writer<IErrorResponse | undefined>(
   (state) => state.error,
   (state, error) => ({

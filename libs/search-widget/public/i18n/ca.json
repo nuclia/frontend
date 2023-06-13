@@ -27,6 +27,7 @@
 	"entities.work_of_art": "Obres",
 	"error.audio-loading": "S'ha produït un error en carregar el fitxer d'àudio.",
 	"error.feature-blocked": "La funció de cerca no està permesa en aquest moment.",
+	"error.partial-results": "Ho sentim, el sistema està sobrecarregat i només podria proporcionar un resultat parcial.",
 	"error.processing": "Aquest recurs encara no s'ha processat completament",
 	"error.search": "Ups! Alguna cosa ha anat malament. Hi estem treballant",
 	"form.title-only": "Cerca només al títol",

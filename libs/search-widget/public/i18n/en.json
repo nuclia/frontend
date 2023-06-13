@@ -28,6 +28,7 @@
 	"entities.work_of_art": "Art",
 	"error.audio-loading": "An error occurred while loading the audio file.",
 	"error.feature-blocked": "Search feature is not allowed at the moment.",
+	"error.partial-results": "Sorry, the system is overloaded and could only provide a partial result.",
 	"error.processing": "This resource is not fully processed yet",
 	"error.search": "Oops! Something is wrong. We are working on it",
 	"form.title-only": "Search in title only",

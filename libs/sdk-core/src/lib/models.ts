@@ -144,4 +144,6 @@ export interface IErrorResponse {
   status: number;
   detail: string;
   type: 'error';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body?: any;
 }

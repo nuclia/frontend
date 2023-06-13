@@ -11,6 +11,7 @@
   import {
     entityRelations,
     hasMore,
+    hasPartialResults,
     hasSearchError,
     isEmptySearchQuery,
     loadMore,
@@ -71,7 +72,7 @@
   class="nuclia-widget sw-video-results"
   data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults && !$isEmptySearchQuery}
-    {#if $hasSearchError}
+    {#if $hasSearchError && !$hasPartialResults}
       <div class="error">
         {#if $searchError.status === 402}
           <strong>{$_('error.feature-blocked')}</strong>
@@ -82,6 +83,11 @@
     {:else if !$pendingResults && $smartResults.length === 0 && !$onlyAnswers}
       <strong>{$_('results.empty')}</strong>
     {:else}
+      {#if $hasPartialResults}
+        <div class="partial-results-warning">
+          <strong>{$_('error.partial-results')}</strong>
+        </div>
+      {/if}
       <div class="results-container">
         <div
           class="results"
