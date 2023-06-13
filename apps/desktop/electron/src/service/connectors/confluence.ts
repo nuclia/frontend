@@ -91,7 +91,7 @@ class ConfluenceImpl implements ISourceConnector {
     }).then(success, failure);
     return from(request).pipe(
       concatMap((result: any) => {
-        const newItems = result.results?.map((r) => this.mapResults(r, loadFolders));
+        const newItems = result.results?.map((r: any) => this.mapResults(r, loadFolders));
         const items = [...(previous?.items || []), ...newItems];
         const next = (start || 0) + BATCH_SIZE;
         return result._links.next
