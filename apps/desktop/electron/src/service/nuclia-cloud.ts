@@ -1,8 +1,10 @@
 import {
+  FIELD_TYPE,
   INuclia,
   Nuclia,
   NucliaOptions,
   Resource,
+  TextField,
   UploadResponse,
   WritableKnowledgeBox,
 } from '../../../../../libs/sdk-core/src';
@@ -24,10 +26,15 @@ export class NucliaCloud {
     this.nuclia = new Nuclia(options);
   }
 
-  upload(originalId: string, filename: string, data: { buffer?: ArrayBuffer; metadata?: any }): Observable<boolean> {
-    if (data.buffer) {
-      const buffer = data.buffer;
-      const slug = sha256(originalId);
+  upload(
+    originalId: string,
+    filename: string,
+    data: { buffer?: ArrayBuffer; text?: TextField; metadata?: any },
+  ): Observable<boolean> {
+    const slug = sha256(originalId);
+    const text = data.text;
+    const buffer = data.buffer;
+    if (buffer || text) {
       return this.getKb().pipe(
         switchMap((kb) =>
           kb.getResourceBySlug(slug, [], []).pipe(
@@ -48,28 +55,51 @@ export class NucliaCloud {
           if (!resource) {
             return of(false);
           }
-          try {
-            return resource
-              .upload('file', buffer, false, {
-                contentType: lookup(filename) || 'application/octet-stream',
-                filename,
-              })
-              .pipe(
+          if (buffer) {
+            try {
+              return resource
+                .upload('file', buffer, false, {
+                  contentType: lookup(filename) || 'application/octet-stream',
+                  filename,
+                })
+                .pipe(
+                  catchError((error: any) => {
+                    console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
+                    return of(false);
+                  }),
+                  switchMap((res) => {
+                    if (res && (res as UploadResponse).completed) {
+                      return of(true);
+                    } else {
+                      return this.deleteResource(slug, resource);
+                    }
+                  }),
+                );
+            } catch (error) {
+              console.error(`Error uploading ${filename} to ${slug}, status ${error}`);
+              return this.deleteResource(slug, resource);
+            }
+          } else if (text) {
+            try {
+              return resource.setField(FIELD_TYPE.text, 'text', text).pipe(
                 catchError((error: any) => {
-                  console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
+                  console.error(`Problem adding ${filename} to ${slug}, status ${error}`);
                   return of(false);
                 }),
                 switchMap((res) => {
-                  if (res && (res as UploadResponse).completed) {
+                  if (res) {
                     return of(true);
                   } else {
                     return this.deleteResource(slug, resource);
                   }
                 }),
               );
-          } catch (error) {
-            console.error(`Error uploading ${filename} to ${slug}, status ${error}`);
-            return this.deleteResource(slug, resource);
+            } catch (error) {
+              console.error(`Error adding ${filename} to ${slug}, status ${error}`);
+              return this.deleteResource(slug, resource);
+            }
+          } else {
+            return of(false);
           }
         }),
       );
