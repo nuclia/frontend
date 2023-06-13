@@ -1,3 +1,8 @@
+# 1.4.0 (unreleased)
+
+### Breaking change
+- `setField` method replaces `addField` and `updateField` which were identical.
+
 # 1.3.4 (2023-06-13)
 
 ### Improvements

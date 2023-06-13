@@ -225,7 +225,7 @@ export class EditResourceService {
   addField(
     fieldType: FIELD_TYPE,
     fieldId: string,
-    data: TextField | LinkField | KeywordSetField,
+    fieldData: TextField | LinkField | KeywordSetField,
   ): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
@@ -233,29 +233,24 @@ export class EditResourceService {
     }
 
     const dataKey = getDataKeyFromFieldType(fieldType);
-    const updatedData: ResourceData = dataKey
+    const resourceData: ResourceData = dataKey
       ? {
           ...currentResource.data,
           [dataKey]: {
             ...currentResource.data[dataKey],
             [fieldId]: {
-              value: data,
+              value: fieldData,
             },
           },
         }
       : currentResource.data;
-    return forkJoin([
-      currentResource.addField(fieldType, fieldId, data),
-      this.sdk.currentKb.pipe(
-        take(1),
-        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
-      ),
-    ]).pipe(
-      catchError((error) => {
-        this.toaster.error('generic.error.oops');
-        return throwError(() => error);
-      }),
-      map(() => this.toaster.success('resource.field.addition-successful')),
+    return this.setField(
+      currentResource,
+      fieldType,
+      fieldId,
+      fieldData,
+      resourceData,
+      'resource.field.addition-successful',
     );
   }
 
@@ -289,35 +284,53 @@ export class EditResourceService {
   updateField(
     fieldType: FIELD_TYPE,
     fieldId: string,
-    data: TextField | LinkField | KeywordSetField,
+    fieldData: TextField | LinkField | KeywordSetField,
   ): Observable<void | null> {
     const currentResource = this._resource.value;
     if (!currentResource) {
       return of(null);
     }
 
-    const updatedData: ResourceData = this.getUpdatedData(fieldType, currentResource.data, (fields, [id, field]) => {
+    const resourceData: ResourceData = this.getUpdatedData(fieldType, currentResource.data, (fields, [id, field]) => {
       if (id !== fieldId) {
         fields[id] = field;
       } else {
         fields[id] = {
-          value: data,
+          value: fieldData,
         };
       }
       return fields;
     });
+    return this.setField(
+      currentResource,
+      fieldType,
+      fieldId,
+      fieldData,
+      resourceData,
+      'resource.field.update-successful',
+    );
+  }
+
+  private setField(
+    currentResource: Resource,
+    fieldType: FIELD_TYPE,
+    fieldId: string,
+    fieldData: TextField | LinkField | KeywordSetField,
+    resourceData: ResourceData,
+    successMessage: string,
+  ) {
     return forkJoin([
-      currentResource.updateField(fieldType, fieldId, data),
+      currentResource.setField(fieldType, fieldId, fieldData),
       this.sdk.currentKb.pipe(
         take(1),
-        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: updatedData }))),
+        tap((kb) => this._resource.next(kb.getResourceFromData({ ...currentResource, data: resourceData }))),
       ),
     ]).pipe(
       catchError((error) => {
         this.toaster.error('generic.error.oops');
         return throwError(() => error);
       }),
-      map(() => this.toaster.success('resource.field.update-successful')),
+      map(() => this.toaster.success(successMessage)),
     );
   }
 

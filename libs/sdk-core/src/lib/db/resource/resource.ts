@@ -231,19 +231,11 @@ export class Resource extends ReadableResource implements IResource {
     return this.nuclia.rest.delete(`${this.path}/${type}/${field}`);
   }
 
-  addField(
+  setField(
     type: FIELD_TYPE,
     field: string,
     data: TextField | LinkField | FileField | KeywordSetField,
   ): Observable<void> {
-    return this.nuclia.rest.put(`${this.path}/${type}/${field}`, data);
-  }
-
-  updateField(
-    type: FIELD_TYPE,
-    field: string,
-    data: TextField | LinkField | FileField | KeywordSetField,
-  ): Observable<{ seqid: number }> {
     return this.nuclia.rest.put(`${this.path}/${type}/${field}`, data);
   }
 
