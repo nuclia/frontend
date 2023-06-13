@@ -3,6 +3,9 @@
 .error {
   width: var(--search-bar-max-width);
 }
+.partial-results-warning {
+  margin-bottom: var(--rhythm-3);
+}
 
 .results-container {
   display: flex;

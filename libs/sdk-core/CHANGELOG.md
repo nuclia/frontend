@@ -1,7 +1,10 @@
-# 1.3.4 (unreleased)
+# 1.3.4 (2023-06-13)
 
 ### Improvements
 - Add `autofilter` property to `BaseSearchOptions` and `WidgetFeatures` models
+- Manage properly 206 status (partial results) on find endpoint:
+  - Add optional `body` property on `IErrorResponse`
+  - Return an `IErrorResponse` with results in `body` when response status is 206
 
 ### Bugfix
 - Prevent content-type to be set to "null" during upload 

@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import type { Search, SearchOptions } from './search.models';
 
@@ -24,11 +24,39 @@ export const find = (
   }
 
   params['shards'] = nuclia.currentShards?.[kbid] || [];
+  const endpoint = `${path}/find`;
   const searchMethod = useGet
-    ? nuclia.rest.get<Search.FindResults | IErrorResponse>(`${path}/find?${serialize(params, others)}`)
-    : nuclia.rest.post<Search.FindResults | IErrorResponse>(`${path}/find`, { ...params, ...others });
+    ? nuclia.rest.get<Response>(`${endpoint}?${serialize(params, others)}`, undefined, true)
+    : nuclia.rest.post<Response>(endpoint, { ...params, ...others }, undefined, true);
   return searchMethod.pipe(
-    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
+    switchMap((res) => {
+      // status 206 means we got partial results
+      if (!res.ok || res.status === 206) {
+        return from(
+          res.json().then(
+            (body) => {
+              throw { status: res.status, body };
+            },
+            () => {
+              throw { status: res.status };
+            },
+          ),
+        );
+      } else {
+        return from(
+          res.json().then(
+            (json) => json,
+            () => {
+              console.warn(`${endpoint} did not return a valid JSON`);
+              return undefined;
+            },
+          ),
+        );
+      }
+    }),
+    catchError((error) =>
+      of({ type: 'error', status: error.status, detail: error.detail, body: error.body } as IErrorResponse),
+    ),
     map((res) => (res.type === 'error' ? res : ({ ...res, type: 'findResults' } as Search.FindResults))),
     tap((res) => {
       if (res.type === 'findResults' && res.shards) {

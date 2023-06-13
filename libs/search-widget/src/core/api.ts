@@ -75,9 +75,9 @@ export const search = (query: string, options: SearchOptions): Observable<Search
       if (res.type === 'error') {
         searchError.set(res);
       }
-      return res.type === 'findResults';
+      return res.type === 'findResults' || res.status === 206;
     }),
-    map((res) => res as Search.FindResults),
+    map((res) => (res.type === 'error' ? res.body : res) as Search.FindResults),
   );
 };
 

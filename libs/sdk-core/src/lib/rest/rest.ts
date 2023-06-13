@@ -35,9 +35,9 @@ export class Rest implements IRest {
     return this.fetch('PUT', path, body, extraHeaders, doNotParse, synchronous);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   patch<T>(
     path: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     body: any,
     extraHeaders?: { [key: string]: string },
     doNotParse?: boolean,
