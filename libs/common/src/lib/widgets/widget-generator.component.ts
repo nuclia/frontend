@@ -10,9 +10,12 @@ import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 
+type FilterType = 'labels' | 'entities' | 'both';
+
 const DEFAULT_WIDGET_CONFIG: {
   features: string[];
   placeholder?: string;
+  filters?: FilterType;
 } = {
   features: [],
 };
@@ -38,6 +41,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     },
   };
   placeholder?: string;
+  filters: FilterType = 'both';
   snippet = '';
   snippetPreview: SafeHtml = '';
   unsubscribeAll = new Subject<void>();
@@ -103,6 +107,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         switchMap((kb) => {
           const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
           this.placeholder = config.placeholder;
+          if (config.filters) {
+            this.filters = config.filters;
+          }
           this.mainForm = this.fb.group({
             features: this.fb.group({
               autofilter: [config.features.includes('autofilter')],
@@ -180,10 +187,15 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   backend="${this.backendConfig.getAPIURL()}"`
         : '';
+      const filters =
+        this.mainFormFeatures.filter && this.filters !== 'both'
+          ? `
+  filters="${this.filters}"`
+          : '';
       const baseSnippet = `<nuclia-search-bar
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${placeholder}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${placeholder}${filters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
@@ -222,6 +234,11 @@ ${baseSnippet}`;
     this.debouncePlaceholder.next(value);
   }
 
+  onFiltersChange(value: string) {
+    this.filters = value as FilterType;
+    this.onFormChange();
+  }
+
   showHints() {
     this.modalService.openModal(WidgetHintDialogComponent);
   }
@@ -245,6 +262,7 @@ ${baseSnippet}`;
       this.widgetConfigurations[kb.id] = {
         features: this.features.split(','),
         placeholder: this.placeholder,
+        filters: this.mainFormFeatures.filter ? this.filters : undefined,
       };
       this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     });

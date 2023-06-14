@@ -63,6 +63,17 @@
             formControlName="filter">
             {{ 'stash.widgets.filter' | translate }}
           </pa-toggle>
+          <div class="filter-type">
+            <pa-select
+              *ngIf="mainFormFeatures.filter"
+              [value]="filters"
+              (valueChange)="onFiltersChange($event)"
+              [label]="'stash.widgets.filter_type' | translate">
+              <pa-option value="both">{{ 'stash.widgets.labels_entities' | translate }}</pa-option>
+              <pa-option value="labels">{{ 'stash.widgets.labels' | translate }}</pa-option>
+              <pa-option value="entities">{{ 'stash.widgets.entities' | translate }}</pa-option>
+            </pa-select>
+          </div>
           <pa-toggle
             *ngIf="areAnswersEnabled | async"
             labelOnRight
