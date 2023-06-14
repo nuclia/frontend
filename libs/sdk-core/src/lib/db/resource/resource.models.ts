@@ -395,6 +395,7 @@ export interface Message {
   timestamp?: string;
   who?: string;
   to?: string[];
+  type?: 'QUESTION' | 'ANSWER';
 }
 
 export interface MessageContent {
