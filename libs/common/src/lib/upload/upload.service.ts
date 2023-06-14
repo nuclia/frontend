@@ -194,14 +194,12 @@ export class UploadService {
               {
                 ident: `question${currentIndex}`,
                 content: { text: row[0] },
-                who: 'Question',
-                to: ['Answer'],
+                type: 'QUESTION',
               },
               {
                 ident: `answer${currentIndex}`,
                 content: { text: row[1], format },
-                who: 'Answer',
-                to: ['Question'],
+                type: 'ANSWER',
               },
             ]);
           } else {
