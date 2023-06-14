@@ -2,6 +2,7 @@
   import { NerLinkHydrated, NerLink, NerNode } from '../../core/knowledge-graph.models';
   import { createEventDispatcher } from 'svelte';
   import { graphSearchResults, graphSelection, graphSelectionRelations } from '../../core/stores/graph.store';
+  import { getFontColor } from '../../core/utils';
 
   // utility function for translating elements
   const move = (x, y) => `transform: translate(${x}px, ${y}px)`;
@@ -112,17 +113,6 @@
       graphSearchResults.set(undefined);
     }
     dispatch('nodeSelection', selectedNode);
-  }
-
-  /**
-   * Return black for bright color, and white for dark color
-   * @param hexa: hexadecimal color
-   */
-  function getFontColor(hexa: string): string {
-    const color = d3.rgb(hexa);
-    // Counting the perceptive luminance - human eye favors green color...
-    const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
-    return luminance > 0.5 ? '#000' : '#fff';
   }
 </script>
 
