@@ -208,6 +208,14 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
+export const allFiltersApplyToResource = searchState.reader<boolean>((state) => {
+  return (
+    !!state.filters.labels &&
+    state.filters.labels.every((labelFilter) => labelFilter.kind === LabelSetKind.RESOURCES) &&
+    (state.filters.entities || []).length === 0
+  );
+});
+
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
 export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => {
