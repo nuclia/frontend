@@ -1,4 +1,4 @@
-import { getAnswer, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
+import { getAnswer, getEntities, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -30,6 +30,7 @@ import { chat, currentAnswer, currentQuestion } from './answers.store';
 import { isTitleOnly } from '../../common/label/label.utils';
 import { graphSearchResults, graphSelection } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
+import { entities } from './entities.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -43,6 +44,9 @@ export function unsubscribeAllEffects() {
 export function initLabelStore() {
   // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
   getLabelSets().subscribe((labelSetMap) => labelSets.set(labelSetMap));
+}
+export function initEntitiesStore() {
+  getEntities().subscribe((entityMap) => entities.set(entityMap));
 }
 
 /**

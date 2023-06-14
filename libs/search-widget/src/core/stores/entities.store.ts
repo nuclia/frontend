@@ -1,10 +1,26 @@
-import { writableSubject } from '../state-lib';
+import { SvelteState, writableSubject } from '../state-lib';
 import type { EntityGroup } from '../models';
 import { resource } from './resource.store';
 import type { Observable } from 'rxjs';
 import { combineLatest, map, take } from 'rxjs';
 import { generatedEntitiesColor } from '../utils';
 import { _ } from '../i18n';
+
+interface EntitiesState {
+  entities: EntityGroup[];
+}
+
+export const entitiesState = new SvelteState<EntitiesState>({
+  entities: [],
+});
+
+export const entities = entitiesState.writer<EntityGroup[]>(
+  (state) => state.entities,
+  (state, entities) => ({
+    ...state,
+    entities,
+  }),
+);
 
 export const entityGroups = writableSubject<EntityGroup[]>([]);
 export const selectedFamily = writableSubject('');

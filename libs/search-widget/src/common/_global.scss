@@ -72,17 +72,17 @@ ul.sw-dropdown-options {
 }
 
 .sw-dropdown-options {
-  .label-set-option {
+  .filter-option {
     align-items: center;
     display: flex;
     flex-direction: row;
     gap: var(--rhythm-1);
     justify-content: space-between;
 
-    .label-set-title {
+    .filter-title {
       flex: 1 1 0;
     }
-    .label-set-color {
+    .filter-color {
       flex: 0 0 auto;
       height: var(--rhythm-1);
       width: var(--rhythm-1);

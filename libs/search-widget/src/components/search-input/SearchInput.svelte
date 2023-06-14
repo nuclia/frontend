@@ -16,24 +16,28 @@
   } from '../../core/stores/suggestions.store';
   import { tap } from 'rxjs/operators';
   import Label from '../../common/label/Label.svelte';
+  import Chip from '../../common/chip/Chip.svelte';
   import type { Observable } from 'rxjs';
-  import { map } from 'rxjs';
-  import type { Classification } from '@nuclia/core';
-  import { getLabelFromFilter } from '@nuclia/core';
+  import { combineLatest, map } from 'rxjs';
   import IconButton from '../../common/button/IconButton.svelte';
   import Dropdown from '../../common/dropdown/Dropdown.svelte';
   import type { LabelSetWithId } from '../../core/stores/labels.store';
   import { orderedLabelSetList } from '../../core/stores/labels.store';
-  import { getParentLiRect } from '../../common/label/label.utils';
+  import { getParentLiRect, LabelFilter } from '../../common/label/label.utils';
   import Button from '../../common/button/Button.svelte';
   import { hasFilterButton, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
+    addEntityFilter,
     addLabelFilter,
+    entityFilters,
+    labelFilters,
+    removeEntityFilter,
     removeLabelFilter,
-    searchFilters,
     searchQuery,
     triggerSearch,
   } from '../../core/stores/search.store';
+  import { entities } from '../../core/stores/entities.store';
+  import type { EntityGroup } from '../../core/models';
 
   export let popupSearch = false;
   export let embeddedSearch = false;
@@ -47,6 +51,7 @@
   let labelSetDropdownElement: HTMLElement | undefined;
   let moreFilterElement: HTMLElement | undefined;
   let selectedLabelSet: LabelSetWithId | undefined;
+  let selectedFamily: EntityGroup | undefined;
   let position: DOMRect | undefined;
   let filterButtonPosition: DOMRect | undefined;
   let moreFilterPosition: { left: number; top: number } | undefined;
@@ -58,7 +63,19 @@
   let displayMoreFilters = false;
   const filterDisplayLimit = popupSearch ? 1 : 2;
 
-  const filters = searchFilters.pipe(
+  const filters = combineLatest([labelFilters, entityFilters]).pipe(
+    map(([labels, entities]) => [
+      ...labels.map((value) => ({
+        type: 'label',
+        key: value.classification.label + value.classification.labelset,
+        value: value.classification,
+      })),
+      ...entities.map((value) => ({
+        type: 'entity',
+        key: value.family + value.entity,
+        value,
+      })),
+    ]),
     tap((filters) => {
       // search box size changes when there are filters or not
       const hasFiltersNow = filters.length > 0;
@@ -68,10 +85,12 @@
       }
     }),
   );
-  let selectedLabels: string[] = [];
-  const labels: Observable<Classification[]> = filters.pipe(
-    map((filters) => filters.map((filter) => getLabelFromFilter(filter))),
-    tap((labelFilters) => (selectedLabels = labelFilters.map((label) => label.label))),
+
+  const selectedLabels: Observable<string[]> = labelFilters.pipe(
+    map((filters) => filters.map((filter) => filter.classification.label)),
+  );
+  const selectedEntities: Observable<string[]> = entityFilters.pipe(
+    map((filters) => filters.map((filter) => filter.entity)),
   );
   const labelSets: Observable<LabelSetWithId[]> = orderedLabelSetList;
 
@@ -127,6 +146,14 @@
     displayMoreFilters = true;
   };
 
+  const selectEntity = (entity) => {
+    showFilterSubmenu = false;
+    if (selectedFamily) {
+      addEntityFilter({ family: selectedFamily.id, entity });
+      selectedFamily = undefined;
+    }
+  };
+
   const selectLabel = (label) => {
     showFilterSubmenu = false;
     if (selectedLabelSet) {
@@ -135,8 +162,9 @@
     }
   };
 
-  function openSubMenu(event, labelSet) {
+  function openSubMenu(event, labelSet, family) {
     selectedLabelSet = labelSet;
+    selectedFamily = family;
     if (labelSetDropdownElement) {
       const dropdownRect = labelSetDropdownElement?.getBoundingClientRect();
       const top = getParentLiRect(event)?.top || event.clientY;
@@ -210,20 +238,30 @@
 
   {#if $filters.length > 0}
     <div class="filters-container">
-      {#each $labels.slice(0, filterDisplayLimit) as label (label.labelset + label.label)}
-        <Label
-          {label}
-          removable
-          on:remove={() => removeLabelFilter(label)} />
+      {#each $filters.slice(0, filterDisplayLimit) as filter (filter.key)}
+        {#if filter.type === 'label'}
+          <Label
+            label={filter.value}
+            removable
+            on:remove={() => removeLabelFilter(filter.value)} />
+        {/if}
+        {#if filter.type === 'entity'}
+          <Chip
+            removable
+            color={$entities.find((family) => family.id === filter.value.family)?.color}
+            on:remove={() => removeEntityFilter(filter.value)}>
+            {filter.value.entity}
+          </Chip>
+        {/if}
       {/each}
-      {#if $labels.length > filterDisplayLimit}
+      {#if $filters.length > filterDisplayLimit}
         <div bind:this={moreFilterElement}>
           <Button
             aspect="basic"
             size="small"
             active={displayMoreFilters}
             on:click={showMoreFilters}>
-            {$_('input.more_filters', { count: $labels.length - filterDisplayLimit })}
+            {$_('input.more_filters', { count: $filters.length - filterDisplayLimit })}
           </Button>
         </div>
         {#if displayMoreFilters}
@@ -231,12 +269,22 @@
             position={moreFilterPosition}
             on:close={() => (displayMoreFilters = false)}>
             <ul class="more-filters-dropdown">
-              {#each $labels.slice(filterDisplayLimit) as label (label.labelset + label.label)}
+              {#each $filters.slice(filterDisplayLimit) as filter (filter.key)}
                 <li>
-                  <Label
-                    {label}
-                    removable
-                    on:remove={() => removeLabelFilter(label)} />
+                  {#if filter.type === 'label'}
+                    <Label
+                      label={filter.value}
+                      removable
+                      on:remove={() => removeLabelFilter(filter.value)} />
+                  {/if}
+                  {#if filter.type === 'entity'}
+                    <Chip
+                      removable
+                      color={$entities.find((family) => family.id === filter.value.family)?.color}
+                      on:remove={() => removeEntityFilter(filter.value)}>
+                      {filter.value.entity}
+                    </Chip>
+                  {/if}
                 </li>
               {/each}
             </ul>
@@ -256,12 +304,25 @@
       bind:this={labelSetDropdownElement}>
       {#each $labelSets as labelSet}
         <li
-          class="label-set-option"
+          class="filter-option"
           on:mouseenter={(event) => openSubMenu(event, labelSet)}>
           <div
-            class="label-set-color"
+            class="filter-color"
             style:background-color={labelSet.color} />
-          <div class="label-set-title ellipsis">{labelSet.title}</div>
+          <div class="filter-title ellipsis">{labelSet.title}</div>
+          <Icon name="chevron-right" />
+        </li>
+      {/each}
+      {#each $entities as family}
+        <li
+          class="filter-option"
+          on:mouseenter={(event) => openSubMenu(event, undefined, family)}>
+          <div
+            class="filter-color"
+            style:background-color={family.color} />
+          <div class="filter-title ellipsis">
+            {family.title}
+          </div>
           <Icon name="chevron-right" />
         </li>
       {/each}
@@ -274,14 +335,26 @@
     position={submenuPosition}
     on:close={() => (showFilterSubmenu = false)}>
     <ul class="sw-dropdown-options">
-      {#each selectedLabelSet.labels as label}
-        <li
-          class="ellipsis"
-          class:selected={selectedLabels.includes(label.title)}
-          on:click={() => selectLabel(label)}>
-          {label.title}
-        </li>
-      {/each}
+      {#if selectedLabelSet}
+        {#each selectedLabelSet.labels as label}
+          <li
+            class="ellipsis"
+            class:selected={$selectedLabels.includes(label.title)}
+            on:click={() => selectLabel(label)}>
+            {label.title}
+          </li>
+        {/each}
+      {/if}
+      {#if selectedFamily}
+        {#each selectedFamily.entities as entity}
+          <li
+            class="ellipsis"
+            class:selected={$selectedEntities.includes(entity)}
+            on:click={() => selectEntity(entity)}>
+            {entity}
+          </li>
+        {/each}
+      {/if}
     </ul>
   </Dropdown>
 {/if}
