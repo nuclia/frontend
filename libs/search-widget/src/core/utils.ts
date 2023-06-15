@@ -158,6 +158,7 @@ export function getFontColor(hexa: string): string {
 const HEX_REGEX = /^#([0-9a-f]{3,6})$/;
 
 function hexToRGB(hex: string): { r: number; g: number; b: number } | undefined {
+  hex = hex.toLowerCase();
   if (!HEX_REGEX.test(hex)) return;
   // 3 digits
   if (hex.length === 4) {
