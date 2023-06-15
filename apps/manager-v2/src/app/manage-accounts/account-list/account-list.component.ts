@@ -14,7 +14,11 @@ export class AccountListComponent {
   filter$: BehaviorSubject<string> = new BehaviorSubject<string>('');
   accounts$: Observable<AccountSummary[]> = combineLatest([this._allAccounts, this.filter$]).pipe(
     map(([accounts, filter]) =>
-      filter ? accounts.filter((account) => account.title.includes(filter) || account.slug.includes(filter)) : accounts,
+      filter
+        ? accounts.filter(
+            (account) => account.id.includes(filter) || account.title.includes(filter) || account.slug.includes(filter),
+          )
+        : accounts,
     ),
     map((accounts) => accounts.sort((a, b) => a.title.localeCompare(b.title))),
   );

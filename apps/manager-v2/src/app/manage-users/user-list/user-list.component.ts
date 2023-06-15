@@ -16,7 +16,10 @@ export class UserListComponent {
   users$: Observable<UserSummary[]> = combineLatest([this._allUsers, this.filter$]).pipe(
     map(([users, filter]) =>
       filter
-        ? users.filter((user) => (user.name || user.email).includes(filter) || user.email.includes(filter))
+        ? users.filter(
+            (user) =>
+              (user.name || user.email).includes(filter) || user.email.includes(filter) || user.id.includes(filter),
+          )
         : users,
     ),
     map((accounts) => accounts.sort((a, b) => (a.name || '').localeCompare(b.name || ''))),
