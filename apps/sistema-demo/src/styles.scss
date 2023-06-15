@@ -34,6 +34,13 @@
   }
 }
 
+.slider-line {
+  margin-bottom: rhythm(2);
+}
+.slider-line + .title-s {
+  margin-bottom: rhythm(0.25);
+}
+
 // Override tab example style
 .tab-example-container {
   --tab-parent-background: #f7f7f8 !important;
