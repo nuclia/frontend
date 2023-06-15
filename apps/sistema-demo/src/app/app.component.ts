@@ -56,6 +56,7 @@ import {
   SistemaPasswordInputComponent,
   SistemaSpinnerComponent,
 } from './sistema-pages';
+import { SliderPageComponent } from '../../../../libs/pastanaga-angular/projects/demo/src/app/demo/pages/slider-page/slider-page.component';
 
 export const menu: IDemoMenuSection[] = [
   {
@@ -117,6 +118,7 @@ export const menu: IDemoMenuSection[] = [
       { view: 'select', title: 'Select', type: SelectPageComponent },
       { view: 'textarea', title: 'Textarea', type: TextareaPageComponent },
       { view: 'toggle', title: 'Toggle', type: TogglePageComponent },
+      { view: 'slider', title: 'Slider', type: SliderPageComponent },
       { view: 'formControl', title: 'Form control', type: FormControlPageComponent },
       { view: 'formFieldHint', title: 'Form field hint', type: FormFieldHintPageComponent },
       { view: 'nativeTextField', title: 'Native Text Field', type: NativeTextFieldPageComponent },
