@@ -6045,7 +6045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/svelte@npm:^3.0.3":
+"@testing-library/svelte@npm:^3.2.2":
   version: 3.2.2
   resolution: "@testing-library/svelte@npm:3.2.2"
   dependencies:
@@ -6098,10 +6098,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/svelte@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@tsconfig/svelte@npm:2.0.1"
-  checksum: b866a3e2a40eed8e4ab9f062a70086d3ab564e7b359545802bdd092f077a268ef715c58408c1b5ef0846efaf3884cc3a26fcb43df6e37195ec0d93392302c431
+"@tsconfig/svelte@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "@tsconfig/svelte@npm:4.0.1"
+  checksum: 888b3dca2dc0041afb1d734ca500f6f40107b7a548c8890df448259ffec2ae3c97765ca7a43a42ad17d33a623ec29e3d39cbacb56847c962eff72b021d0780b6
   languageName: node
   linkType: hard
 
@@ -6720,13 +6720,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:29.4.4":
-  version: 29.4.4
-  resolution: "@types/jest@npm:29.4.4"
+"@types/jest@npm:29.5.2":
+  version: 29.5.2
+  resolution: "@types/jest@npm:29.5.2"
   dependencies:
     expect: ^29.0.0
     pretty-format: ^29.0.0
-  checksum: 754c21d996c3457c761e55c4076a2dd14d82e6290c3f57122db17aa07ef59c12af7df50a82a06845ef9ba1fbf75bb024a1fed68426514618856bda7fb90eb773
+  checksum: 7d205599ea3cccc262bad5cc173d3242d6bf8138c99458509230e4ecef07a52d6ddcde5a1dbd49ace655c0af51d2dbadef3748697292ea4d86da19d9e03e19c0
   languageName: node
   linkType: hard
 
@@ -16517,8 +16517,8 @@ __metadata:
     "@sveltejs/kit": ^1.15.2
     "@sveltejs/package": ^2.0.2
     "@sveltejs/vite-plugin-svelte": ^1.0.0-next.32
-    "@testing-library/svelte": ^3.0.3
-    "@tsconfig/svelte": ^2.0.1
+    "@testing-library/svelte": ^3.2.2
+    "@tsconfig/svelte": ^4.0.1
     "@types/core-js": ^2.5.4
     "@types/cors": ^2.8.13
     "@types/d3": ^6.7.0
@@ -16527,7 +16527,7 @@ __metadata:
     "@types/gapi.auth2": ^0.0.56
     "@types/gapi.client.drive": ^3.0.13
     "@types/jasmine": 4.0.3
-    "@types/jest": 29.4.4
+    "@types/jest": 29.5.2
     "@types/jexl": ^2.2.0
     "@types/latinize": ^0.2.15
     "@types/lru-cache": ^5.1.0
