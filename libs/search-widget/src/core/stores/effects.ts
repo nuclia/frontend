@@ -97,32 +97,9 @@ export function initAnswer() {
     ask
       .pipe(
         distinctUntilChanged(),
-        tap((data) => currentQuestion.set(data)),
-        switchMap(({ question }) =>
-          chat.pipe(
-            take(1),
-            map((chat) => chat.filter((chat) => !chat.answer.incomplete)),
-            switchMap((chat) =>
-              searchFilters.pipe(
-                take(1),
-                switchMap((filters) =>
-                  getAnswer(question, chat, filters).pipe(map((answer) => ({ question, answer }))),
-                ),
-              ),
-            ),
-          ),
-        ),
+        switchMap(({ question, reset }) => askQuestion(question, reset)),
       )
-      .subscribe(({ question, answer }) => {
-        if (answer.incomplete) {
-          currentAnswer.set(answer);
-        } else {
-          chat.set({
-            question,
-            answer,
-          });
-        }
-      }),
+      .subscribe(),
   );
   subscriptions.push(
     isSpeechEnabled
@@ -302,5 +279,30 @@ export function setupTriggerGraphNerSearch() {
         ),
       )
       .subscribe((results) => graphSearchResults.set(results)),
+  );
+}
+
+export function askQuestion(question: string, reset: boolean): Observable<{ question: string; answer: Chat.Answer }> {
+  return of({ question, reset }).pipe(
+    tap((data) => currentQuestion.set(data)),
+    switchMap(({ question }) =>
+      chat.pipe(
+        take(1),
+        map((chat) => chat.filter((chat) => !chat.answer.incomplete)),
+        switchMap((chat) =>
+          searchFilters.pipe(
+            take(1),
+            switchMap((filters) => getAnswer(question, chat, filters).pipe(map((answer) => ({ question, answer })))),
+          ),
+        ),
+        tap(({ question, answer }) => {
+          if (answer.incomplete) {
+            currentAnswer.set(answer);
+          } else {
+            chat.set({ question, answer });
+          }
+        }),
+      ),
+    ),
   );
 }

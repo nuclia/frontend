@@ -1,5 +1,5 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
-import { getAnswer, search } from './api';
+import { search } from './api';
 import type { Search, SearchOptions } from '@nuclia/core';
 import { Chat, ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
@@ -16,7 +16,7 @@ import {
   triggerSearch,
 } from './stores/search.store';
 import { isTitleOnly } from '../common/label/label.utils';
-import { ask } from './stores/effects';
+import { askQuestion } from './stores/effects';
 import { onlyAnswers } from './stores/widget.store';
 
 const subscriptions: Subscription[] = [];
@@ -38,7 +38,6 @@ export const setupTriggerSearch = (
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
-            tap((query) => (!trigger?.more ? ask.next({ question: query, reset: true }) : undefined)),
             tap(() => (!trigger?.more ? pageNumber.set(0) : undefined)),
             switchMap((query) =>
               forkJoin([
@@ -54,7 +53,9 @@ export const setupTriggerSearch = (
                 }),
                 switchMap(([onlyAnswers, options, filters, labelFilters]) => {
                   if (isAnswerEnabled && !trigger?.more) {
-                    return getAnswer(query, [], filters).pipe(map((answer) => ({question: query, answer, onlyAnswers, loadingMore: trigger?.more})));
+                    return askQuestion(query, true).pipe(
+                      map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
+                    );
                   } else {
                     const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
                     const currentOptions: SearchOptions = {
@@ -73,11 +74,11 @@ export const setupTriggerSearch = (
           ),
         ),
       )
-      .subscribe(data => {
+      .subscribe((data) => {
         if (isAnswerEnabled && !data.loadingMore) {
-          const { answer} = data as  {question: string, answer: Chat.Answer};
+          const { answer } = data as { question: string; answer: Chat.Answer };
           if (answer.sources && !data.onlyAnswers) {
-            searchResults.set({results: answer.sources, append: false});
+            searchResults.set({ results: answer.sources, append: false });
           }
         } else {
           const {results, append} = data as {results: Search.FindResults, append: boolean};
