@@ -1,100 +1,78 @@
-import { FileStatus, ISourceConnectorOld, SourceConnectorDefinition, SyncItem, SearchResults } from '../models';
-import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
-import { GoogleBaseImpl } from './google.base';
+import { ISourceConnector, SourceConnectorDefinition, ConnectorParameters, Field } from '../models';
+import { Observable, of, BehaviorSubject } from 'rxjs';
+import { getDeeplink } from '../../utils';
+import { environment } from '../../../environments/environment';
 
-// eslint-disable-next-line
-declare var gapi: any;
+export const GDriveConnector: SourceConnectorDefinition = {
+  id: 'gdrive',
+  title: 'Google Drive',
+  logo: 'assets/logos/gdrive.svg',
+  description: 'File storage and synchronization service developed by Google',
+  factory: () => of(new GDriveImpl()),
+};
 
-// export const GDrive: SourceConnectorDefinition = {
-//   id: 'gdrive',
-//   title: 'Google Drive',
-//   logo: 'assets/logos/gdrive.svg',
-//   description: 'File storage and synchronization service developed by Google',
-//   helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#google-drive-and-google-cloud-connectors-usage',
-//   factory: () => of(new GDriveImpl()),
-// };
+const TOKEN = 'gdrive-token';
+const REFRESH = 'gdrive-refresh';
 
-class GDriveImpl extends GoogleBaseImpl implements ISourceConnectorOld {
-  isExternal = false;
-  resumable = true;
-  override DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
+class GDriveImpl implements ISourceConnector {
+  hasServerSideAuth = true;
+  isExternal = true;
+  resumable = false;
+  private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  getFiles(query?: string, pageSize?: number) {
-    return this.getDrive().pipe(switchMap((drive) => this._getFiles(drive, query, pageSize)));
+  getParameters(): Observable<Field[]> {
+    return of([]);
   }
 
-  private _getFiles(
-    drive: any,
-    query?: string,
-    pageSize: number = 50,
-    nextPageToken?: string,
-  ): Observable<SearchResults> {
-    return from(
-      drive.files.list({
-        pageSize,
-        pageToken: nextPageToken,
-        q: query
-          ? `name contains '${query}' and not mimeType = 'application/vnd.google-apps.folder'`
-          : `not mimeType = 'application/vnd.google-apps.folder'`,
-      }),
-    ).pipe(
-      /* eslint-disable  @typescript-eslint/no-explicit-any */
-      map((res: any) => {
-        if (res.result) {
-          return {
-            items: res.result.files.map(this.map),
-            nextPage: res.result.nextPageToken
-              ? this._getFiles(drive, query, pageSize, res.result.nextPageToken)
-              : undefined,
-          };
-        } else {
-          if (res.error?.code?.startsWith('4')) {
-            throw new Error('Unauthorized');
-          } else {
-            throw new Error(res.error.message || 'Unknown error');
-          }
-        }
-      }),
-    );
+  handleParameters(params: ConnectorParameters) {
+    return;
   }
 
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  map(raw: any): SyncItem {
+  getParametersValues(): ConnectorParameters {
     return {
-      title: raw.name || '',
-      originalId: raw.id || '',
-      metadata: { mimeType: raw['mimeType'] },
-      status: FileStatus.PENDING,
-      uuid: raw.uuid || '',
+      token: localStorage.getItem(TOKEN),
+      refresh: localStorage.getItem(REFRESH),
+      refresh_endpoint: `${environment.dashboard}/api/external_auth/gdrive/refresh`,
     };
   }
 
-  download(resource: SyncItem): Observable<Blob> {
-    return new Observable<Blob>((observer) => {
-      const request = resource.metadata['mimeType'].startsWith('application/vnd.google-apps')
-        ? `https://www.googleapis.com/drive/v3/files/${resource.originalId}/export?mimeType=application/pdf&supportsAllDrives=true`
-        : `https://www.googleapis.com/drive/v3/files/${resource.originalId}?alt=media&supportsAllDrives=true`;
+  goToOAuth(reset?: boolean) {
+    if (reset) {
+      localStorage.removeItem(TOKEN);
+    }
+    const token = localStorage.getItem(TOKEN);
+    if (!token) {
+      const authorizeEndpoint = `${environment.dashboard}/api/external_auth/gdrive/authorize`;
 
-      this.getClient().subscribe((client) =>
-        fetch(request, {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${client.getToken().access_token}` },
-        })
-          .then((response) => response.blob())
-          .then((blob) => {
-            observer.next(blob);
-            observer.complete();
-          }),
-      );
-    });
+      if ((window as any)['electron']) {
+        (window as any)['electron'].openExternal(`${authorizeEndpoint}?redirect=nuclia-desktop://index.html`);
+      } else {
+        location.href = `${authorizeEndpoint}?redirect=http://localhost:4200`;
+      }
+    } else {
+      this.isAuthenticated.next(true);
+    }
   }
 
-  private getDrive(): Observable<any> {
-    return this.getClient().pipe(
-      map((client) => client.drive),
-      catchError(() => {
-        throw new Error('Unauthorized');
-      }),
-    );
+  authenticate(): Observable<boolean> {
+    if (!this.isAuthenticated.getValue()) {
+      const interval = setInterval(() => {
+        const deeplink = getDeeplink();
+        if (deeplink && deeplink.includes('?')) {
+          const params = new URLSearchParams(deeplink.split('?')[1]);
+          const token = params.get('token') || '';
+          const refresh = params.get('refresh') || '';
+          clearInterval(interval);
+          if (token) {
+            localStorage.setItem(TOKEN, token);
+            localStorage.setItem(REFRESH, refresh || '');
+            this.isAuthenticated.next(true);
+          } else {
+            this.isAuthenticated.next(false);
+          }
+        }
+      }, 500);
+    }
+    return this.isAuthenticated.asObservable();
   }
 }

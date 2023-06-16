@@ -108,7 +108,10 @@ export function syncFile(sourceId: string, source: Source, item: SyncItem): Obse
         return from(data.blob.arrayBuffer()).pipe(
           switchMap((arrayBuffer) => {
             try {
-              return nucliaConnector.upload(item.originalId, item.title, { buffer: arrayBuffer });
+              return nucliaConnector.upload(item.originalId, item.title, {
+                buffer: arrayBuffer,
+                metadata: item.metadata,
+              });
             } catch (err) {
               return of(false);
             }

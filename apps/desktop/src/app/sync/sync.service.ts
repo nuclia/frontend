@@ -41,6 +41,7 @@ import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
 import { SharepointConnector } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
+import { GDriveConnector } from './sources/gdrive';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
@@ -69,7 +70,7 @@ export class SyncService {
       instance?: ReplaySubject<ISourceConnector>;
     };
   } = {
-    // gdrive: { definition: GDrive, settings: {} },
+    gdrive: { definition: GDriveConnector, settings: {} },
     onedrive: { definition: OneDriveConnector, settings: {} },
     sharepoint: { definition: SharepointConnector, settings: {} },
     dropbox: { definition: DropboxConnector, settings: {} },
