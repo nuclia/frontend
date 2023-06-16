@@ -102,7 +102,7 @@
     learnMore="https://docs.nuclia.dev/docs/quick-start/push#api-push-contents-using-the-api">
     <p>
       The service access token can be used on any call to the API. It goes in the
-      <code>X-STF-Serviceaccount</code>
+      <code>X-NUCLIA-SERVICEACCOUNT</code>
       header and replaces the
       <code>Authorization</code>
       header
@@ -111,7 +111,7 @@
  -X POST \
  -H "content-type: video/mp4"
  -H "x-language: fr"
- -H "X-STF-Serviceaccount: Bearer YOUR-SERVICE-ACCESS-TOKEN" \
+ -H "X-NUCLIA-SERVICEACCOUNT: Bearer YOUR-SERVICE-ACCESS-TOKEN" \
  -T /path/to/file.mp4</code></pre>
   </ncom-hint>
 </div>
