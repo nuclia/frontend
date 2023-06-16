@@ -26,7 +26,7 @@ export function chat(
       ...options,
     })
     .pipe(
-      map(({ data, incomplete, headers }) => {
+      map(({ data, incomplete, headers, status }) => {
         const id = headers.get('NUCLIA-LEARNING-ID') || '';
         // /chat returns a readable stream structured as follow:
         // - 1st block: 4 first bytes indicates the size of the 2nd block
@@ -46,7 +46,7 @@ export function chat(
             text = text.split(END_OF_STREAM)[0];
           }
         }
-        return { text, sources, incomplete, id };
+        return { text, sources, incomplete, id, partial: status === 529 };
       }),
     );
 }

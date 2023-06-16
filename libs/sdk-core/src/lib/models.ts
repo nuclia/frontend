@@ -83,7 +83,10 @@ export interface IRest {
   getZoneSlug(zoneId: string): Observable<string>;
   getFullUrl(path: string): string;
   getObjectURL(path: string): Observable<string>;
-  getStream(path: string, body: any): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers }>;
+  getStream(
+    path: string,
+    body: any,
+  ): Observable<{ data: Uint8Array; incomplete: boolean; headers: Headers; status: number }>;
 }
 
 export interface IDb {

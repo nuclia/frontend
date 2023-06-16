@@ -1,10 +1,12 @@
 import type { Chat } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
+import type { IErrorResponse } from '@nuclia/core';
 
 interface AnswerState {
   chat: Chat.Entry[];
   currentQuestion: string;
   currentAnswer: Chat.Answer;
+  error?: IErrorResponse;
   isStreaming: boolean;
   isSpeechOn: boolean;
 }
@@ -25,6 +27,7 @@ export const currentQuestion = answerState.writer<string, { question: string; re
     currentQuestion: value.question,
     chat: value.reset ? [] : state.chat,
     isStreaming: true,
+    error: undefined,
   }),
 );
 
@@ -77,4 +80,12 @@ export const isStreaming = answerState.reader((state) => state.isStreaming);
 export const isSpeechOn = answerState.writer<boolean, { value?: boolean; toggle?: boolean }>(
   (state) => state.isSpeechOn,
   (state, params) => ({ ...state, isSpeechOn: params.toggle ? !state.isSpeechOn : !!params.value }),
+);
+
+export const hasChatPartialResults = answerState.reader<boolean>(
+  (state) => !!state.error && state.error.status === 529,
+);
+export const chatError = answerState.writer<IErrorResponse | undefined>(
+  (state) => state.error,
+  (state, error) => ({ ...state, error }),
 );
