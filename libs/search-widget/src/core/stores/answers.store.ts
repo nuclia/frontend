@@ -82,9 +82,7 @@ export const isSpeechOn = answerState.writer<boolean, { value?: boolean; toggle?
   (state, params) => ({ ...state, isSpeechOn: params.toggle ? !state.isSpeechOn : !!params.value }),
 );
 
-export const hasChatPartialResults = answerState.reader<boolean>(
-  (state) => !!state.error && state.error.status === 529,
-);
+export const isServiceOverloaded = answerState.reader<boolean>((state) => !!state.error && state.error.status === 529);
 export const chatError = answerState.writer<IErrorResponse | undefined>(
   (state) => state.error,
   (state, error) => ({ ...state, error }),

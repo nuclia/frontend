@@ -94,8 +94,8 @@ export const getAnswer = (query: string, chat?: Chat.Entry[], filters?: string[]
 
   return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], { filters }).pipe(
     tap((res) => {
-      if (res.partial) {
-        chatError.set({ type: 'error', status: 529, detail: 'Partial results' });
+      if (res.overloaded) {
+        chatError.set({ type: 'error', status: 529, detail: 'Service overloaded' });
       }
     }),
   );

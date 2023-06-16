@@ -26,7 +26,6 @@
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged } from 'rxjs/operators';
   import { isAnswerEnabled, onlyAnswers, setWidgetActions } from '../../core/stores/widget.store';
-  import { hasChatPartialResults } from '../../core/stores/answers.store';
   import { onClosePreview } from '../../tiles/tile.utils';
   import InfoCard from '../../components/info-card/InfoCard.svelte';
   import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
@@ -84,7 +83,7 @@
     {:else if !$pendingResults && $smartResults.length === 0 && !$onlyAnswers}
       <strong>{$_('results.empty')}</strong>
     {:else}
-      {#if $hasPartialResults || $hasChatPartialResults}
+      {#if $hasPartialResults}
         <div class="partial-results-warning">
           <strong>{$_('error.partial-results')}</strong>
         </div>

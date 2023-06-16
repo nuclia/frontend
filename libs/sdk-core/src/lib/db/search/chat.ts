@@ -46,7 +46,7 @@ export function chat(
             text = text.split(END_OF_STREAM)[0];
           }
         }
-        return { text, sources, incomplete, id, partial: status === 529 };
+        return { text, sources, incomplete, id, overloaded: status === 529 };
       }),
     );
 }
