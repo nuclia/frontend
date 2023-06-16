@@ -4,7 +4,7 @@
 - `setField` method replaces `addField` and `updateField` which were identical.
 
 ### Improvements
-- Manage properly 529 status (partial results) on chat endpoint
+- Manage properly 529 status (service overloaded) on chat endpoint
 
 # 1.3.4 (2023-06-13)
 
