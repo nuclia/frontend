@@ -21,7 +21,8 @@ export class UploadQnaComponent {
     nonNullable: true,
     validators: [Validators.required],
   });
-  qnaFormat = new FormControl<TextFormat>('PLAIN', { nonNullable: true });
+  questionFormat = new FormControl<TextFormat>('PLAIN', { nonNullable: true });
+  answerFormat = new FormControl<TextFormat>('PLAIN', { nonNullable: true });
   qna: string[][] = [];
 
   constructor(
@@ -46,7 +47,12 @@ export class UploadQnaComponent {
       this.tracking.logEvent('upload_q_and_a_from_csv');
       this.isUploading = true;
       this.uploadService
-        .uploadQnaResource(this.resourceTitle.getRawValue(), this.qna, this.qnaFormat.getRawValue())
+        .uploadQnaResource(
+          this.resourceTitle.getRawValue(),
+          this.qna,
+          this.questionFormat.getRawValue(),
+          this.answerFormat.getRawValue(),
+        )
         .subscribe({
           next: () => this.modal.close(),
           error: () => {
