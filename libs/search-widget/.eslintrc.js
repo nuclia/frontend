@@ -1,30 +1,30 @@
 module.exports = {
+  extends: [
+    '../../.eslintrc.json',
+    // add more generic rule sets here, such as:
+    // 'eslint:recommended',
+    'plugin:svelte/recommended',
+    'plugin:svelte/prettier',
+  ],
+  rules: {
+    // override/add rules settings here, such as:
+    // 'svelte/rule-name': 'error'
+  },
+  plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
-  plugins: ['svelte3', '@typescript-eslint'],
-  extends: ['../../.eslintrc.json'],
-  ignorePatterns: ['!**/*'],
+  parserOptions: {
+    // ...
+    project: 'libs/search-widget/tsconfig.*?.json',
+    extraFileExtensions: ['.svelte'], // This is a required setting in `@typescript-eslint/parser` v4.24.0.
+  },
   overrides: [
     {
-      files: ['*.ts', '*.js', '*.svelte'],
-      parserOptions: {
-        project: ['libs/search-widget/tsconfig.*?.json'],
-      },
-      rules: {},
-    },
-    {
-      files: ['*.ts', '*.tsx'],
-      rules: {},
-    },
-    {
-      files: ['*.js', '*.jsx'],
-      rules: {},
-    },
-    {
       files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
+      parser: 'svelte-eslint-parser',
+      // Parse the `<script>` in `.svelte` as TypeScript by adding the following configuration.
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+      },
     },
   ],
-  settings: {
-    'svelte3/typescript': require('typescript'),
-  },
 };
