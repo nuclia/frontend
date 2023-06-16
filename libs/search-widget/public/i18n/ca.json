@@ -30,6 +30,7 @@
 	"error.partial-results": "Ho sentim, el sistema està sobrecarregat i només podria proporcionar un resultat parcial.",
 	"error.processing": "Aquest recurs encara no s'ha processat completament",
 	"error.search": "Ups! Alguna cosa ha anat malament. Hi estem treballant",
+	"error.service-overloaded": "Ho sentim, el servei està sobrecarregat i no ha pogut obtenir una resposta.",
 	"form.title-only": "Cerca només al títol",
 	"generic.cancel": "Cancel·lar",
 	"generic.save": "Guardar",

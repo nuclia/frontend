@@ -47,7 +47,7 @@ export const searchQuery = searchState.writer<string>(
       return {
         ...state,
         query: trimmedQuery,
-        hasError: false,
+        error: undefined,
       };
     }
     return state;

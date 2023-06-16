@@ -17,6 +17,7 @@ export namespace Chat {
     id: string;
     sources?: Search.FindResults;
     incomplete?: boolean;
+    overloaded?: boolean;
   }
 
   export enum Author {

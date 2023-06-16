@@ -30,6 +30,7 @@
 	"error.partial-results": "Lo sentimos, el sistema está sobrecargado y solo pudo proporcionar un resultado parcial.",
 	"error.processing": "Este recurso aún no se ha procesado por completo",
 	"error.search": "¡Ups! algo ha ido mal. Estamos trabajando en ello",
+	"error.service-overloaded": "Lo sentimos, el servicio está sobrecargado y no ha podido obtener una respuesta.",
 	"form.title-only": "Buscar solo en el título",
 	"generic.cancel": "Cancelar",
 	"generic.save": "Guardar",

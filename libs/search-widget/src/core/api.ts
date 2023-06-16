@@ -22,6 +22,7 @@ import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
+import { chatError } from './stores/answers.store';
 
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
@@ -91,7 +92,13 @@ export const getAnswer = (query: string, chat?: Chat.Entry[], filters?: string[]
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], { filters });
+  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], { filters }).pipe(
+    tap((res) => {
+      if (res.overloaded) {
+        chatError.set({ type: 'error', status: 529, detail: 'Service overloaded' });
+      }
+    }),
+  );
 };
 
 export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {

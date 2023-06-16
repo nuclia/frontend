@@ -31,6 +31,7 @@
 	"error.partial-results": "Sorry, the system is overloaded and could only provide a partial result.",
 	"error.processing": "This resource is not fully processed yet",
 	"error.search": "Oops! Something is wrong. We are working on it",
+	"error.service-overloaded": "Sorry, the service is overloaded and could not deliver an answer.",
 	"form.title-only": "Search in title only",
 	"generic.cancel": "Cancel",
 	"generic.save": "Save",
