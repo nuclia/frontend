@@ -96,7 +96,7 @@ describe('Authentication', () => {
     });
 
     it('should provide an auth header', () => {
-      expect(auth.getAuthHeaders()).toEqual({ 'X-STF-Serviceaccount': `Bearer abc` });
+      expect(auth.getAuthHeaders()).toEqual({ 'X-NUCLIA-SERVICEACCOUNT': `Bearer abc` });
     });
   });
 });

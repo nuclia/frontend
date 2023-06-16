@@ -31,7 +31,7 @@ export class Authentication implements IAuthentication {
     return this.nuclia.options.standalone
       ? { 'X-NUCLIADB-ROLES': this.getNucliaDbRole(method, path) }
       : this.nuclia.options.apiKey
-      ? { 'X-STF-Serviceaccount': `Bearer ${this.nuclia.options.apiKey}` }
+      ? { 'X-NUCLIA-SERVICEACCOUNT': `Bearer ${this.nuclia.options.apiKey}` }
       : this.getToken()
       ? { Authorization: `Bearer ${this.getToken()}` }
       : {};
