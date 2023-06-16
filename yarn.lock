@@ -5996,7 +5996,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/vite-plugin-svelte@npm:^1.0.0-next.32":
+"@sveltejs/vite-plugin-svelte@npm:^1.4.0":
   version: 1.4.0
   resolution: "@sveltejs/vite-plugin-svelte@npm:1.4.0"
   dependencies:
@@ -16556,7 +16556,7 @@ __metadata:
     "@sentry/tracing": ^7.2.0
     "@sveltejs/kit": ^1.15.2
     "@sveltejs/package": ^2.0.2
-    "@sveltejs/vite-plugin-svelte": ^1.0.0-next.32
+    "@sveltejs/vite-plugin-svelte": ^1.4.0
     "@testing-library/svelte": ^3.2.2
     "@tsconfig/svelte": ^4.0.1
     "@types/core-js": ^2.5.4
