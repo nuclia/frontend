@@ -1,6 +1,6 @@
 {
   "name": "nuclia",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "license": "MIT",
   "author": "Nuclia.cloud",
   "description": "Nuclia frontend apps and libs",
@@ -60,7 +60,6 @@
     "electron-updater": "^5.0.1",
     "express": "^4.18.2",
     "fuse.js": "^3.6.1",
-    "googleapis": "^110.0.0",
     "https": "^1.0.0",
     "isomorphic-unfetch": "^4.0.2",
     "latinize": "^0.5.0",

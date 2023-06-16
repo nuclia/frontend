@@ -59,7 +59,7 @@ export class NucliaCloud {
             try {
               return resource
                 .upload('file', buffer, false, {
-                  contentType: lookup(filename) || 'application/octet-stream',
+                  contentType: data.metadata.mimeType || lookup(filename) || 'application/octet-stream',
                   filename,
                 })
                 .pipe(

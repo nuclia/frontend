@@ -5,6 +5,7 @@ import { SitemapConnector } from './connectors/sitemap';
 import { SharepointConnector } from './connectors/sharepoint';
 import { SourceConnectorDefinition } from './models';
 import { ConfluenceConnector } from './connectors/confluence';
+import { GDriveConnector } from './connectors/gdrive';
 
 const connectors: { [id: string]: SourceConnectorDefinition } = {
   dropbox: DropboxConnector,
@@ -13,6 +14,7 @@ const connectors: { [id: string]: SourceConnectorDefinition } = {
   sitemap: SitemapConnector,
   sharepoint: SharepointConnector,
   confluence: ConfluenceConnector,
+  gdrive: GDriveConnector,
 };
 
 // TODO: add the dynamic connectors

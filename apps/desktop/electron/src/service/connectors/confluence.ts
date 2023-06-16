@@ -103,9 +103,11 @@ class ConfluenceImpl implements ISourceConnector {
 
   /* eslint-disable  @typescript-eslint/no-explicit-any */
   private mapResults(raw: any, isFolder = false): SyncItem {
+    const isAttachment = raw.type === 'attachment';
+    const itemOriginalId = isAttachment ? raw._links?.webui?.split('pageId=')[1].split('&')[0] || '' : raw.id;
     return {
       title: (isFolder ? raw.name : raw.title) || '',
-      originalId: (isFolder ? raw.key : raw.id) || '',
+      originalId: (isFolder ? raw.key : itemOriginalId) || '',
       metadata: { type: raw.type || '' },
       status: FileStatus.PENDING,
       uuid: raw.id || '',
