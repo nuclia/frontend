@@ -185,7 +185,12 @@ export class UploadService {
     );
   }
 
-  uploadQnaResource(title: string, qna: string[][], format: TextFormat): Observable<{ uuid: string }> {
+  uploadQnaResource(
+    title: string,
+    qna: string[][],
+    questionFormat: TextFormat,
+    answerFormat: TextFormat,
+  ): Observable<{ uuid: string }> {
     const conversations: { qna: ConversationField } = {
       qna: {
         messages: qna.reduce((messages, row, currentIndex) => {
@@ -193,12 +198,12 @@ export class UploadService {
             messages = messages.concat([
               {
                 ident: `question${currentIndex}`,
-                content: { text: row[0] },
+                content: { text: row[0], format: questionFormat },
                 type: 'QUESTION',
               },
               {
                 ident: `answer${currentIndex}`,
-                content: { text: row[1], format },
+                content: { text: row[1], format: answerFormat },
                 type: 'ANSWER',
               },
             ]);
