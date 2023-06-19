@@ -19,15 +19,14 @@ import {
   tap,
 } from 'rxjs';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import { isSpeechEnabled, widgetFeatures, widgetMode } from './widget.store';
+import { widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
 import type { Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, labelFilters, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { chat, currentAnswer, currentQuestion, isSpeechOn, lastSpeakableFullAnswer } from './answers.store';
-import { speak, SpeechSettings, SpeechStore } from 'talk2svelte';
+import { chat, currentAnswer, currentQuestion } from './answers.store';
 import { isTitleOnly } from '../../common/label/label.utils';
 import { graphSearchResults, graphSelection } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
@@ -100,34 +99,6 @@ export function initAnswer() {
         switchMap(({ question, reset }) => askQuestion(question, reset)),
       )
       .subscribe(),
-  );
-  subscriptions.push(
-    isSpeechEnabled
-      .pipe(
-        filter((isSpeechEnabled) => isSpeechEnabled),
-        take(1),
-      )
-      .subscribe(() => SpeechSettings.init()),
-  );
-  subscriptions.push(
-    combineLatest([isSpeechOn, SpeechStore.isStarted])
-      .pipe(distinctUntilChanged())
-      .subscribe(([on, started]) => {
-        if (on && !started) {
-          SpeechSettings.start();
-        } else if (!on && started) {
-          SpeechSettings.stop();
-        }
-      }),
-  );
-  subscriptions.push(
-    lastSpeakableFullAnswer
-      .pipe(
-        filter((answer) => !!answer),
-        map((answer) => (answer as Chat.Answer).text),
-        distinctUntilChanged(),
-      )
-      .subscribe((text) => speak(text, 'en-GB')),
   );
 }
 

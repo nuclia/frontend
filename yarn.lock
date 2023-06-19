@@ -16461,7 +16461,6 @@ __metadata:
     postcss-url: 10.1.3
     posthog-js: ^1.57.2
     prettier: 2.8.8
-    prettier-plugin-svelte: 2.10.1
     protobufjs: ^6.11.3
     replace-in-file: ^6.3.5
     rimraf: ^3.0.2
@@ -16478,7 +16477,6 @@ __metadata:
     svelte-check: ^3.4.3
     svelte-jester: ^2.3.2
     svelte-preprocess: ^5.0.4
-    talk2svelte: 0.1.1
     ts-jest: 29.0.5
     ts-node: 10.9.1
     tslib: ^2.3.0
@@ -18136,16 +18134,6 @@ __metadata:
   version: 1.1.2
   resolution: "prelude-ls@npm:1.1.2"
   checksum: c4867c87488e4a0c233e158e4d0d5565b609b105d75e4c05dc760840475f06b731332eb93cc8c9cecb840aa8ec323ca3c9a56ad7820ad2e63f0261dadcb154e4
-  languageName: node
-  linkType: hard
-
-"prettier-plugin-svelte@npm:2.10.1":
-  version: 2.10.1
-  resolution: "prettier-plugin-svelte@npm:2.10.1"
-  peerDependencies:
-    prettier: ^1.16.4 || ^2.0.0
-    svelte: ^3.2.0 || ^4.0.0-next.0
-  checksum: 45f7993098d9f4be7b1c8f61ebce0161996bb6030dc4883ec3d6d9cff552f2cfb5da41ba20e01349709e793b83faaad2dfe81789cd7e17a610f0134df2743266
   languageName: node
   linkType: hard
 
@@ -20256,15 +20244,6 @@ __metadata:
   version: 3.2.4
   resolution: "symbol-tree@npm:3.2.4"
   checksum: 6e8fc7e1486b8b54bea91199d9535bb72f10842e40c79e882fc94fb7b14b89866adf2fd79efa5ebb5b658bc07fb459ccce5ac0e99ef3d72f474e74aaf284029d
-  languageName: node
-  linkType: hard
-
-"talk2svelte@npm:0.1.1":
-  version: 0.1.1
-  resolution: "talk2svelte@npm:0.1.1"
-  peerDependencies:
-    rxjs: ^7.8.0
-  checksum: a3f7204f8f570921db6d2404930783356763cbd24ec08da60259a08c593361f45e71257eeb601111394dc6a21200738e532834dc2d9713e96075ab2f31412861
   languageName: node
   linkType: hard
 
