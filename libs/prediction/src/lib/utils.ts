@@ -4,4 +4,14 @@ export const getCDN = () => CDN;
 
 // TO ENABLE DEBUGGING, GO TO YOUR BROWSER CONSOLE AND TYPE:
 // localStorage.setItem('nuclia_debug', 'true');
-export const logger = localStorage.getItem('nuclia_debug') === 'true' ? console.log : () => {};
+export const logger =
+  isLocalStorageAvailable() && localStorage.getItem('nuclia_debug') === 'true' ? console.log : () => {};
+
+function isLocalStorageAvailable() {
+  try {
+    localStorage.getItem('nuclia_debug');
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
