@@ -13,36 +13,66 @@
         <div class="field">
           <label
             class="title-s"
-            for="industry">
+            for="company">
             {{ 'onboarding.company' | translate }}
           </label>
           <pa-input
             formControlName="company"
+            id="company"
             externalLabel
             [errorMessages]="validationMessages.company"></pa-input>
         </div>
         <div class="field">
           <label
             class="title-s"
-            for="industry">
-            {{ 'onboarding.industry_label' | translate }}
+            for="use_case">
+            {{ 'onboarding.use_case' | translate }}
           </label>
           <pa-select
-            id="industry"
-            [options]="industryOptions"
-            [errorMessages]="validationMessages.industry"
-            formControlName="industry"></pa-select>
+            id="use_case"
+            formControlName="use_case"
+            [errorMessages]="validationMessages.use_case">
+            <pa-option value="Customer / employee support">{{ 'onboarding.use_case.support' | translate }}</pa-option>
+            <pa-option value="Global site search">{{ 'onboarding.use_case.global_search' | translate }}</pa-option>
+            <pa-option value="Workspace Search">{{ 'onboarding.use_case.workspace_search' | translate }}</pa-option>
+            <pa-option value="Research & Analysis">{{ 'onboarding.use_case.research_analysis' | translate }}</pa-option>
+            <pa-option value="Own AI model training">{{ 'onboarding.use_case.ai_training' | translate }}</pa-option>
+            <pa-option value="Other">{{ 'onboarding.use_case.other' | translate }}</pa-option>
+          </pa-select>
         </div>
         <div class="field">
           <label
             class="title-s"
-            for="jobTitle">
-            {{ 'onboarding.job-title' | translate }}
+            for="hosting">
+            {{ 'onboarding.host_db' | translate }}
           </label>
-          <pa-input
-            formControlName="jobTitle"
+          <pa-select
+            formControlName="hosted_nucliadb"
+            id="hosting"
             externalLabel
-            [errorMessages]="validationMessages.jobTitle"></pa-input>
+            help="onboarding.host_db.help"
+            [errorMessages]="validationMessages.hosted_nucliadb">
+            <pa-option value="yes">{{ 'onboarding.host_db.yes' | translate }}</pa-option>
+            <pa-option value="no">{{ 'onboarding.host_db.no' | translate }}</pa-option>
+          </pa-select>
+        </div>
+        <div class="field">
+          <label
+            class="title-s"
+            for="orgSize">
+            {{ 'onboarding.org_size' | translate }}
+          </label>
+          <pa-select
+            formControlName="organization_size"
+            id="orgSize"
+            externalLabel
+            [errorMessages]="validationMessages.organization_size">
+            <pa-option value="1-50">1-50</pa-option>
+            <pa-option value="50-200">50-200</pa-option>
+            <pa-option value="200-1000">200-1000</pa-option>
+            <pa-option value="1000-5000">1000-5000</pa-option>
+            <pa-option value="+5000">+5000</pa-option>
+          </pa-select>
         </div>
         <div class="field">
           <label
@@ -58,22 +88,12 @@
               placeholder="+99"
               [errorMessages]="validationMessages.phoneInternationalCode"></pa-input>
             <pa-input
+              id="phoneNumber"
               formControlName="phoneNumber"
               externalLabel
               placeholder="11 1111 1111"
               [errorMessages]="validationMessages.phoneNumber"></pa-input>
           </div>
-        </div>
-        <div class="field">
-          <label
-            class="title-s"
-            for="searchEngine">
-            {{ 'onboarding.search_engine_label' | translate }}
-          </label>
-          <pa-input
-            id="searchEngine"
-            externalLabel
-            formControlName="searchEngine"></pa-input>
         </div>
 
         <pa-checkbox formControlName="getUpdates">{{ 'onboarding.updates' | translate }}</pa-checkbox>
