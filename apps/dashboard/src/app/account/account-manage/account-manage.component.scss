@@ -28,6 +28,8 @@ h2 {
 
   label,
   .account-field-name {
+    font-weight: $font-weight-semi-bold;
+    margin-top: rhythm(1.5);
     width: 30%;
   }
   div:not(.account-field-name) {
@@ -41,10 +43,6 @@ h2 {
   gap: rhythm(2);
   margin-top: rhythm(5);
   padding-left: 30%;
-}
-
-.account-field-name {
-  font-weight: $font-weight-semi-bold;
 }
 
 .zone-select {

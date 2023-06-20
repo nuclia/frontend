@@ -35,6 +35,8 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   @ViewChildren('section') sections: QueryList<ElementRef> | undefined;
 
   accountForm = this.formBuilder.group({
+    uid: [''],
+    slug: [''],
     title: ['', [Sluggable()]],
     description: [''],
   });
@@ -50,7 +52,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   zones: Zone[] | undefined;
   zone = new UntypedFormControl();
   speechToText: boolean = false;
-  initialValues = { title: '', description: '' };
+  initialValues = { title: '', description: '', slug: '', uid: '' };
 
   constructor(
     private stateService: StateService,
@@ -73,6 +75,8 @@ export class AccountManageComponent implements OnInit, OnDestroy {
           this.account = account;
           this.initialValues.title = account.title;
           this.initialValues.description = account.description || '';
+          this.initialValues.uid = account.id;
+          this.initialValues.slug = account.slug;
         }),
         switchMap(() => this.initZones()),
         takeUntil(this.unsubscribeAll),
