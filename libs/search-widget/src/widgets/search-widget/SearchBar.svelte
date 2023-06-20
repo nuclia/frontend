@@ -24,12 +24,12 @@
   import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
-  export let zone = '';
-  export let knowledgebox = '';
+  export let zone = 'europe-1';
+  export let knowledgebox;
   export let placeholder = '';
   export let lang = '';
-  export let cdn;
-  export let apikey;
+  export let cdn = '';
+  export let apikey = '';
   export let kbslug = '';
   export let account = '';
   export let client = 'widget';
