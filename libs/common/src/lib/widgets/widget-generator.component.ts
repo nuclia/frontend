@@ -10,12 +10,10 @@ import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { NavigationService } from '@flaps/common';
 
-type FilterType = 'labels' | 'entities' | 'both';
-
 const DEFAULT_WIDGET_CONFIG: {
   features: string[];
   placeholder?: string;
-  filters?: FilterType;
+  filters?: { labels: boolean; entities: boolean };
 } = {
   features: [],
 };
@@ -41,7 +39,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     },
   };
   placeholder?: string;
-  filters: FilterType = 'both';
+  filters = { labels: true, entities: true };
   snippet = '';
   snippetPreview: SafeHtml = '';
   unsubscribeAll = new Subject<void>();
@@ -73,6 +71,17 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       }
       return features;
     }, '');
+  }
+
+  get filtersValue(): string {
+    return Object.entries(this.filters)
+      .filter(([, value]) => value)
+      .map(([key]) => key)
+      .join(',');
+  }
+
+  get hasOneFilter(): boolean {
+    return Object.entries(this.filters).filter(([, value]) => value).length === 1;
   }
 
   constructor(
@@ -188,11 +197,10 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   backend="${this.backendConfig.getAPIURL()}"`
         : '';
-      const filters =
-        this.mainFormFeatures.filter && this.filters !== 'both'
-          ? `
-  filters="${this.filters}"`
-          : '';
+      const filters = this.mainFormFeatures.filter
+        ? `
+  filters="${this.filtersValue}"`
+        : '';
       const baseSnippet = `<nuclia-search-bar
   knowledgebox="${kb.id}"
   ${zone}
@@ -235,8 +243,7 @@ ${baseSnippet}`;
     this.debouncePlaceholder.next(value);
   }
 
-  onFiltersChange(value: string) {
-    this.filters = value as FilterType;
+  onFiltersChange() {
     this.onFormChange();
   }
 

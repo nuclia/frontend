@@ -69,6 +69,9 @@ $width-configuration: rhythm(56);
         gap: rhythm(2);
       }
       .filter-type {
+        display: flex;
+        flex-direction: column;
+        gap: rhythm(1);
         margin-left: rhythm(8);
       }
     }

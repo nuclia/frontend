@@ -64,17 +64,15 @@
             {{ 'stash.widgets.filter' | translate }}
           </pa-toggle>
           <div
-            *ngIf="isEntityFiltersEnabled | async"
+            *ngIf="mainFormFeatures.filter && isEntityFiltersEnabled | async"
             class="filter-type">
-            <pa-select
-              *ngIf="mainFormFeatures.filter"
-              [value]="filters"
-              (valueChange)="onFiltersChange($event)"
-              [label]="'stash.widgets.filter_type' | translate">
-              <pa-option value="both">{{ 'stash.widgets.labels_entities' | translate }}</pa-option>
-              <pa-option value="labels">{{ 'stash.widgets.labels' | translate }}</pa-option>
-              <pa-option value="entities">{{ 'stash.widgets.entities' | translate }}</pa-option>
-            </pa-select>
+            <pa-checkbox
+              *ngFor="let type of filters | keyvalue"
+              [(value)]="filters[type.key]"
+              (valueChange)="onFiltersChange()"
+              [disabled]="filters[type.key] && hasOneFilter">
+              {{ 'stash.widgets.' + [type.key] | translate }}
+            </pa-checkbox>
           </div>
           <pa-toggle
             *ngIf="areAnswersEnabled | async"
