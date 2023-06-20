@@ -49,6 +49,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   copyIcon = 'copy';
   isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
   areAnswersEnabled = this.tracking.isFeatureEnabled('answers').pipe(shareReplay(1));
+  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter').pipe(shareReplay(1));
   areSynonymsEnabled = combineLatest([
     this.tracking.isFeatureEnabled('manage-synonyms').pipe(shareReplay(1)),
     this.stateService.account.pipe(

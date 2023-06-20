@@ -80,7 +80,8 @@
       {},
     );
     if (Object.keys(_filters).length === 0) {
-      _filters = { labels: true, entities: true };
+      _filters.labels = true;
+      //_filters.entities = true;  // TODO: Uncomment once entity filters work properly
     }
     initNuclia(
       {

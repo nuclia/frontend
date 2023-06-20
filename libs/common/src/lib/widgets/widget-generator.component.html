@@ -63,7 +63,9 @@
             formControlName="filter">
             {{ 'stash.widgets.filter' | translate }}
           </pa-toggle>
-          <div class="filter-type">
+          <div
+            *ngIf="isEntityFiltersEnabled | async"
+            class="filter-type">
             <pa-select
               *ngIf="mainFormFeatures.filter"
               [value]="filters"
