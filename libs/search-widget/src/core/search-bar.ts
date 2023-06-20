@@ -50,7 +50,7 @@ export const setupTriggerSearch = (
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, filters, isTitleOnly]) => {
+                switchMap(([onlyAnswers, options, filters, inTitleOnly]) => {
                   if (isAnswerEnabled && !trigger?.more) {
                     return askQuestion(query, true).pipe(
                       map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
@@ -61,7 +61,7 @@ export const setupTriggerSearch = (
                       ...options,
                       show,
                       filters,
-                      inTitleOnly: isTitleOnly,
+                      inTitleOnly,
                     };
                     return search(query, currentOptions).pipe(
                       map((results) => ({ results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more })),

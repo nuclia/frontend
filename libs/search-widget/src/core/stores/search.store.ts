@@ -14,7 +14,7 @@ import {
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
-import { Subject } from 'rxjs';
+import { combineLatest, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common/label/label.utils';
 
 interface SearchFilters {
@@ -208,13 +208,15 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
-export const allFiltersApplyToResource = searchState.reader<boolean>((state) => {
-  return (
-    !!state.filters.labels &&
-    state.filters.labels.every((labelFilter) => labelFilter.kind === LabelSetKind.RESOURCES) &&
-    (state.filters.entities || []).length === 0
-  );
-});
+export const isTitleOnly = combineLatest([searchQuery, labelFilters, entityFilters]).pipe(
+  map(
+    ([query, labels, entities]) =>
+      !query &&
+      !!labels &&
+      labels.every((label) => label.kind === LabelSetKind.RESOURCES) &&
+      (entities || []).length === 0,
+  ),
+);
 
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
