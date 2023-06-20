@@ -240,7 +240,6 @@ export interface WidgetFeatures {
   suggestLabels?: boolean;
   answers?: boolean;
   onlyAnswers?: boolean;
-  speech?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
   autofilter?: boolean;

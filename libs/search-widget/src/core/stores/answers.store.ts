@@ -1,6 +1,5 @@
-import type { Chat } from '@nuclia/core';
+import type { Chat, IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
-import type { IErrorResponse } from '@nuclia/core';
 
 interface AnswerState {
   chat: Chat.Entry[];
@@ -8,7 +7,6 @@ interface AnswerState {
   currentAnswer: Chat.Answer;
   error?: IErrorResponse;
   isStreaming: boolean;
-  isSpeechOn: boolean;
 }
 
 const EMPTY_ANSWER = { text: '', id: '' };
@@ -17,7 +15,6 @@ export const answerState = new SvelteState<AnswerState>({
   currentQuestion: '',
   currentAnswer: EMPTY_ANSWER,
   isStreaming: false,
-  isSpeechOn: false,
 });
 
 export const currentQuestion = answerState.writer<string, { question: string; reset: boolean }>(
@@ -50,12 +47,6 @@ export const lastFullAnswer = answerState.reader((state) =>
   state.chat.length > 0 && !state.isStreaming ? state.chat[state.chat.length - 1].answer : undefined,
 );
 
-export const lastSpeakableFullAnswer = answerState.reader((state) =>
-  state.chat.length > 0 && !state.isStreaming && state.isSpeechOn
-    ? state.chat[state.chat.length - 1].answer
-    : undefined,
-);
-
 export const chat = answerState.writer<Chat.Entry[], { question: string; answer: Chat.Answer }>(
   (state) =>
     state.isStreaming
@@ -76,11 +67,6 @@ export const resetChat = answerState.writer<void, void>(
 );
 
 export const isStreaming = answerState.reader((state) => state.isStreaming);
-
-export const isSpeechOn = answerState.writer<boolean, { value?: boolean; toggle?: boolean }>(
-  (state) => state.isSpeechOn,
-  (state, params) => ({ ...state, isSpeechOn: params.toggle ? !state.isSpeechOn : !!params.value }),
-);
 
 export const isServiceOverloaded = answerState.reader<boolean>((state) => !!state.error && state.error.status === 529);
 export const chatError = answerState.writer<IErrorResponse | undefined>(
