@@ -67,11 +67,16 @@
             *ngIf="mainFormFeatures.filter && isEntityFiltersEnabled | async"
             class="filter-type">
             <pa-checkbox
-              *ngFor="let type of filters | keyvalue"
-              [(value)]="filters[type.key]"
+              [(value)]="filters.labels"
               (valueChange)="onFiltersChange()"
-              [disabled]="filters[type.key] && hasOneFilter">
-              {{ 'stash.widgets.' + [type.key] | translate }}
+              [disabled]="filters.labels && hasOneFilter">
+              {{ 'stash.widgets.labels' | translate }}
+            </pa-checkbox>
+            <pa-checkbox
+              [(value)]="filters.entities"
+              (valueChange)="onFiltersChange()"
+              [disabled]="filters.entities && hasOneFilter">
+              {{ 'stash.widgets.entities' | translate }}
             </pa-checkbox>
           </div>
           <pa-toggle

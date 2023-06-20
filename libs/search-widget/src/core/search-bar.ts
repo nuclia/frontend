@@ -4,8 +4,8 @@ import type { Search, SearchOptions } from '@nuclia/core';
 import { Chat, ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
-  allFiltersApplyToResource,
   isEmptySearchQuery,
+  isTitleOnly,
   loadMore,
   pageNumber,
   pendingResults,
@@ -43,14 +43,14 @@ export const setupTriggerSearch = (
                 onlyAnswers.pipe(take(1)),
                 searchOptions.pipe(take(1)),
                 searchFilters.pipe(take(1)),
-                allFiltersApplyToResource.pipe(take(1)),
+                isTitleOnly.pipe(take(1)),
               ]).pipe(
                 tap(([onlyAnswers]) => {
                   if (!onlyAnswers) {
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, filters, allFiltersApplyToResource]) => {
+                switchMap(([onlyAnswers, options, filters, isTitleOnly]) => {
                   if (isAnswerEnabled && !trigger?.more) {
                     return askQuestion(query, true).pipe(
                       map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
@@ -61,7 +61,7 @@ export const setupTriggerSearch = (
                       ...options,
                       show,
                       filters,
-                      inTitleOnly: !query && allFiltersApplyToResource,
+                      inTitleOnly: isTitleOnly,
                     };
                     return search(query, currentOptions).pipe(
                       map((results) => ({ results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more })),

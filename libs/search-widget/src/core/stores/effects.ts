@@ -24,13 +24,7 @@ import { isPopupSearchOpen } from './modal.store';
 import type { Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
-import {
-  allFiltersApplyToResource,
-  isEmptySearchQuery,
-  searchFilters,
-  searchQuery,
-  triggerSearch,
-} from './search.store';
+import { isEmptySearchQuery, isTitleOnly, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
 import { chat, currentAnswer, currentQuestion } from './answers.store';
 import { graphSearchResults, graphSelection } from './graph.store';
@@ -123,15 +117,15 @@ export function activatePermalinks() {
       .pipe(
         switchMap(() => isEmptySearchQuery.pipe(take(1))),
         filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() => combineLatest([searchQuery, searchFilters, allFiltersApplyToResource]).pipe(take(1))),
+        switchMap(() => combineLatest([searchQuery, searchFilters, isTitleOnly]).pipe(take(1))),
       )
-      .subscribe(([query, filters, allFiltersApplyToResource]) => {
+      .subscribe(([query, filters, isTitleOnly]) => {
         const urlParams = getUrlParams();
         urlParams.set(queryKey, query);
         urlParams.delete(filterKey);
         urlParams.delete(titleOnlyKey);
         filters.forEach((filter) => urlParams.append(filterKey, filter));
-        urlParams.append(titleOnlyKey, `${!query && allFiltersApplyToResource}`);
+        urlParams.append(titleOnlyKey, `${isTitleOnly}`);
         updateQueryParams(urlParams);
       }),
     // Remove search parameters from the URL when search results are reset

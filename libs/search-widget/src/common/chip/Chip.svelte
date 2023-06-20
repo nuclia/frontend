@@ -7,7 +7,7 @@
   export let removable = false;
   export let color = '';
 
-  $: fontColor = getFontColor(color);
+  $: fontColor = color && getFontColor(color);
 
   const dispatch = createEventDispatcher();
   const remove = (event) => {
