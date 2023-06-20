@@ -9,8 +9,36 @@
         (ngSubmit)="saveAccount()">
         <div class="account-field">
           <label
+            for="account-uid"
+            class="account-field-name">
+            {{ 'generic.uid' | translate }}
+          </label>
+          <div>
+            <pa-input
+              id="account-uid"
+              formControlName="uid"
+              externalLabel
+              readonly></pa-input>
+          </div>
+        </div>
+        <div class="account-field">
+          <label
+            for="account-slug"
+            class="account-field-name">
+            {{ 'generic.slug' | translate }}
+          </label>
+          <div>
+            <pa-input
+              id="account-slug"
+              formControlName="slug"
+              externalLabel
+              readonly></pa-input>
+          </div>
+        </div>
+        <div class="account-field">
+          <label
             for="account-title"
-            class="account-field-name mt-12">
+            class="account-field-name">
             {{ 'account.title' | translate }}
           </label>
           <div>
@@ -25,7 +53,7 @@
         <div class="account-field">
           <label
             for="account-description"
-            class="account-field-name mt-12">
+            class="account-field-name">
             {{ 'generic.description' | translate }}
           </label>
           <div>
@@ -68,9 +96,9 @@
           {{ 'generic.zone' | translate }}
         </div>
         <div>
-          <div class="mb-20">{{ 'account.zone_description' | translate }}</div>
           <pa-select
             [formControl]="zone"
+            help="account.zone_description"
             externalLabel>
             <pa-option
               *ngFor="let zone of zones"
@@ -90,7 +118,7 @@
       <div class="dangerous-zone">
         <div class="dangerous-zone-title">{{ 'generic.dangerous' | translate }}</div>
         <div class="dangerous-zone-warning">
-          <div>{{ 'account.delete_account_warning_1' | translate: { account: account?.title || '' } }}</div>
+          <div>{{ 'account.delete_account_warning_1' | translate : { account: account?.title || '' } }}</div>
           <ul>
             <li>{{ 'account.delete_account_warning_2' | translate }}</li>
             <li>{{ 'account.delete_account_warning_3' | translate }}</li>
