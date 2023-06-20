@@ -32,7 +32,9 @@ export interface ExtendedAccount extends Account, AccountConfig {
   members: string[];
   users: AccountUser[];
   stashes: AccountKbList;
+  dedicated_processors_state: DedicatedProcessorsState;
 }
+export type DedicatedProcessorsState = 'enabled' | 'disabled' | 'paused';
 export type AccountUserType = 'manager' | 'member';
 
 export interface AccountCreationPayload {
