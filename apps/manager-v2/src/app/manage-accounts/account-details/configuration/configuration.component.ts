@@ -4,7 +4,7 @@ import { AccountTypes } from '@nuclia/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject, switchMap, tap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AccountPatchPayload, ExtendedAccount } from '../../account.models';
+import { AccountPatchPayload, DedicatedProcessorsState, ExtendedAccount } from '../../account.models';
 import { AccountService } from '../../account.service';
 import { SisToastService } from '@nuclia/sistema';
 import { AccountTypeDefaults } from '@flaps/core';
@@ -31,6 +31,10 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
     max_dedicated_processors: new FormControl<number>(0, { nonNullable: true, validators: [Validators.required] }),
     zone: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     trial_expiration_date: new FormControl<string>(''),
+    dedicated_processors_state: new FormControl<DedicatedProcessorsState>('disabled', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
   });
   zones = this.store.zones;
   isSaving = false;
