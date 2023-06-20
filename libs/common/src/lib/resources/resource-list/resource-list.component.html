@@ -145,7 +145,7 @@
     </ng-container>
 
     <div
-      *ngIf="isMainView && emptyKb && !query && !isFiltering && !standalone"
+      *ngIf="isMainView && emptyKb && !query && !isFiltering && !standalone && (isMonoLingual | async) === false"
       class="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
