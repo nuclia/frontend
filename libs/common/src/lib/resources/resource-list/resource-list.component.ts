@@ -101,7 +101,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   currentKb = this.sdk.currentKb;
-  isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
+  isMonoLingual = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getConfiguration()),
+    map((config) => config['semantic_model'] === 'en'),
+  );
 
   labelSets$: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(
     filter((labelSets) => !!labelSets),

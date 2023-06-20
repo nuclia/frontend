@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { map, switchMap } from 'rxjs/operators';
+import { SDKService } from '@flaps/core';
 
 @Component({
   templateUrl: './dataset-import.component.html',
@@ -9,7 +11,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class DatasetImportComponent {
   @ViewChild('uploadLinksContainer') uploadLinksContainer?: ElementRef;
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  isMonoLingual = this.sdk.currentKb.pipe(
+    switchMap((kb) => kb.getConfiguration()),
+    map((config) => config['semantic_model'] === 'en'),
+  );
+
+  constructor(private router: Router, private route: ActivatedRoute, private sdk: SDKService) {}
 
   onDatasetImported(success: boolean) {
     if (success) {
