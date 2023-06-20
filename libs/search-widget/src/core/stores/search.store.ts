@@ -38,6 +38,7 @@ interface SearchState {
   displayedResource: DisplayedResource | null;
   pending: boolean;
   autofilerDisabled?: boolean;
+  showResults: boolean;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -47,6 +48,7 @@ export const searchState = new SvelteState<SearchState>({
   results: NO_RESULTS,
   displayedResource: null,
   pending: false,
+  showResults: false,
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -65,18 +67,32 @@ export const searchQuery = searchState.writer<string>(
   },
 );
 
-export const searchResults = searchState.writer<Search.FindResults, { results: Search.FindResults; append: boolean }>(
+export const searchResults = searchState.writer<
+  Search.FindResults,
+  {
+    results: Search.FindResults;
+    append: boolean;
+  }
+>(
   (state) => state.results,
   (state, params) => ({
     ...state,
     results: params.append ? appendResults(state.results, params.results) : params.results,
     pending: false,
+    showResults: true,
     filters: {
       ...state.filters,
       autofilters: params.append
         ? state.filters.autofilters
         : (params.results.autofilters || []).map((filter) => getEntityFromFilter(filter)),
     },
+  }),
+);
+export const showResults = searchState.writer<boolean>(
+  (state) => state.showResults,
+  (state, showResults) => ({
+    ...state,
+    showResults,
   }),
 );
 

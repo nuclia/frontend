@@ -17,7 +17,7 @@
     initAnswer,
     initEntitiesStore,
     initLabelStore,
-    loadFieldData,
+    initViewer,
     setupTriggerGraphNerSearch,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
@@ -129,7 +129,7 @@
     setLang(lang);
 
     setupTriggerSearch(dispatchCustomEvent, _features.answers);
-    loadFieldData();
+    initViewer();
     if (_features.permalink) {
       activatePermalinks();
     }

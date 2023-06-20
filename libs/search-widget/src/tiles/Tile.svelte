@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { Search } from '@nuclia/core';
+  import type { FileFieldData, LinkFieldData, Search } from '@nuclia/core';
+  import { FIELD_TYPE } from '@nuclia/core';
   import VideoTile from './VideoTile.svelte';
   import PdfTile from './PdfTile.svelte';
   import AudioTile from './AudioTile.svelte';
@@ -7,8 +8,6 @@
   import SpreadsheetTile from './SpreadsheetTile.svelte';
   import ConversationTile from './ConversationTile.svelte';
   import TextTile from './TextTile.svelte';
-  import type { FileFieldData, LinkFieldData } from '@nuclia/core';
-  import { FIELD_TYPE } from '@nuclia/core';
 
   export let result: Search.SmartResult;
 
@@ -29,9 +28,9 @@
     } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
       const file = (result.fieldData as FileFieldData).value?.file;
       // for audio, video, image or text, we have a corresponding tile
-      // for mimetype starying with 'application/', it is more complex:
+      // for mimetype starting with 'application/', it is more complex:
       // - anything like a spreadsheet is a spreadsheet
-      // - 'applicatuion/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
+      // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
       // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
       if (file?.content_type?.startsWith('audio')) {
         tileType = 'audio';
