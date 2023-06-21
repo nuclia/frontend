@@ -26,8 +26,7 @@ import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import {
   isEmptySearchQuery,
-  isTitleOnly
-  labelFilters,
+  isTitleOnly,
   searchFilters,
   searchQuery,
   trackingEngagement,
@@ -302,8 +301,8 @@ export function askQuestion(
         ),
       ),
     ),
-    );
-  }
+  );
+}
 
 export function initUsageTracking() {
   subscriptions.push(
