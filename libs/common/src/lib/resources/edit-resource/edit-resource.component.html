@@ -39,6 +39,12 @@
         aspect="basic"
         (click)="onViewChange()"></pa-button>
       <pa-button
+        *ngIf="isPdfAnnotationEnabled"
+        icon="annotate"
+        paTooltip="resource.tooltip.pdf-annotation"
+        aspect="basic"
+        (click)="goToPawls()"></pa-button>
+      <pa-button
         icon="plus"
         routerLink="add-field"
         [active]="currentView === 'add-field'"

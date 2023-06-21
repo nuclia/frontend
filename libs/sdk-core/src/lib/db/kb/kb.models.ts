@@ -35,6 +35,7 @@ export enum ExtractedDataTypes {
 export enum LabelSetKind {
   RESOURCES = 'RESOURCES',
   PARAGRAPHS = 'PARAGRAPHS',
+  SELECTIONS = 'SELECTIONS',
 }
 
 export enum EventType {

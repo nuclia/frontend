@@ -85,6 +85,25 @@ export class EditResourceService {
     ),
   );
   kbUrl: Observable<string> = this.sdk.currentKb.pipe(map((kb) => this.navigation.getKbUrl(kb.account, kb.slug!)));
+  pawlsData = combineLatest([this.sdk.currentKb, this.resource, this.currentField]).pipe(
+    map(([kb, resource, fieldId]) => {
+      if (resource && fieldId !== 'resource') {
+        const fieldData = resource.getFieldData<FileFieldData>('files', fieldId.field_id);
+        if (!fieldData) {
+          return undefined;
+        }
+        return {
+          options: { ...this.sdk.nuclia.options, account: kb.account, kb: kb.id, kbSlug: kb.slug },
+          resId: resource?.id || '',
+          fieldId: fieldId.field_id,
+          pdf: fieldData.extracted?.file?.file_preview?.uri || fieldData.value?.file?.uri,
+          returnURL: location.href,
+        };
+      } else {
+        return undefined;
+      }
+    }),
+  );
 
   constructor(
     private sdk: SDKService,
