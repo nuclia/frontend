@@ -4,6 +4,8 @@ import {
   Classification,
   FIELD_TYPE,
   getDataKeyFromFieldType,
+  getEntityFromFilter,
+  getFilterFromEntity,
   getFilterFromLabel,
   getLabelFromFilter,
   IErrorResponse,
@@ -12,11 +14,17 @@ import {
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
-import { Subject } from 'rxjs';
+import { combineLatest, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common/label/label.utils';
 
 interface SearchFilters {
   labels?: LabelFilter[];
+  entities?: EntityFilter[];
+}
+
+interface EntityFilter {
+  family: string;
+  entity: string;
 }
 
 // TODO: once old widget will be removed, we should remove displayedResource from the store
@@ -83,7 +91,10 @@ export const searchOptions = searchState.writer<SearchOptions>(
 );
 
 export const searchFilters = searchState.writer<string[], { filters: string[]; titleOnly: boolean }>(
-  (state) => (state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
+  (state) => [
+    ...(state.filters.labels || []).map((filter) => getFilterFromLabel(filter.classification)),
+    ...(state.filters.entities || []).map((filter) => getFilterFromEntity(filter)),
+  ],
   (state, data) => {
     const filters: SearchFilters = {};
     data.filters.forEach((filter) => {
@@ -97,6 +108,13 @@ export const searchFilters = searchState.writer<string[], { filters: string[]; t
           filters.labels = [labelFilter];
         } else {
           filters.labels.push(labelFilter);
+        }
+      } else if (spreadFilter[0] === 'e') {
+        const entityFilter = getEntityFromFilter(filter);
+        if (!filters.entities) {
+          filters.entities = [entityFilter];
+        } else {
+          filters.entities.push(entityFilter);
         }
       }
     });
@@ -117,6 +135,16 @@ export const labelFilters = searchState.writer<LabelFilter[]>(
     },
   }),
 );
+export const entityFilters = searchState.writer<EntityFilter[]>(
+  (state) => state.filters.entities || [],
+  (state, entityFilters) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      entities: entityFilters,
+    },
+  }),
+);
 
 export const displayedResource = searchState.writer<DisplayedResource | null>(
   (state) => state.displayedResource,
@@ -127,7 +155,10 @@ export const displayedResource = searchState.writer<DisplayedResource | null>(
 );
 
 export const isEmptySearchQuery = searchState.reader<boolean>(
-  (state) => !state.query && (!state.filters.labels || state.filters.labels.length === 0),
+  (state) =>
+    !state.query &&
+    (!state.filters.labels || state.filters.labels.length === 0) &&
+    (!state.filters.entities || state.filters.entities.length === 0),
 );
 
 export const hasMore = searchState.reader<boolean>((state) => state.results.next_page);
@@ -177,6 +208,16 @@ export const entityRelations = searchState.reader((state) =>
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
 
+export const isTitleOnly = combineLatest([searchQuery, labelFilters, entityFilters]).pipe(
+  map(
+    ([query, labels, entities]) =>
+      !query &&
+      !!labels &&
+      labels.every((label) => label.kind === LabelSetKind.RESOURCES) &&
+      (entities || []).length === 0,
+  ),
+);
+
 export const triggerSearch: Subject<{ more: true } | void> = new Subject<{ more: true } | void>();
 
 export const addLabelFilter = (label: Classification, kinds: LabelSetKind[]) => {
@@ -196,8 +237,22 @@ export const removeLabelFilter = (label: Classification) => {
   const currentFilters = labelFilters.getValue();
   labelFilters.set(
     currentFilters.filter(
-      (filter) => filter.classification.label !== label.label && filter.classification.labelset !== label.labelset,
+      (filter) => filter.classification.label !== label.label || filter.classification.labelset !== label.labelset,
     ),
+  );
+};
+
+export const addEntityFilter = (entity: EntityFilter) => {
+  const currentFilters = entityFilters.getValue();
+  if (!currentFilters.includes(entity)) {
+    entityFilters.set(currentFilters.concat([entity]));
+  }
+};
+
+export const removeEntityFilter = (entity: EntityFilter) => {
+  const currentFilters = entityFilters.getValue();
+  entityFilters.set(
+    currentFilters.filter((filter) => filter.entity !== entity.entity || filter.family !== entity.family),
   );
 };
 

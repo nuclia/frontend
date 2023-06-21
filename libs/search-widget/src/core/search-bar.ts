@@ -5,7 +5,7 @@ import { Chat, ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   isEmptySearchQuery,
-  labelFilters,
+  isTitleOnly,
   loadMore,
   pageNumber,
   pendingResults,
@@ -15,7 +15,6 @@ import {
   searchResults,
   triggerSearch,
 } from './stores/search.store';
-import { isTitleOnly } from '../common/label/label.utils';
 import { askQuestion } from './stores/effects';
 import { onlyAnswers } from './stores/widget.store';
 
@@ -44,14 +43,14 @@ export const setupTriggerSearch = (
                 onlyAnswers.pipe(take(1)),
                 searchOptions.pipe(take(1)),
                 searchFilters.pipe(take(1)),
-                labelFilters.pipe(take(1)),
+                isTitleOnly.pipe(take(1)),
               ]).pipe(
                 tap(([onlyAnswers]) => {
                   if (!onlyAnswers) {
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, filters, labelFilters]) => {
+                switchMap(([onlyAnswers, options, filters, inTitleOnly]) => {
                   if (isAnswerEnabled && !trigger?.more) {
                     return askQuestion(query, true).pipe(
                       map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
@@ -62,10 +61,10 @@ export const setupTriggerSearch = (
                       ...options,
                       show,
                       filters,
-                      inTitleOnly: isTitleOnly(query, labelFilters),
+                      inTitleOnly,
                     };
                     return search(query, currentOptions).pipe(
-                      map((results) => ({results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more})),
+                      map((results) => ({ results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more })),
                     );
                   }
                 }),
@@ -81,8 +80,8 @@ export const setupTriggerSearch = (
             searchResults.set({ results: answer.sources, append: false });
           }
         } else {
-          const {results, append} = data as {results: Search.FindResults, append: boolean};
-          searchResults.set({results, append})
+          const { results, append } = data as { results: Search.FindResults; append: boolean };
+          searchResults.set({ results, append });
         }
       }),
   );
@@ -98,7 +97,7 @@ export const setupTriggerSearch = (
         distinctUntilChanged(),
       )
       .subscribe(() => {
-        triggerSearch.next({more: true});
+        triggerSearch.next({ more: true });
       }),
   );
 };

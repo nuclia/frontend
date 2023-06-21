@@ -121,6 +121,8 @@ export const formatTitle = (title?: string): string => {
   }
 };
 
+export const entitiesDefaultColor = '#c6c6c6';
+
 export const generatedEntitiesColor: { [key: string]: string } = {
   DATE: '#FF8989',
   EVENT: '#CBA2DA',
@@ -140,6 +142,40 @@ export const generatedEntitiesColor: { [key: string]: string } = {
   TIME: '#21B8A6',
   WORK_OF_ART: '#ffc7c7',
 };
+
+/**
+ * Return black for bright color, and white for dark color
+ * @param hexa: hexadecimal color
+ */
+export function getFontColor(hexa: string): string {
+  const color = hexToRGB(hexa);
+  if (!color) return '#000';
+  // Counting the perceptive luminance - human eye favors green color...
+  const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) / 255;
+  return luminance > 0.5 ? '#000' : '#fff';
+}
+
+const HEX_REGEX = /^#([0-9a-f]{3,6})$/;
+
+function hexToRGB(hex: string): { r: number; g: number; b: number } | undefined {
+  hex = hex.toLowerCase();
+  if (!HEX_REGEX.test(hex)) return;
+  // 3 digits
+  if (hex.length === 4) {
+    return {
+      r: parseInt(hex[1] + hex[1], 16),
+      g: parseInt(hex[2] + hex[2], 16),
+      b: parseInt(hex[3] + hex[3], 16),
+    };
+    // 6 digits
+  } else {
+    return {
+      r: parseInt(hex[1] + hex[2], 16),
+      g: parseInt(hex[3] + hex[4], 16),
+      b: parseInt(hex[5] + hex[6], 16),
+    };
+  }
+}
 
 export function slugify(text: string): string {
   return (

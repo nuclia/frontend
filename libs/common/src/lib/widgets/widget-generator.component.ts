@@ -13,6 +13,7 @@ import { NavigationService } from '@flaps/common';
 const DEFAULT_WIDGET_CONFIG: {
   features: string[];
   placeholder?: string;
+  filters?: { labels: boolean; entities: boolean };
 } = {
   features: [],
 };
@@ -38,6 +39,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
     },
   };
   placeholder?: string;
+  filters = { labels: true, entities: true };
   snippet = '';
   snippetPreview: SafeHtml = '';
   unsubscribeAll = new Subject<void>();
@@ -45,6 +47,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   copyIcon = 'copy';
   isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
   areAnswersEnabled = this.tracking.isFeatureEnabled('answers').pipe(shareReplay(1));
+  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter').pipe(shareReplay(1));
   areSynonymsEnabled = combineLatest([
     this.tracking.isFeatureEnabled('manage-synonyms').pipe(shareReplay(1)),
     this.stateService.account.pipe(
@@ -68,6 +71,17 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       }
       return features;
     }, '');
+  }
+
+  get filtersValue(): string {
+    return Object.entries(this.filters)
+      .filter(([, value]) => value)
+      .map(([key]) => key)
+      .join(',');
+  }
+
+  get hasOneFilter(): boolean {
+    return Object.entries(this.filters).filter(([, value]) => value).length === 1;
   }
 
   constructor(
@@ -103,6 +117,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         switchMap((kb) => {
           const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
           this.placeholder = config.placeholder;
+          if (config.filters) {
+            this.filters = config.filters;
+          }
           this.mainForm = this.fb.group({
             features: this.fb.group({
               autofilter: [config.features.includes('autofilter')],
@@ -180,10 +197,14 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   backend="${this.backendConfig.getAPIURL()}"`
         : '';
+      const filters = this.mainFormFeatures.filter
+        ? `
+  filters="${this.filtersValue}"`
+        : '';
       const baseSnippet = `<nuclia-search-bar
   knowledgebox="${kb.id}"
   ${zone}
-  features="${this.features}" ${placeholder}${privateDetails}${backend}></nuclia-search-bar>
+  features="${this.features}" ${placeholder}${filters}${privateDetails}${backend}></nuclia-search-bar>
 <nuclia-search-results></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
@@ -222,6 +243,10 @@ ${baseSnippet}`;
     this.debouncePlaceholder.next(value);
   }
 
+  onFiltersChange() {
+    this.onFormChange();
+  }
+
   showHints() {
     this.modalService.openModal(WidgetHintDialogComponent);
   }
@@ -245,6 +270,7 @@ ${baseSnippet}`;
       this.widgetConfigurations[kb.id] = {
         features: this.features.split(','),
         placeholder: this.placeholder,
+        filters: this.mainFormFeatures.filter ? this.filters : undefined,
       };
       this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     });

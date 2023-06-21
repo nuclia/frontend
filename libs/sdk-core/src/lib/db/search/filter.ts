@@ -8,3 +8,12 @@ export function getLabelFromFilter(filter: string): Classification {
   const items = filter.split('/');
   return { labelset: items[2], label: items[3] };
 }
+
+export function getFilterFromEntity(entity: { family: string; entity: string }) {
+  return `/e/${entity.family}/${entity.entity}`;
+}
+
+export function getEntityFromFilter(filter: string): { family: string; entity: string } {
+  const items = filter.split('/');
+  return { family: items[2], entity: items[3] };
+}

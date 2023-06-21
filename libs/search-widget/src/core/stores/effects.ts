@@ -1,4 +1,4 @@
-import { getAnswer, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
+import { getAnswer, getEntities, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
 import { labelSets } from './labels.store';
 import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -24,12 +24,12 @@ import { isPopupSearchOpen } from './modal.store';
 import type { Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
-import { isEmptySearchQuery, labelFilters, searchFilters, searchQuery, triggerSearch } from './search.store';
+import { isEmptySearchQuery, isTitleOnly, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
 import { chat, currentAnswer, currentQuestion } from './answers.store';
-import { isTitleOnly } from '../../common/label/label.utils';
 import { graphSearchResults, graphSelection } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
+import { entities } from './entities.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -43,6 +43,9 @@ export function unsubscribeAllEffects() {
 export function initLabelStore() {
   // getLabelSets is making a http call, so this observable will complete and there is no need to unsubscribe.
   getLabelSets().subscribe((labelSetMap) => labelSets.set(labelSetMap));
+}
+export function initEntitiesStore() {
+  getEntities().subscribe((entityMap) => entities.set(entityMap));
 }
 
 /**
@@ -114,15 +117,15 @@ export function activatePermalinks() {
       .pipe(
         switchMap(() => isEmptySearchQuery.pipe(take(1))),
         filter((isEmptySearchQuery) => !isEmptySearchQuery),
-        switchMap(() => combineLatest([searchQuery, searchFilters, labelFilters]).pipe(take(1))),
+        switchMap(() => combineLatest([searchQuery, searchFilters, isTitleOnly]).pipe(take(1))),
       )
-      .subscribe(([query, filters, labelFilters]) => {
+      .subscribe(([query, filters, isTitleOnly]) => {
         const urlParams = getUrlParams();
         urlParams.set(queryKey, query);
         urlParams.delete(filterKey);
         urlParams.delete(titleOnlyKey);
         filters.forEach((filter) => urlParams.append(filterKey, filter));
-        urlParams.append(titleOnlyKey, `${isTitleOnly(query, labelFilters)}`);
+        urlParams.append(titleOnlyKey, `${isTitleOnly}`);
         updateQueryParams(urlParams);
       }),
     // Remove search parameters from the URL when search results are reset

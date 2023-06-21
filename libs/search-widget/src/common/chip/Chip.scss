@@ -1,4 +1,4 @@
-.sw-label {
+.sw-chip {
   align-items: center;
   border-radius: 1px;
   box-sizing: border-box;
@@ -17,7 +17,6 @@
 
   span {
     flex: 1 1 0;
-    filter: saturate(100) brightness(80%);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

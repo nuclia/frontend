@@ -16,8 +16,8 @@ import {
 } from '@nuclia/core';
 import { filter, forkJoin, from, map, merge, Observable, of, switchMap, take, tap } from 'rxjs';
 import type { EntityGroup, WidgetOptions } from './models';
-import { generatedEntitiesColor, getCDN } from './utils';
-import { _ } from './i18n';
+import { entitiesDefaultColor, generatedEntitiesColor, getCDN } from './utils';
+import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
@@ -184,18 +184,22 @@ export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): O
 }
 
 let _entities: EntityGroup[] | undefined = undefined;
-export const loadEntities = (): Observable<EntityGroup[]> => {
+export const getEntities = (): Observable<EntityGroup[]> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
   if (!_entities) {
-    return forkJoin([nucliaApi.knowledgeBox.getEntities(), _.pipe(take(1))]).pipe(
+    return forkJoin([nucliaApi.knowledgeBox.getEntities(true), _.pipe(take(1))]).pipe(
       map(([entityMap, translate]) =>
         Object.entries(entityMap)
           .map(([groupId, group]) => ({
             id: groupId,
-            title: group.title || `entities.${groupId.toLowerCase()}`,
-            color: group.color || generatedEntitiesColor[groupId],
+            title:
+              group.title ||
+              (generatedEntitiesColor[groupId]
+                ? translateInstant(`entities.${groupId.toLowerCase()}`)
+                : groupId.toLocaleLowerCase()),
+            color: group.color || generatedEntitiesColor[groupId] || entitiesDefaultColor,
             entities: Object.entries(group.entities)
               .map(([, entity]) => entity.value)
               .sort((a, b) => a.localeCompare(b)),

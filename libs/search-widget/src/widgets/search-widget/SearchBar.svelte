@@ -15,6 +15,7 @@
     activatePermalinks,
     activateTypeAheadSuggestions,
     initAnswer,
+    initEntitiesStore,
     initLabelStore,
     loadFieldData,
     setupTriggerGraphNerSearch,
@@ -36,8 +37,10 @@
   export let state: KBStates = 'PUBLISHED';
   export let features = '';
   export let standalone = false;
+  export let filters = '';
 
   let _features: WidgetFeatures = {};
+  let _filters: { [key: 'labels' | 'entities']: boolean } = {};
 
   export function search(query: string) {
     searchQuery.set(query);
@@ -72,6 +75,14 @@
       (acc, current) => ({ ...acc, [current as keyof WidgetFeatures]: true }),
       {},
     );
+    _filters = (filters ? filters.split(',').filter((filter) => !!filter) : []).reduce(
+      (acc, current) => ({ ...acc, [current]: true }),
+      {},
+    );
+    if (Object.keys(_filters).length === 0) {
+      _filters.labels = true;
+      //_filters.entities = true;  // TODO: Uncomment once entity filters work properly
+    }
     initNuclia(
       {
         backend,
@@ -97,7 +108,12 @@
       widgetPlaceholder.set(placeholder);
     }
     if (_features.filter) {
-      initLabelStore();
+      if (_filters.labels) {
+        initLabelStore();
+      }
+      if (_filters.entities) {
+        initEntitiesStore();
+      }
     }
     if (_features.answers) {
       initAnswer();
