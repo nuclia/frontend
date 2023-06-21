@@ -1,4 +1,5 @@
 import {
+  BaseSearchOptions,
   Chat,
   Classification,
   FieldFullId,
@@ -43,11 +44,12 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   if (widgetOptions.features?.useSynonyms) {
     DEFAULT_SEARCH_OPTIONS.with_synonyms = true;
   }
-  if (widgetOptions.features?.autofilter) {
-    DEFAULT_SEARCH_OPTIONS.autofilter = true;
-  }
   nucliaApi = new Nuclia(options);
-  searchOptions.set({ inTitleOnly: false, highlight: widgetOptions.highlight });
+  searchOptions.set({
+    inTitleOnly: false,
+    highlight: widgetOptions.highlight,
+    autofilter: !!widgetOptions.features?.autofilter,
+  });
   if (widgetOptions.features?.suggestLabels) {
     const kbPath = nucliaApi?.knowledgeBox.fullpath;
     if (kbPath) {
@@ -71,7 +73,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
     throw new Error('Nuclia API not initialized');
   }
 
-  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...options, ...DEFAULT_SEARCH_OPTIONS }).pipe(
+  return nucliaApi.knowledgeBox.find(query, SEARCH_MODE, { ...DEFAULT_SEARCH_OPTIONS, ...options }).pipe(
     filter((res) => {
       if (res.type === 'error') {
         searchError.set(res);
@@ -82,7 +84,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
   );
 };
 
-export const getAnswer = (query: string, chat?: Chat.Entry[], filters?: string[]) => {
+export const getAnswer = (query: string, chat?: Chat.Entry[], options?: BaseSearchOptions) => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -92,7 +94,7 @@ export const getAnswer = (query: string, chat?: Chat.Entry[], filters?: string[]
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], { filters }).pipe(
+  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], options).pipe(
     tap((res) => {
       if (res.overloaded) {
         chatError.set({ type: 'error', status: 529, detail: 'Service overloaded' });

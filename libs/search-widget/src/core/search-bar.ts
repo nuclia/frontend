@@ -4,6 +4,7 @@ import type { Search, SearchOptions } from '@nuclia/core';
 import { Chat, ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
+  autofilerDisabled,
   isEmptySearchQuery,
   isTitleOnly,
   loadMore,
@@ -44,25 +45,27 @@ export const setupTriggerSearch = (
                 searchOptions.pipe(take(1)),
                 searchFilters.pipe(take(1)),
                 isTitleOnly.pipe(take(1)),
+                autofilerDisabled.pipe(take(1)),
               ]).pipe(
                 tap(([onlyAnswers]) => {
                   if (!onlyAnswers) {
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, filters, inTitleOnly]) => {
+                switchMap(([onlyAnswers, options, filters, inTitleOnly, autofilerDisabled]) => {
+                  const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
+                  const currentOptions: SearchOptions = {
+                    ...options,
+                    show,
+                    filters,
+                    inTitleOnly,
+                    ...(autofilerDisabled ? { autofilter: false } : {}),
+                  };
                   if (isAnswerEnabled && !trigger?.more) {
-                    return askQuestion(query, true).pipe(
+                    return askQuestion(query, true, currentOptions).pipe(
                       map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
                     );
                   } else {
-                    const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
-                    const currentOptions: SearchOptions = {
-                      ...options,
-                      show,
-                      filters,
-                      inTitleOnly,
-                    };
                     return search(query, currentOptions).pipe(
                       map((results) => ({ results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more })),
                     );

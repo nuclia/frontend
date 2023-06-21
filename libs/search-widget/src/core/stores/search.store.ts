@@ -20,9 +20,10 @@ import type { LabelFilter } from '../../common/label/label.utils';
 interface SearchFilters {
   labels?: LabelFilter[];
   entities?: EntityFilter[];
+  autofilters?: EntityFilter[];
 }
 
-interface EntityFilter {
+export interface EntityFilter {
   family: string;
   entity: string;
 }
@@ -36,6 +37,7 @@ interface SearchState {
   error?: IErrorResponse;
   displayedResource: DisplayedResource | null;
   pending: boolean;
+  autofilerDisabled?: boolean;
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -56,6 +58,7 @@ export const searchQuery = searchState.writer<string>(
         ...state,
         query: trimmedQuery,
         error: undefined,
+        autofilerDisabled: false,
       };
     }
     return state;
@@ -68,6 +71,12 @@ export const searchResults = searchState.writer<Search.FindResults, { results: S
     ...state,
     results: params.append ? appendResults(state.results, params.results) : params.results,
     pending: false,
+    filters: {
+      ...state.filters,
+      autofilters: params.append
+        ? state.filters.autofilters
+        : (params.results.autofilters || []).map((filter) => getEntityFromFilter(filter)),
+    },
   }),
 );
 
@@ -143,6 +152,25 @@ export const entityFilters = searchState.writer<EntityFilter[]>(
       ...state.filters,
       entities: entityFilters,
     },
+  }),
+);
+
+export const autofilters = searchState.writer<EntityFilter[]>(
+  (state) => state.filters.autofilters || [],
+  (state, entityFilters) => ({
+    ...state,
+    filters: {
+      ...state.filters,
+      autofilters: entityFilters,
+    },
+  }),
+);
+
+export const autofilerDisabled = searchState.writer<boolean | undefined>(
+  (state) => state.autofilerDisabled,
+  (state, autofilerDisabled) => ({
+    ...state,
+    autofilerDisabled,
   }),
 );
 
@@ -254,6 +282,14 @@ export const removeEntityFilter = (entity: EntityFilter) => {
   entityFilters.set(
     currentFilters.filter((filter) => filter.entity !== entity.entity || filter.family !== entity.family),
   );
+};
+
+export const removeAutofilter = (entity: EntityFilter) => {
+  const currentFilters = autofilters.getValue();
+  autofilters.set(
+    currentFilters.filter((filter) => filter.family !== entity.family || filter.entity !== entity.entity),
+  );
+  autofilerDisabled.set(true);
 };
 
 export function getFirstResourceField(resource: IResource): ResourceField | undefined {

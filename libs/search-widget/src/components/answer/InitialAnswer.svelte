@@ -1,7 +1,7 @@
 <script lang="ts">
   import Icon from '../../common/icons/Icon.svelte';
   import { _ } from '../../core/i18n';
-  import { firstAnswer, isServiceOverloaded, resetChat } from '../../core/stores/answers.store';
+  import { chatError, firstAnswer, isServiceOverloaded, resetChat } from '../../core/stores/answers.store';
   import Answer from './Answer.svelte';
   import Chat from './Chat.svelte';
   import Feedback from './Feedback.svelte';
@@ -21,7 +21,7 @@
   }
 </script>
 
-{#if $firstAnswer.text}
+{#if $firstAnswer.text || !!$chatError}
   <div class="sw-initial-answer">
     {#if $isServiceOverloaded}
       {$_('error.service-overloaded')}
