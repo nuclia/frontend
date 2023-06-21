@@ -84,6 +84,7 @@ export namespace Search {
     query: string;
     total: number;
     relations?: Relations;
+    autofilters?: string[];
   }
 
   export interface FindResource extends IResource {

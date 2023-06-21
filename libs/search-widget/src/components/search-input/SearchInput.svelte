@@ -1,7 +1,7 @@
 <script lang="ts">
   import { _ } from '../../core/i18n';
   import { createEventDispatcher } from 'svelte';
-  import { getCDN } from '../../core/utils';
+  import { entitiesDefaultColor, getCDN } from '../../core/utils';
   import Icon from '../../common/icons/Icon.svelte';
   import Modal from '../../common/modal/Modal.svelte';
   import Suggestions from '../suggestions/Suggestions.svelte';
@@ -29,8 +29,11 @@
   import {
     addEntityFilter,
     addLabelFilter,
+    autofilters,
     entityFilters,
+    EntityFilter,
     labelFilters,
+    removeAutofilter,
     removeEntityFilter,
     removeLabelFilter,
     searchQuery,
@@ -63,8 +66,15 @@
   let displayMoreFilters = false;
   const filterDisplayLimit = popupSearch ? 1 : 2;
 
-  const filters = combineLatest([labelFilters, entityFilters]).pipe(
-    map(([labels, entities]) => [
+  const filters: Observable<
+    {
+      type: 'label' | 'entity';
+      key: string;
+      value: LabelFilter | EntityFilter;
+      autofilter?: boolean;
+    }[]
+  > = combineLatest([labelFilters, entityFilters, autofilters]).pipe(
+    map(([labels, entities, autofilters]) => [
       ...labels.map((value) => ({
         type: 'label',
         key: value.classification.label + value.classification.labelset,
@@ -74,6 +84,12 @@
         type: 'entity',
         key: value.family + value.entity,
         value,
+      })),
+      ...autofilters.map((value) => ({
+        type: 'entity',
+        key: value.family + value.entity,
+        value,
+        autofilter: true,
       })),
     ]),
     tap((filters) => {
@@ -248,8 +264,8 @@
         {#if filter.type === 'entity'}
           <Chip
             removable
-            color={$entities.find((family) => family.id === filter.value.family)?.color}
-            on:remove={() => removeEntityFilter(filter.value)}>
+            color={$entities.find((family) => family.id === filter.value.family)?.color || entitiesDefaultColor}
+            on:remove={() => (filter.autofilter ? removeAutofilter(filter.value) : removeEntityFilter(filter.value))}>
             {filter.value.entity}
           </Chip>
         {/if}
@@ -280,8 +296,9 @@
                   {#if filter.type === 'entity'}
                     <Chip
                       removable
-                      color={$entities.find((family) => family.id === filter.value.family)?.color}
-                      on:remove={() => removeEntityFilter(filter.value)}>
+                      color={$entities.find((family) => family.id === filter.value.family)?.color || entitiesDefaultColor}
+                      on:remove={() =>
+                        filter.autofilter ? removeAutofilter(filter.value) : removeEntityFilter(filter.value)}>
                       {filter.value.entity}
                     </Chip>
                   {/if}
