@@ -21,7 +21,7 @@ import {
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { widgetFeatures, widgetMode } from './widget.store';
 import { isPopupSearchOpen } from './modal.store';
-import type { Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
+import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, isTitleOnly, searchFilters, searchQuery, triggerSearch } from './search.store';
@@ -256,7 +256,11 @@ export function setupTriggerGraphNerSearch() {
   );
 }
 
-export function askQuestion(question: string, reset: boolean): Observable<{ question: string; answer: Chat.Answer }> {
+export function askQuestion(
+  question: string,
+  reset: boolean,
+  options: BaseSearchOptions = {},
+): Observable<{ question: string; answer: Chat.Answer }> {
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(({ question }) =>
@@ -266,7 +270,9 @@ export function askQuestion(question: string, reset: boolean): Observable<{ ques
         switchMap((chat) =>
           searchFilters.pipe(
             take(1),
-            switchMap((filters) => getAnswer(question, chat, filters).pipe(map((answer) => ({ question, answer })))),
+            switchMap((filters) =>
+              getAnswer(question, chat, { ...options, filters }).pipe(map((answer) => ({ question, answer }))),
+            ),
           ),
         ),
         tap(({ question, answer }) => {

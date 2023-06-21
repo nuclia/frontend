@@ -53,19 +53,19 @@ export const setupTriggerSearch = (
                   }
                 }),
                 switchMap(([onlyAnswers, options, filters, inTitleOnly, autofilerDisabled]) => {
+                  const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
+                  const currentOptions: SearchOptions = {
+                    ...options,
+                    show,
+                    filters,
+                    inTitleOnly,
+                    ...(autofilerDisabled ? { autofilter: false } : {}),
+                  };
                   if (isAnswerEnabled && !trigger?.more) {
-                    return askQuestion(query, true).pipe(
+                    return askQuestion(query, true, currentOptions).pipe(
                       map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
                     );
                   } else {
-                    const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
-                    const currentOptions: SearchOptions = {
-                      ...options,
-                      show,
-                      filters,
-                      inTitleOnly,
-                      ...(autofilerDisabled ? { autofilter: false } : {}),
-                    };
                     return search(query, currentOptions).pipe(
                       map((results) => ({ results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more })),
                     );
