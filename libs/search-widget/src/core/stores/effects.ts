@@ -26,7 +26,7 @@ import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import { isEmptySearchQuery, isTitleOnly, searchFilters, searchQuery, triggerSearch } from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
-import { chat, currentAnswer, currentQuestion } from './answers.store';
+import { chat, chatError, currentAnswer, currentQuestion } from './answers.store';
 import { graphSearchResults, graphSelection } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
 import { entities } from './entities.store';
@@ -267,21 +267,29 @@ export function askQuestion(
       chat.pipe(
         take(1),
         map((chat) => chat.filter((chat) => !chat.answer.incomplete)),
-        switchMap((chat) =>
+        switchMap((entries) =>
           searchFilters.pipe(
             take(1),
             switchMap((filters) =>
-              getAnswer(question, chat, { ...options, filters }).pipe(map((answer) => ({ question, answer }))),
+              getAnswer(question, entries, { ...options, filters }).pipe(
+                tap((result) => {
+                  if (result.type === 'error') {
+                    chatError.set(result);
+                  } else {
+                    if (result.incomplete) {
+                      currentAnswer.set(result);
+                    } else {
+                      chat.set({ question, answer: result });
+                    }
+                  }
+                }),
+                filter((result) => result.type !== 'error'),
+                map((answer) => answer as Chat.Answer),
+                map((answer) => ({ question, answer })),
+              ),
             ),
           ),
         ),
-        tap(({ question, answer }) => {
-          if (answer.incomplete) {
-            currentAnswer.set(answer);
-          } else {
-            chat.set({ question, answer });
-          }
-        }),
       ),
     ),
   );

@@ -26,6 +26,7 @@
 	"entities.time": "Time",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Art",
+	"error.answer-feature-blocked": "Answers feature is not allowed at the moment.",
 	"error.audio-loading": "An error occurred while loading the audio file.",
 	"error.feature-blocked": "Search feature is not allowed at the moment.",
 	"error.partial-results": "Sorry, the system is overloaded and could only provide a partial result.",
