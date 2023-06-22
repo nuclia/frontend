@@ -13,11 +13,11 @@ export namespace Chat {
   }
 
   export interface Answer {
+    type: 'answer';
     text: string;
     id: string;
     sources?: Search.FindResults;
     incomplete?: boolean;
-    overloaded?: boolean;
   }
 
   export enum Author {

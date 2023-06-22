@@ -2,9 +2,11 @@
 
 ### Breaking change
 - `setField` method replaces `addField` and `updateField` which were identical.
+- Manage errors on chat endpoint:
+  - `KnowledgeBox.chat` method returns `IErrorResponse` on error
+  - Add `type` property to `FindResults` model
 
 ### Improvements
-- Manage properly 529 status (service overloaded) on chat endpoint
 - Add `getEntityFromFilter` and `getFilterFromEntity` functions
 - Add `autofilters` property to `FindResults` model
 

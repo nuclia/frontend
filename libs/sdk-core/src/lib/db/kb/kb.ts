@@ -155,7 +155,7 @@ export class KnowledgeBox implements IKnowledgeBox {
     context?: Chat.ContextEntry[],
     features?: Chat.Features[],
     options?: BaseSearchOptions,
-  ): Observable<Chat.Answer> {
+  ): Observable<Chat.Answer | IErrorResponse> {
     return chat(this.nuclia, this.path, query, context, features, options);
   }
 
