@@ -69,19 +69,22 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   addServiceAccess(): void {
     if (this.addForm.invalid) return;
 
-    const data: ServiceAccountCreation = {
-      title: this.addForm.value.title,
-      role: this.addForm.value.role,
-    };
+    const data: ServiceAccountCreation = this.addForm.getRawValue();
     this.sdk.currentKb
       .pipe(
         switchMap((kb) => kb.createServiceAccount(data)),
         switchMap(() => this.updateServiceAccess()),
         take(1),
+        tap(() => {
+          this.addForm.get('title')?.reset();
+          this.cdr?.markForCheck();
+        }),
       )
-      .subscribe(() => {
-        this.addForm.get('title')?.reset();
-        this.cdr?.markForCheck();
+      .subscribe((serviceAccounts) => {
+        const sa = serviceAccounts.find((service) => service.title === data.title);
+        if (sa) {
+          this.createKey(sa);
+        }
       });
   }
 
