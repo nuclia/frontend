@@ -99,52 +99,38 @@
   /* TOKEN */
   --border-radius: var(--rhythm-0_25);
 
+  // modals
   --color-backdrop: rgba(var(--color-dark-stronger-rgb), 0.5);
+  --default-modal-width: calc(100vw - var(--rhythm-1_5));
+  --shadow-modal: var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.2);
   --z-index-modal: 10010;
   --z-index-modal-backdrop: 10000;
-
-  --shadow-modal: var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.2);
-
-  --color-scrollbar-track: var(--color-light-stronger);
-  --color-scrollbar-thumb: var(--color-dark-stronger);
-
-  --focus-shadow: inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter);
-  --shadow-small: 1px 1px 2px rgba(var(--color-dark-stronger-rgb), 0.3);
-
-  --form-widget-padding: var(--default-search-field-padding);
-  --form-widget-border-width: 1px;
-  --form-widget-border-style: solid;
-  --form-widget-border-style-stronger: solid;
-  --form-widget-border-color: var(--color-neutral-regular);
-  --form-widget-border-radius: 0;
-  --form-widget-placeholder-color: var(--color-neutral-regular);
-
-  --input-widget-border-width: 0 0 1px 0;
-  --input-widget-border-style: solid;
-  --input-widget-border-style-stronger: solid;
-  --input-widget-border-color: var(--color-dark-stronger);
-  --input-widget-border-radius: 0;
-  --input-widget-placeholder-color: transparent;
-
-  --default-modal-width: calc(100vw - var(--rhythm-1_5));
 
   --resource-modal-width: var(--default-modal-width);
   --resource-modal-width-md: 80vw;
   --resource-modal-height: calc(100vh - var(--rhythm-16));
   --resource-modal-height-md: 85vh;
 
-  --search-bar-border: 1px solid var(--color-neutral-regular);
-  --search-bar-border-focus: 1px solid var(--color-primary-regular);
+  // scrollbars
+  --color-scrollbar-track: var(--color-light-stronger);
+  --color-scrollbar-thumb: var(--color-dark-stronger);
+
+  --focus-shadow: inset 0 0 0 var(--rhythm-0_25) var(--color-primary-lighter);
+
+  // Search bar
+  --search-bar-border-color: var(--color-neutral-regular);
+  --search-bar-border-focus-color: var(--color-primary-regular);
+  --search-bar-border: 1px solid var(--search-bar-border-color);
+  --search-bar-border-focus: 1px solid var(--search-bar-border-focus-color);
   --search-bar-border-radius: 0;
-  --search-bar-padding: var(--default-search-field-padding);
   --search-bar-max-width: var(--rhythm-56);
 
+  // General
+  box-sizing: border-box;
   color: var(--color-dark-stronger);
   font-family: var(--font-family-body);
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-body);
   line-height: var(--line-height-body);
   text-align: left;
-
-  box-sizing: border-box;
 }
