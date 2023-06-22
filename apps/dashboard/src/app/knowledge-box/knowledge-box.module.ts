@@ -13,6 +13,7 @@ import { ServiceAccessComponent } from './service-access/service-access.componen
 import { AccountStatusComponent } from '../account/account-status/account-status.component';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaDropdownModule,
   PaIconModule,
   PaPopupModule,
@@ -56,6 +57,7 @@ import {
     PaTranslateModule,
     UploadModule,
     AccountStatusComponent,
+    PaDateTimeModule,
   ],
   declarations: [
     KnowledgeBoxComponent,
