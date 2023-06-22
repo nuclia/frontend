@@ -1,7 +1,4 @@
 .sw-conversation-viewer {
-  --text-width: calc(var(--rhythm-64) + var(--rhythm-40));
-  --metadata-width: var(--rhythm-20);
-
   background-color: var(--color-light-stronger);
   box-sizing: border-box;
   display: flex;
@@ -15,23 +12,22 @@
   .message {
     padding: var(--rhythm-2);
   }
+  .metadata {
+    align-items: center;
+    display: flex;
+    gap: var(--rhythm-2);
+  }
 
   @media (min-width: 648px) {
+    --message-width: var(--rhythm-75);
     .message {
-      display: flex;
-      gap: var(--rhythm-2);
-      justify-content: flex-start;
       margin: 0 auto;
       max-width: 100%;
-      width: calc(var(--metadata-width) + var(--text-width));
+      width: var(--message-width);
     }
-    .metadata {
-      flex-shrink: 0;
-      text-align: right;
-      width: var(--metadata-width);
-    }
-    .text {
-      max-width: var(--text-width);
-    }
+  }
+
+  @media (min-width: 1024px) {
+    --message-width: var(--rhythm-80);
   }
 }
