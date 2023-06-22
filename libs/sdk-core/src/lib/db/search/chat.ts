@@ -27,6 +27,7 @@ export function chat(
     })
     .pipe(
       map(({ data, incomplete, headers }) => {
+        const searchId = headers.get('X-Nuclia-Trace-Id') || '';
         const id = headers.get('NUCLIA-LEARNING-ID') || '';
         // /chat returns a readable stream structured as follow:
         // - 1st block: 4 first bytes indicates the size of the 2nd block
@@ -39,6 +40,9 @@ export function chat(
         if (!sources && sourcesLength > 0 && data.length > sourcesLength + 4) {
           const sourcesData = data.slice(4, sourcesLength + 4);
           sources = JSON.parse(atob(new TextDecoder().decode(sourcesData.buffer)));
+        }
+        if (sources) {
+          sources.searchId = searchId;
         }
         if (sources && data.length > sourcesLength + 4) {
           text = new TextDecoder().decode(data.slice(sourcesLength + 4).buffer);

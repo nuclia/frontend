@@ -52,7 +52,7 @@ interface SearchState {
   tracking: {
     startTime: number;
     resultsReceived: boolean;
-    searchId: string;
+    searchId: string | undefined;
     engagement: Engagement;
   };
 }
@@ -68,7 +68,7 @@ export const searchState = new SvelteState<SearchState>({
   tracking: {
     startTime: 0,
     resultsReceived: false,
-    searchId: '',
+    searchId: undefined,
     engagement: {},
   },
 });
@@ -258,7 +258,7 @@ export const trackingStartTime = searchState.writer<number>(
   (state, startTime) => ({ ...state, tracking: { startTime, resultsReceived: false, searchId: '', engagement: {} } }),
 );
 
-export const trackingSearchId = searchState.writer<string>(
+export const trackingSearchId = searchState.writer<string | undefined>(
   (state) => state.tracking.searchId,
   (state, searchId) => ({ ...state, tracking: { ...state.tracking, searchId } }),
 );

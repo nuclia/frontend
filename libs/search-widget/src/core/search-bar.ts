@@ -85,14 +85,15 @@ export const setupTriggerSearch = (
         ),
       )
       .subscribe((data) => {
-        trackingSearchId.set('FAKE_ID');
         if (isAnswerEnabled && !data.loadingMore) {
           const { answer } = data as { question: string; answer: Chat.Answer };
           if (answer.sources && !data.onlyAnswers) {
+            trackingSearchId.set(answer.sources.searchId);
             searchResults.set({ results: answer.sources, append: false });
           }
         } else {
           const { results, append } = data as { results: Search.FindResults; append: boolean };
+          trackingSearchId.set(results.searchId);
           searchResults.set({ results, append });
         }
         trackingResultsReceived.set(true);
