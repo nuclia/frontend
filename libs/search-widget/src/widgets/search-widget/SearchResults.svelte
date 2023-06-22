@@ -3,7 +3,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Observable } from 'rxjs';
-  import { combineLatest, debounceTime, map, merge, Subject } from 'rxjs';
+  import { combineLatest, debounceTime, map } from 'rxjs';
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
@@ -17,8 +17,8 @@
     loadMore,
     pendingResults,
     searchError,
+    showResults,
     smartResults,
-    triggerSearch,
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
@@ -30,8 +30,6 @@
   import InfoCard from '../../components/info-card/InfoCard.svelte';
   import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
 
-  const searchAlreadyTriggered = new Subject<void>();
-  const showResults = merge(triggerSearch, searchAlreadyTriggered).pipe(map(() => true));
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
   const tileResult: Observable<Search.SmartResult | null> = combineLatest([
@@ -53,7 +51,7 @@
 
   onMount(() => {
     if (pendingResults.getValue() || smartResults.getValue().length > 0) {
-      searchAlreadyTriggered.next();
+      showResults.set(true);
     }
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));

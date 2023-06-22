@@ -207,7 +207,7 @@ function initStoreFromUrlParams() {
 }
 
 // Load field data when fieldFullId is set
-export function loadFieldData() {
+export function initViewer() {
   const subscription = fieldFullId
     .pipe(
       distinctUntilChanged(),

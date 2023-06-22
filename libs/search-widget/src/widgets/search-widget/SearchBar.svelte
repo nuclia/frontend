@@ -17,12 +17,13 @@
     initAnswer,
     initEntitiesStore,
     initLabelStore,
-    loadFieldData,
+    initViewer,
     setupTriggerGraphNerSearch,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
   import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
+  import { answerState } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -129,7 +130,7 @@
     setLang(lang);
 
     setupTriggerSearch(dispatchCustomEvent, _features.answers);
-    loadFieldData();
+    initViewer();
     if (_features.permalink) {
       activatePermalinks();
     }
@@ -140,6 +141,7 @@
     ready = true;
 
     return () => {
+      answerState.reset();
       searchState.reset();
       suggestionState.reset();
       resetNuclia();

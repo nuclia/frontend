@@ -31,7 +31,7 @@ let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
-export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
+export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions): Nuclia => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
@@ -62,6 +62,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     SEARCH_MODE.push(Search.Features.RELATIONS);
   }
   STATE = state;
+  return nucliaApi;
 };
 
 export const resetNuclia = () => {
