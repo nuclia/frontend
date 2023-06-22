@@ -23,6 +23,7 @@
   } from '../../core/stores/effects';
   import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
   import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
+  import { answerState } from '../../core';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -140,6 +141,7 @@
     ready = true;
 
     return () => {
+      answerState.reset();
       searchState.reset();
       suggestionState.reset();
       resetNuclia();
