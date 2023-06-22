@@ -62,7 +62,7 @@
 
     .paragraph-result-container:hover,
     .paragraph-result-container.hover {
-      background-color: var(--color-neutral-lightest);
+      background-color: var(--default-hover-background-color);
     }
 
     .paragraph-result-container:not(.stack) {

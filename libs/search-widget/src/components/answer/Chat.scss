@@ -2,7 +2,7 @@
   --main-padding-side: var(--rhythm-2);
   --main-padding-top: var(--rhythm-7);
 
-  background: var(--color-neutral-lighter);
+  background: var(--default-modal-background-color);
   bottom: 0;
   display: flex;
   left: 0;
@@ -24,7 +24,7 @@
     --height-input: var(--rhythm-6);
     --max-width-container: calc(100vw - var(--main-padding-side) * 2);
 
-    background: var(--color-light-stronger);
+    background: var(--default-container-background-color);
     display: flex;
     flex: 1 0 auto;
     flex-direction: column;

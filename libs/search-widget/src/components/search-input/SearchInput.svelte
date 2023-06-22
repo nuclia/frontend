@@ -30,8 +30,8 @@
     addEntityFilter,
     addLabelFilter,
     autofilters,
-    entityFilters,
     EntityFilter,
+    entityFilters,
     labelFilters,
     removeAutofilter,
     removeEntityFilter,
@@ -42,8 +42,6 @@
   import { entities } from '../../core/stores/entities.store';
   import type { EntityGroup } from '../../core/models';
 
-  export let popupSearch = false;
-  export let embeddedSearch = false;
   export let searchBarWidget = false;
 
   let searchInputElement: HTMLInputElement;
@@ -64,7 +62,7 @@
   let showFilterSubmenu = false;
   let hasFilters = false;
   let displayMoreFilters = false;
-  const filterDisplayLimit = popupSearch ? 1 : 2;
+  const filterDisplayLimit = 2;
 
   const filters: Observable<
     {
@@ -199,13 +197,10 @@
 <form
   role="search"
   autocomplete="off"
-  class="sw-search-input"
-  class:popup-widget={popupSearch}
-  class:embedded-widget={embeddedSearch}
-  class:search-bar-widget={searchBarWidget}
+  class="sw-search-input search-bar-widget"
   class:has-filters={$filters.length > 0}
   bind:this={inputContainerElement}>
-  {#if embeddedSearch || searchBarWidget}
+  {#if searchBarWidget}
     <img
       src={`${getCDN()}logos/nuclia-grey.svg`}
       class="logo"
@@ -246,7 +241,7 @@
         <IconButton
           icon="filter"
           aspect="basic"
-          size={popupSearch ? 'small' : 'medium'}
+          size="medium"
           on:click={toggleFilter} />
       </div>
     {/if}

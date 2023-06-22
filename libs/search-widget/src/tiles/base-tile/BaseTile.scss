@@ -1,7 +1,7 @@
 .sw-tile {
   --paragraph-height: var(--rhythm-4);
   --paragraph-gap: var(--rhythm-0_5);
-  --expanded-background-color: var(--color-neutral-lighter);
+  --expanded-background-color: var(--default-modal-background-color);
 
   display: flex;
   flex-direction: column;
@@ -71,7 +71,7 @@
 
     .search-result-paragraphs,
     .metadata-content {
-      background-color: var(--color-light-stronger);
+      background-color: var(--default-container-background-color);
       margin-bottom: var(--search-results-margin-bottom);
       max-height: calc(
         100vh - var(--header-height) - var(--viewer-height) - var(--search-results-margin-bottom) * 4 -
@@ -93,7 +93,7 @@
     .metadata-expander-header {
       .metadata-expander-header-title {
         align-items: center;
-        background: var(--color-light-stronger);
+        background: var(--default-container-background-color);
         display: flex;
         height: var(--rhythm-5);
         justify-content: space-between;
@@ -169,7 +169,7 @@
       }
       .find-bar-container {
         align-items: center;
-        background: var(--color-light-stronger);
+        background: var(--default-container-background-color);
         display: flex;
         gap: var(--rhythm-1);
         margin-bottom: var(--find-input-margin);
@@ -177,6 +177,7 @@
       }
 
       .find-bar-container .find-input {
+        background: inherit;
         border: none;
         box-sizing: border-box;
         color: inherit;
@@ -298,7 +299,7 @@
       transition: background var(--transition-superfast);
 
       &:hover {
-        background: var(--color-neutral-lightest);
+        background: var(--default-hover-background-color);
       }
     }
   }
