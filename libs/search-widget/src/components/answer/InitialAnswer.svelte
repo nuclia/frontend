@@ -21,10 +21,16 @@
   }
 </script>
 
-{#if $firstAnswer.text || !!$chatError}
+{#if $firstAnswer.text || $chatError}
   <div class="sw-initial-answer">
-    {#if $isServiceOverloaded}
-      {$_('error.service-overloaded')}
+    {#if $chatError}
+      {#if $isServiceOverloaded}
+        {$_('error.service-overloaded')}
+      {:else if $chatError.status === 402}
+        {$_('error.answer-feature-blocked')}
+      {:else}
+        {$_('error.search')}
+      {/if}
     {:else}
       <div class="container">
         <div class="answer">

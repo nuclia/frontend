@@ -84,7 +84,11 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   getResourceBySlug(slug: string, show?: ResourceProperties[], extracted?: ExtractedDataTypes[]): Observable<IResource>;
 
-  chat(query: string, context?: Chat.ContextEntry[], features?: Chat.Features[]): Observable<Chat.Answer>;
+  chat(
+    query: string,
+    context?: Chat.ContextEntry[],
+    features?: Chat.Features[],
+  ): Observable<Chat.Answer | IErrorResponse>;
 
   find(
     query: string,

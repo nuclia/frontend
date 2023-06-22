@@ -25,6 +25,7 @@
 	"entities.time": "Temps",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Obres",
+	"error.answer-feature-blocked": "La funcionalitat de respostes no està permesa en aquest moment.",
 	"error.audio-loading": "S'ha produït un error en carregar el fitxer d'àudio.",
 	"error.feature-blocked": "La funció de cerca no està permesa en aquest moment.",
 	"error.partial-results": "Ho sentim, el sistema està sobrecarregat i només podria proporcionar un resultat parcial.",

@@ -104,6 +104,7 @@ export const searchError = searchState.writer<IErrorResponse | undefined>(
     ...state,
     error,
     pending: false,
+    showResults: true,
   }),
 );
 

@@ -1,5 +1,5 @@
-import { map, Observable } from 'rxjs';
-import type { INuclia } from '../../models';
+import { catchError, map, Observable, of } from 'rxjs';
+import type { IErrorResponse, INuclia } from '../../models';
 import { Chat } from './chat.models';
 import type { BaseSearchOptions, Search } from './search.models';
 import { ResourceProperties } from '../kb';
@@ -13,7 +13,7 @@ export function chat(
   context: Chat.ContextEntry[] = [],
   features: Chat.Features[] = [Chat.Features.PARAGRAPHS],
   options: BaseSearchOptions = {},
-): Observable<Chat.Answer> {
+): Observable<Chat.Answer | IErrorResponse> {
   let sourcesLength = 0;
   let sources: Search.FindResults | undefined;
   let text = '';
@@ -26,7 +26,7 @@ export function chat(
       ...options,
     })
     .pipe(
-      map(({ data, incomplete, headers, status }) => {
+      map(({ data, incomplete, headers }) => {
         const id = headers.get('NUCLIA-LEARNING-ID') || '';
         // /chat returns a readable stream structured as follow:
         // - 1st block: 4 first bytes indicates the size of the 2nd block
@@ -46,7 +46,8 @@ export function chat(
             text = text.split(END_OF_STREAM)[0];
           }
         }
-        return { text, sources, incomplete, id, overloaded: status === 529 };
+        return { type: 'answer', text, sources, incomplete, id } as Chat.Answer;
       }),
+      catchError((error) => of({ type: 'error', status: error.status, detail: error.detail || '' } as IErrorResponse)),
     );
 }

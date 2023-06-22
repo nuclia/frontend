@@ -23,6 +23,7 @@
 	"entities.time": "Temps",
 	"entities.title": "Insights",
 	"entities.work_of_art": "Œuvres",
+	"error.answer-feature-blocked": "La fonctionnalité de réponses n'est pas autorisée pour le moment.",
 	"error.audio-loading": "Une erreur s'est produite lors du chargement du fichier audio.",
 	"error.feature-blocked": "La fonction de recherche n'est pas autorisée pour le moment.",
 	"error.partial-results": "Désolé, le système est surchargé et n'a pu fournir qu'un résultat partiel.",

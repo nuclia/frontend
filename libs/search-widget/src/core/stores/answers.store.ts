@@ -1,5 +1,6 @@
 import type { Chat, IErrorResponse } from '@nuclia/core';
 import { SvelteState } from '../state-lib';
+import { showResults } from './search.store';
 
 interface AnswerState {
   chat: Chat.Entry[];
@@ -9,7 +10,7 @@ interface AnswerState {
   isStreaming: boolean;
 }
 
-const EMPTY_ANSWER = { text: '', id: '' };
+const EMPTY_ANSWER = { type: 'answer' as const, text: '', id: '' };
 export const answerState = new SvelteState<AnswerState>({
   chat: [],
   currentQuestion: '',
@@ -30,11 +31,14 @@ export const currentQuestion = answerState.writer<string, { question: string; re
 
 export const currentAnswer = answerState.writer<Chat.Answer, Partial<Chat.Answer>>(
   (state) => state.currentAnswer,
-  (state, value) => ({
-    ...state,
-    currentAnswer: { ...state.currentAnswer, ...value },
-    isStreaming: true,
-  }),
+  (state, value) => {
+    showResults.set(true);
+    return {
+      ...state,
+      currentAnswer: { ...state.currentAnswer, ...value },
+      isStreaming: true,
+    };
+  },
 );
 
 export const firstAnswer = answerState.reader((state) =>
@@ -71,5 +75,11 @@ export const isStreaming = answerState.reader((state) => state.isStreaming);
 export const isServiceOverloaded = answerState.reader<boolean>((state) => !!state.error && state.error.status === 529);
 export const chatError = answerState.writer<IErrorResponse | undefined>(
   (state) => state.error,
-  (state, error) => ({ ...state, error }),
+  (state, error) => {
+    showResults.set(true);
+    return {
+      ...state,
+      error,
+    };
+  },
 );

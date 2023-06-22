@@ -95,13 +95,7 @@ export const getAnswer = (query: string, chat?: Chat.Entry[], options?: BaseSear
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], options).pipe(
-    tap((res) => {
-      if (res.overloaded) {
-        chatError.set({ type: 'error', status: 529, detail: 'Service overloaded' });
-      }
-    }),
-  );
+  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], options).pipe();
 };
 
 export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {
