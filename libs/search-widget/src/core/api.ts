@@ -3,6 +3,7 @@ import {
   Chat,
   Classification,
   FieldFullId,
+  IEvents,
   IResource,
   KBStates,
   LabelSets,
@@ -284,4 +285,11 @@ export function getTextFile(path: string): Observable<string> {
     throw new Error('Nuclia API not initialized');
   }
   return nucliaApi.rest.get<Response>(path, {}, true).pipe(switchMap((res) => from(res.text())));
+}
+
+export function getEvents(): IEvents {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.events;
 }

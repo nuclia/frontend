@@ -30,10 +30,16 @@ export interface INuclia {
   auth: IAuthentication;
   rest: IRest;
   db: IDb;
+  events?: IEvents;
   currentShards?: { [kb: string]: string[] };
   get backend(): string;
   get regionalBackend(): string;
   get knowledgeBox(): KnowledgeBox;
+}
+
+export interface IEvents {
+  emit<T>(eventName: string, data: T): void;
+  on<T>(eventName: string): Observable<T>;
 }
 
 export interface IAuthentication {

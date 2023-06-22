@@ -32,6 +32,9 @@ export const find = (
     switchMap((res) => {
       // status 206 means we got partial results
       if (!res.ok || res.status === 206) {
+        if (res.status === 206) {
+          nuclia.events?.emit<{ [key: string]: any }>('partial', { ...params, ...others });
+        }
         return from(
           res.json().then(
             (body) => {

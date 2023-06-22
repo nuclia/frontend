@@ -1,4 +1,13 @@
-import { getAnswer, getEntities, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
+import {
+  getAnswer,
+  getEntities,
+  getEvents,
+  getLabelSets,
+  getResourceField,
+  predict,
+  searchInResource,
+  suggest,
+} from '../api';
 import { labelSets } from './labels.store';
 import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -37,7 +46,6 @@ import { chat, chatError, currentAnswer, currentQuestion } from './answers.store
 import { graphSearchResults, graphSelection } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
 import { entities } from './entities.store';
-import { sub } from 'date-fns';
 import { logEvent } from '../tracking';
 
 const subscriptions: Subscription[] = [];

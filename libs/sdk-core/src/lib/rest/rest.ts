@@ -92,6 +92,10 @@ export class Rest implements IRest {
         body: specialContentType ? body : JSON.stringify(body),
       }).then((res) => {
         if (!res.ok) {
+          this.nuclia.events?.emit<{ status: number; path: string }>('api-error', {
+            status: res.status,
+            path: this.getFullUrl(path),
+          });
           return res.json().then(
             (body) => {
               throw { status: res.status, body };
