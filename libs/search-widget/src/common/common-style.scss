@@ -102,7 +102,7 @@
   // modals
   --color-backdrop: rgba(var(--color-dark-stronger-rgb), 0.5);
   --default-modal-width: calc(100vw - var(--rhythm-1_5));
-  --shadow-modal: var(--rhythm-0_25) var(--rhythm-0_25) var(--rhythm-2) rgba(var(--color-dark-stronger-rgb), 0.2);
+  --shadow-modal: 0 var(--rhythm-0_25) var(--rhythm-1) rgba(var(--color-dark-stronger-rgb), 0.2);
   --z-index-modal: 10010;
   --z-index-modal-backdrop: 10000;
 
@@ -130,6 +130,7 @@
   --default-border-color: var(--custom-border-color, var(--color-neutral-regular));
   --default-hover-background-color: var(--custom-hover-background-color, var(--color-neutral-lightest));
   --default-modal-background-color: var(--custom-modal-background-color, var(--color-neutral-lighter));
+  --dropdown-background-color: var(--custom-dropdown-background-color, var(--color-light-stronger));
   --default-container-background-color: var(--custom-container-background-color, var(--color-light-stronger));
 
   // Global style
