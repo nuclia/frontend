@@ -17,8 +17,8 @@
     initAnswer,
     initEntitiesStore,
     initLabelStore,
-    initViewer,
     initUsageTracking,
+    initViewer,
     resetStatesAndEffects,
     setupTriggerGraphNerSearch,
   } from '../../core/stores/effects';
@@ -38,7 +38,10 @@
   export let state: KBStates = 'PUBLISHED';
   export let features = '';
   export let standalone = false;
+  export let mode = '';
   export let filters = '';
+
+  $: darkMode = mode === 'dark';
 
   let _features: WidgetFeatures = {};
   let _filters: { [key: 'labels' | 'entities']: boolean } = {};
@@ -150,6 +153,7 @@
 <svelte:element this="style">{@html globalCss}</svelte:element>
 <div
   class="nuclia-widget"
+  class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite}
     <SearchInput searchBarWidget={true} />
