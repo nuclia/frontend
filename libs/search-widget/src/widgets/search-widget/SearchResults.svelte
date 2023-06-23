@@ -64,7 +64,7 @@
     getTrackingDataAfterResultsReceived.pipe(take(1)).subscribe((tracking) => {
       const tti = Date.now() - tracking.startTime;
       logEvent('search', {
-        searchId: tracking.searchId,
+        searchId: tracking.searchId || '',
         tti,
       });
       trackingReset.set(undefined);

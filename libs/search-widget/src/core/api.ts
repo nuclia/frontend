@@ -24,7 +24,6 @@ import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
-import { chatError } from './stores/answers.store';
 import { initTracking } from './tracking';
 
 let nucliaApi: Nuclia | null;
@@ -33,8 +32,7 @@ let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
-export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions): Nuclia => {
-  initTracking();
+export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
   if (nucliaApi) {
     throw new Error('Cannot exist more than one Nuclia widget at the same time');
   }
@@ -48,6 +46,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     DEFAULT_SEARCH_OPTIONS.with_synonyms = true;
   }
   nucliaApi = new Nuclia(options);
+  initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
   searchOptions.set({
     inTitleOnly: false,
     highlight: widgetOptions.highlight,
