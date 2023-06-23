@@ -30,6 +30,7 @@ let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
+let CHAT_MODE = [Chat.Features.PARAGRAPHS];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
@@ -62,6 +63,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   }
   if (widgetOptions.features?.relations && !SEARCH_MODE.includes(Search.Features.RELATIONS)) {
     SEARCH_MODE.push(Search.Features.RELATIONS);
+    CHAT_MODE.push(Chat.Features.RELATIONS);
   }
   STATE = state;
   return nucliaApi;
@@ -97,7 +99,7 @@ export const getAnswer = (query: string, chat?: Chat.Entry[], options?: BaseSear
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  return nucliaApi.knowledgeBox.chat(query, context, [Chat.Features.PARAGRAPHS], options).pipe();
+  return nucliaApi.knowledgeBox.chat(query, context, CHAT_MODE, options).pipe();
 };
 
 export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {
