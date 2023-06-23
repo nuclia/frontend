@@ -93,7 +93,9 @@ export const setupTriggerSearch = (
           }
         } else {
           const { results, append } = data as { results: Search.FindResults; append: boolean };
-          trackingSearchId.set(results.searchId);
+          if (!append) {
+            trackingSearchId.set(results.searchId);
+          }
           searchResults.set({ results, append });
         }
         trackingResultsReceived.set(true);
