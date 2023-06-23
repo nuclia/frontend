@@ -8,8 +8,8 @@ import {
   searchInResource,
   suggest,
 } from '../api';
-import { labelSets } from './labels.store';
-import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
+import { labelSets, labelState } from './labels.store';
+import { Suggestions, suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
   combineLatest,
   debounceTime,
@@ -28,8 +28,7 @@ import {
   tap,
 } from 'rxjs';
 import { NO_SUGGESTION_RESULTS } from '../models';
-import { widgetFeatures, widgetMode } from './widget.store';
-import { isPopupSearchOpen } from './modal.store';
+import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
@@ -38,20 +37,32 @@ import {
   isTitleOnly,
   searchFilters,
   searchQuery,
+  searchState,
   trackingEngagement,
   triggerSearch,
 } from './search.store';
-import { fieldData, fieldFullId } from './viewer.store';
-import { chat, chatError, currentAnswer, currentQuestion } from './answers.store';
-import { graphSearchResults, graphSelection } from './graph.store';
+import { fieldData, fieldFullId, viewerState } from './viewer.store';
+import { answerState, chat, chatError, currentAnswer, currentQuestion } from './answers.store';
+import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
-import { entities } from './entities.store';
+import { entities, entitiesState } from './entities.store';
+import { viewerSearchState } from './viewer-search.store';
+import { unsubscribeTriggerSearch } from '../search-bar';
 import { logEvent } from '../tracking';
 
 const subscriptions: Subscription[] = [];
 
-export function unsubscribeAllEffects() {
+export function resetStatesAndEffects() {
   subscriptions.forEach((subscription) => subscription.unsubscribe());
+  unsubscribeTriggerSearch();
+  answerState.reset();
+  entitiesState.reset();
+  graphState.reset();
+  labelState.reset();
+  searchState.reset();
+  suggestionState.reset();
+  viewerState.reset();
+  viewerSearchState.reset();
 }
 
 /**
@@ -146,24 +157,19 @@ export function activatePermalinks() {
         updateQueryParams(urlParams);
       }),
     // Remove search parameters from the URL when search results are reset
-    merge(
-      isPopupSearchOpen.pipe(
-        distinctUntilChanged(),
-        skip(1),
-        filter((isOpen) => !isOpen),
-      ),
-      isEmptySearchQuery.pipe(
+    isEmptySearchQuery
+      .pipe(
         distinctUntilChanged(),
         skip(1),
         filter((isEmpty) => isEmpty),
-      ),
-    ).subscribe(() => {
-      const urlParams = getUrlParams();
-      urlParams.delete(queryKey);
-      urlParams.delete(filterKey);
-      urlParams.delete(titleOnlyKey);
-      updateQueryParams(urlParams);
-    }),
+      )
+      .subscribe(() => {
+        const urlParams = getUrlParams();
+        urlParams.delete(queryKey);
+        urlParams.delete(filterKey);
+        urlParams.delete(titleOnlyKey);
+        updateQueryParams(urlParams);
+      }),
     // Add current field id in the URL when preview is open
     fieldFullId
       .pipe(
@@ -207,9 +213,6 @@ function initStoreFromUrlParams() {
     searchFilters.set({ filters, titleOnly });
     typeAhead.set(query || '');
     triggerSearch.next();
-    if (widgetMode.value === 'popup') {
-      isPopupSearchOpen.set(true);
-    }
   }
 
   // Viewer store

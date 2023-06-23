@@ -26,11 +26,13 @@ import { searchError, searchOptions } from './stores/search.store';
 import { hasViewerSearchError } from './stores/viewer-search.store';
 import { initTracking } from './tracking';
 
+const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
+const DEFAULT_CHAT_MODE = [Chat.Features.PARAGRAPHS];
 let nucliaApi: Nuclia | null;
 let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
-let SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
-let CHAT_MODE = [Chat.Features.PARAGRAPHS];
+let SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
+let CHAT_MODE = [...DEFAULT_CHAT_MODE];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
@@ -71,6 +73,8 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
 
 export const resetNuclia = () => {
   nucliaApi = null;
+  SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
+  CHAT_MODE = [...DEFAULT_CHAT_MODE];
 };
 
 export const search = (query: string, options: SearchOptions): Observable<Search.FindResults> => {
