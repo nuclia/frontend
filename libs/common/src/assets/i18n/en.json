@@ -801,6 +801,8 @@
 	"stash.widgets.autofilter": "Automatic filtering",
 	"stash.widgets.autofilter.help": "Detects entities mentioned in the user query and turns them automatically into filters.",
 	"stash.widgets.configuration": "Widget configuration",
+	"stash.widgets.darkMode": "Dark mode",
+	"stash.widgets.darkMode.help": "Enable dark theme on the widget",
 	"stash.widgets.editLabels": "Edit labels",
 	"stash.widgets.editLabels.help": "Allows to add/remove labels from the resource view",
 	"stash.widgets.entities": "Filter by entities",

@@ -22,7 +22,9 @@
     </div>
   </div>
 
-  <div class="widget-preview">
+  <div
+    class="widget-preview"
+    [class.dark]="mainForm?.controls.darkMode.value">
     <h3>{{ 'stash.widgets.preview' | translate }}</h3>
     <div
       id="preview"
@@ -131,6 +133,13 @@
             {{ 'stash.widgets.autofilter' | translate }}
           </pa-toggle>
         </div>
+
+        <pa-toggle
+          labelOnRight
+          help="stash.widgets.darkMode.help"
+          formControlName="darkMode">
+          {{ 'stash.widgets.darkMode' | translate }}
+        </pa-toggle>
       </section>
       <section class="snippet">
         <h3>

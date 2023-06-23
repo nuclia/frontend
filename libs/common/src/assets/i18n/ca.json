@@ -771,6 +771,8 @@
 	"stash.widgets.autofilter": "Filtrat automàtic",
 	"stash.widgets.autofilter.help": "Detecta les entitats mencionades a la consulta de l'usuari i les converteix automàticament en filtres",
 	"stash.widgets.configuration": "Configuració del widget",
+	"stash.widgets.darkMode": "Mode fosc",
+	"stash.widgets.darkMode.help": "Activa el tema fosc al giny",
 	"stash.widgets.editLabels": "Edita les etiquetes",
 	"stash.widgets.editLabels.help": "Permet afegir/eliminar etiquetes de la vista de recursos",
 	"stash.widgets.entities": "Filtar per entitats",
