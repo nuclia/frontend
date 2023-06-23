@@ -1,7 +1,7 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
 import type { Search, SearchOptions } from '@nuclia/core';
-import { Chat, ResourceProperties } from '@nuclia/core';
+import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   autofilerDisabled,
@@ -71,11 +71,23 @@ export const setupTriggerSearch = (
                   };
                   if (isAnswerEnabled && !trigger?.more) {
                     return askQuestion(query, true, currentOptions).pipe(
-                      map((res) => ({ ...res, onlyAnswers, loadingMore: trigger?.more })),
+                      map((res) => ({
+                        results: res.answer.sources,
+                        append: false,
+                        onlyAnswers,
+                        loadingMore: false,
+                        options: currentOptions,
+                      })),
                     );
                   } else {
                     return search(query, currentOptions).pipe(
-                      map((results) => ({ results, append: !!trigger?.more, onlyAnswers, loadingMore: trigger?.more })),
+                      map((results) => ({
+                        results,
+                        append: !!trigger?.more,
+                        onlyAnswers,
+                        loadingMore: trigger?.more,
+                        options: currentOptions,
+                      })),
                     );
                   }
                 }),
@@ -84,21 +96,25 @@ export const setupTriggerSearch = (
           ),
         ),
       )
-      .subscribe((data) => {
-        if (isAnswerEnabled && !data.loadingMore) {
-          const { answer } = data as { question: string; answer: Chat.Answer };
-          if (answer.sources && !data.onlyAnswers) {
-            trackingSearchId.set(answer.sources.searchId);
-            searchResults.set({ results: answer.sources, append: false });
+      .subscribe(({ results, append, onlyAnswers, loadingMore, options }) => {
+        if (results && results.total === 0 && options.autofilter && (results.autofilters || []).length > 0) {
+          // If autofilter is enabled and no results are found, retry without autofilters
+          autofilerDisabled.set(true);
+          triggerSearch.next(loadingMore ? { more: true } : undefined);
+        } else if (results) {
+          if (isAnswerEnabled && !loadingMore) {
+            if (!onlyAnswers) {
+              trackingSearchId.set(results.searchId);
+              searchResults.set({ results: results, append: false });
+            }
+          } else {
+            if (!append) {
+              trackingSearchId.set(results.searchId);
+            }
+            searchResults.set({ results, append });
           }
-        } else {
-          const { results, append } = data as { results: Search.FindResults; append: boolean };
-          if (!append) {
-            trackingSearchId.set(results.searchId);
-          }
-          searchResults.set({ results, append });
+          trackingResultsReceived.set(true);
         }
-        trackingResultsReceived.set(true);
       }),
   );
 
