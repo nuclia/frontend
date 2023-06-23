@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { FieldId, IResource, ResourceField, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -14,7 +14,7 @@ import {
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
-import { combineLatest, map, Subject } from 'rxjs';
+import { Subject, combineLatest, filter, map, switchMap } from 'rxjs';
 import type { LabelFilter } from '../../common/label/label.utils';
 
 interface SearchFilters {
@@ -28,6 +28,16 @@ export interface EntityFilter {
   entity: string;
 }
 
+type EngagementType = 'CHAT' | 'RESULT';
+
+interface Engagement {
+  type?: EngagementType;
+  resourceRank?: number;
+  paragraphRank?: number;
+  paragraphType?: Search.FindScoreType;
+  paragraphOrder?: number;
+}
+
 // TODO: once old widget will be removed, we should remove displayedResource from the store
 interface SearchState {
   query: string;
@@ -39,6 +49,12 @@ interface SearchState {
   pending: boolean;
   autofilerDisabled?: boolean;
   showResults: boolean;
+  tracking: {
+    startTime: number;
+    resultsReceived: boolean;
+    searchId: string | undefined;
+    engagement: Engagement;
+  };
 }
 
 export const searchState = new SvelteState<SearchState>({
@@ -49,6 +65,12 @@ export const searchState = new SvelteState<SearchState>({
   displayedResource: null,
   pending: false,
   showResults: false,
+  tracking: {
+    startTime: 0,
+    resultsReceived: false,
+    searchId: undefined,
+    engagement: {},
+  },
 });
 
 export const searchQuery = searchState.writer<string>(
@@ -75,18 +97,21 @@ export const searchResults = searchState.writer<
   }
 >(
   (state) => state.results,
-  (state, params) => ({
-    ...state,
-    results: params.append ? appendResults(state.results, params.results) : params.results,
-    pending: false,
-    showResults: true,
-    filters: {
-      ...state.filters,
-      autofilters: params.append
-        ? state.filters.autofilters
-        : (params.results.autofilters || []).map((filter) => getEntityFromFilter(filter)),
-    },
-  }),
+  (state, params) => {
+    CACHE = undefined;
+    return {
+      ...state,
+      results: params.append ? appendResults(state.results, params.results) : params.results,
+      pending: false,
+      showResults: true,
+      filters: {
+        ...state.filters,
+        autofilters: params.append
+          ? state.filters.autofilters
+          : (params.results.autofilters || []).map((filter) => getEntityFromFilter(filter)),
+      },
+    };
+  },
 );
 export const showResults = searchState.writer<boolean>(
   (state) => state.showResults,
@@ -228,6 +253,63 @@ export const pendingResults = searchState.writer<boolean>(
   (state, pending) => ({ ...state, pending }),
 );
 
+export const trackingStartTime = searchState.writer<number>(
+  (state) => state.tracking.startTime,
+  (state, startTime) => ({ ...state, tracking: { startTime, resultsReceived: false, searchId: '', engagement: {} } }),
+);
+
+export const trackingSearchId = searchState.writer<string | undefined>(
+  (state) => state.tracking.searchId,
+  (state, searchId) => ({ ...state, tracking: { ...state.tracking, searchId } }),
+);
+
+export const trackingResultsReceived = searchState.writer<boolean>(
+  (state) => state.tracking.resultsReceived,
+  (state, resultsReceived) => ({ ...state, tracking: { ...state.tracking, resultsReceived } }),
+);
+
+export const trackingReset = searchState.writer<undefined>(
+  () => undefined,
+  (state) => ({ ...state, tracking: { ...state.tracking, startTime: 0, resultsReceived: false } }),
+);
+
+// emits the tracking data only after corresponding results are received
+export const getTrackingDataAfterResultsReceived = combineLatest([
+  trackingResultsReceived,
+  trackingStartTime,
+  trackingSearchId,
+]).pipe(
+  filter(([resultsReceived, startTime]) => resultsReceived && startTime > 0),
+  map(([, startTime, searchId]) => ({ startTime, searchId })),
+);
+
+export const trackingEngagement = searchState.writer<
+  Engagement,
+  { type: EngagementType; rid?: string; paragraph?: Paragraph }
+>(
+  (state) => state.tracking.engagement,
+  (state, params) => {
+    const sortedResources = getSortedResults(state.results.resources);
+    const matching = params.rid ? sortedResources.find((resource) => resource.id === params.rid) : undefined;
+    return {
+      ...state,
+      tracking: {
+        ...state.tracking,
+        engagement: {
+          type: params.type,
+          resourceRank: matching ? sortedResources.findIndex((resource) => resource.id === params.rid) : undefined,
+          paragraphRank:
+            matching && params.paragraph
+              ? matching.paragraphs?.findIndex((paragraph) => paragraph.id === (params.paragraph as any)?.id)
+              : undefined,
+          paragraphType: (params.paragraph as any)?.score_type,
+          paragraphOrder: params.paragraph?.order,
+        },
+      },
+    };
+  },
+);
+
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
   if (!state.results.resources) {
     return [];
@@ -361,39 +443,43 @@ function deepMergeFields(
   }, existing);
 }
 
+let CACHE: Search.SmartResult[] | undefined = undefined;
 export function getSortedResults(resources: { [id: string]: Search.FindResource } | undefined): Search.SmartResult[] {
   if (!resources) {
     return [];
   }
-  return Object.values(resources)
-    .map((res) => ({
-      ...res,
-      paragraphs: Object.values(res.fields)
-        .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
-        .sort((a, b) => a.order - b.order),
-    }))
-    .map((res: Search.SmartResult) => {
-      // take the first paragraph which is not from a generic field
-      const firstFieldParagraph = res.paragraphs?.find(
-        (paragraph) => paragraph.id.split('/')[1] !== SHORT_FIELD_TYPE.generic,
-      );
-      if (firstFieldParagraph) {
-        const [, fieldType, fieldId] = firstFieldParagraph.id.split('/');
-        const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
-        if (field_type && fieldId) {
-          res.field = { field_type, field_id: fieldId };
+  if (!CACHE) {
+    CACHE = Object.values(resources)
+      .map((res) => ({
+        ...res,
+        paragraphs: Object.values(res.fields)
+          .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
+          .sort((a, b) => a.order - b.order),
+      }))
+      .map((res: Search.SmartResult) => {
+        // take the first paragraph which is not from a generic field
+        const firstFieldParagraph = res.paragraphs?.find(
+          (paragraph) => paragraph.id.split('/')[1] !== SHORT_FIELD_TYPE.generic,
+        );
+        if (firstFieldParagraph) {
+          const [, fieldType, fieldId] = firstFieldParagraph.id.split('/');
+          const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
+          if (field_type && fieldId) {
+            res.field = { field_type, field_id: fieldId };
+          }
+        } else {
+          // if none, guess the main field
+          res.field = getMainFieldFromResource(res);
         }
-      } else {
-        // if none, guess the main field
-        res.field = getMainFieldFromResource(res);
-      }
-      if (res.field) {
-        const dataKey = getDataKeyFromFieldType(res.field.field_type);
-        res.fieldData = dataKey ? res.data?.[dataKey]?.[res.field.field_id] : undefined;
-      }
-      return res;
-    })
-    .sort((a, b) => (a.paragraphs?.[0]?.order || 0) - (b.paragraphs?.[0]?.order || 0));
+        if (res.field) {
+          const dataKey = getDataKeyFromFieldType(res.field.field_type);
+          res.fieldData = dataKey ? res.data?.[dataKey]?.[res.field.field_id] : undefined;
+        }
+        return res;
+      })
+      .sort((a, b) => (a.paragraphs?.[0]?.order || 0) - (b.paragraphs?.[0]?.order || 0));
+  }
+  return CACHE;
 }
 
 function getMainFieldFromResource(resource: IResource): FieldId | undefined {

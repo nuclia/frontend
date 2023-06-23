@@ -21,7 +21,7 @@
     take,
     takeUntil,
   } from 'rxjs';
-  import { searchQuery } from '../../core/stores/search.store';
+  import { searchQuery, trackingEngagement } from '../../core/stores/search.store';
   import { Duration, isMobileViewport } from '../../common/utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import {
@@ -69,12 +69,12 @@
   let selectedParagraph: WidgetParagraph | undefined;
   let resultIndex: number | undefined;
   let headerActionsWidth = 0;
-  let resultNavigatorWidth;
+  let resultNavigatorWidth = 0;
   let summaryHeight = 0;
   let resultNavigatorDisabled = false;
   let sidePanelExpanded = false;
   let findInputElement: HTMLElement;
-  let findInPlaceholder;
+  let findInPlaceholder = '';
   let isMediaPlayer = false;
   let transcriptsInitialized = false;
   let sidePanelSectionOpen: 'search' | 'transcripts' | 'summary' = 'search';
@@ -151,7 +151,8 @@
     reset();
   });
 
-  const onClickParagraph = (paragraph: WidgetParagraph, index: number) => {
+  const onClickParagraph = (paragraph: WidgetParagraph | undefined, index: number) => {
+    trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph: paragraph?.paragraph });
     if (expanded) {
       openParagraph(paragraph, index);
       return;
@@ -186,7 +187,7 @@
       });
   };
 
-  const openParagraph = (paragraph, index) => {
+  const openParagraph = (paragraph: WidgetParagraph | undefined, index: number) => {
     resultIndex = index;
     selectParagraph(paragraph);
     if (!expanded) {
@@ -198,19 +199,19 @@
     setTimeout(() => setHeaderActionWidth());
   };
 
-  const selectParagraph = (paragraph) => {
+  const selectParagraph = (paragraph: WidgetParagraph | undefined) => {
     selectedParagraph = paragraph;
     dispatch('selectParagraph', paragraph);
   };
 
   const openPrevious = () => {
-    if (resultIndex > 0) {
+    if (resultIndex && resultIndex > 0) {
       resultIndex -= 1;
       selectParagraph(paragraphList[resultIndex]);
     }
   };
   const openNext = () => {
-    if (resultIndex < paragraphList.length - 1) {
+    if (resultIndex !== undefined && resultIndex < paragraphList.length - 1) {
       resultIndex += 1;
       selectParagraph(paragraphList[resultIndex]);
     }

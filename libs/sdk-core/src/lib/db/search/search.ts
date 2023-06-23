@@ -30,8 +30,12 @@ export const find = (
     : nuclia.rest.post<Response>(endpoint, { ...params, ...others }, undefined, true);
   return searchMethod.pipe(
     switchMap((res) => {
+      const searchId = res.headers.get('X-Nuclia-Trace-Id') || '';
       // status 206 means we got partial results
       if (!res.ok || res.status === 206) {
+        if (res.status === 206) {
+          nuclia.events?.emit<{ [key: string]: any }>('partial', { ...params, ...others });
+        }
         return from(
           res.json().then(
             (body) => {
@@ -45,7 +49,7 @@ export const find = (
       } else {
         return from(
           res.json().then(
-            (json) => json,
+            (json) => ({ ...json, searchId }),
             () => {
               console.warn(`${endpoint} did not return a valid JSON`);
               return undefined;

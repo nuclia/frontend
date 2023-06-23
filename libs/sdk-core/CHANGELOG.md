@@ -9,6 +9,7 @@
 ### Improvements
 - Add `getEntityFromFilter` and `getFilterFromEntity` functions
 - Add `autofilters` property to `FindResults` model
+- Add `events` and emit API errors and partial search results in `events`
 
 # 1.3.4 (2023-06-13)
 

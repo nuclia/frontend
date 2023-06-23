@@ -14,6 +14,9 @@ import {
   searchOptions,
   searchQuery,
   searchResults,
+  trackingResultsReceived,
+  trackingSearchId,
+  trackingStartTime,
   triggerSearch,
 } from './stores/search.store';
 import { askQuestion } from './stores/effects';
@@ -38,7 +41,12 @@ export const setupTriggerSearch = (
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
-            tap(() => (!trigger?.more ? pageNumber.set(0) : undefined)),
+            tap((query) => {
+              if (!trigger?.more) {
+                pageNumber.set(0);
+                trackingStartTime.set(Date.now());
+              }
+            }),
             switchMap((query) =>
               forkJoin([
                 onlyAnswers.pipe(take(1)),
@@ -80,12 +88,15 @@ export const setupTriggerSearch = (
         if (isAnswerEnabled && !data.loadingMore) {
           const { answer } = data as { question: string; answer: Chat.Answer };
           if (answer.sources && !data.onlyAnswers) {
+            trackingSearchId.set(answer.sources.searchId);
             searchResults.set({ results: answer.sources, append: false });
           }
         } else {
           const { results, append } = data as { results: Search.FindResults; append: boolean };
+          trackingSearchId.set(results.searchId);
           searchResults.set({ results, append });
         }
+        trackingResultsReceived.set(true);
       }),
   );
 

@@ -18,6 +18,7 @@
     initEntitiesStore,
     initLabelStore,
     initViewer,
+    initUsageTracking,
     setupTriggerGraphNerSearch,
     unsubscribeAllEffects,
   } from '../../core/stores/effects';
@@ -137,6 +138,7 @@
     if (_features.knowledgeGraph) {
       setupTriggerGraphNerSearch();
     }
+    initUsageTracking();
 
     ready = true;
 

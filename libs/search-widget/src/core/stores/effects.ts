@@ -1,4 +1,13 @@
-import { getAnswer, getEntities, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
+import {
+  getAnswer,
+  getEntities,
+  getEvents,
+  getLabelSets,
+  getResourceField,
+  predict,
+  searchInResource,
+  suggest,
+} from '../api';
 import { labelSets } from './labels.store';
 import { Suggestions, suggestions, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -24,12 +33,20 @@ import { isPopupSearchOpen } from './modal.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
-import { isEmptySearchQuery, isTitleOnly, searchFilters, searchQuery, triggerSearch } from './search.store';
+import {
+  isEmptySearchQuery,
+  isTitleOnly,
+  searchFilters,
+  searchQuery,
+  trackingEngagement,
+  triggerSearch,
+} from './search.store';
 import { fieldData, fieldFullId } from './viewer.store';
 import { chat, chatError, currentAnswer, currentQuestion } from './answers.store';
 import { graphSearchResults, graphSelection } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
 import { entities } from './entities.store';
+import { logEvent } from '../tracking';
 
 const subscriptions: Subscription[] = [];
 
@@ -292,5 +309,16 @@ export function askQuestion(
         ),
       ),
     ),
+  );
+}
+
+export function initUsageTracking() {
+  subscriptions.push(
+    trackingEngagement
+      .pipe(
+        distinctUntilChanged(),
+        filter((engagement) => Object.keys(engagement).length > 0),
+      )
+      .subscribe((engagement) => logEvent('engage', { ...engagement })),
   );
 }

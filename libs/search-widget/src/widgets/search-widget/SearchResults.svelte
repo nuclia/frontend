@@ -19,16 +19,19 @@
     searchError,
     showResults,
     smartResults,
+    getTrackingDataAfterResultsReceived,
+    trackingReset,
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
   import type { Search } from '@nuclia/core';
-  import { distinctUntilChanged } from 'rxjs/operators';
+  import { distinctUntilChanged, take } from 'rxjs/operators';
   import { isAnswerEnabled, onlyAnswers, setWidgetActions } from '../../core/stores/widget.store';
   import { onClosePreview } from '../../tiles/tile.utils';
   import InfoCard from '../../components/info-card/InfoCard.svelte';
   import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
+  import { logEvent } from '../../core/tracking';
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
@@ -56,6 +59,17 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
   });
+
+  function renderingDone(node: HTMLElement) {
+    getTrackingDataAfterResultsReceived.pipe(take(1)).subscribe((tracking) => {
+      const tti = Date.now() - tracking.startTime;
+      logEvent('search', {
+        searchId: tracking.searchId || '',
+        tti,
+      });
+      trackingReset.set(undefined);
+    });
+  }
 
   const onLoadMore = () => loadMore.set();
   const getResultKey = (result: Search.SmartResult) =>
@@ -96,6 +110,11 @@
           <div class="search-results">
             {#each $smartResults as result, i (getResultKey(result))}
               <Tile {result} />
+              {#if i === $smartResults.length - 1}
+                <div
+                  class="results-end"
+                  use:renderingDone />
+              {/if}
             {/each}
             {#if $hasMore}
               <InfiniteScroll

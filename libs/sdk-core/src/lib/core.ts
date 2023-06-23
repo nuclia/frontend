@@ -3,6 +3,7 @@ import { Authentication } from './auth';
 import type { IAuthentication, IDb, INuclia, IRest, NucliaOptions, PromiseMapper } from './models';
 import { Rest } from './rest';
 import { firstValueFrom } from 'rxjs';
+import { Events } from './events';
 
 export class Nuclia implements INuclia {
   options: NucliaOptions;
@@ -10,6 +11,7 @@ export class Nuclia implements INuclia {
   rest: IRest;
   db: IDb;
   currentShards?: { [kb: string]: string[] } = {};
+  events = new Events();
   private readKb?: KnowledgeBox;
 
   get backend(): string {

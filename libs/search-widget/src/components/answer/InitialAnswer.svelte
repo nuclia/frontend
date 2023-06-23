@@ -7,11 +7,13 @@
   import Feedback from './Feedback.svelte';
   import { Button } from '../../common';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+  import { trackingEngagement } from '../../core/stores/search.store';
 
   let showChat = false;
 
   function openChat() {
     showChat = true;
+    trackingEngagement.set({ type: 'CHAT' });
     freezeBackground(true);
   }
   function onClose() {
