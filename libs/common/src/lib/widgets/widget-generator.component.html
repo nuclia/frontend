@@ -24,7 +24,7 @@
 
   <div
     class="widget-preview"
-    [class.dark]="mainForm?.controls.darkMode.value">
+    [class.dark]="mainForm?.controls?.['darkMode']?.value">
     <h3>{{ 'stash.widgets.preview' | translate }}</h3>
     <div
       id="preview"

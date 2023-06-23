@@ -202,7 +202,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   filters="${this.filtersValue}"`
         : '';
-      const mode: string = this.mainForm?.controls.darkMode.getRawValue() ? `mode="dark"` : '';
+      const mode: string = this.mainForm?.controls['darkMode'].getRawValue() ? `mode="dark"` : '';
       const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
