@@ -7,10 +7,10 @@
   import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
   import SearchInput from '../../components/search-input/SearchInput.svelte';
-  import { setupTriggerSearch, unsubscribeTriggerSearch } from '../../core/search-bar';
+  import { setupTriggerSearch } from '../../core/search-bar';
   import globalCss from '../../common/_global.scss?inline';
   import { get_current_component } from 'svelte/internal';
-  import { widgetFeatures, widgetMode, widgetPlaceholder } from '../../core/stores/widget.store';
+  import { widgetFeatures, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     activatePermalinks,
     activateTypeAheadSuggestions,
@@ -19,12 +19,11 @@
     initLabelStore,
     initViewer,
     initUsageTracking,
+    resetStatesAndEffects,
     setupTriggerGraphNerSearch,
-    unsubscribeAllEffects,
   } from '../../core/stores/effects';
-  import { searchQuery, searchState, triggerSearch } from '../../core/stores/search.store';
-  import { suggestionState, typeAhead } from '../../core/stores/suggestions.store';
-  import { answerState } from '../../core';
+  import { searchQuery, triggerSearch } from '../../core/stores/search.store';
+  import { typeAhead } from '../../core/stores/suggestions.store';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = 'europe-1';
@@ -104,7 +103,6 @@
     );
 
     // Setup widget in the store
-    widgetMode.set('embedded');
     widgetFeatures.set(_features);
     if (placeholder) {
       widgetPlaceholder.set(placeholder);
@@ -143,12 +141,8 @@
     ready = true;
 
     return () => {
-      answerState.reset();
-      searchState.reset();
-      suggestionState.reset();
       resetNuclia();
-      unsubscribeAllEffects();
-      unsubscribeTriggerSearch();
+      resetStatesAndEffects();
     };
   });
 </script>

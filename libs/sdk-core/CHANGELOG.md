@@ -1,33 +1,39 @@
-# 1.4.0 (unreleased)
+# 1.4.0 (2023-06-23)
 
 ### Breaking change
+
 - `setField` method replaces `addField` and `updateField` which were identical.
 - Manage errors on chat endpoint:
   - `KnowledgeBox.chat` method returns `IErrorResponse` on error
   - Add `type` property to `FindResults` model
 
 ### Improvements
+
 - Add `getEntityFromFilter` and `getFilterFromEntity` functions
 - Add `autofilters` property to `FindResults` model
 - Add `events` and emit API errors and partial search results in `events`
+- Chat now returns `relations` when available
 
 # 1.3.4 (2023-06-13)
 
 ### Improvements
+
 - Add `autofilter` property to `BaseSearchOptions` and `WidgetFeatures` models
 - Manage properly 206 status (partial results) on find endpoint:
   - Add optional `body` property on `IErrorResponse`
   - Return an `IErrorResponse` with results in `body` when response status is 206
 
 ### Bugfix
-- Prevent content-type to be set to "null" during upload 
+
+- Prevent content-type to be set to "null" during upload
 
 # 1.3.3 (2023-06-06)
 
 ### Improvements
+
 - Update `AccountLimits` model and create `AccountLimitsPatchPayload` model
 - Add `extra` metadata property in Resource model
-- Add `EXTRA` value in `ResourceProperties` enum, allowing to get extra property when loading resource 
+- Add `EXTRA` value in `ResourceProperties` enum, allowing to get extra property when loading resource
 
 # 1.3.2 (2023-05-24)
 
@@ -41,7 +47,7 @@
 
 ### Bugfix
 
-- Fix `knowledgeBox` getter on `Nuclia` object to work without zone when on standalone mode. 
+- Fix `knowledgeBox` getter on `Nuclia` object to work without zone when on standalone mode.
 
 # 1.3.1 (2023-05-02)
 

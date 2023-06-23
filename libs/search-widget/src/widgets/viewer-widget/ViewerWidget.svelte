@@ -3,13 +3,12 @@
 <script lang="ts">
   import { getResourceById, getResourceField, initNuclia, resetNuclia } from '../../core/api';
   import { onMount } from 'svelte';
-  import { setCDN, loadFonts, loadSvgSprite, getFieldType } from '../../core/utils';
+  import { getFieldType, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import type { FieldFullId, KBStates } from '@nuclia/core';
+  import type { FieldFullId, KBStates, ResourceProperties, Search } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { setWidgetActions, widgetType } from '../../core/stores/widget.store';
-  import { unsubscribeAllEffects } from '../../core/stores/effects';
-  import type { ResourceProperties, Search } from '@nuclia/core';
+  import { resetStatesAndEffects } from '../../core/stores/effects';
   import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
   import { fieldData, fieldFullId, isPreviewing, resourceTitle } from '../../core/stores/viewer.store';
   import { distinctUntilChanged } from 'rxjs/operators';
@@ -76,7 +75,7 @@
 
   export const reset = () => {
     resetNuclia();
-    unsubscribeAllEffects();
+    resetStatesAndEffects();
   };
 
   let svgSprite;

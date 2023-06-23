@@ -4,7 +4,7 @@ import { Chat } from './chat.models';
 import type { BaseSearchOptions, Search } from './search.models';
 import { ResourceProperties } from '../kb';
 
-const END_OF_STREAM = '_END_';
+const END_OF_SEARCH_RESULTS = '_END_';
 
 export function chat(
   nuclia: INuclia,
@@ -16,6 +16,7 @@ export function chat(
 ): Observable<Chat.Answer | IErrorResponse> {
   let sourcesLength = 0;
   let sources: Search.FindResults | undefined;
+  let relations: Search.Relations | undefined;
   let text = '';
   return nuclia.rest
     .getStream(`${path}/chat`, {
@@ -29,7 +30,7 @@ export function chat(
       map(({ data, incomplete, headers }) => {
         const searchId = headers.get('X-Nuclia-Trace-Id') || '';
         const id = headers.get('NUCLIA-LEARNING-ID') || '';
-        // /chat returns a readable stream structured as follow:
+        // /chat returns a readable stream structured as follows:
         // - 1st block: 4 first bytes indicates the size of the 2nd block
         // - 2nd block: a base64 encoded JSON containing the sources used to build the answer
         // - 3rd block: the answer text, ended by "_END_"
@@ -46,8 +47,17 @@ export function chat(
         }
         if (sources && data.length > sourcesLength + 4) {
           text = new TextDecoder().decode(data.slice(sourcesLength + 4).buffer);
-          if (text.includes(END_OF_STREAM)) {
-            text = text.split(END_OF_STREAM)[0];
+          if (text.includes(END_OF_SEARCH_RESULTS)) {
+            let relationsBase64;
+            [text, relationsBase64] = text.split(END_OF_SEARCH_RESULTS);
+            if (relationsBase64) {
+              try {
+                relations = JSON.parse(atob(relationsBase64));
+                sources.relations = relations;
+              } catch (e) {
+                console.warn(e);
+              }
+            }
           }
         }
         return { type: 'answer', text, sources, incomplete, id } as Chat.Answer;
