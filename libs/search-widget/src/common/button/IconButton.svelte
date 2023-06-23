@@ -5,7 +5,7 @@
   export let icon = '';
   export let ariaLabel = '';
   export let aspect = 'solid'; // solid or basic
-  export let kind = 'secondary'; // primary | secondary | inverted
+  export let kind = 'secondary'; // primary | secondary
   export let size = 'medium'; // medium | small | xsmall
   export let disabled = false;
   export let active = false;

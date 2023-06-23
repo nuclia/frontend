@@ -2,7 +2,7 @@
   display: flex;
 
   &.thumbnail-background {
-    background-color: var(--color-neutral-lightest);
+    background-color: var(--thumbnail-background-color);
   }
 
   img {

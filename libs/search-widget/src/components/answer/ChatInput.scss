@@ -4,7 +4,7 @@
   display: flex;
   flex: 1 0 auto;
   position: relative;
-  border-top: 1px solid var(--default-border-color);
+  border-top: 1px solid var(--border-color);
   height: var(--rhythm-6);
 
   &.highlight {
@@ -43,6 +43,6 @@
 }
 @media (min-width: 599px) {
   .sw-chat-input {
-    border: 1px solid var(--default-border-color);
+    border: 1px solid var(--border-color);
   }
 }
