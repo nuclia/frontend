@@ -210,38 +210,6 @@
         </div>
       </div>
 
-      <h5 class="section-title">Inverted</h5>
-      <div class="inverted">
-        <div class="demo-container">
-          <div class="buttons-block">
-            <Button
-              kind="inverted"
-              aspect="solid">
-              Solid
-            </Button>
-            <IconButton
-              icon="search"
-              kind="inverted"
-              aspect="solid">
-              Solid
-            </IconButton>
-          </div>
-          <div class="buttons-block">
-            <Button
-              kind="inverted"
-              aspect="basic">
-              Basic
-            </Button>
-            <IconButton
-              icon="search"
-              kind="inverted"
-              aspect="basic">
-              Basic
-            </IconButton>
-          </div>
-        </div>
-      </div>
-
       <h4>Labels</h4>
       <p>
         Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
@@ -307,10 +275,6 @@
   .buttons-block {
     display: flex;
     gap: 16px;
-  }
-  .inverted {
-    background-color: var(--color-dark-stronger);
-    padding: var(--rhythm-1);
   }
 
   @media (min-width: 640px) {

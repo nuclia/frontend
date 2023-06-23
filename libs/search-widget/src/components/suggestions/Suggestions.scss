@@ -1,6 +1,8 @@
 .sw-suggestions {
   --suggestion-side-padding: var(--rhythm-3);
 
+  background: var(--dropdown-background-color);
+
   .error-message {
     padding: 0 var(--rhythm-2);
   }
@@ -28,7 +30,7 @@
   }
   .paragraph:hover,
   .paragraph:focus {
-    background-color: var(--color-neutral-lightest);
+    background-color: var(--hover-background-color);
     outline: 0;
   }
 

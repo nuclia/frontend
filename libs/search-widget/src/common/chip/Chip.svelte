@@ -28,9 +28,9 @@
   class="sw-chip"
   class:closeable={removable}
   style:background-color={color}
+  style:color={fontColor}
   on:click={onClick}>
   <span
-    style:color={fontColor}
     class:clickable>
     <slot />
   </span>

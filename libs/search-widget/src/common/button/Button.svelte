@@ -1,6 +1,6 @@
 <script lang="ts">
   export let aspect = 'solid'; // solid or basic
-  export let kind = 'secondary'; // primary | secondary | inverted
+  export let kind = 'secondary'; // primary | secondary
   export let size = 'medium'; // medium or small
   export let active = false;
   export let disabled = false;

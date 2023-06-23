@@ -63,10 +63,11 @@ ul.sw-dropdown-options {
     padding: 0 var(--rhythm-2);
 
     &:hover {
-      background-color: var(--color-neutral-lightest);
+      background-color: var(--hover-background-color);
     }
     &.selected {
-      background-color: var(--color-primary-lightest);
+      background-color: var(--selected-background-color);
+      color: var(--selected-text-color);
     }
   }
 }
