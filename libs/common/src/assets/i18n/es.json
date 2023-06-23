@@ -771,6 +771,8 @@
 	"stash.widgets.autofilter": "Filtrado automático",
 	"stash.widgets.autofilter.help": "Detacta las entidades mencionadas en la consulta del usuario y las convierte automáticamente en filtros",
 	"stash.widgets.configuration": "Configuracion de Widget",
+	"stash.widgets.darkMode": "Modo oscuro",
+	"stash.widgets.darkMode.help": "Habilitar tema oscuro en el widget",
 	"stash.widgets.editLabels": "Editar etiquetas",
 	"stash.widgets.editLabels.help": "Permite agregar/eliminar etiquetas desde la vista de recursos",
 	"stash.widgets.entities": "Filtrar por entidades",

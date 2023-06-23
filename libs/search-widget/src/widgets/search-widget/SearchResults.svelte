@@ -10,6 +10,7 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     entityRelations,
+    getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
     hasSearchError,
@@ -19,7 +20,6 @@
     searchError,
     showResults,
     smartResults,
-    getTrackingDataAfterResultsReceived,
     trackingReset,
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
@@ -32,6 +32,10 @@
   import InfoCard from '../../components/info-card/InfoCard.svelte';
   import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
   import { logEvent } from '../../core/tracking';
+
+
+  export let mode = '';
+  $: darkMode = mode === 'dark';
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
@@ -82,6 +86,7 @@
 <svelte:element this="style">{@html globalCss}</svelte:element>
 <div
   class="nuclia-widget sw-video-results"
+  class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if $showResults && !$isEmptySearchQuery}
     {#if $hasSearchError && !$hasPartialResults}

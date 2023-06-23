@@ -119,7 +119,7 @@
 
   // Search bar
   --search-bar-border-color: var(--border-color);
-  --search-bar-border-focus-color: var(--color-primary-regular);
+  --search-bar-border-focus-color: var(--border-focus-color);
   --search-bar-border: 1px solid var(--search-bar-border-color);
   --search-bar-border-focus: 1px solid var(--search-bar-border-focus-color);
   --search-bar-border-radius: 0;
@@ -127,6 +127,7 @@
 
   // Customizable theme
   --border-color: var(--custom-border-color, var(--color-dark-stronger));
+  --border-focus-color: var(--custom-border-focus-color, var(--color-primary-regular));
   --text-color: var(--custom-text-color, var(--color-dark-stronger));
   --selected-text-color: var(--custom-selected-text-color, inherit);
   --selected-background-color: var(--custom-selected-background-color, var(--color-primary-lightest));
@@ -144,4 +145,16 @@
   font-weight: var(--font-weight-body);
   line-height: var(--line-height-body);
   text-align: left;
+
+  &.dark-mode {
+    --border-color: var(--color-neutral-lightest);
+    --text-color: var(--color-neutral-lightest);
+    --selected-text-color: var(--color-dark-stronger);
+    --selected-background-color: var(--color-neutral-lightest);
+    --hover-background-color: #2b2d30;
+    --thumbnail-background-color: #2b2d30;
+    --modal-background-color: #303136;
+    --dropdown-background-color: #26282B;
+    --container-background-color: #1f2023;
+  }
 }

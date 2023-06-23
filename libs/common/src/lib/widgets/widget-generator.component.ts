@@ -121,6 +121,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
             this.filters = config.filters;
           }
           this.mainForm = this.fb.group({
+            darkMode: [config.features.includes('darkMode')],
             features: this.fb.group({
               autofilter: [config.features.includes('autofilter')],
               answers: [config.features.includes('answers')],
@@ -201,11 +202,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
         ? `
   filters="${this.filtersValue}"`
         : '';
-      const baseSnippet = `<nuclia-search-bar
+      const mode: string = this.mainForm?.controls['darkMode'].getRawValue() ? `mode="dark"` : '';
+      const baseSnippet = `<nuclia-search-bar ${mode}
   knowledgebox="${kb.id}"
   ${zone}
   features="${this.features}" ${placeholder}${filters}${privateDetails}${backend}></nuclia-search-bar>
-<nuclia-search-results></nuclia-search-results>`;
+<nuclia-search-results ${mode}></nuclia-search-results>`;
 
       this.snippet = `<script src="https://cdn.nuclia.cloud/nuclia-video-widget.umd.js"></script>
 ${baseSnippet}`;

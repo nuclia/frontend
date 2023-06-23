@@ -92,4 +92,10 @@ $width-configuration: rhythm(56);
       }
     }
   }
+
+  .widget-preview.dark {
+    background: #1f2023;
+    color: $color-light-stronger;
+    padding: rhythm(2);
+  }
 }
