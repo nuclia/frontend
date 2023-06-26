@@ -8,7 +8,7 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "@nrwl/workspace/tasks-runners/default",
+      "runner": "@nx/workspace/tasks-runners/default",
       "options": {
         "cacheableOperations": ["build", "lint", "test", "e2e"],
         "parallel": 1
@@ -16,17 +16,17 @@
     }
   },
   "generators": {
-    "@nrwl/angular:application": {
+    "@nx/angular:application": {
       "style": "scss",
       "linter": "eslint",
       "unitTestRunner": "jest",
       "e2eTestRunner": "none"
     },
-    "@nrwl/angular:library": {
+    "@nx/angular:library": {
       "linter": "eslint",
       "unitTestRunner": "jest"
     },
-    "@nrwl/angular:component": {
+    "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }

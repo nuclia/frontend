@@ -5,7 +5,8 @@ import {
   accountOwnerGuard,
   BaseComponent,
   DashboardLayoutComponent,
-  EmptyComponent, knowledgeBoxOwnerGuard,
+  EmptyComponent,
+  knowledgeBoxOwnerGuard,
   KnowledgeBoxSettingsComponent,
   PageNotFoundComponent,
   PageNotFoundModule,
@@ -13,7 +14,7 @@ import {
   SearchComponent,
   SelectAccountComponent,
   selectAccountKbGuard,
-  SelectKbComponent
+  SelectKbComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
@@ -126,7 +127,7 @@ const routes: Routes = [
               },
               {
                 path: 'entities',
-                // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                // eslint-disable-next-line @nx/enforce-module-boundaries
                 loadChildren: () =>
                   import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },

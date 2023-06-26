@@ -6,7 +6,7 @@
   "prefix": "stf",
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/core"],
       "options": {
         "jestConfig": "libs/core/jest.config.js",
@@ -15,7 +15,7 @@
     }
   },
   "generators": {
-    "@nrwl/angular:component": {
+    "@nx/angular:component": {
       "style": "scss",
       "changeDetection": "OnPush"
     }

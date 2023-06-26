@@ -46,7 +46,7 @@ export const routes: Routes = [
               {
                 path: 'resources',
                 loadChildren: () =>
-                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  // eslint-disable-next-line @nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/resources/resources.module').then((m) => m.ResourcesModule),
               },
               {
@@ -60,7 +60,7 @@ export const routes: Routes = [
               {
                 path: 'label-sets',
                 loadChildren: () =>
-                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  // eslint-disable-next-line @nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/label/label-sets/label-sets.module').then(
                     (m) => m.LabelSetsModule,
                   ),
@@ -68,13 +68,13 @@ export const routes: Routes = [
               {
                 path: 'entities',
                 loadChildren: () =>
-                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  // eslint-disable-next-line @nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/entities/entities.module').then((m) => m.EntitiesModule),
               },
               {
                 path: 'widget-generator',
                 loadChildren: () =>
-                  // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+                  // eslint-disable-next-line @nx/enforce-module-boundaries
                   import('../../../../libs/common/src/lib/widgets/widgets.module').then((m) => m.WidgetsModule),
               },
             ],

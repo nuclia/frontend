@@ -27,7 +27,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'user',
-    // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+    // eslint-disable-next-line @nx/enforce-module-boundaries
     loadChildren: () => import('../../../../libs/common/src/lib/user/user.module').then((m) => m.UserModule),
   },
 ];
