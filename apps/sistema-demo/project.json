@@ -88,13 +88,13 @@
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/sistema-demo/src/**/*.ts", "apps/sistema-demo/src/**/*.html"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/sistema-demo"],
       "options": {
         "jestConfig": "apps/sistema-demo/jest.config.js",
@@ -103,34 +103,34 @@
     }
   },
   "generators": {
-    "@nrwl/angular:component": {
+    "@nx/angular:component": {
       "inlineStyle": true,
       "style": "scss",
       "skipTests": true,
       "changeDetection": "OnPush"
     },
-    "@nrwl/angular:class": {
+    "@nx/angular:class": {
       "skipTests": true
     },
-    "@nrwl/angular:directive": {
+    "@nx/angular:directive": {
       "skipTests": true
     },
-    "@nrwl/angular:guard": {
+    "@nx/angular:guard": {
       "skipTests": true
     },
-    "@nrwl/angular:interceptor": {
+    "@nx/angular:interceptor": {
       "skipTests": true
     },
-    "@nrwl/angular:pipe": {
+    "@nx/angular:pipe": {
       "skipTests": true
     },
-    "@nrwl/angular:resolver": {
+    "@nx/angular:resolver": {
       "skipTests": true
     },
-    "@nrwl/angular:service": {
+    "@nx/angular:service": {
       "skipTests": true
     },
-    "@nrwl/angular:application": {
+    "@nx/angular:application": {
       "strict": true
     }
   },
