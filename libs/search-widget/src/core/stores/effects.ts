@@ -280,7 +280,7 @@ export function askQuestion(
   question: string,
   reset: boolean,
   options: BaseSearchOptions = {},
-): Observable<{ question: string; answer: Chat.Answer }> {
+): Observable<Chat.Answer | IErrorResponse> {
   return of({ question, reset }).pipe(
     tap((data) => currentQuestion.set(data)),
     switchMap(({ question }) =>
@@ -303,9 +303,6 @@ export function askQuestion(
                     }
                   }
                 }),
-                filter((result) => result.type !== 'error'),
-                map((answer) => answer as Chat.Answer),
-                map((answer) => ({ question, answer })),
               ),
             ),
           ),
