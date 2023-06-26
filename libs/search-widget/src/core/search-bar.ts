@@ -1,6 +1,6 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
-import type { Search, SearchOptions } from '@nuclia/core';
+import type { Chat, Search, SearchOptions } from '@nuclia/core';
 import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
@@ -20,7 +20,7 @@ import {
   triggerSearch,
 } from './stores/search.store';
 import { askQuestion } from './stores/effects';
-import { onlyAnswers } from './stores/widget.store';
+import { disableAnswers, isAnswerEnabled, onlyAnswers } from './stores/widget.store';
 
 const subscriptions: Subscription[] = [];
 
@@ -30,7 +30,6 @@ export function unsubscribeTriggerSearch() {
 
 export const setupTriggerSearch = (
   dispatch: (event: string, details: string | Search.Results | Search.FindResults) => void | undefined,
-  isAnswerEnabled = false,
 ): void => {
   subscriptions.push(
     triggerSearch
@@ -54,13 +53,14 @@ export const setupTriggerSearch = (
                 searchFilters.pipe(take(1)),
                 isTitleOnly.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
+                isAnswerEnabled.pipe(take(1)),
               ]).pipe(
                 tap(([onlyAnswers]) => {
                   if (!onlyAnswers) {
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, filters, inTitleOnly, autofilerDisabled]) => {
+                switchMap(([onlyAnswers, options, filters, inTitleOnly, autofilerDisabled, isAnswerEnabled]) => {
                   const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
                   const currentOptions: SearchOptions = {
                     ...options,
@@ -71,8 +71,16 @@ export const setupTriggerSearch = (
                   };
                   if (isAnswerEnabled && !trigger?.more) {
                     return askQuestion(query, true, currentOptions).pipe(
+                      tap((res) => {
+                        if (res.type === 'error' && res.status === 402 && !onlyAnswers) {
+                          disableAnswers();
+                          triggerSearch.next();
+                        }
+                      }),
+                      filter((res) => res.type !== 'error'),
+                      map((res) => res as Chat.Answer),
                       map((res) => ({
-                        results: res.answer.sources,
+                        results: res.sources,
                         append: false,
                         onlyAnswers,
                         loadingMore: false,

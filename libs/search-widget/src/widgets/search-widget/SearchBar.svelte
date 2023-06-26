@@ -131,7 +131,7 @@
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
-    setupTriggerSearch(dispatchCustomEvent, _features.answers);
+    setupTriggerSearch(dispatchCustomEvent);
     initViewer();
     if (_features.permalink) {
       activatePermalinks();
