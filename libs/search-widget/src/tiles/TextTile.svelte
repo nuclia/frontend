@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { FileField, Search, TextField } from '@nuclia/core';
+  import type { FileField, IFieldData, Search, TextField } from '@nuclia/core';
   import type { WidgetParagraph } from '../core/models';
   import { PreviewKind } from '../core/models';
   import ExtractedTextViewer from './viewers/ExtractedTextViewer.svelte';
@@ -7,13 +7,17 @@
   import { getCDN } from '../core/utils';
   import DocumentTile from './base-tile/DocumentTile.svelte';
   import { fieldData } from '../core/stores/viewer.store';
-  import { map } from 'rxjs';
+  import { filter, map, Observable } from 'rxjs';
 
   export let result: Search.FieldResult;
 
   let selectedParagraph: WidgetParagraph | undefined;
 
-  const isMarkdown = fieldData.pipe(
+  const filledFieldData: Observable<IFieldData> = fieldData.pipe(
+    filter(data => !!data),
+    map(data => data as IFieldData)
+  );
+  const isMarkdown = filledFieldData.pipe(
     map(
       (data) =>
         (data?.value as TextField)?.format === 'MARKDOWN' ||
@@ -23,7 +27,7 @@
     ),
   );
 
-  const isHtml = fieldData.pipe(
+  const isHtml = filledFieldData.pipe(
     map(
       (data) =>
         (data?.value as TextField)?.format === 'HTML' ||
@@ -33,7 +37,7 @@
     ),
   );
 
-  const isRst = fieldData.pipe(
+  const isRst = filledFieldData.pipe(
     map(
       (data) =>
         (data?.value as TextField)?.format === 'RST' ||

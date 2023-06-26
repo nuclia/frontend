@@ -37,6 +37,10 @@
     --header-height: var(--rhythm-6);
     --search-results-margin-bottom: var(--rhythm-1);
     --expander-header-height: var(--rhythm-5);
+    --metadata-height: var(--search-results-margin-bottom) * (var(--metadata-block-count, 1) + 1) -
+      var(--expander-header-height) * var(--metadata-block-count, 1);
+    --metadata-height-media: var(--search-results-margin-bottom) * (var(--metadata-block-count, 1) + 2) -
+      var(--expander-header-height) * (var(--metadata-block-count, 1) + 1);
 
     background: var(--expanded-background-color);
     bottom: 0;
@@ -57,7 +61,7 @@
       position: relative;
 
       &.full-height {
-        height: calc(100vh - var(--header-height) * 2);
+        height: calc(100vh - var(--header-height) * 2 - var(--metadata-height));
 
         .side-panel {
           display: none;
@@ -73,21 +77,16 @@
     .metadata-content {
       background-color: var(--container-background-color);
       margin-bottom: var(--search-results-margin-bottom);
-      max-height: calc(
-        100vh - var(--header-height) - var(--viewer-height) - var(--search-results-margin-bottom) * 4 -
-          var(--expander-header-height) * 2
-      );
+      max-height: calc(100vh - var(--header-height) - var(--viewer-height) - var(--metadata-height));
       overflow: auto;
     }
+
     .metadata-text-container {
       padding: var(--rhythm-1);
     }
 
     &.media-player .metadata-content {
-      max-height: calc(
-        100vh - var(--header-height) - var(--viewer-height) - var(--search-results-margin-bottom) * 4 -
-          var(--expander-header-height) * 3
-      );
+      max-height: calc(100vh - var(--header-height) - var(--viewer-height) - var(--metadata-height-media));
     }
 
     .metadata-expander-header {
@@ -116,6 +115,30 @@
         }
       }
     }
+
+    .field-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+
+      li {
+        display: flex;
+        gap: var(--rhythm-1);
+        padding: var(--rhythm-0_5) var(--rhythm-2);
+
+        .field-icon {
+          margin-top: var(--rhythm-0_5);
+        }
+        .field-item {
+          display: flex;
+          flex-direction: column;
+        }
+        small {
+          color: var(--color-neutral-regular);
+          margin-top: calc(var(--rhythm-0_5) * -1);
+        }
+      }
+    }
   }
 }
 
@@ -126,6 +149,7 @@
     }
   }
 }
+
 @media (min-width: 648px) {
   .sw-tile {
     --flex-gap: var(--rhythm-2);
@@ -153,6 +177,7 @@
       &:not(.media-player) .thumbnail-container {
         flex: 1;
       }
+
       &.media-player {
         --height-player: calc(100vh - var(--header-height) - var(--rhythm-2));
         justify-content: center;
@@ -167,6 +192,7 @@
         --find-input-height: var(--rhythm-4);
         --find-input-margin: var(--rhythm-1);
       }
+
       .find-bar-container {
         align-items: center;
         background: var(--container-background-color);
@@ -210,15 +236,15 @@
     .search-result-paragraphs,
     .metadata-content {
       max-height: calc(
-        100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) -
-          var(--search-results-margin-bottom) * 2 - var(--expander-header-height)
+        100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) - var(--metadata-height)
       );
     }
+
     &.media-player .search-result-paragraphs,
     &.media-player .metadata-content {
       max-height: calc(
         100vh - var(--header-height) - var(--find-input-height) - var(--find-input-margin) -
-          var(--search-results-margin-bottom) * 3 - var(--expander-header-height) * 3
+          var(--metadata-height-media)
       );
     }
 
@@ -251,6 +277,7 @@
           var(--side-panel-width) - var(--side-panel-button-size) - var(--side-panel-gap) - var(--tile-padding-right)
         );
       }
+
       .find-bar-container {
         line-height: var(--side-panel-button-size);
       }
@@ -271,6 +298,7 @@
     .thumbnail-container {
       min-width: var(--rhythm-28);
     }
+
     &.expanded {
       padding: var(--header-height) var(--side-panel-button-size) var(--rhythm-2) var(--rhythm-2);
     }
@@ -300,6 +328,17 @@
 
       &:hover {
         background: var(--hover-background-color);
+      }
+    }
+
+    .field-list {
+      li:not(.current) {
+        cursor: pointer;
+        transition: background var(--transition-superfast);
+
+        &:hover {
+          background: var(--hover-background-color);
+        }
       }
     }
   }

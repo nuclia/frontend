@@ -39,7 +39,12 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         .filter((field) => field.field_type !== FIELD_TYPE.generic)
         .map((field) => ({
           ...field,
-          icon: field.field_type === FIELD_TYPE.text ? 'file' : field.field_type,
+          icon:
+            field.field_type === FIELD_TYPE.conversation
+              ? 'chat'
+              : field.field_type === FIELD_TYPE.text
+              ? 'file'
+              : field.field_type,
           hasError: !!field.error,
         })),
     ),

@@ -13,6 +13,7 @@ interface ViewerState {
   title: string;
   summary: string;
   isPreviewing: boolean;
+  fieldList: FieldFullId[];
 }
 
 export const viewerState = new SvelteState<ViewerState>({
@@ -21,6 +22,7 @@ export const viewerState = new SvelteState<ViewerState>({
   title: '',
   summary: '',
   isPreviewing: false,
+  fieldList: [],
 });
 
 export const isPreviewing = viewerState.writer<boolean>(
@@ -51,6 +53,16 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
     };
   },
 );
+
+export const fieldList = viewerState.writer<FieldFullId[]>(
+  (state) => state.fieldList,
+  (state, fieldList) => ({
+    ...state,
+    fieldList,
+  }),
+);
+
+export const hasSeveralFields = viewerState.reader<boolean>((state) => state.fieldList.length > 1);
 
 export const resourceField = viewerState.reader<ResourceField | null>((state) =>
   state.fieldData && state.fieldFullId ? { ...state.fieldData, ...state.fieldFullId } : null,

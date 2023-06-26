@@ -3,7 +3,7 @@
   import ParagraphResult from '../../common/paragraph-result/ParagraphResult.svelte';
   import TileHeader from './header/TileHeader.svelte';
   import Icon from '../../common/icons/Icon.svelte';
-  import type { Search } from '@nuclia/core';
+  import type { FieldFullId, Search } from '@nuclia/core';
   import type { MediaWidgetParagraph, WidgetParagraph } from '../../core/models';
   import { PreviewKind } from '../../core/models';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
@@ -11,6 +11,7 @@
     BehaviorSubject,
     combineLatest,
     debounceTime,
+    distinctUntilChanged,
     filter,
     iif,
     map,
@@ -19,7 +20,7 @@
     of,
     Subject,
     take,
-    takeUntil,
+    takeUntil
   } from 'rxjs';
   import { searchQuery, trackingEngagement } from '../../core/stores/search.store';
   import { Duration, isMobileViewport } from '../../common/utils';
@@ -28,16 +29,18 @@
     getNavigationUrl,
     goToUrl,
     mapParagraph2WidgetParagraph,
-    mapSmartParagraph2WidgetParagraph,
+    mapSmartParagraph2WidgetParagraph
   } from '../../core/utils';
   import { isKnowledgeGraphEnabled, navigateToFile, navigateToLink } from '../../core/stores/widget.store';
   import {
     fieldFullId,
+    fieldList,
     fieldSummary,
     getMediaTranscripts,
+    hasSeveralFields,
     isPreviewing,
     resourceTitle,
-    viewerState,
+    viewerState
   } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { getResourceField, searchInResource } from '../../core/api';
@@ -76,10 +79,22 @@
   let findInPlaceholder = '';
   let isMediaPlayer = false;
   let transcriptsInitialized = false;
-  let sidePanelSectionOpen: 'search' | 'transcripts' | 'summary' = 'search';
+  let sidePanelSectionOpen: 'search' | 'transcripts' | 'summary' | 'items' = 'search';
   let transcripts: Observable<MediaWidgetParagraph[]> = of([]);
   let showKnowledgeGraph = false;
   const paragraphHeights: number[] = [];
+
+  const metadataBlockCount = combineLatest([
+    fieldSummary.pipe(distinctUntilChanged()),
+    hasSeveralFields.pipe(distinctUntilChanged())
+  ]).pipe(
+    map(blocks => blocks.reduce((count, hasBlock) => {
+      if (hasBlock) {
+        count += 1;
+      }
+      return count;
+    }, 0))
+  );
 
   $: fullListHeight = paragraphHeights.reduce((sum, height) => (sum += height), 0);
   $: isMobile = isMobileViewport(innerWidth);
@@ -113,16 +128,16 @@
   const isSearchingInResource = new BehaviorSubject(false);
   const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
     viewerSearchResults,
-    isSearchingInResource,
+    isSearchingInResource
   ]).pipe(
     map(([inResourceResults, isInResource]) => {
       // paragraphList is used for next/previous buttons
       paragraphList = isInResource
         ? ((inResourceResults || []) as WidgetParagraph[])
         : result.paragraphs?.map((paragraph) => mapSmartParagraph2WidgetParagraph(paragraph, previewKind)) ||
-          ([] as WidgetParagraph[]);
+        ([] as WidgetParagraph[]);
       return paragraphList;
-    }),
+    })
   );
 
   onMount(() => {
@@ -139,7 +154,7 @@
     isPreviewing
       .pipe(
         filter((previewOpen) => !previewOpen && expanded),
-        takeUntil(unsubscribeAll),
+        takeUntil(unsubscribeAll)
       )
       .subscribe(() => closePreview());
   });
@@ -160,7 +175,7 @@
     const fullId = {
       field_id: result.field.field_id,
       field_type: result.field.field_type,
-      resourceId: result.id,
+      resourceId: result.id
     };
     combineLatest([navigateToFile, navigateToLink])
       .pipe(
@@ -169,11 +184,11 @@
           iif(
             () => navigateToFile || navigateToLink,
             getResourceField(fullId, true).pipe(
-              mergeMap((field) => getNavigationUrl(navigateToFile, navigateToLink, result, field)),
+              mergeMap((field) => getNavigationUrl(navigateToFile, navigateToLink, result, field))
             ),
-            of(false),
-          ),
-        ),
+            of(false)
+          )
+        )
       )
       .subscribe((url) => {
         if (url) {
@@ -297,10 +312,17 @@
     if (sidePanelSectionOpen === 'transcripts' && isMediaPlayer && !transcriptsInitialized) {
       initTranscript(previewKind as PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE);
     }
+    // TODO manage mobile
   }
 
   function toggleSummarySection() {
     sidePanelSectionOpen = sidePanelSectionOpen === 'summary' ? 'search' : 'summary';
+    // TODO manage mobile
+  }
+
+  function toggleItemsSection() {
+    sidePanelSectionOpen = sidePanelSectionOpen === 'items' ? 'search' : 'items';
+    // TODO manage mobile
   }
 
   function openSearchSection() {
@@ -322,6 +344,10 @@
     toggleSidePanel();
     openParagraph(event.detail, -1);
   }
+
+  function displayField(item: FieldFullId) {
+    fieldFullId.set(item);
+  }
 </script>
 
 <svelte:window
@@ -334,7 +360,8 @@
   class:expanded
   class:side-panel-expanded={sidePanelExpanded}
   class:media-player={isMediaPlayer}
-  style={'--viewer-height:' + viewerHeight + 'px'}>
+  style:--viewer-height={viewerHeight+'px'}
+  style:--metadata-block-count={$metadataBlockCount}>
   {#if !showKnowledgeGraph}
     <div class="thumbnail-container">
       <div hidden={expanded && !loading}>
@@ -447,7 +474,7 @@
               </div>
             {/if}
 
-            {#if sidePanelSectionOpen === 'search'}
+            {#if (isMobile && !expanded) || (!isMobile && sidePanelSectionOpen === 'search')}
               <div
                 class="search-result-paragraphs"
                 tabindex="-1">
@@ -467,7 +494,7 @@
                   {/each}
                 </ul>
               </div>
-            {:else}
+            {:else if !isMobile}
               <div
                 class="metadata-expander-header"
                 tabindex="0"
@@ -480,7 +507,9 @@
                   tabindex="-1"
                   class="metadata-expander-header-title">
                   <strong>{$_('tile.search-results', { count: $matchingParagraphs$.length })}</strong>
-                  <div class="expander-icon"><Icon name="chevron-right" /></div>
+                  <div class="expander-icon">
+                    <Icon name="chevron-right" />
+                  </div>
                 </div>
               </div>
             {/if}
@@ -499,7 +528,9 @@
                     tabindex="-1"
                     class="metadata-expander-header-title">
                     <strong>{$_('tile.full-transcripts')}</strong>
-                    <div class="expander-icon"><Icon name="chevron-right" /></div>
+                    <div class="expander-icon">
+                      <Icon name="chevron-right" />
+                    </div>
                   </div>
                 </div>
 
@@ -533,7 +564,9 @@
                     tabindex="-1"
                     class="metadata-expander-header-title">
                     <strong>{$_('tile.summary')}</strong>
-                    <div class="expander-icon"><Icon name="chevron-right" /></div>
+                    <div class="expander-icon">
+                      <Icon name="chevron-right" />
+                    </div>
                   </div>
                 </div>
 
@@ -545,6 +578,48 @@
                   </div>
                 {/if}
               </div>
+              {#if $hasSeveralFields}
+                <div class="metadata-container">
+                  <div class="metadata-expander-header"
+                       tabindex="0"
+                       class:expanded={sidePanelSectionOpen === 'items'}
+                       on:click={toggleItemsSection}
+                       on:keyup={(e) => {
+                    if (e.key === 'Enter') toggleItemsSection();
+                  }}>
+                    <div
+                      tabindex="-1"
+                      class="metadata-expander-header-title">
+                      <strong>{$_('tile.items')}</strong>
+                      <div class="expander-icon">
+                        <Icon name="chevron-right" />
+                      </div>
+                    </div>
+                  </div>
+                  {#if sidePanelSectionOpen === 'items'}
+                    <div class="metadata-content scrollable-area">
+                      <div>
+                        <ul class="field-list">
+                          {#each $fieldList as item}
+                            <li class:current={item.field_id === $fieldFullId.field_id}
+                                on:click={() => displayField(item)}>
+                              <div class="field-icon">
+                                <Icon size="small"
+                                      name={item.field_type === 'conversation' ? 'chat' : item.field_type === 'text' ? 'file' : item.field_type} />
+                              </div>
+                              <div class="field-item">
+                                <span
+                                  class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>{item.field_type}</span>
+                                <small class="body-xs">{item.field_id}</small>
+                              </div>
+                            </li>
+                          {/each}
+                        </ul>
+                      </div>
+                    </div>
+                  {/if}
+                </div>
+              {/if}
             {/if}
           {/if}
         </div>

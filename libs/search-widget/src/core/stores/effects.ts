@@ -1,8 +1,8 @@
 import {
   getAnswer,
   getEntities,
-  getEvents,
   getLabelSets,
+  getResourceById,
   getResourceField,
   predict,
   searchInResource,
@@ -30,7 +30,7 @@ import {
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
-import { getFieldTypeFromString } from '@nuclia/core';
+import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import {
   isEmptySearchQuery,
@@ -41,7 +41,7 @@ import {
   trackingEngagement,
   triggerSearch,
 } from './search.store';
-import { fieldData, fieldFullId, viewerState } from './viewer.store';
+import { fieldData, fieldFullId, fieldList, viewerState } from './viewer.store';
 import { answerState, chat, chatError, currentAnswer, currentQuestion } from './answers.store';
 import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
@@ -227,6 +227,7 @@ function initStoreFromUrlParams() {
 }
 
 // Load field data when fieldFullId is set
+// and check if there are several fields on the corresponding resource
 export function initViewer() {
   const subscription = fieldFullId
     .pipe(
@@ -241,11 +242,32 @@ export function initViewer() {
             tap((resourceField) => fieldData.set(resourceField)),
             switchMap(() => getResourceField(fullId, false)),
             tap((resourceField) => fieldData.set(resourceField)),
+            map(() => fullId),
           );
         } else {
           return of(null);
         }
       }),
+      switchMap((fullId) =>
+        fullId
+          ? getResourceById(fullId.resourceId, [ResourceProperties.VALUES]).pipe(
+              tap((resource) => {
+                const fieldFullIds: FieldFullId[] = Object.entries(resource.data)
+                  .filter(([type]) => type !== 'generics')
+                  .reduce((list, [type, fieldMap]) => {
+                    const fieldType = getFieldTypeFromString(type.substring(0, type.length - 1));
+                    if (fieldType) {
+                      Object.keys(fieldMap).forEach((fieldId) =>
+                        list.push({ field_id: fieldId, field_type: fieldType, resourceId: fullId.resourceId }),
+                      );
+                    }
+                    return list;
+                  }, [] as FieldFullId[]);
+                fieldList.set(fieldFullIds);
+              }),
+            )
+          : of(null),
+      ),
     )
     .subscribe();
   subscriptions.push(subscription);
