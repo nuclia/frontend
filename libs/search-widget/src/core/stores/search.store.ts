@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { FieldId, IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
+import type { IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -14,7 +14,7 @@ import {
   shortToLongFieldType,
 } from '@nuclia/core';
 import { DisplayedResource, NO_RESULTS } from '../models';
-import { Subject, combineLatest, filter, map, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common/label/label.utils';
 
 interface SearchFilters {
@@ -44,6 +44,7 @@ interface SearchState {
   filters: SearchFilters;
   options: SearchOptions;
   results: Search.FindResults;
+  resourceList: Search.FindResource[];
   error?: IErrorResponse;
   displayedResource: DisplayedResource | null;
   pending: boolean;
@@ -62,6 +63,7 @@ export const searchState = new SvelteState<SearchState>({
   filters: {},
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   results: NO_RESULTS,
+  resourceList: [],
   displayedResource: null,
   pending: false,
   showResults: false,
@@ -98,10 +100,14 @@ export const searchResults = searchState.writer<
 >(
   (state) => state.results,
   (state, params) => {
-    CACHE = undefined;
     return {
       ...state,
-      results: params.append ? appendResults(state.results, params.results) : params.results,
+      results: params.append
+        ? appendResults(state.results, params.results)
+        : { ...params.results, resources: undefined },
+      resourceList: params.append
+        ? state.resourceList.concat(Object.values(params.results.resources || {}))
+        : Object.values(params.results.resources || {}),
       pending: false,
       showResults: true,
       filters: {
@@ -289,7 +295,7 @@ export const trackingEngagement = searchState.writer<
 >(
   (state) => state.tracking.engagement,
   (state, params) => {
-    const sortedResources = getSortedResults(state.results.resources);
+    const sortedResources = getSortedResults(state.resourceList);
     const matching = params.rid ? sortedResources.find((resource) => resource.id === params.rid) : undefined;
     return {
       ...state,
@@ -311,10 +317,10 @@ export const trackingEngagement = searchState.writer<
 );
 
 export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
-  if (!state.results.resources) {
+  if (state.resourceList.length === 0) {
     return [];
   }
-  return getSortedResults(state.results.resources);
+  return getSortedResults(state.resourceList);
 });
 
 export const entityRelations = searchState.reader((state) =>
@@ -419,87 +425,54 @@ function appendResults(existingResults: Search.FindResults, newResults: Search.F
   return {
     ...existingResults,
     ...newResults,
-    resources: deepMergeResources(existingResults.resources || {}, newResults.resources || {}),
+    resources: undefined,
   };
 }
 
-function deepMergeResources(
-  existing: { [id: string]: Search.FindResource },
-  newEntries: { [id: string]: Search.FindResource },
-): { [id: string]: Search.FindResource } {
-  return Object.entries(newEntries).reduce((acc, [id, obj]) => {
-    acc[id] = !acc[id] ? obj : { ...acc[id], ...obj, fields: deepMergeFields(acc[id].fields, obj.fields) };
-    return acc;
-  }, existing);
-}
-
-function deepMergeFields(
-  existing: { [id: string]: Search.FindField },
-  newEntries: { [id: string]: Search.FindField },
-): { [id: string]: Search.FindField } {
-  return Object.entries(newEntries).reduce((acc, [id, obj]) => {
-    acc[id] = !acc[id] ? obj : { ...acc[id], ...obj, paragraphs: { ...acc[id].paragraphs, ...obj.paragraphs } };
-    return acc;
-  }, existing);
-}
-
-let CACHE: Search.SmartResult[] | undefined = undefined;
-export function getSortedResults(resources: { [id: string]: Search.FindResource } | undefined): Search.SmartResult[] {
+export function getSortedResults(resources: Search.FindResource[]): Search.SmartResult[] {
   if (!resources) {
     return [];
   }
-  if (!CACHE) {
-    CACHE = Object.values(resources)
-      .map((res) => ({
-        ...res,
-        paragraphs: Object.values(res.fields)
-          .reduce((acc, curr) => acc.concat(Object.values(curr.paragraphs)), [] as Search.FindParagraph[])
-          .sort((a, b) => a.order - b.order),
-      }))
-      .map((res: Search.SmartResult) => {
-        // take the first paragraph which is not from a generic field
-        const firstFieldParagraph = res.paragraphs?.find(
-          (paragraph) => paragraph.id.split('/')[1] !== SHORT_FIELD_TYPE.generic,
-        );
-        if (firstFieldParagraph) {
-          const [, fieldType, fieldId] = firstFieldParagraph.id.split('/');
-          const field_type = shortToLongFieldType(fieldType as SHORT_FIELD_TYPE);
-          if (field_type && fieldId) {
-            res.field = { field_type, field_id: fieldId };
-          }
-        } else {
-          // if none, guess the main field
-          res.field = getMainFieldFromResource(res);
-        }
-        if (res.field) {
-          const dataKey = getDataKeyFromFieldType(res.field.field_type);
-          res.fieldData = dataKey ? res.data?.[dataKey]?.[res.field.field_id] : undefined;
-        }
-        return res;
+  const keyList: string[] = [];
+  return resources.reduce((smartResults, resource) => {
+    const fieldEntries: Search.SmartResult[] = Object.entries(resource.fields)
+      .filter(([fullFieldId]) => {
+        // filter out generic fields
+        const fieldType = fullFieldId.split('/')[1];
+        return fieldType !== SHORT_FIELD_TYPE.generic && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
-      .sort((a, b) => (a.paragraphs?.[0]?.order || 0) - (b.paragraphs?.[0]?.order || 0));
-  }
-  return CACHE;
+      .map(([fullFieldId, field]) => {
+        const [, shortType, fieldId] = fullFieldId.split('/');
+        const fieldType = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
+        const dataKey = getDataKeyFromFieldType(fieldType);
+        const smartResult = {
+          ...resource,
+          field: { field_id: fieldId, field_type: fieldType },
+          fieldData: dataKey ? resource.data?.[dataKey]?.[fieldId] : undefined,
+          paragraphs: Object.values(field.paragraphs).sort((a, b) => a.order - b.order),
+        };
+        // Don't include results already displayed:
+        // sometimes load more bring results which are actually the same as what we got before but with another score_type
+        const uniqueKey = getSmartResultUniqueKey(smartResult);
+        if (!keyList.includes(uniqueKey)) {
+          keyList.push(uniqueKey);
+          return smartResult;
+        } else {
+          return null;
+        }
+      })
+      .filter((smartResult) => !!smartResult)
+      .map((smartResult) => smartResult as Search.SmartResult);
+    smartResults = smartResults.concat(fieldEntries);
+    return smartResults;
+  }, [] as Search.SmartResult[]);
 }
 
-function getMainFieldFromResource(resource: IResource): FieldId | undefined {
-  if (!resource.data) {
-    return;
+export function getSmartResultUniqueKey(result: Search.SmartResult): string {
+  const key = `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
+  if (!allKeys.includes(key)) {
+    allKeys.push(key);
   }
-  // try to find a file field matching the resource icon
-  // if none, we just take the first field
-  const mainFileField = resource.data?.files
-    ? Object.entries(resource.data.files).find(([, field]) => field.value?.file?.content_type === resource.icon)
-    : undefined;
-  if (mainFileField) {
-    return { field_type: FIELD_TYPE.file, field_id: mainFileField[0] };
-  } else if (resource.data.files) {
-    return { field_id: Object.keys(resource.data.files)[0], field_type: FIELD_TYPE.file };
-  } else if (resource.data.links) {
-    return { field_id: Object.keys(resource.data.links)[0], field_type: FIELD_TYPE.link };
-  } else if (resource.data.texts) {
-    return { field_id: Object.keys(resource.data.texts)[0], field_type: FIELD_TYPE.text };
-  } else {
-    return;
-  }
+  return key;
 }
+const allKeys: string[] = [];

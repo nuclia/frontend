@@ -10,6 +10,7 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     entityRelations,
+    getSmartResultUniqueKey,
     getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
@@ -76,11 +77,6 @@
   }
 
   const onLoadMore = () => loadMore.set();
-  const getResultKey = (result: Search.SmartResult) =>
-    result.id +
-    result.field?.field_type +
-    result.field?.field_id +
-    (result.paragraphs || []).reduce((acc, curr) => acc + curr.id, '');
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
@@ -113,7 +109,7 @@
             <InitialAnswer />
           {/if}
           <div class="search-results">
-            {#each $smartResults as result, i (getResultKey(result))}
+            {#each $smartResults as result, i (getSmartResultUniqueKey(result))}
               <Tile {result} />
               {#if i === $smartResults.length - 1}
                 <div
