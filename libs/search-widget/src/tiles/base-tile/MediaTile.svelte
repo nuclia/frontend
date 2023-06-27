@@ -8,7 +8,7 @@
   import type { Observable } from 'rxjs';
   import { getFieldUrl } from '../../core/stores/viewer.store';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
   export let fallbackThumbnail;
   export let previewKind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE;
   export let mediaLoading = true;

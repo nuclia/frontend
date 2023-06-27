@@ -18,7 +18,7 @@
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
   $: isMobile = isMobileViewport(innerWidth);
 
-  const sources = getSortedResults(answer.sources?.resources);
+  const sources = getSortedResults(Object.values(answer.sources?.resources));
 </script>
 
 <svelte:window bind:innerWidth />

@@ -4,7 +4,7 @@
   import Thumbnail from '../../common/thumbnail/Thumbnail.svelte';
   import BaseTile from './BaseTile.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
   export let fallbackThumbnail;
   export let previewKind: PreviewKind;
 

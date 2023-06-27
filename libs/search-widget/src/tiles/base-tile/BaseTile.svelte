@@ -44,11 +44,10 @@
   import SearchResultNavigator from './header/SearchResultNavigator.svelte';
   import { _ } from '../../core/i18n';
   import KnowledgeGraphPanel from '../../components/knowledge-graph/KnowledgeGraphPanel.svelte';
-  import KnowledgeGraph from '../../components/knowledge-graph/KnowledgeGraph.svelte';
   import { graphQuery } from '../../core/stores/graph.store';
   import D3Loader from '../../components/knowledge-graph/D3Loader.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
   export let previewKind: PreviewKind;
   export let typeIndicator: string;
   export let thumbnailLoaded = false;

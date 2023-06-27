@@ -9,7 +9,7 @@
   import { fieldData } from '../core/stores/viewer.store';
   import { map } from 'rxjs';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
 
   let selectedParagraph: WidgetParagraph | undefined;
 

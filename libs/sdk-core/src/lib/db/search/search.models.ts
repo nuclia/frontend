@@ -136,14 +136,10 @@ export namespace Search {
     next_page: boolean;
   }
 
-  export interface SmartResult extends IResource {
+  export interface FieldResult extends IResource {
     paragraphs?: FindParagraph[];
     field?: FieldId;
     fieldData?: IFieldData;
-  }
-
-  export interface SmartParagraph extends Paragraph {
-    sentences?: Sentence[];
   }
 
   export interface Suggestions {
