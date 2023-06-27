@@ -86,6 +86,11 @@ export const setupTriggerSearch = (
                         loadingMore: false,
                         options: currentOptions,
                       })),
+                      // Chat is emitting several times until the answer is complete, but the result sources doesn't change while answer is incomplete
+                      // So we make sure to emit only when results are changing, preventing to write in the state several times while loading the answer
+                      distinctUntilChanged(
+                        (previous, current) => JSON.stringify(previous.results) === JSON.stringify(current.results),
+                      ),
                     );
                   } else {
                     return search(query, currentOptions).pipe(

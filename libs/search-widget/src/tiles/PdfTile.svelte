@@ -9,7 +9,7 @@
   import DocumentTile from './base-tile/DocumentTile.svelte';
   import { isMobileViewport } from '../common/utils';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
 
   const pdfStyle = getPdfJsStyle();
   const pdfJsBaseUrl = getPdfJsBaseUrl();

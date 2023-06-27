@@ -7,7 +7,7 @@
   import { getFieldUrl } from '../core/stores/viewer.store';
   import MediaTile from './base-tile/MediaTile.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
 
   let mediaLoading = true;
   let mediaTime = 0;

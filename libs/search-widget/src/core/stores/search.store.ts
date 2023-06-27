@@ -13,7 +13,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { DisplayedResource, NO_RESULTS } from '../models';
+import { DisplayedResource, FindResultsAsList, NO_RESULT_LIST } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common/label/label.utils';
 
@@ -43,8 +43,7 @@ interface SearchState {
   query: string;
   filters: SearchFilters;
   options: SearchOptions;
-  results: Search.FindResults;
-  resourceList: Search.FindResource[];
+  results: FindResultsAsList;
   error?: IErrorResponse;
   displayedResource: DisplayedResource | null;
   pending: boolean;
@@ -62,8 +61,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
-  results: NO_RESULTS,
-  resourceList: [],
+  results: NO_RESULT_LIST,
   displayedResource: null,
   pending: false,
   showResults: false,
@@ -100,14 +98,14 @@ export const searchResults = searchState.writer<
 >(
   (state) => state.results,
   (state, params) => {
+    const sortedResults = getSortedResults(Object.values(params.results.resources || {}));
     return {
       ...state,
-      results: params.append
-        ? appendResults(state.results, params.results)
-        : { ...params.results, resources: undefined },
-      resourceList: params.append
-        ? state.resourceList.concat(Object.values(params.results.resources || {}))
-        : Object.values(params.results.resources || {}),
+      results: {
+        ...params.results,
+        resources: undefined,
+        resultList: params.append ? state.results.resultList.concat(sortedResults) : sortedResults,
+      },
       pending: false,
       showResults: true,
       filters: {
@@ -119,6 +117,11 @@ export const searchResults = searchState.writer<
     };
   },
 );
+
+export const resultList = searchState.reader<Search.FieldResult[]>((state) => {
+  return state.results.resultList;
+});
+
 export const showResults = searchState.writer<boolean>(
   (state) => state.showResults,
   (state, showResults) => ({
@@ -295,7 +298,7 @@ export const trackingEngagement = searchState.writer<
 >(
   (state) => state.tracking.engagement,
   (state, params) => {
-    const sortedResources = getSortedResults(state.resourceList);
+    const sortedResources = state.results.resultList;
     const matching = params.rid ? sortedResources.find((resource) => resource.id === params.rid) : undefined;
     return {
       ...state,
@@ -315,13 +318,6 @@ export const trackingEngagement = searchState.writer<
     };
   },
 );
-
-export const smartResults = searchState.reader<Search.SmartResult[]>((state) => {
-  if (state.resourceList.length === 0) {
-    return [];
-  }
-  return getSortedResults(state.resourceList);
-});
 
 export const entityRelations = searchState.reader((state) =>
   Object.entries(state.results.relations?.entities || {})
@@ -415,27 +411,14 @@ export function getFirstResourceField(resource: IResource): ResourceField | unde
   }
 }
 
-function appendResults(existingResults: Search.FindResults, newResults: Search.FindResults): Search.FindResults {
-  if (!existingResults) {
-    return newResults;
-  }
-  if (!newResults) {
-    return existingResults;
-  }
-  return {
-    ...existingResults,
-    ...newResults,
-    resources: undefined,
-  };
-}
-
-export function getSortedResults(resources: Search.FindResource[]): Search.SmartResult[] {
+export function getSortedResults(resources: Search.FindResource[]): Search.FieldResult[] {
   if (!resources) {
     return [];
   }
+
   const keyList: string[] = [];
-  return resources.reduce((smartResults, resource) => {
-    const fieldEntries: Search.SmartResult[] = Object.entries(resource.fields)
+  return resources.reduce((resultList, resource) => {
+    const fieldEntries: Search.FieldResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {
         // filter out generic fields
         const fieldType = fullFieldId.split('/')[1];
@@ -453,7 +436,7 @@ export function getSortedResults(resources: Search.FindResource[]): Search.Smart
         };
         // Don't include results already displayed:
         // sometimes load more bring results which are actually the same as what we got before but with another score_type
-        const uniqueKey = getSmartResultUniqueKey(smartResult);
+        const uniqueKey = getResultUniqueKey(smartResult);
         if (!keyList.includes(uniqueKey)) {
           keyList.push(uniqueKey);
           return smartResult;
@@ -462,13 +445,13 @@ export function getSortedResults(resources: Search.FindResource[]): Search.Smart
         }
       })
       .filter((smartResult) => !!smartResult)
-      .map((smartResult) => smartResult as Search.SmartResult);
-    smartResults = smartResults.concat(fieldEntries);
-    return smartResults;
-  }, [] as Search.SmartResult[]);
+      .map((smartResult) => smartResult as Search.FieldResult);
+    resultList = resultList.concat(fieldEntries);
+    return resultList;
+  }, [] as Search.FieldResult[]);
 }
 
-export function getSmartResultUniqueKey(result: Search.SmartResult): string {
+export function getResultUniqueKey(result: Search.FieldResult): string {
   const key = `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
   if (!allKeys.includes(key)) {
     allKeys.push(key);

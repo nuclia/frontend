@@ -6,7 +6,7 @@
   import BaseTile from './base-tile/BaseTile.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
   let thumbnailLoaded = false;
   let selectedParagraph: WidgetParagraph | undefined;
 

@@ -103,7 +103,7 @@ export const getAnswer = (query: string, chat?: Chat.Entry[], options?: BaseSear
     return acc;
   }, [] as Chat.ContextEntry[]);
 
-  return nucliaApi.knowledgeBox.chat(query, context, CHAT_MODE, options).pipe();
+  return nucliaApi.knowledgeBox.chat(query, context, CHAT_MODE, options);
 };
 
 export const sendFeedback = (answer: Chat.Answer, approved: boolean) => {

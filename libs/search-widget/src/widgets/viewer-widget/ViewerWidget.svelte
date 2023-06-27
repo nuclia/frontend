@@ -58,7 +58,7 @@
     onClosePreview();
   }
 
-  const tileResult: Observable<Search.SmartResult | null> = combineLatest([
+  const tileResult: Observable<Search.FieldResult | null> = combineLatest([
     fieldFullId.pipe(distinctUntilChanged()),
     fieldData.pipe(distinctUntilChanged()),
     resourceTitle.pipe(distinctUntilChanged()),

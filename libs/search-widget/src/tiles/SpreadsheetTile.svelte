@@ -6,7 +6,7 @@
   import SpreadsheetViewer from './viewers/SpreadsheetViewer.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
   let thumbnailLoaded = false;
 </script>
 

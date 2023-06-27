@@ -9,14 +9,27 @@ import type {
   WidgetFeatures,
 } from '@nuclia/core';
 
-export const NO_RESULTS: Search.FindResults = {
+export interface FindResultsAsList extends Omit<Search.FindResults, 'resources'> {
+  resultList: Search.FieldResult[];
+}
+
+const EMPTY_FIND_RESULTS: Omit<Search.FindResults, 'resources'> = {
   type: 'findResults',
-  resources: {} as { [id: string]: Search.FindResource },
   total: 0,
   page_number: 0,
   next_page: false,
   page_size: 0,
   query: '',
+};
+
+export const NO_RESULTS: Search.FindResults = {
+  ...EMPTY_FIND_RESULTS,
+  resources: {},
+};
+
+export const NO_RESULT_LIST: FindResultsAsList = {
+  ...EMPTY_FIND_RESULTS,
+  resultList: [],
 };
 
 export const NO_SUGGESTION_RESULTS: Search.Suggestions = {

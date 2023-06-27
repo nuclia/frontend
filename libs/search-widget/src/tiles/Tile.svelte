@@ -9,7 +9,7 @@
   import ConversationTile from './ConversationTile.svelte';
   import TextTile from './TextTile.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
 
   const SpreadsheetContentTypes = [
     'text/csv',

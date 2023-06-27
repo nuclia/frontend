@@ -8,7 +8,7 @@
   import { getFileUrls } from '../core/api';
   import MediaTile from './base-tile/MediaTile.svelte';
 
-  export let result: Search.SmartResult = { id: '' } as Search.SmartResult;
+  export let result: Search.FieldResult;
 
   let mediaLoading = true;
   let mediaTime = 0;

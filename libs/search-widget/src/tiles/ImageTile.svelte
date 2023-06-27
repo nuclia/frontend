@@ -8,7 +8,7 @@
   import ImageViewer from './viewers/ImageViewer.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
 
-  export let result: Search.SmartResult;
+  export let result: Search.FieldResult;
 
   let thumbnailLoaded = false;
   let imageUrl: Observable<string>;

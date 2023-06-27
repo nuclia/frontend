@@ -10,7 +10,7 @@
   import globalCss from '../../common/_global.scss?inline';
   import {
     entityRelations,
-    getSmartResultUniqueKey,
+    getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
@@ -20,7 +20,7 @@
     pendingResults,
     searchError,
     showResults,
-    smartResults,
+    resultList,
     trackingReset,
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
@@ -40,13 +40,13 @@
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
-  const tileResult: Observable<Search.SmartResult | null> = combineLatest([
+  const tileResult: Observable<Search.FieldResult | null> = combineLatest([
     fieldFullId.pipe(distinctUntilChanged()),
     fieldData.pipe(distinctUntilChanged()),
     resourceTitle.pipe(distinctUntilChanged()),
   ]).pipe(
     map(([fullId, data, title]) =>
-      fullId && data ? ({ id: fullId.resourceId, field: fullId, fieldData: data, title } as Search.SmartResult) : null,
+      fullId && data ? ({ id: fullId.resourceId, field: fullId, fieldData: data, title } as Search.FieldResult) : null,
     ),
   );
 
@@ -58,7 +58,7 @@
   let svgSprite;
 
   onMount(() => {
-    if (pendingResults.getValue() || smartResults.getValue().length > 0) {
+    if (pendingResults.getValue() || resultList.getValue().length > 0) {
       showResults.set(true);
     }
     loadFonts();
@@ -93,7 +93,7 @@
           <strong>{$_('error.search')}</strong>
         {/if}
       </div>
-    {:else if !$pendingResults && $smartResults.length === 0 && !$onlyAnswers}
+    {:else if !$pendingResults && $resultList.length === 0 && !$onlyAnswers}
       <strong>{$_('results.empty')}</strong>
     {:else}
       {#if $hasPartialResults}
@@ -109,9 +109,9 @@
             <InitialAnswer />
           {/if}
           <div class="search-results">
-            {#each $smartResults as result, i (getSmartResultUniqueKey(result))}
+            {#each $resultList as result, i (getResultUniqueKey(result))}
               <Tile {result} />
-              {#if i === $smartResults.length - 1}
+              {#if i === $resultList.length - 1}
                 <div
                   class="results-end"
                   use:renderingDone />
