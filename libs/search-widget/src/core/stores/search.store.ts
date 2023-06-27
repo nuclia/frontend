@@ -99,11 +99,11 @@ export const searchResults = searchState.writer<
   (state) => state.results,
   (state, params) => {
     const sortedResults = getSortedResults(Object.values(params.results.resources || {}));
+    const { resources, ...results } = params.results;
     return {
       ...state,
       results: {
-        ...params.results,
-        resources: undefined,
+        ...results,
         resultList: params.append ? state.results.resultList.concat(sortedResults) : sortedResults,
       },
       pending: false,
@@ -452,10 +452,5 @@ export function getSortedResults(resources: Search.FindResource[]): Search.Field
 }
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
-  const key = `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
-  if (!allKeys.includes(key)) {
-    allKeys.push(key);
-  }
-  return key;
+  return `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
 }
-const allKeys: string[] = [];
