@@ -696,6 +696,8 @@
 	"stash.create.in_progress": "Knowledge box creation in progress…",
 	"stash.create.semantic_model": "Languages",
 	"stash.create.semantic_model.help": "Indicate the languages used in the information you will upload in your KB.",
+	"stash.create.visual_labeling": "Annotate by selection",
+	"stash.create.visual_labeling.help": "Allow to visually select some parts of the document layout and annotate them.",
 	"stash.create.zone_description": "Select the zone and the processing provider you would like to use for this knowledge box (defaults to the account’s zone)",
 	"stash.create_service_access": "Create new Service Access",
 	"stash.delete.delete": "Delete knowledge box?",

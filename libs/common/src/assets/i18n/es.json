@@ -673,6 +673,8 @@
 	"stash.create.generative_model.help": "Indique el modelo utilizado para generar respuestas a las preguntas de los usuarios.",
 	"stash.create.in_progress": "Creación de la caja de conocimiento en curso...",
 	"stash.create.semantic_model.help": "Indica los idiomas utilizados en la información que subirás en tu KB.",
+	"stash.create.visual_labeling": "Anotar por selección",
+	"stash.create.visual_labeling.help": "Permita seleccionar visualmente algunas partes del diseño del documento y anotarlas.",
 	"stash.create.zone_description": "Elige la zona y el proveedor de procesamiento que quieres utilizar para esta caja de conocimiento. De forma predeterminada aparece la zona escogida en el Account",
 	"stash.create_service_access": "Crea un nuevo Service Access",
 	"stash.delete.delete": "¿Eliminar caja de conocimiento?",
