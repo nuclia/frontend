@@ -673,6 +673,8 @@
 	"stash.create.generative_model.help": "Indiqueu el model utilitzat per generar respostes a les preguntes dels usuaris.",
 	"stash.create.in_progress": "Creació de la caixa de coneixement en curs...",
 	"stash.create.semantic_model.help": "Indiqueu els idiomes utilitzats a la informació que penjareu a la vostra KB.",
+	"stash.create.visual_labeling": "Anotar per selecció",
+	"stash.create.visual_labeling.help": "Permet seleccionar visualment algunes parts del disseny del document i anotar-les.",
 	"stash.create.zone_description": "Escull la zona i el proveïdor de processament que vols fer servir per aquesta caixa de coneixament. De forma predeterminada apareix la zona escollida a l’Account",
 	"stash.create_service_access": "Crea un nou Service Access",
 	"stash.delete.delete": "Eliminar caixa de coneixement?",
