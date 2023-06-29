@@ -26,7 +26,7 @@
 
   .chat-container {
     --chat-padding: var(--rhythm-1_5);
-    --height-container: var(--custom-height-container, 500px);
+    --height-container: var(--custom-height-container, var(--rhythm-56));
     --height-input: calc(
       var(--rhythm-6) + var(--padding-top-input-container) + var(--padding-bottom-input-container)
     );
