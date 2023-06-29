@@ -3,7 +3,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import type { Observable } from 'rxjs';
-  import { combineLatest, debounceTime, map } from 'rxjs';
+  import { combineLatest, debounceTime, map, tap } from "rxjs";
   import { loadFonts, loadSvgSprite } from '../../core/utils';
   import { _ } from '../../core/i18n';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
@@ -25,7 +25,7 @@
   } from '../../core/stores/search.store';
   import Tile from '../../tiles/Tile.svelte';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
+  import { fieldData, fieldFullId, isNavigating, resourceTitle } from "../../core/stores/viewer.store";
   import type { Search } from '@nuclia/core';
   import { distinctUntilChanged, take } from 'rxjs/operators';
   import { isAnswerEnabled, onlyAnswers, setWidgetActions } from '../../core/stores/widget.store';
@@ -45,6 +45,7 @@
     fieldData.pipe(distinctUntilChanged()),
     resourceTitle.pipe(distinctUntilChanged()),
   ]).pipe(
+    tap((res) => console.log(`fieldFullId, fieldData, resourceTitle:`, res)),
     map(([fullId, data, title]) =>
       fullId && data ? ({ id: fullId.resourceId, field: fullId, fieldData: data, title } as Search.FieldResult) : null,
     ),
@@ -110,7 +111,7 @@
           {/if}
           <div class="search-results">
             {#each $resultList as result, i (getResultUniqueKey(result))}
-              <Tile {result} />
+              <Tile {result} id={i+1} />
               {#if i === $resultList.length - 1}
                 <div
                   class="results-end"
@@ -133,7 +134,11 @@
       {/if}
     {/if}
   {:else if $tileResult}
-    <Tile result={$tileResult} />
+    <Tile result={$tileResult} id={'tileResult'} />
+  {/if}
+
+  {#if $isNavigating}
+    <Tile result={$tileResult} id={'navigation'} />
   {/if}
 
   <div

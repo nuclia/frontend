@@ -9,6 +9,7 @@
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
 
   export let result: Search.FieldResult;
+  export let id: '';
 
   let thumbnailLoaded = false;
   let imageUrl: Observable<string>;
@@ -26,6 +27,7 @@
   noResultNavigator={!result.paragraphs || result.paragraphs.length <= 1}
   {thumbnailLoaded}
   {result}
+  {id}
   on:selectParagraph={() => showImage()}>
   <span slot="thumbnail">
     <Thumbnail

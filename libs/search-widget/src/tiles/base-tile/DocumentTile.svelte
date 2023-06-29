@@ -7,6 +7,7 @@
   export let result: Search.FieldResult;
   export let fallbackThumbnail;
   export let previewKind: PreviewKind;
+  export let id: '';
 
   let thumbnailLoaded = false;
 </script>
@@ -14,6 +15,7 @@
 <BaseTile
   {previewKind}
   {result}
+  {id}
   {thumbnailLoaded}
   typeIndicator={previewKind === PreviewKind.PDF ? 'pdf' : 'text'}
   viewerFullHeight={true}

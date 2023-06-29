@@ -8,6 +8,7 @@
   import MediaTile from './base-tile/MediaTile.svelte';
 
   export let result: Search.FieldResult;
+  export let id: '';
 
   let mediaLoading = true;
   let mediaTime = 0;
@@ -27,6 +28,7 @@
 <MediaTile
   previewKind={PreviewKind.AUDIO}
   {result}
+  {id}
   {mediaLoading}
   fallbackThumbnail={`${getCDN()}tiles/audio.svg`}
   on:playFrom={(event) => playFrom(event.detail)}>

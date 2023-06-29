@@ -10,6 +10,7 @@
   import TextTile from './TextTile.svelte';
 
   export let result: Search.FieldResult;
+  export let id: '';
 
   const SpreadsheetContentTypes = [
     'text/csv',
@@ -55,20 +56,24 @@
   }
 </script>
 
+{#if id}
+  <small>{id}</small>
+{/if}
+
 {#if tileType}
   {#if tileType === 'pdf'}
-    <PdfTile {result} />
+    <PdfTile {result} {id}/>
   {:else if tileType === 'video'}
-    <VideoTile {result} />
+    <VideoTile {result} {id}/>
   {:else if tileType === 'audio'}
-    <AudioTile {result} />
+    <AudioTile {result} {id}/>
   {:else if tileType === 'image'}
-    <ImageTile {result} />
+    <ImageTile {result} {id}/>
   {:else if tileType === 'spreadsheet'}
-    <SpreadsheetTile {result} />
+    <SpreadsheetTile {result} {id}/>
   {:else if tileType === 'conversation'}
-    <ConversationTile {result} />
+    <ConversationTile {result} {id}/>
   {:else}
-    <TextTile {result} />
+    <TextTile {result} {id}/>
   {/if}
 {/if}

@@ -22,7 +22,7 @@
     take,
     takeUntil
   } from 'rxjs';
-  import { searchQuery, trackingEngagement } from '../../core/stores/search.store';
+  import { searchQuery, showResults, trackingEngagement } from '../../core/stores/search.store';
   import { Duration, isMobileViewport } from '../../common/utils';
   import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import {
@@ -33,12 +33,13 @@
   } from '../../core/utils';
   import { isKnowledgeGraphEnabled, navigateToFile, navigateToLink } from '../../core/stores/widget.store';
   import {
+    backFromNavigation,
     fieldFullId,
     fieldList,
     fieldSummary,
     getMediaTranscripts,
     hasSeveralFields,
-    isPreviewing,
+    isPreviewing, navigateToField,
     resourceTitle,
     viewerState
   } from '../../core/stores/viewer.store';
@@ -57,6 +58,7 @@
   export let loading = false;
   export let noResultNavigator = false;
   export let viewerFullHeight = false;
+  export let id: '';
 
   const dispatch = createEventDispatcher();
   const unsubscribeAll = new Subject();
@@ -143,6 +145,7 @@
   onMount(() => {
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
     const currentId = fieldFullId.getValue();
+    console.log(`BaseTile – Mount`, id);
     if (
       currentId?.resourceId === result.id &&
       currentId?.field_type === result.field?.field_type &&
@@ -156,10 +159,15 @@
         filter((previewOpen) => !previewOpen && expanded),
         takeUntil(unsubscribeAll)
       )
-      .subscribe(() => closePreview());
+      .subscribe(() => {
+        console.log(`BaseTile ${id} – react to isPreviewing`);
+        closePreview()
+      });
+
   });
 
   onDestroy(() => {
+    console.log(`Destroy BaseTile ${id}`);
     unsubscribeAll.next(true);
     unsubscribeAll.complete();
     reset();
@@ -232,6 +240,7 @@
   };
 
   const closePreview = () => {
+    console.log(`BaseTile – closePreview`);
     reset();
     unblockBackground(true);
     dispatch('close');
@@ -293,6 +302,7 @@
     expanded = false;
     showKnowledgeGraph = false;
     isPreviewing.set(false);
+    backFromNavigation.set(null);
     selectedParagraph = undefined;
     sidePanelSectionOpen = 'search';
     setTimeout(() => {
@@ -347,7 +357,7 @@
   }
 
   function displayField(item: FieldFullId) {
-    fieldFullId.set(item);
+    navigateToField.set(item);
   }
 </script>
 

@@ -9,6 +9,7 @@
   import MediaTile from './base-tile/MediaTile.svelte';
 
   export let result: Search.FieldResult;
+  export let id: '';
 
   let mediaLoading = true;
   let mediaTime = 0;
@@ -44,6 +45,7 @@
 <MediaTile
   previewKind={PreviewKind.VIDEO}
   {result}
+  {id}
   {mediaLoading}
   on:playFrom={(event) => playFrom(event.detail)}>
   {#if $mediaUrl}

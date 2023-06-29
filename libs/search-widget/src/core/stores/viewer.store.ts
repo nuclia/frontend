@@ -13,7 +13,9 @@ interface ViewerState {
   title: string;
   summary: string;
   isPreviewing: boolean;
+  isNavigating: boolean;
   fieldList: FieldFullId[];
+  previousFieldId: FieldFullId | null;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
@@ -22,7 +24,9 @@ export const viewerState = new SvelteState<ViewerState>({
   title: '',
   summary: '',
   isPreviewing: false,
+  isNavigating: false,
   fieldList: [],
+  previousFieldId: null,
 });
 
 export const isPreviewing = viewerState.writer<boolean>(
@@ -61,6 +65,27 @@ export const fieldList = viewerState.writer<FieldFullId[]>(
     fieldList,
   }),
 );
+
+export const navigateToField = viewerState.writer<null, FieldFullId>(
+  () => null,
+  (state, toField) => ({
+    ...state,
+    previousFieldId: state.fieldFullId,
+    fieldFullId: toField,
+    isNavigating: true,
+  }),
+);
+
+export const backFromNavigation = viewerState.writer(
+  () => null,
+  (state) => ({
+    ...state,
+    fieldFullId: state.previousFieldId,
+    isNavigating: false,
+  }),
+);
+
+export const isNavigating = viewerState.reader<boolean>((state) => state.isNavigating);
 
 export const hasSeveralFields = viewerState.reader<boolean>((state) => state.fieldList.length > 1);
 

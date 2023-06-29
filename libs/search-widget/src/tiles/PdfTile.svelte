@@ -10,6 +10,7 @@
   import { isMobileViewport } from '../common/utils';
 
   export let result: Search.FieldResult;
+  export let id: '';
 
   const pdfStyle = getPdfJsStyle();
   const pdfJsBaseUrl = getPdfJsBaseUrl();
@@ -64,6 +65,7 @@
   previewKind={PreviewKind.PDF}
   fallbackThumbnail={`${getCDN()}icons/application/pdf.svg`}
   {result}
+  {id}
   on:selectParagraph={(event) => openParagraph(event.detail)}>
   {#if pdfViewerLoaded && $pdfUrl}
     <PdfViewer

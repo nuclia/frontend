@@ -12,6 +12,7 @@
   export let fallbackThumbnail;
   export let previewKind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE;
   export let mediaLoading = true;
+  export let id: '';
 
   const dispatch = createEventDispatcher();
 
@@ -49,6 +50,7 @@
 <BaseTile
   {previewKind}
   {result}
+  {id}
   thumbnailLoaded={thumbnailLoaded || !mediaLoading}
   loading={mediaLoading}
   typeIndicator={previewKind === PreviewKind.AUDIO ? 'audio' : 'video'}

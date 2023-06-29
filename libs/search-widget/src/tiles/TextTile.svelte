@@ -10,6 +10,7 @@
   import { filter, map, Observable } from 'rxjs';
 
   export let result: Search.FieldResult;
+  export let id: '';
 
   let selectedParagraph: WidgetParagraph | undefined;
 
@@ -56,6 +57,7 @@
   previewKind={PreviewKind.NONE}
   fallbackThumbnail={`${getCDN()}icons/text/plain.svg`}
   {result}
+  {id}
   on:selectParagraph={(event) => openParagraph(event.detail)}>
   {#if $isMarkdown || $isHtml}
     <TextContentViewer
