@@ -273,6 +273,21 @@ export interface UserFieldMetadata {
   field: { field: string; field_type: string };
   paragraphs?: ParagraphClassification[];
   token?: UserTokenAnnotation[];
+  selections?: PageSelections[];
+}
+
+export interface PageSelections {
+  page: number;
+  visual: VisualSelection[];
+}
+
+export interface VisualSelection {
+  label: string;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+  token_ids: number[];
 }
 
 export interface TokenAnnotation {
