@@ -4,6 +4,7 @@
   import { ask } from '../../core/stores/effects';
 
   export let placeholder = '';
+  export let fullscreen;
 
   let inputElement: HTMLInputElement;
   let question = '';
@@ -28,6 +29,7 @@
 
 <div
   class="sw-chat-input"
+  class:fullscreen
   class:highlight={isListening}>
   <div class="icon">
     <Icon name="chat" />

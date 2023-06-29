@@ -5,8 +5,19 @@
   import ChatInput from './ChatInput.svelte';
   import { _ } from '../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
-  import { delay, distinctUntilChanged } from 'rxjs';
+  import { delay, distinctUntilChanged, filter } from 'rxjs';
   import { IconButton } from '../../common';
+  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+
+  export let fullscreen = true;
+  export let show = !fullscreen;
+  export let height;
+
+  $: {
+    if (fullscreen) {
+      show ? freezeBackground(true) : unblockBackground(true);
+    }
+  }
 
   const dispatch = createEventDispatcher();
   let entriesContainerElement: HTMLDivElement;
@@ -14,9 +25,15 @@
   let isScrolling = false;
 
   onMount(() => {
-    const sub = chat.pipe(delay(200), distinctUntilChanged()).subscribe(() => {
-      entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
-    });
+    const sub = chat
+      .pipe(
+        delay(200),
+        distinctUntilChanged(),
+        filter(() => show),
+      )
+      .subscribe(() => {
+        entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
+      });
     return () => sub.unsubscribe();
   });
 
@@ -26,46 +43,55 @@
   }
 </script>
 
-<div class="sw-chat">
-  <header>
-    <IconButton
-      icon="cross"
-      aspect="basic"
-      on:click={() => dispatch('close')} />
-  </header>
-  <div class="chat-container">
+{#if show}
+  <div
+    class="sw-chat"
+    class:fullscreen>
+    {#if fullscreen}
+      <header>
+        <IconButton
+          icon="cross"
+          aspect="basic"
+          on:click={() => dispatch('close')} />
+      </header>
+    {/if}
     <div
-      class="entries-container"
-      bind:this={entriesContainerElement}>
-      {#each $chat as entry, i}
-        <div class="chat-entry">
-          <div class="question">
-            <div class="chat-icon">
-              <Icon name="chat" />
+      class="chat-container"
+      class:fullscreen
+      style={!fullscreen && height ? '--custom-height-container:' + height : undefined}>
+      <div
+        class="entries-container"
+        bind:this={entriesContainerElement}>
+        {#each $chat as entry, i}
+          <div class="chat-entry">
+            <div class="question">
+              <div class="chat-icon">
+                <Icon name="chat" />
+              </div>
+              <div class="title-m">{entry.question}</div>
             </div>
-            <div class="title-m">{entry.question}</div>
+            <div class="answer">
+              {#if entry.answer.text}
+                <Answer
+                  answer={entry.answer}
+                  rank={i}
+                  on:toggleExpander={checkIfScrolling} />
+              {:else}
+                …
+              {/if}
+            </div>
           </div>
-          <div class="answer">
-            {#if entry.answer.text}
-              <Answer
-                answer={entry.answer}
-                rank={i}
-                on:toggleExpander={checkIfScrolling} />
-            {:else}
-              …
-            {/if}
-          </div>
-        </div>
-      {/each}
+        {/each}
+      </div>
+      <div
+        class="input-container"
+        class:scrolling-behind={isScrolling}>
+        <ChatInput placeholder={$_('answer.placeholder')} {fullscreen} />
+      </div>
     </div>
 
-    <div
-      class="input-container"
-      class:scrolling-behind={isScrolling}>
-      <ChatInput placeholder={$_('answer.placeholder')} />
-    </div>
   </div>
-</div>
+{/if}
 
 <style
   lang="scss"

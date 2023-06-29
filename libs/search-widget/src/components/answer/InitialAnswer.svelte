@@ -6,7 +6,6 @@
   import Chat from './Chat.svelte';
   import Feedback from './Feedback.svelte';
   import { Button } from '../../common';
-  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { trackingEngagement } from '../../core/stores/search.store';
 
   let showChat = false;
@@ -14,11 +13,9 @@
   function openChat() {
     showChat = true;
     trackingEngagement.set({ type: 'CHAT' });
-    freezeBackground(true);
   }
   function onClose() {
     showChat = false;
-    unblockBackground(true);
     resetChat.set();
   }
 </script>
@@ -60,9 +57,9 @@
   </div>
 {/if}
 
-{#if showChat}
-  <Chat on:close={onClose} />
-{/if}
+<Chat
+  show={showChat}
+  on:close={onClose} />
 
 <style
   lang="scss"
