@@ -4,7 +4,7 @@
   display: flex;
   flex: 1 0 auto;
   position: relative;
-  border-top: 1px solid var(--border-color);
+  border: 1px solid var(--border-color);
   height: var(--rhythm-6);
 
   &.highlight {
@@ -41,8 +41,8 @@
     transition: all 0s ease;
   }
 }
-@media (min-width: 599px) {
-  .sw-chat-input {
-    border: 1px solid var(--border-color);
+@media (max-width: 598px) {
+  .sw-chat-input.fullscreen {
+    border-width: 1px 0 0 0;
   }
 }

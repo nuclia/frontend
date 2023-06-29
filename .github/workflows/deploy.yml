@@ -90,7 +90,7 @@ jobs:
         run: |-
           find dist/libs/search-widget -type f -name *.umd.js -exec sed -i.bak "s,__NUCLIA_DEV_VERSION__,$GITHUB_SHA,g" {} \;
           gsutil copy dist/libs/search-widget/*.umd.js gs://$CDN_STORAGE
-          gsutil copy dist/libs/search-widget/nuclia-video-widget.css gs://$CDN_STORAGE
+          gsutil copy dist/libs/search-widget/*.css gs://$CDN_STORAGE
           gsutil copy -r libs/search-widget/public/* gs://$CDN_STORAGE
 
       - name: Publish SDK
