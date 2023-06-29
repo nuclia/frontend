@@ -279,6 +279,7 @@
     showKnowledgeGraph = false;
     isPreviewing.set(false);
     selectedParagraph = undefined;
+    sidePanelSectionOpen = 'search';
     setTimeout(() => {
       isSearchingInResource.next(false);
       sidePanelExpanded = false;

@@ -1,30 +1,21 @@
 module.exports = {
+  extends: ['../../.eslintrc.json', 'plugin:svelte/recommended'],
+  plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
-  plugins: ['svelte3', '@typescript-eslint'],
-  extends: ['../../.eslintrc.json'],
+  parserOptions: {
+    // ...
+    project: 'libs/search-widget-demo/tsconfig.*?.json',
+    extraFileExtensions: ['.svelte'], // This is a required setting in `@typescript-eslint/parser` v4.24.0.
+  },
   ignorePatterns: ['!**/*'],
   overrides: [
     {
-      files: ['*.ts', '*.js', '*.svelte'],
-      parserOptions: {
-        project: ['apps/search-widget-demo/tsconfig.*?.json'],
-      },
-      rules: {},
-    },
-    {
-      files: ['*.ts', '*.tsx'],
-      rules: {},
-    },
-    {
-      files: ['*.js', '*.jsx'],
-      rules: {},
-    },
-    {
       files: ['*.svelte'],
-      processor: 'svelte3/svelte3',
+      parser: 'svelte-eslint-parser',
+      // Parse the `<script>` in `.svelte` as TypeScript by adding the following configuration.
+      parserOptions: {
+        parser: '@typescript-eslint/parser',
+      },
     },
   ],
-  settings: {
-    'svelte3/typescript': require('typescript'),
-  },
 };
