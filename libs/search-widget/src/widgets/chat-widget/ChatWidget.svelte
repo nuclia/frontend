@@ -11,8 +11,8 @@
   import Chat from '../../components/answer/Chat.svelte';
 
   export let backend = 'https://nuclia.cloud/api';
-  export let zone = '';
-  export let knowledgebox = '';
+  export let zone = 'europe-1';
+  export let knowledgebox;
   export let lang = '';
   export let cdn = '';
   export let apikey = '';
@@ -22,10 +22,10 @@
   export let state: KBStates = 'PUBLISHED';
   export let standalone = false;
 
-  export let fullscreen = false;
+  export let layout: 'inline' | 'fullscreen' = 'fullscreen';
   export let height = '';
 
-  let showChat = !fullscreen;
+  let showChat = layout === 'inline';
 
   export function openChat() {
     showChat = true;
@@ -87,7 +87,7 @@
   {#if ready && !!svgSprite}
     <Chat
       show={showChat}
-      {fullscreen}
+      fullscreen={layout === 'fullscreen'}
       height={height || undefined}
       on:close={closeChat} />
   {/if}
