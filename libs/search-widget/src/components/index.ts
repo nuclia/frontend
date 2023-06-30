@@ -5,3 +5,4 @@ export * from './previewers';
 export { default as ResultRow } from './result-row/ResultRow.svelte';
 export { default as SearchInput } from './search-input/SearchInput.svelte';
 export { default as Suggestions } from './suggestions/Suggestions.svelte';
+export { default as Viewer } from './viewer/Viewer.svelte';

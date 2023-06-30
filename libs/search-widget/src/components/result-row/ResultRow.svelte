@@ -1,6 +1,13 @@
 <script lang="ts">
-  import { DocTypeIndicator, isMobileViewport, ParagraphResult, Thumbnail, ThumbnailPlayer } from '../../common';
-  import { getCDN, trackingEngagement, TypedResult } from '../../core';
+  import {
+    DocTypeIndicator,
+    freezeBackground,
+    isMobileViewport,
+    ParagraphResult,
+    Thumbnail,
+    ThumbnailPlayer
+  } from '../../common';
+  import { getCDN, trackingEngagement, TypedResult, viewerData } from '../../core';
   import { Search } from '@nuclia/core';
 
   export let result: TypedResult;
@@ -9,7 +16,6 @@
   let showAllResults = false;
 
   let fallback = '';
-  let typeIndicator = '';
   let isPlayable = false;
   let innerWidth = window.innerWidth;
   $: isMobile = isMobileViewport(innerWidth);
@@ -17,31 +23,24 @@
     switch (result.resultType) {
       case 'audio':
         fallback = `${getCDN()}tiles/audio.svg`;
-        typeIndicator = 'audio'
         isPlayable = true;
         break;
       case 'conversation':
         fallback = `${getCDN()}icons/text/plain.svg`;
-        typeIndicator = 'conv';
         break;
       case 'image':
         fallback = `${getCDN()}icons/image/jpg.svg`;
-        typeIndicator = 'image';
         break;
       case 'pdf':
         fallback = `${getCDN()}icons/application/pdf.svg`;
-        typeIndicator = 'pdf';
         break;
       case 'spreadsheet':
         fallback = `${getCDN()}icons/text/csv.svg`;
-        typeIndicator = 'spreadsheet';
         break;
       case 'text':
         fallback = `${getCDN()}icons/text/plain.svg`;
-        typeIndicator = 'text';
         break;
       case 'video':
-        typeIndicator = 'video';
         isPlayable = true;
         break;
     }
@@ -49,7 +48,16 @@
 
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
-    // TODO open viewer
+    if (result.field) {
+      viewerData.set({
+        fieldFullId: { ...result.field, resourceId: result.id },
+        title: result.title,
+        selectedParagraphIndex: index,
+        resultType: result.resultType,
+        paragraphsCount: result.paragraphs?.length,
+      });
+      freezeBackground(true);
+    }
   }
 </script>
 
@@ -73,7 +81,7 @@
         on:loaded={() => (thumbnailLoaded = true)}/>
     {/if}
     <div class="doc-type-container">
-      <DocTypeIndicator type={typeIndicator} />
+      <DocTypeIndicator type={result.resultType} />
     </div>
   </div>
   <div class="result-container">

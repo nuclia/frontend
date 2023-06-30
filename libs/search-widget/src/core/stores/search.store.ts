@@ -120,7 +120,7 @@ export const searchResults = searchState.writer<
   },
 );
 
-export const resultList = searchState.reader<Search.FieldResult[]>((state) => {
+export const resultList = searchState.reader<TypedResult[]>((state) => {
   return state.results.resultList;
 });
 
@@ -467,7 +467,7 @@ const SpreadsheetContentTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.oasis.opendocument.spreadsheet',
 ];
-function getResultType(result: Search.FieldResult): ResultType {
+export function getResultType(result: Search.FieldResult): ResultType {
   if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
     const url = (result.fieldData as LinkFieldData).value?.uri;
     return url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';

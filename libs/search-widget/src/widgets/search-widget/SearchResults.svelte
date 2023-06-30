@@ -2,16 +2,13 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Observable } from 'rxjs';
-  import { combineLatest, debounceTime, map } from 'rxjs';
-  import { distinctUntilChanged, take } from 'rxjs/operators';
+  import { debounceTime } from 'rxjs';
+  import { take } from 'rxjs/operators';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
     _,
     entityRelations,
-    fieldData,
-    fieldFullId,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
     hasMore,
@@ -25,7 +22,6 @@
     logEvent,
     onlyAnswers,
     pendingResults,
-    resourceTitle,
     resultList,
     searchError,
     setWidgetActions,
@@ -33,26 +29,14 @@
     trackingReset,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import type { Search } from '@nuclia/core';
   import { onClosePreview } from '../../tiles/tile.utils';
-  import { InfoCard, InitialAnswer, ResultRow } from '../../components';
+  import { InfoCard, InitialAnswer, ResultRow, Viewer } from '../../components';
 
 
   export let mode = '';
   $: darkMode = mode === 'dark';
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
-
-  // TODO: move this in the new viewer
-  const tileResult: Observable<Search.FieldResult | null> = combineLatest([
-    fieldFullId.pipe(distinctUntilChanged()),
-    fieldData.pipe(distinctUntilChanged()),
-    resourceTitle.pipe(distinctUntilChanged())
-  ]).pipe(
-    map(([fullId, data, title]) =>
-      fullId && data ? ({ id: fullId.resourceId, field: fullId, fieldData: data, title } as Search.FieldResult) : null
-    )
-  );
 
   export const setTileMenu = setWidgetActions;
 
@@ -138,6 +122,8 @@
       {/if}
     {/if}
   {/if}
+
+  <Viewer />
 
   <div
     id="nuclia-glyphs-sprite"

@@ -1,4 +1,4 @@
-import type { MediaWidgetParagraph, PreviewKind } from '../models';
+import type { MediaWidgetParagraph, PreviewKind, ResultType } from '../models';
 import { SvelteState } from '../state-lib';
 import type { CloudLink, FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, sliceUnicode } from '@nuclia/core';
@@ -7,27 +7,55 @@ import type { Observable } from 'rxjs';
 import { filter, map, of, switchMap } from 'rxjs';
 import { NEWLINE_REGEX } from '../utils';
 
-interface ViewerState {
+export interface ViewerState {
   fieldFullId: FieldFullId | null;
   fieldData: IFieldData | null;
+  selectedParagraphIndex: number | null;
+  paragraphsCount: number;
   title: string;
   summary: string;
   isPreviewing: boolean;
+  resultType: ResultType | null;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
   fieldFullId: null,
   fieldData: null,
+  selectedParagraphIndex: null,
+  paragraphsCount: 0,
   title: '',
   summary: '',
   isPreviewing: false,
+  resultType: null,
 });
+
+export interface ViewerBasicSetter {
+  fieldFullId: FieldFullId | undefined;
+  title: string | undefined;
+  selectedParagraphIndex: number | undefined;
+  paragraphsCount: number | undefined;
+  resultType: ResultType | undefined;
+}
+
+export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
+  (state) => state,
+  (state, data) => ({
+    ...state,
+    fieldFullId: data.fieldFullId || null,
+    title: data.title || '',
+    selectedParagraphIndex: data.selectedParagraphIndex || null,
+    paragraphsCount: data.paragraphsCount || 0,
+    resultType: data.resultType || null,
+    isPreviewing: !!data.fieldFullId, //FIXME: manage isPreviewing in an effect managing navigateToFile/navigateToLink as well
+  }),
+);
 
 export const isPreviewing = viewerState.writer<boolean>(
   (state) => state.isPreviewing,
   (state, isPreviewing) => ({ ...state, isPreviewing }),
 );
 
+// TODO: cleanup now we have viewerData
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
   (state) => state.fieldFullId,
   (state, fieldFullId) => ({

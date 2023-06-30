@@ -1,13 +1,4 @@
-import {
-  getAnswer,
-  getEntities,
-  getEvents,
-  getLabelSets,
-  getResourceField,
-  predict,
-  searchInResource,
-  suggest,
-} from '../api';
+import { getAnswer, getEntities, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
 import { labelSets, labelState } from './labels.store';
 import { Suggestions, suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -35,13 +26,14 @@ import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import {
   isEmptySearchQuery,
   isTitleOnly,
+  resultList,
   searchFilters,
   searchQuery,
   searchState,
   trackingEngagement,
   triggerSearch,
 } from './search.store';
-import { fieldData, fieldFullId, viewerState } from './viewer.store';
+import { fieldData, fieldFullId, viewerData, viewerState } from './viewer.store';
 import { answerState, chat, chatError, currentAnswer, currentQuestion } from './answers.store';
 import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
@@ -221,7 +213,26 @@ function initStoreFromUrlParams() {
     const [resourceId, type, field_id] = preview.split('|');
     const field_type = getFieldTypeFromString(type);
     if (resourceId && field_type && field_id) {
-      fieldFullId.set({ resourceId, field_type, field_id });
+      resultList
+        .pipe(
+          filter((list) => list.length > 0),
+          take(1),
+        )
+        .subscribe((list) => {
+          const previewResult = list.find(
+            (item) =>
+              item.id === resourceId && item.field?.field_id === field_id && item.field.field_type === field_type,
+          );
+          if (previewResult) {
+            viewerData.set({
+              fieldFullId: { field_id, field_type, resourceId: previewResult.id },
+              title: previewResult.title,
+              selectedParagraphIndex: -1,
+              resultType: previewResult.resultType,
+              paragraphsCount: previewResult.paragraphs?.length,
+            });
+          }
+        });
     }
   }
 }
@@ -233,7 +244,7 @@ export function initViewer() {
       distinctUntilChanged(),
       switchMap((fullId) => {
         if (fullId) {
-          // load in 2 passes so we get the field value fast, so we can render the tile
+          // load in 2 passes, so we get the field value fast, so we can render the tile
           // and then get the field extracted metadata later (as it is much bigger)
           // TODO: reconsider when https://app.shortcut.com/flaps/story/4190/option-to-not-load-ners-related-data-when-getting-a-field
           // is done (maybe a unique pass will be better then)

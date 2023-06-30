@@ -4,9 +4,9 @@
   import Feedback from './Feedback.svelte';
   import type { Chat } from '@nuclia/core';
   import { getSortedResults } from '../../core/stores/search.store';
-  import Tile from '../../tiles/Tile.svelte';
   import { createEventDispatcher } from 'svelte';
   import { isMobileViewport } from '../../common/utils';
+  import ResultRow from '../result-row/ResultRow.svelte';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
   export let hideFeedback = false;
@@ -41,7 +41,7 @@
       </h3>
       <div class="results">
         {#each sources as result}
-          <Tile {result} />
+          <ResultRow {result} />
         {/each}
       </div>
     </Expander>
