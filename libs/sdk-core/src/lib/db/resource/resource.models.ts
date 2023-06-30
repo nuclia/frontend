@@ -192,9 +192,27 @@ export interface PagePositions {
   end?: number;
 }
 
+export interface PageStructure {
+  page: {
+    width: number;
+    height: number;
+  };
+  tokens: PageToken[];
+}
+
+export interface PageToken {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  text: string;
+  line: number;
+}
+
 export interface FilePages {
   pages?: CloudLink[];
   positions?: PagePositions[];
+  structures?: PageStructure[];
 }
 
 export interface FileB64 {
