@@ -9,7 +9,7 @@ export const SharepointConnector: SourceConnectorDefinition = {
   title: 'SharePoint',
   logo: 'assets/logos/sharepoint.svg',
   description: 'Microsoft Sharepoint service',
-  helpUrl: 'https://docs.nuclia.dev/docs/batch/nda/#sharepoint-connector-usage',
+  helpUrl: 'https://docs.nuclia.dev/docs/docs/using/nda/#sharepoint-connector-usage',
   permanentSyncOnly: true,
   factory: () => of(new SharepointImpl()),
 };

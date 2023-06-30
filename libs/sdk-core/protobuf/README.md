@@ -22,7 +22,7 @@ yarn add @nuclia/protobuf
 
 ## Usage
 
-When using a [webhook with the Nuclia Understanding API](https://docs.nuclia.dev/docs/understanding/intro#use-a-webhook), the message sent to the webhook is a protobuffer message. It can be decoded using the NucliaProtobufConverter.
+When using a [webhook with the Nuclia Understanding API](https://docs.nuclia.dev/docs/docs/using/understanding/intro#use-a-webhook), the message sent to the webhook is a protobuffer message. It can be decoded using the NucliaProtobufConverter.
 
 ```js
 import { NucliaProtobufConverter } from '@nuclia/protobuf';

@@ -2,7 +2,7 @@
 
 Nuclia SDK is an open-source library wrapping Nuclia API in order to integrate [Nuclia](https://nuclia.com) services in your frontend application.
 
-The full documentation is available at [https://docs.nuclia.dev/docs/sdk/sdk_api](https://docs.nuclia.dev/docs/sdk/sdk_api).
+The full documentation is available at [https://docs.nuclia.dev/docs/docs/sdk/js_sdk_api](https://docs.nuclia.dev/docs/docs/sdk/js_sdk_api).
 
 ## Basic usage
 

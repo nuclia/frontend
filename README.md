@@ -103,7 +103,7 @@ Start by creating an account with an email and password (as SSO doesn't work loc
 
 ## Widget
 
-[Documentation](https://docs.nuclia.dev/docs/widget/api)
+[Documentation](https://docs.nuclia.dev/docs/docs/using/widget/features)
 
 In the demo, the knowledge box id is hardcoded in `apps/search-widget-demo/src/App.svelte`.
 Before launching the demo, replace this id by the one for your own **public** knowledge box.
@@ -128,7 +128,7 @@ When you have some local changes to the widget you'd like to test on the dashboa
 
 ## SDK
 
-[Documentation](https://docs.nuclia.dev/docs/sdk)
+[Documentation](https://docs.nuclia.dev/docs/docs/sdk/js_sdk_api)
 
 ## Desktop app
 
