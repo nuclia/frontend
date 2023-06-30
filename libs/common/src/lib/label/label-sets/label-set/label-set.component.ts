@@ -1,17 +1,21 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
 import { map, Subject, take } from 'rxjs';
-import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { STFUtils } from '@flaps/core';
+import { FeatureFlagService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
 import { EMPTY_LABEL_SET, MutableLabelSet } from '../model';
 import { LABEL_MAIN_COLORS } from '../utils';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../../../validators';
 import { LabelsService } from '../../labels.service';
+
+const KINDS = [
+  { id: LabelSetKind.RESOURCES, name: 'label-set.resources' },
+  { id: LabelSetKind.PARAGRAPHS, name: 'label-set.paragraphs' },
+];
 
 interface LabelSetTitleError extends IErrorMessages {
   required: string;
@@ -32,10 +36,10 @@ export class LabelSetComponent implements OnDestroy {
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
-  kinds = [
-    { id: LabelSetKind.RESOURCES, name: 'label-set.resources' },
-    { id: LabelSetKind.PARAGRAPHS, name: 'label-set.paragraphs' },
-  ];
+  kinds = this.featureFlag.isFeatureEnabled('pdf-annotation').pipe(
+    map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
+    shareReplay(1),
+  );
 
   validationMessages: { [key: string]: LabelSetTitleError } = {
     title: {
@@ -56,8 +60,8 @@ export class LabelSetComponent implements OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private labelsService: LabelsService,
-    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private featureFlag: FeatureFlagService,
   ) {
     this.route.params
       .pipe(

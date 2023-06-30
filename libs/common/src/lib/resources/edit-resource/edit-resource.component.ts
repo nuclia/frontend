@@ -2,19 +2,21 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, map, Observable, Subject, switchMap } from 'rxjs';
+import { filter, forkJoin, map, Observable, Subject, switchMap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
-import { takeUntil } from 'rxjs/operators';
+import { shareReplay, take, takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
 import { NavigationService } from '../../services/navigation.service';
 import { SisModalService } from '@nuclia/sistema';
+import { FeatureFlagService } from '@flaps/core';
+
+const PAWLS_KEY = 'pawls';
 
 interface ResourceFieldWithIcon extends ResourceField {
   icon: string;
@@ -44,6 +46,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         })),
     ),
   );
+  isPdfAnnotationEnabled = this.featureFlag.isFeatureEnabled('pdf-annotation').pipe(shareReplay(1));
 
   activeField?: FieldId | 'resource';
 
@@ -52,9 +55,9 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     private router: Router,
     private editResource: EditResourceService,
     private navigationService: NavigationService,
-    private element: ElementRef,
     private cdr: ChangeDetectorRef,
     private modal: SisModalService,
+    private featureFlag: FeatureFlagService,
   ) {
     this.route.params
       .pipe(
@@ -135,5 +138,12 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         switchMap(() => this.backRoute),
       )
       .subscribe((route) => this.router.navigate([route]));
+  }
+
+  goToPawls() {
+    this.editResource.pawlsData.pipe(take(1)).subscribe((data) => {
+      localStorage.setItem(PAWLS_KEY, JSON.stringify(data));
+      location.href = '/pawls';
+    });
   }
 }

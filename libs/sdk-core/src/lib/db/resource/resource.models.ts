@@ -192,9 +192,27 @@ export interface PagePositions {
   end?: number;
 }
 
+export interface PageStructure {
+  page: {
+    width: number;
+    height: number;
+  };
+  tokens: PageToken[];
+}
+
+export interface PageToken {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  text: string;
+  line: number;
+}
+
 export interface FilePages {
   pages?: CloudLink[];
   positions?: PagePositions[];
+  structures?: PageStructure[];
 }
 
 export interface FileB64 {
@@ -273,6 +291,21 @@ export interface UserFieldMetadata {
   field: { field: string; field_type: string };
   paragraphs?: ParagraphClassification[];
   token?: UserTokenAnnotation[];
+  selections?: PageSelections[];
+}
+
+export interface PageSelections {
+  page: number;
+  visual: VisualSelection[];
+}
+
+export interface VisualSelection {
+  label: string;
+  top: number;
+  left: number;
+  right: number;
+  bottom: number;
+  token_ids: number[];
 }
 
 export interface TokenAnnotation {

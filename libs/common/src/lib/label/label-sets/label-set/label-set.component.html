@@ -40,7 +40,7 @@
           <div>
             <pa-radio-group formControlName="kind">
               <pa-radio
-                *ngFor="let kind of kinds"
+                *ngFor="let kind of kinds | async"
                 [value]="kind.id"
                 [disabled]="!addNew">
                 {{ kind.name | translate }}
