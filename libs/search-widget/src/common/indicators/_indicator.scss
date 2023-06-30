@@ -25,7 +25,7 @@
     background: var(--color-primary-lightest);
   }
   &.selected {
-    background: var(--color-primary-lightest);
+    background: var(--color-primary-lighter);
     color: var(--color-primary-regular);
   }
   &.selected:active {

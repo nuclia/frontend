@@ -12,7 +12,7 @@
   export let ellipsis = false;
   export let selected = false;
   export let minimized = false;
-  export let hideIndicator = false;
+  export let noIndicator = false;
   export let disabled = false;
 
   let hovering = false;
@@ -52,7 +52,7 @@
   {/if}
   <div
     class="paragraph-result-container"
-    class:no-indicator={hideIndicator}
+    class:no-indicator={noIndicator}
     class:stack
     class:selected
     class:disabled
@@ -62,7 +62,7 @@
     on:click={disabled ? null : open}>
     <div
       class="indicator-container"
-      class:hidden={hideIndicator}>
+      class:hidden={noIndicator}>
       {#if isPdf}
         <PageIndicator
           page={paragraph.position.page_number >= 0 ? paragraph.position.page_number + 1 : undefined}

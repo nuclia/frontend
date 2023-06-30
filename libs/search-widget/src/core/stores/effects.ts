@@ -225,11 +225,8 @@ function initStoreFromUrlParams() {
           );
           if (previewResult) {
             viewerData.set({
-              fieldFullId: { field_id, field_type, resourceId: previewResult.id },
-              title: previewResult.title,
+              result: previewResult,
               selectedParagraphIndex: -1,
-              resultType: previewResult.resultType,
-              paragraphsCount: previewResult.paragraphs?.length,
             });
           }
         });

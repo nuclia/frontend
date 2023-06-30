@@ -41,7 +41,7 @@
   } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
   import { getResourceField, searchInResource } from '../../core/api';
-  import SearchResultNavigator from './header/SearchResultNavigator.svelte';
+  import SearchResultNavigator from '../../components/viewer/SearchResultNavigator.svelte';
   import { _ } from '../../core/i18n';
   import KnowledgeGraphPanel from '../../components/knowledge-graph/KnowledgeGraphPanel.svelte';
   import { graphQuery } from '../../core/stores/graph.store';

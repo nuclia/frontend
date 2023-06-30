@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     DocTypeIndicator,
-    freezeBackground,
     isMobileViewport,
     ParagraphResult,
     Thumbnail,
@@ -50,13 +49,9 @@
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
       viewerData.set({
-        fieldFullId: { ...result.field, resourceId: result.id },
-        title: result.title,
+        result,
         selectedParagraphIndex: index,
-        resultType: result.resultType,
-        paragraphsCount: result.paragraphs?.length,
       });
-      freezeBackground(true);
     }
   }
 </script>
@@ -91,11 +86,9 @@
       {result?.title}
     </h3>
 
-    <div
-      class="search-result-paragraphs"
-      tabindex="-1">
+    <div tabindex="-1">
       <ul
-        class="paragraphs-container"
+        class="sw-paragraphs-container"
         class:expanded={showAllResults}
         class:can-expand={result.paragraphs.length > 4}>
         {#each result.paragraphs as paragraph, index}

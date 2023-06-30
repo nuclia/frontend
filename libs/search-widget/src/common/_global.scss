@@ -116,6 +116,15 @@ ul.sw-dropdown-options {
   }
 }
 
+.sw-paragraphs-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--paragraph-gap);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .title-m {
   font-size: var(--font-size-title-m);
   font-weight: var(--font-weight-title-m);

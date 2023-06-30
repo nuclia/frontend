@@ -1,52 +1,49 @@
-import type { MediaWidgetParagraph, PreviewKind, ResultType } from '../models';
+import type { MediaWidgetParagraph, PreviewKind, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
 import type { CloudLink, FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
-import { FIELD_TYPE, FileFieldData, LinkFieldData, sliceUnicode } from '@nuclia/core';
+import { FIELD_TYPE, FileFieldData, LinkFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
 import { filter, map, of, switchMap } from 'rxjs';
 import { NEWLINE_REGEX } from '../utils';
 
 export interface ViewerState {
-  fieldFullId: FieldFullId | null;
-  fieldData: IFieldData | null;
+  currentResult: TypedResult | null;
   selectedParagraphIndex: number | null;
-  paragraphsCount: number;
-  title: string;
   summary: string;
   isPreviewing: boolean;
-  resultType: ResultType | null;
+  fieldFullId: FieldFullId | null;
+
+  // TODO cleanup
+  fieldData: IFieldData | null;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
-  fieldFullId: null,
-  fieldData: null,
+  currentResult: null,
   selectedParagraphIndex: null,
-  paragraphsCount: 0,
-  title: '',
   summary: '',
   isPreviewing: false,
-  resultType: null,
+  fieldFullId: null,
+
+  fieldData: null,
 });
 
 export interface ViewerBasicSetter {
-  fieldFullId: FieldFullId | undefined;
-  title: string | undefined;
+  result: TypedResult | null;
   selectedParagraphIndex: number | undefined;
-  paragraphsCount: number | undefined;
-  resultType: ResultType | undefined;
 }
 
 export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
   (state) => state,
   (state, data) => ({
     ...state,
-    fieldFullId: data.fieldFullId || null,
-    title: data.title || '',
-    selectedParagraphIndex: data.selectedParagraphIndex || null,
-    paragraphsCount: data.paragraphsCount || 0,
-    resultType: data.resultType || null,
-    isPreviewing: !!data.fieldFullId, //FIXME: manage isPreviewing in an effect managing navigateToFile/navigateToLink as well
+    currentResult: data.result,
+    selectedParagraphIndex: typeof data.selectedParagraphIndex === 'number' ? data.selectedParagraphIndex : null,
+    fieldFullId:
+      data.result && data.result.field
+        ? { field_id: data.result.field.field_id, field_type: data.result.field.field_type, resourceId: data.result.id }
+        : null,
+    isPreviewing: !!data, //FIXME: manage isPreviewing in an effect managing navigateToFile/navigateToLink as well
   }),
 );
 
@@ -55,7 +52,14 @@ export const isPreviewing = viewerState.writer<boolean>(
   (state, isPreviewing) => ({ ...state, isPreviewing }),
 );
 
-// TODO: cleanup now we have viewerData
+export const selectedParagraphIndex = viewerState.writer<number | null>(
+  (state) => state.selectedParagraphIndex,
+  (state, index) => ({
+    ...state,
+    selectedParagraphIndex: index,
+  }),
+);
+
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
   (state) => state.fieldFullId,
   (state, fieldFullId) => ({
@@ -85,7 +89,7 @@ export const resourceField = viewerState.reader<ResourceField | null>((state) =>
 );
 
 export const resourceTitle = viewerState.writer<string, string>(
-  (state) => state.title,
+  (state) => state.currentResult?.title || '',
   (state, title) => ({
     ...state,
     title,
@@ -121,6 +125,45 @@ export function getFieldUrl(forcePdf?: boolean): Observable<string> {
 
 export function isLinkField(): Observable<boolean> {
   return fieldFullId.pipe(map((fullId) => fullId?.field_type === FIELD_TYPE.link));
+}
+
+export function getTranscripts(): Observable<Search.FindParagraph[]> {
+  return viewerState.store.pipe(
+    map((state) => {
+      if (!state.fieldFullId || !state.fieldData) {
+        return [];
+      } else {
+        const text = state.fieldData.extracted?.text?.text || '';
+        const paragraphs = (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
+          (paragraph) => paragraph.kind === 'TRANSCRIPT',
+        );
+        const fieldFullId = state.fieldFullId;
+        return paragraphs.map((paragraph, index) => {
+          const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
+          const start = paragraph.start || 0;
+          const end = paragraph.end || 0;
+          const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
+            fieldFullId.field_id
+          }/${start}-${end}`;
+          return {
+            id,
+            order: paragraph.order || 0,
+            text: paragraphText,
+            labels: [],
+            score: 0,
+            score_type: Search.FindScoreType.BOTH,
+            position: {
+              index,
+              start,
+              end,
+              start_seconds: paragraph.start_seconds,
+              end_seconds: paragraph.end_seconds,
+            },
+          };
+        });
+      }
+    }),
+  );
 }
 
 export function getMediaTranscripts(
