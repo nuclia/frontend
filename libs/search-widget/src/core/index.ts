@@ -5,4 +5,5 @@ export * from './i18n';
 export * from './knowledge-graph.models';
 export * from './models';
 export * from './search-bar';
+export * from './tracking';
 export * from './utils';

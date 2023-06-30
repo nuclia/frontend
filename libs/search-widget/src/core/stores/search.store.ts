@@ -3,6 +3,7 @@ import type { IResource, Paragraph, ResourceField, Search, SearchOptions } from 
 import {
   Classification,
   FIELD_TYPE,
+  FileFieldData,
   getDataKeyFromFieldType,
   getEntityFromFilter,
   getFilterFromEntity,
@@ -10,12 +11,13 @@ import {
   getLabelFromFilter,
   IErrorResponse,
   LabelSetKind,
+  LinkFieldData,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { DisplayedResource, FindResultsAsList, NO_RESULT_LIST } from '../models';
+import { DisplayedResource, FindResultsAsList, NO_RESULT_LIST, ResultType, TypedResult } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
-import type { LabelFilter } from '../../common/label/label.utils';
+import type { LabelFilter } from '../../common';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -411,14 +413,14 @@ export function getFirstResourceField(resource: IResource): ResourceField | unde
   }
 }
 
-export function getSortedResults(resources: Search.FindResource[]): Search.FieldResult[] {
+export function getSortedResults(resources: Search.FindResource[]): TypedResult[] {
   if (!resources) {
     return [];
   }
 
   const keyList: string[] = [];
   return resources.reduce((resultList, resource) => {
-    const fieldEntries: Search.FieldResult[] = Object.entries(resource.fields)
+    const fieldEntries: TypedResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {
         // filter out generic fields
         const fieldType = fullFieldId.split('/')[1];
@@ -428,29 +430,74 @@ export function getSortedResults(resources: Search.FindResource[]): Search.Field
         const [, shortType, fieldId] = fullFieldId.split('/');
         const fieldType = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
         const dataKey = getDataKeyFromFieldType(fieldType);
-        const smartResult = {
+        const fieldResult: Search.FieldResult = {
           ...resource,
           field: { field_id: fieldId, field_type: fieldType },
           fieldData: dataKey ? resource.data?.[dataKey]?.[fieldId] : undefined,
           paragraphs: Object.values(field.paragraphs).sort((a, b) => a.order - b.order),
         };
+        const typedResult: TypedResult = {
+          ...fieldResult,
+          resultType: getResultType(fieldResult),
+        };
         // Don't include results already displayed:
         // sometimes load more bring results which are actually the same as what we got before but with another score_type
-        const uniqueKey = getResultUniqueKey(smartResult);
+        const uniqueKey = getResultUniqueKey(typedResult);
         if (!keyList.includes(uniqueKey)) {
           keyList.push(uniqueKey);
-          return smartResult;
+          return typedResult;
         } else {
           return null;
         }
       })
-      .filter((smartResult) => !!smartResult)
-      .map((smartResult) => smartResult as Search.FieldResult);
+      .filter((typedResult) => !!typedResult)
+      .map((typedResult) => typedResult as TypedResult);
     resultList = resultList.concat(fieldEntries);
     return resultList;
-  }, [] as Search.FieldResult[]);
+  }, [] as TypedResult[]);
 }
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
   return `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
+}
+
+const SpreadsheetContentTypes = [
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.oasis.opendocument.spreadsheet',
+];
+function getResultType(result: Search.FieldResult): ResultType {
+  if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
+    const url = (result.fieldData as LinkFieldData).value?.uri;
+    return url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+  } else if (result?.field?.field_type === FIELD_TYPE.conversation) {
+    return 'conversation';
+  } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
+    const file = (result.fieldData as FileFieldData).value?.file;
+    // for audio, video, image or text, we have a corresponding tile
+    // for mimetype starting with 'application/', it is more complex:
+    // - anything like a spreadsheet is a spreadsheet
+    // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
+    // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
+    if (file?.content_type?.startsWith('audio')) {
+      return 'audio';
+    } else if (file?.content_type?.startsWith('video')) {
+      return 'video';
+    } else if (file?.content_type?.startsWith('image')) {
+      return 'image';
+    } else if (file?.content_type?.startsWith('text')) {
+      return 'text';
+    } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
+      return 'spreadsheet';
+    } else if (file?.content_type?.startsWith('application/octet-stream')) {
+      return 'text';
+    } else if (file?.content_type?.startsWith('application')) {
+      return 'pdf';
+    } else {
+      return 'text';
+    }
+  } else {
+    return 'text';
+  }
 }
