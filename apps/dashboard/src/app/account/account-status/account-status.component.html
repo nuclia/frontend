@@ -1,25 +1,23 @@
 <div class="account-status">
   <div>
     <div class="body-m type">
-      <span *ngIf="trialAccount | async">{{ 'account.free_trial' | translate }}</span>
-      <span *ngIf="!(trialAccount | async)">{{ 'account.type.' + (accountType | async) | translate }}</span>
+      <span *ngIf="isTrial | async">{{ 'account.free_trial' | translate }}</span>
+      <span *ngIf="!(isTrial | async)">{{ 'account.type.' + (accountType | async) | translate }}</span>
     </div>
     <div class="title-l price">
       <ng-container *ngIf="price | async as price">
-        <span>{{ price | currency: (getCurrency() | async):'symbol':'1.0-0' }}</span>
+        <span>{{ price | currency : (getCurrency() | async) : 'symbol' : '1.0-0' }}</span>
         <span class="body-s unit">/{{ 'billing.month' | translate }}</span>
       </ng-container>
-      <ng-container *ngIf="trialAccount | async">
-        <div *ngIf="!(blocked | async)">
+      <ng-container *ngIf="isTrial | async">
+        <span *ngIf="trialExpired | async">{{ 'account.expired' | translate }}</span>
+        <span *ngIf="!(trialExpired | async) && (daysLeft | async) !== null">
           {{
-            (trialExpired | async)
-              ? ('account.expired' | translate)
-              : ('account.days_left' | translate: { days: (daysLeft | async) + 1 })
+            (daysLeft | async) === 1
+              ? ('account.day_left' | translate)
+              : ('account.days_left' | translate : { days: (daysLeft | async) })
           }}
-        </div>
-        <div *ngIf="blocked | async">
-          {{ 'account.quota_exhausted' | translate }}
-        </div>
+        </span>
       </ng-container>
     </div>
   </div>
