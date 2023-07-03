@@ -657,6 +657,7 @@
 	"resource.tooltip.pdf-annotation": "Annotate by selection",
 	"resource.tooltip.preview": "Preview",
 	"resource.tooltip.reprocess": "Reprocess",
+	"resource.upload_via_desktop": "Upload via desktop app",
 	"resource.visible_columns_dropdown": "Displayed columns",
 	"search.more_results": "show more results",
 	"search.sort_by": "Sort by",
