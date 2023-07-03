@@ -8,6 +8,8 @@
     isPreviewing,
     searchQuery,
     selectedParagraphIndex,
+    selectNext,
+    selectPrevious,
     TypedResult,
     viewerData,
     viewerSearchQuery,
@@ -29,7 +31,7 @@
   import { onDestroy, onMount } from 'svelte';
   import { FIELD_TYPE, Search } from '@nuclia/core';
   import { BehaviorSubject, debounceTime, filter, Observable, of, Subject, take } from 'rxjs';
-  import { MetadataContainer, MetadataSectionHeader, SearchResultNavigator } from './';
+  import { MetadataContainer, MetadataSectionHeader, SearchResultNavigator, ViewerContent } from './';
 
   // Browser window related variables
   const resizeEvent = new Subject();
@@ -146,14 +148,19 @@
   }
 
   function openPrevious() {
-    // TODO: openPrevious
+    selectPrevious.do();
   }
 
   function openNext() {
-    // TODO: openNext
+    selectNext.do();
+  }
+
+  function selectParagraph(index: number) {
+    selectedParagraphIndex.set(index);
   }
 
   function toggleSidePanel() {
+    // TODO: smoothly scroll to the selected paragraph
     sidePanelExpanded = !sidePanelExpanded;
     resultNavigatorDisabled = sidePanelExpanded;
     if (!showKnowledgeGraph) {
@@ -281,7 +288,9 @@
       {/if}
 
       <div class="viewer-content"
-           class:no-result-navigator={resultNavigatorHidden}></div>
+           class:no-result-navigator={resultNavigatorHidden}>
+        <ViewerContent/>
+      </div>
 
       <div class="side-panel">
         {#if !isMobile}
@@ -348,7 +357,9 @@
                                          minimized={isMobile}
                                          resultType={result?.resultType}
                                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                         selected={index === state.selectedParagraphIndex}/>
+                                         selected={index === state.selectedParagraphIndex}
+                                         on:open={() => selectParagraph(index)}
+                        />
                       {/each}
                     </ul>
                   </div>

@@ -1,4 +1,4 @@
-import type { MediaWidgetParagraph, PreviewKind, TypedResult } from '../models';
+import type { MediaWidgetParagraph, PreviewKind, ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
 import type { CloudLink, FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
@@ -65,6 +65,46 @@ export const selectedParagraphIndex = viewerState.writer<number | null>(
   }),
 );
 
+export const selectPrevious = viewerState.action((state) => {
+  if (state.selectedParagraphIndex !== null && state.selectedParagraphIndex > 0) {
+    return {
+      ...state,
+      selectedParagraphIndex: state.selectedParagraphIndex - 1,
+    };
+  }
+  return state;
+});
+
+export const selectNext = viewerState.action((state) => {
+  if (
+    state.selectedParagraphIndex !== null &&
+    !!state.currentResult?.paragraphs &&
+    state.selectedParagraphIndex < state.currentResult.paragraphs.length - 1
+  ) {
+    return {
+      ...state,
+      selectedParagraphIndex: state.selectedParagraphIndex + 1,
+    };
+  }
+  return state;
+});
+
+export const currentResultType = viewerState.reader<ResultType | null>(
+  (state) => state.currentResult?.resultType || null,
+);
+
+export const playFrom = viewerState.reader<number>((state) => {
+  if (
+    state.selectedParagraphIndex === null ||
+    !state.currentResult?.paragraphs ||
+    state.currentResult.paragraphs.length === 0
+  ) {
+    return 0;
+  }
+  const selectedParagraph = state.currentResult.paragraphs[state.selectedParagraphIndex];
+  return selectedParagraph.position.start_seconds?.[0] || 0;
+});
+
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
   (state) => state.fieldFullId,
   (state, fieldFullId) => ({
@@ -75,16 +115,26 @@ export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | 
 
 export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null>(
   (state) => state.fieldData,
-  (state, data) => ({
-    ...state,
-    fieldData: data
-      ? {
-          value: data.value,
-          extracted: data.extracted,
-        }
-      : null,
-    summary: data?.extracted?.metadata?.metadata?.summary || '',
-  }),
+  (state, data) => {
+    let fieldData: IFieldData | undefined;
+    if (data) {
+      fieldData = {
+        value: data.value,
+        extracted: data.extracted,
+      };
+    }
+    return {
+      ...state,
+      currentResult: state.currentResult
+        ? {
+            ...state.currentResult,
+            fieldData,
+          }
+        : null,
+      fieldData: fieldData ? fieldData : null,
+      summary: data?.extracted?.metadata?.metadata?.summary || '',
+    };
+  },
 );
 
 export const resourceField = viewerState.reader<ResourceField | null>((state) =>

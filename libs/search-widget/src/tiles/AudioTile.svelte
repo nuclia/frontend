@@ -3,7 +3,7 @@
   import { PreviewKind } from '../core/models';
   import { getCDN } from '../core/utils';
   import type { Observable } from 'rxjs';
-  import AudioPlayer from './viewers/AudioPlayer.svelte';
+  import AudioPlayer from '../components/viewer/renderers/players/AudioPlayer.svelte';
   import { getFieldUrl } from '../core/stores/viewer.store';
   import MediaTile from './base-tile/MediaTile.svelte';
 

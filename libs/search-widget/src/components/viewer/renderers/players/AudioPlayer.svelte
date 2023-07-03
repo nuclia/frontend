@@ -1,9 +1,9 @@
 <script lang="ts">
-  import IconButton from '../../common/button/IconButton.svelte';
+  import IconButton from '../../../../common/button/IconButton.svelte';
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { lightFormat } from 'date-fns';
-  import { getCDN } from '../../core/utils';
-  import { _ } from '../../core/i18n';
+  import { getCDN } from '../../../../core/utils';
+  import { _ } from '../../../../core/i18n';
 
   export let src;
   export let time;
