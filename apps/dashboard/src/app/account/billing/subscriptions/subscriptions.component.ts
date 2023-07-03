@@ -63,7 +63,7 @@ export class SubscriptionsComponent {
   }
 
   contact() {
-    this.window.location.href = 'mailto:billing@nuclia.com';
+    this.window.location.href = 'mailto:support@nuclia.com';
   }
 
   cancel() {

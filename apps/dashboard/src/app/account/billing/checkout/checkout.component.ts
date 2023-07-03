@@ -405,7 +405,7 @@ export class CheckoutComponent implements OnDestroy, OnInit {
         ? this.translate.instant(message)
         : this.translate.instant('generic.error.oops') +
             '<br>' +
-            this.translate.instant('billing.assistance', { url: 'mailto:billing@nuclia.com' }),
+            this.translate.instant('billing.assistance', { url: 'mailto:support@nuclia.com' }),
     );
   }
 
