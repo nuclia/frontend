@@ -218,7 +218,7 @@
           class="ellipsis title-m">
           {result?.title}
         </h3>
-        {#if state.fieldFullId.field_type === FIELD_TYPE.file || state.fieldFullId.field_type === FIELD_TYPE.link}
+        {#if state.fieldFullId?.field_type === FIELD_TYPE.file || state.fieldFullId?.field_type === FIELD_TYPE.link}
           <IconButton
             icon={state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
             ariaLabel={$_('resource.source')}
@@ -332,11 +332,13 @@
                 </div>
 
                 {#if sidePanelSectionOpen !== 'search'}
-                  <div class="search-results-collapsed">
-                    <MetadataSectionHeader on:toggle={() => toggleSection('search')}>
-                      {$_('tile.search-results', { count: result?.paragraphs.length })}
-                    </MetadataSectionHeader>
-                  </div>
+                  {#if result?.paragraphs.length > 0}
+                    <div class="search-results-collapsed">
+                      <MetadataSectionHeader on:toggle={() => toggleSection('search')}>
+                        {$_('tile.search-results', { count: result?.paragraphs.length })}
+                      </MetadataSectionHeader>
+                    </div>
+                  {/if}
                 {:else}
                   <div class="search-results-container" tabindex="-1">
                     <ul class="sw-paragraphs-container">

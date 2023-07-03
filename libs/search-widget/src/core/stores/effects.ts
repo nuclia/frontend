@@ -1,4 +1,13 @@
-import { getAnswer, getEntities, getLabelSets, getResourceField, predict, searchInResource, suggest } from '../api';
+import {
+  getAnswer,
+  getEntities,
+  getLabelSets,
+  getResourceById,
+  getResourceField,
+  predict,
+  searchInResource,
+  suggest,
+} from '../api';
 import { labelSets, labelState } from './labels.store';
 import { Suggestions, suggestions, suggestionState, triggerSuggestions, typeAhead } from './suggestions.store';
 import {
@@ -18,12 +27,13 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { NO_SUGGESTION_RESULTS } from '../models';
+import { NO_SUGGESTION_RESULTS, TypedResult } from '../models';
 import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
-import { getFieldTypeFromString } from '@nuclia/core';
+import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import {
+  getResultType,
   isEmptySearchQuery,
   isTitleOnly,
   resultList,
@@ -216,15 +226,35 @@ function initStoreFromUrlParams() {
     if (resourceId && field_type && field_id) {
       resultList
         .pipe(
-          filter((list) => list.length > 0),
           take(1),
+          switchMap((list) => {
+            if (list.length > 0) {
+              const previewResult = list.find(
+                (item) =>
+                  item.id === resourceId && item.field?.field_id === field_id && item.field.field_type === field_type,
+              );
+              return of(previewResult);
+            } else {
+              return getResourceById(resourceId, [
+                ResourceProperties.BASIC,
+                ResourceProperties.ORIGIN,
+                ResourceProperties.VALUES,
+              ]).pipe(
+                map((resource) => {
+                  const field = { field_id, field_type };
+                  const result: TypedResult = {
+                    ...resource,
+                    resultType: getResultType({ ...resource, field }),
+                    field,
+                  };
+                  return result;
+                }),
+              );
+            }
+          }),
         )
-        .subscribe((list) => {
-          const previewResult = list.find(
-            (item) =>
-              item.id === resourceId && item.field?.field_id === field_id && item.field.field_type === field_type,
-          );
-          const index = parseInt(selectedIndex, 10);
+        .subscribe((previewResult: TypedResult | undefined) => {
+          const index = selectedIndex !== 'null' ? parseInt(selectedIndex, 10) : -1;
           if (previewResult) {
             viewerData.set({
               result: previewResult,

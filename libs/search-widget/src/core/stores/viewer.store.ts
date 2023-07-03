@@ -37,7 +37,12 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
   (state) => state,
   (state, data) => ({
     ...state,
-    currentResult: data.result,
+    currentResult: data.result
+      ? {
+          ...data.result,
+          paragraphs: data.result.paragraphs || [],
+        }
+      : null,
     selectedParagraphIndex: typeof data.selectedParagraphIndex === 'number' ? data.selectedParagraphIndex : null,
     fieldFullId:
       data.result && data.result.field
@@ -70,18 +75,16 @@ export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | 
 
 export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null>(
   (state) => state.fieldData,
-  (state, data) => {
-    return {
-      ...state,
-      fieldData: data
-        ? {
-            value: data.value,
-            extracted: data.extracted,
-          }
-        : null,
-      summary: data?.extracted?.metadata?.metadata?.summary || '',
-    };
-  },
+  (state, data) => ({
+    ...state,
+    fieldData: data
+      ? {
+          value: data.value,
+          extracted: data.extracted,
+        }
+      : null,
+    summary: data?.extracted?.metadata?.metadata?.summary || '',
+  }),
 );
 
 export const resourceField = viewerState.reader<ResourceField | null>((state) =>
