@@ -163,15 +163,16 @@ export function activatePermalinks() {
         updateQueryParams(urlParams);
       }),
     // Add current field id in the URL when preview is open
-    fieldFullId
+    viewerData
       .pipe(
         distinctUntilChanged(),
-        filter((fullId) => !!fullId),
+        filter((data) => !!data.fieldFullId),
       )
-      .subscribe((fullId) => {
-        const previewId = `${fullId?.resourceId}|${fullId?.field_type}|${fullId?.field_id}`;
+      .subscribe((viewerState) => {
+        const previewId = `${viewerState.fieldFullId?.resourceId}|${viewerState.fieldFullId?.field_type}|${viewerState.fieldFullId?.field_id}`;
+        const selectedIndex = `${viewerState.selectedParagraphIndex}`;
         const urlParams = getUrlParams();
-        urlParams.set(previewKey, previewId);
+        urlParams.set(previewKey, `${previewId}|${selectedIndex}`);
         updateQueryParams(urlParams);
       }),
     //Remove preview parameters from the URL when preview is closed
@@ -210,7 +211,7 @@ function initStoreFromUrlParams() {
   // Viewer store
   const preview = urlParams.get(previewKey);
   if (preview) {
-    const [resourceId, type, field_id] = preview.split('|');
+    const [resourceId, type, field_id, selectedIndex] = preview.split('|');
     const field_type = getFieldTypeFromString(type);
     if (resourceId && field_type && field_id) {
       resultList
@@ -223,10 +224,11 @@ function initStoreFromUrlParams() {
             (item) =>
               item.id === resourceId && item.field?.field_id === field_id && item.field.field_type === field_type,
           );
+          const index = parseInt(selectedIndex, 10);
           if (previewResult) {
             viewerData.set({
               result: previewResult,
-              selectedParagraphIndex: -1,
+              selectedParagraphIndex: index,
             });
           }
         });
