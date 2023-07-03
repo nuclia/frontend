@@ -10,21 +10,23 @@
         {{ errors.body }}
       </p>
     </div>
-    <div
-      class="paragraph-container"
-      *ngFor="let paragraph of paragraphs | async">
-      <p>{{ paragraph.text }}</p>
-    </div>
-    <div
-      *ngIf="(paragraphs | async)?.length === 0 && !(jsonTextField | async)"
-      class="paragraph-container">
-      <p>{{ 'resource.field-no-paragraph' | translate }}</p>
-    </div>
-    <div
-      *ngIf="jsonTextField | async"
-      class="paragraph-container">
-      <pre><code>{{ jsonTextField | async }}</code></pre>
-    </div>
+    <ng-container *ngIf="loaded; else loading">
+      <div
+        class="paragraph-container"
+        *ngFor="let paragraph of paragraphs | async">
+        <p>{{ paragraph.text }}</p>
+      </div>
+      <div
+        *ngIf="(paragraphs | async)?.length === 0 && !(jsonTextField | async)"
+        class="paragraph-container">
+        <p>{{ 'resource.field-no-paragraph' | translate }}</p>
+      </div>
+      <div
+        *ngIf="jsonTextField | async"
+        class="paragraph-container">
+        <pre><code>{{ jsonTextField | async }}</code></pre>
+      </div>
+    </ng-container>
   </div>
   <div class="viewer-button-container">
     <pa-button
@@ -39,3 +41,7 @@
 <div class="viewer-container">
   <div [innerHTML]="viewerWidget | async"></div>
 </div>
+
+<ng-template #loading>
+  <nsi-delayed-spinner size="medium"></nsi-delayed-spinner>
+</ng-template>
