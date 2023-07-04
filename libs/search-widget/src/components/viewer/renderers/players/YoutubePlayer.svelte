@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from 'svelte';
-  import { getYoutubeId } from '../../core/utils';
+  import { getYoutubeId } from '../../../../core/utils';
 
   export let uri: string;
   export let time: number;
@@ -8,6 +8,7 @@
   let player: any;
   let apiReady = false;
   let videoReady = false;
+  let paused = false;
   const dispatch = createEventDispatcher();
 
   $: if (videoReady && typeof time === 'number') {
@@ -54,18 +55,33 @@
           },
           events: {
             onReady: onPlayerReady,
+            onStateChange: (event) => {
+              paused = event.data === youtube.PlayerState.PAUSED;
+            }
           },
         });
         clearInterval(waitForPlayer);
       }
     }, 300);
   };
+
+  function handleKeydown(event) {
+    if (videoReady && event.target.tagName.toLowerCase() !== 'input' && event.code === 'Space') {
+      event.stopPropagation();
+      event.preventDefault();
+      if (paused) {
+        player.playVideo();
+      } else {
+        player.pauseVideo();
+      }
+    }
+  }
 </script>
 
 <svelte:head>
   <script src="https://www.youtube.com/iframe_api"></script>
 </svelte:head>
-
+<svelte:window on:keydown={handleKeydown} />
 <div class="sw-youtube">
   <div
     class="player"
@@ -74,4 +90,4 @@
 
 <style
   lang="scss"
-  src="./Youtube.scss"></style>
+  src="./YoutubePlayer.scss"></style>

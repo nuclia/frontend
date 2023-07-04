@@ -1,0 +1,148 @@
+<script lang="ts">
+  import { IconButton } from '../../../../common';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { lightFormat } from 'date-fns';
+
+  export let player; //HTMLMediaElement
+
+  const dispatch = createEventDispatcher();
+  let timelineElement: HTMLElement;
+  let volumeElement: HTMLElement;
+  let displayVolume = false;
+  let progressIntervalId: number;
+  let currentTime = '';
+  let totalTime = '';
+  let progress = 0;
+  let playing = false;
+
+  $: if (player) {
+    // don't override existing callbacks
+    const onLoadedData = player.onloadeddata;
+    const onEnded = player.onended;
+    const onPlay = player.onplay;
+    // add callbacks needed for PlayerControls
+    player.onloadeddata = () => {
+      totalTime = getFormattedTimeFromSeconds(player.duration);
+      currentTime = getFormattedTimeFromSeconds(player.currentTime);
+      player.volume = 0.75;
+      if (typeof onLoadedData === 'function') {
+        onLoadedData();
+      }
+    };
+    player.onplay = () => {
+      playing = true;
+      if (typeof onPlay === 'function') {
+        onPlay();
+      }
+    }
+    player.onended = () => {
+      playing = false;
+      if (typeof onEnded === 'function') {
+        onEnded();
+      }
+    }
+  }
+
+  onMount(() => {
+    progressIntervalId = setInterval(() => {
+      if (player) {
+        progress = (player.currentTime / player.duration) * 100;
+        currentTime = getFormattedTimeFromSeconds(player.currentTime);
+      }
+    }, 160);
+  });
+
+  onDestroy(() => {
+    clearInterval(progressIntervalId);
+    if (player && !player.paused) {
+      player.pause();
+    }
+  });
+
+
+  function getFormattedTimeFromSeconds(seconds: number): string {
+    let date = new Date('2022T00:00:00');
+    date.setSeconds(seconds);
+    return seconds >= 3600 ? lightFormat(date, 'h:mm:ss') : lightFormat(date, 'm:ss');
+  }
+
+  function toggleVolume() {
+    displayVolume = !displayVolume;
+  }
+
+  function updateVolume(event: MouseEvent) {
+    const volumeRect = volumeElement.getBoundingClientRect();
+    const volumeHeight = volumeElement.offsetHeight;
+    const level = volumeHeight - (event.clientY - volumeRect.y);
+    player.volume = level <= 5 ? 0 : level / volumeHeight;
+  }
+
+  function seekTime(event: MouseEvent) {
+    const timelineWidth = timelineElement.offsetWidth;
+    player.currentTime = (event.offsetX / timelineWidth) * player.duration;
+  }
+
+  function handleKeydown(event) {
+    if (event.target.tagName.toLowerCase() !== 'input' && event.code === 'Space') {
+      event.stopPropagation();
+      event.preventDefault();
+      togglePlay();
+    }
+  }
+
+  function togglePlay() {
+    if (!player.paused) {
+      player.pause();
+      dispatch('pause');
+    } else {
+      if (player.currentTime === player.duration) {
+        player.currentTime = 0;
+        progress = 0;
+      }
+      player.play();
+      dispatch('play');
+    }
+    playing = !player.paused;
+  }
+
+</script>
+
+<svelte:window on:keydown={handleKeydown} />
+<div class="sw-player-controls">
+  <IconButton
+    icon={playing ? 'pause' : player?.currentTime === player?.duration ? 'refresh' : 'play'}
+    size="small"
+    aspect="solid"
+    on:click={togglePlay} />
+  <div class="time">{currentTime}</div>
+  <div
+    class="timeline"
+    bind:this={timelineElement}
+    on:click={(event) => seekTime(event)}>
+    <div
+      class="progress"
+      style:width={`${progress}%`} />
+  </div>
+  <div class="time">{totalTime}</div>
+  <IconButton
+    icon={!player?.volume ? 'volume-mute' : player.volume > 0.5 ? 'volume-high' : 'volume-low'}
+    size="small"
+    aspect="basic"
+    on:click={toggleVolume} />
+  <div
+    class="volume-container"
+    class:visible={displayVolume}>
+    <div
+      class="volume"
+      bind:this={volumeElement}
+      on:click={(event) => updateVolume(event)}>
+      <div
+        class="level"
+        style:height={`${player?.volume * 100}%`} />
+    </div>
+  </div>
+</div>
+
+<style
+  lang="scss"
+  src="./PlayerControls.scss"></style>

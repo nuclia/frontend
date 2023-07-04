@@ -1,7 +1,4 @@
 .sw-audio-player {
-  --player-bar-height: var(--rhythm-5);
-  --player-bar-background: var(--color-neutral-light);
-
   display: flex;
   flex-direction: column;
 
@@ -15,64 +12,6 @@
     transform: translateX(-50%) translateY(-50%);
     width: var(--rhythm-20);
   }
-
-  .audio-controls {
-    align-items: center;
-    background: var(--player-bar-background);
-    display: flex;
-    gap: var(--rhythm-2);
-    height: var(--player-bar-height);
-    justify-content: space-between;
-    padding: 0 var(--rhythm-1) 0 var(--rhythm-2);
-    position: relative;
-
-    .timeline {
-      --progress-thickness: var(--rhythm-1);
-
-      background: var(--color-light-stronger);
-      cursor: pointer;
-      flex: 1 0 auto;
-      height: var(--progress-thickness);
-
-      .progress {
-        background: var(--color-primary-regular);
-        height: var(--progress-thickness);
-        transition: width 0.16s linear;
-      }
-    }
-
-    .volume-container {
-      --volume-thickness: var(--rhythm-0_5);
-
-      background: var(--player-bar-background);
-      bottom: var(--player-bar-height);
-      opacity: 0;
-      padding: var(--rhythm-1) var(--rhythm-1) 0 var(--rhythm-1);
-      position: absolute;
-      right: var(--rhythm-2);
-      transition: opacity var(--transition-superfast);
-
-      &.visible {
-        opacity: 1;
-      }
-
-      .volume {
-        background: var(--color-light-stronger);
-        cursor: pointer;
-        height: var(--rhythm-12);
-        width: var(--volume-thickness);
-
-        .level {
-          background: var(--color-primary-regular);
-          bottom: 0;
-          max-height: var(--rhythm-12);
-          position: absolute;
-          transition: height var(--transition-fast);
-          width: var(--volume-thickness);
-        }
-      }
-    }
-  }
 }
 
 @media (min-width: 648px) {
@@ -81,7 +20,7 @@
 
     .waves-animation {
       background-color: var(--color-dark-stronger);
-      max-height: calc(100% - var(--player-bar-height));
+      max-height: calc(100vh - var(--renderer-outer-space) - var(--player-bar-height));
     }
   }
 }

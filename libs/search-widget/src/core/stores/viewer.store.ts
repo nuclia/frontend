@@ -92,6 +92,7 @@ export const selectNext = viewerState.action((state) => {
 export const currentResultType = viewerState.reader<ResultType | null>(
   (state) => state.currentResult?.resultType || null,
 );
+export const currentThumbnail = viewerState.reader<string | null>((state) => state.currentResult?.thumbnail || null);
 
 export const playFrom = viewerState.reader<number>((state) => {
   if (

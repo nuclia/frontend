@@ -61,7 +61,6 @@
     overflow: hidden;
 
     .viewer-content {
-      background: #026d71;
       // Search results navigator and metadata blocks have the same size as header
       height: calc(100% - var(--side-padding) * 2 - var(--header-height) * (var(--metadata-block-count) + 1));
 

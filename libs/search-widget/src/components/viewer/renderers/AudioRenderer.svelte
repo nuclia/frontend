@@ -6,7 +6,7 @@
 
   let mediaLoading = true;
   let mediaTime = 0;
-  let mediaUrl: Observable<string> = getFieldUrl();
+  const mediaUrl: Observable<string> = getFieldUrl();
 
   const subscription = playFrom.subscribe((time: number) => mediaTime = time);
 

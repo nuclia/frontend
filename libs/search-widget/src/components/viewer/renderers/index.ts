@@ -1,3 +1,4 @@
+export * from './players';
 export { default as AudioRenderer } from './AudioRenderer.svelte';
 export { default as ConversationRenderer } from './ConversationRenderer.svelte';
 export { default as ImageRenderer } from './ImageRenderer.svelte';

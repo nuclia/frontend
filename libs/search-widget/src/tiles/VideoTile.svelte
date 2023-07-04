@@ -1,9 +1,8 @@
 <script lang="ts">
   import { map, Observable, of, switchMap, tap } from 'rxjs';
   import type { Search } from '@nuclia/core';
-  import Youtube from '../components/previewers/Youtube.svelte';
+  import { YoutubePlayer, VideoPlayer } from '../components';
   import { PreviewKind } from '../core/models';
-  import Player from '../components/previewers/Player.svelte';
   import { getFieldUrl, getPlayableVideo, isLinkField } from '../core/stores/viewer.store';
   import { getFileUrls } from '../core/api';
   import MediaTile from './base-tile/MediaTile.svelte';
@@ -48,12 +47,12 @@
   on:playFrom={(event) => playFrom(event.detail)}>
   {#if $mediaUrl}
     {#if isYoutube}
-      <Youtube
+      <YoutubePlayer
         time={mediaTime}
         uri={$mediaUrl}
         on:videoReady={onVideoReady} />
     {:else if !!$mediaContentType}
-      <Player
+      <VideoPlayer
         time={mediaTime}
         src={$mediaUrl}
         type={$mediaContentType}
