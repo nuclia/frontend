@@ -120,6 +120,7 @@ export class SDKService {
 
   getDemoKb(): Observable<WritableKnowledgeBox> {
     return this.featureFlagService.getFeatureFlag('demo-kb-id').pipe(
+      take(1),
       map(
         (kbId) =>
           new WritableKnowledgeBox(this.nuclia, this.stateService.getAccount()?.slug || '', {
