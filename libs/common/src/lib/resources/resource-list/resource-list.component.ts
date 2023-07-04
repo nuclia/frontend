@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
+import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take, timer } from 'rxjs';
 import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -32,7 +32,7 @@ import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
 import { LabelsService } from '../../label/labels.service';
 import { OptionModel, PopoverDirective, TRANSITION_DURATION } from '@guillotinaweb/pastanaga-angular';
-import { LOCAL_STORAGE } from '@ng-web-apis/common';
+import { LOCAL_STORAGE, WINDOW } from '@ng-web-apis/common';
 import { getClassificationsPayload } from '../edit-resource';
 import {
   ColoredLabel,
@@ -42,6 +42,7 @@ import {
   ResourceWithLabels,
 } from './resource-list.model';
 import { UploadService } from '../../upload/upload.service';
+import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../../utils';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -55,6 +56,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   @ViewChild('failedPopoverDirective') failedPopoverDirective?: PopoverDirective;
 
   private localStorage = inject(LOCAL_STORAGE);
+  private window = inject(WINDOW);
   private sampleDatasetService = inject(SampleDatasetService);
   hasSampleData = this.sampleDatasetService.hasSampleResources();
 
@@ -679,5 +681,34 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         }),
       )
       .subscribe();
+  }
+
+  useDesktop() {
+    let appInstalled = false;
+
+    const onBlur = () => {
+      // A blur event indicates that the application is installed
+      appInstalled = true;
+    };
+    this.window.addEventListener('blur', onBlur);
+
+    timer(400).subscribe(() => {
+      if (!appInstalled) {
+        this.downloadDesktop();
+      }
+      this.window.removeEventListener('blur', onBlur);
+    });
+    this.window.location.href = 'nuclia-desktop://';
+  }
+
+  downloadDesktop() {
+    const platform = getDesktopPlatform();
+    if (platform) {
+      getDesktopAppUrl(platform).subscribe((url) => {
+        this.window.open(url || RELEASE_URL);
+      });
+    } else {
+      this.window.open(RELEASE_URL);
+    }
   }
 }

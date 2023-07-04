@@ -637,6 +637,7 @@
 	"resource.tooltip.pdf-annotation": "Anotar per selecció",
 	"resource.tooltip.preview": "Vista prèvia",
 	"resource.tooltip.reprocess": "Reprocessament",
+	"resource.upload_via_desktop": "Pujar amb la Desktop app",
 	"resource.visible_columns_dropdown": "Columnes mostrades",
 	"search.more_results": "mostrar més resultats",
 	"search.sort_by": "Ordenar per",

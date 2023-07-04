@@ -5,7 +5,7 @@ import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/cor
 import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../utils';
+import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '@flaps/common';
 import { AppService } from '@flaps/common';
 
 @Component({
