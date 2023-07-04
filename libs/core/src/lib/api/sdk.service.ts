@@ -29,6 +29,8 @@ import { StateService } from '../state.service';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { take } from 'rxjs/operators';
 
+const IMMUTABLE_OPTIONS = ['semantic_model', 'visual_labeling'];
+
 @Injectable({ providedIn: 'root' })
 export class SDKService {
   DEMO_SLUG = '__demo';
@@ -217,8 +219,8 @@ export class SDKService {
       map(([hasAnonymization, hasAnswers, hasPdfAnnotation, conf]) => {
         const full = Object.entries(conf)
           .map(([id, data]) => ({ id, data }))
-          // semantic_model cannot be changed after kb creation
-          .filter((entry) => onCreation || entry.id !== 'semantic_model');
+          // some options cannot be changed after kb creation
+          .filter((entry) => onCreation || !IMMUTABLE_OPTIONS.includes(entry.id));
 
         return {
           // At display, hide configurations with only one option or under feature flagging
