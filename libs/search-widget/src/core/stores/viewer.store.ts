@@ -124,14 +124,15 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
         extracted: data.extracted,
       };
     }
+    const currentResult: TypedResult | null = state.currentResult
+      ? {
+          ...state.currentResult,
+          fieldData,
+        }
+      : null;
     return {
       ...state,
-      currentResult: state.currentResult
-        ? {
-            ...state.currentResult,
-            fieldData,
-          }
-        : null,
+      currentResult,
       fieldData: fieldData ? fieldData : null,
       summary: data?.extracted?.metadata?.metadata?.summary || '',
     };

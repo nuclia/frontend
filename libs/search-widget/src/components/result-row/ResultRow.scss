@@ -55,6 +55,10 @@
 
     .result-container {
       width: calc(100% - var(--width-thumbnail) - var(--rhythm-2));
+
+      h3 {
+        cursor: pointer;
+      }
     }
   }
 }

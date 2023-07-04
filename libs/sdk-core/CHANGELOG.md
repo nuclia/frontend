@@ -4,6 +4,10 @@
 
 - Remove `Search.SmartParagraph` interface as it's not used anymore
 - Rename `Search.SmartResult` interface to `Search.FieldResult` as `Smart` prefix doesn't make sense anymore
+- Load `SHORTENED_METADATA` by default on `getField`
+
+### Improvements
+- Add `SHORTENED_METADATA` type to `ExtractedDataTypes`
 
 ### Improvements
 

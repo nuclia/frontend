@@ -210,7 +210,7 @@ export class Resource extends ReadableResource implements IResource {
     show: ResourceFieldProperties[] = [ResourceFieldProperties.VALUE],
     extracted: ExtractedDataTypes[] = [
       ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
+      ExtractedDataTypes.SHORTENED_METADATA,
       ExtractedDataTypes.LINK,
       ExtractedDataTypes.FILE,
     ],

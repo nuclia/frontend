@@ -33,6 +33,7 @@ import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorRespon
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
 import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
 import {
+  getFieldDataFromResource,
   getResultType,
   isEmptySearchQuery,
   isTitleOnly,
@@ -242,10 +243,10 @@ function initStoreFromUrlParams() {
               ]).pipe(
                 map((resource) => {
                   const field = { field_id, field_type };
+                  const fieldResult = { ...resource, field, fieldData: getFieldDataFromResource(resource, field) };
                   const result: TypedResult = {
-                    ...resource,
-                    resultType: getResultType({ ...resource, field }),
-                    field,
+                    ...fieldResult,
+                    resultType: getResultType(fieldResult),
                   };
                   return result;
                 }),
@@ -273,15 +274,7 @@ export function initViewer() {
       distinctUntilChanged(),
       switchMap((fullId) => {
         if (fullId) {
-          // load in 2 passes, so we get the field value fast, so we can render the tile
-          // and then get the field extracted metadata later (as it is much bigger)
-          // TODO: reconsider when https://app.shortcut.com/flaps/story/4190/option-to-not-load-ners-related-data-when-getting-a-field
-          // is done (maybe a unique pass will be better then)
-          return getResourceField(fullId, true).pipe(
-            tap((resourceField) => fieldData.set(resourceField)),
-            switchMap(() => getResourceField(fullId, false)),
-            tap((resourceField) => fieldData.set(resourceField)),
-          );
+          return getResourceField(fullId).pipe(tap((resourceField) => fieldData.set(resourceField)));
         } else {
           return of(null);
         }

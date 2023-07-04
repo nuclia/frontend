@@ -4,10 +4,14 @@ import type { Chat, Search, SearchOptions } from '@nuclia/core';
 import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
+  askQuestion,
   autofilerDisabled,
+  disableAnswers,
+  isAnswerEnabled,
   isEmptySearchQuery,
   isTitleOnly,
   loadMore,
+  onlyAnswers,
   pageNumber,
   pendingResults,
   searchFilters,
@@ -18,9 +22,8 @@ import {
   trackingSearchId,
   trackingStartTime,
   triggerSearch,
-} from './stores/search.store';
-import { askQuestion } from './stores/effects';
-import { disableAnswers, isAnswerEnabled, onlyAnswers } from './stores/widget.store';
+} from './stores';
+import { NO_RESULT_LIST } from './models';
 
 const subscriptions: Subscription[] = [];
 
@@ -40,10 +43,11 @@ export const setupTriggerSearch = (
             filter((isEmptySearchQuery) => !isEmptySearchQuery),
             switchMap(() => searchQuery.pipe(take(1))),
             tap((query) => (dispatch ? dispatch('search', query) : undefined)),
-            tap((query) => {
+            tap(() => {
               if (!trigger?.more) {
                 pageNumber.set(0);
                 trackingStartTime.set(Date.now());
+                searchResults.set({ results: NO_RESULT_LIST, append: false });
               }
             }),
             switchMap((query) =>

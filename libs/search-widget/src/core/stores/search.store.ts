@@ -1,5 +1,5 @@
 import { SvelteState } from '../state-lib';
-import type { IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
@@ -10,6 +10,7 @@ import {
   getFilterFromLabel,
   getLabelFromFilter,
   IErrorResponse,
+  IFieldData,
   LabelSetKind,
   LinkFieldData,
   SHORT_FIELD_TYPE,
@@ -427,13 +428,13 @@ export function getSortedResults(resources: Search.FindResource[]): TypedResult[
         return fieldType !== SHORT_FIELD_TYPE.generic && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
       .map(([fullFieldId, field]) => {
-        const [, shortType, fieldId] = fullFieldId.split('/');
-        const fieldType = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
-        const dataKey = getDataKeyFromFieldType(fieldType);
+        const [, shortType, field_id] = fullFieldId.split('/');
+        const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
+        const fieldId = { field_id, field_type };
         const fieldResult: Search.FieldResult = {
           ...resource,
-          field: { field_id: fieldId, field_type: fieldType },
-          fieldData: dataKey ? resource.data?.[dataKey]?.[fieldId] : undefined,
+          field: fieldId,
+          fieldData: getFieldDataFromResource(resource, fieldId),
           paragraphs: Object.values(field.paragraphs).sort((a, b) => a.order - b.order),
         };
         const typedResult: TypedResult = {
@@ -455,6 +456,11 @@ export function getSortedResults(resources: Search.FindResource[]): TypedResult[
     resultList = resultList.concat(fieldEntries);
     return resultList;
   }, [] as TypedResult[]);
+}
+
+export function getFieldDataFromResource(resource: IResource, field: FieldId): IFieldData | undefined {
+  const dataKey = getDataKeyFromFieldType(field.field_type);
+  return dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
 }
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
