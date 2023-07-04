@@ -39,7 +39,7 @@
         aspect="basic"
         (click)="onViewChange()"></pa-button>
       <pa-button
-        *ngIf="isPdfAnnotationEnabled"
+        *ngIf="isPdfAnnotationEnabled | async"
         icon="annotate"
         paTooltip="resource.tooltip.pdf-annotation"
         aspect="basic"

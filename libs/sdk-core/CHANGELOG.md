@@ -4,6 +4,9 @@
 
 - Remove `Search.SmartParagraph` interface as it's not used anymore
 - Rename `Search.SmartResult` interface to `Search.FieldResult` as `Smart` prefix doesn't make sense anymore
+
+### Improvements
+
 - Add `selections` in field metadata
 
 # 1.4.0 (2023-06-23)
