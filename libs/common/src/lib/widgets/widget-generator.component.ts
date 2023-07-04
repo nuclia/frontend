@@ -112,11 +112,12 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.sdk.currentKb
+    combineLatest([this.sdk.currentKb, this.isEntityFiltersEnabled])
       .pipe(
-        switchMap((kb) => {
+        switchMap(([kb, isEntityFiltersEnabled]) => {
           const config = this.widgetConfigurations[kb.id] || DEFAULT_WIDGET_CONFIG;
           this.placeholder = config.placeholder;
+          this.filters = { labels: true, entities: !!isEntityFiltersEnabled };
           if (config.filters) {
             this.filters = config.filters;
           }
