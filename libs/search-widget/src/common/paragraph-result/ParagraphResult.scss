@@ -21,7 +21,7 @@
     width: calc(100% - var(--expander-width));
 
     &:not(.stack) {
-      align-items: start;
+      align-items: center;
 
       &.no-indicator {
         margin-left: calc(var(--rhythm-1) * -1);

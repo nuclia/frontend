@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    AllResultsToggle,
     DocTypeIndicator,
     isMobileViewport,
     ParagraphResult,
@@ -90,7 +91,8 @@
       <ul
         class="sw-paragraphs-container"
         class:expanded={showAllResults}
-        class:can-expand={result.paragraphs.length > 4}>
+        class:can-expand={result.paragraphs.length > 4}
+        style:--paragraph-count={result.paragraphs.length}>
         {#each result.paragraphs as paragraph, index}
           <ParagraphResult
             {paragraph}
@@ -100,6 +102,12 @@
             on:open={() => clickOnResult(paragraph, index)} />
         {/each}
       </ul>
+
+      {#if result.paragraphs.length > 4}
+        <AllResultsToggle
+          {showAllResults}
+          on:toggle={() => (showAllResults = !showAllResults)} />
+      {/if}
     </div>
   </div>
 </div>
