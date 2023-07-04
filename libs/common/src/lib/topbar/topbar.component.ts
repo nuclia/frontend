@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SDKService, STFTrackingService, UserService } from '@flaps/core';
-import { map, shareReplay, take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { NavigationService } from '../services';
 import { StandaloneService } from '../services/standalone.service';
 
@@ -16,7 +16,7 @@ export class TopbarComponent {
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   billingUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
   );

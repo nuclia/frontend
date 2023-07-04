@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
-import { filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
 import { SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
@@ -22,7 +22,7 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   account?: Account;
   knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
   maxKnowledgeBoxes: number = 1;
-  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
+  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users');
   canAddKb = this.stateService.account.pipe(
     filter((account) => !!account),
     map((account) => account!.can_manage_account),

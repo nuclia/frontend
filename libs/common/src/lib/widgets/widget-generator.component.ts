@@ -4,7 +4,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { BackendConfigurationService, SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { combineLatest, map, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { markForCheck, TranslateService } from '@guillotinaweb/pastanaga-angular';
-import { debounceTime, filter, shareReplay } from 'rxjs/operators';
+import { debounceTime, filter } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { WidgetHintDialogComponent } from './hint/widget-hint.component';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
@@ -45,11 +45,11 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
-  areAnswersEnabled = this.tracking.isFeatureEnabled('answers').pipe(shareReplay(1));
-  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter').pipe(shareReplay(1));
+  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
+  areAnswersEnabled = this.tracking.isFeatureEnabled('answers');
+  isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
   areSynonymsEnabled = combineLatest([
-    this.tracking.isFeatureEnabled('manage-synonyms').pipe(shareReplay(1)),
+    this.tracking.isFeatureEnabled('manage-synonyms'),
     this.stateService.account.pipe(
       filter((account) => !!account),
       map((account) => account?.type),

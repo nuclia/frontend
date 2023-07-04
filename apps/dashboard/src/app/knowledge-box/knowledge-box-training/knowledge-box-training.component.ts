@@ -93,7 +93,7 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     [TrainingType.ner]: this.entitiesGroups,
   };
 
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   enabledTrainings = this.tracking
     .isFeatureEnabled('training_ner')
     .pipe(map((enabled) => (enabled ? this.trainingList : this.trainingList.filter((t) => t !== TrainingType.ner))));

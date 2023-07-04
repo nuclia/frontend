@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { filter, forkJoin, map, Observable, Subject, switchMap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
-import { shareReplay, take, takeUntil } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { EditResourceView } from './edit-resource.helpers';
 import { NavigationService } from '../../services/navigation.service';
 import { SisModalService } from '@nuclia/sistema';
@@ -46,7 +46,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         })),
     ),
   );
-  isPdfAnnotationEnabled = this.featureFlag.isFeatureEnabled('pdf-annotation').pipe(shareReplay(1));
+  isPdfAnnotationEnabled = this.featureFlag.isFeatureEnabled('pdf-annotation');
 
   activeField?: FieldId | 'resource';
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/core';
-import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
+import { combineLatest, filter, map, Observable, share, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '@flaps/common';
@@ -69,7 +69,7 @@ export class KnowledgeBoxHomeComponent {
   );
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
-  isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app').pipe(shareReplay(1));
+  isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
 
