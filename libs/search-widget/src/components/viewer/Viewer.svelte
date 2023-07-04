@@ -2,7 +2,7 @@
   import {
     _, fieldSummary,
     getFieldUrl,
-    getTranscripts,
+    loadTranscripts,
     getWidgetActions,
     isKnowledgeGraphEnabled,
     isPreviewing,
@@ -15,7 +15,8 @@
     viewerSearchQuery,
     viewerState,
     ViewerState,
-    WidgetAction
+    WidgetAction,
+    transcripts,
   } from '../../core';
   import {
     DocTypeIndicator,
@@ -30,7 +31,7 @@
   } from '../../common';
   import { onDestroy, onMount } from 'svelte';
   import { FIELD_TYPE, Search } from '@nuclia/core';
-  import { BehaviorSubject, debounceTime, filter, Observable, of, Subject, take } from 'rxjs';
+  import { BehaviorSubject, debounceTime, filter, Subject, take } from 'rxjs';
   import { MetadataContainer, MetadataSectionHeader, SearchResultNavigator, ViewerContent } from './';
 
   // Browser window related variables
@@ -64,7 +65,7 @@
   let sidePanelSectionOpen: sidePanelSection = 'search';
   const findInPlaceholderPrefix = 'tile.find-in-';
   let findInPlaceholder = '';
-  let transcripts: Observable<Search.FindParagraph[]> = of([]);
+  let searchResultsHeight = 0;
 
   // Load data from the state
   let state: ViewerState;
@@ -156,7 +157,7 @@
   }
 
   function selectParagraph(index: number) {
-    selectedParagraphIndex.set(index);
+    selectedParagraphIndex.set({ index, playFromTranscripts: false });
   }
 
   function toggleSidePanel() {
@@ -168,7 +169,7 @@
         // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
         setTimeout(() => findInputElement?.focus(), Duration.MODERATE);
       } else if (isSearchingInResource.value) {
-        selectedParagraphIndex.set(null);
+        selectedParagraphIndex.set({ index: null, playFromTranscripts: false });
         isSearchingInResource.next(false);
         viewerSearchQuery.set(searchQuery.getValue());
       }
@@ -201,12 +202,12 @@
 
     if (sidePanelSectionOpen === 'transcripts' && !transcriptsInitialized) {
       transcriptsInitialized = true;
-      setTimeout(() => transcripts = getTranscripts());
+      setTimeout(() => loadTranscripts());
     }
   }
 
-  function selectTranscript(paragraph) {
-    // TODO: select transcript
+  function selectTranscript(paragraph: Search.FindParagraph, index: number) {
+    selectedParagraphIndex.set({ index, playFromTranscripts: true });
   }
 </script>
 
@@ -237,7 +238,7 @@
       <div class="header-actions">
         {#if !isMobile && !resultNavigatorHidden}
           <SearchResultNavigator
-            resultIndex={state.selectedParagraphIndex}
+            resultIndex={state.playFromTranscript ? -1 : state.selectedParagraphIndex}
             total={result?.paragraphs.length}
             disabled={resultNavigatorDisabled}
             on:offsetWidth={(event) => (resultNavigatorWidth = event.detail.offsetWidth)}
@@ -340,31 +341,33 @@
                     on:change={findInField} />
                 </div>
 
-                {#if sidePanelSectionOpen !== 'search'}
-                  {#if result?.paragraphs.length > 0}
+                {#if result?.paragraphs.length > 0}
+                  {#if sidePanelSectionOpen !== 'search'}
                     <div class="search-results-collapsed">
                       <MetadataSectionHeader on:toggle={() => toggleSection('search')}>
                         {$_('tile.search-results', { count: result?.paragraphs.length })}
                       </MetadataSectionHeader>
                     </div>
                   {/if}
-                {:else}
-                  <div class="search-results-container" tabindex="-1">
-                    <ul class="sw-paragraphs-container">
+                  <div class="search-results-container"
+                       class:expanded={sidePanelSectionOpen === 'search'}
+                       style:--search-results-height="{searchResultsHeight}px"
+                       tabindex="-1">
+                    <ul class="sw-paragraphs-container"
+                        bind:offsetHeight={searchResultsHeight}>
                       {#each result?.paragraphs as paragraph, index}
                         <ParagraphResult {paragraph}
                                          stack={true}
                                          minimized={isMobile}
                                          resultType={result?.resultType}
                                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                         selected={index === state.selectedParagraphIndex}
+                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
                                          on:open={() => selectParagraph(index)}
                         />
                       {/each}
                     </ul>
                   </div>
                 {/if}
-
               {/if}
 
               {#if isMediaPlayer}
@@ -373,12 +376,13 @@
                                    on:toggle={(event) => toggleSection(event.detail)}>
                   <span slot="sectionTitle">{$_('tile.full-transcripts')}</span>
                   <ul class="sw-paragraphs-container" slot="sectionContent">
-                    {#each $transcripts as paragraph}
+                    {#each $transcripts as paragraph, index}
                       <ParagraphResult
                         {paragraph}
-                        selected={paragraph.id === 'TODO'}
+                        selected={state.playFromTranscript && index === state.selectedParagraphIndex}
+                        resultType={result?.resultType}
                         stack
-                        on:open={() => selectTranscript(paragraph)} />
+                        on:open={() => selectTranscript(paragraph, index)} />
                     {/each}
                   </ul>
                 </MetadataContainer>

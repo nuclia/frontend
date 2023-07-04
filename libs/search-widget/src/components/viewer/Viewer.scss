@@ -175,9 +175,19 @@
 
         .search-results-container {
           background: var(--container-background-color);
-          margin-bottom: var(--panel-section-margin-bottom);
+          height: 0;
           max-height: calc(100vh - var(--expander-max-height));
-          overflow: auto;
+          opacity: 0;
+          overflow: hidden;
+          transition: height var(--transition-moderate), opacity var(--transition-fast) var(--duration--moderate);
+
+          &.expanded {
+            height: var(--search-results-height);
+            margin-bottom: var(--panel-section-margin-bottom);
+            opacity: 1;
+            overflow: auto;
+            transition: height var(--transition-moderate), opacity var(--transition-fast);
+          }
         }
         .search-results-collapsed {
           margin-bottom: var(--panel-section-margin-bottom);

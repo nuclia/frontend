@@ -46,13 +46,14 @@
       opacity: 0;
       max-height: calc(100vh - var(--expander-max-height));
       overflow: auto;
-      transition: height var(--transition-fast), opacity var(--transition-superfast);
+      transition: height var(--transition-moderate), opacity var(--transition-fast) var(--duration--moderate);
     }
 
     &.expanded {
       .metadata-expander-content {
         height: var(--content-height);
         opacity: 1;
+        transition: height var(--transition-moderate), opacity var(--transition-fast);
       }
     }
   }

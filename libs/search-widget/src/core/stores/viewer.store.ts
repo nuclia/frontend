@@ -4,15 +4,17 @@ import type { CloudLink, FieldFullId, IFieldData, ResourceField } from '@nuclia/
 import { FIELD_TYPE, FileFieldData, LinkFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
-import { filter, map, of, switchMap } from 'rxjs';
+import { filter, map, of, switchMap, take } from 'rxjs';
 import { NEWLINE_REGEX } from '../utils';
 
 export interface ViewerState {
   currentResult: TypedResult | null;
   selectedParagraphIndex: number | null;
+  playFromTranscript: boolean;
   summary: string;
   isPreviewing: boolean;
   fieldFullId: FieldFullId | null;
+  transcripts: Search.FindParagraph[];
 
   // TODO cleanup
   fieldData: IFieldData | null;
@@ -21,9 +23,11 @@ export interface ViewerState {
 export const viewerState = new SvelteState<ViewerState>({
   currentResult: null,
   selectedParagraphIndex: null,
+  playFromTranscript: false,
   summary: '',
   isPreviewing: false,
   fieldFullId: null,
+  transcripts: [],
 
   fieldData: null,
 });
@@ -57,11 +61,15 @@ export const isPreviewing = viewerState.writer<boolean>(
   (state, isPreviewing) => ({ ...state, isPreviewing }),
 );
 
-export const selectedParagraphIndex = viewerState.writer<number | null>(
+export const selectedParagraphIndex = viewerState.writer<
+  number | null,
+  { index: number | null; playFromTranscripts: boolean }
+>(
   (state) => state.selectedParagraphIndex,
-  (state, index) => ({
+  (state, payload) => ({
     ...state,
-    selectedParagraphIndex: index,
+    selectedParagraphIndex: payload.index,
+    playFromTranscript: payload.playFromTranscripts,
   }),
 );
 
@@ -70,20 +78,36 @@ export const selectPrevious = viewerState.action((state) => {
     return {
       ...state,
       selectedParagraphIndex: state.selectedParagraphIndex - 1,
+      playFromTranscript: false,
     };
   }
   return state;
 });
 
 export const selectNext = viewerState.action((state) => {
+  if (!state.currentResult?.paragraphs) {
+    return state;
+  }
+
+  // when we played from transcript previously, the selectedParagraphIndex on result navigator is set to 0,
+  // so next search result is always the first one in this case
+  if (state.playFromTranscript) {
+    return {
+      ...state,
+      selectedParagraphIndex: 0,
+      playFromTranscript: false,
+    };
+  }
+
+  // otherwise, we increment selectedParagraphIndex in the limit of paragraphs count
   if (
     state.selectedParagraphIndex !== null &&
-    !!state.currentResult?.paragraphs &&
     state.selectedParagraphIndex < state.currentResult.paragraphs.length - 1
   ) {
     return {
       ...state,
       selectedParagraphIndex: state.selectedParagraphIndex + 1,
+      playFromTranscript: false,
     };
   }
   return state;
@@ -97,12 +121,15 @@ export const currentThumbnail = viewerState.reader<string | null>((state) => sta
 export const playFrom = viewerState.reader<number>((state) => {
   if (
     state.selectedParagraphIndex === null ||
-    !state.currentResult?.paragraphs ||
-    state.currentResult.paragraphs.length === 0
+    (state.playFromTranscript && state.transcripts.length === 0) ||
+    (!state.playFromTranscript && (!state.currentResult?.paragraphs || state.currentResult.paragraphs.length === 0))
   ) {
     return 0;
   }
-  const selectedParagraph = state.currentResult.paragraphs[state.selectedParagraphIndex];
+  const paragraphs: Search.FindParagraph[] = state.playFromTranscript
+    ? state.transcripts
+    : (state.currentResult?.paragraphs as Search.FindParagraph[]);
+  const selectedParagraph = paragraphs[state.selectedParagraphIndex];
   return selectedParagraph.position.start_seconds?.[0] || 0;
 });
 
@@ -137,6 +164,14 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
       summary: data?.extracted?.metadata?.metadata?.summary || '',
     };
   },
+);
+
+export const transcripts = viewerState.writer<Search.FindParagraph[]>(
+  (state) => state.transcripts,
+  (state, transcripts) => ({
+    ...state,
+    transcripts,
+  }),
 );
 
 export const resourceField = viewerState.reader<ResourceField | null>((state) =>
@@ -182,43 +217,46 @@ export function isLinkField(): Observable<boolean> {
   return fieldFullId.pipe(map((fullId) => fullId?.field_type === FIELD_TYPE.link));
 }
 
-export function getTranscripts(): Observable<Search.FindParagraph[]> {
-  return viewerState.store.pipe(
-    map((state) => {
-      if (!state.fieldFullId || !state.fieldData) {
-        return [];
-      } else {
-        const text = state.fieldData.extracted?.text?.text || '';
-        const paragraphs = (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
-          (paragraph) => paragraph.kind === 'TRANSCRIPT',
-        );
-        const fieldFullId = state.fieldFullId;
-        return paragraphs.map((paragraph, index) => {
-          const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
-          const start = paragraph.start || 0;
-          const end = paragraph.end || 0;
-          const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
-            fieldFullId.field_id
-          }/${start}-${end}`;
-          return {
-            id,
-            order: paragraph.order || 0,
-            text: paragraphText,
-            labels: [],
-            score: 0,
-            score_type: Search.FindScoreType.BOTH,
-            position: {
-              index,
-              start,
-              end,
-              start_seconds: paragraph.start_seconds,
-              end_seconds: paragraph.end_seconds,
-            },
-          };
-        });
-      }
-    }),
-  );
+export function loadTranscripts() {
+  viewerState.store
+    .pipe(
+      take(1),
+      map((state) => {
+        if (!state.fieldFullId || !state.fieldData) {
+          return [];
+        } else {
+          const text = state.fieldData.extracted?.text?.text || '';
+          const paragraphs = (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
+            (paragraph) => paragraph.kind === 'TRANSCRIPT',
+          );
+          const fieldFullId = state.fieldFullId;
+          return paragraphs.map((paragraph, index) => {
+            const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
+            const start = paragraph.start || 0;
+            const end = paragraph.end || 0;
+            const id = `${fieldFullId.resourceId}/${longToShortFieldType(fieldFullId.field_type)}/${
+              fieldFullId.field_id
+            }/${start}-${end}`;
+            return {
+              id,
+              order: paragraph.order || 0,
+              text: paragraphText,
+              labels: [],
+              score: 0,
+              score_type: Search.FindScoreType.BOTH,
+              position: {
+                index,
+                start,
+                end,
+                start_seconds: paragraph.start_seconds,
+                end_seconds: paragraph.end_seconds,
+              },
+            };
+          });
+        }
+      }),
+    )
+    .subscribe((transcriptList) => transcripts.set(transcriptList));
 }
 
 export function getMediaTranscripts(
