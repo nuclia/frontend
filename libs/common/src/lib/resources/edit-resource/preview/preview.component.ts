@@ -68,7 +68,6 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
     combineLatest([this.fieldId, this.resource])
       .pipe(takeUntil(this.unsubscribeAll))
       .subscribe(([fieldId, resource]) => {
-        this.loaded = true;
         this.errors = getErrors(fieldId, resource);
         const paragraphs: Paragraph[] = getParagraphs(fieldId, resource);
         const enhancedParagraphs: ParagraphWithText[] = paragraphs.map((paragraph) => ({
@@ -77,6 +76,8 @@ export class PreviewComponent extends SelectFirstFieldDirective implements OnIni
           text: resource.getParagraphText(fieldId.field_type, fieldId.field_id, paragraph),
         }));
         this.paragraphService.setupParagraphs(enhancedParagraphs);
+        this.loaded = true;
+        this.cdr.markForCheck();
       });
   }
 
