@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
-import { combineLatest, filter, map, of, switchMap, shareReplay, take } from 'rxjs';
+import { combineLatest, filter, map, of, switchMap, take } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 import { BillingService } from '../billing/billing.service';
@@ -33,7 +33,7 @@ export class AccountStatusComponent {
   upgradeUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigation.getAccountManageUrl(account.slug) + '/billing/subscriptions'),
   );
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   daysLeft = this.sdk.currentAccount.pipe(
     filter((account) => !!account.trial_expiration_date),
     map((account) => {

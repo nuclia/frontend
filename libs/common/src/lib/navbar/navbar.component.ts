@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
-import { combineLatest, map, merge, Observable, of, shareReplay, Subject } from 'rxjs';
+import { combineLatest, map, merge, Observable, of, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { AppService, NavigationService } from '../services';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
@@ -39,15 +39,15 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
-  isActivityEnabled = this.tracking.isFeatureEnabled('view-activity').pipe(shareReplay(1));
-  isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities').pipe(shareReplay(1));
-  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users').pipe(shareReplay(1));
-  isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets').pipe(shareReplay(1));
-  isAPIKeysEnabled = this.tracking.isFeatureEnabled('manage-api-keys').pipe(shareReplay(1));
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing').pipe(shareReplay(1));
-  isTrainingEnabled = this.tracking.isFeatureEnabled('training').pipe(shareReplay(1));
+  isActivityEnabled = this.tracking.isFeatureEnabled('view-activity');
+  isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities');
+  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users');
+  isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets');
+  isAPIKeysEnabled = this.tracking.isFeatureEnabled('manage-api-keys');
+  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
+  isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   isSynonymsEnabled: Observable<boolean> = combineLatest([
-    this.tracking.isFeatureEnabled('manage-synonyms').pipe(shareReplay(1)),
+    this.tracking.isFeatureEnabled('manage-synonyms'),
     this.account.pipe(
       filter((account) => !!account),
       map((account) => account?.type),

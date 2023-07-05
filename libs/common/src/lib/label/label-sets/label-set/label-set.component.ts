@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, Subject, take } from 'rxjs';
-import { filter, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { FeatureFlagService, STFUtils } from '@flaps/core';
 import { LabelSetKind, LabelSets } from '@nuclia/core';
@@ -36,10 +36,11 @@ export class LabelSetComponent implements OnDestroy {
   });
 
   colors: string[] = LABEL_MAIN_COLORS;
-  kinds = this.featureFlag.isFeatureEnabled('pdf-annotation').pipe(
-    map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
-    shareReplay(1),
-  );
+  kinds = this.featureFlag
+    .isFeatureEnabled('pdf-annotation')
+    .pipe(
+      map((enabled) => (enabled ? KINDS.concat({ id: LabelSetKind.SELECTIONS, name: 'label-set.selections' }) : KINDS)),
+    );
 
   validationMessages: { [key: string]: LabelSetTitleError } = {
     title: {

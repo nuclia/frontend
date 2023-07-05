@@ -15,7 +15,7 @@ import { WINDOW } from '@ng-web-apis/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionsComponent {
-  isCalculatorEnabled = this.tracking.isFeatureEnabled('calculator').pipe(shareReplay());
+  isCalculatorEnabled = this.tracking.isFeatureEnabled('calculator');
   accountType = this.billing.type.pipe(shareReplay());
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))

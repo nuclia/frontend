@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map, switchMap } from 'rxjs';
+import { BehaviorSubject, combineLatest, distinctUntilKeyChanged, forkJoin, map, switchMap, take } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { TrainingType } from '@nuclia/core';
 import { DEFAULT_FEATURES_LIST } from '../widgets/widget-features';
@@ -31,8 +31,8 @@ export class SearchComponent implements OnInit, OnDestroy {
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
-        this.featureFlag.isFeatureEnabled('answers'),
-        this.featureFlag.isFeatureEnabled('knowledge-graph'),
+        this.featureFlag.isFeatureEnabled('answers').pipe(take(1)),
+        this.featureFlag.isFeatureEnabled('knowledge-graph').pipe(take(1)),
       ]).pipe(
         map(([hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled]) => ({
           kb,
