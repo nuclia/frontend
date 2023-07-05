@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, map, Observable, shareReplay } from 'rxjs';
+import { BehaviorSubject, map, Observable, shareReplay, switchMap } from 'rxjs';
+import { fromFetch } from 'rxjs/fetch';
 
 interface Features {
   [key: string]: string | boolean | undefined;
@@ -12,9 +13,10 @@ const stageFeatures: Features = {
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
   private stageFeatures = new BehaviorSubject<Features>(stageFeatures);
-  private features: Observable<Features> = from(
-    fetch('https://nuclia.github.io/status/features.json').then((res) => res.json()),
-  ).pipe(shareReplay());
+  private features: Observable<Features> = fromFetch('https://nuclia.github.io/status/features.json').pipe(
+    switchMap((res) => res.json()),
+    shareReplay(),
+  );
 
   private isNotProd = location.hostname !== 'nuclia.cloud';
 
