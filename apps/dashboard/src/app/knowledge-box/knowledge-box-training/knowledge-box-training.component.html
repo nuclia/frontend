@@ -64,20 +64,22 @@
           (onClose)="trainings[type].open = false">
           <pa-option
             *ngIf="options[type] | async as options"
+            (selectOption)="toggleAll(type, $event)"
             dontCloseOnSelect>
             <pa-checkbox
               [value]="trainings[type].selectedOptions.length === options.length"
-              (change)="toggleAll(type)">
+              (change)="toggleAll(type, $event)">
               {{ 'stash.settings.processes.training.select_all' | translate }}
             </pa-checkbox>
           </pa-option>
           <pa-separator></pa-separator>
           <pa-option
             *ngFor="let option of options[type] | async"
+            (selectOption)="toggleOption(type, option, $event)"
             dontCloseOnSelect>
             <pa-checkbox
               [value]="trainings[type].selectedOptions.includes(option)"
-              (change)="toggleOption(type, option)">
+              (change)="toggleOption(type, option, $event)">
               {{ option.title | translate }}
             </pa-checkbox>
           </pa-option>
@@ -89,10 +91,11 @@
           (onClose)="trainings[type].open = false">
           <pa-option
             *ngFor="let option of options[type] | async"
+            (selectOption)="updateSelection(type, option, $event)"
             dontCloseOnSelect>
             <pa-checkbox
               [value]="trainings[type].selectedOptions.includes(option)"
-              (change)="updateSelection(type, option)">
+              (change)="updateSelection(type, option, $event)">
               {{ option.title | translate }}
             </pa-checkbox>
           </pa-option>
