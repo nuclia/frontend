@@ -131,26 +131,40 @@ export class KnowledgeBoxTrainingComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
-  toggleOption(type: TrainingType, option: TrainingOption) {
-    if (this.trainings[type].selectedOptions.includes(option)) {
-      this.trainings[type].selectedOptions = this.trainings[type].selectedOptions.filter((item) => item !== option);
-    } else {
-      this.trainings[type].selectedOptions = [...this.trainings[type].selectedOptions, option];
-    }
-    markForCheck(this.cdr);
-  }
-
-  updateSelection(type: TrainingType, option: TrainingOption) {
-    this.trainings[type].selectedOptions = [option];
-    markForCheck(this.cdr);
-  }
-
-  toggleAll(type: TrainingType) {
-    this.options[type].pipe(take(1)).subscribe((options) => {
-      const selectAll = this.trainings[type].selectedOptions.length < options.length;
-      this.trainings[type].selectedOptions = selectAll ? options.map((option) => option) : [];
+  toggleOption(type: TrainingType, option: TrainingOption, event: Event) {
+    if (this.isValidEvent(event)) {
+      if (this.trainings[type].selectedOptions.includes(option)) {
+        this.trainings[type].selectedOptions = this.trainings[type].selectedOptions.filter((item) => item !== option);
+      } else {
+        this.trainings[type].selectedOptions = [...this.trainings[type].selectedOptions, option];
+      }
       markForCheck(this.cdr);
-    });
+    }
+  }
+
+  updateSelection(type: TrainingType, option: TrainingOption, event: Event) {
+    if (this.isValidEvent(event)) {
+      if (this.trainings[type].selectedOptions.includes(option)) {
+        this.trainings[type].selectedOptions = [];
+      } else {
+        this.trainings[type].selectedOptions = [option];
+      }
+      markForCheck(this.cdr);
+    }
+  }
+
+  toggleAll(type: TrainingType, event: Event) {
+    if (this.isValidEvent(event)) {
+      this.options[type].pipe(take(1)).subscribe((options) => {
+        const selectAll = this.trainings[type].selectedOptions.length < options.length;
+        this.trainings[type].selectedOptions = selectAll ? options.map((option) => option) : [];
+        markForCheck(this.cdr);
+      });
+    }
+  }
+
+  isValidEvent(event: Event) {
+    return event.type === 'change' || (event.type === 'click' && (event.target as HTMLElement).tagName === 'LI');
   }
 
   startOrStopTraining(type: TrainingType) {

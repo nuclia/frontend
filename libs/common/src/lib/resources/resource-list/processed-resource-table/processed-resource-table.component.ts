@@ -189,10 +189,17 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     }
   }
 
-  toggleFilter() {
+  onToggleFilter() {
     const filters = this.selectedFilters;
     this.filter.emit(filters);
     this.isFiltering = filters.length > 0;
+  }
+
+  onSelectFilter(option: OptionModel, event: MouseEvent | KeyboardEvent) {
+    if ((event.target as HTMLElement).tagName === 'LI') {
+      option.selected = !option.selected;
+      this.onToggleFilter();
+    }
   }
 
   clearFilters() {

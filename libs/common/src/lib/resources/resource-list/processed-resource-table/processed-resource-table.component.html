@@ -60,10 +60,11 @@
           <pa-option-header>{{ 'resource.classification-column' | translate }}</pa-option-header>
           <pa-option
             *ngFor="let option of filterOptions.classification"
+            (selectOption)="onSelectFilter(option, $event)"
             dontCloseOnSelect>
             <pa-checkbox
               [(value)]="option.selected"
-              (valueChange)="toggleFilter()">
+              (valueChange)="onToggleFilter()">
               {{ option.label }}
             </pa-checkbox>
           </pa-option>
@@ -75,11 +76,12 @@
           <pa-option-header>{{ 'resource.filter.main-type' | translate }}</pa-option-header>
           <pa-option
             *ngFor="let option of filterOptions.mainTypes"
+            (selectOption)="onSelectFilter(option, $event)"
             [paTooltip]="option.help"
             dontCloseOnSelect>
             <pa-checkbox
               [(value)]="option.selected"
-              (valueChange)="toggleFilter()">
+              (valueChange)="onToggleFilter()">
               {{ option.label }}
             </pa-checkbox>
           </pa-option>
