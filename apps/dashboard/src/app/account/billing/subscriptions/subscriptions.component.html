@@ -41,7 +41,7 @@
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
         <pa-button
-          *ngIf="(accountType | async) === 'stash-basic' || (accountType | async) === 'stash-trial'"
+          *ngIf="(accountType | async) === 'stash-trial'"
           kind="primary"
           routerLink="../checkout"
           [queryParams]="{ type: 'stash-developer' }">
