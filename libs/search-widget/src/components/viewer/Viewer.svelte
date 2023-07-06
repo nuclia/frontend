@@ -70,7 +70,9 @@
   // Load data from the state
   let state: ViewerState;
   let result: TypedResult | null;
-  const stateSubscription = viewerData.subscribe((value) => {
+  const stateSubscription = viewerData.pipe(
+    filter(data => data.isPreviewing)
+  ).subscribe((value) => {
     freezeBackground(true);
     state = value;
     result = value.currentResult;
