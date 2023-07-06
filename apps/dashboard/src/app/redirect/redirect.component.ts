@@ -17,7 +17,7 @@ export class RedirectComponent {
     map(([authenticated, userInfo]) => !!(authenticated && userInfo)),
   );
   token = this.sdk.nuclia.auth.getToken();
-  displayToken = this.route.queryParamMap.pipe(map((params) => params.has('display')));
+  displayToken = this.route.queryParamMap.pipe(map((params) => params.get('display') === 'token'));
 
   constructor(private sdk: SDKService, private userService: UserService, private route: ActivatedRoute) {
     this.isValidToken
