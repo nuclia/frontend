@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { BehaviorSubject, catchError, map, Observable, of, switchMap, take } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
   AccountUsage,
@@ -17,7 +17,9 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isSubscribed = this.type.pipe(map((type) => type === 'stash-developer' || type === 'stash-business'));
+  isSubscribed = combineLatest([this.type, this.getPrices().pipe(shareReplay())]).pipe(
+    map(([type, prices]) => Object.keys(prices).includes(type as string)),
+  );
 
   private _country = new BehaviorSubject<string | null>(null);
   country = this._country.asObservable();
