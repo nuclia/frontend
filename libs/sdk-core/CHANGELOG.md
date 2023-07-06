@@ -8,13 +8,13 @@
 
 ### Improvements
 - Add `SHORTENED_METADATA` type to `ExtractedDataTypes`
-
-### Improvements
-
 - Add `selections` in field metadata
 - Update Learning configurations models
   - Update `LearningConfiguration` interface 
   - Add `LearningConfigurationSchemas` and `LearningConfigurationSchema` interfaces
+
+### Bug fixes
+- Add missing `generic` type in `shortToLongFieldType` and `getFieldTypeFromString` mappers
 
 # 1.4.0 (2023-06-23)
 

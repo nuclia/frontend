@@ -6,6 +6,7 @@ import {
   FileFieldData,
   getDataKeyFromFieldType,
   getEntityFromFilter,
+  getFieldTypeFromString,
   getFilterFromEntity,
   getFilterFromLabel,
   getLabelFromFilter,
@@ -421,21 +422,40 @@ export function getSortedResults(resources: Search.FindResource[]): TypedResult[
 
   const keyList: string[] = [];
   return resources.reduce((resultList, resource) => {
+    const fieldCount = Object.keys(resource.fields).length;
     const fieldEntries: TypedResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {
-        // filter out generic fields
+        // filter out title field when it’s not the only field
         const fieldType = fullFieldId.split('/')[1];
-        return fieldType !== SHORT_FIELD_TYPE.generic && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
+        return fieldCount === 1
+          ? true
+          : fullFieldId !== '/a/title' && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
       .map(([fullFieldId, field]) => {
-        const [, shortType, field_id] = fullFieldId.split('/');
-        const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
-        const fieldId = { field_id, field_type };
+        let [, shortType, field_id] = fullFieldId.split('/');
+        let fieldId: FieldId;
+
+        if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
+          // if matching field is generic, we take the first other field from resource data
+          fieldId = Object.entries(resource.data)
+            .map(([dataKey, data]) => {
+              // data key is matching field type with an `s` suffix
+              const fieldType = getFieldTypeFromString(dataKey.substring(0, dataKey.length - 1));
+              return { field_type: fieldType as FIELD_TYPE, field_id: Object.keys(data)[0] };
+            })
+            .filter((fullId) => {
+              return fullId.field_type !== FIELD_TYPE.generic;
+            })[0];
+        } else {
+          const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
+          fieldId = { field_id, field_type };
+        }
         const fieldResult: Search.FieldResult = {
           ...resource,
           field: fieldId,
           fieldData: getFieldDataFromResource(resource, fieldId),
-          paragraphs: Object.values(field.paragraphs).sort((a, b) => a.order - b.order),
+          paragraphs:
+            fullFieldId !== '/a/title' ? Object.values(field.paragraphs).sort((a, b) => a.order - b.order) : [],
         };
         const typedResult: TypedResult = {
           ...fieldResult,
@@ -474,12 +494,14 @@ const SpreadsheetContentTypes = [
   'application/vnd.oasis.opendocument.spreadsheet',
 ];
 export function getResultType(result: Search.FieldResult): ResultType {
-  if (result?.field?.field_type === FIELD_TYPE.link && !!result?.fieldData?.value) {
+  const fieldType = result?.field?.field_type;
+  const fieldDataValue = result?.fieldData?.value;
+  if (fieldType === FIELD_TYPE.link && !!fieldDataValue) {
     const url = (result.fieldData as LinkFieldData).value?.uri;
     return url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
-  } else if (result?.field?.field_type === FIELD_TYPE.conversation) {
+  } else if (fieldType === FIELD_TYPE.conversation) {
     return 'conversation';
-  } else if (result?.field?.field_type === FIELD_TYPE.file && !!result?.fieldData?.value) {
+  } else if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
     const file = (result.fieldData as FileFieldData).value?.file;
     // for audio, video, image or text, we have a corresponding tile
     // for mimetype starting with 'application/', it is more complex:

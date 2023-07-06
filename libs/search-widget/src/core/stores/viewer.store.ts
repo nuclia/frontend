@@ -1,6 +1,6 @@
 import type { MediaWidgetParagraph, PreviewKind, ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
-import type { CloudLink, FieldFullId, IFieldData, ResourceField } from '@nuclia/core';
+import type { CloudLink, FieldFullId, IFieldData } from '@nuclia/core';
 import { FIELD_TYPE, FileFieldData, LinkFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
@@ -161,7 +161,7 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
       ...state,
       currentResult,
       fieldData: fieldData ? fieldData : null,
-      summary: data?.extracted?.metadata?.metadata?.summary || '',
+      summary: data?.extracted?.metadata?.metadata?.summary?.trim() || '',
     };
   },
 );
@@ -172,10 +172,6 @@ export const transcripts = viewerState.writer<Search.FindParagraph[]>(
     ...state,
     transcripts,
   }),
-);
-
-export const resourceField = viewerState.reader<ResourceField | null>((state) =>
-  state.fieldData && state.fieldFullId ? { ...state.fieldData, ...state.fieldFullId } : null,
 );
 
 export const resourceTitle = viewerState.writer<string, string>(
