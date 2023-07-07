@@ -95,6 +95,7 @@ export interface Field {
   type: 'text' | 'select' | 'folder' | 'textarea';
   options?: { label: string; value: string; disabled?: boolean }[];
   required?: boolean;
+  pattern?: string | RegExp;
   canBeRefreshed?: boolean;
 }
 

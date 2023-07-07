@@ -22,6 +22,8 @@ class SitemapImpl implements ISourceConnector {
         label: 'Sitemap URL',
         type: 'text',
         required: true,
+        pattern: /.+\.xml/,
+        placeholder: 'https://my-website.com/sitemap.xml',
       },
     ]);
   }
