@@ -7,7 +7,7 @@ import {
   OnDestroy,
   Output,
 } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { filter, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { ConnectorDefinition, ConnectorParameters, Field } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
@@ -139,7 +139,7 @@ export class ConnectorsComponent implements OnDestroy {
     this.canStoreParams = this.type === 'sources' && this.fields.every((field) => field.type !== 'folder');
     this.form = this.formBuilder.group({
       fields: this.formBuilder.group(
-        fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', field.required ? [Validators.required] : []] }), {}),
+        fields.reduce((acc, field) => ({ ...acc, [field.id]: ['', this.getFieldValidators(field)] }), {}),
       ),
       permanentSync: [!!this.selectedConnector?.permanentSyncOnly],
       quickAccess: this.formBuilder.group({
@@ -160,12 +160,15 @@ export class ConnectorsComponent implements OnDestroy {
     markForCheck(this.cdr);
   }
 
-  updateValidators(saveCredentials: boolean) {
-    const name = this.form?.get('quickAccess')?.get('name');
-    saveCredentials ? name?.addValidators(Validators.required) : name?.removeValidators(Validators.required);
-    // force validation to be refreshed
-    this.form?.patchValue({ quickAccess: { name: this.form?.value.quickAccess.name } });
-    this.form?.updateValueAndValidity();
+  getFieldValidators(field: Field) {
+    const validators: ValidatorFn[] = [];
+    if (field.required) {
+      validators.push(Validators.required);
+    }
+    if (field.pattern) {
+      validators.push(Validators.pattern(field.pattern));
+    }
+    return validators;
   }
 
   validate() {
