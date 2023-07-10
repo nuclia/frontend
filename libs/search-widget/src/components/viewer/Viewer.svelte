@@ -65,7 +65,6 @@
   let sidePanelSectionOpen: sidePanelSection = 'search';
   const findInPlaceholderPrefix = 'tile.find-in-';
   let findInPlaceholder = '';
-  let searchResultsHeight = 0;
 
   // Load data from the state
   let state: ViewerState;
@@ -344,19 +343,11 @@
                 </div>
 
                 {#if result?.paragraphs.length > 0}
-                  {#if sidePanelSectionOpen !== 'search'}
-                    <div class="search-results-collapsed">
-                      <MetadataSectionHeader on:toggle={() => toggleSection('search')}>
-                        {$_('tile.search-results', { count: result?.paragraphs.length })}
-                      </MetadataSectionHeader>
-                    </div>
-                  {/if}
-                  <div class="search-results-container"
-                       class:expanded={sidePanelSectionOpen === 'search'}
-                       style:--search-results-height="{searchResultsHeight}px"
-                       tabindex="-1">
-                    <ul class="sw-paragraphs-container"
-                        bind:offsetHeight={searchResultsHeight}>
+                  <MetadataContainer sectionId="search"
+                                     expanded={sidePanelSectionOpen === 'search'}
+                                     on:toggle={(event) => toggleSection(event.detail)}>
+                    <span slot="sectionTitle">{$_('tile.search-results', { count: result?.paragraphs.length })}</span>
+                    <ul class="sw-paragraphs-container" slot="sectionContent">
                       {#each result?.paragraphs as paragraph, index}
                         <ParagraphResult {paragraph}
                                          stack={true}
@@ -368,11 +359,11 @@
                         />
                       {/each}
                     </ul>
-                  </div>
+                  </MetadataContainer>
                 {/if}
               {/if}
 
-              {#if isMediaPlayer}
+              {#if isMediaPlayer && $transcripts.length > 0}
                 <MetadataContainer sectionId="transcripts"
                                    expanded={sidePanelSectionOpen === 'transcripts'}
                                    on:toggle={(event) => toggleSection(event.detail)}>
@@ -390,12 +381,14 @@
                 </MetadataContainer>
               {/if}
 
-              <MetadataContainer sectionId="summary"
-                                 expanded={sidePanelSectionOpen === 'summary'}
-                                 on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('tile.summary')}</span>
-                <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
-              </MetadataContainer>
+              {#if $fieldSummary}
+                <MetadataContainer sectionId="summary"
+                                   expanded={sidePanelSectionOpen === 'summary'}
+                                   on:toggle={(event) => toggleSection(event.detail)}>
+                  <span slot="sectionTitle">{$_('tile.summary')}</span>
+                  <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
+                </MetadataContainer>
+              {/if}
             {/if}
         </div>
       </div>
