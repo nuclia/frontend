@@ -218,38 +218,18 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   }
 
   private loadFilters() {
-    const mimeFacetFamily = '/n/i';
-    const faceted = [mimeFacetFamily].concat(Object.keys(this._labelSets).map((setId) => `/l/${setId}`));
-    let allFacets: Search.FacetsResult;
+    const mimeFacets = ['/n/i/application', '/n/i/audio', '/n/i/image', '/n/i/text', '/n/i/video'];
+    const faceted = mimeFacets.concat(Object.keys(this._labelSets).map((setId) => `/l/${setId}`));
     this.sdk.currentKb
       .pipe(
         take(1),
-        switchMap((kb) =>
-          kb.catalog('', { faceted }).pipe(
-            switchMap((results) => {
-              if (results.type === 'error') {
-                return of(results);
-              }
-              const facetsResult = results.fulltext?.facets || {};
-              // Store all facets but mimetype ones
-              allFacets = Object.entries(facetsResult).reduce((facets, [key, value]) => {
-                if (key !== mimeFacetFamily) {
-                  facets[key] = value;
-                }
-                return facets;
-              }, {} as Search.FacetsResult);
-              const mimeFaceted = Object.keys(facetsResult[mimeFacetFamily]);
-              return kb.catalog('', { faceted: mimeFaceted });
-            }),
-          ),
-        ),
-        tap((results) => {
-          if (results.type !== 'error') {
-            allFacets = { ...allFacets, ...(results.fulltext?.facets || {}) };
-          }
-        }),
+        switchMap((kb) => kb.catalog('', { faceted })),
       )
-      .subscribe(() => this.formatFiltersFromFacets(allFacets));
+      .subscribe((results) => {
+        if (results.type !== 'error') {
+          this.formatFiltersFromFacets(results.fulltext?.facets || {});
+        }
+      });
   }
 
   private formatFiltersFromFacets(allFacets: Search.FacetsResult) {
