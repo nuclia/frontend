@@ -57,15 +57,24 @@
             <small>{{ 'stash.create.' + conf.id + '.help' | translate }}</small>
           </div>
         </div>
-        <pa-radio-group
-          [formControlName]="conf.id"
-          [name]="conf.id">
-          <pa-radio
-            *ngFor="let value of conf.data.options"
-            [value]="value.value">
-            {{ value.name.toLowerCase() }}
-          </pa-radio>
-        </pa-radio-group>
+        <div class="options">
+          <pa-radio-group
+            [formControlName]="conf.id"
+            [name]="conf.id">
+            <pa-radio
+              *ngFor="let value of conf.data.options"
+              [value]="value.value">
+              {{ value.name.toLowerCase() }}
+            </pa-radio>
+          </pa-radio-group>
+          <div class="fields">
+            <pa-input
+              *ngFor="let field of this.getVisibleFields(conf)"
+              [formControlName]="field.value">
+              {{ field.name }}
+            </pa-input>
+          </div>
+        </div>
       </div>
 
       <footer>

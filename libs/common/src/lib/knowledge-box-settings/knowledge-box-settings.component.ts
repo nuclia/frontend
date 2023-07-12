@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { catchError, filter, of, Subject } from 'rxjs';
 import { concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService, StateService, STFUtils } from '@flaps/core';
+import { SDKService, StateService, STFUtils, VisibleLearningConfiguration } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../validators';
@@ -31,7 +31,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   unsubscribeAll = new Subject<void>();
   hasAnswers = false;
   learningConfigurations?: { id: string; data: LearningConfiguration }[];
-  displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
+  displayedLearningConfigurations?: VisibleLearningConfiguration[];
   currentConfig: { [id: string]: string } = {};
 
   constructor(
@@ -66,8 +66,16 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             description: [this.kb?.description],
             config: this.formBuilder.group(
               this.displayedLearningConfigurations.reduce((acc, entry) => {
-                acc[entry.id] = [this.currentConfig[entry.id]];
-                return acc;
+                return {
+                  ...acc,
+                  [entry.id]: [this.currentConfig[entry.id]],
+                  ...entry.data.options.reduce((acc, option) => {
+                    option.fields.forEach((field) => {
+                      acc[field.value] = [this.currentConfig[field.value]];
+                    });
+                    return acc;
+                  }, {} as { [key: string]: any }),
+                };
               }, {} as { [key: string]: any }),
             ),
           });
@@ -84,6 +92,11 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       description: this.kb?.description,
       config: this.currentConfig,
     });
+  }
+
+  getVisibleFields(conf: VisibleLearningConfiguration) {
+    const selectedOption = this.kbForm?.value['config'][conf.id] || '';
+    return conf.data.options.find((option) => option.value === selectedOption)?.fields || [];
   }
 
   saveKb(): void {
@@ -113,7 +126,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             acc[entry.id] = this.kbForm?.value.config[entry.id];
             return acc;
           }, current);
-          return hasChange ? kb.setConfiguration(conf) : of(null);
+          const fields = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
+            this.getVisibleFields(entry).forEach((field) => {
+              if (this.currentConfig[field.value] !== this.kbForm?.value.config[field.value]) {
+                hasChange = true;
+              }
+              acc[field.value] = this.kbForm?.value.config[field.value];
+            });
+            return acc;
+          }, {} as { [key: string]: string });
+
+          return hasChange ? kb.setConfiguration({ ...conf, ...fields }) : of(null);
         }),
         concatMap(() =>
           this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),

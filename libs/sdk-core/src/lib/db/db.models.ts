@@ -183,6 +183,13 @@ export interface LearningConfigurations {
 export interface LearningConfiguration {
   options?: { value: string; name: string }[];
   default: string;
+  field_groups?: { [key: string]: LearningConfigurationFieldGroup };
+}
+
+export interface LearningConfigurationFieldGroup {
+  dependencies: string[];
+  account_types: string[];
+  fields: { [key: string]: { name: string } };
 }
 
 export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];

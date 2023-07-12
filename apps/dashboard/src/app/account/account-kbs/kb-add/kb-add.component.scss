@@ -31,6 +31,13 @@ pa-radio-group {
   }
 }
 
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin: rhythm(2) 0;
+}
+
 .kb-add-separator {
   margin: rhythm(1) 0;
 }

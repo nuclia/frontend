@@ -59,6 +59,13 @@
                 {{ value.name.toLocaleLowerCase() }}
               </pa-radio>
             </pa-radio-group>
+            <div class="fields">
+              <pa-input
+                *ngFor="let field of this.getVisibleFields(conf)"
+                [formControlName]="field.value">
+                {{ field.name }}
+              </pa-input>
+            </div>
           </div>
         </div>
 

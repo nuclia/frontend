@@ -4,6 +4,7 @@ import {
   Counters,
   IKnowledgeBoxItem,
   KnowledgeBox,
+  LearningConfiguration,
   LearningConfigurationSet,
   Nuclia,
   WritableKnowledgeBox,
@@ -30,6 +31,19 @@ import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { take } from 'rxjs/operators';
 
 const IMMUTABLE_OPTIONS = ['semantic_model', 'visual_labeling'];
+
+export interface VisibleLearningConfiguration {
+  id: string;
+  data: LearningConfigurationWithFields;
+}
+
+export interface LearningConfigurationWithFields extends LearningConfiguration {
+  options: {
+    value: string;
+    name: string;
+    fields: { value: string; name: string }[];
+  }[];
+}
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
@@ -210,14 +224,15 @@ export class SDKService {
 
   getVisibleLearningConfiguration(
     onCreation = true,
-  ): Observable<{ display: LearningConfigurationSet; full: LearningConfigurationSet }> {
+  ): Observable<{ display: VisibleLearningConfiguration[]; full: LearningConfigurationSet }> {
     return forkJoin([
       this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
       this.featureFlagService.isFeatureEnabled('answers').pipe(take(1)),
       this.featureFlagService.isFeatureEnabled('pdf-annotation').pipe(take(1)),
       this.nuclia.db.getLearningConfigurations().pipe(take(1)),
+      this.currentAccount.pipe(take(1)),
     ]).pipe(
-      map(([hasAnonymization, hasAnswers, hasPdfAnnotation, conf]) => {
+      map(([hasAnonymization, hasAnswers, hasPdfAnnotation, conf, account]) => {
         const full = Object.entries(conf)
           .map(([id, data]) => ({ id, data }))
           // some options cannot be changed after kb creation
