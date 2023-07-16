@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { SDKService, STFUtils, VisibleLearningConfiguration, Zone } from '@flaps/core';
+import { SDKService, STFUtils, Zone } from '@flaps/core';
 import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
@@ -21,7 +21,7 @@ export class KbAddComponent implements OnInit {
   step = 0;
   kbForm?: UntypedFormGroup;
   learningConfigurations?: { id: string; data: LearningConfiguration }[];
-  displayedLearningConfigurations?: VisibleLearningConfiguration[];
+  displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
   validationMessages: { [key: string]: IErrorMessages } = {
     title: {
       sluggable: 'stash.kb_name_invalid',
@@ -53,16 +53,8 @@ export class KbAddComponent implements OnInit {
         zone: [this.modal.config.data?.account.zone],
         config: this.formBuilder.group(
           this.displayedLearningConfigurations.reduce((acc, entry) => {
-            return {
-              ...acc,
-              [entry.id]: [entry.data.default],
-              ...entry.data.options.reduce((acc, option) => {
-                option.fields.forEach((field) => {
-                  acc[field.value] = [''];
-                });
-                return acc;
-              }, {} as { [key: string]: any }),
-            };
+            acc[entry.id] = [entry.data.default];
+            return acc;
           }, {} as { [key: string]: any }),
         ),
       });
@@ -87,19 +79,13 @@ export class KbAddComponent implements OnInit {
       acc[entry.id] = this.kbForm?.value.config[entry.id];
       return acc;
     }, default_learning_configuration);
-    const fields = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-      this.getVisibleFields(entry).forEach((field) => {
-        acc[field.value] = this.kbForm?.value.config[field.value];
-      });
-      return acc;
-    }, {} as { [key: string]: string });
 
     const payload: KnowledgeBoxCreation = {
       slug: STFUtils.generateSlug(this.kbForm.value.title),
       zone: this.kbForm.value.zone,
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
-      learning_configuration: { ...learning_configuration, ...fields },
+      learning_configuration,
     };
     this.saving = true;
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
@@ -124,11 +110,6 @@ export class KbAddComponent implements OnInit {
         this.cdr?.markForCheck();
       },
     });
-  }
-
-  getVisibleFields(conf: VisibleLearningConfiguration) {
-    const selectedOption = this.kbForm?.value['config'][conf.id] || '';
-    return conf.data.options.find((option) => option.value === selectedOption)?.fields || [];
   }
 
   close(): void {
