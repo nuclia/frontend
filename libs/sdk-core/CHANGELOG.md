@@ -8,7 +8,9 @@
 ### Improvements
 
 - Add `selections` in field metadata
-- Add `LearningConfigurationFieldGroup` interface
+- Update Learning configurations models
+  - Update `LearningConfiguration` interface 
+  - Add `LearningConfigurationSchemas` and `LearningConfigurationSchema` interfaces
 
 # 1.4.0 (2023-06-23)
 

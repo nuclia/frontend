@@ -668,6 +668,8 @@
 	"standalone.upload-no-nua-key": "No estás conectado al servidor <strong>nuclia.cloud</strong> y no se procesarán nuevos datos.",
 	"stash.add_user": "Añadir usuario",
 	"stash.added_user": "El usuario {{user}} ha sido añadido",
+	"stash.config.azure_openai": "Azure OpenAI key",
+	"stash.config.openai": "OpenAI key",
 	"stash.contact_admin": "No está autorizado para crear un cuadro de conocimiento. Póngase en contacto con su administrador.",
 	"stash.create": "Crea una caja de conocimiento",
 	"stash.create.error": "Perdon, alguna cosa pasó mal cuando creabamos la caja de conocimiento. Por favor vuelve a intentarlo.",

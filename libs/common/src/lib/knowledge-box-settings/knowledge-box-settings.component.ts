@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { catchError, filter, of, Subject } from 'rxjs';
-import { concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService, StateService, STFUtils, VisibleLearningConfiguration } from '@flaps/core';
+import { auditTime, concatMap, delay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { LearningConfigurationUserKeys, SDKService, StateService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { Sluggable } from '../validators';
@@ -29,10 +29,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
 
   saving = false;
   unsubscribeAll = new Subject<void>();
-  hasAnswers = false;
   learningConfigurations?: { id: string; data: LearningConfiguration }[];
-  displayedLearningConfigurations?: VisibleLearningConfiguration[];
-  currentConfig: { [id: string]: string } = {};
+  displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
+  userKeys?: LearningConfigurationUserKeys;
+  currentConfig: { [key: string]: any } = {};
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -51,34 +51,46 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() => (this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})).pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() =>
-          this.sdk.getVisibleLearningConfiguration(false).pipe(catchError(() => of({ display: [], full: [] }))),
+          this.sdk
+            .getVisibleLearningConfiguration(false)
+            .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(({ display, full }) => {
+      .subscribe(({ display, full, keys }) => {
         this.displayedLearningConfigurations = display;
         this.learningConfigurations = full;
+        this.userKeys = keys;
         if (this.kb) {
           this.kbForm = this.formBuilder.group({
             uid: [this.kb?.id],
             slug: [this.kb?.slug, [Sluggable()]],
             title: [this.kb?.title, [Validators.required]],
             description: [this.kb?.description],
-            config: this.formBuilder.group(
-              this.displayedLearningConfigurations.reduce((acc, entry) => {
-                return {
-                  ...acc,
-                  [entry.id]: [this.currentConfig[entry.id]],
-                  ...entry.data.options.reduce((acc, option) => {
-                    option.fields.forEach((field) => {
-                      acc[field.value] = [this.currentConfig[field.value]];
-                    });
-                    return acc;
-                  }, {} as { [key: string]: any }),
-                };
+            config: this.formBuilder.group({
+              ...(this.displayedLearningConfigurations || []).reduce((acc, entry) => {
+                acc[entry.id] = this.currentConfig[entry.id];
+                return acc;
               }, {} as { [key: string]: any }),
-            ),
+              user_keys: this.formBuilder.group(
+                Object.entries(this.userKeys || {}).reduce((acc, [groupId, group]) => {
+                  acc[groupId] = this.formBuilder.group(
+                    Object.entries(group).reduce((acc, [fieldId, field]) => {
+                      acc[fieldId] = [this.currentConfig['user_keys']?.[groupId]?.[fieldId] || ''];
+                      return acc;
+                    }, {} as { [key: string]: any }),
+                  );
+                  return acc;
+                }, {} as { [key: string]: any }),
+              ),
+            }),
           });
+          this.updateFormValidators();
+          this.kbForm.controls.config.valueChanges
+            .pipe(takeUntil(this.unsubscribeAll), auditTime(100))
+            .subscribe(() => {
+              this.updateFormValidators();
+            });
           this.cdr?.markForCheck();
         }
       });
@@ -94,9 +106,26 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getVisibleFields(conf: VisibleLearningConfiguration) {
-    const selectedOption = this.kbForm?.value['config'][conf.id] || '';
-    return conf.data.options.find((option) => option.value === selectedOption)?.fields || [];
+  updateFormValidators() {
+    if (this.kbForm) {
+      const userKeysControls = (
+        (this.kbForm?.controls.config as UntypedFormGroup).controls.user_keys as UntypedFormGroup
+      ).controls;
+      const visibleGroups = (this.displayedLearningConfigurations || [])
+        .map((conf) => this.getVisibleFieldGroup(conf))
+        .filter((value) => !!value);
+      Object.entries(this.userKeys || {}).forEach(([groupId, group]) => {
+        Object.entries((userKeysControls[groupId] as UntypedFormGroup).controls).forEach(([fieldId, fieldControl]) => {
+          if (visibleGroups.includes(groupId)) {
+            fieldControl.setValidators(group[fieldId].required ? Validators.required : []);
+          } else {
+            fieldControl.clearValidators();
+          }
+          fieldControl.updateValueAndValidity({ emitEvent: false });
+        });
+      });
+      this.cdr?.markForCheck();
+    }
   }
 
   saveKb(): void {
@@ -126,17 +155,25 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             acc[entry.id] = this.kbForm?.value.config[entry.id];
             return acc;
           }, current);
-          const fields = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-            this.getVisibleFields(entry).forEach((field) => {
-              if (this.currentConfig[field.value] !== this.kbForm?.value.config[field.value]) {
-                hasChange = true;
-              }
-              acc[field.value] = this.kbForm?.value.config[field.value];
-            });
-            return acc;
-          }, {} as { [key: string]: string });
 
-          return hasChange ? kb.setConfiguration({ ...conf, ...fields }) : of(null);
+          const userKeys = {
+            user_keys: (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
+              const group = this.getVisibleFieldGroup(entry);
+              if (group) {
+                acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce((acc, fieldId) => {
+                  const value = this.kbForm?.value.config['user_keys'][group][fieldId];
+                  if ((this.currentConfig['user_keys']?.[group]?.[fieldId] || '') !== value) {
+                    hasChange = true;
+                  }
+                  acc[fieldId] = value;
+                  return acc;
+                }, {} as { [key: string]: any });
+              }
+              return acc;
+            }, {} as { [key: string]: any }),
+          };
+
+          return hasChange ? kb.setConfiguration({ ...conf, ...userKeys }) : of(null);
         }),
         concatMap(() =>
           this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),
@@ -148,6 +185,12 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         this.stateService.setStash(kb);
         this.sdk.refreshKbList(true);
       });
+  }
+
+  getVisibleFieldGroup(conf: { id: string; data: LearningConfiguration }) {
+    const selectedOption = this.kbForm?.value['config'][conf.id] || '';
+    const groupId = conf.data.options.find((option) => option.value === selectedOption)?.user_key;
+    return groupId && this.userKeys?.[groupId] ? groupId : undefined;
   }
 
   ngOnDestroy() {

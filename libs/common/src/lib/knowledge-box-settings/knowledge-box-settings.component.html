@@ -67,12 +67,18 @@
               {{ value.name.toLowerCase() }}
             </pa-radio>
           </pa-radio-group>
-          <div class="fields">
-            <pa-input
-              *ngFor="let field of this.getVisibleFields(conf)"
-              [formControlName]="field.value">
-              {{ field.name }}
-            </pa-input>
+          <div
+            class="fields"
+            *ngIf="getVisibleFieldGroup(conf) as id"
+            formGroupName="user_keys">
+            <ng-container [formGroupName]="id">
+              <div class="title-s">{{ 'stash.config.' + id | translate }}:</div>
+              <pa-input
+                *ngFor="let field of userKeys[id] | keyvalue"
+                [formControlName]="field.key">
+                {{ field.value.title | translate }}
+              </pa-input>
+            </ng-container>
           </div>
         </div>
       </div>

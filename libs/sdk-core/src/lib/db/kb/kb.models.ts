@@ -117,7 +117,7 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
 
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList>;
 
-  getConfiguration(): Observable<{ [id: string]: string }>;
+  getConfiguration(): Observable<{ [id: string]: any }>;
 }
 
 export interface IWritableKnowledgeBox extends IKnowledgeBox {
@@ -177,7 +177,7 @@ export interface IWritableKnowledgeBox extends IKnowledgeBox {
 
   deleteKey(saId: string, saKeyId: string): Observable<void>;
 
-  setConfiguration(config: { [id: string]: string }): Observable<void>;
+  setConfiguration(config: { [id: string]: any }): Observable<void>;
 }
 
 export interface KnowledgeBoxCreation {
@@ -185,7 +185,7 @@ export interface KnowledgeBoxCreation {
   title: string;
   description?: string;
   zone?: string;
-  learning_configuration?: { [configId: string]: string };
+  learning_configuration?: { [configId: string]: any };
 }
 
 export interface Entities {
