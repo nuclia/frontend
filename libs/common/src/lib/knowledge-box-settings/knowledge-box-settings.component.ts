@@ -29,6 +29,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
 
   saving = false;
   unsubscribeAll = new Subject<void>();
+  formReady = new Subject<void>();
   learningConfigurations?: { id: string; data: LearningConfiguration }[];
   displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
   userKeys?: LearningConfigurationUserKeys;
@@ -42,6 +43,14 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.formReady
+      .pipe(
+        tap(() => this.updateFormValidators()),
+        switchMap(() => this.kbForm?.controls['config'].valueChanges || of({})),
+        auditTime(100),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe(() => this.updateFormValidators());
     this.stateService.stash
       .pipe(
         filter((data) => !!data),
@@ -85,12 +94,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
               ),
             }),
           });
-          this.updateFormValidators();
-          this.kbForm.controls['config'].valueChanges
-            .pipe(takeUntil(this.unsubscribeAll), auditTime(100))
-            .subscribe(() => {
-              this.updateFormValidators();
-            });
+          this.formReady.next();
           this.cdr?.markForCheck();
         }
       });

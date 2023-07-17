@@ -74,7 +74,7 @@
             <ng-container [formGroupName]="id">
               <div class="title-s">{{ 'stash.config.' + id | translate }}:</div>
               <pa-input
-                *ngFor="let field of userKeys[id] | keyvalue"
+                *ngFor="let field of userKeys[id] || {} | keyvalue"
                 [formControlName]="field.key">
                 {{ field.value.title | translate }}
               </pa-input>
