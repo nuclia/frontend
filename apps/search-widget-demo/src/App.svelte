@@ -104,7 +104,7 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink,relations,knowledgeGraph,zanswers,zonlyAnswers" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,answers,zonlyAnswers" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}

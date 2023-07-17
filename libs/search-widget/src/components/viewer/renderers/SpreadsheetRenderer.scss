@@ -1,0 +1,31 @@
+.sw-spreadsheet-renderer {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--renderer-outer-space));
+  width: 100%;
+
+  .tabs {
+    flex-shrink: 0;
+  }
+
+  .table-container {
+    background-color: var(--color-light-stronger);
+    flex: 1 1 0;
+    overflow: auto;
+    padding: var(--rhythm-2);
+  }
+
+  table {
+    background-color: var(--color-light-stronger);
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+
+  td {
+    border: 1px solid var(--color-neutral-light);
+    font-size: var(--font-size-medium);
+    max-width: var(--rhythm-27);
+    padding: var(--rhythm-1_5) var(--rhythm-1);
+  }
+}
