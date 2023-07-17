@@ -10,6 +10,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
   annotations:
     checksum/config: {{ include (print $.Template.BasePath "/app.cm.yaml") . | sha256sum }}
+
 spec:
   replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
@@ -21,6 +22,10 @@ spec:
   template:
     metadata:
       name: "{{ .Release.Name }}"
+  {{- if hasKey .Values "annotations" }}
+      annotations:
+{{ toYaml .Values.annotations | indent 8 }}
+  {{- end }}
       labels:
         app: "{{ .Chart.Name }}"
         version: "{{ .Values.hash }}"
