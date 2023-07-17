@@ -181,7 +181,7 @@ export interface LearningConfigurations {
 }
 
 export interface LearningConfiguration {
-  options: { value: string; name: string }[];
+  options?: { value: string; name: string }[];
   default: string;
 }
 
