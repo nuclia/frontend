@@ -35,6 +35,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
   userKeys?: LearningConfigurationUserKeys;
   currentConfig: { [key: string]: any } = {};
+  isAzureOpenAIEnabled = this.tracking.isFeatureEnabled('azure_openai');
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -63,16 +64,24 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() => (this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})).pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() =>
-          this.sdk
-            .getVisibleLearningConfiguration(false)
-            .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
+          combineLatest([
+            this.isAzureOpenAIEnabled,
+            this.sdk
+              .getVisibleLearningConfiguration(false)
+              .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
+          ]),
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(({ display, full, keys }) => {
+      .subscribe(([isAzureOpenAIEnabled, { display, full, keys }]) => {
         this.displayedLearningConfigurations = display;
         this.learningConfigurations = full;
         this.userKeys = keys;
+        if (!isAzureOpenAIEnabled) {
+          if (this.currentConfig['generative_model'] === 'chatgpt-azure') {
+            this.currentConfig['config']['generative_model'] = 'chatgpt';
+          }
+        }
         if (this.kb) {
           this.kbForm = this.formBuilder.group({
             uid: [this.kb?.id],
