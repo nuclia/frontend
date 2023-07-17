@@ -152,9 +152,14 @@
           background: var(--container-background-color);
           display: flex;
           gap: var(--rhythm-1);
+          justify-content: center;
           margin-bottom: var(--panel-section-margin-bottom);
-          padding-left: var(--rhythm-1);
+          padding: 0 var(--rhythm-1);
 
+          .search-icon {
+            display: flex;
+            flex: 0 0 auto;
+          }
           .find-input {
             background: inherit;
             border: none;

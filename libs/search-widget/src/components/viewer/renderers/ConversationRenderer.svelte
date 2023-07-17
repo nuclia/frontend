@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
-  import { combineLatest, filter, interval, map, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+  import { combineLatest, filter, interval, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
   import { fieldData, fieldFullId, selectedParagraph } from '../../../core';
   import type { ConversationFieldData } from '@nuclia/core';
   import { FieldFullId, longToShortFieldType, Message, Paragraph, Search } from '@nuclia/core';
@@ -9,7 +9,7 @@
 
   let viewerElement: HTMLElement;
   let stopHighlight: Subject<void> = new Subject<void>();
-  let selectedId = '';
+  let selectedId: string | undefined;
 
   $: !!viewerElement && highlightSelection();
 
@@ -39,13 +39,13 @@
 
   function highlightSelection() {
     selectedParagraph.pipe(
+      tap(paragraph => selectedId = paragraph?.id),
       filter(paragraph => !!paragraph),
       map(paragraph => paragraph as Search.FindParagraph),
       switchMap((paragraph) => {
-        selectedId = paragraph.id;
         const selectedElementId = formatValidId(paragraph.id);
         return interval(200).pipe(
-          map(() => viewerElement.querySelector(`#${selectedElementId}`)),
+          map(() => viewerElement?.querySelector(`#${selectedElementId}`)),
           filter((paragraphElement) => !!paragraphElement),
           map(paragraphElement => paragraphElement as HTMLElement),
           takeUntil(stopHighlight),
@@ -58,7 +58,7 @@
   }
 
   function formatValidId(id: string) {
-    return `id_${id.split('/').join('_')}`;
+    return `id_${(id || '').split('/').join('_')}`;
   }
 
   function isMessageSelected(message: MessageWithParagraphs): boolean {

@@ -23,7 +23,6 @@
   } from 'rxjs';
   import { searchQuery, trackingEngagement } from '../../core/stores/search.store';
   import { Duration, isMobileViewport } from '../../common/utils';
-  import { viewerSearchQuery, viewerSearchResults } from '../../core/stores/viewer-search.store';
   import {
     getNavigationUrl,
     goToUrl,
@@ -37,6 +36,8 @@
     getMediaTranscripts,
     isPreviewing,
     resourceTitle,
+    searchInFieldQuery,
+    searchInFieldResults,
     viewerState,
   } from '../../core/stores/viewer.store';
   import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
@@ -112,7 +113,7 @@
   let paragraphList: WidgetParagraph[] = [];
   const isSearchingInResource = new BehaviorSubject(false);
   const matchingParagraphs$: Observable<WidgetParagraph[]> = combineLatest([
-    viewerSearchResults,
+    searchInFieldResults,
     isSearchingInResource,
   ]).pipe(
     map(([inResourceResults, isInResource]) => {
@@ -192,7 +193,7 @@
     if (!expanded) {
       expanded = true;
       isPreviewing.set(true);
-      viewerSearchQuery.set(searchQuery.getValue());
+      searchInFieldQuery.set(searchQuery.getValue());
       freezeBackground(true);
     }
     setTimeout(() => setHeaderActionWidth());
@@ -243,13 +244,13 @@
         selectParagraph(undefined);
         resultIndex = -1;
         isSearchingInResource.next(false);
-        viewerSearchQuery.set(searchQuery.getValue());
+        searchInFieldQuery.set(searchQuery.getValue());
       }
     }
   };
 
   const findInField = () => {
-    const query = viewerSearchQuery.getValue();
+    const query = searchInFieldQuery.getValue();
     sidePanelSectionOpen = 'search';
     if (query) {
       isSearchingInResource.next(true);
@@ -257,7 +258,7 @@
         .pipe(map((results) => results.paragraphs?.results || []))
         .subscribe((paragraphs) => {
           resultIndex = -1;
-          viewerSearchResults.set(paragraphs.map((paragraph) => mapParagraph2WidgetParagraph(paragraph, previewKind)));
+          searchInFieldResults.set(paragraphs.map((paragraph) => mapParagraph2WidgetParagraph(paragraph, previewKind)));
         });
     } else {
       isSearchingInResource.next(false);
@@ -443,7 +444,7 @@
                   placeholder={$_(findInPlaceholder)}
                   tabindex="-1"
                   bind:this={findInputElement}
-                  bind:value={$viewerSearchQuery}
+                  bind:value={$searchInFieldQuery}
                   on:change={findInField} />
               </div>
             {/if}

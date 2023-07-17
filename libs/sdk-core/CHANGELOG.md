@@ -12,6 +12,8 @@
 - Update Learning configurations models
   - Update `LearningConfiguration` interface 
   - Add `LearningConfigurationSchemas` and `LearningConfigurationSchema` interfaces
+- Add `resource_filters` property to `BaseSearchOptions`
+- Add `find` method to `resource` class
 
 ### Bug fixes
 - Add missing `generic` type in `shortToLongFieldType` and `getFieldTypeFromString` mappers

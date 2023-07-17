@@ -9,27 +9,36 @@ import { NEWLINE_REGEX } from '../utils';
 
 export interface ViewerState {
   currentResult: TypedResult | null;
-  selectedParagraphIndex: number | null;
+  selectedParagraphIndex: number;
   playFromTranscript: boolean;
   summary: string;
   isPreviewing: boolean;
   fieldFullId: FieldFullId | null;
   transcripts: Search.FindParagraph[];
+
+  // Viewer internal search
+  query: string | null;
+  searchInFieldResults: Search.FindParagraph[] | null;
+  hasError: boolean;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
   currentResult: null,
-  selectedParagraphIndex: null,
+  selectedParagraphIndex: -1,
   playFromTranscript: false,
   summary: '',
   isPreviewing: false,
   fieldFullId: null,
   transcripts: [],
+
+  query: null,
+  searchInFieldResults: null,
+  hasError: false,
 });
 
 export interface ViewerBasicSetter {
   result: TypedResult | null;
-  selectedParagraphIndex: number | undefined;
+  selectedParagraphIndex: number;
 }
 
 export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
@@ -42,12 +51,53 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
           paragraphs: data.result.paragraphs || [],
         }
       : null,
-    selectedParagraphIndex: typeof data.selectedParagraphIndex === 'number' ? data.selectedParagraphIndex : null,
+    selectedParagraphIndex: data.selectedParagraphIndex,
     fieldFullId:
       data.result && data.result.field
         ? { field_id: data.result.field.field_id, field_type: data.result.field.field_type, resourceId: data.result.id }
         : null,
     isPreviewing: !!data, //FIXME: manage isPreviewing in an effect managing navigateToFile/navigateToLink as well
+    searchInFieldResults: null,
+  }),
+);
+
+export const searchInFieldQuery = viewerState.writer<string | null, string>(
+  (state) => state.query,
+  (state, query) => {
+    const trimmedQuery = query.trim();
+    if (trimmedQuery !== state.query) {
+      return {
+        ...state,
+        query: trimmedQuery,
+        hasError: false,
+      };
+    }
+    return state;
+  },
+);
+
+export const searchInFieldResults = viewerState.writer<Search.FindParagraph[] | null>(
+  (state) => state.searchInFieldResults,
+  (state, results) => ({
+    ...state,
+    searchInFieldResults: results,
+    selectedParagraphIndex: -1,
+  }),
+);
+
+export const resetSearchInField = viewerState.action((state) => ({
+  ...state,
+  searchInFieldResults: null,
+  query: null,
+  selectedParagraphIndex: -1,
+  playFromTranscripts: false,
+}));
+
+export const hasViewerSearchError = viewerState.writer<boolean>(
+  (state) => state.hasError,
+  (state, hasError) => ({
+    ...state,
+    hasError,
   }),
 );
 
@@ -58,7 +108,7 @@ export const isPreviewing = viewerState.writer<boolean>(
 
 export const selectedParagraphIndex = viewerState.writer<
   number | null,
-  { index: number | null; playFromTranscripts: boolean }
+  { index: number; playFromTranscripts: boolean }
 >(
   (state) => state.selectedParagraphIndex,
   (state, payload) => ({
@@ -68,11 +118,18 @@ export const selectedParagraphIndex = viewerState.writer<
   }),
 );
 
-export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>((state) =>
-  state.currentResult && state.currentResult.paragraphs && state.selectedParagraphIndex !== null
-    ? state.currentResult.paragraphs[state.selectedParagraphIndex]
-    : null,
-);
+export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>((state) => {
+  if (state.selectedParagraphIndex !== null) {
+    if (!!state.searchInFieldResults) {
+      return state.searchInFieldResults[state.selectedParagraphIndex];
+    }
+    if (state.currentResult && state.currentResult.paragraphs) {
+      return state.currentResult.paragraphs[state.selectedParagraphIndex];
+    }
+  }
+
+  return null;
+});
 
 export const selectPrevious = viewerState.action((state) => {
   if (state.selectedParagraphIndex !== null && state.selectedParagraphIndex > 0) {

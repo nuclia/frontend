@@ -7,5 +7,4 @@ export * from './resource.store';
 export * from './search.store';
 export * from './suggestions.store';
 export * from './viewer.store';
-export * from './viewer-search.store';
 export * from './widget.store';

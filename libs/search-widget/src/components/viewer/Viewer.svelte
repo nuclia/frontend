@@ -1,6 +1,7 @@
 <script lang="ts">
   import {
-    _, fieldSummary,
+    _,
+    fieldSummary,
     getFieldUrl,
     loadTranscripts,
     getWidgetActions,
@@ -12,11 +13,13 @@
     selectPrevious,
     TypedResult,
     viewerData,
-    viewerSearchQuery,
     viewerState,
     ViewerState,
     WidgetAction,
     transcripts,
+    searchInResource,
+    searchInFieldResults,
+    searchInFieldQuery, resetSearchInField
   } from '../../core';
   import {
     DocTypeIndicator,
@@ -30,9 +33,9 @@
     unblockBackground
   } from '../../common';
   import { onDestroy, onMount } from 'svelte';
-  import { FIELD_TYPE, Search } from '@nuclia/core';
-  import { BehaviorSubject, debounceTime, filter, Subject, take } from 'rxjs';
-  import { MetadataContainer, MetadataSectionHeader, SearchResultNavigator, ViewerContent } from './';
+  import { FIELD_TYPE, longToShortFieldType, Search, SearchOptions } from '@nuclia/core';
+  import { BehaviorSubject, debounceTime, filter, map, Subject, take } from 'rxjs';
+  import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
 
   // Browser window related variables
   const resizeEvent = new Subject();
@@ -170,9 +173,9 @@
         // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
         setTimeout(() => findInputElement?.focus(), Duration.MODERATE);
       } else if (isSearchingInResource.value) {
-        selectedParagraphIndex.set({ index: null, playFromTranscripts: false });
+        resetInternalSearch();
         isSearchingInResource.next(false);
-        viewerSearchQuery.set(searchQuery.getValue());
+        searchInFieldQuery.set(searchQuery.getValue());
       }
     }
   }
@@ -181,22 +184,33 @@
     // TODO toggleKnowledgeGraph
   }
 
-  const findInField = () => {
-    const query = viewerSearchQuery.getValue();
-    sidePanelSectionOpen = 'search';
-    if (query) {
-      isSearchingInResource.next(true);
-      // FIXME
-      // searchInResource(query, result, { highlight: true })
-      //   .pipe(map((results) => results.paragraphs?.results || []))
-      //   .subscribe((paragraphs) => {
-      //     resultIndex = -1;
-      //     viewerSearchResults.set(paragraphs.map((paragraph) => mapParagraph2WidgetParagraph(paragraph, previewKind)));
-      //   });
-    } else {
-      isSearchingInResource.next(false);
+  function findInField(event) {
+    if (event.key === 'Enter') {
+      const query = searchInFieldQuery.getValue();
+      sidePanelSectionOpen = 'search';
+      if (query && result) {
+        isSearchingInResource.next(true);
+        const fullId = {
+          resourceId: result.id,
+          field: result.field ? [`${longToShortFieldType(result.field.field_type)}/${result.field.field_id}`] : undefined,
+        }
+        const options: SearchOptions = {
+          highlight: true,
+          fields: fullId.field
+        };
+        searchInResource(query, result, options)
+          .pipe(
+            map((results) => Object.values(results.resources?.[fullId.resourceId]?.fields[`/${fullId.field}`].paragraphs || {})))
+          .subscribe((paragraphs) => searchInFieldResults.set(paragraphs));
+      } else {
+        isSearchingInResource.next(false);
+      }
     }
-  };
+  }
+
+  function resetInternalSearch() {
+    resetSearchInField.do();
+  }
 
   function toggleSection(section: sidePanelSection) {
     sidePanelSectionOpen = sidePanelSectionOpen === section ? 'search' : section;
@@ -237,11 +251,10 @@
       </div>
 
       <div class="header-actions">
-        {#if !isMobile && !resultNavigatorHidden}
+        {#if !isMobile && !resultNavigatorHidden && !resultNavigatorDisabled}
           <SearchResultNavigator
             resultIndex={state.playFromTranscript ? -1 : state.selectedParagraphIndex}
             total={result?.paragraphs.length}
-            disabled={resultNavigatorDisabled}
             on:offsetWidth={(event) => (resultNavigatorWidth = event.detail.offsetWidth)}
             on:openPrevious={openPrevious}
             on:openNext={openNext} />
@@ -329,7 +342,9 @@
                 <div
                   class="find-bar-container"
                   tabindex="0">
-                  <Icon name="search" />
+                  <div class="search-icon">
+                    <Icon name="search" />
+                  </div>
                   <input
                     class="find-input"
                     type="text"
@@ -338,26 +353,46 @@
                     placeholder={$_(findInPlaceholder)}
                     tabindex="-1"
                     bind:this={findInputElement}
-                    bind:value={$viewerSearchQuery}
-                    on:change={findInField} />
+                    bind:value={$searchInFieldQuery}
+                    on:keyup={(e) => findInField(e)} />
+                  {#if state.query?.length > 0}
+                    <IconButton
+                      icon="cross"
+                      aspect="basic"
+                      size="small"
+                      on:click={resetInternalSearch}></IconButton>
+                  {/if}
                 </div>
 
-                {#if result?.paragraphs.length > 0}
+                {#if result?.paragraphs.length > 0 || state.searchInFieldResults?.length > 0}
                   <MetadataContainer sectionId="search"
                                      expanded={sidePanelSectionOpen === 'search'}
                                      on:toggle={(event) => toggleSection(event.detail)}>
-                    <span slot="sectionTitle">{$_('tile.search-results', { count: result?.paragraphs.length })}</span>
+                    <span slot="sectionTitle">{$_('tile.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
                     <ul class="sw-paragraphs-container" slot="sectionContent">
-                      {#each result?.paragraphs as paragraph, index}
-                        <ParagraphResult {paragraph}
-                                         stack={true}
-                                         minimized={isMobile}
-                                         resultType={result?.resultType}
-                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                                         on:open={() => selectParagraph(index)}
-                        />
-                      {/each}
+                      {#if state.searchInFieldResults?.length > 0}
+                        {#each state.searchInFieldResults as paragraph, index}
+                          <ParagraphResult {paragraph}
+                                           stack={true}
+                                           minimized={isMobile}
+                                           resultType={result?.resultType}
+                                           noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                                           selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                                           on:open={() => selectParagraph(index)}
+                          />
+                        {/each}
+                      {:else}
+                        {#each result?.paragraphs as paragraph, index}
+                          <ParagraphResult {paragraph}
+                                           stack={true}
+                                           minimized={isMobile}
+                                           resultType={result?.resultType}
+                                           noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                                           selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                                           on:open={() => selectParagraph(index)}
+                          />
+                        {/each}
+                      {/if}
                     </ul>
                   </MetadataContainer>
                 {/if}

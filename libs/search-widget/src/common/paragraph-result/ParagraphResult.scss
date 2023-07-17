@@ -60,8 +60,8 @@
       padding-right: var(--rhythm-1_5);
     }
 
-    .paragraph-result-container:hover,
-    .paragraph-result-container.hover {
+    .paragraph-result-container:not(.selected):hover,
+    .paragraph-result-container:not(.selected).hover {
       background-color: var(--hover-background-color);
     }
 

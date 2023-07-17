@@ -49,7 +49,6 @@ import { answerState, chat, chatError, currentAnswer, currentQuestion } from './
 import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
 import { entities, entitiesState } from './entities.store';
-import { viewerSearchState } from './viewer-search.store';
 import { unsubscribeTriggerSearch } from '../search-bar';
 import { logEvent } from '../tracking';
 
@@ -65,7 +64,6 @@ export function resetStatesAndEffects() {
   searchState.reset();
   suggestionState.reset();
   viewerState.reset();
-  viewerSearchState.reset();
 }
 
 /**
