@@ -1,12 +1,12 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
   import { map } from 'rxjs';
-  import { getExtractedTexts } from '../../core/utils';
-  import { fieldData } from '../../core/stores/viewer.store';
-  import type { WidgetParagraph } from '../../core/models';
+  import { getExtractedTexts } from '../../../../core/utils';
+  import { fieldData } from '../../../../core/stores/viewer.store';
+  import type { WidgetParagraph } from '../../../../core/models';
   import type { Search } from '@nuclia/core';
-  import PlainTextRenderer from './renderer/PlainTextRenderer.svelte';
-  import RstRenderer from './renderer/RstRenderer.svelte';
+  import PlainTextRenderer from './PlainTextRendering.svelte';
+  import RstRenderer from './RstRendering.svelte';
 
   export let selectedParagraph: WidgetParagraph | undefined;
   export let isRst = false;
@@ -34,7 +34,7 @@
 </script>
 
 <div
-  class="sw-text-viewer"
+  class="sw-text-rendering"
   bind:this={textViewerElement}>
   {#if $extractedTexts}
     {#each $extractedTexts as paragraph}
@@ -51,4 +51,4 @@
   {/if}
 </div>
 
-<!-- Style is the same for both TextContentViewer and ExtractedTextViewer, so the class is defined in _global.scss -->
+<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in _global.scss -->

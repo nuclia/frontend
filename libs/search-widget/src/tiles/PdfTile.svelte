@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Search } from '@nuclia/core';
-  import PdfViewer from './viewers/PdfViewer.svelte';
   import type { Observable } from 'rxjs';
   import { getCDN, getPdfJsBaseUrl, getPdfJsStyle } from '../core/utils';
   import type { WidgetParagraph } from '../core/models';
@@ -8,6 +7,7 @@
   import { getFieldUrl } from '../core/stores/viewer.store';
   import DocumentTile from './base-tile/DocumentTile.svelte';
   import { isMobileViewport } from '../common/utils';
+  import PdfRendering from "../components/viewer/renderers/renderings/PdfRendering.svelte";
 
   export let result: Search.FieldResult;
 
@@ -66,7 +66,7 @@
   {result}
   on:selectParagraph={(event) => openParagraph(event.detail)}>
   {#if pdfViewerLoaded && $pdfUrl}
-    <PdfViewer
+    <PdfRendering
       src={$pdfUrl}
       paragraph={selectedParagraph}
       showController={!isMobile} />

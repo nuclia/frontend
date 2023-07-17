@@ -1,14 +1,12 @@
 <script lang="ts">
   import { Observable, of, switchMap } from 'rxjs';
-  import { fieldData } from '../../core/stores/viewer.store';
-  import type { WidgetParagraph } from '../../core/models';
-  import type { FileField, TextField } from '@nuclia/core';
-  import { getUnMarked } from '../tile.utils';
-  import { getTextFile } from '../../core/api';
-  import MarkdownRenderer from './renderer/MarkdownRenderer.svelte';
-  import HtmlRenderer from './renderer/HtmlRenderer.svelte';
+  import { fieldData , getTextFile} from '../../../../core';
+  import type { FileField, Search, TextField } from '@nuclia/core';
+  import MarkdownRenderer from './MarkdownRendering.svelte';
+  import HtmlRenderer from './HtmlRendering.svelte';
+  import { getUnMarked } from "../../utils";
 
-  export let selectedParagraph: WidgetParagraph | undefined;
+  export let selectedParagraph: Search.FindParagraph | undefined;
   export let isHtml: boolean;
 
   let bodyElement: HTMLElement;
@@ -45,7 +43,7 @@
       // Ideally we would love to highlight the entire text, but the way paragraphs are extracted
       // does not match the initial Markdown structure, nor the final HTML structure
       if (!found && textContent && textToSelect.includes(textContent)) {
-        child.scrollIntoView({ behavior: 'smooth' });
+        child.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         child.classList.add('highlight');
         found = true;
       } else {
@@ -55,7 +53,7 @@
   }
 </script>
 
-<div class="sw-text-viewer">
+<div class="sw-text-rendering">
   {#if isHtml}
     <HtmlRenderer
       text={$body}
@@ -67,4 +65,4 @@
   {/if}
 </div>
 
-<!-- Style is the same for both TextContentViewer and ExtractedTextViewer, so the class is defined in _global.scss -->
+<!-- Style is the same for both TextContentRendering and ExtractedTextRendering, so the class is defined in _global.scss -->

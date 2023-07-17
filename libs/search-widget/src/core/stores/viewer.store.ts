@@ -15,9 +15,6 @@ export interface ViewerState {
   isPreviewing: boolean;
   fieldFullId: FieldFullId | null;
   transcripts: Search.FindParagraph[];
-
-  // TODO cleanup
-  fieldData: IFieldData | null;
 }
 
 export const viewerState = new SvelteState<ViewerState>({
@@ -28,8 +25,6 @@ export const viewerState = new SvelteState<ViewerState>({
   isPreviewing: false,
   fieldFullId: null,
   transcripts: [],
-
-  fieldData: null,
 });
 
 export interface ViewerBasicSetter {
@@ -71,6 +66,12 @@ export const selectedParagraphIndex = viewerState.writer<
     selectedParagraphIndex: payload.index,
     playFromTranscript: payload.playFromTranscripts,
   }),
+);
+
+export const selectedParagraph = viewerState.reader<Search.FindParagraph | null>((state) =>
+  state.currentResult && state.currentResult.paragraphs && state.selectedParagraphIndex !== null
+    ? state.currentResult.paragraphs[state.selectedParagraphIndex]
+    : null,
 );
 
 export const selectPrevious = viewerState.action((state) => {
@@ -142,7 +143,7 @@ export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | 
 );
 
 export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null>(
-  (state) => state.fieldData,
+  (state) => state.currentResult?.fieldData || null,
   (state, data) => {
     let fieldData: IFieldData | undefined;
     if (data) {
@@ -160,7 +161,6 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
     return {
       ...state,
       currentResult,
-      fieldData: fieldData ? fieldData : null,
       summary: data?.extracted?.metadata?.metadata?.summary?.trim() || '',
     };
   },
@@ -189,18 +189,18 @@ export const fieldType = viewerState.reader<FIELD_TYPE | null>((state) => state.
 export function getFieldUrl(forcePdf?: boolean): Observable<string> {
   return viewerState.store.pipe(
     switchMap((state) => {
-      if (!state.fieldFullId || !state.fieldData) {
+      if (!state.fieldFullId || !state.currentResult?.fieldData) {
         return of(['']);
       } else if (state.fieldFullId.field_type === FIELD_TYPE.file) {
-        if (forcePdf && !(state.fieldData as FileFieldData)?.value?.file?.content_type?.includes('pdf')) {
-          const pdfPreview = (state.fieldData as FileFieldData).extracted?.file?.file_preview;
+        if (forcePdf && !(state.currentResult.fieldData as FileFieldData)?.value?.file?.content_type?.includes('pdf')) {
+          const pdfPreview = (state.currentResult.fieldData as FileFieldData).extracted?.file?.file_preview;
           return pdfPreview?.uri ? getFileUrls([pdfPreview.uri]) : of(['']);
         } else {
-          const uri = (state.fieldData as FileFieldData)?.value?.file?.uri;
+          const uri = (state.currentResult.fieldData as FileFieldData)?.value?.file?.uri;
           return uri ? getFileUrls([uri]) : of(['']);
         }
       } else if (state.fieldFullId.field_type === FIELD_TYPE.link) {
-        return of([(state.fieldData as LinkFieldData)?.value?.uri || '']);
+        return of([(state.currentResult.fieldData as LinkFieldData)?.value?.uri || '']);
       } else {
         return of(['']);
       }
@@ -218,11 +218,11 @@ export function loadTranscripts() {
     .pipe(
       take(1),
       map((state) => {
-        if (!state.fieldFullId || !state.fieldData) {
+        if (!state.fieldFullId || !state.currentResult?.fieldData) {
           return [];
         } else {
-          const text = state.fieldData.extracted?.text?.text || '';
-          const paragraphs = (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
+          const text = state.currentResult.fieldData.extracted?.text?.text || '';
+          const paragraphs = (state.currentResult.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
             (paragraph) => paragraph.kind === 'TRANSCRIPT',
           );
           const fieldFullId = state.fieldFullId;
@@ -260,12 +260,12 @@ export function getMediaTranscripts(
 ): Observable<MediaWidgetParagraph[]> {
   return viewerState.store.pipe(
     map((state) => {
-      if (!state.fieldFullId || !state.fieldData) {
+      if (!state.fieldFullId || !state.currentResult?.fieldData) {
         return [];
       } else {
         const fullId = state.fieldFullId;
-        const text = state.fieldData.extracted?.text?.text || '';
-        const paragraphs = (state.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
+        const text = state.currentResult.fieldData.extracted?.text?.text || '';
+        const paragraphs = (state.currentResult.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
           (paragraph) => paragraph.kind === 'TRANSCRIPT',
         );
         return paragraphs.map((paragraph) => {
@@ -289,11 +289,10 @@ export function getMediaTranscripts(
 
 export function getPlayableVideo(): Observable<CloudLink | undefined> {
   return viewerState.store.pipe(
-    filter((state) => !!state.fieldData?.extracted),
-    map(
-      (state) =>
-        (state.fieldData as FileFieldData)?.extracted?.file?.file_generated?.['video.mpd'] ||
-        (state.fieldData as FileFieldData)?.value?.file,
-    ),
+    filter((state) => !!state.currentResult?.fieldData?.extracted),
+    map((state) => {
+      const data = state.currentResult?.fieldData as FileFieldData;
+      return data?.extracted?.file?.file_generated?.['video.mpd'] || data?.value?.file;
+    }),
   );
 }

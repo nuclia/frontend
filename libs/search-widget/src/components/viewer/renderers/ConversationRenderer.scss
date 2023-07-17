@@ -1,8 +1,10 @@
-.sw-conversation-viewer {
+.sw-conversation-renderer {
   background-color: var(--color-light-stronger);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  height: calc(100vh - var(--renderer-outer-space));
+  overflow: auto;
   padding: var(--rhythm-3) 0;
   width: 100%;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import TurnDownService from 'turndown';
-  import MarkdownRenderer from './MarkdownRenderer.svelte';
+  import MarkdownRenderer from './MarkdownRendering.svelte';
   import { createEventDispatcher } from 'svelte';
 
   export let text = '';

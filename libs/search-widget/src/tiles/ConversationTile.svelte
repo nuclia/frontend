@@ -2,9 +2,9 @@
   import { Search } from '@nuclia/core';
   import { PreviewKind, WidgetParagraph } from '../core/models';
   import { getCDN } from '../core/utils';
-  import ConversationViewer from './viewers/ConversationViewer.svelte';
   import BaseTile from './base-tile/BaseTile.svelte';
   import Thumbnail from '../common/thumbnail/Thumbnail.svelte';
+  import ConversationRenderer from "../components/viewer/renderers/ConversationRenderer.svelte";
 
   export let result: Search.FieldResult;
   let thumbnailLoaded = false;
@@ -29,7 +29,7 @@
       aspectRatio="5/4"
       on:loaded={() => (thumbnailLoaded = true)} />
   </span>
-  <ConversationViewer
+  <ConversationRenderer
     slot="viewer"
     {selectedParagraph} />
 </BaseTile>

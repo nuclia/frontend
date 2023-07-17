@@ -91,14 +91,14 @@ ul.sw-dropdown-options {
   }
 }
 
-.sw-text-viewer {
+.sw-text-rendering {
   background: var(--color-light-stronger);
   margin: 0 auto;
   max-width: 800px;
   padding: var(--rhythm-3) var(--rhythm-4);
 }
 
-.sw-conversation-viewer .html-content {
+.sw-conversation-renderer .html-content {
   p {
     margin-top: 0;
 
@@ -159,4 +159,8 @@ ul.sw-dropdown-options {
   font-size: var(--font-size-xsmall);
   font-weight: var(--font-weight-body);
   line-height: var(--line-height-body-xs);
+}
+
+pre > code {
+  white-space: pre-wrap;
 }

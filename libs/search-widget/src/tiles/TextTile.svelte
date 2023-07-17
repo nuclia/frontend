@@ -2,12 +2,12 @@
   import type { FileField, Search, TextField } from '@nuclia/core';
   import type { WidgetParagraph } from '../core/models';
   import { PreviewKind } from '../core/models';
-  import ExtractedTextViewer from './viewers/ExtractedTextViewer.svelte';
-  import TextContentViewer from './viewers/TextContentViewer.svelte';
   import { getCDN } from '../core/utils';
   import DocumentTile from './base-tile/DocumentTile.svelte';
   import { fieldData } from '../core/stores/viewer.store';
   import { map } from 'rxjs';
+  import TextContentRendering from "../components/viewer/renderers/renderings/TextContentRendering.svelte";
+  import ExtractedTextRendering from "../components/viewer/renderers/renderings/ExtractedTextRendering.svelte";
 
   export let result: Search.FieldResult;
 
@@ -54,11 +54,11 @@
   {result}
   on:selectParagraph={(event) => openParagraph(event.detail)}>
   {#if $isMarkdown || $isHtml}
-    <TextContentViewer
+    <TextContentRendering
       {selectedParagraph}
       isHtml={$isHtml} />
   {:else}
-    <ExtractedTextViewer
+    <ExtractedTextRendering
       {selectedParagraph}
       isRst={$isRst} />
   {/if}
