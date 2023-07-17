@@ -5,6 +5,7 @@ import { Sluggable } from '@flaps/common';
 import { Account, KnowledgeBoxCreation, LearningConfiguration } from '@nuclia/core';
 import * as Sentry from '@sentry/angular';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface KbAddData {
   account: Account;
@@ -41,6 +42,7 @@ export class KbAddComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private cdr: ChangeDetectorRef,
     private sdk: SDKService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -124,5 +126,10 @@ export class KbAddComponent implements OnInit {
   back() {
     this.step--;
     this.cdr?.markForCheck();
+  }
+
+  hasTranslation(key: string) {
+    const translation = this.translate.instant(key);
+    return translation !== key && translation !== '';
   }
 }

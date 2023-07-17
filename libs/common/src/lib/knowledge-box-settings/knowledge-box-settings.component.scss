@@ -8,7 +8,7 @@
   }
 
   form > div {
-    align-items: center;
+    align-items: flex-start;
     display: flex;
     margin-bottom: rhythm(2);
 
@@ -17,9 +17,24 @@
       width: rhythm(28);
     }
 
+    .label {
+      padding-right: rhythm(3);
+    }
+
     pa-input,
     pa-textarea {
       width: rhythm(56);
+    }
+
+    .options {
+      margin-top: rhythm(1);
+    }
+
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: rhythm(2);
+      margin-top: rhythm(3);
     }
   }
 

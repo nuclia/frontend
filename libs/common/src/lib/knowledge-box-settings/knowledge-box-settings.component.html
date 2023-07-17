@@ -57,15 +57,44 @@
             <small>{{ 'stash.create.' + conf.id + '.help' | translate }}</small>
           </div>
         </div>
-        <pa-radio-group
-          [formControlName]="conf.id"
-          [name]="conf.id">
-          <pa-radio
-            *ngFor="let value of conf.data.options"
-            [value]="value.value">
-            {{ value.name.toLowerCase() }}
-          </pa-radio>
-        </pa-radio-group>
+        <div class="options">
+          <pa-radio-group
+            [formControlName]="conf.id"
+            [name]="conf.id">
+            <pa-radio
+              *ngFor="let value of conf.data.options"
+              [value]="value.value">
+              {{
+                (hasTranslation('stash.config.' + value.value)
+                  ? 'stash.config.' + value.value
+                  : value.name.toLowerCase()
+                ) | translate
+              }}
+            </pa-radio>
+          </pa-radio-group>
+          <div
+            *ngIf="getVisibleFieldGroup(conf) as groupId"
+            formGroupName="user_keys">
+            <div
+              class="fields"
+              [formGroupName]="groupId">
+              <pa-toggle
+                labelOnRight
+                [value]="ownKey"
+                (valueChange)="toggleOwnKey()">
+                {{ 'stash.config.own_key' | translate }}
+              </pa-toggle>
+              <ng-container *ngIf="ownKey">
+                <div class="title-s">{{ 'stash.config.' + groupId | translate }}:</div>
+                <pa-input
+                  *ngFor="let field of userKeys?.[groupId] || {} | keyvalue"
+                  [formControlName]="field.key">
+                  {{ field.value.title | translate }}
+                </pa-input>
+              </ng-container>
+            </div>
+          </div>
+        </div>
       </div>
 
       <footer>

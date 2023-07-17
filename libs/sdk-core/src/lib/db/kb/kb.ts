@@ -229,8 +229,8 @@ export class KnowledgeBox implements IKnowledgeBox {
     return this.nuclia.rest.get<EventList>(`/kb/${this.id}/activity${params ? '?' + params : ''}`);
   }
 
-  getConfiguration(): Observable<{ [id: string]: string }> {
-    return this.nuclia.rest.get<{ [id: string]: string }>(`/kb/${this.id}/configuration`);
+  getConfiguration(): Observable<{ [id: string]: any }> {
+    return this.nuclia.rest.get<{ [id: string]: any }>(`/kb/${this.id}/configuration`);
   }
 }
 
@@ -385,7 +385,7 @@ export class WritableKnowledgeBox extends KnowledgeBox implements IWritableKnowl
     return this.nuclia.rest.delete(`/account/${this.account}/kb/${this.slug}/service_account/${saId}/key/${saKeyId}`);
   }
 
-  setConfiguration(config: { [id: string]: string }): Observable<void> {
+  setConfiguration(config: { [id: string]: any }): Observable<void> {
     return this.nuclia.rest.patch(`/kb/${this.id}/configuration`, config);
   }
 }

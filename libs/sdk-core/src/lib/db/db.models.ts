@@ -177,12 +177,32 @@ export interface ProcessingStatusResponse {
 }
 
 export interface LearningConfigurations {
-  [key: string]: LearningConfiguration;
+  [key: string]: LearningConfiguration | LearningConfigurationSchemas;
 }
 
 export interface LearningConfiguration {
-  options?: { value: string; name: string }[];
+  options: { value: string; name: string; user_key?: string }[];
   default: string;
+  create: boolean;
+  update: boolean;
+}
+
+export interface LearningConfigurationSchemas {
+  schemas: { [key: string]: LearningConfigurationSchema };
+  create: boolean;
+  update: boolean;
+}
+
+export interface LearningConfigurationSchema {
+  title: string;
+  type: string;
+  properties: {
+    [key: string]: {
+      title: string;
+      type: string;
+    };
+  };
+  required: string[];
 }
 
 export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];
