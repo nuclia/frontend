@@ -80,7 +80,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         this.userKeys = keys;
         if (!isAzureOpenAIEnabled) {
           if (this.currentConfig['generative_model'] === 'chatgpt-azure') {
-            this.currentConfig['config']['generative_model'] = 'chatgpt';
+            this.currentConfig['generative_model'] = 'chatgpt';
           }
         }
         if (this.kb) {
