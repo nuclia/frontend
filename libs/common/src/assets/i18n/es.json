@@ -673,6 +673,7 @@
 	"stash.config.chatgpt-azure": "ChatGPT Azure OpenAI",
 	"stash.config.generative-multilingual-2023": "Nuclia multilingual private model",
 	"stash.config.openai": "OpenAI key",
+	"stash.config.own_key": "Utilizar key propia",
 	"stash.contact_admin": "No está autorizado para crear un cuadro de conocimiento. Póngase en contacto con su administrador.",
 	"stash.create": "Crea una caja de conocimiento",
 	"stash.create.error": "Perdon, alguna cosa pasó mal cuando creabamos la caja de conocimiento. Por favor vuelve a intentarlo.",

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, filter, of, Subject } from 'rxjs';
-import { auditTime, concatMap, delay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { LearningConfigurationUserKeys, SDKService, StateService, STFUtils } from '@flaps/core';
+import { catchError, combineLatest, filter, of, Subject } from 'rxjs';
+import { auditTime, concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { LearningConfigurationUserKeys, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,6 +35,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   displayedLearningConfigurations?: { id: string; data: LearningConfiguration }[];
   userKeys?: LearningConfigurationUserKeys;
   currentConfig: { [key: string]: any } = {};
+  ownKey = false;
   isAzureOpenAIEnabled = this.tracking.isFeatureEnabled('azure_openai');
 
   constructor(
@@ -106,6 +107,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
               ),
             }),
           });
+          this.ownKey = this.hasOwnKey();
           this.formReady.next();
           this.cdr?.markForCheck();
         }
@@ -122,6 +124,23 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     });
   }
 
+  hasOwnKey() {
+    const generativeModel = (this.displayedLearningConfigurations || []).find((conf) => conf.id === 'generative_model');
+    const selectedGroup = generativeModel && this.getVisibleFieldGroup(generativeModel);
+    const currentGroupConfig = selectedGroup && this.currentConfig['user_keys']?.[selectedGroup];
+    return (
+      Object.values(currentGroupConfig || {}).length > 0 &&
+      Object.values(currentGroupConfig || {}).every((value) => !!value)
+    );
+  }
+
+  toggleOwnKey() {
+    this.ownKey = !this.ownKey;
+    this.kbForm?.markAsDirty();
+    this.updateFormValidators();
+    this.cdr.markForCheck();
+  }
+
   updateFormValidators() {
     if (this.kbForm) {
       const userKeysControls = (
@@ -132,7 +151,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         .filter((value) => !!value);
       Object.entries(this.userKeys || {}).forEach(([groupId, group]) => {
         Object.entries((userKeysControls[groupId] as UntypedFormGroup).controls).forEach(([fieldId, fieldControl]) => {
-          if (visibleGroups.includes(groupId)) {
+          if (visibleGroups.includes(groupId) && this.ownKey) {
             fieldControl.setValidators(group[fieldId].required ? Validators.required : []);
           } else {
             fieldControl.clearValidators();
@@ -163,11 +182,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             }
             return acc;
           }, {} as { [key: string]: string });
-          let hasChange = false;
           const conf = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-            if (current[entry.id] !== this.kbForm?.value.config[entry.id]) {
-              hasChange = true;
-            }
             acc[entry.id] = this.kbForm?.value.config[entry.id];
             return acc;
           }, current);
@@ -175,12 +190,9 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
           const userKeys = {
             user_keys: (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
               const group = this.getVisibleFieldGroup(entry);
-              if (group) {
+              if (group && this.ownKey) {
                 acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce((acc, fieldId) => {
                   const value = this.kbForm?.value.config['user_keys'][group][fieldId];
-                  if ((this.currentConfig['user_keys']?.[group]?.[fieldId] || '') !== value) {
-                    hasChange = true;
-                  }
                   acc[fieldId] = value;
                   return acc;
                 }, {} as { [key: string]: any });
@@ -189,7 +201,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             }, {} as { [key: string]: any }),
           };
 
-          return hasChange ? kb.setConfiguration({ ...conf, ...userKeys }) : of(null);
+          return kb.setConfiguration({ ...conf, ...userKeys });
         }),
         concatMap(() =>
           this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),

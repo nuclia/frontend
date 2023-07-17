@@ -73,17 +73,26 @@
             </pa-radio>
           </pa-radio-group>
           <div
-            class="fields"
-            *ngIf="getVisibleFieldGroup(conf) as id"
+            *ngIf="getVisibleFieldGroup(conf) as groupId"
             formGroupName="user_keys">
-            <ng-container [formGroupName]="id">
-              <div class="title-s">{{ 'stash.config.' + id | translate }}:</div>
-              <pa-input
-                *ngFor="let field of userKeys?.[id] || {} | keyvalue"
-                [formControlName]="field.key">
-                {{ field.value.title | translate }}
-              </pa-input>
-            </ng-container>
+            <div
+              class="fields"
+              [formGroupName]="groupId">
+              <pa-toggle
+                labelOnRight
+                [value]="ownKey"
+                (valueChange)="toggleOwnKey()">
+                {{ 'stash.config.own_key' | translate }}
+              </pa-toggle>
+              <ng-container *ngIf="ownKey">
+                <div class="title-s">{{ 'stash.config.' + groupId | translate }}:</div>
+                <pa-input
+                  *ngFor="let field of userKeys?.[groupId] || {} | keyvalue"
+                  [formControlName]="field.key">
+                  {{ field.value.title | translate }}
+                </pa-input>
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>
