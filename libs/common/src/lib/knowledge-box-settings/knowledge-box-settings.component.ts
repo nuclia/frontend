@@ -86,7 +86,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             }),
           });
           this.updateFormValidators();
-          this.kbForm.controls.config.valueChanges
+          this.kbForm.controls['config'].valueChanges
             .pipe(takeUntil(this.unsubscribeAll), auditTime(100))
             .subscribe(() => {
               this.updateFormValidators();
@@ -109,7 +109,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   updateFormValidators() {
     if (this.kbForm) {
       const userKeysControls = (
-        (this.kbForm?.controls.config as UntypedFormGroup).controls.user_keys as UntypedFormGroup
+        (this.kbForm?.controls['config'] as UntypedFormGroup).controls['user_keys'] as UntypedFormGroup
       ).controls;
       const visibleGroups = (this.displayedLearningConfigurations || [])
         .map((conf) => this.getVisibleFieldGroup(conf))
