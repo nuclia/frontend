@@ -17,7 +17,7 @@ import {
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { DisplayedResource, FindResultsAsList, NO_RESULT_LIST, ResultType, TypedResult } from '../models';
+import { FindResultsAsList, NO_RESULT_LIST, ResultType, TypedResult } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
 import type { LabelFilter } from '../../common';
 
@@ -42,14 +42,12 @@ interface Engagement {
   paragraphOrder?: number;
 }
 
-// TODO: once old widget will be removed, we should remove displayedResource from the store
 interface SearchState {
   query: string;
   filters: SearchFilters;
   options: SearchOptions;
   results: FindResultsAsList;
   error?: IErrorResponse;
-  displayedResource: DisplayedResource | null;
   pending: boolean;
   autofilerDisabled?: boolean;
   showResults: boolean;
@@ -66,7 +64,6 @@ export const searchState = new SvelteState<SearchState>({
   filters: {},
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   results: NO_RESULT_LIST,
-  displayedResource: null,
   pending: false,
   showResults: false,
   tracking: {
@@ -226,14 +223,6 @@ export const autofilerDisabled = searchState.writer<boolean | undefined>(
   (state, autofilerDisabled) => ({
     ...state,
     autofilerDisabled,
-  }),
-);
-
-export const displayedResource = searchState.writer<DisplayedResource | null>(
-  (state) => state.displayedResource,
-  (state, displayedResource) => ({
-    ...state,
-    displayedResource,
   }),
 );
 

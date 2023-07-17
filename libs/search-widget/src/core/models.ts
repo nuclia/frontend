@@ -54,15 +54,6 @@ export interface WidgetAction {
   action: (fullId: FieldFullId) => void;
 }
 
-/**
- * @deprecated This interface was used for the previous viewer implementation
- */
-export interface DisplayedResource {
-  uid: string;
-  paragraph?: Search.Paragraph;
-  sentence?: Search.Paragraph;
-}
-
 export enum PreviewKind {
   NONE,
   PDF,

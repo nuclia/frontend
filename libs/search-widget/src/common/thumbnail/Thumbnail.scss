@@ -30,9 +30,8 @@
     }
   }
 
-  /* TODO: replace with a svelte transition once "insertRule" error is solved  */
   .fade-in {
-    animation: fadeIn 0.16s;
+    animation: fadeIn var(--duration--superfast);
   }
   @keyframes fadeIn {
     0% {
