@@ -5,6 +5,7 @@ import { auditTime, concatMap, delay, switchMap, take, takeUntil, tap } from 'rx
 import { LearningConfigurationUserKeys, SDKService, StateService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
 
 @Component({
@@ -40,6 +41,8 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
+    private tracking: STFTrackingService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -195,6 +198,11 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     const selectedOption = this.kbForm?.value['config'][conf.id] || '';
     const groupId = conf.data.options.find((option) => option.value === selectedOption)?.user_key;
     return groupId && this.userKeys?.[groupId] ? groupId : undefined;
+  }
+
+  hasTranslation(key: string) {
+    const translation = this.translate.instant(key);
+    return translation !== key && translation !== '';
   }
 
   ngOnDestroy() {

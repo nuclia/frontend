@@ -64,7 +64,12 @@
             <pa-radio
               *ngFor="let value of conf.data.options"
               [value]="value.value">
-              {{ value.name.toLowerCase() }}
+              {{
+                (hasTranslation('stash.config.' + value.value)
+                  ? 'stash.config.' + value.value
+                  : value.name.toLowerCase()
+                ) | translate
+              }}
             </pa-radio>
           </pa-radio-group>
           <div
