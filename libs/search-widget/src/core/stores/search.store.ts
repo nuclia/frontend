@@ -484,7 +484,9 @@ export function getFieldDataFromResource(resource: IResource, field: FieldId): I
 }
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
-  return `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
+  return result.paragraphs && result.paragraphs.length > 0
+    ? `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`
+    : result.id;
 }
 
 const SpreadsheetContentTypes = [
