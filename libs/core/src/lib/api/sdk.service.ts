@@ -227,6 +227,7 @@ export class SDKService {
           // At display, hide configurations with only one option or under feature flagging
           display: full.filter(
             (entry) =>
+              entry.data.options &&
               entry.data.options.length > 1 &&
               (entry.id !== 'anonymization_model' || hasAnonymization) &&
               (entry.id !== 'visual_labeling' || hasPdfAnnotation) &&
