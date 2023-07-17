@@ -28,3 +28,7 @@ virtualService:
   enabled: false
   gateway: XXX
   host: XXX
+
+# annotations:
+#   what: "add annotations"
+#   where: "in the pods"
