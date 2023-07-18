@@ -287,10 +287,12 @@ export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
   }
 };
 
-export function getPrefixedFieldId(fullId: FieldFullId): string {
-  return `/${longToShortFieldType(fullId.field_type)}/${fullId.field_id}`;
+export function getFieldIdWithShortType(fullId: FieldFullId): string {
+  return `${longToShortFieldType(fullId.field_type)}/${fullId.field_id}`;
 }
 
 export function getFindParagraphs(results: Search.FindResults, fullId: FieldFullId): Search.FindParagraph[] {
-  return Object.values(results.resources?.[fullId.resourceId]?.fields[getPrefixedFieldId(fullId)]?.paragraphs || {});
+  return Object.values(
+    results.resources?.[fullId.resourceId]?.fields[`/${getFieldIdWithShortType(fullId)}`]?.paragraphs || {},
+  );
 }

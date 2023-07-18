@@ -5,7 +5,9 @@
     fieldMetadata,
     fieldSummary,
     fullMetadataLoaded,
-    getFieldUrl, getFindParagraphs, getPrefixedFieldId,
+    getFieldUrl,
+    getFindParagraphs,
+    getFieldIdWithShortType,
     getResourceMetadata,
     getWidgetActions,
     graphQuery,
@@ -220,7 +222,7 @@
         };
         const options: SearchOptions = {
           highlight: true,
-          fields: [getPrefixedFieldId(fullId)]
+          fields: [getFieldIdWithShortType(fullId)]
         };
         searchInResource(query, result, options)
           .pipe(map((results) => getFindParagraphs(results, fullId)))
