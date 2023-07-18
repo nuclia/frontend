@@ -447,7 +447,7 @@
               {/if}
             {/if}
 
-            {#if isMediaPlayer && $transcripts.length > 0}
+            {#if isMediaPlayer}
               <MetadataContainer sectionId="transcripts"
                                  expanded={sidePanelSectionOpen === 'transcripts'}
                                  on:toggle={(event) => toggleSection(event.detail)}>
