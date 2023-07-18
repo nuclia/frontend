@@ -1,13 +1,10 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
-  import Icon from '../../common/icons/Icon.svelte';
-  import { chat } from '../../core/stores/answers.store';
+  import { _, chat } from '../../core';
   import ChatInput from './ChatInput.svelte';
-  import { _ } from '../../core/i18n';
   import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
-  import { IconButton } from '../../common';
-  import { freezeBackground, unblockBackground } from '../../common/modal/modal.utils';
+  import { freezeBackground, Icon, IconButton, unblockBackground } from '../../common';
 
   export let fullscreen = true;
   export let show = !fullscreen;
@@ -89,7 +86,6 @@
         <ChatInput placeholder={$_('answer.placeholder')} {fullscreen} />
       </div>
     </div>
-
   </div>
 {/if}
 

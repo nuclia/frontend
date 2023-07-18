@@ -12,7 +12,7 @@
   right: 0;
   top: 0;
   transition: padding-right var(--transition-moderate);
-  z-index: 1000;
+  z-index: calc(var(--z-index-modal) + 10);
 
   header {
     --header-padding-left: var(--rhythm-2);
