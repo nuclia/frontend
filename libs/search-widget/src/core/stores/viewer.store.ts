@@ -66,7 +66,7 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
       data.result && data.result.field
         ? { field_id: data.result.field.field_id, field_type: data.result.field.field_type, resourceId: data.result.id }
         : null,
-    isPreviewing: !!data, //FIXME: manage isPreviewing in an effect managing navigateToFile/navigateToLink as well
+    isPreviewing: !!data,
     searchInFieldResults: null,
     fullMetadataLoaded: false,
   }),

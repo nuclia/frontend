@@ -7,8 +7,17 @@
     Thumbnail,
     ThumbnailPlayer
   } from '../../common';
-  import { getCDN, trackingEngagement, TypedResult, viewerData } from '../../core';
-  import { Search } from '@nuclia/core';
+  import {
+    getCDN,
+    getNavigationUrl, goToUrl,
+    navigateToFile,
+    navigateToLink,
+    trackingEngagement,
+    TypedResult,
+    viewerData
+  } from "../../core";
+  import { ResourceField, Search } from "@nuclia/core";
+  import { combineLatest, forkJoin, of, switchMap, take } from "rxjs";
 
   export let result: TypedResult;
 
@@ -49,9 +58,19 @@
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
-      viewerData.set({
-        result,
-        selectedParagraphIndex: typeof index === 'number' ? index : -1,
+      const resourceField: ResourceField = {...result.field, ...result.fieldData};
+      combineLatest([navigateToFile, navigateToLink]).pipe(
+        take(1),
+        switchMap(([toFile, toLink]) => toFile || toLink ? getNavigationUrl(toFile, toLink, result, resourceField) : of(false))
+      ).subscribe(url => {
+        if (url) {
+          goToUrl(url as string, paragraph?.text);
+        } else {
+          viewerData.set({
+            result,
+            selectedParagraphIndex: typeof index === 'number' ? index : -1,
+          });
+        }
       });
     }
   }
