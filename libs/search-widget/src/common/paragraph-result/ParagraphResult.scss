@@ -35,6 +35,7 @@
     }
     &.selected {
       background: var(--selected-background-color);
+      color: var(--selected-text-color);
     }
     &:not(.disabled) {
       cursor: pointer;
