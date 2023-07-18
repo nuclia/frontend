@@ -23,8 +23,7 @@
   import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { forkJoin, Observable } from 'rxjs';
-  import { onClosePreview } from '../../tiles/tile.utils';
-  import { Viewer } from '../../components';
+  import { onClosePreview, Viewer } from '../../components';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';

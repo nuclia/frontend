@@ -29,8 +29,7 @@
     trackingReset,
   } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { onClosePreview } from '../../tiles/tile.utils';
-  import { InfoCard, InitialAnswer, ResultRow, Viewer } from '../../components';
+  import { InfoCard, InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
 
 
   export let mode = '';

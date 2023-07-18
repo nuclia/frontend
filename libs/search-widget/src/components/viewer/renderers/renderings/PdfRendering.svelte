@@ -1,13 +1,10 @@
 <script lang="ts">
-  import { getPdfJsBaseUrl } from '../../../../core/utils';
+  import { getPdfJsBaseUrl, getPdfSrc } from '../../../../core';
   import { onDestroy, onMount } from 'svelte';
-  import IconButton from '../../../../common/button/IconButton.svelte';
   import type { Subscription } from 'rxjs';
   import { debounceTime, filter, Subject } from 'rxjs';
-  import { getUnMarked } from '../../../../tiles/tile.utils';
-  import Spinner from '../../../../common/spinner/Spinner.svelte';
-  import { getPdfSrc } from '../../../../core/api';
-  import { isMobileViewport } from '../../../../common/utils';
+  import { IconButton, isMobileViewport, Spinner } from '../../../../common';
+  import { getUnMarked } from '../../utils';
 
   export let src: string;
   export let paragraph;

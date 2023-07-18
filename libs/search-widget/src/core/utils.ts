@@ -2,7 +2,6 @@ import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
 import { from, map, of } from 'rxjs';
 import {
-  CloudLink,
   FIELD_TYPE,
   FieldFullId,
   FileField,
@@ -10,15 +9,11 @@ import {
   IFieldData,
   IResource,
   LinkField,
-  LinkFieldData,
   longToShortFieldType,
-  Resource,
-  ResourceData,
   ResourceField,
   Search,
   sliceUnicode,
 } from '@nuclia/core';
-import type { PreviewKind, WidgetParagraph } from './models';
 import { getFileUrls } from './api';
 
 let CDN = 'https://cdn.nuclia.cloud/';
@@ -237,75 +232,6 @@ function getTextFragment(paragraphText: string) {
   return '';
 }
 
-// FIXME: cleanup
-export function mapSmartParagraph2WidgetParagraph(paragraph: Search.FindParagraph, kind: PreviewKind): WidgetParagraph {
-  const start_seconds = paragraph.position.start_seconds?.[0];
-  const end_seconds = paragraph.position.end_seconds?.[0];
-  const start = paragraph.position?.start;
-  const end = paragraph.position?.end;
-  const fieldId = paragraph.id.split('/');
-  return {
-    paragraph,
-    fieldType: fieldId[1],
-    fieldId: fieldId[2],
-    text: paragraph.text,
-    preview: kind,
-    start,
-    end,
-    page: paragraph.position?.page_number,
-    start_seconds,
-    end_seconds,
-  } as WidgetParagraph;
-}
-
-export function mapParagraph2SmartParagraph(paragraph: Search.Paragraph): Search.FindParagraph {
-  const start_seconds = paragraph.start_seconds?.[0];
-  const end_seconds = paragraph.end_seconds?.[0];
-  const id = `${paragraph.rid}/${paragraph.field_type}/${paragraph.field}/${paragraph.position?.start || 0}-${
-    paragraph.position?.end || 0
-  }`;
-  return {
-    id,
-    text: paragraph.text,
-    score: paragraph.score,
-    order: paragraph.order,
-    labels: paragraph.labels,
-    score_type: Search.FindScoreType.BM25,
-    position: { ...paragraph.position, start_seconds, end_seconds },
-    page_number: paragraph.position?.page_number,
-  } as Search.FindParagraph;
-}
-
-export function mapParagraph2WidgetParagraph(paragraph: Search.Paragraph, kind: PreviewKind): WidgetParagraph {
-  return mapSmartParagraph2WidgetParagraph(mapParagraph2SmartParagraph(paragraph), kind);
-}
-
-export function getVideoStream(fileField: FileFieldData): CloudLink | undefined {
-  return fileField.extracted?.file?.file_generated?.['video.mpd'];
-}
-
-export function getFileField(resource: Resource, fieldId: string): FileFieldData | undefined {
-  return resource.data.files?.[fieldId];
-}
-
-export function getLinkField(resource: Resource, fieldId: string): LinkFieldData | undefined {
-  return resource.data.links?.[fieldId];
-}
-
-export function getFields(resource: Resource) {
-  return Object.keys(resource.data)
-    .reduce((acc, fieldType) => {
-      const fieldKeys = Object.keys(resource.data[fieldType as keyof ResourceData] || {});
-      const fields = fieldKeys.map((fieldId) => [fieldType, fieldId]);
-      return acc.concat(fields);
-    }, [] as string[][])
-    .map(([fieldType, fieldId]) => ({
-      field: resource.data[fieldType as keyof ResourceData]![fieldId],
-      field_type: fieldType,
-      field_id: fieldId,
-    }));
-}
-
 export function getFieldType(fieldType: string): FIELD_TYPE {
   return (fieldType.endsWith('s') ? fieldType.slice(0, fieldType.length - 1) : fieldType) as FIELD_TYPE;
 }
@@ -326,13 +252,6 @@ export function getExtractedTexts(data: IFieldData | null): { shortId: string; t
 }
 
 export const NEWLINE_REGEX = /\n/g;
-
-export const getParagraphId = (rid: string, paragraph: WidgetParagraph) => {
-  const type = paragraph.fieldType.slice(0, -1) as FIELD_TYPE;
-  return `${rid}/${longToShortFieldType(type)}/${paragraph.fieldId}/${paragraph.paragraph.start || 0}-${
-    paragraph.paragraph.end || 0
-  }`;
-};
 
 export const getNavigationUrl = (
   navigateToFile: boolean,
