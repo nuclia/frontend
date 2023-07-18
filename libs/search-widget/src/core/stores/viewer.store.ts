@@ -1,7 +1,15 @@
 import type { MediaWidgetParagraph, PreviewKind, ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
 import type { CloudLink, FieldFullId, IFieldData } from '@nuclia/core';
-import { FIELD_TYPE, FileFieldData, LinkFieldData, longToShortFieldType, Search, sliceUnicode } from '@nuclia/core';
+import {
+  FIELD_TYPE,
+  FieldMetadata,
+  FileFieldData,
+  LinkFieldData,
+  longToShortFieldType,
+  Search,
+  sliceUnicode,
+} from '@nuclia/core';
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
 import { filter, map, of, switchMap, take } from 'rxjs';
@@ -15,6 +23,7 @@ export interface ViewerState {
   isPreviewing: boolean;
   fieldFullId: FieldFullId | null;
   transcripts: Search.FindParagraph[];
+  fullMetadataLoaded: boolean;
 
   // Viewer internal search
   query: string | null;
@@ -30,6 +39,7 @@ export const viewerState = new SvelteState<ViewerState>({
   isPreviewing: false,
   fieldFullId: null,
   transcripts: [],
+  fullMetadataLoaded: false,
 
   query: null,
   searchInFieldResults: null,
@@ -58,6 +68,7 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
         : null,
     isPreviewing: !!data, //FIXME: manage isPreviewing in an effect managing navigateToFile/navigateToLink as well
     searchInFieldResults: null,
+    fullMetadataLoaded: false,
   }),
 );
 
@@ -221,6 +232,32 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
       summary: data?.extracted?.metadata?.metadata?.summary?.trim() || '',
     };
   },
+);
+
+export const fullMetadataLoaded = viewerState.reader<boolean>((state) => state.fullMetadataLoaded);
+
+export const fieldMetadata = viewerState.writer<FieldMetadata | undefined, FieldMetadata>(
+  (state) => state.currentResult?.fieldData?.extracted?.metadata?.metadata,
+  (state, metadata) =>
+    state.currentResult?.fieldData?.extracted?.metadata?.metadata
+      ? {
+          ...state,
+          currentResult: {
+            ...state.currentResult,
+            fieldData: {
+              ...state.currentResult.fieldData,
+              extracted: {
+                ...state.currentResult.fieldData.extracted,
+                metadata: {
+                  ...state.currentResult.fieldData.extracted.metadata,
+                  metadata,
+                },
+              },
+            },
+          },
+          fullMetadataLoaded: true,
+        }
+      : state,
 );
 
 export const transcripts = viewerState.writer<Search.FindParagraph[]>(

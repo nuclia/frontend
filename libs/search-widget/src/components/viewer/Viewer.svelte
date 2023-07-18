@@ -1,25 +1,31 @@
 <script lang="ts">
   import {
     _,
+    fieldFullId,
+    fieldMetadata,
     fieldSummary,
-    getFieldUrl,
-    loadTranscripts,
+    fullMetadataLoaded,
+    getFieldUrl, getFindParagraphs, getPrefixedFieldId,
+    getResourceMetadata,
     getWidgetActions,
+    graphQuery,
     isKnowledgeGraphEnabled,
     isPreviewing,
+    loadTranscripts,
+    resetSearchInField,
+    searchInFieldQuery,
+    searchInFieldResults,
+    searchInResource,
     searchQuery,
     selectedParagraphIndex,
     selectNext,
     selectPrevious,
+    transcripts,
     TypedResult,
     viewerData,
     viewerState,
     ViewerState,
-    WidgetAction,
-    transcripts,
-    searchInResource,
-    searchInFieldResults,
-    searchInFieldQuery, resetSearchInField
+    WidgetAction
   } from '../../core';
   import {
     DocTypeIndicator,
@@ -33,9 +39,10 @@
     unblockBackground
   } from '../../common';
   import { onDestroy, onMount } from 'svelte';
-  import { FIELD_TYPE, longToShortFieldType, Search, SearchOptions } from '@nuclia/core';
-  import { BehaviorSubject, debounceTime, filter, map, Subject, take } from 'rxjs';
+  import { FIELD_TYPE, FieldFullId, FieldMetadata, Search, SearchOptions } from '@nuclia/core';
+  import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
   import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
+  import { D3Loader, KnowledgeGraphPanel } from '../knowledge-graph';
 
   // Browser window related variables
   const resizeEvent = new Subject();
@@ -95,6 +102,7 @@
     }
   });
 
+  const unsubscribeOnClose: Subject<void> = new Subject();
   onMount(() => {
     resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
     menuItems = getWidgetActions();
@@ -102,9 +110,11 @@
 
   onDestroy(() => {
     stateSubscription.unsubscribe();
+    unsubscribeOnClose.complete();
   });
 
   function close() {
+    unsubscribeOnClose.next();
     viewerState.reset();
     unblockBackground(true);
     displayMenu = false;
@@ -181,26 +191,39 @@
   }
 
   function toggleKnowledgeGraph() {
-    // TODO toggleKnowledgeGraph
+    showKnowledgeGraph = !showKnowledgeGraph;
+    // load all metadata if they weren't loaded already
+    fullMetadataLoaded.pipe(
+      filter(loaded => !loaded),
+      switchMap(() => {
+        return fieldFullId.pipe(
+          filter(fieldId => !!fieldId),
+          take(1),
+          switchMap(fullId => getResourceMetadata(fullId))
+        );
+      }),
+      filter(metadata => !!metadata),
+      map(metadata => metadata as FieldMetadata),
+      takeUntil(unsubscribeOnClose),
+    ).subscribe((metadata) => fieldMetadata.set(metadata));
   }
 
   function findInField(event) {
     if (event.key === 'Enter') {
       const query = searchInFieldQuery.getValue();
       sidePanelSectionOpen = 'search';
-      if (query && result) {
+      if (query && result && result.field) {
         isSearchingInResource.next(true);
-        const fullId = {
+        const fullId: FieldFullId = {
           resourceId: result.id,
-          field: result.field ? [`${longToShortFieldType(result.field.field_type)}/${result.field.field_id}`] : undefined,
-        }
+          ...result.field
+        };
         const options: SearchOptions = {
           highlight: true,
-          fields: fullId.field
+          fields: [getPrefixedFieldId(fullId)]
         };
         searchInResource(query, result, options)
-          .pipe(
-            map((results) => Object.values(results.resources?.[fullId.resourceId]?.fields[`/${fullId.field}`].paragraphs || {})))
+          .pipe(map((results) => getFindParagraphs(results, fullId)))
           .subscribe((paragraphs) => searchInFieldResults.set(paragraphs));
       } else {
         isSearchingInResource.next(false);
@@ -223,6 +246,12 @@
 
   function selectTranscript(paragraph: Search.FindParagraph, index: number) {
     selectedParagraphIndex.set({ index, playFromTranscripts: true });
+  }
+
+  function findInGraph() {
+    // TODO: findInGraph
+    const query = graphQuery.getValue();
+    console.log(`Todo: find ${query} in graph`);
   }
 </script>
 
@@ -304,7 +333,13 @@
 
       <div class="viewer-content"
            class:no-result-navigator={resultNavigatorHidden}>
-        <ViewerContent/>
+        {#if !showKnowledgeGraph}
+          <ViewerContent />
+        {:else}
+          <D3Loader
+            rightPanelOpen={sidePanelExpanded}
+            on:openRightPanel={toggleSidePanel} />
+        {/if}
       </div>
 
       <div class="side-panel">
@@ -335,96 +370,111 @@
         {/if}
 
         <div class="side-panel-content">
-            {#if showKnowledgeGraph}
-              <!-- TODO knowledge graph -->
-            {:else}
-              {#if !isMobile}
-                <div
-                  class="find-bar-container"
-                  tabindex="0">
-                  <div class="search-icon">
-                    <Icon name="search" />
-                  </div>
-                  <input
-                    class="find-input"
-                    type="text"
-                    autocomplete="off"
-                    aria-label={$_(findInPlaceholder)}
-                    placeholder={$_(findInPlaceholder)}
-                    tabindex="-1"
-                    bind:this={findInputElement}
-                    bind:value={$searchInFieldQuery}
-                    on:keyup={(e) => findInField(e)} />
-                  {#if state.query?.length > 0}
-                    <IconButton
-                      icon="cross"
-                      aspect="basic"
-                      size="small"
-                      on:click={resetInternalSearch}></IconButton>
-                  {/if}
+          {#if showKnowledgeGraph}
+            {#if !isMobile}
+              <div
+                class="find-bar-container"
+                tabindex="0">
+                <Icon name="search" />
+                <input
+                  class="find-input"
+                  type="text"
+                  autocomplete="off"
+                  tabindex="-1"
+                  bind:value={$graphQuery}
+                  on:change={findInGraph} />
+              </div>
+            {/if}
+            <KnowledgeGraphPanel />
+          {:else}
+            {#if !isMobile}
+              <div
+                class="find-bar-container"
+                tabindex="0">
+                <div class="search-icon">
+                  <Icon name="search" />
                 </div>
-
-                {#if result?.paragraphs.length > 0 || state.searchInFieldResults?.length > 0}
-                  <MetadataContainer sectionId="search"
-                                     expanded={sidePanelSectionOpen === 'search'}
-                                     on:toggle={(event) => toggleSection(event.detail)}>
-                    <span slot="sectionTitle">{$_('tile.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
-                    <ul class="sw-paragraphs-container" slot="sectionContent">
-                      {#if state.searchInFieldResults?.length > 0}
-                        {#each state.searchInFieldResults as paragraph, index}
-                          <ParagraphResult {paragraph}
-                                           stack={true}
-                                           minimized={isMobile}
-                                           resultType={result?.resultType}
-                                           noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                           selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                                           on:open={() => selectParagraph(index)}
-                          />
-                        {/each}
-                      {:else}
-                        {#each result?.paragraphs as paragraph, index}
-                          <ParagraphResult {paragraph}
-                                           stack={true}
-                                           minimized={isMobile}
-                                           resultType={result?.resultType}
-                                           noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                           selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                                           on:open={() => selectParagraph(index)}
-                          />
-                        {/each}
-                      {/if}
-                    </ul>
-                  </MetadataContainer>
+                <input
+                  class="find-input"
+                  type="text"
+                  autocomplete="off"
+                  aria-label={$_(findInPlaceholder)}
+                  placeholder={$_(findInPlaceholder)}
+                  tabindex="-1"
+                  bind:this={findInputElement}
+                  bind:value={$searchInFieldQuery}
+                  on:keyup={(e) => findInField(e)} />
+                {#if state.query?.length > 0}
+                  <IconButton
+                    icon="cross"
+                    aspect="basic"
+                    size="small"
+                    on:click={resetInternalSearch}></IconButton>
                 {/if}
-              {/if}
+              </div>
 
-              {#if isMediaPlayer && $transcripts.length > 0}
-                <MetadataContainer sectionId="transcripts"
-                                   expanded={sidePanelSectionOpen === 'transcripts'}
+              {#if result?.paragraphs.length > 0 || state.searchInFieldResults?.length > 0}
+                <MetadataContainer sectionId="search"
+                                   expanded={sidePanelSectionOpen === 'search'}
                                    on:toggle={(event) => toggleSection(event.detail)}>
-                  <span slot="sectionTitle">{$_('tile.full-transcripts')}</span>
+                  <span
+                    slot="sectionTitle">{$_('tile.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
                   <ul class="sw-paragraphs-container" slot="sectionContent">
-                    {#each $transcripts as paragraph, index}
-                      <ParagraphResult
-                        {paragraph}
-                        selected={state.playFromTranscript && index === state.selectedParagraphIndex}
-                        resultType={result?.resultType}
-                        stack
-                        on:open={() => selectTranscript(paragraph, index)} />
-                    {/each}
+                    {#if state.searchInFieldResults?.length > 0}
+                      {#each state.searchInFieldResults as paragraph, index}
+                        <ParagraphResult {paragraph}
+                                         stack={true}
+                                         minimized={isMobile}
+                                         resultType={result?.resultType}
+                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                                         on:open={() => selectParagraph(index)}
+                        />
+                      {/each}
+                    {:else}
+                      {#each result?.paragraphs as paragraph, index}
+                        <ParagraphResult {paragraph}
+                                         stack={true}
+                                         minimized={isMobile}
+                                         resultType={result?.resultType}
+                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                                         on:open={() => selectParagraph(index)}
+                        />
+                      {/each}
+                    {/if}
                   </ul>
                 </MetadataContainer>
               {/if}
-
-              {#if $fieldSummary}
-                <MetadataContainer sectionId="summary"
-                                   expanded={sidePanelSectionOpen === 'summary'}
-                                   on:toggle={(event) => toggleSection(event.detail)}>
-                  <span slot="sectionTitle">{$_('tile.summary')}</span>
-                  <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
-                </MetadataContainer>
-              {/if}
             {/if}
+
+            {#if isMediaPlayer && $transcripts.length > 0}
+              <MetadataContainer sectionId="transcripts"
+                                 expanded={sidePanelSectionOpen === 'transcripts'}
+                                 on:toggle={(event) => toggleSection(event.detail)}>
+                <span slot="sectionTitle">{$_('tile.full-transcripts')}</span>
+                <ul class="sw-paragraphs-container" slot="sectionContent">
+                  {#each $transcripts as paragraph, index}
+                    <ParagraphResult
+                      {paragraph}
+                      selected={state.playFromTranscript && index === state.selectedParagraphIndex}
+                      resultType={result?.resultType}
+                      stack
+                      on:open={() => selectTranscript(paragraph, index)} />
+                  {/each}
+                </ul>
+              </MetadataContainer>
+            {/if}
+
+            {#if $fieldSummary}
+              <MetadataContainer sectionId="summary"
+                                 expanded={sidePanelSectionOpen === 'summary'}
+                                 on:toggle={(event) => toggleSection(event.detail)}>
+                <span slot="sectionTitle">{$_('tile.summary')}</span>
+                <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
+              </MetadataContainer>
+            {/if}
+          {/if}
         </div>
       </div>
     </div>

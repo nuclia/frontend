@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
-  import { currentThumbnail, getFieldUrl, getFileUrls, getPlayableVideo, isLinkField, playFrom } from "../../../core";
+  import { map, of, switchMap, take, tap } from 'rxjs';
   import { onDestroy } from 'svelte';
-  import { map, of, switchMap, take, tap } from "rxjs";
-  import YoutubePlayer from "./players/YoutubePlayer.svelte";
-  import { Thumbnail } from "../../../common";
-  import VideoPlayer from "./players/VideoPlayer.svelte";
+  import { currentThumbnail, getFieldUrl, getFileUrls, getPlayableVideo, isLinkField, playFrom } from '../../../core';
+  import { Thumbnail } from '../../../common';
+  import { VideoPlayer, YoutubePlayer } from './players';
 
   let mediaLoading = true;
   let mediaTime = 0;

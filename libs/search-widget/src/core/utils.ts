@@ -4,6 +4,7 @@ import { from, map, of } from 'rxjs';
 import {
   CloudLink,
   FIELD_TYPE,
+  FieldFullId,
   FileField,
   FileFieldData,
   IFieldData,
@@ -236,6 +237,7 @@ function getTextFragment(paragraphText: string) {
   return '';
 }
 
+// FIXME: cleanup
 export function mapSmartParagraph2WidgetParagraph(paragraph: Search.FindParagraph, kind: PreviewKind): WidgetParagraph {
   const start_seconds = paragraph.position.start_seconds?.[0];
   const end_seconds = paragraph.position.end_seconds?.[0];
@@ -365,3 +367,11 @@ export const getExternalUrl = (resource: IResource, field?: ResourceField) => {
     return undefined;
   }
 };
+
+export function getPrefixedFieldId(fullId: FieldFullId): string {
+  return `/${longToShortFieldType(fullId.field_type)}/${fullId.field_id}`;
+}
+
+export function getFindParagraphs(results: Search.FindResults, fullId: FieldFullId): Search.FindParagraph[] {
+  return Object.values(results.resources?.[fullId.resourceId]?.fields[getPrefixedFieldId(fullId)]?.paragraphs || {});
+}

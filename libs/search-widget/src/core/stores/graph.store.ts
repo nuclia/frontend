@@ -6,7 +6,7 @@ interface GraphState {
   query: string;
   selectedNode?: NerNode;
   selectedNodeEdges?: NerLinkHydrated[];
-  selectedNodeResults?: Search.Results;
+  selectedNodeResults?: Search.FindParagraph[];
 }
 
 export const graphState = new SvelteState<GraphState>({
@@ -48,7 +48,7 @@ export const graphSelectionRelations = graphState.writer<NerLinkHydrated[] | und
   }),
 );
 
-export const graphSearchResults = graphState.writer<Search.Results | undefined>(
+export const graphSearchResults = graphState.writer<Search.FindParagraph[] | undefined>(
   (state) => state.selectedNodeResults,
   (state, results) => ({
     ...state,
@@ -56,6 +56,6 @@ export const graphSearchResults = graphState.writer<Search.Results | undefined>(
   }),
 );
 
-export const graphSelectionParagraphs = graphState.reader<Search.Paragraph[]>(
-  (state) => state.selectedNodeResults?.paragraphs?.results || [],
+export const graphSelectionParagraphs = graphState.reader<Search.FindParagraph[]>(
+  (state) => state.selectedNodeResults || [],
 );

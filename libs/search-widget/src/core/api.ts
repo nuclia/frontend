@@ -2,7 +2,9 @@ import {
   BaseSearchOptions,
   Chat,
   Classification,
+  ExtractedDataTypes,
   FieldFullId,
+  FieldMetadata,
   IEvents,
   IResource,
   KBStates,
@@ -186,6 +188,21 @@ export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): O
       fullFieldId.field_id,
       valueOnly ? [ResourceFieldProperties.VALUE] : [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
     );
+}
+
+export function getResourceMetadata(fullFieldId: FieldFullId): Observable<FieldMetadata | undefined> {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox
+    .getResourceFromData({ id: fullFieldId.resourceId })
+    .getField(
+      fullFieldId.field_type,
+      fullFieldId.field_id,
+      [ResourceFieldProperties.EXTRACTED],
+      [ExtractedDataTypes.METADATA],
+    )
+    .pipe(map((data) => data.extracted?.metadata?.metadata));
 }
 
 let _entities: EntityGroup[] | undefined = undefined;

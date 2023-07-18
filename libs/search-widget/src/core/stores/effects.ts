@@ -31,7 +31,7 @@ import { NO_SUGGESTION_RESULTS, TypedResult } from '../models';
 import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
 import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
-import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
+import { formatQueryKey, getFindParagraphs, getUrlParams, updateQueryParams } from '../utils';
 import {
   getFieldDataFromResource,
   getResultType,
@@ -297,13 +297,15 @@ export function setupTriggerGraphNerSearch() {
       ),
     ])
       .pipe(
-        switchMap(
-          ([node, fullId]) => searchInResource(`"${node.ner}"`, { id: fullId.resourceId }, {}),
+        switchMap(([node, fullId]) =>
           // FIXME: here's the proper call once the following bug is fixed: https://app.shortcut.com/flaps/story/5365/searching-on-resource-using-filtering-on-entity-always-returns-the-same-results
           // searchInResource('', { id: fullId.resourceId }, { filters: [`/e/${node.family}/${node.ner}`] }),
+          searchInResource(`"${node.ner}"`, { id: fullId.resourceId }, {}).pipe(
+            map((results) => getFindParagraphs(results, fullId)),
+          ),
         ),
       )
-      .subscribe((results) => graphSearchResults.set(results)),
+      .subscribe((paragraphs) => graphSearchResults.set(paragraphs)),
   );
 }
 

@@ -1,4 +1,4 @@
-# 1.5.0 (unreleased)
+# 1.5.0 (2023-07-18)
 
 ### Breaking changes
 
@@ -7,6 +7,7 @@
 - Load `SHORTENED_METADATA` by default on `getField`
 
 ### Improvements
+
 - Add `SHORTENED_METADATA` type to `ExtractedDataTypes`
 - Add `selections` in field metadata
 - Update Learning configurations models
@@ -15,7 +16,8 @@
 - Add `resource_filters` property to `BaseSearchOptions`
 - Add `find` method to `resource` class
 
-### Bug fixes
+### Bug fix
+
 - Add missing `generic` type in `shortToLongFieldType` and `getFieldTypeFromString` mappers
 
 # 1.4.0 (2023-06-23)

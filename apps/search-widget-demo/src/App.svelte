@@ -26,10 +26,13 @@
   // let kb = '1154f6a1-af3c-4a19-9039-35466f024448'; // Knowledge graph (daria wiki + an article)
   // let kb = '096d9070-f7be-40c8-a24c-19c89072e3ff'; // e2e permanent
   // let kb = 'dba8dfe3-cbde-4aa6-9b90-57fdd2503672'; // conversations
-  let kb = '02701e7d-2e67-4671-9b63-6634328ba0d6'; // Q&A Nuclia
+  // let kb = '02701e7d-2e67-4671-9b63-6634328ba0d6'; // Q&A Nuclia
 
-  const backend = 'https://stashify.cloud/api';
-  // const backend = 'https://nuclia.cloud/api';
+  // KB in prod
+  let kb = '16375869-1037-460d-8648-b3ee9c9206c0' // market outlook reports
+
+  // const backend = 'https://stashify.cloud/api';
+  const backend = 'https://nuclia.cloud/api';
 
   onMount(() => {
     resultsWidget?.setTileMenu([
