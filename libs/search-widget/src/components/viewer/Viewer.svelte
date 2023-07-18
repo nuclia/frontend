@@ -1,0 +1,487 @@
+<script lang="ts">
+  import {
+    _,
+    fieldFullId,
+    fieldMetadata,
+    fieldSummary,
+    fullMetadataLoaded,
+    getFieldUrl,
+    getFindParagraphs,
+    getFieldIdWithShortType,
+    getResourceMetadata,
+    getWidgetActions,
+    graphQuery,
+    isKnowledgeGraphEnabled,
+    isPreviewing,
+    loadTranscripts,
+    resetSearchInField,
+    searchInFieldQuery,
+    searchInFieldResults,
+    searchInResource,
+    searchQuery,
+    selectedParagraphIndex,
+    selectNext,
+    selectPrevious,
+    transcripts,
+    TypedResult,
+    viewerData,
+    viewerState,
+    ViewerState,
+    WidgetAction
+  } from '../../core';
+  import {
+    DocTypeIndicator,
+    Dropdown,
+    Duration,
+    freezeBackground,
+    Icon,
+    IconButton,
+    isMobileViewport,
+    ParagraphResult,
+    unblockBackground
+  } from '../../common';
+  import { onDestroy, onMount } from 'svelte';
+  import { FIELD_TYPE, FieldFullId, FieldMetadata, Search, SearchOptions } from '@nuclia/core';
+  import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
+  import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
+  import { D3Loader, KnowledgeGraphPanel } from '../knowledge-graph';
+
+  // Browser window related variables
+  const resizeEvent = new Subject();
+  let innerWidth = window.innerWidth;
+  $: isMobile = isMobileViewport(innerWidth);
+
+  // Header and menu
+  let menuItems: WidgetAction[] = [];
+  let menuButton: HTMLElement | undefined;
+  let menuPosition: { left: number; top: number } | undefined;
+  let displayMenu = false;
+  let resultNavigatorDisabled = false;
+  let resultNavigatorHidden = false;
+  let resultNavigatorWidth = 0;
+  let headerActionsWidth = 0;
+  const buttonWidth = 40;
+  $: hasMenu = menuItems.length > 0;
+  $: actionsWidth = headerActionsWidth + (hasMenu ? buttonWidth * 2 : buttonWidth);
+
+  // Renderer
+  let isMediaPlayer = false;
+
+  // Side panel
+  const isSearchingInResource = new BehaviorSubject(false);
+  let sidePanelExpanded = false;
+  let showKnowledgeGraph = false;
+  let transcriptsInitialized = false;
+  let findInputElement: HTMLElement;
+  type sidePanelSection = 'search' | 'transcripts' | 'summary' | 'items';
+  let sidePanelSectionOpen: sidePanelSection = 'search';
+  const findInPlaceholderPrefix = 'tile.find-in-';
+  let findInPlaceholder = '';
+
+  // Load data from the state
+  let state: ViewerState;
+  let result: TypedResult | null;
+  const stateSubscription = viewerData.pipe(
+    filter(data => data.isPreviewing)
+  ).subscribe((value) => {
+    freezeBackground(true);
+    state = value;
+    result = value.currentResult;
+    resultNavigatorHidden = (result?.paragraphs?.length || 0) <= 1;
+    switch (result?.resultType) {
+      case 'audio':
+      case 'video':
+        findInPlaceholder = `${findInPlaceholderPrefix}${result.resultType}`;
+        isMediaPlayer = true;
+        break;
+      case 'image':
+        findInPlaceholder = `${findInPlaceholderPrefix}image`;
+        resultNavigatorHidden = true;
+        break;
+      default:
+        findInPlaceholder = `${findInPlaceholderPrefix}document`;
+        break;
+    }
+  });
+
+  const unsubscribeOnClose: Subject<void> = new Subject();
+  onMount(() => {
+    resizeEvent.pipe(debounceTime(100)).subscribe(() => setHeaderActionWidth());
+    menuItems = getWidgetActions();
+  });
+
+  onDestroy(() => {
+    stateSubscription.unsubscribe();
+    unsubscribeOnClose.complete();
+  });
+
+  function close() {
+    unsubscribeOnClose.next();
+    viewerState.reset();
+    unblockBackground(true);
+    displayMenu = false;
+    resultNavigatorDisabled = false;
+    resultNavigatorHidden = false;
+    sidePanelExpanded = false;
+    showKnowledgeGraph = false;
+    isMediaPlayer = false;
+    transcriptsInitialized = false;
+    sidePanelSectionOpen = 'search';
+  }
+
+  function setHeaderActionWidth() {
+    headerActionsWidth = isMobile ? 0 : resultNavigatorWidth;
+  }
+
+  function openOrigin() {
+    getFieldUrl()
+      .pipe(
+        take(1),
+        filter((url) => !!url)
+      )
+      .subscribe((url) => window.open(url, 'blank', 'noreferrer'));
+  }
+
+  function openMenu(event) {
+    event.stopPropagation();
+    if (menuButton) {
+      displayMenu = true;
+      const menuWidth = 176;
+      menuPosition = {
+        left: menuButton.offsetLeft - menuWidth + menuButton.offsetWidth,
+        top: menuButton.clientHeight + 6,
+        width: menuWidth
+      };
+      // close side panel
+      sidePanelExpanded = false;
+    }
+  }
+
+  function clickOnMenu(item: WidgetAction) {
+    const fullId = state.fieldFullId;
+    if (fullId) {
+      item.action(fullId);
+    }
+  }
+
+  function openPrevious() {
+    selectPrevious.do();
+  }
+
+  function openNext() {
+    selectNext.do();
+  }
+
+  function selectParagraph(index: number) {
+    selectedParagraphIndex.set({ index, playFromTranscripts: false });
+  }
+
+  function toggleSidePanel() {
+    // TODO: smoothly scroll to the selected paragraph
+    sidePanelExpanded = !sidePanelExpanded;
+    resultNavigatorDisabled = sidePanelExpanded;
+    if (!showKnowledgeGraph) {
+      if (sidePanelExpanded) {
+        // Wait for animation to finish before focusing on find input, otherwise the focus is breaking the transition
+        setTimeout(() => findInputElement?.focus(), Duration.MODERATE);
+      } else if (isSearchingInResource.value) {
+        resetInternalSearch();
+        isSearchingInResource.next(false);
+        searchInFieldQuery.set(searchQuery.getValue());
+      }
+    }
+  }
+
+  function toggleKnowledgeGraph() {
+    showKnowledgeGraph = !showKnowledgeGraph;
+    // load all metadata if they weren't loaded already
+    fullMetadataLoaded.pipe(
+      filter(loaded => !loaded),
+      switchMap(() => {
+        return fieldFullId.pipe(
+          filter(fieldId => !!fieldId),
+          take(1),
+          switchMap(fullId => getResourceMetadata(fullId))
+        );
+      }),
+      filter(metadata => !!metadata),
+      map(metadata => metadata as FieldMetadata),
+      takeUntil(unsubscribeOnClose),
+    ).subscribe((metadata) => fieldMetadata.set(metadata));
+  }
+
+  function findInField(event) {
+    if (event.key === 'Enter') {
+      const query = searchInFieldQuery.getValue();
+      sidePanelSectionOpen = 'search';
+      if (query && result && result.field) {
+        isSearchingInResource.next(true);
+        const fullId: FieldFullId = {
+          resourceId: result.id,
+          ...result.field
+        };
+        const options: SearchOptions = {
+          highlight: true,
+          fields: [getFieldIdWithShortType(fullId)]
+        };
+        searchInResource(query, result, options)
+          .pipe(map((results) => getFindParagraphs(results, fullId)))
+          .subscribe((paragraphs) => searchInFieldResults.set(paragraphs));
+      } else {
+        isSearchingInResource.next(false);
+      }
+    }
+  }
+
+  function resetInternalSearch() {
+    resetSearchInField.do();
+  }
+
+  function toggleSection(section: sidePanelSection) {
+    sidePanelSectionOpen = sidePanelSectionOpen === section ? 'search' : section;
+
+    if (sidePanelSectionOpen === 'transcripts' && !transcriptsInitialized) {
+      transcriptsInitialized = true;
+      setTimeout(() => loadTranscripts());
+    }
+  }
+
+  function selectTranscript(paragraph: Search.FindParagraph, index: number) {
+    selectedParagraphIndex.set({ index, playFromTranscripts: true });
+  }
+
+  function findInGraph() {
+    // TODO: findInGraph
+    const query = graphQuery.getValue();
+    console.log(`Todo: find ${query} in graph`);
+  }
+</script>
+
+<svelte:window
+  bind:innerWidth
+  on:resize={(event) => resizeEvent.next(event)}></svelte:window>
+
+{#if $isPreviewing}
+  <div class="sw-viewer"
+       style:--search-section-count={sidePanelSectionOpen === 'search' ? 1 : 0}
+       style:--metadata-block-count={(isMediaPlayer ? 2 : 1) + (sidePanelSectionOpen !== 'search' ? 1 : 0)}>
+    <header style:--header-actions-width={`${actionsWidth}px`}>
+      <div class="header-title">
+        <DocTypeIndicator type={result?.resultType} />
+        <h3
+          class="ellipsis title-m">
+          {result?.title}
+        </h3>
+        {#if state.fieldFullId?.field_type === FIELD_TYPE.file || state.fieldFullId?.field_type === FIELD_TYPE.link}
+          <IconButton
+            icon={state.fieldFullId.field_type === FIELD_TYPE.file ? 'download' : 'square-arrow'}
+            ariaLabel={$_('resource.source')}
+            aspect="basic"
+            on:click={openOrigin} />
+        {/if}
+      </div>
+
+      <div class="header-actions">
+        {#if !isMobile && !resultNavigatorHidden && !resultNavigatorDisabled}
+          <SearchResultNavigator
+            resultIndex={state.playFromTranscript ? -1 : state.selectedParagraphIndex}
+            total={result?.paragraphs.length}
+            on:offsetWidth={(event) => (resultNavigatorWidth = event.detail.offsetWidth)}
+            on:openPrevious={openPrevious}
+            on:openNext={openNext} />
+        {/if}
+
+        {#if hasMenu && result?.paragraphs.length > 1}
+          <div class="separator" />
+        {/if}
+        {#if hasMenu}
+          <div bind:this={menuButton}>
+            <IconButton
+              icon="more-vertical"
+              aspect="basic"
+              on:click={openMenu} />
+          </div>
+
+          {#if displayMenu}
+            <Dropdown
+              position={menuPosition}
+              on:close={() => (displayMenu = false)}>
+              <ul class="viewer-menu">
+                {#each menuItems as item}
+                  <li on:click={() => clickOnMenu(item)}>{item.label}</li>
+                {/each}
+              </ul>
+            </Dropdown>
+          {/if}
+        {/if}
+        <IconButton
+          icon="cross"
+          ariaLabel={$_('generic.close')}
+          aspect="basic"
+          on:click={close} />
+      </div>
+    </header>
+
+    <div class="viewer-body"
+         class:side-panel-expanded={sidePanelExpanded}>
+      {#if isMobile && !resultNavigatorHidden}
+        <SearchResultNavigator
+          resultIndex={state.selectedParagraphIndex}
+          total={result?.paragraphs.length}
+          disabled={resultNavigatorDisabled}
+          on:openPrevious={openPrevious}
+          on:openNext={openNext} />
+      {/if}
+
+      <div class="viewer-content">
+        {#if !showKnowledgeGraph}
+          <ViewerContent noResultNavigator={resultNavigatorHidden} />
+        {:else}
+          <D3Loader
+            rightPanelOpen={sidePanelExpanded}
+            on:openRightPanel={toggleSidePanel} />
+        {/if}
+      </div>
+
+      <div class="side-panel">
+        {#if !isMobile}
+          <div class="side-panel-button-container">
+            {#if !showKnowledgeGraph}
+              <div
+                class="side-panel-button"
+                on:click={toggleSidePanel}>
+                <Icon name={sidePanelExpanded ? 'chevrons-right' : 'search'} />
+              </div>
+            {:else}
+              <div
+                class="side-panel-button"
+                on:click={toggleSidePanel}>
+                <Icon name={sidePanelExpanded ? 'chevrons-right' : 'info'} />
+              </div>
+            {/if}
+
+            {#if $isKnowledgeGraphEnabled}
+              <div
+                class="side-panel-button"
+                on:click={toggleKnowledgeGraph}>
+                <Icon name={showKnowledgeGraph ? 'cross' : 'submenu'} />
+              </div>
+            {/if}
+          </div>
+        {/if}
+
+        <div class="side-panel-content">
+          {#if showKnowledgeGraph}
+            {#if !isMobile}
+              <div
+                class="find-bar-container"
+                tabindex="0">
+                <Icon name="search" />
+                <input
+                  class="find-input"
+                  type="text"
+                  autocomplete="off"
+                  tabindex="-1"
+                  bind:value={$graphQuery}
+                  on:change={findInGraph} />
+              </div>
+            {/if}
+            <KnowledgeGraphPanel />
+          {:else}
+            {#if !isMobile}
+              <div
+                class="find-bar-container"
+                tabindex="0">
+                <div class="search-icon">
+                  <Icon name="search" />
+                </div>
+                <input
+                  class="find-input"
+                  type="text"
+                  autocomplete="off"
+                  aria-label={$_(findInPlaceholder)}
+                  placeholder={$_(findInPlaceholder)}
+                  tabindex="-1"
+                  bind:this={findInputElement}
+                  bind:value={$searchInFieldQuery}
+                  on:keyup={(e) => findInField(e)} />
+                {#if state.query?.length > 0}
+                  <IconButton
+                    icon="cross"
+                    aspect="basic"
+                    size="small"
+                    on:click={resetInternalSearch}></IconButton>
+                {/if}
+              </div>
+
+              {#if result?.paragraphs.length > 0 || state.searchInFieldResults?.length > 0}
+                <MetadataContainer sectionId="search"
+                                   expanded={sidePanelSectionOpen === 'search'}
+                                   on:toggle={(event) => toggleSection(event.detail)}>
+                  <span
+                    slot="sectionTitle">{$_('tile.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
+                  <ul class="sw-paragraphs-container" slot="sectionContent">
+                    {#if state.searchInFieldResults?.length > 0}
+                      {#each state.searchInFieldResults as paragraph, index}
+                        <ParagraphResult {paragraph}
+                                         stack={true}
+                                         minimized={isMobile}
+                                         resultType={result?.resultType}
+                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                                         on:open={() => selectParagraph(index)}
+                        />
+                      {/each}
+                    {:else}
+                      {#each result?.paragraphs as paragraph, index}
+                        <ParagraphResult {paragraph}
+                                         stack={true}
+                                         minimized={isMobile}
+                                         resultType={result?.resultType}
+                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                                         on:open={() => selectParagraph(index)}
+                        />
+                      {/each}
+                    {/if}
+                  </ul>
+                </MetadataContainer>
+              {/if}
+            {/if}
+
+            {#if isMediaPlayer}
+              <MetadataContainer sectionId="transcripts"
+                                 expanded={sidePanelSectionOpen === 'transcripts'}
+                                 on:toggle={(event) => toggleSection(event.detail)}>
+                <span slot="sectionTitle">{$_('tile.full-transcripts')}</span>
+                <ul class="sw-paragraphs-container" slot="sectionContent">
+                  {#each $transcripts as paragraph, index}
+                    <ParagraphResult
+                      {paragraph}
+                      selected={state.playFromTranscript && index === state.selectedParagraphIndex}
+                      resultType={result?.resultType}
+                      stack
+                      on:open={() => selectTranscript(paragraph, index)} />
+                  {/each}
+                </ul>
+              </MetadataContainer>
+            {/if}
+
+            {#if $fieldSummary}
+              <MetadataContainer sectionId="summary"
+                                 expanded={sidePanelSectionOpen === 'summary'}
+                                 on:toggle={(event) => toggleSection(event.detail)}>
+                <span slot="sectionTitle">{$_('tile.summary')}</span>
+                <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
+              </MetadataContainer>
+            {/if}
+          {/if}
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
+
+<style
+  lang="scss"
+  src="./Viewer.scss"></style>

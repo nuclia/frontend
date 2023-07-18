@@ -91,10 +91,14 @@
   --line-height-title-xxs: calc(var(--font-size-base) * 1.375);
 
   /* TRANSITIONS */
-  --transition-superfast: 0.16s ease-in-out;
-  --transition-fast: 0.24s ease;
-  --transition-moderate: 0.48s ease;
-  --transition-slow: 0.8s cubic-bezier(0.6, 0, 0.4, 1);
+  --duration--superfast: 0.16s;
+  --duration--fast: 0.24s;
+  --duration--moderate: 0.48s;
+  --duration--slow: 0.8s;
+  --transition-superfast: var(--duration--superfast) ease-in-out;
+  --transition-fast: var(--duration--fast) ease;
+  --transition-moderate: var(--duration--moderate) ease;
+  --transition-slow: var(--duration--slow) cubic-bezier(0.6, 0, 0.4, 1);
 
   /* TOKEN */
   --border-radius: var(--rhythm-0_25);
@@ -125,6 +129,10 @@
   --search-bar-border-radius: 0;
   --search-bar-max-width: var(--rhythm-56);
 
+  // Viewer
+  --expander-header-height: var(--rhythm-5);
+  --player-bar-height: var(--rhythm-5);
+
   // Customizable theme
   --border-color: var(--custom-border-color, var(--color-dark-stronger));
   --border-focus-color: var(--custom-border-focus-color, var(--color-primary-regular));
@@ -154,7 +162,7 @@
     --hover-background-color: #2b2d30;
     --thumbnail-background-color: #2b2d30;
     --modal-background-color: #303136;
-    --dropdown-background-color: #26282B;
+    --dropdown-background-color: #26282b;
     --container-background-color: #1f2023;
   }
 }

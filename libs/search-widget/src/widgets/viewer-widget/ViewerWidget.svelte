@@ -1,19 +1,29 @@
 <svelte:options tag="nuclia-viewer" />
 
 <script lang="ts">
-  import { getResourceById, getResourceField, initNuclia, resetNuclia } from '../../core/api';
+  import {
+    getFieldType,
+    getResourceById,
+    getResourceField,
+    getResultType,
+    initNuclia,
+    initViewer,
+    isPreviewing,
+    loadFonts,
+    loadSvgSprite,
+    resetNuclia,
+    resetStatesAndEffects,
+    setCDN,
+    setLang,
+    setWidgetActions,
+    viewerData
+  } from '../../core';
   import { onMount } from 'svelte';
-  import { getFieldType, loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
-  import { setLang } from '../../core/i18n';
-  import type { FieldFullId, KBStates, ResourceProperties, Search } from '@nuclia/core';
+  import type { FieldFullId, KBStates } from '@nuclia/core';
+  import { ResourceProperties } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
-  import { setWidgetActions, widgetType } from '../../core/stores/widget.store';
-  import { resetStatesAndEffects } from '../../core/stores/effects';
-  import { combineLatest, map, Observable, of, switchMap } from 'rxjs';
-  import { fieldData, fieldFullId, isPreviewing, resourceTitle } from '../../core/stores/viewer.store';
-  import { distinctUntilChanged } from 'rxjs/operators';
-  import Tile from '../../tiles/Tile.svelte';
-  import { onClosePreview } from '../../tiles/tile.utils';
+  import { forkJoin, Observable } from 'rxjs';
+  import { onClosePreview, Viewer } from '../../components';
 
   export let backend = 'https://nuclia.cloud/api';
   export let zone = '';
@@ -36,20 +46,30 @@
     const fullId = {
       resourceId: rid,
       field_id,
-      field_type: fieldType,
+      field_type: fieldType
     };
     openPreview(fullId);
-    getResourceById(fullId.resourceId, [ResourceProperties.BASIC]).subscribe((resource) =>
-      resourceTitle.set(resource.title || ''),
-    );
   } else {
     closePreview();
   }
 
-  export const setTileMenu = setWidgetActions;
-  export function openPreview(fullId: FieldFullId, title?: string): Observable<boolean> {
-    fieldFullId.set(fullId);
-    resourceTitle.set(title || '');
+  export const setViewerMenu = setWidgetActions;
+
+  export function openPreview(fullId: FieldFullId): Observable<boolean> {
+    forkJoin([
+      getResourceById(fullId.resourceId, [ResourceProperties.BASIC, ResourceProperties.VALUES]),
+      getResourceField(fullId)
+    ]).subscribe(([resource, fieldData]) => {
+      const field = { field_id: fullId.field_id, field_type: fullId.field_type };
+      viewerData.set({
+        result: {
+          ...resource,
+          field,
+          resultType: getResultType({ ...resource, field, fieldData })
+        },
+        selectedParagraphIndex: -1
+      });
+    });
 
     return isPreviewing;
   }
@@ -57,21 +77,6 @@
   export function closePreview() {
     onClosePreview();
   }
-
-  const tileResult: Observable<Search.FieldResult | null> = combineLatest([
-    fieldFullId.pipe(distinctUntilChanged()),
-    fieldData.pipe(distinctUntilChanged()),
-    resourceTitle.pipe(distinctUntilChanged()),
-  ]).pipe(
-    switchMap(([fullId, data, title]) =>
-      !!fullId && !data
-        ? getResourceField(fullId as FieldFullId).pipe(map((resourceField) => fieldData.set(resourceField)))
-        : of({ fullId, data, title }),
-    ),
-    map(({ fullId, data, title }) =>
-      fullId && data ? { id: fullId.resourceId, field: fullId, fieldData: data, title } : null,
-    ),
-  );
 
   export const reset = () => {
     resetNuclia();
@@ -95,20 +100,18 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
-        standalone,
+        standalone
       },
       state,
-      {},
+      {}
     );
-
-    // Setup widget in the store
-    widgetType.set('viewer');
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
     setLang(lang);
 
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
+    initViewer();
 
     ready = true;
 
@@ -121,8 +124,8 @@
 <div
   class="nuclia-widget"
   data-version="__NUCLIA_DEV_VERSION__">
-  {#if ready && !!svgSprite && $tileResult}
-    <Tile result={$tileResult} />
+  {#if ready && !!svgSprite}
+    <Viewer />
   {/if}
 
   <div

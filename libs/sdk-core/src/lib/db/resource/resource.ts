@@ -25,7 +25,7 @@ import type {
   UserTokenAnnotation,
 } from './resource.models';
 import type { Search, SearchOptions } from '../search';
-import { search } from '../search';
+import { find, search } from '../search';
 import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
 import { ExtractedDataTypes, ResourceFieldProperties } from '../kb';
 
@@ -178,11 +178,15 @@ export class Resource extends ReadableResource implements IResource {
   uuid: string;
   private nuclia: INuclia;
 
+  get kbPath(): string {
+    return `/kb/${this.kb}`;
+  }
+
   get path(): string {
     if (!this.uuid && !this.slug) {
       throw new Error('Resource must have either uuid or slug');
     }
-    return !this.uuid ? `/kb/${this.kb}/slug/${this.slug}` : `/kb/${this.kb}/resource/${this.uuid}`;
+    return !this.uuid ? `${this.kbPath}/slug/${this.slug}` : `${this.kbPath}/resource/${this.uuid}`;
   }
 
   constructor(nuclia: INuclia, kb: string, data: IResource) {
@@ -210,7 +214,7 @@ export class Resource extends ReadableResource implements IResource {
     show: ResourceFieldProperties[] = [ResourceFieldProperties.VALUE],
     extracted: ExtractedDataTypes[] = [
       ExtractedDataTypes.TEXT,
-      ExtractedDataTypes.METADATA,
+      ExtractedDataTypes.SHORTENED_METADATA,
       ExtractedDataTypes.LINK,
       ExtractedDataTypes.FILE,
     ],
@@ -260,6 +264,21 @@ export class Resource extends ReadableResource implements IResource {
     options?: SearchOptions,
   ): Observable<Search.Results | IErrorResponse> {
     return search(this.nuclia, this.kb, this.path, query, features, options, true);
+  }
+
+  find(
+    query: string,
+    features: Search.ResourceFeatures[] = [],
+    options?: SearchOptions,
+  ): Observable<Search.FindResults | IErrorResponse> {
+    return find(
+      this.nuclia,
+      this.kb,
+      this.kbPath,
+      query,
+      features,
+      this.uuid ? { ...options, resource_filters: [this.uuid] } : options,
+    );
   }
 
   setLabels(fieldId: string, fieldType: string, paragraphId: string, labels: Classification[]): Observable<void> {

@@ -7,7 +7,7 @@ export const find = (
   kbid: string,
   path: string,
   query: string,
-  features: Search.Features[] = [],
+  features: (Search.Features | Search.ResourceFeatures)[] = [],
   options?: SearchOptions,
   useGet?: boolean,
 ): Observable<Search.FindResults | IErrorResponse> => {

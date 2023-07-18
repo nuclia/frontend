@@ -63,7 +63,7 @@ export class ResourceViewerService {
               },
             );
           }
-          widget.setTileMenu(actions);
+          widget.setViewerMenu(actions);
           widget.addEventListener('search', () => this.trackingService.logEvent('search'));
           clearInterval(waitForWidget);
         }

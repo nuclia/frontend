@@ -67,6 +67,8 @@ export function shortToLongFieldType(shortType: SHORT_FIELD_TYPE): FIELD_TYPE | 
       return FIELD_TYPE.link;
     case SHORT_FIELD_TYPE.text:
       return FIELD_TYPE.text;
+    case SHORT_FIELD_TYPE.generic:
+      return FIELD_TYPE.generic;
     default:
       return null;
   }
@@ -86,6 +88,8 @@ export function getFieldTypeFromString(type: string): FIELD_TYPE | null {
       return FIELD_TYPE.conversation;
     case FIELD_TYPE.datetime:
       return FIELD_TYPE.datetime;
+    case FIELD_TYPE.generic:
+      return FIELD_TYPE.generic;
     default:
       return null;
   }

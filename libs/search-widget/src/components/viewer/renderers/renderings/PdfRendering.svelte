@@ -1,0 +1,214 @@
+<script lang="ts">
+  import { getPdfJsBaseUrl, getPdfSrc } from '../../../../core';
+  import { onDestroy, onMount } from 'svelte';
+  import type { Subscription } from 'rxjs';
+  import { debounceTime, filter, Subject } from 'rxjs';
+  import { IconButton, isMobileViewport, Spinner } from '../../../../common';
+  import { getUnMarked } from '../../utils';
+
+  export let src: string;
+  export let paragraph;
+  export let showController = true;
+
+  const pdfJsLib = window['pdfjs-dist/build/pdf'];
+  const pdfJsViewer = window['pdfjs-dist/web/pdf_viewer'];
+  pdfJsLib.GlobalWorkerOptions.workerSrc = `${getPdfJsBaseUrl()}/build/pdf.worker.js`;
+
+  let innerWidth = window.innerWidth;
+  let pdfContainerElement: HTMLElement;
+  let containerOffsetWidth;
+  let pdfViewer;
+  let eventBus;
+  let findController;
+  let linkService;
+
+  let currentPage = 1;
+  let totalPage = 1;
+  let zoom: number = 1;
+  let pdfInitialized = false;
+
+  const updateTextLayerMatch$: Subject<{ paragraphFound: boolean; page: number }> = new Subject<{
+    paragraphFound: boolean;
+    page: number;
+  }>();
+  const subscriptions: Subscription[] = [];
+
+  $: src && loadPdf();
+  $: pdfViewer && paragraph && paragraph.text && findSelectedText();
+  $: pdfViewer && !paragraph && unselectText();
+  $: isMobile = isMobileViewport(innerWidth);
+  $: scale = isMobile ? 'page-fit' : 'auto';
+
+  onMount(() => {
+    loadPdf();
+
+    subscriptions.push(
+      updateTextLayerMatch$
+        .pipe(
+          // When pdfjs find a match, updateTextLayerMatch event is sent twice: first with pageIndex -1, then with the right pageIndex
+          // we debounce to ignore the pageIndex -1 sent when paragraph is found
+          debounceTime(50),
+          filter((data) => !data.paragraphFound),
+        )
+        .subscribe(() => {
+          // Paragraph not found in PDF, go to paragraph page
+          const pageNumber = paragraph?.page;
+          if (pageNumber) {
+            pdfViewer.scrollPageIntoView({ pageNumber });
+          }
+        }),
+    );
+  });
+
+  onDestroy(() => {
+    subscriptions.forEach((subscription) => subscription.unsubscribe());
+  });
+
+  function loadPdf() {
+    if (!src || !pdfContainerElement) {
+      return;
+    }
+    // initialise PDF.js
+    eventBus = new pdfJsViewer.EventBus();
+    linkService = new pdfJsViewer.PDFLinkService({ eventBus });
+    findController = new pdfJsViewer.PDFFindController({ eventBus, linkService });
+    pdfViewer = new pdfJsViewer.PDFViewer({
+      container: pdfContainerElement,
+      removePageBorders: true,
+      eventBus,
+      findController,
+      linkService,
+    });
+    linkService.setViewer(pdfViewer);
+
+    // Load the pdf and pass it to PDF.js
+    const loadingTask = pdfJsLib.getDocument(getPdfSrc(src));
+    loadingTask.promise.then(
+      (pdf) => {
+        pdfViewer.setDocument(pdf);
+        linkService.setDocument(pdf);
+      },
+      (reason) => {
+        console.error(`Loading PDF failed`, reason);
+      },
+    );
+
+    // Display the right page and highlight the paragraph
+    eventBus.on('pagesinit', () => {
+      totalPage = pdfViewer.pagesCount;
+      pdfViewer.currentScaleValue = scale;
+      zoom = pdfViewer.currentScale;
+      pdfInitialized = true;
+
+      if (paragraph?.text) {
+        findSelectedText();
+      }
+    });
+
+    eventBus.on('pagechanging', (event) => {
+      currentPage = event.pageNumber;
+    });
+
+    eventBus.on('updatetextlayermatches', (event) => {
+      updateTextLayerMatch$.next({ paragraphFound: event.pageIndex > 0, page: event.pageIndex });
+    });
+  }
+
+  function findSelectedText() {
+    const query = getUnMarked(paragraph.text);
+    eventBus.dispatch('find', {
+      caseSensitive: true,
+      phraseSearch: true,
+      query,
+    });
+  }
+
+  function unselectText() {
+    eventBus.dispatch('find', { query: '' });
+  }
+
+  const zoomIn = () => {
+    if (pdfViewer) {
+      pdfViewer.increaseScale();
+      zoom = pdfViewer.currentScale;
+    }
+  };
+
+  const zoomOut = () => {
+    if (pdfViewer) {
+      pdfViewer.decreaseScale();
+      zoom = pdfViewer.currentScale;
+    }
+  };
+
+  const previousPage = () => {
+    if (pdfViewer) {
+      pdfViewer.previousPage();
+    }
+  };
+
+  const nextPage = () => {
+    if (pdfViewer) {
+      pdfViewer.nextPage();
+    }
+  };
+
+  function resize() {
+    if (!!pdfViewer && pdfInitialized) {
+      pdfViewer.currentScaleValue = scale;
+    }
+  }
+</script>
+
+<svelte:window
+  bind:innerWidth
+  on:resize={resize} />
+<div
+  class="pdf-container"
+  bind:this={pdfContainerElement}
+  bind:offsetWidth={containerOffsetWidth}
+  style:--container-width="{containerOffsetWidth}px">
+  <div class="pdfViewer" />
+  {#if !src || !pdfInitialized}
+    <div class="loading-container">
+      <Spinner />
+    </div>
+  {/if}
+
+  {#if showController}
+    <div class="pdf-controller">
+      <div class="pdf-navigator">
+        <IconButton
+          icon="circle-chevron-left"
+          aspect="basic"
+          size="small"
+          on:click={previousPage} />
+        <IconButton
+          icon="circle-chevron-right"
+          aspect="basic"
+          size="small"
+          on:click={nextPage} />
+      </div>
+
+      <span>{currentPage} / {totalPage}</span>
+
+      <div class="pdf-zoom-container">
+        <IconButton
+          icon="circle-minus"
+          aspect="basic"
+          size="small"
+          on:click={zoomOut} />
+        <IconButton
+          icon="circle-plus"
+          aspect="basic"
+          size="small"
+          on:click={zoomIn} />
+      </div>
+      <span>{Math.round(zoom * 100)}%</span>
+    </div>
+  {/if}
+</div>
+
+<style
+  lang="scss"
+  src="./PdfRendering.scss"></style>

@@ -2,7 +2,9 @@ import {
   BaseSearchOptions,
   Chat,
   Classification,
+  ExtractedDataTypes,
   FieldFullId,
+  FieldMetadata,
   IEvents,
   IResource,
   KBStates,
@@ -23,8 +25,8 @@ import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
-import { hasViewerSearchError } from './stores/viewer-search.store';
 import { initTracking } from './tracking';
+import { hasViewerSearchError } from './stores/viewer.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
 const DEFAULT_CHAT_MODE = [Chat.Features.PARAGRAPHS];
@@ -118,7 +120,7 @@ export const searchInResource = (
   resource: IResource,
   options: SearchOptions,
   features: Search.ResourceFeatures[] = [Search.ResourceFeatures.PARAGRAPH],
-): Observable<Search.Results> => {
+): Observable<Search.FindResults> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
@@ -126,15 +128,15 @@ export const searchInResource = (
 
   return nucliaApi.knowledgeBox
     .getResourceFromData(resource)
-    .search(query, features, { ...options, ...DEFAULT_SEARCH_OPTIONS })
+    .find(query, features, { ...options, ...DEFAULT_SEARCH_OPTIONS })
     .pipe(
       filter((res) => {
         if (res.type === 'error') {
           hasViewerSearchError.set(true);
         }
-        return res.type === 'searchResults';
+        return res.type === 'findResults';
       }),
-      map((res) => res as Search.Results),
+      map((res) => res as Search.FindResults),
     );
 };
 
@@ -186,6 +188,21 @@ export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): O
       fullFieldId.field_id,
       valueOnly ? [ResourceFieldProperties.VALUE] : [ResourceFieldProperties.VALUE, ResourceFieldProperties.EXTRACTED],
     );
+}
+
+export function getResourceMetadata(fullFieldId: FieldFullId): Observable<FieldMetadata | undefined> {
+  if (!nucliaApi) {
+    throw new Error('Nuclia API not initialized');
+  }
+  return nucliaApi.knowledgeBox
+    .getResourceFromData({ id: fullFieldId.resourceId })
+    .getField(
+      fullFieldId.field_type,
+      fullFieldId.field_id,
+      [ResourceFieldProperties.EXTRACTED],
+      [ExtractedDataTypes.METADATA],
+    )
+    .pipe(map((data) => data.extracted?.metadata?.metadata));
 }
 
 let _entities: EntityGroup[] | undefined = undefined;

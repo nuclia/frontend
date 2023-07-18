@@ -1,5 +1,5 @@
 import type { Observable } from 'rxjs';
-import { map, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 
 export interface ReadableObservable<U> extends Observable<U> {
   getValue(): U;
@@ -7,6 +7,10 @@ export interface ReadableObservable<U> extends Observable<U> {
 
 export interface SvelteWritableObservable<U, V = U> extends ReadableObservable<U> {
   set(value: V): void;
+}
+
+export interface SvelteActionObservable extends ReadableObservable<void> {
+  do(): void;
 }
 
 export class SvelteState<STATE> {
@@ -33,6 +37,15 @@ export class SvelteState<STATE> {
     selector.set = (params: V) => {
       const current = this.store.getValue();
       this.store.next(updateFn(current, params));
+    };
+    return selector;
+  }
+
+  action(updateFn: (state: STATE) => STATE): SvelteActionObservable {
+    const selector = this.reader(() => {}) as SvelteActionObservable;
+    selector.do = () => {
+      const current = this.store.getValue();
+      this.store.next(updateFn(current));
     };
     return selector;
   }

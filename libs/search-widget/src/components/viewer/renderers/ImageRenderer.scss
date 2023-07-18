@@ -1,0 +1,11 @@
+.sw-image-renderer {
+  align-items: flex-start;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+  img {
+    max-height: calc(100vh - var(--renderer-outer-space));
+    max-width: 100%;
+  }
+}

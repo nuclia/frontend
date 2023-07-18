@@ -1,8 +1,8 @@
 import {
   getAnswer,
   getEntities,
-  getEvents,
   getLabelSets,
+  getResourceById,
   getResourceField,
   predict,
   searchInResource,
@@ -27,26 +27,28 @@ import {
   take,
   tap,
 } from 'rxjs';
-import { NO_SUGGESTION_RESULTS } from '../models';
+import { NO_SUGGESTION_RESULTS, TypedResult } from '../models';
 import { widgetFeatures } from './widget.store';
 import type { BaseSearchOptions, Chat, Classification, FieldFullId, IErrorResponse, Search } from '@nuclia/core';
-import { getFieldTypeFromString } from '@nuclia/core';
-import { formatQueryKey, getUrlParams, updateQueryParams } from '../utils';
+import { getFieldTypeFromString, ResourceProperties } from '@nuclia/core';
+import { formatQueryKey, getFindParagraphs, getUrlParams, updateQueryParams } from '../utils';
 import {
+  getFieldDataFromResource,
+  getResultType,
   isEmptySearchQuery,
   isTitleOnly,
+  resultList,
   searchFilters,
   searchQuery,
   searchState,
   trackingEngagement,
   triggerSearch,
 } from './search.store';
-import { fieldData, fieldFullId, viewerState } from './viewer.store';
+import { fieldData, fieldFullId, viewerData, viewerState } from './viewer.store';
 import { answerState, chat, chatError, currentAnswer, currentQuestion } from './answers.store';
 import { graphSearchResults, graphSelection, graphState } from './graph.store';
 import type { NerNode } from '../knowledge-graph.models';
 import { entities, entitiesState } from './entities.store';
-import { viewerSearchState } from './viewer-search.store';
 import { unsubscribeTriggerSearch } from '../search-bar';
 import { logEvent } from '../tracking';
 
@@ -62,7 +64,6 @@ export function resetStatesAndEffects() {
   searchState.reset();
   suggestionState.reset();
   viewerState.reset();
-  viewerSearchState.reset();
 }
 
 /**
@@ -171,15 +172,16 @@ export function activatePermalinks() {
         updateQueryParams(urlParams);
       }),
     // Add current field id in the URL when preview is open
-    fieldFullId
+    viewerData
       .pipe(
         distinctUntilChanged(),
-        filter((fullId) => !!fullId),
+        filter((data) => !!data.fieldFullId),
       )
-      .subscribe((fullId) => {
-        const previewId = `${fullId?.resourceId}|${fullId?.field_type}|${fullId?.field_id}`;
+      .subscribe((viewerState) => {
+        const previewId = `${viewerState.fieldFullId?.resourceId}|${viewerState.fieldFullId?.field_type}|${viewerState.fieldFullId?.field_id}`;
+        const selectedIndex = `${viewerState.selectedParagraphIndex}`;
         const urlParams = getUrlParams();
-        urlParams.set(previewKey, previewId);
+        urlParams.set(previewKey, `${previewId}|${selectedIndex}`);
         updateQueryParams(urlParams);
       }),
     //Remove preview parameters from the URL when preview is closed
@@ -218,10 +220,47 @@ function initStoreFromUrlParams() {
   // Viewer store
   const preview = urlParams.get(previewKey);
   if (preview) {
-    const [resourceId, type, field_id] = preview.split('|');
+    const [resourceId, type, field_id, selectedIndex] = preview.split('|');
     const field_type = getFieldTypeFromString(type);
     if (resourceId && field_type && field_id) {
-      fieldFullId.set({ resourceId, field_type, field_id });
+      resultList
+        .pipe(
+          take(1),
+          switchMap((list) => {
+            if (list.length > 0) {
+              const previewResult = list.find(
+                (item) =>
+                  item.id === resourceId && item.field?.field_id === field_id && item.field.field_type === field_type,
+              );
+              return of(previewResult);
+            } else {
+              return getResourceById(resourceId, [
+                ResourceProperties.BASIC,
+                ResourceProperties.ORIGIN,
+                ResourceProperties.VALUES,
+              ]).pipe(
+                map((resource) => {
+                  const field = { field_id, field_type };
+                  const fieldResult = { ...resource, field, fieldData: getFieldDataFromResource(resource, field) };
+                  const result: TypedResult = {
+                    ...fieldResult,
+                    resultType: getResultType(fieldResult),
+                  };
+                  return result;
+                }),
+              );
+            }
+          }),
+        )
+        .subscribe((previewResult: TypedResult | undefined) => {
+          const index = selectedIndex !== 'null' ? parseInt(selectedIndex, 10) : -1;
+          if (previewResult) {
+            viewerData.set({
+              result: previewResult,
+              selectedParagraphIndex: index,
+            });
+          }
+        });
     }
   }
 }
@@ -233,15 +272,7 @@ export function initViewer() {
       distinctUntilChanged(),
       switchMap((fullId) => {
         if (fullId) {
-          // load in 2 passes so we get the field value fast, so we can render the tile
-          // and then get the field extracted metadata later (as it is much bigger)
-          // TODO: reconsider when https://app.shortcut.com/flaps/story/4190/option-to-not-load-ners-related-data-when-getting-a-field
-          // is done (maybe a unique pass will be better then)
-          return getResourceField(fullId, true).pipe(
-            tap((resourceField) => fieldData.set(resourceField)),
-            switchMap(() => getResourceField(fullId, false)),
-            tap((resourceField) => fieldData.set(resourceField)),
-          );
+          return getResourceField(fullId).pipe(tap((resourceField) => fieldData.set(resourceField)));
         } else {
           return of(null);
         }
@@ -266,13 +297,15 @@ export function setupTriggerGraphNerSearch() {
       ),
     ])
       .pipe(
-        switchMap(
-          ([node, fullId]) => searchInResource(`"${node.ner}"`, { id: fullId.resourceId }, {}),
+        switchMap(([node, fullId]) =>
           // FIXME: here's the proper call once the following bug is fixed: https://app.shortcut.com/flaps/story/5365/searching-on-resource-using-filtering-on-entity-always-returns-the-same-results
           // searchInResource('', { id: fullId.resourceId }, { filters: [`/e/${node.family}/${node.ner}`] }),
+          searchInResource(`"${node.ner}"`, { id: fullId.resourceId }, {}).pipe(
+            map((results) => getFindParagraphs(results, fullId)),
+          ),
         ),
       )
-      .subscribe((results) => graphSearchResults.set(results)),
+      .subscribe((paragraphs) => graphSearchResults.set(paragraphs)),
   );
 }
 

@@ -2,16 +2,17 @@
   import TimeIndicator from '../indicators/TimeIndicator.svelte';
   import { createEventDispatcher } from 'svelte';
   import PageIndicator from '../indicators/PageIndicator.svelte';
-  import type { WidgetParagraph } from '../../core/models';
-  import { PreviewKind } from '../../core/models';
+  import { ResultType } from '../../core';
   import IconButton from '../button/IconButton.svelte';
+  import { Search } from '@nuclia/core';
 
-  export let paragraph: WidgetParagraph;
+  export let paragraph: Search.FindParagraph;
+  export let resultType: ResultType;
   export let stack = false;
   export let ellipsis = false;
   export let selected = false;
   export let minimized = false;
-  export let hideIndicator = false;
+  export let noIndicator = false;
   export let disabled = false;
 
   let hovering = false;
@@ -21,9 +22,9 @@
   const open = () => {
     dispatch('open', true);
   };
-  const mediaKinds: PreviewKind[] = [PreviewKind.AUDIO, PreviewKind.VIDEO, PreviewKind.YOUTUBE];
-  $: isMedia = mediaKinds.includes(paragraph.preview);
-  $: isPdf = paragraph.preview === PreviewKind.PDF;
+  const mediaKinds: ResultType[] = ['audio', 'video'];
+  $: isMedia = mediaKinds.includes(resultType);
+  $: isPdf = resultType === 'pdf';
 
   let paragraphElement: HTMLElement;
   $: hasEllipsis = paragraphElement && paragraphElement.offsetWidth < paragraphElement.scrollWidth;
@@ -51,7 +52,7 @@
   {/if}
   <div
     class="paragraph-result-container"
-    class:no-indicator={hideIndicator}
+    class:no-indicator={noIndicator}
     class:stack
     class:selected
     class:disabled
@@ -61,16 +62,16 @@
     on:click={disabled ? null : open}>
     <div
       class="indicator-container"
-      class:hidden={hideIndicator}>
+      class:hidden={noIndicator}>
       {#if isPdf}
         <PageIndicator
-          page={paragraph.page >= 0 ? paragraph.page + 1 : undefined}
+          page={paragraph.position.page_number >= 0 ? paragraph.position.page_number + 1 : undefined}
           {stack}
           {selected}
           hovering={hovering || expanded} />
       {:else if isMedia}
         <TimeIndicator
-          start={paragraph.start_seconds || 0}
+          start={paragraph.position.start_seconds || 0}
           {selected}
           hover={hovering || expanded}
           {minimized} />

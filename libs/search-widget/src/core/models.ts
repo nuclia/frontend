@@ -9,8 +9,13 @@ import type {
   WidgetFeatures,
 } from '@nuclia/core';
 
+export type ResultType = 'pdf' | 'video' | 'audio' | 'image' | 'spreadsheet' | 'conversation' | 'text';
+export interface TypedResult extends Search.FieldResult {
+  resultType: ResultType;
+}
+
 export interface FindResultsAsList extends Omit<Search.FindResults, 'resources'> {
-  resultList: Search.FieldResult[];
+  resultList: TypedResult[];
 }
 
 const EMPTY_FIND_RESULTS: Omit<Search.FindResults, 'resources'> = {
@@ -47,15 +52,6 @@ export interface WidgetAction {
   label: string;
   destructive?: boolean;
   action: (fullId: FieldFullId) => void;
-}
-
-/**
- * @deprecated This interface was used for the previous viewer implementation
- */
-export interface DisplayedResource {
-  uid: string;
-  paragraph?: Search.Paragraph;
-  sentence?: Search.Paragraph;
 }
 
 export enum PreviewKind {

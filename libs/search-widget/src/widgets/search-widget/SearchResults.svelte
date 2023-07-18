@@ -2,37 +2,34 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import type { Observable } from 'rxjs';
-  import { combineLatest, debounceTime, map } from 'rxjs';
-  import { loadFonts, loadSvgSprite } from '../../core/utils';
-  import { _ } from '../../core/i18n';
+  import { debounceTime } from 'rxjs';
+  import { take } from 'rxjs/operators';
   import LoadingDots from '../../common/spinner/LoadingDots.svelte';
   import globalCss from '../../common/_global.scss?inline';
   import {
+    _,
     entityRelations,
     getResultUniqueKey,
     getTrackingDataAfterResultsReceived,
     hasMore,
     hasPartialResults,
     hasSearchError,
+    isAnswerEnabled,
     isEmptySearchQuery,
+    loadFonts,
     loadMore,
+    loadSvgSprite,
+    logEvent,
+    onlyAnswers,
     pendingResults,
-    searchError,
-    showResults,
     resultList,
+    searchError,
+    setWidgetActions,
+    showResults,
     trackingReset,
-  } from '../../core/stores/search.store';
-  import Tile from '../../tiles/Tile.svelte';
+  } from '../../core';
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
-  import { fieldData, fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
-  import type { Search } from '@nuclia/core';
-  import { distinctUntilChanged, take } from 'rxjs/operators';
-  import { isAnswerEnabled, onlyAnswers, setWidgetActions } from '../../core/stores/widget.store';
-  import { onClosePreview } from '../../tiles/tile.utils';
-  import InfoCard from '../../components/info-card/InfoCard.svelte';
-  import InitialAnswer from '../../components/answer/InitialAnswer.svelte';
-  import { logEvent } from '../../core/tracking';
+  import { InfoCard, InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
 
 
   export let mode = '';
@@ -40,17 +37,8 @@
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
-  const tileResult: Observable<Search.FieldResult | null> = combineLatest([
-    fieldFullId.pipe(distinctUntilChanged()),
-    fieldData.pipe(distinctUntilChanged()),
-    resourceTitle.pipe(distinctUntilChanged()),
-  ]).pipe(
-    map(([fullId, data, title]) =>
-      fullId && data ? ({ id: fullId.resourceId, field: fullId, fieldData: data, title } as Search.FieldResult) : null,
-    ),
-  );
+  export const setViewerMenu = setWidgetActions;
 
-  export const setTileMenu = setWidgetActions;
   export function closePreview() {
     onClosePreview();
   }
@@ -70,7 +58,7 @@
       const tti = Date.now() - tracking.startTime;
       logEvent('search', {
         searchId: tracking.searchId || '',
-        tti,
+        tti
       });
       trackingReset.set(undefined);
     });
@@ -110,7 +98,7 @@
           {/if}
           <div class="search-results">
             {#each $resultList as result, i (getResultUniqueKey(result))}
-              <Tile {result} />
+              <ResultRow {result} />
               {#if i === $resultList.length - 1}
                 <div
                   class="results-end"
@@ -132,9 +120,9 @@
         <LoadingDots />
       {/if}
     {/if}
-  {:else if $tileResult}
-    <Tile result={$tileResult} />
   {/if}
+
+  <Viewer />
 
   <div
     id="nuclia-glyphs-sprite"

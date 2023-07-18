@@ -1,16 +1,24 @@
-# 1.5.0 (unreleased)
+# 1.5.0 (2023-07-18)
 
 ### Breaking changes
 
 - Remove `Search.SmartParagraph` interface as it's not used anymore
 - Rename `Search.SmartResult` interface to `Search.FieldResult` as `Smart` prefix doesn't make sense anymore
+- Load `SHORTENED_METADATA` by default on `getField`
 
 ### Improvements
 
+- Add `SHORTENED_METADATA` type to `ExtractedDataTypes`
 - Add `selections` in field metadata
 - Update Learning configurations models
   - Update `LearningConfiguration` interface 
   - Add `LearningConfigurationSchemas` and `LearningConfigurationSchema` interfaces
+- Add `resource_filters` property to `BaseSearchOptions`
+- Add `find` method to `resource` class
+
+### Bug fix
+
+- Add missing `generic` type in `shortToLongFieldType` and `getFieldTypeFromString` mappers
 
 # 1.4.0 (2023-06-23)
 

@@ -1,0 +1,26 @@
+.sw-audio-player {
+  display: flex;
+  flex-direction: column;
+
+  .error {
+    background: rgba(255, 255, 255, 0.8);
+    left: 50%;
+    padding: var(--rhythm-1);
+    position: absolute;
+    text-align: center;
+    top: 35%;
+    transform: translateX(-50%) translateY(-50%);
+    width: var(--rhythm-20);
+  }
+}
+
+@media (min-width: 648px) {
+  .sw-audio-player {
+    height: 100%;
+
+    .waves-animation {
+      background-color: var(--color-dark-stronger);
+      max-height: calc(100vh - var(--renderer-outer-space) - var(--player-bar-height));
+    }
+  }
+}

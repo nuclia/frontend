@@ -1,0 +1,17 @@
+.sw-youtube {
+  .player {
+    aspect-ratio: 16 / 9;
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (min-width: 648px) {
+  .sw-youtube {
+    height: 100%;
+
+    .player {
+      max-height: calc(100vh - var(--renderer-outer-space));
+    }
+  }
+}

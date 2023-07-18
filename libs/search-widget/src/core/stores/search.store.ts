@@ -1,21 +1,25 @@
 import { SvelteState } from '../state-lib';
-import type { IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
+import type { FieldId, IResource, Paragraph, ResourceField, Search, SearchOptions } from '@nuclia/core';
 import {
   Classification,
   FIELD_TYPE,
+  FileFieldData,
   getDataKeyFromFieldType,
   getEntityFromFilter,
+  getFieldTypeFromString,
   getFilterFromEntity,
   getFilterFromLabel,
   getLabelFromFilter,
   IErrorResponse,
+  IFieldData,
   LabelSetKind,
+  LinkFieldData,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
-import { DisplayedResource, FindResultsAsList, NO_RESULT_LIST } from '../models';
+import { FindResultsAsList, NO_RESULT_LIST, ResultType, TypedResult } from '../models';
 import { combineLatest, filter, map, Subject } from 'rxjs';
-import type { LabelFilter } from '../../common/label/label.utils';
+import type { LabelFilter } from '../../common';
 
 interface SearchFilters {
   labels?: LabelFilter[];
@@ -38,14 +42,12 @@ interface Engagement {
   paragraphOrder?: number;
 }
 
-// TODO: once old widget will be removed, we should remove displayedResource from the store
 interface SearchState {
   query: string;
   filters: SearchFilters;
   options: SearchOptions;
   results: FindResultsAsList;
   error?: IErrorResponse;
-  displayedResource: DisplayedResource | null;
   pending: boolean;
   autofilerDisabled?: boolean;
   showResults: boolean;
@@ -62,7 +64,6 @@ export const searchState = new SvelteState<SearchState>({
   filters: {},
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
   results: NO_RESULT_LIST,
-  displayedResource: null,
   pending: false,
   showResults: false,
   tracking: {
@@ -118,7 +119,7 @@ export const searchResults = searchState.writer<
   },
 );
 
-export const resultList = searchState.reader<Search.FieldResult[]>((state) => {
+export const resultList = searchState.reader<TypedResult[]>((state) => {
   return state.results.resultList;
 });
 
@@ -222,14 +223,6 @@ export const autofilerDisabled = searchState.writer<boolean | undefined>(
   (state, autofilerDisabled) => ({
     ...state,
     autofilerDisabled,
-  }),
-);
-
-export const displayedResource = searchState.writer<DisplayedResource | null>(
-  (state) => state.displayedResource,
-  (state, displayedResource) => ({
-    ...state,
-    displayedResource,
   }),
 );
 
@@ -411,46 +404,119 @@ export function getFirstResourceField(resource: IResource): ResourceField | unde
   }
 }
 
-export function getSortedResults(resources: Search.FindResource[]): Search.FieldResult[] {
+export function getSortedResults(resources: Search.FindResource[]): TypedResult[] {
   if (!resources) {
     return [];
   }
 
   const keyList: string[] = [];
   return resources.reduce((resultList, resource) => {
-    const fieldEntries: Search.FieldResult[] = Object.entries(resource.fields)
+    const fieldCount = Object.keys(resource.fields).length;
+    const fieldEntries: TypedResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {
-        // filter out generic fields
+        // filter out title field when it’s not the only field
         const fieldType = fullFieldId.split('/')[1];
-        return fieldType !== SHORT_FIELD_TYPE.generic && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
+        return fieldCount === 1
+          ? true
+          : fullFieldId !== '/a/title' && shortToLongFieldType(fieldType as SHORT_FIELD_TYPE) !== null;
       })
       .map(([fullFieldId, field]) => {
-        const [, shortType, fieldId] = fullFieldId.split('/');
-        const fieldType = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
-        const dataKey = getDataKeyFromFieldType(fieldType);
-        const smartResult = {
+        let [, shortType, field_id] = fullFieldId.split('/');
+        let fieldId: FieldId;
+
+        if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
+          // if matching field is generic, we take the first other field from resource data
+          fieldId = Object.entries(resource.data)
+            .map(([dataKey, data]) => {
+              // data key is matching field type with an `s` suffix
+              const fieldType = getFieldTypeFromString(dataKey.substring(0, dataKey.length - 1));
+              return { field_type: fieldType as FIELD_TYPE, field_id: Object.keys(data)[0] };
+            })
+            .filter((fullId) => {
+              return fullId.field_type !== FIELD_TYPE.generic;
+            })[0];
+        } else {
+          const field_type = shortToLongFieldType(shortType as SHORT_FIELD_TYPE) as FIELD_TYPE;
+          fieldId = { field_id, field_type };
+        }
+        const fieldResult: Search.FieldResult = {
           ...resource,
-          field: { field_id: fieldId, field_type: fieldType },
-          fieldData: dataKey ? resource.data?.[dataKey]?.[fieldId] : undefined,
-          paragraphs: Object.values(field.paragraphs).sort((a, b) => a.order - b.order),
+          field: fieldId,
+          fieldData: getFieldDataFromResource(resource, fieldId),
+          paragraphs:
+            fullFieldId !== '/a/title' ? Object.values(field.paragraphs).sort((a, b) => a.order - b.order) : [],
+        };
+        const typedResult: TypedResult = {
+          ...fieldResult,
+          resultType: getResultType(fieldResult),
         };
         // Don't include results already displayed:
         // sometimes load more bring results which are actually the same as what we got before but with another score_type
-        const uniqueKey = getResultUniqueKey(smartResult);
+        const uniqueKey = getResultUniqueKey(typedResult);
         if (!keyList.includes(uniqueKey)) {
           keyList.push(uniqueKey);
-          return smartResult;
+          return typedResult;
         } else {
           return null;
         }
       })
-      .filter((smartResult) => !!smartResult)
-      .map((smartResult) => smartResult as Search.FieldResult);
+      .filter((typedResult) => !!typedResult)
+      .map((typedResult) => typedResult as TypedResult);
     resultList = resultList.concat(fieldEntries);
     return resultList;
-  }, [] as Search.FieldResult[]);
+  }, [] as TypedResult[]);
+}
+
+export function getFieldDataFromResource(resource: IResource, field: FieldId): IFieldData | undefined {
+  const dataKey = getDataKeyFromFieldType(field.field_type);
+  return dataKey ? resource.data?.[dataKey]?.[field.field_id] : undefined;
 }
 
 export function getResultUniqueKey(result: Search.FieldResult): string {
-  return `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`;
+  return result.paragraphs && result.paragraphs.length > 0
+    ? `${(result.paragraphs || []).reduce((acc, curr) => `${acc}${acc.length > 0 ? '__' : ''}${curr.id}`, '')}`
+    : result.id;
+}
+
+const SpreadsheetContentTypes = [
+  'text/csv',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.oasis.opendocument.spreadsheet',
+];
+export function getResultType(result: Search.FieldResult): ResultType {
+  const fieldType = result?.field?.field_type;
+  const fieldDataValue = result?.fieldData?.value;
+  if (fieldType === FIELD_TYPE.link && !!fieldDataValue) {
+    const url = (result.fieldData as LinkFieldData).value?.uri;
+    return url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+  } else if (fieldType === FIELD_TYPE.conversation) {
+    return 'conversation';
+  } else if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
+    const file = (result.fieldData as FileFieldData).value?.file;
+    // for audio, video, image or text, we have a corresponding tile
+    // for mimetype starting with 'application/', it is more complex:
+    // - anything like a spreadsheet is a spreadsheet
+    // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
+    // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
+    if (file?.content_type?.startsWith('audio')) {
+      return 'audio';
+    } else if (file?.content_type?.startsWith('video')) {
+      return 'video';
+    } else if (file?.content_type?.startsWith('image')) {
+      return 'image';
+    } else if (file?.content_type?.startsWith('text')) {
+      return 'text';
+    } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
+      return 'spreadsheet';
+    } else if (file?.content_type?.startsWith('application/octet-stream')) {
+      return 'text';
+    } else if (file?.content_type?.startsWith('application')) {
+      return 'pdf';
+    } else {
+      return 'text';
+    }
+  } else {
+    return 'text';
+  }
 }

@@ -1,16 +1,24 @@
 <script lang="ts">
   import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
-  import { getResourceById } from '../../core/api';
-  import { getNavigationUrl, goToUrl } from '../../core/utils';
-  import { _ } from '../../core/i18n';
-  import { NO_RESULTS } from '../../core/models';
-  import { suggestionsHasError, suggestions, suggestionError } from '../../core/stores/suggestions.store';
-  import { navigateToFile, navigateToLink } from '../../core/stores/widget.store';
   import Label from '../../common/label/Label.svelte';
-  import { combineLatest, iif, map, of, switchMap, take } from 'rxjs';
-  import { addLabelFilter, displayedResource, getFirstResourceField } from '../../core/stores/search.store';
-  import { fieldFullId, resourceTitle } from '../../core/stores/viewer.store';
+  import { combineLatest, iif, map, of, switchMap, take, tap } from 'rxjs';
+  import {
+    _,
+    addLabelFilter,
+    fieldFullId,
+    getFirstResourceField,
+    getNavigationUrl,
+    getResourceById, getResultType,
+    goToUrl,
+    navigateToFile,
+    navigateToLink,
+    NO_RESULTS,
+    suggestionError,
+    suggestions,
+    suggestionsHasError,
+    viewerData
+  } from "../../core";
 
   export let paragraphs: Search.Paragraph[] = [];
   export let labels: Classification[] = [];
@@ -18,45 +26,46 @@
   const goToResource = (paragraph: Search.Paragraph) => {
     getResourceById(paragraph.rid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN, ResourceProperties.VALUES])
       .pipe(
-        switchMap((resource) =>
-          combineLatest([navigateToFile, navigateToLink]).pipe(
+        switchMap((resource) => {
+          const firstResourceField = getFirstResourceField(resource);
+          return combineLatest([navigateToFile, navigateToLink]).pipe(
             take(1),
-            switchMap(([navigateToFile, navigateToLink]) =>
-              iif(
-                () => (navigateToFile || navigateToLink) && !!getFirstResourceField(resource),
-                getNavigationUrl(
-                  navigateToFile,
-                  navigateToLink,
-                  resource,
-                  getFirstResourceField(resource) as ResourceField,
-                ),
-                of(false),
+            switchMap(([navigateToFile, navigateToLink]) => iif(
+              () => (navigateToFile || navigateToLink) && !!firstResourceField,
+              getNavigationUrl(
+                navigateToFile,
+                navigateToLink,
+                resource,
+                firstResourceField as ResourceField
               ),
-            ),
-            map((url) => ({ url, resource })),
-          ),
-        ),
-      )
-      .subscribe(({ url, resource }) => {
-        if (url) {
-          goToUrl(url);
-        } else {
-          const resourceField = getFirstResourceField(resource);
-          openViewer(resource, resourceField);
-        }
-        suggestions.set({ results: NO_RESULTS });
-      });
+              of(false)
+            )),
+            map((url) => ({ url, resource }))
+          ).pipe(
+            tap(({ url, resource }) => {
+              if (url) {
+                goToUrl(url);
+              } else {
+                openViewer(resource, firstResourceField);
+              }
+              suggestions.set({ results: NO_RESULTS });
+            })
+          );
+        })
+      ).subscribe();
   };
 
   function openViewer(resource: IResource, field?: ResourceField) {
     if (field) {
-      fieldFullId.set({ resourceId: resource.id, field_id: field.field_id, field_type: field.field_type });
+      viewerData.set({
+        result: {
+          ...resource,
+          resultType: getResultType({...resource, field }),
+          field: {field_id: field.field_id, field_type: field.field_type},
+        },
+        selectedParagraphIndex: -1,
+      });
     }
-    if (resource.title) {
-      resourceTitle.set(resource.title);
-    }
-    // to be removed once old widget will be gone
-    displayedResource.set({ uid: resource.id });
   }
 </script>
 

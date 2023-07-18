@@ -28,6 +28,7 @@ export interface BaseSearchOptions {
   show?: ResourceProperties[];
   extracted?: ExtractedDataTypes[];
   field_type_filter?: FIELD_TYPE[];
+  resource_filters?: string[];
   shards?: string[];
   autofilter?: boolean;
 }

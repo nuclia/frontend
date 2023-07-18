@@ -1,0 +1,20 @@
+/*
+ --renderer-outer-space is a variable used in our different renderers to calculate the renderer’s max-height
+ it is usually used as follow: `max-height: calc(100vh - var(--renderer-outer-space));`
+ this way, the renderers can still be used by themselves (= as components outside the viewer)
+ and the end user can set their own `--renderer-outer-space` variable
+ */
+@media (max-width: 647px) {
+  .sw-viewer-content {
+    --renderer-outer-space: var(--header-height) * (var(--metadata-block-count) + 2) - var(--bottom-padding);
+  }
+
+  .sw-viewer-content.no-result-navigator {
+    --renderer-outer-space: var(--header-height) * (var(--metadata-block-count) + 1) - var(--bottom-padding);
+  }
+}
+@media (min-width: 648px) {
+  .sw-viewer-content {
+    --renderer-outer-space: var(--header-height) - var(--top-padding) - var(--bottom-padding);
+  }
+}

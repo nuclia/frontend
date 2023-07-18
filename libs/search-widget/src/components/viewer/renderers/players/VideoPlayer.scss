@@ -1,0 +1,7 @@
+.sw-video-player {
+  text-align: center;
+  video {
+    max-height: calc(100vh - var(--renderer-outer-space) - var(--player-bar-height));
+    max-width: 100%;
+  }
+}

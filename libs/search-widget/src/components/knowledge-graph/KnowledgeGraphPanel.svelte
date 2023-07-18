@@ -56,6 +56,7 @@
             <ParagraphResult
               {paragraph}
               stack={true}
+              disabled={true}
               on:open={() => onClickParagraph(paragraph)} />
           {/each}
         </ul>

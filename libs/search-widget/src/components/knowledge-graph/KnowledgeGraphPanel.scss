@@ -1,6 +1,6 @@
 .sw-knowledge-graph-panel {
   background: var(--color-light-stronger);
-  height: calc(var(--viewer-height) - var(--find-input-height) - var(--find-input-margin) * 2);
+  height: calc(100% - var(--header-height) + var(--rhythm-0_5));
   opacity: 0;
   overflow: auto;
   transition: opacity var(--transition-superfast);

@@ -14,3 +14,4 @@ export * from './tabs';
 export * from './thumbnail';
 export { default as Toggle } from './toggle/Toggle.svelte';
 export * from './tooltip';
+export * from './utils';

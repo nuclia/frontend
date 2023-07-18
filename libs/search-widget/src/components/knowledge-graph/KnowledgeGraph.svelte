@@ -1,22 +1,21 @@
 <script lang="ts">
-  import { fieldData } from '../../core/stores/viewer.store';
-  import Expander from '../../common/expander/Expander.svelte';
-  import { translateInstant } from '../../core/i18n';
-  import { generatedEntitiesColor } from '../../core/utils';
-  import Graph from './Graph.svelte';
-  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  import { map, Subject, takeUntil } from 'rxjs';
-  import { filter } from 'rxjs/operators';
-  import { FieldMetadata } from '@nuclia/core';
-  import type {
+  import {
+    fieldMetadata,
+    generatedEntitiesColor,
+    graphState,
     NerFamily,
     NerLink,
     NerNode,
     PositionWithRelevance,
     RelationWithRelevance,
-  } from '../../core/knowledge-graph.models';
-  import { graphState } from '../../core/stores/graph.store';
-  import Checkbox from '../../common/checkbox/Checkbox.svelte';
+    translateInstant
+  } from '../../core';
+  import { Checkbox, Expander } from '../../common';
+  import Graph from './Graph.svelte';
+  import { createEventDispatcher, onDestroy, onMount } from 'svelte';
+  import { map, Subject, takeUntil } from 'rxjs';
+  import { filter } from 'rxjs/operators';
+  import { FieldMetadata } from '@nuclia/core';
 
   export let rightPanelOpen = false;
 
@@ -56,18 +55,17 @@
           const target: NerNode = link.target;
           const radiusSum = source.radius + target.radius;
           return radiusSum + radiusSum / 2;
-        }),
+        })
     ],
-    ['charge', d3.forceManyBody().strength(chargeStrength)],
+    ['charge', d3.forceManyBody().strength(chargeStrength)]
   ].filter((d) => d);
 
   onMount(() => {
-    fieldData
+    fieldMetadata
       .pipe(
-        map((data) => data?.extracted?.metadata?.metadata),
         filter((metadata) => !!metadata),
         map((metadata) => metadata as FieldMetadata),
-        takeUntil(unsubscribeAll),
+        takeUntil(unsubscribeAll)
       )
       .subscribe((metadata) => {
         const { relations, positions } = getRelevanceLists(metadata);
@@ -100,13 +98,13 @@
             family,
             relevance,
             color: generatedEntitiesColor[family] || defaultFamilyColor,
-            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius),
+            radius: Math.max(Math.min(relevance * radiusRatio, maxRadius || 0), minRadius)
           });
           return list;
         }, [] as NerNode[])
         // keep only relevant nodes which are in a link
         .filter(
-          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id),
+          (node) => node.relevance > 0 && links.some((link) => link.source === node.id || link.target === node.id)
         )
     );
   }
@@ -118,7 +116,7 @@
           !!relation.from &&
           positions[`${relation.from.group}/${relation.from.value}`] &&
           !!relation.to &&
-          positions[`${relation.to.group}/${relation.to.value}`],
+          positions[`${relation.to.group}/${relation.to.value}`]
       )
       .map((relation) => ({
         source: `${relation.from?.group}/${relation.from?.value}`,
@@ -126,7 +124,7 @@
         fromGroup: relation.from?.group,
         toGroup: relation.to.group,
         relevance: relation.relevance || 0,
-        label: relation.label,
+        label: relation.label
       }));
   }
 
@@ -164,10 +162,10 @@
         const relevance = Math.min(from?.relevance || 0, to?.relevance || 0);
         return {
           ...relation,
-          relevance,
+          relevance
         };
       }),
-      positions,
+      positions
     };
   }
 
@@ -185,7 +183,7 @@
         return {
           id,
           color,
-          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase(),
+          label: !!generatedEntityColor ? translateInstant('entities.' + id.toLowerCase()) : id.toLocaleLowerCase()
         };
       })
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -215,9 +213,7 @@
   class:with-right-panel={rightPanelOpen}>
   <div class="left-panel">
     <div class="ner-families-container">
-      <Expander
-        on:toggleExpander
-        expanded={true}>
+      <Expander on:toggleExpander>
         <div
           class="title-s"
           slot="header">
