@@ -12,6 +12,7 @@
     VideoRenderer
   } from './renderers';
 
+  export let noResultNavigator;
   let resultType: ResultType | null;
   const stateSubscription = currentResultType.pipe(filter(type => !!type)).subscribe((value) => resultType = value);
 
@@ -20,7 +21,8 @@
   });
 </script>
 
-<div class="sw-viewer-content">
+<div class="sw-viewer-content"
+     class:no-result-navigator={noResultNavigator}>
   {#if resultType === 'audio'}
     <AudioRenderer />
   {:else if resultType === 'conversation'}
@@ -38,12 +40,8 @@
   {/if}
 </div>
 
-<!-- --renderer-outer-space is a variable used in our different renderers to calculate the renderer’s max-height -->
-<!-- it is usually used as follow: `max-height: calc(100vh - var(--renderer-outer-space));` -->
-<!-- this way, the renderers can still be used by themselves (= as components outside the viewer)
- and the end user can set their own `--renderer-outer-space` variable -->
-<style>
-  .sw-viewer-content {
-    --renderer-outer-space: var(--header-height) - var(--side-padding) * 2;
-  }
-</style>
+<style
+  lang="scss"
+  src="./ViewerContent.scss"></style>
+
+

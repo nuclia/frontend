@@ -331,10 +331,9 @@
           on:openNext={openNext} />
       {/if}
 
-      <div class="viewer-content"
-           class:no-result-navigator={resultNavigatorHidden}>
+      <div class="viewer-content">
         {#if !showKnowledgeGraph}
-          <ViewerContent />
+          <ViewerContent noResultNavigator={resultNavigatorHidden} />
         {:else}
           <D3Loader
             rightPanelOpen={sidePanelExpanded}

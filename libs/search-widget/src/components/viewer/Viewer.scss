@@ -1,6 +1,8 @@
 .sw-viewer {
   --header-height: var(--rhythm-6);
   --side-padding: var(--rhythm-2);
+  --top-padding: 0;
+  --bottom-padding: var(--rhythm-2);
 
   background: var(--modal-background-color);
   bottom: 0;
@@ -57,17 +59,8 @@
 
   .viewer-body {
     height: calc(100% - var(--header-height));
-    padding: var(--side-padding);
+    padding: var(--top-padding) var(--side-padding) var(--bottom-padding);
     overflow: hidden;
-
-    .viewer-content {
-      // Search results navigator and metadata blocks have the same size as header
-      height: calc(100% - var(--side-padding) * 2 - var(--header-height) * (var(--metadata-block-count) + 1));
-
-      &.no-result-navigator {
-        height: calc(100% - var(--side-padding) * 2 - var(--header-height) * var(--metadata-block-count));
-      }
-    }
   }
 
   .summary-container {
@@ -77,14 +70,20 @@
 
 @media (max-width: 647px) {
   .sw-viewer {
-    .viewer-body .side-panel {
-      margin-top: var(--rhythm-1);
+    .viewer-body {
+      --section-spacing: var(--rhythm-1);
+
+      .side-panel {
+        margin-top: var(--section-spacing);
+      }
     }
   }
 }
 
 @media (min-width: 648px) {
   .sw-viewer {
+    --top-padding: var(--rhythm-2);
+
     header {
       gap: var(--rhythm-2);
 
@@ -102,25 +101,23 @@
       padding-right: var(--side-panel-button-size);
       transition: padding-right var(--transition-moderate);
 
-      .viewer-content,
-      .viewer-content.no-result-navigator {
-        height: calc(100% - var(--side-padding) * 2);
+      .viewer-content {
+        height: calc(100% - var(--top-padding) - var(--bottom-padding));
       }
 
       .side-panel {
         --panel-section-margin-bottom: var(--rhythm-1);
-        --metadata-height: var(--panel-section-margin-bottom) *
-          (var(--metadata-block-count, 1) + var(--search-section-count)) - var(--expander-header-height) *
-          var(--metadata-block-count, 1);
-        --expander-max-height: var(--header-height) - var(--side-padding) - var(--find-input-height) -
-          var(--panel-section-margin-bottom) * 2 - var(--metadata-height);
+        --metadata-height: var(--panel-section-margin-bottom) * (var(--metadata-block-count, 1)) -
+          var(--expander-header-height) * (var(--metadata-block-count, 1) + var(--search-section-count));
+        --expander-max-height: var(--header-height) - var(--top-padding) - var(--bottom-padding) -
+          var(--find-input-height) - var(--panel-section-margin-bottom) - var(--metadata-height);
 
         display: flex;
         gap: var(--side-panel-gap);
         height: 100%;
         position: absolute;
         right: calc(var(--side-panel-width) * -1 + var(--side-panel-button-size));
-        top: calc(var(--header-height) + var(--side-padding));
+        top: calc(var(--header-height) + var(--top-padding));
         transition: right var(--transition-moderate);
         width: var(--side-panel-width);
 
@@ -141,7 +138,7 @@
         }
 
         .side-panel-content {
-          height: calc(100% - (var(--header-height) + var(--side-padding) * 2));
+          height: calc(100% - (var(--header-height) + var(--top-padding) + var(--bottom-padding)));
           width: calc(
             var(--side-panel-width) - var(--side-panel-button-size) - var(--side-panel-gap) - var(--side-padding)
           );
