@@ -11,7 +11,6 @@ export const getWidgetActions = () => widgetActions;
 
 export const widgetFeatures = writableSubject<WidgetFeatures | null>(null);
 export const widgetPlaceholder = writableSubject<string>('input.placeholder');
-export const widgetType = writableSubject<'search' | 'viewer' | null>(null);
 
 export const navigateToLink = widgetFeatures.pipe(map((features) => !!features?.navigateToLink));
 export const navigateToFile = widgetFeatures.pipe(map((features) => !!features?.navigateToFile));

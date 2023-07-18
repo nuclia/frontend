@@ -12,9 +12,10 @@
   let viewerWidget: NucliaViewerWidget;
   let resultsWidget: NucliaSearchResults;
 
-  let resource = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
+  let viewerKb = '16375869-1037-460d-8648-b3ee9c9206c0';
+  let resource = '553ee1f6168a3ebef66591e0006f3400';
   let fieldType = 'file';
-  let fieldId = '20fd69d4b4dcdf0eb9e8c95dfff1ce6c';
+  let fieldId = '553ee1f6168a3ebef66591e0006f3400';
 
   // let kb = 'eed07421-dc96-4067-a73b-32c89eac0229'; // philo
   // let kb = 'd10ea56b-7af9-495d-860f-23b616a44f9a'; // eudald
@@ -35,7 +36,7 @@
   const backend = 'https://nuclia.cloud/api';
 
   onMount(() => {
-    resultsWidget?.setTileMenu([
+    resultsWidget?.setViewerMenu([
       {
         label: 'Delete',
         action: (fullId: FieldFullId) => {
@@ -49,7 +50,7 @@
         },
       },
     ]);
-    viewerWidget?.setTileMenu([
+    viewerWidget?.setViewerMenu([
       {
         label: 'Delete',
         action: (fullId: FieldFullId) => {
@@ -113,6 +114,9 @@
   {/if}
   {#if selected === 'viewer'}
     <h2>Viewer widget</h2>
+    <label for="kb">Kb:</label>
+    <input id="kb" bind:value={viewerKb}>
+
     <label for="rid">Resource id:</label>
     <input
       id="rid"
@@ -136,7 +140,7 @@
       <NucliaViewerWidget
         bind:this={viewerWidget}
         zone="europe-1"
-        knowledgebox={kb}
+        knowledgebox={viewerKb}
         cdn="/"
         {backend}
         lang="en" />

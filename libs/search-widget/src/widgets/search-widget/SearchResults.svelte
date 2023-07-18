@@ -38,7 +38,7 @@
 
   const showLoading = pendingResults.pipe(debounceTime(1500));
 
-  export const setTileMenu = setWidgetActions;
+  export const setViewerMenu = setWidgetActions;
 
   export function closePreview() {
     onClosePreview();

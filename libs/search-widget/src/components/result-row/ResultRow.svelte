@@ -51,7 +51,7 @@
     if (result.field) {
       viewerData.set({
         result,
-        selectedParagraphIndex: index,
+        selectedParagraphIndex: typeof index === 'number' ? index : -1,
       });
     }
   }
