@@ -1,3 +1,10 @@
+# 1.2.0 (2023-07-18)
+
+### Breaking changes
+
+- Replace `Tile` components displaying search results by `ResultRow` and `Viewer` components
+- Rename `setTileMenu` method by `setViewerMenu`
+
 # 1.1.1 (2023-03-03)
 
 ### Bug fix
