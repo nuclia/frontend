@@ -268,14 +268,6 @@ export const transcripts = viewerState.writer<Search.FindParagraph[]>(
   }),
 );
 
-export const resourceTitle = viewerState.writer<string, string>(
-  (state) => state.currentResult?.title || '',
-  (state, title) => ({
-    ...state,
-    title,
-  }),
-);
-
 export const fieldSummary = viewerState.reader<string>((state) => state.summary);
 
 export const fieldType = viewerState.reader<FIELD_TYPE | null>((state) => state.fieldFullId?.field_type || null);
