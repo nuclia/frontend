@@ -1,0 +1,19 @@
+@import 'variables';
+
+pa-datetime {
+  color: $color-primary-regular;
+}
+
+.expiration {
+  margin: rhythm(1) 0 rhythm(2);
+}
+
+pa-radio-group {
+  display: flex !important;
+  flex-direction: column;
+  gap: rhythm(2);
+}
+
+pa-modal-footer {
+  gap: rhythm(2);
+}

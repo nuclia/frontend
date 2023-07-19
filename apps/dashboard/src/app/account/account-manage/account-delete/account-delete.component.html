@@ -7,16 +7,16 @@
       <pa-checkbox
         noEllipsis
         [(value)]="deleteAccount">
-        {{ 'account.delete_account_confirm' | translate: { account: (account | async)?.title } }}
+        {{ 'account.delete_account_confirm' | translate : { account: (account | async)?.title } }}
       </pa-checkbox>
     </div>
     <div
       class="delete-user"
-      *ngIf="showDeleteUser">
-      <label for="group-delete-user">{{ 'account.delete_user_confirm' | translate }}</label>
+      *ngIf="canKeepUser | async">
+      <label for="group-keep-user">{{ 'account.delete.keep_user_title' | translate }}</label>
       <pa-radio-group
-        [(value)]="deleteUser"
-        id="group-delete-user">
+        [(value)]="keepUser"
+        id="group-keep-user">
         <pa-radio value="yes">{{ 'generic.yes' | translate }}</pa-radio>
         <pa-radio value="no">{{ 'generic.no' | translate }}</pa-radio>
       </pa-radio-group>
@@ -30,8 +30,8 @@
     </pa-button>
     <pa-button
       kind="destructive"
-      [disabled]="!deleteAccount || (showDeleteUser && deleteUser === undefined)"
-      (click)="modal.close({ deleteUser: deleteUser === 'yes' })">
+      [disabled]="!deleteAccount || ((canKeepUser | async) && keepUser === undefined) || loading"
+      (click)="delete()">
       {{ 'generic.delete' | translate }}
     </pa-button>
   </pa-modal-footer>
