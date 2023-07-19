@@ -18,6 +18,9 @@ spec:
       heritage: "{{ .Release.Service }}"
   template:
     metadata:
+  {{- if hasKey .Values "annotations" }}
+      annotations:
+{{ toYaml .Values.annotations | indent 8 }}
       name: {{ .Release.Name }}
       labels:
         app: {{ .Release.Name }}
