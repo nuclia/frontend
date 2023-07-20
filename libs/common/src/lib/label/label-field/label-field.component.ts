@@ -24,6 +24,7 @@ export class LabelFieldComponent {
     this.labelKind.next(kind);
   }
   @Input() size: Size | undefined;
+  @Input() disabled: boolean = false;
 
   @Output() selectionChange = new EventEmitter<Classification[]>();
   @Output() noLabels = new EventEmitter<boolean>();

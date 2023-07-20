@@ -51,6 +51,7 @@ export class ParagraphClassificationComponent implements OnInit, OnDestroy {
   searchQuery = '';
   hasMoreResults = false;
   nextPageNumber = 0;
+  isAdminOrContrib = this.editResource.isAdminOrContrib;
 
   constructor(
     private route: ActivatedRoute,

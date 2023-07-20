@@ -107,6 +107,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     switchMap((kb) => kb.getConfiguration()),
     map((config) => config['semantic_model'] === 'en'),
   );
+  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
 
   labelSets$: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(
     filter((labelSets) => !!labelSets),

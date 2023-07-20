@@ -36,6 +36,7 @@ export class ParagraphAnnotationComponent extends SelectFirstFieldDirective impl
   );
   hasParagraph: Observable<boolean> = this.annotationService.hasParagraph;
   paragraphLoaded: Observable<boolean> = this.annotationService.paragraphLoaded;
+  isAdminOrContrib = this.editResource.isAdminOrContrib;
 
   entityFamilies: Observable<EntityGroup[]> = this.editResource.loadResourceEntities();
   selectedFamily: Observable<EntityGroup | null> = this.annotationService.selectedFamily;

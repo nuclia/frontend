@@ -34,6 +34,7 @@
             <div class="labels-container">
               <pa-chip-closeable
                 *ngFor="let label of paragraph.generatedClassifications"
+                [noCloseButton]="(isAdminOrContrib | async) === false"
                 [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
                 (closed)="cancelGeneratedLabel(paragraph, label)">
                 {{ label.label }}
@@ -41,6 +42,7 @@
               <ng-container *ngFor="let label of paragraph.userClassifications">
                 <pa-chip-closeable
                   *ngIf="!label.cancelled_by_user"
+                  [noCloseButton]="(isAdminOrContrib | async) === false"
                   [backgroundColor]="(availableLabels | async)?.[label.labelset]?.color"
                   (closed)="removeUserLabel(paragraph, label)">
                   {{ label.label }}
@@ -53,7 +55,7 @@
 
       <div
         class="right-panel-container"
-        *ngIf="(hasLabels | async) === true">
+        *ngIf="(hasLabels | async) === true && (isAdminOrContrib | async) === true">
         <div class="help">
           <pa-icon
             name="info"

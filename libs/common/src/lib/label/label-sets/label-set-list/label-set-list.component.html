@@ -26,6 +26,7 @@
     <pa-expander-header-side-block>
       <div>
         <pa-button
+          *ngIf="(isAdminOrContrib | async) === true"
           icon="edit"
           aspect="basic"
           [routerLink]="'../' + labelSet.key"
@@ -33,6 +34,7 @@
           {{ 'label-set.edit' | translate }}
         </pa-button>
         <pa-button
+          *ngIf="(isAdminOrContrib | async) === true"
           icon="trash"
           aspect="basic"
           kind="destructive"

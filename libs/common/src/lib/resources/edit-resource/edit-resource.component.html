@@ -21,6 +21,7 @@
         icon="edit"
         routerLink="resource"
         [active]="currentView === 'resource'"
+        [disabled]="(isAdminOrContrib | async) === false"
         paTooltip="resource.tooltip.edition"
         aspect="basic"
         (click)="onViewChange()"></pa-button>
@@ -41,6 +42,7 @@
       <pa-button
         *ngIf="isPdfAnnotationEnabled | async"
         icon="annotate"
+        [disabled]="(isAdminOrContrib | async) === false"
         paTooltip="resource.tooltip.pdf-annotation"
         aspect="basic"
         (click)="goToPawls()"></pa-button>
@@ -48,6 +50,7 @@
         icon="plus"
         routerLink="add-field"
         [active]="currentView === 'add-field'"
+        [disabled]="(isAdminOrContrib | async) === false"
         paTooltip="resource.tooltip.add-field"
         aspect="basic"
         (click)="onViewChange()"></pa-button>
@@ -55,11 +58,12 @@
         icon="refresh"
         paTooltip="resource.tooltip.reprocess"
         aspect="basic"
-        [disabled]="(resource | async)?.metadata?.status === 'PENDING'"
+        [disabled]="(resource | async)?.metadata?.status === 'PENDING' || (isAdminOrContrib | async) === false"
         (click)="reprocessResource()"></pa-button>
       <pa-button
         icon="trash"
         paTooltip="resource.tooltip.delete"
+        [disabled]="(isAdminOrContrib | async) === false"
         aspect="basic"
         (click)="deleteResource()"></pa-button>
     </div>

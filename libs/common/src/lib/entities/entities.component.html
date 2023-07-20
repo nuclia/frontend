@@ -10,6 +10,7 @@
         <pa-button
           iconAndText
           icon="circle-plus"
+          [disabled]="(isAdminOrContrib | async) === false"
           (click)="addFamily()">
           {{ 'ner-management.add-family' | translate }}
         </pa-button>
@@ -37,7 +38,9 @@
       *ngIf="selectedFamily">
       <div class="family-toolbar">
         <div class="title-s">{{ selectedFamily.title }}</div>
-        <div class="family-actions">
+        <div
+          class="family-actions"
+          *ngIf="(isAdminOrContrib | async) === true">
           <pa-button
             aspect="basic"
             icon="plus"

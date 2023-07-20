@@ -44,6 +44,7 @@ export class EntityListComponent implements OnInit, OnDestroy {
   deletedNer?: string;
   duplicatedEntity?: Entity;
   matchingEntities: Entity[] = [];
+  isAdminOrContrib = this.entitiesService.isAdminOrContrib;
 
   private _family: NerFamily | undefined;
 

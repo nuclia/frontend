@@ -30,6 +30,7 @@ export class EntitiesComponent {
         .sort((a, b) => (a.title || '').localeCompare(b.title || '')),
     ),
   );
+  isAdminOrContrib = this.entitiesService.isAdminOrContrib;
 
   selectedFamily?: NerFamily;
 
