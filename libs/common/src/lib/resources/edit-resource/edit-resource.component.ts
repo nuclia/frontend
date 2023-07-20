@@ -47,6 +47,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
     ),
   );
   isPdfAnnotationEnabled = this.featureFlag.isFeatureEnabled('pdf-annotation');
+  isAdminOrContrib = this.editResource.isAdminOrContrib;
 
   activeField?: FieldId | 'resource';
 

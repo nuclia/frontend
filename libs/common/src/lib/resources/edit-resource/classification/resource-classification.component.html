@@ -7,6 +7,7 @@
     <div class="scrollable-area classification-container">
       <app-label-field
         [selection]="currentLabels"
+        [disabled]="(isAdminOrContrib | async) === false"
         (noLabels)="noLabels = $event"
         (selectionChange)="updateLabels($event)"></app-label-field>
     </div>

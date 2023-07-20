@@ -14,6 +14,7 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
   isModified = false;
   noLabels = false;
   kbUrl = this.editResource.kbUrl;
+  isAdminOrContrib = this.editResource.isAdminOrContrib;
 
   constructor(private cdr: ChangeDetectorRef) {
     super();

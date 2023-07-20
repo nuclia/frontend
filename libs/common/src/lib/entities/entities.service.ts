@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
-import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { SDKService, STFUtils } from '@flaps/core';
 import { Entities, EntitiesGroup, Entity, IKnowledgeBox, UpdateEntitiesGroupPayload } from '@nuclia/core';
 
@@ -11,6 +11,7 @@ export class EntitiesService {
   private entitiesSubject = new BehaviorSubject<Entities | null>(null);
 
   entities = this.entitiesSubject.asObservable();
+  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
 
   constructor(private sdk: SDKService) {
     this.sdk.currentKb

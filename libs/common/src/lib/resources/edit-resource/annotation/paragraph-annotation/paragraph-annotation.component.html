@@ -23,7 +23,7 @@
               <p
                 [attr.paragraphId]="paragraph.paragraphId"
                 [class.family-selected]="(selectedFamily | async) !== null"
-                [innerHTML]="paragraph.annotatedText | safe: 'html'"
+                [innerHTML]="paragraph.annotatedText | safe : 'html'"
                 (mouseup)="onMouseUp($event)"></p>
 
               <div
@@ -36,7 +36,7 @@
                       selectedEntity?.paragraphId === paragraph.paragraphId)
                   ">
                   <button
-                    *ngIf="!!selectedEntity"
+                    *ngIf="!!selectedEntity && (isAdminOrContrib | async) === true"
                     class="annotation-button remove"
                     (click)="removeEntityFromParagraph(paragraph)">
                     <pa-icon
@@ -46,8 +46,9 @@
                   <button
                     class="annotation-button confirm"
                     *ngIf="
-                      userSelection?.paragraphId === paragraph.paragraphId ||
-                      selectedEntity?.klass !== (selectedFamily | async)?.id
+                      (isAdminOrContrib | async) === true &&
+                      (userSelection?.paragraphId === paragraph.paragraphId ||
+                        selectedEntity?.klass !== (selectedFamily | async)?.id)
                     "
                     (click)="userSelection ? addEntity(paragraph) : updateEntity(paragraph)">
                     <pa-icon

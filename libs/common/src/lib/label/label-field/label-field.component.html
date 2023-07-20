@@ -3,6 +3,7 @@
   class="label-field"
   [class.small-button]="size === 'small'">
   <app-label-dropdown
+    *ngIf="!disabled"
     [size]="size"
     [labelSets]="labelSets$ | async"
     [selection]="selection"

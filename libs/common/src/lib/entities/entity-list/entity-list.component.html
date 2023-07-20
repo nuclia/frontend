@@ -16,6 +16,7 @@
       [disabled]="deletedNer === ner.value">
       <pa-table-cell>
         <div
+          *ngIf="(isAdminOrContrib | async) === true"
           class="table-row-actions"
           [class.stay-visible]="duplicatedEntity?.value === ner.value">
           <pa-button
@@ -76,6 +77,7 @@
             *ngFor="let duplicate of ner.represents"
             class="duplicate-item">
             <pa-button
+              *ngIf="(isAdminOrContrib | async) === true"
               class="table-row-action"
               icon="arrows-unrelated"
               aspect="basic"
