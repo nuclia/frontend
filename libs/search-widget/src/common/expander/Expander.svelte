@@ -6,9 +6,9 @@
   export let duration: number = 300;
 
   const dispatch = createEventDispatcher();
-  let content;
+  let content: HTMLElement;
   let showContent: boolean = false;
-  let contentHeight: string = '0px';
+  let contentHeight = 0;
   let timer;
 
   $: if (expanded) {
@@ -17,17 +17,28 @@
     collapse();
   }
 
-  onMount(() => {});
+  onMount(() => {
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (entries[0].contentRect.height !== contentHeight) {
+        contentHeight = entries[0].contentRect.height;
+      }
+    });
+    resizeObserver.observe(content);
+
+    return () => {
+      resizeObserver.disconnect();
+    }
+  });
 
   const expand = async () => {
     showContent = true;
     await tick();
-    contentHeight = parseInt(content.getBoundingClientRect().height) + 'px';
+    contentHeight = content.getBoundingClientRect().height;
     setTimeout(() => dispatch('toggleExpander', { expanded: true }), duration);
   };
 
   const collapse = () => {
-    contentHeight = '0px';
+    contentHeight = 0;
     timer && timer.clearTimeout();
     setTimeout(() => {
       showContent = false;
@@ -56,7 +67,7 @@
   </div>
   <div
     class="expander-content"
-    style:height={contentHeight}
+    style:height="{contentHeight}px"
     style:display={showContent ? 'block' : 'none'}
     style:transition={`height ${duration}ms`}>
     <div bind:this={content}>
