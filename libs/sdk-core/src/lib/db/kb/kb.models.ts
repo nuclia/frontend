@@ -48,6 +48,7 @@ export enum EventType {
   STOPPED = 'STOPPED',
   SEARCH = 'SEARCH',
   PROCESSED = 'PROCESSED',
+  CHAT = 'CHAT',
 }
 
 export interface IKnowledgeBoxCreation {
@@ -117,6 +118,10 @@ export interface IKnowledgeBox extends IKnowledgeBoxCreation {
   getTempToken(): Observable<string>;
 
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList>;
+
+  listActivityDownloads(type: EventType): Observable<ActivityDownloadList>;
+
+  downloadActivity(type: EventType, month: string): Observable<Blob>;
 
   getConfiguration(): Observable<{ [id: string]: any }>;
 }
@@ -275,6 +280,10 @@ export interface EventList {
 }
 
 export type Event = { [key: string]: any };
+
+export interface ActivityDownloadList {
+  downloads: string[];
+}
 
 export interface ServiceAccountKey {
   id: string;
