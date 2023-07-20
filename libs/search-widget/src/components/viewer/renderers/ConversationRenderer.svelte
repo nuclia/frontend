@@ -91,7 +91,7 @@
             {/if}
           </div>
         {/if}
-        <div class="text body-m html-content">
+        <div class="text body-m external-html-content">
           {#if !message.content.format || message.content.format === 'PLAIN'}
             <PlainTextRendering text={message.content.text} />
           {:else if message.content.format === 'MARKDOWN'}

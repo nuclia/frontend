@@ -241,9 +241,9 @@ export function getExtractedTexts(data: IFieldData | null): { shortId: string; t
     return [];
   }
   const text = data.extracted?.text?.text || '';
-  const hasUnicodeCharacters =
-    text.length > 0 && text.length !== (data.extracted?.metadata?.metadata?.paragraphs || []).pop()?.end;
-  return (data.extracted?.metadata?.metadata?.paragraphs || []).map((paragraph) => ({
+  const paragraphs = data.extracted?.metadata?.metadata?.paragraphs || [];
+  const hasUnicodeCharacters = text.length > 0 && text.length !== paragraphs[paragraphs.length - 1]?.end;
+  return paragraphs.map((paragraph) => ({
     shortId: `${paragraph.start || 0}-${paragraph.end || 0}`,
     text: hasUnicodeCharacters
       ? sliceUnicode(text, paragraph.start, paragraph.end).trim()

@@ -1,3 +1,6 @@
+a {
+  color: var(--link-color);
+}
 mark {
   background-color: inherit;
   color: inherit;
@@ -20,7 +23,8 @@ mark.ner[family] {
   white-space: nowrap;
 }
 .highlight {
-  background-color: var(--color-primary-lighter);
+  background-color: var(--selected-background-color);
+  color: var(--selected-text-color);
   border-radius: 0;
 }
 .sr-only {
@@ -92,13 +96,17 @@ ul.sw-dropdown-options {
 }
 
 .sw-text-rendering {
-  background: var(--color-light-stronger);
+  background: var(--container-background-color);
   margin: 0 auto;
   max-width: 800px;
-  padding: var(--rhythm-3) var(--rhythm-4);
+  padding: var(--rhythm-1) var(--rhythm-2);
+
+  p {
+    padding: var(--rhythm-1) var(--rhythm-2);
+  }
 }
 
-.sw-conversation-renderer .html-content {
+.external-html-content {
   p {
     margin-top: 0;
 
@@ -154,6 +162,12 @@ ul.sw-dropdown-options {
 
 .body-m {
   font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-body);
+  line-height: var(--line-height-body);
+}
+
+.body-s {
+  font-size: var(--font-size-small);
   font-weight: var(--font-weight-body);
   line-height: var(--line-height-body);
 }

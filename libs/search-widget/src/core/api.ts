@@ -174,7 +174,7 @@ export const getResourceById = (uid: string, show?: ResourceProperties[]): Obser
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }
-  return merge(nucliaApi.knowledgeBox.getResource(uid, show));
+  return nucliaApi.knowledgeBox.getResource(uid, show);
 };
 
 export function getResourceField(fullFieldId: FieldFullId, valueOnly = false): Observable<ResourceField> {

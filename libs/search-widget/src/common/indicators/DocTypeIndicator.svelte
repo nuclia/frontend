@@ -2,7 +2,7 @@
   export let type;
 
   let typeIndicator = '';
-  switch (type) {
+  $: switch (type) {
     case 'audio':
       typeIndicator = 'audio'
       break;

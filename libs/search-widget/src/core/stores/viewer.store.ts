@@ -1,10 +1,11 @@
-import type { MediaWidgetParagraph, PreviewKind, ResultType, TypedResult } from '../models';
+import type { ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
 import type { CloudLink, FieldFullId, IFieldData } from '@nuclia/core';
 import {
   FIELD_TYPE,
   FieldMetadata,
   FileFieldData,
+  getFieldTypeFromString,
   LinkFieldData,
   longToShortFieldType,
   Search,
@@ -13,7 +14,6 @@ import {
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
 import { filter, map, of, switchMap, take } from 'rxjs';
-import { NEWLINE_REGEX } from '../utils';
 
 export interface ViewerState {
   currentResult: TypedResult | null;
@@ -51,6 +51,18 @@ export interface ViewerBasicSetter {
   selectedParagraphIndex: number;
 }
 
+export const isMediaPlayer = viewerState.reader<boolean>(
+  (state) => state.currentResult?.resultType === 'video' || state.currentResult?.resultType === 'audio',
+);
+
+export const metadataBlockCount = viewerState.reader<number>((state) => {
+  const searchBlock = (state.currentResult?.paragraphs || []).length > 0 ? 1 : 0;
+  const transcriptBlock = isMediaPlayer.getValue() ? 1 : 0;
+  const summaryBlock = !!state.summary ? 1 : 0;
+  const itemsBlock = (fieldList.getValue() || []).length > 0 ? 1 : 0;
+  return searchBlock + transcriptBlock + summaryBlock + itemsBlock;
+});
+
 export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
   (state) => state,
   (state, data) => ({
@@ -64,7 +76,11 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
     selectedParagraphIndex: data.selectedParagraphIndex,
     fieldFullId:
       data.result && data.result.field
-        ? { field_id: data.result.field.field_id, field_type: data.result.field.field_type, resourceId: data.result.id }
+        ? {
+            field_id: data.result.field.field_id,
+            field_type: data.result.field.field_type,
+            resourceId: data.result.id,
+          }
         : null,
     isPreviewing: !!data,
     searchInFieldResults: null,
@@ -199,7 +215,7 @@ export const playFrom = viewerState.reader<number>((state) => {
     ? state.transcripts
     : (state.currentResult?.paragraphs as Search.FindParagraph[]);
   const selectedParagraph = paragraphs[state.selectedParagraphIndex];
-  return selectedParagraph.position.start_seconds?.[0] || 0;
+  return selectedParagraph?.position.start_seconds?.[0] || 0;
 });
 
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
@@ -233,6 +249,25 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
     };
   },
 );
+
+export const fieldList = viewerState.reader<FieldFullId[] | null>((state) => {
+  if (!state.currentResult) {
+    return null;
+  }
+  const resource = state.currentResult;
+  const fieldList = Object.entries(resource.data || {})
+    .filter(([type, fieldMap]) => type !== 'generics' && !!fieldMap)
+    .reduce((list, [type, fieldMap]) => {
+      const fieldType = getFieldTypeFromString(type.substring(0, type.length - 1));
+      if (fieldType) {
+        Object.keys(fieldMap).forEach((fieldId) =>
+          list.push({ field_id: fieldId, field_type: fieldType, resourceId: resource.id }),
+        );
+      }
+      return list;
+    }, [] as FieldFullId[]);
+  return fieldList.length > 1 ? fieldList : null;
+});
 
 export const fullMetadataLoaded = viewerState.reader<boolean>((state) => state.fullMetadataLoaded);
 
@@ -339,38 +374,6 @@ export function loadTranscripts() {
       }),
     )
     .subscribe((transcriptList) => transcripts.set(transcriptList));
-}
-
-export function getMediaTranscripts(
-  kind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE,
-): Observable<MediaWidgetParagraph[]> {
-  return viewerState.store.pipe(
-    map((state) => {
-      if (!state.fieldFullId || !state.currentResult?.fieldData) {
-        return [];
-      } else {
-        const fullId = state.fieldFullId;
-        const text = state.currentResult.fieldData.extracted?.text?.text || '';
-        const paragraphs = (state.currentResult.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
-          (paragraph) => paragraph.kind === 'TRANSCRIPT',
-        );
-        return paragraphs.map((paragraph) => {
-          const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
-          return {
-            paragraph,
-            text: paragraphText.trim().replace(NEWLINE_REGEX, '<br>'),
-            fieldType: fullId.field_type,
-            fieldId: fullId.field_id,
-            preview: kind,
-            start: paragraph.start || 0,
-            end: paragraph.end || 0,
-            start_seconds: paragraph.start_seconds?.[0] || 0,
-            end_seconds: paragraph.end_seconds?.[0] || 0,
-          };
-        });
-      }
-    }),
-  );
 }
 
 export function getPlayableVideo(): Observable<CloudLink | undefined> {
