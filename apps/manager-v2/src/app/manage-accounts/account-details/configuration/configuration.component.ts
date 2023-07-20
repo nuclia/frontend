@@ -99,6 +99,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
           next: (updatedAccount) => {
             this.store.setAccountDetails(updatedAccount);
             this.accountBackup = { ...updatedAccount };
+            this.patchConfigForm(updatedAccount);
             this.isSaving = false;
             this.configForm.markAsPristine();
             this.cdr.markForCheck();
