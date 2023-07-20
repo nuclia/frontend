@@ -427,6 +427,7 @@ export function getSortedResults(resources: Search.FindResource[]): TypedResult[
         if (shortType === SHORT_FIELD_TYPE.generic && resource.data) {
           // if matching field is generic, we take the first other field from resource data
           fieldId = Object.entries(resource.data)
+            .filter(([, data]) => !!data)
             .map(([dataKey, data]) => {
               // data key is matching field type with an `s` suffix
               const fieldType = getFieldTypeFromString(dataKey.substring(0, dataKey.length - 1));

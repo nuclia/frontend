@@ -15,7 +15,7 @@
 
   type MessageWithParagraphs = Message & { paragraphIds: string[] };
   const messages: Observable<MessageWithParagraphs[]> = combineLatest([fieldFullId, fieldData]).pipe(
-    filter(([fieldId, field]) => !!fieldId && !!field),
+    filter(([fieldId, field]) => !!fieldId && !!field && !!field.value),
     map(([fieldId, field]) => [fieldId, field] as [string, ConversationFieldData]),
     map(([fieldId, field]) => {
       return field.value.messages.map((message) => ({
