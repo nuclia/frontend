@@ -1,4 +1,4 @@
-import type { MediaWidgetParagraph, PreviewKind, ResultType, TypedResult } from '../models';
+import type { ResultType, TypedResult } from '../models';
 import { SvelteState } from '../state-lib';
 import type { CloudLink, FieldFullId, IFieldData } from '@nuclia/core';
 import {
@@ -14,7 +14,6 @@ import {
 import { getFileUrls } from '../api';
 import type { Observable } from 'rxjs';
 import { filter, map, of, switchMap, take } from 'rxjs';
-import { NEWLINE_REGEX } from '../utils';
 
 export interface ViewerState {
   currentResult: TypedResult | null;
@@ -375,38 +374,6 @@ export function loadTranscripts() {
       }),
     )
     .subscribe((transcriptList) => transcripts.set(transcriptList));
-}
-
-export function getMediaTranscripts(
-  kind: PreviewKind.VIDEO | PreviewKind.AUDIO | PreviewKind.YOUTUBE,
-): Observable<MediaWidgetParagraph[]> {
-  return viewerState.store.pipe(
-    map((state) => {
-      if (!state.fieldFullId || !state.currentResult?.fieldData) {
-        return [];
-      } else {
-        const fullId = state.fieldFullId;
-        const text = state.currentResult.fieldData.extracted?.text?.text || '';
-        const paragraphs = (state.currentResult.fieldData.extracted?.metadata?.metadata?.paragraphs || []).filter(
-          (paragraph) => paragraph.kind === 'TRANSCRIPT',
-        );
-        return paragraphs.map((paragraph) => {
-          const paragraphText = sliceUnicode(text, paragraph.start, paragraph.end).trim();
-          return {
-            paragraph,
-            text: paragraphText.trim().replace(NEWLINE_REGEX, '<br>'),
-            fieldType: fullId.field_type,
-            fieldId: fullId.field_id,
-            preview: kind,
-            start: paragraph.start || 0,
-            end: paragraph.end || 0,
-            start_seconds: paragraph.start_seconds?.[0] || 0,
-            end_seconds: paragraph.end_seconds?.[0] || 0,
-          };
-        });
-      }
-    }),
-  );
 }
 
 export function getPlayableVideo(): Observable<CloudLink | undefined> {

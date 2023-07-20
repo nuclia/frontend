@@ -1,14 +1,12 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
   import { map } from 'rxjs';
-  import { getExtractedTexts } from '../../../../core/utils';
-  import { fieldData } from '../../../../core/stores/viewer.store';
-  import type { WidgetParagraph } from '../../../../core/models';
+  import { fieldData, getExtractedTexts } from '../../../../core';
   import type { Search } from '@nuclia/core';
   import PlainTextRenderer from './PlainTextRendering.svelte';
   import RstRenderer from './RstRendering.svelte';
 
-  export let selectedParagraph: WidgetParagraph | undefined;
+  export let selectedParagraph: Search.FindParagraph | undefined;
   export let isRst = false;
 
   let textViewerElement: HTMLElement;
@@ -24,10 +22,10 @@
     if (!selectedParagraph) {
       return;
     }
-    selected = (selectedParagraph.paragraph as Search.FindParagraph)?.id.split('/').pop() || '';
+    selected = selectedParagraph?.id.split('/').pop() || '';
     if (selected) {
       setTimeout(() =>
-        textViewerElement?.querySelector(`#paragraph${selected}`)?.scrollIntoView({ behavior: 'smooth' }),
+        textViewerElement?.querySelector(`#paragraph${selected}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }),
       );
     }
   }
