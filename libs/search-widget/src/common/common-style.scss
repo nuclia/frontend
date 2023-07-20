@@ -136,6 +136,7 @@
   // Customizable theme
   --border-color: var(--custom-border-color, var(--color-dark-stronger));
   --border-focus-color: var(--custom-border-focus-color, var(--color-primary-regular));
+  --link-color: var(--custom-link-color, var(--color-primary-regular));
   --text-color: var(--custom-text-color, var(--color-dark-stronger));
   --selected-text-color: var(--custom-selected-text-color, inherit);
   --selected-background-color: var(--custom-selected-background-color, var(--color-primary-lightest));

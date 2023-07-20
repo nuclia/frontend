@@ -1,8 +1,8 @@
 <script lang="ts">
   import type { Observable } from 'rxjs';
+  import { filter, map } from 'rxjs';
   import type { FileField, IFieldData, TextField } from '@nuclia/core';
   import { fieldData, selectedParagraph } from '../../../core';
-  import { filter, map } from 'rxjs';
   import { ExtractedTextRendering, TextContentRendering } from './renderings';
 
   const filledFieldData: Observable<IFieldData> = fieldData.pipe(
@@ -40,7 +40,7 @@
   );
 </script>
 
-<div class="sw-text-renderer">
+<div class="sw-text-renderer external-html-content">
   {#if $isMarkdown || $isHtml}
     <TextContentRendering
       selectedParagraph={$selectedParagraph}
