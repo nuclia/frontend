@@ -59,11 +59,12 @@
 	"results.summary": "Resumen",
 	"suggest.intents": "Etiquetas",
 	"suggest.paragraphs": "Párrafo sugerido",
-	"tile.find-in-audio": "Buscar en audio",
-	"tile.find-in-document": "Buscar en documento",
-	"tile.find-in-image": "Buscar en la imagen",
-	"tile.find-in-video": "Encontrar en vídeo",
-	"tile.full-transcripts": "Transcripción completa",
-	"tile.search-results": "{{count}} resultados de búsqueda",
-	"tile.summary": "Resumen"
+	"viewer.find-in-audio": "Buscar en audio",
+	"viewer.find-in-document": "Buscar en documento",
+	"viewer.find-in-image": "Buscar en la imagen",
+	"viewer.find-in-video": "Encontrar en vídeo",
+	"viewer.full-transcripts": "Transcripción completa",
+	"viewer.items": "Elementos",
+	"viewer.search-results": "{{count}} resultados de búsqueda",
+	"viewer.summary": "Resumen"
 }

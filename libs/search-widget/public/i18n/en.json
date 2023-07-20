@@ -60,11 +60,12 @@
 	"results.summary": "Summary",
 	"suggest.intents": "Labels",
 	"suggest.paragraphs": "Suggested paragraphs",
-	"tile.find-in-audio": "Find in audio",
-	"tile.find-in-document": "Find in document",
-	"tile.find-in-image": "Find in image",
-	"tile.find-in-video": "Find in video",
-	"tile.full-transcripts": "Full transcript",
-	"tile.search-results": "{{count}} search results",
-	"tile.summary": "Summary"
+	"viewer.find-in-audio": "Find in audio",
+	"viewer.find-in-document": "Find in document",
+	"viewer.find-in-image": "Find in image",
+	"viewer.find-in-video": "Find in video",
+	"viewer.full-transcripts": "Full transcript",
+	"viewer.items": "Items",
+	"viewer.search-results": "{{count}} search results",
+	"viewer.summary": "Summary"
 }

@@ -2,18 +2,23 @@
   import {
     _,
     fieldFullId,
+    fieldList,
     fieldMetadata,
     fieldSummary,
     fullMetadataLoaded,
+    getFieldDataFromResource,
+    getFieldIdWithShortType,
     getFieldUrl,
     getFindParagraphs,
-    getFieldIdWithShortType,
     getResourceMetadata,
+    getResultType,
     getWidgetActions,
     graphQuery,
     isKnowledgeGraphEnabled,
+    isMediaPlayer,
     isPreviewing,
     loadTranscripts,
+    metadataBlockCount,
     resetSearchInField,
     searchInFieldQuery,
     searchInFieldResults,
@@ -64,9 +69,6 @@
   $: hasMenu = menuItems.length > 0;
   $: actionsWidth = headerActionsWidth + (hasMenu ? buttonWidth * 2 : buttonWidth);
 
-  // Renderer
-  let isMediaPlayer = false;
-
   // Side panel
   const isSearchingInResource = new BehaviorSubject(false);
   let sidePanelExpanded = false;
@@ -75,7 +77,7 @@
   let findInputElement: HTMLElement;
   type sidePanelSection = 'search' | 'transcripts' | 'summary' | 'items';
   let sidePanelSectionOpen: sidePanelSection = 'search';
-  const findInPlaceholderPrefix = 'tile.find-in-';
+  const findInPlaceholderPrefix = 'viewer.find-in-';
   let findInPlaceholder = '';
 
   // Load data from the state
@@ -92,7 +94,6 @@
       case 'audio':
       case 'video':
         findInPlaceholder = `${findInPlaceholderPrefix}${result.resultType}`;
-        isMediaPlayer = true;
         break;
       case 'image':
         findInPlaceholder = `${findInPlaceholderPrefix}image`;
@@ -124,7 +125,6 @@
     resultNavigatorHidden = false;
     sidePanelExpanded = false;
     showKnowledgeGraph = false;
-    isMediaPlayer = false;
     transcriptsInitialized = false;
     sidePanelSectionOpen = 'search';
   }
@@ -206,7 +206,7 @@
       }),
       filter(metadata => !!metadata),
       map(metadata => metadata as FieldMetadata),
-      takeUntil(unsubscribeOnClose),
+      takeUntil(unsubscribeOnClose)
     ).subscribe((metadata) => fieldMetadata.set(metadata));
   }
 
@@ -255,6 +255,24 @@
     const query = graphQuery.getValue();
     console.log(`Todo: find ${query} in graph`);
   }
+
+  function navigateToField(item: FieldFullId) {
+    if (!state?.currentResult) {
+      return;
+    }
+    const field = { field_id: item.field_id, field_type: item.field_type };
+    const fieldResult = {
+      ...state.currentResult,
+      field,
+      fieldData: getFieldDataFromResource(state.currentResult, field)
+    };
+    const result: TypedResult = {
+      ...fieldResult,
+      paragraphs: [],
+      resultType: getResultType(fieldResult)
+    };
+    viewerData.set({ result, selectedParagraphIndex: -1 });
+  }
 </script>
 
 <svelte:window
@@ -264,7 +282,7 @@
 {#if $isPreviewing}
   <div class="sw-viewer"
        style:--search-section-count={sidePanelSectionOpen === 'search' ? 1 : 0}
-       style:--metadata-block-count={(isMediaPlayer ? 2 : 1) + (sidePanelSectionOpen !== 'search' ? 1 : 0)}>
+       style:--metadata-block-count={$metadataBlockCount}>
     <header style:--header-actions-width={`${actionsWidth}px`}>
       <div class="header-title">
         <DocTypeIndicator type={result?.resultType} />
@@ -419,7 +437,7 @@
                                    expanded={sidePanelSectionOpen === 'search'}
                                    on:toggle={(event) => toggleSection(event.detail)}>
                   <span
-                    slot="sectionTitle">{$_('tile.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
+                    slot="sectionTitle">{$_('viewer.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
                   <ul class="sw-paragraphs-container" slot="sectionContent">
                     {#if state.searchInFieldResults?.length > 0}
                       {#each state.searchInFieldResults as paragraph, index}
@@ -449,11 +467,11 @@
               {/if}
             {/if}
 
-            {#if isMediaPlayer}
+            {#if $isMediaPlayer}
               <MetadataContainer sectionId="transcripts"
                                  expanded={sidePanelSectionOpen === 'transcripts'}
                                  on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('tile.full-transcripts')}</span>
+                <span slot="sectionTitle">{$_('viewer.full-transcripts')}</span>
                 <ul class="sw-paragraphs-container" slot="sectionContent">
                   {#each $transcripts as paragraph, index}
                     <ParagraphResult
@@ -471,8 +489,32 @@
               <MetadataContainer sectionId="summary"
                                  expanded={sidePanelSectionOpen === 'summary'}
                                  on:toggle={(event) => toggleSection(event.detail)}>
-                <span slot="sectionTitle">{$_('tile.summary')}</span>
+                <span slot="sectionTitle">{$_('viewer.summary')}</span>
                 <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
+              </MetadataContainer>
+            {/if}
+
+            {#if $fieldList}
+              <MetadataContainer sectionId="items"
+                                 expanded={sidePanelSectionOpen === 'items'}
+                                 on:toggle={(event) => toggleSection(event.detail)}>
+                <span slot="sectionTitle">{$_('viewer.items')}</span>
+                <ul class="field-list" slot="sectionContent">
+                  {#each $fieldList as item}
+                    <li class:current={item.field_id === $fieldFullId.field_id}
+                        on:click={() => navigateToField(item)}>
+                      <div class="field-icon">
+                        <Icon size="small"
+                              name={item.field_type === 'conversation' ? 'chat' : item.field_type === 'text' ? 'file' : item.field_type} />
+                      </div>
+                      <div class="field-item">
+                                <span
+                                  class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>{item.field_type}</span>
+                        <small class="body-xs">{item.field_id}</small>
+                      </div>
+                    </li>
+                  {/each}
+                </ul>
               </MetadataContainer>
             {/if}
           {/if}

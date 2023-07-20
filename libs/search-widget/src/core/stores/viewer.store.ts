@@ -5,6 +5,7 @@ import {
   FIELD_TYPE,
   FieldMetadata,
   FileFieldData,
+  getFieldTypeFromString,
   LinkFieldData,
   longToShortFieldType,
   Search,
@@ -51,6 +52,18 @@ export interface ViewerBasicSetter {
   selectedParagraphIndex: number;
 }
 
+export const isMediaPlayer = viewerState.reader<boolean>(
+  (state) => state.currentResult?.resultType === 'video' || state.currentResult?.resultType === 'audio',
+);
+
+export const metadataBlockCount = viewerState.reader<number>((state) => {
+  const searchBlock = (state.currentResult?.paragraphs || []).length > 0 ? 1 : 0;
+  const transcriptBlock = isMediaPlayer.getValue() ? 1 : 0;
+  const summaryBlock = !!state.summary ? 1 : 0;
+  const itemsBlock = (fieldList.getValue() || []).length > 0 ? 1 : 0;
+  return searchBlock + transcriptBlock + summaryBlock + itemsBlock;
+});
+
 export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
   (state) => state,
   (state, data) => ({
@@ -64,7 +77,11 @@ export const viewerData = viewerState.writer<ViewerState, ViewerBasicSetter>(
     selectedParagraphIndex: data.selectedParagraphIndex,
     fieldFullId:
       data.result && data.result.field
-        ? { field_id: data.result.field.field_id, field_type: data.result.field.field_type, resourceId: data.result.id }
+        ? {
+            field_id: data.result.field.field_id,
+            field_type: data.result.field.field_type,
+            resourceId: data.result.id,
+          }
         : null,
     isPreviewing: !!data,
     searchInFieldResults: null,
@@ -199,7 +216,7 @@ export const playFrom = viewerState.reader<number>((state) => {
     ? state.transcripts
     : (state.currentResult?.paragraphs as Search.FindParagraph[]);
   const selectedParagraph = paragraphs[state.selectedParagraphIndex];
-  return selectedParagraph.position.start_seconds?.[0] || 0;
+  return selectedParagraph?.position.start_seconds?.[0] || 0;
 });
 
 export const fieldFullId = viewerState.writer<FieldFullId | null, FieldFullId | null>(
@@ -233,6 +250,25 @@ export const fieldData = viewerState.writer<IFieldData | null, IFieldData | null
     };
   },
 );
+
+export const fieldList = viewerState.reader<FieldFullId[] | null>((state) => {
+  if (!state.currentResult) {
+    return null;
+  }
+  const resource = state.currentResult;
+  const fieldList = Object.entries(resource.data || {})
+    .filter(([type, fieldMap]) => type !== 'generics' && !!fieldMap)
+    .reduce((list, [type, fieldMap]) => {
+      const fieldType = getFieldTypeFromString(type.substring(0, type.length - 1));
+      if (fieldType) {
+        Object.keys(fieldMap).forEach((fieldId) =>
+          list.push({ field_id: fieldId, field_type: fieldType, resourceId: resource.id }),
+        );
+      }
+      return list;
+    }, [] as FieldFullId[]);
+  return fieldList.length > 1 ? fieldList : null;
+});
 
 export const fullMetadataLoaded = viewerState.reader<boolean>((state) => state.fullMetadataLoaded);
 

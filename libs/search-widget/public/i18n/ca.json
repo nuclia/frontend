@@ -59,11 +59,12 @@
 	"results.summary": "Resum",
 	"suggest.intents": "Etiquetes",
 	"suggest.paragraphs": "Paràgraf suggerit",
-	"tile.find-in-audio": "Troba a l'àudio",
-	"tile.find-in-document": "Troba al document",
-	"tile.find-in-image": "Buscar a la imatge",
-	"tile.find-in-video": "Troba al vídeo",
-	"tile.full-transcripts": "Transcripció completa",
-	"tile.search-results": "{{count}} resultats de cerca",
-	"tile.summary": "Resum"
+	"viewer.find-in-audio": "Troba a l'àudio",
+	"viewer.find-in-document": "Troba al document",
+	"viewer.find-in-image": "Buscar a la imatge",
+	"viewer.find-in-video": "Troba al vídeo",
+	"viewer.full-transcripts": "Transcripció completa",
+	"viewer.items": "Elements",
+	"viewer.search-results": "{{count}} resultats de cerca",
+	"viewer.summary": "Resum"
 }
