@@ -3,7 +3,7 @@ import { coerceNumberProperty } from '@angular/cdk/coercion';
 import { parseCsv } from '../csv-parser';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { ConfirmationData, Kind } from '@guillotinaweb/pastanaga-angular';
-import { filter } from 'rxjs/operators';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-csv-select',
@@ -53,7 +53,7 @@ export class CsvSelectComponent<T> {
     if (this.confirmData) {
       this.modalService
         .openConfirm(this.confirmData)
-        .onClose.pipe(filter((confirm) => confirm))
+        .onClose.pipe(filter((confirm) => !!confirm))
         .subscribe(() => this.openUploadDialog());
     } else {
       this.openUploadDialog();
