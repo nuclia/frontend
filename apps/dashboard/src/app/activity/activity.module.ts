@@ -8,13 +8,16 @@ import { ActivityComponent } from './activity.component';
 import { ActivityListComponent } from './activity-list.component';
 import { PaButtonModule, PaTabsModule } from '@guillotinaweb/pastanaga-angular';
 import { PipesModule } from '@flaps/common';
-
-const Components = [ActivityComponent, ActivityListComponent];
+import { ActivityDownloadComponent } from './activity-download.component';
 
 const ROUTES = [
   {
     path: '',
     component: ActivityComponent,
+  },
+  {
+    path: 'download',
+    component: ActivityDownloadComponent,
   },
 ];
 
@@ -28,7 +31,7 @@ const ROUTES = [
     PaButtonModule,
     PaTabsModule,
   ],
-  declarations: [...Components],
+  declarations: [ActivityComponent, ActivityListComponent, ActivityDownloadComponent],
   exports: [],
 })
 export class ActivityModule {}

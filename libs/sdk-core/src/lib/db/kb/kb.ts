@@ -1,4 +1,4 @@
-import { catchError, map, Observable, of, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import type {
   Entities,
   EntitiesGroup,
@@ -12,6 +12,7 @@ import type {
   UpdateEntitiesGroupPayload,
 } from './kb.models';
 import {
+  ActivityDownloadList,
   Counters,
   ExtractedDataTypes,
   IKnowledgeBoxCreation,
@@ -227,6 +228,16 @@ export class KnowledgeBox implements IKnowledgeBox {
       .filter((p) => p)
       .join('&');
     return this.nuclia.rest.get<EventList>(`/kb/${this.id}/activity${params ? '?' + params : ''}`);
+  }
+
+  listActivityDownloads(type: EventType): Observable<ActivityDownloadList> {
+    return this.nuclia.rest.get<ActivityDownloadList>(`/kb/${this.id}/activity/downloads?type=${type}`);
+  }
+
+  downloadActivity(type: EventType, month: string): Observable<Blob> {
+    return this.nuclia.rest
+      .get<Response>(`/kb/${this.id}/activity/download?type=${type}&month=${month}`, {}, true)
+      .pipe(switchMap((res) => from(res.blob())));
   }
 
   getConfiguration(): Observable<{ [id: string]: any }> {

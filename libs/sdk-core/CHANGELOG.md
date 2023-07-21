@@ -1,3 +1,9 @@
+# 1.5.1 (unreleased)
+
+### Improvements
+
+- Add support for `/activity/download` and `/activity/downloads` endpoints
+
 # 1.5.0 (2023-07-18)
 
 ### Breaking changes
