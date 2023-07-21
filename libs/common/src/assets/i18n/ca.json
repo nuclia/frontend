@@ -216,6 +216,7 @@
 	"empty.title": "No hem trobat cap resultat :(",
 	"entities.law": "Legal",
 	"entities.quantity": "Quantitats i mesures",
+	"error.creating-kb": "S'ha produït un error en crear el quadre de coneixement",
 	"error.deleting-resource": "No s'ha pogut suprimir el recurs",
 	"error.deleting-resources": "No s'ha pogut suprimir {{count}} recursos",
 	"error.reprocessing-resource": "No s'ha pogut tornar a processar el recurs",

@@ -228,6 +228,7 @@
 	"empty.title": "No results.",
 	"entities.law": "Legal",
 	"entities.quantity": "Quantities and measures",
+	"error.creating-kb": "An error occurred while creating the Knowledge Box",
 	"error.deleting-resource": "Deleting the resource failed",
 	"error.deleting-resources": "Deletion failed for {{count}} resources",
 	"error.reprocessing-resource": "Reprocessing the resource failed",

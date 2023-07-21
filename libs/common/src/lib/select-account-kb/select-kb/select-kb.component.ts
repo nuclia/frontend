@@ -36,6 +36,7 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   errorMessages: IErrorMessages = { sluggable: 'stash.kb_name_invalid' } as IErrorMessages;
 
   standalone = this.environment.standalone;
+  creatingKb = false;
 
   constructor(
     private navigation: NavigationService,
@@ -107,19 +108,24 @@ export class SelectKbComponent implements OnInit, OnDestroy {
   save() {
     if (this.kbName.invalid || !this.kbName.value) return;
 
+    this.creatingKb = true;
+    this.kbName.disable();
     const kbSlug = STFUtils.generateSlug(this.kbName.value);
     const kbData = {
       slug: kbSlug,
       zone: this.account!.zone,
       title: this.kbName.value,
     };
-    this.sdk.nuclia.db.createKnowledgeBox(this.account!.slug, kbData).subscribe((kb) => {
-      this.router.navigate([this.navigation.getKbUrl(this.account!.slug, this.standalone ? kb.id : kbSlug)]);
+    this.sdk.nuclia.db.createKnowledgeBox(this.account!.slug, kbData).subscribe({
+      next: (kb) => {
+        this.router.navigate([this.navigation.getKbUrl(this.account!.slug, this.standalone ? kb.id : kbSlug)]);
+      },
+      error: () => {
+        this.toast.error('error.creating-kb');
+        this.creatingKb = false;
+        this.kbName.enable();
+      },
     });
-  }
-
-  back() {
-    this.router.navigate(['/select-account-kb']);
   }
 
   goToAccountManage() {

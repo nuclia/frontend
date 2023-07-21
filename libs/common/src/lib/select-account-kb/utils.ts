@@ -23,10 +23,10 @@ export const selectAnimations = [
           width: '100%',
         }),
       ]),
-      query(':enter', [style({ transform: 'translateX(100%)', opacity: 0 })]),
+      query(':enter', [style({ transform: 'translateX(100%)', opacity: 0 })], { optional: true }),
       group([
-        query(':leave', [animate(duration, style({ transform: 'translateX(-100%)', opacity: 0 }))]),
-        query(':enter', [animate(duration, style({ transform: 'translateX(0)', opacity: 1 }))]),
+        query(':leave', [animate(duration, style({ transform: 'translateX(-100%)', opacity: 0 }))], { optional: true }),
+        query(':enter', [animate(duration, style({ transform: 'translateX(0)', opacity: 1 }))], { optional: true }),
       ]),
     ]),
     transition('true => false', [
