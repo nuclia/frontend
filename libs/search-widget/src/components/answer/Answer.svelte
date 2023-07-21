@@ -16,6 +16,7 @@
   const dispatch = createEventDispatcher();
   const NEWLINE = new RegExp(/\n/g);
   $: text = answer.text?.replace(NEWLINE, '<br>') || '';
+  $: notEnoughData = text === 'Not enough data to answer this.';
   $: isMobile = isMobileViewport(innerWidth);
 
   const sources = getSortedResults(Object.values(answer.sources?.resources));
@@ -29,7 +30,7 @@
       <Feedback {rank} />
     {/if}
   </div>
-  {#if answer.sources}
+  {#if answer.sources && !notEnoughData}
     <div class="feedback">
       <Feedback {rank} />
     </div>

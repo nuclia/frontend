@@ -10,6 +10,7 @@
   }
   .container {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
   }
   .answer {
@@ -29,14 +30,14 @@
 }
 @media (max-width: 600px) {
   .sw-initial-answer .actions {
-    position: absolute;
-    right: var(--rhythm-2);
-    top: var(--rhythm-1_5);
+    text-align: right;
   }
 }
 
 @media (min-width: 599px) {
   .sw-initial-answer {
+    min-height: var(--rhythm-8);
+
     .answer {
       max-width: calc(100% - var(--rhythm-27));
     }
