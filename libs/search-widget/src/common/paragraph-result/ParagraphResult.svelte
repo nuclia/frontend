@@ -28,11 +28,10 @@
 
   let paragraphElement: HTMLElement;
   $: hasEllipsis = paragraphElement && paragraphElement.offsetWidth < paragraphElement.scrollWidth;
-  $: paragraphElement && dispatch('paragraphHeight', paragraphElement.offsetHeight);
 
   function toggleExpand() {
     expanded = !expanded;
-    setTimeout(() => dispatch('paragraphHeight', paragraphElement.offsetHeight));
+    setTimeout(() => dispatch('paragraphHeight', `${paragraphElement.offsetHeight}px`));
   }
 </script>
 
