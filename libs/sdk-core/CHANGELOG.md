@@ -3,6 +3,7 @@
 ### Improvements
 
 - Add support for `/activity/download` and `/activity/downloads` endpoints
+- Move `highlight` option from `SearchOptions` to `BaseSearchOptions`
 
 # 1.5.0 (2023-07-18)
 
