@@ -27,6 +27,7 @@
   let fallback = '';
   let isPlayable = false;
   let innerWidth = window.innerWidth;
+  let expandedParagraphHeight;
   $: isMobile = isMobileViewport(innerWidth);
   $: {
     switch (result.resultType) {
@@ -111,14 +112,18 @@
         class="sw-paragraphs-container"
         class:expanded={showAllResults}
         class:can-expand={result.paragraphs.length > 4}
-        style:--paragraph-count={result.paragraphs.length}>
+        style:--paragraph-count={result.paragraphs.length}
+        style:--expanded-paragraph-height={!!expandedParagraphHeight ? expandedParagraphHeight : undefined}
+      >
         {#each result.paragraphs as paragraph, index}
           <ParagraphResult
             {paragraph}
             resultType={result.resultType}
             ellipsis={true}
             minimized={isMobile}
-            on:open={() => clickOnResult(paragraph, index)} />
+            on:open={() => clickOnResult(paragraph, index)}
+            on:paragraphHeight={(event) => expandedParagraphHeight = event.detail}
+          />
         {/each}
       </ul>
 
