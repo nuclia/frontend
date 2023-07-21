@@ -32,12 +32,6 @@
       {/if}
     {:else}
       <div class="container">
-        <div class="answer">
-          <Answer
-            answer={$firstAnswer}
-            rank={0}
-            hideFeedback={true} />
-        </div>
         <div class="actions">
           <Button
             aspect="basic"
@@ -51,6 +45,12 @@
           <div class="feedback">
             <Feedback rank={0} />
           </div>
+        </div>
+        <div class="answer">
+          <Answer
+            answer={$firstAnswer}
+            rank={0}
+            hideFeedback={true} />
         </div>
       </div>
     {/if}
