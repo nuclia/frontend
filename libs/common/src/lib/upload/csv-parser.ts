@@ -5,7 +5,7 @@ const SLUG_REGEX = /^[a-zA-Z0-9-_]+$/;
 
 // CSV parser following RFC 4180: https://github.com/mholt/PapaParse
 export function parseCsv(content: string): string[][] {
-  const parseResult = parse<string[]>(content, {});
+  const parseResult = parse<string[]>(content, { skipEmptyLines: true });
   return parseResult.data;
 }
 
