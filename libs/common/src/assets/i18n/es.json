@@ -216,6 +216,7 @@
 	"empty.title": "No hemos encontrado ningún resultado :(",
 	"entities.law": "Legal",
 	"entities.quantity": "Cantidades y medidas",
+	"error.creating-kb": "Ocurrió un error al crear el cuadro de conocimiento",
 	"error.deleting-resource": "Error al eliminar el recurso",
 	"error.deleting-resources": "Error al eliminar {{count}} recursos",
 	"error.reprocessing-resource": "Error al reprocesar el recurso",

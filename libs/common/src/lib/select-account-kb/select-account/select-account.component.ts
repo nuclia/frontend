@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { ActivatedRoute, NavigationStart, Router, Scroll } from '@angular/router';
+import { filter, Subject } from 'rxjs';
 import { SimpleAccount, StaticEnvironmentConfiguration } from '@flaps/core';
 import { AccountsKbs, SelectAccountKbService } from '../select-account-kb.service';
 import { selectAnimations, standaloneSimpleAccount } from '../utils';
@@ -32,10 +31,19 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.accounts = this.selectService.getAccounts();
     this.kbs = this.selectService.getKbs();
-    this.route.url.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
-      this.selectKb = this.route.children.length > 0;
-      this.cdr.markForCheck();
-    });
+
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart || event instanceof Scroll))
+      .subscribe((event) => {
+        // Good animation is done using NavigationStart,
+        // but we also listen to Scroll event because NavigationStart isn't triggered when loading a page directly
+        if (event instanceof NavigationStart) {
+          this.selectKb = event.url !== '/select';
+        } else {
+          this.selectKb = (event as Scroll).routerEvent.url !== '/select';
+        }
+        this.cdr.markForCheck();
+      });
 
     if (this.standalone) {
       this.accounts = [standaloneSimpleAccount];

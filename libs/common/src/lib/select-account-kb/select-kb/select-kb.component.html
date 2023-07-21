@@ -68,28 +68,20 @@
 
   <div class="select-kb-footer">
     <pa-button
-      *ngIf="(standalone && !addKb) || (canAddKb | async) === true"
+      *ngIf="!addKb && (standalone || (canAddKb | async) === true)"
       (click)="toggleForm()">
       {{ 'stash.create' | translate }}
-    </pa-button>
-
-    <pa-button
-      *ngIf="!addKb && !standalone"
-      kind="inverted"
-      (click)="back()">
-      {{ 'generic.back_to_accounts' | translate }}
     </pa-button>
 
     <ng-container *ngIf="addKb">
       <pa-button
         aspect="basic"
-        [disabled]="kbName.pristine"
         (click)="toggleForm()">
         {{ 'generic.cancel' | translate }}
       </pa-button>
 
       <pa-button
-        [disabled]="kbName.invalid"
+        [disabled]="kbName.invalid || creatingKb"
         (click)="save()">
         {{ 'generic.save' | translate }}
       </pa-button>
