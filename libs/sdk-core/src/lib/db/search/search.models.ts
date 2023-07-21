@@ -31,6 +31,7 @@ export interface BaseSearchOptions {
   resource_filters?: string[];
   shards?: string[];
   autofilter?: boolean;
+  highlight?: boolean;
 }
 
 export interface SearchOptions extends BaseSearchOptions {
@@ -39,7 +40,6 @@ export interface SearchOptions extends BaseSearchOptions {
   isAdvanced?: boolean;
 
   // API options
-  highlight?: boolean;
   faceted?: string[];
   sort?: SortOption;
   page_number?: number;
