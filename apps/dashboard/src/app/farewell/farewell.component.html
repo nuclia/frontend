@@ -1,9 +1,6 @@
 <stf-user-container>
   <div class="message">
-    <h1>{{ 'farewell.title' | translate }}</h1>
-    <div
-      [innerHtml]="
-        'farewell.message' | translate: { username: (userPrefs | async)?.name || '', email: 'eudald@nuclia.com' }
-      "></div>
+    <h1>{{ ((feedback | async) ? 'farewell.thanks_time' : 'farewell.thanks_trust') | translate }}</h1>
+    <div>{{ ((feedback | async) ? 'farewell.response_submitted' : 'farewell.see_again') | translate }}</div>
   </div>
 </stf-user-container>

@@ -46,7 +46,7 @@ export class AccountDeleteComponent {
           if (keepUser) {
             this.router.navigate([this.navigation.getAccountSelectUrl()]);
           } else {
-            this.router.navigate(['/setup/farewell']);
+            this.router.navigate(['/farewell']);
           }
           this.modal.close();
         },
