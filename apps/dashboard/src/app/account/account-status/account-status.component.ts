@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
-import { combineLatest, filter, map, of, switchMap, take } from 'rxjs';
+import { combineLatest, filter, map, of, shareReplay, switchMap, take } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 import { BillingService } from '../billing/billing.service';
-import { AccountUsage } from '../billing/billing.models';
+import { AccountUsage, SubscriptionStatus } from '../billing/billing.models';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PaButtonModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
@@ -26,6 +26,8 @@ export class AccountStatusComponent {
 
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
   isTrial = this.accountType.pipe(map((type) => type === 'stash-trial'));
+  isSubscribed = this.billingService.isSubscribed;
+  subscription = this.billingService.getSubscription().pipe(shareReplay());
   currency = this.billingService.getAccountUsage().pipe(map((usage) => usage.currency));
   price = combineLatest([this.billingService.getPrices(), this.accountType]).pipe(
     map(([prices, accountType]) => prices?.[accountType]?.recurring.month.price),
@@ -51,6 +53,17 @@ export class AccountStatusComponent {
       const expiration = new Date(`${account.trial_expiration_date}+00:00`);
       const now = new Date();
       return expiration < now;
+    }),
+  );
+  isCancelScheduled = this.subscription.pipe(
+    map((subscription) => subscription?.status === SubscriptionStatus.CANCEL_SCHEDULED),
+  );
+  subscriptionDaysLeft = this.subscription.pipe(
+    map((subscription) => {
+      const expiration = new Date(subscription?.end_billing_period || '');
+      const now = new Date();
+      const difference = differenceInDays(expiration, now) + 1;
+      return difference > 0 ? difference : 0;
     }),
   );
 

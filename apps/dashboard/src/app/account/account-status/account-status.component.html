@@ -5,9 +5,20 @@
       <span *ngIf="!(isTrial | async)">{{ 'account.type.' + (accountType | async) | translate }}</span>
     </div>
     <div class="title-l price">
-      <ng-container *ngIf="price | async as price">
-        <span>{{ price | currency : (getCurrency() | async) : 'symbol' : '1.0-0' }}</span>
-        <span class="body-s unit">/{{ 'billing.month' | translate }}</span>
+      <ng-container *ngIf="isSubscribed | async">
+        <ng-container *ngIf="(isCancelScheduled | async) === false">
+          <span>{{ price | async | currency : (getCurrency() | async) : 'symbol' : '1.0-0' }}</span>
+          <span class="body-s unit">/{{ 'billing.month' | translate }}</span>
+        </ng-container>
+        <ng-container *ngIf="isCancelScheduled | async">
+          <span>
+            {{
+              (subscriptionDaysLeft | async) === 1
+                ? ('account.day_left' | translate)
+                : ('account.days_left' | translate : { days: (subscriptionDaysLeft | async) })
+            }}
+          </span>
+        </ng-container>
       </ng-container>
       <ng-container *ngIf="isTrial | async">
         <span *ngIf="trialExpired | async">{{ 'account.expired' | translate }}</span>
