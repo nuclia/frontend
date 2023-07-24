@@ -14,7 +14,7 @@
       [(value)]="deleteImmediately"
       id="delete-user">
       <pa-radio
-        *ngIf="isActiveSubscription | async"
+        [class.hidden-option]="!(isActiveSubscription | async)"
         noEllipsis
         value="no">
         {{ 'account.delete.defer_delete' | translate }}
