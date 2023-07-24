@@ -46,12 +46,22 @@ export class ActivityDownloadComponent implements OnDestroy {
     this.sdk.currentKb
       .pipe(
         take(1),
-        switchMap((kb) => kb.downloadActivity(this.selectedEventType, month)),
+        switchMap((kb) => kb.downloadActivity(this.selectedEventType, month).pipe(map((blob) => ({ blob, kb })))),
       )
-      .subscribe((blob) => {
-        const url = URL.createObjectURL(blob);
+      .subscribe((res) => {
+        const url = URL.createObjectURL(res.blob);
         this.urls.push(url);
-        this.window.open(url, 'blank', 'noreferrer');
+        const filename = `activity_${res.kb.id}_${this.selectedEventType.toLowerCase()}_${month}`;
+
+        // Hack to set csv filename
+        const a = this.window.document.createElement('a');
+        this.window.document.body.appendChild(a);
+        a.href = url;
+        a.download = filename;
+        a.click();
+        setTimeout(() => {
+          a.remove();
+        });
       });
   }
 
