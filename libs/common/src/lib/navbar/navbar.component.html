@@ -35,7 +35,7 @@
           </a>
           <ng-container *ngIf="!standalone">
             <a
-              *ngIf="isActivityEnabled | async"
+              *ngIf="(isActivityEnabled | async) && (isTrial | async) === false"
               [routerLink]="kbUrl + '/activity/download'"
               routerLinkActive="active"
               class="nav-link"
