@@ -37,7 +37,6 @@ export interface BaseSearchOptions {
 export interface SearchOptions extends BaseSearchOptions {
   // non API-official options
   inTitleOnly?: boolean;
-  isAdvanced?: boolean;
 
   // API options
   faceted?: string[];
