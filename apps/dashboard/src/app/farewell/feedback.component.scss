@@ -1,0 +1,27 @@
+@import 'variables';
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(5);
+  width: rhythm(48);
+}
+
+pa-radio-group{
+  display: flex !important;
+  flex-direction: column;
+  gap: rhythm(1);
+}
+
+label {
+  display: block;
+  margin-bottom: rhythm(0.5);
+}
+
+.buttons {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(1);
+  margin-top: rhythm(3);
+}

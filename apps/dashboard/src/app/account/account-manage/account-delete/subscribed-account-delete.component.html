@@ -1,0 +1,42 @@
+<pa-modal-dialog>
+  <pa-modal-title>
+    {{ 'account.delete.subscription_detected' | translate }}
+    <div class="expiration title-xxs">
+      {{ ('account.delete.expiration' | translate) + ' ' }}
+      <pa-datetime
+        [datetime]="(subscription | async)?.end_billing_period || ''"
+        format="human"
+        dateOnly></pa-datetime>
+    </div>
+  </pa-modal-title>
+  <pa-modal-content>
+    <pa-radio-group
+      [(value)]="deleteImmediately"
+      id="delete-user">
+      <pa-radio
+        [class.hidden-option]="!(isActiveSubscription | async)"
+        noEllipsis
+        value="no">
+        {{ 'account.delete.defer_delete' | translate }}
+      </pa-radio>
+      <pa-radio
+        noEllipsis
+        value="yes">
+        {{ 'account.delete.delete_immediately' | translate }}
+      </pa-radio>
+    </pa-radio-group>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      aspect="basic"
+      (click)="modal.close()">
+      {{ 'pastanaga.cancel' | translate }}
+    </pa-button>
+    <pa-button
+      kind="destructive"
+      (click)="confirm()"
+      [disabled]="deleteImmediately === undefined || loading">
+      {{ 'pastanaga.confirm' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-dialog>

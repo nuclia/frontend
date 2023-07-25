@@ -10,15 +10,17 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject, take } from 'rxjs';
 import { concatMap, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AccountModification, SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
 import { TOPBAR_HEIGHT } from '../../styles/js-variables';
 import { NavigationService, Sluggable } from '@flaps/common';
-import { IErrorMessages, ModalConfig } from '@guillotinaweb/pastanaga-angular';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { SisModalService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
+import { SubscribedAccountDeleteComponent } from './account-delete/subscribed-account-delete.component';
+import { BillingService } from '../billing/billing.service';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 
@@ -64,7 +66,7 @@ export class AccountManageComponent implements OnInit, OnDestroy {
     private router: Router,
     private navigation: NavigationService,
     private modalService: SisModalService,
-    private toaster: SisToastService,
+    private billingService: BillingService,
   ) {}
 
   ngOnInit(): void {
@@ -135,39 +137,15 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   }
 
   deleteAccount() {
-    this.sdk.nuclia.db
-      .getWelcome()
+    this.billingService.isSubscribed
       .pipe(
-        map(
-          (welcome) => welcome.dependant_accounts.length === 1 && welcome.dependant_accounts[0].id === this.account!.id,
-        ),
-        switchMap(
-          (showDeleteUser) =>
-            this.modalService.openModal(
-              AccountDeleteComponent,
-              new ModalConfig<{ showDeleteUser: boolean }>({ data: { showDeleteUser } }),
-            ).onClose,
-        ),
-        filter((result) => !!result),
-        switchMap((result) =>
-          this.sdk.nuclia.db.deleteAccount(this.account!.slug).pipe(
-            switchMap(() => (result.deleteUser ? this.sdk.nuclia.auth.deleteAuthenticatedUser() : of(undefined))),
-            map(() => result.deleteUser),
-          ),
+        take(1),
+        switchMap((subscribed) =>
+          subscribed
+            ? this.modalService.openModal(SubscribedAccountDeleteComponent).onClose
+            : this.modalService.openModal(AccountDeleteComponent).onClose,
         ),
       )
-      .subscribe({
-        next: (deleteUser) => {
-          this.stateService.cleanAccount();
-          if (deleteUser) {
-            this.router.navigate(['/setup/farewell']);
-          } else {
-            this.router.navigate([this.navigation.getAccountSelectUrl()]);
-          }
-        },
-        error: () => {
-          this.toaster.error('account.delete.error');
-        },
-      });
+      .subscribe();
   }
 }

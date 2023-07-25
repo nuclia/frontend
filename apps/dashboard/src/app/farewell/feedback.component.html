@@ -1,0 +1,57 @@
+<stf-user-container>
+  <div class="message">
+    <header>
+      <h1>{{ 'feedback.title' | translate }}</h1>
+      <div class="body-m">{{ 'feedback.subtitle' | translate }}</div>
+    </header>
+    <pa-radio-group
+      [(value)]="feedback"
+      name="options">
+      <pa-radio value="too_expensive">
+        {{ 'feedback.reason.too_expensive' | translate }}
+      </pa-radio>
+      <pa-radio value="missing_features">
+        {{ 'feedback.reason.missing_features' | translate }}
+      </pa-radio>
+      <pa-radio value="switched_service">
+        {{ 'feedback.reason.switched_service' | translate }}
+      </pa-radio>
+      <pa-radio value="unused">
+        {{ 'feedback.reason.unused' | translate }}
+      </pa-radio>
+      <pa-radio value="custom_service">
+        {{ 'feedback.reason.customer_service' | translate }}
+      </pa-radio>
+      <pa-radio value="too_complex">
+        {{ 'feedback.reason.too_complex' | translate }}
+      </pa-radio>
+      <pa-radio value="low_quality">
+        {{ 'feedback.reason.low_quality' | translate }}
+      </pa-radio>
+      <pa-radio value="other">
+        {{ 'feedback.reason.other' | translate }}
+      </pa-radio>
+    </pa-radio-group>
+    <div>
+      <label
+        class="body-m"
+        for="feedback-comment">
+        {{ 'feedback.anything_else' | translate }}
+      </label>
+      <pa-textarea
+        id="feedback-comment"
+        [(value)]="comment"
+        [rows]="4"
+        externalLabel></pa-textarea>
+      <div class="buttons">
+        <pa-button
+          kind="destructive"
+          (click)="delete()"
+          [disabled]="loading">
+          {{ 'account.delete_account' | translate }}
+        </pa-button>
+        <nsi-spinner *ngIf="loading"></nsi-spinner>
+      </div>
+    </div>
+  </div>
+</stf-user-container>

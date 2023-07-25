@@ -3,6 +3,7 @@ import { SDKService } from '@flaps/core';
 import { BehaviorSubject, catchError, combineLatest, map, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 import { AccountTypes } from '@nuclia/core';
 import {
+  AccountSubscription,
   AccountUsage,
   BillingDetails,
   Currency,
@@ -11,6 +12,7 @@ import {
   Prices,
   StripeCustomer,
   StripeSubscription,
+  StripeSubscriptionCancellation,
   StripeSubscriptionCreation,
 } from './billing.models';
 
@@ -80,6 +82,16 @@ export class BillingService {
     );
   }
 
+  getSubscription(): Observable<AccountSubscription | null> {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.get<AccountSubscription>(`/billing/account/${account.id}/subscription`),
+      ),
+      catchError(() => of(null)),
+    );
+  }
+
   createSubscription(data: StripeSubscriptionCreation) {
     return this.sdk.currentAccount.pipe(
       take(1),
@@ -93,6 +105,15 @@ export class BillingService {
     return this.sdk.currentAccount.pipe(
       take(1),
       switchMap((account) => this.sdk.nuclia.rest.patch<void>(`/billing/account/${account.id}/subscription`, data)),
+    );
+  }
+
+  cancelSubscription(data: StripeSubscriptionCancellation) {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.post<void>(`/billing/account/${account.id}/subscription/cancel`, data),
+      ),
     );
   }
 

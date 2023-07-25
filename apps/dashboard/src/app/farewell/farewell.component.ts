@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { UserService } from '@flaps/core';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-setup-farewell',
@@ -7,6 +8,6 @@ import { UserService } from '@flaps/core';
   styleUrls: ['./farewell.component.scss'],
 })
 export class FarewellComponent {
-  userPrefs = this.userService.userPrefs;
-  constructor(private userService: UserService) {}
+  feedback = this.route.queryParamMap.pipe(map((params) => params.get('feedback') === 'true'));
+  constructor(private route: ActivatedRoute) {}
 }

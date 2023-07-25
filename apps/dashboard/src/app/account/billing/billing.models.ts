@@ -58,11 +58,44 @@ export interface PaymentMethod {
   payment_method_type: string;
 }
 
+export enum SubscriptionStatus {
+  NO_SUBSCRIPTION = 'no_subscription',
+  PENDING = 'pending',
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  CANCEL_SCHEDULED = 'cancel_scheduled',
+  CANCELED = 'canceled',
+}
+
+export enum CancellationFeedback {
+  TOO_EXPENSIVE = 'too_expensive',
+  MISSING_FEATURES = 'missing_features',
+  SWITCHED_SERVICE = 'switched_service',
+  UNUSED = 'unused',
+  CUSTOMER_SERVICE = 'customer_service',
+  TOO_COMPLEX = 'too_complex',
+  LOW_QUALITY = 'low_quality',
+  OTHER = 'other',
+}
+
+export interface AccountSubscription {
+  status: SubscriptionStatus;
+  on_demand_budget: number;
+  billing_interval: RecurrentPriceInterval;
+  start_billing_period: string;
+  end_billing_period: string;
+}
+
 export interface StripeSubscriptionCreation {
   payment_method_id: string;
   on_demand_budget: number;
   billing_interval?: RecurrentPriceInterval;
   account_type: AccountTypes;
+}
+
+export interface StripeSubscriptionCancellation {
+  feedback?: CancellationFeedback;
+  comment?: string;
 }
 
 export interface StripeSubscription {

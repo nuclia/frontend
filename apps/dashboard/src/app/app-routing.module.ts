@@ -34,6 +34,7 @@ import {
 } from './knowledge-box';
 import { inviteGuard } from './invite/invite.guard';
 import { InviteComponent } from './invite/invite.component';
+import { FeedbackComponent } from './farewell/feedback.component';
 
 const routes: Routes = [
   {
@@ -186,7 +187,12 @@ const routes: Routes = [
     ],
   },
   {
-    path: 'setup/farewell',
+    path: 'feedback',
+    component: FeedbackComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'farewell',
     component: FarewellComponent,
   },
   {

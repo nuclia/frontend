@@ -7,6 +7,7 @@ import { AccountService, STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
+import { SubscribedAccountDeleteComponent } from '../../account-manage/account-delete/subscribed-account-delete.component';
 
 @Component({
   selector: 'app-subscriptions',
@@ -66,7 +67,7 @@ export class SubscriptionsComponent {
     this.window.location.href = 'mailto:support@nuclia.com';
   }
 
-  cancel() {
-    this.window.open('https://tr1ow02y4vw.typeform.com/to/zOiVFwJU', '_blank', 'noreferrer,noopener');
+  delete() {
+    this.modalService.openModal(SubscribedAccountDeleteComponent);
   }
 }

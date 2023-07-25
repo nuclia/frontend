@@ -218,13 +218,13 @@
     *ngIf="isSubscribed | async"
     class="cancel-subscription">
     <div>
-      <h2>{{ 'billing.cancel_subscription.title' | translate }}</h2>
+      <h2>{{ 'account.delete_account' | translate }}</h2>
       <div>{{ 'billing.cancel_subscription.description' | translate }}</div>
     </div>
     <pa-button
-      (click)="cancel()"
+      (click)="delete()"
       kind="destructive">
-      {{ 'billing.cancel_subscription' | translate }}
+      {{ 'generic.delete' | translate }}
     </pa-button>
   </div>
 </div>
