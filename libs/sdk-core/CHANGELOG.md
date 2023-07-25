@@ -1,4 +1,8 @@
-# 1.5.1 (unreleased)
+# 1.6.0 (2023-07-25)
+
+### Breaking changes
+
+- Remove `advanced_query` support on search endpoints
 
 ### Improvements
 
@@ -18,7 +22,7 @@
 - Add `SHORTENED_METADATA` type to `ExtractedDataTypes`
 - Add `selections` in field metadata
 - Update Learning configurations models
-  - Update `LearningConfiguration` interface 
+  - Update `LearningConfiguration` interface
   - Add `LearningConfigurationSchemas` and `LearningConfigurationSchema` interfaces
 - Add `resource_filters` property to `BaseSearchOptions`
 - Add `find` method to `resource` class
