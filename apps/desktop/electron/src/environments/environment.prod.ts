@@ -1,6 +1,6 @@
-declare const __BUILD_VERSION__: string;
-
 export const environment = {
   production: true,
-  version: __BUILD_VERSION__,
+  sentry_url: '__SENTRY_URL__',
+  sentry_environment: 'prod',
+  sentry_release: '__SENTRY_RELEASE__',
 };

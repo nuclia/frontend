@@ -1,6 +1,6 @@
 {
   "name": "nuclia",
-  "version": "2.6.1",
+  "version": "2.6.2",
   "license": "MIT",
   "author": "Nuclia.cloud",
   "description": "Nuclia frontend apps and libs",
@@ -42,6 +42,8 @@
     "@nxext/vite": "15.1.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@sentry/angular": "^7.2.0",
+    "@sentry/electron": "^4.8.0",
+    "@sentry/node": "^7.60.0",
     "@sentry/tracing": "^7.2.0",
     "@sveltejs/kit": "^1.15.2",
     "@sveltejs/package": "^2.0.2",

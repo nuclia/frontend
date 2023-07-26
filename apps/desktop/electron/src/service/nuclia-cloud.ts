@@ -64,7 +64,7 @@ export class NucliaCloud {
                 })
                 .pipe(
                   catchError((error: any) => {
-                    console.error(`Problem uploading ${filename} to ${slug}, status ${error}`);
+                    console.error(`Problem uploading ${filename} to ${slug}, error: ${JSON.stringify(error)}`);
                     return of(false);
                   }),
                   switchMap((res) => {
