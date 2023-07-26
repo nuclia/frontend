@@ -7,6 +7,7 @@
   import { createEventDispatcher } from 'svelte';
   import { isMobileViewport } from '../../common/utils';
   import ResultRow from '../result-row/ResultRow.svelte';
+  import { hideSources } from '../../core/stores/widget.store';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
   export let hideFeedback = false;
@@ -34,18 +35,20 @@
     <div class="feedback">
       <Feedback {rank} />
     </div>
-    <Expander on:toggleExpander>
-      <h3
-        class="title-xs"
-        slot="header">
-        {isMobile ? $_('answer.sources-mobile') : $_('answer.sources')}
-      </h3>
-      <div class="results">
-        {#each sources as result}
-          <ResultRow {result} />
-        {/each}
-      </div>
-    </Expander>
+    {#if !$hideSources}
+      <Expander on:toggleExpander>
+        <h3
+          class="title-xs"
+          slot="header">
+          {isMobile ? $_('answer.sources-mobile') : $_('answer.sources')}
+        </h3>
+        <div class="results">
+          {#each sources as result}
+            <ResultRow {result} />
+          {/each}
+        </div>
+      </Expander>
+    {/if}
   {/if}
 </div>
 

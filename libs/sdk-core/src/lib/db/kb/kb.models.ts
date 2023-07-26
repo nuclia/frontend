@@ -251,6 +251,7 @@ export interface WidgetFeatures {
   suggestLabels?: boolean;
   answers?: boolean;
   onlyAnswers?: boolean;
+  hideSources?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
   autofilter?: boolean;

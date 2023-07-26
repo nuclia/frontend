@@ -21,6 +21,10 @@ export const onlyAnswers = combineLatest([
   isAnswerEnabled,
   widgetFeatures.pipe(map((features) => !!features?.onlyAnswers)),
 ]).pipe(map(([answers, onlyAnswers]) => answers && onlyAnswers));
+export const hideSources = combineLatest([
+  isAnswerEnabled,
+  widgetFeatures.pipe(map((features) => !!features?.hideSources)),
+]).pipe(map(([answers, hideSources]) => answers && hideSources));
 
 export const disableAnswers = () => {
   widgetFeatures.set({ ...(widgetFeatures.value || {}), answers: false });

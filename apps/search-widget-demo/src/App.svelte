@@ -108,14 +108,16 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink,relations,knowledgeGraph,znavigateToLink,znavigateToFile,answers,zonlyAnswers" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,znavigateToLink,znavigateToFile,answers,onlyAnswers,zhideSources" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
   {#if selected === 'viewer'}
     <h2>Viewer widget</h2>
     <label for="kb">Kb:</label>
-    <input id="kb" bind:value={viewerKb}>
+    <input
+      id="kb"
+      bind:value={viewerKb} />
 
     <label for="rid">Resource id:</label>
     <input
@@ -147,115 +149,113 @@
     </div>
   {/if}
 
-<div class="nuclia-widget">
-  <Expander>
-    <h3 slot="header">Sistema in Svelte</h3>
-    <div class="nuclia-widget">
-      <h4>Buttons</h4>
-      <h5 class="section-title">Primary</h5>
-      <div>
-        <div class="demo-container">
-          <div class="buttons-block">
-            <Button
-              kind="primary"
-              aspect="solid">
-              Solid
-            </Button>
-            <IconButton
-              icon="search"
-              kind="primary"
-              aspect="solid">
-              Solid
-            </IconButton>
-          </div>
+  <div class="nuclia-widget">
+    <Expander>
+      <h3 slot="header">Sistema in Svelte</h3>
+      <div class="nuclia-widget">
+        <h4>Buttons</h4>
+        <h5 class="section-title">Primary</h5>
+        <div>
+          <div class="demo-container">
+            <div class="buttons-block">
+              <Button
+                kind="primary"
+                aspect="solid">
+                Solid
+              </Button>
+              <IconButton
+                icon="search"
+                kind="primary"
+                aspect="solid">
+                Solid
+              </IconButton>
+            </div>
 
-          <div class="buttons-block">
-            <Button
-              kind="primary"
-              aspect="basic">
-              Basic
-            </Button>
-            <IconButton
-              icon="search"
-              kind="primary"
-              aspect="basic">
-              Basic
-            </IconButton>
-          </div>
-        </div>
-      </div>
-
-      <h5 class="section-title">Secondary</h5>
-      <div>
-        <div class="demo-container">
-          <div class="buttons-block">
-            <Button
-              kind="secondary"
-              aspect="solid">
-              Solid
-            </Button>
-            <IconButton
-              icon="search"
-              kind="secondary"
-              aspect="solid">
-              Solid
-            </IconButton>
-          </div>
-          <div class="buttons-block">
-            <Button
-              kind="secondary"
-              aspect="basic">
-              Basic
-            </Button>
-            <IconButton
-              icon="search"
-              kind="secondary"
-              aspect="basic">
-              Basic
-            </IconButton>
+            <div class="buttons-block">
+              <Button
+                kind="primary"
+                aspect="basic">
+                Basic
+              </Button>
+              <IconButton
+                icon="search"
+                kind="primary"
+                aspect="basic">
+                Basic
+              </IconButton>
+            </div>
           </div>
         </div>
-      </div>
 
-      <h4>Labels</h4>
-      <p>
-        Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
-      </p>
-      <p><strong>Default: not removable, not clickable</strong></p>
-      <div class="demo-container">
-        <Label label={{ labelset: 'artist', label: 'Queen' }} />
-        <Label label={{ labelset: 'sentiment', label: 'positive' }} />
-        <Label label={{ labelset: 'genre', label: 'Rock' }} />
-      </div>
-      <p><strong>Clickable</strong></p>
-      <div class="demo-container">
-        <Label
-          clickable
-          label={{ labelset: 'artist', label: 'Queen' }} />
-        <Label
-          clickable
-          label={{ labelset: 'sentiment', label: 'positive' }} />
-        <Label
-          clickable
-          label={{ labelset: 'genre', label: 'Rock' }} />
-      </div>
-      <p><strong>Removable</strong></p>
-      <div class="demo-container">
-        <Label
-          removable
-          label={{ labelset: 'artist', label: 'Queen' }} />
-        <Label
-          removable
-          label={{ labelset: 'sentiment', label: 'positive' }} />
-        <Label
-          removable
-          label={{ labelset: 'genre', label: 'Rock' }} />
-      </div>
-    </div>
-  </Expander>
-</div>
+        <h5 class="section-title">Secondary</h5>
+        <div>
+          <div class="demo-container">
+            <div class="buttons-block">
+              <Button
+                kind="secondary"
+                aspect="solid">
+                Solid
+              </Button>
+              <IconButton
+                icon="search"
+                kind="secondary"
+                aspect="solid">
+                Solid
+              </IconButton>
+            </div>
+            <div class="buttons-block">
+              <Button
+                kind="secondary"
+                aspect="basic">
+                Basic
+              </Button>
+              <IconButton
+                icon="search"
+                kind="secondary"
+                aspect="basic">
+                Basic
+              </IconButton>
+            </div>
+          </div>
+        </div>
 
-
+        <h4>Labels</h4>
+        <p>
+          Examples working with kb <code>f67d94ee-bd5b-4044-8844-a291c2ac244c</code>
+        </p>
+        <p><strong>Default: not removable, not clickable</strong></p>
+        <div class="demo-container">
+          <Label label={{ labelset: 'artist', label: 'Queen' }} />
+          <Label label={{ labelset: 'sentiment', label: 'positive' }} />
+          <Label label={{ labelset: 'genre', label: 'Rock' }} />
+        </div>
+        <p><strong>Clickable</strong></p>
+        <div class="demo-container">
+          <Label
+            clickable
+            label={{ labelset: 'artist', label: 'Queen' }} />
+          <Label
+            clickable
+            label={{ labelset: 'sentiment', label: 'positive' }} />
+          <Label
+            clickable
+            label={{ labelset: 'genre', label: 'Rock' }} />
+        </div>
+        <p><strong>Removable</strong></p>
+        <div class="demo-container">
+          <Label
+            removable
+            label={{ labelset: 'artist', label: 'Queen' }} />
+          <Label
+            removable
+            label={{ labelset: 'sentiment', label: 'positive' }} />
+          <Label
+            removable
+            label={{ labelset: 'genre', label: 'Rock' }} />
+        </div>
+      </div>
+    </Expander>
+  </div>
 </main>
 
 <style lang="scss">
