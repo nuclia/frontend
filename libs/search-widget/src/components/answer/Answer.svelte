@@ -27,26 +27,28 @@
 <div class="sw-answer">
   <div class="answer-container">
     <div class="text">{@html text}</div>
-    {#if $hideSources && !isMobile && !hideFeedback}
+    {#if !isMobile && !hideFeedback}
       <Feedback {rank} />
     {/if}
   </div>
-  {#if !$hideSources && answer.sources && !notEnoughData}
+  {#if answer.sources && !notEnoughData}
     <div class="feedback">
       <Feedback {rank} />
     </div>
-    <Expander on:toggleExpander>
-      <h3
-        class="title-xs"
-        slot="header">
-        {isMobile ? $_('answer.sources-mobile') : $_('answer.sources')}
-      </h3>
-      <div class="results">
-        {#each sources as result}
-          <ResultRow {result} />
-        {/each}
-      </div>
-    </Expander>
+    {#if !$hideSources}
+      <Expander on:toggleExpander>
+        <h3
+          class="title-xs"
+          slot="header">
+          {isMobile ? $_('answer.sources-mobile') : $_('answer.sources')}
+        </h3>
+        <div class="results">
+          {#each sources as result}
+            <ResultRow {result} />
+          {/each}
+        </div>
+      </Expander>
+    {/if}
   {/if}
 </div>
 
