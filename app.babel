@@ -3040,6 +3040,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.extra_paragraphs_cost</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.features.anon</name>
 						<description/>
 						<comment/>
@@ -3680,6 +3700,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.paragraphs_per_file</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.parameter.files</name>
 						<description/>
 						<comment/>
@@ -3960,6 +4000,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.quotas.ingestion</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.quotas.kbs</name>
 						<description/>
 						<comment/>
@@ -4000,7 +4060,107 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.quotas.paragraphs</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.quotas.paragraphs_stored</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.quotas.search_inference</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.quotas.searches</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.quotas.storage</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>billing.quotas.train</name>
 						<description/>
 						<comment/>
 						<default_text/>
