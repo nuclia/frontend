@@ -3,11 +3,25 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import { router } from './routes';
 import { sync } from './sync';
+import * as Sentry from '@sentry/node';
+import { environment } from '../environments/environment';
 
 const app: Express = express();
 const port = 5001;
 
 export const initSyncService = () => {
+  const sentryUrl = environment.sentry_url;
+  if (sentryUrl) {
+    Sentry.init({ dsn: sentryUrl });
+    Sentry.configureScope((scope) => {
+      scope.addEventProcessor((event) => {
+        event.environment = environment.sentry_environment || 'desktop-dev';
+        event.release = environment.sentry_release || '0.0-dev';
+        return event;
+      });
+    });
+  }
+
   app.use(
     cors({
       origin: '*',

@@ -2,6 +2,8 @@ import SquirrelEvents from './app/events/squirrel.events';
 import ElectronEvents from './app/events/electron.events';
 import { app, BrowserWindow } from 'electron';
 import App from './app/app';
+import * as Sentry from '@sentry/electron';
+import { environment } from './environments/environment';
 
 export default class Main {
   static initialize() {
@@ -23,6 +25,18 @@ export default class Main {
       // UpdateEvents.initAutoUpdateService();
     }
   }
+}
+
+const sentryUrl = environment.sentry_url;
+if (sentryUrl) {
+  Sentry.init({ dsn: sentryUrl });
+  Sentry.configureScope((scope) => {
+    scope.addEventProcessor((event) => {
+      event.environment = environment.sentry_environment || 'desktop-dev';
+      event.release = environment.sentry_release || '0.0-dev';
+      return event;
+    });
+  });
 }
 
 // handle setup events as quickly as possible

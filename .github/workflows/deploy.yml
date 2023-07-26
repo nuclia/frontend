@@ -266,6 +266,8 @@ jobs:
           yarn missdev
       - name: Build desktop app
         run: |-
+          npx replace-in-file __SENTRY_URL__ ${{ secrets.SENTRY_URL }} ./apps/desktop/electron/src/environments/environment.prod.ts
+          npx replace-in-file __SENTRY_RELEASE__ ${{ github.sha }} ./apps/desktop/electron/src/environments/environment.prod.ts
           npx nx build desktop --configuration production
           npx replace-in-file __VERSION__ ${{ github.sha }} ./dist/apps/desktop/assets/deployment/app-config.json
       - name: Build electron app
