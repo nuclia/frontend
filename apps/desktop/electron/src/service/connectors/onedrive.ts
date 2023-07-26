@@ -68,7 +68,7 @@ class OneDriveImpl implements ISourceConnector {
     } else {
       path += `/children`;
     }
-    path += `?top=100&filter=${foldersOnly ? 'folder' : 'file'} ne null`;
+    path += `?top=100${foldersOnly ? '&filter=folder ne null' : ''}`;
     if (nextPage) {
       path += `&$skiptoken=${nextPage}`;
     }
@@ -92,9 +92,9 @@ class OneDriveImpl implements ISourceConnector {
             res['@odata.nextLink'] && res['@odata.nextLink'].includes('&$skiptoken=')
               ? res?.['@odata.nextLink'].split('&$skiptoken=')[1].split('&')[0]
               : undefined;
-          const items = (res.value || []).map((item: any) =>
-            foldersOnly ? this.mapToSyncItemFolder(item) : this.mapToSyncItem(item),
-          );
+          const items = (res.value || [])
+            .filter((item: any) => foldersOnly || !!item.file)
+            .map((item: any) => (foldersOnly ? this.mapToSyncItemFolder(item) : this.mapToSyncItem(item)));
           const results = {
             items: [...(previous?.items || []), ...items],
             nextPage,
@@ -158,6 +158,9 @@ class OneDriveImpl implements ISourceConnector {
         } else {
           this.params.token = '';
           this.params.refresh = '';
+          if (res.error) {
+            throw new Error(res.error_description || 'Unknown error when refreshing OneDrive authentication');
+          }
           return false;
         }
       }),

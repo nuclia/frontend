@@ -52,38 +52,41 @@ function syncFiles() {
                           return of(undefined);
                         }
 
-                        const batch: Observable<string | undefined>[] = source.items.slice(0, 10).map((item) =>
-                          of(item).pipe(
-                            switchMap((item) =>
-                              syncFile(id, source, item).pipe(
-                                tap((success) => {
-                                  if (success) {
-                                    incrementActiveSyncLog(id);
-                                  }
-                                }),
-                                map((success) => (success ? item.originalId : undefined)),
-                                // do not overwhelm the source
-                                delay(500),
+                        const batch: Observable<{ id: string; success: boolean }>[] = source.items
+                          .slice(0, 10)
+                          .map((item) =>
+                            of(item).pipe(
+                              switchMap((item) =>
+                                syncFile(id, source, item).pipe(
+                                  tap((success) => {
+                                    if (success) {
+                                      incrementActiveSyncLog(id);
+                                    }
+                                  }),
+                                  map((success) => ({ id: item.originalId, success })),
+                                  // do not overwhelm the source
+                                  delay(500),
+                                ),
                               ),
                             ),
-                          ),
-                        );
+                          );
                         return forkJoin(batch).pipe(
                           tap((result) => {
                             if (result) {
-                              const successfullyUploaded = result.filter((originalId) => !!originalId);
-                              const hasFailures = successfullyUploaded.length !== result.length;
+                              const processed = result.map((res) => res.id);
+                              const successCount = result.filter((res) => res.success).length;
+                              const hasFailures = result.length - successCount > 0;
                               source.items = (source.items || []).filter(
-                                (item) => !successfullyUploaded.includes(item.originalId),
+                                (item) => !processed.includes(item.originalId),
                               );
-                              source.total = (source.total || 0) + successfullyUploaded.length;
+                              source.total = (source.total || 0) + successCount;
                               addLog(
                                 id,
                                 source,
-                                successfullyUploaded.length,
-                                hasFailures ? `${result.length - successfullyUploaded.length} failures` : '',
+                                successCount,
+                                hasFailures ? `${result.length - successCount} failures` : '',
                               );
-                              if (successfullyUploaded.length > 0) {
+                              if (processed.length > 0) {
                                 updateSource(id, source);
                               }
                               removeActiveSyncLog(id);
