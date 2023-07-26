@@ -10,6 +10,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   notPublic: true,
   answers: false,
   onlyAnswers: false,
+  hideSources: false,
   autofilter: false,
 };
 

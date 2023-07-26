@@ -96,6 +96,13 @@
             {{ 'stash.widgets.onlyAnswers' | translate }}
           </pa-toggle>
           <pa-toggle
+            *ngIf="areAnswersEnabled | async"
+            labelOnRight
+            help="stash.widgets.hideSources.help"
+            formControlName="hideSources">
+            {{ 'stash.widgets.hideSources' | translate }}
+          </pa-toggle>
+          <pa-toggle
             labelOnRight
             help="stash.widgets.relations.help"
             formControlName="relations">

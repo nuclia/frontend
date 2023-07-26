@@ -7,6 +7,7 @@
   import { createEventDispatcher } from 'svelte';
   import { isMobileViewport } from '../../common/utils';
   import ResultRow from '../result-row/ResultRow.svelte';
+  import { hideSources } from '../../core/stores/widget.store';
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
   export let hideFeedback = false;
@@ -26,11 +27,11 @@
 <div class="sw-answer">
   <div class="answer-container">
     <div class="text">{@html text}</div>
-    {#if !isMobile && !hideFeedback}
+    {#if $hideSources && !isMobile && !hideFeedback}
       <Feedback {rank} />
     {/if}
   </div>
-  {#if answer.sources && !notEnoughData}
+  {#if !$hideSources && answer.sources && !notEnoughData}
     <div class="feedback">
       <Feedback {rank} />
     </div>

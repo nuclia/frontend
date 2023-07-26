@@ -130,6 +130,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               navigateToFile: [config.features.includes('navigateToFile')],
               navigateToLink: [config.features.includes('navigateToLink')],
               onlyAnswers: [config.features.includes('onlyAnswers')],
+              hideSources: [config.features.includes('hideSources')],
               permalink: [config.features.includes('permalink')],
               relations: [config.features.includes('relations')],
               suggestLabels: [config.features.includes('suggestLabels')],

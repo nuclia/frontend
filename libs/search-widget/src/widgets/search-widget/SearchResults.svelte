@@ -31,7 +31,6 @@
   import InfiniteScroll from '../../common/infinite-scroll/InfiniteScroll.svelte';
   import { InfoCard, InitialAnswer, onClosePreview, ResultRow, Viewer } from '../../components';
 
-
   export let mode = '';
   $: darkMode = mode === 'dark';
 
@@ -58,7 +57,7 @@
       const tti = Date.now() - tracking.startTime;
       logEvent('search', {
         searchId: tracking.searchId || '',
-        tti
+        tti,
       });
       trackingReset.set(undefined);
     });
