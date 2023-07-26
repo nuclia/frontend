@@ -25,6 +25,7 @@ import { HistoryComponent } from './history/history.component';
 import { UsageComponent } from './usage/usage.component';
 import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
+import { DeprecatedTiersComponent } from './subscriptions/deprecated-tiers.component';
 
 const routes: Routes = [
   {
@@ -84,6 +85,7 @@ const routes: Routes = [
     RedirectComponent,
     UsageComponent,
     UsageTableComponent,
+    DeprecatedTiersComponent,
   ],
   exports: [UsageTableComponent],
 })

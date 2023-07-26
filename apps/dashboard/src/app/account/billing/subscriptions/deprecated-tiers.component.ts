@@ -1,31 +1,22 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { BillingService } from '../billing.service';
-import { CalculatorComponent } from '../calculator/calculator.component';
 import { forkJoin, shareReplay, take, tap } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
 import { AccountService, STFTrackingService } from '@flaps/core';
-import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
-import { SubscribedAccountDeleteComponent } from '../../account-manage/account-delete/subscribed-account-delete.component';
 
 @Component({
-  selector: 'app-subscriptions',
-  templateUrl: './subscriptions.component.html',
-  styleUrls: ['./subscriptions.component.scss'],
+  selector: 'app-deprecated-tiers',
+  templateUrl: './deprecated-tiers.component.html',
+  styleUrls: ['./deprecated-tiers.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SubscriptionsComponent {
-  isCalculatorEnabled = this.tracking.isFeatureEnabled('calculator');
+export class DeprecatedTiersComponent {
   accountType = this.billing.type.pipe(shareReplay());
-  countryList = Object.entries(COUNTRIES)
-    .map(([code, name]) => ({ code, name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
   accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
-  isSubscribed = this.billing.isSubscribed;
-  showNewTiers = this.tracking.isFeatureEnabled('new-tiers');
 
   constructor(
     private billing: BillingService,
@@ -37,27 +28,14 @@ export class SubscriptionsComponent {
   ) {
     forkJoin([this.billing.getCustomer(), this.billing.country.pipe(take(1))]).subscribe(([customer, country]) => {
       if (customer) {
-        this.onSelectCountry(customer.billing_details.country);
+        this.setCurrency(customer.billing_details.country);
       } else if (country) {
-        this.onSelectCountry(country);
+        this.setCurrency(country);
       }
     });
   }
 
-  openCalculator() {
-    this.prices.pipe(take(1)).subscribe((prices) => {
-      this.modalService.openModal(CalculatorComponent, {
-        dismissable: true,
-        data: {
-          prices,
-          currency: this.currency,
-        },
-      });
-    });
-  }
-
-  onSelectCountry(country: string) {
-    this.billing.setCountry(country);
+  setCurrency(country: string) {
     this.billing
       .getCurrency(country)
       .pipe(tap((currency) => (this.currency = currency)))
@@ -66,9 +44,5 @@ export class SubscriptionsComponent {
 
   contact() {
     this.window.location.href = 'mailto:support@nuclia.com';
-  }
-
-  delete() {
-    this.modalService.openModal(SubscribedAccountDeleteComponent);
   }
 }

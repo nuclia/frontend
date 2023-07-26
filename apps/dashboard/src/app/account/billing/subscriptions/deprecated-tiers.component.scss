@@ -1,0 +1,55 @@
+@import 'variables';
+
+.subscriptions {
+  margin-bottom: rhythm(8);
+  table-layout: fixed;
+  min-width: 1000px;
+
+  th {
+    border-bottom: 1px solid $color-neutral-regular;
+    padding-bottom: rhythm(3);
+    text-align: center;
+    &:first-child {
+      text-align: left;
+      vertical-align: bottom;
+    }
+  }
+
+  td {
+    border-bottom: 1px solid $color-neutral-lighter;
+    height: rhythm(6);
+    text-align: center;
+    &:first-child {
+      text-align: left;
+    }
+  }
+
+  .plan {
+    vertical-align: top;
+    width: rhythm(24);
+  }
+
+  .plan-name {
+    font-size: $font-size-title-l;
+    margin-bottom: rhythm(1);
+  }
+
+  .price {
+    color: $color-primary-regular;
+    font-size: $font-size-title-l;
+    margin-bottom: rhythm(2);
+  }
+
+  .unit {
+    color: $color-neutral-regular;
+    font-size: $font-size-body-s;
+    font-weight: $font-weight-regular;
+  }
+
+  .subscribed {
+    color: $color-primary-regular;
+    display: flex;
+    gap: rhythm(1);
+    justify-content: center;
+  }
+}
