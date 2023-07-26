@@ -1,3 +1,9 @@
+# 1.6.1 (unreleased)
+
+### Improvements
+
+- Add `stash-starter` and `stash-growth` to `AccountTypes`
+
 # 1.6.0 (2023-07-25)
 
 ### Breaking changes

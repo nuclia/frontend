@@ -2,16 +2,20 @@ import { AccountTypes } from '@nuclia/core';
 
 export type Currency = 'USD' | 'EUR';
 export type UsageType =
-  | 'qa'
+  | 'generative'
   | 'media'
   | 'searches'
+  | 'predict'
+  | 'training'
+  | 'paragraphs'
+  | 'paragraphs_processed'
+
+  // Deprecated items
   | 'self-hosted-qa'
+  | 'qa'
   | 'self-hosted-predict'
   | 'self-hosted-processed-paragraphs'
   | 'self-hosted-processed-documents'
-  | 'training-hours' // TODO: remove once removed from backend response
-  | 'training'
-  | 'paragraphs'
   | 'files'; // this last one does not existing in the backend response, we calculate it from paragraphs
 
 export interface Prices {
