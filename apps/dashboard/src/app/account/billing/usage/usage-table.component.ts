@@ -28,7 +28,7 @@ export class UsageTableComponent {
     }
   }
 
-  private usageData = new ReplaySubject<AccountUsage>();
+  usageData = new ReplaySubject<AccountUsage>();
   showNewTiers = this.tracking.isFeatureEnabled('new-tiers');
   total = this.usageData.pipe(map((usage) => usage.over_cost));
   invoiceItems: Observable<[string, InvoiceItem][]> = combineLatest([this.usageData, this.showNewTiers]).pipe(
