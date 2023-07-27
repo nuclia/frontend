@@ -14,6 +14,7 @@ import {
   setSources,
 } from './sources';
 import { restartCollection } from './sync';
+import { getServerLogs } from './logging';
 
 export const router = express.Router();
 
@@ -22,7 +23,8 @@ router.get('/', (req, res) => {
 });
 
 router.get('/status', (req, res) => {
-  res.send('{"running": true}');
+  const data = { running: true, logs: getServerLogs() };
+  res.send(JSON.stringify(data));
 });
 
 router.get('/sources', async (req, res) => {

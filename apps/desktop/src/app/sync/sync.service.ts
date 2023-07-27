@@ -333,7 +333,13 @@ export class SyncService {
   }
 
   serverStatus(server: string): Observable<{ running: boolean }> {
-    return this.http.get<{ running: boolean }>(`${server}/status`).pipe(catchError(() => of({ running: false })));
+    return this.http.get<{ running: boolean; logs: string[] }>(`${server}/status`).pipe(
+      catchError(() => of({ running: false, logs: ['Server down'] })),
+      map((res) => {
+        res.logs.forEach((log) => console.log('[SERVER]', log));
+        return { running: res.running };
+      }),
+    );
   }
 
   setSyncServer(server: { url?: string; local?: boolean }) {
