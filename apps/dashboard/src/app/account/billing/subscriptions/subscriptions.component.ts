@@ -8,6 +8,7 @@ import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
 import { SubscribedAccountDeleteComponent } from '../../account-manage/account-delete/subscribed-account-delete.component';
+import { DeprecatedCalculatorComponent } from '../calculator/deprecated-calculator.component';
 
 @Component({
   selector: 'app-subscriptions',
@@ -16,7 +17,6 @@ import { SubscribedAccountDeleteComponent } from '../../account-manage/account-d
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionsComponent {
-  isCalculatorEnabled = this.tracking.isFeatureEnabled('calculator');
   accountType = this.billing.type.pipe(shareReplay());
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
@@ -45,8 +45,8 @@ export class SubscriptionsComponent {
   }
 
   openCalculator() {
-    this.prices.pipe(take(1)).subscribe((prices) => {
-      this.modalService.openModal(CalculatorComponent, {
+    forkJoin([this.prices.pipe(take(1)), this.showNewTiers.pipe(take(1))]).subscribe(([prices, showNewTiers]) => {
+      this.modalService.openModal(showNewTiers ? CalculatorComponent : DeprecatedCalculatorComponent, {
         dismissable: true,
         data: {
           prices,

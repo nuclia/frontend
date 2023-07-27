@@ -114,21 +114,21 @@
         <td>
           <div>{{ defaults['stash-trial'].monthly_limit_paragraphs_processed | number }}</div>
           <div class="unit">
-            {{ 'billing.quotas.up-to' | translate }}
+            {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-trial'].upload_limit_max_non_media_file_size | size }}
           </div>
         </td>
         <td>
           <div>{{(prices | async)?.['stash-starter'].usage['paragraphs_processed'].threshold | number}}</div>
           <div class="unit">
-            {{ 'billing.quotas.up-to' | translate }}
+            {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-starter'].upload_limit_max_non_media_file_size | size }}
           </div>
         </td>
         <td>
           <div>{{(prices | async)?.['stash-growth'].usage['paragraphs_processed'].threshold | number}}</div>
           <div class="unit">
-            {{ 'billing.quotas.up-to' | translate }}
+            {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-growth'].upload_limit_max_non_media_file_size | size }}
           </div>
         </td>
@@ -141,7 +141,7 @@
             {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
           </div>
           <div class="unit">
-            {{ 'billing.quotas.up-to' | translate }}
+            {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-trial'].upload_limit_max_media_file_size | size }}
           </div>
         </td>
@@ -150,7 +150,7 @@
             {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
           </div>
           <div class="unit">
-            {{ 'billing.quotas.up-to' | translate }}
+            {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-starter'].upload_limit_max_media_file_size | size }}
           </div>
         </td>
@@ -159,7 +159,7 @@
             {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
           </div>
           <div class="unit">
-            {{ 'billing.quotas.up-to' | translate }}
+            {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-growth'].upload_limit_max_media_file_size | size }}
           </div>
         </td>
@@ -262,7 +262,6 @@
     </div>
     <div class="calculator">
       <pa-button
-        *ngIf="isCalculatorEnabled | async"
         (click)="openCalculator()"
         icon="settings"
         iconAndText>

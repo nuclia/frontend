@@ -3,7 +3,6 @@
   fitContentHeight>
   <pa-modal-title>
     <h2>{{ 'billing.budget_calculator' | translate }}</h2>
-    <div class="body-s">{{ 'billing.budget_calculator.help' | translate }}</div>
   </pa-modal-title>
   <pa-modal-content>
     <form>
@@ -14,16 +13,22 @@
           name="radio-tier"
           [value]="tier"
           (valueChange)="changeTier($event)">
-          <pa-radio value="stash-starter">Starter</pa-radio>
-          <pa-radio value="stash-growth">Growth</pa-radio>
+          <pa-radio value="stash-developer">Starter/developer</pa-radio>
+          <pa-radio value="stash-business">Business</pa-radio>
         </pa-radio-group>
       </div>
       <div class="section">
+        <div>
+          <div class="title-s">{{ 'billing.ingestion_cost' | translate }}</div>
+          <div
+            class="body-s"
+            [innerHTML]="'billing.ingestion_cost.description' | translate"></div>
+        </div>
         <div *ngFor="let param of params">
           <div class="field-block">
             <pa-slider
               [min]="prices[tier].usage[param].threshold || 0"
-              [max]="maxValue(prices[tier].usage[param].price, prices[tier].usage[param].threshold)"
+              [max]="600 / prices[tier].usage[param].price + prices[tier].usage[param].threshold"
               [value]="values[param]"
               (valueChange)="update(param, $event)">
               <span class="title-xxs">{{ 'billing.parameter.' + param | translate }}</span>
@@ -45,6 +50,9 @@
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
           <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>
         </div>
+        <div
+          class="contact"
+          [innerHTML]="'billing.self_hosted' | translate : { url: 'mailto:support@nuclia.com' }"></div>
       </div>
     </form>
   </pa-modal-content>
