@@ -36,6 +36,7 @@ type EngagementType = 'CHAT' | 'RESULT';
 
 interface Engagement {
   type?: EngagementType;
+  searchId?: string;
   resourceRank?: number;
   paragraphRank?: number;
   paragraphType?: Search.FindScoreType;
@@ -306,6 +307,7 @@ export const trackingEngagement = searchState.writer<
               : undefined,
           paragraphType: (params.paragraph as any)?.score_type,
           paragraphOrder: params.paragraph?.order,
+          searchId: state.tracking.searchId,
         },
       },
     };
