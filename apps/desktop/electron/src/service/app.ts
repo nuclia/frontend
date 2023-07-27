@@ -5,11 +5,13 @@ import { router } from './routes';
 import { sync } from './sync';
 import * as Sentry from '@sentry/node';
 import { environment } from '../environments/environment';
+import { initLog } from './logging';
 
 const app: Express = express();
 const port = 5001;
 
 export const initSyncService = () => {
+  initLog();
   const sentryUrl = environment.sentry_url;
   if (sentryUrl) {
     Sentry.init({ dsn: sentryUrl });
