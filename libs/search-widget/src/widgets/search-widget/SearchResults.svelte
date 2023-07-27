@@ -82,6 +82,9 @@
       </div>
     {:else if !$pendingResults && $resultList.length === 0 && !$onlyAnswers}
       <strong>{$_('results.empty')}</strong>
+      <div
+        class="results-end"
+        use:renderingDone />
     {:else}
       {#if $hasPartialResults}
         <div class="partial-results-warning">
