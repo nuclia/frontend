@@ -130,6 +130,7 @@ export interface AccountUsage {
   invoice_items: { [key in UsageType]: InvoiceItem };
   start_billing_date: string;
   end_billing_date: string;
+  over_cost: number;
 }
 
 export interface InvoicesListPagination {

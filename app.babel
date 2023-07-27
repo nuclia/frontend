@@ -1940,26 +1940,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.type.stash-basic</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>account.type.stash-business</name>
 						<description/>
 						<comment/>
@@ -2020,7 +2000,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.type.stash-startup</name>
+						<name>account.type.stash-growth</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -2040,7 +2020,27 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>account.type.stash-team</name>
+						<name>account.type.stash-starter</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>account.type.stash-startup</name>
 						<description/>
 						<comment/>
 						<default_text/>
