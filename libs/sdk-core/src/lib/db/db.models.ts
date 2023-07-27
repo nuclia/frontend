@@ -2,10 +2,12 @@ export type AccountTypes =
   | 'stash-basic'
   | 'stash-team'
   | 'stash-trial'
-  | 'stash-developer'
-  | 'stash-business'
   | 'stash-startup'
-  | 'stash-enterprise';
+  | 'stash-starter'
+  | 'stash-growth'
+  | 'stash-enterprise'
+  | 'stash-developer' // Deprecated
+  | 'stash-business'; // Deprecated
 
 export const NUA_KEY = 'NUCLIA_NUA_KEY';
 

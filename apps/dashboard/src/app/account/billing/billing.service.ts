@@ -139,12 +139,10 @@ export class BillingService {
                 price: res[key as AccountTypes].usage.media.price * 60,
                 threshold: Math.floor(res[key as AccountTypes].usage.media.threshold / 60),
               },
-              training: res[key as AccountTypes].usage.training
-                ? {
-                    price: res[key as AccountTypes].usage.training.price * 60,
-                    threshold: Math.floor(res[key as AccountTypes].usage.training.threshold / 60),
-                  }
-                : res[key as AccountTypes].usage['training-hours'],
+              training: {
+                price: res[key as AccountTypes].usage.training.price * 60,
+                threshold: Math.floor(res[key as AccountTypes].usage.training.threshold / 60),
+              },
             },
           };
           return acc;
@@ -168,14 +166,12 @@ export class BillingService {
             current_usage: Math.ceil((usage.invoice_items.media.current_usage / 60) * 10) / 10,
             over_usage: Math.ceil((usage.invoice_items.media.over_usage / 60) * 10) / 10,
           },
-          training: usage.invoice_items.training
-            ? {
-                ...usage.invoice_items.training,
-                threshold: Math.floor(usage.invoice_items.training.threshold / 60),
-                current_usage: Math.ceil((usage.invoice_items.training.current_usage / 60) * 10) / 10,
-                over_usage: Math.ceil((usage.invoice_items.training.over_usage / 60) * 10) / 10,
-              }
-            : usage.invoice_items['training-hours'],
+          training: {
+            ...usage.invoice_items.training,
+            threshold: Math.floor(usage.invoice_items.training.threshold / 60),
+            current_usage: Math.ceil((usage.invoice_items.training.current_usage / 60) * 10) / 10,
+            over_usage: Math.ceil((usage.invoice_items.training.over_usage / 60) * 10) / 10,
+          },
         },
       })),
     );

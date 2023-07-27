@@ -6,24 +6,16 @@ import { BillingService } from '../billing.service';
 import { AccountTypes } from '@nuclia/core';
 
 @Component({
-  selector: 'app-calculator',
-  templateUrl: './calculator.component.html',
-  styleUrls: ['./calculator.component.scss'],
+  selector: 'app-deprecated-calculator',
+  templateUrl: './deprecated-calculator.component.html',
+  styleUrls: ['./deprecated-calculator.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CalculatorComponent {
-  params: UsageType[] = [
-    'media',
-    'paragraphs_processed',
-    'searches',
-    'predict',
-    'generative',
-    'paragraphs',
-    'training',
-  ];
+export class DeprecatedCalculatorComponent {
+  params: UsageType[] = ['media', 'files', 'searches', 'qa', 'training'];
   prices = this.modal.config.data!.prices;
   currency = this.modal.config.data!.currency;
-  tier: AccountTypes = 'stash-starter';
+  tier: AccountTypes = 'stash-developer';
 
   values = this.params.reduce(
     (acc, param) => ({ ...acc, [param]: this.prices[this.tier].usage[param].threshold }),
@@ -45,10 +37,6 @@ export class CalculatorComponent {
     this.cdr?.markForCheck();
   }
 
-  maxValue(price: number, threshold: number) {
-    return Math.ceil(300 / price + threshold);
-  }
-
   calculatePrice(param: UsageType) {
     return (
       (this.values[param] - this.prices[this.tier].usage[param].threshold) * this.prices[this.tier].usage[param].price
@@ -61,12 +49,8 @@ export class CalculatorComponent {
 
   changeTier(tier: AccountTypes) {
     this.tier = tier;
-    this.cdr?.markForCheck();
-    // wait until the new slider range is properly set
-    setTimeout(() => {
-      Object.keys(this.values).forEach((param) => {
-        this.update(param as UsageType, this.prices[tier].usage[param as UsageType].threshold);
-      });
+    Object.keys(this.values).forEach((param) => {
+      this.update(param as UsageType, this.prices[tier].usage[param as UsageType].threshold);
     });
   }
 

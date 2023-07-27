@@ -15,27 +15,45 @@ h2 {
   margin-top: rhythm(2);
 }
 .subscriptions {
-  margin-bottom: rhythm(8);
-  table-layout: fixed;
-  min-width: 1000px;
+  border-collapse: separate;
+  border-spacing: rhythm(1.5) 0;
+  white-space: nowrap;
 
   th {
-    border-bottom: 1px solid $color-neutral-regular;
-    padding-bottom: rhythm(3);
-    text-align: center;
-    &:first-child {
-      text-align: left;
-      vertical-align: bottom;
-    }
+    padding: rhythm(2);
   }
 
   td {
-    border-bottom: 1px solid $color-neutral-lighter;
-    height: rhythm(6);
-    text-align: center;
-    &:first-child {
-      text-align: left;
+    padding: rhythm(1) rhythm(2);
+    vertical-align: top;
+  }
+
+  tr:not(:last-child) td {
+    position:relative;
+    &::after {
+      border-bottom: 1px solid $color-neutral-lighter;
+      bottom: 0;
+      content: "";
+      left: rhythm(2);
+      position: absolute;
+      right: rhythm(2);
     }
+  }
+
+  th:not(:first-child):not(:nth-child(2)),
+  td:not(:nth-child(2)) {
+    background-color: $color-light-stronger;
+  }
+
+  td:last-child {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .section-header td {
+    font-weight: $font-weight-bold;
+    height: rhythm(8);
+    vertical-align: bottom;
   }
 
   .plan {
@@ -62,11 +80,17 @@ h2 {
 
   .subscribed {
     color: $color-primary-regular;
-    display: flex;
-    gap: rhythm(1);
-    justify-content: center;
   }
 }
+
+.notes {
+  border-bottom: 1px solid $color-neutral-lighter;
+  color: $color-neutral-regular;
+  margin: rhythm(6) 0;
+  padding-bottom: rhythm(2);
+
+}
+
 .calculator {
   margin-top: rhythm(2);
 }
