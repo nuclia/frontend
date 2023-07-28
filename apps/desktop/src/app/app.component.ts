@@ -7,7 +7,6 @@ import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga
 import { CONNECTOR_ID_KEY } from './sync/models';
 import { getDeeplink } from './utils';
 import pkg from '../../../../package.json';
-import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'nde-root',
@@ -22,8 +21,8 @@ export class AppComponent implements OnInit {
     private ngxTranslate: TranslateService,
     private paTranslate: PaTranslateService,
     private user: UserService,
-    private sdk: SDKService,
     private router: Router,
+    private sdk: SDKService,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
   ) {

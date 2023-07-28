@@ -329,6 +329,7 @@ jobs:
           tag_name: ${{ needs.pre-release.outputs.release-tag }}
           files: |
             dist/executables/*.exe
+            dist/executables/*.exe.blockmap
             dist/executables/*.yml
       - name: Release Linux installer
         uses: softprops/action-gh-release@v1
