@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { map, Observable, shareReplay, switchMap, take } from 'rxjs';
 import { SDKService } from '@flaps/core';
 import { EventType } from '@nuclia/core';
@@ -11,14 +11,13 @@ import { WINDOW } from '@ng-web-apis/common';
   styleUrls: ['./activity-download.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ActivityDownloadComponent implements OnDestroy {
+export class ActivityDownloadComponent {
   eventTypes = {
     searches: [EventType.CHAT, EventType.SEARCH],
     resources: [EventType.PROCESSED, EventType.NEW, EventType.MODIFIED],
   };
   selectedTab: 'resources' | 'searches' = 'resources';
   selectedEventType: EventType = this.eventTypes[this.selectedTab][0];
-  urls: string[] = [];
 
   activity = [...this.eventTypes.searches, ...this.eventTypes.resources].reduce((acc, eventType) => {
     acc[eventType] = this.sdk.currentKb.pipe(
@@ -36,21 +35,23 @@ export class ActivityDownloadComponent implements OnDestroy {
 
   constructor(private sdk: SDKService, private cdr: ChangeDetectorRef, @Inject(WINDOW) private window: Window) {}
 
-  ngOnDestroy() {
-    this.urls.forEach((url) => {
-      URL.revokeObjectURL(url);
-    });
-  }
-
   download(month: string) {
     this.sdk.currentKb
       .pipe(
         take(1),
-        switchMap((kb) => kb.downloadActivity(this.selectedEventType, month)),
+        switchMap((kb) =>
+          kb
+            .getTempToken()
+            .pipe(
+              map((token) =>
+                this.sdk.nuclia.rest.getFullUrl(
+                  `/kb/${kb.id}/activity/download?type=${this.selectedEventType}&month=${month}&eph-token=${token}`,
+                ),
+              ),
+            ),
+        ),
       )
-      .subscribe((blob) => {
-        const url = URL.createObjectURL(blob);
-        this.urls.push(url);
+      .subscribe((url) => {
         this.window.open(url, 'blank', 'noreferrer');
       });
   }
