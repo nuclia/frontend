@@ -26,7 +26,7 @@
           <div
             *ngIf="locale | async as loc"
             class="display-m">
-            {{ totalSearch | async | number: '1.0-0':loc }}
+            {{ totalSearch | async | number : '1.0-0' : loc }}
           </div>
         </div>
         <app-empty-chart
@@ -56,17 +56,17 @@
         <div *ngIf="locale | async as loc">
           <dl class="total-resources">
             <dt>{{ 'stats.total.title' | translate }}</dt>
-            <dd class="display-s">{{ (counters | async)?.resources | number: '1.0-0':loc }}</dd>
+            <dd class="display-s">{{ (counters | async)?.resources | number : '1.0-0' : loc }}</dd>
           </dl>
           <dl>
             <dt>{{ 'stats.total.fields' | translate }}</dt>
-            <dd>{{ (counters | async)?.fields | number: '1.0-0':loc }}</dd>
+            <dd>{{ (counters | async)?.fields | number : '1.0-0' : loc }}</dd>
 
             <dt>{{ 'stats.total.paragraphs' | translate }}</dt>
-            <dd>{{ (counters | async)?.paragraphs | number: '1.0-0':loc }}</dd>
+            <dd>{{ (counters | async)?.paragraphs | number : '1.0-0' : loc }}</dd>
 
             <dt>{{ 'stats.total.sentences' | translate }}</dt>
-            <dd>{{ (counters | async)?.sentences | number: '1.0-0':loc }}</dd>
+            <dd>{{ (counters | async)?.sentences | number : '1.0-0' : loc }}</dd>
           </dl>
         </div>
       </div>
@@ -99,3 +99,4 @@
     </div>
   </div>
 </div>
+<app-knowledge-box-survey [totalSearch]="totalSearch | async"></app-knowledge-box-survey>
