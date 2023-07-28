@@ -5,6 +5,7 @@
 - Add `stash-starter` and `stash-growth` to `AccountTypes`
 - `getTempToken` method can now be used without providing `account` and `kbSlug` options to `Nuclia` class
 - `/activity/download` and `/activity/downloads` endpoints now use regional backend
+- Add `widget` property to `LearningConfigurationSchemas` interface
 
 # 1.6.0 (2023-07-25)
 
