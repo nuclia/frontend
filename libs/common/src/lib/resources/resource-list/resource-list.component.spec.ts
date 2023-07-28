@@ -22,6 +22,7 @@ import { ErrorResourcesTableComponent } from './error-resources-table/error-reso
 import { PendingResourcesTableComponent } from './pending-resources-table/pending-resources-table.component';
 import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
 import { UploadService } from '../../upload/upload.service';
+import { NavigationService } from '../../services/navigation.service';
 
 describe('ResourceListComponent', () => {
   let component: ResourceListComponent;
@@ -58,6 +59,9 @@ describe('ResourceListComponent', () => {
               getLabels: jest.fn(() => of({})),
               listResources: () => of({ resources: [] }),
             }),
+            currentAccount: of({
+              type: 'test-type',
+            }),
             counters: of({ resources: 0 }),
             refreshing: of(true),
             nuclia: {
@@ -89,6 +93,7 @@ describe('ResourceListComponent', () => {
             error: 0,
           }),
         }),
+        MockProvider(NavigationService),
       ],
     }).compileComponents();
 
