@@ -127,7 +127,7 @@ export class Rest implements IRest {
       path.startsWith('/billing') ||
       path.startsWith('/configuration') ||
       path.startsWith('/manage') ||
-      path.includes('/activity');
+      (path.includes('/activity') && !path.includes('/activity/download'));
     const backend = isGlobal || this.nuclia.options.standalone ? this.nuclia.backend : this.nuclia.regionalBackend;
     const version =
       path.startsWith('/auth') ||
