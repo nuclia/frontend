@@ -86,11 +86,19 @@
               </pa-toggle>
               <ng-container *ngIf="ownKey">
                 <div class="title-s">{{ 'stash.config.' + groupId | translate }}:</div>
-                <pa-input
-                  *ngFor="let field of userKeys?.[groupId] || {} | keyvalue"
-                  [formControlName]="field.key">
-                  {{ field.value.title | translate }}
-                </pa-input>
+                <ng-container *ngFor="let field of userKeys?.[groupId] || {} | keyvalue">
+                  <pa-input
+                    *ngIf="!field.value.textarea"
+                    [formControlName]="field.key">
+                    {{ field.value.title | translate }}
+                  </pa-input>
+                  <pa-textarea
+                    *ngIf="field.value.textarea"
+                    [formControlName]="field.key"
+                    [rows]="5">
+                    {{ field.value.title | translate }}
+                  </pa-textarea>
+                </ng-container>
               </ng-container>
             </div>
           </div>

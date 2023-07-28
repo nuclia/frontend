@@ -36,6 +36,7 @@ export interface LearningConfigurationUserKeys {
     [key: string]: {
       title: string;
       required: boolean;
+      textarea: boolean;
     };
   };
 }
@@ -263,9 +264,13 @@ export class SDKService {
                     acc[schemaId] = Object.entries(schema.properties)
                       .filter(([, property]) => property.type === 'string')
                       .reduce((acc, [propertyId, property]) => {
-                        acc[propertyId] = { title: property.title, required: schema.required.includes(propertyId) };
+                        acc[propertyId] = {
+                          title: property.title,
+                          required: schema.required.includes(propertyId),
+                          textarea: property.widget === 'textarea',
+                        };
                         return acc;
-                      }, {} as { [key: string]: { title: string; required: boolean } });
+                      }, {} as { [key: string]: { title: string; required: boolean; textarea: boolean } });
                     return acc;
                   },
                   {} as LearningConfigurationUserKeys,

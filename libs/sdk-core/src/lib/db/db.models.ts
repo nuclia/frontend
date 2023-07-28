@@ -202,6 +202,7 @@ export interface LearningConfigurationSchema {
     [key: string]: {
       title: string;
       type: string;
+      widget?: string;
     };
   };
   required: string[];
