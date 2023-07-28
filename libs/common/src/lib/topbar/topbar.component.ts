@@ -16,7 +16,7 @@ export class TopbarComponent {
   kb = this.sdk.currentKb;
   isStage = location.hostname === 'stashify.cloud';
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isBillingEnabled = this.tracking.isFeatureEnabled('billing');
+  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
   billingUrl = this.sdk.currentAccount.pipe(
     map((account) => this.navigationService.getAccountManageUrl(account.slug) + '/billing'),
   );

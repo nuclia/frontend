@@ -19,7 +19,7 @@
 
   <div class="topbar-actions">
     <pa-button
-      *ngIf="!standalone && (accountType | async) && (isBillingEnabled | async)"
+      *ngIf="!standalone && (accountType | async) && (isAccountManager | async)"
       kind="primary"
       aspect="basic"
       size="small"

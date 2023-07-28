@@ -138,7 +138,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   emptyKb = false;
   neverGotData = this.currentKb.pipe(map((kb) => !this.uploadService.hasKbGotData(kb.id)));
   isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
-  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
+  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
 
   constructor(
