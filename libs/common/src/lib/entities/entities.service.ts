@@ -11,7 +11,7 @@ export class EntitiesService {
   private entitiesSubject = new BehaviorSubject<Entities | null>(null);
 
   entities = this.entitiesSubject.asObservable();
-  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAdminOrContrib = this.sdk.isAdminOrContrib;
 
   constructor(private sdk: SDKService) {
     this.sdk.currentKb

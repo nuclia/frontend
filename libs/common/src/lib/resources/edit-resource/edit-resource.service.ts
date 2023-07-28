@@ -104,7 +104,7 @@ export class EditResourceService {
       }
     }),
   );
-  isAdminOrContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  isAdminOrContrib = this.sdk.isAdminOrContrib;
 
   constructor(
     private sdk: SDKService,
