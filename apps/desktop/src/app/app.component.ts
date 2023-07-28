@@ -21,8 +21,8 @@ export class AppComponent implements OnInit {
     private ngxTranslate: TranslateService,
     private paTranslate: PaTranslateService,
     private user: UserService,
-    private router: Router,
     private sdk: SDKService,
+    private router: Router,
     private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
   ) {
