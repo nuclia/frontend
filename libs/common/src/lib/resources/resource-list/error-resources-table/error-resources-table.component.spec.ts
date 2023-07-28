@@ -32,6 +32,7 @@ describe('ErrorResourcesTableComponent', () => {
       providers: [
         MockProvider(SDKService, {
           currentKb: of({ admin: true } as unknown as WritableKnowledgeBox),
+          isAdminOrContrib: of(true),
           nuclia: {
             options: {},
           } as unknown as Nuclia,
