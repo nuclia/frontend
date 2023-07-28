@@ -64,6 +64,7 @@ export class SDKService {
   counters = new ReplaySubject<Counters>(1);
   pendingRefresh = new BehaviorSubject(false);
   refreshing = this._refreshCounter.asObservable();
+  isAdminOrContrib = this.currentKb.pipe(map((kb) => this.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
 
   get isKbLoaded() {
     return this._isKbLoaded;

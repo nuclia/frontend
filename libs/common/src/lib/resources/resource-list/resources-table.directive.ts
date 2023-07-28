@@ -87,7 +87,7 @@ export class ResourcesTableDirective {
 
   protected sdk: SDKService = inject(SDKService);
   currentKb = this.sdk.currentKb;
-  isAdminOrContrib = this.currentKb.pipe(map((kb) => this.sdk.nuclia.options.standalone || !!kb.admin || !!kb.contrib));
+  isAdminOrContrib = this.sdk.isAdminOrContrib;
 
   protected defaultColumns: ColumnHeader[] = COMMON_COLUMNS;
   columns: Observable<ColumnHeader[]> = this.isAdminOrContrib.pipe(
