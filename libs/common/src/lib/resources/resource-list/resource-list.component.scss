@@ -32,6 +32,13 @@ $table-breakpoint: 1400px;
     }
   }
 
+  .shared-queue-container {
+    align-items: center;
+    display: flex;
+    flex-shrink: 0;
+    gap: rhythm(1);
+  }
+
   .upload-container {
     display: flex;
     gap: rhythm(2);

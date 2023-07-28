@@ -43,6 +43,7 @@ import {
 } from './resource-list.model';
 import { UploadService } from '../../upload/upload.service';
 import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../../utils';
+import { NavigationService } from '../../services';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -136,6 +137,9 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = false;
   neverGotData = this.currentKb.pipe(map((kb) => !this.uploadService.hasKbGotData(kb.id)));
+  isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
+  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account!.can_manage_account));
+  upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
 
   constructor(
     private sdk: SDKService,
@@ -148,6 +152,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     private toaster: SisToastService,
     private labelService: LabelsService,
     private uploadService: UploadService,
+    private navigation: NavigationService,
   ) {}
 
   ngOnInit(): void {

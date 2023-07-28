@@ -32,9 +32,7 @@ export class AccountStatusComponent {
   price = combineLatest([this.billingService.getPrices(), this.accountType]).pipe(
     map(([prices, accountType]) => prices?.[accountType]?.recurring.month.price),
   );
-  upgradeUrl = this.sdk.currentAccount.pipe(
-    map((account) => this.navigation.getAccountManageUrl(account.slug) + '/billing/subscriptions'),
-  );
+  upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   daysLeft = this.sdk.currentAccount.pipe(
     filter((account) => !!account.trial_expiration_date),
