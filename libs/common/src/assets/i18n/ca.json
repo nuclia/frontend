@@ -528,7 +528,7 @@
 	"onboarding.title": "👋​ Benvinguts a Nuclia!",
 	"onboarding.updates": "Obteniu actualitzacions ocasionals sobre Nuclia",
 	"onboarding.use_case": "Quin és el vostre cas d'ús principal?",
-	"onboarding.use_case.ai_training": "Formació pròpia del model d'IA",
+	"onboarding.use_case.ai_training": "Entrenament del model d'IA",
 	"onboarding.use_case.global_search": "Cerca global de llocs",
 	"onboarding.use_case.other": "Un altre",
 	"onboarding.use_case.research_analysis": "Recerca i anàlisi",
