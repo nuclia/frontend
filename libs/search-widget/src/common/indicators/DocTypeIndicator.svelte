@@ -4,7 +4,7 @@
   let typeIndicator = '';
   $: switch (type) {
     case 'audio':
-      typeIndicator = 'audio'
+      typeIndicator = 'audio';
       break;
     case 'conversation':
       typeIndicator = 'conv';
@@ -13,7 +13,7 @@
       typeIndicator = 'image';
       break;
     case 'pdf':
-      typeIndicator = 'pdf';
+      typeIndicator = 'document';
       break;
     case 'spreadsheet':
       typeIndicator = 'spreadsheet';
