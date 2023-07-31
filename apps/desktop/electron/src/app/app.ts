@@ -107,13 +107,13 @@ export default class App {
       if (!App.application.isPackaged) {
         App.mainWindow.loadURL(`http://localhost:${rendererAppPort}`);
       } else {
-        App.mainWindow.loadURL(
-          format({
-            pathname: join(__dirname, '..', rendererAppName, 'index.html'),
-            protocol: 'file:',
-            slashes: true,
-          }),
-        );
+        const url = format({
+          pathname: join(__dirname, '..', rendererAppName, 'index.html'),
+          protocol: 'file:',
+          slashes: true,
+        }).replace(/\\/g, '/');
+        console.log('OPENING', url);
+        App.mainWindow.loadURL(url);
         App.application.setAsDefaultProtocolClient('nuclia-desktop');
 
         // Protocol handler for osx

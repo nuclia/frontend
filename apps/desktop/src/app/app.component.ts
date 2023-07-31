@@ -23,8 +23,8 @@ export class AppComponent implements OnInit {
     private user: UserService,
     private sdk: SDKService,
     private router: Router,
-    private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
+    private tracking: STFTrackingService,
   ) {
     this.initTranslate(undefined);
     this.user.userPrefs.subscribe((prefs) => {
