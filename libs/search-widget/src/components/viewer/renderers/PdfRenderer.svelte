@@ -4,7 +4,7 @@
   import { isMobileViewport } from '../../../common';
   import { PdfRendering } from './renderings';
 
-  const pdfUrl: Observable<string> = getFieldUrl();
+  const pdfUrl: Observable<string> = getFieldUrl(true);
   const pdfStyle = getPdfJsStyle();
   const pdfJsBaseUrl = getPdfJsBaseUrl();
   const pdfOverrideStyle = `.nuclia-widget .textLayer .highlight.selected {
@@ -25,7 +25,6 @@
   let innerWidth = window.innerWidth;
   $: isMobile = isMobileViewport(innerWidth);
 </script>
-
 
 <svelte:window bind:innerWidth />
 <svelte:head>
