@@ -176,9 +176,13 @@ jobs:
           helm package charts/app
           curl --data-binary "@app-${{ steps.version_step.outputs.version_number }}.tgz" ${{ secrets.HELM_CHART_URL }}/api/charts
 
-      - name: Trigger internal Jenkins
-        run: |-
-          curl -u "${{ secrets.JENKINS_API_USER }}:${{ secrets.JENKINS_API_KEY }}" --data-urlencode "COMPONENT=app" --data-urlencode "VERSION=${{ steps.version_step.outputs.version_number }}" ${{ secrets.JENKINS_FRONTEND_URL }}/buildWithParameters
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GH_CICD_PUBLIC }}
+          repository: nuclia/frontend_deploy
+          event-type: promote
+          client-payload: '{"component": "app", "chart-version": "${{ steps.version_step.outputs.version_number }}" }'
 
   deploy-manager:
     name: Deploy manager
