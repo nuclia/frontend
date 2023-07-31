@@ -251,14 +251,15 @@ export function readPersistentData() {
   } catch (err) {
     console.error(`Error reading connectors-log.json file: ${err}`);
   }
-  //do something when app is closing
+
+  //save files on exit
   process.on('exit', exitHandler);
   process.on('SIGTERM', exitHandler);
   //catches ctrl+c event
   process.on('SIGINT', exitHandler);
 }
 
-function exitHandler() {
+export function saveFiles() {
   try {
     fs.writeFileSync(getDataPath('connectors-db.json'), JSON.stringify(SOURCES));
   } catch (err) {
@@ -279,6 +280,10 @@ function exitHandler() {
     console.error(`Error writing connectors-log.json file: ${err}`);
     throw err;
   }
+}
+
+function exitHandler() {
+  saveFiles();
   console.log('Exit now');
   process.exit();
 }

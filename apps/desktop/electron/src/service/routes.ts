@@ -11,6 +11,7 @@ import {
   getSourceFromBody,
   getSources,
   hasAuth,
+  saveFiles,
   setSources,
 } from './sources';
 import { restartCollection } from './sync';
@@ -20,6 +21,11 @@ export const router = express.Router();
 
 router.get('/', (req, res) => {
   res.send('"Nuclia desktop service is running!"');
+});
+
+router.get('/stop', (req, res) => {
+  saveFiles();
+  res.status(201).send();
 });
 
 router.get('/status', (req, res) => {
