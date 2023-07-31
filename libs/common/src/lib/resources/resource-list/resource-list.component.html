@@ -38,6 +38,18 @@
       </pa-button>
     </ng-template>
 
+    <div
+      class="shared-queue-container title-s"
+      *ngIf="isPendingView && (isTrial | async)">
+      <pa-icon name="info"></pa-icon>
+      {{ 'resource.shared_queue' | translate }}
+      <a
+        *ngIf="isAccountManager | async"
+        [routerLink]="upgradeUrl | async">
+        {{ 'billing.upgrade_now' | translate }}
+      </a>
+    </div>
+
     <div class="upload-container">
       <ng-container *ngIf="isMainView && (isAdminOrContrib | async)">
         <stf-upload-button></stf-upload-button>

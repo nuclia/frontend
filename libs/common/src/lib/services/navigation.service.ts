@@ -63,6 +63,10 @@ export class NavigationService {
     return `${this.getKbUrl(accountSlug, kbSlug)}/users`;
   }
 
+  getUpgradeUrl(accountSlug: string): string {
+    return `${this.getAccountManageUrl(accountSlug)}/billing/subscriptions`;
+  }
+
   getSearchUrl(accountSlug: string, kbSlug: string): string {
     return `${this.getKbUrl(accountSlug, kbSlug)}/search`;
   }

@@ -4720,6 +4720,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>billing.upgrade_now</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>billing.usage.consumables</name>
 						<description/>
 						<comment/>
@@ -13421,6 +13441,26 @@
 					</concept_node>
 					<concept_node>
 						<name>resource.selected_count</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>resource.shared_queue</name>
 						<description/>
 						<comment/>
 						<default_text/>

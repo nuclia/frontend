@@ -49,7 +49,9 @@
     <div
       *ngIf="isKbAdmin | async"
       class="right-column">
-      <div class="account-status">
+      <div
+        class="account-status"
+        *ngIf="isAccountManager | async">
         <app-account-status></app-account-status>
       </div>
       <div class="container resource-stats">
