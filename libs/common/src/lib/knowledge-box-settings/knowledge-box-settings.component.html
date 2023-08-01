@@ -65,8 +65,8 @@
               *ngFor="let value of conf.data.options"
               [value]="value.value">
               {{
-                (hasTranslation('stash.config.' + value.value)
-                  ? 'stash.config.' + value.value
+                (hasTranslation('stash.config.option.' + value.value)
+                  ? 'stash.config.option.' + value.value
                   : value.name.toLowerCase()
                 ) | translate
               }}
@@ -85,7 +85,11 @@
                 {{ 'stash.config.own_key' | translate }}
               </pa-toggle>
               <ng-container *ngIf="ownKey">
-                <div class="title-s">{{ 'stash.config.' + groupId | translate }}:</div>
+                <div
+                  *ngIf="hasTranslation('stash.config.key.' + groupId)"
+                  class="title-s">
+                  {{ 'stash.config.key.' + groupId | translate }}:
+                </div>
                 <ng-container *ngFor="let field of userKeys?.[groupId] || {} | keyvalue">
                   <pa-input
                     *ngIf="!field.value.textarea"

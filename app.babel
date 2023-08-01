@@ -14580,7 +14580,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.config.azure_openai</name>
+						<name>stash.config.key.azure_openai</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -14600,7 +14600,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.config.chatgpt</name>
+						<name>stash.config.key.openai</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -14620,7 +14620,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.config.chatgpt-azure</name>
+						<name>stash.config.option.chatgpt</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -14640,7 +14640,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.config.generative-multilingual-2023</name>
+						<name>stash.config.option.chatgpt-azure</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -14660,7 +14660,47 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.config.openai</name>
+						<name>stash.config.option.cohere</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.config.option.generative-multilingual-2023</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.config.option.palm</name>
 						<description/>
 						<comment/>
 						<default_text/>
