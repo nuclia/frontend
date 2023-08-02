@@ -38,8 +38,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private config: BackendConfigurationService,
     private navigation: NavigationService,
     private sdk: SDKService,
-    private titleService: Title,
     private paTranslate: PaTranslateService,
+    private titleService: Title,
     private modalService: SisModalService,
   ) {
     this.unsubscribeAll = new Subject();
