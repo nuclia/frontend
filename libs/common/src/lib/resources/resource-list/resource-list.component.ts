@@ -44,7 +44,6 @@ import {
 import { UploadService } from '../../upload/upload.service';
 import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../../utils';
 import { NavigationService } from '../../services';
-import { th } from 'date-fns/locale';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
