@@ -44,6 +44,7 @@ import {
 import { UploadService } from '../../upload/upload.service';
 import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../../utils';
 import { NavigationService } from '../../services';
+import { th } from 'date-fns/locale';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -157,17 +158,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.uploadService.initStatusCount();
-    this.getResources().subscribe(() => {
-      this.emptyKb = this.data?.length === 0;
-      this.cdr.markForCheck();
-    });
+    this.getResources().subscribe(() => this.cdr.markForCheck());
     this.sdk.refreshing
       .pipe(
         takeUntil(this.unsubscribeAll),
         tap(() => (this.refreshing = true)),
         switchMap(() => this.getResources()),
       )
-      .subscribe();
+      .subscribe(() => this.cdr.markForCheck());
 
     // Reset resource list when query is empty (without forcing user to hit enter)
     this.searchForm.controls.query.valueChanges
@@ -245,6 +243,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.manageBulkActionResults('deleting');
         this.sdk.refreshCounter(true);
+        this.cdr.markForCheck();
       });
   }
 
@@ -310,7 +309,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         switchMap(() => this._getResources(true)),
         switchMap(() => this.uploadService.updateStatusCount()),
       )
-      .subscribe();
+      .subscribe(() => this.cdr.markForCheck());
   }
 
   private afterBulkActions() {
@@ -326,7 +325,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   loadMore() {
     if (this.hasMore) {
       this.page += 1;
-      this.getResources(false).subscribe();
+      this.getResources(false).subscribe(() => this.cdr.markForCheck());
     }
   }
 
@@ -336,12 +335,12 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   filter(filters: string[]) {
-    this._getResources(true, filters).subscribe();
+    this._getResources(true, filters).subscribe(() => this.cdr.markForCheck());
   }
 
   triggerLoadResources() {
     this.setLoading(true);
-    this._getResources(true).subscribe();
+    this._getResources(true).subscribe(() => this.cdr.markForCheck());
   }
 
   getResources(displayLoader = true): Observable<Search.Results> {
@@ -611,7 +610,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         }),
         switchMap(() => this.getResources()),
       )
-      .subscribe();
+      .subscribe(() => this.cdr.markForCheck());
   }
 
   private mergeExistingAndSelectedLabels(
@@ -645,14 +644,14 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.statusDisplayed.next(status);
     this.getResources()
       .pipe(switchMap(() => this.uploadService.updateStatusCount()))
-      .subscribe();
+      .subscribe(() => this.cdr.markForCheck());
   }
 
   onDatasetImport(success: boolean) {
     if (success) {
       this.getResources()
         .pipe(switchMap(() => this.uploadService.updateStatusCount()))
-        .subscribe();
+        .subscribe(() => this.cdr.markForCheck());
     }
   }
 
@@ -686,7 +685,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
           return this._getResources(true);
         }),
       )
-      .subscribe();
+      .subscribe(() => this.cdr.markForCheck());
   }
 
   useDesktop() {
