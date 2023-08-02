@@ -1,116 +1,113 @@
-<div
-  class="mb-28"
-  *ngIf="account | async as account">
-  <div class="users-amount">
-    {{ 'account.users_amount' | translate }}
-    <strong>{{ account.current_users }}</strong>
-  </div>
-  <div
-    class="users-left"
-    *ngIf="account.max_users != null">
-    {{ 'account.users_left' | translate }}
-    <strong>{{ account.max_users - account.current_users }}</strong>
+<ng-container *ngIf="kb && (isAccountManager | async) && (canAddUsers | async)">
+  <h3>{{ 'stash.users.new_user' | translate }}</h3>
+  <form
+    class="add-user"
+    (ngSubmit)="addUser()"
+    [formGroup]="addForm">
+    <pa-input
+      type="email"
+      formControlName="email">
+      {{ 'accounts.add_user_input' | translate }}
+    </pa-input>
+    <pa-select
+      formControlName="role"
+      label="{{ 'generic.role' | translate }}"
+      dim>
+      <pa-option
+        *ngFor="let role of initialRoles"
+        [value]="role">
+        {{ roleTitles[role] | translate }}
+      </pa-option>
+    </pa-select>
+    <pa-button
+      type="submit"
+      kind="primary"
+      size="large"
+      [disabled]="addForm.invalid">
+      {{ 'generic.add' | translate }}
+    </pa-button>
+  </form>
+</ng-container>
+
+<div class="users-list-header">
+  <h3>{{ 'stash.users.users_list' | translate }}</h3>
+  <div>
+    <nsi-dropdown-button
+      aspect="basic"
+      [popupRef]="orderUsers"
+      [open]="orderOpen">
+      {{ 'stash.users.sort_by_' + (order | async) | translate }}
+    </nsi-dropdown-button>
+    <pa-dropdown
+      #orderUsers
+      (onClose)="orderOpen = false"
+      (onOpen)="orderOpen = true">
+      <pa-option
+        value="role"
+        (selectOption)="changeOrder('role')">
+        {{ 'stash.users.sort_by_role' | translate }}
+      </pa-option>
+      <pa-option
+        value="name"
+        (selectOption)="changeOrder('name')">
+        {{ 'stash.users.sort_by_name' | translate }}
+      </pa-option>
+    </pa-dropdown>
   </div>
 </div>
 
-<ng-container *ngIf="kb && (isAccountManager | async)">
-  <div
-    class="add-user"
-    *ngIf="canAddUsers | async">
-    <form
-      (ngSubmit)="addUser()"
-      [formGroup]="addForm">
-      <pa-input
-        type="email"
-        formControlName="email">
-        {{ 'accounts.add_user_input' | translate }}
-      </pa-input>
-      <pa-select
-        formControlName="role"
-        label="{{ 'generic.role' | translate }}">
-        <pa-option
-          *ngFor="let role of initialRoles"
-          [value]="role">
-          {{ roleTitles[role] | translate }}
-        </pa-option>
-      </pa-select>
+<pa-table columns="1fr 1fr 1fr 1fr">
+  <pa-table-header>
+    <pa-table-cell header>
+      <span class="title-xxs">{{ 'generic.name' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header>
+      <span class="title-xxs">{{ 'generic.email' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header>
+      <span class="title-xxs">{{ 'generic.role' | translate }}</span>
+    </pa-table-cell>
+    <pa-table-cell header></pa-table-cell>
+  </pa-table-header>
 
-      <pa-button
-        type="submit"
-        kind="secondary"
-        [disabled]="addForm.invalid">
-        {{ 'account.add_user' | translate }}
-      </pa-button>
-    </form>
-  </div>
-</ng-container>
-
-<table
-  cdk-table
-  [dataSource]="(usersKb | async) || []"
-  class="user-table">
-  <ng-container cdkColumnDef="name">
-    <th
-      cdk-header-cell
-      *cdkHeaderCellDef>
-      {{ 'generic.user' | translate }}
-    </th>
-    <td
-      cdk-cell
-      *cdkCellDef="let user">
-      {{ user.name }} – {{ user.email }}
-    </td>
-  </ng-container>
-
-  <ng-container cdkColumnDef="role">
-    <th
-      cdk-header-cell
-      *cdkHeaderCellDef>
-      {{ 'stash.users.role' | translate }}
-    </th>
-    <td
-      cdk-cell
-      *cdkCellDef="let user">
-      <pa-select
-        (valueChange)="changeRole(user.id, $event)"
-        [value]="user.role"
+  <pa-table-row *ngFor="let user of usersKb | async">
+    <pa-table-cell>
+      <span class="title-s">{{ user.name }}</span>
+    </pa-table-cell>
+    <pa-table-cell>
+      <span class="body-s">{{ user.email }}</span>
+    </pa-table-cell>
+    <pa-table-cell>
+      <nsi-dropdown-button
+        size="small"
+        aspect="basic"
+        [popupRef]="roleDropdown"
         [disabled]="
           (isAccountManager | async) === false || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)
-        "
-        dim>
+        ">
+        {{ roleTitles[user.role] | translate }}
+      </nsi-dropdown-button>
+      <pa-dropdown #roleDropdown>
         <pa-option
           *ngFor="let role of roles"
-          [value]="role">
+          [value]="role"
+          (selectOption)="changeRole(user.id, role)">
           {{ roleTitles[role] | translate }}
         </pa-option>
-      </pa-select>
-    </td>
-  </ng-container>
-
-  <ng-container cdkColumnDef="actions">
-    <th
-      cdk-header-cell
-      *cdkHeaderCellDef></th>
-    <td
-      cdk-cell
-      *cdkCellDef="let user">
-      <pa-button
-        *ngIf="(isAccountManager | async) === true"
-        aspect="basic"
-        icon="trash"
-        size="small"
-        kind="destructive"
-        [disabled]="(userCount | async) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
-        (click)="deleteUser(user)">
-        {{ 'generic.delete' | translate }}
-      </pa-button>
-    </td>
-  </ng-container>
-
-  <tr
-    cdk-header-row
-    *cdkHeaderRowDef="columns"></tr>
-  <tr
-    cdk-row
-    *cdkRowDef="let row; columns: columns"></tr>
-</table>
+      </pa-dropdown>
+    </pa-table-cell>
+    <pa-table-cell>
+      <div class="actions">
+        <pa-button
+          *ngIf="(isAccountManager | async) === true"
+          aspect="basic"
+          icon="trash"
+          size="small"
+          [disabled]="(userCount | async) < 2 || (user.role === 'SOWNER' && (hasSeveralOwners | async) === false)"
+          (click)="deleteUser(user)">
+          {{ 'generic.delete' | translate }}
+        </pa-button>
+      </div>
+    </pa-table-cell>
+  </pa-table-row>
+</pa-table>

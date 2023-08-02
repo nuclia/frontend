@@ -97,7 +97,7 @@
               <span class="nav-link-title">{{ 'stash.side.trainings' | translate }}</span>
             </a>
           </div>
-          <ng-container *ngIf="isAdmin | async">
+          <ng-container *ngIf="isAccountManager | async">
             <div
               *ngIf="isUsersEnabled | async"
               class="group-items">

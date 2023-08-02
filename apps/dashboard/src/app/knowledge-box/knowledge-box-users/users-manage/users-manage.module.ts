@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CdkTableModule } from '@angular/cdk/table';
-import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { PaButtonModule, PaDropdownModule, PaTableModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
+import { DropdownButtonComponent } from '@nuclia/sistema';
 import { UsersManageComponent } from './users-manage.component';
 
 @NgModule({
@@ -14,8 +14,10 @@ import { UsersManageComponent } from './users-manage.component';
     TranslateModule.forChild(),
     ReactiveFormsModule,
     FormsModule,
-    CdkTableModule,
     PaButtonModule,
+    PaDropdownModule,
+    DropdownButtonComponent,
+    PaTableModule,
     PaTextFieldModule,
   ],
   declarations: [UsersManageComponent],

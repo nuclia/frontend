@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, Observable } from 'rxjs';
-import { KbUser, StateService } from '@flaps/core';
+import { BehaviorSubject, combineLatest, filter, map, Observable, switchMap } from 'rxjs';
+import { KbUser, SDKService } from '@flaps/core';
 import { KB_ROLE_TITLES, SORTED_KB_ROLES } from '../../utils';
 import { UsersManageService } from './users-manage.service';
 import { KBRoles } from '@nuclia/core';
-import { SisToastService } from '@nuclia/sistema';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+
+type Order = 'role' | 'name';
 
 @Component({
   selector: 'app-users-manage',
@@ -27,26 +29,33 @@ export class UsersManageComponent {
       this.users.updateUsers(value);
     }
   }
-  @Input() modal: boolean = false;
 
   addForm = this.formBuilder.group({
     email: ['', [Validators.required, Validators.email]],
-    role: ['', [Validators.required]],
+    role: ['SMEMBER', [Validators.required]],
   });
+  order = new BehaviorSubject<Order>('role');
+  orderOpen = false;
 
-  columns: string[] = ['name', 'role', 'actions'];
-  usersKb: Observable<KbUser[]> = this.users.usersKb;
-  userCount: Observable<number> = this.users.usersKb.pipe(map((users) => users.length));
-  account = this.state.account.pipe(filter((account) => !!account));
-  isAccountManager = this.account.pipe(
-    filter((account) => !!account),
-    map((account) => account!.can_manage_account),
+  usersKb: Observable<KbUser[]> = combineLatest([this.users.usersKb, this.order]).pipe(
+    map(([users, order]) => {
+      if (order === 'name') {
+        return [...users].sort((a, b) => a.name.localeCompare(b.name));
+      } else {
+        return [...users].sort((a, b) => {
+          const order = this.roles.indexOf(a.role) - this.roles.indexOf(b.role);
+          return order === 0 ? a.name.localeCompare(b.name) : order;
+        });
+      }
+    }),
   );
+  userCount: Observable<number> = this.users.usersKb.pipe(map((users) => users.length));
+  isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
   hasSeveralOwners: Observable<boolean> = this.usersKb.pipe(
     map((users: KbUser[]) => users.filter((user) => user.role === 'SOWNER')?.length > 1),
   );
-  canAddUsers = this.account.pipe(
-    map((account) => account!.max_users == null || account!.current_users < account!.max_users),
+  canAddUsers = this.sdk.currentAccount.pipe(
+    map((account) => account.max_users == null || account.current_users < account.max_users),
   );
 
   roles = SORTED_KB_ROLES;
@@ -57,9 +66,10 @@ export class UsersManageComponent {
     private users: UsersManageService,
     private formBuilder: UntypedFormBuilder,
     private translate: TranslateService,
-    private state: StateService,
+    private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
+    private modal: SisModalService,
   ) {}
 
   addUser() {
@@ -77,10 +87,27 @@ export class UsersManageComponent {
   }
 
   changeRole(userId: string, newRole: KBRoles) {
-    this.users.changeRole(this.kb!, userId, newRole).subscribe();
+    this.users.changeRole(this.kb || '', userId, newRole).subscribe();
+  }
+
+  changeOrder(order: Order) {
+    this.order.next(order);
   }
 
   deleteUser(user: KbUser) {
-    this.users.deleteUser(this.kb!, user.id).subscribe();
+    this.modal
+      .openConfirm({
+        title: 'stash.confirm_delete_user.title',
+        description: 'stash.confirm_delete_user.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((result) => !!result),
+        switchMap(() => this.users.deleteUser(this.kb || '', user.id)),
+      )
+      .subscribe(() => {
+        this.toaster.success('stash.users.user_deleted');
+      });
   }
 }

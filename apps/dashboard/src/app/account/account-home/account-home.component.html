@@ -117,7 +117,7 @@
           <li *ngFor="let kb of kbs | async">
             <a
               class="kb-item"
-              [href]="getKbUrl(account.slug, kb.slug)">
+              [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug) : undefined">
               {{ kb.title }}
               <pa-icon
                 *ngIf="kb.state === 'PRIVATE'"
