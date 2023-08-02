@@ -57,8 +57,8 @@
                 *ngFor="let value of conf.data.options"
                 [value]="value.value">
                 {{
-                  (hasTranslation('stash.config.' + value.value)
-                    ? 'stash.config.' + value.value
+                  (hasTranslation('stash.config.option.' + value.value)
+                    ? 'stash.config.option.' + value.value
                     : value.name.toLowerCase()
                   ) | translate
                 }}
