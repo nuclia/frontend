@@ -14740,6 +14740,46 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>stash.confirm_delete_user.description</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.confirm_delete_user.title</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>stash.contact_admin</name>
 						<description/>
 						<comment/>
@@ -15880,26 +15920,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.search_users_description</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>stash.seats_available</name>
 						<description/>
 						<comment/>
@@ -16820,6 +16840,26 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>stash.users.new_user</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>stash.users.role</name>
 						<description/>
 						<comment/>
@@ -16840,7 +16880,7 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.users.title</name>
+						<name>stash.users.sort_by_name</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -16860,7 +16900,47 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>stash.users.users</name>
+						<name>stash.users.sort_by_role</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.users.user_deleted</name>
+						<description/>
+						<comment/>
+						<default_text/>
+						<translations>
+							<translation>
+								<language>ca-ES</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>es-ES</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>stash.users.users_list</name>
 						<description/>
 						<comment/>
 						<default_text/>

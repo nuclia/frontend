@@ -16,7 +16,7 @@
       *ngFor="let kb of knowledgeBoxes">
       <a
         class="account-kb-title"
-        [class.disabled]="!kb.role_on_kb && !account.can_manage_account"
+        [class.disabled]="!kb.role_on_kb || !account.can_manage_account"
         [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
         {{ kb.title }}
       </a>
