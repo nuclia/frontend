@@ -214,12 +214,16 @@ export class KnowledgeBox implements IKnowledgeBox {
   getTempToken(): Observable<string> {
     const account = this.account || this.nuclia.options.account;
     const kbSlug = this.slug || this.nuclia.options.kbSlug;
-    if (!account || !kbSlug) {
-      throw new Error('Account and KB slug are required to get a temp token');
+    if (!this.nuclia.options.standalone) {
+      if (!account || !kbSlug) {
+        throw new Error('Account and KB slug are required to get a temp token');
+      }
+      return this.nuclia.rest
+        .post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {})
+        .pipe(map((res) => res.token));
+    } else {
+      return this.nuclia.rest.get<{ token: string }>('/temp-access-token').pipe(map((res) => res.token));
     }
-    return this.nuclia.rest
-      .post<{ token: string }>(`/account/${account}/kb/${kbSlug}/ephemeral_tokens`, {})
-      .pipe(map((res) => res.token));
   }
 
   listActivity(type?: EventType, page?: number, size?: number): Observable<EventList> {

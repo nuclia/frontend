@@ -277,7 +277,7 @@ export function getPdfSrc(path: string): string | { url: string; httpHeaders: an
 }
 
 export const isPrivateKnowledgeBox = (): boolean => {
-  return STATE === 'PRIVATE';
+  return STATE === 'PRIVATE' || !!nucliaApi?.options?.standalone;
 };
 
 export const hasAuthData = (): boolean => {
