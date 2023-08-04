@@ -75,7 +75,8 @@ class OneDriveImpl implements ISourceConnector {
   }
 
   authenticate(): Observable<boolean> {
-    if (!this.isAuthenticated.getValue()) {
+    const token = localStorage.getItem(TOKEN);
+    if (!token) {
       const interval = setInterval(() => {
         const deeplink = getDeeplink();
         if (deeplink && deeplink.includes('?')) {
@@ -109,6 +110,8 @@ class OneDriveImpl implements ISourceConnector {
           }
         }
       }, 500);
+    } else {
+      this.isAuthenticated.next(true);
     }
     return this.isAuthenticated.asObservable();
   }
