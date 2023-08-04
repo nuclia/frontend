@@ -58,7 +58,7 @@ class SitemapImpl implements ISourceConnector {
     return this.getFiles().pipe(
       map((searchResults) => {
         return searchResults.items.filter(
-          (item) => item.metadata['lastModified'] && item.metadata['lastModified'] > since,
+          (item) => !item.metadata['lastModified'] || item.metadata['lastModified'] > since,
         );
       }),
     );
