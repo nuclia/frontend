@@ -64,6 +64,12 @@ export class CalculatorComponent {
     this.cdr?.markForCheck();
   }
 
+  toggleSelfHosted() {
+    this.selfHosted = !this.selfHosted;
+    this.total = this.calculateTotal();
+    this.cdr?.markForCheck();
+  }
+
   maxValue(price: number, threshold: number) {
     return Math.ceil(300 / price + threshold);
   }
