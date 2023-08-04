@@ -19,22 +19,58 @@
         </pa-radio-group>
       </div>
       <div class="section">
-        <div *ngFor="let param of params">
-          <div class="field-block">
-            <pa-slider
-              [min]="prices[tier].usage[param].threshold || 0"
-              [max]="maxValue(prices[tier].usage[param].price, prices[tier].usage[param].threshold)"
-              [value]="values[param]"
-              (valueChange)="update(param, $event)">
-              <span class="title-xxs">{{ 'billing.parameter.' + param | translate }}</span>
-            </pa-slider>
-            <div class="price">{{ calculatePrice(param) | currency : currency }}</div>
+        <h3 class="title-m">{{ 'billing.quotas.ingestion' | translate }}</h3>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{ param: 'media' }"></ng-container>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{ param: 'paragraphs_processed' }"></ng-container>
+        <div class="separator"></div>
+        <h3 class="title-m">{{ 'billing.quotas.search_inference' | translate }}</h3>
+        <pa-checkbox
+          [value]="selfHosted"
+          (valueChange)="toggleSelfHosted()">
+          Self hosted
+        </pa-checkbox>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{
+            param: 'searches',
+            text: 'billing.quotas.searches'
+          }"></ng-container>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{
+            param: 'generative',
+            text: 'billing.quotas.answers'
+          }"></ng-container>
+        <div class="separator"></div>
+        <h3 class="title-m">{{ 'billing.quotas.train' | translate }}</h3>
+        <ng-container
+          [ngTemplateOutlet]="sliderTemplate"
+          [ngTemplateOutletContext]="{ param: 'training' }"></ng-container>
+        <ng-template
+          #sliderTemplate
+          let-param="param"
+          let-text="text">
+          <div>
+            <div class="field-block">
+              <pa-slider
+                [min]="prices[tier].usage[param].threshold || 0"
+                [max]="maxValue(getUnitPrice(tier, param), prices[tier].usage[param].threshold)"
+                [value]="values[param]"
+                (valueChange)="update(param, $event)">
+                <span class="title-xxs">{{ text || 'billing.parameter.' + param | translate }}</span>
+              </pa-slider>
+              <div class="price">{{ calculatePrice(param) | currency : currency }}</div>
+            </div>
+            <div class="unit-price body-xs">
+              {{ getUnitPrice(tier, param) | currency : currency : 'symbol' : '1.2-6' }} /
+              {{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
+            </div>
           </div>
-          <div class="unit-price body-xs">
-            {{ prices[tier].usage[param].price | currency : currency : 'symbol' : '1.2-6' }} /
-            {{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
-          </div>
-        </div>
+        </ng-template>
       </div>
       <div class="section">
         <div>

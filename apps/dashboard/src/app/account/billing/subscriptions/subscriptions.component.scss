@@ -1,18 +1,12 @@
 @import 'variables';
 
 h2 {
-  margin-bottom: 0;
+  margin-bottom: rhythm(3);
 }
 
-.header {
-  display: flex;
-  align-items: baseline;
-  margin-bottom: rhythm(4);
-}
 .field-block {
   width: rhythm(24);
   margin-bottom: rhythm(1);
-  margin-top: rhythm(2);
 }
 .subscriptions {
   border-collapse: separate;

@@ -213,7 +213,6 @@
 	"billing.state": "Província",
 	"billing.subscribed": "Subscrit",
 	"billing.subscription.country": "Seleccioneu el país de facturació",
-	"billing.subscription.help": "Tots els plans de subscripció tenen accés a totes les funcions.",
 	"billing.subscription.title": "Nivells de subscripció",
 	"billing.subscription_tier": "Nivell de subscripció",
 	"billing.success": "Subscripció satisfactòria",

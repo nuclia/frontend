@@ -1,12 +1,17 @@
 @import 'variables';
 
 :host {
-  pa-slider ::ng-deep .pa-field .pa-field-control-range[type='range'] {
-    width: rhythm(35);
+  pa-slider ::ng-deep {
+    label {
+      width: rhythm(28);
+    }
+    output {
+      min-width: rhythm(6) !important;
+    }
   }
 }
 
-h2 {
+h2, h3 {
   margin: 0;
 }
 
@@ -15,6 +20,7 @@ form {
   flex-direction: column;
   gap: rhythm(5);
   max-width: rhythm(90);
+  padding-bottom: rhythm(4);
 }
 
 pa-radio-group {
@@ -27,6 +33,12 @@ pa-radio-group {
   display: flex;
   flex-direction: column;
   gap: rhythm(1.5);
+}
+
+.separator {
+  border-bottom: 1px solid $color-neutral-lighter;
+  margin: rhythm(0.5) 0;
+  width: rhythm(10);
 }
 
 .field-block {
