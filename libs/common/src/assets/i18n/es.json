@@ -213,7 +213,6 @@
 	"billing.state": "Provincia",
 	"billing.subscribed": "Suscrito",
 	"billing.subscription.country": "Seleccione el país de facturación",
-	"billing.subscription.help": "Todos los planes de suscripción tienen acceso a todas las funciones.",
 	"billing.subscription.title": "Niveles de subscripción",
 	"billing.subscription_tier": "Nivel de suscripción",
 	"billing.success": "Suscripción exitosa",

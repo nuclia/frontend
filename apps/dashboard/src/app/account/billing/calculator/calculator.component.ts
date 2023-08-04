@@ -24,11 +24,30 @@ export class CalculatorComponent {
   prices = this.modal.config.data!.prices;
   currency = this.modal.config.data!.currency;
   tier: AccountTypes = 'stash-starter';
+  selfHosted = false;
 
   values = this.params.reduce(
     (acc, param) => ({ ...acc, [param]: this.prices[this.tier].usage[param].threshold }),
     {} as { [param in UsageType]: number },
   );
+
+  searchPrices = ['stash-starter', 'stash-growth'].reduce((acc, accountType) => {
+    const type = accountType as AccountTypes;
+    acc[type] = {
+      self_hosted: {
+        searches: 2 * this.prices[type].usage['predict'].price,
+        generative: 2 * this.prices[type].usage['predict'].price + this.prices[type].usage['generative'].price,
+      },
+      managed: {
+        searches: this.prices[type].usage['searches'].price + 2 * this.prices[type].usage['predict'].price,
+        generative:
+          this.prices[type].usage['searches'].price +
+          2 * this.prices[type].usage['predict'].price +
+          this.prices[type].usage['generative'].price,
+      },
+    };
+    return acc;
+  }, {} as { [type in AccountTypes]: { self_hosted: any; managed: any } });
 
   total = this.calculateTotal();
   isSpain = this.billing.country.pipe(map((country) => country === 'ES'));
@@ -50,13 +69,19 @@ export class CalculatorComponent {
   }
 
   calculatePrice(param: UsageType) {
-    return (
-      (this.values[param] - this.prices[this.tier].usage[param].threshold) * this.prices[this.tier].usage[param].price
-    );
+    return (this.values[param] - this.prices[this.tier].usage[param].threshold) * this.getUnitPrice(this.tier, param);
   }
 
   calculateTotal() {
     return this.params.reduce((acc, current) => acc + this.calculatePrice(current), 0);
+  }
+
+  getUnitPrice(tier: AccountTypes, param: UsageType) {
+    if (param === 'searches' || param === 'generative') {
+      return this.searchPrices[tier][this.selfHosted ? 'self_hosted' : 'managed'][param];
+    } else {
+      return this.prices[tier].usage[param].price;
+    }
   }
 
   changeTier(tier: AccountTypes) {

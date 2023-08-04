@@ -20,10 +20,6 @@
   </pa-typeahead-select>
 </div>
 <div *ngIf="currency">
-  <div class="header">
-    <p class="body-m">{{ 'billing.subscription.help' | translate }}</p>
-  </div>
-
   <app-deprecated-tiers *ngIf="(showNewTiers | async) === false"></app-deprecated-tiers>
 
   <ng-container *ngIf="(showNewTiers | async) === true">

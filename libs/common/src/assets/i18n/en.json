@@ -225,7 +225,6 @@
 	"billing.state": "State",
 	"billing.subscribed": "Subscribed",
 	"billing.subscription.country": "Select the billing country",
-	"billing.subscription.help": "All subscription plans have access to all features.",
 	"billing.subscription.title": "Subscription tiers",
 	"billing.subscription_tier": "Subscription tier",
 	"billing.success": "Successful subscription",
