@@ -7,6 +7,9 @@ import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga
 import { CONNECTOR_ID_KEY } from './sync/models';
 import { getDeeplink } from './utils';
 import pkg from '../../../../package.json';
+import { filter, map, switchMap, take } from 'rxjs';
+import { SisModalService } from '@nuclia/sistema';
+import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'nde-root',
@@ -16,6 +19,17 @@ import pkg from '../../../../package.json';
 export class AppComponent implements OnInit {
   version = '';
   isAuthenticated = true;
+  hasTrialExpired = this.sdk.nuclia.auth.isAuthenticated().pipe(
+    filter((isAuthenticated) => isAuthenticated),
+    switchMap(() => this.sdk.currentAccount),
+    filter((account) => account.type === 'stash-trial'),
+    map((account) => {
+      const expiration = new Date(`${account.trial_expiration_date}+00:00`);
+      const now = new Date();
+      return expiration < now;
+    }),
+    filter((hasExpired) => hasExpired),
+  );
   constructor(
     private config: BackendConfigurationService,
     private ngxTranslate: TranslateService,
@@ -24,6 +38,8 @@ export class AppComponent implements OnInit {
     private sdk: SDKService,
     private router: Router,
     private tracking: STFTrackingService,
+    private modalService: SisModalService,
+    private navigationService: NavigationService,
     private cdr: ChangeDetectorRef,
   ) {
     this.initTranslate(undefined);
@@ -40,6 +56,7 @@ export class AppComponent implements OnInit {
     if (this.config.getVersion()) {
       this.version = `${pkg['version']} - ${this.config.getVersion()}`;
     }
+    this.checkTrialExpiration();
   }
 
   initTranslate(userLocale?: string) {
@@ -107,5 +124,28 @@ export class AppComponent implements OnInit {
     if ((window as any)['electron']) {
       (window as any)['electron'].debug();
     }
+  }
+
+  private checkTrialExpiration() {
+    this.hasTrialExpired
+      .pipe(
+        take(1),
+        switchMap(
+          () =>
+            this.modalService.openConfirm({
+              title: 'account.trial-end.title',
+              description: 'account.trial-end.help',
+              onlyConfirm: true,
+            }).onClose,
+        ),
+      )
+      .subscribe(() => {
+        if ((window as any)['electron']) {
+          (window as any)['electron'].openExternal('https://nuclia.cloud');
+        } else if (!location.search) {
+          // dev mode in browser
+          location.href = 'https://nuclia.cloud';
+        }
+      });
   }
 }

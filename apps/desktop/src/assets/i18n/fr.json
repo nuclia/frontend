@@ -1,4 +1,7 @@
 {
+	"account.trial-end.help": "L'essai de 15 jours a expiré et votre compte a été bloqué. Vous pouvez soit souscrire à l'un de nos forfaits, soit nous contacter pour une prolongation de l'essai.",
+	"account.trial-end.title": "Oh! Votre essai gratuit est terminé",
+	"account.trial-end.upgrade": "Souscrire",
 	"generic.cancel": "Annuler",
 	"generic.logout": "Déconnexion",
 	"generic.save_continue": "Enregistrer et continuer",

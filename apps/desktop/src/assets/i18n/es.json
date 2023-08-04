@@ -1,4 +1,7 @@
 {
+	"account.trial-end.help": "La prueba de 15 días ha expirado y su cuenta ha sido bloqueada. Puede suscribirse a uno de nuestros planes o contactarnos para una extensión de la prueba.",
+	"account.trial-end.title": "¡Oh! Su prueba gratuita ha finalizado",
+	"account.trial-end.upgrade": "Suscribir",
 	"generic.cancel": "Cancelar",
 	"generic.logout": "Salir",
 	"generic.save_continue": "Guardar y continuar",
