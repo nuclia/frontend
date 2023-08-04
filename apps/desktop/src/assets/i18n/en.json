@@ -1,4 +1,7 @@
 {
+	"account.trial-end.help": "The 15-day trial has expired and your account has been blocked. You can either subscribe to one of our plans or contact us for an extension of the trial.",
+	"account.trial-end.title": "Oh! Your free trial has ended",
+	"account.trial-end.upgrade": "Subscribe",
 	"generic.cancel": "Cancel",
 	"generic.logout": "Log out",
 	"generic.save_continue": "Save & Continue",

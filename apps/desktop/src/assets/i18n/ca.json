@@ -1,4 +1,7 @@
 {
+	"account.trial-end.help": "La prova de 15 dies ha caducat i el vostre compte s'ha bloquejat. Pots subscriure't a un dels nostres plans o contactar amb nosaltres per ampliar la prova.",
+	"account.trial-end.title": "Oh! La teva prova gratuïta ha finalitzat",
+	"account.trial-end.upgrade": "Subscriu-te",
 	"generic.cancel": "Cancel·lar",
 	"generic.logout": "Sortir",
 	"generic.save_continue": "Desar i continuar",
