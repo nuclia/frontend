@@ -32,7 +32,7 @@
     viewerData,
     viewerState,
     ViewerState,
-    WidgetAction
+    WidgetAction,
   } from '../../core';
   import {
     DocTypeIndicator,
@@ -43,7 +43,7 @@
     IconButton,
     isMobileViewport,
     ParagraphResult,
-    unblockBackground
+    unblockBackground,
   } from '../../common';
   import { onDestroy, onMount } from 'svelte';
   import { FIELD_TYPE, FieldFullId, FieldMetadata, Search, SearchOptions } from '@nuclia/core';
@@ -83,9 +83,7 @@
   // Load data from the state
   let state: ViewerState;
   let result: TypedResult | null;
-  const stateSubscription = viewerData.pipe(
-    filter(data => data.isPreviewing)
-  ).subscribe((value) => {
+  const stateSubscription = viewerData.pipe(filter((data) => data.isPreviewing)).subscribe((value) => {
     freezeBackground(true);
     state = value;
     result = value.currentResult;
@@ -137,7 +135,7 @@
     getFieldUrl()
       .pipe(
         take(1),
-        filter((url) => !!url)
+        filter((url) => !!url),
       )
       .subscribe((url) => window.open(url, 'blank', 'noreferrer'));
   }
@@ -150,7 +148,7 @@
       menuPosition = {
         left: menuButton.offsetLeft - menuWidth + menuButton.offsetWidth,
         top: menuButton.clientHeight + 6,
-        width: menuWidth
+        width: menuWidth,
       };
       // close side panel
       sidePanelExpanded = false;
@@ -195,19 +193,21 @@
   function toggleKnowledgeGraph() {
     showKnowledgeGraph = !showKnowledgeGraph;
     // load all metadata if they weren't loaded already
-    fullMetadataLoaded.pipe(
-      filter(loaded => !loaded),
-      switchMap(() => {
-        return fieldFullId.pipe(
-          filter(fieldId => !!fieldId),
-          take(1),
-          switchMap(fullId => getResourceMetadata(fullId))
-        );
-      }),
-      filter(metadata => !!metadata),
-      map(metadata => metadata as FieldMetadata),
-      takeUntil(unsubscribeOnClose)
-    ).subscribe((metadata) => fieldMetadata.set(metadata));
+    fullMetadataLoaded
+      .pipe(
+        filter((loaded) => !loaded),
+        switchMap(() => {
+          return fieldFullId.pipe(
+            filter((fieldId) => !!fieldId),
+            take(1),
+            switchMap((fullId) => getResourceMetadata(fullId)),
+          );
+        }),
+        filter((metadata) => !!metadata),
+        map((metadata) => metadata as FieldMetadata),
+        takeUntil(unsubscribeOnClose),
+      )
+      .subscribe((metadata) => fieldMetadata.set(metadata));
   }
 
   function findInField(event) {
@@ -218,11 +218,11 @@
         isSearchingInResource.next(true);
         const fullId: FieldFullId = {
           resourceId: result.id,
-          ...result.field
+          ...result.field,
         };
         const options: SearchOptions = {
           highlight: true,
-          fields: [getFieldIdWithShortType(fullId)]
+          fields: [getFieldIdWithShortType(fullId)],
         };
         searchInResource(query, result, options)
           .pipe(map((results) => getFindParagraphs(results, fullId)))
@@ -264,12 +264,12 @@
     const fieldResult = {
       ...state.currentResult,
       field,
-      fieldData: getFieldDataFromResource(state.currentResult, field)
+      fieldData: getFieldDataFromResource(state.currentResult, field),
     };
     const result: TypedResult = {
       ...fieldResult,
       paragraphs: [],
-      resultType: getResultType(fieldResult)
+      resultType: getResultType(fieldResult),
     };
     viewerData.set({ result, selectedParagraphIndex: -1 });
   }
@@ -277,17 +277,17 @@
 
 <svelte:window
   bind:innerWidth
-  on:resize={(event) => resizeEvent.next(event)}></svelte:window>
+  on:resize={(event) => resizeEvent.next(event)} />
 
 {#if $isPreviewing}
-  <div class="sw-viewer"
-       style:--search-section-count={sidePanelSectionOpen === 'search' ? 1 : 0}
-       style:--metadata-block-count={$metadataBlockCount}>
+  <div
+    class="sw-viewer"
+    style:--search-section-count={sidePanelSectionOpen === 'search' ? 1 : 0}
+    style:--metadata-block-count={$metadataBlockCount}>
     <header style:--header-actions-width={`${actionsWidth}px`}>
       <div class="header-title">
         <DocTypeIndicator type={result?.resultType} />
-        <h3
-          class="ellipsis title-m">
+        <h3 class="ellipsis title-m">
           {result?.title}
         </h3>
         {#if state.fieldFullId?.field_type === FIELD_TYPE.file || state.fieldFullId?.field_type === FIELD_TYPE.link}
@@ -340,8 +340,9 @@
       </div>
     </header>
 
-    <div class="viewer-body"
-         class:side-panel-expanded={sidePanelExpanded}>
+    <div
+      class="viewer-body"
+      class:side-panel-expanded={sidePanelExpanded}>
       {#if isMobile && !resultNavigatorHidden}
         <SearchResultNavigator
           resultIndex={state.selectedParagraphIndex}
@@ -368,7 +369,7 @@
               <div
                 class="side-panel-button"
                 on:click={toggleSidePanel}>
-                <Icon name={sidePanelExpanded ? 'chevrons-right' : 'search'} />
+                <Icon name={sidePanelExpanded ? 'chevrons-right' : 'chevrons-left'} />
               </div>
             {:else}
               <div
@@ -428,38 +429,47 @@
                     icon="cross"
                     aspect="basic"
                     size="small"
-                    on:click={resetInternalSearch}></IconButton>
+                    on:click={resetInternalSearch} />
                 {/if}
               </div>
 
               {#if result?.paragraphs.length > 0 || state.searchInFieldResults?.length > 0}
-                <MetadataContainer sectionId="search"
-                                   expanded={sidePanelSectionOpen === 'search'}
-                                   on:toggle={(event) => toggleSection(event.detail)}>
-                  <span
-                    slot="sectionTitle">{$_('viewer.search-results', { count: state.searchInFieldResults?.length > 0 ? state.searchInFieldResults.length : result?.paragraphs.length })}</span>
-                  <ul class="sw-paragraphs-container" slot="sectionContent">
+                <MetadataContainer
+                  sectionId="search"
+                  expanded={sidePanelSectionOpen === 'search'}
+                  on:toggle={(event) => toggleSection(event.detail)}>
+                  <span slot="sectionTitle">
+                    {$_('viewer.search-results', {
+                      count:
+                        state.searchInFieldResults?.length > 0
+                          ? state.searchInFieldResults.length
+                          : result?.paragraphs.length,
+                    })}
+                  </span>
+                  <ul
+                    class="sw-paragraphs-container"
+                    slot="sectionContent">
                     {#if state.searchInFieldResults?.length > 0}
                       {#each state.searchInFieldResults as paragraph, index}
-                        <ParagraphResult {paragraph}
-                                         stack={true}
-                                         minimized={isMobile}
-                                         resultType={result?.resultType}
-                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                                         on:open={() => selectParagraph(index)}
-                        />
+                        <ParagraphResult
+                          {paragraph}
+                          stack={true}
+                          minimized={isMobile}
+                          resultType={result?.resultType}
+                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                          selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                          on:open={() => selectParagraph(index)} />
                       {/each}
                     {:else}
                       {#each result?.paragraphs as paragraph, index}
-                        <ParagraphResult {paragraph}
-                                         stack={true}
-                                         minimized={isMobile}
-                                         resultType={result?.resultType}
-                                         noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
-                                         selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
-                                         on:open={() => selectParagraph(index)}
-                        />
+                        <ParagraphResult
+                          {paragraph}
+                          stack={true}
+                          minimized={isMobile}
+                          resultType={result?.resultType}
+                          noIndicator={result?.resultType === 'image' || result?.resultType === 'text'}
+                          selected={!state.playFromTranscript && index === state.selectedParagraphIndex}
+                          on:open={() => selectParagraph(index)} />
                       {/each}
                     {/if}
                   </ul>
@@ -468,11 +478,14 @@
             {/if}
 
             {#if $isMediaPlayer}
-              <MetadataContainer sectionId="transcripts"
-                                 expanded={sidePanelSectionOpen === 'transcripts'}
-                                 on:toggle={(event) => toggleSection(event.detail)}>
+              <MetadataContainer
+                sectionId="transcripts"
+                expanded={sidePanelSectionOpen === 'transcripts'}
+                on:toggle={(event) => toggleSection(event.detail)}>
                 <span slot="sectionTitle">{$_('viewer.full-transcripts')}</span>
-                <ul class="sw-paragraphs-container" slot="sectionContent">
+                <ul
+                  class="sw-paragraphs-container"
+                  slot="sectionContent">
                   {#each $transcripts as paragraph, index}
                     <ParagraphResult
                       {paragraph}
@@ -486,30 +499,45 @@
             {/if}
 
             {#if $fieldSummary}
-              <MetadataContainer sectionId="summary"
-                                 expanded={sidePanelSectionOpen === 'summary'}
-                                 on:toggle={(event) => toggleSection(event.detail)}>
+              <MetadataContainer
+                sectionId="summary"
+                expanded={sidePanelSectionOpen === 'summary'}
+                on:toggle={(event) => toggleSection(event.detail)}>
                 <span slot="sectionTitle">{$_('viewer.summary')}</span>
-                <div class="summary-container" slot="sectionContent">{$fieldSummary}</div>
+                <div
+                  class="summary-container"
+                  slot="sectionContent">
+                  {$fieldSummary}
+                </div>
               </MetadataContainer>
             {/if}
 
             {#if $fieldList}
-              <MetadataContainer sectionId="items"
-                                 expanded={sidePanelSectionOpen === 'items'}
-                                 on:toggle={(event) => toggleSection(event.detail)}>
+              <MetadataContainer
+                sectionId="items"
+                expanded={sidePanelSectionOpen === 'items'}
+                on:toggle={(event) => toggleSection(event.detail)}>
                 <span slot="sectionTitle">{$_('viewer.items')}</span>
-                <ul class="field-list" slot="sectionContent">
+                <ul
+                  class="field-list"
+                  slot="sectionContent">
                   {#each $fieldList as item}
-                    <li class:current={item.field_id === $fieldFullId.field_id}
-                        on:click={() => navigateToField(item)}>
+                    <li
+                      class:current={item.field_id === $fieldFullId.field_id}
+                      on:click={() => navigateToField(item)}>
                       <div class="field-icon">
-                        <Icon size="small"
-                              name={item.field_type === 'conversation' ? 'chat' : item.field_type === 'text' ? 'file' : item.field_type} />
+                        <Icon
+                          size="small"
+                          name={item.field_type === 'conversation'
+                            ? 'chat'
+                            : item.field_type === 'text'
+                            ? 'file'
+                            : item.field_type} />
                       </div>
                       <div class="field-item">
-                                <span
-                                  class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>{item.field_type}</span>
+                        <span class={item.field_id === $fieldFullId.field_id ? 'title-xxs' : 'body-s'}>
+                          {item.field_type}
+                        </span>
                         <small class="body-xs">{item.field_id}</small>
                       </div>
                     </li>
