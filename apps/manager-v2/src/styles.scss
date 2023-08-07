@@ -92,9 +92,15 @@ nav {
   padding: 0 rhythm(2);
 }
 
+.table-actions {
+  align-items: center;
+  display: flex;
+  gap: rhythm(4);
+}
+
 .filter-container {
   padding: rhythm(2) 0;
-  max-width: rhythm(40);
+  width: rhythm(40);
 }
 
 form,

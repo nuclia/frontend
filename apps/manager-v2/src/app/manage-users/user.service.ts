@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SDKService } from '@flaps/core';
-import { Observable, of } from 'rxjs';
-import { User, UserSearch, UserSummary } from './user.models';
+import { Observable, of, tap } from 'rxjs';
+import { AuthenticatedUser, User, UserSearch, UserSummary } from './user.models';
 
 const USERS_ENDPOINT = '/manage/@users';
 const USER_ENDPOINT = '/manage/@user';
@@ -38,5 +38,9 @@ export class UserService {
 
   deleteUser(userId: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`${USER_ENDPOINT}/${userId}`);
+  }
+
+  getAuthenticatedUser(): Observable<AuthenticatedUser> {
+    return this.sdk.nuclia.rest.get('/user');
   }
 }

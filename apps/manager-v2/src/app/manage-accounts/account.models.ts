@@ -95,16 +95,6 @@ export interface KnowledgeBox {
   data: unknown;
 }
 
-export interface ZoneSummary {
-  id: string;
-  slug: string;
-  account: string | null;
-  title: string;
-  created: string;
-  modified: string | null;
-  '@id': string;
-}
-
 export enum BlockedFeature {
   UPLOAD = 'upload',
   PROCESSING = 'processing',

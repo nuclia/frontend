@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { filter, Subject, switchMap } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AccountDetailsStore } from './account-details.store';
+import { ZoneService } from '../../manage-zones/zone.service';
 
 @Component({
   templateUrl: './account-details.component.html',
@@ -19,6 +20,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
+    private zoneService: ZoneService,
     private store: AccountDetailsStore,
   ) {}
 
@@ -31,7 +33,7 @@ export class AccountDetailsComponent implements OnInit, OnDestroy {
       )
       .subscribe((account) => this.store.setAccountDetails(account));
 
-    this.accountService.getZones().subscribe((zones) => this.store.setZones(zones));
+    this.zoneService.getZones().subscribe((zones) => this.store.setZones(zones));
   }
 
   ngOnDestroy() {
