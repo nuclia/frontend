@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { AccountService } from '../account.service';
 import { AccountDetailsStore } from './account-details.store';
+import { ZoneService } from '../../manage-zones/zone.service';
 import { of } from 'rxjs';
 import { PaButtonModule, PaIconModule } from '@guillotinaweb/pastanaga-angular';
 
@@ -16,7 +17,8 @@ describe('AccountDetailsComponent', () => {
       imports: [RouterTestingModule, MockModule(PaButtonModule), MockModule(PaIconModule)],
       declarations: [AccountDetailsComponent],
       providers: [
-        MockProvider(AccountService, {
+        MockProvider(AccountService),
+        MockProvider(ZoneService, {
           getZones: jest.fn(() => of([])),
         }),
         MockProvider(AccountDetailsStore),

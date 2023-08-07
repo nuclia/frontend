@@ -10,13 +10,11 @@ import {
   ExtendedAccount,
   KbRoles,
   KbSummary,
-  ZoneSummary,
 } from './account.models';
 import { AccountBlockingState, AccountTypes } from '@nuclia/core';
 
 const ACCOUNTS_ENDPOINT = '/manage/@accounts';
 const ACCOUNT_ENDPOINT = '/manage/@account';
-const ZONE_ENDPOINT = '/manage/@zones';
 const KB_ENDPOINT = '@stashes';
 
 @Injectable({
@@ -45,10 +43,6 @@ export class AccountService {
 
   deleteAccount(id: string): Observable<void> {
     return this.sdk.nuclia.rest.delete(`${ACCOUNT_ENDPOINT}/${id}`);
-  }
-
-  getZones(): Observable<ZoneSummary[]> {
-    return this.sdk.nuclia.rest.get(ZONE_ENDPOINT);
   }
 
   updateBlockedFeatures(

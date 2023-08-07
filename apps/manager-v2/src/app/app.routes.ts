@@ -23,6 +23,11 @@ export const appRoutes: Route[] = [
         canActivate: [authGuard],
         loadChildren: () => import('./manage-users/manage-users.module').then((m) => m.ManageUsersModule),
       },
+      {
+        path: 'zones',
+        canActivate: [authGuard],
+        loadChildren: () => import('./manage-zones/manage-zones.module').then((m) => m.ManageZonesModule),
+      },
     ],
   },
   {

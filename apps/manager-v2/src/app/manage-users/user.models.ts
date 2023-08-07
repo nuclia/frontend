@@ -26,3 +26,12 @@ export interface UserSummary {
   last_login: string | null;
   '@id': string;
 }
+
+export interface AuthenticatedUser {
+  id: string;
+  name: string;
+  email: string;
+  language?: Language;
+  last_login?: string | null;
+  type: UserType;
+}

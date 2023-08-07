@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter, map, Observable, take } from 'rxjs';
-import { ExtendedAccount, KbSummary, ZoneSummary } from '../account.models';
+import { ExtendedAccount, KbSummary } from '../account.models';
+import { ZoneSummary } from '../../manage-zones/zone.models';
 import { AccountBlockingState } from '@nuclia/core';
 
 const BLOCKING_STATE_LABEL = {

@@ -1,0 +1,62 @@
+<div class="pa-main-container">
+  <div class="pa-main-side-panel">
+    <div class="panel-header">
+      <pa-button
+        icon="arrow-left"
+        aspect="basic"
+        (click)="goBack()">
+        Back
+      </pa-button>
+      <div class="title-l">
+        {{ zoneTitle }}
+      </div>
+    </div>
+  </div>
+  <div class="pa-main-container-wide">
+    <h3>{{ addZone ? 'Add zone' : 'Zone details' }}</h3>
+    <form
+      [formGroup]="zoneForm"
+      (submit)="save()">
+      <pa-input
+        *ngIf="!addZone"
+        readonly
+        formControlName="id">
+        Id
+      </pa-input>
+      <pa-input formControlName="slug">Slug</pa-input>
+      <pa-input formControlName="title">Title</pa-input>
+      <pa-input
+        *ngIf="!addZone"
+        readonly
+        formControlName="creator">
+        Creator
+      </pa-input>
+      <pa-input
+        *ngIf="!addZone"
+        readonly
+        formControlName="created">
+        Created
+      </pa-input>
+      <pa-input
+        *ngIf="!addZone"
+        readonly
+        formControlName="modified">
+        Modified
+      </pa-input>
+      <footer>
+        <pa-button
+          type="submit"
+          kind="primary"
+          [disabled]="zoneForm.pristine || zoneForm.invalid || isSaving">
+          Save
+        </pa-button>
+        <pa-button
+          *ngIf="!addZone"
+          aspect="basic"
+          (click)="reset()">
+          Cancel
+        </pa-button>
+      </footer>
+    </form>
+  </div>
+</div>
