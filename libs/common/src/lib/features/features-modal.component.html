@@ -2,7 +2,7 @@
   <pa-modal-title>{{ 'features.customize_features' | translate }}</pa-modal-title>
   <pa-modal-content>
     <div *ngFor="let feature of features || {} | keyvalue">
-      <pa-checkbox [(value)]="features[feature.key]">{{ feature.key }}</pa-checkbox>
+      <pa-checkbox [(value)]="features[feature.key] || false">{{ feature.key }}</pa-checkbox>
     </div>
   </pa-modal-content>
   <pa-modal-footer>
