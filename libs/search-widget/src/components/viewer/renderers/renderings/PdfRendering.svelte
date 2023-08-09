@@ -5,9 +5,10 @@
   import { debounceTime, filter, Subject } from 'rxjs';
   import { IconButton, isMobileViewport, Spinner } from '../../../../common';
   import { getUnMarked } from '../../utils';
+  import { Search } from '@nuclia/core';
 
   export let src: string;
-  export let paragraph;
+  export let paragraph: Search.FindParagraph;
   export let showController = true;
 
   const pdfJsLib = window['pdfjs-dist/build/pdf'];
@@ -52,9 +53,9 @@
         )
         .subscribe(() => {
           // Paragraph not found in PDF, go to paragraph page
-          const pageNumber = paragraph?.page;
+          const pageNumber = paragraph?.position.page_number;
           if (pageNumber) {
-            pdfViewer.scrollPageIntoView({ pageNumber });
+            pdfViewer.scrollPageIntoView({ pageNumber: pageNumber + 1 });
           }
         }),
     );
