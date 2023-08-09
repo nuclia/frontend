@@ -1,0 +1,21 @@
+<pa-modal-advanced>
+  <pa-modal-title>{{ 'features.customize_features' | translate }}</pa-modal-title>
+  <pa-modal-content>
+    <div *ngFor="let feature of features || {} | keyvalue">
+      <pa-checkbox [(value)]="features[feature.key]">{{ feature.key }}</pa-checkbox>
+    </div>
+  </pa-modal-content>
+  <pa-modal-footer>
+    <pa-button
+      *ngIf="hasCustomFeatures"
+      kind="destructive"
+      (click)="reset()">
+      {{ 'generic.reset' | translate }}
+    </pa-button>
+    <pa-button
+      kind="primary"
+      (click)="save()">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+  </pa-modal-footer>
+</pa-modal-advanced>

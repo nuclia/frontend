@@ -5,6 +5,7 @@ export * from './lib/base';
 export * from './lib/charts';
 export * from './lib/directives';
 export * from './lib/entities';
+export * from './lib/features';
 export * from './lib/guards';
 export * from './lib/hint';
 export * from './lib/knowledge-box-settings';
