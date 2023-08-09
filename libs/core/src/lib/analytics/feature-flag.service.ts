@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, shareReplay, switchMap } from 'rxjs';
+import { BehaviorSubject, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 
-interface Features {
+export interface Features {
   [key: string]: string | boolean | undefined;
 }
+
+const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
 
 const stageFeatures: Features = {
   'demo-kb-id': 'eed07421-dc96-4067-a73b-32c89eac0229',
@@ -12,10 +14,13 @@ const stageFeatures: Features = {
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {
-  private stageFeatures = new BehaviorSubject<Features>(stageFeatures);
-  private features: Observable<Features> = fromFetch('https://nuclia.github.io/status/features.json').pipe(
+  private remoteFeatures = fromFetch('https://nuclia.github.io/status/features.json').pipe(
     switchMap((res) => res.json()),
     shareReplay(),
+  );
+  private stageFeatures = new BehaviorSubject<Features>({ ...stageFeatures, ...this.getCustomFeatures() });
+  private features: Observable<Features> = this.remoteFeatures.pipe(
+    map((features) => ({ ...features, ...this.getCustomFeatures() })),
   );
 
   private isNotProd = location.hostname !== 'nuclia.cloud';
@@ -44,5 +49,25 @@ export class FeatureFlagService {
           .map(([key]) => key),
       ),
     );
+  }
+
+  getFeatures(): Observable<Features> {
+    return this.isNotProd ? this.stageFeatures : this.features;
+  }
+
+  getDefaultFeatures(): Observable<Features> {
+    return this.isNotProd ? of(stageFeatures) : this.remoteFeatures;
+  }
+
+  getCustomFeatures(): Features {
+    try {
+      return JSON.parse(localStorage.getItem(CUSTOM_FEATURE_FLAGS) || '{}') as Features;
+    } catch {
+      return {};
+    }
+  }
+
+  setCustomFeatures(features: Features) {
+    localStorage.setItem(CUSTOM_FEATURE_FLAGS, JSON.stringify(features));
   }
 }

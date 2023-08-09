@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BackendConfigurationService,
@@ -16,6 +17,7 @@ import { ModalConfig, TranslateService as PaTranslateService } from '@guillotina
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
 import { MessageModalComponent, NavigationService } from '@flaps/common';
+import { FeaturesModalComponent } from '@flaps/common';
 
 @Component({
   selector: 'app-root',
@@ -41,6 +43,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private paTranslate: PaTranslateService,
     private modalService: SisModalService,
     private titleService: Title,
+    @Inject(DOCUMENT) private document: any,
   ) {
     this.unsubscribeAll = new Subject();
 
@@ -69,6 +72,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     this.displayAlert();
     this.displayAnnounce();
     this.preventDragAndDropOnWindow();
+    this.listenFeatureFlagCode();
   }
 
   ngOnDestroy(): void {
@@ -188,5 +192,28 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         });
       }
     }
+  }
+
+  listenFeatureFlagCode() {
+    const activationKeyCodes = [
+      'ArrowUp',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowRight',
+      'KeyB',
+      'KeyA',
+    ];
+    let userKeys: string[] = [];
+    this.document.addEventListener('keyup', (event: KeyboardEvent) => {
+      if ((event.target as HTMLElement).tagName === 'INPUT') return;
+      userKeys = [...userKeys, event.code].slice(-activationKeyCodes.length);
+      if (JSON.stringify(activationKeyCodes) === JSON.stringify(userKeys)) {
+        this.modalService.openModal(FeaturesModalComponent);
+      }
+    });
   }
 }
