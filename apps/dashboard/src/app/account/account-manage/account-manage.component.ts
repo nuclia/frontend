@@ -56,6 +56,9 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   speechToText: boolean = false;
   initialValues = { title: '', description: '', slug: '', uid: '' };
 
+  isSubscribed = this.billingService.isSubscribed;
+  deleteAccountUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
+
   constructor(
     private stateService: StateService,
     private formBuilder: UntypedFormBuilder,
