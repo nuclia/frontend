@@ -433,7 +433,7 @@
                 {/if}
               </div>
 
-              {#if result?.paragraphs.length > 0 || state.searchInFieldResults?.length > 0}
+              {#if result?.paragraphs.length > 0 || state.searchInFieldResults !== null}
                 <MetadataContainer
                   sectionId="search"
                   expanded={sidePanelSectionOpen === 'search'}
@@ -441,7 +441,7 @@
                   <span slot="sectionTitle">
                     {$_('viewer.search-results', {
                       count:
-                        state.searchInFieldResults?.length > 0
+                        state.searchInFieldResults !== null
                           ? state.searchInFieldResults.length
                           : result?.paragraphs.length,
                     })}
@@ -449,7 +449,7 @@
                   <ul
                     class="sw-paragraphs-container"
                     slot="sectionContent">
-                    {#if state.searchInFieldResults?.length > 0}
+                    {#if state.searchInFieldResults !== null}
                       {#each state.searchInFieldResults as paragraph, index}
                         <ParagraphResult
                           {paragraph}
