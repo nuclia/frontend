@@ -52,15 +52,14 @@ h2 {
 .dangerous-zone {
   background-color: $color-secondary-lightest;
   padding: rhythm(3) rhythm(4);
-}
-
-.dangerous-zone-title {
-  color: $color-secondary-stronger;
-  font-weight: $font-weight-semi-bold;
-  margin-bottom: rhythm(0.5);
-}
-
-.dangerous-zone-warning {
-  line-height: line-height(l);
-  margin-bottom: rhythm(3);
+  h3 {
+    margin-bottom: rhythm(1);
+  }
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+  pa-button {
+    margin-top: rhythm(3);
+  }
 }
