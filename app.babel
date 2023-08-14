@@ -9600,26 +9600,6 @@
 						</translations>
 					</concept_node>
 					<concept_node>
-						<name>modal.upload.choose_language</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
 						<name>modal.upload.drop</name>
 						<description/>
 						<comment/>
@@ -9641,66 +9621,6 @@
 					</concept_node>
 					<concept_node>
 						<name>modal.upload.drop_folder</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>modal.upload.error</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>modal.upload.file_duplicated</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>modal.upload.file_invalid</name>
 						<description/>
 						<comment/>
 						<default_text/>
@@ -18941,46 +18861,6 @@
 					</concept_node>
 					<concept_node>
 						<name>upload.progress-dialog-title</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>upload.progress.conflicts</name>
-						<description/>
-						<comment/>
-						<default_text/>
-						<translations>
-							<translation>
-								<language>ca-ES</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>es-ES</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>upload.progress.failed</name>
 						<description/>
 						<comment/>
 						<default_text/>
