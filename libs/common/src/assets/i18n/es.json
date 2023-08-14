@@ -854,6 +854,8 @@
 	"stash.widgets.relations": "Relaciones",
 	"stash.widgets.relations.help": "Muestra información de las entidades relacionadas en los resultados de búsqueda.",
 	"stash.widgets.snippet": "Fragmento de código",
+	"stash.widgets.suggestEntities": "Sugerir entidades",
+	"stash.widgets.suggestEntities.help": "Sugerir resultados mientras se escribe la consulta de búsqueda",
 	"stash.widgets.suggestions": "Sugerencias",
 	"stash.widgets.suggestions.help": "Sugerir resultados mientras escribe la consulta de búsqueda",
 	"stash.widgets.suggestLabels": "Sugerir etiquetas",

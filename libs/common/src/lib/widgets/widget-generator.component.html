@@ -53,6 +53,13 @@
             {{ 'stash.widgets.suggestions' | translate }}
           </pa-toggle>
           <pa-toggle
+            *ngIf="canSuggestEntities | async"
+            labelOnRight
+            help="stash.widgets.suggestEntities.help"
+            formControlName="suggestEntities">
+            {{ 'stash.widgets.suggestEntities' | translate }}
+          </pa-toggle>
+          <pa-toggle
             *ngIf="isTrainingEnabled | async"
             labelOnRight
             help="stash.widgets.suggestLabels.help"
