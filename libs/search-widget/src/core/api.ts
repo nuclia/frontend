@@ -35,7 +35,7 @@ let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
 let CHAT_MODE = [...DEFAULT_CHAT_MODE];
-let SUGGEST_MODE = [];
+let SUGGEST_MODE: Search.SuggestionFeatures[] = [];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
