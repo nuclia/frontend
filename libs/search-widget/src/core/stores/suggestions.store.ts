@@ -37,7 +37,7 @@ export const suggestions = suggestionState.writer<Suggestions>(
   (state, suggestions) => ({
     ...state,
     suggestions,
-    hasError: false,
+    error: undefined,
   }),
 );
 
