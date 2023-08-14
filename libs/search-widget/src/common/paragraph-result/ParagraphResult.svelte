@@ -58,19 +58,23 @@
     class:hover={expanded}
     on:mouseenter={() => (hovering = true)}
     on:mouseleave={() => (hovering = false)}
-    on:click={disabled ? null : open}>
+    on:click={disabled ? null : open}
+    on:keyup={(e) => {
+      if(e.key === 'Enter' && !disabled) open()
+    }}
+  >
     <div
       class="indicator-container"
       class:hidden={noIndicator}>
       {#if isPdf}
         <PageIndicator
-          page={paragraph.position.page_number >= 0 ? paragraph.position.page_number + 1 : undefined}
+          page={paragraph.position.page_number}
           {stack}
           {selected}
           hovering={hovering || expanded} />
       {:else if isMedia}
         <TimeIndicator
-          start={paragraph.position.start_seconds || 0}
+          start={paragraph.position.start_seconds?.[0]}
           {selected}
           hover={hovering || expanded}
           {minimized} />
