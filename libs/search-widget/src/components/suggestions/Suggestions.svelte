@@ -2,6 +2,7 @@
   import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
   import Label from '../../common/label/Label.svelte';
+  import Chip from '../../common/chip/Chip.svelte';
   import { combineLatest, iif, map, of, switchMap, take, tap } from 'rxjs';
   import {
     _,
@@ -13,15 +14,26 @@
     goToUrl,
     navigateToFile,
     navigateToLink,
-    NO_RESULTS,
+    NO_SUGGESTION_RESULTS,
+    suggestEntities,
     suggestionError,
     suggestions,
     suggestionsHasError,
+    typeAhead,
     viewerData
   } from "../../core";
+  import { createEventDispatcher } from 'svelte';
 
   export let paragraphs: Search.Paragraph[] = [];
+  export let entities: string[] = [];
   export let labels: Classification[] = [];
+
+  const dispatch = createEventDispatcher();
+  const search = (query) => {
+    typeAhead.set(query);
+    suggestions.set({ results: NO_SUGGESTION_RESULTS });
+    dispatch('search');
+  };
 
   const goToResource = (paragraph: Search.Paragraph) => {
     getResourceById(paragraph.rid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN, ResourceProperties.VALUES])
@@ -48,7 +60,7 @@
               } else {
                 openViewer(resource, firstResourceField);
               }
-              suggestions.set({ results: NO_RESULTS });
+              suggestions.set({ results: NO_SUGGESTION_RESULTS });
             })
           );
         })
@@ -94,9 +106,26 @@
         </ul>
       </section>
     {/if}
+    {#if entities.length > 0 && $suggestEntities}
+      <section>
+        <h3>{$_('suggest.entities')}</h3>
+        <ul class="entities">
+          {#each entities.slice(0, 4) as entity}
+            <li>
+              <Chip
+                color="var(--color-neutral-lightest)"
+                clickable
+                on:click={() => search(entity)}>
+                {entity}
+              </Chip>
+            </li>
+          {/each}
+        </ul>
+      </section>
+    {/if}
     {#if paragraphs.length > 0}
       <section>
-        <h3>{$_('suggest.paragraphs')}</h3>
+        <h3>{$_('suggest.titles')}</h3>
         <div>
           {#each paragraphs.slice(0, 4) as paragraph}
             <div

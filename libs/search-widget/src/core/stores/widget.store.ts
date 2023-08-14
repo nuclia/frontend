@@ -17,6 +17,7 @@ export const navigateToFile = widgetFeatures.pipe(map((features) => !!features?.
 export const hasFilterButton = widgetFeatures.pipe(map((features) => !!features?.filter));
 export const isAnswerEnabled = widgetFeatures.pipe(map((features) => !!features?.answers));
 export const isKnowledgeGraphEnabled = widgetFeatures.pipe(map((features) => !!features?.knowledgeGraph));
+export const suggestEntities = widgetFeatures.pipe(map((features) => !!features?.suggestEntities));
 export const onlyAnswers = combineLatest([
   isAnswerEnabled,
   widgetFeatures.pipe(map((features) => !!features?.onlyAnswers)),

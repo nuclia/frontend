@@ -35,6 +35,7 @@ let nucliaPrediction: NucliaPrediction | null;
 let STATE: KBStates;
 let SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
 let CHAT_MODE = [...DEFAULT_CHAT_MODE];
+let SUGGEST_MODE = [];
 const DEFAULT_SEARCH_OPTIONS: Partial<SearchOptions> = {};
 
 export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOptions: WidgetOptions) => {
@@ -69,6 +70,12 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     SEARCH_MODE.push(Search.Features.RELATIONS);
     CHAT_MODE.push(Chat.Features.RELATIONS);
   }
+  if (widgetOptions.features?.suggestions) {
+    SUGGEST_MODE.push(Search.SuggestionFeatures.PARAGRAPH);
+  }
+  if (widgetOptions.features?.suggestEntities) {
+    SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
+  }
   STATE = state;
   return nucliaApi;
 };
@@ -77,6 +84,7 @@ export const resetNuclia = () => {
   nucliaApi = null;
   SEARCH_MODE = [...DEFAULT_SEARCH_MODE];
   CHAT_MODE = [...DEFAULT_CHAT_MODE];
+  SUGGEST_MODE = [];
 };
 
 export const search = (query: string, options: SearchOptions): Observable<Search.FindResults> => {
@@ -150,7 +158,7 @@ export const suggest = (query: string) => {
     throw new Error('Nuclia API not initialized');
   }
 
-  return nucliaApi.knowledgeBox.suggest(query, true).pipe(
+  return nucliaApi.knowledgeBox.suggest(query, true, SUGGEST_MODE).pipe(
     filter((res) => {
       if (res.type === 'error') {
         suggestionError.set(res);
