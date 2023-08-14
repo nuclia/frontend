@@ -7,7 +7,7 @@
   import {
     _,
     addLabelFilter,
-    fieldFullId,
+    getFieldDataFromResource,
     getFirstResourceField,
     getNavigationUrl,
     getResourceById, getResultType,
@@ -69,10 +69,11 @@
 
   function openViewer(resource: IResource, field?: ResourceField) {
     if (field) {
+      const fieldData = getFieldDataFromResource(resource, field);
       viewerData.set({
         result: {
           ...resource,
-          resultType: getResultType({...resource, field }),
+          resultType: getResultType({...resource, field, fieldData }),
           field: {field_id: field.field_id, field_type: field.field_type},
         },
         selectedParagraphIndex: -1,
