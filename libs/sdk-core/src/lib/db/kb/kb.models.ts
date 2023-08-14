@@ -249,6 +249,7 @@ export interface WidgetFeatures {
   relations?: boolean;
   suggestions?: boolean;
   suggestLabels?: boolean;
+  suggestEntities?: boolean;
   answers?: boolean;
   onlyAnswers?: boolean;
   hideSources?: boolean;

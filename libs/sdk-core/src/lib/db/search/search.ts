@@ -103,6 +103,27 @@ export const catalog = (nuclia: INuclia, kbid: string, query: string, options?: 
   return manageSearchRequest(nuclia, kbid, searchMethod);
 };
 
+export const suggest = (
+  nuclia: INuclia,
+  kbid: string,
+  path: string,
+  query: string,
+  inTitleOnly: boolean,
+  features: Search.SuggestionFeatures[],
+) => {
+  const params: { [key: string]: string | string[] } = {
+    query: query || '',
+    features,
+  };
+  if (inTitleOnly) {
+    params['fields'] = ['a/title'];
+  }
+  return nuclia.rest.get<Search.Suggestions | IErrorResponse>(`${path}/suggest?${serialize(params, {})}`).pipe(
+    catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
+    map((res) => (res.type === 'error' ? res : ({ ...res, type: 'suggestions' } as Search.Suggestions))),
+  );
+};
+
 function manageSearchRequest(
   nuclia: INuclia,
   kbid: string,

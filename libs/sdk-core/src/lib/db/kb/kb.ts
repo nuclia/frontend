@@ -29,7 +29,7 @@ import { Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import type { BaseSearchOptions, Chat } from '../search';
-import { catalog, chat, find, Search, search, SearchOptions } from '../search';
+import { catalog, chat, find, Search, search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -180,12 +180,12 @@ export class KnowledgeBox implements IKnowledgeBox {
     return catalog(this.nuclia, this.id, query, options);
   }
 
-  suggest(query: string, inTitleOnly = false): Observable<Search.Suggestions | IErrorResponse> {
-    const params = `query=${encodeURIComponent(query)}${inTitleOnly ? '&fields=a/title' : ''}`;
-    return this.nuclia.rest.get<Search.Suggestions | IErrorResponse>(`${this.path}/suggest?${params}`).pipe(
-      catchError((error) => of({ type: 'error', status: error.status, detail: error.detail } as IErrorResponse)),
-      map((res) => (res.type === 'error' ? res : { ...res, type: 'suggestions' })),
-    );
+  suggest(
+    query: string,
+    inTitleOnly = false,
+    features: Search.SuggestionFeatures[] = [],
+  ): Observable<Search.Suggestions | IErrorResponse> {
+    return suggest(this.nuclia, this.id, this.path, query, inTitleOnly, features);
   }
 
   feedback(answerId: string, good: boolean): Observable<void> {
