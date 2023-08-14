@@ -8,6 +8,7 @@
   import {
     hasSuggestions,
     suggestedLabels,
+    suggestedEntities,
     suggestedParagraphs,
     suggestionsHasError,
     suggestionState,
@@ -379,7 +380,9 @@
   on:close={closeSuggestions}>
   <div class="sw-suggestions-container">
     <Suggestions
+      on:search={() => search()}
       paragraphs={$suggestedParagraphs}
+      entities={$suggestedEntities}
       labels={$suggestedLabels} />
   </div>
 </Modal>

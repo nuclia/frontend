@@ -74,6 +74,12 @@ export namespace Search {
     VECTOR = 'vector',
   }
 
+  export enum SuggestionFeatures {
+    PARAGRAPH = 'paragraph',
+    ENTITIES = 'entities',
+    INTENT = 'intent',
+  }
+
   export interface FindResults {
     type: 'findResults';
     resources?: { [id: string]: FindResource };
@@ -145,6 +151,7 @@ export namespace Search {
   export interface Suggestions {
     type: 'suggestions';
     paragraphs?: Paragraphs;
+    entities?: { total?: number; entities?: string[] };
   }
 
   export interface Sentences extends Pagination {

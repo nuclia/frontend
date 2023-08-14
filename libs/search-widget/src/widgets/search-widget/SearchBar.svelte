@@ -124,7 +124,7 @@
     loadFonts();
     loadSvgSprite().subscribe((sprite) => (svgSprite = sprite));
 
-    if (_features.suggestions) {
+    if (_features.suggestions || _features.suggestEntities) {
       activateTypeAheadSuggestions();
     }
 

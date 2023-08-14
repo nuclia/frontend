@@ -7,6 +7,7 @@ export const DEFAULT_FEATURES: WidgetFeatures = {
   permalink: true,
   relations: true,
   suggestions: true,
+  suggestEntities: false,
   notPublic: true,
   answers: false,
   onlyAnswers: false,

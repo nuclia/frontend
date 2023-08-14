@@ -1489,6 +1489,30 @@
 						<name>suggest</name>
 						<children>
 							<concept_node>
+								<name>entities</name>
+								<description/>
+								<comment/>
+								<default_text/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
 								<name>intents</name>
 								<description/>
 								<comment/>
@@ -1513,7 +1537,7 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>paragraphs</name>
+								<name>titles</name>
 								<description/>
 								<comment/>
 								<default_text/>

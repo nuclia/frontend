@@ -47,6 +47,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   copyIcon = 'copy';
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   areAnswersEnabled = this.tracking.isFeatureEnabled('answers');
+  canSuggestEntities = this.tracking.isFeatureEnabled('suggest-entities');
   isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
   areSynonymsEnabled = combineLatest([
     this.tracking.isFeatureEnabled('manage-synonyms'),
@@ -134,6 +135,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               permalink: [config.features.includes('permalink')],
               relations: [config.features.includes('relations')],
               suggestLabels: [config.features.includes('suggestLabels')],
+              suggestEntities: [config.features.includes('suggestEntities')],
               suggestions: [config.features.includes('suggestions')],
               useSynonyms: [config.features.includes('useSynonyms')],
             }),

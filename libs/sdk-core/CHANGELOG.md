@@ -7,6 +7,8 @@
 - `/activity/download` and `/activity/downloads` endpoints now use regional backend
 - Add `widget` property to `LearningConfigurationSchemas` interface
 - Support ephemeral tokens on NucliaDB standalone
+- Add entity suggestions support on suggest endpoint
+- Add `suggestEntities` to `WidgetFeatures` interface
 
 # 1.6.0 (2023-07-25)
 

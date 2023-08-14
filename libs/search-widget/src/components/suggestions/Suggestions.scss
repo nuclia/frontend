@@ -9,16 +9,13 @@
   section {
     padding: var(--rhythm-2) var(--suggestion-side-padding);
   }
-  section:last-of-type {
-    padding-bottom: 0;
-  }
 
   section:not(:last-of-type) {
     border-bottom: 1px solid var(--color-neutral-light);
   }
 
   h3 {
-    font-size: var(--font-size-xsmall);
+    font-size: var(--font-size-small);
     margin: 0;
   }
   .paragraph {
@@ -34,8 +31,10 @@
     outline: 0;
   }
 
+  .entities,
   .intents {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--rhythm-1);
     list-style: none;
     margin: var(--rhythm-1) 0;

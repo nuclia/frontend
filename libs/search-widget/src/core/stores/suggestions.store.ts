@@ -2,6 +2,7 @@ import { SvelteState } from '../state-lib';
 import type { Classification, IErrorResponse, Search } from '@nuclia/core';
 import { NO_SUGGESTION_RESULTS } from '../models';
 import { combineLatest, map, Observable, Subject } from 'rxjs';
+import { suggestEntities } from './widget.store';
 
 export type Suggestions = {
   results: Search.Suggestions;
@@ -36,7 +37,7 @@ export const suggestions = suggestionState.writer<Suggestions>(
   (state, suggestions) => ({
     ...state,
     suggestions,
-    hasError: false,
+    error: undefined,
   }),
 );
 
@@ -57,6 +58,20 @@ export const suggestedLabels: Observable<Classification[]> = suggestionState.rea
   (state) => state.suggestions.labels || [],
 );
 
-export const hasSuggestions: Observable<boolean> = combineLatest([suggestedParagraphs, suggestedLabels]).pipe(
-  map(([suggestedParagraphs, suggestedLabels]) => suggestedParagraphs.length > 0 || suggestedLabels.length > 0),
+export const suggestedEntities: Observable<string[]> = suggestionState.reader<string[]>(
+  (state) => state.suggestions.results.entities?.entities || [],
+);
+
+export const hasSuggestions: Observable<boolean> = combineLatest([
+  suggestedParagraphs,
+  suggestedLabels,
+  suggestedEntities,
+  suggestEntities,
+]).pipe(
+  map(
+    ([suggestedParagraphs, suggestedLabels, suggestedEntities, canSuggestEntities]) =>
+      suggestedParagraphs.length > 0 ||
+      suggestedLabels.length > 0 ||
+      (suggestedEntities.length > 0 && canSuggestEntities), // TODO: canSuggestEntities can be deleted once "features" param works properly on suggest endpoint
+  ),
 );
