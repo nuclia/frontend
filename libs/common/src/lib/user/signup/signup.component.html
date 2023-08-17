@@ -22,10 +22,10 @@
       </pa-input>
       <pa-input
         type="email"
-        [placeholder]="'login.email.signup.placeholder' | translate"
+        [help]="'login.email_signup_help' | translate"
         formControlName="email"
         [errorMessages]="validationMessages.email">
-        {{ 'login.email.signup' | translate }}
+        {{ 'login.email_signup' | translate }}
       </pa-input>
       <nsi-password-input
         formControlName="password"

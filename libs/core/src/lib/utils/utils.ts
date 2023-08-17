@@ -9,6 +9,7 @@ const DATE_FORMATS: { [locale: string]: string } = {
   ca: 'dd - LL - yyyy',
   es: 'dd - LL - yyyy',
   'en-US': 'LL - dd - yyyy',
+  fr: 'dd/LL/yyyy',
 };
 
 const INJECTED: string[] = [];
@@ -276,7 +277,7 @@ export class STFUtils {
   }
 
   public static supportedLanguages() {
-    return ['ca', 'es', 'en'];
+    return ['ca', 'es', 'en', 'fr'];
   }
 
   static getDateFormat(locale: string): string {

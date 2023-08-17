@@ -24,6 +24,7 @@ import { AppComponent } from './app.component';
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
+import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
 import {
@@ -35,12 +36,13 @@ import {
   TopbarModule,
   UploadModule,
 } from '@flaps/common';
-import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
+import { KnowledgeBoxModule } from './knowledge-box';
 import { InviteModule } from './invite/invite.module';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
+registerLocaleData(localeFr);
 
 export function createTranslateLoader(http: HttpClient, config: BackendConfigurationService) {
   return new TranslateHttpLoader(http, 'assets/i18n/', `.json?version=${config.getVersion()}`);
