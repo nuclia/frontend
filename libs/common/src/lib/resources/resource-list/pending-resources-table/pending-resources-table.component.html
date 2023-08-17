@@ -2,7 +2,7 @@
   <div
     class="resource-bulk-actions"
     *ngIf="(isAdminOrContrib | async) && selection.length > 0">
-    {{ 'resource.selected_count' | translate: { num: selection.length } }}
+    {{ 'resource.selected_count' | translate : { num: selection.length } }}
 
     <ng-container *ngIf="selection.length > 0">
       <pa-button
@@ -33,7 +33,9 @@
 <div class="table-container">
   <pa-infinite-scroll (reachAnchor)="onLoadMore()">
     <pa-table [columns]="tableLayout | async">
-      <pa-table-sortable-header [cells]="headerCells | async">
+      <pa-table-sortable-header
+        [cells]="headerCells | async"
+        (sort)="sortBy($event)">
         <pa-table-cell
           header
           *ngIf="isAdminOrContrib | async">
@@ -75,7 +77,7 @@
         </pa-table-cell>
 
         <pa-table-cell center>
-          <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
+          <span class="body-s">{{ row.resource.created | formatDate : { default: true } }}</span>
         </pa-table-cell>
         <pa-table-cell center>
           <span class="body-s">{{ row.status }}</span>
