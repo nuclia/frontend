@@ -50,6 +50,9 @@
       "@nuclia/sistema": [
         "libs/sistema/src/index.ts"
       ],
+      "@nuclia/user": [
+        "libs/user/src/index.ts"
+      ],
       "@nuclia/widget": [
         "libs/search-widget/src/index.ts"
       ]
