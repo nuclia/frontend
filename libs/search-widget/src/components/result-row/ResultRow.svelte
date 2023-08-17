@@ -15,9 +15,10 @@
     trackingEngagement,
     TypedResult,
     viewerData
-  } from "../../core";
-  import { ResourceField, Search } from "@nuclia/core";
-  import { combineLatest, forkJoin, of, switchMap, take } from "rxjs";
+  } from '../../core';
+  import type { ResourceField, Search } from '@nuclia/core';
+  import { combineLatest, of, switchMap, take } from 'rxjs';
+  import { FieldMetadata } from './';
 
   export let result: TypedResult;
 
@@ -27,8 +28,9 @@
   let fallback = '';
   let isPlayable = false;
   let innerWidth = window.innerWidth;
-  let expandedParagraphHeight;
+  let expandedParagraphHeight: string | undefined;
   $: isMobile = isMobileViewport(innerWidth);
+  $: paragraphs = result.paragraphs || [];
   $: {
     switch (result.resultType) {
       case 'audio':
@@ -103,19 +105,23 @@
   <div class="result-container">
     <h3
       class="ellipsis title-m"
-      on:click={() => clickOnResult()}>
+      on:click={() => clickOnResult()}
+      on:keyup={(e) => {if (e.key === 'Enter') clickOnResult();}}
+    >
       {result?.title}
     </h3>
+
+    <FieldMetadata {result}></FieldMetadata>
 
     <div tabindex="-1">
       <ul
         class="sw-paragraphs-container"
         class:expanded={showAllResults}
-        class:can-expand={result.paragraphs.length > 4}
-        style:--paragraph-count={result.paragraphs.length}
+        class:can-expand={paragraphs.length > 4}
+        style:--paragraph-count={paragraphs.length}
         style:--expanded-paragraph-height={!!expandedParagraphHeight ? expandedParagraphHeight : undefined}
       >
-        {#each result.paragraphs as paragraph, index}
+        {#each paragraphs as paragraph, index}
           <ParagraphResult
             {paragraph}
             resultType={result.resultType}
@@ -127,7 +133,7 @@
         {/each}
       </ul>
 
-      {#if result.paragraphs.length > 4}
+      {#if paragraphs.length > 4}
         <AllResultsToggle
           {showAllResults}
           on:toggle={() => (showAllResults = !showAllResults)} />

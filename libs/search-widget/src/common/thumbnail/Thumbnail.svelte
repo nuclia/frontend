@@ -1,8 +1,8 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
-  import { getFile } from '../../core/api';
+  import { getFile } from '../../core';
 
-  export let src: string;
+  export let src: string | undefined;
   export let fallback = '';
   export let aspectRatio: '5/4' | '16/9' = '5/4';
   export let noBackground = false;

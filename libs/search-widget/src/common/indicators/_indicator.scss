@@ -2,13 +2,15 @@
   align-items: center;
   background: var(--color-neutral-lightest);
   border-radius: var(--rhythm-4);
+  border: none;
   color: var(--color-dark-stronger);
   cursor: pointer;
   display: flex;
   font-size: var(--font-size-medium);
+  font-family: var(--font-family-body);
+  font-weight: var(--font-weight-body);
   gap: var(--rhythm-0_25);
   line-height: var(--rhythm-3);
-  max-width: var(--rhythm-9);
   padding: 0 var(--rhythm-1);
   position: relative;
   transition: background-color var(--transition-superfast);

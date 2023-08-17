@@ -11,6 +11,8 @@
 - [SDK](#sdk)
 - [Desktop app](#desktop-app)
 - [Sistema](#sistema)
+- [Protobuf library](#protobuf-library)
+- [CI/CD Deployment](#cicd-deployment)
 
 ---
 
@@ -224,7 +226,7 @@ npm publish
 
 ## CI/CD Deployment
 
-## Scope
+### Scope
 
 CI/CD deployment does not cover:
 
@@ -238,7 +240,7 @@ It covers:
 - the widget (not active at the time I am writing this doc, but will be soon);
 - the manager app
 
-## Deploying to stage
+### Deploying to stage
 
 When merging a PR, if it impacts the manager app, it is built and our `deploy_manager` job (in our `deploy` GitHub Action) will update Helm and then trigger a Repository Dispatch event to the `frontend_deploy` repo.
 
@@ -246,14 +248,14 @@ That's how the manager is deployed to **stage**.
 
 You can see the deployment on [Stage ArgoCD](http://stashify.argocd.nuclia.com/applications/argocd/manager?view=tree&conditions=false&resource=).
 
-## Promoting to production
+### Promoting to production
 
 Once the app is deployed on stage, you can promote it to production by going to https://github.com/nuclia/stage/actions/workflows/promote-to-production.yaml and clicking on "Run workflow".
 Then, choose the `manager` component in the list (keep the default values for the rest) and click on "Run workflow".
 
 It triggers the prod promotion, and it can be monitores on [Prod ArgoCD](http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=).
 
-## About ArgoCD
+### About ArgoCD
 
 ArgoCD allows to monitor deployments and also to read the logs of the different pods.
 
