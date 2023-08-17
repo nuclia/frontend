@@ -47,6 +47,11 @@
 	"recover.recover": "Recuperar",
 	"recover.title": "Recupera la contraseña",
 	"recover.verify": "Verifica la cuenta para cambiar la contraseña",
+	"validation.company-email": "Utilice un correo electrónico de la empresa",
 	"validation.email": "Introduce un correo electrónico válido",
-	"validation.required": "Este campo es obligatorio"
+	"validation.password_minlength": "La contraseña debe tener al menos 8 caracteres",
+	"validation.password_mismatch": "Ups! La contraseña no coincide",
+	"validation.password_required": "Elije una contraseña",
+	"validation.required": "Este campo es obligatorio",
+	"validation.required_short": "Necesario"
 }

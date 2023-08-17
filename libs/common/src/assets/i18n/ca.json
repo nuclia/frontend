@@ -47,6 +47,11 @@
 	"recover.recover": "Recuperar",
 	"recover.title": "Recupera la contrasenya",
 	"recover.verify": "Verifica el compte per canviar la contrasenya",
+	"validation.company-email": "Si us plau, utilitzeu un correu electrònic de l'empresa",
 	"validation.email": "Introdueix un correu electrònic vàlid",
-	"validation.required": "Aquest camp és obligatori"
+	"validation.password_minlength": "La contrasenya ha de tenir com a mínim 8 caràcters",
+	"validation.password_mismatch": "Ep! La contrasenya no coincideix",
+	"validation.password_required": "Escull una contrasenya",
+	"validation.required": "Aquest camp és obligatori",
+	"validation.required_short": "Obligatori"
 }

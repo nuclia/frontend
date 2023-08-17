@@ -1390,19 +1390,19 @@
 			<name>main</name>
 			<translation_urls>
 				<translation_url>
-					<path>apps/desktop/src/assets/i18n/ca.json</path>
+					<path>src/assets/i18n/ca.json</path>
 					<language>ca-ES</language>
 				</translation_url>
 				<translation_url>
-					<path>apps/desktop/src/assets/i18n/en.json</path>
+					<path>src/assets/i18n/en.json</path>
 					<language>en-US</language>
 				</translation_url>
 				<translation_url>
-					<path>apps/desktop/src/assets/i18n/es.json</path>
+					<path>src/assets/i18n/es.json</path>
 					<language>es-ES</language>
 				</translation_url>
 				<translation_url>
-					<path>apps/desktop/src/assets/i18n/fr.json</path>
+					<path>src/assets/i18n/fr.json</path>
 					<language>fr-FR</language>
 				</translation_url>
 			</translation_urls>

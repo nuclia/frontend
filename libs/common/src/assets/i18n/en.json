@@ -47,6 +47,11 @@
 	"recover.recover": "Recover",
 	"recover.title": "Recover your password",
 	"recover.verify": "Check your email and use the provided link to change your password",
+	"validation.company-email": "Please use a company email",
 	"validation.email": "Enter a valid email",
-	"validation.required": "Required field"
+	"validation.password_minlength": "Password must be at least 8 characters long",
+	"validation.password_mismatch": "Password does not match",
+	"validation.password_required": "Choose a password",
+	"validation.required": "Required field",
+	"validation.required_short": "Required"
 }

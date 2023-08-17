@@ -11,7 +11,7 @@
     -->
 	<preset_collections/>
 	<framework>ngx-translate</framework>
-	<filename>app.babel</filename>
+	<filename>common.babel</filename>
 	<source_root_dir>.</source_root_dir>
 	<folder_node>
 		<name/>
@@ -1157,6 +1157,29 @@
 						<name>validation</name>
 						<children>
 							<concept_node>
+								<name>company-email</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
 								<name>email</name>
 								<description/>
 								<comment/>
@@ -1180,7 +1203,99 @@
 								</translations>
 							</concept_node>
 							<concept_node>
+								<name>password_minlength</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>password_mismatch</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>password_required</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
 								<name>required</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>required_short</name>
 								<description/>
 								<comment/>
 								<translations>
@@ -1228,19 +1343,19 @@
 			<name>main</name>
 			<translation_urls>
 				<translation_url>
-					<path>libs/common/src/assets/i18n/ca.json</path>
+					<path>src/assets/i18n/ca.json</path>
 					<language>ca-ES</language>
 				</translation_url>
 				<translation_url>
-					<path>libs/common/src/assets/i18n/en.json</path>
+					<path>src/assets/i18n/en.json</path>
 					<language>en-US</language>
 				</translation_url>
 				<translation_url>
-					<path>libs/common/src/assets/i18n/es.json</path>
+					<path>src/assets/i18n/es.json</path>
 					<language>es-ES</language>
 				</translation_url>
 				<translation_url>
-					<path>libs/common/src/assets/i18n/fr.json</path>
+					<path>src/assets/i18n/fr.json</path>
 					<language>fr-FR</language>
 				</translation_url>
 			</translation_urls>

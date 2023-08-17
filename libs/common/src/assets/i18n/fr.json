@@ -47,6 +47,11 @@
 	"recover.recover": "Récupérer",
 	"recover.title": "Récupérer votre mot de passe",
 	"recover.verify": "Vérifiez votre email et utilisez le lien fourni pour modifier votre mot de passe.",
+	"validation.company-email": "Veuillez utiliser un email d’entreprise",
 	"validation.email": "Saisir un email valide",
-	"validation.required": "Champs obligatoire"
+	"validation.password_minlength": "Le mot de passe doit comporter au moins 8 caractères",
+	"validation.password_mismatch": "Le mot de passe ne correspond pas",
+	"validation.password_required": "Choisissez un mot de passe",
+	"validation.required": "Champs obligatoire",
+	"validation.required_short": "Requis"
 }
