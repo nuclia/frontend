@@ -13,7 +13,7 @@ import {
   UserService,
 } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
-import { SamePassword } from '../../validators/form.validator';
+import { SamePassword } from '../../../../common/src/lib/validators/form.validator';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 
 @Component({
