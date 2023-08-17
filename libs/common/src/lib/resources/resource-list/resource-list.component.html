@@ -140,6 +140,7 @@
         [(selection)]="selection"
         (clickOnTitle)="viewResource($event.resource.id)"
         (menuAction)="onMenuAction($event)"
+        (reprocessResources)="bulkReprocess($event)"
         (deleteResources)="delete($event)"
         (loadMore)="loadMore()"
         (sort)="sortBy($event)"></stf-pending-resources-table>
