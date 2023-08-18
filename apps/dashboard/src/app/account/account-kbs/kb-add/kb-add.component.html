@@ -1,6 +1,6 @@
 <pa-modal-advanced>
   <pa-modal-title>
-    {{ 'stash.create' | translate }}
+    {{ 'stash.create.title' | translate }}
   </pa-modal-title>
   <pa-modal-content>
     <form
@@ -48,7 +48,7 @@
           formGroupName="config"
           class="learning-config">
           <div *ngFor="let conf of displayedLearningConfigurations">
-            <h3>{{ 'stash.create.' + conf.id | translate }}</h3>
+            <h3>{{ 'stash.create.' + conf.id + '.label' | translate }}</h3>
             <p>{{ 'stash.create.' + conf.id + '.help' | translate }}</p>
             <pa-radio-group
               [formControlName]="conf.id"

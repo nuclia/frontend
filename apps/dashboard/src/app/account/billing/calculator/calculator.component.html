@@ -3,7 +3,7 @@
   fitContentHeight>
   <pa-modal-title>
     <h2>{{ 'billing.budget_calculator' | translate }}</h2>
-    <div class="body-s">{{ 'billing.budget_calculator.help' | translate }}</div>
+    <div class="body-s">{{ 'billing.budget_calculator_help' | translate }}</div>
   </pa-modal-title>
   <pa-modal-content>
     <form>
@@ -63,10 +63,10 @@
                 (valueChange)="update(param, $event)">
                 <span class="title-xxs">{{ text || 'billing.parameter.' + param | translate }}</span>
               </pa-slider>
-              <div class="price">{{ calculatePrice(param) | currency : currency }}</div>
+              <div class="price">{{ calculatePrice(param) | currency: currency }}</div>
             </div>
             <div class="unit-price body-xs">
-              {{ getUnitPrice(tier, param) | currency : currency : 'symbol' : '1.2-6' }} /
+              {{ getUnitPrice(tier, param) | currency: currency : 'symbol' : '1.2-6' }} /
               {{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
             </div>
           </div>
@@ -75,8 +75,8 @@
       <div class="section">
         <div>
           <div class="title-l">
-            {{ 'billing.monthly_estimation' | translate }}
-            <span class="total">{{ total | currency : currency }} *</span>
+            {{ 'billing.monthly_estimation.title' | translate }}
+            <span class="total">{{ total | currency: currency }} *</span>
           </div>
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
           <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>

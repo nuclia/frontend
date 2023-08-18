@@ -50,27 +50,27 @@
             labelOnRight
             help="stash.widgets.suggestions.help"
             formControlName="suggestions">
-            {{ 'stash.widgets.suggestions' | translate }}
+            {{ 'stash.widgets.suggestions.label' | translate }}
           </pa-toggle>
           <pa-toggle
             *ngIf="canSuggestEntities | async"
             labelOnRight
             help="stash.widgets.suggestEntities.help"
             formControlName="suggestEntities">
-            {{ 'stash.widgets.suggestEntities' | translate }}
+            {{ 'stash.widgets.suggestEntities.label' | translate }}
           </pa-toggle>
           <pa-toggle
             *ngIf="isTrainingEnabled | async"
             labelOnRight
             help="stash.widgets.suggestLabels.help"
             formControlName="suggestLabels">
-            {{ 'stash.widgets.suggestLabels' | translate }}
+            {{ 'stash.widgets.suggestLabels.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.filter.help"
             formControlName="filter">
-            {{ 'stash.widgets.filter' | translate }}
+            {{ 'stash.widgets.filter.label' | translate }}
           </pa-toggle>
           <div
             *ngIf="mainFormFeatures.filter && isEntityFiltersEnabled | async"
@@ -93,58 +93,58 @@
             labelOnRight
             help="stash.widgets.answers.help"
             formControlName="answers">
-            {{ 'stash.widgets.answers' | translate }}
+            {{ 'stash.widgets.answers.label' | translate }}
           </pa-toggle>
           <pa-toggle
             *ngIf="areAnswersEnabled | async"
             labelOnRight
             help="stash.widgets.onlyAnswers.help"
             formControlName="onlyAnswers">
-            {{ 'stash.widgets.onlyAnswers' | translate }}
+            {{ 'stash.widgets.onlyAnswers.label' | translate }}
           </pa-toggle>
           <pa-toggle
             *ngIf="areAnswersEnabled | async"
             labelOnRight
             help="stash.widgets.hideSources.help"
             formControlName="hideSources">
-            {{ 'stash.widgets.hideSources' | translate }}
+            {{ 'stash.widgets.hideSources.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.relations.help"
             formControlName="relations">
-            {{ 'stash.widgets.relations' | translate }}
+            {{ 'stash.widgets.relations.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.navigateToLink.help"
             formControlName="navigateToLink">
-            {{ 'stash.widgets.navigateToLink' | translate }}
+            {{ 'stash.widgets.navigateToLink.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.navigateToFile.help"
             formControlName="navigateToFile">
-            {{ 'stash.widgets.navigateToFile' | translate }}
+            {{ 'stash.widgets.navigateToFile.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.permalink.help"
             formControlName="permalink">
-            {{ 'stash.widgets.permalink' | translate }}
+            {{ 'stash.widgets.permalink.label' | translate }}
           </pa-toggle>
           <pa-toggle
             *ngIf="areSynonymsEnabled | async"
             labelOnRight
             help="stash.widgets.synonyms.help"
             formControlName="useSynonyms">
-            {{ 'stash.widgets.synonyms' | translate }}
+            {{ 'stash.widgets.synonyms.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight
             help="stash.widgets.autofilter.help"
             formControlName="autofilter">
-            {{ 'stash.widgets.autofilter' | translate }}
+            {{ 'stash.widgets.autofilter.label' | translate }}
           </pa-toggle>
         </div>
 
@@ -152,7 +152,7 @@
           labelOnRight
           help="stash.widgets.darkMode.help"
           formControlName="darkMode">
-          {{ 'stash.widgets.darkMode' | translate }}
+          {{ 'stash.widgets.darkMode.label' | translate }}
         </pa-toggle>
       </section>
       <section class="snippet">

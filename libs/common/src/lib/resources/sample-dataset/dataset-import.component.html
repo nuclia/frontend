@@ -2,7 +2,7 @@
   <h1>{{ 'dataset.title' | translate }}</h1>
 
   <ng-container *ngIf="(isMonoLingual | async) === false">
-    <h2>{{ 'dataset.option1' | translate }}</h2>
+    <h2>{{ 'dataset.option1.title' | translate }}</h2>
     <p class="body-m">
       {{ 'dataset.option1.description' | translate }}
     </p>
@@ -11,7 +11,7 @@
   </ng-container>
 
   <div class="upload-data">
-    <h2 *ngIf="(isMonoLingual | async) === false">{{ 'dataset.option2' | translate }}</h2>
+    <h2 *ngIf="(isMonoLingual | async) === false">{{ 'dataset.option2.title' | translate }}</h2>
     <p
       class="body-m"
       #uploadLinksContainer>
