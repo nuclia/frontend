@@ -32,6 +32,9 @@ export class SelectAccountComponent implements OnInit, OnDestroy {
     this.accounts = this.selectService.getAccounts();
     this.kbs = this.selectService.getKbs();
 
+    if (this.accounts?.length === 1) {
+      this.router.navigate([this.getAccountUrl(this.accounts[0].slug)]);
+    }
     this.router.events
       .pipe(filter((event) => event instanceof NavigationStart || event instanceof Scroll))
       .subscribe((event) => {
