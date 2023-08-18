@@ -1,4 +1,4 @@
 {
-	"generic.email": "Email",
-	"generic.or": "Ou"
+	"stats.endpoint": "NucliaDB API endpoint",
+	"stats.total_search": "Nombre total de recherches"
 }

@@ -1,21 +1,21 @@
 <div class="dataset-import-container">
-  <h1>{{ 'onboarding.dataset.title' | translate }}</h1>
+  <h1>{{ 'dataset.title' | translate }}</h1>
 
   <ng-container *ngIf="(isMonoLingual | async) === false">
-    <h2>{{ 'onboarding.dataset.option1' | translate }}</h2>
+    <h2>{{ 'dataset.option1' | translate }}</h2>
     <p class="body-m">
-      {{ 'onboarding.dataset.option1.description' | translate }}
+      {{ 'dataset.option1.description' | translate }}
     </p>
 
     <stf-dataset-selector (imported)="onDatasetImported($event)"></stf-dataset-selector>
   </ng-container>
 
   <div class="upload-data">
-    <h2 *ngIf="(isMonoLingual | async) === false">{{ 'onboarding.dataset.option2' | translate }}</h2>
+    <h2 *ngIf="(isMonoLingual | async) === false">{{ 'dataset.option2' | translate }}</h2>
     <p
       class="body-m"
       #uploadLinksContainer>
-      {{ 'onboarding.dataset.option2.description' | translate }}
+      {{ 'dataset.option2.description' | translate }}
     </p>
     <stf-upload-button (uploaded)="onUpload()"></stf-upload-button>
   </div>

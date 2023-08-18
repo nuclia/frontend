@@ -15,7 +15,7 @@
           "error",
           {
             "type": "attribute",
-            "prefix": "nuclia",
+            "prefix": "nus",
             "style": "camelCase"
           }
         ],
@@ -23,7 +23,7 @@
           "error",
           {
             "type": "element",
-            "prefix": "nuclia",
+            "prefix": "nus",
             "style": "kebab-case"
           }
         ]

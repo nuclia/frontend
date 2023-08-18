@@ -26,7 +26,7 @@
           <label
             class="title-s"
             for="use_case">
-            {{ 'onboarding.use_case' | translate }}
+            {{ 'onboarding.use_case_label' | translate }}
           </label>
           <pa-select
             id="use_case"
@@ -50,10 +50,10 @@
             formControlName="hosted_nucliadb"
             id="hosting"
             externalLabel
-            help="onboarding.host_db.help"
+            help="onboarding.host_db_help"
             [errorMessages]="validationMessages.hosted_nucliadb">
-            <pa-option value="yes">{{ 'onboarding.host_db.yes' | translate }}</pa-option>
-            <pa-option value="no">{{ 'onboarding.host_db.no' | translate }}</pa-option>
+            <pa-option value="yes">{{ 'onboarding.host_db_yes' | translate }}</pa-option>
+            <pa-option value="no">{{ 'onboarding.host_db_no' | translate }}</pa-option>
           </pa-select>
         </div>
         <div class="field">
