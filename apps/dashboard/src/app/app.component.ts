@@ -16,8 +16,7 @@ import { Title } from '@angular/platform-browser';
 import { ModalConfig, TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { takeUntil } from 'rxjs/operators';
 import { SisModalService } from '@nuclia/sistema';
-import { MessageModalComponent, NavigationService } from '@flaps/common';
-import { FeaturesModalComponent } from '@flaps/common';
+import { FeaturesModalComponent, MessageModalComponent, NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-root',
@@ -26,9 +25,10 @@ import { FeaturesModalComponent } from '@flaps/common';
 })
 export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('toastsContainer', { read: ViewContainerRef, static: true }) toastsContainer?: ViewContainerRef;
-  version: string | undefined;
 
   private unsubscribeAll: Subject<void>;
+
+  version: string | undefined;
 
   constructor(
     private state: StateService,
