@@ -13,11 +13,11 @@ import {
   UserService,
 } from '@flaps/core';
 import { Language, WelcomeUser } from '@nuclia/core';
-import { SamePassword } from '../../../../common/src/lib/validators/form.validator';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
+import { SamePassword } from '../password.validator';
 
 @Component({
-  selector: 'stf-profile',
+  selector: 'nus-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

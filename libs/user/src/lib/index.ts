@@ -8,6 +8,7 @@ export * from './magic/magic.service';
 export * from './onboarding/onboarding.component';
 export * from './onboarding/onboarding.models';
 export * from './onboarding/onboarding.service';
+export * from './password.validator';
 export * from './profile/profile.component';
 export * from './recover/recover.component';
 export * from './reset/reset.component';
