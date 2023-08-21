@@ -70,7 +70,7 @@
     <pa-button
       *ngIf="!addKb && (standalone || (canAddKb | async) === true)"
       (click)="toggleForm()">
-      {{ 'stash.create' | translate }}
+      {{ 'stash.create.title' | translate }}
     </pa-button>
 
     <ng-container *ngIf="addKb">

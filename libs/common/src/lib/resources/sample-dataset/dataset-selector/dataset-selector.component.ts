@@ -43,8 +43,8 @@ export class DatasetSelectorComponent {
       new ModalConfig({
         dismissable: false,
         data: {
-          title: 'onboarding.dataset.importing_title',
-          description: 'onboarding.dataset.importing_description',
+          title: 'dataset.importing_title',
+          description: 'dataset.importing_description',
         },
       }),
     );
@@ -55,7 +55,7 @@ export class DatasetSelectorComponent {
         this.imported.emit(true);
       },
       error: (err) => {
-        this.toaster.error('onboarding.dataset.import_failed');
+        this.toaster.error('dataset.import_failed');
         this.importing = false;
         loadingModal.close();
         this.imported.emit(false);

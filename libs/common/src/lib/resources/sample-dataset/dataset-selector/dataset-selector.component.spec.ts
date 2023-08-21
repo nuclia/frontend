@@ -65,8 +65,8 @@ describe('DatasetSelectorComponent', () => {
         new ModalConfig({
           dismissable: false,
           data: {
-            title: 'onboarding.dataset.importing_title',
-            description: 'onboarding.dataset.importing_description',
+            title: 'dataset.importing_title',
+            description: 'dataset.importing_description',
           },
         }),
       );
