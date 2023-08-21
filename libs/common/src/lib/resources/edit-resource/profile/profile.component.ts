@@ -109,7 +109,7 @@ export class ResourceProfileComponent implements OnInit {
         modified: data.origin?.modified,
         related: (data.origin?.related || []).join('\n'),
       },
-      extra: JSON.stringify(data.extra?.metadata, null, 2),
+      extra: JSON.stringify(data.extra?.metadata, null, 2) || '',
     });
     this.extraMetadata = data.extra?.metadata;
     this.form.enable();

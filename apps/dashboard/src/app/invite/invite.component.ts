@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { UntypedFormBuilder, Validators } from '@angular/forms';
 import { LoginService, MIN_PASSWORD_LENGTH, SDKService } from '@flaps/core';
-import { SamePassword } from '@flaps/common';
+import { SamePassword } from '@nuclia/user';
 import { Router } from '@angular/router';
 import { concatMap } from 'rxjs/operators';
 

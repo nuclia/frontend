@@ -19,7 +19,7 @@
       </div>
       <div class="section">
         <div>
-          <div class="title-s">{{ 'billing.ingestion_cost' | translate }}</div>
+          <div class="title-s">{{ 'billing.ingestion_cost.title' | translate }}</div>
           <div
             class="body-s"
             [innerHTML]="'billing.ingestion_cost.description' | translate"></div>
@@ -33,10 +33,10 @@
               (valueChange)="update(param, $event)">
               <span class="title-xxs">{{ 'billing.parameter.' + param | translate }}</span>
             </pa-slider>
-            <div class="price">{{ calculatePrice(param) | currency : currency }}</div>
+            <div class="price">{{ calculatePrice(param) | currency: currency }}</div>
           </div>
           <div class="unit-price body-xs">
-            {{ prices[tier].usage[param].price | currency : currency : 'symbol' : '1.2-6' }} /
+            {{ prices[tier].usage[param].price | currency: currency : 'symbol' : '1.2-6' }} /
             {{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
           </div>
         </div>
@@ -44,15 +44,15 @@
       <div class="section">
         <div>
           <div class="title-l">
-            {{ 'billing.monthly_estimation' | translate }}
-            <span class="total">{{ total | currency : currency }} *</span>
+            {{ 'billing.monthly_estimation.title' | translate }}
+            <span class="total">{{ total | currency: currency }} *</span>
           </div>
           <div>*{{ 'billing.monthly_estimation.description' | translate }}</div>
           <div *ngIf="isSpain | async">{{ 'billing.without_vat' | translate }}</div>
         </div>
         <div
           class="contact"
-          [innerHTML]="'billing.self_hosted' | translate : { url: 'mailto:support@nuclia.com' }"></div>
+          [innerHTML]="'billing.self_hosted' | translate: { url: 'mailto:support@nuclia.com' }"></div>
       </div>
     </form>
   </pa-modal-content>

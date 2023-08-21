@@ -3,9 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpBackend, HttpClientModule } from '@angular/common/http';
 import { BackendConfigurationService, STFConfigModule } from '@flaps/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { APP_BASE_HREF, registerLocaleData } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AngularSvgIconModule } from 'angular-svg-icon';
@@ -20,13 +19,18 @@ import { UploadModule } from '@flaps/common';
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
+import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
 
-export function createTranslateLoader(http: HttpClient, config: BackendConfigurationService) {
-  return new TranslateHttpLoader(http, 'assets/i18n/', `.json?version=${config.getVersion()}`);
+export function createTranslateLoader(http: HttpBackend, config: BackendConfigurationService) {
+  const suffix = `.json?version=${config.getVersion()}`;
+  return new MultiTranslateHttpLoader(http, [
+    { prefix: 'assets/i18n/user/', suffix },
+    { prefix: 'assets/i18n/common/', suffix },
+  ]);
 }
 
 @NgModule({
@@ -41,7 +45,7 @@ export function createTranslateLoader(http: HttpClient, config: BackendConfigura
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient, BackendConfigurationService],
+        deps: [HttpBackend, BackendConfigurationService],
       },
     }),
     RouterModule.forRoot(routes, routerOptions),

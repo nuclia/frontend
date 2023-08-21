@@ -2,17 +2,17 @@
   class="subscriptions"
   *ngIf="accountTypesDefaults | async as defaults">
   <tr>
-    <th>{{ 'billing.quotas' | translate }}</th>
+    <th>{{ 'billing.quotas_label' | translate }}</th>
     <th class="plan">
       <div class="plan-name">
-        {{ 'billing.trial.title' | translate : { days: defaults['stash-trial'].max_trial_days } }}
+        {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
       </div>
       <div class="price">{{ 'billing.free' | translate }}</div>
     </th>
     <th class="plan">
       <div class="plan-name">Starter/Developer</div>
       <div class="price">
-        {{ (prices | async)?.['stash-developer'].recurring.month.price | currency: currency}}
+        {{ (prices | async)?.['stash-developer'].recurring.month.price | currency: currency }}
         <span class="unit">/{{ 'billing.month' | translate }}</span>
       </div>
       <pa-button
@@ -83,14 +83,14 @@
       </div>
     </td>
     <td>
-      <div>{{(prices | async)?.['stash-developer'].usage['files'].threshold | number}}</div>
+      <div>{{ (prices | async)?.['stash-developer'].usage['files'].threshold | number }}</div>
       <div class="unit">
         {{ 'billing.quotas.up-to' | translate }}
         {{ defaults['stash-developer'].upload_limit_max_non_media_file_size | size }}
       </div>
     </td>
     <td>
-      <div>{{(prices | async)?.['stash-business'].usage['files'].threshold | number}}</div>
+      <div>{{ (prices | async)?.['stash-business'].usage['files'].threshold | number }}</div>
       <div class="unit">
         {{ 'billing.quotas.up-to' | translate }}
         {{ defaults['stash-business'].upload_limit_max_non_media_file_size | size }}
@@ -134,10 +134,10 @@
       <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
     </td>
     <td>
-      <div>{{(prices | async)?.['stash-developer'].usage['searches'].threshold | number}}</div>
+      <div>{{ (prices | async)?.['stash-developer'].usage['searches'].threshold | number }}</div>
     </td>
     <td>
-      <div>{{(prices | async)?.['stash-business'].usage['searches'].threshold | number }}</div>
+      <div>{{ (prices | async)?.['stash-business'].usage['searches'].threshold | number }}</div>
     </td>
     <td>-</td>
   </tr>
@@ -147,10 +147,10 @@
       <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
     </td>
     <td>
-      <div>{{(prices | async)?.['stash-developer'].usage['qa'].threshold | number}}</div>
+      <div>{{ (prices | async)?.['stash-developer'].usage['qa'].threshold | number }}</div>
     </td>
     <td>
-      <div>{{(prices | async)?.['stash-business'].usage['qa'].threshold | number }}</div>
+      <div>{{ (prices | async)?.['stash-business'].usage['qa'].threshold | number }}</div>
     </td>
     <td>-</td>
   </tr>
@@ -161,12 +161,12 @@
     </td>
     <td>
       <div>
-        {{(prices | async)?.['stash-developer'].usage['training'].threshold | number}} {{ 'hours' | translate }}
+        {{ (prices | async)?.['stash-developer'].usage['training'].threshold | number }} {{ 'hours' | translate }}
       </div>
     </td>
     <td>
       <div>
-        {{(prices | async)?.['stash-business'].usage['training'].threshold | number }} {{ 'hours' | translate }}
+        {{ (prices | async)?.['stash-business'].usage['training'].threshold | number }} {{ 'hours' | translate }}
       </div>
     </td>
     <td>-</td>

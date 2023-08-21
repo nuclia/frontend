@@ -9,7 +9,7 @@ const PHONE_INTERNATIONAL_CODE = new RegExp(/^[+][0-9s]+$/);
 const PHONE_NUMBER = new RegExp(/^[0-9\s]+$/);
 
 @Component({
-  selector: 'stf-onboarding',
+  selector: 'nus-onboarding',
   templateUrl: './onboarding.component.html',
   styleUrls: ['./onboarding.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,14 +36,17 @@ export class OnboardingComponent {
     use_case: { required: 'validation.required' },
     hosted_nucliadb: { required: 'validation.required' },
     organization_size: { required: 'validation.required' },
-    phoneInternationalCode: { required: 'validation.required_short', pattern: 'onboarding.phone.invalid_code' },
-    phoneNumber: { required: 'validation.required', pattern: 'onboarding.phone.invalid_number' },
+    phoneInternationalCode: { required: 'validation.required_short', pattern: 'onboarding.invalid_phone_code' },
+    phoneNumber: { required: 'validation.required', pattern: 'onboarding.invalid_phone_number' },
   };
 
   zones: Zone[] = [];
   onboardingStatus: Observable<OnboardingStatus> = this.onboardingService.onboardingState;
 
-  constructor(private onboardingService: OnboardingService, private zoneService: ZoneService) {
+  constructor(
+    private onboardingService: OnboardingService,
+    private zoneService: ZoneService,
+  ) {
     this.zoneService.getZones().subscribe((zones) => (this.zones = zones));
   }
 

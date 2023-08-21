@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpBackend, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
@@ -24,6 +23,7 @@ import { AppComponent } from './app.component';
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeCa from '@angular/common/locales/ca';
+import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
 import { RedirectModule } from './redirect/redirect.module';
 import {
@@ -35,15 +35,21 @@ import {
   TopbarModule,
   UploadModule,
 } from '@flaps/common';
-import { KnowledgeBoxModule } from './knowledge-box/knowledge-box.module';
+import { KnowledgeBoxModule } from './knowledge-box';
 import { InviteModule } from './invite/invite.module';
+import { MultiTranslateHttpLoader } from 'ngx-translate-multi-http-loader';
 
 registerLocaleData(localeEn);
 registerLocaleData(localeEs);
 registerLocaleData(localeCa);
+registerLocaleData(localeFr);
 
-export function createTranslateLoader(http: HttpClient, config: BackendConfigurationService) {
-  return new TranslateHttpLoader(http, 'assets/i18n/', `.json?version=${config.getVersion()}`);
+export function createTranslateLoader(http: HttpBackend, config: BackendConfigurationService) {
+  const suffix = `.json?version=${config.getVersion()}`;
+  return new MultiTranslateHttpLoader(http, [
+    { prefix: 'assets/i18n/user/', suffix },
+    { prefix: 'assets/i18n/common/', suffix },
+  ]);
 }
 
 const components = [AppComponent];
@@ -79,7 +85,7 @@ const appModules = [
       loader: {
         provide: TranslateLoader,
         useFactory: createTranslateLoader,
-        deps: [HttpClient, BackendConfigurationService],
+        deps: [HttpBackend, BackendConfigurationService],
       },
     }),
     PaToastModule,

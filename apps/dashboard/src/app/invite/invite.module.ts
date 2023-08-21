@@ -4,7 +4,7 @@ import { InviteComponent } from './invite.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PaButtonModule, PaTextFieldModule } from '@guillotinaweb/pastanaga-angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { UserContainerModule } from '@flaps/common';
+import { UserContainerModule } from '@nuclia/user';
 
 @NgModule({
   declarations: [InviteComponent],

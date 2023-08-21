@@ -33,7 +33,7 @@
     </p>
 
     <div [class.running]="trainings[type].running">
-      <p>{{ 'stash.settings.processes.' + type + '.info' | translate }}</p>
+      <p>{{ 'stash.settings.processes.' + type + '_info' | translate }}</p>
 
       <ng-container *ngIf="type !== trainingTypes.ner">
         <div class="select">

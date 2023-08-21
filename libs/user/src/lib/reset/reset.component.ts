@@ -3,12 +3,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReCaptchaV3Service } from 'ngx-captcha';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BackendConfigurationService, LoginService, MIN_PASSWORD_LENGTH, ResetData } from '@flaps/core';
-import { SamePassword } from '../../validators/form.validator';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisToastService } from '@nuclia/sistema';
+import { SamePassword } from '../password.validator';
 
 @Component({
-  selector: 'stf-reset',
+  selector: 'nus-reset',
   templateUrl: './reset.component.html',
   styleUrls: ['./reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

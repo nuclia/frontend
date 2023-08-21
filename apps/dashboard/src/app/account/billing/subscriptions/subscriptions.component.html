@@ -30,7 +30,7 @@
         <th></th>
         <th class="plan">
           <div class="plan-name">
-            {{ 'billing.trial.title' | translate : { days: defaults['stash-trial'].max_trial_days } }}
+            {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
           </div>
           <div class="price">{{ 'billing.free' | translate }}</div>
           <div
@@ -42,7 +42,7 @@
         <th class="plan">
           <div class="plan-name">Starter</div>
           <div class="price">
-            {{ (prices | async)?.['stash-starter'].recurring.month.price | currency: currency}}
+            {{ (prices | async)?.['stash-starter'].recurring.month.price | currency: currency }}
             <span class="unit">/{{ 'billing.month' | translate }}</span>
           </div>
           <pa-button
@@ -115,14 +115,14 @@
           </div>
         </td>
         <td>
-          <div>{{(prices | async)?.['stash-starter'].usage['paragraphs_processed'].threshold | number}}</div>
+          <div>{{ (prices | async)?.['stash-starter'].usage['paragraphs_processed'].threshold | number }}</div>
           <div class="unit">
             {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-starter'].upload_limit_max_non_media_file_size | size }}
           </div>
         </td>
         <td>
-          <div>{{(prices | async)?.['stash-growth'].usage['paragraphs_processed'].threshold | number}}</div>
+          <div>{{ (prices | async)?.['stash-growth'].usage['paragraphs_processed'].threshold | number }}</div>
           <div class="unit">
             {{ 'billing.quotas.files-up-to' | translate }}
             {{ defaults['stash-growth'].upload_limit_max_non_media_file_size | size }}
@@ -174,10 +174,10 @@
           <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
         </td>
         <td>
-          <div>{{(prices | async)?.['stash-starter'].usage['searches'].threshold | number}}</div>
+          <div>{{ (prices | async)?.['stash-starter'].usage['searches'].threshold | number }}</div>
         </td>
         <td>
-          <div>{{(prices | async)?.['stash-growth'].usage['searches'].threshold | number }}</div>
+          <div>{{ (prices | async)?.['stash-growth'].usage['searches'].threshold | number }}</div>
         </td>
         <td>-</td>
       </tr>
@@ -187,10 +187,10 @@
           <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
         </td>
         <td>
-          <div>{{(prices | async)?.['stash-starter'].usage['generative'].threshold | number}}</div>
+          <div>{{ (prices | async)?.['stash-starter'].usage['generative'].threshold | number }}</div>
         </td>
         <td>
-          <div>{{(prices | async)?.['stash-growth'].usage['generative'].threshold | number }}</div>
+          <div>{{ (prices | async)?.['stash-growth'].usage['generative'].threshold | number }}</div>
         </td>
         <td>-</td>
       </tr>
@@ -231,12 +231,12 @@
         </td>
         <td>
           <div>
-            {{(prices | async)?.['stash-starter'].usage['training'].threshold | number}} {{ 'hours' | translate }}
+            {{ (prices | async)?.['stash-starter'].usage['training'].threshold | number }} {{ 'hours' | translate }}
           </div>
         </td>
         <td>
           <div>
-            {{(prices | async)?.['stash-growth'].usage['training'].threshold | number }} {{ 'hours' | translate }}
+            {{ (prices | async)?.['stash-growth'].usage['training'].threshold | number }} {{ 'hours' | translate }}
           </div>
         </td>
         <td>-</td>
@@ -245,8 +245,11 @@
     <div class="notes">
       <div>* {{ 'billing.paragraphs_per_file' | translate }}</div>
       <div
-        *ngIf="(prices | async )?.['stash-starter'].usage['paragraphs'].price | currency: currency:'symbol':'1.2-6' as price">
-        ** {{ 'billing.extra_paragraphs_cost' | translate : { price } }}
+        *ngIf="
+          (prices | async)?.['stash-starter'].usage['paragraphs'].price
+            | currency: currency : 'symbol' : '1.2-6' as price
+        ">
+        ** {{ 'billing.extra_paragraphs_cost' | translate: { price } }}
       </div>
     </div>
   </ng-container>
@@ -254,7 +257,7 @@
   <div>
     <h2>{{ 'billing.cost_over_limits' | translate }}</h2>
     <div class="body-s">
-      {{ 'billing.cost_over_limits.description' | translate }}
+      {{ 'billing.cost_over_limits_description' | translate }}
     </div>
     <div class="calculator">
       <pa-button
