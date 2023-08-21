@@ -592,19 +592,17 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   deleteSampleDataset() {
-    this.toaster.info('onboarding.dataset.delete_in_progress');
+    this.toaster.info('dataset.delete_in_progress');
     this.sampleDatasetService
       .deleteSampleDataset()
       .pipe(
         tap((count) => {
           if (count.error === 0) {
-            this.toaster.success('onboarding.dataset.delete_successful');
+            this.toaster.success('dataset.delete_successful');
           } else if (count.success > 0) {
-            this.toaster.warning(
-              this.translate.instant('onboarding.dataset.delete_partially_successful', { error: count.error }),
-            );
+            this.toaster.warning(this.translate.instant('dataset.delete_partially_successful', { error: count.error }));
           } else {
-            this.toaster.error('onboarding.dataset.delete_failed');
+            this.toaster.error('dataset.delete_failed');
           }
         }),
         switchMap(() => this.getResources()),
