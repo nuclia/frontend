@@ -1,4 +1,6 @@
 {
+	"stash.widgets.displayMetadata.help": "Afficher quelques métadonnées sur les résultats de recherche",
+	"stash.widgets.displayMetadata.label": "Afficher les métadonnées",
 	"stats.endpoint": "NucliaDB API endpoint",
 	"stats.total_search": "Nombre total de recherches"
 }

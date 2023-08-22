@@ -765,6 +765,8 @@
 	"stash.widgets.configuration": "Widget configuration",
 	"stash.widgets.darkMode.help": "Enable dark theme on the widget",
 	"stash.widgets.darkMode.label": "Dark mode",
+	"stash.widgets.displayMetadata.help": "Display some metadata on the search results",
+	"stash.widgets.displayMetadata.label": "Display metadata",
 	"stash.widgets.entities": "Filter by entities",
 	"stash.widgets.filter.help": "Displays filters in search bar",
 	"stash.widgets.filter.label": "Filter",
