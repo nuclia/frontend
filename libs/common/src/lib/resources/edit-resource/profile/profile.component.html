@@ -6,6 +6,18 @@
       <div>
         <label
           class="title-s"
+          for="uid">
+          {{ 'generic.uid' | translate }}
+        </label>
+        <pa-input
+          id="uid"
+          externalLabel
+          readonly
+          [value]="(resource | async)?.uuid"></pa-input>
+      </div>
+      <div>
+        <label
+          class="title-s"
           for="title">
           {{ 'resource.title' | translate }}
         </label>
