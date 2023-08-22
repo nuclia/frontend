@@ -28,6 +28,7 @@
       var(--paragraph-height) * var(--paragraph-count) + var(--paragraph-gap) * (var(--paragraph-count) - 1) +
         var(--expanded-paragraph-height)
     );
+    margin-top: var(--rhythm-1);
     overflow: hidden;
     transition: height var(--transition-fast);
 

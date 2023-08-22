@@ -250,6 +250,7 @@ export interface WidgetFeatures {
   suggestions?: boolean;
   suggestLabels?: boolean;
   suggestEntities?: boolean;
+  displayMetadata?: boolean;
   answers?: boolean;
   onlyAnswers?: boolean;
   hideSources?: boolean;

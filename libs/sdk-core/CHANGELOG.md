@@ -1,4 +1,4 @@
-# 1.6.1 (unreleased)
+# 1.6.1 (2023-08-22)
 
 ### Improvements
 
@@ -8,7 +8,7 @@
 - Add `widget` property to `LearningConfigurationSchemas` interface
 - Support ephemeral tokens on NucliaDB standalone
 - Add entity suggestions support on suggest endpoint
-- Add `suggestEntities` to `WidgetFeatures` interface
+- Add `suggestEntities` and `displayMetadata` to `WidgetFeatures` interface
 
 # 1.6.0 (2023-07-25)
 

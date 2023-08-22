@@ -8,6 +8,7 @@
     ThumbnailPlayer
   } from '../../common';
   import {
+    displayMetadata,
     getCDN,
     getNavigationUrl, goToUrl,
     navigateToFile,
@@ -111,7 +112,9 @@
       {result?.title}
     </h3>
 
-    <FieldMetadata {result}></FieldMetadata>
+    {#if $displayMetadata}
+      <FieldMetadata {result}></FieldMetadata>
+    {/if}
 
     <div tabindex="-1">
       <ul
