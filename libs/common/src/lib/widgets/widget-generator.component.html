@@ -88,27 +88,27 @@
               {{ 'stash.widgets.entities' | translate }}
             </pa-checkbox>
           </div>
-          <pa-toggle
-            *ngIf="areAnswersEnabled | async"
-            labelOnRight
-            help="stash.widgets.answers.help"
-            formControlName="answers">
-            {{ 'stash.widgets.answers.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="areAnswersEnabled | async"
-            labelOnRight
-            help="stash.widgets.onlyAnswers.help"
-            formControlName="onlyAnswers">
-            {{ 'stash.widgets.onlyAnswers.label' | translate }}
-          </pa-toggle>
-          <pa-toggle
-            *ngIf="areAnswersEnabled | async"
-            labelOnRight
-            help="stash.widgets.hideSources.help"
-            formControlName="hideSources">
-            {{ 'stash.widgets.hideSources.label' | translate }}
-          </pa-toggle>
+          <ng-container *ngIf="areAnswersEnabled | async">
+            <pa-toggle
+              labelOnRight
+              help="stash.widgets.answers.help"
+              formControlName="answers">
+              {{ 'stash.widgets.answers.label' | translate }}
+            </pa-toggle>
+            <pa-toggle
+              labelOnRight
+              help="stash.widgets.onlyAnswers.help"
+              formControlName="onlyAnswers">
+              {{ 'stash.widgets.onlyAnswers.label' | translate }}
+            </pa-toggle>
+            <pa-toggle
+              labelOnRight
+              help="stash.widgets.hideSources.help"
+              formControlName="hideSources">
+              {{ 'stash.widgets.hideSources.label' | translate }}
+            </pa-toggle>
+          </ng-container>
+
           <pa-toggle
             labelOnRight
             help="stash.widgets.relations.help"
@@ -145,6 +145,12 @@
             help="stash.widgets.autofilter.help"
             formControlName="autofilter">
             {{ 'stash.widgets.autofilter.label' | translate }}
+          </pa-toggle>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.displayMetadata.help"
+            formControlName="displayMetadata">
+            {{ 'stash.widgets.displayMetadata.label' | translate }}
           </pa-toggle>
         </div>
 

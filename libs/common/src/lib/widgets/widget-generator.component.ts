@@ -138,6 +138,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               suggestEntities: [config.features.includes('suggestEntities')],
               suggestions: [config.features.includes('suggestions')],
               useSynonyms: [config.features.includes('useSynonyms')],
+              displayMetadata: [config.features.includes('displayMetadata')],
             }),
           });
           setTimeout(() => this.generateSnippet(), 100);

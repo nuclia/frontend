@@ -737,6 +737,8 @@
 	"stash.widgets.configuration": "Configuració del widget",
 	"stash.widgets.darkMode.help": "Activa el tema fosc al giny",
 	"stash.widgets.darkMode.label": "Mode fosc",
+	"stash.widgets.displayMetadata.help": "Mostra algunes metadades als resultats de la cerca",
+	"stash.widgets.displayMetadata.label": "Mostra metadades",
 	"stash.widgets.entities": "Filtar per entitats",
 	"stash.widgets.filter.help": "Mostra els filtres a la barra de cerca",
 	"stash.widgets.filter.label": "Filtre",
