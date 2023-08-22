@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { TypedResult } from '../../core';
   import { getDataKeyFromFieldType } from '@nuclia/core';
-  import IconButton from '../../common/button/IconButton.svelte';
+  import { IconButton } from '../../common';
+  import { formatSize } from '../../core';
 
   export let result: TypedResult;
 
@@ -21,7 +22,7 @@
               }
               return !excludedMetadata.includes(subKey) && !!subValue;
             }).forEach(([subKey, subValue]) => {
-              list.push({ label: subKey, value: subValue as string });
+              list.push({ label: subKey, value: subKey === 'size' ? formatSize(subValue as number) : `${subValue}` });
             });
           } else {
             list.push({ label: key, value: key === 'added' ? value.substring(0, value.indexOf('T')) : value });

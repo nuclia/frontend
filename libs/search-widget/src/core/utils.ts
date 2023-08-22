@@ -64,6 +64,25 @@ export const formatTime = (sec: number) => {
   return d.toISOString().substring(startIndex, 19);
 };
 
+const sizeUnits = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+export function formatSize(bytes: number): string {
+  if (isNaN(parseFloat(String(bytes))) || !isFinite(bytes)) {
+    return '?';
+  }
+
+  let unit = 0;
+
+  while (bytes >= 1024) {
+    bytes /= 1024;
+    unit++;
+  }
+  let precision = 2;
+  if (unit === 0) {
+    precision = 0;
+  }
+  return `${bytes.toFixed(precision)} ${sizeUnits[unit]}`;
+}
+
 export const formatQueryKey = (key: string): string => {
   return `__nuclia_${key}__`;
 };
