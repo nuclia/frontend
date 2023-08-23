@@ -121,7 +121,13 @@ export class NucliaCloud {
     const slug = sha256(originalId);
     return this.getKb().pipe(
       switchMap((kb) =>
-        kb.createOrUpdateResource({ title: filename, slug, files: { 'remote-file': { file: data } } }).pipe(
+        kb.createOrUpdateResource({
+          title: filename,
+          slug,
+          links: { link: { uri: data.uri } },
+          origin: { url: data.uri },
+          icon: "application/stf-link"
+        }).pipe(
           catchError((error) => {
             console.log(`createOrUpdateResource – error:`, JSON.stringify(error));
             return throwError(() => new Error('Resource creation/modification failed'));
