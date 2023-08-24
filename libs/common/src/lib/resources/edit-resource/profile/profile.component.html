@@ -4,39 +4,27 @@
       [formGroup]="form"
       (ngSubmit)="save()">
       <div>
-        <label
-          class="title-s"
-          for="uid">
-          {{ 'generic.uid' | translate }}
-        </label>
         <pa-input
           id="uid"
-          externalLabel
           readonly
-          [value]="(resource | async)?.uuid"></pa-input>
+          [value]="(resource | async)?.uuid">
+          {{ 'generic.uid' | translate }}
+        </pa-input>
       </div>
       <div>
-        <label
-          class="title-s"
-          for="title">
-          {{ 'resource.title' | translate }}
-        </label>
         <pa-input
           id="title"
-          externalLabel
-          formControlName="title"></pa-input>
+          formControlName="title">
+          {{ 'resource.title' | translate }}
+        </pa-input>
       </div>
       <div>
-        <label
-          class="title-s"
-          for="summary">
-          {{ 'resource.summary' | translate }}
-        </label>
         <pa-textarea
           id="summary"
-          externalLabel
           formControlName="summary"
-          [rows]="5"></pa-textarea>
+          [rows]="5">
+          {{ 'resource.summary' | translate }}
+        </pa-textarea>
       </div>
       <div>
         <div>
@@ -96,88 +84,58 @@
 
       <section formGroupName="origin">
         <div>
-          <label
-            class="title-s"
-            for="authors">
-            {{ 'resource.origin.collaborators' | translate }}
-          </label>
           <pa-input
             id="authors"
-            externalLabel
             help="resource.origin.collaborators-helper"
-            formControlName="collaborators"></pa-input>
+            formControlName="collaborators">
+            {{ 'resource.origin.collaborators' | translate }}
+          </pa-input>
         </div>
         <div>
-          <label
-            class="title-s"
-            for="created">
-            {{ 'resource.origin.created' | translate }}
-          </label>
           <pa-date-picker
             id="created"
-            externalLabel
+            [label]="'resource.origin.created' | translate"
             formControlName="created"></pa-date-picker>
         </div>
         <div>
-          <label
-            class="title-s"
-            for="modified">
-            {{ 'resource.origin.modified' | translate }}
-          </label>
           <pa-date-picker
             id="modified"
-            externalLabel
+            [label]="'resource.origin.modified' | translate"
             formControlName="modified"></pa-date-picker>
         </div>
         <div>
-          <label
-            class="title-s"
-            for="filename">
-            {{ 'resource.origin.filename' | translate }}
-          </label>
           <pa-input
             id="filename"
-            externalLabel
-            formControlName="filename"></pa-input>
+            formControlName="filename">
+            {{ 'resource.origin.filename' | translate }}
+          </pa-input>
         </div>
         <div>
-          <label
-            class="title-s"
-            for="url">
-            {{ 'resource.origin.url' | translate }}
-          </label>
           <pa-input
             id="url"
-            externalLabel
-            formControlName="url"></pa-input>
+            formControlName="url">
+            {{ 'resource.origin.url' | translate }}
+          </pa-input>
         </div>
         <div>
-          <label
-            class="title-s"
-            for="related">
-            {{ 'resource.origin.related' | translate }}
-          </label>
           <pa-textarea
             id="related"
-            externalLabel
             formControlName="related"
-            [rows]="3"></pa-textarea>
+            [rows]="3">
+            {{ 'resource.origin.related' | translate }}
+          </pa-textarea>
         </div>
       </section>
       <section>
-        <label
-          class="title-s"
-          for="extra">
-          {{ 'resource.extra-metadata.label' | translate }}
-        </label>
         <pa-toggle [(value)]="editExtraMetadata">Edit extra metadata</pa-toggle>
         <div class="extra-metadata-container">
           <pa-textarea
             *ngIf="editExtraMetadata"
             id="extra"
             formControlName="extra"
-            externalLabel
-            [rows]="5"></pa-textarea>
+            [rows]="5">
+            {{ 'resource.extra-metadata.label' | translate }}
+          </pa-textarea>
           <div *ngIf="!editExtraMetadata">
             <nsi-json-viewer [json]="extraMetadata"></nsi-json-viewer>
           </div>

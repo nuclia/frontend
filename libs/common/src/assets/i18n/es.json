@@ -516,7 +516,7 @@
 	"resource.extra-metadata.invalid-json": "JSON inválido",
 	"resource.extra-metadata.label": "Metadatos adicionales",
 	"resource.failed_resources_popover": "Procesamiento de archivos fallidos",
-	"resource.field.add": "Agregar un campo",
+	"resource.field.add": "Agrega un",
 	"resource.field.addition-successful": "Campo agregado con éxito",
 	"resource.field.delete": "Eliminar campo",
 	"resource.field.delete-confirm-description": "¿Está seguro de que desea eliminar esto {{type}}?",

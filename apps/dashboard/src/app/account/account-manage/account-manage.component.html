@@ -7,62 +7,31 @@
       <form
         [formGroup]="accountForm"
         (ngSubmit)="saveAccount()">
-        <div class="account-field">
-          <label
-            for="account-uid"
-            class="account-field-name">
-            {{ 'generic.uid' | translate }}
-          </label>
-          <div>
-            <pa-input
-              id="account-uid"
-              formControlName="uid"
-              externalLabel
-              readonly></pa-input>
-          </div>
-        </div>
-        <div class="account-field">
-          <label
-            for="account-slug"
-            class="account-field-name">
-            {{ 'generic.slug' | translate }}
-          </label>
-          <div>
-            <pa-input
-              id="account-slug"
-              formControlName="slug"
-              externalLabel
-              readonly></pa-input>
-          </div>
-        </div>
-        <div class="account-field">
-          <label
-            for="account-title"
-            class="account-field-name">
-            {{ 'account.title' | translate }}
-          </label>
-          <div>
-            <pa-input
-              id="account-title"
-              formControlName="title"
-              externalLabel
-              [errorMessages]="validationMessages.title"></pa-input>
-          </div>
-        </div>
+        <pa-input
+          id="account-uid"
+          formControlName="uid"
+          readonly>
+          {{ 'generic.uid' | translate }}
+        </pa-input>
+        <pa-input
+          id="account-slug"
+          formControlName="slug"
+          readonly>
+          {{ 'generic.slug' | translate }}
+        </pa-input>
+        <pa-input
+          id="account-title"
+          formControlName="title"
+          [errorMessages]="validationMessages.title">
+          {{ 'account.title' | translate }}
+        </pa-input>
 
-        <div class="account-field">
-          <label
-            for="account-description"
-            class="account-field-name">
-            {{ 'generic.description' | translate }}
-          </label>
-          <div>
-            <pa-textarea
-              id="account-description"
-              formControlName="description"
-              rows="4"></pa-textarea>
-          </div>
-        </div>
+        <pa-textarea
+          id="account-description"
+          formControlName="description"
+          rows="4">
+          {{ 'generic.description' | translate }}
+        </pa-textarea>
 
         <div class="account-form-cta">
           <pa-button
@@ -90,23 +59,18 @@
       <h2>{{ 'account.config' | translate }}</h2>
 
       <div
-        class="account-field"
+        class="field-container"
         *ngIf="zones">
-        <div class="account-field-name">
-          {{ 'generic.zone' | translate }}
-        </div>
-        <div>
-          <pa-select
-            [formControl]="zone"
-            help="account.zone_description"
-            externalLabel>
-            <pa-option
-              *ngFor="let zone of zones"
-              [value]="zone.id">
-              {{ zone.title }}
-            </pa-option>
-          </pa-select>
-        </div>
+        <pa-select
+          [formControl]="zone"
+          help="account.zone_description"
+          [label]="'generic.zone' | translate">
+          <pa-option
+            *ngFor="let zone of zones"
+            [value]="zone.id">
+            {{ zone.title }}
+          </pa-option>
+        </pa-select>
       </div>
     </div>
   </div>
@@ -116,7 +80,7 @@
       <div class="dangerous-zone">
         <h3 class="title-s">{{ 'account.delete_account' | translate }}</h3>
         <div *ngIf="(isSubscribed | async) === false">
-          <p>{{ 'account.delete_account_warning_1' | translate : { account: account?.title || '' } }}</p>
+          <p>{{ 'account.delete_account_warning_1' | translate: { account: account?.title || '' } }}</p>
           <ul>
             <li>{{ 'account.delete_account_warning_2' | translate }}</li>
             <li>{{ 'account.delete_account_warning_3' | translate }}</li>

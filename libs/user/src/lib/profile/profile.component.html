@@ -12,73 +12,55 @@
       <h1>{{ 'generic.user_preferences' | translate }}</h1>
 
       <div class="field">
-        <div class="field-label">
-          <label for="name">{{ 'profile.name' | translate }}</label>
-        </div>
-        <div class="field-input">
-          <pa-input
-            formControlName="name"
-            id="name"
-            required
-            externalLabel
-            [errorMessages]="profile_validation_messages.name"></pa-input>
-        </div>
+        <pa-input
+          formControlName="name"
+          id="name"
+          required
+          [errorMessages]="profile_validation_messages.name">
+          {{ 'profile.name' | translate }}
+        </pa-input>
       </div>
 
       <div class="field">
-        <div class="field-label">
-          <label for="email">{{ 'generic.email' | translate }}</label>
-        </div>
-        <div class="field-input">
-          <pa-input
-            formControlName="email"
-            id="email"
-            required
-            type="email"
-            externalLabel
-            [errorMessages]="profile_validation_messages.email"></pa-input>
-        </div>
+        <pa-input
+          formControlName="email"
+          id="email"
+          required
+          type="email"
+          [errorMessages]="profile_validation_messages.email">
+          {{ 'generic.email' | translate }}
+        </pa-input>
       </div>
 
       <ng-container *ngIf="canModifyPassword">
         <div class="field">
-          <div class="field-label">
-            <label>{{ 'profile.new_password' | translate }}</label>
-          </div>
-          <div class="field-input">
-            <nsi-password-input
-              formControlName="password"
-              [errorMessages]="profile_validation_messages.password"></nsi-password-input>
-          </div>
+          <nsi-password-input
+            formControlName="password"
+            [errorMessages]="profile_validation_messages.password">
+            {{ 'profile.new_password' | translate }}
+          </nsi-password-input>
         </div>
 
         <div class="field">
-          <div class="field-label">
-            <label>{{ 'profile.repeat_password' | translate }}</label>
-          </div>
-          <div class="field-input">
-            <nsi-password-input
-              formControlName="passwordConfirm"
-              [errorMessages]="profile_validation_messages.passwordConfirm"></nsi-password-input>
-          </div>
+          <nsi-password-input
+            formControlName="passwordConfirm"
+            [errorMessages]="profile_validation_messages.passwordConfirm">
+            {{ 'profile.repeat_password' | translate }}
+          </nsi-password-input>
         </div>
       </ng-container>
 
       <div class="field">
-        <div class="field-label">
-          <label for="language">{{ 'generic.language' | translate }}</label>
-        </div>
-        <div class="field-input">
-          <pa-radio-group
-            id="language"
-            formControlName="language">
-            <pa-radio
-              *ngFor="let lang of languages"
-              [value]="lang.value">
-              {{ lang.label | translate }}
-            </pa-radio>
-          </pa-radio-group>
-        </div>
+        <label for="language">{{ 'generic.language' | translate }}</label>
+        <pa-radio-group
+          id="language"
+          formControlName="language">
+          <pa-radio
+            *ngFor="let lang of languages"
+            [value]="lang.value">
+            {{ lang.label | translate }}
+          </pa-radio>
+        </pa-radio-group>
       </div>
 
       <div class="actions">
