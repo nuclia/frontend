@@ -10,10 +10,6 @@ form > section > div {
 }
 
 form > div {
-  &.classification-container {
-    margin-top: rhythm(5);
-  }
-
   .thumbnails-container {
     $thumbnail-height: rhythm(14) + rhythm(1);
 
@@ -78,12 +74,6 @@ form > div {
 }
 
 .right-panel-container {
-  margin-top: $line-height-title-s + rhythm(0.5);
+  margin-top: $spacing-top;
   width: rhythm(40);
-}
-
-@media (min-width: $size-viewport-medium-min) {
-  .right-panel-container {
-    margin-top: $line-height-title-s-md + rhythm(0.5);
-  }
 }

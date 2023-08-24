@@ -535,7 +535,7 @@
 	"resource.extra-metadata.invalid-json": "Invalid JSON",
 	"resource.extra-metadata.label": "Extra metadata",
 	"resource.failed_resources_popover": "Processing failed files",
-	"resource.field.add": "Add a field",
+	"resource.field.add": "Add a",
 	"resource.field.addition-successful": "Field added successfully",
 	"resource.field.delete": "Delete field",
 	"resource.field.delete-confirm-description": "Are you sure you want to delete this {{type}}?",

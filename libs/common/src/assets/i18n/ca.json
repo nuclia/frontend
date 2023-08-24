@@ -516,7 +516,7 @@
 	"resource.extra-metadata.invalid-json": "JSON no vàlid",
 	"resource.extra-metadata.label": "Metadades addicionals",
 	"resource.failed_resources_popover": "El processament dels fitxers ha fallat",
-	"resource.field.add": "Afegeix un camp",
+	"resource.field.add": "Afegeix a",
 	"resource.field.addition-successful": "El camp s'ha afegit correctament",
 	"resource.field.delete": "Suprimeix el camp",
 	"resource.field.delete-confirm-description": "Confirmeu que voleu suprimir aquest {{type}}?",

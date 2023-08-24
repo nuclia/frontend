@@ -1,9 +1,7 @@
 <div class="main-container">
   <div class="scrollable-area with-footer">
-    <div class="title-xxs">{{ 'resource.field.add' | translate }}</div>
-
     <nsi-dropdown-button [popupRef]="fieldTypeDropdown">
-      {{ 'resource.field-' + fieldType.value | translate }}
+      {{ 'resource.field.add' | translate }} {{ 'resource.field-' + fieldType.value | translate }}
     </nsi-dropdown-button>
     <pa-dropdown #fieldTypeDropdown>
       <pa-option
@@ -17,15 +15,10 @@
     <form [formGroup]="form">
       <ng-container *ngIf="fieldType.value === 'text'">
         <div class="field-block">
-          <label
-            class="title-xxs"
-            for="format">
-            {{ 'resource.field-text-format-label' | translate }}
-          </label>
           <pa-select
             id="format"
             formControlName="format"
-            externalLabel>
+            [label]="'resource.field-text-format-label' | translate">
             <pa-option
               *ngFor="let format of availableFormats"
               [value]="format">
@@ -35,30 +28,22 @@
         </div>
 
         <div class="field-block">
-          <label
-            class="title-xxs"
-            for="text">
-            {{ 'resource.field-text-body-label' | translate }}
-          </label>
           <pa-textarea
             id="text"
-            formControlName="text"
-            externalLabel></pa-textarea>
+            formControlName="text">
+            {{ 'resource.field-text-body-label' | translate }}
+          </pa-textarea>
         </div>
       </ng-container>
 
       <ng-container *ngIf="fieldType.value === 'link'">
         <div class="field-block">
-          <label
-            class="title-xxs"
-            for="link">
-            URL
-          </label>
           <pa-input
             id="link"
             formControlName="text"
-            [errorMessages]="textErrors"
-            externalLabel></pa-input>
+            [errorMessages]="textErrors">
+            URL
+          </pa-input>
         </div>
       </ng-container>
 

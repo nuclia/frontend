@@ -25,8 +25,7 @@
 .scrollable-area {
   height: calc(100vh - var(--app-topbar-height) - #{$height-header} - #{$padding-top-page-container});
   overflow: auto;
-  padding-bottom: rhythm(2);
-  padding-right: rhythm(2); // give space for the scrollbar
+  padding: $spacing-top rhythm(2) rhythm(2) 0;
   width: $width-page-content-large;
 
   &.with-right-panel {

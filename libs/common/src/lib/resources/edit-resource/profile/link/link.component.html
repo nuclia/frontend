@@ -3,15 +3,11 @@
     class="scrollable-area"
     [formGroup]="form"
     (ngSubmit)="save()">
-    <label
-      class="title-xs"
-      for="link">
-      URL
-    </label>
     <pa-input
       id="link"
-      formControlName="link"
-      externalLabel></pa-input>
+      formControlName="link">
+      URL
+    </pa-input>
   </form>
 </div>
 

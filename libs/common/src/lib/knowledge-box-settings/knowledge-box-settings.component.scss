@@ -7,6 +7,13 @@
     margin: 0 0 rhythm(4) 0;
   }
 
+  pa-input,
+  pa-textarea {
+    display: block;
+    margin-bottom: rhythm(2);
+    width: rhythm(56);
+  }
+
   form > div {
     align-items: flex-start;
     display: flex;
@@ -19,11 +26,6 @@
 
     .label {
       padding-right: rhythm(3);
-    }
-
-    pa-input,
-    pa-textarea {
-      width: rhythm(56);
     }
 
     .options {

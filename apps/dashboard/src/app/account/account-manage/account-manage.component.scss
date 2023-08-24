@@ -8,8 +8,8 @@ h2 {
 }
 
 .section {
-  padding: rhythm(7) 0 rhythm(7) 0;
   border-bottom: 1px solid $color-neutral-light;
+  padding: rhythm(7) 0;
   &:first-child {
     padding-top: 0;
   }
@@ -19,22 +19,14 @@ h2 {
 }
 
 .section-container {
-  max-width: 825px;
+  max-width: 560px;
 }
 
-.account-field {
+.section-container form,
+.section-container .field-container {
   display: flex;
-  margin-bottom: rhythm(4);
-
-  label,
-  .account-field-name {
-    font-weight: $font-weight-semi-bold;
-    margin-top: rhythm(1.5);
-    width: 30%;
-  }
-  div:not(.account-field-name) {
-    flex: 1 0 auto;
-  }
+  flex-direction: column;
+  gap: rhythm(2);
 }
 
 .account-form-cta {
@@ -42,7 +34,6 @@ h2 {
   display: flex;
   gap: rhythm(2);
   margin-top: rhythm(5);
-  padding-left: 30%;
 }
 
 .zone-select {

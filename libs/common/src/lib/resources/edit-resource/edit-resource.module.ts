@@ -64,6 +64,7 @@ import { HintModule } from '../../hint';
     PaDatePickerModule,
     PaTableModule,
     JsonViewerComponent,
+    PaTextFieldModule,
   ],
   declarations: [
     AddFieldComponent,
