@@ -273,10 +273,17 @@
     };
     viewerData.set({ result, selectedParagraphIndex: -1 });
   }
+
+  function onEscape(event: KeyboardEvent) {
+    if ($isPreviewing && event.key === 'Escape') {
+      close();
+    }
+  }
 </script>
 
 <svelte:window
   bind:innerWidth
+  on:keydown={onEscape}
   on:resize={(event) => resizeEvent.next(event)} />
 
 {#if $isPreviewing}
