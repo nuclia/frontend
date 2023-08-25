@@ -4,7 +4,6 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SDKService } from '@flaps/core';
 import { CloudLink, FileFieldData, Resource } from '@nuclia/core';
 import { filter, forkJoin, map, Observable, Subject, switchMap, tap, timer } from 'rxjs';
-import { SisToastService } from '@nuclia/sistema';
 import { takeUntil } from 'rxjs/operators';
 import { EditResourceService } from '../edit-resource.service';
 import { JsonValidator } from '../../../validators';
@@ -79,7 +78,6 @@ export class ResourceProfileComponent implements OnInit {
   constructor(
     private editResource: EditResourceService,
     private sdk: SDKService,
-    private toaster: SisToastService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
   ) {
