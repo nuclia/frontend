@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { Classification, Resource } from '@nuclia/core';
 import { map } from 'rxjs';
 import { SelectFirstFieldDirective } from '../select-first-field/select-first-field.directive';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   templateUrl: './resource-classification.component.html',
@@ -22,12 +23,17 @@ export class ResourceClassificationComponent extends SelectFirstFieldDirective i
 
   ngOnInit(): void {
     this.editResource.setCurrentView('classification');
-    this.editResource.resource.pipe(map((resource) => resource?.getClassifications() || [])).subscribe((labels) => {
-      this.resourceLabels = labels;
-      this.currentLabels = labels;
-      this.isModified = false;
-      this.cdr.detectChanges();
-    });
+    this.editResource.resource
+      .pipe(
+        map((resource) => resource?.getClassifications() || []),
+        takeUntil(this.unsubscribeAll),
+      )
+      .subscribe((labels) => {
+        this.resourceLabels = labels;
+        this.currentLabels = labels;
+        this.isModified = false;
+        this.cdr.detectChanges();
+      });
   }
 
   updateLabels(labels: Classification[]) {

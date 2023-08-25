@@ -7,7 +7,7 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { filter, forkJoin, map, Observable, Subject, switchMap } from 'rxjs';
+import { filter, map, Observable, Subject, switchMap } from 'rxjs';
 import { FIELD_TYPE, FieldId, Resource, ResourceField } from '@nuclia/core';
 import { EditResourceService } from './edit-resource.service';
 import { take, takeUntil } from 'rxjs/operators';
@@ -69,7 +69,7 @@ export class EditResourceComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.editResource.currentView.subscribe((view) => {
+    this.editResource.currentView.pipe(takeUntil(this.unsubscribeAll)).subscribe((view) => {
       this.currentView = view;
       this.cdr.detectChanges();
     });

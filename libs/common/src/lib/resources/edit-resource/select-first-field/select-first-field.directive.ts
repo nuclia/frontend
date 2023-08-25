@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EditResourceService } from '../edit-resource.service';
 import { filter, map, Observable, Subject, switchMap } from 'rxjs';
 import { FieldId, Resource } from '@nuclia/core';
+import { takeUntil } from 'rxjs/operators';
 
 @Directive({
   selector: '[appSelectFirstField]',
@@ -33,6 +34,7 @@ export class SelectFirstFieldDirective implements OnDestroy {
         filter((params) => !params['fieldId'] && !params['fieldType']),
         switchMap(() => this.editResource.fields),
         filter((fields) => fields.length > 0),
+        takeUntil(this.unsubscribeAll),
       )
       .subscribe((fields) => {
         const field = fields[0];
