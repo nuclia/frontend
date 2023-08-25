@@ -15,7 +15,7 @@
     resetStatesAndEffects,
     setCDN,
     setLang,
-    setWidgetActions,
+    setWidgetActions, TypedResult,
     viewerData
   } from '../../core';
   import { onMount } from 'svelte';
@@ -61,12 +61,15 @@
       getResourceField(fullId)
     ]).subscribe(([resource, fieldData]) => {
       const field = { field_id: fullId.field_id, field_type: fullId.field_type };
+      const {resultType, resultIcon} = getResultType({...resource, field, fieldData });
+      const result: TypedResult = {
+        ...resource,
+        field,
+        resultType,
+        resultIcon,
+      };
       viewerData.set({
-        result: {
-          ...resource,
-          field,
-          resultType: getResultType({ ...resource, field, fieldData })
-        },
+        result,
         selectedParagraphIndex: -1
       });
     });
