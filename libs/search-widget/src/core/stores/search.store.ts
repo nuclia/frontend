@@ -320,14 +320,17 @@ export const entityRelations = searchState.reader((state) =>
       entity,
       relations: relations.related_to
         .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
-        .reduce((acc, current) => {
-          if (!acc[current.relation_label]) {
-            acc[current.relation_label] = [current.entity];
-          } else {
-            acc[current.relation_label].push(current.entity);
-          }
-          return acc;
-        }, {} as { [relation: string]: string[] }),
+        .reduce(
+          (acc, current) => {
+            if (!acc[current.relation_label]) {
+              acc[current.relation_label] = [current.entity];
+            } else {
+              acc[current.relation_label].push(current.entity);
+            }
+            return acc;
+          },
+          {} as { [relation: string]: string[] },
+        ),
     }))
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
@@ -449,9 +452,11 @@ export function getSortedResults(resources: Search.FindResource[]): TypedResult[
           paragraphs:
             fullFieldId !== '/a/title' ? Object.values(field.paragraphs).sort((a, b) => a.order - b.order) : [],
         };
+        const { resultType, resultIcon } = getResultType(fieldResult);
         const typedResult: TypedResult = {
           ...fieldResult,
-          resultType: getResultType(fieldResult),
+          resultType,
+          resultIcon,
         };
         // Don't include results already displayed:
         // sometimes load more bring results which are actually the same as what we got before but with another score_type
@@ -487,14 +492,16 @@ const SpreadsheetContentTypes = [
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   'application/vnd.oasis.opendocument.spreadsheet',
 ];
-export function getResultType(result: Search.FieldResult): ResultType {
+export function getResultType(result: Search.FieldResult): { resultType: ResultType; resultIcon: string } {
   const fieldType = result?.field?.field_type;
   const fieldDataValue = result?.fieldData?.value;
+  let resultType: ResultType;
+  let icon = '';
   if (fieldType === FIELD_TYPE.link && !!fieldDataValue) {
     const url = (result.fieldData as LinkFieldData).value?.uri;
-    return url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
+    resultType = url?.includes('youtube.com') || url?.includes('youtu.be') ? 'video' : 'text';
   } else if (fieldType === FIELD_TYPE.conversation) {
-    return 'conversation';
+    resultType = 'conversation';
   } else if (fieldType === FIELD_TYPE.file && !!fieldDataValue) {
     const file = (result.fieldData as FileFieldData).value?.file;
     // for audio, video, image or text, we have a corresponding tile
@@ -503,23 +510,25 @@ export function getResultType(result: Search.FieldResult): ResultType {
     // - 'application/octet-stream' is the default generic mimetype, its means we have no idea what it is, so we use text as that's the most reliable
     // - anything else is a pdf ('application/pdf' of course, but also any MSWord, OpenOffice, etc., are converted to pdf by the backend)
     if (file?.content_type?.startsWith('audio')) {
-      return 'audio';
+      resultType = 'audio';
     } else if (file?.content_type?.startsWith('video')) {
-      return 'video';
+      resultType = 'video';
     } else if (file?.content_type?.startsWith('image')) {
-      return 'image';
+      resultType = 'image';
     } else if (file?.content_type?.startsWith('text')) {
-      return 'text';
+      resultType = 'text';
     } else if (SpreadsheetContentTypes.includes(file?.content_type || '')) {
-      return 'spreadsheet';
+      resultType = 'spreadsheet';
     } else if (file?.content_type?.startsWith('application/octet-stream')) {
-      return 'text';
+      resultType = 'text';
     } else if (file?.content_type?.startsWith('application')) {
-      return 'pdf';
+      resultType = 'pdf';
+      icon = file?.content_type === 'application/pdf' ? 'pdf' : 'generic';
     } else {
-      return 'text';
+      resultType = 'text';
     }
   } else {
-    return 'text';
+    resultType = 'text';
   }
+  return { resultType, resultIcon: icon || resultType };
 }

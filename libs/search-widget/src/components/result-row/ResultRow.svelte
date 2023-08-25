@@ -45,7 +45,7 @@
         fallback = `${getCDN()}icons/image/jpg.svg`;
         break;
       case 'pdf':
-        fallback = `${getCDN()}icons/application/pdf.svg`;
+        fallback = `${getCDN()}icons/application/${result.resultIcon}.svg`;
         break;
       case 'spreadsheet':
         fallback = `${getCDN()}icons/text/csv.svg`;

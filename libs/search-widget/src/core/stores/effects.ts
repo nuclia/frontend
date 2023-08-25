@@ -242,9 +242,11 @@ function initStoreFromUrlParams() {
                 map((resource) => {
                   const field = { field_id, field_type };
                   const fieldResult = { ...resource, field, fieldData: getFieldDataFromResource(resource, field) };
+                  const { resultType, resultIcon } = getResultType(fieldResult);
                   const result: TypedResult = {
                     ...fieldResult,
-                    resultType: getResultType(fieldResult),
+                    resultType,
+                    resultIcon,
                   };
                   return result;
                 }),

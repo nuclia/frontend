@@ -266,10 +266,12 @@
       field,
       fieldData: getFieldDataFromResource(state.currentResult, field),
     };
+    const { resultType, resultIcon } = getResultType(fieldResult);
     const result: TypedResult = {
       ...fieldResult,
       paragraphs: [],
-      resultType: getResultType(fieldResult),
+      resultType,
+      resultIcon,
     };
     viewerData.set({ result, selectedParagraphIndex: -1 });
   }
