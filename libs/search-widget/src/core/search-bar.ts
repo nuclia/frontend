@@ -1,7 +1,6 @@
 import { distinctUntilChanged, filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { search } from './api';
 import type { Chat, Search, SearchOptions } from '@nuclia/core';
-import { ResourceProperties } from '@nuclia/core';
 import { forkJoin, Subscription } from 'rxjs';
 import {
   askQuestion,
@@ -18,6 +17,7 @@ import {
   searchOptions,
   searchQuery,
   searchResults,
+  searchShow,
   trackingResultsReceived,
   trackingSearchId,
   trackingStartTime,
@@ -54,6 +54,7 @@ export const setupTriggerSearch = (
               forkJoin([
                 onlyAnswers.pipe(take(1)),
                 searchOptions.pipe(take(1)),
+                searchShow.pipe(take(1)),
                 searchFilters.pipe(take(1)),
                 isTitleOnly.pipe(take(1)),
                 autofilerDisabled.pipe(take(1)),
@@ -64,14 +65,13 @@ export const setupTriggerSearch = (
                     pendingResults.set(true);
                   }
                 }),
-                switchMap(([onlyAnswers, options, filters, inTitleOnly, autofilerDisabled, isAnswerEnabled]) => {
-                  const show = [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN];
+                switchMap(([onlyAnswers, options, show, filters, inTitleOnly, autoFilterDisabled, isAnswerEnabled]) => {
                   const currentOptions: SearchOptions = {
                     ...options,
                     show,
                     filters,
                     inTitleOnly,
-                    ...(autofilerDisabled ? { autofilter: false } : {}),
+                    ...(autoFilterDisabled ? { autofilter: false } : {}),
                   };
                   if (isAnswerEnabled && !trigger?.more) {
                     return askQuestion(query, true, currentOptions).pipe(

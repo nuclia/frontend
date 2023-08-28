@@ -42,7 +42,7 @@
     onClosePreview();
   }
 
-  let svgSprite;
+  let svgSprite: string;
 
   onMount(() => {
     if (pendingResults.getValue() || resultList.getValue().length > 0) {
@@ -74,7 +74,7 @@
   {#if $showResults && !$isEmptySearchQuery}
     {#if $hasSearchError && !$hasPartialResults}
       <div class="error">
-        {#if $searchError.status === 402}
+        {#if $searchError?.status === 402}
           <strong>{$_('error.feature-blocked')}</strong>
         {:else}
           <strong>{$_('error.search')}</strong>
