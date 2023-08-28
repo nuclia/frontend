@@ -14,6 +14,7 @@ import {
   IFieldData,
   LabelSetKind,
   LinkFieldData,
+  ResourceProperties,
   SHORT_FIELD_TYPE,
   shortToLongFieldType,
 } from '@nuclia/core';
@@ -47,6 +48,7 @@ interface SearchState {
   query: string;
   filters: SearchFilters;
   options: SearchOptions;
+  show: ResourceProperties[];
   results: FindResultsAsList;
   error?: IErrorResponse;
   pending: boolean;
@@ -64,6 +66,7 @@ export const searchState = new SvelteState<SearchState>({
   query: '',
   filters: {},
   options: { inTitleOnly: false, highlight: true, page_number: 0 },
+  show: [ResourceProperties.BASIC, ResourceProperties.VALUES, ResourceProperties.ORIGIN],
   results: NO_RESULT_LIST,
   pending: false,
   showResults: false,
@@ -149,6 +152,14 @@ export const searchOptions = searchState.writer<SearchOptions>(
   (state, options) => ({
     ...state,
     options,
+  }),
+);
+
+export const searchShow = searchState.writer<ResourceProperties[]>(
+  (state) => state.show,
+  (state, show) => ({
+    ...state,
+    show,
   }),
 );
 
@@ -320,17 +331,14 @@ export const entityRelations = searchState.reader((state) =>
       entity,
       relations: relations.related_to
         .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
-        .reduce(
-          (acc, current) => {
-            if (!acc[current.relation_label]) {
-              acc[current.relation_label] = [current.entity];
-            } else {
-              acc[current.relation_label].push(current.entity);
-            }
-            return acc;
-          },
-          {} as { [relation: string]: string[] },
-        ),
+        .reduce((acc, current) => {
+          if (!acc[current.relation_label]) {
+            acc[current.relation_label] = [current.entity];
+          } else {
+            acc[current.relation_label].push(current.entity);
+          }
+          return acc;
+        }, {} as { [relation: string]: string[] }),
     }))
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
