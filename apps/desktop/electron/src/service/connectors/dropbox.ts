@@ -84,7 +84,7 @@ class DropboxImpl implements ISourceConnector {
       };
     };
     const failure = (url: string) => {
-      return (err) => {
+      return (err: any) => {
         console.error(`Error for ${url}: ${err}`);
         throw new Error();
       };

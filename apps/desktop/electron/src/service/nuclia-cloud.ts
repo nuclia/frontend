@@ -73,7 +73,9 @@ export class NucliaCloud {
                     } else {
                       return this.deleteResource(slug, resource).pipe(
                         map(() =>
-                          (res as any).success === false ? res : { success: false, message: 'Upload failed' },
+                          (res as any).success === false
+                            ? (res as { success: boolean; message: string })
+                            : { success: false, message: 'Upload failed' },
                         ),
                       );
                     }
