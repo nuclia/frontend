@@ -625,6 +625,7 @@
 	"stash.config.option.chatgpt-azure": "ChatGPT Azure OpenAI",
 	"stash.config.option.cohere": "Cohere (beta)",
 	"stash.config.option.generative-multilingual-2023": "Nuclia multilingual private model",
+	"stash.config.option.multilingual-2023-08-16": "multiligual (alpha)",
 	"stash.config.option.palm": "Google PaLM 2 (beta)",
 	"stash.config.own_key": "Utilizar key propia",
 	"stash.confirm_delete_user.description": "La única forma de deshacer esta acción es invitandolo de nuevo a unirse a la caja de conocimiento.",

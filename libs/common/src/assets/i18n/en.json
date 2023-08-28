@@ -629,6 +629,7 @@
 	"stash.config.option.chatgpt-azure": "ChatGPT Azure OpenAI",
 	"stash.config.option.cohere": "Cohere (beta)",
 	"stash.config.option.generative-multilingual-2023": "Nuclia multilingual private model",
+	"stash.config.option.multilingual-2023-08-16": "multiligual (alpha)",
 	"stash.config.option.palm": "Google PaLM 2 (beta)",
 	"stash.config.own_key": "Use own key",
 	"stash.confirm_delete_user.description": "The only way you can undo this action is by inviting them again to join your knowledge box.",
