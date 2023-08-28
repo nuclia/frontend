@@ -78,10 +78,16 @@ class OneDriveImpl implements ISourceConnector {
         headers: {
           Authorization: `Bearer ${this.params.token || ''}`,
         },
-      }).then((res) => res.json()),
+      }).then(
+        (res) => res.json(),
+        (err) => {
+          console.error(`Error fetching ${path}: ${err}`);
+        },
+      ),
     ).pipe(
       concatMap((res) => {
         if (res.error) {
+          console.error(`Error fetching ${path}: ${res.error}`);
           if (res.error.code === 'InvalidAuthenticationToken') {
             throw new Error('Unauthorized');
           } else {

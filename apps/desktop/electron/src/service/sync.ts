@@ -58,12 +58,12 @@ function syncFiles() {
                             of(item).pipe(
                               switchMap((item) =>
                                 syncFile(id, source, item).pipe(
-                                  tap((success) => {
-                                    if (success) {
+                                  tap((res) => {
+                                    if (res.success) {
                                       incrementActiveSyncLog(id);
                                     }
                                   }),
-                                  map((success) => ({ id: item.originalId, success })),
+                                  map((res) => ({ id: item.originalId, success: res.success })),
                                   // do not overwhelm the source
                                   delay(500),
                                 ),
@@ -75,7 +75,7 @@ function syncFiles() {
                             if (result) {
                               const processed = result.map((res) => res.id);
                               const successCount = result.filter((res) => res.success).length;
-                              const hasFailures = result.length - successCount > 0;
+                              const failures = result.length - successCount;
                               source.items = (source.items || []).filter(
                                 (item) => !processed.includes(item.originalId),
                               );
@@ -84,7 +84,9 @@ function syncFiles() {
                                 id,
                                 source,
                                 successCount,
-                                hasFailures ? `${result.length - successCount} failures` : '',
+                                failures > 0
+                                  ? `${result.length - successCount} ${failures > 1 ? 'failures' : 'failure'}`
+                                  : '',
                               );
                               if (processed.length > 0) {
                                 updateSource(id, source);
@@ -128,7 +130,7 @@ function collectLastModified() {
                           source.lastSyncGMT = new Date().toISOString();
                           updateSource(id, source);
                         } else {
-                          addErrorLog(id, source, results.error);
+                          addErrorLog(id, source.kb?.knowledgeBox, results.error);
                           console.error(results.error);
                         }
                       }),

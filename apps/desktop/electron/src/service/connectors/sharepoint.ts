@@ -58,10 +58,10 @@ class SharepointImpl implements ISourceConnector {
     nextPage?: string,
     previous?: SearchResults,
   ): Observable<SearchResults> {
+    let path = '';
     return (siteId ? of(siteId) : this.getSiteId()).pipe(
       concatMap((_siteId) => {
         siteId = _siteId;
-        let path = '';
         if (foldersOnly) {
           path = `https://graph.microsoft.com/v1.0/sites/${siteId}/lists`;
         } else if (folder) {
@@ -81,11 +81,17 @@ class SharepointImpl implements ISourceConnector {
               Authorization: `Bearer ${this.params.token}`,
               Prefer: 'HonorNonIndexedQueriesWarningMayFailRandomly',
             },
-          }).then((res) => res.json()),
+          }).then(
+            (res) => res.json(),
+            (err) => {
+              console.error(`Error fetching ${path}: ${err}`);
+            },
+          ),
         );
       }),
       concatMap((res) => {
         if (res.error) {
+          console.error(`Error fetching ${path}: ${res.error}`);
           if (res.error.code === 'InvalidAuthenticationToken') {
             throw new Error('Unauthorized');
           } else {

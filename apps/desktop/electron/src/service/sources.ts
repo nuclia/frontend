@@ -96,9 +96,13 @@ function downloadFileOrLink(
   }
 }
 
-export function syncFile(sourceId: string, source: Source, item: SyncItem): Observable<boolean> {
+export function syncFile(
+  sourceId: string,
+  source: Source,
+  item: SyncItem,
+): Observable<{ success: boolean; message?: string }> {
   if (!source.kb) {
-    return of(false);
+    return of({ success: false });
   }
 
   const nucliaConnector = new NucliaCloud(source.kb);
@@ -113,23 +117,28 @@ export function syncFile(sourceId: string, source: Source, item: SyncItem): Obse
                 metadata: item.metadata,
               });
             } catch (err) {
-              return of(false);
+              return of({ success: false, message: `${err}` });
             }
           }),
         );
       } else if (data.type === 'text' && data.text) {
-        return nucliaConnector.upload(item.originalId, item.title, { text: data.text }).pipe(map(() => true));
+        return nucliaConnector.upload(item.originalId, item.title, { text: data.text });
       } else if (data.type === 'link' && data.link) {
-        return nucliaConnector.uploadLink(item.originalId, item.title, data.link).pipe(map(() => true));
+        return nucliaConnector
+          .uploadLink(item.originalId, item.title, data.link)
+          .pipe(map(() => ({ success: true, message: '' })));
       } else {
-        return of(false);
+        return of({ success: false, message: '' });
       }
     }),
-    tap((success) =>
-      success
-        ? console.log(`Uploaded ${item.originalId} with success`)
-        : console.warn(`Failed to upload ${item.originalId}`),
-    ),
+    tap((res) => {
+      if (res.success) {
+        console.log(`Uploaded ${item.originalId} with success`);
+      } else {
+        console.warn(`Failed to upload ${item.originalId}`);
+        addErrorLog(sourceId, source.kb?.knowledgeBox, res.message || 'Failed to upload file');
+      }
+    }),
   );
 }
 
@@ -195,10 +204,10 @@ export function addLog(id: string, source: Source, count: number, errors: string
   });
 }
 
-export function addErrorLog(id: string, source: Source, error?: string) {
+export function addErrorLog(sourceId: string, kbId?: string, error?: string) {
   LOG.push({
-    from: id,
-    to: source.kb?.knowledgeBox || 'Unknown kb',
+    from: sourceId,
+    to: kbId || 'Unknown kb',
     errors: error || 'Unknown error',
     progress: 100,
     started: true,

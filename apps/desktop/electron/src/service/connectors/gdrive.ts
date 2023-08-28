@@ -78,7 +78,12 @@ class GDriveImpl implements ISourceConnector {
         headers: {
           Authorization: `Bearer ${this.params.token || ''}`,
         },
-      }).then((res) => res.json()),
+      }).then(
+        (res) => res.json(),
+        (err) => {
+          console.error(`Error fetching ${path}: ${err}`);
+        },
+      ),
     ).pipe(
       concatMap((res) => {
         if (res.error) {
