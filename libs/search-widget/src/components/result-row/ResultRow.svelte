@@ -10,7 +10,7 @@
   import {
     displayMetadata,
     getCDN,
-    getNavigationUrl, goToUrl,
+    getNavigationUrl, goToUrl, hideThumbnails,
     navigateToFile,
     navigateToLink,
     trackingEngagement,
@@ -83,7 +83,7 @@
 <svelte:window bind:innerWidth />
 
 <div class="sw-result-row">
-  <div class="thumbnail-container">
+  <div class="thumbnail-container" hidden={$hideThumbnails}>
     {#if isPlayable}
       <ThumbnailPlayer
         thumbnail={result.thumbnail}

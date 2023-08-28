@@ -254,6 +254,7 @@ export interface WidgetFeatures {
   answers?: boolean;
   onlyAnswers?: boolean;
   hideSources?: boolean;
+  hideThumbnails?: boolean;
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
   autofilter?: boolean;

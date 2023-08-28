@@ -751,6 +751,8 @@
 	"stash.widgets.filter_type": "Types de filtres",
 	"stash.widgets.hideSources.help": "Masquer les sources utilisées pour générer la réponse",
 	"stash.widgets.hideSources.label": "Masquer les sources",
+	"stash.widgets.hideThumbnails.help": "Masquer les vignettes dans les résultats de recherche",
+	"stash.widgets.hideThumbnails.label": "Masquer les vignettes",
 	"stash.widgets.hint_1": "Pour une lecture correcte des résultats, la largeur de la barre de recherche ne doit pas être inférieure à 384px.",
 	"stash.widgets.hint_2": "Si la couleur d’arrière-plan de votre page de recherche n’est pas neutre, n’oubliez pas d’ajouter une couleur d’arrière-plan sur votre champ de recherche pour faciliter la lecture.",
 	"stash.widgets.labels": "Filtrer par libellés",
