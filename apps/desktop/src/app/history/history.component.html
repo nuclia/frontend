@@ -35,11 +35,12 @@
           *ngIf="active.completed && !active.errors"
           name="check"
           class="success"></pa-icon>
-        <pa-icon
-          *ngIf="active.completed && active.errors"
-          name="circle-cross"
-          class="error"
-          [paTooltip]="active.errors"></pa-icon>
+        <ng-container *ngIf="active.completed && active.errors">
+          <pa-icon
+            name="circle-cross"
+            class="error"></pa-icon>
+          {{ active.errors }}
+        </ng-container>
       </pa-table-cell>
       <pa-table-cell>{{ active.total }}</pa-table-cell>
     </pa-table-row>
@@ -58,11 +59,13 @@
           *ngIf="upload.completed && !upload.errors"
           name="check"
           class="success"></pa-icon>
-        <pa-icon
-          *ngIf="upload.completed && upload.errors"
-          name="circle-cross"
-          class="error"
-          [paTooltip]="upload.errors"></pa-icon>
+        <ng-container *ngIf="upload.completed && upload.errors">
+          <pa-icon
+            *ngIf="upload.completed && upload.errors"
+            name="circle-cross"
+            class="error"></pa-icon>
+          {{ upload.errors }}
+        </ng-container>
       </pa-table-cell>
       <pa-table-cell>{{ upload.total }}</pa-table-cell>
     </pa-table-row>

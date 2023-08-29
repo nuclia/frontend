@@ -68,39 +68,42 @@ class DropboxImpl implements ISourceConnector {
     nextPage?: string | number,
     previous?: SearchResults,
   ): Observable<SearchResults> {
-    const success = (res: any) => {
-      if (res.status === 200) {
-        return res.json();
-      } else if (res.status === 401) {
-        throw new Error('Unauthorized');
-      } else {
-        return res.text().then((text: string) => {
-          throw new Error(text || 'Unknown error');
-        });
-      }
+    const success = (url: string) => {
+      return (res: any) => {
+        if (res.status === 200) {
+          return res.json();
+        } else if (res.status === 401) {
+          console.error(`Unauthorized for ${url}`);
+          throw new Error('Unauthorized');
+        } else {
+          console.error(`Error for ${url}`);
+          return res.text().then((text: string) => {
+            throw new Error(text || 'Unknown error');
+          });
+        }
+      };
     };
-    const failure = () => {
-      throw new Error();
+    const failure = (url: string) => {
+      return (err: any) => {
+        console.error(`Error for ${url}: ${err}`);
+        throw new Error();
+      };
     };
-    const request = query
-      ? fetch(`https://api.dropboxapi.com/2/files/search_v2${nextPage ? '/continue' : ''}`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${this.params.token || ''}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(nextPage ? { cursor: nextPage } : { query }),
-        }).then(success, failure)
-      : fetch(`https://api.dropboxapi.com/2/files/list_folder${nextPage ? '/continue' : ''}`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${this.params.token || ''}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(
+    const url = query
+      ? `https://api.dropboxapi.com/2/files/search_v2${nextPage ? '/continue' : ''}`
+      : `https://api.dropboxapi.com/2/files/list_folder${nextPage ? '/continue' : ''}`;
+    const request = fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.params.token || ''}`,
+        'Content-Type': 'application/json',
+      },
+      body: query
+        ? JSON.stringify(nextPage ? { cursor: nextPage } : { query })
+        : JSON.stringify(
             nextPage ? { cursor: nextPage } : { path, recursive: true, limit: 100, include_media_info: true },
           ),
-        }).then(success, failure);
+    }).then(success(url), failure(url));
     return from(request).pipe(
       concatMap((result: any) => {
         const newItems =

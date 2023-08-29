@@ -58,20 +58,26 @@ class ConfluenceImpl implements ISourceConnector {
     start?: number,
     previous?: SearchResults,
   ): Observable<SearchResults> {
-    const success = (res: any) => {
-      if (res.status === 200) {
-        return res.json();
-      } else if (res.status === 401) {
-        throw new Error('Unauthorized');
-      } else {
-        return res.text().then((text: string) => {
-          throw new Error(text || 'Unknown error');
-        });
-      }
+    const success = (url: string) => {
+      return (res: any) => {
+        if (res.status === 200) {
+          return res.json();
+        } else if (res.status === 401) {
+          console.error(`Unauthorized for ${url}`);
+          throw new Error('Unauthorized');
+        } else {
+          console.error(`Error for ${url}`);
+          return res.text().then((text: string) => {
+            throw new Error(text || 'Unknown error');
+          });
+        }
+      };
     };
-    const failure = (err: any) => {
-      console.error(err);
-      throw new Error();
+    const failure = (url: string) => {
+      return (err: any) => {
+        console.error(`Error for ${url}: ${err}`);
+        throw new Error();
+      };
     };
     const endpoint = loadFolders
       ? `${this.params.url}/rest/api/space?`
@@ -88,7 +94,7 @@ class ConfluenceImpl implements ISourceConnector {
         Authorization: `Basic ${btoa(this.params.user + ':' + this.params.token)}`,
         'Content-Type': 'application/json',
       },
-    }).then(success, failure);
+    }).then(success(endpoint), failure(endpoint));
     return from(request).pipe(
       concatMap((result: any) => {
         const newItems = result.results?.map((r: any) => this.mapResults(r, loadFolders));

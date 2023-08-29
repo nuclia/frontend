@@ -30,7 +30,7 @@ export class NucliaCloud {
     originalId: string,
     filename: string,
     data: { buffer?: ArrayBuffer; text?: TextField; metadata?: any },
-  ): Observable<boolean> {
+  ): Observable<{ success: boolean; message?: string }> {
     const slug = sha256(originalId);
     const text = data.text;
     const buffer = data.buffer;
@@ -53,7 +53,7 @@ export class NucliaCloud {
         delay(500),
         switchMap((resource) => {
           if (!resource) {
-            return of(false);
+            return of({ success: false });
           }
           if (buffer) {
             try {
@@ -65,46 +65,52 @@ export class NucliaCloud {
                 .pipe(
                   catchError((error: any) => {
                     console.error(`Problem uploading ${filename} to ${slug}, error: ${JSON.stringify(error)}`);
-                    return of(false);
+                    return of({ success: false, message: error.body?.detail || JSON.stringify(error) });
                   }),
                   switchMap((res) => {
                     if (res && (res as UploadResponse).completed) {
-                      return of(true);
+                      return of({ success: true });
                     } else {
-                      return this.deleteResource(slug, resource);
+                      return this.deleteResource(slug, resource).pipe(
+                        map(() =>
+                          (res as any).success === false
+                            ? (res as { success: boolean; message: string })
+                            : { success: false, message: 'Upload failed' },
+                        ),
+                      );
                     }
                   }),
                 );
             } catch (error) {
               console.error(`Error uploading ${filename} to ${slug}, status ${error}`);
-              return this.deleteResource(slug, resource);
+              return this.deleteResource(slug, resource).pipe(map(() => ({ success: false })));
             }
           } else if (text) {
             try {
               return resource.setField(FIELD_TYPE.text, 'text', text).pipe(
                 catchError((error: any) => {
                   console.error(`Problem adding ${filename} to ${slug}, status ${error}`);
-                  return of(false);
+                  return of({ success: false });
                 }),
                 switchMap((res) => {
                   if (res) {
-                    return of(true);
+                    return of({ success: true });
                   } else {
-                    return this.deleteResource(slug, resource);
+                    return this.deleteResource(slug, resource).pipe(map(() => ({ success: false })));
                   }
                 }),
               );
             } catch (error) {
               console.error(`Error adding ${filename} to ${slug}, status ${error}`);
-              return this.deleteResource(slug, resource);
+              return this.deleteResource(slug, resource).pipe(map(() => ({ success: false })));
             }
           } else {
-            return of(false);
+            return of({ success: false });
           }
         }),
       );
     } else {
-      return of(false);
+      return of({ success: false });
     }
   }
 
@@ -121,18 +127,20 @@ export class NucliaCloud {
     const slug = sha256(originalId);
     return this.getKb().pipe(
       switchMap((kb) =>
-        kb.createOrUpdateResource({
-          title: filename,
-          slug,
-          links: { link: { uri: data.uri } },
-          origin: { url: data.uri },
-          icon: "application/stf-link"
-        }).pipe(
-          catchError((error) => {
-            console.log(`createOrUpdateResource – error:`, JSON.stringify(error));
-            return throwError(() => new Error('Resource creation/modification failed'));
-          }),
-        ),
+        kb
+          .createOrUpdateResource({
+            title: filename,
+            slug,
+            links: { link: { uri: data.uri } },
+            origin: { url: data.uri },
+            icon: 'application/stf-link',
+          })
+          .pipe(
+            catchError((error) => {
+              console.log(`createOrUpdateResource – error:`, JSON.stringify(error));
+              return throwError(() => new Error('Resource creation/modification failed'));
+            }),
+          ),
       ),
       map(() => undefined),
     );
