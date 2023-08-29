@@ -754,6 +754,8 @@
 	"stash.widgets.filter_type": "Tipos de filtro",
 	"stash.widgets.hideSources.help": "Ocultar las fuentes utilizadas para generar la respuesta",
 	"stash.widgets.hideSources.label": "Ocultar fuentes",
+	"stash.widgets.hideThumbnails.help": "Ocultar miniaturas en los resultados de búsqueda",
+	"stash.widgets.hideThumbnails.label": "Ocultar miniaturas",
 	"stash.widgets.hint_1": "Para mostrar correctamente los resultados, el ancho de la barra de búsqueda no debería ser inferior a 384px.",
 	"stash.widgets.hint_2": "Si el color de fondo de su página de búsqueda no es neutral, recuerde agregar un color de fondo en su cuadro de búsqueda para que sea más fácil de leer.",
 	"stash.widgets.labels": "Filtrar per etiquetas",

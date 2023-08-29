@@ -19,6 +19,7 @@ export const isAnswerEnabled = widgetFeatures.pipe(map((features) => !!features?
 export const isKnowledgeGraphEnabled = widgetFeatures.pipe(map((features) => !!features?.knowledgeGraph));
 export const suggestEntities = widgetFeatures.pipe(map((features) => !!features?.suggestEntities));
 export const displayMetadata = widgetFeatures.pipe(map((features) => !!features?.displayMetadata));
+export const hideThumbnails = widgetFeatures.pipe(map((features) => !!features?.hideThumbnails));
 export const onlyAnswers = combineLatest([
   isAnswerEnabled,
   widgetFeatures.pipe(map((features) => !!features?.onlyAnswers)),
