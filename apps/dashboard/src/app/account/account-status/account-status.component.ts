@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, Inject, Input } from '@angular/core';
-import { combineLatest, filter, map, of, shareReplay, switchMap, take } from 'rxjs';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { combineLatest, filter, map, shareReplay, switchMap, take } from 'rxjs';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { NavigationService } from '@flaps/common';
 import { BillingService } from '../billing/billing.service';
-import { AccountUsage, SubscriptionStatus } from '../billing/billing.models';
+import { SubscriptionStatus } from '../billing/billing.models';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { PaButtonModule, PaTranslateModule } from '@guillotinaweb/pastanaga-angular';
@@ -22,16 +22,10 @@ const TRIAL_ALERT = 'NUCLIA_TRIAL_ALERT';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountStatusComponent {
-  @Input() usage?: AccountUsage;
-
   accountType = this.sdk.currentAccount.pipe(map((account) => account.type));
   isTrial = this.accountType.pipe(map((type) => type === 'stash-trial'));
   isSubscribed = this.billingService.isSubscribed;
   subscription = this.billingService.getSubscription().pipe(shareReplay());
-  currency = this.billingService.getAccountUsage().pipe(map((usage) => usage.currency));
-  price = combineLatest([this.billingService.getPrices(), this.accountType]).pipe(
-    map(([prices, accountType]) => prices?.[accountType]?.recurring.month.price),
-  );
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
   isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   daysLeft = this.sdk.currentAccount.pipe(
@@ -75,10 +69,6 @@ export class AccountStatusComponent {
     @Inject(WINDOW) private window: Window,
   ) {
     this.checkIfTrialExpired();
-  }
-
-  getCurrency() {
-    return this.usage ? of(this.usage.currency) : this.currency;
   }
 
   contact() {
