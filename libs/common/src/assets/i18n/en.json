@@ -843,7 +843,7 @@
 	"upload.select_file": "Drop your file(s) or click here",
 	"upload.size_warning_1": "Media files can not exceed {{ maxMedia }} and non-media files {{ max }}.",
 	"upload.size_warning_2": "Files exceeding those sizes will not be uploaded",
-	"upload.takes_time": "We needs some time to process the files. Feel free to close this dialog box and keep working.",
+	"upload.takes_time": "We need some time to process the files. Feel free to close this dialog box and keep working.",
 	"upload.toast.failed": "Errors during upload",
 	"upload.toast.successful": "Upload successful",
 	"upload.upload_from_csv": "Add resources from CSV",
