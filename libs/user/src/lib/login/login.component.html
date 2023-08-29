@@ -32,6 +32,7 @@
         <div class="login_field">
           <nsi-password-input
             #password
+            data-cy="password"
             formControlName="password"
             name="password"
             [errorMessages]="loginValidationMessages.password">
@@ -48,19 +49,21 @@
         </div>
         <div
           class="login_form_error body-xs"
+          data-cy="login-error"
           *ngIf="formError">
           <pa-icon
             name="warning"
             size="small"></pa-icon>
           <div>
-            <strong>{{ 'login.error.auth_error' | translate }}</strong>
+            <strong>{{ 'login.error.auth_error' | translate }}&nbsp;</strong>
             <span>{{ 'login.try_again' | translate }}</span>
           </div>
         </div>
         <div class="login_submit">
           <pa-button
             type="submit"
-            kind="primary">
+            kind="primary"
+            [disabled]="loginForm.invalid">
             {{ 'login.login' | translate }}
           </pa-button>
         </div>

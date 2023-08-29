@@ -36,6 +36,7 @@
     <app-kb-switch></app-kb-switch>
 
     <app-user-menu
+      data-cy="user-menu"
       *ngIf="!standalone"
       [userInfo]="userInfo | async"></app-user-menu>
 
