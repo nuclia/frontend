@@ -216,3 +216,14 @@ export interface PredictedToken {
   start: number;
   end: number;
 }
+
+// ResourceProperties is not in resource.models to prevent circular dependencies between resource, search and chat
+export enum ResourceProperties {
+  BASIC = 'basic',
+  ORIGIN = 'origin',
+  RELATIONS = 'relations',
+  VALUES = 'values',
+  EXTRACTED = 'extracted',
+  ERRORS = 'errors',
+  EXTRA = 'extra',
+}

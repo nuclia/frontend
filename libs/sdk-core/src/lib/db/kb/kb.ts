@@ -1,36 +1,33 @@
 import { catchError, from, map, Observable, of, switchMap } from 'rxjs';
 import type {
+  ActivityDownloadList,
+  Counters,
   Entities,
   EntitiesGroup,
   EventList,
   EventType,
   IKnowledgeBox,
+  IKnowledgeBoxCreation,
+  IWritableKnowledgeBox,
   LabelSet,
   LabelSets,
+  ResourceList,
+  ResourcePagination,
+  ServiceAccount,
+  ServiceAccountCreation,
   Synonyms,
   SynonymsPayload,
   UpdateEntitiesGroupPayload,
 } from './kb.models';
-import {
-  ActivityDownloadList,
-  Counters,
-  ExtractedDataTypes,
-  IKnowledgeBoxCreation,
-  IWritableKnowledgeBox,
-  ResourceList,
-  ResourcePagination,
-  ResourceProperties,
-  ServiceAccount,
-  ServiceAccountCreation,
-} from './kb.models';
 import type { IErrorResponse, INuclia } from '../../models';
 import type { ICreateResource, IResource, LinkField, Origin, UserMetadata } from '../resource';
-import { Resource } from '../resource';
+import { ExtractedDataTypes, Resource } from '../resource';
 import type { UploadResponse } from '../upload';
 import { batchUpload, FileMetadata, FileWithMetadata, upload, UploadStatus } from '../upload';
 import type { BaseSearchOptions, Chat } from '../search';
 import { catalog, chat, find, Search, search, SearchOptions, suggest } from '../search';
 import { Training } from '../training';
+import { ResourceProperties } from '../db.models'; // eslint-disable-next-line @typescript-eslint/no-empty-interface
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface KnowledgeBox extends IKnowledgeBox {}

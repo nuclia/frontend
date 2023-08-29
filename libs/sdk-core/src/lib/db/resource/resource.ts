@@ -24,10 +24,10 @@ import type {
   TokenAnnotation,
   UserTokenAnnotation,
 } from './resource.models';
+import { ExtractedDataTypes, ResourceFieldProperties } from './resource.models';
 import type { Search, SearchOptions } from '../search';
 import { find, search } from '../search';
 import { setEntities, setLabels, sliceUnicode } from './resource.helpers';
-import { ExtractedDataTypes, ResourceFieldProperties } from '../kb';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ReadableResource extends IResource {}
@@ -85,27 +85,33 @@ export class ReadableResource implements IResource {
     const entities = (this.fieldmetadata || [])
       .filter((entry) => entry.token && entry.token.length > 0)
       .map((entry) => entry.token as UserTokenAnnotation[]);
-    return entities.reduce((acc, val) => {
-      val
-        .filter((token) => !token.cancelled_by_user)
-        .forEach((token) => {
-          if (!acc[token.klass]) {
-            acc[token.klass] = [];
-          }
-          acc[token.klass].push(token.token);
-        });
-      return acc;
-    }, {} as { [key: string]: string[] });
+    return entities.reduce(
+      (acc, val) => {
+        val
+          .filter((token) => !token.cancelled_by_user)
+          .forEach((token) => {
+            if (!acc[token.klass]) {
+              acc[token.klass] = [];
+            }
+            acc[token.klass].push(token.token);
+          });
+        return acc;
+      },
+      {} as { [key: string]: string[] },
+    );
   }
 
   getNamedEntities(): { [key: string]: string[] } {
     return this.getFields()
       .filter((field) => field.extracted?.metadata?.metadata?.ner)
       .map((field) =>
-        Object.entries(field.extracted!.metadata!.metadata!.ner).reduce((acc, [key, value]) => {
-          acc[value] = (acc[value] || []).concat([key]);
-          return acc;
-        }, {} as { [key: string]: string[] }),
+        Object.entries(field.extracted!.metadata!.metadata!.ner).reduce(
+          (acc, [key, value]) => {
+            acc[value] = (acc[value] || []).concat([key]);
+            return acc;
+          },
+          {} as { [key: string]: string[] },
+        ),
       )
       .reduce((acc, val) => {
         Object.entries(val).forEach(([key, value]) => {

@@ -1,5 +1,13 @@
-import type { ExtractedDataTypes, ResourceProperties } from '../kb';
-import type { FIELD_TYPE, FieldId, IFieldData, IResource, RelationEntityType, RelationType } from '../resource';
+import type {
+  ExtractedDataTypes,
+  FIELD_TYPE,
+  FieldId,
+  IFieldData,
+  IResource,
+  RelationEntityType,
+  RelationType,
+} from '../resource';
+import type { ResourceProperties } from '../db.models';
 
 export type ResourceStatus = 'PENDING' | 'PROCESSED' | 'ERROR';
 
