@@ -1,3 +1,9 @@
+# 1.6.2 (unreleased)
+
+### Improvements
+
+- Fix circular dependencies in db models
+
 # 1.6.1 (2023-08-22)
 
 ### Improvements

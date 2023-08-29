@@ -2,7 +2,8 @@ import { catchError, map, Observable, of } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { Chat } from './chat.models';
 import type { BaseSearchOptions, Search } from './search.models';
-import { ResourceProperties } from '../kb';
+
+import { ResourceProperties } from '../db.models';
 
 const END_OF_SEARCH_RESULTS = '_END_';
 

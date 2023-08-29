@@ -1,37 +1,12 @@
 import type { Observable } from 'rxjs';
-import type { IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
+import type { ExtractedDataTypes, IResource, LinkField, Origin, Resource, UserMetadata } from '../resource';
 import type { FileMetadata, FileWithMetadata, UploadResponse, UploadStatus } from '../upload';
 import type { Chat, Search, SearchOptions } from '../search';
 import type { IErrorResponse } from '../../models';
+import type { ResourceProperties } from '../db.models';
 
 export type KBStates = 'PUBLISHED' | 'PRIVATE';
 export type KBRoles = 'SOWNER' | 'SCONTRIBUTOR' | 'SMEMBER';
-
-export enum ResourceProperties {
-  BASIC = 'basic',
-  ORIGIN = 'origin',
-  RELATIONS = 'relations',
-  VALUES = 'values',
-  EXTRACTED = 'extracted',
-  ERRORS = 'errors',
-  EXTRA = 'extra',
-}
-
-export enum ResourceFieldProperties {
-  VALUE = 'value',
-  EXTRACTED = 'extracted',
-  ERROR = 'error',
-}
-
-export enum ExtractedDataTypes {
-  TEXT = 'text',
-  METADATA = 'metadata',
-  SHORTENED_METADATA = 'shortened_metadata',
-  LARGE_METADATA = 'large_metadata',
-  VECTOR = 'vectors',
-  LINK = 'link',
-  FILE = 'file',
-}
 
 export enum LabelSetKind {
   RESOURCES = 'RESOURCES',

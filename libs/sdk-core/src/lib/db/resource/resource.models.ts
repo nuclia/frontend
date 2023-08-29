@@ -444,3 +444,19 @@ export interface MessageAttachment {
   payload: string;
   md5: string;
 }
+
+export enum ResourceFieldProperties {
+  VALUE = 'value',
+  EXTRACTED = 'extracted',
+  ERROR = 'error',
+}
+
+export enum ExtractedDataTypes {
+  TEXT = 'text',
+  METADATA = 'metadata',
+  SHORTENED_METADATA = 'shortened_metadata',
+  LARGE_METADATA = 'large_metadata',
+  VECTOR = 'vectors',
+  LINK = 'link',
+  FILE = 'file',
+}
