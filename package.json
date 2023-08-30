@@ -1,6 +1,6 @@
 {
   "name": "nuclia",
-  "version": "2.6.11",
+  "version": "2.6.12",
   "license": "MIT",
   "author": "Nuclia.cloud",
   "description": "Nuclia frontend apps and libs",
@@ -20,6 +20,7 @@
     "sdk-build:default": "rimraf ./dist/sdk-core && cd ./libs/sdk-core && rollup -c && cd ../..",
     "postsdk-build:default": "yarn sdk-build-node",
     "sdk-build-node": "rimraf ./dist/sdk-core-node && cd ./libs/sdk-core/node && rollup -c && cd ../..",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org nuclia --project application ./dist && sentry-cli sourcemaps upload --org nuclia --project application ./dist",
     "desktop-server-dev": "concurrently \"cd apps/desktop/electron && npx tsc -p ./tsconfig.server.json --watch\" \"nodemon -q dist/service/apps/desktop/electron/src/service/server.js\""
   },
   "private": true,
@@ -41,7 +42,7 @@
     "@ngx-translate/http-loader": "^8.0.0",
     "@nxext/vite": "15.1.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
-    "@sentry/angular": "^7.2.0",
+    "@sentry/angular": "latest",
     "@sentry/electron": "^4.8.0",
     "@sentry/node": "^7.60.0",
     "@sentry/tracing": "^7.2.0",

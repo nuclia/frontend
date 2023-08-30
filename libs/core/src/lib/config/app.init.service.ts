@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as Sentry from '@sentry/angular';
-import { Integrations } from '@sentry/tracing';
 
 export type EnvironmentConfiguration = {
   version: string;
@@ -52,7 +51,7 @@ export class AppInitService {
             Sentry.init({
               dsn: config.backend.sentry_url,
               integrations: [
-                new Integrations.BrowserTracing({
+                new Sentry.BrowserTracing({
                   tracingOrigins: [config.backend.sentry_backend],
                   routingInstrumentation: Sentry.routingInstrumentation,
                 }),

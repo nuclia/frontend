@@ -17,6 +17,7 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
+          "sourceMap": true,
           "inspect": false,
           "fileReplacements": [
             {

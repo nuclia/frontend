@@ -7124,34 +7124,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/angular@npm:^7.2.0":
-  version: 7.46.0
-  resolution: "@sentry/angular@npm:7.46.0"
+"@sentry-internal/tracing@npm:7.66.0":
+  version: 7.66.0
+  resolution: "@sentry-internal/tracing@npm:7.66.0"
   dependencies:
-    "@sentry/browser": 7.46.0
-    "@sentry/types": 7.46.0
-    "@sentry/utils": 7.46.0
-    tslib: ^2.0.0
+    "@sentry/core": 7.66.0
+    "@sentry/types": 7.66.0
+    "@sentry/utils": 7.66.0
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: 8eb427edf613df808b8e1030d0bf021af6a2e5d52930bb9561efe032a7b37c18af5c69b75017d667070bb987981bc2d9a40c7feaa646e23297bfec9a22853cd2
+  languageName: node
+  linkType: hard
+
+"@sentry/angular@npm:latest":
+  version: 7.66.0
+  resolution: "@sentry/angular@npm:7.66.0"
+  dependencies:
+    "@sentry/browser": 7.66.0
+    "@sentry/types": 7.66.0
+    "@sentry/utils": 7.66.0
+    tslib: ^2.4.1
   peerDependencies:
     "@angular/common": ">= 10.x <= 15.x"
     "@angular/core": ">= 10.x <= 15.x"
     "@angular/router": ">= 10.x <= 15.x"
     rxjs: ^6.5.5 || ^7.x
-  checksum: 29707d6b105c9c17cba5435f700a062421b75721d371cb1cc06d5e14cc455c2765f822e4eccee81f4465c9c231fb8f3ab5475bceb501c4efdb774ac43286daed
-  languageName: node
-  linkType: hard
-
-"@sentry/browser@npm:7.46.0":
-  version: 7.46.0
-  resolution: "@sentry/browser@npm:7.46.0"
-  dependencies:
-    "@sentry-internal/tracing": 7.46.0
-    "@sentry/core": 7.46.0
-    "@sentry/replay": 7.46.0
-    "@sentry/types": 7.46.0
-    "@sentry/utils": 7.46.0
-    tslib: ^1.9.3
-  checksum: a3c675df84923199f15cec0cf54ebf0a8fef61f38901c2fa665d4e2a139e4b4752bdf1f7f2714448e0031dfc32078cf5d5011b72d86dbd5ea91d68e141002529
+  checksum: 2d879bc9b54620dd208e8a75ee5f614900e2412584316932399b2aa527629282ce4cf081deacfab646f45d05f01188267f92db882b2a418e93ce14ae845326f1
   languageName: node
   linkType: hard
 
@@ -7166,6 +7164,20 @@ __metadata:
     "@sentry/utils": 7.58.0
     tslib: ^2.4.1 || ^1.9.3
   checksum: 8b2d00a9f616e04e2948d85ec122cd7e115b94007775031e82e60aff05a3211c4a0be46901cd1bb0e0c986611d49fc07f23014d1a68ee7913d0fc8af2f84a0b9
+  languageName: node
+  linkType: hard
+
+"@sentry/browser@npm:7.66.0":
+  version: 7.66.0
+  resolution: "@sentry/browser@npm:7.66.0"
+  dependencies:
+    "@sentry-internal/tracing": 7.66.0
+    "@sentry/core": 7.66.0
+    "@sentry/replay": 7.66.0
+    "@sentry/types": 7.66.0
+    "@sentry/utils": 7.66.0
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: c3530289f31514fcd6ac1009dc7fd3fc28a378d9bd11ed6f9acdc02729119287810ced25bf53eaa64983ab04558ce234d9938f6dc4e42f079da3eebb94939b64
   languageName: node
   linkType: hard
 
@@ -7199,6 +7211,17 @@ __metadata:
     "@sentry/utils": 7.60.0
     tslib: ^2.4.1 || ^1.9.3
   checksum: 33d5c69f9507a49ac22d36bfe772625b328cd75a4b5c9d64af8b2d8635b3e502e1e98e0eaab51458e4d8b55739daa1c34294aa4179eeb6fe4f285c03b08e6328
+  languageName: node
+  linkType: hard
+
+"@sentry/core@npm:7.66.0":
+  version: 7.66.0
+  resolution: "@sentry/core@npm:7.66.0"
+  dependencies:
+    "@sentry/types": 7.66.0
+    "@sentry/utils": 7.66.0
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: 50f598d45586a643cbf75bade329160a06f2797932836e255b50ada52a531ec02d8c56022daf844cb0ee45437f222102b06a73020e7a17eadfbdb9457f7e9bf2
   languageName: node
   linkType: hard
 
@@ -7249,17 +7272,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/replay@npm:7.46.0":
-  version: 7.46.0
-  resolution: "@sentry/replay@npm:7.46.0"
-  dependencies:
-    "@sentry/core": 7.46.0
-    "@sentry/types": 7.46.0
-    "@sentry/utils": 7.46.0
-  checksum: 1d91acecf8c1742e47fc87b4cc51d600884063f66918b8e4b194897e6028294416e65ae854f1cef04a46e6466f7d423fb009340e519585fa5d53b98c40257b13
-  languageName: node
-  linkType: hard
-
 "@sentry/replay@npm:7.58.0":
   version: 7.58.0
   resolution: "@sentry/replay@npm:7.58.0"
@@ -7268,6 +7280,17 @@ __metadata:
     "@sentry/types": 7.58.0
     "@sentry/utils": 7.58.0
   checksum: 69e6308242ba5e4e8f401616a474b8ced5ebfb41b1e5317204b05cb8cecc2f116ca25c1ec7a2e174b7e5cbe3f8be1b9abfe3425ca09b5346cfb2047eeb9da355
+  languageName: node
+  linkType: hard
+
+"@sentry/replay@npm:7.66.0":
+  version: 7.66.0
+  resolution: "@sentry/replay@npm:7.66.0"
+  dependencies:
+    "@sentry/core": 7.66.0
+    "@sentry/types": 7.66.0
+    "@sentry/utils": 7.66.0
+  checksum: 54b4ea614a4eb79b7a35327249f06612b4bc60209927046736e5ae8b609883e1a295563a5f9377140a21c74e777ae6c81bdb4498f3f920163df9a6fe135241b2
   languageName: node
   linkType: hard
 
@@ -7301,6 +7324,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/types@npm:7.66.0":
+  version: 7.66.0
+  resolution: "@sentry/types@npm:7.66.0"
+  checksum: 33ae0139e0689979d570524c8ccf55348961cc6ac656140023a2348c7667524581162ac902ed85f2761bfaba095cbe9afbdee2e8e3fa1bf1dbe27b097869a5ea
+  languageName: node
+  linkType: hard
+
 "@sentry/utils@npm:7.46.0":
   version: 7.46.0
   resolution: "@sentry/utils@npm:7.46.0"
@@ -7328,6 +7358,16 @@ __metadata:
     "@sentry/types": 7.60.0
     tslib: ^2.4.1 || ^1.9.3
   checksum: 3dd3dd2d7c33e011db700032d1a81f8c7c95f6b212f9685fd614e976fae1ff259dd98340e5ccca52bf251387e7f02949850edb5879a35da842e1b71a1e975331
+  languageName: node
+  linkType: hard
+
+"@sentry/utils@npm:7.66.0":
+  version: 7.66.0
+  resolution: "@sentry/utils@npm:7.66.0"
+  dependencies:
+    "@sentry/types": 7.66.0
+    tslib: ^2.4.1 || ^1.9.3
+  checksum: b33d89c18cfcac1bf4bf20453f6ebd5229911a3264b32f25d6591cfab303c86da9b06ce46e8f3490f391c7b4efe5ddd153e5dffe8b2316cf605daa789da0c39c
   languageName: node
   linkType: hard
 
@@ -18424,7 +18464,7 @@ __metadata:
     "@rollup/plugin-terser": ^0.3.0
     "@rollup/plugin-typescript": ^8.3.0
     "@schematics/angular": 16.2.0
-    "@sentry/angular": ^7.2.0
+    "@sentry/angular": latest
     "@sentry/electron": ^4.8.0
     "@sentry/node": ^7.60.0
     "@sentry/tracing": ^7.2.0
@@ -23067,6 +23107,13 @@ __metadata:
   version: 2.5.0
   resolution: "tslib@npm:2.5.0"
   checksum: ae3ed5f9ce29932d049908ebfdf21b3a003a85653a9a140d614da6b767a93ef94f460e52c3d787f0e4f383546981713f165037dc2274df212ea9f8a4541004e1
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.4.1":
+  version: 2.6.2
+  resolution: "tslib@npm:2.6.2"
+  checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
   languageName: node
   linkType: hard
 

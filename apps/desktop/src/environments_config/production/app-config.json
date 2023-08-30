@@ -9,6 +9,7 @@
     "analytics": "G-QLPEN1JVZC",
     "sentry_environment": "desktop-prod",
     "sentry_url": "__SENTRY_URL__",
+    "sentry_release": "__SENTRY_RELEASE__",
     "sentry_backend": "nuclia.cloud"
   }
 }
