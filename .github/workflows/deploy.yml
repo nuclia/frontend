@@ -138,10 +138,11 @@ jobs:
           folder: dist/apps/sistema-demo
 
       - name: Upload sourcemaps to Sentry
-        run: |-
-          yarn add @sentry/cli
-          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-          yarn run sentry:sourcemaps
+        uses: getsentry/action-release@v1.0.0
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: nuclia
+          SENTRY_PROJECT: application
 
   deploy-app:
     name: Deploy dashboard

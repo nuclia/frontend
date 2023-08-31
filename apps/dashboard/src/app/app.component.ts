@@ -40,8 +40,8 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     private config: BackendConfigurationService,
     private navigation: NavigationService,
     private sdk: SDKService,
-    private paTranslate: PaTranslateService,
     private modalService: SisModalService,
+    private paTranslate: PaTranslateService,
     private titleService: Title,
     @Inject(DOCUMENT) private document: any,
   ) {
