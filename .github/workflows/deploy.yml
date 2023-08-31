@@ -137,6 +137,12 @@ jobs:
         with:
           folder: dist/apps/sistema-demo
 
+      - name: Upload sourcemaps to Sentry
+        run: |-
+          yarn add @sentry/cli
+          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          yarn run sentry:sourcemaps
+
   deploy-app:
     name: Deploy dashboard
     runs-on: ubuntu-latest
@@ -350,9 +356,3 @@ jobs:
             dist/executables/*.snap
             dist/executables/*.AppImage
             dist/executables/latest-*.yml
-      - name: Upload sourcemaps to Sentry
-        if: startsWith(matrix.os, 'macos')
-        run: |-
-          yarn add @sentry/cli
-          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
-          yarn run sentry:sourcemaps
