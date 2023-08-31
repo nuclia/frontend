@@ -287,7 +287,9 @@ jobs:
           cp -r dist/service ./dist/apps/desktop-electron/assets
       - name: Upload sourcemaps to Sentry
         if: startsWith(matrix.os, 'macos')
-        run: yarn run sentry:sourcemaps
+        run: |-
+          yarn add @sentry/cli
+          yarn run sentry:sourcemaps
       - name: Install the Apple certificate
         if: startsWith(matrix.os, 'macos')
         env:
