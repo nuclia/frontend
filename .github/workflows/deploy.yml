@@ -354,4 +354,5 @@ jobs:
         if: startsWith(matrix.os, 'macos')
         run: |-
           yarn add @sentry/cli
+          SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
           yarn run sentry:sourcemaps
