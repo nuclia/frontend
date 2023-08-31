@@ -32,8 +32,8 @@ export class AppComponent implements OnInit {
   );
   constructor(
     private config: BackendConfigurationService,
-    private ngxTranslate: TranslateService,
     private paTranslate: PaTranslateService,
+    private ngxTranslate: TranslateService,
     private user: UserService,
     private sdk: SDKService,
     private router: Router,

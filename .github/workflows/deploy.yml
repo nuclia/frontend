@@ -285,9 +285,6 @@ jobs:
           npx nx build desktop-electron --configuration production
           npx tsc -p apps/desktop/electron/tsconfig.server.json
           cp -r dist/service ./dist/apps/desktop-electron/assets
-      - name: Upload sourcemaps to Sentry
-        if: startsWith(matrix.os, 'macos')
-        run: yarn run sentry:sourcemaps
       - name: Install the Apple certificate
         if: startsWith(matrix.os, 'macos')
         env:
@@ -353,3 +350,8 @@ jobs:
             dist/executables/*.snap
             dist/executables/*.AppImage
             dist/executables/latest-*.yml
+      - name: Upload sourcemaps to Sentry
+        if: startsWith(matrix.os, 'macos')
+        run: |-
+          yarn add @sentry/cli
+          yarn run sentry:sourcemaps
