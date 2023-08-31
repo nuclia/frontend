@@ -27,6 +27,7 @@ export class LoginComponent {
   loginValidationMessages = {
     email: {
       required: 'validation.required',
+      email: 'validation.email',
     },
     password: {
       required: 'validation.required',
@@ -34,7 +35,7 @@ export class LoginComponent {
   };
 
   loginForm = new FormGroup({
-    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
     password: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
   });
 
