@@ -8,7 +8,7 @@ import type { AuthTokens, NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
-const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
+const REFRESH_DELAY = 5 * 60 * 1000; // 5 min
 
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
@@ -18,7 +18,7 @@ export class Authentication implements IAuthentication {
   public constructor(nuclia: INuclia) {
     this.nuclia = nuclia;
     if (this.nuclia.options.knowledgeBox) {
-      // if knowledgeBox is defined, we are using searvice account (or the kb is public)
+      // if knowledgeBox is defined, we are using service account (or the kb is public)
       this._isAuthenticated.next(true);
     } else {
       this.checkTokenExpiration();
