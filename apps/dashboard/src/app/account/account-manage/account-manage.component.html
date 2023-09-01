@@ -79,8 +79,8 @@
     <div class="section-container">
       <div class="dangerous-zone">
         <h3 class="title-s">{{ 'account.delete_account' | translate }}</h3>
-        <div *ngIf="(isSubscribed | async) === false">
-          <p>{{ 'account.delete_account_warning_1' | translate: { account: account?.title || '' } }}</p>
+        <div *ngIf="(cannotDeleteAccount | async) === false">
+          <p>{{ 'account.delete_account_warning_1' | translate : { account: account?.title || '' } }}</p>
           <ul>
             <li>{{ 'account.delete_account_warning_2' | translate }}</li>
             <li>{{ 'account.delete_account_warning_3' | translate }}</li>
@@ -92,11 +92,11 @@
             {{ 'generic.delete' | translate }}
           </pa-button>
         </div>
-        <div *ngIf="(isSubscribed | async) === true">
+        <div *ngIf="(cannotDeleteAccount | async) === true">
           <p>{{ 'account.delete.subscription_detected' | translate }}</p>
           <p>
             {{ 'account.delete.go_to' | translate }}
-            <a [routerLink]="deleteAccountUrl | async">{{ 'account.billing' | translate }}</a>
+            <a [routerLink]="cancelSubscriptionUrl | async">{{ 'billing.my-subscription' | translate }}</a>
           </p>
         </div>
       </div>

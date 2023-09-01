@@ -268,18 +268,4 @@
       </pa-button>
     </div>
   </div>
-
-  <div
-    *ngIf="isSubscribed | async"
-    class="cancel-subscription">
-    <div>
-      <h2>{{ 'account.delete_account' | translate }}</h2>
-      <div>{{ 'billing.cancel_subscription.description' | translate }}</div>
-    </div>
-    <pa-button
-      (click)="delete()"
-      kind="destructive">
-      {{ 'generic.delete' | translate }}
-    </pa-button>
-  </div>
 </div>

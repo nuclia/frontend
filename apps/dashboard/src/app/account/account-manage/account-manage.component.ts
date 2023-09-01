@@ -19,8 +19,8 @@ import { NavigationService, Sluggable } from '@flaps/common';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { SisModalService } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-delete/account-delete.component';
-import { SubscribedAccountDeleteComponent } from './account-delete/subscribed-account-delete.component';
 import { BillingService } from '../billing/billing.service';
+import { SubscriptionStatus } from '../billing/billing.models';
 
 type Section = 'account' | 'config' | 'knowledgeboxes' | 'users' | 'nucliaDBs';
 
@@ -56,8 +56,19 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   speechToText: boolean = false;
   initialValues = { title: '', description: '', slug: '', uid: '' };
 
-  isSubscribed = this.billingService.isSubscribed;
-  deleteAccountUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
+  cannotDeleteAccount = this.billingService
+    .getSubscription()
+    .pipe(
+      map(
+        (subscription) =>
+          subscription?.status === SubscriptionStatus.ACTIVE ||
+          subscription?.status === SubscriptionStatus.PENDING ||
+          subscription?.status === SubscriptionStatus.PAYMENT_ISSUES,
+      ),
+    );
+  cancelSubscriptionUrl = this.sdk.currentAccount.pipe(
+    map((account) => `${this.navigation.getBillingUrl(account.slug)}/my-subscription`),
+  );
 
   constructor(
     private stateService: StateService,
@@ -140,15 +151,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
   }
 
   deleteAccount() {
-    this.billingService.isSubscribed
-      .pipe(
-        take(1),
-        switchMap((subscribed) =>
-          subscribed
-            ? this.modalService.openModal(SubscribedAccountDeleteComponent).onClose
-            : this.modalService.openModal(AccountDeleteComponent).onClose,
-        ),
-      )
-      .subscribe();
+    this.modalService.openModal(AccountDeleteComponent);
   }
 }
