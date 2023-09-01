@@ -251,9 +251,13 @@ You can see the deployment on [Stage ArgoCD](http://stashify.argocd.nuclia.com/a
 ### Promoting to production
 
 Once the app is deployed on stage, you can promote it to production by going to https://github.com/nuclia/stage/actions/workflows/promote-to-production.yaml and clicking on "Run workflow".
-Then, choose the `manager` component in the list (keep the default values for the rest) and click on "Run workflow".
+Then, choose `app` or `manager` component in the list (keep the default values for the rest) and click on "Run workflow".
 
-It triggers the prod promotion, and it can be monitores on [Prod ArgoCD](http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=).
+It triggers the prod promotion, and it can be monitored on [http://europe1.argocd.nuclia.com/applications/app?resource=](http://europe1.argocd.nuclia.com/applications/app?resource=) or [http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=](http://europe1.argocd.nuclia.com/applications/argocd/manager?view=tree&resource=).
+
+To deploy the widget, use [https://github.com/nuclia/frontend_deploy/actions/workflows/cdn-sync.yaml](https://github.com/nuclia/frontend_deploy/actions/workflows/cdn-sync.yaml).
+
+Note: the desktop app is always directly deployed to prod (there is no stage, the downloadable installers are stored as artefacts in the Github repo).
 
 ### About ArgoCD
 

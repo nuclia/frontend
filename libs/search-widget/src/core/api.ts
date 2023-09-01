@@ -76,6 +76,11 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   if (widgetOptions.features?.suggestEntities) {
     SUGGEST_MODE.push(Search.SuggestionFeatures.ENTITIES);
   }
+  if (widgetOptions.features?.noBM25forChat) {
+    // no BM25 should be achieved by just removing `paragraphs`, but passing `relations` alone breaks the caht response
+    // CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Chat.Features.PARAGRAPHS);
+    CHAT_MODE = []; // temporary workaround
+  }
   STATE = state;
   return nucliaApi;
 };

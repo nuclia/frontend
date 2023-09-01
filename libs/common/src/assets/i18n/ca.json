@@ -767,6 +767,8 @@
 	"stash.widgets.navigateToFile.label": "Navega cap als arxius",
 	"stash.widgets.navigateToLink.help": "Quan feu servir Nuclia per cercar pàgines web, fer clic a un resultat obrirà la pàgina original en lloc de mostrar-la al visor.",
 	"stash.widgets.navigateToLink.label": "Navega cap als enllaços",
+	"stash.widgets.noBM25forChat.help": "Els resultats de full text no s'utilitzaran per generar respostes",
+	"stash.widgets.noBM25forChat.label": "Només resultats semàntics per a les respostes",
 	"stash.widgets.onlyAnswers.help": "Mostra respostes però no resultats de cerca. Aquesta opció només té efecte si la generació de respostes està activada",
 	"stash.widgets.onlyAnswers.label": "Només respostes",
 	"stash.widgets.permalink.help": "Afegiu paràmetres addicionals a l'URL que permet l'obertura directa d'un recurs o dels resultats d'una cerca",

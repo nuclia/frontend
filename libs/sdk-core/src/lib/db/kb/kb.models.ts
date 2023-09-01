@@ -233,6 +233,7 @@ export interface WidgetFeatures {
   knowledgeGraph?: boolean;
   useSynonyms?: boolean;
   autofilter?: boolean;
+  noBM25forChat?: boolean;
 }
 
 export interface Counters {

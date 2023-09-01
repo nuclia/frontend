@@ -767,6 +767,8 @@
 	"stash.widgets.navigateToFile.label": "Navega hacia los archivos",
 	"stash.widgets.navigateToLink.help": "Al usar Nuclia para buscar páginas web, hacer clic en un resultado abrirá la página original en lugar de mostrarla en el visor.",
 	"stash.widgets.navigateToLink.label": "Navega hacia los enlaces",
+	"stash.widgets.noBM25forChat.help": "Los resultados de full text no se utilizarán para generar respuestas.",
+	"stash.widgets.noBM25forChat.label": "Sólo resultados semánticos para las respuestas.",
 	"stash.widgets.onlyAnswers.help": "Muestra respuestas pero no resultados de búsqueda. Esta opción solo tiene efecto si la generación de respuestas está habilitada",
 	"stash.widgets.onlyAnswers.label": "Solo respuestas",
 	"stash.widgets.permalink.help": "Agregue parámetros adicionales en la URL que permita la apertura directa de un recurso o de los resultados de una búsqueda",
