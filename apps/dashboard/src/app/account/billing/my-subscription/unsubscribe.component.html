@@ -8,12 +8,12 @@
       <div class="title-s">
         {{ 'billing.subscription-end' | translate }}:
         <pa-datetime
-          [datetime]="data.endBillingPeriod"
+          [datetime]="data?.endBillingPeriod || ''"
           format="human"
           dateOnly></pa-datetime>
       </div>
     </div>
-    <div *ngIf="data.overCost > 0">
+    <div *ngIf="(data?.overCost || 0) > 0">
       <div class="title-s">
         {{ 'billing.current-over-cost' | translate }}:
         <span class="price">{{ data.overCost | currency : data.currency }}</span>
