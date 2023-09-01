@@ -26,7 +26,13 @@
   </div>
   <div class="buttons">
     <pa-button
-      *ngIf="isBillingEnabled | async"
+      *ngIf="(isSubscribed | async) && (isCancelScheduled | async)"
+      kind="primary"
+      [routerLink]="reactivateUrl | async">
+      {{ 'billing.reactivate' | translate }}
+    </pa-button>
+    <pa-button
+      *ngIf="!((isSubscribed | async) && (isCancelScheduled | async))"
       kind="primary"
       [routerLink]="upgradeUrl | async">
       {{ 'billing.upgrade' | translate }}

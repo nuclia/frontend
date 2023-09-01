@@ -1,0 +1,22 @@
+@import 'variables';
+
+h2 {
+  margin: 0;
+  text-align: center;
+}
+
+pa-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(4);
+}
+
+.price,
+pa-datetime {
+  color: $color-primary-regular;
+}
+
+a {
+  color: $color-neutral-regular;
+  text-decortion: underline;
+}

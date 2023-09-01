@@ -106,7 +106,7 @@
         <td>-</td>
       </tr>
       <tr>
-        <td>{{ 'billing.quotas.paragraphs' | translate }} *</td>
+        <td>{{ 'billing.quotas.paragraphs_processed' | translate }} *</td>
         <td>
           <div>{{ defaults['stash-trial'].monthly_limit_paragraphs_processed | number }}</div>
           <div class="unit">
@@ -131,7 +131,7 @@
         <td>-</td>
       </tr>
       <tr>
-        <td>{{ 'billing.quotas.medias' | translate }}</td>
+        <td>{{ 'billing.quotas.media' | translate }}</td>
         <td>
           <div *ngIf="defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 as hours">
             {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
@@ -182,7 +182,7 @@
         <td>-</td>
       </tr>
       <tr>
-        <td>{{ 'billing.quotas.answers' | translate }}</td>
+        <td>{{ 'billing.quotas.generative' | translate }}</td>
         <td>
           <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
         </td>
@@ -202,7 +202,7 @@
         <td></td>
       </tr>
       <tr>
-        <td>{{ 'billing.quotas.paragraphs_stored' | translate }}</td>
+        <td>{{ 'billing.quotas.paragraphs' | translate }}</td>
         <td>
           {{ 'billing.quotas.up-to' | translate }}
           {{ defaults['stash-trial'].monthly_limit_paragraphs_stored | number }}

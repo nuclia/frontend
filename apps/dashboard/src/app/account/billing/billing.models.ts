@@ -66,7 +66,7 @@ export enum SubscriptionStatus {
   NO_SUBSCRIPTION = 'no_subscription',
   PENDING = 'pending',
   ACTIVE = 'active',
-  INACTIVE = 'inactive',
+  PAYMENT_ISSUES = 'payment_issues',
   CANCEL_SCHEDULED = 'cancel_scheduled',
   CANCELED = 'canceled',
 }

@@ -27,6 +27,9 @@ export class AccountStatusComponent {
   isSubscribed = this.billingService.isSubscribed;
   subscription = this.billingService.getSubscription().pipe(shareReplay());
   upgradeUrl = this.sdk.currentAccount.pipe(map((account) => this.navigation.getUpgradeUrl(account.slug)));
+  reactivateUrl = this.sdk.currentAccount.pipe(
+    map((account) => `${this.navigation.getBillingUrl(account.slug)}/my-subscription`),
+  );
   isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   daysLeft = this.sdk.currentAccount.pipe(
     filter((account) => !!account.trial_expiration_date),

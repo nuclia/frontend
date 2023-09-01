@@ -117,6 +117,15 @@ export class BillingService {
     );
   }
 
+  reactivateSubscription() {
+    return this.sdk.currentAccount.pipe(
+      take(1),
+      switchMap((account) =>
+        this.sdk.nuclia.rest.post<void>(`/billing/account/${account.id}/subscription/reactivate`, undefined),
+      ),
+    );
+  }
+
   getCurrency(country: string): Observable<Currency> {
     return this.sdk.nuclia.rest
       .get<{ currency: string }>(`/billing/currencies?country=${country}`)

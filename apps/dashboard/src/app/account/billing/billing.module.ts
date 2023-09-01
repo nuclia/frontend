@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import {
   PaButtonModule,
+  PaDateTimeModule,
   PaIconModule,
   PaModalModule,
   PaSliderModule,
@@ -26,6 +27,8 @@ import { HistoryComponent } from './history/history.component';
 import { UsageComponent } from './usage/usage.component';
 import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
+import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
+import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
 import { DeprecatedTiersComponent } from './subscriptions/deprecated-tiers.component';
 
 const routes: Routes = [
@@ -47,6 +50,10 @@ const routes: Routes = [
         component: CheckoutComponent,
       },
       {
+        path: 'my-subscription',
+        component: MySubscriptionComponent,
+      },
+      {
         path: 'usage',
         component: UsageComponent,
       },
@@ -66,6 +73,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     PaButtonModule,
+    PaDateTimeModule,
     PaModalModule,
     PaTextFieldModule,
     PaIconModule,
@@ -87,6 +95,8 @@ const routes: Routes = [
     RedirectComponent,
     UsageComponent,
     UsageTableComponent,
+    MySubscriptionComponent,
+    UnsubscribeComponent,
     DeprecatedTiersComponent,
   ],
   exports: [UsageTableComponent],
