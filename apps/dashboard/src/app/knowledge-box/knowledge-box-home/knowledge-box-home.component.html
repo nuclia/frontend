@@ -5,7 +5,11 @@
     *ngIf="!!(endpoint | async)">
     <div class="title-s">{{ 'stats.endpoint' | translate }}</div>
     <div class="endpoint-text">
-      <div class="endpoint">{{ endpoint | async }}</div>
+      <div
+        class="endpoint"
+        data-cy="kb-endpoint">
+        {{ endpoint | async }}
+      </div>
       <pa-button
         *ngIf="clipboardSupported"
         aspect="basic"

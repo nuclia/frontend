@@ -2,10 +2,11 @@
   <div
     class="resource-bulk-actions"
     *ngIf="(isAdminOrContrib | async) && selection.length > 0">
-    {{ 'resource.selected_count' | translate : { num: selection.length } }}
+    {{ 'resource.selected_count' | translate: { num: selection.length } }}
 
     <ng-container *ngIf="selection.length > 0">
       <pa-button
+        data-cy="delete-selection"
         kind="destructive"
         aspect="basic"
         size="small"
@@ -40,6 +41,7 @@
           header
           *ngIf="isAdminOrContrib | async">
           <pa-checkbox
+            data-cy="select-all"
             [value]="allSelected"
             [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
             [disabled]="bulkAction.inProgress"
@@ -77,7 +79,7 @@
         </pa-table-cell>
 
         <pa-table-cell center>
-          <span class="body-s">{{ row.resource.created | formatDate : { default: true } }}</span>
+          <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
         </pa-table-cell>
         <pa-table-cell center>
           <span class="body-s">{{ row.status }}</span>

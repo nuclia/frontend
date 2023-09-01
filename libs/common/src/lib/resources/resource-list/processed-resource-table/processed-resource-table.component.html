@@ -17,6 +17,7 @@
 
     <ng-container *ngIf="selection.length > 0">
       <pa-button
+        data-cy="delete-selection"
         kind="destructive"
         aspect="basic"
         size="small"
@@ -121,6 +122,7 @@
           header
           *ngIf="isAdminOrContrib | async">
           <pa-checkbox
+            data-cy="select-all"
             [value]="allSelected"
             [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
             [disabled]="bulkAction.inProgress"
@@ -142,8 +144,16 @@
               *ngIf="row.resource.icon | mimeIcon as icon"
               [path]="'assets/mime-icons/' + icon"></pa-icon>
             <div class="title-and-description">
-              <div class="body-s">{{ row.resource.title }}</div>
-              <small *ngIf="row.description">{{ row.description }}</small>
+              <div
+                class="body-s"
+                data-cy="resource-title">
+                {{ row.resource.title }}
+              </div>
+              <small
+                *ngIf="row.description"
+                data-cy="resource-description">
+                {{ row.description }}
+              </small>
             </div>
             <div class="title-status">
               <pa-icon
@@ -182,6 +192,7 @@
         <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
           <pa-button
             icon="more-vertical"
+            data-cy="menu-button"
             aspect="basic"
             size="small"
             paTooltip="generic.actions"

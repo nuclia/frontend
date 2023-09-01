@@ -1,6 +1,7 @@
 <router-outlet></router-outlet>
 <div class="resource-list">
   <div
+    data-cy="spinner"
     class="loading-shade"
     *ngIf="isLoading">
     <nsi-spinner></nsi-spinner>
@@ -29,6 +30,7 @@
     </form>
     <ng-template #backButton>
       <pa-button
+        data-cy="back-to-processed"
         iconAndText
         icon="chevron-left"
         aspect="basic"
@@ -70,6 +72,7 @@
     </div>
     <div class="status-buttons-container">
       <div
+        data-cy="pending-access"
         class="status-button"
         *ngIf="(statusCount | async)?.pending || 0 > 0">
         <pa-button
@@ -164,7 +167,8 @@
 
     <div
       *ngIf="isMainView && emptyKb && !query && !isFiltering && !standalone && (isMonoLingual | async) === false"
-      class="empty-kb">
+      class="empty-kb"
+      data-cy="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
       </p>
