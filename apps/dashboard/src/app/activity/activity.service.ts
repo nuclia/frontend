@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject, Observable, of } from 'rxjs';
-import { takeUntil, take, map, switchMap, concatMap, catchError, tap, shareReplay, filter } from 'rxjs/operators';
-import { SDKService, StateService } from '@flaps/core';
-import { UsersService } from '@flaps/core';
-import { ResourcePagination, ResourceProperties, EventType } from '@nuclia/core';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { catchError, concatMap, filter, map, shareReplay, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { SDKService, StateService, UsersService } from '@flaps/core';
+import { EventType, ResourcePagination, ResourceProperties } from '@nuclia/core';
 
 export interface ActivityEvent {
   resource: Observable<string>;
@@ -35,7 +34,11 @@ export class ActivityService implements OnDestroy {
 
   activity = this._activity.asObservable();
 
-  constructor(private sdk: SDKService, private users: UsersService, private stateService: StateService) {
+  constructor(
+    private sdk: SDKService,
+    private users: UsersService,
+    private stateService: StateService,
+  ) {
     this.triggerLoad
       .pipe(
         concatMap((type) => {
@@ -72,9 +75,9 @@ export class ActivityService implements OnDestroy {
           map((res) => ({
             pagination: res.pagination,
             events: res.events.map((event) => ({
-              resource: this.getResource(event.rid),
-              date: event.time || undefined,
-              username: event.userid ? this.getUser(event.userid) : of(''),
+              resource: this.getResource(event['rid']),
+              date: event['time'] || undefined,
+              username: event['userid'] ? this.getUser(event['userid']) : of(''),
             })),
           })),
         ),

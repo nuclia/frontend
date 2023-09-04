@@ -57,7 +57,7 @@ export class ClientDialogComponent implements OnInit {
     private sdkService: SDKService,
     private cdr: ChangeDetectorRef,
   ) {
-    this.editMode = !!this.modal.config.data?.client;
+    this.editMode = !!this.modal.config.data?.['client'];
   }
 
   ngOnInit() {
@@ -71,8 +71,8 @@ export class ClientDialogComponent implements OnInit {
         }),
       )
       .subscribe(() => {
-        if (this.modal.config.data?.client) {
-          this.clientForm.patchValue(this.modal.config.data.client);
+        if (this.modal.config.data?.['client']) {
+          this.clientForm.patchValue(this.modal.config.data['client']);
           this.cdr.markForCheck();
         } else {
           this.account.subscribe((account) => {

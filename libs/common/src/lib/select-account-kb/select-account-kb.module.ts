@@ -10,8 +10,6 @@ import { SelectKbComponent } from './select-kb/select-kb.component';
 import { PaButtonModule, PaIconModule, PaTextFieldModule, PaTooltipModule } from '@guillotinaweb/pastanaga-angular';
 import { BackButtonComponent } from '@nuclia/sistema';
 
-const Components = [SelectAccountComponent, SelectKbComponent];
-
 @NgModule({
   imports: [
     CommonModule,
@@ -24,9 +22,8 @@ const Components = [SelectAccountComponent, SelectKbComponent];
     PaTooltipModule,
     PaTextFieldModule,
     BackButtonComponent,
-    PaTooltipModule,
   ],
-  declarations: [...Components],
+  declarations: [SelectAccountComponent, SelectKbComponent],
   exports: [],
 })
 export class SelectAccountKbModule {}

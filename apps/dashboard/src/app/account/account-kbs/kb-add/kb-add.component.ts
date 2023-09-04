@@ -52,12 +52,15 @@ export class KbAddComponent implements OnInit {
       this.kbForm = this.formBuilder.group({
         title: ['', [Sluggable()]],
         description: [''],
-        zone: [this.modal.config.data?.account.zone],
+        zone: [this.modal.config.data?.['account'].zone],
         config: this.formBuilder.group(
-          this.displayedLearningConfigurations.reduce((acc, entry) => {
-            acc[entry.id] = [entry.data.default];
-            return acc;
-          }, {} as { [key: string]: any }),
+          this.displayedLearningConfigurations.reduce(
+            (acc, entry) => {
+              acc[entry.id] = [entry.data.default];
+              return acc;
+            },
+            {} as { [key: string]: any },
+          ),
         ),
       });
       this.cdr.markForCheck();
@@ -73,10 +76,13 @@ export class KbAddComponent implements OnInit {
 
     if (!this.kbForm || this.kbForm.invalid) return;
 
-    const default_learning_configuration = (this.learningConfigurations || []).reduce((acc, entry) => {
-      acc[entry.id] = entry.data.default;
-      return acc;
-    }, {} as { [key: string]: string });
+    const default_learning_configuration = (this.learningConfigurations || []).reduce(
+      (acc, entry) => {
+        acc[entry.id] = entry.data.default;
+        return acc;
+      },
+      {} as { [key: string]: string },
+    );
     const learning_configuration = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
       acc[entry.id] = this.kbForm?.value.config[entry.id];
       return acc;
@@ -93,7 +99,7 @@ export class KbAddComponent implements OnInit {
     const inProgressTimeout = setTimeout(() => (this.creationInProgress = true), 500);
     this.error = '';
     this.cdr?.markForCheck();
-    this.sdk.nuclia.db.createKnowledgeBox(this.modal.config.data?.account.slug, payload).subscribe({
+    this.sdk.nuclia.db.createKnowledgeBox(this.modal.config.data?.['account'].slug, payload).subscribe({
       next: () => {
         clearTimeout(inProgressTimeout);
         this.modal.close({ success: true });

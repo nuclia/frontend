@@ -7,20 +7,20 @@
       (submit)="submit()">
       <pa-input
         formControlName="username"
-        [errorMessages]="validationMessages.username"
+        [errorMessages]="validationMessages['username']"
         autocapitalize="off">
         {{ 'login.full_name' | translate }}
       </pa-input>
       <pa-input
         formControlName="password"
         type="password"
-        [errorMessages]="validationMessages.passowrd">
+        [errorMessages]="validationMessages['passowrd']">
         {{ 'login.password' | translate }}
       </pa-input>
       <pa-input
         formControlName="passwordConfirm"
         type="password"
-        [errorMessages]="validationMessages.passwordConfirm">
+        [errorMessages]="validationMessages['passwordConfirm']">
         {{ 'generic.confirm_password' | translate }}
       </pa-input>
       <div class="setup-invite-actions">

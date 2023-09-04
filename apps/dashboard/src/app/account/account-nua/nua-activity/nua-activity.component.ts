@@ -18,7 +18,7 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
 
   client: Observable<NUAClient | undefined> = this.activatedRoute.params.pipe(
     switchMap((params) =>
-      this.nua.clients.pipe(map((clients) => clients.find((client) => client.client_id === params.id))),
+      this.nua.clients.pipe(map((clients) => clients.find((client) => client.client_id === params['id']))),
     ),
     takeUntil(this._terminator),
   );
@@ -39,7 +39,7 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
     combineLatest([this.stateService.account, this.client])
       .pipe(
         filter(([account, client]) => !!account && !!client),
-        map(([account, client]) => ({ account, client } as { account: Account; client: NUAClient })),
+        map(([account, client]) => ({ account, client }) as { account: Account; client: NUAClient }),
         take(1),
         switchMap(({ account, client }) => this.nuaActivity.loadActivity(account.slug, client.client_id)),
       )

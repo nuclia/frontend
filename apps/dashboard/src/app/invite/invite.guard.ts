@@ -9,7 +9,7 @@ export const inviteGuard = (route: ActivatedRouteSnapshot) => {
   const router: Router = inject(Router);
 
   return combineLatest([
-    getSlugs(sdk, route.queryParams.account, route.queryParams.kb),
+    getSlugs(sdk, route.queryParams['account'], route.queryParams['kb']),
     user.userPrefs.pipe(filter((prefs) => !!prefs)),
   ]).pipe(
     take(1),
