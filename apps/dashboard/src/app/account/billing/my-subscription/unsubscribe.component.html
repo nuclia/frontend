@@ -13,10 +13,10 @@
           dateOnly></pa-datetime>
       </div>
     </div>
-    <div *ngIf="(data?.overCost || 0) > 0">
+    <div *ngIf="!!data && data.overCost > 0">
       <div class="title-s">
         {{ 'billing.current-over-cost' | translate }}:
-        <span class="price">{{ data.overCost | currency : data.currency }}</span>
+        <span class="price">{{ data.overCost | currency: data.currency }}</span>
       </div>
       <div>{{ 'billing.current-over-cost-help' | translate }}</div>
     </div>

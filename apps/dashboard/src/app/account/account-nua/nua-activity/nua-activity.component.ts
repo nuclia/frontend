@@ -25,7 +25,7 @@ export class NuaActivityComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['file', 'timestamp', 'actor'];
 
-  activity: Observable<Activity[]> = this.nuaActivity.activityLogs;
+  activityLogs: Observable<Activity[]> = this.nuaActivity.activityLogs;
   hasMore: Observable<boolean> = this.nuaActivity.hasMore;
 
   constructor(

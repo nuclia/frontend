@@ -82,9 +82,9 @@ export class CheckoutComponent implements OnDestroy, OnInit {
   );
   subscribeMode = this.accountType.pipe(map((type) => !!type));
 
-  prices = this.billingService.getPrices().pipe(shareReplay());
+  prices$ = this.billingService.getPrices().pipe(shareReplay());
   updateCurrency = new Subject<string>();
-  currency = this.updateCurrency.pipe(
+  currency$ = this.updateCurrency.pipe(
     distinctUntilChanged(),
     switchMap((country) => this.billingService.getCurrency(country)),
     shareReplay(),
@@ -411,8 +411,8 @@ export class CheckoutComponent implements OnDestroy, OnInit {
 
   openReview() {
     return forkJoin([
-      this.prices.pipe(take(1)),
-      this.currency.pipe(take(1)),
+      this.prices$.pipe(take(1)),
+      this.currency$.pipe(take(1)),
       this.accountType.pipe(
         take(1),
         filter((accountType) => !!accountType),

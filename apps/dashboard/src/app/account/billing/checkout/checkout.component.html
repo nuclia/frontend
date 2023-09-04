@@ -16,14 +16,14 @@
         aspect="basic"></pa-button>
     </div>
     <div class="section-body">
-      <div class="body-m">
-        {{ 'account.type.' + (accountType | async) | translate }}
+      <div
+        class="body-m"
+        *ngIf="accountType | async as account">
+        {{ 'account.type.' + account | translate }}
         -
-        <ng-container *ngIf="currency | async as currency">
-          <ng-container *ngIf="prices | async as prices">
-            {{ prices[accountType | async].recurring.month.price | currency: currency }}/{{
-              'billing.month' | translate
-            }}
+        <ng-container *ngIf="currency$ | async as currency">
+          <ng-container *ngIf="prices$ | async as prices">
+            {{ prices[account].recurring.month.price | currency: currency }}/{{ 'billing.month' | translate }}
           </ng-container>
         </ng-container>
       </div>
@@ -299,7 +299,7 @@
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
           <span
-            *ngIf="currency | async as currency"
+            *ngIf="currency$ | async as currency"
             class="title-m">
             {{ currency === 'USD' ? '$' : '€' }}
           </span>

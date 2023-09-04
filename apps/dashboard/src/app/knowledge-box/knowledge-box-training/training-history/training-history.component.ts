@@ -13,7 +13,7 @@ export class TrainingHistoryComponent {
   status = TrainingExecutionStatus;
   isLastPage = false;
   currentPage = new BehaviorSubject<number>(0);
-  executions: Observable<TrainingExecutionWithDuration[]> = this.currentPage.pipe(
+  executions$: Observable<TrainingExecutionWithDuration[]> = this.currentPage.pipe(
     concatMap(() =>
       this.sdk.currentKb.pipe(
         filter((kb) => !!kb),

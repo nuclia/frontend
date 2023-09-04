@@ -14,53 +14,22 @@
   </header>
 
   <div class="activity-container">
-    <table
-      cdk-table
-      [dataSource]="activity | async">
-      <ng-container cdkColumnDef="file">
-        <th
-          cdk-header-cell
-          *cdkHeaderCellDef>
-          {{ 'activity.resource' | translate }}
-        </th>
-        <td
-          cdk-cell
-          *cdkCellDef="let activity">
-          {{ activity.resourceId | async }}
-        </td>
-      </ng-container>
-      <ng-container cdkColumnDef="timestamp">
-        <th
-          cdk-header-cell
-          *cdkHeaderCellDef>
-          {{ 'activity.timestamp' | translate }}
-        </th>
-        <td
-          cdk-cell
-          *cdkCellDef="let activity">
-          {{ activity.timestamp | formatDate }} {{ activity.timestamp | formatTime }}
-        </td>
-      </ng-container>
-      <ng-container cdkColumnDef="actor">
-        <th
-          cdk-header-cell
-          *cdkHeaderCellDef>
-          {{ 'activity.actor' | translate }}
-        </th>
-        <td
-          cdk-cell
-          *cdkCellDef="let activity">
+    <pa-table columns="40% 1fr 1fr">
+      <pa-table-header>
+        <pa-table-cell header>{{ 'activity.resource' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'activity.timestamp' | translate }}</pa-table-cell>
+        <pa-table-cell header>{{ 'activity.actor' | translate }}</pa-table-cell>
+      </pa-table-header>
+      <pa-table-row *ngFor="let activity of activityLogs | async">
+        <pa-table-cell>{{ activity.resourceId | async }}</pa-table-cell>
+        <pa-table-cell>
+          <pa-datetime [datetime]="activity.timestamp"></pa-datetime>
+        </pa-table-cell>
+        <pa-table-cell>
           {{ activity.userId | async }}
-        </td>
-      </ng-container>
-
-      <tr
-        cdk-header-row
-        *cdkHeaderRowDef="displayedColumns"></tr>
-      <tr
-        cdk-row
-        *cdkRowDef="let row; columns: displayedColumns"></tr>
-    </table>
+        </pa-table-cell>
+      </pa-table-row>
+    </pa-table>
 
     <div class="load-more">
       <pa-button

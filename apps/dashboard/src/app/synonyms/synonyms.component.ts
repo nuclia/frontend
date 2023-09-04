@@ -38,18 +38,18 @@ export class SynonymsComponent {
     this.addSynonymForm.reset();
   }
 
-  deleteEntry(mainWord: string, synonyms: string) {
+  deleteEntry(mainWord: string, synonyms: string[]) {
     this.modalService
       .openConfirm({
         title: 'synonyms.confirm-deletion.title',
         description: this.translate.instant('synonyms.confirm-deletion.description', { word: mainWord, synonyms }),
         isDestructive: true,
       })
-      .onClose.pipe(filter((confirmed) => confirmed))
+      .onClose.pipe(filter((confirmed) => !!confirmed))
       .subscribe(() => this.synonymsService.deleteSynonym(mainWord));
   }
 
-  editSynonym(mainWord: string, $event: KeyboardEvent) {
+  editSynonym(mainWord: string, $event: Event) {
     const input = $event.target as HTMLInputElement;
     this.synonymsService.editSynonym(mainWord, input.value);
     this.editing = '';

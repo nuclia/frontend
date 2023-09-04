@@ -106,6 +106,6 @@
     </div>
   </div>
 </div>
-<ng-container *ngIf="(totalSearch | async) > 0">
+<ng-container *ngIf="(totalSearch | async) || 0 > 0">
   <app-knowledge-box-survey [totalSearch]="totalSearch | async"></app-knowledge-box-survey>
 </ng-container>

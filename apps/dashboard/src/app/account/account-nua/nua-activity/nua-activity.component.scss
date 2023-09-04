@@ -31,24 +31,6 @@
   background: $color-light-stronger;
 }
 
-table {
-  border-spacing: 0;
-  padding: rhythm(1) rhythm(3);
-  width: 100%;
-
-  .cdk-header-cell {
-    border-bottom: 1px solid $color-neutral-regular;
-  }
-
-  .cdk-column-file {
-    width: 40%;
-  }
-
-  .cdk-cell {
-    padding: rhythm(1);
-  }
-}
-
 .load-more {
   display: flex;
   justify-content: center;

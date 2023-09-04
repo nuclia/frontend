@@ -39,7 +39,9 @@
       <th class="plan">
         <div class="plan-name">Starter</div>
         <div class="price">
-          {{ (prices | async)?.['stash-starter'].recurring.month.price | currency: currency }}
+          <span *ngIf="(prices | async)?.['stash-starter'] as starter">
+            {{ starter.recurring.month.price | currency: currency }}
+          </span>
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
         <pa-button
@@ -112,14 +114,18 @@
         </div>
       </td>
       <td>
-        <div>{{ (prices | async)?.['stash-starter'].usage['paragraphs_processed'].threshold | number }}</div>
+        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['paragraphs_processed'] as starterParagraphsProcessed">
+          {{ starterParagraphsProcessed.threshold | number }}
+        </div>
         <div class="unit">
           {{ 'billing.quotas.files-up-to' | translate }}
           {{ defaults['stash-starter'].upload_limit_max_non_media_file_size | size }}
         </div>
       </td>
       <td>
-        <div>{{ (prices | async)?.['stash-growth'].usage['paragraphs_processed'].threshold | number }}</div>
+        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['paragraphs_processed'] as growthParagraphsProcessed">
+          {{ growthParagraphsProcessed.threshold | number }}
+        </div>
         <div class="unit">
           {{ 'billing.quotas.files-up-to' | translate }}
           {{ defaults['stash-growth'].upload_limit_max_non_media_file_size | size }}
@@ -139,7 +145,7 @@
         </div>
       </td>
       <td>
-        <div *ngIf="(prices | async)?.['stash-starter'].usage['media'].threshold as hours">
+        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['media']?.threshold as hours">
           {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
         </div>
         <div class="unit">
@@ -148,7 +154,7 @@
         </div>
       </td>
       <td>
-        <div *ngIf="(prices | async)?.['stash-growth'].usage['media'].threshold as hours">
+        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['media']?.threshold as hours">
           {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
         </div>
         <div class="unit">
@@ -171,10 +177,14 @@
         <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
       </td>
       <td>
-        <div>{{ (prices | async)?.['stash-starter'].usage['searches'].threshold | number }}</div>
+        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['searches'] as starterSearches">
+          {{ starterSearches.threshold | number }}
+        </div>
       </td>
       <td>
-        <div>{{ (prices | async)?.['stash-growth'].usage['searches'].threshold | number }}</div>
+        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['searches'] as growthSearches">
+          {{ growthSearches.threshold | number }}
+        </div>
       </td>
       <td>-</td>
     </tr>
@@ -184,10 +194,14 @@
         <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
       </td>
       <td>
-        <div>{{ (prices | async)?.['stash-starter'].usage['generative'].threshold | number }}</div>
+        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['generative'] as starterGenerative">
+          {{ starterGenerative.threshold | number }}
+        </div>
       </td>
       <td>
-        <div>{{ (prices | async)?.['stash-growth'].usage['generative'].threshold | number }}</div>
+        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['generative'] as growthGenerative">
+          {{ growthGenerative.threshold | number }}
+        </div>
       </td>
       <td>-</td>
     </tr>
@@ -206,11 +220,15 @@
       </td>
       <td>
         {{ 'billing.quotas.up-to' | translate }}
-        {{ (prices | async)?.['stash-starter'].usage['paragraphs'].threshold | number }} **
+        <span *ngIf="(prices | async)?.['stash-starter']?.usage?.['paragraphs'] as starterParagraphs">
+          {{ starterParagraphs.threshold | number }} **
+        </span>
       </td>
       <td>
         {{ 'billing.quotas.up-to' | translate }}
-        {{ (prices | async)?.['stash-growth'].usage['paragraphs'].threshold | number }} **
+        <span *ngIf="(prices | async)?.['stash-growth']?.usage?.['paragraphs'] as growthParagraphs">
+          {{ growthParagraphs.threshold | number }} **
+        </span>
       </td>
       <td>-</td>
     </tr>
@@ -227,13 +245,13 @@
         <div>–</div>
       </td>
       <td>
-        <div>
-          {{ (prices | async)?.['stash-starter'].usage['training'].threshold | number }} {{ 'hours' | translate }}
+        <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['training'] as starterTraining">
+          {{ starterTraining.threshold | number }} {{ 'hours' | translate }}
         </div>
       </td>
       <td>
-        <div>
-          {{ (prices | async)?.['stash-growth'].usage['training'].threshold | number }} {{ 'hours' | translate }}
+        <div *ngIf="(prices | async)?.['stash-growth']?.usage?.['training'] as growthTraining">
+          {{ growthTraining.threshold | number }} {{ 'hours' | translate }}
         </div>
       </td>
       <td>-</td>
@@ -241,11 +259,8 @@
   </table>
   <div class="notes">
     <div>* {{ 'billing.paragraphs_per_file' | translate }}</div>
-    <div
-      *ngIf="
-        (prices | async)?.['stash-starter'].usage['paragraphs'].price | currency: currency : 'symbol' : '1.2-6' as price
-      ">
-      ** {{ 'billing.extra_paragraphs_cost' | translate: { price } }}
+    <div *ngIf="(prices | async)?.['stash-starter']?.usage?.['paragraphs']?.price as price">
+      ** {{ 'billing.extra_paragraphs_cost' | translate: { price: price | currency: currency : 'symbol' : '1.2-6' } }}
     </div>
   </div>
 

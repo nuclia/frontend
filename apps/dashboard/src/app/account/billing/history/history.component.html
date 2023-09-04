@@ -15,7 +15,9 @@
       </pa-table-cell>
       <pa-table-cell>{{ invoice.order_number }}</pa-table-cell>
       <pa-table-cell>{{ 'account.type.' + invoice.account_type | translate }}</pa-table-cell>
-      <pa-table-cell>{{ invoice.amount | currency: (currency | async) }}</pa-table-cell>
+      <pa-table-cell>
+        <span *ngIf="currency$ | async as currency">{{ invoice.amount | currency: currency }}</span>
+      </pa-table-cell>
       <pa-table-cell>
         <pa-button
           icon="download"

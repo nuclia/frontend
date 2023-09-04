@@ -23,7 +23,6 @@ import { AccountNUAComponent } from './account-nua/account-nua.component';
 import { ClientDialogComponent } from './account-nua/client-dialog/client-dialog.component';
 import { AccountUsersComponent } from './account-users/account-users.component';
 import { NuaActivityComponent } from './account-nua/nua-activity/nua-activity.component';
-import { CdkTableModule } from '@angular/cdk/table';
 import { UsersManageModule } from '../knowledge-box';
 import {
   PaButtonModule,
@@ -66,7 +65,6 @@ const Components = [
     PipesModule,
     TokenDialogModule,
     ChartsModule,
-    CdkTableModule,
     STFSidebarModule,
     NavbarModule,
     UsersManageModule,

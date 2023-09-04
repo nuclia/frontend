@@ -1,12 +1,12 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Input,
   OnDestroy,
   ViewChild,
   ViewEncapsulation,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { fromEvent, Subject } from 'rxjs';
 import { auditTime, takeUntil } from 'rxjs/operators';
@@ -29,7 +29,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('container') private container: ElementRef | undefined;
 
-  @Input() xAxisTickOptions?: TickOptions;
+  @Input() xAxisTickOptions?: TickOptions | null;
   @Input() tooltipsEnabled = false;
 
   @Input()
@@ -210,6 +210,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy {
   }
 
   private removeExistingChartFromParent(): void {
-    d3.select(this.container?.nativeElement).select('svg').remove();
+    d3.select(this.container?.nativeElement)
+      .select('svg')
+      .remove();
   }
 }

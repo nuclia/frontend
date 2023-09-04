@@ -4,21 +4,21 @@
   <ng-container *ngIf="!(cancelScheduled | async)">
     <div
       class="subscription-info"
-      *ngIf="prices | async as prices">
+      *ngIf="prices$ | async as prices">
       <div class="subscription-tier">
         <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
         <div>
           <span
             class="title-l price"
-            *ngIf="currency | async as currency">
-            {{ prices.recurring.month.price | currency : currency }}
+            *ngIf="currency$ | async as currency">
+            {{ prices.recurring.month.price | currency: currency }}
           </span>
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
       </div>
       <pa-table
         columns="auto auto auto"
-        *ngIf="currency | async as currency">
+        *ngIf="currency$ | async as currency">
         <pa-table-header>
           <pa-table-cell header>{{ 'billing.quotas_label' | translate }}</pa-table-cell>
           <pa-table-cell header></pa-table-cell>
@@ -45,7 +45,7 @@
           </pa-table-cell>
           <pa-table-cell>
             <span>
-              <span class="body-m">{{ prices.usage[param].price | currency : currency : 'symbol' : '1.2-6' }}</span>
+              <span class="body-m">{{ prices.usage[param].price | currency: currency : 'symbol' : '1.2-6' }}</span>
               <span class="unit">
                 /{{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
               </span>

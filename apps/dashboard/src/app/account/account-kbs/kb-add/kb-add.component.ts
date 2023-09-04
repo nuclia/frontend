@@ -34,6 +34,7 @@ export class KbAddComponent implements OnInit {
   creationInProgress = false;
   failures = 0;
   error = '';
+  zones: Zone[] = [];
 
   private _lastStep = 1;
 
@@ -46,6 +47,7 @@ export class KbAddComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.zones = this.modal.config.data?.['zones'] || [];
     this.sdk.getVisibleLearningConfiguration().subscribe(({ display, full }) => {
       this.displayedLearningConfigurations = display;
       this.learningConfigurations = full;
