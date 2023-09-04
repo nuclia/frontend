@@ -12,30 +12,30 @@
         <pa-input
           id="kb-title"
           formControlName="title"
-          [errorMessages]="validationMessages.title">
+          [errorMessages]="validationMessages['title']">
           {{ 'stash.name' | translate }}
         </pa-input>
 
         <pa-textarea
           id="kb-description"
           formControlName="description"
-          rows="4">
+          [rows]="4">
           {{ 'generic.description' | translate }}
         </pa-textarea>
 
         <div class="kb-add-separator"></div>
         <div
           class="kb-add-zone"
-          *ngIf="modal.config.data?.zones">
+          *ngIf="zones.length > 0">
           <h4>{{ 'generic.zone' | translate }}</h4>
           <div class="mb-24">{{ 'stash.create.zone_description' | translate }}</div>
           <pa-select
             formControlName="zone"
             externalLabel
-            [readonly]="modal.config.data.zones.length === 1"
+            [readonly]="zones.length === 1"
             class="kb-add-zone-select">
             <pa-option
-              *ngFor="let zone of modal.config.data.zones"
+              *ngFor="let zone of zones"
               [value]="zone.id">
               {{ zone.title }}
             </pa-option>

@@ -13,7 +13,7 @@ const PAGE_SIZE = 25;
 })
 export class HistoryComponent implements OnDestroy {
   invoices: InvoicesList = { items: [], pagination: { has_more: true } };
-  currency = this.billingService.getAccountUsage().pipe(
+  currency$ = this.billingService.getAccountUsage().pipe(
     map((usage) => usage.currency),
     shareReplay(),
   );

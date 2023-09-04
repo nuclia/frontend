@@ -4,6 +4,12 @@ import { map } from 'rxjs';
 import { Currency, Prices, UsageType } from '../billing.models';
 import { BillingService } from '../billing.service';
 import { AccountTypes } from '@nuclia/core';
+import { asUsageType } from '../utils';
+
+export interface CalculatorModalData {
+  prices: { [key in AccountTypes]: Prices };
+  currency: Currency;
+}
 
 @Component({
   selector: 'app-calculator',
@@ -21,39 +27,44 @@ export class CalculatorComponent {
     'paragraphs',
     'training',
   ];
-  prices = this.modal.config.data!.prices;
-  currency = this.modal.config.data!.currency;
+  prices: { [key in AccountTypes]: Prices } = this.modal.config.data!.prices;
+  currency: Currency = this.modal.config.data!.currency;
   tier: AccountTypes = 'stash-starter';
   selfHosted = false;
 
-  values = this.params.reduce(
+  values: { [param in UsageType]: number } = this.params.reduce(
     (acc, param) => ({ ...acc, [param]: this.prices[this.tier].usage[param].threshold }),
     {} as { [param in UsageType]: number },
   );
 
-  searchPrices = ['stash-starter', 'stash-growth'].reduce((acc, accountType) => {
-    const type = accountType as AccountTypes;
-    acc[type] = {
-      self_hosted: {
-        searches: 2 * this.prices[type].usage['predict'].price,
-        generative: 2 * this.prices[type].usage['predict'].price + this.prices[type].usage['generative'].price,
-      },
-      managed: {
-        searches: this.prices[type].usage['searches'].price + 2 * this.prices[type].usage['predict'].price,
-        generative:
-          this.prices[type].usage['searches'].price +
-          2 * this.prices[type].usage['predict'].price +
-          this.prices[type].usage['generative'].price,
-      },
-    };
-    return acc;
-  }, {} as { [type in AccountTypes]: { self_hosted: any; managed: any } });
+  searchPrices = ['stash-starter', 'stash-growth'].reduce(
+    (acc, accountType) => {
+      const type = accountType as AccountTypes;
+      acc[type] = {
+        self_hosted: {
+          searches: 2 * this.prices[type].usage['predict'].price,
+          generative: 2 * this.prices[type].usage['predict'].price + this.prices[type].usage['generative'].price,
+        },
+        managed: {
+          searches: this.prices[type].usage['searches'].price + 2 * this.prices[type].usage['predict'].price,
+          generative:
+            this.prices[type].usage['searches'].price +
+            2 * this.prices[type].usage['predict'].price +
+            this.prices[type].usage['generative'].price,
+        },
+      };
+      return acc;
+    },
+    {} as { [type in AccountTypes]: { self_hosted: any; managed: any } },
+  );
 
   total = this.calculateTotal();
   isSpain = this.billing.country.pipe(map((country) => country === 'ES'));
+  // Used to define the types of all template parameters
+  typeToken: UsageType = 'generative';
 
   constructor(
-    public modal: ModalRef<{ prices: { [key in AccountTypes]: Prices }; currency: Currency }>,
+    public modal: ModalRef<CalculatorModalData>,
     private billing: BillingService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -105,4 +116,6 @@ export class CalculatorComponent {
     this.billing.setBudgetEstimation(this.total);
     this.modal.close();
   }
+
+  protected readonly asUsageType = asUsageType;
 }

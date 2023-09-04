@@ -21,7 +21,7 @@ export class UsageTableComponent {
   ];
 
   @Input()
-  set usage(value: AccountUsage | undefined) {
+  set usage(value: AccountUsage | undefined | null) {
     if (value) {
       this.usageData.next(value);
     }

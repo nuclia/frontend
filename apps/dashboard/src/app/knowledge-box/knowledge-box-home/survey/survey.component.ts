@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { injectScript } from '@flaps/core';
 
 const SURVEY_OCCURRENCES = [20, 300, 600, 2000, 5000];
@@ -10,7 +10,7 @@ const SURVEY_NEXT_OCCURRENCE_KEY = 'survey_next_occurrence';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SurveyComponent implements OnInit, OnDestroy {
-  @Input() totalSearch?: number;
+  @Input() totalSearch?: number | null;
   render = false;
 
   constructor(private cdr: ChangeDetectorRef) {}

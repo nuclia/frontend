@@ -29,7 +29,7 @@
         <pa-textarea
           id="account-description"
           formControlName="description"
-          rows="4">
+          [rows]="4">
           {{ 'generic.description' | translate }}
         </pa-textarea>
 
@@ -80,7 +80,7 @@
       <div class="dangerous-zone">
         <h3 class="title-s">{{ 'account.delete_account' | translate }}</h3>
         <div *ngIf="(cannotDeleteAccount | async) === false">
-          <p>{{ 'account.delete_account_warning_1' | translate : { account: account?.title || '' } }}</p>
+          <p>{{ 'account.delete_account_warning_1' | translate: { account: account?.title || '' } }}</p>
           <ul>
             <li>{{ 'account.delete_account_warning_2' | translate }}</li>
             <li>{{ 'account.delete_account_warning_3' | translate }}</li>

@@ -49,7 +49,7 @@
               size="small"
               kind="inverted"
               [popupRef]="range">
-              {{ 'account.chart_range_label' | translate : { hours: pendingRange.value } }}
+              {{ 'account.chart_range_label' | translate: { hours: pendingRange.value } }}
             </nsi-dropdown-button>
             <pa-dropdown #range>
               <pa-option
@@ -117,7 +117,7 @@
           <li *ngFor="let kb of kbs | async">
             <a
               class="kb-item"
-              [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug) : undefined">
+              [routerLink]="kb.role_on_kb && kb.slug ? getKbUrl(account.slug, kb.slug) : undefined">
               {{ kb.title }}
               <pa-icon
                 *ngIf="kb.state === 'PRIVATE'"

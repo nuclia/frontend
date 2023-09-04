@@ -63,9 +63,9 @@ export class AccountHomeComponent {
   };
 
   allCharts = true;
-  charts = this.statsTypes.reduce(
+  charts: { [type in StatsType]: Observable<ChartData> } = this.statsTypes.reduce(
     (acc, current) => ({ ...acc, [current]: this.getChartData(current).pipe(take(1), shareReplay()) }),
-    {} as { [type in StatsType]: ChartData },
+    {} as { [type in StatsType]: Observable<ChartData> },
   );
 
   statsRange = StatsRange;
@@ -139,16 +139,19 @@ export class AccountHomeComponent {
           .map((stat) => [new Date(stat.time_period), stat.stats] as [Date, number])
           .reverse()
           // Keep only points in current period
-          .reduce((currentMonthStats, point) => {
-            const currentPeriod = { start: new Date(period.start).setUTCHours(0, 0, 0, 0), end: new Date() };
-            if (isWithinInterval(point[0], currentPeriod)) {
-              currentMonthStats.push([
-                point[0],
-                (currentMonthStats[currentMonthStats.length - 1]?.[1] || 0) + point[1],
-              ]);
-            }
-            return currentMonthStats;
-          }, [] as [Date, number][])
+          .reduce(
+            (currentMonthStats, point) => {
+              const currentPeriod = { start: new Date(period.start).setUTCHours(0, 0, 0, 0), end: new Date() };
+              if (isWithinInterval(point[0], currentPeriod)) {
+                currentMonthStats.push([
+                  point[0],
+                  (currentMonthStats[currentMonthStats.length - 1]?.[1] || 0) + point[1],
+                ]);
+              }
+              return currentMonthStats;
+            },
+            [] as [Date, number][],
+          )
           .map((stat) => [format(stat[0], 'd'), this.mappers[statsType] ? this.mappers[statsType](stat[1]) : stat[1]]),
         domain: stats.map((stat) => format(new Date(stat.time_period), 'd')).reverse(),
         threshold,

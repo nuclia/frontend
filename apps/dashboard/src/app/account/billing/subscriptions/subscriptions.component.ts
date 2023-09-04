@@ -19,7 +19,7 @@ export class SubscriptionsComponent {
   countryList = Object.entries(COUNTRIES)
     .map(([code, name]) => ({ code, name }))
     .sort((a, b) => a.name.localeCompare(b.name));
-  currency?: Currency;
+  currency: Currency = 'EUR';
   prices = this.billing.getPrices().pipe(shareReplay());
   accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
 

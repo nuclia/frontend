@@ -54,20 +54,20 @@
           #sliderTemplate
           let-param="param"
           let-text="text">
-          <div>
+          <div *ngIf="asUsageType(param) as usageType">
             <div class="field-block">
               <pa-slider
-                [min]="prices[tier].usage[param].threshold || 0"
-                [max]="maxValue(getUnitPrice(tier, param), prices[tier].usage[param].threshold)"
-                [value]="values[param]"
-                (valueChange)="update(param, $event)">
-                <span class="title-xxs">{{ text || 'billing.parameter.' + param | translate }}</span>
+                [min]="prices[tier].usage[usageType].threshold || 0"
+                [max]="maxValue(getUnitPrice(tier, usageType), prices[tier].usage[usageType].threshold)"
+                [value]="values[usageType]"
+                (valueChange)="update(usageType, $event)">
+                <span class="title-xxs">{{ text || 'billing.parameter.' + usageType | translate }}</span>
               </pa-slider>
-              <div class="price">{{ calculatePrice(param) | currency: currency }}</div>
+              <div class="price">{{ calculatePrice(usageType) | currency: currency }}</div>
             </div>
             <div class="unit-price body-xs">
-              {{ getUnitPrice(tier, param) | currency: currency : 'symbol' : '1.2-6' }} /
-              {{ (['media', 'training'].includes(param) ? 'billing.hour' : 'billing.unit') | translate }}
+              {{ getUnitPrice(tier, usageType) | currency: currency : 'symbol' : '1.2-6' }} /
+              {{ (['media', 'training'].includes(usageType) ? 'billing.hour' : 'billing.unit') | translate }}
             </div>
           </div>
         </ng-template>
