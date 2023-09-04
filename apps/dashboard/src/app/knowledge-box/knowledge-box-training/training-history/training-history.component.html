@@ -8,7 +8,7 @@
   <h2>{{ 'training.history' | translate }}</h2>
 
   <pa-infinite-scroll
-    *ngIf="executions | async as executions"
+    *ngIf="executions$ | async as executions"
     (reachAnchor)="fetchNextPage()">
     <pa-table columns="auto 120px 120px auto 1fr 80px">
       <pa-table-header>

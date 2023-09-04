@@ -21,7 +21,7 @@ export class TopbarComponent {
   ) {}
 
   menuOpen = false;
-  account = this.state.account;
+  account$ = this.state.account;
   isServerDown = this.sync.isServerDown;
 
   avatar: Observable<AvatarModel> = this.user.userPrefs.pipe(

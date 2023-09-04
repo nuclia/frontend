@@ -1,6 +1,6 @@
 <div class="activity">
   <div class="activity-header">
-    <ng-container *ngIf="currentTab | async as currentTab">
+    <ng-container *ngIf="currentTab$ | async as currentTab">
       <pa-tabs
         noSlider
         notFullWidth>

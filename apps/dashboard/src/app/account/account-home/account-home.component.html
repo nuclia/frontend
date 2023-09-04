@@ -113,7 +113,7 @@
         <div class="title-s">{{ 'account.knowledgeboxes' | translate }}</div>
         <ul
           class="kb-list"
-          *ngIf="account | async as account">
+          *ngIf="account$ | async as account">
           <li *ngFor="let kb of kbs | async">
             <a
               class="kb-item"

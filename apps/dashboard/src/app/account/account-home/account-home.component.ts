@@ -21,13 +21,13 @@ type ChartData = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountHomeComponent {
-  account = this.sdk.currentAccount;
+  account$ = this.sdk.currentAccount;
   kbs = this.sdk.kbList;
   statsTypes = [StatsType.MEDIA_SECONDS, StatsType.SEARCHES, StatsType.TRAIN_SECONDS];
-  isTrial = this.account.pipe(map((account) => account.type === 'stash-trial'));
+  isTrial = this.account$.pipe(map((account) => account.type === 'stash-trial'));
   isSubscribed = this.billingService.isSubscribed;
   usage = this.billingService.getAccountUsage().pipe(shareReplay());
-  trialPeriod = combineLatest([this.account, this.accountService.getAccountTypes()]).pipe(
+  trialPeriod = combineLatest([this.account$, this.accountService.getAccountTypes()]).pipe(
     map(([account, defaults]) => {
       const expiration = account.trial_expiration_date ? new Date(`${account.trial_expiration_date}+00:00`) : undefined;
       return expiration
@@ -85,7 +85,7 @@ export class AccountHomeComponent {
       }
     }),
   );
-  pending = combineLatest([this.account, this.pendingRange]).pipe(
+  pending = combineLatest([this.account$, this.pendingRange]).pipe(
     switchMap(([account, pendingRange]) =>
       this.sdk.nuclia.db.getProcessingStats(pendingRange, account!.id).pipe(
         map((stats) => {
@@ -111,7 +111,7 @@ export class AccountHomeComponent {
     ),
   );
 
-  totalQueries = this.account.pipe(
+  totalQueries = this.account$.pipe(
     switchMap((account) => this.sdk.nuclia.db.getStats(account.slug, StatsType.SEARCHES, undefined, StatsPeriod.YEAR)),
     map((stats) => stats.reduce((acc, stat) => acc + stat.stats, 0)),
   );
@@ -160,7 +160,7 @@ export class AccountHomeComponent {
   }
 
   getStats(statsType: StatsType) {
-    return combineLatest([this.account, this.period]).pipe(
+    return combineLatest([this.account$, this.period]).pipe(
       switchMap(([account, period]) => {
         // getStats only returns data for 30 days
         const lastDate = addDays(period.start, 29).getTime().toString();
@@ -175,7 +175,7 @@ export class AccountHomeComponent {
   }
 
   getLimit(statsType: StatsType): Observable<number | undefined> {
-    return this.account.pipe(
+    return this.account$.pipe(
       map((account) => {
         const limits = account.limits.usage;
         let limit;
@@ -195,7 +195,7 @@ export class AccountHomeComponent {
   }
 
   getThreshold(statsType: StatsType): Observable<number | undefined> {
-    return combineLatest([this.account, this.prices]).pipe(
+    return combineLatest([this.account$, this.prices]).pipe(
       map(([account, prices]) => {
         const usage = prices[account.type].usage;
         switch (statsType) {

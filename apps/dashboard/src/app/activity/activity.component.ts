@@ -1,5 +1,5 @@
-import { Component, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { Subject, BehaviorSubject, combineLatest, map, takeUntil } from 'rxjs';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { BehaviorSubject, combineLatest, map, Subject, takeUntil } from 'rxjs';
 import { EventType } from '@nuclia/core';
 import { ActivityService, VISIBLE_TYPES } from './activity.service';
 
@@ -12,9 +12,9 @@ import { ActivityService, VISIBLE_TYPES } from './activity.service';
 })
 export class ActivityComponent implements OnDestroy {
   tabs = VISIBLE_TYPES.map((type) => ({ type, title: 'activity.' + type.toLowerCase() }));
-  currentTab = new BehaviorSubject<EventType>(this.tabs[0]?.type);
+  currentTab$ = new BehaviorSubject<EventType>(this.tabs[0]?.type);
 
-  data = combineLatest([this.currentTab, this.activity.activity]).pipe(
+  data = combineLatest([this.currentTab$, this.activity.activity]).pipe(
     map(([currentTab, activity]) => activity[currentTab]!),
   );
   unsubscribeAll = new Subject<void>();
@@ -28,11 +28,11 @@ export class ActivityComponent implements OnDestroy {
   }
 
   selectTab(tab: EventType) {
-    this.currentTab.next(tab);
+    this.currentTab$.next(tab);
   }
 
   loadMoreEvents() {
-    this.activity.loadMoreEvents(this.currentTab.getValue());
+    this.activity.loadMoreEvents(this.currentTab$.getValue());
   }
 
   ngOnDestroy() {

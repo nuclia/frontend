@@ -12,7 +12,7 @@
   </pa-button>
 
   <div
-    *ngIf="clients | async as clients"
+    *ngIf="clients$ | async as clients"
     class="container">
     <h4>{{ 'account.existing_keys' | translate }}</h4>
     <div

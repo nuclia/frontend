@@ -15,7 +15,7 @@ import { NavigationService, TokenDialogComponent } from '@flaps/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountNUAComponent {
-  clients = this.nua.clients;
+  clients$ = this.nua.clients;
   unsubscribeAll = new Subject<void>();
 
   isNuaActivityEnabled = this.tracking.isFeatureEnabled('view-nua-activity');

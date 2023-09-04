@@ -16,7 +16,7 @@ import { NavigationService } from '@flaps/common';
 })
 export class MySubscriptionComponent {
   type = this.billingService.type;
-  prices = combineLatest([this.billingService.getPrices(), this.type]).pipe(
+  prices$ = combineLatest([this.billingService.getPrices(), this.type]).pipe(
     map(([prices, type]) => prices[type]),
     shareReplay(),
   );
@@ -25,7 +25,7 @@ export class MySubscriptionComponent {
     shareReplay(),
   );
   usage = this.billingService.getAccountUsage().pipe(shareReplay());
-  currency = this.usage.pipe(map((usage) => usage.currency));
+  currency$ = this.usage.pipe(map((usage) => usage.currency));
   subscription = this.billingService.getSubscription().pipe(shareReplay());
   activeSubscription = this.subscription.pipe(
     map((subscription) => subscription?.status === SubscriptionStatus.ACTIVE),
@@ -55,7 +55,7 @@ export class MySubscriptionComponent {
 
   delete() {
     combineLatest([
-      this.currency,
+      this.currency$,
       this.usage.pipe(map((usage) => usage.over_cost)),
       this.subscription.pipe(map((subscription) => subscription?.end_billing_period)),
     ])

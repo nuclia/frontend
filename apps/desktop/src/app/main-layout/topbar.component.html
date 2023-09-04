@@ -18,7 +18,7 @@
   </div>
   <div class="accounts">
     <pa-button
-      *ngIf="account | async as account"
+      *ngIf="account$ | async as account"
       size="small"
       kind="inverted"
       (click)="goSelect()">
