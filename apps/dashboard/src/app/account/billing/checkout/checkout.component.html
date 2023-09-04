@@ -299,7 +299,7 @@
             [formControl]="budget"
             [errorMessages]="errors"></pa-input>
           <span
-            *ngIf="currency | async as currency"
+            *ngIf="currency$ | async as currency"
             class="title-m">
             {{ currency === 'USD' ? '$' : '€' }}
           </span>
