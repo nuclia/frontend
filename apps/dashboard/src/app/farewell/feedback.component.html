@@ -46,9 +46,9 @@
       <div class="buttons">
         <pa-button
           kind="destructive"
-          (click)="delete()"
+          (click)="cancelSubscription()"
           [disabled]="loading">
-          {{ 'account.delete_account' | translate }}
+          {{ 'billing.end-subscription' | translate }}
         </pa-button>
         <nsi-spinner *ngIf="loading"></nsi-spinner>
       </div>

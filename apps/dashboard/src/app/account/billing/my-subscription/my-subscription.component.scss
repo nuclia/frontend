@@ -1,0 +1,66 @@
+@import 'variables';
+
+.my-subscription {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  max-width: rhythm(80);
+}
+
+h2 {
+  margin: 0;
+}
+
+.subscription-info {
+  background-color: $color-light-stronger;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  padding: rhythm(3);
+}
+
+.subscription-tier {
+  display: flex;
+  justify-content: space-between;
+}
+
+.unit {
+  color: $color-neutral-regular;
+  font-size: $font-size-body-s;
+}
+
+pa-datetime,
+.price {
+  color: $color-primary-regular;
+}
+
+.warning {
+  align-items: center;
+  color: $color-secondary-stronger;
+  display: flex;
+  gap: rhythm(1);
+  pa-icon {
+    color: inherit;
+  }
+}
+
+.renewal,
+.cancel-subscription {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  max-width: rhythm(80);
+  padding: rhythm(3);
+  h3 {
+    margin: 0;
+  }
+}
+
+.renewal {
+  background-color: $color-light-stronger;
+}
+
+.cancel-subscription {
+  background-color: $color-secondary-lightest;
+}

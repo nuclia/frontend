@@ -39,7 +39,6 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent, SisProgressModule } from '@nuclia/sistema';
 import { AccountDeleteComponent } from './account-manage/account-delete/account-delete.component';
-import { SubscribedAccountDeleteComponent } from './account-manage/account-delete/subscribed-account-delete.component';
 import { AccountStatusComponent } from './account-status/account-status.component';
 import { BillingModule } from './billing/billing.module';
 
@@ -53,7 +52,6 @@ const Components = [
   ClientDialogComponent,
   AccountUsersComponent,
   AccountDeleteComponent,
-  SubscribedAccountDeleteComponent,
 ];
 
 @NgModule({

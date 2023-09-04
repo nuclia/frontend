@@ -7,7 +7,6 @@ import { AccountService, STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
-import { SubscribedAccountDeleteComponent } from '../../account-manage/account-delete/subscribed-account-delete.component';
 import { DeprecatedCalculatorComponent } from '../calculator/deprecated-calculator.component';
 
 @Component({
@@ -24,7 +23,6 @@ export class SubscriptionsComponent {
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
   accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
-  isSubscribed = this.billing.isSubscribed;
   showNewTiers = this.tracking.isFeatureEnabled('new-tiers');
 
   constructor(
@@ -66,9 +64,5 @@ export class SubscriptionsComponent {
 
   contact() {
     this.window.location.href = 'mailto:support@nuclia.com';
-  }
-
-  delete() {
-    this.modalService.openModal(SubscribedAccountDeleteComponent);
   }
 }

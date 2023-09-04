@@ -20,6 +20,13 @@
       </li>
       <li *ngIf="isSubscribed | async">
         <a
+          [routerLink]="'./my-subscription'"
+          routerLinkActive="active">
+          {{ 'billing.my-subscription' | translate }}
+        </a>
+      </li>
+      <li *ngIf="isSubscribed | async">
+        <a
           [routerLink]="'./usage'"
           routerLinkActive="active">
           {{ 'billing.usage.consumption' | translate }}
