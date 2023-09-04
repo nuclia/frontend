@@ -11,13 +11,16 @@
 
   .select-kb-header {
     border-bottom: 1px solid $color-neutral-regular;
+    display: flex;
     flex: 0 0 auto;
+    justify-content: space-around;
     padding-bottom: rhythm(1);
     position: relative;
 
     .select-kb-title {
       flex: 1 0 auto;
       margin-bottom: 0;
+      max-width: calc(100% - #{rhythm(20)});
       text-align: center;
     }
 

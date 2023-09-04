@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import { SDKService } from '@flaps/core';
+import { SDKService, UsersService } from '@flaps/core';
 import { BehaviorSubject, map, Observable, of, tap } from 'rxjs';
 import { catchError, shareReplay, switchMap, take } from 'rxjs/operators';
 import { EventList, ResourceProperties } from '@nuclia/core';
-import { UsersService } from '@flaps/core';
 
 export interface Activity {
   resourceId: Observable<string>;
@@ -31,7 +30,10 @@ export class NuaActivityService {
     return this._hasMore.asObservable();
   }
 
-  constructor(private sdk: SDKService, private userService: UsersService) {}
+  constructor(
+    private sdk: SDKService,
+    private userService: UsersService,
+  ) {}
 
   loadActivity(accountSlug: string, clientId: string): Observable<EventList> {
     this._account = { accountSlug, clientId };
@@ -89,9 +91,9 @@ export class NuaActivityService {
 
   private mapEventsToActivityLogs(data: EventList, accountSlug: string) {
     return data.events.map((event) => ({
-      resourceId: this.sdk.isKbLoaded ? this.getResource(event.rid) : of(event.rid),
-      timestamp: event.time,
-      userId: this.getUserName(event.userid, accountSlug),
+      resourceId: this.sdk.isKbLoaded ? this.getResource(event['rid']) : of(event['rid']),
+      timestamp: event['time'],
+      userId: this.getUserName(event['userid'], accountSlug),
     }));
   }
 }
