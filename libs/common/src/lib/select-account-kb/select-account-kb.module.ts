@@ -24,6 +24,7 @@ const Components = [SelectAccountComponent, SelectKbComponent];
     PaTooltipModule,
     PaTextFieldModule,
     BackButtonComponent,
+    PaTooltipModule,
   ],
   declarations: [...Components],
   exports: [],
