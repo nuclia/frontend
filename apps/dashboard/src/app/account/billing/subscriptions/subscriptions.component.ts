@@ -7,7 +7,6 @@ import { AccountService, STFTrackingService } from '@flaps/core';
 import { COUNTRIES } from '../utils';
 import { Currency } from '../billing.models';
 import { WINDOW } from '@ng-web-apis/common';
-import { DeprecatedCalculatorComponent } from '../calculator/deprecated-calculator.component';
 
 @Component({
   selector: 'app-subscriptions',
@@ -23,7 +22,6 @@ export class SubscriptionsComponent {
   currency?: Currency;
   prices = this.billing.getPrices().pipe(shareReplay());
   accountTypesDefaults = this.accountService.getAccountTypes().pipe(shareReplay());
-  showNewTiers = this.tracking.isFeatureEnabled('new-tiers');
 
   constructor(
     private billing: BillingService,
@@ -43,8 +41,8 @@ export class SubscriptionsComponent {
   }
 
   openCalculator() {
-    forkJoin([this.prices.pipe(take(1)), this.showNewTiers.pipe(take(1))]).subscribe(([prices, showNewTiers]) => {
-      this.modalService.openModal(showNewTiers ? CalculatorComponent : DeprecatedCalculatorComponent, {
+    this.prices.pipe(take(1)).subscribe((prices) => {
+      this.modalService.openModal(CalculatorComponent, {
         dismissable: true,
         data: {
           prices,
