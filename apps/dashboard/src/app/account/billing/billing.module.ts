@@ -20,7 +20,6 @@ import { BillingComponent } from './billing.component';
 import { SubscriptionsComponent } from './subscriptions/subscriptions.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { CalculatorComponent } from './calculator/calculator.component';
-import { DeprecatedCalculatorComponent } from './calculator/deprecated-calculator.component';
 import { ReviewComponent } from './review/review.component';
 import { FeaturesComponent } from './features/features.component';
 import { HistoryComponent } from './history/history.component';
@@ -29,7 +28,6 @@ import { UsageTableComponent } from './usage/usage-table.component';
 import { RedirectComponent } from './redirect.component';
 import { MySubscriptionComponent } from './my-subscription/my-subscription.component';
 import { UnsubscribeComponent } from './my-subscription/unsubscribe.component';
-import { DeprecatedTiersComponent } from './subscriptions/deprecated-tiers.component';
 
 const routes: Routes = [
   {
@@ -88,7 +86,6 @@ const routes: Routes = [
     SubscriptionsComponent,
     CheckoutComponent,
     CalculatorComponent,
-    DeprecatedCalculatorComponent,
     ReviewComponent,
     FeaturesComponent,
     HistoryComponent,
@@ -97,7 +94,6 @@ const routes: Routes = [
     UsageTableComponent,
     MySubscriptionComponent,
     UnsubscribeComponent,
-    DeprecatedTiersComponent,
   ],
   exports: [UsageTableComponent],
 })

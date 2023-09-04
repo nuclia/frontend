@@ -20,239 +20,234 @@
   </pa-typeahead-select>
 </div>
 <div *ngIf="currency">
-  <app-deprecated-tiers *ngIf="(showNewTiers | async) === false"></app-deprecated-tiers>
-
-  <ng-container *ngIf="(showNewTiers | async) === true">
-    <table
-      class="subscriptions body-m"
-      *ngIf="accountTypesDefaults | async as defaults">
-      <tr>
-        <th></th>
-        <th class="plan">
-          <div class="plan-name">
-            {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
-          </div>
-          <div class="price">{{ 'billing.free' | translate }}</div>
-          <div
-            *ngIf="(accountType | async) === 'stash-trial'"
-            class="subscribed">
-            <pa-icon name="check"></pa-icon>
-          </div>
-        </th>
-        <th class="plan">
-          <div class="plan-name">Starter</div>
-          <div class="price">
-            {{ (prices | async)?.['stash-starter'].recurring.month.price | currency: currency }}
-            <span class="unit">/{{ 'billing.month' | translate }}</span>
-          </div>
-          <pa-button
-            *ngIf="(accountType | async) === 'stash-trial'"
-            kind="primary"
-            routerLink="../checkout"
-            [queryParams]="{ type: 'stash-starter' }">
-            {{ 'billing.upgrade' | translate }}
-          </pa-button>
-          <div
-            *ngIf="(accountType | async) === 'stash-starter'"
-            class="subscribed">
-            <pa-icon name="check"></pa-icon>
-          </div>
-        </th>
-        <th class="plan">
-          <div class="plan-name">Growth</div>
-          <div class="price">
-            <span class="unit">{{ 'billing.already_available' | translate }}</span>
-          </div>
-          <pa-button
-            *ngIf="(accountType | async) !== 'stash-growth'"
-            (click)="contact()">
-            {{ 'billing.contact' | translate }}
-          </pa-button>
-          <div
-            *ngIf="(accountType | async) === 'stash-growth'"
-            class="subscribed">
-            <pa-icon name="check"></pa-icon>
-          </div>
-        </th>
-        <th class="plan">
-          <div class="plan-name">Enterprise</div>
-          <div class="price">
-            <span class="unit">{{ 'billing.enterprise_ready' | translate }}</span>
-          </div>
-          <pa-button
-            *ngIf="(accountType | async) !== 'stash-enterprise'"
-            (click)="contact()">
-            {{ 'billing.contact' | translate }}
-          </pa-button>
-          <div
-            *ngIf="(accountType | async) === 'stash-enterprise'"
-            class="subscribed">
-            <pa-icon name="check"></pa-icon>
-          </div>
-        </th>
-      </tr>
-      <tr class="section-header">
-        <td class="title-m">{{ 'billing.quotas.ingestion' | translate }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.kbs' | translate }}</td>
-        <td>{{ defaults['stash-trial'].max_kbs }}</td>
-        <td>{{ defaults['stash-starter'].max_kbs }}</td>
-        <td>{{ defaults['stash-growth'].max_kbs }}</td>
-        <td>-</td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.paragraphs_processed' | translate }} *</td>
-        <td>
-          <div>{{ defaults['stash-trial'].monthly_limit_paragraphs_processed | number }}</div>
-          <div class="unit">
-            {{ 'billing.quotas.files-up-to' | translate }}
-            {{ defaults['stash-trial'].upload_limit_max_non_media_file_size | size }}
-          </div>
-        </td>
-        <td>
-          <div>{{ (prices | async)?.['stash-starter'].usage['paragraphs_processed'].threshold | number }}</div>
-          <div class="unit">
-            {{ 'billing.quotas.files-up-to' | translate }}
-            {{ defaults['stash-starter'].upload_limit_max_non_media_file_size | size }}
-          </div>
-        </td>
-        <td>
-          <div>{{ (prices | async)?.['stash-growth'].usage['paragraphs_processed'].threshold | number }}</div>
-          <div class="unit">
-            {{ 'billing.quotas.files-up-to' | translate }}
-            {{ defaults['stash-growth'].upload_limit_max_non_media_file_size | size }}
-          </div>
-        </td>
-        <td>-</td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.media' | translate }}</td>
-        <td>
-          <div *ngIf="defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 as hours">
-            {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
-          </div>
-          <div class="unit">
-            {{ 'billing.quotas.files-up-to' | translate }}
-            {{ defaults['stash-trial'].upload_limit_max_media_file_size | size }}
-          </div>
-        </td>
-        <td>
-          <div *ngIf="(prices | async)?.['stash-starter'].usage['media'].threshold as hours">
-            {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
-          </div>
-          <div class="unit">
-            {{ 'billing.quotas.files-up-to' | translate }}
-            {{ defaults['stash-starter'].upload_limit_max_media_file_size | size }}
-          </div>
-        </td>
-        <td>
-          <div *ngIf="(prices | async)?.['stash-growth'].usage['media'].threshold as hours">
-            {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
-          </div>
-          <div class="unit">
-            {{ 'billing.quotas.files-up-to' | translate }}
-            {{ defaults['stash-growth'].upload_limit_max_media_file_size | size }}
-          </div>
-        </td>
-        <td>-</td>
-      </tr>
-      <tr class="section-header">
-        <td class="title-m">{{ 'billing.quotas.search_inference' | translate }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.searches' | translate }}</td>
-        <td>
-          <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
-        </td>
-        <td>
-          <div>{{ (prices | async)?.['stash-starter'].usage['searches'].threshold | number }}</div>
-        </td>
-        <td>
-          <div>{{ (prices | async)?.['stash-growth'].usage['searches'].threshold | number }}</div>
-        </td>
-        <td>-</td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.generative' | translate }}</td>
-        <td>
-          <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
-        </td>
-        <td>
-          <div>{{ (prices | async)?.['stash-starter'].usage['generative'].threshold | number }}</div>
-        </td>
-        <td>
-          <div>{{ (prices | async)?.['stash-growth'].usage['generative'].threshold | number }}</div>
-        </td>
-        <td>-</td>
-      </tr>
-      <tr class="section-header">
-        <td class="title-m">{{ 'billing.quotas.storage' | translate }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.paragraphs' | translate }}</td>
-        <td>
-          {{ 'billing.quotas.up-to' | translate }}
-          {{ defaults['stash-trial'].monthly_limit_paragraphs_stored | number }}
-        </td>
-        <td>
-          {{ 'billing.quotas.up-to' | translate }}
-          {{ (prices | async)?.['stash-starter'].usage['paragraphs'].threshold | number }} **
-        </td>
-        <td>
-          {{ 'billing.quotas.up-to' | translate }}
-          {{ (prices | async)?.['stash-growth'].usage['paragraphs'].threshold | number }} **
-        </td>
-        <td>-</td>
-      </tr>
-      <tr class="section-header">
-        <td class="title-m">{{ 'billing.quotas.train' | translate }}</td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td>{{ 'billing.quotas.training' | translate }}</td>
-        <td>
-          <div>–</div>
-        </td>
-        <td>
-          <div>
-            {{ (prices | async)?.['stash-starter'].usage['training'].threshold | number }} {{ 'hours' | translate }}
-          </div>
-        </td>
-        <td>
-          <div>
-            {{ (prices | async)?.['stash-growth'].usage['training'].threshold | number }} {{ 'hours' | translate }}
-          </div>
-        </td>
-        <td>-</td>
-      </tr>
-    </table>
-    <div class="notes">
-      <div>* {{ 'billing.paragraphs_per_file' | translate }}</div>
-      <div
-        *ngIf="
-          (prices | async)?.['stash-starter'].usage['paragraphs'].price
-            | currency: currency : 'symbol' : '1.2-6' as price
-        ">
-        ** {{ 'billing.extra_paragraphs_cost' | translate: { price } }}
-      </div>
+  <table
+    class="subscriptions body-m"
+    *ngIf="accountTypesDefaults | async as defaults">
+    <tr>
+      <th></th>
+      <th class="plan">
+        <div class="plan-name">
+          {{ 'billing.trial.title' | translate: { days: defaults['stash-trial'].max_trial_days } }}
+        </div>
+        <div class="price">{{ 'billing.free' | translate }}</div>
+        <div
+          *ngIf="(accountType | async) === 'stash-trial'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+        </div>
+      </th>
+      <th class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="price">
+          {{ (prices | async)?.['stash-starter'].recurring.month.price | currency: currency }}
+          <span class="unit">/{{ 'billing.month' | translate }}</span>
+        </div>
+        <pa-button
+          *ngIf="(accountType | async) === 'stash-trial'"
+          kind="primary"
+          routerLink="../checkout"
+          [queryParams]="{ type: 'stash-starter' }">
+          {{ 'billing.upgrade' | translate }}
+        </pa-button>
+        <div
+          *ngIf="(accountType | async) === 'stash-starter'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+        </div>
+      </th>
+      <th class="plan">
+        <div class="plan-name">Growth</div>
+        <div class="price">
+          <span class="unit">{{ 'billing.already_available' | translate }}</span>
+        </div>
+        <pa-button
+          *ngIf="(accountType | async) !== 'stash-growth'"
+          (click)="contact()">
+          {{ 'billing.contact' | translate }}
+        </pa-button>
+        <div
+          *ngIf="(accountType | async) === 'stash-growth'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+        </div>
+      </th>
+      <th class="plan">
+        <div class="plan-name">Enterprise</div>
+        <div class="price">
+          <span class="unit">{{ 'billing.enterprise_ready' | translate }}</span>
+        </div>
+        <pa-button
+          *ngIf="(accountType | async) !== 'stash-enterprise'"
+          (click)="contact()">
+          {{ 'billing.contact' | translate }}
+        </pa-button>
+        <div
+          *ngIf="(accountType | async) === 'stash-enterprise'"
+          class="subscribed">
+          <pa-icon name="check"></pa-icon>
+        </div>
+      </th>
+    </tr>
+    <tr class="section-header">
+      <td class="title-m">{{ 'billing.quotas.ingestion' | translate }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.kbs' | translate }}</td>
+      <td>{{ defaults['stash-trial'].max_kbs }}</td>
+      <td>{{ defaults['stash-starter'].max_kbs }}</td>
+      <td>{{ defaults['stash-growth'].max_kbs }}</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.paragraphs_processed' | translate }} *</td>
+      <td>
+        <div>{{ defaults['stash-trial'].monthly_limit_paragraphs_processed | number }}</div>
+        <div class="unit">
+          {{ 'billing.quotas.files-up-to' | translate }}
+          {{ defaults['stash-trial'].upload_limit_max_non_media_file_size | size }}
+        </div>
+      </td>
+      <td>
+        <div>{{ (prices | async)?.['stash-starter'].usage['paragraphs_processed'].threshold | number }}</div>
+        <div class="unit">
+          {{ 'billing.quotas.files-up-to' | translate }}
+          {{ defaults['stash-starter'].upload_limit_max_non_media_file_size | size }}
+        </div>
+      </td>
+      <td>
+        <div>{{ (prices | async)?.['stash-growth'].usage['paragraphs_processed'].threshold | number }}</div>
+        <div class="unit">
+          {{ 'billing.quotas.files-up-to' | translate }}
+          {{ defaults['stash-growth'].upload_limit_max_non_media_file_size | size }}
+        </div>
+      </td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.media' | translate }}</td>
+      <td>
+        <div *ngIf="defaults['stash-trial'].monthly_limit_media_seconds_processed / 3600 as hours">
+          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
+        </div>
+        <div class="unit">
+          {{ 'billing.quotas.files-up-to' | translate }}
+          {{ defaults['stash-trial'].upload_limit_max_media_file_size | size }}
+        </div>
+      </td>
+      <td>
+        <div *ngIf="(prices | async)?.['stash-starter'].usage['media'].threshold as hours">
+          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
+        </div>
+        <div class="unit">
+          {{ 'billing.quotas.files-up-to' | translate }}
+          {{ defaults['stash-starter'].upload_limit_max_media_file_size | size }}
+        </div>
+      </td>
+      <td>
+        <div *ngIf="(prices | async)?.['stash-growth'].usage['media'].threshold as hours">
+          {{ hours }} {{ (hours === 1 ? 'billing.hour' : 'billing.hours') | translate }}
+        </div>
+        <div class="unit">
+          {{ 'billing.quotas.files-up-to' | translate }}
+          {{ defaults['stash-growth'].upload_limit_max_media_file_size | size }}
+        </div>
+      </td>
+      <td>-</td>
+    </tr>
+    <tr class="section-header">
+      <td class="title-m">{{ 'billing.quotas.search_inference' | translate }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.searches' | translate }}</td>
+      <td>
+        <div>{{ defaults['stash-trial'].monthly_limit_hosted_searches_performed | number }}</div>
+      </td>
+      <td>
+        <div>{{ (prices | async)?.['stash-starter'].usage['searches'].threshold | number }}</div>
+      </td>
+      <td>
+        <div>{{ (prices | async)?.['stash-growth'].usage['searches'].threshold | number }}</div>
+      </td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.generative' | translate }}</td>
+      <td>
+        <div>{{ defaults['stash-trial'].monthly_limit_hosted_answers_generated | number }}</div>
+      </td>
+      <td>
+        <div>{{ (prices | async)?.['stash-starter'].usage['generative'].threshold | number }}</div>
+      </td>
+      <td>
+        <div>{{ (prices | async)?.['stash-growth'].usage['generative'].threshold | number }}</div>
+      </td>
+      <td>-</td>
+    </tr>
+    <tr class="section-header">
+      <td class="title-m">{{ 'billing.quotas.storage' | translate }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.paragraphs' | translate }}</td>
+      <td>
+        {{ 'billing.quotas.up-to' | translate }}
+        {{ defaults['stash-trial'].monthly_limit_paragraphs_stored | number }}
+      </td>
+      <td>
+        {{ 'billing.quotas.up-to' | translate }}
+        {{ (prices | async)?.['stash-starter'].usage['paragraphs'].threshold | number }} **
+      </td>
+      <td>
+        {{ 'billing.quotas.up-to' | translate }}
+        {{ (prices | async)?.['stash-growth'].usage['paragraphs'].threshold | number }} **
+      </td>
+      <td>-</td>
+    </tr>
+    <tr class="section-header">
+      <td class="title-m">{{ 'billing.quotas.train' | translate }}</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>{{ 'billing.quotas.training' | translate }}</td>
+      <td>
+        <div>–</div>
+      </td>
+      <td>
+        <div>
+          {{ (prices | async)?.['stash-starter'].usage['training'].threshold | number }} {{ 'hours' | translate }}
+        </div>
+      </td>
+      <td>
+        <div>
+          {{ (prices | async)?.['stash-growth'].usage['training'].threshold | number }} {{ 'hours' | translate }}
+        </div>
+      </td>
+      <td>-</td>
+    </tr>
+  </table>
+  <div class="notes">
+    <div>* {{ 'billing.paragraphs_per_file' | translate }}</div>
+    <div
+      *ngIf="
+        (prices | async)?.['stash-starter'].usage['paragraphs'].price | currency: currency : 'symbol' : '1.2-6' as price
+      ">
+      ** {{ 'billing.extra_paragraphs_cost' | translate: { price } }}
     </div>
-  </ng-container>
+  </div>
 
   <div>
     <h2>{{ 'billing.cost_over_limits' | translate }}</h2>

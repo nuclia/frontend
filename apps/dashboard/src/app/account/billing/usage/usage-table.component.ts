@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { AccountUsage, InvoiceItem, UsageType } from '../billing.models';
 import { STFTrackingService } from '@flaps/core';
-import { combineLatest, map, Observable, ReplaySubject } from 'rxjs';
+import { map, Observable, ReplaySubject } from 'rxjs';
 
 @Component({
   selector: 'app-usage-table',
@@ -10,7 +10,6 @@ import { combineLatest, map, Observable, ReplaySubject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UsageTableComponent {
-  paramsToShowDeprecated = ['media', 'paragraphs', 'searches', 'qa', 'training'];
   paramsToShow: UsageType[] = [
     'media',
     'paragraphs_processed',
@@ -29,14 +28,13 @@ export class UsageTableComponent {
   }
 
   usageData = new ReplaySubject<AccountUsage>();
-  showNewTiers = this.tracking.isFeatureEnabled('new-tiers');
   total = this.usageData.pipe(map((usage) => usage.over_cost));
-  invoiceItems: Observable<[string, InvoiceItem][]> = combineLatest([this.usageData, this.showNewTiers]).pipe(
-    map(([usage, showNewTiers]) => {
-      const params = showNewTiers ? this.paramsToShow : this.paramsToShowDeprecated;
+  invoiceItems: Observable<[string, InvoiceItem][]> = this.usageData.pipe(
+    map((usage) => {
+      const params = this.paramsToShow;
       return Object.entries(usage.invoice_items)
-        .filter(([type]) => params.includes(type))
-        .sort(([type1], [type2]) => params.indexOf(type1) - params.indexOf(type2));
+        .filter(([type]) => params.includes(type as UsageType))
+        .sort(([type1], [type2]) => params.indexOf(type1 as UsageType) - params.indexOf(type2 as UsageType));
     }),
   );
 
