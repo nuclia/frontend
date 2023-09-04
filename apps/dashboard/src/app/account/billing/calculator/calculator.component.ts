@@ -60,8 +60,6 @@ export class CalculatorComponent {
 
   total = this.calculateTotal();
   isSpain = this.billing.country.pipe(map((country) => country === 'ES'));
-  // Used to define the types of all template parameters
-  typeToken: UsageType = 'generative';
 
   constructor(
     public modal: ModalRef<CalculatorModalData>,
