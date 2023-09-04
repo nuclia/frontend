@@ -203,7 +203,7 @@
 	"billing.quotas.generative": "Generative answer",
 	"billing.quotas.ingestion": "Ingestion",
 	"billing.quotas.kbs": "Number of knowledge boxes",
-	"billing.quotas.media": "Video & audio indexing ",
+	"billing.quotas.media": "Video & audio indexing",
 	"billing.quotas.paragraphs": "Paragraph stored",
 	"billing.quotas.paragraphs_processed": "Number of paragraph",
 	"billing.quotas.predict": "Predicts",
