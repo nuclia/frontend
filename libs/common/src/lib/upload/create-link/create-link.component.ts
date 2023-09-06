@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SDKService, STFTrackingService } from '@flaps/core';
 import { Classification } from '@nuclia/core';
-import { Observable, of, switchMap } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { SisToastService } from '@nuclia/sistema';
 import { IErrorMessages, ModalRef } from '@guillotinaweb/pastanaga-angular';
 import { UploadService } from '../upload.service';
@@ -53,20 +53,21 @@ export class CreateLinkComponent {
     if (this.linkForm.valid) {
       this.pending = true;
       this.cdr?.markForCheck();
-      let obs: Observable<{ uuid: string }>;
+      let obs: Observable<{ errors: number }>;
       if (this.linkForm.value.type === 'multiple') {
         this.tracking.logEvent('multiple_links_upload');
         const links: string[] = (this.linkForm.value.links || '')
           .split('\n')
           .map((link: string) => link.trim())
           .filter((link: string) => !!link);
-        obs = links.reduce(
-          (acc, curr) => acc.pipe(switchMap(() => this.uploadService.createLinkResource(curr, this.selectedLabels))),
-          of({ uuid: '' }),
+        obs = this.uploadService.bulkUpload(
+          links.map((link) => this.uploadService.createLinkResource(link, this.selectedLabels)),
         );
       } else if (this.linkForm.value.type === 'one') {
         this.tracking.logEvent('link_upload');
-        obs = this.uploadService.createLinkResource(this.linkForm.value.link || '', this.selectedLabels);
+        obs = this.uploadService.bulkUpload([
+          this.uploadService.createLinkResource(this.linkForm.value.link || '', this.selectedLabels),
+        ]);
       } else {
         this.tracking.logEvent('link_upload_from_csv');
         const allLabels = this.csv.reduce((acc, curr) => acc.concat(curr.labels), [] as Classification[]);
@@ -74,23 +75,20 @@ export class CreateLinkComponent {
           .createMissingLabels(allLabels)
           .pipe(
             switchMap(() =>
-              this.csv.reduce(
-                (acc, curr) => acc.pipe(switchMap(() => this.uploadService.createLinkResource(curr.link, curr.labels))),
-                of({ uuid: '' }),
+              this.uploadService.bulkUpload(
+                this.csv.map((link) => this.uploadService.createLinkResource(link.link, link.labels)),
               ),
             ),
           );
       }
-      obs.subscribe({
-        next: () => {
+      obs.subscribe((res) => {
+        this.sdk.refreshCounter();
+        if (res.errors === 0) {
           this.modal.close();
-          this.sdk.refreshCounter();
-        },
-        error: () => {
+        } else {
           this.pending = false;
           this.cdr?.markForCheck();
-          this.toaster.error('link.create.error');
-        },
+        }
       });
     }
   }

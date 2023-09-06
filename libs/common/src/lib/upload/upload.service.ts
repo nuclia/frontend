@@ -16,11 +16,14 @@ import {
 import { LabelsService } from '../label/labels.service';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
   concatMap,
   filter,
   forkJoin,
+  from,
   map,
+  mergeMap,
   Observable,
   of,
   ReplaySubject,
@@ -28,6 +31,7 @@ import {
   switchMap,
   take,
   timer,
+  toArray,
 } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { SisToastService } from '@nuclia/sistema';
@@ -154,14 +158,12 @@ export class UploadService {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
-        kb
-          .createLinkResource(
-            { uri },
-            { classifications },
-            true,
-            REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
-          )
-          .pipe(tap(() => this.onUploadComplete(true, kb.id))),
+        kb.createLinkResource(
+          { uri },
+          { classifications },
+          true,
+          REGEX_YOUTUBE_URL.test(uri) ? undefined : { url: uri },
+        ),
       ),
     );
   }
@@ -225,6 +227,27 @@ export class UploadService {
           })
           .pipe(tap(() => this.onUploadComplete(true, kb.id))),
       ),
+    );
+  }
+
+  bulkUpload(uploads: Observable<any>[]): Observable<{ errors: number }> {
+    let errors = 0;
+    uploads = uploads.map((upload) =>
+      upload.pipe(
+        catchError(() => {
+          errors += 1;
+          return of(null);
+        }),
+      ),
+    );
+    return from(uploads).pipe(
+      mergeMap((obs) => obs, 6),
+      toArray(),
+      switchMap(() => this.sdk.currentKb.pipe(take(1))),
+      tap((kb) => {
+        this.onUploadComplete(errors === 0, kb.id);
+      }),
+      map(() => ({ errors })),
     );
   }
 

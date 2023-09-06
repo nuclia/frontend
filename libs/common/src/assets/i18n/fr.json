@@ -432,7 +432,6 @@
 	"language.ru": "Russe",
 	"language.sv": "Suédois",
 	"language.tr": "Turc",
-	"link.create.error": "Erreur lors du téléchargement du lien",
 	"modal.create_link.csv_file": "Fichier CSV",
 	"modal.create_link.input": "Tapez ou collez le lien",
 	"modal.create_link.multiple": "Liens multiples",
