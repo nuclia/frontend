@@ -423,7 +423,9 @@ export function getSortedResults(resources: Search.FindResource[]): TypedResult[
   }
 
   const keyList: string[] = [];
-  return resources.reduce((resultList, resource) => {
+  return resources
+    .filter(resource => !!resource.origin?.url)
+    .reduce((resultList, resource) => {
     const fieldCount = Object.keys(resource.fields).length;
     const fieldEntries: TypedResult[] = Object.entries(resource.fields)
       .filter(([fullFieldId]) => {

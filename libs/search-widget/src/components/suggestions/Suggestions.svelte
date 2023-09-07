@@ -1,88 +1,23 @@
 <script lang="ts">
-  import type { Classification, IResource, ResourceField, Search } from '@nuclia/core';
+  import type { Search } from '@nuclia/core';
   import { ResourceProperties } from '@nuclia/core';
-  import Label from '../../common/label/Label.svelte';
-  import Chip from '../../common/chip/Chip.svelte';
-  import { combineLatest, iif, map, of, switchMap, take, tap } from 'rxjs';
-  import {
-      _,
-      addLabelFilter,
-      getFieldDataFromResource,
-      getFirstResourceField,
-      getNavigationUrl,
-      getResourceById, getResultType,
-      goToUrl,
-      navigateToFile,
-      navigateToLink,
-      NO_SUGGESTION_RESULTS,
-      suggestEntities,
-      suggestionError,
-      suggestions,
-      suggestionsHasError,
-      typeAhead, TypedResult,
-      viewerData
-  } from '../../core';
-  import { createEventDispatcher } from 'svelte';
+  import { _, getResourceById, goToUrl, suggestionError, suggestionsHasError } from '../../core';
 
   export let paragraphs: Search.Paragraph[] = [];
-  export let entities: string[] = [];
-  export let labels: Classification[] = [];
-
-  const dispatch = createEventDispatcher();
-  const search = (query) => {
-    typeAhead.set(query);
-    suggestions.set({ results: NO_SUGGESTION_RESULTS });
-    dispatch('search');
-  };
 
   const goToResource = (paragraph: Search.Paragraph) => {
     getResourceById(paragraph.rid, [ResourceProperties.BASIC, ResourceProperties.ORIGIN, ResourceProperties.VALUES])
-      .pipe(
-        switchMap((resource) => {
-          const firstResourceField = getFirstResourceField(resource);
-          return combineLatest([navigateToFile, navigateToLink]).pipe(
-            take(1),
-            switchMap(([navigateToFile, navigateToLink]) => iif(
-              () => (navigateToFile || navigateToLink) && !!firstResourceField,
-              getNavigationUrl(
-                navigateToFile,
-                navigateToLink,
-                resource,
-                firstResourceField as ResourceField
-              ),
-              of(false)
-            )),
-            map((url) => ({ url, resource }))
-          ).pipe(
-            tap(({ url, resource }) => {
-              if (url) {
-                goToUrl(url);
-              } else {
-                openViewer(resource, firstResourceField);
-              }
-              suggestions.set({ results: NO_SUGGESTION_RESULTS });
-            })
-          );
-        })
-      ).subscribe();
+      .subscribe(resource => {
+        if (resource.origin?.url) {
+          goToUrl(resource.origin.url);
+        } else if (resource.data?.links?.link?.value?.uri) {
+          goToUrl(resource.data?.links.link.value.uri);
+        } else {
+          console.log(resource.data);
+        }
+      });
   };
 
-  function openViewer(resource: IResource, field?: ResourceField) {
-    if (field) {
-      const fieldData = getFieldDataFromResource(resource, field);
-      const {resultType, resultIcon} = getResultType({...resource, field, fieldData });
-      const result: TypedResult = {
-          ...resource,
-          resultType,
-          resultIcon,
-          field: {field_id: field.field_id, field_type: field.field_type},
-      };
-      viewerData.set({
-        result,
-        selectedParagraphIndex: -1,
-      });
-    }
-  }
 </script>
 
 <div class="sw-suggestions">
@@ -95,41 +30,8 @@
       {/if}
     </div>
   {:else}
-    {#if labels.length > 0}
-      <section>
-        <h3>{$_('suggest.intents')}</h3>
-        <ul class="intents">
-          {#each labels as label}
-            <li>
-              <Label
-                {label}
-                clickable
-                on:click={() => addLabelFilter(label, [])} />
-            </li>
-          {/each}
-        </ul>
-      </section>
-    {/if}
-    {#if entities.length > 0 && $suggestEntities}
-      <section>
-        <h3>{$_('suggest.entities')}</h3>
-        <ul class="entities">
-          {#each entities.slice(0, 4) as entity}
-            <li>
-              <Chip
-                color="var(--color-neutral-lightest)"
-                clickable
-                on:click={() => search(entity)}>
-                {entity}
-              </Chip>
-            </li>
-          {/each}
-        </ul>
-      </section>
-    {/if}
     {#if paragraphs.length > 0}
       <section>
-        <h3>{$_('suggest.titles')}</h3>
         <div>
           {#each paragraphs.slice(0, 4) as paragraph}
             <div

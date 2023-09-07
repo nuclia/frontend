@@ -4,6 +4,11 @@
   --expanded-paragraph-height: 0px;
 
   display: flex;
+  padding: var(--rhythm-1) var(--rhythm-3);
+
+  .link-origin {
+    text-decoration: none;
+  }
 
   .thumbnail-container {
     position: relative;
@@ -63,5 +68,11 @@
         cursor: pointer;
       }
     }
+  }
+}
+
+@media (hover: hover) {
+  .sw-result-row:hover {
+    background: var(--hover-background-color);
   }
 }

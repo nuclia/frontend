@@ -1,7 +1,7 @@
 @import '_common-modal.scss';
 
 .sw-modal-backdrop {
-  --modal-width: 100vw;
+  --modal-width: calc(100vw - var(--side-spacing)*2);
 
   &.popup .modal .modal-content {
     box-shadow: var(--shadow-modal);
@@ -9,7 +9,8 @@
 
   &.popup .modal {
     position: fixed;
-    left: 0;
+    left: var(--side-spacing);
+    right: var(--side-spacing);
     top: var(--popup-top);
     transform: none;
     width: var(--modal-width);

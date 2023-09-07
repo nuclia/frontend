@@ -1,7 +1,5 @@
 .sw-initial-answer {
-  border: 1px solid var(--color-neutral-light);
-  border-radius: var(--rhythm-2);
-  margin-bottom: var(--rhythm-1);
+  border-bottom: 1px solid var(--color-neutral-light);
   padding: var(--rhythm-2) var(--rhythm-3);
   position: relative;
 
@@ -18,39 +16,9 @@
   }
 
   .actions {
-    .go-to-chat {
-      align-items: center;
-      display: flex;
-      gap: var(--rhythm-1);
-    }
+    margin-top: var(--rhythm-1);
     .feedback {
-      display: none;
-    }
-  }
-}
-@media (max-width: 600px) {
-  .sw-initial-answer .actions {
-    text-align: right;
-  }
-}
-
-@media (min-width: 599px) {
-  .sw-initial-answer {
-    min-height: var(--rhythm-8);
-
-    .answer {
-      max-width: calc(100% - var(--rhythm-27));
-    }
-    .actions {
-      position: absolute;
-      right: var(--rhythm-4);
-      text-align: right;
-      width: var(--rhythm-27);
-      .feedback {
-        display: flex;
-        align-items: center;
-        justify-content: end;
-      }
+      gap: var(--rhythm-1);
     }
   }
 }

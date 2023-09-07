@@ -26,12 +26,15 @@
     aspect="basic"
     icon="smiley-happy"
     active={isGood}
+    size="small"
     kind={isGood ? 'primary' : 'secondary'}
     on:click={() => send(true)} />
+  
   <IconButton
     aspect="basic"
     icon="smiley-sad"
     active={isBad}
+    size="small"
     kind={isBad ? 'primary' : 'secondary'}
     on:click={() => send(false)} />
 {/if}

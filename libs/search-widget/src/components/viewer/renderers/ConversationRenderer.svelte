@@ -2,8 +2,14 @@
   import { onDestroy } from 'svelte';
   import { combineLatest, filter, interval, map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
   import { fieldData, fieldFullId, selectedParagraph } from '../../../core';
-  import type { ConversationFieldData } from '@nuclia/core';
-  import { FieldFullId, longToShortFieldType, Message, Paragraph, Search } from '@nuclia/core';
+  import type {
+    ConversationFieldData,
+    FieldFullId,
+    longToShortFieldType,
+    Message,
+    Paragraph,
+    Search,
+  } from '@nuclia/core';
   import { lightFormat } from 'date-fns';
   import { HtmlRendering, MarkdownRendering, PlainTextRendering, RstRendering } from './renderings';
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { TypedResult, ViewerState, WidgetAction } from '../../core';
   import {
     _,
     fieldFullId,
@@ -28,11 +29,8 @@
     selectNext,
     selectPrevious,
     transcripts,
-    TypedResult,
     viewerData,
     viewerState,
-    ViewerState,
-    WidgetAction,
   } from '../../core';
   import {
     DocTypeIndicator,
@@ -46,7 +44,7 @@
     unblockBackground,
   } from '../../common';
   import { onDestroy, onMount } from 'svelte';
-  import { FIELD_TYPE, FieldFullId, FieldMetadata, Search, SearchOptions } from '@nuclia/core';
+  import type { FIELD_TYPE, FieldFullId, FieldMetadata, Search, SearchOptions } from '@nuclia/core';
   import { BehaviorSubject, debounceTime, filter, map, Subject, switchMap, take, takeUntil } from 'rxjs';
   import { MetadataContainer, SearchResultNavigator, ViewerContent } from './';
   import { D3Loader, KnowledgeGraphPanel } from '../knowledge-graph';

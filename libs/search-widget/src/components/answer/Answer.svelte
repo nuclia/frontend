@@ -8,6 +8,7 @@
   import { isMobileViewport } from '../../common/utils';
   import ResultRow from '../result-row/ResultRow.svelte';
   import { hideSources } from '../../core/stores/widget.store';
+
   export let answer: Partial<Chat.Answer>;
   export let rank = 0;
   export let hideFeedback = false;
@@ -32,9 +33,6 @@
     {/if}
   </div>
   {#if answer.sources && !notEnoughData}
-    <div class="feedback">
-      <Feedback {rank} />
-    </div>
     {#if !$hideSources}
       <Expander on:toggleExpander>
         <h3
