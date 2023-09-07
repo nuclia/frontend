@@ -21,19 +21,9 @@
     z-index: 1;
   }
 
-  .table-row-action,
-  .table-row-actions {
+  .table-row-action {
     opacity: 0;
     transition: opacity $transition-hint;
-  }
-
-  .table-row-actions {
-    display: flex;
-    gap: rhythm(1);
-
-    &.stay-visible {
-      opacity: 1;
-    }
   }
 
   .duplicate-list {
@@ -44,23 +34,6 @@
       align-items: center;
       display: flex;
       gap: rhythm(0.5);
-    }
-  }
-
-  .duplicate-of-popup {
-    display: flex;
-    flex-direction: column;
-
-    .entity-input {
-      border: none;
-      border-bottom: 1px solid $color-neutral-regular;
-      margin-bottom: rhythm(1);
-    }
-
-    .suggested-entities {
-      list-style: none;
-      margin: 0;
-      padding: 0;
     }
   }
 }

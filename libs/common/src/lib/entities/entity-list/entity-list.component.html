@@ -1,7 +1,7 @@
 <div
   #listContainer
   class="ner-list-container">
-  <pa-table columns="96px 1fr 3fr">
+  <pa-table columns="32px 1fr 3fr">
     <pa-table-header>
       <pa-table-row>
         <pa-table-cell header><div class="whitespace"></div></pa-table-cell>
@@ -9,64 +9,12 @@
         <pa-table-cell header>{{ 'ner-list.duplicates' | translate }}</pa-table-cell>
       </pa-table-row>
     </pa-table-header>
-
-    <pa-table-row
-      *ngFor="let ner of entities; trackBy: trackByValue"
-      [clickable]="deletedNer !== ner.value"
-      [disabled]="deletedNer === ner.value">
+    <pa-table-row *ngFor="let ner of entities; trackBy: trackByValue">
       <pa-table-cell>
-        <div
-          *ngIf="(isAdminOrContrib | async) === true"
-          class="table-row-actions"
-          [class.stay-visible]="duplicatedEntity?.value === ner.value">
-          <pa-button
-            icon="trash"
-            kind="destructive"
-            aspect="basic"
-            iconSize="small"
-            size="small"
-            paTooltip="ner-list.delete-entity-tooltip"
-            [disabled]="deletedNer === ner.value"
-            (click)="deleteEntity(ner)">
-            {{ 'ner-list.add-duplicate-tooltip' | translate }}
-          </pa-button>
-          <pa-button
-            icon="arrows-related"
-            aspect="basic"
-            iconSize="small"
-            size="small"
-            paTooltip="ner-list.add-duplicate-tooltip"
-            [paPopup]="duplicateOf"
-            [disabled]="deletedNer === ner.value">
-            {{ 'ner-list.add-duplicate-tooltip' | translate }}
-          </pa-button>
-          <pa-popup
-            #duplicateOf
-            (onClose)="duplicatedEntity = undefined"
-            (onOpen)="openDuplicatesOfPopup(ner)">
-            <div class="duplicate-of-popup">
-              <label
-                for="entityInput"
-                class="body-xs">
-                {{ 'ner-list.duplicates-of' | translate }}
-              </label>
-              <input
-                #entityInput
-                id="entityInput"
-                class="entity-input"
-                paFocusable
-                (keyup)="getMatchingEntities($event)" />
-              <ul class="suggested-entities">
-                <pa-option
-                  *ngFor="let entity of matchingEntities"
-                  [value]="entity.value"
-                  (selectOption)="addDuplicateOf(entity)">
-                  {{ entity.value }}
-                </pa-option>
-              </ul>
-            </div>
-          </pa-popup>
-        </div>
+        <pa-checkbox
+          [disabled]="(isAdminOrContrib | async) === false"
+          [value]="selection.includes(ner.value)"
+          (change)="toggleSelection(ner.value)"></pa-checkbox>
       </pa-table-cell>
       <pa-table-cell>
         {{ ner.value }}
@@ -76,6 +24,7 @@
           <div
             *ngFor="let duplicate of ner.represents"
             class="duplicate-item">
+            {{ duplicate }}
             <pa-button
               *ngIf="(isAdminOrContrib | async) === true"
               class="table-row-action"
@@ -87,7 +36,6 @@
               (click)="removeDuplicate(ner, duplicate)">
               {{ 'ner-list.remove-duplicate-tooltip' | translate }}
             </pa-button>
-            {{ duplicate }}
           </div>
         </div>
       </pa-table-cell>

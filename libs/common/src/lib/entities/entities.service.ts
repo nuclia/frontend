@@ -97,30 +97,34 @@ export class EntitiesService {
     );
   }
 
-  addDuplicate(groupId: string, duplicatedEntity: Entity, mainEntity: Entity): Observable<Entities> {
-    if (!mainEntity.represents) {
-      mainEntity.represents = [duplicatedEntity.value];
-    } else if (!mainEntity.represents.includes(duplicatedEntity.value)) {
-      mainEntity.represents.push(duplicatedEntity.value);
+  addDuplicate(groupId: string, duplicatedEntities: Entity[], mainEntity: Entity): Observable<Entities> {
+    const allValues = duplicatedEntities.map((entity) => entity.value);
+    if (mainEntity.represents) {
+      allValues.push(...mainEntity.represents);
     }
-
     // if duplicated entity has duplicates, add them too
-    duplicatedEntity.represents?.forEach((duplicate) => mainEntity.represents?.push(duplicate));
+    duplicatedEntities.forEach((entity) => {
+      if (entity.represents) {
+        allValues.push(...entity.represents);
+      }
+    });
+    // make all values unique
+    mainEntity.represents = [...new Set(allValues)];
 
     // Mark duplicated entity as merged
-    duplicatedEntity.merged = true;
-    duplicatedEntity.represents = [];
+    duplicatedEntities = duplicatedEntities.map((entity) => ({ ...entity, merged: true, represents: [] }));
 
+    const update = { [mainEntity.value]: mainEntity };
+    duplicatedEntities.forEach((entity) => {
+      update[entity.value] = entity;
+    });
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb
           .updateEntitiesGroup(groupId, {
             add: {},
-            update: {
-              [mainEntity.value]: mainEntity,
-              [duplicatedEntity.value]: duplicatedEntity,
-            },
+            update,
             delete: [],
           })
           .pipe(switchMap(() => this._refreshEntities(kb))),
@@ -155,12 +159,12 @@ export class EntitiesService {
     );
   }
 
-  deleteEntity(groupId: string, entityId: string): Observable<Entities> {
+  deleteEntities(groupId: string, entities: Entity[]): Observable<Entities> {
     return this.sdk.currentKb.pipe(
       take(1),
       switchMap((kb) =>
         kb
-          .updateEntitiesGroup(groupId, { add: {}, update: {}, delete: [entityId] })
+          .updateEntitiesGroup(groupId, { add: {}, update: {}, delete: entities.map((entity) => entity.value) })
           .pipe(switchMap(() => this._refreshEntities(kb))),
       ),
     );
@@ -179,10 +183,13 @@ export class EntitiesService {
   }
 
   private formatEntitiesToAdd(entities: string[]): { [key: string]: Entity } {
-    return entities.reduce((map, family) => {
-      const familyId = family.trim();
-      map[familyId] = { value: familyId };
-      return map;
-    }, {} as { [key: string]: Entity });
+    return entities.reduce(
+      (map, family) => {
+        const familyId = family.trim();
+        map[familyId] = { value: familyId };
+        return map;
+      },
+      {} as { [key: string]: Entity },
+    );
   }
 }

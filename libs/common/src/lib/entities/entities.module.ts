@@ -16,6 +16,7 @@ import {
   PaPopupModule,
   PaTableModule,
   PaTextFieldModule,
+  PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
@@ -41,6 +42,7 @@ import { SisProgressModule } from '@nuclia/sistema';
     PaTableModule,
     PaPopupModule,
     PaFocusableModule,
+    PaTogglesModule,
   ],
   declarations: [EntitiesComponent, EntityListComponent, AddNerDialogComponent, NerFamilyDialogComponent],
   exports: [],
