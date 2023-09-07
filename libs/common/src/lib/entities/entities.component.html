@@ -89,7 +89,7 @@
           </pa-button>
           <pa-popup
             #duplicateOf
-            (onClose)="selectedNer = []"
+            (onClose)="selectEntities([])"
             (onOpen)="openDuplicatesOfPopup()">
             <div class="duplicate-of-popup">
               <label
