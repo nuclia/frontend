@@ -461,7 +461,7 @@
 	"ner-family-toolbar.add-button": "Afegeix NER a la família",
 	"ner-family-toolbar.edit-button": "Edita la família NER",
 	"ner-family-toolbar.remove-button": "Suprimeix la família NER",
-	"ner-list.add-duplicate-tooltip": "Marca com a duplicat de",
+	"ner-list.add-duplicate-tooltip": "Marca NER seleccionat com a duplicat de",
 	"ner-list.delete-entity-tooltip": "Suprimeix el NER seleccionat",
 	"ner-list.duplicates": "Duplicats",
 	"ner-list.duplicates-of": "Duplicats de",

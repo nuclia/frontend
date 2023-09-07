@@ -457,7 +457,7 @@
 	"ner-family-toolbar.add-button": "Ajouter NER à la famille",
 	"ner-family-toolbar.edit-button": "Modifier la famille NER",
 	"ner-family-toolbar.remove-button": "Supprimer la famille NER",
-	"ner-list.add-duplicate-tooltip": "Marquer comme doublons de",
+	"ner-list.add-duplicate-tooltip": "Marquer le NER sélectionné comme double de",
 	"ner-list.delete-entity-tooltip": "Supprimer le NER sélectionné",
 	"ner-list.duplicates": "Doublons",
 	"ner-list.duplicates-of": "Doublons de",
