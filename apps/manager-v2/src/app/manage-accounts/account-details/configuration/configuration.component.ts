@@ -19,6 +19,7 @@ export class ConfigurationComponent implements OnInit, OnDestroy {
   private accountBackup?: ExtendedAccount;
 
   configForm = new FormGroup({
+    slug: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
     type: new FormControl<AccountTypes>('stash-trial', { nonNullable: true, validators: [Validators.required] }),
     kbs: new FormGroup({
