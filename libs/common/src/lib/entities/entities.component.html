@@ -28,7 +28,29 @@
           <div class="family-name">
             {{ family.title }}
           </div>
-          <pa-icon name="chevron-right"></pa-icon>
+          <div class="family-actions">
+            <pa-button
+              *ngIf="family.key === selectedFamily?.key && selectedFamily?.custom"
+              aspect="basic"
+              size="small"
+              iconSize="small"
+              icon="edit"
+              paTooltip="ner-family-toolbar.edit-button"
+              (click)="updateFamily()">
+              {{ 'ner-family-toolbar.edit-button' | translate }}
+            </pa-button>
+            <pa-button
+              *ngIf="family.key === selectedFamily?.key"
+              aspect="basic"
+              size="small"
+              iconSize="small"
+              icon="trash"
+              kind="destructive"
+              paTooltip="ner-family-toolbar.remove-button"
+              (click)="removeFamily()">
+              {{ 'ner-family-toolbar.remove-button' | translate }}
+            </pa-button>
+          </div>
         </li>
       </ul>
     </div>
@@ -49,25 +71,55 @@
             {{ 'ner-family-toolbar.add-button' | translate }}
           </pa-button>
           <pa-button
-            *ngIf="selectedFamily.custom"
-            aspect="basic"
-            icon="edit"
-            paTooltip="ner-family-toolbar.edit-button"
-            (click)="updateFamily()">
-            {{ 'ner-family-toolbar.edit-button' | translate }}
-          </pa-button>
-          <pa-button
-            aspect="basic"
             icon="trash"
             kind="destructive"
-            paTooltip="ner-family-toolbar.remove-button"
-            (click)="removeFamily()">
-            {{ 'ner-family-toolbar.remove-button' | translate }}
+            aspect="basic"
+            paTooltip="ner-list.delete-entity-tooltip"
+            [disabled]="selectedNer.length === 0"
+            (click)="deleteEntities()">
+            {{ 'ner-list.add-duplicate-tooltip' | translate }}
           </pa-button>
+          <pa-button
+            icon="arrows-related"
+            aspect="basic"
+            paTooltip="ner-list.add-duplicate-tooltip"
+            [paPopup]="duplicateOf"
+            [disabled]="selectedNer.length === 0">
+            {{ 'ner-list.add-duplicate-tooltip' | translate }}
+          </pa-button>
+          <pa-popup
+            #duplicateOf
+            (onClose)="selectedNer = []"
+            (onOpen)="openDuplicatesOfPopup()">
+            <div class="duplicate-of-popup">
+              <label
+                for="entityInput"
+                class="body-xs">
+                {{ 'ner-list.duplicates-of' | translate }}
+              </label>
+              <input
+                #entityInput
+                id="entityInput"
+                class="entity-input"
+                paFocusable
+                (keyup)="getMatchingEntities($event)" />
+              <ul class="suggested-entities">
+                <pa-option
+                  *ngFor="let entity of matchingEntities"
+                  [value]="entity.value"
+                  (selectOption)="addDuplicateOf(entity)">
+                  {{ entity.value }}
+                </pa-option>
+              </ul>
+            </div>
+          </pa-popup>
         </div>
       </div>
 
-      <app-entity-list [family]="selectedFamily"></app-entity-list>
+      <app-entity-list
+        [family]="selectedFamily"
+        [selection]="selectedIds"
+        (selectionChange)="selectEntities($event)"></app-entity-list>
     </div>
   </div>
 </div>

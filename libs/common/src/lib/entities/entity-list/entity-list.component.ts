@@ -3,9 +3,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnDestroy,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -37,18 +39,19 @@ export class EntityListComponent implements OnInit, OnDestroy {
       .sort((a, b) => a.value.localeCompare(b.value));
   }
 
+  @Input() selection: string[] = [];
+  @Output() selectionChange: EventEmitter<string[]> = new EventEmitter();
   @ViewChild('listContainer') listContainer?: ElementRef;
-  @ViewChild('entityInput') entityInput?: ElementRef;
 
   unsubscribeAll = new Subject<void>();
-  deletedNer?: string;
-  duplicatedEntity?: Entity;
-  matchingEntities: Entity[] = [];
   isAdminOrContrib = this.entitiesService.isAdminOrContrib;
 
   private _family: NerFamily | undefined;
 
-  constructor(private cdr: ChangeDetectorRef, private entitiesService: EntitiesService) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private entitiesService: EntitiesService,
+  ) {}
 
   ngOnInit(): void {}
 
@@ -61,41 +64,18 @@ export class EntityListComponent implements OnInit, OnDestroy {
     return ner.value;
   }
 
-  deleteEntity(ner: Entity) {
-    if (this.family) {
-      this.deletedNer = ner.value;
-      this.entitiesService.deleteEntity(this.family.key, ner.value).subscribe(() => (this.deletedNer = undefined));
-    }
-  }
-
-  openDuplicatesOfPopup(ner: Entity) {
-    this.duplicatedEntity = ner;
-    if (this.entityInput) {
-      const inputElement: HTMLInputElement = this.entityInput.nativeElement;
-      setTimeout(() => {
-        inputElement.focus();
-        this.cdr.markForCheck();
-      });
-    }
-  }
-
-  getMatchingEntities(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    if (value.length > 2) {
-      this.matchingEntities = this.entities.filter((entity) => entity.value.startsWith(value));
-    }
-  }
-  addDuplicateOf(entity: Entity) {
-    if (this.family && this.duplicatedEntity) {
-      this.entitiesService.addDuplicate(this.family.key, this.duplicatedEntity, entity).subscribe(() => {
-        this.duplicatedEntity = undefined;
-        this.matchingEntities = [];
-      });
-    }
-  }
   removeDuplicate(ner: Entity, duplicate: string) {
     if (this.family) {
-      this.entitiesService.removeDuplicate(this.family.key, ner, duplicate).subscribe();
+      this.entitiesService.removeDuplicate(this.family.key, ner, duplicate).subscribe(() => this.cdr.markForCheck());
     }
+  }
+
+  toggleSelection(ner: string) {
+    if (this.selection.includes(ner)) {
+      this.selection = this.selection.filter((id) => id !== ner);
+    } else {
+      this.selection = this.selection.concat([ner]);
+    }
+    this.selectionChange.emit(this.selection);
   }
 }

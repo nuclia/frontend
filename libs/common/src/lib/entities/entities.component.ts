@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
 import { Observable, switchMap, tap } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { Entities } from '@nuclia/core';
-import { generatedEntitiesColor, getNerFamilyTitle, NerFamily } from './model';
+import { Entity, generatedEntitiesColor, getNerFamilyTitle, NerFamily } from './model';
 import { EntitiesService } from './entities.service';
 import { NerFamilyDialogComponent } from './ner-family-dialog/ner-family-dialog.component';
 import { ModalConfig, ModalService } from '@guillotinaweb/pastanaga-angular';
@@ -16,6 +16,8 @@ import { AddNerDialogComponent } from './add-ner-dialog';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntitiesComponent {
+  @ViewChild('entityInput') entityInput?: ElementRef;
+
   familyColors = generatedEntitiesColor;
   nerFamilies: Observable<NerFamily[]> = this.entitiesService.entities.pipe(
     filter((entities): entities is Entities => !!entities),
@@ -33,6 +35,10 @@ export class EntitiesComponent {
   isAdminOrContrib = this.entitiesService.isAdminOrContrib;
 
   selectedFamily?: NerFamily;
+  selectedNer: Entity[] = [];
+  selectedIds: string[] = [];
+  matchingEntities: Entity[] = [];
+  duplicatedEntity?: Entity;
 
   constructor(
     private translate: TranslateService,
@@ -95,6 +101,51 @@ export class EntitiesComponent {
             this.cdr.markForCheck();
           },
         });
+    }
+  }
+
+  deleteEntities() {
+    if (this.selectedFamily && this.selectedNer.length > 0) {
+      this.entitiesService
+        .deleteEntities(this.selectedFamily.key, this.selectedNer)
+        .subscribe(() => this.selectEntities([]));
+    }
+  }
+
+  openDuplicatesOfPopup() {
+    if (this.entityInput) {
+      const inputElement: HTMLInputElement = this.entityInput.nativeElement;
+      setTimeout(() => {
+        inputElement.focus();
+        this.cdr.markForCheck();
+      });
+    }
+  }
+
+  getMatchingEntities(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    if (this.selectedFamily && value.length > 2) {
+      const entities = Object.values(this.selectedFamily.entities || {})
+        .filter((entity) => !entity.merged)
+        .sort((a, b) => a.value.localeCompare(b.value));
+      this.matchingEntities = entities.filter((entity) => entity.value.startsWith(value));
+    }
+  }
+
+  addDuplicateOf(entity: Entity) {
+    if (this.selectedFamily && this.selectedNer.length > 0) {
+      this.entitiesService.addDuplicate(this.selectedFamily.key, this.selectedNer, entity).subscribe(() => {
+        this.matchingEntities = [];
+        this.selectEntities([]);
+      });
+    }
+  }
+
+  selectEntities(ids: string[]) {
+    if (this.selectedFamily) {
+      this.selectedIds = ids;
+      this.selectedNer = Object.values(this.selectedFamily.entities).filter((entity) => ids.includes(entity.value));
+      this.cdr.markForCheck();
     }
   }
 
