@@ -68,12 +68,10 @@ export class UploadTextComponent {
       .createMissingLabels(allLabels)
       .pipe(
         switchMap(() =>
-          forkJoin(
+          this.uploadService.bulkUpload(
             this.csv.map((row) => this.uploadService.uploadTextResource(row.title, row.body, row.format, row.labels)),
           ),
         ),
-        switchMap(() => this.sdk.currentKb.pipe(take(1))),
-        tap((kb) => this.uploadService.onUploadComplete(true, kb.id)),
       )
       .subscribe(() => this.modal.close());
   }
