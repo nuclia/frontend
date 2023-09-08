@@ -218,6 +218,7 @@ export interface WidgetFeatures {
   entityAnnotation?: boolean;
   filter?: boolean;
   navigateToFile?: boolean;
+  targetNewTab?: boolean;
   navigateToLink?: boolean;
   notPublic?: boolean;
   permalink?: boolean;

@@ -797,6 +797,8 @@
 	"stash.widgets.suggestLabels.label": "Sugerir etiquetas",
 	"stash.widgets.synonyms.help": "Coincidencia de sinónimos en la búsqueda difusa. No se puede utilizar con la opción de relación.",
 	"stash.widgets.synonyms.label": "Coincidencia de sinónimos",
+	"stash.widgets.targetNewTab.help": "Abrir en una pestaña nueva",
+	"stash.widgets.targetNewTab.label": "Apuntar a nueva pestaña",
 	"stash.widgets.title": "Generador de widgets de búsqueda",
 	"stash.widgets.warning": "Para que el widget funcione correctamente, el cuadro de conocimiento <strong>debe ser público</strong>.",
 	"stash.widgets.warning-dangerous-snippet": "¡Zona peligrosa! Para que este widget funcione con un cuadro de conocimiento privado, debe proporcionar un token de API.",

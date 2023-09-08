@@ -797,6 +797,8 @@
 	"stash.widgets.suggestLabels.label": "Suggereix etiquetes",
 	"stash.widgets.synonyms.help": "Relaciona sinònims a la cerca difusa. No es pot utilitzar amb l'opció de relació.",
 	"stash.widgets.synonyms.label": "Coincidir amb sinònims",
+	"stash.widgets.targetNewTab.help": "Obre en una pestanya nova",
+	"stash.widgets.targetNewTab.label": "Orienta una pestanya nova",
 	"stash.widgets.title": "Generador de widgets de cerca",
 	"stash.widgets.warning": "Perquè el giny funcioni correctament, el quadre de coneixement <strong>ha de ser públic</strong>.",
 	"stash.widgets.warning-dangerous-snippet": "Zona perillosa! Perquè aquest giny funcioni amb una caixa de coneixement privada, cal que proporcioneu un testimoni d'API.",

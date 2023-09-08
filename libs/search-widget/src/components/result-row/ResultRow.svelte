@@ -12,13 +12,13 @@
     getCDN,
     getNavigationUrl, goToUrl, hideThumbnails,
     navigateToFile,
-    navigateToLink,
+    navigateToLink, targetNewTab,
     trackingEngagement,
     TypedResult,
     viewerData
   } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
-  import { combineLatest, of, switchMap, take } from 'rxjs';
+  import { combineLatest, map, of, switchMap, take } from 'rxjs';
   import { FieldMetadata } from './';
 
   export let result: TypedResult;
@@ -30,6 +30,7 @@
   let isPlayable = false;
   let innerWidth = window.innerWidth;
   let expandedParagraphHeight: string | undefined;
+  let metaKeyOn = false;
   $: isMobile = isMobileViewport(innerWidth);
   $: paragraphs = result.paragraphs || [];
   $: {
@@ -63,12 +64,16 @@
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
       const resourceField: ResourceField = {...result.field, ...result.fieldData};
-      combineLatest([navigateToFile, navigateToLink]).pipe(
+      combineLatest([navigateToFile, navigateToLink, targetNewTab]).pipe(
         take(1),
-        switchMap(([toFile, toLink]) => toFile || toLink ? getNavigationUrl(toFile, toLink, result, resourceField) : of(false))
-      ).subscribe(url => {
-        if (url) {
-          goToUrl(url as string, paragraph?.text);
+        map(features => features as boolean[]),
+        switchMap(([toFile, toLink, newTab]) => toFile || toLink
+        ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(map(url => url ? {url, newTab} : false))
+        : of(false))
+      ).subscribe((data) => {
+        if (data) {
+          const {url, newTab} = data as {url: string; newTab: boolean};
+          goToUrl(url, paragraph?.text, newTab||metaKeyOn);
         } else {
           viewerData.set({
             result,
@@ -78,9 +83,21 @@
       });
     }
   }
+
+  function onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Meta' || event.key === 'Control') {
+      metaKeyOn = true;
+    }
+  }
+
+  function onKeyUp(event: KeyboardEvent) {
+    if (event.key === 'Meta' || event.key === 'Control') {
+      metaKeyOn = false;
+    }
+  }
 </script>
 
-<svelte:window bind:innerWidth />
+<svelte:window bind:innerWidth on:keydown={onKeyDown} on:keyup={onKeyUp} />
 
 <div class="sw-result-row">
   <div class="thumbnail-container" hidden={$hideThumbnails}>
