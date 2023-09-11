@@ -51,6 +51,7 @@ import type { NerNode } from '../knowledge-graph.models';
 import { entities, entitiesState } from './entities.store';
 import { unsubscribeTriggerSearch } from '../search-bar';
 import { logEvent } from '../tracking';
+import { translateInstant } from '../i18n';
 
 const subscriptions: Subscription[] = [];
 
@@ -321,7 +322,7 @@ export function askQuestion(
     switchMap(({ question }) =>
       chat.pipe(
         take(1),
-        map((chat) => chat.filter((chat) => !chat.answer.incomplete)),
+        map((chat) => chat.filter((chat) => !chat.answer.incomplete && !chat.answer.inError)),
         switchMap((entries) =>
           searchFilters.pipe(
             take(1),
@@ -329,7 +330,19 @@ export function askQuestion(
               getAnswer(question, entries, { ...options, filters }).pipe(
                 tap((result) => {
                   if (result.type === 'error') {
-                    chatError.set(result);
+                    if ([412, 529].includes(result.status)) {
+                      chat.set({
+                        question,
+                        answer: {
+                          inError: true,
+                          text: translateInstant('answer.error.rephrasing'),
+                          type: 'answer',
+                          id: '',
+                        },
+                      });
+                    } else {
+                      chatError.set(result);
+                    }
                   } else {
                     if (result.incomplete) {
                       currentAnswer.set(result);

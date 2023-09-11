@@ -1,6 +1,6 @@
 <script lang="ts">
   import Answer from './Answer.svelte';
-  import { _, chat } from '../../core';
+  import { _, chat, chatError, isServiceOverloaded } from '../../core';
   import ChatInput from './ChatInput.svelte';
   import { createEventDispatcher, onMount } from 'svelte';
   import { delay, distinctUntilChanged, filter } from 'rxjs';
@@ -26,7 +26,7 @@
       .pipe(
         delay(200),
         distinctUntilChanged(),
-        filter(() => show),
+        filter(() => show)
       )
       .subscribe(() => {
         entriesContainerElement.scrollTo({ top: entriesContainerElement.scrollHeight, behavior: 'smooth' });
@@ -61,7 +61,8 @@
         bind:this={entriesContainerElement}>
         {#each $chat as entry, i}
           <div class="chat-entry">
-            <div class="question">
+            <div class="question"
+                 class:error={entry.answer.inError}>
               <div class="chat-icon">
                 <Icon name="chat" />
               </div>

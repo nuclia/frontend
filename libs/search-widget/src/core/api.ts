@@ -5,6 +5,7 @@ import {
   ExtractedDataTypes,
   FieldFullId,
   FieldMetadata,
+  IErrorResponse,
   IEvents,
   IResource,
   KBStates,
@@ -106,7 +107,11 @@ export const search = (query: string, options: SearchOptions): Observable<Search
   );
 };
 
-export const getAnswer = (query: string, chat?: Chat.Entry[], options?: BaseSearchOptions) => {
+export const getAnswer = (
+  query: string,
+  chat?: Chat.Entry[],
+  options?: BaseSearchOptions,
+): Observable<Chat.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
   }

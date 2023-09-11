@@ -331,14 +331,17 @@ export const entityRelations = searchState.reader((state) =>
       entity,
       relations: relations.related_to
         .filter((relation) => relation.entity_type === 'entity' && relation.relation_label.length > 0)
-        .reduce((acc, current) => {
-          if (!acc[current.relation_label]) {
-            acc[current.relation_label] = [current.entity];
-          } else {
-            acc[current.relation_label].push(current.entity);
-          }
-          return acc;
-        }, {} as { [relation: string]: string[] }),
+        .reduce(
+          (acc, current) => {
+            if (!acc[current.relation_label]) {
+              acc[current.relation_label] = [current.entity];
+            } else {
+              acc[current.relation_label].push(current.entity);
+            }
+            return acc;
+          },
+          {} as { [relation: string]: string[] },
+        ),
     }))
     .filter((entity) => Object.keys(entity.relations).length > 0),
 );
@@ -417,7 +420,7 @@ export function getFirstResourceField(resource: IResource): ResourceField | unde
   }
 }
 
-export function getSortedResults(resources: Search.FindResource[]): TypedResult[] {
+export function getSortedResults(resources?: Search.FindResource[]): TypedResult[] {
   if (!resources) {
     return [];
   }
