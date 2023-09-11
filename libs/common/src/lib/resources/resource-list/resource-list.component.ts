@@ -207,7 +207,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   }
 
   delete(resources: Resource[]) {
-    const title = resources.length > 1 ? 'resource.delete_resources_confirm' : 'resource.delete_resource_confirm';
+    const title = resources.length > 1 ? 'resource.confirm-delete.plural-title' : 'resource.confirm-delete.title';
     const message =
       resources.length > 1 ? 'resource.confirm-delete.plural-description' : 'resource.confirm-delete.description';
     this.modalService
@@ -238,34 +238,49 @@ export class ResourceListComponent implements OnInit, OnDestroy {
         delay(1000),
         switchMap(() => this.uploadService.updateStatusCount()),
         switchMap(() => this._getResources(true)),
+        tap(() => {
+          this.manageBulkActionResults('deleting');
+          this.sdk.refreshCounter(true);
+          this.cdr.markForCheck();
+        }),
       )
-      .subscribe(() => {
-        this.manageBulkActionResults('deleting');
-        this.sdk.refreshCounter(true);
-        this.cdr.markForCheck();
-      });
+      .subscribe();
   }
 
   bulkReprocess(resources: Resource[], wait = 1000) {
-    this.setLoading(true);
+    const title = resources.length > 1 ? 'resource.confirm-reprocess.plural-title' : 'resource.confirm-reprocess.title';
+    const description =
+      resources.length > 1 ? 'resource.confirm-reprocess.plural-description' : 'resource.confirm-reprocess.description';
 
-    this.bulkAction = {
-      inProgress: true,
-      done: 0,
-      errors: 0,
-      total: resources.length,
-      label: 'generic.reindexing',
-    };
-
-    from(resources.map((resource) => this.updateBulkAction(resource.reprocess())))
-      .pipe(
+    this.modalService
+      .openConfirm({
+        title,
+        description,
+      })
+      .onClose.pipe(
+        filter((yes) => !!yes),
+        tap((yes) => {
+          this.setLoading(true);
+          if (resources.length > 1) {
+            this.bulkAction = {
+              inProgress: true,
+              done: 0,
+              errors: 0,
+              total: resources.length,
+              label: 'generic.reindexing',
+            };
+            this.cdr.markForCheck();
+          }
+        }),
+        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.reprocess())))),
         mergeMap((obs) => obs, 6),
         toArray(),
         delay(wait),
         switchMap(() => this.uploadService.updateStatusCount()),
         switchMap(() => this._getResources(true)),
+        tap(() => this.manageBulkActionResults('reprocessing')),
       )
-      .subscribe(() => this.manageBulkActionResults('reprocessing'));
+      .subscribe();
   }
 
   private updateBulkAction(observable: Observable<void>): Observable<any> {
