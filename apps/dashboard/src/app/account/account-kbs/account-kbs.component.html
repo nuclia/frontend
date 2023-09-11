@@ -16,6 +16,7 @@
       *ngFor="let kb of knowledgeBoxes">
       <a
         class="account-kb-title"
+        [attr.data-cy]="kb.title + '-link'"
         [class.disabled]="!kb.role_on_kb || !account.can_manage_account"
         [routerLink]="kb.role_on_kb ? getKbUrl(account.slug, kb.slug!) : null">
         {{ kb.title }}
@@ -68,6 +69,7 @@
             icon="trash"
             kind="destructive"
             iconAndText
+            [attr.data-cy]="kb.title + '-delete'"
             (click)="deleteKb(kb)">
             {{ 'generic.delete' | translate }}
           </pa-button>
