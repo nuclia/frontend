@@ -793,6 +793,8 @@
 	"stash.widgets.suggestLabels.label": "Proposer des libellés",
 	"stash.widgets.synonyms.help": "Faites correspondre les synonymes dans la recherche floue. Il ne peut pas être utilisé avec l'option relation.",
 	"stash.widgets.synonyms.label": "Faire correspondre les synonymes",
+	"stash.widgets.targetNewTab.help": "Ouvrir dans un nouvel onglet",
+	"stash.widgets.targetNewTab.label": "Cibler un nouvel onglet",
 	"stash.widgets.title": "Générateur de widgets de recherche",
 	"stash.widgets.warning": "Pour que le widget fonctionne correctement, la boîte de connaissances <strong>doit être publique</strong>.",
 	"stash.widgets.warning-dangerous-snippet": "Zone dangereuse ! Pour que ce widget fonctionne avec une boîte de connaissances privée, vous devez fournir un jeton API.",

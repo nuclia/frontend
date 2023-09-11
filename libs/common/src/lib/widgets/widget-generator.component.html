@@ -118,8 +118,15 @@
           <pa-toggle
             labelOnRight
             help="stash.widgets.navigateToLink.help"
-            formControlName="navigateToLink">
+            formControlName="navigateToLink"
+            (valueChange)="updateTarget($event)">
             {{ 'stash.widgets.navigateToLink.label' | translate }}
+          </pa-toggle>
+          <pa-toggle
+            labelOnRight
+            help="stash.widgets.targetNewTab.help"
+            formControlName="targetNewTab">
+            {{ 'stash.widgets.targetNewTab.label' | translate }}
           </pa-toggle>
           <pa-toggle
             labelOnRight

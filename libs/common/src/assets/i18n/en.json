@@ -800,6 +800,8 @@
 	"stash.widgets.suggestLabels.label": "Suggest labels",
 	"stash.widgets.synonyms.help": "Match synonyms in fuzzy search. It cannot be used with the relation option.",
 	"stash.widgets.synonyms.label": "Match synomyms",
+	"stash.widgets.targetNewTab.help": "Open in a new tab",
+	"stash.widgets.targetNewTab.label": "Target new tab",
 	"stash.widgets.title": "Search widget generator",
 	"stash.widgets.warning": "In order for the widget to work properly, the <strong>knowledge box must be public</strong>.",
 	"stash.widgets.warning-dangerous-snippet": "Dangerous zone! For this widget to work with a private knowledge box you need to provide an API token.",

@@ -130,6 +130,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               filter: [config.features.includes('filter')],
               navigateToFile: [config.features.includes('navigateToFile')],
               navigateToLink: [config.features.includes('navigateToLink')],
+              targetNewTab: [config.features.includes('targetNewTab')],
               onlyAnswers: [config.features.includes('onlyAnswers')],
               hideSources: [config.features.includes('hideSources')],
               hideThumbnails: [config.features.includes('hideThumbnails')],
@@ -283,5 +284,18 @@ ${baseSnippet}`;
       };
       this.localStorage.setItem(WIDGETS_CONFIGURATION, JSON.stringify(this.widgetConfigurations));
     });
+  }
+
+  updateTarget(navigateToLinkEnabled: boolean) {
+    const targetNewTabControl = this.mainForm?.controls['features']?.get('targetNewTab');
+    if (!targetNewTabControl) {
+      return;
+    }
+    if (navigateToLinkEnabled) {
+      targetNewTabControl.enable();
+    } else {
+      targetNewTabControl.patchValue(false);
+      targetNewTabControl.disable();
+    }
   }
 }

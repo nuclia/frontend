@@ -1,6 +1,6 @@
 import { fromFetch } from 'rxjs/fetch';
 import { switchMap } from 'rxjs/operators';
-import { from, map, of } from 'rxjs';
+import { from, map, Observable, of } from 'rxjs';
 import {
   FIELD_TYPE,
   FieldFullId,
@@ -204,7 +204,7 @@ export function slugify(text: string): string {
   );
 }
 
-export function goToUrl(url: string, paragraphText?: string) {
+export function goToUrl(url: string, paragraphText?: string, newTab = false) {
   const urlObject = new URL(url);
   if (urlObject.protocol.startsWith('http')) {
     let textFragment = '';
@@ -215,7 +215,7 @@ export function goToUrl(url: string, paragraphText?: string) {
         url = url + textFragment;
       }
     }
-    window.location.href = url;
+    window.open(url, newTab ? '_blank' : '_self');
   } else {
     console.info(`Invalid URL: ${url}`);
   }
@@ -277,7 +277,7 @@ export const getNavigationUrl = (
   navigateToLink: boolean,
   resource: IResource,
   field: ResourceField,
-) => {
+): Observable<string | undefined> => {
   const url = getExternalUrl(resource, field);
   const isFile = field.field_type === FIELD_TYPE.file;
   if (url && navigateToLink && !isYoutubeUrl(url)) {
