@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="4.1.0" version="1.3">
+<babeledit_project be_version="5.0.0" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -26,7 +26,6 @@
 								<name>chat-action</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -47,13 +46,40 @@
 								</translations>
 							</concept_node>
 							<folder_node>
+								<name>error</name>
+								<children>
+									<concept_node>
+										<name>rephrasing</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+								</children>
+							</folder_node>
+							<folder_node>
 								<name>input</name>
 								<children>
 									<concept_node>
 										<name>label</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -79,7 +105,6 @@
 								<name>placeholder</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -103,7 +128,6 @@
 								<name>sources</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -127,7 +151,6 @@
 								<name>sources-mobile</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -151,7 +174,6 @@
 								<name>title</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -180,7 +202,6 @@
 								<name>annotated</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -204,7 +225,6 @@
 								<name>annotations</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -228,7 +248,6 @@
 								<name>date</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -252,7 +271,6 @@
 								<name>event</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -276,7 +294,6 @@
 								<name>fac</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -300,7 +317,6 @@
 								<name>gpe</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -324,7 +340,6 @@
 								<name>language</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -348,7 +363,6 @@
 								<name>law</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -372,7 +386,6 @@
 								<name>legal</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -396,7 +409,6 @@
 								<name>loc</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -420,7 +432,6 @@
 								<name>mail</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -444,7 +455,6 @@
 								<name>money</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -468,7 +478,6 @@
 								<name>norp</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -492,7 +501,6 @@
 								<name>org</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -516,7 +524,6 @@
 								<name>percent</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -540,7 +547,6 @@
 								<name>person</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -564,7 +570,6 @@
 								<name>product</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -588,7 +593,6 @@
 								<name>quantity</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -612,7 +616,6 @@
 								<name>time</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -636,7 +639,6 @@
 								<name>title</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -660,7 +662,6 @@
 								<name>work_of_art</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -689,7 +690,6 @@
 								<name>answer-feature-blocked</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -713,7 +713,6 @@
 								<name>audio-loading</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -737,7 +736,6 @@
 								<name>feature-blocked</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -761,7 +759,6 @@
 								<name>partial-results</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -785,7 +782,6 @@
 								<name>processing</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -809,7 +805,6 @@
 								<name>search</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -833,7 +828,6 @@
 								<name>service-overloaded</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -862,7 +856,6 @@
 								<name>title-only</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -891,7 +884,6 @@
 								<name>cancel</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -915,7 +907,6 @@
 								<name>save</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -944,7 +935,6 @@
 								<name>clear</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -968,7 +958,6 @@
 								<name>more_filters</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -992,7 +981,6 @@
 								<name>placeholder</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1021,7 +1009,6 @@
 								<name>back</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1050,7 +1037,6 @@
 								<name>classification</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1074,7 +1060,6 @@
 								<name>creation</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1098,7 +1083,6 @@
 								<name>language</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1122,7 +1106,6 @@
 								<name>other</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1146,7 +1129,6 @@
 								<name>preview</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1170,7 +1152,6 @@
 								<name>relevance</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1194,7 +1175,6 @@
 								<name>search</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1218,7 +1198,6 @@
 								<name>sequential</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1242,7 +1221,6 @@
 								<name>show-all</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1266,7 +1244,6 @@
 								<name>source</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1290,7 +1267,6 @@
 								<name>summary</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1319,7 +1295,6 @@
 								<name>count</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1343,7 +1318,6 @@
 								<name>empty</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1367,7 +1341,6 @@
 								<name>more_labels</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1391,7 +1364,6 @@
 								<name>paragraphs</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1415,7 +1387,6 @@
 								<name>semantic</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1439,7 +1410,6 @@
 								<name>sentences</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1463,7 +1433,6 @@
 								<name>summary</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1492,7 +1461,6 @@
 								<name>entities</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1516,7 +1484,6 @@
 								<name>intents</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1540,7 +1507,6 @@
 								<name>titles</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1569,7 +1535,6 @@
 								<name>find-in-audio</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1593,7 +1558,6 @@
 								<name>find-in-document</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1617,7 +1581,6 @@
 								<name>find-in-image</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1641,7 +1604,6 @@
 								<name>find-in-video</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1665,7 +1627,6 @@
 								<name>full-transcripts</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1689,7 +1650,6 @@
 								<name>items</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1713,7 +1673,6 @@
 								<name>search-results</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -1737,7 +1696,6 @@
 								<name>summary</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>

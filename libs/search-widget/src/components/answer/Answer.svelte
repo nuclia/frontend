@@ -20,13 +20,14 @@
   $: notEnoughData = text === 'Not enough data to answer this.';
   $: isMobile = isMobileViewport(innerWidth);
 
-  const sources = getSortedResults(Object.values(answer.sources?.resources));
+  const sources = answer.sources?.resources ? getSortedResults(Object.values(answer.sources?.resources)) : [];
 </script>
 
 <svelte:window bind:innerWidth />
 <div class="sw-answer">
   <div class="answer-container">
-    <div class="text">{@html text}</div>
+    <div class="text"
+         class:error={answer.inError}>{@html text}</div>
     {#if !isMobile && !hideFeedback}
       <Feedback {rank} />
     {/if}

@@ -27,9 +27,7 @@
   .chat-container {
     --chat-padding: var(--rhythm-1_5);
     --height-container: var(--custom-height-container, var(--rhythm-56));
-    --height-input: calc(
-      var(--rhythm-6) + var(--padding-top-input-container) + var(--padding-bottom-input-container)
-    );
+    --height-input: calc(var(--rhythm-6) + var(--padding-top-input-container) + var(--padding-bottom-input-container));
     --max-width-container: 100%;
     --max-height-entries: calc(var(--height-container) - var(--height-input));
     --padding-top-input-container: var(--chat-padding);
@@ -59,6 +57,10 @@
       .chat-entry {
         padding: var(--chat-padding);
 
+        .error {
+          color: var(--color-neutral-light);
+        }
+
         &:not(:last-of-type) {
           border-bottom: 1px solid var(--color-neutral-lighter);
         }
@@ -78,7 +80,8 @@
 
     .input-container {
       flex: 0 0 auto;
-      padding: var(--padding-top-input-container) var(--padding-side-input-container) var(--padding-bottom-input-container);
+      padding: var(--padding-top-input-container) var(--padding-side-input-container)
+        var(--padding-bottom-input-container);
     }
   }
 }

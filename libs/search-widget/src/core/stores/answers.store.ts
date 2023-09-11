@@ -58,7 +58,16 @@ export const chat = answerState.writer<Chat.Entry[], { question: string; answer:
       : state.chat,
   (state, params) => ({
     ...state,
-    chat: [...state.chat, { question: params.question, answer: params.answer }],
+    chat: [
+      ...state.chat,
+      {
+        question: params.question,
+        answer: {
+          ...params.answer,
+          inError: params.answer.inError || params.answer.text === 'Not enough data to answer this.',
+        },
+      },
+    ],
     currentQuestion: '',
     currentAnswer: EMPTY_ANSWER,
     isStreaming: false,

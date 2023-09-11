@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Chat with your docs",
+	"answer.error.rephrasing": "Sorry, I cannot process this question, maybe rephrasing it would help.",
 	"answer.input.label": "Chat input",
 	"answer.placeholder": "Let's chat",
 	"answer.sources": "Based on these sources",

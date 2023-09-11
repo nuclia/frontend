@@ -1,5 +1,6 @@
 {
 	"answer.chat-action": "Xateja amb els teus documents",
+	"answer.error.rephrasing": "Ho sento, no puc processar aquesta pregunta, potser ajudaria a reformular-la.",
 	"answer.input.label": "Entrada de xat",
 	"answer.placeholder": "Parlem",
 	"answer.sources": "A partir d'aquestes fonts",

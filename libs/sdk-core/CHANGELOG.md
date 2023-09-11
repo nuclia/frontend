@@ -1,8 +1,9 @@
-# 1.6.2 (unreleased)
+# 1.6.2 (2023-09-11)
 
 ### Improvements
 
 - Fix circular dependencies in db models
+- Add `inError` in Chat.Answer model
 
 # 1.6.1 (2023-08-22)
 
