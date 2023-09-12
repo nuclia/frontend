@@ -1,12 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
-  import ModalHeader from './ModalHeader.svelte';
   import { freezeBackground, unblockBackground } from './modal.utils';
 
   export let show = false;
   export let popup = false;
-  export let closeButton = false;
-  export let backButton = false;
   export let parentPosition: DOMRect | undefined = undefined;
   export let alignTo = '';
   export let modalWidth = '';
@@ -71,13 +68,6 @@
       style:--popup-top="{parentPosition?.bottom || 0}px"
       style:--popup-left="{(alignTo === 'right' ? parentPosition?.right : parentPosition?.left) || 0}px"
       style:--modal-width={modalWidth ? modalWidth : ''}>
-      {#if backButton || closeButton}
-        <ModalHeader
-          {closeButton}
-          {backButton}
-          on:close={close}
-          on:back />
-      {/if}
       <div
         class="modal-content"
         bind:this={modalContentContainer}
