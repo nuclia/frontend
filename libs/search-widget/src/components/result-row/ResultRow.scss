@@ -21,6 +21,14 @@
     h3 {
       margin: 0;
     }
+    .result-title-container {
+      display: flex;
+      gap: var(--rhythm-1);
+
+      .result-icon {
+        margin-top: var(--rhythm-0_25);
+      }
+    }
   }
 
   .sw-paragraphs-container {

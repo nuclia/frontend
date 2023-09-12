@@ -108,7 +108,7 @@
         knowledgebox={kb}
         lang="en"
         placeholder="Search"
-        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,zhideThumbnails,noBM25forChat" />
+        features="filter,suggestions,permalink,relations,knowledgeGraph,navigateToLink,ztargetNewTab,znavigateToFile,answers,zonlyAnswers,zhideSources,displayMetadata,hideThumbnails,noBM25forChat" />
       <NucliaSearchResults bind:this={resultsWidget} />
     </div>
   {/if}
