@@ -1,7 +1,7 @@
 <script lang="ts">
   import {
     AllResultsToggle,
-    DocTypeIndicator,
+    DocTypeIndicator, Icon,
     isMobileViewport,
     ParagraphResult,
     Thumbnail,
@@ -9,10 +9,12 @@
   } from '../../common';
   import {
     displayMetadata,
-    getCDN,
-    getNavigationUrl, goToUrl, hideThumbnails,
+    getNavigationUrl,
+    goToUrl,
+    hideThumbnails,
     navigateToFile,
-    navigateToLink, targetNewTab,
+    navigateToLink,
+    targetNewTab,
     trackingEngagement,
     TypedResult,
     viewerData
@@ -36,25 +38,26 @@
   $: {
     switch (result.resultType) {
       case 'audio':
-        fallback = `${getCDN()}tiles/audio.svg`;
+        fallback = 'audio';
         isPlayable = true;
         break;
       case 'conversation':
-        fallback = `${getCDN()}icons/text/plain.svg`;
+        fallback = 'chat';
         break;
       case 'image':
-        fallback = `${getCDN()}icons/image/jpg.svg`;
+        fallback = 'image';
         break;
       case 'pdf':
-        fallback = `${getCDN()}icons/application/${result.resultIcon}.svg`;
+        fallback = result.resultIcon;
         break;
       case 'spreadsheet':
-        fallback = `${getCDN()}icons/text/csv.svg`;
+        fallback = 'spreadsheet';
         break;
       case 'text':
-        fallback = `${getCDN()}icons/text/plain.svg`;
+        fallback = 'file';
         break;
       case 'video':
+        fallback = 'play';
         isPlayable = true;
         break;
     }
@@ -63,21 +66,21 @@
   function clickOnResult(paragraph?: Search.FindParagraph, index?: number) {
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
-      const resourceField: ResourceField = {...result.field, ...result.fieldData};
+      const resourceField: ResourceField = { ...result.field, ...result.fieldData };
       combineLatest([navigateToFile, navigateToLink, targetNewTab]).pipe(
         take(1),
         map(features => features as boolean[]),
         switchMap(([toFile, toLink, newTab]) => toFile || toLink
-        ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(map(url => url ? {url, newTab} : false))
-        : of(false))
+          ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(map(url => url ? { url, newTab } : false))
+          : of(false))
       ).subscribe((data) => {
         if (data) {
-          const {url, newTab} = data as {url: string; newTab: boolean};
-          goToUrl(url, paragraph?.text, newTab||metaKeyOn);
+          const { url, newTab } = data as { url: string; newTab: boolean };
+          goToUrl(url, paragraph?.text, newTab || metaKeyOn);
         } else {
           viewerData.set({
             result,
-            selectedParagraphIndex: typeof index === 'number' ? index : -1,
+            selectedParagraphIndex: typeof index === 'number' ? index : -1
           });
         }
       });
@@ -114,24 +117,34 @@
         src={result.thumbnail}
         {fallback}
         aspectRatio="5/4"
-        on:loaded={() => (thumbnailLoaded = true)}/>
+        on:loaded={() => (thumbnailLoaded = true)} />
     {/if}
     <div class="doc-type-container">
       <DocTypeIndicator type={result.resultType} />
     </div>
   </div>
   <div class="result-container">
-    <h3
-      class="ellipsis title-m"
-      on:click={() => clickOnResult()}
-      on:keyup={(e) => {if (e.key === 'Enter') clickOnResult();}}
-    >
-      {result?.title}
-    </h3>
+    <div class="result-title-container">
+      {#if $hideThumbnails}
+        <div class="result-icon">
+          <Icon name={fallback}/>
+        </div>
+      {/if}
+      <div>
+        <h3
+          class="ellipsis title-m"
+          on:click={() => clickOnResult()}
+          on:keyup={(e) => {if (e.key === 'Enter') clickOnResult();}}
+        >
+          {result?.title}
+        </h3>
 
-    {#if $displayMetadata}
-      <FieldMetadata {result}></FieldMetadata>
-    {/if}
+        {#if $displayMetadata}
+          <FieldMetadata {result}></FieldMetadata>
+        {/if}
+      </div>
+    </div>
+
 
     <div tabindex="-1">
       <ul

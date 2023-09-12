@@ -1,6 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onDestroy, onMount } from 'svelte';
   import { getFile } from '../../core';
+  import { Icon } from '../icons';
 
   export let src: string | undefined;
   export let fallback = '';
@@ -37,11 +38,15 @@
   class:thumbnail-background={!noBackground}
   class:thumbnail-fallback={!src && !!fallback}>
   {#if loaded}
-    <img
-      src={thumbnail}
-      alt="Thumbnail"
-      style:aspect-ratio={aspectRatio}
-      class="fade-in" />
+    {#if !src}
+      <Icon name={fallback} size="large" />
+    {:else}
+      <img
+        src={thumbnail}
+        alt="Thumbnail"
+        style:aspect-ratio={aspectRatio}
+        class="fade-in" />
+    {/if}
   {/if}
   {#if !loaded}
     <div

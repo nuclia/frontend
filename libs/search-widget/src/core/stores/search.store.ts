@@ -534,7 +534,7 @@ export function getResultType(result: Search.FieldResult): { resultType: ResultT
       resultType = 'text';
     } else if (file?.content_type?.startsWith('application')) {
       resultType = 'pdf';
-      icon = file?.content_type === 'application/pdf' ? 'pdf' : 'generic';
+      icon = file?.content_type === 'application/pdf' ? 'file-pdf' : 'file-empty';
     } else {
       resultType = 'text';
     }
