@@ -12,11 +12,10 @@
   }
 
   &.thumbnail-fallback {
+    align-items: center;
+    color: var(--color-neutral-regular);
     height: var(--rhythm-22);
     justify-content: center;
-    img {
-      width: var(--rhythm-12);
-    }
   }
 
   .thumbnail-placeholder {

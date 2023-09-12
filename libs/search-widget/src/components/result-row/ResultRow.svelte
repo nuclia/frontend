@@ -36,23 +36,23 @@
   $: {
     switch (result.resultType) {
       case 'audio':
-        fallback = `${getCDN()}tiles/audio.svg`;
+        fallback = 'audio';
         isPlayable = true;
         break;
       case 'conversation':
-        fallback = `${getCDN()}icons/text/plain.svg`;
+        fallback = 'chat';
         break;
       case 'image':
-        fallback = `${getCDN()}icons/image/jpg.svg`;
+        fallback = 'image';
         break;
       case 'pdf':
-        fallback = `${getCDN()}icons/application/${result.resultIcon}.svg`;
+        fallback = result.resultIcon;
         break;
       case 'spreadsheet':
-        fallback = `${getCDN()}icons/text/csv.svg`;
+        fallback = 'spreadsheet';
         break;
       case 'text':
-        fallback = `${getCDN()}icons/text/plain.svg`;
+        fallback = 'file';
         break;
       case 'video':
         isPlayable = true;
