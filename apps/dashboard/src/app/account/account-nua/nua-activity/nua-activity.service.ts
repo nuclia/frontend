@@ -75,7 +75,6 @@ export class NuaActivityService {
   private getResource(id: string): Observable<string> {
     if (!this._resourceNames[id]) {
       this._resourceNames[id] = this.sdk.currentKb.pipe(
-        tap((kb) => console.log(kb)),
         take(1),
         switchMap((kb) =>
           kb.getResource(id, [ResourceProperties.BASIC], []).pipe(

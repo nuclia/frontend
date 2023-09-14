@@ -15,7 +15,6 @@ export class MagicService {
 
   execute(action: MagicAction): void {
     this.authService.setNextUrl(null);
-    this.stateService.dbDelStateData();
     this.stateService.cleanAccount();
 
     if (action.token) {
