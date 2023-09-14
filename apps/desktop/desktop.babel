@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="4.1.0" version="1.3">
+<babeledit_project be_version="5.0.0" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -29,7 +29,6 @@
 										<name>help</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -53,7 +52,6 @@
 										<name>title</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -77,7 +75,6 @@
 										<name>upgrade</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -108,7 +105,29 @@
 								<name>cancel</name>
 								<description/>
 								<comment/>
-								<default_text/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>delete</name>
+								<description/>
+								<comment/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -132,7 +151,6 @@
 								<name>logout</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -153,10 +171,9 @@
 								</translations>
 							</concept_node>
 							<concept_node>
-								<name>save_continue</name>
+								<name>save</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -180,7 +197,6 @@
 								<name>server_down</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -204,7 +220,6 @@
 								<name>server_up</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -228,7 +243,6 @@
 								<name>switch_account</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -252,7 +266,6 @@
 								<name>upload</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -281,7 +294,6 @@
 								<name>clear</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -305,7 +317,6 @@
 								<name>data</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -329,7 +340,6 @@
 								<name>date</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -353,7 +363,6 @@
 								<name>knowledge_box</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -377,7 +386,6 @@
 								<name>source</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -401,7 +409,80 @@
 								<name>title</name>
 								<description/>
 								<comment/>
-								<default_text/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+						</children>
+					</folder_node>
+					<folder_node>
+						<name>home</name>
+						<children>
+							<concept_node>
+								<name>active-connectors</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>new-connector</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
+							<concept_node>
+								<name>welcome</name>
+								<description/>
+								<comment/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -430,7 +511,6 @@
 								<name>button</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -454,7 +534,6 @@
 								<name>headline</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -478,7 +557,6 @@
 								<name>not-connected</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -507,7 +585,6 @@
 								<name>cancel</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -531,7 +608,6 @@
 								<name>confirm</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -558,7 +634,6 @@
 										<name>a-few-seconds-ago</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -582,7 +657,6 @@
 										<name>at</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -606,7 +680,6 @@
 										<name>minutesAgo</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -630,7 +703,6 @@
 										<name>one-minute-ago</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -654,7 +726,6 @@
 										<name>yesterday</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -682,10 +753,9 @@
 						<name>upload</name>
 						<children>
 							<concept_node>
-								<name>data</name>
+								<name>add-connector</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -705,117 +775,33 @@
 									</translation>
 								</translations>
 							</concept_node>
-							<folder_node>
-								<name>destination</name>
-								<children>
-									<concept_node>
-										<name>description</name>
-										<description/>
-										<comment/>
-										<default_text/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-									<concept_node>
-										<name>title</name>
-										<description/>
-										<comment/>
-										<default_text/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-								</children>
-							</folder_node>
-							<folder_node>
-								<name>folder</name>
-								<children>
-									<concept_node>
-										<name>drop</name>
-										<description/>
-										<comment/>
-										<default_text/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-									<concept_node>
-										<name>selected</name>
-										<description/>
-										<comment/>
-										<default_text/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-								</children>
-							</folder_node>
+							<concept_node>
+								<name>connectors</name>
+								<description/>
+								<comment/>
+								<translations>
+									<translation>
+										<language>ca-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>en-US</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>es-ES</language>
+										<approved>false</approved>
+									</translation>
+									<translation>
+										<language>fr-FR</language>
+										<approved>false</approved>
+									</translation>
+								</translations>
+							</concept_node>
 							<concept_node>
 								<name>refresh</name>
 								<description/>
 								<comment/>
-								<default_text/>
 								<translations>
 									<translation>
 										<language>ca-ES</language>
@@ -842,7 +828,6 @@
 										<name>region</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -866,7 +851,6 @@
 										<name>region_help</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -895,7 +879,6 @@
 										<name>all</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -919,7 +902,6 @@
 										<name>description</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -943,7 +925,6 @@
 										<name>search</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -972,7 +953,6 @@
 										<name>external</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -996,7 +976,6 @@
 										<name>external-button</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1020,7 +999,6 @@
 										<name>local</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1044,7 +1022,6 @@
 										<name>local-button</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1068,7 +1045,6 @@
 										<name>title</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1092,7 +1068,6 @@
 										<name>url</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1118,10 +1093,32 @@
 								<name>source</name>
 								<children>
 									<concept_node>
-										<name>confirm-delete</name>
+										<name>confirm-delete-description</name>
 										<description/>
 										<comment/>
-										<default_text/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>confirm-delete-title</name>
+										<description/>
+										<comment/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1145,7 +1142,29 @@
 										<name>description</name>
 										<description/>
 										<comment/>
-										<default_text/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>destination</name>
+										<description/>
+										<comment/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1169,7 +1188,29 @@
 										<name>help</name>
 										<description/>
 										<comment/>
-										<default_text/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>name</name>
+										<description/>
+										<comment/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1193,7 +1234,6 @@
 										<name>permanent-sync</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1214,10 +1254,32 @@
 										</translations>
 									</concept_node>
 									<concept_node>
-										<name>quick_access_name</name>
+										<name>settings</name>
 										<description/>
 										<comment/>
-										<default_text/>
+										<translations>
+											<translation>
+												<language>ca-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>es-ES</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>settings-description</name>
+										<description/>
+										<comment/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1241,7 +1303,6 @@
 										<name>title</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1270,7 +1331,6 @@
 										<name>configure</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1294,31 +1354,6 @@
 										<name>data</name>
 										<description/>
 										<comment/>
-										<default_text/>
-										<translations>
-											<translation>
-												<language>ca-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>es-ES</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-									<concept_node>
-										<name>destination</name>
-										<description/>
-										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>
@@ -1342,7 +1377,6 @@
 										<name>source</name>
 										<description/>
 										<comment/>
-										<default_text/>
 										<translations>
 											<translation>
 												<language>ca-ES</language>

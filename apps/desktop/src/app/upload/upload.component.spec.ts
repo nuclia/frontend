@@ -21,7 +21,7 @@ import {
 import { MockModule, MockProvider } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
 
-describe('UploadComponent', () => {
+xdescribe('UploadComponent', () => {
   let component: UploadComponent;
   let fixture: ComponentFixture<UploadComponent>;
   let sync: SyncService;

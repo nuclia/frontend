@@ -5,7 +5,7 @@
       <ul>
         <li
           (click)="addSource()"
-          [class.active]="(!(currentSourceId | async) && (step | async) === 0) || (step | async) === 1">
+          [class.active]="!(currentSourceId | async) && ((step | async) === 0 || (step | async) === 1)">
           <pa-icon
             class="logo"
             name="plus"

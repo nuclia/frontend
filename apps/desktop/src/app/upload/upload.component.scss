@@ -8,3 +8,21 @@
 h2 {
   margin: 0;
 }
+
+.steps {
+  align-items: center;
+  display: flex;
+  font-size: $font-size-title-s;
+  gap: rhythm(1);
+  margin-bottom: rhythm(8);
+  .step {
+    font-weight: $font-weight-semi-bold;
+    &.active {
+      color: $color-primary-regular;
+    }
+    &.pending {
+      color: $color-neutral-light;
+      font-weight: $font-weight-regular;
+    }
+  }
+}

@@ -9,7 +9,13 @@
 h2 {
   margin: 0;
 }
+
 .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.searchbar {
   align-items: center;
   flex: 0 0 auto;
   display: flex;
@@ -61,4 +67,8 @@ td {
     color: $color-text-disabled;
     padding-left: rhythm(3.5);
   }
+}
+
+.parameters {
+  margin-top: rhythm(4);
 }

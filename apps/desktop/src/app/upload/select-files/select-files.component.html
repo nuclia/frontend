@@ -1,57 +1,92 @@
 <div class="select-files">
-  <h2>{{ 'upload.steps.data' | translate }}</h2>
-  <div>{{ 'upload.select.description' | translate }}</div>
   <div class="header">
-    <pa-checkbox
-      *ngIf="!(currentSource | async).permanentSync"
-      [value]="isSelectingAll"
-      (valueChange)="toggleSelectAll($event)">
-      {{ 'upload.select.all' | translate }}
-    </pa-checkbox>
-    <form
-      *ngIf="!isSelectingAll"
-      class="search-form"
-      #form="ngForm"
-      (ngSubmit)="search(form.value.query)">
-      <pa-input
-        [(ngModel)]="query"
-        name="query"></pa-input>
+    <div>
+      <h2>{{ 'upload.steps.data' | translate }}</h2>
+      <div>{{ 'upload.select.description' | translate }}</div>
+    </div>
+    <div>
       <pa-button
-        size="small"
-        kind="primary"
-        type="submit">
-        {{ 'upload.select.search' | translate }}
+        icon="gear"
+        aspect="basic"
+        (click)="goToSettings()"
+        paTooltip="upload.source.settings">
+        {{ 'upload.source.settings' | translate }}
       </pa-button>
-    </form>
+      <pa-button
+        icon="trash"
+        kind="destructive"
+        aspect="basic"
+        (click)="delete()"
+        paTooltip="generic.delete">
+        {{ 'generic.delete' | translate }}
+      </pa-button>
+    </div>
   </div>
+
+  <ng-container *ngIf="canSelectFiles | async">
+    <div class="searchbar">
+      <pa-checkbox
+        *ngIf="!(currentSource | async).permanentSync"
+        [value]="isSelectingAll"
+        (valueChange)="toggleSelectAll($event)">
+        {{ 'upload.select.all' | translate }}
+      </pa-checkbox>
+      <form
+        *ngIf="!isSelectingAll"
+        class="search-form"
+        #form="ngForm"
+        (ngSubmit)="search(form.value.query)">
+        <pa-input
+          [(ngModel)]="query"
+          name="query"></pa-input>
+        <pa-button
+          size="small"
+          kind="primary"
+          type="submit">
+          {{ 'upload.select.search' | translate }}
+        </pa-button>
+      </form>
+    </div>
+    <div
+      class="body"
+      #scroll>
+      <table>
+        <tr *ngFor="let resource of resources | async">
+          <td>
+            <pa-checkbox
+              *ngIf="!isSelectingAll"
+              [value]="selection.isSelected(resource)"
+              (valueChange)="toggle(resource)">
+              {{ resource.title }}
+            </pa-checkbox>
+            <span
+              *ngIf="isSelectingAll"
+              class="body-m disabled">
+              {{ resource.title }}
+            </span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </ng-container>
   <div
-    class="body"
-    #scroll>
-    <table>
-      <tr *ngFor="let resource of resources | async">
-        <td>
-          <pa-checkbox
-            *ngIf="!isSelectingAll"
-            [value]="selection.isSelected(resource)"
-            (valueChange)="toggle(resource)">
-            {{ resource.title }}
-          </pa-checkbox>
-          <span
-            *ngIf="isSelectingAll"
-            class="body-m disabled">
-            {{ resource.title }}
-          </span>
-        </td>
-      </tr>
-    </table>
+    *ngIf="!(canSelectFiles | async)"
+    class="parameters">
+    <pa-checkbox
+      *ngFor="let param of (currentSource | async)?.data || {} | keyvalue"
+      disabled
+      [value]="true">
+      {{ param.value }}
+    </pa-checkbox>
   </div>
+  <nsi-spinner *ngIf="loading"></nsi-spinner>
   <div class="footer">
     <pa-button
-      qa="next"
+      qa="upload"
       kind="primary"
-      [disabled]="selection.isEmpty()"
-      (click)="next.emit()">
-      {{ 'generic.save_continue' | translate }}
+      [disabled]="(canSelectFiles | async) && selection.isEmpty()"
+      (click)="upload()">
+      {{ 'generic.save' | translate }}
     </pa-button>
     <pa-button
       qa="cancel"

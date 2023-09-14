@@ -13,7 +13,6 @@ export const SitemapConnector: SourceConnectorDefinition = {
 class SitemapImpl implements ISourceConnector {
   hasServerSideAuth = false;
   isExternal = true;
-  url = '';
 
   getParameters(): Observable<Field[]> {
     return of([
@@ -29,15 +28,11 @@ class SitemapImpl implements ISourceConnector {
   }
 
   handleParameters(params: ConnectorParameters) {
-    if (params['url']) {
-      this.url = params['url'];
-    }
+    // eslint-disable-next-line no-empty-function
   }
 
   getParametersValues(): ConnectorParameters {
-    return {
-      path: this.url,
-    };
+    return {};
   }
 
   goToOAuth() {

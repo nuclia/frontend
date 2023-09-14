@@ -1,0 +1,64 @@
+@import 'variables';
+
+h2 {
+  margin: 0;
+}
+
+form {
+  width: 100%;
+}
+
+.selected-source {
+  align-items: center;
+  display: flex;
+  font-size: $font-size-body-m;
+  font-weight: $font-weight-thin;
+  gap: rhythm(2);
+  margin: rhythm(4) 0;
+  img {
+    width: rhythm(6);
+  }
+}
+
+.field {
+  margin-bottom: rhythm(2);
+}
+
+.select-field-container {
+  display: flex;
+  margin-bottom: $margin-bottom-field;
+
+  pa-select {
+    flex: 1 0 auto;
+  }
+  pa-button {
+    margin-left: rhythm(2);
+  }
+}
+
+.help {
+  color: $color-neutral-regular;
+  display: flex;
+  gap: rhythm(1);
+  a {
+    color: inherit;
+    font-weight: $font-weight-regular;
+  }
+}
+
+.settings {
+  margin: rhythm(3) 0;
+}
+
+.destination {
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(2);
+  margin: rhythm(6) 0;
+}
+
+.buttons {
+  display: flex;
+  gap: rhythm(2);
+  margin-top: rhythm(8);
+}

@@ -1,16 +1,9 @@
 import { SelectionModel } from '@angular/cdk/collections';
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { delay, filter, forkJoin, map, of, Subject, switchMap, take, takeUntil, tap } from 'rxjs';
+import { delay, filter, forkJoin, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
-import {
-  CONNECTOR_ID_KEY,
-  ConnectorDefinition,
-  ConnectorParameters,
-  FileStatus,
-  ISourceConnector,
-  SyncItem,
-} from '../sync/models';
+import { CONNECTOR_ID_KEY, ISourceConnector, SOURCE_NAME_KEY, SyncItem } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -21,103 +14,108 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadComponent implements OnInit, OnDestroy {
-  sourceId = '';
-  source?: ISourceConnector;
-  selection = new SelectionModel<SyncItem>(true, []);
+  steps = ['source', 'configure', 'data'];
   step = this.sync.step;
-  quickAccess?: { connectorId: string; quickAccessName: string };
+  currentSourceId = this.sync.currentSourceId;
   unsubscribeAll = new Subject<void>();
-  syncServer = this.sync.syncServer;
+
+  newConnector?: string;
 
   constructor(
     private sync: SyncService,
     private router: Router,
     private tracking: STFTrackingService,
     private toaster: SisToastService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.sourceId = localStorage.getItem(CONNECTOR_ID_KEY) || '';
+    const connectorId = localStorage.getItem(CONNECTOR_ID_KEY) || '';
+    const sourceName = localStorage.getItem(SOURCE_NAME_KEY) || '';
     // useful for dev mode in browser (in Electron, as the page is not reloaded, authenticate is already waiting for an answer)
-    if (this.sourceId && !this.source) {
-      forkJoin([this.sync.getSource(this.sourceId).pipe(take(1)), this.sync.hasCurrentSourceAuth()])
+    if (connectorId && sourceName) {
+      this.sync.setCurrentSourceId(sourceName);
+      forkJoin([this.sync.getSource(connectorId).pipe(take(1)), this.sync.hasCurrentSourceAuth()])
         .pipe(
-          tap(([source]) => (this.source = source)),
           switchMap(([source, hasAuth]) => (hasAuth ? of(true) : this.sync.authenticateToSource(source))),
           filter((yes) => yes),
         )
         .subscribe(() => {
           this.goTo(2);
           localStorage.removeItem(CONNECTOR_ID_KEY);
+          localStorage.removeItem(SOURCE_NAME_KEY);
         });
+    } else {
+      this.goTo(0);
     }
-    this.sync.showFirstStep.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
+    this.sync.addSource.pipe(takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.reset();
+      this.goTo(0);
     });
     this.sync.showSource.pipe(takeUntil(this.unsubscribeAll)).subscribe((data) => {
-      if (data.edit) {
-        this.quickAccess = { connectorId: data.connectorId, quickAccessName: data.quickAccessName };
-        this.goTo(1);
-      } else {
-        const params = this.sync.getSourceCache(data.quickAccessName).data;
-        const connector = this.sync.sources[data.connectorId].definition;
-        this.selectSource({ name: data.quickAccessName, connector, params }, false);
-      }
+      this.selectSource({ connectorId: data.connectorId, name: data.sourceId });
     });
   }
 
   ngOnDestroy() {
-    this.goTo(0);
+    this.goTo(-1);
+    this.sync.clearCurrentSourceId();
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
 
   goTo(step: number) {
-    this.sync.setStep(step);
+    this.sync.step.pipe(take(1)).subscribe((currentStep) => {
+      if (currentStep === step) {
+        // Force refresh
+        this.sync.setStep(-1);
+        this.cdr.detectChanges();
+      }
+      this.sync.setStep(step);
+    });
   }
 
-  selectSource(
-    event: { name: string; connector: ConnectorDefinition; params?: ConnectorParameters; permanentSync?: boolean },
-    update = true,
-  ) {
+  onSelectConnector(connectorId: string) {
+    this.newConnector = connectorId;
+    this.goTo(1);
+  }
+
+  goToSettings() {
+    this.newConnector = undefined;
+    this.goTo(1);
+  }
+
+  selectSource(event: { name: string; connectorId: string }) {
+    let sourceInstance: ISourceConnector;
     if (!event.name) {
       throw new Error('Name is mandatory');
     }
-    this.sourceId = event.connector.id;
+    this.reset();
     this.sync.setCurrentSourceId(event.name);
-    this.tracking.logEvent('desktop:select_source', { sourceId: this.sourceId });
-    (update
-      ? this.sync
-          .setSourceData(event.name, {
-            connectorId: event.connector.id,
-            data: event.params || {},
-            permanentSync: !!event.permanentSync,
-          })
-          .pipe(
-            delay(500), // let the data be stored before querying it
-            map(() => true),
-          )
-      : of(true)
-    )
+    this.tracking.logEvent('desktop:select_source', { sourceId: event.connectorId });
+
+    forkJoin([
+      this.sync.getSource(event.connectorId).pipe(take(1)),
+      this.sync.currentSource.pipe(take(1)),
+      this.sync.hasCurrentSourceAuth(),
+    ])
       .pipe(
-        switchMap(() =>
-          forkJoin([this.sync.getSource(event.connector.id).pipe(take(1)), this.sync.hasCurrentSourceAuth()]),
-        ),
-        switchMap(([source, hasAuth]) => {
-          this.source = source;
-          if (source.handleParameters && event.params) {
-            source.handleParameters(event.params);
+        switchMap(([source, sourceData, hasAuth]) => {
+          sourceInstance = source;
+          if (source.handleParameters && sourceData.data) {
+            source.handleParameters(sourceData.data);
           }
           if (hasAuth) {
             return of(true);
           } else {
             if (source.hasServerSideAuth) {
-              localStorage.setItem(CONNECTOR_ID_KEY, event.connector.id);
+              localStorage.setItem(CONNECTOR_ID_KEY, event.connectorId);
+              localStorage.setItem(SOURCE_NAME_KEY, event.name);
               source.goToOAuth(true);
-              return this.sync.authenticateToSource(this.source);
+              return this.sync.authenticateToSource(sourceInstance);
             } else {
               this.toaster.error('Missing authentication');
-              this.sync.goToSource(event.connector.id, event.name, true);
+              this.goToSettings();
               return of(false);
             }
           }
@@ -126,67 +124,20 @@ export class UploadComponent implements OnInit, OnDestroy {
         delay(500), // wait for source data to be stored
       )
       .subscribe(() => {
-        const cache = this.sync.getSourceCache(event.name);
-        if (event.connector.id === 'folder' && cache.permanentSync) {
-          const data = this.source?.getParametersValues();
-          if (data) {
-            this.selection.setSelection({
-              uuid: '',
-              title: data.path,
-              originalId: data.path,
-              metadata: {},
-              status: FileStatus.PENDING,
-            });
-            this.goTo(3);
-          }
-          // TODO: do not hardcode this condition
-        } else if (event.connector.id === 'sitemap') {
-          const data = this.source?.getParametersValues();
-          if (data) {
-            this.selection.setSelection({
-              uuid: '',
-              title: data.url,
-              originalId: data.url,
-              metadata: {},
-              status: FileStatus.PENDING,
-            });
-            this.goTo(3);
-          }
-        } else {
-          this.goTo(2);
-        }
-      });
-  }
-
-  selectDestination(event: { connector: ConnectorDefinition; params: ConnectorParameters }) {
-    this.tracking.logEvent('desktop:select_destination', { sourceId: event.connector.id });
-    this.sync
-      .addSync({
-        date: new Date().toISOString(),
-        source: this.sync.getCurrentSourceId(),
-        destination: {
-          id: event.connector.id,
-          params: event.params,
-        },
-        items: this.selection.selected,
-      })
-      .subscribe((success) => {
-        if (success) {
-          this.router.navigate(['/history'], { queryParams: { active: 'true' } });
-        }
+        this.goTo(2);
       });
   }
 
   private reset() {
     localStorage.removeItem(CONNECTOR_ID_KEY);
-    this.sourceId = '';
-    this.source = undefined;
-    this.quickAccess = undefined;
-    this.selection.clear();
-    this.goTo(0);
+    localStorage.removeItem(SOURCE_NAME_KEY);
+    this.newConnector = undefined;
+    this.goTo(-1);
+    this.sync.clearCurrentSourceId();
   }
 
   cancel() {
     this.reset();
+    this.router.navigate(['/']);
   }
 }
