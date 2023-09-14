@@ -1,7 +1,7 @@
 import { Observable, from, map } from 'rxjs';
 import { ConnectorParameters } from '../models';
 
-export class OauthBaseConnector {
+export class OAuthBaseConnector {
   params: ConnectorParameters = {};
   refreshAuthentication(): Observable<boolean> {
     return from(

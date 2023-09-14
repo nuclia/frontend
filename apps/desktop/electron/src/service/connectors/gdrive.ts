@@ -8,14 +8,14 @@ import {
   Link,
 } from '../models';
 import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
-import { OauthBaseConnector } from './oauth.base';
+import { OAuthBaseConnector } from './oauth.base';
 
 export const GDriveConnector: SourceConnectorDefinition = {
   id: 'gdrive',
   factory: () => new GDriveImpl(),
 };
 
-class GDriveImpl extends OauthBaseConnector implements ISourceConnector {
+class GDriveImpl extends OAuthBaseConnector implements ISourceConnector {
   params: ConnectorParameters = {};
   isExternal = false;
 

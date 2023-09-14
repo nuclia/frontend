@@ -8,7 +8,7 @@ import {
   Link,
 } from '../models';
 import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
-import { OauthBaseConnector } from './oauth.base';
+import { OAuthBaseConnector } from './oauth.base';
 
 export const OneDriveConnector: SourceConnectorDefinition = {
   id: 'onedrive',
@@ -17,7 +17,7 @@ export const OneDriveConnector: SourceConnectorDefinition = {
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
 
-class OneDriveImpl extends OauthBaseConnector implements ISourceConnector {
+class OneDriveImpl extends OAuthBaseConnector implements ISourceConnector {
   params: ConnectorParameters = {};
   isExternal = false;
 

@@ -8,7 +8,7 @@ import {
   Link,
 } from '../models';
 import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
-import { OauthBaseConnector } from './oauth.base';
+import { OAuthBaseConnector } from './oauth.base';
 
 export const SharepointConnector: SourceConnectorDefinition = {
   id: 'sharepoint',
@@ -17,7 +17,7 @@ export const SharepointConnector: SourceConnectorDefinition = {
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
 
-class SharepointImpl extends OauthBaseConnector implements ISourceConnector {
+class SharepointImpl extends OAuthBaseConnector implements ISourceConnector {
   isExternal = false;
   params: ConnectorParameters = {};
 

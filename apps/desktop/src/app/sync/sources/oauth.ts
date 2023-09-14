@@ -6,7 +6,7 @@ import { environment } from '../../../environments/environment';
 const TOKEN = '-token';
 const REFRESH = '-refresh';
 
-export class OauthConnector implements ISourceConnector {
+export class OAuthConnector implements ISourceConnector {
   name: string;
   hasServerSideAuth = true;
   isExternal = true;

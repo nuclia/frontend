@@ -1,10 +1,10 @@
 import { ConnectorParameters, Field } from '../models';
 import { Observable, of } from 'rxjs';
-import { OauthConnector } from './oauth';
+import { OAuthConnector } from './oauth';
 
 const SITE_NAME = 'SHAREPOINT_SITE_NAME';
 
-export class SharepointImpl extends OauthConnector {
+export class SharepointImpl extends OAuthConnector {
   constructor(name: string) {
     super(name);
   }

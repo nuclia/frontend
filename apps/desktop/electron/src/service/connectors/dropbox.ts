@@ -8,14 +8,14 @@ import {
   Link,
 } from '../models';
 import { concatMap, forkJoin, from, map, Observable, of } from 'rxjs';
-import { OauthBaseConnector } from './oauth.base';
+import { OAuthBaseConnector } from './oauth.base';
 
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
   factory: () => new DropboxImpl(),
 };
 
-class DropboxImpl extends OauthBaseConnector implements ISourceConnector {
+class DropboxImpl extends OAuthBaseConnector implements ISourceConnector {
   isExternal = false;
   params: ConnectorParameters = {};
 

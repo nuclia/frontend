@@ -39,7 +39,7 @@ import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
 import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
-import { OauthConnector } from './sources/oauth';
+import { OAuthConnector } from './sources/oauth';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
@@ -74,7 +74,7 @@ export class SyncService {
         title: 'Google Drive',
         logo: 'assets/logos/gdrive.svg',
         description: 'File storage and synchronization service developed by Google',
-        factory: () => of(new OauthConnector('gdrive')),
+        factory: () => of(new OAuthConnector('gdrive')),
       },
       settings: {},
     },
@@ -84,7 +84,7 @@ export class SyncService {
         title: 'One Drive',
         logo: 'assets/logos/onedrive.svg',
         description: 'Microsoft OneDrive file hosting service',
-        factory: () => of(new OauthConnector('onedrive')),
+        factory: () => of(new OAuthConnector('onedrive')),
       },
       settings: {},
     },
@@ -105,7 +105,7 @@ export class SyncService {
         title: 'Dropbox',
         logo: 'assets/logos/dropbox.svg',
         description: 'File storage and synchronization service developed by Dropbox',
-        factory: () => of(new OauthConnector('dropbox')),
+        factory: () => of(new OAuthConnector('dropbox')),
       },
       settings: {},
     },
