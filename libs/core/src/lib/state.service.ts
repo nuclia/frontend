@@ -35,7 +35,7 @@ export class StateService {
     return this.kbSubject.getValue();
   }
 
-  setKb(stash: KnowledgeBox) {
-    this.kbSubject.next(stash);
+  setKb(kb: KnowledgeBox) {
+    this.kbSubject.next(kb);
   }
 }

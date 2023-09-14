@@ -7,6 +7,7 @@ import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } fr
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
@@ -45,6 +46,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
     private translate: TranslateService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -124,13 +126,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   initKbForm() {
-    this.kbForm?.patchValue({
-      uid: this.kb?.id,
-      slug: this.kb?.slug,
-      title: this.kb?.title,
-      description: this.kb?.description,
+    if (!this.kbForm || !this.kb) {
+      return;
+    }
+    this.kbForm.patchValue({
+      uid: this.kb.id,
+      slug: this.kb.slug,
+      title: this.kb.title,
+      description: this.kb.description,
       config: this.currentConfig,
     });
+    this.kbForm.markAsPristine();
   }
 
   hasOwnKey() {
@@ -173,9 +179,14 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveKb(): void {
-    if (!this.kbForm || this.kbForm.invalid) return;
+    if (!this.kbForm || this.kbForm.invalid || !this.kb) {
+      return;
+    }
+
     this.saving = true;
     const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
+    const oldSlug = this.kb.slug || '';
+    const isSlugUpdated = newSlug !== oldSlug;
     const data: Partial<KnowledgeBox> = {
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
@@ -229,7 +240,9 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         this.kbForm?.markAsPristine();
         this.saving = false;
         this.stateService.setKb(kb);
-        this.sdk.refreshKbList(true);
+        if (isSlugUpdated) {
+          this.router.navigateByUrl(this.router.url.replace(oldSlug, newSlug));
+        }
       });
   }
 

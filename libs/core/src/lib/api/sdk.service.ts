@@ -80,7 +80,9 @@ export class SDKService {
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
-        distinctUntilChanged((previous, current) => previous[0].id === current[0].id),
+        distinctUntilChanged(
+          (previous, current) => previous[0].id === current[0].id && previous[0].slug === current[0].slug,
+        ),
         switchMap(([kb, account]) =>
           kb && kb.slug === this.DEMO_SLUG
             ? this.getDemoKb()
