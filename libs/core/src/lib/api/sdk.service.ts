@@ -43,7 +43,6 @@ export interface LearningConfigurationUserKeys {
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
-  DEMO_SLUG = '__demo';
   nuclia: Nuclia = new Nuclia({
     backend: this.config.getAPIURL(),
     client: this.config.staticConf.client,
@@ -84,11 +83,9 @@ export class SDKService {
           (previous, current) => previous[0].id === current[0].id && previous[0].slug === current[0].slug,
         ),
         switchMap(([kb, account]) =>
-          kb && kb.slug === this.DEMO_SLUG
-            ? this.getDemoKb()
-            : this.nuclia.db
-                .getKnowledgeBox(account.slug, (this.config.staticConf.standalone ? kb.id : kb.slug) as string)
-                .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug, data))),
+          this.nuclia.db
+            .getKnowledgeBox(account.slug, (this.config.staticConf.standalone ? kb.id : kb.slug) as string)
+            .pipe(map((data) => new WritableKnowledgeBox(this.nuclia, account.slug, data))),
         ),
         tap(() => (this._isKbLoaded = true)),
       )
@@ -114,13 +111,6 @@ export class SDKService {
     const currentKb = this.stateService.getKb();
     if (!force && currentKb && currentKb.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
-    } else if (kbSlug === this.DEMO_SLUG) {
-      return this.getDemoKb().pipe(
-        tap((kb) => {
-          this.nuclia.options.zone = 'europe-1';
-          this.stateService.setKb(kb);
-        }),
-      );
     } else {
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
         map((kb) => {
@@ -129,21 +119,6 @@ export class SDKService {
         }),
       );
     }
-  }
-
-  getDemoKb(): Observable<WritableKnowledgeBox> {
-    return this.featureFlagService.getFeatureFlag('demo-kb-id').pipe(
-      take(1),
-      map(
-        (kbId) =>
-          new WritableKnowledgeBox(this.nuclia, this.stateService.getAccount()?.slug || '', {
-            id: kbId as string,
-            zone: 'europe-1',
-            slug: this.DEMO_SLUG,
-            title: 'Demo',
-          }),
-      ),
-    );
   }
 
   refreshCounter(singleTry = false): void {

@@ -18,12 +18,5 @@
       (selectOption)="goToKb(kb)">
       {{ kb.title }}
     </pa-option>
-    <pa-separator *ngIf="!last || (last && (showDemo | async))"></pa-separator>
   </ng-container>
-  <pa-option
-    *ngIf="showDemo | async"
-    class="demo-kb"
-    (selectOption)="goToDemo()">
-    Demo
-  </pa-option>
 </pa-dropdown>
