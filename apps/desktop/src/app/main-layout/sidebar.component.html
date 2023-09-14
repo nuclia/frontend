@@ -1,70 +1,47 @@
 <div class="sidebar">
   <ng-container *ngIf="(isServerPage | async) === false">
     <div class="upload-menu">
-      <div class="upload-title">{{ 'upload.data' | translate }}:</div>
-      <ul>
-        <li *ngFor="let text of steps; let step = index">
-          <span
-            class="step"
-            [class.pending]="(currentStep | async) < step"
-            [class.active]="(currentStep | async) === step"
-            [class.clickable]="step === 0"
-            (click)="goToStep(step)">
-            <span
-              *ngIf="(currentStep | async) <= step"
-              class="step-number">
-              <pa-icon name="circle-dash"></pa-icon>
-              <span>{{ step + 1 }}</span>
-            </span>
-            <pa-icon
-              *ngIf="(currentStep | async) > step"
-              class="checked"
-              name="circle-check"></pa-icon>
-            {{ text | translate }}
-          </span>
-          <div
-            *ngIf="step === 0 && (currentStep | async) === 0"
-            class="quick-access-list">
-            <div
-              *ngFor="let item of sources | async"
-              class="quick-access">
-              <div
-                class="source-title"
-                (click)="goToSource(item.connectorId, item.name, false)"
-                paEllipsisTooltip>
-                {{ item.name }}
-              </div>
-              <div class="action-container">
-                <pa-button
-                  (click)="goToSource(item.connectorId, item.name, true)"
-                  size="small"
-                  iconSize="small"
-                  icon="edit"
-                  aspect="basic"></pa-button>
-                <pa-button
-                  (click)="deleteSource(item.name)"
-                  size="small"
-                  iconSize="small"
-                  icon="trash"
-                  aspect="basic"></pa-button>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-    <div class="history-menu">
+      <div class="menu-title title-s">{{ 'upload.connectors' | translate }}:</div>
       <ul>
         <li
-          routerLink="/history"
-          routerLinkActive="active">
-          {{ 'history.title' | translate }}
+          (click)="addSource()"
+          [class.active]="(!(currentSourceId | async) && (step | async) === 0) || (step | async) === 1">
           <pa-icon
+            class="logo"
+            name="plus"
+            size="small"></pa-icon>
+          <div>{{ 'upload.add-connector' | translate }}</div>
+          <pa-icon
+            class="arrow"
+            name="chevron-right"
+            size="small"></pa-icon>
+        </li>
+        <li
+          *ngFor="let source of sources | async"
+          (click)="goToSource(source.connectorId, source.name)"
+          [class.active]="(currentSourceId | async) === source.name">
+          <img
+            *ngIf="source.logo"
+            class="logo"
+            [src]="source.logo" />
+          <div paEllipsisTooltip>{{ source.name }}</div>
+          <pa-icon
+            class="arrow"
             name="chevron-right"
             size="small"></pa-icon>
         </li>
       </ul>
     </div>
+    <ul>
+      <li
+        routerLink="/history"
+        routerLinkActive="active">
+        {{ 'history.title' | translate }}
+        <pa-icon
+          class="arrow"
+          name="chevron-right"
+          size="small"></pa-icon>
+      </li>
+    </ul>
   </ng-container>
 </div>
