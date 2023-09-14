@@ -22,7 +22,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
   account?: Account;
   knowledgeBoxes: IKnowledgeBoxItem[] | undefined;
   maxKnowledgeBoxes: number = 1;
-  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users');
   canAddKb = this.stateService.account.pipe(
     filter((account) => !!account),
     map((account) => account!.can_manage_account),

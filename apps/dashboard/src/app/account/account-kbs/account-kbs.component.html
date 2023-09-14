@@ -24,7 +24,6 @@
       <div class="actions">
         <ng-container *ngIf="account.can_manage_account">
           <pa-button
-            *ngIf="isUsersEnabled | async"
             class="icon-button"
             icon="add-user"
             aspect="basic"
@@ -34,7 +33,7 @@
           </pa-button>
 
           <pa-button
-            *ngIf="!!kb.role_on_kb && (isUsersEnabled | async)"
+            *ngIf="!!kb.role_on_kb"
             class="icon-button"
             icon="edit"
             aspect="basic"

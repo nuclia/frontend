@@ -46,7 +46,6 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
   clipboardSupported = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
-  areAnswersEnabled = this.tracking.isFeatureEnabled('answers');
   canSuggestEntities = this.tracking.isFeatureEnabled('suggest-entities');
   isEntityFiltersEnabled = this.tracking.isFeatureEnabled('entity-filter');
   areSynonymsEnabled = combineLatest([

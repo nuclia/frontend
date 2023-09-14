@@ -35,7 +35,7 @@
           </a>
           <ng-container *ngIf="!standalone">
             <a
-              *ngIf="(isActivityEnabled | async) && (isTrial | async) === false"
+              *ngIf="(isTrial | async) === false"
               [routerLink]="kbUrl + '/activity/download'"
               routerLinkActive="active"
               class="nav-link"
@@ -98,9 +98,7 @@
             </a>
           </div>
           <ng-container *ngIf="isAccountManager | async">
-            <div
-              *ngIf="isUsersEnabled | async"
-              class="group-items">
+            <div class="group-items">
               <a
                 [routerLink]="kbUrl + '/users'"
                 routerLinkActive="active"
@@ -111,7 +109,7 @@
             </div>
           </ng-container>
           <div
-            *ngIf="(isAPIKeysEnabled | async) && (isAdmin | async)"
+            *ngIf="isAdmin | async"
             class="group-items">
             <a
               [routerLink]="kbUrl + '/keys'"
@@ -123,9 +121,7 @@
           </div>
         </ng-container>
 
-        <div
-          *ngIf="isWidgetsEnabled | async"
-          class="group-items">
+        <div class="group-items">
           <a
             [routerLink]="kbUrl + '/widget-generator'"
             routerLinkActive="active"

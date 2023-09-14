@@ -230,18 +230,10 @@ export class SDKService {
       this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
       this.featureFlagService.isFeatureEnabled('answers').pipe(take(1)),
       this.featureFlagService.isFeatureEnabled('pdf-annotation').pipe(take(1)),
-      this.featureFlagService.isFeatureEnabled('azure_openai').pipe(take(1)),
       this.nuclia.db.getLearningConfigurations().pipe(take(1)),
       this.currentAccount.pipe(take(1)),
     ]).pipe(
-      map(([hasAnonymization, hasAnswers, hasPdfAnnotation, isAzureOpenAIEnabled, conf, account]) => {
-        const generativeModel = conf['generative_model'] as LearningConfiguration;
-        if (!isAzureOpenAIEnabled && generativeModel) {
-          if (generativeModel.default === 'chatgpt-azure') {
-            generativeModel.default = 'chatgpt';
-          }
-          generativeModel.options = generativeModel.options.filter((option) => option.value !== 'chatgpt-azure');
-        }
+      map(([hasAnonymization, hasAnswers, hasPdfAnnotation, conf, account]) => {
         const full = Object.entries(conf)
           .filter(([, value]) => 'options' in value)
           .map((entry) => entry as [string, LearningConfiguration])
