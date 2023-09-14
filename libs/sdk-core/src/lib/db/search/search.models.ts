@@ -42,6 +42,10 @@ export interface BaseSearchOptions {
   highlight?: boolean;
 }
 
+export interface ChatOptions extends BaseSearchOptions {
+  synchronous?: boolean;
+}
+
 export interface SearchOptions extends BaseSearchOptions {
   // non API-official options
   inTitleOnly?: boolean;

@@ -1,3 +1,9 @@
+# 1.6.3 (unreleased)
+
+### Improvements
+
+- Add synchronous option to `/chat` endpoint, allowing to get the response as a JSON instead of a stream
+
 # 1.6.2 (2023-09-11)
 
 ### Improvements
