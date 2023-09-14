@@ -19,7 +19,11 @@ export class RedirectComponent {
   token = this.sdk.nuclia.auth.getToken();
   displayToken = this.route.queryParamMap.pipe(map((params) => params.get('display') === 'token'));
 
-  constructor(private sdk: SDKService, private userService: UserService, private route: ActivatedRoute) {
+  constructor(
+    private sdk: SDKService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+  ) {
     this.isValidToken
       .pipe(
         filter((valid) => valid),
@@ -39,6 +43,9 @@ export class RedirectComponent {
           }
           redirectUrl += redirectUrl.includes('?') ? '&' : '?';
           const tokens = `access_token=${this.sdk.nuclia.auth.getToken()}&refresh_token=${this.sdk.nuclia.auth.getRefreshToken()}`;
+          // logout so the refresh_token we pass to the desktop app is not used in the dashboard
+          // (a refresh token can only be used one time)
+          this.sdk.nuclia.auth.logout();
           location.href = redirectUrl + tokens;
         }
       });

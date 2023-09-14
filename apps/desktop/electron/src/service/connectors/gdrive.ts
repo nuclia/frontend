@@ -7,14 +7,15 @@ import {
   FileStatus,
   Link,
 } from '../models';
-import { Observable, of, from, map, concatMap, forkJoin, tap } from 'rxjs';
+import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
+import { OAuthBaseConnector } from './oauth.base';
 
 export const GDriveConnector: SourceConnectorDefinition = {
   id: 'gdrive',
   factory: () => new GDriveImpl(),
 };
 
-class GDriveImpl implements ISourceConnector {
+class GDriveImpl extends OAuthBaseConnector implements ISourceConnector {
   params: ConnectorParameters = {};
   isExternal = false;
 
@@ -141,27 +142,5 @@ class GDriveImpl implements ISourceConnector {
           observer.complete();
         });
     });
-  }
-
-  refreshAuthentication(): Observable<boolean> {
-    return from(
-      fetch(`${this.params.refresh_endpoint}?refresh_token=${this.params.refresh}`, {
-        method: 'GET',
-        headers: {
-          origin: 'http://localhost:4200/',
-        },
-      }).then((res) => res.json()),
-    ).pipe(
-      map((res) => {
-        if (res.token) {
-          this.params.token = res.token;
-          return true;
-        } else {
-          this.params.token = '';
-          this.params.refresh = '';
-          return false;
-        }
-      }),
-    );
   }
 }

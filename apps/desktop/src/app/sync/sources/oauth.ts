@@ -1,24 +1,21 @@
-import { ISourceConnector, SourceConnectorDefinition, ConnectorParameters, Field } from '../models';
+import { ISourceConnector, ConnectorParameters, Field } from '../models';
 import { Observable, of, BehaviorSubject } from 'rxjs';
 import { getDeeplink } from '../../utils';
 import { environment } from '../../../environments/environment';
 
-export const GDriveConnector: SourceConnectorDefinition = {
-  id: 'gdrive',
-  title: 'Google Drive',
-  logo: 'assets/logos/gdrive.svg',
-  description: 'File storage and synchronization service developed by Google',
-  factory: () => of(new GDriveImpl()),
-};
+const TOKEN = '-token';
+const REFRESH = '-refresh';
 
-const TOKEN = 'gdrive-token';
-const REFRESH = 'gdrive-refresh';
-
-class GDriveImpl implements ISourceConnector {
+export class OAuthConnector implements ISourceConnector {
+  name: string;
   hasServerSideAuth = true;
   isExternal = true;
   resumable = false;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  constructor(name: string) {
+    this.name = name;
+  }
 
   getParameters(): Observable<Field[]> {
     return of([]);
@@ -30,19 +27,19 @@ class GDriveImpl implements ISourceConnector {
 
   getParametersValues(): ConnectorParameters {
     return {
-      token: localStorage.getItem(TOKEN),
-      refresh: localStorage.getItem(REFRESH),
-      refresh_endpoint: `${environment.dashboard}/api/external_auth/gdrive/refresh`,
+      token: localStorage.getItem(this.name + TOKEN),
+      refresh: localStorage.getItem(this.name + REFRESH),
+      refresh_endpoint: `${environment.dashboard}/api/external_auth/${this.name}/refresh`,
     };
   }
 
   goToOAuth(reset?: boolean) {
     if (reset) {
-      localStorage.removeItem(TOKEN);
+      localStorage.removeItem(this.name + TOKEN);
     }
-    const token = localStorage.getItem(TOKEN);
+    const token = localStorage.getItem(this.name + TOKEN);
     if (!token) {
-      const authorizeEndpoint = `${environment.dashboard}/api/external_auth/gdrive/authorize`;
+      const authorizeEndpoint = `${environment.dashboard}/api/external_auth/${this.name}/authorize`;
 
       if ((window as any)['electron']) {
         (window as any)['electron'].openExternal(`${authorizeEndpoint}?redirect=nuclia-desktop://index.html`);
@@ -64,8 +61,8 @@ class GDriveImpl implements ISourceConnector {
           const refresh = params.get('refresh') || '';
           clearInterval(interval);
           if (token) {
-            localStorage.setItem(TOKEN, token);
-            localStorage.setItem(REFRESH, refresh || '');
+            localStorage.setItem(this.name + TOKEN, token);
+            localStorage.setItem(this.name + REFRESH, refresh || '');
             this.isAuthenticated.next(true);
           } else {
             this.isAuthenticated.next(false);

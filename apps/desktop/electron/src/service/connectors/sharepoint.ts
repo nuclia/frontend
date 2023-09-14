@@ -8,6 +8,7 @@ import {
   Link,
 } from '../models';
 import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
+import { OAuthBaseConnector } from './oauth.base';
 
 export const SharepointConnector: SourceConnectorDefinition = {
   id: 'sharepoint',
@@ -16,7 +17,7 @@ export const SharepointConnector: SourceConnectorDefinition = {
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
 
-class SharepointImpl implements ISourceConnector {
+class SharepointImpl extends OAuthBaseConnector implements ISourceConnector {
   isExternal = false;
   params: ConnectorParameters = {};
 
@@ -153,31 +154,6 @@ class SharepointImpl implements ISourceConnector {
     );
   }
 
-  refreshAuthentication(): Observable<boolean> {
-    return from(
-      fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          origin: 'http://localhost:4200/',
-        },
-        body: `client_id=${this.params.client_id}&refresh_token=${this.params.refresh}&grant_type=refresh_token&scope=${SCOPE}`,
-      }).then((res) => res.json()),
-    ).pipe(
-      map((res) => {
-        if (res.access_token && res.refresh_token) {
-          this.params.token = res.access_token;
-          this.params.refresh = res.refresh_token;
-          return true;
-        } else {
-          this.params.token = '';
-          this.params.refresh = '';
-          return false;
-        }
-      }),
-    );
-  }
-
   private getSiteId(): Observable<string> {
     const path = `https://graph.microsoft.com/v1.0/sites?search=${this.params.site_name}}`;
     return from(
@@ -186,6 +162,13 @@ class SharepointImpl implements ISourceConnector {
           Authorization: `Bearer ${this.params.token || ''}`,
         },
       }).then((res) => res.json()),
-    ).pipe(map((res) => res.value[0]?.id || ''));
+    ).pipe(
+      map((res) => {
+        if (res.error) {
+          throw new Error(`Error fetching Sharepoint site id for "${this.params.site_name}": ${res.error.message}`);
+        }
+        return res.value[0]?.id || '';
+      }),
+    );
   }
 }
