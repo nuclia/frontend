@@ -39,7 +39,7 @@ export class ServiceAccessComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    combineLatest([this.stateService.account, this.stateService.stash])
+    combineLatest([this.stateService.account, this.stateService.kb])
       .pipe(
         filter(([account, kb]) => !!account && !!kb),
         tap(([account, kb]) => {

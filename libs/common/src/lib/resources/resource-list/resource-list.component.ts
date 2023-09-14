@@ -359,7 +359,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   getResources(displayLoader = true): Observable<Search.Results> {
     if (!this.standalone) {
-      forkJoin([this.stateService.account.pipe(take(1)), this.stateService.stash.pipe(take(1))])
+      forkJoin([this.stateService.account.pipe(take(1)), this.stateService.kb.pipe(take(1))])
         .pipe(
           filter(([account, kb]) => !!account && !!kb),
           take(1),

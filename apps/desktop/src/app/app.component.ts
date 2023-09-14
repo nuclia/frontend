@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BackendConfigurationService, SDKService, UserService } from '@flaps/core';
-import { STFUtils, STFTrackingService } from '@flaps/core';
+import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils, UserService } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { CONNECTOR_ID_KEY } from './sync/models';

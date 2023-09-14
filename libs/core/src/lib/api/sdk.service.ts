@@ -76,7 +76,7 @@ export class SDKService {
     private stateService: StateService,
     private featureFlagService: FeatureFlagService,
   ) {
-    combineLatest([this.stateService.stash, this.stateService.account])
+    combineLatest([this.stateService.kb, this.stateService.account])
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
         map(([kb, account]) => [kb, account] as [KnowledgeBox, Account]),
@@ -90,39 +90,39 @@ export class SDKService {
         ),
         tap(() => (this._isKbLoaded = true)),
       )
-      .subscribe((kb) => this._currentKB.next(kb));
+      .subscribe((kb) => {
+        this._currentKB.next(kb);
+        this.refreshKbList();
+      });
 
     this.countersRefreshSubcriptions();
     this.refreshCounter(true);
-    this.refreshKbList();
   }
 
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
     const currentAccount = this.config.staticConf.standalone ? { slug: accountSlug } : this.stateService.getAccount();
-    const accountObs =
-      currentAccount && currentAccount.slug === accountSlug
-        ? of(currentAccount as Account)
-        : this.nuclia.db.getAccount(accountSlug);
-    return accountObs.pipe(tap((account) => this.stateService.setAccount(account)));
+    return currentAccount && currentAccount.slug === accountSlug
+      ? of(currentAccount as Account)
+      : this.nuclia.db.getAccount(accountSlug).pipe(tap((account) => this.stateService.setAccount(account)));
   }
 
   setCurrentKnowledgeBox(accountSlug: string, kbSlug: string, force = false): Observable<WritableKnowledgeBox> {
     // returns the current kb and set it if not set
-    const currentKb = this.stateService.getStash();
+    const currentKb = this.stateService.getKb();
     if (!force && currentKb && currentKb.slug === kbSlug) {
       return of(currentKb as WritableKnowledgeBox);
     } else if (kbSlug === this.DEMO_SLUG) {
       return this.getDemoKb().pipe(
         tap((kb) => {
           this.nuclia.options.zone = 'europe-1';
-          this.stateService.setStash(kb);
+          this.stateService.setKb(kb);
         }),
       );
     } else {
       return this.nuclia.db.getKnowledgeBox(accountSlug, kbSlug).pipe(
         map((kb) => {
-          this.stateService.setStash(kb);
+          this.stateService.setKb(kb);
           return kb;
         }),
       );
@@ -156,7 +156,7 @@ export class SDKService {
       ? this.nuclia.db
           .getStandaloneKbs()
           .pipe(
-            map((kbs) => kbs.map((kb) => ({ ...kb, id: kb.uuid, title: kb.slug, zone: 'local' } as IKnowledgeBoxItem))),
+            map((kbs) => kbs.map((kb) => ({ ...kb, id: kb.uuid, title: kb.slug, zone: 'local' }) as IKnowledgeBoxItem)),
           )
       : this.stateService.account.pipe(
           filter((account) => !!account),
@@ -263,14 +263,17 @@ export class SDKService {
                   (acc, [schemaId, schema]) => {
                     acc[schemaId] = Object.entries(schema.properties)
                       .filter(([, property]) => property.type === 'string')
-                      .reduce((acc, [propertyId, property]) => {
-                        acc[propertyId] = {
-                          title: property.title,
-                          required: schema.required.includes(propertyId),
-                          textarea: property.widget === 'textarea',
-                        };
-                        return acc;
-                      }, {} as { [key: string]: { title: string; required: boolean; textarea: boolean } });
+                      .reduce(
+                        (acc, [propertyId, property]) => {
+                          acc[propertyId] = {
+                            title: property.title,
+                            required: schema.required.includes(propertyId),
+                            textarea: property.widget === 'textarea',
+                          };
+                          return acc;
+                        },
+                        {} as { [key: string]: { title: string; required: boolean; textarea: boolean } },
+                      );
                     return acc;
                   },
                   {} as LearningConfigurationUserKeys,

@@ -17,7 +17,7 @@ export class NavigationService {
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
-  homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.stash]).pipe(
+  homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.kb]).pipe(
     map(([account, kb]) => {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);

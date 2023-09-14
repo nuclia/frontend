@@ -20,7 +20,7 @@ export class StateService {
   readonly account = this.accountSubject.asObservable();
 
   private readonly kbSubject = new BehaviorSubject<KnowledgeBox | null>(null);
-  readonly stash = this.kbSubject.asObservable();
+  readonly kb = this.kbSubject.asObservable();
 
   dbGetStateData(): StateData | null {
     return this.local.getStoredState<StateData>(STATE_DATA);
@@ -50,15 +50,11 @@ export class StateService {
     this.kbSubject.next(null);
   }
 
-  getStash(): KnowledgeBox | null {
+  getKb(): KnowledgeBox | null {
     return this.kbSubject.getValue();
   }
 
-  setStash(stash: KnowledgeBox) {
+  setKb(stash: KnowledgeBox) {
     this.kbSubject.next(stash);
-  }
-
-  cleanStash() {
-    this.kbSubject.next(null);
   }
 }
