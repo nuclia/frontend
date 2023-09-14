@@ -1,8 +1,7 @@
 import { catchError, map, Observable, of } from 'rxjs';
 import type { IErrorResponse, INuclia } from '../../models';
 import { Chat } from './chat.models';
-import type { Search } from './search.models';
-import { ChatOptions } from './search.models';
+import type { ChatOptions, Search } from './search.models';
 
 import { ResourceProperties } from '../db.models';
 
