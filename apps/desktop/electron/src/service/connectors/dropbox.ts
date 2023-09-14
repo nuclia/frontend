@@ -7,14 +7,15 @@ import {
   ConnectorParameters,
   Link,
 } from '../models';
-import { concatMap, forkJoin, from, map, Observable, of, tap } from 'rxjs';
+import { concatMap, forkJoin, from, map, Observable, of } from 'rxjs';
+import { OauthBaseConnector } from './oauth.base';
 
 export const DropboxConnector: SourceConnectorDefinition = {
   id: 'dropbox',
   factory: () => new DropboxImpl(),
 };
 
-class DropboxImpl implements ISourceConnector {
+class DropboxImpl extends OauthBaseConnector implements ISourceConnector {
   isExternal = false;
   params: ConnectorParameters = {};
 
@@ -185,10 +186,5 @@ class DropboxImpl implements ISourceConnector {
 
   getLink(resource: SyncItem): Observable<Link> {
     throw new Error('Method not implemented.');
-  }
-
-  refreshAuthentication(): Observable<boolean> {
-    this.params.token = '';
-    return of(false);
   }
 }

@@ -31,17 +31,15 @@ import {
   SyncRow,
 } from './models';
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
-import { injectScript, SDKService, UserService } from '@flaps/core';
-import { DropboxConnector } from './sources/dropbox';
+import { injectScript, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
 import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
-import { OneDriveConnector } from './sources/onedrive';
 import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
-import { SharepointConnector } from './sources/sharepoint';
+import { SharepointImpl } from './sources/sharepoint';
 import { ConfluenceConnector } from './sources/confluence';
-import { GDriveConnector } from './sources/gdrive';
+import { OauthConnector } from './sources/oauth';
 
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
@@ -70,10 +68,47 @@ export class SyncService {
       instance?: ReplaySubject<ISourceConnector>;
     };
   } = {
-    gdrive: { definition: GDriveConnector, settings: {} },
-    onedrive: { definition: OneDriveConnector, settings: {} },
-    sharepoint: { definition: SharepointConnector, settings: {} },
-    dropbox: { definition: DropboxConnector, settings: {} },
+    gdrive: {
+      definition: {
+        id: 'gdrive',
+        title: 'Google Drive',
+        logo: 'assets/logos/gdrive.svg',
+        description: 'File storage and synchronization service developed by Google',
+        factory: () => of(new OauthConnector('gdrive')),
+      },
+      settings: {},
+    },
+    onedrive: {
+      definition: {
+        id: 'onedrive',
+        title: 'One Drive',
+        logo: 'assets/logos/onedrive.svg',
+        description: 'Microsoft OneDrive file hosting service',
+        factory: () => of(new OauthConnector('onedrive')),
+      },
+      settings: {},
+    },
+    sharepoint: {
+      definition: {
+        id: 'sharepoint',
+        title: 'SharePoint',
+        logo: 'assets/logos/sharepoint.svg',
+        description: 'Microsoft Sharepoint service',
+        permanentSyncOnly: true,
+        factory: () => of(new SharepointImpl('sharepoint')),
+      },
+      settings: {},
+    },
+    dropbox: {
+      definition: {
+        id: 'dropbox',
+        title: 'Dropbox',
+        logo: 'assets/logos/dropbox.svg',
+        description: 'File storage and synchronization service developed by Dropbox',
+        factory: () => of(new OauthConnector('dropbox')),
+      },
+      settings: {},
+    },
     folder: { definition: FolderConnector, settings: {} },
     sitemap: { definition: SitemapConnector, settings: {} },
     confluence: { definition: ConfluenceConnector, settings: {} },
@@ -103,7 +138,10 @@ export class SyncService {
   sourcesCache = this._sourcesCache.asObservable();
   currentSource = this.sourcesCache.pipe(map((sources) => sources[this.getCurrentSourceId()]));
 
-  constructor(private sdk: SDKService, private user: UserService, private http: HttpClient) {
+  constructor(
+    private sdk: SDKService,
+    private http: HttpClient,
+  ) {
     const account = this.getAccountId();
     if (account) {
       this.setAccount();

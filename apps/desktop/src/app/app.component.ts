@@ -9,7 +9,6 @@ import { getDeeplink } from './utils';
 import pkg from '../../../../package.json';
 import { filter, map, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
-import { NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'nde-root',
@@ -39,7 +38,6 @@ export class AppComponent implements OnInit {
     private router: Router,
     private tracking: STFTrackingService,
     private modalService: SisModalService,
-    private navigationService: NavigationService,
     private cdr: ChangeDetectorRef,
   ) {
     this.initTranslate(undefined);

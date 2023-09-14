@@ -8,6 +8,7 @@ import {
   Link,
 } from '../models';
 import { Observable, of, from, map, concatMap, forkJoin } from 'rxjs';
+import { OauthBaseConnector } from './oauth.base';
 
 export const OneDriveConnector: SourceConnectorDefinition = {
   id: 'onedrive',
@@ -16,7 +17,7 @@ export const OneDriveConnector: SourceConnectorDefinition = {
 
 const SCOPE = 'https://graph.microsoft.com/files.read offline_access';
 
-class OneDriveImpl implements ISourceConnector {
+class OneDriveImpl extends OauthBaseConnector implements ISourceConnector {
   params: ConnectorParameters = {};
   isExternal = false;
 
@@ -142,34 +143,6 @@ class OneDriveImpl implements ISourceConnector {
       fetch(resource.metadata.downloadLink, { headers: { Authorization: `Bearer ${this.params.token || ''}` } }).then(
         (res) => res.blob(),
       ),
-    );
-  }
-
-  refreshAuthentication(): Observable<boolean> {
-    return from(
-      fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          origin: 'http://localhost:4200/',
-        },
-        body: `client_id=${this.params.client_id}&refresh_token=${this.params.refresh}&grant_type=refresh_token&scope=${SCOPE}`,
-      }).then((res) => res.json()),
-    ).pipe(
-      map((res) => {
-        if (res.access_token && res.refresh_token) {
-          this.params.token = res.access_token;
-          this.params.refresh = res.refresh_token;
-          return true;
-        } else {
-          this.params.token = '';
-          this.params.refresh = '';
-          if (res.error) {
-            throw new Error(res.error_description || 'Unknown error when refreshing OneDrive authentication');
-          }
-          return false;
-        }
-      }),
     );
   }
 }
