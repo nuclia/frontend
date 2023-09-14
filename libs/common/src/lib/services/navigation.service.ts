@@ -17,7 +17,7 @@ export class NavigationService {
     @Inject('staticEnvironmentConfiguration') private environment: StaticEnvironmentConfiguration,
   ) {}
 
-  homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.stash]).pipe(
+  homeUrl: Observable<string> = combineLatest([this.stateService.account, this.stateService.kb]).pipe(
     map(([account, kb]) => {
       if (account && this.inAccountManagement(location.pathname)) {
         return this.getAccountManageUrl(account.slug);
@@ -76,13 +76,11 @@ export class NavigationService {
   }
   // Redirect authenticated users to the landing page.
   goToLandingPage(): void {
-    const data = this.stateService.dbGetStateData();
     const goToUrl = this.authService.getNextUrl();
     if (goToUrl && goToUrl !== '/') {
       this.goToNextUrl(goToUrl);
-    } else if ((!!data && data.account) || this.environment.standalone) {
-      const account = !!data && data.account ? data.account : standaloneSimpleAccount.slug;
-      this.router.navigate([this.getKbSelectUrl(account)]);
+    } else if (this.environment.standalone) {
+      this.router.navigate([this.getKbSelectUrl(standaloneSimpleAccount.slug)]);
     } else {
       this.router.navigate([this.getAccountSelectUrl()]);
     }
@@ -99,7 +97,6 @@ export class NavigationService {
   }
 
   resetState() {
-    this.stateService.dbDelStateData();
     this.stateService.cleanAccount();
     this.router.navigate([this.getAccountSelectUrl()]);
   }

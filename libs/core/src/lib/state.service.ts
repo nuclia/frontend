@@ -3,13 +3,6 @@ import { BehaviorSubject } from 'rxjs';
 import { Account, KnowledgeBox } from '@nuclia/core';
 import { LocalState } from './models';
 
-const STATE_DATA = 'STATE_DATA';
-
-export interface StateData {
-  account: string;
-  stash: string | null; // There are use cases were only an account is set
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -20,19 +13,7 @@ export class StateService {
   readonly account = this.accountSubject.asObservable();
 
   private readonly kbSubject = new BehaviorSubject<KnowledgeBox | null>(null);
-  readonly stash = this.kbSubject.asObservable();
-
-  dbGetStateData(): StateData | null {
-    return this.local.getStoredState<StateData>(STATE_DATA);
-  }
-
-  dbSetStateData(data: StateData | null) {
-    this.local.storeLocalState(STATE_DATA, data);
-  }
-
-  dbDelStateData() {
-    this.local.removeStoredState(STATE_DATA);
-  }
+  readonly kb = this.kbSubject.asObservable();
 
   getAccount(): Account | null {
     return this.accountSubject.getValue();
@@ -50,15 +31,11 @@ export class StateService {
     this.kbSubject.next(null);
   }
 
-  getStash(): KnowledgeBox | null {
+  getKb(): KnowledgeBox | null {
     return this.kbSubject.getValue();
   }
 
-  setStash(stash: KnowledgeBox) {
-    this.kbSubject.next(stash);
-  }
-
-  cleanStash() {
-    this.kbSubject.next(null);
+  setKb(kb: KnowledgeBox) {
+    this.kbSubject.next(kb);
   }
 }

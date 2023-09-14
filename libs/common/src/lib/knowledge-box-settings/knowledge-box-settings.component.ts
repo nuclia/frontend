@@ -7,6 +7,7 @@ import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } fr
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
+import { Router } from '@angular/router';
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
@@ -45,6 +46,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private tracking: STFTrackingService,
     private translate: TranslateService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +58,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(() => this.updateFormValidators());
-    this.stateService.stash
+    this.stateService.kb
       .pipe(
         filter((data) => !!data),
         tap((data) => (this.kb = data || undefined)),
@@ -90,20 +92,29 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             title: [this.kb?.title, [Validators.required]],
             description: [this.kb?.description],
             config: this.formBuilder.group({
-              ...(this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-                acc[entry.id] = this.currentConfig[entry.id];
-                return acc;
-              }, {} as { [key: string]: any }),
-              user_keys: this.formBuilder.group(
-                Object.entries(this.userKeys || {}).reduce((acc, [groupId, group]) => {
-                  acc[groupId] = this.formBuilder.group(
-                    Object.entries(group).reduce((acc, [fieldId, field]) => {
-                      acc[fieldId] = [this.currentConfig['user_keys']?.[groupId]?.[fieldId] || ''];
-                      return acc;
-                    }, {} as { [key: string]: any }),
-                  );
+              ...(this.displayedLearningConfigurations || []).reduce(
+                (acc, entry) => {
+                  acc[entry.id] = this.currentConfig[entry.id];
                   return acc;
-                }, {} as { [key: string]: any }),
+                },
+                {} as { [key: string]: any },
+              ),
+              user_keys: this.formBuilder.group(
+                Object.entries(this.userKeys || {}).reduce(
+                  (acc, [groupId, group]) => {
+                    acc[groupId] = this.formBuilder.group(
+                      Object.entries(group).reduce(
+                        (acc, [fieldId, field]) => {
+                          acc[fieldId] = [this.currentConfig['user_keys']?.[groupId]?.[fieldId] || ''];
+                          return acc;
+                        },
+                        {} as { [key: string]: any },
+                      ),
+                    );
+                    return acc;
+                  },
+                  {} as { [key: string]: any },
+                ),
               ),
             }),
           });
@@ -115,13 +126,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   initKbForm() {
-    this.kbForm?.patchValue({
-      uid: this.kb?.id,
-      slug: this.kb?.slug,
-      title: this.kb?.title,
-      description: this.kb?.description,
+    if (!this.kbForm || !this.kb) {
+      return;
+    }
+    this.kbForm.patchValue({
+      uid: this.kb.id,
+      slug: this.kb.slug,
+      title: this.kb.title,
+      description: this.kb.description,
       config: this.currentConfig,
     });
+    this.kbForm.markAsPristine();
   }
 
   hasOwnKey() {
@@ -164,9 +179,14 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   }
 
   saveKb(): void {
-    if (!this.kbForm || this.kbForm.invalid) return;
+    if (!this.kbForm || this.kbForm.invalid || !this.kb) {
+      return;
+    }
+
     this.saving = true;
     const newSlug = STFUtils.generateSlug(this.kbForm.value.slug);
+    const oldSlug = this.kb.slug || '';
+    const isSlugUpdated = newSlug !== oldSlug;
     const data: Partial<KnowledgeBox> = {
       title: this.kbForm.value.title,
       description: this.kbForm.value.description,
@@ -176,29 +196,38 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     kb.modify(data)
       .pipe(
         switchMap(() => {
-          const current = (this.learningConfigurations || []).reduce((acc, entry) => {
-            if (this.currentConfig[entry.id]) {
-              acc[entry.id] = this.currentConfig[entry.id];
-            }
-            return acc;
-          }, {} as { [key: string]: string });
+          const current = (this.learningConfigurations || []).reduce(
+            (acc, entry) => {
+              if (this.currentConfig[entry.id]) {
+                acc[entry.id] = this.currentConfig[entry.id];
+              }
+              return acc;
+            },
+            {} as { [key: string]: string },
+          );
           const conf = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
             acc[entry.id] = this.kbForm?.value.config[entry.id];
             return acc;
           }, current);
 
           const userKeys = {
-            user_keys: (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
-              const group = this.getVisibleFieldGroup(entry);
-              if (group && this.ownKey) {
-                acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce((acc, fieldId) => {
-                  const value = this.kbForm?.value.config['user_keys'][group][fieldId];
-                  acc[fieldId] = value;
-                  return acc;
-                }, {} as { [key: string]: any });
-              }
-              return acc;
-            }, {} as { [key: string]: any }),
+            user_keys: (this.displayedLearningConfigurations || []).reduce(
+              (acc, entry) => {
+                const group = this.getVisibleFieldGroup(entry);
+                if (group && this.ownKey) {
+                  acc[group] = Object.keys(this.userKeys?.[group] || {}).reduce(
+                    (acc, fieldId) => {
+                      const value = this.kbForm?.value.config['user_keys'][group][fieldId];
+                      acc[fieldId] = value;
+                      return acc;
+                    },
+                    {} as { [key: string]: any },
+                  );
+                }
+                return acc;
+              },
+              {} as { [key: string]: any },
+            ),
           };
 
           return kb.setConfiguration({ ...conf, ...userKeys });
@@ -210,8 +239,10 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       .subscribe((kb) => {
         this.kbForm?.markAsPristine();
         this.saving = false;
-        this.stateService.setStash(kb);
-        this.sdk.refreshKbList(true);
+        this.stateService.setKb(kb);
+        if (isSlugUpdated) {
+          this.router.navigateByUrl(this.router.url.replace(oldSlug, newSlug));
+        }
       });
   }
 

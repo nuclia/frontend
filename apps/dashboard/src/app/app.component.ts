@@ -57,7 +57,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.tracking.logout();
       this.router.navigate(['/user/login']);
       this.state.cleanAccount();
-      this.state.cleanStash();
     });
 
     if (this.config.useRemoteLogin()) {

@@ -21,7 +21,6 @@ import {
   PaTextFieldModule,
   PaTogglesModule,
   PaTooltipModule,
-  PaTranslateModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { DropdownButtonComponent } from '@nuclia/sistema';
 import {
@@ -55,7 +54,6 @@ import {
     PaPopupModule,
     PaIconModule,
     DropdownButtonComponent,
-    PaTranslateModule,
     UploadModule,
     AccountStatusComponent,
     PaDateTimeModule,
