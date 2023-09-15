@@ -131,6 +131,7 @@ xdescribe('UploadComponent', () => {
       params: {},
       permanentSync: false,
     });
+    /*
     component.source = {
       hasServerSideAuth: false,
       isExternal: false,
@@ -139,6 +140,7 @@ xdescribe('UploadComponent', () => {
       goToOAuth: () => {},
       authenticate: () => of(true),
     };
+     */
     sync.setStep(2);
     fixture.detectChanges();
     fixture.debugElement.nativeElement.querySelector('[qa="next"]').click();
