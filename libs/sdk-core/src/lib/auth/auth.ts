@@ -104,7 +104,7 @@ export class Authentication implements IAuthentication {
   }
 
   refresh(): Observable<boolean> {
-    return this.fetch<AuthTokens>('/auth/refresh', { refresh_token: this.getRefreshToken() }, false, {}).pipe(
+    return this.fetch<AuthTokens>('/auth/refresh', { refresh_token: this.getRefreshToken() }, true, {}).pipe(
       catchError((e) => {
         this.logout();
         return throwError(e);
