@@ -45,7 +45,7 @@
         class="standalone-config"
         [paTooltip]="(errorMessage | async) || ''">
         <pa-icon
-          [name]="(hasValidKey | async) === true ? 'circle-check' : 'circle-cross'"
+          [name]="(hasValidKey | async) === true ? 'circle-check' : 'warning'"
           [class]="(hasValidKey | async) === true ? 'valid' : 'invalid'"></pa-icon>
         <div class="title-xs">nuclia.cloud</div>
       </div>

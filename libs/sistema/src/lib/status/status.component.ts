@@ -17,7 +17,7 @@ export class SisStatusComponent {
         this._statusIcon = 'circle-check';
         break;
       case 'error':
-        this._statusIcon = 'circle-cross';
+        this._statusIcon = 'warning';
         break;
       case 'pending':
       default:
