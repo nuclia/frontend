@@ -40,11 +40,7 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   accountUrl = this.account.pipe(map((account) => this.navigationService.getAccountManageUrl(account!.slug)));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
 
-  isActivityEnabled = this.tracking.isFeatureEnabled('view-activity');
   isEntitiesEnabled = this.tracking.isFeatureEnabled('manage-entities');
-  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users');
-  isWidgetsEnabled = this.tracking.isFeatureEnabled('manage-widgets');
-  isAPIKeysEnabled = this.tracking.isFeatureEnabled('manage-api-keys');
   isBillingEnabled = this.tracking.isFeatureEnabled('billing');
   isTrainingEnabled = this.tracking.isFeatureEnabled('training');
   isSynonymsEnabled: Observable<boolean> = combineLatest([

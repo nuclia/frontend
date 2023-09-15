@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, combineLatest, filter, of, Subject } from 'rxjs';
+import { catchError, filter, of, Subject } from 'rxjs';
 import { auditTime, concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { LearningConfigurationUserKeys, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
@@ -37,7 +37,6 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   userKeys?: LearningConfigurationUserKeys;
   currentConfig: { [key: string]: any } = {};
   ownKey = false;
-  isAzureOpenAIEnabled = this.tracking.isFeatureEnabled('azure_openai');
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -67,24 +66,17 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() => (this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})).pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() =>
-          combineLatest([
-            this.isAzureOpenAIEnabled,
-            this.sdk
-              .getVisibleLearningConfiguration(false)
-              .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
-          ]),
+          this.sdk
+            .getVisibleLearningConfiguration(false)
+            .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
         ),
         takeUntil(this.unsubscribeAll),
       )
-      .subscribe(([isAzureOpenAIEnabled, { display, full, keys }]) => {
+      .subscribe(({ display, full, keys }) => {
         this.displayedLearningConfigurations = display;
         this.learningConfigurations = full;
         this.userKeys = keys;
-        if (!isAzureOpenAIEnabled) {
-          if (this.currentConfig['generative_model'] === 'chatgpt-azure') {
-            this.currentConfig['generative_model'] = 'chatgpt';
-          }
-        }
+
         if (this.kb) {
           this.kbForm = this.formBuilder.group({
             uid: [this.kb?.id],

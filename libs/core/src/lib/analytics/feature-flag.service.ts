@@ -8,9 +8,7 @@ export interface Features {
 
 const CUSTOM_FEATURE_FLAGS = 'NUCLIA_CUSTOM_FEATURE_FLAGS';
 
-const stageFeatures: Features = {
-  'demo-kb-id': 'eed07421-dc96-4067-a73b-32c89eac0229',
-};
+const stageFeatures: Features = {};
 
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagService {

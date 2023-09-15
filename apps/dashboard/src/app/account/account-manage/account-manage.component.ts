@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Observable, Subject, take } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { concatMap, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { AccountModification, SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
 import { Account } from '@nuclia/core';
@@ -48,8 +48,6 @@ export class AccountManageComponent implements OnInit, OnDestroy {
       sluggable: 'account.account_name_invalid',
     } as IErrorMessages,
   };
-
-  isUsersEnabled = this.tracking.isFeatureEnabled('manage-users');
 
   zones: Zone[] | undefined;
   zone = new UntypedFormControl();
