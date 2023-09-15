@@ -40,7 +40,7 @@ describe('SisToastService', () => {
     service.error(message);
     expect(mockToastService.openError).toHaveBeenCalledWith(message, {
       title: 'Error',
-      icon: 'circle-cross',
+      icon: 'warning',
       ...closeButtonConf,
     });
   });

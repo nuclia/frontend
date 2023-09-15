@@ -2,7 +2,7 @@
   <div
     class="resource-bulk-actions"
     *ngIf="(isAdminOrContrib | async) && selection.length > 0">
-    {{ 'resource.selected_count' | translate : { num: allErrorsSelected ? errorCount : selection.length } }}
+    {{ 'resource.selected_count' | translate: { num: allErrorsSelected ? errorCount : selection.length } }}
 
     <ng-container *ngIf="selection.length > 0">
       <pa-button
@@ -26,7 +26,7 @@
           kind="primary"
           *ngIf="!allErrorsSelected"
           (click)="selectAllErrors()">
-          {{ 'resource.select-all-failures' | translate : { count: errorCount } }}
+          {{ 'resource.select-all-failures' | translate: { count: errorCount } }}
         </pa-button>
         <pa-button
           aspect="basic"
@@ -87,13 +87,13 @@
               <pa-icon
                 class="error"
                 *ngIf="row.resource.metadata?.status === 'ERROR'"
-                name="circle-cross"></pa-icon>
+                name="warning"></pa-icon>
             </div>
           </div>
         </pa-table-cell>
 
         <pa-table-cell center>
-          <span class="body-s">{{ row.resource.created | formatDate : { default: true } }}</span>
+          <span class="body-s">{{ row.resource.created | formatDate: { default: true } }}</span>
         </pa-table-cell>
         <pa-table-cell-menu *ngIf="isAdminOrContrib | async">
           <pa-button

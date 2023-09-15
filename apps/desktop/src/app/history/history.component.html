@@ -37,7 +37,7 @@
           class="success"></pa-icon>
         <ng-container *ngIf="active.completed && active.errors">
           <pa-icon
-            name="circle-cross"
+            name="warning"
             class="error"></pa-icon>
           {{ active.errors }}
         </ng-container>
@@ -62,7 +62,7 @@
         <ng-container *ngIf="upload.completed && upload.errors">
           <pa-icon
             *ngIf="upload.completed && upload.errors"
-            name="circle-cross"
+            name="warning"
             class="error"></pa-icon>
           {{ upload.errors }}
         </ng-container>

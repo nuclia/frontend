@@ -33,7 +33,7 @@ export class SisToastService {
   }
 
   error(message: string) {
-    const conf = { ...closeButtonConf, title: 'Error', icon: 'circle-cross' };
+    const conf = { ...closeButtonConf, title: 'Error', icon: 'warning' };
     this.paToaster.openError(message, conf);
   }
 }
