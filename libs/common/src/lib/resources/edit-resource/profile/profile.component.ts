@@ -4,7 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { SDKService } from '@flaps/core';
 import { CloudLink, FileFieldData, Resource } from '@nuclia/core';
 import { filter, forkJoin, map, Observable, Subject, switchMap, tap, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { shareReplay, takeUntil } from 'rxjs/operators';
 import { EditResourceService } from '../edit-resource.service';
 import { JsonValidator } from '../../../validators';
 
@@ -26,6 +26,7 @@ export class ResourceProfileComponent implements OnInit {
       this.currentValue = resource;
       this.updateForm(resource);
     }),
+    shareReplay(1),
     takeUntil(this.unsubscribeAll),
   );
   currentValue?: Resource;
@@ -70,6 +71,7 @@ export class ResourceProfileComponent implements OnInit {
   );
   hasBaseDropZoneOver = false;
 
+  isFormReady = false;
   isUploading = false;
   isSaving = false;
   extraMetadata: any;
@@ -80,9 +82,7 @@ export class ResourceProfileComponent implements OnInit {
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
-  ) {
-    this.form.disable();
-  }
+  ) {}
 
   ngOnInit() {
     this.editResource.setCurrentView('resource');
@@ -110,8 +110,8 @@ export class ResourceProfileComponent implements OnInit {
       extra: JSON.stringify(data.extra?.metadata, null, 2) || '',
     });
     this.extraMetadata = data.extra?.metadata;
-    this.form.enable();
-    this.cdr?.markForCheck();
+    this.isFormReady = true;
+    this.cdr?.detectChanges();
   }
 
   save() {

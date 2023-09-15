@@ -1,6 +1,8 @@
 <div class="main-container">
   <div class="scrollable-area with-footer with-right-panel">
+    <nsi-spinner *ngIf="!isFormReady"></nsi-spinner>
     <form
+      *ngIf="isFormReady"
       [formGroup]="form"
       (ngSubmit)="save()">
       <div>
