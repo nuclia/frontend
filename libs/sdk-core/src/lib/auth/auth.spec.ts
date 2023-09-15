@@ -76,7 +76,7 @@ describe('Authentication', () => {
           expect(global.fetch).toHaveBeenCalledWith(
             'http://here/auth/refresh',
             expect.objectContaining({
-              headers: { Authorization: `Bearer ${ACCESS_TOKEN}`, 'content-type': 'application/json' },
+              headers: { 'content-type': 'application/json' },
               method: 'POST',
               body: '{"refresh_token":"qwerty"}',
             }),
