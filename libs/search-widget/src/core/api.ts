@@ -1,6 +1,6 @@
 import {
-  BaseSearchOptions,
   Chat,
+  ChatOptions,
   Classification,
   ExtractedDataTypes,
   FieldFullId,
@@ -81,6 +81,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
     CHAT_MODE = CHAT_MODE.filter((feature) => feature !== Chat.Features.PARAGRAPHS);
   }
   STATE = state;
+
   return nucliaApi;
 };
 
@@ -110,7 +111,7 @@ export const search = (query: string, options: SearchOptions): Observable<Search
 export const getAnswer = (
   query: string,
   chat?: Chat.Entry[],
-  options?: BaseSearchOptions,
+  options?: ChatOptions,
 ): Observable<Chat.Answer | IErrorResponse> => {
   if (!nucliaApi) {
     throw new Error('Nuclia API not initialized');
