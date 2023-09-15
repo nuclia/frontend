@@ -47,7 +47,6 @@ $table-breakpoint: 1400px;
   .status-buttons-container {
     align-items: center;
     display: flex;
-    gap: rhythm(2);
     justify-content: flex-end;
     min-width: rhythm(24);
 
@@ -55,6 +54,10 @@ $table-breakpoint: 1400px;
       align-items: center;
       display: flex;
       gap: rhythm(0.25);
+
+      &.with-margin {
+        margin-right: rhythm(2);
+      }
     }
     .file-count {
       font-size: font-size(l);
