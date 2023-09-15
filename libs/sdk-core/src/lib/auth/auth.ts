@@ -8,7 +8,10 @@ import type { AuthTokens, NucliaDBRole } from './auth.models';
 
 const LOCALSTORAGE_AUTH_KEY = 'JWT_KEY';
 const LOCALSTORAGE_REFRESH_KEY = 'JWT_REFRESH_KEY';
-const REFRESH_DELAY = 5 * 60 * 1000; // 5 min
+// Restore the 6 hours delay as 5 minutes is too painful for the desktop
+// (temporary until we have the Deno agent)
+const REFRESH_DELAY = 6 * 60 * 60 * 1000; // 6 hours
+// const REFRESH_DELAY = 5 * 60 * 1000; // 5 min
 
 export class Authentication implements IAuthentication {
   private nuclia: INuclia;
