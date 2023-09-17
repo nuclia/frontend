@@ -43,7 +43,7 @@ describe('ConnectorsComponent', () => {
   });
 
   describe('sources', () => {
-    it('should emit when a source is selected', () => {
+    it('should select connector', () => {
       jest.spyOn(component.select, 'emit');
       const element = fixture.debugElement.nativeElement.querySelector('.connector');
       element.click();
