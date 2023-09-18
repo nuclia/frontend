@@ -1,4 +1,17 @@
 <div class="select-files">
+  <div
+    class="source-destination body-m"
+    *ngIf="currentConnector | async as connector">
+    <img
+      [src]="connector.logo"
+      [alt]="connector.title" />
+    {{ currentSourceId | async }}
+    <pa-icon name="chevron-right"></pa-icon>
+    <img
+      [src]="nucliaCloud.logo"
+      [alt]="nucliaCloud.title" />
+    Knowledge Box
+  </div>
   <div class="header">
     <div>
       <h2>{{ 'upload.steps.data' | translate }}</h2>

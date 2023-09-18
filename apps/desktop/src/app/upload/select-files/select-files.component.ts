@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { SelectionModel } from '@angular/cdk/collections';
-import { Observable, of, Subject, take } from 'rxjs';
+import { combineLatest, Observable, of, Subject, take } from 'rxjs';
 import { catchError, filter, map, scan, share, switchMap, tap } from 'rxjs/operators';
 import { FileStatus, SearchResults, SyncItem } from '../../sync/models';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -64,6 +64,12 @@ export class SelectFilesComponent implements AfterViewInit {
     ),
     share(),
   );
+
+  currentSourceId = this.sync.currentSourceId;
+  currentConnector = combineLatest([this.sync.currentSource, this.sync.sourceObs]).pipe(
+    map(([source, definitions]) => definitions.find((definition) => definition.id === source?.connectorId)),
+  );
+  nucliaCloud = this.sync.destinations['nucliacloud'].definition;
 
   constructor(
     private cdr: ChangeDetectorRef,

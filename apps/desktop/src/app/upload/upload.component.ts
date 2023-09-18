@@ -1,9 +1,8 @@
-import { SelectionModel } from '@angular/cdk/collections';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { delay, filter, forkJoin, of, Subject, switchMap, take, takeUntil } from 'rxjs';
 import { STFTrackingService } from '@flaps/core';
-import { CONNECTOR_ID_KEY, ISourceConnector, SOURCE_NAME_KEY, SyncItem } from '../sync/models';
+import { CONNECTOR_ID_KEY, ISourceConnector, SOURCE_NAME_KEY } from '../sync/models';
 import { SyncService } from '../sync/sync.service';
 import { SisToastService } from '@nuclia/sistema';
 
@@ -109,8 +108,10 @@ export class UploadComponent implements OnInit, OnDestroy {
             return of(true);
           } else {
             if (source.hasServerSideAuth) {
-              localStorage.setItem(CONNECTOR_ID_KEY, event.connectorId);
-              localStorage.setItem(SOURCE_NAME_KEY, event.name);
+              if (!(window as any)['electron']) {
+                localStorage.setItem(CONNECTOR_ID_KEY, event.connectorId);
+                localStorage.setItem(SOURCE_NAME_KEY, event.name);
+              }
               source.goToOAuth(true);
               return this.sync.authenticateToSource(sourceInstance);
             } else {

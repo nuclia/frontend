@@ -72,3 +72,14 @@ td {
 .parameters {
   margin-top: rhythm(4);
 }
+
+.source-destination {
+  align-items: center;
+  display:flex;
+  gap: rhythm(1);
+  margin-bottom: rhythm(8);
+  img {
+    width: rhythm(3);
+    height: rhythm(3);
+  }
+}
