@@ -28,12 +28,4 @@
     flex-direction: column;
     gap: rhythm(1);
   }
-
-  pa-button.full-width {
-    display: flex;
-
-    ::ng-deep .pa-button {
-      flex: 1 0 auto;
-    }
-  }
 }

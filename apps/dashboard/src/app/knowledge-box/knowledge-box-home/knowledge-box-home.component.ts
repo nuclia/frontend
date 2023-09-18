@@ -5,8 +5,7 @@ import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/cor
 import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '@flaps/common';
-import { AppService } from '@flaps/common';
+import { AppService, getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -68,6 +67,7 @@ export class KnowledgeBoxHomeComponent {
     ),
   );
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
+  isKbContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
