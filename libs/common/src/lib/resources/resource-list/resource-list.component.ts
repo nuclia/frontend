@@ -158,13 +158,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.uploadService.initStatusCount();
     this.getResources().subscribe(() => this.cdr.markForCheck());
-    this.sdk.refreshing
-      .pipe(
-        takeUntil(this.unsubscribeAll),
-        tap(() => (this.refreshing = true)),
-        switchMap(() => this.getResources()),
-      )
-      .subscribe(() => this.cdr.markForCheck());
 
     // Reset resource list when query is empty (without forcing user to hit enter)
     this.searchForm.controls.query.valueChanges
