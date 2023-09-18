@@ -123,10 +123,10 @@ class NucliaCloudKBImpl implements IDestinationConnector {
         options: kbs
           .filter((kb) => !!kb.slug)
           .map((kb) => {
-            const slug = kb.slug || '';
+            const id = kb.id || '';
             return {
-              label: kb.title || slug,
-              value: slug,
+              label: kb.title || id,
+              value: id,
               disabled: kb.role_on_kb === 'SMEMBER',
             };
           }),

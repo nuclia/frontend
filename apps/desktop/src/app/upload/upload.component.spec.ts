@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -8,6 +8,7 @@ import { BehaviorSubject, NEVER, of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
 import { ConnectorsComponent } from '../connectors/connectors.component';
 import { SyncService } from '../sync/sync.service';
+import { SettingsComponent } from './settings/settings.component';
 import { SelectFilesComponent } from './select-files/select-files.component';
 
 import { UploadComponent } from './upload.component';
@@ -20,6 +21,11 @@ import {
 } from '@guillotinaweb/pastanaga-angular';
 import { MockModule, MockProvider } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
+import { FileStatus } from '../sync/models';
+
+let currentSourceId: string | null = null;
+const fileTitle = 'File title';
+const connectorId = 'connector1';
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -28,7 +34,14 @@ describe('UploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [UploadComponent, ConnectorsComponent, ConnectorComponent, TranslatePipeMock, SelectFilesComponent],
+      declarations: [
+        UploadComponent,
+        ConnectorsComponent,
+        ConnectorComponent,
+        TranslatePipeMock,
+        SelectFilesComponent,
+        SettingsComponent,
+      ],
       imports: [
         NoopAnimationsModule,
         RouterTestingModule,
@@ -44,37 +57,12 @@ describe('UploadComponent', () => {
         {
           provide: SyncService,
           useValue: {
-            sources: { source1: { definition: { id: 'source1' }, settings: {} } },
-            destinations: { destination1: { definition: { id: 'destination1' }, settings: {} } },
+            sources: { [connectorId]: { definition: { id: connectorId }, settings: {} } },
+            destinations: { nucliacloud: { definition: { id: 'nucliacloud' }, settings: {} } },
             addSync: jest.fn(() => of(false)),
-            getConnectors: (type: 'sources' | 'destinations') =>
-              type === 'sources'
-                ? [
-                    {
-                      id: 'source1',
-                      title: 'Source 1',
-                      icon: '',
-                      description: '',
-                    },
-                  ]
-                : [
-                    {
-                      id: 'destination1',
-                      title: 'Destination 1',
-                      icon: '',
-                      description: '',
-                    },
-                  ],
             getDestination: () =>
               of({
-                getParameters: () =>
-                  of([
-                    {
-                      id: 'param1',
-                      label: 'Param 1',
-                      type: 'text',
-                    },
-                  ]),
+                getParameters: () => of([{ id: 'kb' }]),
               }),
             getSource: () =>
               of({
@@ -86,20 +74,37 @@ describe('UploadComponent', () => {
             }),
             sourceObs: of([
               {
-                id: 'source1',
-                title: 'Source 1',
+                id: connectorId,
+                title: 'Connector title',
                 icon: '',
                 description: '',
               },
             ]),
-            showFirstStep: NEVER,
+            getSourceCache: () => of([{}]),
+            addSource: NEVER,
             showSource: NEVER,
             step: new BehaviorSubject<number>(0),
             setStep: (step: number) => {
               (sync.step as BehaviorSubject<number>).next(step);
             },
-            setSourceData: () => of(),
-            getCurrentSourceId: () => 'sync-1',
+            currentSourceId: of(currentSourceId),
+            setCurrentSourceId: (value: string) => (currentSourceId = value),
+            getCurrentSourceId: () => currentSourceId,
+            clearCurrentSourceId: () => (currentSourceId = null),
+            hasCurrentSourceAuth: () => of(true),
+            canSelectFiles: () => true,
+            getFiles: () =>
+              of({
+                items: [
+                  {
+                    uuid: '',
+                    title: fileTitle,
+                    originalId: '',
+                    metadata: {},
+                    status: FileStatus.PENDING,
+                  },
+                ],
+              }),
           },
         },
         {
@@ -118,41 +123,30 @@ describe('UploadComponent', () => {
     sync = TestBed.inject(SyncService);
   });
 
-  it('should allow to add a new sync', () => {
+  it('should create new source', fakeAsync(() => {
     jest.spyOn(sync, 'setStep');
     fixture.debugElement.nativeElement.querySelector('.connector').click();
     expect(sync.setStep).toHaveBeenCalledWith(1);
+
     fixture.detectChanges();
-    let connectors = fixture.debugElement.query(By.css('nde-connectors'));
-    fixture.debugElement.nativeElement.querySelector('pa-input[formcontrolname="name"]').value = 'Sync 1';
-    connectors.triggerEventHandler('selectConnector', {
+    const name = fixture.debugElement.nativeElement.querySelector('pa-input[formcontrolname="name"]');
+    expect(name).toBeTruthy();
+
+    const settings = fixture.debugElement.query(By.css('nde-settings'));
+    settings.triggerEventHandler('save', {
       name: 'sync-1',
-      connector: {},
-      params: {},
-      permanentSync: false,
+      connectorId: connectorId,
     });
-    component.source = {
-      hasServerSideAuth: false,
-      isExternal: false,
-      getParameters: () => of([]),
-      getParametersValues: () => ({}),
-      goToOAuth: () => {},
-      authenticate: () => of(true),
-    };
-    sync.setStep(2);
+    tick(600);
+    expect(sync.setStep).toHaveBeenCalledWith(2);
+
     fixture.detectChanges();
-    fixture.debugElement.nativeElement.querySelector('[qa="next"]').click();
-    expect(sync.setStep).toHaveBeenCalledWith(3);
+    const selectFiles = fixture.debugElement.query(By.css('nde-select-files'));
+    selectFiles.componentInstance.ngAfterViewInit();
+    tick(300);
     fixture.detectChanges();
-    fixture.debugElement.nativeElement.querySelector('.connector').click();
-    fixture.detectChanges();
-    connectors = fixture.debugElement.query(By.css('nde-connectors'));
-    connectors.triggerEventHandler('selectConnector', {
-      name: 'kb-1',
-      connector: {},
-      params: {},
-    });
-    fixture.detectChanges();
-    expect(sync.addSync).toHaveBeenCalled();
-  });
+    const file = fixture.debugElement.query(By.css('table pa-checkbox'));
+    expect(file.nativeElement.textContent.trim() === fileTitle).toBeTruthy();
+    flush();
+  }));
 });

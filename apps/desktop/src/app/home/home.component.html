@@ -1,0 +1,15 @@
+<div class="container">
+  <h2>
+    {{ 'home.welcome' | translate }},
+    <span class="username">{{ username | async }}</span>
+    <span>!</span>
+  </h2>
+  <div class="body-m">
+    <div>{{ 'home.new-connector' | translate }}</div>
+    <div *ngIf="((sources | async) || []).length > 0">
+      {{ 'home.active-connectors' | translate }}
+    </div>
+  </div>
+
+  <pa-button routerLink="./add-upload">{{ 'upload.add-connector' | translate }}</pa-button>
+</div>

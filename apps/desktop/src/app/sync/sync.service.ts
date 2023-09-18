@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
+  combineLatest,
   distinctUntilChanged,
   filter,
   forkJoin,
@@ -18,8 +19,6 @@ import {
 } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
-  ConnectorDefinition,
-  ConnectorParameters,
   ConnectorSettings,
   DestinationConnectorDefinition,
   IDestinationConnector,
@@ -44,20 +43,6 @@ import { OAuthConnector } from './sources/oauth';
 export const ACCOUNT_KEY = 'NUCLIA_ACCOUNT';
 export const LOCAL_SYNC_SERVER = 'http://localhost:5001';
 export const SYNC_SERVER_KEY = 'NUCLIA_SYNC_SERVER';
-const SOURCE_NAME_KEY = 'NUCLIA_SOURCE_NAME';
-
-interface Sync {
-  date: string;
-  source: string;
-  destination: {
-    id: string;
-    params: ConnectorParameters;
-  };
-  items: SyncItem[];
-  started?: boolean;
-  completed?: boolean;
-  resumable?: boolean;
-}
 
 @Injectable({ providedIn: 'root' })
 export class SyncService {
@@ -126,22 +111,21 @@ export class SyncService {
   private _syncServer = new BehaviorSubject<string>(localStorage.getItem(SYNC_SERVER_KEY) || '');
   syncServer = this._syncServer.asObservable();
 
-  private _step = new BehaviorSubject<number>(0);
+  private _step = new BehaviorSubject<number>(-1);
   step = this._step.asObservable();
-  private _showSource = new Subject<{ connectorId: string; quickAccessName: string; edit: boolean }>();
-  showSource = this._showSource.asObservable();
-  private _showFirstStep = new Subject<void>();
-  showFirstStep = this._showFirstStep.asObservable();
+  showSource = new Subject<{ connectorId: string; sourceId: string }>();
+  addSource = new Subject<void>();
   private _isServerDown = new BehaviorSubject<boolean>(true);
   isServerDown = this._isServerDown.asObservable();
+  private _currentSourceId = new BehaviorSubject<string | null>(null);
+  currentSourceId = this._currentSourceId.asObservable();
   private _sourcesCache = new BehaviorSubject<{ [id: string]: Source }>({});
   sourcesCache = this._sourcesCache.asObservable();
-  currentSource = this.sourcesCache.pipe(map((sources) => sources[this.getCurrentSourceId()]));
+  currentSource = combineLatest([this.sourcesCache, this.currentSourceId]).pipe(
+    map(([sources, sourceId]) => sources[sourceId || '']),
+  );
 
-  constructor(
-    private sdk: SDKService,
-    private http: HttpClient,
-  ) {
+  constructor(private sdk: SDKService, private http: HttpClient) {
     const account = this.getAccountId();
     if (account) {
       this.setAccount();
@@ -169,12 +153,6 @@ export class SyncService {
     if (!localStorage.getItem(SYNC_SERVER_KEY) || localStorage.getItem(SYNC_SERVER_KEY) === LOCAL_SYNC_SERVER) {
       this.setSyncServer({ url: '', local: true });
     }
-  }
-
-  getConnectors(type: 'sources' | 'destinations'): ConnectorDefinition[] {
-    return Object.values(this[type])
-      .map((obj) => obj.definition)
-      .sort((a, b) => a.title.localeCompare(b.title));
   }
 
   getSource(id: string): Observable<ISourceConnector> {
@@ -245,42 +223,48 @@ export class SyncService {
     );
   }
 
-  addSync(sync: Sync): Observable<boolean> {
-    return this.getSourceData(sync.source)
-      .pipe(
-        switchMap((source) =>
-          sync.destination.id === 'nucliacloud'
-            ? this.getKb(sync.destination.params.kb).pipe(
-                switchMap((kb) => {
-                  if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
-                    return of(source);
-                  } else {
-                    return this.getNucliaKey(kb).pipe(
-                      map((data) => ({
-                        ...source,
-                        kb: {
-                          zone: this.sdk.nuclia.options.zone,
-                          backend: this.sdk.nuclia.options.backend,
-                          knowledgeBox: data.kbid,
-                          apiKey: data.token,
-                        } as NucliaOptions,
-                      })),
-                    );
-                  }
-                }),
-              )
-            : of(source),
-        ),
-      )
-      .pipe(
-        switchMap((source) =>
-          this.http.patch<void>(`${this._syncServer.getValue()}/source/${sync.source}`, {
-            ...source,
-            items: sync.items,
+  setSourceDestination(sourceId: string, kbId: string): Observable<void> {
+    return this.getSourceData(sourceId).pipe(
+      switchMap((source) =>
+        this.getKb(kbId).pipe(
+          switchMap((kb) => {
+            if (source.kb && source.kb.knowledgeBox === kb.id && source.kb.apiKey) {
+              return of(source);
+            } else {
+              return this.getNucliaKey(kb).pipe(
+                map((data) => ({
+                  ...source,
+                  kb: {
+                    zone: this.sdk.nuclia.options.zone,
+                    backend: this.sdk.nuclia.options.backend,
+                    knowledgeBox: data.kbid,
+                    apiKey: data.token,
+                  } as NucliaOptions,
+                })),
+              );
+            }
           }),
         ),
-        map(() => true),
-      );
+      ),
+      switchMap((source) => this.setSourceData(sourceId, source)),
+    );
+  }
+
+  addSync(sourceId: string, items: SyncItem[]): Observable<boolean> {
+    return this.getSourceData(sourceId).pipe(
+      switchMap((source) =>
+        this.http.patch<void>(`${this._syncServer.getValue()}/source/${sourceId}`, {
+          ...source,
+          items,
+        }),
+      ),
+      map(() => true),
+    );
+  }
+
+  canSelectFiles(sourceId: string) {
+    const source = this._sourcesCache.getValue()[sourceId];
+    return source && !(source.connectorId === 'sitemap' || (source.connectorId === 'folder' && source.permanentSync));
   }
 
   getAccountId(): string {
@@ -312,15 +296,6 @@ export class SyncService {
     this._step.next(step);
   }
 
-  goToFirstStep() {
-    this._showFirstStep.next();
-  }
-
-  goToSource(connectorId: string, quickAccessName: string, edit: boolean) {
-    this.setCurrentSourceId(quickAccessName);
-    this._showSource.next({ connectorId, quickAccessName, edit });
-  }
-
   getSourceCache(name: string): Source {
     return this._sourcesCache.getValue()[name];
   }
@@ -345,10 +320,15 @@ export class SyncService {
       .subscribe();
   }
 
-  getKb(slug: string): Observable<WritableKnowledgeBox> {
+  getKb(kbId: string): Observable<WritableKnowledgeBox> {
     return this.sdk.currentAccount.pipe(
       take(1),
-      switchMap((account) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, slug)),
+      switchMap((account) =>
+        this.sdk.nuclia.db.getKnowledgeBoxes(account.slug).pipe(
+          map((kbs) => kbs.find((kb) => kb.id === kbId)),
+          switchMap((kb) => this.sdk.nuclia.db.getKnowledgeBox(account.slug, kb?.slug || '')),
+        ),
+      ),
     );
   }
 
@@ -412,7 +392,10 @@ export class SyncService {
         return this.currentSource.pipe(
           take(1),
           switchMap((currentSource) =>
-            this.setSourceData(this.getCurrentSourceId(), { ...currentSource, data: source.getParametersValues() }),
+            this.setSourceData(this.getCurrentSourceId() || '', {
+              ...currentSource,
+              data: source.getParametersValues(),
+            }),
           ),
           map(() => true),
         );
@@ -420,12 +403,16 @@ export class SyncService {
     );
   }
 
-  getCurrentSourceId(): string {
-    return localStorage.getItem(SOURCE_NAME_KEY) || '';
+  getCurrentSourceId(): string | null {
+    return this._currentSourceId.getValue();
   }
 
   setCurrentSourceId(id: string) {
-    localStorage.setItem(SOURCE_NAME_KEY, id);
+    this._currentSourceId.next(id);
+  }
+
+  clearCurrentSourceId() {
+    this._currentSourceId.next(null);
   }
 
   getLogs(since?: string): Observable<SyncRow[]> {

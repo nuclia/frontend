@@ -9,7 +9,13 @@
 h2 {
   margin: 0;
 }
+
 .header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.searchbar {
   align-items: center;
   flex: 0 0 auto;
   display: flex;
@@ -60,5 +66,20 @@ td {
   .disabled {
     color: $color-text-disabled;
     padding-left: rhythm(3.5);
+  }
+}
+
+.parameters {
+  margin-top: rhythm(4);
+}
+
+.source-destination {
+  align-items: center;
+  display:flex;
+  gap: rhythm(1);
+  margin-bottom: rhythm(8);
+  img {
+    width: rhythm(3);
+    height: rhythm(3);
   }
 }

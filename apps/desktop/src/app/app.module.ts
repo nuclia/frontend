@@ -22,6 +22,7 @@ import { AccountModule } from './account/account.module';
 import { LoginModule } from './login/login.module';
 import { PaToastModule } from '@guillotinaweb/pastanaga-angular';
 import { ServerSelectionModule } from './server-selection/server-selection.module';
+import { HomeModule } from './home/home.module';
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
@@ -52,6 +53,7 @@ registerLocaleData(localeCa);
     AccountModule,
     LoginModule,
     ServerSelectionModule,
+    HomeModule,
   ],
   providers: [TranslatePipe],
   bootstrap: [AppComponent],

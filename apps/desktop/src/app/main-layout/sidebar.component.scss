@@ -2,24 +2,22 @@
 
 .sidebar {
   background: $color-neutral-lightest;
-  height: 100%;
+  height: calc(100% - #{rhythm(9)});
   position: fixed;
-  top: 70px;
+  top: rhythm(9);
   left: 0;
+  overflow-y: auto;
+  padding-top: rhythm(6);
   width: rhythm(35);
 
   .upload-menu {
-    padding: rhythm(6) rhythm(2) rhythm(4) rhythm(4);
     border-bottom: 1px solid $color-neutral-light;
-
-    ul {
-      gap: rhythm(1.5);
-    }
   }
 
-  .upload-title {
+  .menu-title {
     font-weight: $font-weight-semi-bold;
-    margin-bottom: rhythm(1.5);
+    margin-bottom: rhythm(1);
+    margin-left: rhythm(4);
   }
 
   ul {
@@ -28,92 +26,37 @@
     list-style: none;
     margin: 0;
     padding: 0;
-  }
-
-  .step {
-    align-items: center;
-    cursor: default;
-    display: flex;
-    gap: rhythm(1.5);
-
-    &.active {
-      font-weight: $font-weight-semi-bold;
-    }
-
-    &.pending {
-      opacity: 0.3;
-      pa-icon {
-        color: $color-neutral-light;
-      }
-    }
-
-    &.clickable {
-      cursor: pointer;
-    }
-
-    pa-icon.checked {
-      color: $color-primary-regular;
-    }
-  }
-
-  .step-number {
-    position: relative;
-    > span {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: $font-size-body-xs;
-    }
-  }
-
-  .quick-access-list {
-    padding-left: rhythm(4);
-  }
-
-  .quick-access {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    .source-title {
-      cursor: pointer;
-      max-width: calc(100% - #{rhythm(2)} - #{rhythm(4)}* 2);
-    }
-    .action-container {
-      flex: 0 0 auto;
-    }
-    pa-button {
-      visibility: hidden;
-    }
-    &:hover pa-button {
-      visibility: visible;
-    }
-  }
-
-  .history-menu {
-    padding: 0;
 
     li {
       align-items: center;
       cursor: pointer;
       display: flex;
-      font-weight: $font-weight-semi-bold;
+      font-size: $font-size-title-s;
+      gap: rhythm(2);
       padding: 0 rhythm(4);
       position: relative;
-      height: rhythm(5);
+      height: rhythm(6);
       transition: background-color $transition-hint, color $transition-hint;
+
+      .logo {
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        width: rhythm(3);
+        height: rhythm(3);
+      }
 
       &:focus,
       &:hover {
         outline: 0;
         background-color: $color-neutral-lighter;
 
-        pa-icon {
+        .arrow {
           visibility: visible;
         }
       }
 
-      pa-icon {
+      .arrow {
         position: absolute;
         top: 50%;
         right: rhythm(2);
@@ -124,8 +67,9 @@
       &.active {
         background-color: $color-dark-stronger;
         color: $color-light-stronger;
+        font-weight: $font-weight-semi-bold;
 
-        pa-icon {
+        .arrow {
           visibility: visible;
         }
       }

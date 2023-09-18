@@ -1,0 +1,121 @@
+<h2 class="unit-test">{{ 'upload.source.settings' | translate }}</h2>
+<p>{{ 'upload.source.settings-description' | translate }}</p>
+<form
+  *ngIf="!!fields && !!form"
+  [formGroup]="form"
+  qa="fields-form"
+  (ngSubmit)="validate()">
+  <div class="selected-source">
+    <img
+      [src]="connector.logo"
+      [alt]="connector.title" />
+    <div>{{ connector.title }}</div>
+  </div>
+  <div class="settings">
+    <div class="field">
+      <pa-input
+        formControlName="name"
+        [errorMessages]="validationMessages.name">
+        {{ 'upload.source.name' | translate }}
+      </pa-input>
+    </div>
+  </div>
+  <div
+    *ngFor="let field of fields"
+    formGroupName="fields"
+    class="field">
+    <pa-input
+      *ngIf="field.type === 'text'"
+      [help]="field.help | translate"
+      [placeholder]="field.placeholder"
+      [formControlName]="field.id">
+      {{ field.label | translate }}
+    </pa-input>
+    <pa-textarea
+      *ngIf="field.type === 'textarea'"
+      [help]="field.help | translate"
+      [formControlName]="field.id">
+      {{ field.label | translate }}
+    </pa-textarea>
+    <div
+      *ngIf="field.type === 'select'"
+      class="select-field-container">
+      <pa-select
+        [formControlName]="field.id"
+        [label]="field.label">
+        <pa-option
+          *ngFor="let option of field.options"
+          [disabled]="option.disabled"
+          [value]="option.value">
+          {{ option.label }}
+        </pa-option>
+      </pa-select>
+    </div>
+  </div>
+  <div
+    *ngIf="connector.helpUrl"
+    class="help">
+    <pa-icon
+      size="small"
+      name="info"></pa-icon>
+    <a
+      [href]="connector.helpUrl"
+      (click)="goToDocumentation($event, connector.helpUrl)"
+      target="_blank"
+      rel="noopener noreferrer">
+      {{ 'upload.source.help' | translate : { source: connector.title } }}
+    </a>
+  </div>
+
+  <div
+    class="settings"
+    *ngIf="!connector?.permanentSyncOnly">
+    <div class="field">
+      <pa-checkbox formControlName="permanentSync">
+        {{ 'upload.source.permanent-sync' | translate }}
+      </pa-checkbox>
+    </div>
+  </div>
+
+  <div class="destination">
+    <div class="body-m">{{ 'upload.source.destination' | translate }}:</div>
+    <div
+      *ngIf="kbField.type === 'select'"
+      class="select-field-container">
+      <pa-select
+        [formControlName]="kbField.id"
+        [label]="kbField.label">
+        <pa-option
+          *ngFor="let option of kbField.options"
+          [disabled]="option.disabled"
+          [value]="option.value">
+          {{ option.label }}
+        </pa-option>
+      </pa-select>
+      <pa-button
+        *ngIf="kbField.canBeRefreshed"
+        icon="refresh"
+        aspect="basic"
+        [paTooltip]="'upload.refresh' | translate : { field: kbField.label }"
+        (click)="refreshField(kbField.id)">
+        {{ 'upload.refresh' | translate : { field: kbField.label } }}
+      </pa-button>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <pa-button
+      qa="save"
+      type="submit"
+      kind="primary"
+      [disabled]="form.invalid">
+      {{ 'generic.save' | translate }}
+    </pa-button>
+    <pa-button
+      qa="cancel"
+      aspect="basic"
+      (click)="onCancel()">
+      {{ 'generic.cancel' | translate }}
+    </pa-button>
+  </div>
+</form>
