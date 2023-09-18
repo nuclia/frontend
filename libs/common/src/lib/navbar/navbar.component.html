@@ -20,6 +20,18 @@
       <div class="nav-group">
         <div class="group-items">
           <a
+            [routerLink]="kbUrl + '/upload'"
+            class="nav-link"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
+            <pa-icon name="upload"></pa-icon>
+            <span class="nav-link-title">{{ 'stash.upload_data' | translate }}</span>
+          </a>
+        </div>
+      </div>
+      <div class="nav-group">
+        <div class="group-items">
+          <a
             class="nav-link"
             routerLinkActive="active"
             [routerLink]="kbUrl + '/search'">

@@ -5,7 +5,7 @@ import { Account, Counters, KBStates, StatsPeriod, StatsType } from '@nuclia/cor
 import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, take, tap } from 'rxjs';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
-import { AppService, getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '@flaps/common';
+import { AppService, DesktopUploadService, NavigationService } from '@flaps/common';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -68,6 +68,12 @@ export class KnowledgeBoxHomeComponent {
   );
   isKbAdmin = this.sdk.currentKb.pipe(map((kb) => !!kb.admin));
   isKbContrib = this.sdk.currentKb.pipe(map((kb) => !!kb.admin || !!kb.contrib));
+  kbUrl = this.sdk.currentKb.pipe(
+    map((kb) => {
+      const kbSlug = (this.sdk.nuclia.options.standalone ? kb.id : kb.slug) as string;
+      return this.navigationService.getKbUrl(kb.account, kbSlug);
+    }),
+  );
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
@@ -82,6 +88,7 @@ export class KnowledgeBoxHomeComponent {
     private cdr: ChangeDetectorRef,
     private modalService: SisModalService,
     private tracking: STFTrackingService,
+    private navigationService: NavigationService,
   ) {}
 
   toggleKbState() {
@@ -114,17 +121,6 @@ export class KnowledgeBoxHomeComponent {
       });
   }
 
-  downloadDesktop() {
-    const platform = getDesktopPlatform();
-    if (platform) {
-      getDesktopAppUrl(platform).subscribe((url) => {
-        window.open(url || RELEASE_URL);
-      });
-    } else {
-      window.open(RELEASE_URL);
-    }
-  }
-
   copyEndpoint() {
     this.endpoint.pipe(take(1)).subscribe((endpoint) => {
       navigator.clipboard.writeText(endpoint);
@@ -136,4 +132,6 @@ export class KnowledgeBoxHomeComponent {
       }, 1000);
     });
   }
+
+  protected readonly DesktopUploadService = DesktopUploadService;
 }

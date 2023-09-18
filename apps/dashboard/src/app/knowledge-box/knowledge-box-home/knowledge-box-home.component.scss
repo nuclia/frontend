@@ -90,6 +90,11 @@
     display: flex;
     flex-direction: column;
     gap: rhythm(1.5);
+
+    stf-desktop-sources {
+      display: block;
+      margin-bottom: rhythm(0.5);
+    }
   }
 
   .total-resources {

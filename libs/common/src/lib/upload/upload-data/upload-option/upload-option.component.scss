@@ -1,0 +1,23 @@
+@import 'apps/dashboard/src/variables';
+
+.upload-option {
+  align-items: center;
+  background: $color-neutral-lightest;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: rhythm(3);
+  height: rhythm(15);
+  justify-content: center;
+  transition: background $transition-hint;
+  width: rhythm(15);
+
+  &:hover {
+    background: $color-neutral-lighter;
+  }
+
+  &:active {
+    background: $color-neutral-light;
+  }
+}

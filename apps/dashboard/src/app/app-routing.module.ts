@@ -15,6 +15,7 @@ import {
   SelectAccountComponent,
   selectAccountKbGuard,
   SelectKbComponent,
+  UploadDataComponent,
 } from '@flaps/common';
 import { authGuard } from '@flaps/core';
 import { AccountManageComponent } from './account/account-manage/account-manage.component';
@@ -112,6 +113,10 @@ const routes: Routes = [
                 path: '',
                 component: KnowledgeBoxHomeComponent,
                 resolve: {},
+              },
+              {
+                path: 'upload',
+                component: UploadDataComponent,
               },
               {
                 path: 'resources',

@@ -1,0 +1,35 @@
+@import 'apps/dashboard/src/variables';
+
+.desktop-sources {
+  display: flex;
+  gap: rhythm(2);
+
+  img {
+    height: rhythm(3);
+    width: rhythm(3);
+  }
+
+  &.show-details {
+    border: solid 1px $color-neutral-light;
+    border-radius: $border-radius-default;
+    display: flex;
+    flex-wrap: wrap;
+    gap: rhythm(3);
+    justify-content: space-between;
+    padding: rhythm(3) rhythm(2) rhythm(3) rhythm(4);
+    width: rhythm(53);
+
+    .source {
+      align-items: center;
+      display: flex;
+      gap: rhythm(2);
+      text-transform: capitalize;
+      width: rhythm(20);
+
+      img {
+        height: rhythm(4);
+        width: rhythm(4);
+      }
+    }
+  }
+}

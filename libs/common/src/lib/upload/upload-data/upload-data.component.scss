@@ -1,0 +1,38 @@
+@import 'apps/dashboard/src/variables';
+
+.upload-data-page {
+  padding: rhythm(6) var(--app-layout-margin-right);
+
+  .upload-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(6);
+    margin-top: rhythm(4);
+
+    .upload-options {
+      display: flex;
+      gap: rhythm(4);
+    }
+
+    .desktop-option {
+      .description {
+        align-items: center;
+        display: flex;
+        gap: rhythm(1);
+      }
+
+      .desktop-button {
+        img {
+          width: rhythm(20);
+        }
+        ::ng-deep .pa-button-label {
+          display: flex;
+        }
+      }
+
+      .sources-container {
+        margin-top: rhythm(3);
+      }
+    }
+  }
+}

@@ -57,21 +57,24 @@
         *ngIf="isKbContrib | async">
         <div class="title-m">{{ 'stash.home.upload-block.title' | translate }}</div>
         <pa-button
+          [routerLink]="(kbUrl | async) + '/upload'"
           class="full-width"
           aspect="solid"
           kind="primary"
-          size="large"
           iconAndText
           iconSize="medium"
           icon="upload">
-          {{ 'stash.upload_data' | translate }}
+          <a [routerLink]="(kbUrl | async) + '/upload'">
+            {{ 'stash.upload_data' | translate }}
+          </a>
         </pa-button>
         <div>
           {{ 'stash.home.upload-block.description' | translate }}
-          <ng-container *ngIf="isDownloadDesktopEnabled">
+          <ng-container *ngIf="isDownloadDesktopEnabled | async">
             {{ 'stash.home.upload-block.description-desktop' | translate }}
           </ng-container>
         </div>
+        <stf-desktop-sources *ngIf="isDownloadDesktopEnabled | async"></stf-desktop-sources>
       </div>
       <div
         class="container account-status"

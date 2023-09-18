@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { combineLatest, map, merge, Observable, of, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { AppService, NavigationService } from '../services';
+import { NavigationService } from '../services';
 import { SDKService, StateService, STFTrackingService } from '@flaps/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { SmallNavbarDirective } from './small-navbar.directive';
@@ -54,7 +54,6 @@ export class NavbarComponent extends SmallNavbarDirective implements OnInit, OnD
   standalone = this.sdk.nuclia.options.standalone;
 
   constructor(
-    private app: AppService,
     private tracking: STFTrackingService,
     private sdk: SDKService,
     private stateService: StateService,
