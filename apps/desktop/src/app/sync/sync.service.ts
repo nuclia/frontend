@@ -19,6 +19,7 @@ import {
 } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
+  baseLogoPath,
   ConnectorSettings,
   DestinationConnectorDefinition,
   IDestinationConnector,
@@ -57,7 +58,7 @@ export class SyncService {
       definition: {
         id: 'gdrive',
         title: 'Google Drive',
-        logo: 'assets/logos/gdrive.svg',
+        logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
         factory: () => of(new OAuthConnector('gdrive')),
       },
@@ -67,7 +68,7 @@ export class SyncService {
       definition: {
         id: 'onedrive',
         title: 'One Drive',
-        logo: 'assets/logos/onedrive.svg',
+        logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
         factory: () => of(new OAuthConnector('onedrive')),
       },
@@ -77,7 +78,7 @@ export class SyncService {
       definition: {
         id: 'sharepoint',
         title: 'SharePoint',
-        logo: 'assets/logos/sharepoint.svg',
+        logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
         factory: () => of(new SharepointImpl('sharepoint')),
@@ -88,7 +89,7 @@ export class SyncService {
       definition: {
         id: 'dropbox',
         title: 'Dropbox',
-        logo: 'assets/logos/dropbox.svg',
+        logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
         factory: () => of(new OAuthConnector('dropbox')),
       },
@@ -125,7 +126,10 @@ export class SyncService {
     map(([sources, sourceId]) => sources[sourceId || '']),
   );
 
-  constructor(private sdk: SDKService, private http: HttpClient) {
+  constructor(
+    private sdk: SDKService,
+    private http: HttpClient,
+  ) {
     const account = this.getAccountId();
     if (account) {
       this.setAccount();

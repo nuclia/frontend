@@ -1,10 +1,10 @@
-import { ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
+import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
 
 export const SitemapConnector: SourceConnectorDefinition = {
   id: 'sitemap',
   title: 'Sitemap',
-  logo: 'assets/logos/sitemap.svg',
+  logo: `${baseLogoPath}/sitemap.svg`,
   description: 'Upload web pages from a sitemap.xml',
   permanentSyncOnly: true,
   factory: () => of(new SitemapImpl()),

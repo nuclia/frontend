@@ -1,10 +1,10 @@
-import { ISourceConnector, SourceConnectorDefinition, Field, ConnectorParameters } from '../models';
+import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
 
 export const ConfluenceConnector: SourceConnectorDefinition = {
   id: 'confluence',
   title: 'Confluence',
-  logo: 'assets/logos/confluence.svg',
+  logo: `${baseLogoPath}/confluence.svg`,
   description: 'Collaboration platform developed by Atlassian',
   helpUrl: 'https://docs.nuclia.dev/docs/docs/using/nda#confluence-connector-usage',
   factory: () => of(new ConfluenceImpl()),
