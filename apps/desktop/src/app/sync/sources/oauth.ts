@@ -1,20 +1,22 @@
 import { ISourceConnector, ConnectorParameters, Field } from '../models';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { getDeeplink } from '../../utils';
+import { clearDeeplink, getDeeplink } from '../../utils';
 import { environment } from '../../../environments/environment';
 
-const TOKEN = '-token';
-const REFRESH = '-refresh';
+const TOKEN = 'token';
+const REFRESH = 'refresh';
 
 export class OAuthConnector implements ISourceConnector {
   name: string;
+  id: string;
   hasServerSideAuth = true;
   isExternal = true;
   resumable = false;
   private isAuthenticated: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  constructor(name: string) {
+  constructor(name: string, id: string) {
     this.name = name;
+    this.id = id;
   }
 
   getParameters(): Observable<Field[]> {
@@ -27,17 +29,17 @@ export class OAuthConnector implements ISourceConnector {
 
   getParametersValues(): ConnectorParameters {
     return {
-      token: localStorage.getItem(this.name + TOKEN),
-      refresh: localStorage.getItem(this.name + REFRESH),
+      token: localStorage.getItem(this.prefixStorageKey(TOKEN)),
+      refresh: localStorage.getItem(this.prefixStorageKey(REFRESH)),
       refresh_endpoint: `${environment.dashboard}/api/external_auth/${this.name}/refresh`,
     };
   }
 
   goToOAuth(reset?: boolean) {
     if (reset) {
-      localStorage.removeItem(this.name + TOKEN);
+      localStorage.removeItem(this.prefixStorageKey(TOKEN));
     }
-    const token = localStorage.getItem(this.name + TOKEN);
+    const token = localStorage.getItem(this.prefixStorageKey(TOKEN));
     if (!token) {
       const authorizeEndpoint = `${environment.dashboard}/api/external_auth/${this.name}/authorize`;
 
@@ -59,10 +61,11 @@ export class OAuthConnector implements ISourceConnector {
           const params = new URLSearchParams(deeplink.split('?')[1]);
           const token = params.get('token') || '';
           const refresh = params.get('refresh') || '';
+          clearDeeplink();
           clearInterval(interval);
           if (token) {
-            localStorage.setItem(this.name + TOKEN, token);
-            localStorage.setItem(this.name + REFRESH, refresh || '');
+            localStorage.setItem(this.prefixStorageKey(TOKEN), token);
+            localStorage.setItem(this.prefixStorageKey(REFRESH), refresh || '');
             this.isAuthenticated.next(true);
           } else {
             this.isAuthenticated.next(false);
@@ -71,5 +74,9 @@ export class OAuthConnector implements ISourceConnector {
       }, 500);
     }
     return this.isAuthenticated.asObservable();
+  }
+
+  private prefixStorageKey(key: string): string {
+    return `${this.name}-${this.id}-${key}`;
   }
 }

@@ -9,6 +9,10 @@ export function getDeeplink(): string {
   return deeplink;
 }
 
+export function clearDeeplink(): void {
+  (window as any)['deeplink'] = undefined;
+}
+
 export async function sha256(message: string) {
   // encode as UTF-8
   const msgBuffer = new TextEncoder().encode(message);

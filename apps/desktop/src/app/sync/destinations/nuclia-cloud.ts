@@ -1,6 +1,7 @@
 import { Account, INuclia, Nuclia, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { catchError, from, map, Observable, of, switchMap, tap } from 'rxjs';
 import {
+  baseLogoPath,
   ConnectorParameters,
   ConnectorSettings,
   DestinationConnectorDefinition,
@@ -15,7 +16,7 @@ export const NucliaCloudKB: DestinationConnectorDefinition = {
   id: 'nucliacloud',
   title: 'Nuclia Cloud',
   description: 'Nuclia Cloud Knowledge Box',
-  logo: 'assets/logos/nucliacloud.svg',
+  logo: `${baseLogoPath}/nucliacloud.svg`,
   factory: (data?: ConnectorSettings) => {
     const nuclia = new Nuclia({ ...data } as unknown as NucliaOptions);
     return of(new NucliaCloudKBImpl(nuclia));

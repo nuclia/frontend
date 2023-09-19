@@ -4,7 +4,7 @@ import { BackendConfigurationService, SDKService, STFTrackingService, STFUtils, 
 import { TranslateService } from '@ngx-translate/core';
 import { TranslateService as PaTranslateService } from '@guillotinaweb/pastanaga-angular';
 import { CONNECTOR_ID_KEY, SOURCE_NAME_KEY } from './sync/models';
-import { getDeeplink } from './utils';
+import { clearDeeplink, getDeeplink } from './utils';
 import pkg from '../../../../package.json';
 import { filter, map, switchMap, take } from 'rxjs';
 import { SisModalService } from '@nuclia/sistema';
@@ -90,6 +90,7 @@ export class AppComponent implements OnInit {
               if (!(window as any)['deeplink']) {
                 location.search = '';
               }
+              clearDeeplink();
               clearInterval(interval);
             }
           } else {
@@ -110,6 +111,7 @@ export class AppComponent implements OnInit {
             } else {
               this.router.navigateByUrl(`/add-upload${deeplink}`);
             }
+            clearDeeplink();
             clearInterval(interval);
           }
         }, 500);

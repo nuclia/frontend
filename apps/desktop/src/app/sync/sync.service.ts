@@ -51,7 +51,7 @@ export class SyncService {
     [id: string]: {
       definition: SourceConnectorDefinition;
       settings: ConnectorSettings;
-      instance?: ReplaySubject<ISourceConnector>;
+      instances?: { [key: string]: ReplaySubject<ISourceConnector> };
     };
   } = {
     gdrive: {
@@ -60,7 +60,7 @@ export class SyncService {
         title: 'Google Drive',
         logo: `${baseLogoPath}/gdrive.svg`,
         description: 'File storage and synchronization service developed by Google',
-        factory: () => of(new OAuthConnector('gdrive')),
+        factory: (settings) => of(new OAuthConnector('gdrive', settings?.id || '')),
       },
       settings: {},
     },
@@ -70,7 +70,7 @@ export class SyncService {
         title: 'One Drive',
         logo: `${baseLogoPath}/onedrive.svg`,
         description: 'Microsoft OneDrive file hosting service',
-        factory: () => of(new OAuthConnector('onedrive')),
+        factory: (settings) => of(new OAuthConnector('onedrive', settings?.id || '')),
       },
       settings: {},
     },
@@ -81,7 +81,7 @@ export class SyncService {
         logo: `${baseLogoPath}/sharepoint.svg`,
         description: 'Microsoft Sharepoint service',
         permanentSyncOnly: true,
-        factory: () => of(new SharepointImpl('sharepoint')),
+        factory: (settings) => of(new SharepointImpl('sharepoint', settings?.id || '')),
       },
       settings: {},
     },
@@ -91,7 +91,7 @@ export class SyncService {
         title: 'Dropbox',
         logo: `${baseLogoPath}/dropbox.svg`,
         description: 'File storage and synchronization service developed by Dropbox',
-        factory: () => of(new OAuthConnector('dropbox')),
+        factory: (settings) => of(new OAuthConnector('dropbox', settings?.id || '')),
       },
       settings: {},
     },
@@ -159,14 +159,19 @@ export class SyncService {
     }
   }
 
-  getSource(id: string): Observable<ISourceConnector> {
-    if (!this.sources[id].instance) {
-      this.sources[id].instance = new ReplaySubject(1);
-      this.sources[id].definition
-        .factory(this.sources[id].settings)
-        .subscribe(this.sources[id].instance as ReplaySubject<ISourceConnector>);
+  getSource(connector: string, instance: string): Observable<ISourceConnector> {
+    const source = this.sources[connector];
+    if (!source.instances) {
+      source.instances = {};
     }
-    return (this.sources[id].instance as ReplaySubject<ISourceConnector>).asObservable();
+    const instances = source.instances as { [key: string]: ReplaySubject<ISourceConnector> };
+    if (!instances[instance]) {
+      instances[instance] = new ReplaySubject(1);
+      source.definition
+        .factory({ ...source.settings, id: instance })
+        .subscribe(instances[instance] as ReplaySubject<ISourceConnector>);
+    }
+    return (instances[instance] as ReplaySubject<ISourceConnector>).asObservable();
   }
   getDestination(id: string): Observable<IDestinationConnector> {
     return this.destinations[id].definition.factory(this.destinations[id].settings);
