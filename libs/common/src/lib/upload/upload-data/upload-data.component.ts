@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { getDesktopAppUrl, getDesktopPlatform, RELEASE_URL } from '../../utils';
+import { openDesktop } from '../../utils';
 import { UploadDialogService, UploadType } from '../../resources';
 import { filter } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,18 +24,7 @@ export class UploadDataComponent {
       .subscribe(() => this.router.navigate(['../resources'], { relativeTo: this.route }));
   }
 
-  downloadDesktop() {
-    const platform = getDesktopPlatform();
-    if (platform) {
-      getDesktopAppUrl(platform).subscribe((url) => {
-        window.open(url || RELEASE_URL);
-      });
-    } else {
-      window.open(RELEASE_URL);
-    }
-  }
-
   openDesktop() {
-    window.open('nuclia-desktop://index.html');
+    openDesktop();
   }
 }

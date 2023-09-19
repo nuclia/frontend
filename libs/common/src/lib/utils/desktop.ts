@@ -1,4 +1,4 @@
-import { from, map, Observable, switchMap } from 'rxjs';
+import { from, map, Observable, switchMap, timer } from 'rxjs';
 import { fromFetch } from 'rxjs/fetch';
 
 export const RELEASE_URL = 'https://github.com/nuclia/frontend/releases/latest';
@@ -36,4 +36,33 @@ export function getDesktopAppUrl(platform: 'mac' | 'win' | 'linux'): Observable<
       return asset?.browser_download_url || null;
     }),
   );
+}
+
+export function openDesktop() {
+  let appInstalled = false;
+
+  const onBlur = () => {
+    // A blur event indicates that the application is installed
+    appInstalled = true;
+  };
+  window.addEventListener('blur', onBlur);
+
+  timer(400).subscribe(() => {
+    if (!appInstalled) {
+      downloadDesktop();
+    }
+    window.removeEventListener('blur', onBlur);
+  });
+  window.location.href = 'nuclia-desktop://';
+}
+
+function downloadDesktop() {
+  const platform = getDesktopPlatform();
+  if (platform) {
+    getDesktopAppUrl(platform).subscribe((url) => {
+      window.open(url || RELEASE_URL);
+    });
+  } else {
+    window.open(RELEASE_URL);
+  }
 }

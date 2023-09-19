@@ -31,21 +31,13 @@
         <span class="title-xs">Nuclia Desktop.</span>
         {{ 'stash.upload.desktop.description' | translate }}
       </p>
-      <div class="desktop-actions">
-        <pa-button
-          icon="download"
-          iconAndText
-          (click)="downloadDesktop()">
-          {{ 'stash.upload.desktop.download' | translate }}
-        </pa-button>
-        <div class="body-m">or</div>
-        <pa-button
-          icon="square-arrow"
-          iconAndText
-          (click)="openDesktop()">
-          {{ 'stash.upload.desktop.open' | translate }}
-        </pa-button>
-      </div>
+      <pa-button
+        class="desktop-button"
+        (click)="openDesktop()">
+        <img
+          src="assets/logos/nuclia-desktop-white.svg"
+          alt="Nuclia Desktop" />
+      </pa-button>
 
       <div class="sources-container">
         <stf-desktop-sources showDetails></stf-desktop-sources>

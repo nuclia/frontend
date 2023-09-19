@@ -166,13 +166,13 @@
     </ng-container>
 
     <div
-      *ngIf="isMainView && emptyKb && !query && !isFiltering && !standalone && (isMonoLingual | async) === false"
+      *ngIf="isMainView && emptyKb && !query && !isFiltering && !standalone"
       class="empty-kb"
       data-cy="empty-kb">
       <p>
         <strong>{{ 'resource.empty' | translate }}</strong>
       </p>
-      <ng-container *ngIf="neverGotData | async">
+      <ng-container *ngIf="(neverGotData | async) && (isMonoLingual | async) === false">
         <p>{{ 'resource.empty_import' | translate }}</p>
         <stf-dataset-selector (imported)="onDatasetImport($event)"></stf-dataset-selector>
       </ng-container>
