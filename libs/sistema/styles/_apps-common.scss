@@ -37,3 +37,11 @@ code.endpoint {
 .pa-popup {
   min-width: rhythm(16);
 }
+
+pa-button.full-width {
+  display: flex;
+
+  .pa-button {
+    flex: 1 0 auto;
+  }
+}

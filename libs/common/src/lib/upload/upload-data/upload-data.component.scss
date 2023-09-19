@@ -1,0 +1,36 @@
+@import 'apps/dashboard/src/variables';
+
+.upload-data-page {
+  padding: rhythm(6) var(--app-layout-margin-right);
+
+  .upload-options-container {
+    display: flex;
+    flex-direction: column;
+    gap: rhythm(6);
+    margin-top: rhythm(4);
+
+    .upload-options {
+      display: flex;
+      gap: rhythm(4);
+    }
+
+    .desktop-option {
+      .description {
+        align-items: center;
+        display: flex;
+        gap: rhythm(0.5);
+        margin-bottom: rhythm(2);
+      }
+
+      .desktop-actions {
+        align-items: center;
+        display: flex;
+        gap: rhythm(2);
+      }
+
+      .sources-container {
+        margin-top: rhythm(4);
+      }
+    }
+  }
+}

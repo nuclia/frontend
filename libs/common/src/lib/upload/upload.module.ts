@@ -28,6 +28,9 @@ import { LabelModule } from '../label';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
 import { ProgressBarModule } from '../progress-bar';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
+import { UploadDataComponent } from './upload-data/upload-data.component';
+import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';
+import { DesktopSourcesComponent } from './upload-data/desktop-sources/desktop-sources.component';
 
 @NgModule({
   imports: [
@@ -60,7 +63,10 @@ import { UploadQnaComponent } from './upload-qna/upload-qna.component';
     UploadProgressDialogComponent,
     UploadTextComponent,
     UploadQnaComponent,
+    UploadDataComponent,
+    UploadOptionComponent,
+    DesktopSourcesComponent,
   ],
-  exports: [UploadBarComponent, CsvSelectComponent],
+  exports: [UploadBarComponent, CsvSelectComponent, UploadDataComponent, DesktopSourcesComponent],
 })
 export class UploadModule {}

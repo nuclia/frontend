@@ -5,7 +5,7 @@ import { KnowledgeBoxHomeComponent } from './knowledge-box-home.component';
 import { of } from 'rxjs';
 import { TranslateLoader, TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import * as EN from '../../../../../../libs/common/src/assets/i18n/en.json';
-import { AppService } from '@flaps/common';
+import { AppService, NavigationService } from '@flaps/common';
 import { MockProvider } from 'ng-mocks';
 
 function createTranslateLoader() {
@@ -52,6 +52,7 @@ describe('KnowledgeBoxHomeComponent', () => {
           },
         },
         MockProvider(TranslatePipe),
+        MockProvider(NavigationService),
       ],
     }).compileComponents();
   });

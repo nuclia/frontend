@@ -1,18 +1,10 @@
-import {
-  ISourceConnectorOld,
-  SourceConnectorDefinition,
-  SyncItem,
-  SearchResults,
-  ConnectorParameters,
-  FileStatus,
-  Field,
-} from '../models';
-import { Observable, of, from, map, switchMap } from 'rxjs';
+import { ConnectorParameters, Field, FileStatus, ISourceConnectorOld, SearchResults, SyncItem } from '../models';
+import { from, map, Observable, of, switchMap } from 'rxjs';
 
 // export const BrightcoveConnector: SourceConnectorDefinition = {
 //   id: 'brightcove',
 //   title: 'Brightcove',
-//   logo: 'assets/logos/brightcove.svg',
+//   logo: `${baseLogoPath}/brightcove.svg`,
 //   description: 'Video delivery platform',
 //   factory: () => of(new BrightcoveImpl()),
 // };

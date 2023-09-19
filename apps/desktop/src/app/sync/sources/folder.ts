@@ -1,4 +1,4 @@
-import { SourceConnectorDefinition, Field, ConnectorParameters, ISourceConnector } from '../models';
+import { baseLogoPath, ConnectorParameters, Field, ISourceConnector, SourceConnectorDefinition } from '../models';
 import { Observable, of } from 'rxjs';
 
 type ElectronFile = File & { relativePath: string };
@@ -7,7 +7,7 @@ const FILES_TO_IGNORE = ['.DS_Store', 'Thumbs.db'];
 export const FolderConnector: SourceConnectorDefinition = {
   id: 'folder',
   title: 'Folder',
-  logo: 'assets/logos/folder.svg',
+  logo: `${baseLogoPath}/folder.svg`,
   description: 'Upload a folder from your device',
   factory: () => of(new FolderImpl()),
 };

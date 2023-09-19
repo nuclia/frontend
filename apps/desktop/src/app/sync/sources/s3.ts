@@ -1,22 +1,14 @@
-import {
-  ISourceConnectorOld,
-  SourceConnectorDefinition,
-  SyncItem,
-  SearchResults,
-  ConnectorParameters,
-  FileStatus,
-  Field,
-} from '../models';
-import { _Object, S3Client, ListObjectsV2Command, GetObjectCommand } from '@aws-sdk/client-s3';
+import { ConnectorParameters, Field, FileStatus, ISourceConnectorOld, SearchResults, SyncItem } from '../models';
+import { _Object, GetObjectCommand, ListObjectsV2Command, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { Observable, of, from, map } from 'rxjs';
+import { from, map, Observable, of } from 'rxjs';
 
 const MAX_PAGE_SIZE = 1000;
 
 // export const S3Connector: SourceConnectorDefinition = {
 //   id: 's3',
 //   title: 'AWS S3',
-//   logo: 'assets/logos/s3.svg',
+//   logo: `${baseLogoPath}/s3.svg`,
 //   description: 'Object storage service developed by Amazon',
 //   factory: () => of(new S3Impl()),
 // };

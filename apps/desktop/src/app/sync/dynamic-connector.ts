@@ -1,6 +1,5 @@
-import { ISourceConnector, SyncItem, SearchResults, Field, ConnectorParameters, FileStatus } from './models';
+import { ConnectorParameters, Field, FileStatus, ISourceConnector, SearchResults, SyncItem } from './models';
 import { from, map, Observable, of } from 'rxjs';
-import { defaultAuthCheck } from '../utils';
 
 interface PromisedSyncItem {
   uuid: string;

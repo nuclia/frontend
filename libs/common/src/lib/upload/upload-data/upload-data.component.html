@@ -1,0 +1,55 @@
+<div class="upload-data-page">
+  <h1>{{ 'stash.upload_data' | translate }}</h1>
+  <p class="body-m">{{ 'stash.upload.page-subtitle' | translate }}</p>
+
+  <div class="upload-options-container">
+    <div class="upload-options">
+      <stf-upload-option
+        icon="file"
+        text="stash.upload.option.file"
+        (click)="selectUpload('files')"></stf-upload-option>
+      <stf-upload-option
+        icon="folder"
+        text="stash.upload.option.folder"
+        (click)="selectUpload('folder')"></stf-upload-option>
+      <stf-upload-option
+        icon="link"
+        text="stash.upload.option.links"
+        (click)="selectUpload('link')"></stf-upload-option>
+      <stf-upload-option
+        icon="spreadsheet"
+        text="stash.upload.option.csv"
+        (click)="selectUpload('csv')"></stf-upload-option>
+      <stf-upload-option
+        icon="chat"
+        text="stash.upload.option.q-and-a"
+        (click)="selectUpload('qna')"></stf-upload-option>
+    </div>
+
+    <div class="desktop-option">
+      <p class="body-m description">
+        <span class="title-xs">Nuclia Desktop.</span>
+        {{ 'stash.upload.desktop.description' | translate }}
+      </p>
+      <div class="desktop-actions">
+        <pa-button
+          icon="download"
+          iconAndText
+          (click)="downloadDesktop()">
+          {{ 'stash.upload.desktop.download' | translate }}
+        </pa-button>
+        <div class="body-m">or</div>
+        <pa-button
+          icon="square-arrow"
+          iconAndText
+          (click)="openDesktop()">
+          {{ 'stash.upload.desktop.open' | translate }}
+        </pa-button>
+      </div>
+
+      <div class="sources-container">
+        <stf-desktop-sources showDetails></stf-desktop-sources>
+      </div>
+    </div>
+  </div>
+</div>
