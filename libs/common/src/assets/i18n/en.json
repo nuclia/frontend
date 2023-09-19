@@ -72,7 +72,7 @@
 	"account.public": "Public",
 	"account.related_kbs": "Account’s Knowledge Boxes",
 	"account.replace_config": "Replace settings",
-	"account.settings": "Account preferences",
+	"account.settings": "Account management",
 	"account.speech_to_text": "Speech-to-text",
 	"account.speech_to_text_description": "Nuclia offers enhanced speech-to-text models. Using these models require more computation and an associated extra cost. Check the following checkbox if you want to use the enhanced models.",
 	"account.stash.add": "Add knowledge box",

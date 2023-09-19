@@ -72,7 +72,7 @@
 	"account.public": "Public",
 	"account.related_kbs": "Boîtes de connaissances du compte",
 	"account.replace_config": "Remplacer les paramètres",
-	"account.settings": "Préférences du compte",
+	"account.settings": "Gestion du compte",
 	"account.speech_to_text": "De la parole au texte",
 	"account.speech_to_text_description": "Nuclia propose des modèles de synthèse vocale améliorés. L'utilisation de ces modèles nécessite plus de calculs et un coût supplémentaire associé. Cochez la case suivante si vous souhaitez utiliser les modèles améliorés.",
 	"account.stash.add": "Ajouter une boîte à connaissances",

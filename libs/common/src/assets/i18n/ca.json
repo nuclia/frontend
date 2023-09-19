@@ -72,7 +72,7 @@
 	"account.public": "Públic",
 	"account.related_kbs": "Knowledge Box relacionats amb l’Account",
 	"account.replace_config": "Reemplaçar configuració",
-	"account.settings": "Preferències de l’Account",
+	"account.settings": "Gestió del compte",
 	"account.speech_to_text_description": "Nuclia ofereix models millorats de veu a text. L'ús d'aquests models requereix un càlcul més elevat i suposen un cost addicional. Marqueu la casella de selecció  si voleu utilitzar els models millorats.",
 	"account.stash.add": "Afegir caixa coneixement",
 	"account.stash.delete": "Borrar",
