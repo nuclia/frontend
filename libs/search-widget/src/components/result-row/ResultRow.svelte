@@ -1,11 +1,12 @@
 <script lang="ts">
   import {
     AllResultsToggle,
-    DocTypeIndicator, Icon,
+    DocTypeIndicator,
+    Icon,
     isMobileViewport,
     ParagraphResult,
     Thumbnail,
-    ThumbnailPlayer
+    ThumbnailPlayer,
   } from '../../common';
   import {
     displayMetadata,
@@ -17,7 +18,7 @@
     targetNewTab,
     trackingEngagement,
     TypedResult,
-    viewerData
+    viewerData,
   } from '../../core';
   import type { ResourceField, Search } from '@nuclia/core';
   import { combineLatest, map, of, switchMap, take } from 'rxjs';
@@ -67,23 +68,29 @@
     trackingEngagement.set({ type: 'RESULT', rid: result.id, paragraph });
     if (result.field) {
       const resourceField: ResourceField = { ...result.field, ...result.fieldData };
-      combineLatest([navigateToFile, navigateToLink, targetNewTab]).pipe(
-        take(1),
-        map(features => features as boolean[]),
-        switchMap(([toFile, toLink, newTab]) => toFile || toLink
-          ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(map(url => url ? { url, newTab } : false))
-          : of(false))
-      ).subscribe((data) => {
-        if (data) {
-          const { url, newTab } = data as { url: string; newTab: boolean };
-          goToUrl(url, paragraph?.text, newTab || metaKeyOn);
-        } else {
-          viewerData.set({
-            result,
-            selectedParagraphIndex: typeof index === 'number' ? index : -1
-          });
-        }
-      });
+      combineLatest([navigateToFile, navigateToLink, targetNewTab])
+        .pipe(
+          take(1),
+          map((features) => features as boolean[]),
+          switchMap(([toFile, toLink, newTab]) =>
+            toFile || toLink
+              ? getNavigationUrl(toFile, toLink, result, resourceField).pipe(
+                  map((url) => (url ? { url, newTab } : false)),
+                )
+              : of(false),
+          ),
+        )
+        .subscribe((data) => {
+          if (data) {
+            const { url, newTab } = data as { url: string; newTab: boolean };
+            goToUrl(url, paragraph?.text, newTab || metaKeyOn);
+          } else {
+            viewerData.set({
+              result,
+              selectedParagraphIndex: typeof index === 'number' ? index : -1,
+            });
+          }
+        });
     }
   }
 
@@ -100,10 +107,17 @@
   }
 </script>
 
-<svelte:window bind:innerWidth on:keydown={onKeyDown} on:keyup={onKeyUp} />
+<svelte:window
+  bind:innerWidth
+  on:keydown={onKeyDown}
+  on:keyup={onKeyUp} />
 
-<div class="sw-result-row">
-  <div class="thumbnail-container" hidden={$hideThumbnails}>
+<div
+  class="sw-result-row"
+  data-nuclia-rid={result.id}>
+  <div
+    class="thumbnail-container"
+    hidden={$hideThumbnails}>
     {#if isPlayable}
       <ThumbnailPlayer
         thumbnail={result.thumbnail}
@@ -127,24 +141,24 @@
     <div class="result-title-container">
       {#if $hideThumbnails}
         <div class="result-icon">
-          <Icon name={fallback}/>
+          <Icon name={fallback} />
         </div>
       {/if}
       <div>
         <h3
           class="ellipsis title-m"
           on:click={() => clickOnResult()}
-          on:keyup={(e) => {if (e.key === 'Enter') clickOnResult();}}
-        >
+          on:keyup={(e) => {
+            if (e.key === 'Enter') clickOnResult();
+          }}>
           {result?.title}
         </h3>
 
         {#if $displayMetadata}
-          <FieldMetadata {result}></FieldMetadata>
+          <FieldMetadata {result} />
         {/if}
       </div>
     </div>
-
 
     <div tabindex="-1">
       <ul
@@ -152,8 +166,7 @@
         class:expanded={showAllResults}
         class:can-expand={paragraphs.length > 4}
         style:--paragraph-count={paragraphs.length}
-        style:--expanded-paragraph-height={!!expandedParagraphHeight ? expandedParagraphHeight : undefined}
-      >
+        style:--expanded-paragraph-height={!!expandedParagraphHeight ? expandedParagraphHeight : undefined}>
         {#each paragraphs as paragraph, index}
           <ParagraphResult
             {paragraph}
@@ -161,8 +174,7 @@
             ellipsis={true}
             minimized={isMobile}
             on:open={() => clickOnResult(paragraph, index)}
-            on:paragraphHeight={(event) => expandedParagraphHeight = event.detail}
-          />
+            on:paragraphHeight={(event) => (expandedParagraphHeight = event.detail)} />
         {/each}
       </ul>
 
