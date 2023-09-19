@@ -1,6 +1,6 @@
 import { ISourceConnector, ConnectorParameters, Field } from '../models';
 import { Observable, of, BehaviorSubject } from 'rxjs';
-import { getDeeplink } from '../../utils';
+import { clearDeeplink, getDeeplink } from '../../utils';
 import { environment } from '../../../environments/environment';
 
 const TOKEN = '-token';
@@ -59,6 +59,7 @@ export class OAuthConnector implements ISourceConnector {
           const params = new URLSearchParams(deeplink.split('?')[1]);
           const token = params.get('token') || '';
           const refresh = params.get('refresh') || '';
+          clearDeeplink();
           clearInterval(interval);
           if (token) {
             localStorage.setItem(this.name + TOKEN, token);
