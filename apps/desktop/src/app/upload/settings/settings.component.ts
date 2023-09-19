@@ -50,7 +50,12 @@ export class SettingsComponent implements OnInit {
         tap((connector) => {
           this.connector = connector;
         }),
-        switchMap(() => combineLatest([this.sync.getSource(connectorId), this.sync.getDestination('nucliacloud')])),
+        switchMap(() =>
+          combineLatest([
+            this.sync.getSource(connectorId, this.addNew ? '' : this.sync.getCurrentSourceId() || ''),
+            this.sync.getDestination('nucliacloud'),
+          ]),
+        ),
         switchMap(([source, destination]) => combineLatest([source.getParameters(), destination.getParameters()])),
         take(1),
       )

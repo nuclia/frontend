@@ -5,8 +5,8 @@ import { OAuthConnector } from './oauth';
 const SITE_NAME = 'SHAREPOINT_SITE_NAME';
 
 export class SharepointImpl extends OAuthConnector {
-  constructor(name: string) {
-    super(name);
+  constructor(name: string, id: string) {
+    super(name, id);
   }
 
   override getParameters(): Observable<Field[]> {

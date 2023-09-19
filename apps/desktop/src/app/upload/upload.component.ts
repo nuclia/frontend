@@ -34,7 +34,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     // useful for dev mode in browser (in Electron, as the page is not reloaded, authenticate is already waiting for an answer)
     if (connectorId && sourceName) {
       this.sync.setCurrentSourceId(sourceName);
-      forkJoin([this.sync.getSource(connectorId).pipe(take(1)), this.sync.hasCurrentSourceAuth()])
+      forkJoin([this.sync.getSource(connectorId, sourceName).pipe(take(1)), this.sync.hasCurrentSourceAuth()])
         .pipe(
           switchMap(([source, hasAuth]) => (hasAuth ? of(true) : this.sync.authenticateToSource(source))),
           filter((yes) => yes),
@@ -94,7 +94,7 @@ export class UploadComponent implements OnInit, OnDestroy {
     this.tracking.logEvent('desktop:select_source', { sourceId: event.connectorId });
 
     forkJoin([
-      this.sync.getSource(event.connectorId).pipe(take(1)),
+      this.sync.getSource(event.connectorId, event.name).pipe(take(1)),
       this.sync.currentSource.pipe(take(1)),
       this.sync.hasCurrentSourceAuth(),
     ])
