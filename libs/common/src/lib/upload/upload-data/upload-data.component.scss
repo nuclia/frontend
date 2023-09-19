@@ -18,20 +18,18 @@
       .description {
         align-items: center;
         display: flex;
-        gap: rhythm(1);
+        gap: rhythm(0.5);
+        margin-bottom: rhythm(2);
       }
 
-      .desktop-button {
-        img {
-          width: rhythm(20);
-        }
-        ::ng-deep .pa-button-label {
-          display: flex;
-        }
+      .desktop-actions {
+        align-items: center;
+        display: flex;
+        gap: rhythm(2);
       }
 
       .sources-container {
-        margin-top: rhythm(3);
+        margin-top: rhythm(4);
       }
     }
   }
