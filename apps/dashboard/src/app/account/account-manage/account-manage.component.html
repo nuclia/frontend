@@ -3,7 +3,7 @@
     class="section"
     id="account">
     <div class="section-container">
-      <h2>{{ 'account.manage' | translate }}</h2>
+      <h1>{{ 'account.manage' | translate }}</h1>
       <form
         [formGroup]="accountForm"
         (ngSubmit)="saveAccount()">
@@ -19,6 +19,18 @@
           readonly>
           {{ 'generic.slug' | translate }}
         </pa-input>
+        <pa-select
+          *ngIf="zones"
+          readonly
+          [formControl]="zone"
+          help="account.zone_description"
+          [label]="'generic.zone' | translate">
+          <pa-option
+            *ngFor="let zone of zones"
+            [value]="zone.id">
+            {{ zone.title }}
+          </pa-option>
+        </pa-select>
         <pa-input
           id="account-title"
           formControlName="title"
@@ -52,33 +64,10 @@
     </div>
   </div>
 
-  <div
-    class="section"
-    id="config">
-    <div class="section-container">
-      <h2>{{ 'account.config' | translate }}</h2>
-
-      <div
-        class="field-container"
-        *ngIf="zones">
-        <pa-select
-          [formControl]="zone"
-          help="account.zone_description"
-          [label]="'generic.zone' | translate">
-          <pa-option
-            *ngFor="let zone of zones"
-            [value]="zone.id">
-            {{ zone.title }}
-          </pa-option>
-        </pa-select>
-      </div>
-    </div>
-  </div>
-
   <div class="section">
     <div class="section-container">
       <div class="dangerous-zone">
-        <h3 class="title-s">{{ 'account.delete_account' | translate }}</h3>
+        <h3>{{ 'account.delete_account' | translate }}</h3>
         <div *ngIf="(cannotDeleteAccount | async) === false">
           <p>{{ 'account.delete_account_warning_1' | translate: { account: account?.title || '' } }}</p>
           <ul>

@@ -72,7 +72,7 @@
 	"account.public": "Público",
 	"account.related_kbs": "Cajas de conocimiento de la cuenta",
 	"account.replace_config": "Reemplazar configuración",
-	"account.settings": "Preferencias de la cuenta",
+	"account.settings": "Gestión de la cuenta",
 	"account.speech_to_text_description": "Nuclia ofrece modelos mejorados de voz a texto. El uso de estos modelos requiere un cómputo mayor y tienen un costo extra. Marque la siguiente casilla de verificación si desea utilizar los modelos mejorados.",
 	"account.stash.add": "Añadir caja de conocimiento",
 	"account.stash.delete": "Borrar",

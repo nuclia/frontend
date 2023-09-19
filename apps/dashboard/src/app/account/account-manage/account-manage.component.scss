@@ -3,10 +3,9 @@
 .container {
   padding: rhythm(9) var(--app-layout-margin-right) rhythm(8) 5%;
 }
-h2 {
-  margin: 0 0 rhythm(4) 0;
+h1 {
+  margin-bottom: rhythm(4);
 }
-
 .section {
   border-bottom: 1px solid $color-neutral-light;
   padding: rhythm(7) 0;
@@ -26,7 +25,7 @@ h2 {
 .section-container .field-container {
   display: flex;
   flex-direction: column;
-  gap: rhythm(2);
+  gap: rhythm(3);
 }
 
 .account-form-cta {
