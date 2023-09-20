@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { filter, map, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { Account, IKnowledgeBoxItem, KBStates, WritableKnowledgeBox } from '@nuclia/core';
-import { SDKService, StateService, STFTrackingService, Zone, ZoneService } from '@flaps/core';
+import { SDKService, StateService, Zone, ZoneService } from '@flaps/core';
 import { KbAddComponent, KbAddData } from './kb-add/kb-add.component';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -34,7 +34,6 @@ export class AccountKbsComponent implements OnInit, OnDestroy {
     private router: Router,
     private stateService: StateService,
     private zoneService: ZoneService,
-    private tracking: STFTrackingService,
     private cdr: ChangeDetectorRef,
     private toaster: SisToastService,
     private sdk: SDKService,
