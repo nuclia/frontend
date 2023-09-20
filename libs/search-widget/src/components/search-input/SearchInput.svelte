@@ -26,7 +26,7 @@
   import { orderedLabelSetList } from '../../core/stores/labels.store';
   import { getParentLiRect, LabelFilter } from '../../common/label/label.utils';
   import Button from '../../common/button/Button.svelte';
-  import { hasFilterButton, widgetPlaceholder } from '../../core/stores/widget.store';
+  import { hasFilterButton, hideLogo, widgetPlaceholder } from '../../core/stores/widget.store';
   import {
     addEntityFilter,
     addLabelFilter,
@@ -42,8 +42,6 @@
   } from '../../core/stores/search.store';
   import { entities } from '../../core/stores/entities.store';
   import type { EntityGroup } from '../../core/models';
-
-  export let searchBarWidget = false;
 
   let searchInputElement: HTMLInputElement;
   const dispatch = createEventDispatcher();
@@ -198,10 +196,11 @@
 <form
   role="search"
   autocomplete="off"
-  class="sw-search-input search-bar-widget"
+  class="sw-search-input"
   class:has-filters={$filters.length > 0}
+  class:has-logo={!$hideLogo}
   bind:this={inputContainerElement}>
-  {#if searchBarWidget}
+  {#if !$hideLogo}
     <img
       src={`${getCDN()}logos/nuclia-grey.svg`}
       class="logo"

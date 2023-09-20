@@ -156,7 +156,7 @@
   class:dark-mode={darkMode}
   data-version="__NUCLIA_DEV_VERSION__">
   {#if ready && !!svgSprite}
-    <SearchInput searchBarWidget={true} />
+    <SearchInput />
   {/if}
   <div
     id="nuclia-glyphs-sprite"

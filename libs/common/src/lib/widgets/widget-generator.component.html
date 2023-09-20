@@ -169,6 +169,13 @@
             formControlName="noBM25forChat">
             {{ 'stash.widgets.noBM25forChat.label' | translate }}
           </pa-toggle>
+          <pa-toggle
+            *ngIf="canHideLogo | async"
+            labelOnRight
+            help="stash.widgets.hideLogo.help"
+            formControlName="hideLogo">
+            {{ 'stash.widgets.hideLogo.label' | translate }}
+          </pa-toggle>
         </div>
 
         <pa-toggle
