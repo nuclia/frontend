@@ -26,7 +26,7 @@ import { _, translateInstant } from './i18n';
 import { suggestionError } from './stores/suggestions.store';
 import { NucliaPrediction } from '@nuclia/prediction';
 import { searchError, searchOptions } from './stores/search.store';
-import { initTracking } from './tracking';
+import { initTracking, logEvent } from './tracking';
 import { hasViewerSearchError } from './stores/viewer.store';
 
 const DEFAULT_SEARCH_MODE = [Search.Features.PARAGRAPH, Search.Features.VECTOR];
@@ -54,6 +54,12 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
   }
   nucliaApi = new Nuclia(options);
   initTracking(nucliaApi.options.knowledgeBox || 'kb not defined');
+  logEvent('init', {
+    widget_features: Object.entries(widgetOptions?.features || {})
+      .filter(([, value]) => !!value)
+      .map(([key]) => key)
+      .join(','),
+  });
   searchOptions.set({
     inTitleOnly: false,
     highlight: widgetOptions.highlight,
