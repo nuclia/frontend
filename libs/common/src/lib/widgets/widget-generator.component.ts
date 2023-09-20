@@ -55,7 +55,9 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       map((account) => account?.type),
     ),
   ]).pipe(map(([featureEnabled, accountType]) => featureEnabled && accountType === 'stash-business'));
-  canHideLogo = this.sdk.currentAccount.pipe(map((account) => account.type !== 'stash-trial'));
+  canHideLogo = this.sdk.currentAccount.pipe(
+    map((account) => ['stash-growth', 'stash-startup', 'stash-enterprise'].includes(account.type)),
+  );
 
   debouncePlaceholder = new Subject<string>();
 
