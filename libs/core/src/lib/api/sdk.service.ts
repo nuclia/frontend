@@ -52,6 +52,7 @@ export class SDKService {
   private _currentKB = new ReplaySubject<WritableKnowledgeBox>(1);
   private _kbList = new ReplaySubject<IKnowledgeBoxItem[]>(1);
   private _refreshCounter = new Subject<boolean>();
+  private _triggerRefreshKbs = new Subject<boolean>();
   private _repetitiveRefreshCounter = new Subject<void>();
   private _isKbLoaded = false;
 
@@ -75,6 +76,8 @@ export class SDKService {
     private stateService: StateService,
     private featureFlagService: FeatureFlagService,
   ) {
+    this._triggerRefreshKbs.subscribe((refreshCurrentKb) => this._refreshKbList(refreshCurrentKb));
+    this.stateService.account.pipe(filter((account) => !!account)).subscribe((account) => this.refreshKbList());
     combineLatest([this.stateService.kb, this.stateService.account])
       .pipe(
         filter(([kb, account]) => !!kb && !!kb.slug && !!account && !!account.slug),
@@ -91,7 +94,6 @@ export class SDKService {
       )
       .subscribe((kb) => {
         this._currentKB.next(kb);
-        this.refreshKbList();
       });
 
     this.countersRefreshSubcriptions();
@@ -129,6 +131,10 @@ export class SDKService {
   }
 
   refreshKbList(refreshCurrentKb = false) {
+    this._triggerRefreshKbs.next(refreshCurrentKb);
+  }
+
+  private _refreshKbList(refreshCurrentKb = false) {
     const kbList = this.nuclia.options.standalone
       ? this.nuclia.db
           .getStandaloneKbs()
