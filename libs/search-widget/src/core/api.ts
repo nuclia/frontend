@@ -59,7 +59,7 @@ export const initNuclia = (options: NucliaOptions, state: KBStates, widgetOption
       .filter(([, value]) => !!value)
       .map(([key]) => key)
       .join(','),
-  } as { [key: string]: boolean });
+  });
   searchOptions.set({
     inTitleOnly: false,
     highlight: widgetOptions.highlight,
