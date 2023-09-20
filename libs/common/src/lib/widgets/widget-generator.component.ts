@@ -55,6 +55,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
       map((account) => account?.type),
     ),
   ]).pipe(map(([featureEnabled, accountType]) => featureEnabled && accountType === 'stash-business'));
+  canHideLogo = this.sdk.currentAccount.pipe(map((account) => account.type !== 'stash-trial'));
 
   debouncePlaceholder = new Subject<string>();
 
@@ -141,6 +142,7 @@ export class WidgetGeneratorComponent implements OnInit, OnDestroy {
               useSynonyms: [config.features.includes('useSynonyms')],
               displayMetadata: [config.features.includes('displayMetadata')],
               noBM25forChat: [config.features.includes('noBM25forChat')],
+              hideLogo: [config.features.includes('hideLogo')],
             }),
           });
           setTimeout(() => this.generateSnippet(), 100);

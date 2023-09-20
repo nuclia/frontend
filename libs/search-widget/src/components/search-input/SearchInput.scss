@@ -1,6 +1,10 @@
 .sw-search-input {
+  border: var(--search-bar-border);
+  border-radius: var(--search-bar-border-radius);
   display: flex;
   flex-direction: column;
+  height: var(--rhythm-6);
+  max-width: var(--search-bar-max-width);
   position: relative;
 
   .input-container {
@@ -8,6 +12,8 @@
     box-sizing: border-box;
     display: flex;
     flex: 1 0 auto;
+    padding-left: var(--rhythm-5);
+    padding-right: var(--rhythm-1);
     position: relative;
   }
 
@@ -32,30 +38,12 @@
     transition: all 0s ease;
   }
 
-  &.search-bar-widget {
-    border: var(--search-bar-border);
-    border-radius: var(--search-bar-border-radius);
-    max-width: var(--search-bar-max-width);
-  }
-
-  &.search-bar-widget:focus-within {
+  &:focus-within {
     border: var(--search-bar-border-focus);
-    border-top: 1px solid transparent;
-
-    &:before,
-    &:after {
-      background: var(--search-bar-border-focus-color);
-    }
   }
 
-  &.search-bar-widget {
+  &.has-logo {
     border-top: 1px solid transparent;
-    height: var(--rhythm-6);
-
-    .input-container {
-      padding-left: var(--rhythm-5);
-      padding-right: var(--rhythm-1);
-    }
 
     .logo {
       left: var(--rhythm-1_5);
@@ -82,6 +70,15 @@
       left: var(--rhythm-9);
       right: -1px;
     }
+
+    &:focus-within {
+      border-top: 1px solid transparent;
+
+      &:before,
+      &:after {
+        background: var(--search-bar-border-focus-color);
+      }
+    }
   }
 
   .filters-container {
@@ -97,7 +94,7 @@
     }
   }
 
-  &.has-filters.search-bar-widget .input-container:after {
+  &.has-filters .input-container:after {
     background: var(--color-neutral-light);
     content: '';
     height: 1px;
@@ -107,10 +104,10 @@
     top: var(--rhythm-6);
   }
 
-  &.has-filters.search-bar-widget .filters-container {
+  &.has-filters .filters-container {
     padding: var(--rhythm-0_5) var(--rhythm-1) var(--rhythm-1);
   }
-  &.has-filters.search-bar-widget {
+  &.has-filters {
     height: var(--rhythm-12);
   }
 
@@ -128,7 +125,7 @@
 }
 
 @media (min-width: 448px) {
-  .sw-search-input.search-bar-widget {
+  .sw-search-input {
     width: var(--search-bar-max-width);
   }
 }

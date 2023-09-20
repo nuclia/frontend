@@ -772,6 +772,8 @@
 	"stash.widgets.filter.help": "Muestra filtros en la barra de búsqueda",
 	"stash.widgets.filter.label": "Filtrar",
 	"stash.widgets.filter_type": "Tipos de filtro",
+	"stash.widgets.hideLogo.help": "Ocultar el logotipo de Nuclia de la barra de búsqueda",
+	"stash.widgets.hideLogo.label": "Ocultar logotipo",
 	"stash.widgets.hideSources.help": "Ocultar las fuentes utilizadas para generar la respuesta",
 	"stash.widgets.hideSources.label": "Ocultar fuentes",
 	"stash.widgets.hideThumbnails.help": "Ocultar miniaturas en los resultados de búsqueda",
