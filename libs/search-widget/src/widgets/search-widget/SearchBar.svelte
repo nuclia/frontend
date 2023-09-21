@@ -204,9 +204,7 @@
          on:keyup={onBackdropKeyup}
          on:click={onBackdropClick}>
       <div class="search-container"
-           class:with-results={$showResults && !$isEmptySearchQuery}
-           style:--answer-height={answerHeight + 'px'}
-      >
+           class:with-results={$showResults && !$isEmptySearchQuery}>
         <div class="search-bar-container">
           <SearchInput />
         </div>
