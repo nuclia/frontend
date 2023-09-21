@@ -21,7 +21,7 @@ export class UploadDataComponent {
     this.uploadService
       .upload(type)
       .onClose.pipe(filter((data) => !data || !data.cancel))
-      .subscribe(() => this.router.navigate(['../resources'], { relativeTo: this.route }));
+      .subscribe(() => this.router.navigate(['../resources/pending'], { relativeTo: this.route }));
   }
 
   openDesktop() {

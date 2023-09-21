@@ -59,6 +59,25 @@ const ROUTES: Routes = [
       {
         path: '',
         component: ResourceListComponent,
+        children: [
+          {
+            path: '',
+            redirectTo: 'processed',
+            pathMatch: 'full',
+          },
+          {
+            path: 'processed',
+            component: ProcessedResourceTableComponent,
+          },
+          {
+            path: 'pending',
+            component: PendingResourcesTableComponent,
+          },
+          {
+            path: 'error',
+            component: ErrorResourcesTableComponent,
+          },
+        ],
       },
       {
         path: 'dataset',

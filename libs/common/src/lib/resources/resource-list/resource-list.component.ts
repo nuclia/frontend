@@ -9,41 +9,17 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, forkJoin, from, mergeMap, Observable, of, Subject, take } from 'rxjs';
-import { debounceTime, delay, filter, map, switchMap, takeUntil, tap, toArray } from 'rxjs/operators';
-import { ActivatedRoute, Router } from '@angular/router';
-import {
-  Classification,
-  deDuplicateList,
-  IResource,
-  LabelSetKind,
-  LabelSets,
-  ProcessingStatusResponse,
-  Resource,
-  RESOURCE_STATUS,
-  ResourceStatus,
-  Search,
-  SearchOptions,
-  SortOption,
-  UserClassification,
-} from '@nuclia/core';
-import { SDKService, StateService } from '@flaps/core';
-import { SisModalService, SisToastService } from '@nuclia/sistema';
-import { SampleDatasetService } from '../sample-dataset/sample-dataset.service';
-import { LabelsService } from '../../label/labels.service';
-import { OptionModel, PopoverDirective, TRANSITION_DURATION } from '@guillotinaweb/pastanaga-angular';
+import { filter, Observable, Subject } from 'rxjs';
+import { debounceTime, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { SDKService } from '@flaps/core';
+import { SisToastService } from '@nuclia/sistema';
+import { SampleDatasetService } from '../sample-dataset';
+import { OptionModel, PopoverDirective } from '@guillotinaweb/pastanaga-angular';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
-import { getClassificationsPayload } from '../edit-resource';
-import {
-  ColoredLabel,
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_SORTING,
-  MenuAction,
-  ResourceWithLabels,
-} from './resource-list.model';
 import { UploadService } from '../../upload/upload.service';
 import { NavigationService } from '../../services';
 import { openDesktop } from '../../utils';
+import { ResourceListService } from './resource-list.service';
 
 const POPOVER_DISPLAYED = 'NUCLIA_STATUS_POPOVER_DISPLAYED';
 
@@ -62,12 +38,6 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   unsubscribeAll = new Subject<void>();
 
-  data: ResourceWithLabels[] | undefined;
-  page = 0;
-  hasMore = false;
-  pageSize = DEFAULT_PAGE_SIZE;
-  sort: SortOption = DEFAULT_SORTING;
-  isLoading = true;
   searchOptions: OptionModel[] = [];
 
   statusCount = this.uploadService.statusCount.pipe(
@@ -89,17 +59,11 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     }),
   );
 
-  statusDisplayed: BehaviorSubject<ResourceStatus> = new BehaviorSubject<ResourceStatus>('PROCESSED');
-  private currentProcessingStatus?: ProcessingStatusResponse;
-
-  get isMainView() {
-    return this.statusDisplayed.value === 'PROCESSED';
+  get isMainView(): boolean {
+    return this.resourceListService.status === 'PROCESSED';
   }
-  get isFailureView() {
-    return this.statusDisplayed.value === 'ERROR';
-  }
-  get isPendingView() {
-    return this.statusDisplayed.value === 'PENDING';
+  get isPendingView(): boolean {
+    return this.resourceListService.status === 'PENDING';
   }
 
   currentKb = this.sdk.currentKb;
@@ -109,32 +73,21 @@ export class ResourceListComponent implements OnInit, OnDestroy {
   );
   isAdminOrContrib = this.sdk.isAdminOrContrib;
 
-  labelSets$: Observable<LabelSets> = this.labelService.getLabelsByKind(LabelSetKind.RESOURCES).pipe(
-    filter((labelSets) => !!labelSets),
-    map((labelSets) => labelSets as LabelSets),
-  );
-
   searchForm = new FormGroup({
     searchIn: new FormControl<'title' | 'resource'>('title'),
     query: new FormControl<string>(''),
   });
+  isSearching = false;
 
   get query() {
     return this.searchForm.controls.query.getRawValue();
   }
 
-  bulkAction = {
-    inProgress: false,
-    total: 0,
-    done: 0,
-    errors: 0,
-    label: '',
-  };
   selection: string[] = [];
-  isFiltering = false;
+  isFiltering: Observable<boolean> = this.resourceListService.isFiltering;
 
   standalone = this.sdk.nuclia.options.standalone;
-  emptyKb = false;
+  emptyKb = this.resourceListService.emptyKb;
   neverGotData = this.currentKb.pipe(map((kb) => !this.uploadService.hasKbGotData(kb.id)));
   isTrial = this.sdk.currentAccount.pipe(map((account) => account.type === 'stash-trial'));
   isAccountManager = this.sdk.currentAccount.pipe(map((account) => account.can_manage_account));
@@ -142,26 +95,19 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   constructor(
     private sdk: SDKService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private modalService: SisModalService,
-    private stateService: StateService,
     private toaster: SisToastService,
-    private labelService: LabelsService,
+    private translate: TranslateService,
     private uploadService: UploadService,
     private navigation: NavigationService,
+    private resourceListService: ResourceListService,
   ) {}
 
   ngOnInit(): void {
-    this.uploadService.initStatusCount();
-    this.getResources().subscribe(() => this.cdr.markForCheck());
-
     // Reset resource list when query is empty (without forcing user to hit enter)
     this.searchForm.controls.query.valueChanges
       .pipe(
-        debounceTime(TRANSITION_DURATION.moderate),
+        debounceTime(100),
         filter((value) => !value),
         takeUntil(this.unsubscribeAll),
       )
@@ -190,411 +136,22 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     this.unsubscribeAll.complete();
   }
 
+  useDesktop() {
+    openDesktop();
+  }
+
   search() {
     if (!this.searchForm.value.query) {
       this.searchForm.controls.searchIn.setValue('title');
     }
-    this.page = 0;
-    this.triggerLoadResources();
-  }
-
-  delete(resources: Resource[]) {
-    const title = resources.length > 1 ? 'resource.confirm-delete.plural-title' : 'resource.confirm-delete.title';
-    const message =
-      resources.length > 1 ? 'resource.confirm-delete.plural-description' : 'resource.confirm-delete.description';
-    this.modalService
-      .openConfirm({
-        title,
-        description: message,
-        confirmLabel: 'generic.delete',
-        isDestructive: true,
-      })
-      .onClose.pipe(
-        filter((yes) => !!yes),
-        tap(() => {
-          this.setLoading(true);
-          if (resources.length > 1) {
-            this.bulkAction = {
-              inProgress: true,
-              done: 0,
-              errors: 0,
-              total: resources.length,
-              label: 'generic.deleting',
-            };
-            this.cdr.markForCheck();
-          }
-        }),
-        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.delete())))),
-        mergeMap((obs) => obs, 6),
-        toArray(),
-        delay(1000),
-        switchMap(() => this.uploadService.updateStatusCount()),
-        switchMap(() => this._getResources(true)),
-        tap(() => {
-          this.manageBulkActionResults('deleting');
-          this.sdk.refreshCounter(true);
-          this.cdr.markForCheck();
-        }),
-      )
-      .subscribe();
-  }
-
-  bulkReprocess(resources: Resource[], wait = 1000) {
-    const title = resources.length > 1 ? 'resource.confirm-reprocess.plural-title' : 'resource.confirm-reprocess.title';
-    const description =
-      resources.length > 1 ? 'resource.confirm-reprocess.plural-description' : 'resource.confirm-reprocess.description';
-
-    this.modalService
-      .openConfirm({
-        title,
-        description,
-      })
-      .onClose.pipe(
-        filter((yes) => !!yes),
-        tap((yes) => {
-          this.setLoading(true);
-          if (resources.length > 1) {
-            this.bulkAction = {
-              inProgress: true,
-              done: 0,
-              errors: 0,
-              total: resources.length,
-              label: 'generic.reindexing',
-            };
-            this.cdr.markForCheck();
-          }
-        }),
-        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.reprocess())))),
-        mergeMap((obs) => obs, 6),
-        toArray(),
-        delay(wait),
-        switchMap(() => this.uploadService.updateStatusCount()),
-        switchMap(() => this._getResources(true)),
-        tap(() => this.manageBulkActionResults('reprocessing')),
-      )
-      .subscribe();
-  }
-
-  private updateBulkAction(observable: Observable<void>): Observable<any> {
-    return observable.pipe(
-      tap(() => {
-        this.bulkAction = {
-          ...this.bulkAction,
-          done: this.bulkAction.done + 1,
-        };
-        this.cdr.markForCheck();
-      }),
-      catchError(() => {
-        this.bulkAction = {
-          ...this.bulkAction,
-          errors: this.bulkAction.errors + 1,
-        };
-        return of(null);
-      }),
-    );
-  }
-
-  private manageBulkActionResults(action: 'reprocessing' | 'deleting') {
-    if (this.bulkAction.errors > 0) {
-      const message = this.translate.instant(
-        this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`,
-        { count: this.bulkAction.errors },
-      );
-      this.toaster.error(message);
-    } else {
-      this.selection = [];
-    }
-    this.afterBulkActions();
-  }
-
-  reindex(resource: Resource) {
-    resource
-      .reprocess()
-      .pipe(
-        delay(1000), // wait for reprocess to be effective
-        switchMap(() => this._getResources(true)),
-        switchMap(() => this.uploadService.updateStatusCount()),
-      )
-      .subscribe(() => this.cdr.markForCheck());
-  }
-
-  private afterBulkActions() {
-    this.setLoading(false);
-    this.bulkAction = { inProgress: false, total: 0, done: 0, errors: 0, label: '' };
-    this.cdr.markForCheck();
-  }
-
-  viewResource(resourceId: string) {
-    this.router.navigate([`./${resourceId}/edit/preview`], { relativeTo: this.route });
-  }
-
-  loadMore() {
-    if (this.hasMore) {
-      this.page += 1;
-      this.getResources(false).subscribe(() => this.cdr.markForCheck());
-    }
-  }
-
-  sortBy(sortOption: SortOption) {
-    this.sort = sortOption;
-    this.triggerLoadResources();
-  }
-
-  filter(filters: string[]) {
-    this._getResources(true, filters).subscribe(() => this.cdr.markForCheck());
-  }
-
-  triggerLoadResources() {
-    this.setLoading(true);
-    this._getResources(true).subscribe(() => this.cdr.markForCheck());
-  }
-
-  getResources(displayLoader = true): Observable<Search.Results> {
-    if (!this.standalone) {
-      forkJoin([this.stateService.account.pipe(take(1)), this.stateService.kb.pipe(take(1))])
-        .pipe(
-          filter(([account, kb]) => !!account && !!kb),
-          take(1),
-          switchMap(([account]) => this.sdk.nuclia.db.getProcessingStatus(account!.id)),
-        )
-        .subscribe((status) => (this.currentProcessingStatus = status));
-    }
-    this.setLoading(displayLoader);
-    return this._getResources();
-  }
-
-  private _getResources(replaceData = false, filters: string[] = []): Observable<Search.Results> {
     const query = (this.searchForm.value.query || '').trim().replace('.', '\\.');
-    const hasQuery = query.length > 0;
     const titleOnly = this.searchForm.value.searchIn === 'title';
-    if (replaceData) {
-      this.page = 0;
-    }
-    this.isFiltering = filters.length > 0;
-
-    return this.sdk.currentKb.pipe(
-      take(1),
-      switchMap((kb) => {
-        const status = this.statusDisplayed.value;
-        const searchOptions: SearchOptions = {
-          page_number: this.page,
-          page_size: this.pageSize,
-          sort: this.sort,
-          filters: status === RESOURCE_STATUS.PROCESSED ? filters : [`/n/s/${status}`].concat(filters),
-          with_status: status === RESOURCE_STATUS.PROCESSED ? status : undefined,
-        };
-        return forkJoin([
-          of(kb),
-          (titleOnly
-            ? kb.catalog(query, searchOptions)
-            : kb.search(
-                query,
-                hasQuery
-                  ? [Search.Features.PARAGRAPH, Search.Features.VECTOR, Search.Features.DOCUMENT]
-                  : [Search.Features.DOCUMENT],
-                searchOptions,
-              )
-          ).pipe(map((res) => (res.type === 'error' ? { type: 'searchResults' } : res) as Search.Results)),
-          this.labelSets$.pipe(take(1)),
-        ]);
-      }),
-      map(([kb, results, labelSets]) => {
-        const newResults = titleOnly
-          ? this.getTitleOnlyData(results, kb.id, labelSets)
-          : this.getResourceData(query, results, kb.id, labelSets);
-        this.data = this.page === 0 || replaceData ? newResults : (this.data || []).concat(newResults);
-        this.hasMore = !!results.fulltext?.next_page;
-
-        this.setLoading(false);
-        this.emptyKb = this.data.length === 0;
-        return results;
-      }),
-    );
+    this.resourceListService.search(query, titleOnly);
   }
 
-  onMenuAction($event: { resource: Resource; action: MenuAction }) {
-    const resourceId = $event.resource.id;
-    switch ($event.action) {
-      case 'annotate':
-        this.router.navigate([`./${resourceId}/edit/annotation`], { relativeTo: this.route });
-        break;
-      case 'edit':
-        this.router.navigate([`./${resourceId}/edit`], { relativeTo: this.route });
-        break;
-      case 'classify':
-        this.router.navigate([`./${resourceId}/edit/classification`], { relativeTo: this.route });
-        break;
-      case 'delete':
-        this.delete([$event.resource]);
-        break;
-      case 'reprocess':
-        this.bulkReprocess([$event.resource]);
-        break;
-    }
-  }
-
-  private getResourceWithLabels(kbId: string, resourceData: IResource, labelSets: LabelSets): ResourceWithLabels {
-    const resource = new Resource(this.sdk.nuclia, kbId, resourceData);
-    const resourceWithLabels: ResourceWithLabels = {
-      resource,
-      labels: [],
-    };
-    const labels = resource.getClassifications();
-    if (labels.length > 0) {
-      resourceWithLabels.labels = labels.map((label) => ({
-        ...label,
-        color: labelSets[label.labelset]?.color || '#ffffff',
-      }));
-    }
-    if (this.statusDisplayed.value === 'PENDING' && this.currentProcessingStatus) {
-      resourceWithLabels.status = this.getProcessingStatus(resource);
-    }
-
-    return resourceWithLabels;
-  }
-
-  private getProcessingStatus(resource: Resource): string {
-    if (!this.currentProcessingStatus) {
-      return '';
-    }
-    const last_delivered_seqid =
-      resource.queue === 'private'
-        ? this.currentProcessingStatus.account?.last_delivered_seqid
-        : this.currentProcessingStatus.shared?.last_delivered_seqid;
-    if (resource.last_account_seq !== undefined) {
-      const count =
-        typeof last_delivered_seqid === 'number'
-          ? resource.last_account_seq - last_delivered_seqid
-          : resource.last_account_seq - 1;
-      let statusKey = 'resource.status_processing';
-      if (count === 1) {
-        statusKey = 'resource.status_next';
-      } else if (count > 1) {
-        statusKey = 'resource.status_pending';
-      }
-      return this.translate.instant(statusKey, { count });
-    } else {
-      return this.translate.instant('resource.status_unknown');
-    }
-  }
-
-  private getTitleOnlyData(results: Search.Results, kbId: string, labelSets: LabelSets): ResourceWithLabels[] {
-    return Object.values(results.resources || {}).map((resourceData) =>
-      this.getResourceWithLabels(kbId, resourceData, labelSets),
-    );
-  }
-
-  private getResourceData(
-    trimmedQuery: string,
-    results: Search.Results,
-    kbId: string,
-    labelSets: LabelSets,
-  ): ResourceWithLabels[] {
-    const allResources = results.resources;
-    if (!allResources || Object.keys(allResources).length === 0) {
-      return [];
-    }
-    const fulltextOrderedResources: IResource[] =
-      results.fulltext?.results.reduce((resources, result) => {
-        const iResource: IResource = allResources[result.rid];
-        if (result && iResource && !resources.find((resource) => resource.id === result.rid)) {
-          resources.push(iResource);
-        }
-        return resources;
-      }, [] as IResource[]) || [];
-    const smartResults = fulltextOrderedResources.map((resourceData) =>
-      this.getResourceWithLabels(kbId, resourceData, labelSets),
-    );
-
-    // if not a keyword search, fill results with the 2 best semantic sentences
-    const looksLikeKeywordSearch = trimmedQuery.split(' ').length < 3;
-    if (!looksLikeKeywordSearch) {
-      const semanticResults = results.sentences?.results || [];
-      const twoBestSemantic = semanticResults.slice(0, 2);
-      twoBestSemantic.forEach((sentence) => {
-        const resourceIndex = smartResults.findIndex((result) => result.resource.id === sentence.rid);
-        if (resourceIndex > -1 && !smartResults[resourceIndex].description) {
-          smartResults[resourceIndex].description = sentence.text;
-        }
-      });
-    }
-
-    // Fill the rest of the results with first paragraph
-    const paragraphResults = results.paragraphs?.results || [];
-    smartResults.forEach((result) => {
-      if (!result.description) {
-        const paragraph = paragraphResults.find((paragraph) => paragraph.rid === result.resource.id);
-        if (paragraph) {
-          result.description = paragraph.text;
-        } else {
-          // use summary as description when no paragraph
-          result.description = result.resource.summary;
-        }
-      }
-    });
-
-    return smartResults;
-  }
-
-  addLabelsToSelection($event: { labels: Classification[]; resources: Resource[] }) {
-    const { labels, resources } = $event;
-    if (labels.length > 0) {
-      this.bulkAction = {
-        inProgress: true,
-        done: 0,
-        errors: 0,
-        total: resources.length,
-        label: 'resource.adding_labels',
-      };
-      const requests = resources.map((resource) => {
-        return this.labelSets$.pipe(
-          take(1),
-          map((labelSets) => ({
-            usermetadata: {
-              ...resource.usermetadata,
-              classifications: this.mergeExistingAndSelectedLabels(resource, labelSets, labels),
-            },
-          })),
-          switchMap((updatedResource) =>
-            resource.modify(updatedResource).pipe(
-              map(() => ({ isError: false })),
-              catchError((error) => of({ isError: true, error })),
-            ),
-          ),
-        );
-      });
-
-      forkJoin(requests)
-        .pipe(
-          tap((results) => {
-            const errorCount = results.filter((res) => res.isError).length;
-            const successCount = results.length - errorCount;
-            this.bulkAction = {
-              inProgress: true,
-              done: successCount,
-              errors: errorCount,
-              total: resources.length,
-              label: 'resource.adding_labels',
-            };
-            if (successCount > 0) {
-              this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
-            }
-            if (errorCount > 0) {
-              this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
-            }
-          }),
-          switchMap(() => this._getResources(true)),
-        )
-        .subscribe(() => {
-          this.bulkAction = {
-            inProgress: false,
-            done: 0,
-            total: 0,
-            errors: 0,
-            label: '',
-          };
-          this.cdr.markForCheck();
-        });
+  onDatasetImport(success: boolean) {
+    if (success) {
+      this.resourceListService.loadResources(true, false);
     }
   }
 
@@ -612,87 +169,8 @@ export class ResourceListComponent implements OnInit, OnDestroy {
             this.toaster.error('dataset.delete_failed');
           }
         }),
-        switchMap(() => this.getResources()),
+        switchMap(() => this.resourceListService.loadResources()),
       )
       .subscribe(() => this.cdr.markForCheck());
-  }
-
-  private mergeExistingAndSelectedLabels(
-    resource: Resource,
-    labelSets: LabelSets,
-    labels: Classification[],
-  ): Classification[] {
-    const exclusiveLabelSets = Object.entries(labelSets)
-      .filter(([, labelSet]) => !labelSet.multiple)
-      .filter(([id]) => labels.some((label) => label.labelset === id))
-      .map(([id]) => id);
-
-    const resourceLabels = resource
-      .getClassifications()
-      .filter((label) => !exclusiveLabelSets.includes(label.labelset));
-
-    return getClassificationsPayload(
-      resource,
-      deDuplicateList(resourceLabels.concat(labels.map((label) => ({ ...label, cancelled_by_user: false })))),
-    );
-  }
-
-  setLoading(isLoading: boolean) {
-    this.isLoading = isLoading;
-    this.cdr?.markForCheck();
-  }
-
-  displayStatus(status: ResourceStatus) {
-    this.page = 0;
-    this.searchForm.patchValue({ searchIn: 'title', query: '' });
-    this.statusDisplayed.next(status);
-    this.getResources()
-      .pipe(switchMap(() => this.uploadService.updateStatusCount()))
-      .subscribe(() => this.cdr.markForCheck());
-  }
-
-  onDatasetImport(success: boolean) {
-    if (success) {
-      this.getResources()
-        .pipe(switchMap(() => this.uploadService.updateStatusCount()))
-        .subscribe(() => this.cdr.markForCheck());
-    }
-  }
-
-  removeLabel($event: { resource: Resource; labelToRemove: ColoredLabel }) {
-    const { resource, labelToRemove } = $event;
-    let classifications: UserClassification[] = resource.usermetadata?.classifications || [];
-    if (!labelToRemove.immutable) {
-      classifications = classifications.filter(
-        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
-      );
-    } else {
-      classifications.push({
-        label: labelToRemove.label,
-        labelset: labelToRemove.labelset,
-        cancelled_by_user: true,
-      });
-    }
-    resource
-      .modify({
-        usermetadata: {
-          ...resource.usermetadata,
-          classifications,
-        },
-      })
-      .pipe(
-        switchMap(() => this._getResources(true)),
-        catchError(() => {
-          this.toaster.error(
-            `An error occurred while removing "${labelToRemove.labelset} – ${labelToRemove.label}" label, please try again later.`,
-          );
-          return this._getResources(true);
-        }),
-      )
-      .subscribe(() => this.cdr.markForCheck());
-  }
-
-  useDesktop() {
-    openDesktop();
   }
 }

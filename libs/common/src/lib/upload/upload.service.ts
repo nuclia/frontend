@@ -54,7 +54,11 @@ export class UploadService {
   barDisabled = this._barDisabled.asObservable();
   statusCount = this._statusCount.asObservable();
 
-  constructor(private sdk: SDKService, private labelsService: LabelsService, private toaster: SisToastService) {}
+  constructor(
+    private sdk: SDKService,
+    private labelsService: LabelsService,
+    private toaster: SisToastService,
+  ) {}
 
   uploadFiles(files: FileWithMetadata[]) {
     let hasNotifiedError = false;
@@ -271,10 +275,6 @@ export class UploadService {
         this._statusCount.next({ pending: count.pending, error: count.error });
       }),
     );
-  }
-
-  initStatusCount() {
-    this.updateStatusCount().subscribe();
   }
 
   onUploadComplete(success: boolean, kbId: string) {

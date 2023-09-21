@@ -1,12 +1,4 @@
-<router-outlet></router-outlet>
 <div class="resource-list">
-  <div
-    data-cy="spinner"
-    class="loading-shade"
-    *ngIf="isLoading">
-    <nsi-spinner></nsi-spinner>
-  </div>
-
   <div class="resource-list-header">
     <form
       *ngIf="isMainView; else backButton"
@@ -28,14 +20,15 @@
         icon="search"
         formControlName="query"></pa-input>
     </form>
+
     <ng-template #backButton>
       <pa-button
         data-cy="back-to-processed"
+        routerLink="./processed"
         iconAndText
         icon="chevron-left"
         aspect="basic"
-        size="small"
-        (click)="displayStatus('PROCESSED')">
+        size="small">
         {{ 'resource.processed_resources' | translate }}
       </pa-button>
     </ng-template>
@@ -77,6 +70,9 @@
         [class.with-margin]="(statusCount | async)?.error || 0 > 0"
         *ngIf="(statusCount | async)?.pending || 0 > 0">
         <pa-button
+          routerLink="./pending"
+          routerLinkActive
+          #rla="routerLinkActive"
           icon="clock-dash"
           size="small"
           aspect="basic"
@@ -84,8 +80,7 @@
           #pendingPopoverDirective="paPopoverRef"
           [paPopover]="pendingPopover"
           paPopoverOffset="0px"
-          [active]="statusDisplayed.value === 'PENDING'"
-          (click)="displayStatus('PENDING')">
+          [active]="rla.isActive">
           {{ (statusCount | async)?.pending }}
         </pa-button>
       </div>
@@ -97,6 +92,9 @@
         class="status-button"
         *ngIf="(statusCount | async)?.error || 0 > 0">
         <pa-button
+          routerLink="./error"
+          routerLinkActive
+          #rla="routerLinkActive"
           icon="warning"
           size="small"
           kind="destructive"
@@ -105,8 +103,7 @@
           #failedPopoverDirective="paPopoverRef"
           [paPopover]="failedPopover"
           paPopoverOffset="0px"
-          [active]="statusDisplayed.value === 'ERROR'"
-          (click)="displayStatus('ERROR')">
+          [active]="rla.isActive">
           {{ (statusCount | async)?.error }}
         </pa-button>
       </div>
@@ -117,56 +114,10 @@
   </div>
 
   <div class="resource-list-content">
-    <ng-container *ngIf="currentKb | async">
-      <stf-processed-resource-table
-        *ngIf="isMainView && ((data?.length || 0) > 0 || !!query || !!isFiltering)"
-        [data]="data"
-        [sorting]="sort"
-        [labelSets]="labelSets$ | async"
-        [bulkAction]="bulkAction"
-        [(selection)]="selection"
-        (addLabels)="addLabelsToSelection($event)"
-        (clickOnTitle)="viewResource($event.resource.id)"
-        (deleteResources)="delete($event)"
-        (menuAction)="onMenuAction($event)"
-        (removeLabel)="removeLabel($event)"
-        (reprocessResources)="bulkReprocess($event)"
-        (loadMore)="loadMore()"
-        (sort)="sortBy($event)"
-        (filter)="filter($event)"></stf-processed-resource-table>
-
-      <stf-pending-resources-table
-        *ngIf="isPendingView && (data?.length || 0) > 0"
-        [data]="data"
-        [sorting]="sort"
-        [bulkAction]="bulkAction"
-        [(selection)]="selection"
-        (clickOnTitle)="viewResource($event.resource.id)"
-        (menuAction)="onMenuAction($event)"
-        (reprocessResources)="bulkReprocess($event)"
-        (deleteResources)="delete($event)"
-        (loadMore)="loadMore()"
-        (sort)="sortBy($event)"></stf-pending-resources-table>
-
-      <stf-error-resources-table
-        *ngIf="isFailureView && (data?.length || 0) > 0"
-        [data]="data"
-        [sorting]="sort"
-        [bulkAction]="bulkAction"
-        [(selection)]="selection"
-        [errorCount]="(statusCount | async)?.error"
-        (clickOnTitle)="viewResource($event.resource.id)"
-        (isLoading)="setLoading($event)"
-        (menuAction)="onMenuAction($event)"
-        (deleteResources)="delete($event)"
-        (reprocessResources)="bulkReprocess($event)"
-        (reprocessAll)="bulkReprocess($event, 2000)"
-        (loadMore)="loadMore()"
-        (sort)="sortBy($event)"></stf-error-resources-table>
-    </ng-container>
+    <router-outlet></router-outlet>
 
     <div
-      *ngIf="isMainView && emptyKb && !query && !isFiltering && !standalone"
+      *ngIf="isMainView && (emptyKb | async) === true && !standalone"
       class="empty-kb"
       data-cy="empty-kb">
       <p>
