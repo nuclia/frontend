@@ -73,35 +73,30 @@ export class EntitiesComponent {
     }
   }
 
-  updateFamily() {
-    if (this.selectedFamily && this.selectedFamily.custom) {
-      this.modalService
-        .openModal(NerFamilyDialogComponent, new ModalConfig({ data: this.selectedFamily }))
-        .onClose.subscribe();
+  updateFamily(family: NerFamily) {
+    if (family.custom) {
+      this.modalService.openModal(NerFamilyDialogComponent, new ModalConfig({ data: family })).onClose.subscribe();
     }
   }
 
-  removeFamily() {
-    if (this.selectedFamily) {
-      const family = this.selectedFamily;
-      this.modalService
-        .openConfirm({
-          title: this.translate.instant('ner-remove-family-dialog.title', { familyName: family.title }),
-          description: 'ner-remove-family-dialog.description',
-          confirmLabel: 'generic.delete',
-          isDestructive: true,
-        })
-        .onClose.pipe(
-          filter((confirm) => confirm),
-          switchMap(() => this.entitiesService.deleteFamily(family.key)),
-        )
-        .subscribe({
-          next: () => {
-            this.selectedFamily = undefined;
-            this.cdr.markForCheck();
-          },
-        });
-    }
+  removeFamily(family: NerFamily) {
+    this.modalService
+      .openConfirm({
+        title: this.translate.instant('ner-remove-family-dialog.title', { familyName: family.title }),
+        description: 'ner-remove-family-dialog.description',
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((confirm) => confirm),
+        switchMap(() => this.entitiesService.deleteFamily(family.key)),
+      )
+      .subscribe({
+        next: () => {
+          this.selectedFamily = undefined;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   deleteEntities() {

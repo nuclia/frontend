@@ -30,24 +30,24 @@
           </div>
           <div class="family-actions">
             <pa-button
-              *ngIf="family.key === selectedFamily?.key && selectedFamily?.custom"
+              *ngIf="family.custom"
               aspect="basic"
               size="small"
               iconSize="small"
               icon="edit"
+              [kind]="family.key === selectedFamily?.key ? 'inverted' : 'secondary'"
               paTooltip="ner-family-toolbar.edit-button"
-              (click)="updateFamily()">
+              (click)="updateFamily(family)">
               {{ 'ner-family-toolbar.edit-button' | translate }}
             </pa-button>
             <pa-button
-              *ngIf="family.key === selectedFamily?.key"
-              aspect="solid"
+              aspect="basic"
               size="small"
               iconSize="small"
               icon="trash"
               kind="destructive"
               paTooltip="ner-family-toolbar.remove-button"
-              (click)="removeFamily()">
+              (click)="removeFamily(family)">
               {{ 'ner-family-toolbar.remove-button' | translate }}
             </pa-button>
           </div>

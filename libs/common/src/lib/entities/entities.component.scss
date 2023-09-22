@@ -76,7 +76,8 @@ $gap-family-selection: rhythm(7);
         }
 
         &.selected-family {
-          background: $color-neutral-light;
+          background: $color-dark-stronger;
+          color: $color-light-stronger;
         }
 
         .family-color {
@@ -90,6 +91,13 @@ $gap-family-selection: rhythm(7);
           align-items: center;
           pa-button {
             height: rhythm(4);
+            opacity: 0;
+            transition: opacity $transition-hint;
+          }
+        }
+        &.selected-family, &:hover {
+          .family-actions pa-button {
+            opacity: 1;
           }
         }
       }
