@@ -5,9 +5,10 @@ import {
   IKnowledgeBoxItem,
   KnowledgeBox,
   LearningConfiguration,
-  LearningConfigurationSchemas,
   LearningConfigurationSet,
+  LearningConfigurationUserKeys,
   Nuclia,
+  USER_PROMPTS,
   WritableKnowledgeBox,
 } from '@nuclia/core';
 import {
@@ -30,16 +31,6 @@ import { BackendConfigurationService } from '../config';
 import { StateService } from '../state.service';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { take } from 'rxjs/operators';
-
-export interface LearningConfigurationUserKeys {
-  [key: string]: {
-    [key: string]: {
-      title: string;
-      required: boolean;
-      textarea: boolean;
-    };
-  };
-}
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
@@ -216,7 +207,7 @@ export class SDKService {
     ]).pipe(
       map(([hasAnonymization, hasAnswers, hasPdfAnnotation, conf, account]) => {
         const full = Object.entries(conf)
-          .filter(([, value]) => 'options' in value)
+          .filter(([id, value]) => 'options' in value || (!onCreation && id === USER_PROMPTS))
           .map((entry) => entry as [string, LearningConfiguration])
           .map(([id, data]) => ({ id, data }))
           // some options cannot be changed after kb creation
@@ -226,33 +217,32 @@ export class SDKService {
           // At display, hide configurations with only one option or under feature flagging
           display: full.filter(
             (entry) =>
-              entry.data.options.length > 1 &&
-              (entry.id !== 'anonymization_model' || hasAnonymization) &&
-              (entry.id !== 'visual_labeling' || hasPdfAnnotation) &&
-              (entry.id !== 'generative_model' || hasAnswers),
+              entry.id === USER_PROMPTS ||
+              (entry.data.options &&
+                entry.data.options.length > 1 &&
+                (entry.id !== 'anonymization_model' || hasAnonymization) &&
+                (entry.id !== 'visual_labeling' || hasPdfAnnotation) &&
+                (entry.id !== 'generative_model' || hasAnswers)),
           ),
           full,
           keys:
             account.type === 'stash-enterprise'
-              ? Object.entries((conf['user_keys'] as LearningConfigurationSchemas)?.schemas || {}).reduce(
-                  (acc, [schemaId, schema]) => {
-                    acc[schemaId] = Object.entries(schema.properties)
-                      .filter(([, property]) => property.type === 'string')
-                      .reduce(
-                        (acc, [propertyId, property]) => {
-                          acc[propertyId] = {
-                            title: property.title,
-                            required: schema.required.includes(propertyId),
-                            textarea: property.widget === 'textarea',
-                          };
-                          return acc;
-                        },
-                        {} as { [key: string]: { title: string; required: boolean; textarea: boolean } },
-                      );
-                    return acc;
-                  },
-                  {} as LearningConfigurationUserKeys,
-                )
+              ? Object.entries(conf['user_keys']?.schemas || {}).reduce((acc, [schemaId, schema]) => {
+                  acc[schemaId] = Object.entries(schema.properties)
+                    .filter(([, property]) => property.type === 'string')
+                    .reduce(
+                      (acc, [propertyId, property]) => {
+                        acc[propertyId] = {
+                          title: property.title,
+                          required: schema.required.includes(propertyId),
+                          textarea: property.widget === 'textarea',
+                        };
+                        return acc;
+                      },
+                      {} as { [key: string]: { title: string; required: boolean; textarea: boolean } },
+                    );
+                  return acc;
+                }, {} as LearningConfigurationUserKeys)
               : {},
         };
       }),

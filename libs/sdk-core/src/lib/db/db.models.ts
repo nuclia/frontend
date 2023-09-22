@@ -179,21 +179,18 @@ export interface ProcessingStatusResponse {
 }
 
 export interface LearningConfigurations {
-  [key: string]: LearningConfiguration | LearningConfigurationSchemas;
+  [key: string]: LearningConfiguration;
 }
 
 export interface LearningConfiguration {
-  options: { value: string; name: string; user_key?: string }[];
+  options?: { value: string; name: string; user_key?: string; user_prompt?: string }[];
+  schemas?: { [key: string]: LearningConfigurationSchema };
   default: string;
   create: boolean;
   update: boolean;
 }
 
-export interface LearningConfigurationSchemas {
-  schemas: { [key: string]: LearningConfigurationSchema };
-  create: boolean;
-  update: boolean;
-}
+export const USER_PROMPTS = 'user_prompts';
 
 export interface LearningConfigurationSchema {
   title: string;
@@ -203,12 +200,24 @@ export interface LearningConfigurationSchema {
       title: string;
       type: string;
       widget?: string;
+      info?: string;
+      examples?: string[];
     };
   };
   required: string[];
 }
 
 export type LearningConfigurationSet = { id: string; data: LearningConfiguration }[];
+
+export interface LearningConfigurationUserKeys {
+  [key: string]: {
+    [key: string]: {
+      title: string;
+      required: boolean;
+      textarea: boolean;
+    };
+  };
+}
 
 export interface PredictedToken {
   text: string;
