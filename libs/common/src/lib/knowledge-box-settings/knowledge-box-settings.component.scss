@@ -30,6 +30,7 @@
 
     .options {
       margin-top: rhythm(1);
+      width: 100%;
     }
 
     .fields {
@@ -37,6 +38,16 @@
       flex-direction: column;
       gap: rhythm(2);
       margin-top: rhythm(3);
+    }
+
+    .user-prompts {
+      margin-top: rhythm(2);
+      pa-select {
+        margin-top: rhythm(1);
+      }
+      pa-textarea {
+        width: 100%;
+      }
     }
   }
 

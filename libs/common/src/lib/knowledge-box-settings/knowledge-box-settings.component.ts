@@ -2,8 +2,17 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { catchError, filter, of, Subject } from 'rxjs';
 import { auditTime, concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { LearningConfigurationUserKeys, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
-import { Account, KnowledgeBox, LearningConfiguration, WritableKnowledgeBox } from '@nuclia/core';
+import { SDKService, StateService, STFUtils } from '@flaps/core';
+import {
+  Account,
+  KnowledgeBox,
+  LearningConfiguration,
+  USER_PROMPTS,
+  WritableKnowledgeBox,
+  LearningConfigurationUserKeys,
+  LearningConfigurationSchema,
+  LearningConfigurationSet,
+} from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
@@ -37,13 +46,16 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   userKeys?: LearningConfigurationUserKeys;
   currentConfig: { [key: string]: any } = {};
   ownKey = false;
+  promptConfigurations?: LearningConfiguration;
+  promptKeys: string[] = [];
+  currentPromptConfig?: LearningConfigurationSchema;
+  currentPromptKey?: string;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
     private sdk: SDKService,
     private cdr: ChangeDetectorRef,
-    private tracking: STFTrackingService,
     private translate: TranslateService,
     private router: Router,
   ) {}
@@ -68,12 +80,35 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() =>
           this.sdk
             .getVisibleLearningConfiguration(false)
-            .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
+            .pipe(
+              catchError(() =>
+                of({
+                  display: [] as LearningConfigurationSet,
+                  full: [] as LearningConfigurationSet,
+                  keys: {} as LearningConfigurationUserKeys,
+                }),
+              ),
+            ),
         ),
         takeUntil(this.unsubscribeAll),
       )
       .subscribe(({ display, full, keys }) => {
-        this.displayedLearningConfigurations = display;
+        this.displayedLearningConfigurations = display.filter((entry) => entry.id !== USER_PROMPTS);
+        this.promptConfigurations = display.find((entry) => entry.id === USER_PROMPTS)?.data;
+        this.promptKeys = Object.keys(this.promptConfigurations?.schemas || {});
+        const promptsValues = Object.entries(this.promptConfigurations?.schemas || {}).reduce(
+          (acc, [key, value]) => {
+            acc[key] = {};
+            if (value.properties['prompt']) {
+              acc[key]['prompt'] = this.currentConfig['user_prompts']?.[key]?.prompt || '';
+            }
+            if (value.properties['system']) {
+              acc[key]['system'] = this.currentConfig['user_prompts']?.[key]?.system || '';
+            }
+            return acc;
+          },
+          {} as { [key: string]: { prompt?: string; system?: string } },
+        );
         this.learningConfigurations = full;
         this.userKeys = keys;
 
@@ -108,8 +143,27 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
                   {} as { [key: string]: any },
                 ),
               ),
+              user_prompts: this.formBuilder.group(
+                Object.entries(promptsValues || {}).reduce(
+                  (acc, [key, value]) => {
+                    acc[key] = this.formBuilder.group(
+                      Object.entries(value).reduce(
+                        (acc, [fieldId, field]) => {
+                          acc[fieldId] = [field || ''];
+                          acc[`${fieldId}_examples`] = [''];
+                          return acc;
+                        },
+                        {} as { [key: string]: string[] },
+                      ),
+                    );
+                    return acc;
+                  },
+                  {} as { [key: string]: UntypedFormGroup },
+                ),
+              ),
             }),
           });
+          this.updatePrompts(this.currentConfig['generative_model'] || '');
           this.ownKey = this.hasOwnKey();
           this.formReady.next();
           this.cdr?.markForCheck();
@@ -128,6 +182,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       description: this.kb.description,
       config: this.currentConfig,
     });
+    this.updatePrompts(this.currentConfig['generative_model'] || '');
     this.kbForm.markAsPristine();
   }
 
@@ -195,7 +250,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
               }
               return acc;
             },
-            {} as { [key: string]: string },
+            {} as { [key: string]: any },
           );
           const conf = (this.displayedLearningConfigurations || []).reduce((acc, entry) => {
             acc[entry.id] = this.kbForm?.value.config[entry.id];
@@ -222,6 +277,14 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             ),
           };
 
+          const promptKey = this.getPromptKeyForModel(this.kbForm?.value.config['generative_model'] || '');
+          if (promptKey) {
+            if (!conf['user_prompts']) {
+              conf['user_prompts'] = {};
+            }
+            conf['user_prompts'][promptKey] = this.kbForm?.value.config['user_prompts'][promptKey];
+          }
+
           return kb.setConfiguration({ ...conf, ...userKeys });
         }),
         concatMap(() =>
@@ -238,15 +301,45 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  getVisibleFieldGroup(conf: { id: string; data: LearningConfiguration }) {
+  getVisibleFieldGroup(conf: { id: string; data: LearningConfiguration }): string | undefined {
     const selectedOption = this.kbForm?.value['config'][conf.id] || '';
-    const groupId = conf.data.options.find((option) => option.value === selectedOption)?.user_key;
+    const groupId = conf.data.options?.find((option) => option.value === selectedOption)?.user_key;
     return groupId && this.userKeys?.[groupId] ? groupId : undefined;
   }
 
   hasTranslation(key: string) {
     const translation = this.translate.instant(key);
     return translation !== key && translation !== '';
+  }
+
+  private getPromptKeyForModel(model: string): string | undefined {
+    if (this.promptConfigurations) {
+      const modelsConfig = this.displayedLearningConfigurations?.find((conf) => conf.id === 'generative_model');
+      if (modelsConfig) {
+        const selectedModel = modelsConfig.data.options?.find((option) => option.value === model);
+        if (selectedModel) {
+          return selectedModel.user_prompt;
+        }
+      }
+    }
+    return undefined;
+  }
+
+  updatePrompts(model: string) {
+    this.currentPromptKey = this.getPromptKeyForModel(model);
+    if (this.promptConfigurations && this.currentPromptKey && this.kbForm) {
+      this.currentPromptConfig = this.promptConfigurations.schemas?.[this.currentPromptKey];
+    }
+    this.cdr?.markForCheck();
+  }
+
+  setPrompt(field: string, key: string, value: string) {
+    if (this.kbForm && value) {
+      this.kbForm.controls['config'].patchValue({
+        user_prompts: { [key]: { [field]: value, [`${field}_examples`]: '' } },
+      });
+      this.cdr?.markForCheck();
+    }
   }
 
   ngOnDestroy() {
