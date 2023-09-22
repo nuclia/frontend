@@ -91,7 +91,13 @@
               </ng-container>
             </div>
           </div>
-          <div *ngIf="conf.id === 'generative_model' && !!currentPromptConfig && currentPromptKey">
+          <div
+            *ngIf="
+              (isUserPromptsEnabled | async) === true &&
+              conf.id === 'generative_model' &&
+              !!currentPromptConfig &&
+              currentPromptKey
+            ">
             <div formGroupName="user_prompts">
               <div
                 *ngFor="let key of promptKeys"
