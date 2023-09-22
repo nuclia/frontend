@@ -15,8 +15,8 @@ import {
   SortOption,
 } from '@nuclia/core';
 import { TranslateService } from '@ngx-translate/core';
-import { LabelsService } from '../../label';
-import { UploadService } from '../../upload';
+import { LabelsService } from '../../label/labels.service';
+import { UploadService } from '../../upload/upload.service';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
