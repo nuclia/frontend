@@ -98,13 +98,13 @@
                 [formGroupName]="key">
                 <div [hidden]="key !== currentPromptKey">
                   <div
-                    *ngIf="promptConfigurations.schemas[key].properties.prompt"
+                    *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['prompt']"
                     class="user-prompts">
                     <label class="title-s">{{ 'stash.create.user_prompts.prompt' | translate }}</label>
                     <pa-textarea
                       formControlName="prompt"
-                      [help]="promptConfigurations.schemas[key].properties.prompt.info">
-                      {{ promptConfigurations.schemas[key].properties.prompt.title }}
+                      [help]="promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.info || ''">
+                      {{ promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.title }}
                     </pa-textarea>
                     <pa-select
                       formControlName="prompt_examples"
@@ -112,20 +112,22 @@
                       [label]="'stash.create.user_prompts.examples' | translate"
                       (valueChange)="setPrompt('prompt', key, $event)">
                       <pa-option
-                        *ngFor="let option of promptConfigurations.schemas[key].properties.prompt.examples"
+                        *ngFor="
+                          let option of promptConfigurations?.schemas?.[key]?.properties?.['prompt']?.examples || []
+                        "
                         [value]="option">
                         {{ option }}
                       </pa-option>
                     </pa-select>
                   </div>
                   <div
-                    *ngIf="promptConfigurations.schemas[key].properties.system"
+                    *ngIf="!!promptConfigurations?.schemas?.[key]?.properties?.['system']"
                     class="user-prompts">
                     <label class="title-s">{{ 'stash.create.user_prompts.system' | translate }}</label>
                     <pa-textarea
                       formControlName="system"
-                      [help]="promptConfigurations.schemas[key].properties.system.info">
-                      {{ promptConfigurations.schemas[key].properties.system.title }}
+                      [help]="promptConfigurations?.schemas?.[key]?.properties?.['system']?.info || ''">
+                      {{ promptConfigurations?.schemas?.[key]?.properties?.['system']?.title }}
                     </pa-textarea>
                     <pa-select
                       formControlName="system_examples"
@@ -133,7 +135,9 @@
                       [label]="'stash.create.user_prompts.examples' | translate"
                       (valueChange)="setPrompt('system', key, $event)">
                       <pa-option
-                        *ngFor="let option of promptConfigurations.schemas[key].properties.system.examples"
+                        *ngFor="
+                          let option of promptConfigurations?.schemas?.[key]?.properties?.['system']?.examples || []
+                        "
                         [value]="option">
                         {{ option }}
                       </pa-option>

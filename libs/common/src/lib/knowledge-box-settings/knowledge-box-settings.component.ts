@@ -11,6 +11,7 @@ import {
   WritableKnowledgeBox,
   LearningConfigurationUserKeys,
   LearningConfigurationSchema,
+  LearningConfigurationSet,
 } from '@nuclia/core';
 import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -79,7 +80,15 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() =>
           this.sdk
             .getVisibleLearningConfiguration(false)
-            .pipe(catchError(() => of({ display: [], full: [], keys: {} }))),
+            .pipe(
+              catchError(() =>
+                of({
+                  display: [] as LearningConfigurationSet,
+                  full: [] as LearningConfigurationSet,
+                  keys: {} as LearningConfigurationUserKeys,
+                }),
+              ),
+            ),
         ),
         takeUntil(this.unsubscribeAll),
       )
