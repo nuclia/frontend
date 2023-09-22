@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { catchError, filter, of, Subject } from 'rxjs';
-import { auditTime, concatMap, switchMap, take, takeUntil, tap } from 'rxjs/operators';
-import { SDKService, StateService, STFUtils } from '@flaps/core';
+import { auditTime, concatMap, share, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { FeatureFlagService, SDKService, StateService, STFUtils } from '@flaps/core';
 import {
   Account,
   KnowledgeBox,
@@ -50,6 +50,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
   promptKeys: string[] = [];
   currentPromptConfig?: LearningConfigurationSchema;
   currentPromptKey?: string;
+  isUserPromptsEnabled = this.featureFlag.isFeatureEnabled('user-prompts');
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -58,6 +59,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private router: Router,
+    private featureFlag: FeatureFlagService,
   ) {}
 
   ngOnInit(): void {
@@ -78,17 +80,15 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
         switchMap(() => (this.kb?.getConfiguration().pipe(catchError(() => of({}))) || of({})).pipe(take(1))),
         tap((conf) => (this.currentConfig = conf)),
         switchMap(() =>
-          this.sdk
-            .getVisibleLearningConfiguration(false)
-            .pipe(
-              catchError(() =>
-                of({
-                  display: [] as LearningConfigurationSet,
-                  full: [] as LearningConfigurationSet,
-                  keys: {} as LearningConfigurationUserKeys,
-                }),
-              ),
+          this.sdk.getVisibleLearningConfiguration(false).pipe(
+            catchError(() =>
+              of({
+                display: [] as LearningConfigurationSet,
+                full: [] as LearningConfigurationSet,
+                keys: {} as LearningConfigurationUserKeys,
+              }),
             ),
+          ),
         ),
         takeUntil(this.unsubscribeAll),
       )
