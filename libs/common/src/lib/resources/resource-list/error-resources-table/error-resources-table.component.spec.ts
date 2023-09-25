@@ -15,6 +15,7 @@ import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { UploadService } from '../../../upload/upload.service';
 
 describe('ErrorResourcesTableComponent', () => {
   let component: ErrorResourcesTableComponent;
@@ -43,6 +44,7 @@ describe('ErrorResourcesTableComponent', () => {
         MockProvider(SisModalService),
         MockProvider(SisToastService),
         MockProvider(TranslateService),
+        MockProvider(UploadService),
       ],
     }).compileComponents();
 

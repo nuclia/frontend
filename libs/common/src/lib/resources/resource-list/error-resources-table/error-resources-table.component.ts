@@ -4,7 +4,7 @@ import { EMPTY, expand, map, Observable, reduce, take } from 'rxjs';
 import { IErrorResponse, IResource, KnowledgeBox, Resource, RESOURCE_STATUS, Search } from '@nuclia/core';
 import { switchMap, tap } from 'rxjs/operators';
 import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING } from '../resource-list.model';
-import { UploadService } from '../../../upload';
+import { UploadService } from '../../../upload/upload.service';
 
 @Component({
   selector: 'stf-error-resources-table',
