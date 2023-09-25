@@ -28,7 +28,9 @@
         {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
       </pa-button>
       <ng-container
-        *ngIf="(allSelected | async) === true && (errorCount | async) > selection.length && !bulkAction.inProgress">
+        *ngIf="
+          (allSelected | async) === true && ((errorCount | async) || 0) > selection.length && !bulkAction.inProgress
+        ">
         <pa-button
           aspect="basic"
           kind="primary"
