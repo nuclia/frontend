@@ -22,7 +22,7 @@ export interface Prices {
   recurring: {
     month: { price: number };
     year: { price: number };
-  };
+  } | null;
   usage: {
     [key in UsageType]: Usage;
   };

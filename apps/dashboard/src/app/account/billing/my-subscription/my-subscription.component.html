@@ -7,7 +7,7 @@
       *ngIf="prices$ | async as prices">
       <div class="subscription-tier">
         <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
-        <div>
+        <div *ngIf="prices.recurring">
           <span
             class="title-l price"
             *ngIf="currency$ | async as currency">

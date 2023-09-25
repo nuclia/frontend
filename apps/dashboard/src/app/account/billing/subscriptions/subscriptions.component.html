@@ -38,10 +38,10 @@
       </th>
       <th class="plan">
         <div class="plan-name">Starter</div>
-        <div class="price">
-          <span *ngIf="(prices | async)?.['stash-starter'] as starter">
-            {{ starter.recurring.month.price | currency: currency }}
-          </span>
+        <div
+          class="price"
+          *ngIf="(prices | async)?.['stash-starter']?.recurring as starter">
+          <span>{{ starter.month.price | currency : currency }}</span>
           <span class="unit">/{{ 'billing.month' | translate }}</span>
         </div>
         <pa-button
