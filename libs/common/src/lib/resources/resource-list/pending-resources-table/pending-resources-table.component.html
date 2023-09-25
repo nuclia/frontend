@@ -1,3 +1,10 @@
+<div
+  data-cy="spinner"
+  class="loading-shade"
+  *ngIf="isLoading">
+  <nsi-spinner></nsi-spinner>
+</div>
+
 <div class="resource-table-header">
   <div
     class="resource-bulk-actions"
@@ -42,14 +49,14 @@
           *ngIf="isAdminOrContrib | async">
           <pa-checkbox
             data-cy="select-all"
-            [value]="allSelected"
-            [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
+            [value]="allSelected | async"
+            [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
             [disabled]="bulkAction.inProgress"
             (change)="toggleAll()"></pa-checkbox>
         </pa-table-cell>
       </pa-table-sortable-header>
 
-      <pa-table-row *ngFor="let row of data; trackBy: trackById">
+      <pa-table-row *ngFor="let row of data | async; trackBy: trackById">
         <pa-table-cell *ngIf="isAdminOrContrib | async">
           <pa-checkbox
             [value]="selection.includes(row.resource.id)"

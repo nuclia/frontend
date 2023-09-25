@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProcessedResourceTableComponent } from './processed-resource-table.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaDropdownModule,
@@ -14,7 +14,8 @@ import {
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { DropdownButtonComponent } from '@nuclia/sistema';
+import { DropdownButtonComponent, SisModalService, SisToastService } from '@nuclia/sistema';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ResourceTableComponent', () => {
   let component: ProcessedResourceTableComponent;
@@ -24,6 +25,7 @@ describe('ResourceTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ProcessedResourceTableComponent],
       imports: [
+        RouterTestingModule,
         MockModule(TranslateModule),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),
@@ -41,6 +43,9 @@ describe('ResourceTableComponent', () => {
             options: {},
           } as unknown as Nuclia,
         }),
+        MockProvider(SisModalService),
+        MockProvider(SisToastService),
+        MockProvider(TranslateService),
       ],
     }).compileComponents();
 

@@ -33,8 +33,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { FileUploadModule, STFPipesModule } from '@flaps/core';
 import { RouterModule } from '@angular/router';
-import { LabelModule } from '../../label';
-import { HintModule } from '../../hint';
+import { LabelModule } from '../../label/label.module';
+import { HintModule } from '../../hint/hint.module';
 
 @NgModule({
   imports: [

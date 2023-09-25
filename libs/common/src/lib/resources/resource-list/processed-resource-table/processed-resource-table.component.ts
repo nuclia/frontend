@@ -1,22 +1,18 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnChanges,
-  OnDestroy,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { ColoredLabel, ColumnHeader, DEFAULT_PREFERENCES, RESOURCE_LIST_PREFERENCES } from '../resource-list.model';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
-import { BehaviorSubject, combineLatest, Observable, of, skip, Subject, take, tap } from 'rxjs';
+import { map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, catchError, combineLatest, forkJoin, Observable, of, skip, Subject, take } from 'rxjs';
 import { HeaderCell, OptionModel } from '@guillotinaweb/pastanaga-angular';
-import { Classification, LabelSets, Resource, Search } from '@nuclia/core';
-import { LabelsService } from '@flaps/common';
+import {
+  Classification,
+  deDuplicateList,
+  LabelSets,
+  Resource,
+  RESOURCE_STATUS,
+  Search,
+  UserClassification,
+} from '@nuclia/core';
+import { getClassificationsPayload, LabelsService } from '@flaps/common';
 import { LOCAL_STORAGE } from '@ng-web-apis/common';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import mime from 'mime';
@@ -33,21 +29,10 @@ interface Filters {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProcessedResourceTableComponent extends ResourcesTableDirective implements OnInit, OnDestroy, OnChanges {
-  @Input()
-  set labelSets(value: LabelSets | undefined | null) {
-    if (value) {
-      this._labelSets = value;
-    }
-  }
-  get labelSets(): LabelSets {
-    return this._labelSets;
-  }
-
-  @Output() addLabels: EventEmitter<{ resources: Resource[]; labels: Classification[] }> = new EventEmitter();
-  @Output() removeLabel: EventEmitter<{ resource: Resource; labelToRemove: ColoredLabel }> = new EventEmitter();
-  @Output() filter: EventEmitter<string[]> = new EventEmitter();
-
-  private _labelSets: LabelSets = {};
+  override status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  labelSets = this.resourceListService.labelSets;
+  isReady = this.resourceListService.ready;
+  emptyKb = this.resourceListService.emptyKb;
 
   get initialColumns(): ColumnHeader[] {
     return [
@@ -122,7 +107,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   private localStorage = inject(LOCAL_STORAGE);
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor() {
     super();
     const pref = this.localStorage.getItem(RESOURCE_LIST_PREFERENCES);
     if (pref) {
@@ -139,7 +124,8 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     this.optionalColumns = this.defaultColumns.filter((column) => column.optional);
   }
 
-  ngOnInit() {
+  override ngOnInit() {
+    super.ngOnInit();
     this.columnVisibilityUpdate.pipe(skip(1), takeUntil(this.unsubscribeAll)).subscribe(() => {
       this.userPreferences.columns = this.defaultColumns
         .map((column) => (column.optional && column.visible ? column.id : ''))
@@ -150,7 +136,8 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     this.loadFilters();
   }
 
-  ngOnDestroy() {
+  override ngOnDestroy() {
+    super.ngOnDestroy();
     this.unsubscribeAll.next();
     this.unsubscribeAll.complete();
   }
@@ -169,7 +156,39 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     this.deletingLabel = true;
     $event.event.stopPropagation();
     $event.event.preventDefault();
-    this.removeLabel.emit({ resource, labelToRemove });
+
+    let classifications: UserClassification[] = resource.usermetadata?.classifications || [];
+    if (!labelToRemove.immutable) {
+      classifications = classifications.filter(
+        (label) => !(label.labelset === labelToRemove.labelset && label.label === labelToRemove.label),
+      );
+    } else {
+      classifications.push({
+        label: labelToRemove.label,
+        labelset: labelToRemove.labelset,
+        cancelled_by_user: true,
+      });
+    }
+    resource
+      .modify({
+        usermetadata: {
+          ...resource.usermetadata,
+          classifications,
+        },
+      })
+      .pipe(
+        switchMap(() => this.resourceListService.loadResources(true, false)),
+        catchError(() => {
+          this.toaster.error(
+            `An error occurred while removing "${labelToRemove.labelset} – ${labelToRemove.label}" label, please try again later.`,
+          );
+          return this.resourceListService.loadResources(true, false);
+        }),
+      )
+      .subscribe(() => {
+        this.deletingLabel = false;
+        this.cdr.markForCheck();
+      });
   }
 
   updateLabelList(list: Classification[]) {
@@ -177,9 +196,68 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   }
 
   addLabelsToSelection() {
-    const resources = this.getSelectedResources();
-    this.addLabels.emit({ labels: this.currentLabelList, resources });
-    this.currentLabelList = [];
+    if (this.currentLabelList.length > 0) {
+      this.getSelectedResources()
+        .pipe(
+          switchMap((resources) => {
+            this.bulkAction = {
+              inProgress: true,
+              done: 0,
+              errors: 0,
+              total: resources.length,
+              label: 'resource.adding_labels',
+            };
+            const requests = resources.map((resource) => {
+              return this.resourceListService.labelSets.pipe(
+                take(1),
+                map((labelSets) => ({
+                  usermetadata: {
+                    ...resource.usermetadata,
+                    classifications: this.mergeExistingAndSelectedLabels(resource, labelSets, this.currentLabelList),
+                  },
+                })),
+                switchMap((updatedResource) =>
+                  resource.modify(updatedResource).pipe(
+                    map(() => ({ isError: false })),
+                    catchError((error) => of({ isError: true, error })),
+                  ),
+                ),
+              );
+            });
+
+            return forkJoin(requests).pipe(
+              tap((results) => {
+                const errorCount = results.filter((res) => res.isError).length;
+                const successCount = results.length - errorCount;
+                this.bulkAction = {
+                  inProgress: true,
+                  done: successCount,
+                  errors: errorCount,
+                  total: resources.length,
+                  label: 'resource.adding_labels',
+                };
+                if (successCount > 0) {
+                  this.toaster.success(this.translate.instant('resource.add_labels_success', { count: successCount }));
+                }
+                if (errorCount > 0) {
+                  this.toaster.error(this.translate.instant('resource.add_labels_error', { count: errorCount }));
+                }
+              }),
+              switchMap(() => this.resourceListService.loadResources(true, false)),
+            );
+          }),
+        )
+        .subscribe(() => {
+          this.bulkAction = {
+            inProgress: false,
+            done: 0,
+            total: 0,
+            errors: 0,
+            label: '',
+          };
+          this.cdr.markForCheck();
+        });
+    }
   }
 
   selectColumn(column: ColumnHeader, event: MouseEvent | KeyboardEvent) {
@@ -191,8 +269,10 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   onToggleFilter() {
     const filters = this.selectedFilters;
-    this.filter.emit(filters);
-    this.isFiltering = filters.length > 0;
+    if (filters.length > 0) {
+      this.resourceListService.filter(filters);
+      this.isFiltering = filters.length > 0;
+    }
   }
 
   onSelectFilter(option: OptionModel, event: MouseEvent | KeyboardEvent) {
@@ -203,7 +283,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   }
 
   clearFilters() {
-    this.filter.emit([]);
+    this.resourceListService.filter([]);
     this.isFiltering = false;
     this.filterOptions.classification.forEach((option) => (option.selected = false));
     this.filterOptions.mainTypes.forEach((option) => (option.selected = false));
@@ -219,11 +299,12 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   private loadFilters() {
     const mimeFacets = ['/n/i/application', '/n/i/audio', '/n/i/image', '/n/i/text', '/n/i/video'];
-    const faceted = mimeFacets.concat(Object.keys(this._labelSets).map((setId) => `/l/${setId}`));
-    this.sdk.currentKb
+    forkJoin([this.sdk.currentKb.pipe(take(1)), this.labelSets.pipe(take(1))])
       .pipe(
-        take(1),
-        switchMap((kb) => kb.catalog('', { faceted })),
+        switchMap(([kb, labelSets]) => {
+          const faceted = mimeFacets.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
+          return kb.catalog('', { faceted });
+        }),
       )
       .subscribe((results) => {
         if (results.type !== 'error') {
@@ -294,5 +375,25 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
       label: `${label} (${facet.count})`,
       help,
     });
+  }
+
+  private mergeExistingAndSelectedLabels(
+    resource: Resource,
+    labelSets: LabelSets,
+    labels: Classification[],
+  ): Classification[] {
+    const exclusiveLabelSets = Object.entries(labelSets)
+      .filter(([, labelSet]) => !labelSet.multiple)
+      .filter(([id]) => labels.some((label) => label.labelset === id))
+      .map(([id]) => id);
+
+    const resourceLabels = resource
+      .getClassifications()
+      .filter((label) => !exclusiveLabelSets.includes(label.labelset));
+
+    return getClassificationsPayload(
+      resource,
+      deDuplicateList(resourceLabels.concat(labels.map((label) => ({ ...label, cancelled_by_user: false })))),
+    );
   }
 }

@@ -23,10 +23,10 @@ import {
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
 import { SisProgressModule } from '@nuclia/sistema';
-import { HintModule } from '../hint';
-import { LabelModule } from '../label';
+import { HintModule } from '../hint/hint.module';
+import { LabelModule } from '../label/label.module';
 import { UploadBarComponent } from './upload-bar/upload-bar.component';
-import { ProgressBarModule } from '../progress-bar';
+import { ProgressBarModule } from '../progress-bar/progress-bar.module';
 import { UploadQnaComponent } from './upload-qna/upload-qna.component';
 import { UploadDataComponent } from './upload-data/upload-data.component';
 import { UploadOptionComponent } from './upload-data/upload-option/upload-option.component';

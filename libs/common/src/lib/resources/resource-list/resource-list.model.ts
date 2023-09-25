@@ -32,5 +32,6 @@ export interface BulkAction {
   inProgress: boolean;
   total: number;
   done: number;
+  errors: number;
   label: string;
 }

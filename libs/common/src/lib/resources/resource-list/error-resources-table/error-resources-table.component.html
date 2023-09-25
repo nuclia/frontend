@@ -1,8 +1,15 @@
+<div
+  data-cy="spinner"
+  class="loading-shade"
+  *ngIf="isLoading">
+  <nsi-spinner></nsi-spinner>
+</div>
+
 <div class="resource-table-header">
   <div
     class="resource-bulk-actions"
     *ngIf="(isAdminOrContrib | async) && selection.length > 0">
-    {{ 'resource.selected_count' | translate: { num: allErrorsSelected ? errorCount : selection.length } }}
+    {{ 'resource.selected_count' | translate: { num: allErrorsSelected ? (errorCount | async) : selection.length } }}
 
     <ng-container *ngIf="selection.length > 0">
       <pa-button
@@ -20,13 +27,16 @@
         (click)="bulkReprocess()">
         {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
       </pa-button>
-      <ng-container *ngIf="allSelected && errorCount > selection.length && !bulkAction.inProgress">
+      <ng-container
+        *ngIf="
+          (allSelected | async) === true && ((errorCount | async) || 0) > selection.length && !bulkAction.inProgress
+        ">
         <pa-button
           aspect="basic"
           kind="primary"
           *ngIf="!allErrorsSelected"
           (click)="selectAllErrors()">
-          {{ 'resource.select-all-failures' | translate: { count: errorCount } }}
+          {{ 'resource.select-all-failures' | translate: { count: errorCount | async } }}
         </pa-button>
         <pa-button
           aspect="basic"
@@ -56,14 +66,14 @@
           header
           *ngIf="isAdminOrContrib | async">
           <pa-checkbox
-            [value]="allSelected"
-            [paTooltip]="(allSelected ? 'generic.deselect_all' : 'generic.select_all') | translate"
+            [value]="allSelected | async"
+            [paTooltip]="((allSelected | async) === true ? 'generic.deselect_all' : 'generic.select_all') | translate"
             [disabled]="bulkAction.inProgress"
             (change)="toggleAll()"></pa-checkbox>
         </pa-table-cell>
       </pa-table-sortable-header>
 
-      <pa-table-row *ngFor="let row of data; trackBy: trackById">
+      <pa-table-row *ngFor="let row of data | async; trackBy: trackById">
         <pa-table-cell *ngIf="isAdminOrContrib | async">
           <pa-checkbox
             [value]="selection.includes(row.resource.id)"

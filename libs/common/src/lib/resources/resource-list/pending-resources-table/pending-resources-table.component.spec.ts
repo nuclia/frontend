@@ -5,7 +5,7 @@ import { MockModule, MockProvider } from 'ng-mocks';
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaScrollModule,
@@ -13,6 +13,8 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
 
 describe('PendingResourcesTableComponent', () => {
   let component: PendingResourcesTableComponent;
@@ -22,6 +24,7 @@ describe('PendingResourcesTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [PendingResourcesTableComponent],
       imports: [
+        RouterTestingModule,
         MockModule(TranslateModule),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),
@@ -37,6 +40,9 @@ describe('PendingResourcesTableComponent', () => {
             options: {},
           } as unknown as Nuclia,
         }),
+        MockProvider(SisModalService),
+        MockProvider(SisToastService),
+        MockProvider(TranslateService),
       ],
     }).compileComponents();
 

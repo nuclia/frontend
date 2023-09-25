@@ -6,7 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 import { A11yModule } from '@angular/cdk/a11y';
 
-import { ResourceListComponent } from './resource-list';
+import {
+  ErrorResourcesTableComponent,
+  PendingResourcesTableComponent,
+  ProcessedResourceTableComponent,
+  ResourceListComponent,
+  ResourcesTableDirective,
+} from './resource-list';
 import {
   AddFieldComponent,
   EditResourceComponent,
@@ -46,10 +52,6 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
-import { ProcessedResourceTableComponent } from './resource-list/processed-resource-table/processed-resource-table.component';
-import { PendingResourcesTableComponent } from './resource-list/pending-resources-table/pending-resources-table.component';
-import { ResourcesTableDirective } from './resource-list/resources-table.directive';
-import { ErrorResourcesTableComponent } from './resource-list/error-resources-table/error-resources-table.component';
 
 const ROUTES: Routes = [
   {
@@ -59,6 +61,25 @@ const ROUTES: Routes = [
       {
         path: '',
         component: ResourceListComponent,
+        children: [
+          {
+            path: '',
+            redirectTo: 'processed',
+            pathMatch: 'full',
+          },
+          {
+            path: 'processed',
+            component: ProcessedResourceTableComponent,
+          },
+          {
+            path: 'pending',
+            component: PendingResourcesTableComponent,
+          },
+          {
+            path: 'error',
+            component: ErrorResourcesTableComponent,
+          },
+        ],
       },
       {
         path: 'dataset',

@@ -1,10 +1,27 @@
-import { Directive, EventEmitter, inject, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Directive, inject, OnDestroy, OnInit } from '@angular/core';
 import { BulkAction, ColumnHeader, MenuAction, ResourceWithLabels } from './resource-list.model';
-import { Resource, SortField, SortOption } from '@nuclia/core';
-import { map } from 'rxjs/operators';
+import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
+import { delay, map, switchMap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
-import { combineLatest, Observable } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  from,
+  mergeMap,
+  Observable,
+  of,
+  take,
+  tap,
+  toArray,
+} from 'rxjs';
+import { ResourceListService } from './resource-list.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { TranslateService } from '@ngx-translate/core';
 
 export const COMMON_COLUMNS = [
   { id: 'title', label: 'resource.title', size: '3fr', sortable: false },
@@ -20,26 +37,42 @@ export const COMMON_COLUMNS = [
 @Directive({
   selector: '[stfResourcesTable]',
 })
-export class ResourcesTableDirective {
-  @Input()
-  set data(value: ResourceWithLabels[] | undefined | null) {
-    if (value) {
-      this._data = value;
-    }
+export class ResourcesTableDirective implements OnInit, OnDestroy {
+  protected resourceListService = inject(ResourceListService);
+  protected sdk: SDKService = inject(SDKService);
+  protected cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  protected router = inject(Router);
+  protected route = inject(ActivatedRoute);
+  protected modalService = inject(SisModalService);
+  protected toaster = inject(SisToastService);
+  protected translate = inject(TranslateService);
+
+  // status is set to processed by default, but will be overridden by each component extending this directive
+  status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
+  data = this.resourceListService.data;
+  sorting = this.resourceListService.sort;
+  isAdminOrContrib = this.sdk.isAdminOrContrib;
+
+  private _selection = new BehaviorSubject<string[]>([]);
+  set selection(selection: string[]) {
+    this._selection.next(selection);
   }
-  get data(): ResourceWithLabels[] {
-    return this._data;
+  get selection(): string[] {
+    return this._selection.value;
   }
 
-  @Input()
-  set sorting(value: SortOption | undefined | null) {
-    this._sorting = value;
-  }
-  get sorting() {
-    return this._sorting;
-  }
+  allSelected = combineLatest([this.data, this._selection]).pipe(
+    map(([data, selection]) => data.length > 0 && selection.length === data.length),
+  );
+  isLoading = false;
 
-  @Input()
+  private _bulkAction: BulkAction = {
+    inProgress: false,
+    total: 0,
+    done: 0,
+    errors: 0,
+    label: '',
+  };
   set bulkAction(value: BulkAction | undefined | null) {
     if (value) {
       // Reset selection when bulk action is done
@@ -53,42 +86,6 @@ export class ResourcesTableDirective {
     return this._bulkAction;
   }
 
-  @Input()
-  set selection(value: string[] | undefined | null) {
-    if (value) {
-      this._selection = value;
-    }
-  }
-  get selection(): string[] {
-    return this._selection;
-  }
-
-  get allSelected(): boolean {
-    return this.selection.length > 0 && this.selection.length === this.data.length;
-  }
-
-  @Output() loadMore: EventEmitter<void> = new EventEmitter();
-  @Output() sort: EventEmitter<SortOption> = new EventEmitter();
-  @Output() clickOnTitle: EventEmitter<{ resource: Resource }> = new EventEmitter();
-  @Output() deleteResources: EventEmitter<Resource[]> = new EventEmitter();
-  @Output() menuAction: EventEmitter<{ resource: Resource; action: MenuAction }> = new EventEmitter();
-  @Output() reprocessResources: EventEmitter<Resource[]> = new EventEmitter();
-  @Output() selectionChange: EventEmitter<string[]> = new EventEmitter();
-
-  private _bulkAction: BulkAction = {
-    inProgress: false,
-    total: 0,
-    done: 0,
-    label: '',
-  };
-  private _data: ResourceWithLabels[] = [];
-  private _selection: string[] = [];
-  private _sorting?: SortOption | null;
-
-  protected sdk: SDKService = inject(SDKService);
-  currentKb = this.sdk.currentKb;
-  isAdminOrContrib = this.sdk.isAdminOrContrib;
-
   protected defaultColumns: ColumnHeader[] = COMMON_COLUMNS;
   columns: Observable<ColumnHeader[]> = this.isAdminOrContrib.pipe(
     map((canEdit) => {
@@ -96,7 +93,6 @@ export class ResourcesTableDirective {
       return canEdit ? [...columns, { id: 'menu', label: 'generic.actions', size: '96px' }] : [...columns];
     }),
   );
-
   headerCells: Observable<HeaderCell[]> = this.columns.pipe(map((cells) => cells.map((cell) => new HeaderCell(cell))));
   tableLayout: Observable<string> = combineLatest([this.isAdminOrContrib, this.columns]).pipe(
     map(([canEdit, cells]) => {
@@ -104,6 +100,15 @@ export class ResourcesTableDirective {
       return canEdit ? `40px ${layout}` : layout;
     }),
   );
+
+  ngOnInit() {
+    this.resourceListService.status = this.status;
+    this.resourceListService.loadResources().subscribe();
+  }
+
+  ngOnDestroy() {
+    this.resourceListService.clear();
+  }
 
   protected getApplySortingMapper() {
     return (column: ColumnHeader) => {
@@ -116,7 +121,7 @@ export class ResourcesTableDirective {
   }
 
   onLoadMore() {
-    this.loadMore.emit();
+    this.resourceListService.loadMore();
   }
 
   sortBy(cell: HeaderCell) {
@@ -128,7 +133,7 @@ export class ResourcesTableDirective {
           field: cell.id,
           order: cell.descending ? 'desc' : 'asc',
         };
-        this.sort.emit(sorting);
+        this.resourceListService.sortBy(sorting);
         break;
     }
   }
@@ -137,31 +142,126 @@ export class ResourcesTableDirective {
     return resource.resource.id;
   }
 
-  triggerAction(resource: Resource, action: MenuAction) {
-    this.menuAction.emit({ resource, action });
+  onClickTitle(resource: Resource) {
+    this.router.navigate([`../${resource.id}/edit/preview`], { relativeTo: this.route });
   }
 
-  onClickTitle(resource: Resource) {
-    this.clickOnTitle.emit({ resource });
+  triggerAction(resource: Resource, action: MenuAction) {
+    const resourceId = resource.id;
+    switch (action) {
+      case 'annotate':
+        this.router.navigate([`../${resourceId}/edit/annotation`], { relativeTo: this.route });
+        break;
+      case 'edit':
+        this.router.navigate([`../${resourceId}/edit`], { relativeTo: this.route });
+        break;
+      case 'classify':
+        this.router.navigate([`../${resourceId}/edit/classification`], { relativeTo: this.route });
+        break;
+      case 'delete':
+        this.delete([resource]).subscribe();
+        break;
+      case 'reprocess':
+        this.reprocess([resource]).subscribe();
+        break;
+    }
+  }
+
+  delete(resources: Resource[]) {
+    const title = resources.length > 1 ? 'resource.confirm-delete.plural-title' : 'resource.confirm-delete.title';
+    const message =
+      resources.length > 1 ? 'resource.confirm-delete.plural-description' : 'resource.confirm-delete.description';
+    return this.modalService
+      .openConfirm({
+        title,
+        description: message,
+        confirmLabel: 'generic.delete',
+        isDestructive: true,
+      })
+      .onClose.pipe(
+        filter((yes) => !!yes),
+        tap(() => {
+          this.isLoading = true;
+          if (resources.length > 1) {
+            this.bulkAction = {
+              inProgress: true,
+              done: 0,
+              errors: 0,
+              total: resources.length,
+              label: 'generic.deleting',
+            };
+            this.cdr.markForCheck();
+          }
+        }),
+        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.delete())))),
+        mergeMap((obs) => obs, 6),
+        toArray(),
+        delay(1000),
+        switchMap(() => this.resourceListService.loadResources()),
+        tap(() => {
+          this.manageBulkActionResults('deleting');
+          this.sdk.refreshCounter(true);
+          this.cdr.markForCheck();
+        }),
+      );
   }
 
   bulkDelete() {
-    const resources = this.getSelectedResources();
-    this.deleteResources.emit(resources);
+    this.getSelectedResources()
+      .pipe(switchMap((resources) => this.delete(resources)))
+      .subscribe();
+  }
+
+  reprocess(resources: Resource[]) {
+    const wait: number = this.status === RESOURCE_STATUS.ERROR ? 2000 : 1000;
+    const title = resources.length > 1 ? 'resource.confirm-reprocess.plural-title' : 'resource.confirm-reprocess.title';
+    const description =
+      resources.length > 1 ? 'resource.confirm-reprocess.plural-description' : 'resource.confirm-reprocess.description';
+
+    return this.modalService
+      .openConfirm({
+        title,
+        description,
+      })
+      .onClose.pipe(
+        filter((yes) => !!yes),
+        tap((yes) => {
+          this.isLoading = true;
+          if (resources.length > 1) {
+            this.bulkAction = {
+              inProgress: true,
+              done: 0,
+              errors: 0,
+              total: resources.length,
+              label: 'generic.reindexing',
+            };
+            this.cdr.markForCheck();
+          }
+        }),
+        switchMap(() => from(resources.map((resource) => this.updateBulkAction(resource.reprocess())))),
+        mergeMap((obs) => obs, 6),
+        toArray(),
+        delay(wait),
+        switchMap(() => this.resourceListService.loadResources()),
+        tap(() => {
+          this.manageBulkActionResults('reprocessing');
+          this.sdk.refreshCounter(true);
+          this.cdr.markForCheck();
+        }),
+      );
   }
 
   bulkReprocess() {
-    const resources = this.getSelectedResources();
-    this.reprocessResources.emit(resources);
+    this.getSelectedResources()
+      .pipe(switchMap((resources) => this.reprocess(resources)))
+      .subscribe();
   }
 
   toggleAll() {
-    if (this.allSelected) {
-      this.selection = [];
-    } else {
-      this.selection = this.data.map((row) => row.resource.id);
-    }
-    this.selectionChange.emit(this.selection);
+    forkJoin([this.allSelected.pipe(take(1)), this.data.pipe(take(1))]).subscribe(([allSelected, rows]) => {
+      this.selection = allSelected ? [] : rows.map((row) => row.resource.id);
+      this.cdr.detectChanges();
+    });
   }
 
   toggleSelection(resourceId: string) {
@@ -170,10 +270,50 @@ export class ResourcesTableDirective {
     } else {
       this.selection = this.selection.concat([resourceId]);
     }
-    this.selectionChange.emit(this.selection);
   }
 
-  protected getSelectedResources(): Resource[] {
-    return this.data.filter((row) => this.selection.includes(row.resource.id)).map((row) => row.resource);
+  protected getSelectedResources(): Observable<Resource[]> {
+    return this.data.pipe(
+      take(1),
+      map((data) => data.filter((row) => this.selection.includes(row.resource.id)).map((row) => row.resource)),
+    );
+  }
+
+  private updateBulkAction(observable: Observable<void>): Observable<any> {
+    return observable.pipe(
+      tap(() => {
+        this.bulkAction = {
+          ...this.bulkAction,
+          done: this.bulkAction.done + 1,
+        };
+        this.cdr.markForCheck();
+      }),
+      catchError(() => {
+        this.bulkAction = {
+          ...this.bulkAction,
+          errors: this.bulkAction.errors + 1,
+        };
+        return of(null);
+      }),
+    );
+  }
+
+  private manageBulkActionResults(action: 'reprocessing' | 'deleting') {
+    if (this.bulkAction.errors > 0) {
+      const message = this.translate.instant(
+        this.bulkAction.errors > 1 ? `error.${action}-resources` : `error.${action}-resource`,
+        { count: this.bulkAction.errors },
+      );
+      this.toaster.error(message);
+    } else {
+      this.selection = [];
+    }
+    this.afterBulkActions();
+  }
+
+  private afterBulkActions() {
+    this.isLoading = false;
+    this.bulkAction = { inProgress: false, total: 0, done: 0, errors: 0, label: '' };
+    this.cdr.markForCheck();
   }
 }

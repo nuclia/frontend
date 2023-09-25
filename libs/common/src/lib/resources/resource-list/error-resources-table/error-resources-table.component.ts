@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ResourcesTableDirective } from '../resources-table.directive';
-import { EMPTY, expand, map, Observable, of, reduce, take } from 'rxjs';
+import { EMPTY, expand, map, Observable, reduce, take } from 'rxjs';
 import { IErrorResponse, IResource, KnowledgeBox, Resource, RESOURCE_STATUS, Search } from '@nuclia/core';
 import { switchMap, tap } from 'rxjs/operators';
 import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING } from '../resource-list.model';
-import { SisToastService } from '@nuclia/sistema';
+import { UploadService } from '../../../upload/upload.service';
 
 @Component({
   selector: 'stf-error-resources-table',
@@ -13,24 +13,14 @@ import { SisToastService } from '@nuclia/sistema';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorResourcesTableComponent extends ResourcesTableDirective {
-  @Input()
-  set errorCount(value: number | null | undefined) {
-    if (typeof value === 'number') {
-      this._errorCount = value;
-    }
-  }
-  get errorCount(): number {
-    return this._errorCount;
-  }
-  @Output() isLoading: EventEmitter<boolean> = new EventEmitter();
-  @Output() reprocessAll: EventEmitter<Resource[]> = new EventEmitter();
+  private uploadService = inject(UploadService);
+  override status: RESOURCE_STATUS = RESOURCE_STATUS.ERROR;
 
-  private _errorCount = 0;
+  get errorCount(): Observable<number> {
+    return this.uploadService.statusCount.pipe(map((statusCount) => statusCount.error));
+  }
+
   allErrorsSelected = false;
-
-  constructor(private toaster: SisToastService) {
-    super();
-  }
 
   selectAllErrors() {
     this.allErrorsSelected = true;
@@ -42,24 +32,21 @@ export class ErrorResourcesTableComponent extends ResourcesTableDirective {
   }
 
   override bulkDelete() {
-    const resourcesObs = this.allErrorsSelected ? this.getAllResourcesInError() : of(this.getSelectedResources());
-    resourcesObs.subscribe((resources) => this.deleteResources.emit(resources));
+    const resourcesObs = this.allErrorsSelected ? this.getAllResourcesInError() : this.getSelectedResources();
+    resourcesObs.pipe(switchMap((resources) => this.delete(resources))).subscribe();
   }
 
   override bulkReprocess() {
-    const resourcesObs = this.allErrorsSelected ? this.getAllResourcesInError() : of(this.getSelectedResources());
-    resourcesObs.subscribe((resources) => {
+    const resourcesObs = this.allErrorsSelected ? this.getAllResourcesInError() : this.getSelectedResources();
+    resourcesObs.pipe(switchMap((resources) => this.reprocess(resources))).subscribe(() => {
       if (this.allErrorsSelected) {
-        this.reprocessAll.emit(resources);
         this.toaster.info('resource.reindex-all-info');
-      } else {
-        this.reprocessResources.emit(resources);
       }
     });
   }
 
   private getAllResourcesInError(): Observable<Resource[]> {
-    this.isLoading.emit(true);
+    this.isLoading = true;
     let kb: KnowledgeBox;
     return this.sdk.currentKb.pipe(
       take(1),
@@ -80,7 +67,7 @@ export class ErrorResourcesTableComponent extends ResourcesTableDirective {
             );
       }),
       reduce((accData, data) => accData.concat(data), [] as Resource[]),
-      tap(() => this.isLoading.emit(false)),
+      tap(() => (this.isLoading = false)),
     );
   }
 

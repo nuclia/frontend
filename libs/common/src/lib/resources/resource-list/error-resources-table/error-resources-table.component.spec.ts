@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ErrorResourcesTableComponent } from './error-resources-table.component';
 import { MockModule, MockProvider } from 'ng-mocks';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   PaButtonModule,
   PaScrollModule,
@@ -13,6 +13,9 @@ import {
 import { SDKService } from '@flaps/core';
 import { of } from 'rxjs';
 import { Nuclia, WritableKnowledgeBox } from '@nuclia/core';
+import { RouterTestingModule } from '@angular/router/testing';
+import { SisModalService, SisToastService } from '@nuclia/sistema';
+import { UploadService } from '../../../upload/upload.service';
 
 describe('ErrorResourcesTableComponent', () => {
   let component: ErrorResourcesTableComponent;
@@ -22,6 +25,7 @@ describe('ErrorResourcesTableComponent', () => {
     await TestBed.configureTestingModule({
       declarations: [ErrorResourcesTableComponent],
       imports: [
+        RouterTestingModule,
         MockModule(TranslateModule),
         MockModule(PaScrollModule),
         MockModule(PaTableModule),
@@ -37,6 +41,10 @@ describe('ErrorResourcesTableComponent', () => {
             options: {},
           } as unknown as Nuclia,
         }),
+        MockProvider(SisModalService),
+        MockProvider(SisToastService),
+        MockProvider(TranslateService),
+        MockProvider(UploadService),
       ],
     }).compileComponents();
 
