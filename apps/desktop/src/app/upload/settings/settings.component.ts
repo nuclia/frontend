@@ -120,9 +120,8 @@ export class SettingsComponent implements OnInit {
         connectorId: this.connector?.id || '',
         data: this.form?.value.fields || {},
         permanentSync: this.form?.value.permanentSync,
-        labels: this.selectedLabels,
       })
-      .pipe(switchMap(() => this.sync.setSourceDestination(this.form?.value.name || '', kbId)))
+      .pipe(switchMap(() => this.sync.setSourceDestination(this.form?.value.name || '', kbId, this.selectedLabels)))
       .subscribe(() => {
         this.save.emit({
           name: this.form?.value.name || '',
