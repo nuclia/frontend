@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { STFTrackingService, TranslatePipeMock } from '@flaps/core';
+import { SDKService, STFTrackingService, TranslatePipeMock } from '@flaps/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, NEVER, of } from 'rxjs';
 import { ConnectorComponent } from '../connectors/connector/connector.component';
@@ -22,6 +22,7 @@ import {
 import { MockModule, MockProvider } from 'ng-mocks';
 import { By } from '@angular/platform-browser';
 import { FileStatus } from '../sync/models';
+import { LabelModule } from '@flaps/common';
 
 let currentSourceId: string | null = null;
 const fileTitle = 'File title';
@@ -52,6 +53,7 @@ describe('UploadComponent', () => {
         MockModule(PaCardModule),
         MockModule(PaTogglesModule),
         MockModule(PaIconModule),
+        MockModule(LabelModule),
       ],
       providers: [
         {
@@ -110,6 +112,20 @@ describe('UploadComponent', () => {
         {
           provide: TranslateService,
           useValue: { get: () => of('') },
+        },
+        {
+          provide: SDKService,
+          useValue: {
+            currentAccount: of({
+              type: 'test-type',
+            }),
+            kbList: of([]),
+            setCurrentKnowledgeBox: () => of(undefined),
+            currentKb: of({
+              id: 'testKb',
+              getLabels: jest.fn(() => of({})),
+            }),
+          },
         },
         MockProvider(STFTrackingService),
       ],
