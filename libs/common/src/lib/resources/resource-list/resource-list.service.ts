@@ -46,7 +46,6 @@ export class ResourceListService {
 
   private _filters = new BehaviorSubject<string[]>([]);
   filters = this._filters.asObservable();
-  isFiltering = this.filters.pipe(map((filters) => filters.length > 0));
 
   private _ready = new BehaviorSubject<boolean>(false);
   ready = this._ready.asObservable();

@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ResourcesTableDirective } from '../resources-table.directive';
 import { EMPTY, expand, map, Observable, reduce, take } from 'rxjs';
 import { IErrorResponse, IResource, KnowledgeBox, Resource, RESOURCE_STATUS, Search } from '@nuclia/core';
 import { switchMap, tap } from 'rxjs/operators';
 import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING } from '../resource-list.model';
+import { UploadService } from '../../../upload';
 
 @Component({
   selector: 'stf-error-resources-table',
@@ -12,20 +13,13 @@ import { DEFAULT_PAGE_SIZE, DEFAULT_SORTING } from '../resource-list.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorResourcesTableComponent extends ResourcesTableDirective {
+  private uploadService = inject(UploadService);
   override status: RESOURCE_STATUS = RESOURCE_STATUS.ERROR;
 
-  @Input()
-  set errorCount(value: number | null | undefined) {
-    if (typeof value === 'number') {
-      this._errorCount = value;
-    }
+  get errorCount(): Observable<number> {
+    return this.uploadService.statusCount.pipe(map((statusCount) => statusCount.error));
   }
-  get errorCount(): number {
-    return this._errorCount;
-  }
-  @Output() reprocessAll: EventEmitter<Resource[]> = new EventEmitter();
 
-  private _errorCount = 0;
   allErrorsSelected = false;
 
   selectAllErrors() {
@@ -39,19 +33,14 @@ export class ErrorResourcesTableComponent extends ResourcesTableDirective {
 
   override bulkDelete() {
     const resourcesObs = this.allErrorsSelected ? this.getAllResourcesInError() : this.getSelectedResources();
-    // FIXME
-    // resourcesObs.subscribe((resources) => this.deleteResources.emit(resources));
+    resourcesObs.pipe(switchMap((resources) => this.delete(resources))).subscribe();
   }
 
   override bulkReprocess() {
     const resourcesObs = this.allErrorsSelected ? this.getAllResourcesInError() : this.getSelectedResources();
-    resourcesObs.subscribe((resources) => {
+    resourcesObs.pipe(switchMap((resources) => this.reprocess(resources))).subscribe(() => {
       if (this.allErrorsSelected) {
-        this.reprocessAll.emit(resources);
         this.toaster.info('resource.reindex-all-info');
-      } else {
-        // FIXME
-        // this.reprocessResources.emit(resources);
       }
     });
   }

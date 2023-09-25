@@ -9,7 +9,7 @@
   <div
     class="resource-bulk-actions"
     *ngIf="(isAdminOrContrib | async) && selection.length > 0">
-    {{ 'resource.selected_count' | translate: { num: allErrorsSelected ? errorCount : selection.length } }}
+    {{ 'resource.selected_count' | translate: { num: allErrorsSelected ? (errorCount | async) : selection.length } }}
 
     <ng-container *ngIf="selection.length > 0">
       <pa-button
@@ -27,13 +27,14 @@
         (click)="bulkReprocess()">
         {{ (selection.length === 1 ? 'generic.reindex' : 'generic.reindex-plural') | translate }}
       </pa-button>
-      <ng-container *ngIf="(allSelected | async) === true && errorCount > selection.length && !bulkAction.inProgress">
+      <ng-container
+        *ngIf="(allSelected | async) === true && (errorCount | async) > selection.length && !bulkAction.inProgress">
         <pa-button
           aspect="basic"
           kind="primary"
           *ngIf="!allErrorsSelected"
           (click)="selectAllErrors()">
-          {{ 'resource.select-all-failures' | translate: { count: errorCount } }}
+          {{ 'resource.select-all-failures' | translate: { count: errorCount | async } }}
         </pa-button>
         <pa-button
           aspect="basic"

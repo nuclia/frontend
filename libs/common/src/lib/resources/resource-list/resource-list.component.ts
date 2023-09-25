@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, Observable, Subject } from 'rxjs';
+import { filter, Subject } from 'rxjs';
 import { debounceTime, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { SisToastService } from '@nuclia/sistema';
@@ -77,14 +77,10 @@ export class ResourceListComponent implements OnInit, OnDestroy {
     searchIn: new FormControl<'title' | 'resource'>('title'),
     query: new FormControl<string>(''),
   });
-  isSearching = false;
 
   get query() {
     return this.searchForm.controls.query.getRawValue();
   }
-
-  selection: string[] = [];
-  isFiltering: Observable<boolean> = this.resourceListService.isFiltering;
 
   standalone = this.sdk.nuclia.options.standalone;
   emptyKb = this.resourceListService.emptyKb;

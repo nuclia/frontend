@@ -4,7 +4,20 @@ import { Resource, RESOURCE_STATUS, SortField, SortOption } from '@nuclia/core';
 import { delay, map, switchMap } from 'rxjs/operators';
 import { SDKService } from '@flaps/core';
 import { HeaderCell } from '@guillotinaweb/pastanaga-angular';
-import { catchError, combineLatest, filter, forkJoin, from, mergeMap, Observable, of, take, tap, toArray } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  filter,
+  forkJoin,
+  from,
+  mergeMap,
+  Observable,
+  of,
+  take,
+  tap,
+  toArray,
+} from 'rxjs';
 import { ResourceListService } from './resource-list.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SisModalService, SisToastService } from '@nuclia/sistema';
@@ -38,9 +51,19 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
   data = this.resourceListService.data;
   sorting = this.resourceListService.sort;
-
   isAdminOrContrib = this.sdk.isAdminOrContrib;
-  allSelected = this.data.pipe(map((data) => data.length > 0 && this.selection.length === data.length));
+
+  private _selection = new BehaviorSubject<string[]>([]);
+  set selection(selection: string[]) {
+    this._selection.next(selection);
+  }
+  get selection(): string[] {
+    return this._selection.value;
+  }
+
+  allSelected = combineLatest([this.data, this._selection]).pipe(
+    map(([data, selection]) => data.length > 0 && selection.length === data.length),
+  );
   isLoading = false;
 
   private _bulkAction: BulkAction = {
@@ -61,16 +84,6 @@ export class ResourcesTableDirective implements OnInit, OnDestroy {
   }
   get bulkAction(): BulkAction {
     return this._bulkAction;
-  }
-
-  private _selection: string[] = [];
-  set selection(value: string[] | undefined | null) {
-    if (value) {
-      this._selection = value;
-    }
-  }
-  get selection(): string[] {
-    return this._selection;
   }
 
   protected defaultColumns: ColumnHeader[] = COMMON_COLUMNS;
