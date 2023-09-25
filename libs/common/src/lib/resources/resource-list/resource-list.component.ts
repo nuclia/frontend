@@ -147,7 +147,7 @@ export class ResourceListComponent implements OnInit, OnDestroy {
 
   onDatasetImport(success: boolean) {
     if (success) {
-      this.resourceListService.loadResources(true, false);
+      this.resourceListService.loadResources(true, true).subscribe();
     }
   }
 
