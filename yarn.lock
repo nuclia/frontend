@@ -17507,6 +17507,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mime@npm:4.0.0-beta.1":
+  version: 4.0.0-beta.1
+  resolution: "mime@npm:4.0.0-beta.1"
+  bin:
+    mime: bin/cli.js
+  checksum: b62b87e657a3340d39b0d6e6b40d7211c75e1574ee17da96e76ed69ce749034188e9a777ea190bee6008a6f0eb62694a9251f2cc20ba837d030e093eb7cf31ad
+  languageName: node
+  linkType: hard
+
 "mime@npm:^2.5.2":
   version: 2.6.0
   resolution: "mime@npm:2.6.0"
@@ -18492,7 +18501,7 @@ __metadata:
     jest-preset-angular: 13.1.1
     latinize: ^0.5.0
     localstorage-polyfill: ^1.0.1
-    mime: ^3.0.0
+    mime: 4.0.0-beta.1
     mime-types: ^2.1.35
     mrs-developer: ^1.7.1
     ng-mocks: 14.11.0
