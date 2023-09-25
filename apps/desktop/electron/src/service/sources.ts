@@ -114,7 +114,7 @@ export function syncFile(
             try {
               return nucliaConnector.upload(item.originalId, item.title, {
                 buffer: arrayBuffer,
-                metadata: item.metadata,
+                metadata: { ...item.metadata, labels: source.labels },
               });
             } catch (err) {
               return of({ success: false, message: `${err}` });
@@ -122,7 +122,10 @@ export function syncFile(
           }),
         );
       } else if (data.type === 'text' && data.text) {
-        return nucliaConnector.upload(item.originalId, item.title, { text: data.text });
+        return nucliaConnector.upload(item.originalId, item.title, {
+          text: data.text,
+          metadata: { labels: source.labels },
+        });
       } else if (data.type === 'link' && data.link) {
         return nucliaConnector
           .uploadLink(item.originalId, item.title, data.link)

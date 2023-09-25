@@ -7,11 +7,14 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { combineLatest, filter, map, switchMap, take, tap } from 'rxjs';
+import { Observable, combineLatest, filter, forkJoin, map, of, switchMap, take, tap } from 'rxjs';
 import { IErrorMessages, markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { SyncService } from '../../sync/sync.service';
 import { ConnectorDefinition, Field } from '../../sync/models';
+import { SDKService } from '@flaps/core';
+import { LabelsService } from '@flaps/common';
+import { Classification } from '@nuclia/core';
 
 @Component({
   selector: 'nde-settings',
@@ -37,8 +40,16 @@ export class SettingsComponent implements OnInit {
   kbField?: Field;
   form?: UntypedFormGroup;
   connector?: ConnectorDefinition;
+  showLabels = false;
+  selectedLabels: Classification[] = [];
 
-  constructor(private sync: SyncService, private cdr: ChangeDetectorRef, private formBuilder: UntypedFormBuilder) {}
+  constructor(
+    private sync: SyncService,
+    private cdr: ChangeDetectorRef,
+    private formBuilder: UntypedFormBuilder,
+    private sdk: SDKService,
+    private labelsService: LabelsService,
+  ) {}
 
   ngOnInit() {
     const source = this.sync.getSourceCache(this.sync.getCurrentSourceId() || '');
@@ -47,8 +58,9 @@ export class SettingsComponent implements OnInit {
       .pipe(
         map((sources) => sources.find((source) => source.id === connectorId)),
         filter((connector) => !!connector),
-        tap((connector) => {
+        switchMap((connector) => {
           this.connector = connector;
+          return source?.kb?.knowledgeBox ? this._onSelectKb(source.kb?.knowledgeBox) : of(true);
         }),
         switchMap(() =>
           combineLatest([
@@ -78,6 +90,7 @@ export class SettingsComponent implements OnInit {
     if (!this.addNew) {
       const cache = this.sync.getSourceCache(this.sync.getCurrentSourceId() || '');
       if (cache) {
+        this.selectedLabels = cache.labels || [];
         this.form.patchValue({
           fields: cache.data,
           name: this.sync.getCurrentSourceId() || '',
@@ -101,13 +114,14 @@ export class SettingsComponent implements OnInit {
   }
 
   validate() {
+    const kbId = (this.form?.value.kb || '').split('|')[0];
     this.sync
       .setSourceData(this.form?.value.name || '', {
         connectorId: this.connector?.id || '',
         data: this.form?.value.fields || {},
         permanentSync: this.form?.value.permanentSync,
       })
-      .pipe(switchMap(() => this.sync.setSourceDestination(this.form?.value.name || '', this.form?.value.kb || '')))
+      .pipe(switchMap(() => this.sync.setSourceDestination(this.form?.value.name || '', kbId, this.selectedLabels)))
       .subscribe(() => {
         this.save.emit({
           name: this.form?.value.name || '',
@@ -146,5 +160,21 @@ export class SettingsComponent implements OnInit {
         sourceId: this.sync.getCurrentSourceId() || '',
       });
     }
+  }
+
+  onSelectKb(kb: string) {
+    this._onSelectKb(kb).subscribe(() => this.cdr?.detectChanges());
+  }
+
+  private _onSelectKb(kbId: string): Observable<boolean> {
+    return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.kbList.pipe(take(1))]).pipe(
+      switchMap(([account, kbs]) =>
+        this.sdk.setCurrentKnowledgeBox(account.slug, kbs.find((kb) => kb.id === kbId)?.slug || ''),
+      ),
+      switchMap(() => this.labelsService.refreshLabelsSets()),
+      switchMap(() => this.labelsService.hasLabelSets()),
+      filter((hasLabels) => !!hasLabels),
+      tap(() => (this.showLabels = true)),
+    );
   }
 }
