@@ -33,7 +33,7 @@ import {
 import { NucliaCloudKB } from './destinations/nuclia-cloud';
 import { injectScript, SDKService } from '@flaps/core';
 import { SitemapConnector } from './sources/sitemap';
-import { NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
+import { Classification, NucliaOptions, WritableKnowledgeBox } from '@nuclia/core';
 import { DynamicConnectorWrapper } from './dynamic-connector';
 import { HttpClient } from '@angular/common/http';
 import { FolderConnector } from './sources/folder';
@@ -232,7 +232,7 @@ export class SyncService {
     );
   }
 
-  setSourceDestination(sourceId: string, kbId: string): Observable<void> {
+  setSourceDestination(sourceId: string, kbId: string, labels?: Classification[]): Observable<void> {
     return this.getSourceData(sourceId).pipe(
       switchMap((source) =>
         this.getKb(kbId).pipe(
@@ -243,6 +243,7 @@ export class SyncService {
               return this.getNucliaKey(kb).pipe(
                 map((data) => ({
                   ...source,
+                  labels,
                   kb: {
                     zone: this.sdk.nuclia.options.zone,
                     backend: this.sdk.nuclia.options.backend,

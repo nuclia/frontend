@@ -1,4 +1,4 @@
-import { NucliaOptions } from '@nuclia/core';
+import { Classification, NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
 
 export const baseLogoPath = 'assets/connector-logos';
@@ -117,6 +117,7 @@ export interface Source {
   permanentSync?: boolean;
   lastSync?: string;
   total?: number;
+  labels?: Classification[];
 }
 
 export interface SyncRow {

@@ -1,4 +1,4 @@
-import type { NucliaOptions } from '@nuclia/core';
+import type { Classification, NucliaOptions } from '@nuclia/core';
 import { Observable } from 'rxjs';
 
 export interface Source {
@@ -10,6 +10,7 @@ export interface Source {
   permanentSync?: boolean;
   lastSyncGMT?: string;
   total?: number;
+  labels?: Classification[];
 }
 
 export interface ConnectorDefinition {

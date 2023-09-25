@@ -15,6 +15,7 @@ import {
   PaTogglesModule,
   PaTooltipModule,
 } from '@guillotinaweb/pastanaga-angular';
+import { LabelModule } from '@flaps/common';
 
 @NgModule({
   imports: [
@@ -30,6 +31,7 @@ import {
     PaTooltipModule,
     PaIconModule,
     SisProgressModule,
+    LabelModule,
   ],
   exports: [],
   declarations: [UploadComponent, SelectFilesComponent, SettingsComponent],

@@ -1,5 +1,6 @@
 import {
   FIELD_TYPE,
+  ICreateResource,
   INuclia,
   Nuclia,
   NucliaOptions,
@@ -38,10 +39,23 @@ export class NucliaCloud {
       return this.getKb().pipe(
         switchMap((kb) =>
           kb.getResourceBySlug(slug, [], []).pipe(
+            switchMap((resource) => {
+              if (data.metadata?.labels) {
+                return resource
+                  .modify({ usermetadata: { classifications: data.metadata.labels } })
+                  .pipe(map(() => resource));
+              } else {
+                return of(resource);
+              }
+            }),
             catchError((error) => {
               if (error.status === 404) {
+                const resourceData: ICreateResource = { slug, title: filename };
+                if (data.metadata.labels) {
+                  resourceData.usermetadata = { classifications: data.metadata?.labels };
+                }
                 return kb
-                  .createResource({ slug, title: filename }, true)
+                  .createResource(resourceData, true)
                   .pipe(map((data) => kb.getResourceFromData({ id: data.uuid })));
               } else {
                 console.error(`Problem creating ${slug}, status ${error.status}`);

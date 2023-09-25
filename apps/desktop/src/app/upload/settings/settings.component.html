@@ -63,7 +63,7 @@
       (click)="goToDocumentation($event, connector.helpUrl)"
       target="_blank"
       rel="noopener noreferrer">
-      {{ 'upload.source.help' | translate : { source: connector.title } }}
+      {{ 'upload.source.help' | translate: { source: connector.title } }}
     </a>
   </div>
 
@@ -83,8 +83,9 @@
       *ngIf="kbField.type === 'select'"
       class="select-field-container">
       <pa-select
-        [formControlName]="kbField.id"
-        [label]="kbField.label">
+        formControlName="kb"
+        [label]="kbField.label"
+        (valueChange)="onSelectKb($event)">
         <pa-option
           *ngFor="let option of kbField.options"
           [disabled]="option.disabled"
@@ -96,10 +97,16 @@
         *ngIf="kbField.canBeRefreshed"
         icon="refresh"
         aspect="basic"
-        [paTooltip]="'upload.refresh' | translate : { field: kbField.label }"
+        [paTooltip]="'upload.refresh' | translate: { field: kbField.label }"
         (click)="refreshField(kbField.id)">
-        {{ 'upload.refresh' | translate : { field: kbField.label } }}
+        {{ 'upload.refresh' | translate: { field: kbField.label } }}
       </pa-button>
+    </div>
+    <div
+      *ngIf="showLabels"
+      class="field">
+      <div class="body-m">{{ 'upload.labels' | translate }}</div>
+      <app-label-field [(selection)]="selectedLabels"></app-label-field>
     </div>
   </div>
 
