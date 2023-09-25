@@ -53,7 +53,7 @@ export class RedirectComponent {
   copy() {
     navigator.clipboard.writeText(this.token);
     this.copied = true;
-    markForCheck(this.cdr);
+    this.cdr.markForCheck();
     setTimeout(() => {
       this.copied = false;
       this.cdr.markForCheck();
