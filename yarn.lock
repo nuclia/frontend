@@ -8270,10 +8270,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/latinize@npm:^0.2.15":
-  version: 0.2.15
-  resolution: "@types/latinize@npm:0.2.15"
-  checksum: 816a34cc63094c1559ca08c1a56bb010d65cd59c28b73b8e9da10fe18d603e7f724e57930144b4acb16dadf186246e20a52ae9c4a77f2b5343cd9f492159ea15
+"@types/latinize@npm:^0.2.16":
+  version: 0.2.16
+  resolution: "@types/latinize@npm:0.2.16"
+  checksum: c6f993b057da60db9ee016266374951acdf9a294f4cd973bfc6fa5e69cc53caa9edc4b2d6ca903c28066c884ddb98ef32b5930f92b68bae1a062fdace4316f76
   languageName: node
   linkType: hard
 
@@ -18453,7 +18453,7 @@ __metadata:
     "@types/jasmine": 4.0.3
     "@types/jest": 29.5.2
     "@types/jexl": ^2.2.0
-    "@types/latinize": ^0.2.15
+    "@types/latinize": ^0.2.16
     "@types/lru-cache": ^5.1.0
     "@types/mime-types": ^2.1.1
     "@types/node": 18.7.1
