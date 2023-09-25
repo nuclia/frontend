@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SDKService, UserService } from '@flaps/core';
 import { take, map, filter, switchMap, combineLatest } from 'rxjs';
@@ -18,11 +18,13 @@ export class RedirectComponent {
   );
   token = this.sdk.nuclia.auth.getToken();
   displayToken = this.route.queryParamMap.pipe(map((params) => params.get('display') === 'token'));
+  copied = false;
 
   constructor(
     private sdk: SDKService,
     private userService: UserService,
     private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {
     this.isValidToken
       .pipe(
@@ -50,5 +52,11 @@ export class RedirectComponent {
 
   copy() {
     navigator.clipboard.writeText(this.token);
+    this.copied = true;
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.copied = false;
+      this.cdr.markForCheck();
+    }, 2000);
   }
 }

@@ -10,3 +10,17 @@ code {
   margin-bottom: rhythm(3);
   word-break: break-all;
 }
+
+.copy {
+  align-items: center;
+  display: flex;
+  gap: rhythm(2);
+  pa-icon {
+    color: $color-primary-regular;
+    opacity: 0;
+    transition: opacity $transition-hint;
+    &.active {
+      opacity: 1;
+    }
+  }
+}
