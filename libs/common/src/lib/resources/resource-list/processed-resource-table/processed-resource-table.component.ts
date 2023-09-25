@@ -267,14 +267,6 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     }
   }
 
-  onToggleFilter() {
-    const filters = this.selectedFilters;
-    if (filters.length > 0) {
-      this.resourceListService.filter(filters);
-      this.isFiltering = filters.length > 0;
-    }
-  }
-
   onSelectFilter(option: OptionModel, event: MouseEvent | KeyboardEvent) {
     if ((event.target as HTMLElement).tagName === 'LI') {
       option.selected = !option.selected;
@@ -282,7 +274,19 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     }
   }
 
+  onToggleFilter() {
+    const filters = this.selectedFilters;
+    if (filters.length > 0) {
+      this.router.navigate(['./'], { relativeTo: this.route, queryParams: { filters } });
+      this.resourceListService.filter(filters);
+      this.isFiltering = filters.length > 0;
+    } else {
+      this.clearFilters();
+    }
+  }
+
   clearFilters() {
+    this.router.navigate(['./'], { relativeTo: this.route, queryParams: {} });
     this.resourceListService.filter([]);
     this.isFiltering = false;
     this.filterOptions.classification.forEach((option) => (option.selected = false));
@@ -299,21 +303,32 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
 
   private loadFilters() {
     const mimeFacets = ['/n/i/application', '/n/i/audio', '/n/i/image', '/n/i/text', '/n/i/video'];
-    forkJoin([this.sdk.currentKb.pipe(take(1)), this.labelSets.pipe(take(1))])
+    forkJoin([
+      this.sdk.currentKb.pipe(take(1)),
+      this.labelSets.pipe(take(1)),
+      this.route.queryParamMap.pipe(take(1)),
+      this.resourceListService.filters.pipe(take(1)),
+    ])
       .pipe(
-        switchMap(([kb, labelSets]) => {
+        switchMap(([kb, labelSets, queryParams, filters]) => {
           const faceted = mimeFacets.concat(Object.keys(labelSets).map((setId) => `/l/${setId}`));
-          return kb.catalog('', { faceted });
+          return kb.catalog('', { faceted }).pipe(map((results) => ({ results, queryParams, filters })));
         }),
       )
-      .subscribe((results) => {
+      .subscribe(({ results, queryParams, filters }) => {
         if (results.type !== 'error') {
-          this.formatFiltersFromFacets(results.fulltext?.facets || {});
+          const previousFilters = queryParams.get('preserveFilters') ? filters : queryParams.getAll('filters');
+          this.formatFiltersFromFacets(results.fulltext?.facets || {}, previousFilters);
+          if (previousFilters.length > 0) {
+            this.onToggleFilter();
+          } else {
+            this.resourceListService.filter([]);
+          }
         }
       });
   }
 
-  private formatFiltersFromFacets(allFacets: Search.FacetsResult) {
+  private formatFiltersFromFacets(allFacets: Search.FacetsResult, queryParamsFilters: string[]) {
     // Group facets by types
     const facetGroups: {
       classification: { key: string; count: number }[];
@@ -344,7 +359,9 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     };
     if (facetGroups.classification.length > 0) {
       facetGroups.classification.forEach((facet) =>
-        filters.classification.push(this.getOptionFromFacet(facet, facet.key.substring(3))),
+        filters.classification.push(
+          this.getOptionFromFacet(facet, facet.key.substring(3), queryParamsFilters.includes(facet.key)),
+        ),
       );
       filters.classification.sort((a, b) => a.label.localeCompare(b.label));
     }
@@ -358,7 +375,9 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
         if (help.includes('.')) {
           help = help.split('.').pop();
         }
-        return filters.mainTypes.push(this.getOptionFromFacet(facet, label, help));
+        return filters.mainTypes.push(
+          this.getOptionFromFacet(facet, label, queryParamsFilters.includes(facet.key), help),
+        );
       });
       filters.mainTypes.sort((a, b) => a.label.localeCompare(b.label));
     }
@@ -368,12 +387,18 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
     this.cdr.markForCheck();
   }
 
-  private getOptionFromFacet(facet: { key: string; count: number }, label: string, help?: string): OptionModel {
+  private getOptionFromFacet(
+    facet: { key: string; count: number },
+    label: string,
+    selected: boolean,
+    help?: string,
+  ): OptionModel {
     return new OptionModel({
       id: facet.key,
       value: facet.key,
       label: `${label} (${facet.count})`,
       help,
+      selected,
     });
   }
 

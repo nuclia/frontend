@@ -5,7 +5,7 @@
       icon="chevron-left"
       aspect="basic"
       size="small"
-      [routerLink]="backRoute | async">
+      (click)="backToResources()">
       {{ 'resource.resources' | translate }}
     </pa-button>
     <div class="title-s">{{ (resource | async)?.title }}</div>

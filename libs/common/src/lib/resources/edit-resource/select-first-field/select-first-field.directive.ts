@@ -38,7 +38,7 @@ export class SelectFirstFieldDirective implements OnDestroy {
       )
       .subscribe((fields) => {
         const field = fields[0];
-        this.router.navigate([`./${field.field_type}/${field.field_id}`], { relativeTo: this.route });
+        this.router.navigate([`./${field.field_type}/${field.field_id}`], { relativeTo: this.route, replaceUrl: true });
       });
   }
 

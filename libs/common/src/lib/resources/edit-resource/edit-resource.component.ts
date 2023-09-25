@@ -136,9 +136,8 @@ export class EditResourceComponent implements OnInit, OnDestroy {
         switchMap(() => this.editResource.resource),
         map((resource) => resource as Resource),
         switchMap((resource: Resource) => resource.delete(true)),
-        switchMap(() => this.backRoute),
       )
-      .subscribe((route) => this.router.navigate([route]));
+      .subscribe((route) => this.backToResources());
   }
 
   goToPawls() {
@@ -146,5 +145,11 @@ export class EditResourceComponent implements OnInit, OnDestroy {
       localStorage.setItem(PAWLS_KEY, JSON.stringify(data));
       location.href = '/pawls';
     });
+  }
+
+  backToResources() {
+    this.backRoute
+      .pipe(take(1))
+      .subscribe((resourceRoute) => this.router.navigate([resourceRoute], { queryParams: { preserveFilters: true } }));
   }
 }
