@@ -44,9 +44,9 @@ export class ResourceListService {
     }
   }
 
+  private _triggerResourceLoad = new Subject<{ replaceData: boolean; updateCount: boolean }>();
   private _filters = new BehaviorSubject<string[]>([]);
   filters = this._filters.asObservable();
-
   private _ready = new BehaviorSubject<boolean>(false);
   ready = this._ready.asObservable();
   private _data = new BehaviorSubject<ResourceWithLabels[]>([]);
@@ -66,6 +66,12 @@ export class ResourceListService {
   private _query = '';
   private _titleOnly = true;
 
+  constructor() {
+    this._triggerResourceLoad
+      .pipe(switchMap(({ replaceData, updateCount }) => this.loadResources(replaceData, updateCount)))
+      .subscribe();
+  }
+
   clear() {
     this._ready.next(false);
     this._data.next([]);
@@ -83,25 +89,25 @@ export class ResourceListService {
 
   filter(filters: string[]) {
     this._filters.next(filters);
-    this.loadResources(true, false).subscribe();
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
   loadMore() {
     if (this._hasMore) {
       this._page += 1;
-      this.loadResources(false, false).subscribe();
+      this._triggerResourceLoad.next({ replaceData: false, updateCount: false });
     }
   }
 
   sortBy(sortOption: SortOption) {
     this._sort = sortOption;
-    this.loadResources(true, false).subscribe();
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
   search(query: string, titleOnly: boolean) {
     this._query = query;
     this._titleOnly = titleOnly;
-    this.loadResources(true, false).subscribe();
+    this._triggerResourceLoad.next({ replaceData: true, updateCount: false });
   }
 
   loadResources(replaceData = true, updateCount = true): Observable<void> {
