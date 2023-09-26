@@ -19,8 +19,16 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
-  isSubscribed = combineLatest([this.type, this.getPrices().pipe(shareReplay())]).pipe(
-    map(([type, prices]) => Object.keys(prices).includes(type as string)),
+  isSubscribed = combineLatest([this.type, this.getPrices()]).pipe(
+    switchMap(([type, prices]) => {
+      if (type === 'stash-enterprise') {
+        // Not all enterprise accounts are subscribed
+        return this.getSubscription().pipe(map((subscription) => subscription !== null));
+      } else {
+        return of(Object.keys(prices).includes(type as string));
+      }
+    }),
+    shareReplay(1),
   );
 
   private _country = new BehaviorSubject<string | null>(null);

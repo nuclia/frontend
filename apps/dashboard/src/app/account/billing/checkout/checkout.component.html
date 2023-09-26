@@ -22,7 +22,7 @@
         {{ 'account.type.' + account | translate }}
         <ng-container *ngIf="currency$ | async as currency">
           <ng-container *ngIf="(prices$ | async)?.[account]?.recurring as prices">
-            - {{ prices.month?.price || '' | currency : currency }}/{{ 'billing.month' | translate }}
+            - {{ prices.month.price | currency : currency }}/{{ 'billing.month' | translate }}
           </ng-container>
         </ng-container>
       </div>
