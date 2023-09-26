@@ -540,6 +540,7 @@
 	"resource.entities.quantity": "Quantitat",
 	"resource.entities.time": "Temps",
 	"resource.entities.work_of_art": "Obres",
+	"resource.error.loading-failed": "No s'han pogut carregar els recursos.",
 	"resource.extra-metadata.invalid-json": "JSON no vàlid",
 	"resource.extra-metadata.label": "Metadades addicionals",
 	"resource.failed_resources_popover": "El processament dels fitxers ha fallat",

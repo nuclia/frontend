@@ -17,6 +17,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { LabelsService } from '../../label/labels.service';
 import { UploadService } from '../../upload/upload.service';
+import { SisToastService } from '@nuclia/sistema';
 
 @Injectable({ providedIn: 'root' })
 export class ResourceListService {
@@ -25,6 +26,7 @@ export class ResourceListService {
   private translate = inject(TranslateService);
   private stateService = inject(StateService);
   private uploadService = inject(UploadService);
+  private toastService = inject(SisToastService);
 
   private processingStatus?: ProcessingStatusResponse;
   private _status: RESOURCE_STATUS = RESOURCE_STATUS.PROCESSED;
@@ -167,6 +169,7 @@ export class ResourceListService {
       ),
       catchError((error) => {
         console.error(`Error while loading results:`, error);
+        this.toastService.error(this.translate.instant('resource.error.loading-failed'));
         this._data.next([]);
         return of(undefined);
       }),
