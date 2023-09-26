@@ -6,7 +6,7 @@ import { addDays, format, isWithinInterval, lastDayOfMonth, setDate, subDays } f
 import { TranslateService } from '@ngx-translate/core';
 import { SisToastService } from '@nuclia/sistema';
 import { NavigationService, TickOptions } from '@flaps/common';
-import { BillingService } from '../billing/billing.service';
+import { BillingService, UPGRADABLE_ACCOUNT_TYPES } from '../billing/billing.service';
 
 type ChartData = {
   data: [string, number][];
@@ -61,7 +61,7 @@ export class AccountHomeComponent {
     [StatsType.MEDIA_SECONDS]: (value) => value / 3600,
     [StatsType.TRAIN_SECONDS]: (value) => value / 3600,
   };
-  canUpgrade = this.account$.pipe(map((account) => ['stash-trial', 'stash-starter'].includes(account.type)));
+  canUpgrade = this.account$.pipe(map((account) => UPGRADABLE_ACCOUNT_TYPES.includes(account.type)));
 
   allCharts = true;
   charts: { [type in StatsType]: Observable<ChartData> } = this.statsTypes.reduce(
