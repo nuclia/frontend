@@ -5,7 +5,7 @@
   import { onMount } from 'svelte';
   import { loadFonts, loadSvgSprite, setCDN } from '../../core/utils';
   import { setLang } from '../../core/i18n';
-  import type { KBStates} from '@nuclia/core';
+  import type { KBStates } from '@nuclia/core';
   import globalCss from '../../common/_global.scss?inline';
   import { initAnswer, initUsageTracking, initViewer, resetStatesAndEffects } from '../../core/stores/effects';
   import Chat from '../../components/answer/Chat.svelte';
@@ -80,6 +80,7 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
+<slot />
 
 <div
   class="nuclia-widget"

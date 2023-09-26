@@ -15,8 +15,9 @@
     resetStatesAndEffects,
     setCDN,
     setLang,
-    setWidgetActions, TypedResult,
-    viewerData
+    setWidgetActions,
+    TypedResult,
+    viewerData,
   } from '../../core';
   import { onMount } from 'svelte';
   import type { FieldFullId, KBStates } from '@nuclia/core';
@@ -46,7 +47,7 @@
     const fullId = {
       resourceId: rid,
       field_id,
-      field_type: fieldType
+      field_type: fieldType,
     };
     openPreview(fullId);
   } else {
@@ -58,10 +59,10 @@
   export function openPreview(fullId: FieldFullId): Observable<boolean> {
     forkJoin([
       getResourceById(fullId.resourceId, [ResourceProperties.BASIC, ResourceProperties.VALUES]),
-      getResourceField(fullId)
+      getResourceField(fullId),
     ]).subscribe(([resource, fieldData]) => {
       const field = { field_id: fullId.field_id, field_type: fullId.field_type };
-      const {resultType, resultIcon} = getResultType({...resource, field, fieldData });
+      const { resultType, resultIcon } = getResultType({ ...resource, field, fieldData });
       const result: TypedResult = {
         ...resource,
         field,
@@ -70,7 +71,7 @@
       };
       viewerData.set({
         result,
-        selectedParagraphIndex: -1
+        selectedParagraphIndex: -1,
       });
     });
 
@@ -103,10 +104,10 @@
         apiKey: apikey,
         kbSlug: kbslug,
         account,
-        standalone
+        standalone,
       },
       state,
-      {}
+      {},
     );
 
     lang = lang || window.navigator.language.split('-')[0] || 'en';
@@ -123,6 +124,7 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
+<slot />
 
 <div
   class="nuclia-widget"

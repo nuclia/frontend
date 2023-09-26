@@ -151,6 +151,7 @@
 </script>
 
 <svelte:element this="style">{@html globalCss}</svelte:element>
+<slot />
 <div
   class="nuclia-widget"
   class:dark-mode={darkMode}
