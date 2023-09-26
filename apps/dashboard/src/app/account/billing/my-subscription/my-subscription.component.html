@@ -7,7 +7,7 @@
       *ngIf="prices$ | async as prices">
       <div class="subscription-tier">
         <div class="title-l">{{ 'account.type.' + (type | async) | translate }}</div>
-        <div>
+        <div *ngIf="prices.recurring">
           <span
             class="title-l price"
             *ngIf="currency$ | async as currency">
@@ -29,7 +29,11 @@
             <span class="body-m">{{ 'billing.quotas.kbs' | translate }}</span>
           </pa-table-cell>
           <pa-table-cell>
-            <span class="body-m">{{ (defaults | async)?.max_kbs || '' }}</span>
+            <span
+              class="body-m"
+              *ngIf="(defaults | async)?.max_kbs as maxKbs">
+              {{ maxKbs === -1 ? ('billing.unlimited' | translate) : maxKbs }}
+            </span>
           </pa-table-cell>
           <pa-table-cell>-</pa-table-cell>
         </pa-table-row>

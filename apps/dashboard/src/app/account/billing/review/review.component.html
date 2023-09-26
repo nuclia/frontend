@@ -7,7 +7,9 @@
       <h2 class="title-s">
         {{ 'billing.review.subscribe_to' | translate: { account: 'account.type.' + account | translate } }}
       </h2>
-      <div class="body-m">
+      <div
+        class="body-m"
+        *ngIf="cost">
         {{
           'billing.review.cost' | translate: { cost: cost | currency: currency, budget: budget | currency: currency }
         }}
