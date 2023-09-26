@@ -200,12 +200,11 @@ export class SDKService {
   }> {
     return forkJoin([
       this.featureFlagService.isFeatureEnabled('kb-anonymization').pipe(take(1)),
-      this.featureFlagService.isFeatureEnabled('answers').pipe(take(1)),
       this.featureFlagService.isFeatureEnabled('pdf-annotation').pipe(take(1)),
       this.nuclia.db.getLearningConfigurations().pipe(take(1)),
       this.currentAccount.pipe(take(1)),
     ]).pipe(
-      map(([hasAnonymization, hasAnswers, hasPdfAnnotation, conf, account]) => {
+      map(([hasAnonymization, hasPdfAnnotation, conf, account]) => {
         const full = Object.entries(conf)
           .filter(([id, value]) => 'options' in value || (!onCreation && id === USER_PROMPTS))
           .map((entry) => entry as [string, LearningConfiguration])
@@ -221,8 +220,7 @@ export class SDKService {
               (entry.data.options &&
                 entry.data.options.length > 1 &&
                 (entry.id !== 'anonymization_model' || hasAnonymization) &&
-                (entry.id !== 'visual_labeling' || hasPdfAnnotation) &&
-                (entry.id !== 'generative_model' || hasAnswers)),
+                (entry.id !== 'visual_labeling' || hasPdfAnnotation)),
           ),
           full,
           keys:

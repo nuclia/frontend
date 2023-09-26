@@ -31,14 +31,13 @@ export class SearchComponent implements OnInit, OnDestroy {
       forkJoin([
         kb.getLabels().pipe(map((labelSets) => Object.keys(labelSets).length > 0)),
         kb.training.hasModel(TrainingType.classifier),
-        this.featureFlag.isFeatureEnabled('answers').pipe(take(1)),
         this.featureFlag.isFeatureEnabled('knowledge-graph').pipe(take(1)),
       ]).pipe(
-        map(([hasLabels, hasClassifier, isChatEnabled, isKnowledgeGraphEnabled]) => ({
+        map(([hasLabels, hasClassifier, isKnowledgeGraphEnabled]) => ({
           kb,
           hasLabels,
           hasClassifier,
-          isChatEnabled: isChatEnabled && toggleAnswerEnabled,
+          isChatEnabled: toggleAnswerEnabled,
           isKnowledgeGraphEnabled,
         })),
       ),
