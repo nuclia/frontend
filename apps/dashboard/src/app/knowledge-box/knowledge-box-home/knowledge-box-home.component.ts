@@ -76,6 +76,9 @@ export class KnowledgeBoxHomeComponent {
   );
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
+  canUpgrade = combineLatest([this.isAccountManager, this.account]).pipe(
+    map(([isAccountManager, account]) => isAccountManager && ['stash-trial', 'stash-starter'].includes(account.type)),
+  );
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
 

@@ -78,7 +78,7 @@
       </div>
       <div
         class="container account-status"
-        *ngIf="isAccountManager | async">
+        *ngIf="canUpgrade | async">
         <app-account-status></app-account-status>
       </div>
       <div class="container resource-stats">

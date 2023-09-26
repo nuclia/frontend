@@ -61,6 +61,7 @@ export class AccountHomeComponent {
     [StatsType.MEDIA_SECONDS]: (value) => value / 3600,
     [StatsType.TRAIN_SECONDS]: (value) => value / 3600,
   };
+  canUpgrade = this.account$.pipe(map((account) => ['stash-trial', 'stash-starter'].includes(account.type)));
 
   allCharts = true;
   charts: { [type in StatsType]: Observable<ChartData> } = this.statsTypes.reduce(
