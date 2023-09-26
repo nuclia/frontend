@@ -536,6 +536,7 @@
 	"resource.entities.quantity": "Quantité",
 	"resource.entities.time": "Temps",
 	"resource.entities.work_of_art": "Art",
+	"resource.error.loading-failed": "Le chargement des ressources a échoué.",
 	"resource.extra-metadata.invalid-json": "JSON invalide",
 	"resource.extra-metadata.label": "Métadonnées supplémentaires",
 	"resource.failed_resources_popover": "Traitement des fichiers ayant échoué",
