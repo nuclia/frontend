@@ -17,6 +17,7 @@ import { IErrorMessages } from '@guillotinaweb/pastanaga-angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Sluggable } from '../validators';
 import { Router } from '@angular/router';
+import { SisToastService } from '@nuclia/sistema';
 
 @Component({
   templateUrl: './knowledge-box-settings.component.html',
@@ -60,6 +61,7 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private router: Router,
     private featureFlag: FeatureFlagService,
+    private toast: SisToastService,
   ) {}
 
   ngOnInit(): void {
@@ -285,7 +287,13 @@ export class KnowledgeBoxSettingsComponent implements OnInit, OnDestroy {
             conf['user_prompts'][promptKey] = this.kbForm?.value.config['user_prompts'][promptKey];
           }
 
-          return kb.setConfiguration({ ...conf, ...userKeys });
+          return kb.setConfiguration({ ...conf, ...userKeys }).pipe(
+            tap(() => this.toast.success(this.translate.instant('stash.config.success'))),
+            catchError(() => {
+              this.toast.error(this.translate.instant('stash.config.failure'));
+              return of(undefined);
+            }),
+          );
         }),
         concatMap(() =>
           this.sdk.nuclia.db.getKnowledgeBox(this.account!.slug, kb.account === 'local' ? kb.id : newSlug),
