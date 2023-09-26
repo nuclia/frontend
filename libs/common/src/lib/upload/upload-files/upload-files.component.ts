@@ -3,7 +3,7 @@ import { filter, map, take } from 'rxjs';
 import { DroppedFile, SDKService, StateService, STFTrackingService, STFUtils } from '@flaps/core';
 import { Account, Classification, FileWithMetadata, ICreateResource } from '@nuclia/core';
 import { FILES_TO_IGNORE, PATTERNS_TO_IGNORE, UploadService } from '../upload.service';
-import * as mime from 'mime';
+import mime from 'mime';
 import { StandaloneService } from '../../services';
 
 const GENERAL_LABELSET = 'General';
@@ -74,7 +74,7 @@ export class UploadFilesComponent {
       )
       .map((file) => {
         // Some file types (like .mkv) are not recognized by some browsers
-        return file.type ? file : new File([file], file.name, { type: (mime as any).getType(file.name) });
+        return file.type ? file : new File([file], file.name, { type: mime.getType(file.name) || undefined });
       });
     const mediaFiles = this.getFilesByType(files, true);
     const nonMediaFiles = this.getFilesByType(files, false);
