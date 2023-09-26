@@ -6,6 +6,7 @@ import { combineLatest, filter, map, Observable, share, shareReplay, switchMap, 
 import { SisModalService, SisToastService } from '@nuclia/sistema';
 import { markForCheck } from '@guillotinaweb/pastanaga-angular';
 import { AppService, DesktopUploadService, NavigationService } from '@flaps/common';
+import { UPGRADABLE_ACCOUNT_TYPES } from '../../account/billing/billing.service';
 
 @Component({
   selector: 'app-knowledge-box-home',
@@ -76,6 +77,9 @@ export class KnowledgeBoxHomeComponent {
   );
   isAccountManager = this.account.pipe(map((account) => account!.can_manage_account));
   isDownloadDesktopEnabled = this.tracking.isFeatureEnabled('download-desktop-app');
+  canUpgrade = combineLatest([this.isAccountManager, this.account]).pipe(
+    map(([isAccountManager, account]) => isAccountManager && UPGRADABLE_ACCOUNT_TYPES.includes(account.type)),
+  );
   clipboardSupported: boolean = !!(navigator.clipboard && navigator.clipboard.writeText);
   copyIcon = 'copy';
 

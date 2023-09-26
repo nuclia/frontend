@@ -106,7 +106,7 @@
     </div>
 
     <div class="right-column">
-      <div>
+      <div *ngIf="canUpgrade | async">
         <app-account-status></app-account-status>
       </div>
       <div>

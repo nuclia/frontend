@@ -16,6 +16,8 @@ import {
   StripeSubscriptionCreation,
 } from './billing.models';
 
+export const UPGRADABLE_ACCOUNT_TYPES: AccountTypes[] = ['stash-trial', 'stash-starter'];
+
 @Injectable({ providedIn: 'root' })
 export class BillingService {
   type = this.sdk.currentAccount.pipe(map((account) => account.type));
