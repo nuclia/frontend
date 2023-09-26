@@ -234,6 +234,7 @@
 	"billing.tier_select.help": "Cada nivell té quotes diferents. Selecciona un nivell per obtenir informació més acurada dels costos de consum.",
 	"billing.trial.title": "{{days}} dies de prova",
 	"billing.unit": "unitat",
+	"billing.unlimited": "Il·limitat",
 	"billing.unsubscribe-error": "Error en cancel·lar la subscripció",
 	"billing.unsubscribe-help": "Encara que deixis de renovar la teva subscripció, encara pots utilitzar Nuclia durant un temps.",
 	"billing.unsubscribe-title": "No s'ha acabat fins que s'ha acabat de veritat...",

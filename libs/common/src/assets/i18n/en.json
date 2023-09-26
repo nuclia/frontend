@@ -237,6 +237,7 @@
 	"billing.tier_select.help": "Each tier has different quotas. Select a tier to get a more accurate understanding of the consumption costs.",
 	"billing.trial.title": "{{days}} days trial",
 	"billing.unit": "unit",
+	"billing.unlimited": "Unlimited",
 	"billing.unsubscribe-error": "Error when unsubscribing",
 	"billing.unsubscribe-help": "Don’t forget: even if you stop renewing your subscription, you still have some time left to use Nuclia.",
 	"billing.unsubscribe-title": "It's not over until it's truly over...",
