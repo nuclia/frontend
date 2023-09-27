@@ -103,10 +103,17 @@
       </pa-button>
     </div>
     <div
-      *ngIf="showLabels"
+      *ngIf="(hasLabelSets | async) === true"
       class="field">
       <div class="body-m">{{ 'upload.labels' | translate }}</div>
       <app-label-field [(selection)]="selectedLabels"></app-label-field>
+    </div>
+    <div
+      *ngIf="(hasLabelSets | async) === false"
+      class="field">
+      <div
+        class="body-m"
+        [innerHTML]="'upload.no-labels' | translate: { url: dashboardUrl }"></div>
     </div>
   </div>
 

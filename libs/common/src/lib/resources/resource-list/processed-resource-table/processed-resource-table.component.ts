@@ -70,7 +70,7 @@ export class ProcessedResourceTableComponent extends ResourcesTableDirective imp
   optionalColumns: ColumnHeader[];
   columnVisibilityUpdate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
-  hasLabelSets = inject(LabelsService).hasLabelSets();
+  hasLabelSets = inject(LabelsService).hasLabelSets;
   currentLabelList: Classification[] = [];
   deletingLabel = false;
 

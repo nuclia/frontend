@@ -33,6 +33,7 @@
 	"upload.add-connector": "Ajouter un connecteur",
 	"upload.connectors": "Connecteurs",
 	"upload.labels": "Appliquer des étiquettes aux ressources téléchargées via ce connecteur",
+	"upload.no-labels": "Si vous souhaitez attribuer des étiquettes lors du téléchargement de fichiers, définissez des ensembles d'étiquettes dans votre <a href=\"{{url}}\">tableau de bord</a>.",
 	"upload.refresh": "Rafraîchir {{field}}",
 	"upload.s3.region": "Région",
 	"upload.s3.region_help": "par exemple: eu-west-3",

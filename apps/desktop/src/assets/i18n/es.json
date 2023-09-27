@@ -33,6 +33,7 @@
 	"upload.add-connector": "Añadir conector",
 	"upload.connectors": "Conectores",
 	"upload.labels": "Aplicar etiquetas a los recursos cargados a través de este conector",
+	"upload.no-labels": "Si desea asignar etiquetas al cargar archivos, defina algunos conjuntos de etiquetas en su <a href=\"{{url}}\">panel</a>.",
 	"upload.refresh": "Refrescar {{field}}",
 	"upload.s3.region": "Región",
 	"upload.s3.region_help": "Por ejemplo: eu-west-3",

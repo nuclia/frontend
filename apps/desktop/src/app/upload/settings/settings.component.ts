@@ -15,6 +15,7 @@ import { ConnectorDefinition, Field } from '../../sync/models';
 import { SDKService } from '@flaps/core';
 import { LabelsService } from '@flaps/common';
 import { Classification } from '@nuclia/core';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'nde-settings',
@@ -40,8 +41,9 @@ export class SettingsComponent implements OnInit {
   kbField?: Field;
   form?: UntypedFormGroup;
   connector?: ConnectorDefinition;
-  showLabels = false;
+  hasLabelSets = this.labelsService.hasLabelSets;
   selectedLabels: Classification[] = [];
+  dashboardUrl = '';
 
   constructor(
     private sync: SyncService,
@@ -166,15 +168,16 @@ export class SettingsComponent implements OnInit {
     this._onSelectKb(kb).subscribe(() => this.cdr?.detectChanges());
   }
 
-  private _onSelectKb(kbId: string): Observable<boolean> {
+  private _onSelectKb(kbId: string): Observable<undefined> {
     return forkJoin([this.sdk.currentAccount.pipe(take(1)), this.sdk.kbList.pipe(take(1))]).pipe(
-      switchMap(([account, kbs]) =>
-        this.sdk.setCurrentKnowledgeBox(account.slug, kbs.find((kb) => kb.id === kbId)?.slug || ''),
-      ),
-      switchMap(() => this.labelsService.refreshLabelsSets()),
-      switchMap(() => this.labelsService.hasLabelSets()),
-      filter((hasLabels) => !!hasLabels),
-      tap(() => (this.showLabels = true)),
+      switchMap(([account, kbs]) => {
+        const kbSlug = kbs.find((kb) => kb.id === kbId)?.slug || '';
+        this.dashboardUrl = `${environment.dashboard}/at/${account.slug}/${kbSlug}/label-sets/list`;
+        return this.sdk.setCurrentKnowledgeBox(account.slug, kbSlug);
+      }),
+      map(() => {
+        return undefined;
+      }),
     );
   }
 }
