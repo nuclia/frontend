@@ -1,8 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService, StateService, StaticEnvironmentConfiguration } from '@flaps/core';
+import { AuthService, StateService, StaticEnvironmentConfiguration, standaloneSimpleAccount } from '@flaps/core';
 import { combineLatest, map, Observable } from 'rxjs';
-import { standaloneSimpleAccount } from '../select-account-kb/utils';
 
 const IN_ACCOUNT_MANAGEMENT = new RegExp('/at/[^/]+/manage');
 

@@ -31,6 +31,7 @@ import { BackendConfigurationService } from '../config';
 import { StateService } from '../state.service';
 import { FeatureFlagService } from '../analytics/feature-flag.service';
 import { take } from 'rxjs/operators';
+import { standaloneSimpleAccount } from '../models/account.model';
 
 @Injectable({ providedIn: 'root' })
 export class SDKService {
@@ -93,10 +94,14 @@ export class SDKService {
 
   setCurrentAccount(accountSlug: string): Observable<Account> {
     // returns the current account and set it if not set
-    const currentAccount = this.config.staticConf.standalone ? { slug: accountSlug } : this.stateService.getAccount();
-    return currentAccount && currentAccount.slug === accountSlug
-      ? of(currentAccount as Account)
-      : this.nuclia.db.getAccount(accountSlug).pipe(tap((account) => this.stateService.setAccount(account)));
+    const currentAccount = this.stateService.getAccount();
+    if (currentAccount && currentAccount.slug === accountSlug) {
+      return of(currentAccount);
+    } else {
+      return (
+        this.config.staticConf.standalone ? of(standaloneSimpleAccount) : this.nuclia.db.getAccount(accountSlug)
+      ).pipe(tap((account) => this.stateService.setAccount(account)));
+    }
   }
 
   setCurrentKnowledgeBox(accountSlug: string, kbSlug: string, force = false): Observable<WritableKnowledgeBox> {

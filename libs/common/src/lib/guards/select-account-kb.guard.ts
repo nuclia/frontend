@@ -1,10 +1,11 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { SDKService, SimpleAccount } from '@flaps/core';
+import { SDKService } from '@flaps/core';
 import { SelectAccountKbService } from '../select-account-kb/select-account-kb.service';
 import { NavigationService } from '../services';
 import { catchError, of } from 'rxjs';
+import { Account } from '@nuclia/core';
 
 export const selectAccountKbGuard = (route: ActivatedRouteSnapshot) => {
   const selectService: SelectAccountKbService = inject(SelectAccountKbService);
@@ -56,7 +57,7 @@ export const selectAccountKbGuard = (route: ActivatedRouteSnapshot) => {
   );
 };
 
-function hasInvalidParams(route: ActivatedRouteSnapshot, accounts: SimpleAccount[]) {
+function hasInvalidParams(route: ActivatedRouteSnapshot, accounts: Account[]) {
   const accountSlug = route.firstChild?.paramMap.get('account');
   return !!accountSlug && accounts.every((account) => account.slug !== accountSlug);
 }
