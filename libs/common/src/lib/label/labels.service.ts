@@ -14,7 +14,6 @@ export class LabelsService {
   constructor(private sdk: SDKService) {
     this.sdk.currentKb
       .pipe(
-        tap(() => this._labelsSubject.next(null)),
         filter((kb) => !!kb),
         distinctUntilKeyChanged('id'),
         switchMap(() => this.refreshLabelsSets()),
