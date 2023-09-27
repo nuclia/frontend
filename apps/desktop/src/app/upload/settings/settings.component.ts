@@ -146,7 +146,7 @@ export class SettingsComponent implements OnInit {
       });
   }
 
-  goToDocumentation(event: MouseEvent, url: string) {
+  goToUrl(event: MouseEvent, url: string) {
     if ((window as any)['electron']) {
       event.preventDefault();
       (window as any)['electron'].openExternal(url);

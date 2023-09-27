@@ -60,7 +60,7 @@
       name="info"></pa-icon>
     <a
       [href]="connector.helpUrl"
-      (click)="goToDocumentation($event, connector.helpUrl)"
+      (click)="goToUrl($event, connector.helpUrl)"
       target="_blank"
       rel="noopener noreferrer">
       {{ 'upload.source.help' | translate: { source: connector.title } }}
@@ -111,9 +111,15 @@
     <div
       *ngIf="(hasLabelSets | async) === false"
       class="field">
-      <div
-        class="body-m"
-        [innerHTML]="'upload.no-labels' | translate: { url: dashboardUrl }"></div>
+      <div class="body-m">
+        <a
+          [href]="dashboardUrl"
+          (click)="goToUrl($event, dashboardUrl)"
+          target="_blank"
+          rel="noopener noreferrer">
+          {{ 'upload.no-labels' | translate }}
+        </a>
+      </div>
     </div>
   </div>
 
