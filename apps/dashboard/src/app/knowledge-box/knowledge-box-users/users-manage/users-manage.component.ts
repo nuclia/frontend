@@ -55,7 +55,7 @@ export class UsersManageComponent {
     map((users: KbUser[]) => users.filter((user) => user.role === 'SOWNER')?.length > 1),
   );
   canAddUsers = this.sdk.currentAccount.pipe(
-    map((account) => account.max_users == null || account.current_users < account.max_users),
+    map((account) => account.max_users == null || (account.current_users || 0) < account.max_users),
   );
 
   roles = SORTED_KB_ROLES;
